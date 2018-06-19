@@ -10,17 +10,18 @@ import com.nukkitx.api.event.block.BlockPlaceEvent;
 import com.nukkitx.api.item.ItemInstance;
 import com.nukkitx.api.level.chunk.Chunk;
 import com.nukkitx.api.metadata.item.GenericDamageValue;
+import com.nukkitx.api.util.BoundingBox;
 import com.nukkitx.api.util.GameMode;
 import com.nukkitx.api.util.data.BlockFace;
-import com.nukkitx.nbt.util.VarInt;
 import com.nukkitx.server.block.BlockUtil;
 import com.nukkitx.server.block.NukkitBlockState;
 import com.nukkitx.server.block.behavior.BlockBehavior;
 import com.nukkitx.server.block.behavior.BlockBehaviors;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.minecraft.MinecraftUtil;
-import com.nukkitx.server.network.minecraft.packet.LevelEventPacket;
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.BedrockUtil;
+import com.nukkitx.server.network.bedrock.packet.LevelEventPacket;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.util.VarInts;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -47,6 +48,7 @@ public class ItemUseTransaction extends ComplexTransaction {
                 break;
             case PLACE:
                 placeBlock(session, serverItem);
+                break;
             case USE:
                 useBlock(session, serverItem);
         }
@@ -60,7 +62,9 @@ public class ItemUseTransaction extends ComplexTransaction {
 
         Optional<Chunk> chunk = session.getLevel().getChunkIfLoaded(chunkX, chunkZ);
         if (!chunk.isPresent()) {
-            log.debug("{} tried to break block at unloaded chunk ({}, {})", session.getName(), chunkX, chunkZ);
+            if (log.isDebugEnabled()) {
+                log.debug("{} tried to break block at unloaded chunk ({}, {})", session.getName(), chunkX, chunkZ);
+            }
             return;
         }
 
@@ -110,12 +114,10 @@ public class ItemUseTransaction extends ComplexTransaction {
     }
 
     private void placeBlock(PlayerSession session, ItemInstance withItem) {
-        if (!withItem.getItemType().isBlock()) {
-            log.debug("{} tried to place a non-block type");
-            return;
-        }
         if (!session.ensureAndGet(PlayerData.class).getGameMode().canPlace()) {
-            log.debug("{} is in a gamemode which cannot place blocks");
+            if (log.isDebugEnabled()) {
+                log.debug("{} is in a gamemode which cannot place blocks");
+            }
             return;
         }
 
@@ -127,13 +129,23 @@ public class ItemUseTransaction extends ComplexTransaction {
         Optional<Block> block = session.getLevel().getBlockIfChunkLoaded(position);
         Optional<Block> optionalOld = session.getLevel().getBlockIfChunkLoaded(blockPosition);
         if (!block.isPresent() || !optionalOld.isPresent()) {
-            log.debug("{} tried to place block at unloaded chunk ({}, {})", session.getName(), chunkX, chunkZ);
+            if (log.isDebugEnabled()) {
+                log.debug("{} tried to place block at unloaded chunk ({}, {})", session.getName(), chunkX, chunkZ);
+            }
             return;
         }
         Block against = block.get();
         Block oldBlock = optionalOld.get();
 
-        if (!isHandValid(withItem, session)) {
+        if (!oldBlock.getBlockState().getBlockType().isFloodable()) {
+            //TODO: Create a separate property for this. Not all floodable items can be replaced.
+            return;
+        }
+
+        Vector3f min = oldBlock.getBlockPosition().toFloat();
+        BoundingBox boundingBlock = new BoundingBox(min.add(1, 1, 1), min);
+
+        if (!isHandValid(withItem, session) || session.getBoundingBox().intersectsWith(boundingBlock)) {
             resetBlock(oldBlock, session);
             return;
         }
@@ -148,6 +160,14 @@ public class ItemUseTransaction extends ComplexTransaction {
             resetBlock(oldBlock, session);
             // Reset inventory
             session.sendPlayerInventory();
+        } else {
+            int amountLeft = withItem.getAmount();
+            if (amountLeft <= 1) {
+                session.getInventory().clearItem(session.getInventory().getHeldHotbarSlot());
+            } else {
+                session.getInventory().setItem(session.getInventory().getHeldHotbarSlot(),
+                        withItem.toBuilder().amount(amountLeft - 1).build());
+            }
         }
     }
 
@@ -156,29 +176,24 @@ public class ItemUseTransaction extends ComplexTransaction {
     }
 
     public void read(ByteBuf buffer){
-        action = Action.values()[VarInt.readUnsignedInt(buffer)];
-        position = MinecraftUtil.readVector3i(buffer);
-        face = VarInt.readSignedInt(buffer);
+        action = Action.values()[VarInts.readUnsignedInt(buffer)];
+        position = BedrockUtil.readVector3i(buffer);
+        face = VarInts.readInt(buffer);
         super.read(buffer);
-        clickPosition = MinecraftUtil.readVector3f(buffer);
+        clickPosition = BedrockUtil.readVector3f(buffer);
     }
 
     public void write(ByteBuf buffer){
-        VarInt.writeUnsignedInt(buffer, action.ordinal());
-        MinecraftUtil.writeVector3i(buffer, position);
-        VarInt.writeSignedInt(buffer, face);
+        VarInts.writeUnsignedInt(buffer, action.ordinal());
+        BedrockUtil.writeVector3i(buffer, position);
+        VarInts.writeInt(buffer, face);
         super.write(buffer);
-        MinecraftUtil.writeVector3f(buffer, clickPosition);
+        BedrockUtil.writeVector3f(buffer, clickPosition);
     }
 
     @Override
     public Type getType() {
         return type;
-    }
-
-    @Override
-    public void handle(PlayerSession.PlayerNetworkPacketHandler handler) {
-        handler.handle(this);
     }
 
     @Override

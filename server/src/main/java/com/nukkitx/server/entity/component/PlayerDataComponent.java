@@ -8,8 +8,8 @@ import com.nukkitx.api.permission.PlayerPermission;
 import com.nukkitx.api.util.GameMode;
 import com.nukkitx.api.util.Skin;
 import com.nukkitx.server.entity.Attribute;
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
-import com.nukkitx.server.network.minecraft.session.data.ClientData;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.data.ClientData;
 import com.nukkitx.server.permission.NukkitAbilities;
 
 import javax.annotation.Nonnegative;
@@ -28,11 +28,12 @@ public class PlayerDataComponent implements PlayerData {
     private volatile Skin skin;
     private volatile GameMode gameMode = GameMode.SURVIVAL;
     private volatile boolean sprinting = false;
+    private volatile boolean sneaking = false;
     private volatile float speed = 0.1f;
     private volatile int hunger = 20;
     private volatile float saturation = 20f;
     private volatile float exhaustion = 0f;
-    private volatile int experience;
+    private volatile int experience = 0;
 
     public PlayerDataComponent(PlayerSession session) {
         this.session = session;
@@ -46,7 +47,23 @@ public class PlayerDataComponent implements PlayerData {
     }
 
     public void setSprinting(boolean sprinting) {
-        this.sprinting = sprinting;
+        if (this.sprinting != sprinting) {
+            this.sprinting = sprinting;
+            session.onAttributeUpdate(new Attribute("minecraft:movement", getEffectiveSpeed(), 0.1f, Float.MAX_VALUE, 0.1f));
+        }
+    }
+
+    @Override
+    public boolean isSneaking() {
+        return sneaking;
+    }
+
+    @Override
+    public void setSneaking(boolean sneaking) {
+        if (this.sneaking != sneaking) {
+            this.sneaking = sneaking;
+            // TODO: checks
+        }
     }
 
     @Nonnull

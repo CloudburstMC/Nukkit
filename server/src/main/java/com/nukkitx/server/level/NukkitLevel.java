@@ -19,9 +19,9 @@ import com.nukkitx.server.entity.system.*;
 import com.nukkitx.server.level.manager.*;
 import com.nukkitx.server.level.provider.ChunkProvider;
 import com.nukkitx.server.metadata.MetadataSerializers;
-import com.nukkitx.server.network.minecraft.packet.BlockEntityDataPacket;
-import com.nukkitx.server.network.minecraft.packet.UpdateBlockPacket;
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.packet.BlockEntityDataPacket;
+import com.nukkitx.server.network.bedrock.packet.UpdateBlockPacket;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 

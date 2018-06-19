@@ -7,13 +7,17 @@ import com.nukkitx.api.metadata.item.Coal;
 import com.nukkitx.api.metadata.item.GenericDamageValue;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import lombok.Builder;
+
+import java.util.Optional;
+
+import static com.nukkitx.api.item.TierTypes.*;
+import static com.nukkitx.api.item.ToolTypes.*;
 
 public class ItemTypes {
     private static final TIntObjectMap<ItemType> BY_ID = new TIntObjectHashMap<>(256);
-    public static final ItemType IRON_SHOVEL = IntItem.builder().id(256).name("iron_shovel").maxStackSize(1).data(GenericDamageValue.class).build();
-    public static final ItemType IRON_PICKAXE = IntItem.builder().id(257).name("iron_pickaxe").maxStackSize(1).data(GenericDamageValue.class).build();
-    public static final ItemType IRON_AXE = IntItem.builder().id(258).name("iron_axe").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType IRON_SHOVEL = IntItem.builder().id(256).name("iron_shovel").maxStackSize(1).data(GenericDamageValue.class).toolType(SHOVEL).tierType(IRON).build();
+    public static final ItemType IRON_PICKAXE = IntItem.builder().id(257).name("iron_pickaxe").maxStackSize(1).data(GenericDamageValue.class).toolType(PICKAXE).tierType(IRON).build();
+    public static final ItemType IRON_AXE = IntItem.builder().id(258).name("iron_axe").maxStackSize(1).data(GenericDamageValue.class).toolType(AXE).tierType(IRON).build();
     public static final ItemType FLINT_AND_STEEL = IntItem.builder().id(259).name("flint_and_steel").maxStackSize(1).data(GenericDamageValue.class).build();
     public static final ItemType APPLE = IntItem.builder().id(260).name("apple").maxStackSize(64).build();
     public static final ItemType BOW = IntItem.builder().id(261).name("bow").maxStackSize(1).data(GenericDamageValue.class).build();
@@ -22,26 +26,26 @@ public class ItemTypes {
     public static final ItemType DIAMOND = IntItem.builder().id(264).name("diamond").maxStackSize(64).build();
     public static final ItemType IRON_INGOT = IntItem.builder().id(265).name("iron_ingot").maxStackSize(64).build();
     public static final ItemType GOLD_INGOT = IntItem.builder().id(266).name("gold_ingot").maxStackSize(64).build();
-    public static final ItemType IRON_SWORD = IntItem.builder().id(267).name("iron_sword").maxStackSize(1).build();
-    public static final ItemType WOODEN_SWORD = IntItem.builder().id(268).name("wooden_sword").maxStackSize(1).data(GenericDamageValue.class).build();
-    public static final ItemType WOODEN_SHOVEL = IntItem.builder().id(269).name("wooden_shovel").maxStackSize(1).data(GenericDamageValue.class).build();
-    public static final ItemType WOODEN_PICKAXE = IntItem.builder().id(270).name("wooden_pickaxe").maxStackSize(1).data(GenericDamageValue.class).build();
-    public static final ItemType WOODEN_AXE = IntItem.builder().id(271).name("wooden_axe").maxStackSize(1).data(GenericDamageValue.class).build();
-    public static final ItemType STONE_SWORD = IntItem.builder().id(272).name("stone_sword").maxStackSize(1).data(GenericDamageValue.class).build();
-    public static final ItemType STONE_SHOVEL = IntItem.builder().id(273).name("stone_shovel").maxStackSize(1).data(GenericDamageValue.class).build();
-    public static final ItemType STONE_PICKAXE = IntItem.builder().id(274).name("stone_pickaxe").maxStackSize(1).data(GenericDamageValue.class).build();
-    public static final ItemType STONE_AXE = IntItem.builder().id(275).name("stone_axe").maxStackSize(1).data(GenericDamageValue.class).build();
-    public static final ItemType DIAMOND_SWORD = IntItem.builder().id(276).name("diamond_sword").maxStackSize(1).data(GenericDamageValue.class).build();
-    public static final ItemType DIAMOND_SHOVEL = IntItem.builder().id(277).name("diamond_shovel").maxStackSize(1).data(GenericDamageValue.class).build();
-    public static final ItemType DIAMOND_PICKAXE = IntItem.builder().id(278).name("diamond_pickaxe").maxStackSize(1).data(GenericDamageValue.class).build();
-    public static final ItemType DIAMOND_AXE = IntItem.builder().id(279).name("diamond_axe").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType IRON_SWORD = IntItem.builder().id(267).name("iron_sword").maxStackSize(1).data(GenericDamageValue.class).toolType(SWORD).tierType(IRON).build();
+    public static final ItemType WOODEN_SWORD = IntItem.builder().id(268).name("wooden_sword").maxStackSize(1).data(GenericDamageValue.class).toolType(SWORD).tierType(WOOD).build();
+    public static final ItemType WOODEN_SHOVEL = IntItem.builder().id(269).name("wooden_shovel").maxStackSize(1).data(GenericDamageValue.class).toolType(SHOVEL).tierType(WOOD).build();
+    public static final ItemType WOODEN_PICKAXE = IntItem.builder().id(270).name("wooden_pickaxe").maxStackSize(1).data(GenericDamageValue.class).toolType(PICKAXE).tierType(WOOD).build();
+    public static final ItemType WOODEN_AXE = IntItem.builder().id(271).name("wooden_axe").maxStackSize(1).data(GenericDamageValue.class).toolType(AXE).tierType(WOOD).build();
+    public static final ItemType STONE_SWORD = IntItem.builder().id(272).name("stone_sword").maxStackSize(1).data(GenericDamageValue.class).toolType(SWORD).tierType(STONE).build();
+    public static final ItemType STONE_SHOVEL = IntItem.builder().id(273).name("stone_shovel").maxStackSize(1).data(GenericDamageValue.class).toolType(SHOVEL).tierType(STONE).build();
+    public static final ItemType STONE_PICKAXE = IntItem.builder().id(274).name("stone_pickaxe").maxStackSize(1).data(GenericDamageValue.class).toolType(PICKAXE).tierType(STONE).build();
+    public static final ItemType STONE_AXE = IntItem.builder().id(275).name("stone_axe").maxStackSize(1).data(GenericDamageValue.class).toolType(AXE).tierType(STONE).build();
+    public static final ItemType DIAMOND_SWORD = IntItem.builder().id(276).name("diamond_sword").maxStackSize(1).data(GenericDamageValue.class).toolType(SWORD).tierType(TierTypes.DIAMOND).build();
+    public static final ItemType DIAMOND_SHOVEL = IntItem.builder().id(277).name("diamond_shovel").maxStackSize(1).data(GenericDamageValue.class).toolType(SHOVEL).tierType(TierTypes.DIAMOND).build();
+    public static final ItemType DIAMOND_PICKAXE = IntItem.builder().id(278).name("diamond_pickaxe").maxStackSize(1).data(GenericDamageValue.class).toolType(PICKAXE).tierType(TierTypes.DIAMOND).build();
+    public static final ItemType DIAMOND_AXE = IntItem.builder().id(279).name("diamond_axe").maxStackSize(1).data(GenericDamageValue.class).toolType(AXE).tierType(TierTypes.DIAMOND).build();
     public static final ItemType STICK = IntItem.builder().id(280).name("stick").maxStackSize(64).build();
     public static final ItemType BOWL = IntItem.builder().id(281).name("bowl").maxStackSize(64).build();
     public static final ItemType MUSHROOM_STEW = IntItem.builder().id(282).name("mushroom_stew").maxStackSize(1).build();
-    public static final ItemType GOLDEN_SWORD = IntItem.builder().id(283).name("golden_sword").maxStackSize(1).data(GenericDamageValue.class).build();
-    public static final ItemType GOLDEN_SHOVEL = IntItem.builder().id(284).name("golden_shovel").maxStackSize(1).data(GenericDamageValue.class).build();
-    public static final ItemType GOLDEN_PICKAXE = IntItem.builder().id(285).name("golden_pickaxe").maxStackSize(1).data(GenericDamageValue.class).build();
-    public static final ItemType GOLDEN_AXE = IntItem.builder().id(286).name("golden_axe").maxStackSize(1).data(GenericDamageValue.class).build();
+    public static final ItemType GOLDEN_SWORD = IntItem.builder().id(283).name("golden_sword").maxStackSize(1).data(GenericDamageValue.class).toolType(SWORD).tierType(GOLD).build();
+    public static final ItemType GOLDEN_SHOVEL = IntItem.builder().id(284).name("golden_shovel").maxStackSize(1).data(GenericDamageValue.class).toolType(SHOVEL).tierType(GOLD).build();
+    public static final ItemType GOLDEN_PICKAXE = IntItem.builder().id(285).name("golden_pickaxe").maxStackSize(1).data(GenericDamageValue.class).toolType(PICKAXE).tierType(GOLD).build();
+    public static final ItemType GOLDEN_AXE = IntItem.builder().id(286).name("golden_axe").maxStackSize(1).data(GenericDamageValue.class).toolType(AXE).tierType(GOLD).build();
     public static final ItemType STRING = IntItem.builder().id(287).name("string").maxStackSize(64).build();
     public static final ItemType FEATHER = IntItem.builder().id(288).name("feather").maxStackSize(64).build();
     public static final ItemType GUNPOWDER = IntItem.builder().id(289).name("gunpowder").maxStackSize(64).build();
@@ -110,7 +114,7 @@ public class ItemTypes {
     public static final ItemType REDSTONE_REPEATER = IntItem.builder().id(356).name("repeater").maxStackSize(64).build();
     public static final ItemType COOKIE = IntItem.builder().id(357).name("cookie").maxStackSize(64).build();
     public static final ItemType FILLED_MAP = IntItem.builder().id(358).name("map_filled").maxStackSize(64).build();
-    public static final ItemType SHEARS = IntItem.builder().id(359).name("shears").maxStackSize(1).build();
+    public static final ItemType SHEARS = IntItem.builder().id(359).name("shears").maxStackSize(1).toolType(ToolTypes.SHEARS).build();
     public static final ItemType MELON = IntItem.builder().id(360).name("melon").maxStackSize(64).build();
     public static final ItemType PUMPKIN_SEEDS = IntItem.builder().id(361).name("pumpkin_seeds").maxStackSize(64).build();
     public static final ItemType MELON_SEEDS = IntItem.builder().id(362).name("melon_seeds").maxStackSize(64).build();
@@ -218,18 +222,22 @@ public class ItemTypes {
     public static final ItemType DISC_11 = IntItem.builder().id(510).name("record_11").maxStackSize(1).build();
     public static final ItemType DISC_WAIT = IntItem.builder().id(511).name("record_wait").maxStackSize(1).build();
 
-    @Builder
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private static class IntItem implements ItemType {
         private final int id;
         private final String name;
         private final int maxStackSize;
         private final Class<? extends Metadata> data;
+        private final Optional<ToolType> toolType;
+        private final Optional<TierType> tierType;
 
-        public IntItem(int id, String name, int maxStackSize, Class<? extends Metadata> data) {
+        public IntItem(int id, String name, int maxStackSize, Class<? extends Metadata> data, ToolType toolType, TierType tierType) {
             this.id = id;
             this.name = name.toUpperCase();
-            this.maxStackSize = maxStackSize;
+            this.maxStackSize = maxStackSize < 1 ? 64 : maxStackSize;
             this.data = data;
+            this.toolType = Optional.ofNullable(toolType);
+            this.tierType = Optional.ofNullable(tierType);
 
             BY_ID.put(id, this);
         }
@@ -260,6 +268,16 @@ public class ItemTypes {
         }
 
         @Override
+        public Optional<ToolType> getToolType() {
+            return toolType;
+        }
+
+        @Override
+        public Optional<TierType> getTierType() {
+            return tierType;
+        }
+
+        @Override
         public String toString() {
             return getName();
         }
@@ -267,6 +285,53 @@ public class ItemTypes {
         @Override
         public int hashCode() {
             return id;
+        }
+
+        private static Builder builder() {
+            return new Builder();
+        }
+
+        private static class Builder {
+            private int id;
+            private String name;
+            private int maxStackSize;
+            private Class<? extends Metadata> data;
+            private ToolType toolType;
+            private TierType tierType;
+
+            private Builder id(int id) {
+                this.id = id;
+                return this;
+            }
+
+            private Builder name(String name) {
+                this.name = name;
+                return this;
+            }
+
+            private Builder maxStackSize(int maxStackSize) {
+                this.maxStackSize = maxStackSize;
+                return this;
+            }
+
+            private Builder data(Class<? extends Metadata> data) {
+                this.data = data;
+                return this;
+            }
+
+            private Builder toolType(ToolType toolType) {
+                this.toolType = toolType;
+                return this;
+            }
+
+            private Builder tierType(TierType tierType) {
+                this.tierType = tierType;
+                return this;
+            }
+
+            public IntItem build() {
+                return new IntItem(id, name, maxStackSize, data, toolType, tierType);
+            }
         }
     }
 

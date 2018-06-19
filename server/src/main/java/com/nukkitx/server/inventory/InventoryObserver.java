@@ -2,7 +2,7 @@ package com.nukkitx.server.inventory;
 
 import com.nukkitx.api.inventory.Inventory;
 import com.nukkitx.api.item.ItemInstance;
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;

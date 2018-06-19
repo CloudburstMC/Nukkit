@@ -6,10 +6,10 @@ import com.nukkitx.api.entity.Entity;
 import com.nukkitx.api.level.SoundEvent;
 import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.minecraft.MinecraftPacket;
-import com.nukkitx.server.network.minecraft.packet.LevelEventPacket;
-import com.nukkitx.server.network.minecraft.packet.LevelSoundEventPacket;
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.BedrockPacket;
+import com.nukkitx.server.network.bedrock.packet.LevelEventPacket;
+import com.nukkitx.server.network.bedrock.packet.LevelSoundEventPacket;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import lombok.Synchronized;
@@ -18,20 +18,20 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class LevelPacketManager {
-    private final Queue<MinecraftPacket> broadcastQueue = new ConcurrentLinkedQueue<>();
-    private final Map<Vector3f, Queue<MinecraftPacket>> specificPositionViewerQueue = new HashMap<>();
-    private final TLongObjectMap<Queue<MinecraftPacket>> specificEntityViewerQueue = new TLongObjectHashMap<>();
+    private final Queue<BedrockPacket> broadcastQueue = new ConcurrentLinkedQueue<>();
+    private final Map<Vector3f, Queue<BedrockPacket>> specificPositionViewerQueue = new HashMap<>();
+    private final TLongObjectMap<Queue<BedrockPacket>> specificEntityViewerQueue = new TLongObjectHashMap<>();
     private final int viewDistanceSquared;
     private final NukkitLevel level;
 
     public LevelPacketManager(NukkitLevel level, int viewDistance) {
         this.level = level;
-        this.viewDistanceSquared = (int) Math.pow((viewDistance * 16), 2);
+        this.viewDistanceSquared = (int) Math.pow((viewDistance << 4), 2);
     }
 
     public void onTick() {
         List<PlayerSession> playersInWorld = level.getEntityManager().getPlayers();
-        MinecraftPacket pk;
+        BedrockPacket pk;
         while ((pk = broadcastQueue.poll()) != null) {
             for (PlayerSession session : playersInWorld) {
                 if (!session.isRemoved()) {
@@ -49,7 +49,7 @@ public class LevelPacketManager {
                         if (session == entity) continue; // Don't move ourselves
 
                         if (session.getPosition().distanceSquared(entity.getPosition()) <= viewDistanceSquared && !session.isRemoved()) {
-                            for (MinecraftPacket packet : queue) {
+                            for (BedrockPacket packet : queue) {
 
                                 session.getMinecraftSession().addToSendQueue(packet);
                             }
@@ -65,7 +65,7 @@ public class LevelPacketManager {
             specificPositionViewerQueue.forEach((position, queue) -> {
                 for (PlayerSession session : playersInWorld) {
                     if (session.getPosition().distanceSquared(position) <= viewDistanceSquared && !session.isRemoved()) {
-                        for (MinecraftPacket packet : queue) {
+                        for (BedrockPacket packet : queue) {
                             session.getMinecraftSession().addToSendQueue(packet);
                         }
                     }
@@ -77,10 +77,10 @@ public class LevelPacketManager {
 
 
     @Synchronized("specificEntityViewerQueue")
-    public void queuePacketForViewers(Entity entity, MinecraftPacket packet) {
+    public void queuePacketForViewers(Entity entity, BedrockPacket packet) {
         Preconditions.checkNotNull(entity, "entity");
         Preconditions.checkNotNull(packet, "packet");
-        Queue<MinecraftPacket> packageQueue = specificEntityViewerQueue.get(entity.getEntityId());
+        Queue<BedrockPacket> packageQueue = specificEntityViewerQueue.get(entity.getEntityId());
         if (packageQueue == null) {
             specificEntityViewerQueue.put(entity.getEntityId(), packageQueue = new ArrayDeque<>());
         }
@@ -88,17 +88,17 @@ public class LevelPacketManager {
     }
 
     @Synchronized("specificPositionViewerQueue")
-    public void queuePacketForViewers(Vector3f position, MinecraftPacket packet) {
+    public void queuePacketForViewers(Vector3f position, BedrockPacket packet) {
         Preconditions.checkNotNull(position, "position");
         Preconditions.checkNotNull(packet, "packet");
-        Queue<MinecraftPacket> packageQueue = specificPositionViewerQueue.get(position);
+        Queue<BedrockPacket> packageQueue = specificPositionViewerQueue.get(position);
         if (packageQueue == null) {
             specificPositionViewerQueue.put(position, packageQueue = new ArrayDeque<>());
         }
         packageQueue.add(packet);
     }
 
-    public void queuePacketForPlayers(MinecraftPacket packet) {
+    public void queuePacketForPlayers(BedrockPacket packet) {
         Preconditions.checkNotNull(packet, "packet");
         broadcastQueue.add(packet);
     }
@@ -143,7 +143,7 @@ public class LevelPacketManager {
         queuePacketForViewers(entity, packet);
     }
 
-    public void sendImmediatePacketForViewers(Entity entity, MinecraftPacket packet) {
+    public void sendImmediatePacketForViewers(Entity entity, BedrockPacket packet) {
         Preconditions.checkNotNull(entity, "entity");
         Preconditions.checkNotNull(packet, "packet");
 
@@ -158,7 +158,7 @@ public class LevelPacketManager {
         }
     }
 
-    public void sendImmediatePacketForViewers(Vector3f position, MinecraftPacket packet) {
+    public void sendImmediatePacketForViewers(Vector3f position, BedrockPacket packet) {
         Preconditions.checkNotNull(position, "position");
         Preconditions.checkNotNull(packet, "packet");
 

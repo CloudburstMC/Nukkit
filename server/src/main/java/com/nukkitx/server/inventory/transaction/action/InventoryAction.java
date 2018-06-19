@@ -1,7 +1,7 @@
 package com.nukkitx.server.inventory.transaction.action;
 
 import com.nukkitx.api.item.ItemInstance;
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import io.netty.buffer.ByteBuf;
@@ -10,10 +10,10 @@ import lombok.Getter;
 
 import javax.annotation.Nonnull;
 
-import static com.nukkitx.nbt.util.VarInt.readUnsignedInt;
-import static com.nukkitx.nbt.util.VarInt.writeUnsignedInt;
-import static com.nukkitx.server.network.minecraft.MinecraftUtil.readItemInstance;
-import static com.nukkitx.server.network.minecraft.MinecraftUtil.writeItemInstance;
+import static com.nukkitx.server.network.bedrock.BedrockUtil.readItemInstance;
+import static com.nukkitx.server.network.bedrock.BedrockUtil.writeItemInstance;
+import static com.nukkitx.server.network.util.VarInts.readUnsignedInt;
+import static com.nukkitx.server.network.util.VarInts.writeUnsignedInt;
 
 @Data
 public abstract class InventoryAction {

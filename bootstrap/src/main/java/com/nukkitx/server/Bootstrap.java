@@ -1,5 +1,6 @@
 package com.nukkitx.server;
 
+import io.netty.util.ResourceLeakDetector;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import lombok.extern.log4j.Log4j2;
@@ -12,6 +13,7 @@ public class Bootstrap {
     public static final long START_TIME = System.currentTimeMillis();
 
     public static void main(String... args) {
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
         boolean ansiEnabled = false;
         Path path = Paths.get(System.getProperty("user.dir"));
 

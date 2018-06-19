@@ -13,7 +13,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import static com.nukkitx.api.level.data.GameRule.*;
-import static com.nukkitx.nbt.util.VarInt.writeUnsignedInt;
+import static com.nukkitx.server.network.util.VarInts.writeUnsignedInt;
 
 @SuppressWarnings({"unchecked"})
 public class NukkitGameRules implements GameRules {

@@ -6,11 +6,14 @@ import com.nukkitx.api.Player;
 import com.nukkitx.api.block.Block;
 import com.nukkitx.api.block.BlockState;
 import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemType;
+import com.nukkitx.api.item.TierType;
+import com.nukkitx.api.item.ToolType;
 import com.nukkitx.api.util.BoundingBox;
 import com.nukkitx.api.util.data.BlockFace;
 import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.item.behavior.ItemBehavior;
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -20,7 +23,19 @@ public interface BlockBehavior extends ItemBehavior {
 
     Collection<ItemInstance> getDrops(Player player, Block block, @Nullable ItemInstance item);
 
-    float getBreakTime(Player player, Block block, @Nullable ItemInstance item);
+    default float getBreakTime(Player player, Block block, @Nullable ItemInstance item) {
+        float breakTime = block.getBlockState().getBlockType().hardness();
+
+        if (isCorrectTool(item)) {
+            breakTime *= 1.5;
+        } else {
+            breakTime *= 5;
+        }
+
+        breakTime /= getMiningEfficiency(item);
+
+        return breakTime;
+    }
 
     boolean isCorrectTool(@Nullable ItemInstance item);
 
@@ -52,6 +67,19 @@ public interface BlockBehavior extends ItemBehavior {
 
     default Optional<BlockState> overridePlacement(Vector3i against, BlockFace face, ItemInstance withItem) {
         return Optional.empty();
+    }
+
+    default float getMiningEfficiency(@Nullable ItemInstance item) {
+        if (item == null) {
+            return 1f;
+        }
+        ItemType itemType = item.getItemType();
+
+        float efficiency = itemType.getTierType().map(TierType::getMiningEfficiency).orElse(1f);
+
+        efficiency *= itemType.getToolType().map(ToolType::getEfficiencyMultiplier).orElse(1f);
+
+        return efficiency;
     }
 
     enum Result {

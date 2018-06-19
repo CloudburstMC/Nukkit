@@ -18,34 +18,28 @@ import com.nukkitx.nbt.stream.NBTOutputStream;
 import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.nbt.tag.IntTag;
 import com.nukkitx.nbt.tag.Tag;
-import com.nukkitx.nbt.util.VarInt;
 import com.nukkitx.server.level.NukkitLevel;
 import com.nukkitx.server.metadata.MetadataSerializers;
-import com.nukkitx.server.network.minecraft.packet.FullChunkDataPacket;
-import com.nukkitx.server.network.minecraft.packet.WrappedPacket;
-import com.nukkitx.server.network.minecraft.wrapper.DefaultWrapperHandler;
+import com.nukkitx.server.network.bedrock.packet.FullChunkDataPacket;
+import com.nukkitx.server.network.util.VarInts;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.buffer.Unpooled;
 import lombok.Synchronized;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Queue;
+import java.lang.ref.SoftReference;
+import java.util.*;
 
 @Log4j2
 public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, FullChunkDataPacketCreator {
     private final Level level;
     private final TIntObjectMap<CompoundTag> serializedBlockEntities = new TIntObjectHashMap<>();
-    private byte[] precompressed;
+    private SoftReference<byte[]> cached = null;
 
     public SectionedChunk(int x, int z, Level level) {
         this(new ChunkSection[16], x, z, level);
@@ -115,7 +109,7 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
             blockEntities.remove(pos);
         }
 
-        precompressed = null;
+        refreshCache();
         return getBlock(x, y, z);
     }
 
@@ -174,7 +168,10 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         // From the top, however...
         boolean blocked = false;
         for (int y = maxHeight; y > 0; y--) {
-            BlockType type = BlockTypes.byId(sections[y >> 4].getBlockId(x, y & 15, z, 0));
+            BlockState state = NukkitLevel.getPaletteManager()
+                    .getBlockState(sections[y >> 4].getBlockId(x, y & 15, z, 0))
+                    .orElseThrow(() -> new IllegalStateException("Runtime ID is not registered"));
+            BlockType type = state.getBlockType();
             byte light = 15;
             if (!blocked) {
                 if (!type.isTransparent()) {
@@ -212,7 +209,7 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
     public void recalculateLight() {
         recalculateHeightMap();
         populateSkyLight();
-        precompressed = null;
+        refreshCache();
     }
 
     @Synchronized
@@ -240,7 +237,9 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         TLongSet visitedRemove = new TLongHashSet();
 
         ChunkSection section = getOrCreateSection(y >> 4);
-        BlockType ourType = BlockTypes.byId(section.getBlockId(x, y & 15, z, 0));
+        BlockType ourType = NukkitLevel.getPaletteManager()
+                .getBlockState(section.getBlockId(x, y & 15, z, 0))
+                .orElseThrow(() -> new IllegalStateException("Runtime ID is not registered")).getBlockType();
         byte currentBlockLight = section.getBlockLight(x, y & 15, z);
         byte newBlockLight = (byte) ourType.emitsLight();
 
@@ -270,7 +269,8 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         while ((toSpread = spread.poll()) != null) {
             ChunkSection cs = getOrCreateSection(toSpread.getY() >> 4);
             byte adjustedLight = (byte) (cs.getBlockLight(toSpread.getX(), toSpread.getY() & 15, toSpread.getZ())
-                    - BlockTypes.byId(cs.getBlockId(toSpread.getX(), toSpread.getY() & 15, toSpread.getZ(), 0)).filtersLight());
+                    - NukkitLevel.getPaletteManager().getBlockState(cs.getBlockId(toSpread.getX(), toSpread.getY() & 15, toSpread.getZ(), 0))
+                    .orElseThrow(() -> new IllegalStateException("Runtime ID is not registered")).getBlockType().filtersLight());
 
             if (adjustedLight >= 1) {
                 computeSpreadBlockLight(toSpread.sub(1, 0, 0), adjustedLight, spread, visitedSpread);
@@ -321,14 +321,20 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         }
     }
 
+    private void refreshCache() {
+        cached = null;
+    }
+
     @Override
     @Synchronized
-    public WrappedPacket createFullChunkDataPacket() {
-        if (precompressed != null) {
-            ByteBuf payload = PooledByteBufAllocator.DEFAULT.directBuffer(precompressed.length);
-            payload.writeBytes(precompressed);
-            WrappedPacket packet = new WrappedPacket();
-            packet.setPayload(payload);
+    public FullChunkDataPacket createFullChunkDataPacket() {
+        FullChunkDataPacket packet = new FullChunkDataPacket();
+        packet.setChunkX(x);
+        packet.setChunkZ(z);
+
+        if (cached != null && cached.get() != null) {
+            packet.setData(cached.get());
+
             return packet;
         }
 
@@ -360,48 +366,45 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
 
         // Chunk sections
         int bufferSize = 1 + 4096 * topBlank + 768 + 2 + nbtSize;
-        ByteBuf byteBuf = Unpooled.buffer(bufferSize);
-        byteBuf.markReaderIndex();
-        byteBuf.writeByte((byte) topBlank);
+        ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.buffer(bufferSize);
+        try {
+            byteBuf.markReaderIndex();
+            byteBuf.writeByte((byte) topBlank);
 
-        for (int i = 0; i < topBlank; i++) {
-            getOrCreateSection(i).writeTo(byteBuf);
+            for (int i = 0; i < topBlank; i++) {
+                getOrCreateSection(i).writeTo(byteBuf);
+            }
+
+            // Heightmap
+            byteBuf.writeBytes(height);
+            // Biomes
+            byteBuf.writeBytes(biomeId);
+
+            // Extra data TODO: Implement
+            VarInts.writeInt(byteBuf, 0);
+            VarInts.writeInt(byteBuf, 0);
+
+            if (blockEntitiesStream != null) {
+                blockEntitiesStream.writeTo(byteBuf);
+            }
+
+            byte[] chunkData = new byte[byteBuf.readableBytes()];
+            cached = new SoftReference<>(chunkData);
+            byteBuf.readBytes(chunkData);
+            packet.setData(chunkData);
+        } finally {
+            byteBuf.release();
         }
 
-        // Heightmap
-        byteBuf.writeBytes(height);
-        // Biomes
-        byteBuf.writeBytes(biomeId);
-
-        // Extra data TODO: Implement
-        VarInt.writeSignedInt(byteBuf, 0);
-        VarInt.writeSignedInt(byteBuf, 0);
-
-        if (blockEntitiesStream != null) {
-            blockEntitiesStream.writeTo(byteBuf);
-        }
-
-        FullChunkDataPacket packet = new FullChunkDataPacket();
-        packet.setChunkX(x);
-        packet.setChunkZ(z);
-        byte[] chunkData = new byte[byteBuf.readableBytes()];
-        byteBuf.readBytes(chunkData);
-        packet.setData(chunkData);
-
-        WrappedPacket wrappedPacket = new WrappedPacket();
-        wrappedPacket.setPayload(DefaultWrapperHandler.HIGH_COMPRESSION.compressPackets(packet));
-
-        precompressed = new byte[wrappedPacket.getPayload().readableBytes()];
-        wrappedPacket.getPayload().readBytes(precompressed);
-        return wrappedPacket;
+        return packet;
     }
 
     private static class CanWriteToBB extends FastByteArrayOutputStream {
-        public CanWriteToBB() {
+        CanWriteToBB() {
             super(8192);
         }
 
-        public void writeTo(ByteBuf buf) {
+        void writeTo(ByteBuf buf) {
             buf.writeBytes(array, 0, position);
         }
     }

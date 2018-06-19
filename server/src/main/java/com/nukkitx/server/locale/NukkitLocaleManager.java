@@ -7,7 +7,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.nukkitx.api.locale.LocaleManager;
 import com.nukkitx.api.message.Message;
-import com.nukkitx.api.message.TextFormat;
 import com.nukkitx.api.message.TranslationMessage;
 import com.nukkitx.server.NukkitServer;
 import lombok.extern.log4j.Log4j2;
@@ -21,11 +20,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Log4j2
 public class NukkitLocaleManager implements LocaleManager {
-    private static final Pattern colorPattern = Pattern.compile("((?>" + TextFormat.FORMAT_CHAR + "[0-9A-FK-OR])*?)(.+)");
+    private static final Pattern I18N_PATTERN = Pattern.compile("%([a-z0-9.]+)");
     private static final ClassLoader LOADER = NukkitServer.class.getClassLoader();
     private static final String LANGUAGE_PATH = "lang/";
     private static final String EXTENSION = ".lang";
@@ -93,14 +93,23 @@ public class NukkitLocaleManager implements LocaleManager {
         if (properties == null) {
             properties = locales.get(Locale.US);
         }
+        String i18n;
+        boolean percentBreak = false;
+        Matcher matcher = I18N_PATTERN.matcher(string);
 
-        String i18n = TextFormat.removeFormatting(string);
+        if (matcher.find()) {
+            i18n = matcher.group(1);
+            percentBreak = true;
+        } else {
+            i18n = string;
+        }
 
         if (!properties.containsKey(i18n)) {
             return string;
         }
-        String l10n = properties.getProperty(i18n);
 
+        String l10n = properties.getProperty(i18n);
+        i18n = (percentBreak ? '%' : "") + i18n;
         Formatter formatter = new Formatter(locale);
         return string.replace(i18n, formatter.format(l10n, objects).toString());
     }

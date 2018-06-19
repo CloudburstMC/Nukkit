@@ -21,7 +21,7 @@ pipeline {
 
         stage ('Javadoc') {
             when {
-                branch "main"
+                branch "master"
             }
             steps {
                 sh 'mvn javadoc:aggregate -DskipTests -pl api'

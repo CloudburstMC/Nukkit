@@ -4,20 +4,16 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Maven coordinates -->
     <parent>
         <artifactId>nukkitx-parent</artifactId>
         <groupId>com.nukkitx</groupId>
         <version>1.5.0.1-SNAPSHOT</version>
     </parent>
+
     <artifactId>nukkitx-bootstrap</artifactId>
-    <version>1.5.0.1-SNAPSHOT</version>
-
-    <!-- Module information -->
+    <version>1.6.0.1-SNAPSHOT</version>
     <name>NukkitX Bootstrap</name>
-    <description>The main bootstrap module for NukkitX.</description>
 
-    <!-- Module dependencies -->
     <dependencies>
         <dependency>
             <groupId>com.nukkitx</groupId>
@@ -33,13 +29,9 @@
         </dependency>
     </dependencies>
 
-    <!-- Module build lifecycle -->
     <build>
-        <!-- Override the final name, this is the executable jar -->
         <finalName>nukkit-${project.version}</finalName>
-        <!-- Lifecycle plugins -->
         <plugins>
-            <!-- Describe the final jar -->
             <plugin>
                 <groupId>net.md-5</groupId>
                 <artifactId>scriptus</artifactId>
@@ -92,6 +84,7 @@
                 </dependencies>
                 <executions>
                     <execution>
+                        <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
@@ -104,6 +97,32 @@
                         </transformer>
                     </transformers>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.zeroturnaround</groupId>
+                <artifactId>jrebel-maven-plugin</artifactId>
+                <version>1.1.8</version>
+                <configuration>
+                    <classpath>
+                        <resources>
+                            <resource>
+                                <directory>../api/target/classes</directory>
+                            </resource>
+                            <resource>
+                                <directory>../server/target/classes</directory>
+                            </resource>
+                        </resources>
+                    </classpath>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>generate-rebel-xml</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

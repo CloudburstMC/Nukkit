@@ -2,6 +2,8 @@ package com.nukkitx.api.item;
 
 import com.nukkitx.api.metadata.Metadata;
 
+import java.util.Optional;
+
 public interface ItemType {
     int getId();
 
@@ -16,4 +18,8 @@ public interface ItemType {
     default boolean isStackable() {
         return getMaximumStackSize() > 1;
     }
+
+    Optional<ToolType> getToolType();
+
+    Optional<TierType> getTierType();
 }

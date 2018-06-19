@@ -13,8 +13,8 @@ import com.nukkitx.server.entity.component.ContainedItemComponent;
 import com.nukkitx.server.entity.component.PhysicsComponent;
 import com.nukkitx.server.entity.component.PickupDelayComponent;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.minecraft.MinecraftPacket;
-import com.nukkitx.server.network.minecraft.packet.AddItemEntityPacket;
+import com.nukkitx.server.network.bedrock.BedrockPacket;
+import com.nukkitx.server.network.bedrock.packet.AddItemEntityPacket;
 
 public class DroppedItemEntity extends BaseEntity implements DroppedItem {
     public DroppedItemEntity(Vector3f position, NukkitLevel level, NukkitServer server, ItemInstance itemDropped) {
@@ -26,7 +26,7 @@ public class DroppedItemEntity extends BaseEntity implements DroppedItem {
     }
 
     @Override
-    public MinecraftPacket createAddEntityPacket() {
+    public BedrockPacket createAddEntityPacket() {
         AddItemEntityPacket packet = new AddItemEntityPacket();
         packet.setItemInstance(ensureAndGet(ContainedItem.class).getItem());
         packet.setMotion(getMotion());

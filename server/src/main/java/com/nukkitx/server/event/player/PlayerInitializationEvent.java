@@ -2,21 +2,21 @@ package com.nukkitx.server.event.player;
 
 import com.nukkitx.api.event.Event;
 import com.nukkitx.api.level.Level;
-import com.nukkitx.server.network.minecraft.session.MinecraftSession;
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.BedrockSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 
 public class PlayerInitializationEvent implements Event {
-    private final MinecraftSession minecraftSession;
+    private final BedrockSession bedrockSession;
     private final Level level;
     private PlayerSession playerSession;
 
-    public PlayerInitializationEvent(MinecraftSession minecraftSession, Level level) {
-        this.minecraftSession = minecraftSession;
+    public PlayerInitializationEvent(BedrockSession bedrockSession, Level level) {
+        this.bedrockSession = bedrockSession;
         this.level = level;
     }
 
-    public MinecraftSession getMinecraftSession() {
-        return minecraftSession;
+    public BedrockSession getBedrockSession() {
+        return bedrockSession;
     }
 
     public Level getLevel() {

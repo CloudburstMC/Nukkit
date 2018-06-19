@@ -8,10 +8,10 @@ import com.nukkitx.api.entity.system.System;
 import com.nukkitx.api.util.BoundingBox;
 import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.minecraft.packet.MoveEntityPacket;
-import com.nukkitx.server.network.minecraft.packet.SetEntityMotionPacket;
-import com.nukkitx.server.network.minecraft.session.MinecraftSession;
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.packet.MoveEntityAbsolutePacket;
+import com.nukkitx.server.network.bedrock.packet.SetEntityMotionPacket;
+import com.nukkitx.server.network.bedrock.session.BedrockSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import gnu.trove.iterator.TLongObjectIterator;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
@@ -39,8 +39,10 @@ public class LevelEntityManager {
     }
 
     public void registerEntity(BaseEntity entity) {
-        entities.put(entity.getEntityId(), entity);
-        entitiesChanged.set(true);
+        synchronized (entities) {
+            entities.put(entity.getEntityId(), entity);
+            entitiesChanged.set(true);
+        }
     }
 
     public void deregisterEntity(BaseEntity entity) {
@@ -76,7 +78,7 @@ public class LevelEntityManager {
             entities.forEachValue(entity -> {
                 if (entity instanceof PlayerSession) {
                     PlayerSession session = (PlayerSession) entity;
-                    MinecraftSession mcpeSession = session.getMinecraftSession();
+                    BedrockSession mcpeSession = session.getMinecraftSession();
                     if (mcpeSession != null && !mcpeSession.isClosed() && session.isSpawned()) {
                         sessions.add((PlayerSession) entity);
                     }
@@ -152,6 +154,7 @@ public class LevelEntityManager {
                         if (log.isDebugEnabled()) {
                             log.debug("{} was removed", entity);
                         }
+                        entitiesChanged.set(true);
                         synchronized (entities) {
                             entities.remove(entity.getEntityId());
                         }
@@ -179,11 +182,9 @@ public class LevelEntityManager {
 
                     // Check if we need to send movement updates
                     if (entity.isMovementStale()) {
-                        entity.resetStaleMovement();
-
-                        MoveEntityPacket moveEntity = new MoveEntityPacket();
+                        MoveEntityAbsolutePacket moveEntity = new MoveEntityAbsolutePacket();
                         moveEntity.setRuntimeEntityId(entity.getEntityId());
-                        moveEntity.setPosition(entity.getPosition());
+                        moveEntity.setPosition(entity.getGamePosition());
                         moveEntity.setRotation(entity.getRotation());
                         moveEntity.setOnGround(entity.isOnGround());
                         level.getPacketManager().queuePacketForViewers(entity, moveEntity);
@@ -192,13 +193,16 @@ public class LevelEntityManager {
                         entityMotion.setRuntimeEntityId(entity.getEntityId());
                         entityMotion.setMotion(entity.getMotion());
                         level.getPacketManager().queuePacketForViewers(entity, entityMotion);
+
+                        entity.resetStaleMovement();
                     }
 
                 } catch (Exception e) {
-                    entitiesChanged.set(true);
                     synchronized (entities) {
                         entities.remove(entity.getEntityId());
                     }
+                    entitiesChanged.set(true);
+                    entity.remove();
                     log.error("Unable to tick entity {}", entity, e);
                 }
             }
@@ -208,7 +212,8 @@ public class LevelEntityManager {
 
         // Update viewable entities if something changed
         if (entitiesChanged.compareAndSet(true, false)) {
-            getPlayers().forEach(PlayerSession::updateViewableEntities);
+            List<PlayerSession> players = getPlayers();
+            players.forEach(PlayerSession::updateViewableEntities);
         }
     }
 

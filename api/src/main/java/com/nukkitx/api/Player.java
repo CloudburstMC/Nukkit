@@ -3,6 +3,7 @@ package com.nukkitx.api;
 import com.flowpowered.math.vector.Vector3i;
 import com.nukkitx.api.command.sender.CommandSender;
 import com.nukkitx.api.entity.Entity;
+import com.nukkitx.api.inventory.PlayerInventory;
 import com.nukkitx.api.item.ItemInstance;
 import com.nukkitx.api.permission.Permissible;
 import com.nukkitx.api.util.Skin;
@@ -27,14 +28,6 @@ public interface Player extends Session, CommandSender, Entity, Permissible {
 
     @Nonnull
     Optional<UUID> getOfflineUuid();
-
-    boolean isSneaking();
-
-    void setSneaking(boolean sneaking);
-
-    boolean isSprinting();
-
-    void setSprinting(boolean sprinting);
 
     int getExperienceLevel();
 
@@ -117,6 +110,8 @@ public interface Player extends Session, CommandSender, Entity, Permissible {
     boolean dropItem(ItemInstance item);
 
     boolean isSpawned();
+
+    PlayerInventory getInventory();
 
     @Override
     default boolean isOnline() {

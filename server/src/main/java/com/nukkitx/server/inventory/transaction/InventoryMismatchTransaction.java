@@ -1,6 +1,6 @@
 package com.nukkitx.server.inventory.transaction;
 
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -17,11 +17,6 @@ public class InventoryMismatchTransaction extends SimpleTransaction {
     @Override
     public Type getType() {
         return type;
-    }
-
-    @Override
-    public void handle(PlayerSession.PlayerNetworkPacketHandler handler) {
-        handler.handle(this);
     }
 
     @Override

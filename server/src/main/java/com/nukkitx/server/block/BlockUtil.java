@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @UtilityClass
 public class BlockUtil {
-    public static final NukkitItemInstance AIR = new NukkitItemInstance(BlockTypes.AIR);
+    public static final NukkitItemInstance AIR = new NukkitItemInstance(BlockTypes.AIR, 0, null);
 
     public static boolean setBlockState(Player player, Vector3i position, BlockState state) {
         int chunkX = position.getX() >> 4;

@@ -36,7 +36,7 @@ public class TranslatableMessage implements Message {
 
     public static TranslatableMessage of(@Nonnull TranslationMessage message) {
         Preconditions.checkNotNull(message, "message");
-        return of(message.getMessage(), message.getParameters());
+        return of(message.getMessage(), (Object[]) message.getParameters());
     }
 
     @Override

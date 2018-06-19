@@ -6,7 +6,7 @@ import com.nukkitx.api.inventory.Inventory;
 import com.nukkitx.api.inventory.InventoryType;
 import com.nukkitx.api.item.ItemInstance;
 import com.nukkitx.server.item.NukkitItemInstance;
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -135,7 +135,9 @@ public class NukkitInventory implements Inventory {
         for (int i = 0; i < contents.length; i++) {
             if (contents[i] == null) {
                 contents[i] = item;
-                log.debug("Slot {} set with item ", i, item);
+                if (log.isDebugEnabled()) {
+                    log.debug("Slot {} set with item ", i, item);
+                }
                 for (InventoryObserver observer : observers) {
                     observer.onInventorySlotChange(i, null, item, this, session);
                 }

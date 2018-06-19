@@ -5,12 +5,13 @@ import com.nukkitx.api.Player;
 import com.nukkitx.api.block.Block;
 import com.nukkitx.api.item.ItemInstance;
 import com.nukkitx.api.item.ItemInstanceBuilder;
-import com.nukkitx.server.item.behavior.ItemBehaviorUtil;
-import com.nukkitx.server.network.minecraft.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 
+@Log4j2
 public class SimpleBlockBehavior implements BlockBehavior {
     public static final SimpleBlockBehavior INSTANCE = new SimpleBlockBehavior();
 
@@ -30,22 +31,8 @@ public class SimpleBlockBehavior implements BlockBehavior {
     }
 
     @Override
-    public float getBreakTime(Player player, Block block, @Nullable ItemInstance item) {
-        float breakTime = block.getBlockState().getBlockType().hardness();
-
-        if (isCorrectTool(item)) {
-            breakTime *= 1.5;
-            breakTime /= ItemBehaviorUtil.getMiningEfficiency(item);
-        } else {
-            breakTime *= 5;
-        }
-
-        return breakTime;
-    }
-
-    @Override
     public boolean isCorrectTool(@Nullable ItemInstance item) {
-        return true;
+        return false;
     }
 
     @Override
@@ -55,6 +42,6 @@ public class SimpleBlockBehavior implements BlockBehavior {
 
     @Override
     public boolean onPlace(PlayerSession session, Block against, ItemInstance withItem) {
-        return false;
+        return true;
     }
 }
