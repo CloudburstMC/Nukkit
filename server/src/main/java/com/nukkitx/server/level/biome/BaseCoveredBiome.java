@@ -25,7 +25,7 @@ public abstract class BaseCoveredBiome extends BiomeImpl {
     }
 
     @Override
-    public void cover(Chunk chunk, int x, int z, double avgHeight) {
+    public void cover(Chunk chunk, int x, int z) {
         for (int y = 255; y >= 0; y--) {
             if (chunk.getBlock(x, y, z).getBlockState().getBlockType().isSolid()) {
                 if (this.cover != null && y != 255) {
@@ -35,6 +35,7 @@ public abstract class BaseCoveredBiome extends BiomeImpl {
                 for (int i = 0; i < this.groundDepth; i++) {
                     chunk.setBlock(x, y--, z, this.ground);
                 }
+                return;
             }
         }
     }

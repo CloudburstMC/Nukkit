@@ -170,8 +170,8 @@ public class LevelChunkManager {
                         log.trace("Generating chunk {},{} using {} with seed {}", x, z, chunkGenerator.getClass().getName(), seed);
                     }
                     SectionedChunk newChunk = new SectionedChunk(x, z, level);
-                    Random random;
-                    chunkGenerator.generateChunk(level, newChunk, random = new Random(seed));
+                    Random random = new Random(seed);
+                    chunkGenerator.generateChunk(level, newChunk, random);
                     chunkGenerator.populateChunk(level, newChunk, random);
                     newChunk.recalculateLight();
                     chunk = newChunk;

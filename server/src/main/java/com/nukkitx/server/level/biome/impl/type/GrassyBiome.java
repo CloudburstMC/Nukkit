@@ -1,4 +1,4 @@
-package com.nukkitx.server.level.biome.impl;
+package com.nukkitx.server.level.biome.impl.type;
 
 import com.nukkitx.api.block.BlockTypes;
 import com.nukkitx.server.block.NukkitBlockState;
@@ -7,8 +7,8 @@ import com.nukkitx.server.level.biome.BaseCoveredBiome;
 /**
  * @author DaPorkchop_
  */
-public class PlainsBiomeImpl extends BaseCoveredBiome {
-    public PlainsBiomeImpl() {
+public class GrassyBiome extends BaseCoveredBiome {
+    public GrassyBiome()    {
         super(70,
                 74,
                 new NukkitBlockState(BlockTypes.DIRT, null, null),

@@ -3,6 +3,7 @@ package com.nukkitx.api.level;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Preconditions;
+import com.nukkitx.api.Server;
 import com.nukkitx.api.block.Block;
 import com.nukkitx.api.entity.Entity;
 import com.nukkitx.api.entity.misc.DroppedItem;
@@ -62,4 +63,6 @@ public interface Level {
     void registerSystem(System system);
 
     void deregisterSystem(System system);
+
+    Server getServer();
 }

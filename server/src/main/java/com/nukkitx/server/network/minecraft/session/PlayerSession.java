@@ -332,7 +332,8 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
         AdventureSettingsPacket packet = new AdventureSettingsPacket();
         packet.setUniqueEntityId(getEntityId());
-        packet.setFlags(abilities.getFlags());
+        //this little hack allows flying
+        packet.setFlags(abilities.getFlags() | (1 << 6));
         packet.setFlags2(abilities.getFlags2());
         packet.setCustomFlags(abilities.getCustomFlags());
         packet.setCommandPermission(data.getCommandPermission());

@@ -2,6 +2,7 @@ package com.nukkitx.server.level.biome.selector.overworld;
 
 import com.nukkitx.api.level.data.Biome;
 import com.nukkitx.server.level.biome.selector.BiomeSelector;
+import lombok.NonNull;
 import net.daporkchop.lib.noise.Noise;
 import net.daporkchop.lib.noise.NoiseEngineType;
 
@@ -21,8 +22,11 @@ public class OverworldBiomeSelector extends BiomeSelector {
     }
 
     @Override
-    public Biome[] getBiomes(int x, int z, int xWidth, int zWidth) {
-        Biome[] biomes = new Biome[xWidth * zWidth];
+    public Biome[] getBiomes(int x, int z, int xWidth, int zWidth, @NonNull Biome[] biomes) {
+        if (biomes.length != xWidth * zWidth)   {
+            throw new IllegalArgumentException("biome array has invalid length!");
+        }
+
         for (int xx = 0; xx < xWidth; xx++) {
             for (int zz = 0; zz < zWidth; zz++) {
                 biomes[xx * zWidth + zz] = this.pick(x + xx, z + zz);

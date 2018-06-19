@@ -30,7 +30,6 @@ public abstract class BiomeImpl {
      * @param chunk     the chunk to cover
      * @param x         the in-chunk x coordinate to cover
      * @param z         the in-chunk z coordinate to cover
-     * @param avgHeight the average biome height for the given in-chunk coordinates
      */
-    public abstract void cover(@NonNull Chunk chunk, int x, int z, double avgHeight);
+    public abstract void cover(@NonNull Chunk chunk, int x, int z);
 }

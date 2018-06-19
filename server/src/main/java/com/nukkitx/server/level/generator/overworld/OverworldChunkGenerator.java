@@ -6,11 +6,16 @@ import com.nukkitx.api.block.BlockTypes;
 import com.nukkitx.api.level.Level;
 import com.nukkitx.api.level.chunk.Chunk;
 import com.nukkitx.api.level.data.Biome;
+import com.nukkitx.api.level.data.GameRule;
 import com.nukkitx.server.block.NukkitBlockState;
+import com.nukkitx.server.level.biome.BiomeImpl;
+import com.nukkitx.server.level.biome.impl.OceanBiome;
+import com.nukkitx.server.level.biome.impl.type.GrassyBiome;
 import com.nukkitx.server.level.biome.selector.BiomeSelector;
 import com.nukkitx.server.level.biome.selector.overworld.OverworldBiomeSelector;
 import com.nukkitx.server.level.generator.AbstractChunkGenerator;
 import com.nukkitx.server.level.populator.impl.bedrock.FloorBedrockPopulator;
+import gnu.trove.map.hash.TByteObjectHashMap;
 import net.daporkchop.lib.noise.Noise;
 import net.daporkchop.lib.noise.NoiseEngineType;
 
@@ -26,8 +31,16 @@ public class OverworldChunkGenerator extends AbstractChunkGenerator {
 
     private static final Vector3f SPAWN = new Vector3f(0, 128, 0);
 
+    private static final TByteObjectHashMap<BiomeImpl> REGISTERED_BIOMES = new TByteObjectHashMap<>();
+    private static final ThreadLocal<Biome[]> BIOME_CACHE = ThreadLocal.withInitial(() -> new Biome[20 * 20]);
+    private static final ThreadLocal<double[]> NOISE_CACHE = ThreadLocal.withInitial(() -> new double[16 * 16 * 256]);
+
+    static {
+        REGISTERED_BIOMES.put(Biome.OCEAN.id(), new OceanBiome());
+        REGISTERED_BIOMES.put(Biome.PLAINS.id(), new GrassyBiome());
+    }
+
     private volatile Noise noiseGen;
-    private final ThreadLocal<double[]> noiseCache = ThreadLocal.withInitial(() -> new double[16 * 16 * 256]);
     private volatile BiomeSelector selector;
 
     {
@@ -36,14 +49,32 @@ public class OverworldChunkGenerator extends AbstractChunkGenerator {
 
     @Override
     public void generateChunk(Level level, Chunk chunk, Random random) {
+        //debug:
+        level.getData().getGameRules().setGameRule(GameRule.SHOW_COORDINATES, true);
+
         super.generateChunk(level, chunk, random);
-        Biome[] biomes = this.selector.getBiomes(chunk.getX() << 4, chunk.getZ() << 4, 16, 16);
+        int x = chunk.getX() << 4;
+        int z = chunk.getZ() << 4;
+        Biome[] biomes = this.selector.getBiomes(x - 2, z - 2, 20, 20, BIOME_CACHE.get());
         //set biomes
-        for (int x = 0; x < 16; x++)     {
-            for (int z = 0; z < 16; z++)    {
-                chunk.setBiome(x, z, biomes[(x << 4) | z]);
+        for (int xx = 0; x < 16; x++)     {
+            for (int zz = 0; z < 16; z++)    {
+                chunk.setBiome(xx, zz, biomes[(xx << 4) | zz]);
             }
         }
+
+        this.noiseGen.forEach(x, z, 16, 16, 4, 4, (xx, zz, v) -> {
+            BiomeImpl biome = REGISTERED_BIOMES.get(biomes[(xx << 4) | zz].id());
+            int min = biome == null ? 66 : biome.getMinHeight();
+            for (int y = 0; y < min; y++) {
+                chunk.setBlock(xx, y, zz, STONE);
+            }
+            int max = biome == null ? 70 : biome.getMaxHeight();
+            max = min + (int) ((1.0d / (double) (max - min)) * (v * 0.5d + 0.5d));
+            for (int y = min; y < max; y++) {
+                chunk.setBlock(xx, y, zz, STONE);
+            }
+        });
     }
 
     @Override

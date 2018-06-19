@@ -4,116 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableBiMap;
 import com.nukkitx.server.network.PacketCodec;
 import com.nukkitx.server.network.PacketFactory;
-import com.nukkitx.server.network.minecraft.packet.AddBehaviorTreePacket;
-import com.nukkitx.server.network.minecraft.packet.AddEntityPacket;
-import com.nukkitx.server.network.minecraft.packet.AddHangingEntityPacket;
-import com.nukkitx.server.network.minecraft.packet.AddItemEntityPacket;
-import com.nukkitx.server.network.minecraft.packet.AddPaintingPacket;
-import com.nukkitx.server.network.minecraft.packet.AddPlayerPacket;
-import com.nukkitx.server.network.minecraft.packet.AdventureSettingsPacket;
-import com.nukkitx.server.network.minecraft.packet.AnimatePacket;
-import com.nukkitx.server.network.minecraft.packet.AvailableCommandsPacket;
-import com.nukkitx.server.network.minecraft.packet.BlockEntityDataPacket;
-import com.nukkitx.server.network.minecraft.packet.BlockEventPacket;
-import com.nukkitx.server.network.minecraft.packet.BlockPickRequestPacket;
-import com.nukkitx.server.network.minecraft.packet.BookEditPacket;
-import com.nukkitx.server.network.minecraft.packet.BossEventPacket;
-import com.nukkitx.server.network.minecraft.packet.CameraPacket;
-import com.nukkitx.server.network.minecraft.packet.ChangeDimensionPacket;
-import com.nukkitx.server.network.minecraft.packet.ChunkRadiusUpdatePacket;
-import com.nukkitx.server.network.minecraft.packet.ClientToServerHandshakePacket;
-import com.nukkitx.server.network.minecraft.packet.ClientboundMapItemDataPacket;
-import com.nukkitx.server.network.minecraft.packet.CommandBlockUpdatePacket;
-import com.nukkitx.server.network.minecraft.packet.CommandOutputPacket;
-import com.nukkitx.server.network.minecraft.packet.CommandRequestPacket;
-import com.nukkitx.server.network.minecraft.packet.ContainerClosePacket;
-import com.nukkitx.server.network.minecraft.packet.ContainerOpenPacket;
-import com.nukkitx.server.network.minecraft.packet.ContainerSetDataPacket;
-import com.nukkitx.server.network.minecraft.packet.CraftingDataPacket;
-import com.nukkitx.server.network.minecraft.packet.CraftingEventPacket;
-import com.nukkitx.server.network.minecraft.packet.DisconnectPacket;
-import com.nukkitx.server.network.minecraft.packet.EntityEventPacket;
-import com.nukkitx.server.network.minecraft.packet.EntityFallPacket;
-import com.nukkitx.server.network.minecraft.packet.EntityPickRequestPacket;
-import com.nukkitx.server.network.minecraft.packet.EventPacket;
-import com.nukkitx.server.network.minecraft.packet.ExplodePacket;
-import com.nukkitx.server.network.minecraft.packet.FullChunkDataPacket;
-import com.nukkitx.server.network.minecraft.packet.GameRulesChangedPacket;
-import com.nukkitx.server.network.minecraft.packet.GuiDataPickItemPacket;
-import com.nukkitx.server.network.minecraft.packet.HurtArmorPacket;
-import com.nukkitx.server.network.minecraft.packet.InitiateWebSocketConnectionPacket;
-import com.nukkitx.server.network.minecraft.packet.InteractPacket;
-import com.nukkitx.server.network.minecraft.packet.InventoryContentPacket;
-import com.nukkitx.server.network.minecraft.packet.InventorySlotPacket;
-import com.nukkitx.server.network.minecraft.packet.InventoryTransactionPacket;
-import com.nukkitx.server.network.minecraft.packet.ItemFrameDropItemPacket;
-import com.nukkitx.server.network.minecraft.packet.LabTablePacket;
-import com.nukkitx.server.network.minecraft.packet.LevelEventPacket;
-import com.nukkitx.server.network.minecraft.packet.LevelSoundEventPacket;
-import com.nukkitx.server.network.minecraft.packet.LoginPacket;
-import com.nukkitx.server.network.minecraft.packet.MapInfoRequestPacket;
-import com.nukkitx.server.network.minecraft.packet.MobArmorEquipmentPacket;
-import com.nukkitx.server.network.minecraft.packet.MobEffectPacket;
-import com.nukkitx.server.network.minecraft.packet.MobEquipmentPacket;
-import com.nukkitx.server.network.minecraft.packet.ModalFormRequestPacket;
-import com.nukkitx.server.network.minecraft.packet.ModalFormResponsePacket;
-import com.nukkitx.server.network.minecraft.packet.MoveEntityPacket;
-import com.nukkitx.server.network.minecraft.packet.MovePlayerPacket;
-import com.nukkitx.server.network.minecraft.packet.NpcRequestPacket;
-import com.nukkitx.server.network.minecraft.packet.PhotoTransferPacket;
-import com.nukkitx.server.network.minecraft.packet.PlaySoundPacket;
-import com.nukkitx.server.network.minecraft.packet.PlayStatusPacket;
-import com.nukkitx.server.network.minecraft.packet.PlayerActionPacket;
-import com.nukkitx.server.network.minecraft.packet.PlayerHotbarPacket;
-import com.nukkitx.server.network.minecraft.packet.PlayerInputPacket;
-import com.nukkitx.server.network.minecraft.packet.PlayerListPacket;
-import com.nukkitx.server.network.minecraft.packet.PlayerSkinPacket;
-import com.nukkitx.server.network.minecraft.packet.PurchaseReceiptPacket;
-import com.nukkitx.server.network.minecraft.packet.RemoveEntityPacket;
-import com.nukkitx.server.network.minecraft.packet.RemoveObjectivePacket;
-import com.nukkitx.server.network.minecraft.packet.RequestChunkRadiusPacket;
-import com.nukkitx.server.network.minecraft.packet.ResourcePackChunkDataPacket;
-import com.nukkitx.server.network.minecraft.packet.ResourcePackChunkRequestPacket;
-import com.nukkitx.server.network.minecraft.packet.ResourcePackClientResponsePacket;
-import com.nukkitx.server.network.minecraft.packet.ResourcePackDataInfoPacket;
-import com.nukkitx.server.network.minecraft.packet.ResourcePackStackPacket;
-import com.nukkitx.server.network.minecraft.packet.ResourcePacksInfoPacket;
-import com.nukkitx.server.network.minecraft.packet.RespawnPacket;
-import com.nukkitx.server.network.minecraft.packet.RiderJumpPacket;
-import com.nukkitx.server.network.minecraft.packet.ServerSettingsRequestPacket;
-import com.nukkitx.server.network.minecraft.packet.ServerSettingsResponsePacket;
-import com.nukkitx.server.network.minecraft.packet.ServerToClientHandshakePacket;
-import com.nukkitx.server.network.minecraft.packet.SetCommandsEnabledPacket;
-import com.nukkitx.server.network.minecraft.packet.SetDefaultGameTypePacket;
-import com.nukkitx.server.network.minecraft.packet.SetDifficultyPacket;
-import com.nukkitx.server.network.minecraft.packet.SetDisplayObjectivePacket;
-import com.nukkitx.server.network.minecraft.packet.SetEntityDataPacket;
-import com.nukkitx.server.network.minecraft.packet.SetEntityLinkPacket;
-import com.nukkitx.server.network.minecraft.packet.SetEntityMotionPacket;
-import com.nukkitx.server.network.minecraft.packet.SetHealthPacket;
-import com.nukkitx.server.network.minecraft.packet.SetLastHurtByPacket;
-import com.nukkitx.server.network.minecraft.packet.SetPlayerGameTypePacket;
-import com.nukkitx.server.network.minecraft.packet.SetScorePacket;
-import com.nukkitx.server.network.minecraft.packet.SetSpawnPositionPacket;
-import com.nukkitx.server.network.minecraft.packet.SetTimePacket;
-import com.nukkitx.server.network.minecraft.packet.SetTitlePacket;
-import com.nukkitx.server.network.minecraft.packet.ShowCreditsPacket;
-import com.nukkitx.server.network.minecraft.packet.ShowProfilePacket;
-import com.nukkitx.server.network.minecraft.packet.ShowStoreOfferPacket;
-import com.nukkitx.server.network.minecraft.packet.SimpleEventPacket;
-import com.nukkitx.server.network.minecraft.packet.SpawnExperienceOrbPacket;
-import com.nukkitx.server.network.minecraft.packet.StartGamePacket;
-import com.nukkitx.server.network.minecraft.packet.StopSoundPacket;
-import com.nukkitx.server.network.minecraft.packet.StructureBlockUpdatePacket;
-import com.nukkitx.server.network.minecraft.packet.SubClientLoginPacket;
-import com.nukkitx.server.network.minecraft.packet.TakeItemEntityPacket;
-import com.nukkitx.server.network.minecraft.packet.TextPacket;
-import com.nukkitx.server.network.minecraft.packet.TransferPacket;
-import com.nukkitx.server.network.minecraft.packet.UpdateAttributesPacket;
-import com.nukkitx.server.network.minecraft.packet.UpdateBlockPacket;
-import com.nukkitx.server.network.minecraft.packet.UpdateBlockSyncedPacket;
-import com.nukkitx.server.network.minecraft.packet.UpdateEquipPacket;
-import com.nukkitx.server.network.minecraft.packet.UpdateTradePacket;
+import com.nukkitx.server.network.minecraft.packet.*;
 import gnu.trove.map.TObjectByteMap;
 import gnu.trove.map.hash.TObjectByteHashMap;
 import gnu.trove.set.TIntSet;
@@ -130,8 +21,6 @@ public class MinecraftPacketRegistry implements PacketCodec<MinecraftPacket> {
     private static final MinecraftPacketRegistry INSTANCE = new MinecraftPacketRegistry();
     private static final TIntSet SUPPORTED_PROTOCOL_VERSIONS = new TIntHashSet();
     private static final ImmutableBiMap<Integer, String> VERSION_STRINGS;
-    private final PacketFactory<MinecraftPacket>[] factories = (PacketFactory<MinecraftPacket>[]) new PacketFactory[256];
-    private final TObjectByteMap<Class<? extends MinecraftPacket>> idMapping = new TObjectByteHashMap<>(64, 0.75f, (byte) -1);
 
     static {
         // Support protocol versions for Nukkit
@@ -158,6 +47,9 @@ public class MinecraftPacketRegistry implements PacketCodec<MinecraftPacket> {
                 .put(223, "1.2.13")
                 .build();
     }
+
+    private final PacketFactory<MinecraftPacket>[] factories = (PacketFactory<MinecraftPacket>[]) new PacketFactory[256];
+    private final TObjectByteMap<Class<? extends MinecraftPacket>> idMapping = new TObjectByteHashMap<>(64, 0.75f, (byte) -1);
 
     private MinecraftPacketRegistry() {
         factories[1] = LoginPacket::new;
@@ -277,27 +169,6 @@ public class MinecraftPacketRegistry implements PacketCodec<MinecraftPacket> {
         }
     }
 
-    @Override
-    public MinecraftPacket tryDecode(ByteBuf byteBuf) {
-        short id = byteBuf.readUnsignedByte();
-        byteBuf.skipBytes(2); // This is for split-screen.
-        MinecraftPacket packet = factories[id].newInstance();
-        packet.decode(byteBuf);
-        if (log.isDebugEnabled() && byteBuf.isReadable()) {
-            log.debug(packet.getClass().getSimpleName() + " still has " + byteBuf.readableBytes() + " bytes to read!");
-        }
-        return packet;
-    }
-
-    @Override
-    public ByteBuf tryEncode(MinecraftPacket packet) {
-        ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.directBuffer();
-        byteBuf.writeByte(getId(packet));
-        byteBuf.writeBytes(new byte[]{0, 0});
-        packet.encode(byteBuf);
-        return byteBuf;
-    }
-
     public static MinecraftPacket decode(ByteBuf byteBuf) {
         return INSTANCE.tryDecode(byteBuf);
     }
@@ -334,5 +205,26 @@ public class MinecraftPacketRegistry implements PacketCodec<MinecraftPacket> {
             throw new IllegalArgumentException("Packet ID for " + clazz.getName() + " does not exist.");
         }
         return id;
+    }
+
+    @Override
+    public MinecraftPacket tryDecode(ByteBuf byteBuf) {
+        short id = byteBuf.readUnsignedByte();
+        byteBuf.skipBytes(2); // This is for split-screen.
+        MinecraftPacket packet = factories[id].newInstance();
+        packet.decode(byteBuf);
+        if (log.isDebugEnabled() && byteBuf.isReadable()) {
+            log.debug(packet.getClass().getSimpleName() + " still has " + byteBuf.readableBytes() + " bytes to read!");
+        }
+        return packet;
+    }
+
+    @Override
+    public ByteBuf tryEncode(MinecraftPacket packet) {
+        ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.directBuffer();
+        byteBuf.writeByte(getId(packet));
+        byteBuf.writeBytes(new byte[]{0, 0});
+        packet.encode(byteBuf);
+        return byteBuf;
     }
 }
