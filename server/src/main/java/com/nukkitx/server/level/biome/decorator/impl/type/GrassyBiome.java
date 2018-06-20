@@ -1,8 +1,8 @@
-package com.nukkitx.server.level.biome.impl.type;
+package com.nukkitx.server.level.biome.decorator.impl.type;
 
 import com.nukkitx.api.block.BlockTypes;
 import com.nukkitx.server.block.NukkitBlockState;
-import com.nukkitx.server.level.biome.BaseCoveredBiome;
+import com.nukkitx.server.level.biome.decorator.BaseCoveredBiome;
 
 /**
  * @author DaPorkchop_

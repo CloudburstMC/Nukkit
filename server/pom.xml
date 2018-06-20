@@ -18,6 +18,13 @@
         <network.version>1.0.13-SNAPSHOT</network.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>DaPorkchop_'s repo</id>
+            <url>https://maven.daporkchop.net/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>com.nukkitx</groupId>
@@ -88,7 +95,7 @@
         <dependency>
             <groupId>net.daporkchop.lib</groupId>
             <artifactId>noise</artifactId>
-            <version>0.0.2</version>
+            <version>0.0.3</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
