@@ -9,9 +9,14 @@ import cn.nukkit.utils.BlockColor;
  * Created on 2015/11/24 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockHayBale extends BlockSolid {
+public class BlockHayBale extends BlockSolidMeta {
     public BlockHayBale() {
+        this(0);
     }
+
+    public BlockHayBale(int meta) {
+        super(meta);
+     }
 
     @Override
     public int getId() {

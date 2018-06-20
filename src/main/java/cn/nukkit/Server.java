@@ -2079,7 +2079,7 @@ public class Server {
         // TODO: 2016/1/30 all finds of minecart
         Entity.registerEntity("Boat", EntityBoat.class);
 
-        //Entity.registerEntity("Lightning", EntityLightning.class); lightning shouldn't be saved as entity
+        Entity.registerEntity("EndCrystal", EntityEndCrystal.class);
     }
 
     private void registerBlockEntities() {
