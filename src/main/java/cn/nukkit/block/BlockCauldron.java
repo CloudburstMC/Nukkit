@@ -194,7 +194,7 @@ public class BlockCauldron extends BlockSolidMeta {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         CompoundTag nbt = new CompoundTag("")
-                .putString("id", BlockEntity.CHEST)
+                .putString("id", BlockEntity.CAULDRON)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z)
