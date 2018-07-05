@@ -30,6 +30,6 @@ public class UpdateSoftEnumPacket implements BedrockPacket {
     public enum Type {
         ADD,
         REMOVE,
-        SET
+        UPDATE
     }
 }
