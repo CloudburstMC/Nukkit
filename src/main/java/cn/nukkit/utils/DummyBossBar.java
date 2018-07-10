@@ -196,7 +196,7 @@ public class DummyBossBar {
      * Update boss entity's position when teleport and each 5s.
      */
     public void updateBossEntityPosition() {
-        MoveEntityPacket pk = new MoveEntityPacket();
+        MoveEntityAbsolutePacket pk = new MoveEntityAbsolutePacket();
         pk.eid = this.bossBarId;
         pk.x = this.player.x;
         pk.y = -10;
