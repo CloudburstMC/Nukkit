@@ -2079,7 +2079,7 @@ public class Server {
         // TODO: 2016/1/30 all finds of minecart
         Entity.registerEntity("Boat", EntityBoat.class);
 
-        //Entity.registerEntity("Lightning", EntityLightning.class); lightning shouldn't be saved as entity
+        Entity.registerEntity("EndCrystal", EntityEndCrystal.class);
     }
 
     private void registerBlockEntities() {
@@ -2099,6 +2099,7 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.HOPPER, BlockEntityHopper.class);
         BlockEntity.registerBlockEntity(BlockEntity.BED, BlockEntityBed.class);
         BlockEntity.registerBlockEntity(BlockEntity.JUKEBOX, BlockEntityJukebox.class);
+        BlockEntity.registerBlockEntity(BlockEntity.SHULKER_BOX, BlockEntityShulkerBox.class);
     }
 
     public static Server getInstance() {

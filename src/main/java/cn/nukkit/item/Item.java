@@ -216,7 +216,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             //TODO: list[GLISTERING_MELON] = ItemMelonGlistering.class; //382
             list[SPAWN_EGG] = ItemSpawnEgg.class; //383
             list[EXPERIENCE_BOTTLE] = ItemExpBottle.class; //384
-            //TODO: list[FIRE_CHARGE] = ItemFireCharge.class; //385
+            list[FIRE_CHARGE] = ItemFireCharge.class; //385
             //TODO: list[BOOK_AND_QUILL] = ItemBookAndQuill.class; //386
             list[WRITTEN_BOOK] = ItemBookWritten.class; //387
             list[EMERALD] = ItemEmerald.class; //388

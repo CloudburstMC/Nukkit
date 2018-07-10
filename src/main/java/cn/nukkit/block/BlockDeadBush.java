@@ -31,6 +31,11 @@ public class BlockDeadBush extends BlockFlowable {
     public int getId() {
         return DEAD_BUSH;
     }
+    
+    @Override
+    public boolean canBeReplaced() {
+        return true;
+    }
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {

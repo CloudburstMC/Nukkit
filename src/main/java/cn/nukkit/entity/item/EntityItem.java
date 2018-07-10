@@ -130,8 +130,11 @@ public class EntityItem extends Entity {
 
         this.timing.startTiming();
 
-
         boolean hasUpdate = this.entityBaseTick(tickDiff);
+
+        if (isInsideOfFire()) {
+            this.kill();
+        }
 
         if (this.isAlive()) {
             if (this.pickupDelay > 0 && this.pickupDelay < 32767) {

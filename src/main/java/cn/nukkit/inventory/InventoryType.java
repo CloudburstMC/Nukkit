@@ -18,7 +18,8 @@ public enum InventoryType {
     DISPENSER(0, "Dispenser", 6), //9 CONTAINER
     DROPPER(9, "Dropper", 7), //9 CONTAINER
     HOPPER(5, "Hopper", 8), //5 CONTAINER
-    CURSOR(1, "Cursor", -1);
+    CURSOR(1, "Cursor", -1),
+    SHULKER_BOX(27, "Shulker Box", 0);
 
     private final int size;
     private final String title;
