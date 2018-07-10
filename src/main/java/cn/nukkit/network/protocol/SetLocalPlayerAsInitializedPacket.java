@@ -1,7 +1,4 @@
-package cn.nukkit.network;
-
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.ProtocolInfo;
+package cn.nukkit.network.protocol;
 
 public class SetLocalPlayerAsInitializedPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.SET_LOCAL_PLAYER_AS_INITIALIZED_PACKET;
