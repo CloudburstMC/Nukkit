@@ -35,14 +35,24 @@ public abstract class BiomeDecorator {
     private final int maxHeight;
 
     /**
-     * Places decorate on a chunk
+     * Decorates a chunk
      *
      * @param chunk  the chunk to decorate
-     * @param random
+     * @param random an instance of {@link Random} for use in population
      */
     public void decorate(@NonNull Chunk chunk, @NonNull Random random) {
         this.populators.forEach(populator -> populator.populate(chunk.getLevel(), chunk, random));
     }
+
+    /**
+     * Generates land cover in a chunk.
+     *
+     * @param chunk  the chunk to cover
+     * @param x      the in-chunk x coordinate to cover
+     * @param z      the in-chunk z coordinate to cover
+     * @param random an instance of {@link Random} for use in random generation
+     */
+    public abstract void cover(@NonNull Chunk chunk, int x, int z, @NonNull Random random);
 
     /**
      * Adds a chunk populator that will be executed when populating this chunk

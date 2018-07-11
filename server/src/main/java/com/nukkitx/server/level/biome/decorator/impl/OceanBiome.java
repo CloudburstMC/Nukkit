@@ -21,20 +21,16 @@ public class OceanBiome extends BiomeDecorator {
     }
 
     @Override
-    public void decorate(Chunk chunk, Random random) {
-        for (int x = 15; x >= 0; x--) {
-            for (int z = 15; z >= 0; z--) {
-                for (int y = 64; y >= 0; y--) {
-                    if (!chunk.getBlock(x, y, z).getBlockState().getBlockType().isSolid()) {
-                        chunk.setBlock(x, y, z, WATER);
-                    } else {
-                        chunk.setBlock(x, y--, z, GRAVEL);
-                        for (int i = 0; i < 4; i++) {
-                            chunk.setBlock(x, y--, z, DIRT);
-                        }
-                        return;
-                    }
+    public void cover(Chunk chunk, int x, int z, Random random) {
+        for (int y = 64; y >= 0; y--) {
+            if (!chunk.getBlock(x, y, z).getBlockState().getBlockType().isSolid()) {
+                chunk.setBlock(x, y, z, WATER);
+            } else {
+                chunk.setBlock(x, y--, z, GRAVEL);
+                for (int i = 0; i < 4; i++) {
+                    chunk.setBlock(x, y--, z, DIRT);
                 }
+                return;
             }
         }
     }

@@ -23,6 +23,8 @@ import net.daporkchop.lib.noise.NoiseEngineType;
 import java.util.Random;
 import java.util.function.Supplier;
 
+import static net.daporkchop.lib.math.primitive.Floor.floorI;
+
 /**
  * @author DaPorkchop_
  */
@@ -73,16 +75,9 @@ public class OverworldChunkGenerator extends AbstractChunkGenerator {
         //debug:
         level.getData().getGameRules().setGameRule(GameRule.SHOW_COORDINATES, true);
 
-        super.generateChunk(level, chunk, random);
         int blockX = chunk.getX() << 4;
         int blockZ = chunk.getZ() << 4;
         Biome[] biomes = this.selector.getBiomes(blockX - 2, blockZ - 2, 20, 20, BIOME_CACHE);
-        //set biomes
-        for (int xx = 15; xx >= 0; xx--) {
-            for (int zz = 15; zz >= 0; zz--) {
-                chunk.setBiome(xx, zz, biomes[((xx + 2) * 20) + zz + 2]);
-            }
-        }
         BiomeDecorator decorator;
 
         int[] minmaxHeight = this.getDataThreadLocal(MINMAX_CACHE, () -> new int[16 * 16 * 2]);
@@ -92,8 +87,8 @@ public class OverworldChunkGenerator extends AbstractChunkGenerator {
                 int min = 0;
                 int max = 0;
                 int count = 0;
-                for (int X = 0; X < 5; X++) {
-                    for (int Z = 0; Z < 5; Z++) {
+                for (int X = 4; X >= 0; X++) {
+                    for (int Z = 4; Z >= 0; Z++) {
                         decorator = REGISTERED_BIOMES.get(biomes[((x + X) * 20) + z + Z].id());
                         min += decorator.getMinHeight();
                         max += decorator.getMaxHeight();
@@ -104,13 +99,26 @@ public class OverworldChunkGenerator extends AbstractChunkGenerator {
                 minmaxHeight[((x << 4) | z) << 8] = max / count;
             }
         }
-        decorator = REGISTERED_BIOMES.get(biomes[(9 * 20) + 9].id());
 
         double[] noise = this.getNoise(chunk.getX(), chunk.getZ(), minmaxHeight);
         for (int x = 15; x >= 0; x--) {
             for (int z = 15; z >= 0; z--) {
+                for (int y = floorI(noise[(x << 4) | z]); y >= 0; y--)  {
+                    chunk.setBlock(x, y, z, STONE);
+                }
             }
         }
+
+        //set biomes and generate ground cover
+        for (int xx = 15; xx >= 0; xx--) {
+            for (int zz = 15; zz >= 0; zz--) {
+                Biome biome = biomes[((xx + 2) * 20) + zz + 2];
+                chunk.setBiome(xx, zz, biome);
+                REGISTERED_BIOMES.get(biome.id()).cover(chunk, xx, zz, random);
+            }
+        }
+
+        super.generateChunk(level, chunk, random);
     }
 
     @Override
@@ -140,7 +148,7 @@ public class OverworldChunkGenerator extends AbstractChunkGenerator {
         //TODO: scale this around a bit or something lol
         for (int x = 15; x >= 0; x--) {
             for (int z = 15; z >= 0; z--) {
-                noise[(x << 5) | z] = (noise[(x << 5) | z] + 1.0d) * 60.0d;
+                noise[(x << 5) | z] = (noise[(x << 5) | z] + 1.0d) * 60.0d + 10.0d;
             }
         }
         return noise;

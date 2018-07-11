@@ -7,6 +7,8 @@ import lombok.NonNull;
 import java.util.Random;
 
 /**
+ * Implements a basic mechanism for generating ground cover on a biome
+ *
  * @author DaPorkchop_
  */
 public abstract class BaseCoveredBiome extends BiomeDecorator {
@@ -27,21 +29,17 @@ public abstract class BaseCoveredBiome extends BiomeDecorator {
     }
 
     @Override
-    public void decorate(Chunk chunk, Random random) {
-        for (int x = 15; x >= 0; x--) {
-            for (int z = 15; z >= 0; z--) {
-                for (int y = 255; y >= 0; y--) {
-                    if (chunk.getBlock(x, y, z).getBlockState().getBlockType().isSolid()) {
-                        if (this.cover != null && y != 255) {
-                            chunk.setBlock(x, y + 1, z, this.cover);
-                        }
-                        chunk.setBlock(x, y--, z, this.surface);
-                        for (int i = 0; i < this.groundDepth; i++) {
-                            chunk.setBlock(x, y--, z, this.ground);
-                        }
-                        return;
-                    }
+    public void cover(Chunk chunk, int x, int z, Random random) {
+        for (int y = 255; y >= 0; y--) {
+            if (chunk.getBlock(x, y, z).getBlockState().getBlockType().isSolid()) {
+                if (this.cover != null && y != 255) {
+                    chunk.setBlock(x, y + 1, z, this.cover);
                 }
+                chunk.setBlock(x, y--, z, this.surface);
+                for (int i = 0; i < this.groundDepth; i++) {
+                    chunk.setBlock(x, y--, z, this.ground);
+                }
+                return;
             }
         }
     }

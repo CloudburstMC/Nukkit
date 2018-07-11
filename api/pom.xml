@@ -7,7 +7,7 @@
     <parent>
         <artifactId>nukkitx-parent</artifactId>
         <groupId>com.nukkitx</groupId>
-        <version>1.5.0.1-SNAPSHOT</version>
+        <version>1.6.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>nukkitx-api</artifactId>
@@ -74,6 +74,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.0.1</version>
                 <configuration>
                     <links>
                         <link>https://flowpowered.com/math</link>
