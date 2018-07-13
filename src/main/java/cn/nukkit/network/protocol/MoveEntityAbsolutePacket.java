@@ -6,8 +6,8 @@ import cn.nukkit.math.Vector3f;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class MoveEntityPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.MOVE_ENTITY_PACKET;
+public class MoveEntityAbsolutePacket extends DataPacket {
+    public static final byte NETWORK_ID = ProtocolInfo.MOVE_ENTITY_ABSOLUTE_PACKET;
 
     public long eid;
     public double x;
@@ -27,6 +27,9 @@ public class MoveEntityPacket extends DataPacket {
     @Override
     public void decode() {
         this.eid = this.getEntityRuntimeId();
+        int flags = this.getByte();
+        teleport = (flags & 0x01) != 0;
+        onGround = (flags & 0x02) != 0;
         Vector3f v = this.getVector3f();
         this.x = v.x;
         this.y = v.y;
@@ -42,11 +45,17 @@ public class MoveEntityPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putEntityRuntimeId(this.eid);
+        byte flags = 0;
+        if (teleport) {
+            flags |= 0x01;
+        }
+        if (onGround) {
+            flags |= 0x02;
+        }
+        this.putByte(flags);
         this.putVector3f((float) this.x, (float) this.y, (float) this.z);
         this.putByte((byte) (this.pitch / (360d / 256d)));
         this.putByte((byte) (this.headYaw / (360d / 256d)));
         this.putByte((byte) (this.yaw / (360d / 256d)));
-        this.putBoolean(this.onGround);
-        this.putBoolean(this.teleport);
     }
 }
