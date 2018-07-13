@@ -39,7 +39,7 @@ public class BlockDiamond extends BlockSolid {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() > ItemTool.TIER_IRON) {
+        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_IRON) {
             return new Item[]{
                     toItem()
             };
