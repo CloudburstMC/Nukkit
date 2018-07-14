@@ -20,7 +20,8 @@ pipeline {
         stage ('Build') {
             steps {
                 script {
-                    currentBuild.description = "${VERSION}-${COMMIT}".replace("-SNAPSHOT", "")
+                    currentBuild.displayName = "${VERSION} ${BUILD_NUMBER}"
+                    currentBuild.description = "git-Nukkit-${COMMIT}"
                 }
                 sh 'mvn clean package'
             }
