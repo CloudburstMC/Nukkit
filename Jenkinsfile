@@ -20,7 +20,7 @@ pipeline {
         stage ('Build') {
             steps {
                 script {
-                    currentBuild.displayName = "${VERSION}-${COMMIT}"
+                    currentBuild.description = "${VERSION}-${COMMIT}".replace("-SNAPSHOT", "")
                 }
                 sh 'mvn clean package'
             }
