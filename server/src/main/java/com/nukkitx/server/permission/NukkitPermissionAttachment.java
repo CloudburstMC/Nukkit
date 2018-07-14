@@ -4,8 +4,7 @@ import com.nukkitx.api.permission.Permissible;
 import com.nukkitx.api.permission.Permission;
 import com.nukkitx.api.permission.PermissionAttachment;
 import com.nukkitx.api.permission.PermissionRemovedExecutor;
-import com.nukkitx.api.plugin.Plugin;
-import com.nukkitx.server.util.PluginException;
+import com.nukkitx.api.plugin.PluginContainer;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,17 +22,14 @@ public class NukkitPermissionAttachment implements PermissionAttachment {
 
     private Permissible permissible;
 
-    private Plugin plugin;
+    private PluginContainer plugin;
 
-    public NukkitPermissionAttachment(Plugin plugin, Permissible permissible) {
-        if (!plugin.isEnabled()) {
-            throw new PluginException("Plugin " + plugin.getDescription().getName() + " is disabled");
-        }
+    public NukkitPermissionAttachment(PluginContainer plugin, Permissible permissible) {
         this.permissible = permissible;
         this.plugin = plugin;
     }
 
-    public Plugin getPlugin() {
+    public PluginContainer getPlugin() {
         return plugin;
     }
 

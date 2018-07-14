@@ -23,7 +23,7 @@ import com.nukkitx.api.message.TranslationMessage;
 import com.nukkitx.api.permission.Permission;
 import com.nukkitx.api.permission.PermissionAttachment;
 import com.nukkitx.api.permission.PermissionAttachmentInfo;
-import com.nukkitx.api.plugin.Plugin;
+import com.nukkitx.api.plugin.PluginContainer;
 import com.nukkitx.api.util.Rotation;
 import com.nukkitx.api.util.Skin;
 import com.nukkitx.api.util.data.DeviceOS;
@@ -865,17 +865,17 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
     }
 
     @Override
-    public PermissionAttachment addAttachment(Plugin plugin) {
+    public PermissionAttachment addAttachment(PluginContainer plugin) {
         return null;
     }
 
     @Override
-    public PermissionAttachment addAttachment(Plugin plugin, String name) {
+    public PermissionAttachment addAttachment(PluginContainer plugin, String name) {
         return null;
     }
 
     @Override
-    public PermissionAttachment addAttachment(Plugin plugin, String name, Boolean value) {
+    public PermissionAttachment addAttachment(PluginContainer plugin, String name, Boolean value) {
         return null;
     }
 

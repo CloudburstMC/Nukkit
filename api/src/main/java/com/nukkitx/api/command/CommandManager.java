@@ -1,11 +1,11 @@
 package com.nukkitx.api.command;
 
-import com.nukkitx.api.plugin.Plugin;
+import com.nukkitx.api.plugin.PluginDescription;
 
 import javax.annotation.Nonnull;
 
 public interface CommandManager {
-    void register(@Nonnull Plugin plugin, @Nonnull Command command) throws CommandException;
+    void register(@Nonnull PluginDescription plugin, @Nonnull Command command) throws CommandException;
 
     CommandData getDefaultData();
 

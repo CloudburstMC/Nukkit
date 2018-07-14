@@ -1,6 +1,5 @@
 package com.nukkitx.server.scheduler;
 
-import com.nukkitx.api.plugin.Plugin;
 import com.nukkitx.api.scheduler.NukkitRunnable;
 import com.nukkitx.api.scheduler.NukkitScheduler;
 import com.nukkitx.server.NukkitServer;
@@ -50,11 +49,11 @@ public class ServerScheduler implements NukkitScheduler {
         return asyncPool;
     }
 
-    public TaskHandler scheduleTask(Plugin plugin, Runnable task) {
+    public <T> TaskHandler<T> scheduleTask(T plugin, Runnable task) {
         return addTask(plugin, task, 0, 0, false);
     }
 
-    public TaskHandler scheduleAsyncTask(Plugin plugin, Runnable task) {
+    public <T> TaskHandler<T> scheduleAsyncTask(T plugin, Runnable task) {
         return addTask(plugin, task, 0, 0, true);
     }
 
@@ -66,15 +65,15 @@ public class ServerScheduler implements NukkitScheduler {
         throw new UnsupportedOperationException("Cannot increase a working pool size."); //wtf?
     }
 
-    public TaskHandler scheduleDelayedTask(Plugin plugin, Runnable task, int delay) {
+    public <T> TaskHandler<T> scheduleDelayedTask(T plugin, Runnable task, int delay) {
         return addTask(plugin, task, delay, 0, false);
     }
 
-    public TaskHandler scheduleRepeatingTask(Plugin plugin, Runnable task, int period) {
+    public <T> TaskHandler<T> scheduleRepeatingTask(T plugin, Runnable task, int period) {
         return addTask(plugin, task, 0, period, false);
     }
 
-    public TaskHandler scheduleDelayedRepeatingTask(Plugin plugin, Runnable task, int delay, int period) {
+    public <T> TaskHandler<T> scheduleDelayedRepeatingTask(T plugin, Runnable task, int delay, int period) {
         return addTask(plugin, task, delay, period, false);
     }
 
@@ -88,7 +87,7 @@ public class ServerScheduler implements NukkitScheduler {
         }
     }
 
-    public void cancelTasks(Plugin plugin) {
+    public <T> void cancelTasks(T plugin) {
         if (plugin == null) {
             throw new NullPointerException("Plugin cannot be null!");
         }
@@ -124,15 +123,15 @@ public class ServerScheduler implements NukkitScheduler {
         return this.taskMap.containsKey(taskId);
     }
 
-    private TaskHandler addTask(Plugin plugin, Runnable task, int delay, int period, boolean asynchronous) {
-        if (plugin != null && plugin.isDisabled()) {
-            throw new PluginException("Plugin '" + plugin.getName() + "' attempted to register a task while disabled.");
+    private <T> TaskHandler<T> addTask(T plugin, Runnable task, int delay, int period, boolean asynchronous) {
+        if (plugin == null) {
+            throw new PluginException("Plugin '" + plugin + "' attempted to register a task while disabled.");
         }
         if (delay < 0 || period < 0) {
             throw new PluginException("Attempted to register a task with negative delay or period.");
         }
 
-        TaskHandler taskHandler = new TaskHandler(plugin, task, nextTaskId(), asynchronous);
+        TaskHandler taskHandler = new TaskHandler<>(plugin, task, nextTaskId(), asynchronous);
         taskHandler.setDelay(delay);
         taskHandler.setPeriod(period);
         taskHandler.setNextRunTick(taskHandler.isDelayed() ? currentTick + taskHandler.getDelay() : currentTick);

@@ -14,6 +14,9 @@ import com.nukkitx.api.command.CommandNotFoundException;
 import com.nukkitx.api.command.MessageRecipient;
 import com.nukkitx.api.command.PluginCommand;
 import com.nukkitx.api.command.sender.ConsoleCommandSender;
+import com.nukkitx.api.event.server.ServerInitializationEvent;
+import com.nukkitx.api.event.server.ServerShutdownEvent;
+import com.nukkitx.api.event.server.ServerStartEvent;
 import com.nukkitx.api.level.Level;
 import com.nukkitx.api.level.LevelCreator;
 import com.nukkitx.api.level.chunk.Chunk;
@@ -21,16 +24,18 @@ import com.nukkitx.api.level.chunk.generator.ChunkGenerator;
 import com.nukkitx.api.message.Message;
 import com.nukkitx.api.message.TranslationMessage;
 import com.nukkitx.api.permission.Permissible;
-import com.nukkitx.api.plugin.PluginLoadOrder;
 import com.nukkitx.api.util.Config;
 import com.nukkitx.api.util.ConfigBuilder;
 import com.nukkitx.api.util.SemVer;
+import com.nukkitx.event.EventManagerImpl;
 import com.nukkitx.network.NetworkListener;
 import com.nukkitx.network.raknet.RakNetServer;
+import com.nukkitx.plugin.SimplePluginManager;
+import com.nukkitx.plugin.loader.JavaPluginLoader;
+import com.nukkitx.plugin.service.SimpleServiceManager;
 import com.nukkitx.server.command.NukkitCommandManager;
 import com.nukkitx.server.console.*;
 import com.nukkitx.server.entity.EntitySpawner;
-import com.nukkitx.server.event.NukkitEventManager;
 import com.nukkitx.server.item.NukkitItemInstanceBuilder;
 import com.nukkitx.server.level.LevelManager;
 import com.nukkitx.server.level.NukkitLevel;
@@ -48,10 +53,6 @@ import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import com.nukkitx.server.network.util.EncryptionUtil;
 import com.nukkitx.server.permission.NukkitAbilities;
 import com.nukkitx.server.permission.NukkitPermissionManager;
-import com.nukkitx.server.plugin.NukkitPluginManager;
-import com.nukkitx.server.plugin.java.JavaPluginLoader;
-import com.nukkitx.server.plugin.service.NKServiceManager;
-import com.nukkitx.server.plugin.service.ServiceManager;
 import com.nukkitx.server.resourcepack.ResourcePackManager;
 import com.nukkitx.server.scheduler.ServerScheduler;
 import com.nukkitx.server.util.ServerKiller;
@@ -110,15 +111,15 @@ public class NukkitServer implements Server {
     @Getter
     private final NukkitPermissionManager permissionManager = new NukkitPermissionManager();
     @Getter
-    private final NukkitPluginManager pluginManager = new NukkitPluginManager(this);
+    private final SimplePluginManager pluginManager = new SimplePluginManager();
     @Getter
     private final NukkitLocaleManager localeManager = new NukkitLocaleManager();
     @Getter
     private final EntitySpawner entitySpawner = new EntitySpawner(this);
     @Getter
-    private final NukkitEventManager eventManager = new NukkitEventManager();
+    private final EventManagerImpl eventManager = new EventManagerImpl();
     @Getter
-    private final ServiceManager serviceManager = new NKServiceManager();
+    private final SimpleServiceManager serviceManager = new SimpleServiceManager();
     @Getter
     private final NukkitSessionManager sessionManager = new NukkitSessionManager();
     @Getter
@@ -236,12 +237,17 @@ public class NukkitServer implements Server {
         }
 
         // Register plugin loaders
-        pluginManager.registerPluginLoader(JavaPluginLoader.class, new JavaPluginLoader(this));
+        pluginManager.registerLoader(JavaPluginLoader.class, JavaPluginLoader.builder()
+                .dataPath(dataPath)
+                .registerDependency(NukkitServer.class, this)
+                .registerDependency(Server.class, this)
+                .build()
+        );
 
         // Load plugins
         loadPlugins();
 
-        pluginManager.enablePlugins(PluginLoadOrder.STARTUP);
+        eventManager.fire(ServerInitializationEvent.INSTANCE);
 
         // Setup default LevelData values
         DefaultsLevelDataProvider defaultsLevelData = new DefaultsLevelDataProvider(this);
@@ -316,7 +322,7 @@ public class NukkitServer implements Server {
             System.exit(1);
         }
 
-        pluginManager.enablePlugins(PluginLoadOrder.POSTWORLD);
+        eventManager.fire(ServerInitializationEvent.INSTANCE);
 
         log.info(TranslatableMessage.of("nukkit.server.networkStart", configuration.getNetwork().getAddress(), Integer.toString(configuration.getNetwork().getPort())));
         if (configuration.getNetwork().isQueryEnabled()) {
@@ -337,7 +343,7 @@ public class NukkitServer implements Server {
 
         /*if (configuration.getRcon().isEnabled()) {
             RconNetworkListener rconListener = new RconNetworkListener(
-                    this,
+                    new NukkitRconEventListener(),
                     configuration.getRcon().getPassword().getBytes(StandardCharsets.UTF_8),
                     configuration.getRcon().getAddress(),
                     configuration.getRcon().getPort()
@@ -348,14 +354,18 @@ public class NukkitServer implements Server {
         }*/
 
         timerService.scheduleAtFixedRate(sessionManager::onTick, 50, 50, TimeUnit.MILLISECONDS);
+
         if (configuration.getGeneral().isAutoSaving()) {
             int autoSaveInterval = configuration.getGeneral().getAutoSaveInterval();
             timerService.scheduleAtFixedRate(this::doAutoSave, autoSaveInterval, autoSaveInterval, TimeUnit.MINUTES);
+            // TODO: Keep ScheduledFuture so auto save can be disabled whilst the server is loaded.
         }
+
         if (ansiEnabled) {
             timerService.scheduleAtFixedRate(this::titleTick, 500, 500, TimeUnit.MILLISECONDS);
         }
-        pluginManager.enablePlugins(PluginLoadOrder.POSTNETWORK);
+
+        eventManager.fire(ServerStartEvent.INSTANCE);
 
         loop();
     }
@@ -485,10 +495,10 @@ public class NukkitServer implements Server {
         listeners.forEach(NetworkListener::close);
 
         // Safely disable plugins.
-        if (log.isDebugEnabled()) {
-            log.debug("Disabling plugins");
-        }
-        this.pluginManager.disablePlugins();
+
+        eventManager.fire(ServerShutdownEvent.INSTANCE);
+
+        this.pluginManager.deregisterLoader(JavaPluginLoader.class);
 
         // Unload all levels.
         levelManager.getLevels().forEach(this::unloadLevel);

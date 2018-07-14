@@ -1,9 +1,8 @@
 package com.nukkitx.server.permission;
 
 import com.nukkitx.api.permission.*;
-import com.nukkitx.api.plugin.Plugin;
+import com.nukkitx.api.plugin.PluginContainer;
 import com.nukkitx.server.NukkitServer;
-import com.nukkitx.server.util.PluginException;
 import com.nukkitx.server.util.ServerException;
 
 import java.util.*;
@@ -76,20 +75,17 @@ public class NukkitPermissible implements Permissible {
     }
 
     @Override
-    public NukkitPermissionAttachment addAttachment(Plugin plugin) {
+    public NukkitPermissionAttachment addAttachment(PluginContainer plugin) {
         return this.addAttachment(plugin, null, null);
     }
 
     @Override
-    public NukkitPermissionAttachment addAttachment(Plugin plugin, String name) {
+    public NukkitPermissionAttachment addAttachment(PluginContainer plugin, String name) {
         return this.addAttachment(plugin, name, null);
     }
 
     @Override
-    public NukkitPermissionAttachment addAttachment(Plugin plugin, String name, Boolean value) {
-        if (!plugin.isEnabled()) {
-            throw new PluginException("Plugin " + plugin.getDescription().getName() + " is disabled");
-        }
+    public NukkitPermissionAttachment addAttachment(PluginContainer plugin, String name, Boolean value) {
 
         NukkitPermissionAttachment result = new NukkitPermissionAttachment(plugin, this.parent != null ? this.parent : this);
         this.attachments.add(result);

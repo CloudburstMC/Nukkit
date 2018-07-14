@@ -7,7 +7,7 @@
     <parent>
         <artifactId>nukkitx-parent</artifactId>
         <groupId>com.nukkitx</groupId>
-        <version>1.5.0.1-SNAPSHOT</version>
+        <version>1.6.0.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>nukkitx-api</artifactId>
@@ -19,6 +19,18 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.nukkitx</groupId>
+            <artifactId>event-api</artifactId>
+            <version>${event.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.nukkitx</groupId>
+            <artifactId>plugin-api</artifactId>
+            <version>${plugin.version}</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>net.sf.trove4j</groupId>
             <artifactId>trove</artifactId>

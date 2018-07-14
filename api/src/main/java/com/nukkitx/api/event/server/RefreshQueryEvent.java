@@ -2,7 +2,7 @@ package com.nukkitx.api.event.server;
 
 import com.nukkitx.api.Player;
 import com.nukkitx.api.Server;
-import com.nukkitx.api.plugin.Plugin;
+import com.nukkitx.api.plugin.PluginContainer;
 import com.nukkitx.api.util.GameMode;
 
 import java.util.Collection;
@@ -11,7 +11,7 @@ import java.util.Collection;
  * Query information sent to server lists, not the player's server list.
  */
 public class RefreshQueryEvent implements ServerEvent {
-    private final Collection<Plugin> plugins;
+    private final Collection<PluginContainer> plugins;
     private final Collection<Player> players;
     private GameMode gameMode;
     private int timeout;
@@ -73,7 +73,7 @@ public class RefreshQueryEvent implements ServerEvent {
         this.pluginListEnabled = pluginListEnabled;
     }
 
-    public Collection<Plugin> getPlugins() {
+    public Collection<PluginContainer> getPlugins() {
         return plugins;
     }
 

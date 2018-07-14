@@ -7,11 +7,10 @@
     <parent>
         <artifactId>nukkitx-parent</artifactId>
         <groupId>com.nukkitx</groupId>
-        <version>1.5.0.1-SNAPSHOT</version>
+        <version>1.6.0.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>nukkitx-bootstrap</artifactId>
-    <version>1.6.0.1-SNAPSHOT</version>
     <name>NukkitX Bootstrap</name>
 
     <dependencies>

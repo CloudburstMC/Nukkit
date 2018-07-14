@@ -7,7 +7,7 @@ import com.nukkitx.api.message.TranslationMessage;
 import com.nukkitx.api.permission.Permission;
 import com.nukkitx.api.permission.PermissionAttachment;
 import com.nukkitx.api.permission.PermissionAttachmentInfo;
-import com.nukkitx.api.plugin.Plugin;
+import com.nukkitx.api.plugin.PluginContainer;
 import com.nukkitx.server.NukkitServer;
 import lombok.extern.log4j.Log4j2;
 
@@ -75,17 +75,17 @@ public class NukkitConsoleCommandSender implements ConsoleCommandSender {
     }
 
     @Override
-    public PermissionAttachment addAttachment(Plugin plugin) {
+    public PermissionAttachment addAttachment(PluginContainer plugin) {
         return null;
     }
 
     @Override
-    public PermissionAttachment addAttachment(Plugin plugin, String name) {
+    public PermissionAttachment addAttachment(PluginContainer plugin, String name) {
         return null;
     }
 
     @Override
-    public PermissionAttachment addAttachment(Plugin plugin, String name, Boolean value) {
+    public PermissionAttachment addAttachment(PluginContainer plugin, String name, Boolean value) {
         return null;
     }
 

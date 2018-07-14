@@ -1,11 +1,11 @@
 package com.nukkitx.api.permission;
 
-import com.nukkitx.api.plugin.Plugin;
+import com.nukkitx.api.plugin.PluginContainer;
 
 import java.util.Map;
 
 public interface PermissionAttachment {
-    Plugin getPlugin();
+    PluginContainer getPlugin();
 
     Map<String, Boolean> getPermissions();
 
