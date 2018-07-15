@@ -1,5 +1,6 @@
 package com.nukkitx.api.item;
 
+import com.nukkitx.api.block.BlockTypes;
 import com.nukkitx.api.enchantment.EnchantmentInstance;
 import com.nukkitx.api.metadata.Metadata;
 
@@ -20,8 +21,8 @@ public interface ItemInstance {
 
     Optional<Metadata> getItemData();
 
-    default <T extends Metadata> T ensureItemData(Class<T> clazz) {
-        return (T) getItemData().get();
+    static boolean isNull(@Nullable ItemInstance item) {
+        return item == null || item.getItemType() == BlockTypes.AIR || item.getAmount() == 0;
     }
 
     Optional<String> getName();
@@ -40,7 +41,17 @@ public interface ItemInstance {
 
     boolean equals(@Nullable ItemInstance item);
 
+    default <T extends Metadata> T ensureItemData(Class<T> clazz) {
+        try {
+            return (T) getItemData().orElseThrow(() -> new IllegalArgumentException("ItemInstance has no data"));
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("Invalid class supplied", e);
+        }
+    }
+
     default boolean isFull() {
         return getAmount() >= getItemType().getMaximumStackSize();
     }
+
+    boolean equals(@Nullable ItemInstance other, boolean checkAmount, boolean checkMeta, boolean checkUserData);
 }
