@@ -8,7 +8,7 @@ import com.nukkitx.api.metadata.block.Crops;
 public class CropsSerializer implements Serializer {
     @Override
     public short readMetadata(BlockState state) {
-        Crops crops = getBlockData(state);
+        Crops crops = state.ensureBlockData(Crops.class);
         return (short) crops.getStage();
     }
 

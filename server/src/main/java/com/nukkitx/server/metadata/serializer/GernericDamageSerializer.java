@@ -9,7 +9,7 @@ public class GernericDamageSerializer implements Serializer {
 
     @Override
     public short readMetadata(ItemInstance item) {
-        GenericDamageValue damage = getItemData(item);
+        GenericDamageValue damage = item.ensureItemData(GenericDamageValue.class);
         return damage.getDamage();
     }
 

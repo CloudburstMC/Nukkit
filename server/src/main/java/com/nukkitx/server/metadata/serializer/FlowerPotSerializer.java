@@ -12,7 +12,7 @@ import com.nukkitx.server.block.entity.NukkitFlowerPotBlockEntity;
 public class FlowerPotSerializer implements Serializer {
     @Override
     public CompoundTag readNBT(BlockState state) {
-        NukkitFlowerPotBlockEntity blockEntity = getBlockEntity(state);
+        NukkitFlowerPotBlockEntity blockEntity = state.ensureBlockEntity(NukkitFlowerPotBlockEntity.class);
         return CompoundTagBuilder.builder()
                 .stringTag("contents", blockEntity.getPlantType().name().toLowerCase())
                 .buildRootTag();
@@ -20,7 +20,7 @@ public class FlowerPotSerializer implements Serializer {
 
     @Override
     public CompoundTag readNBT(ItemInstance item) {
-        NukkitFlowerPotBlockEntity blockEntity = getItemData(item);
+        NukkitFlowerPotBlockEntity blockEntity = item.ensureItemData(NukkitFlowerPotBlockEntity.class);
         return CompoundTagBuilder.builder()
                 .stringTag("contents", blockEntity.getPlantType().name().toLowerCase())
                 .buildRootTag();
