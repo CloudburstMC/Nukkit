@@ -17,25 +17,37 @@
 
     <repositories>
         <repository>
-            <id>aikar</id>
-            <url>http://ci.emc.gs/nexus/content/groups/aikar/</url>
+            <id>nukkitx-repo-release</id>
+            <url>https://repo.nukkitx.com/release/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
         <repository>
-            <id>daporkchop</id>
-            <url>http://maven.daporkchop.net/</url>
+            <id>nukkitx-repo-snapshot</id>
+            <url>https://repo.nukkitx.com/snapshot/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
     <distributionManagement>
         <repository>
-            <id>central</id>
-            <name>potestas-releases</name>
-            <url>https://repo.potestas.xyz/main</url>
+            <id>releases</id>
+            <name>nukkitx-releases</name>
+            <url>https://repo.nukkitx.com/release</url>
         </repository>
         <snapshotRepository>
             <id>snapshots</id>
-            <name>potestas-snapshots</name>
-            <url>https://repo.potestas.xyz/main</url>
+            <name>nukkitx-snapshots</name>
+            <url>https://repo.nukkitx.com/snapshot</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -44,36 +56,49 @@
             <groupId>it.unimi.dsi</groupId>
             <artifactId>fastutil</artifactId>
             <version>8.1.1</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
             <version>1.14</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>21.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.4</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
             <version>1.16</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>jline</groupId>
             <artifactId>jline</artifactId>
             <version>2.14.6</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.tinfoiled.mcpe.leveldb</groupId>
+            <groupId>org.iq80.leveldb</groupId>
             <artifactId>leveldb</artifactId>
-            <version>0.8</version>
+            <version>0.10-SNAPSHOT</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
@@ -128,29 +153,6 @@
                         <version>${junit.platform.version}</version>
                     </dependency>
                 </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>2.5.2</version>
-                <executions>
-                    <execution>
-                        <id>install-external</id>
-                        <phase>clean</phase>
-                        <configuration>
-                            <file>${basedir}/lib/leveldb.jar</file>
-                            <repositoryLayout>default</repositoryLayout>
-                            <groupId>com.tinfoiled.mcpe.leveldb</groupId>
-                            <artifactId>leveldb</artifactId>
-                            <version>0.8</version>
-                            <packaging>jar</packaging>
-                            <generatePom>true</generatePom>
-                        </configuration>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
