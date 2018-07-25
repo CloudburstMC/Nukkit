@@ -15,7 +15,6 @@ import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
@@ -74,6 +73,12 @@ public class BugReportGenerator extends Thread {
         StringWriter stringWriter = new StringWriter();
         throwable.printStackTrace(new PrintWriter(stringWriter));
 
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
+        boolean pluginError = false;
+        if (stackTrace.length > 0) {
+            pluginError = !throwable.getStackTrace()[0].getClassName().startsWith("cn.nukkit");
+        }
+
 
         File mdReport = new File(reports, date + "_" + throwable.getClass().getSimpleName() + ".md");
         mdReport.createNewFile();
@@ -94,7 +99,7 @@ public class BugReportGenerator extends Thread {
         content = content.replace("${CPU_TYPE}", cpuType == null ? "UNKNOWN" : cpuType);
         content = content.replace("${AVAILABLE_CORE}", String.valueOf(osMXBean.getAvailableProcessors()));
         content = content.replace("${STACKTRACE}", stringWriter.toString());
-        content = content.replace("${PLUGIN_ERROR}", String.valueOf(!throwable.getStackTrace()[0].getClassName().startsWith("cn.nukkit")).toUpperCase());
+        content = content.replace("${PLUGIN_ERROR}", Boolean.toString(pluginError).toUpperCase());
         content = content.replace("${STORAGE_TYPE}", model.toString());
 
         Utils.writeFile(mdReport, content);
