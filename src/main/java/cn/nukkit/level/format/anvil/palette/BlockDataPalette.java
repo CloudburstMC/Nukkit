@@ -107,7 +107,7 @@ public final class BlockDataPalette implements Cloneable {
         return getAndSetFullBlock(getIndex(x, y, z), (char) value);
     }
 
-    private int getAndSetFullBlock(int index, char value) {
+    private synchronized int getAndSetFullBlock(int index, char value) {
         char[] raw = getCachedRaw();
         if (raw != null) {
             char result = raw[index];
@@ -123,14 +123,12 @@ public final class BlockDataPalette implements Cloneable {
                 }
                 return fullId;
             } else {
-                synchronized (this) {
-                    return getAndSetFullBlock(index, value);
-                }
+                return getAndSetFullBlock(index, value);
             }
         }
     }
 
-    private int getFullBlock(int index) {
+    private synchronized int getFullBlock(int index) {
         char[] raw = getCachedRaw();
         if (raw != null) {
             return raw[index];
@@ -140,9 +138,7 @@ public final class BlockDataPalette implements Cloneable {
         if (palette != null && encodedData != null) {
             return palette.getKey(encodedData.getAt(index));
         } else {
-            synchronized (this) {
-                return getFullBlock(index);
-            }
+            return getFullBlock(index);
         }
     }
 
@@ -155,7 +151,7 @@ public final class BlockDataPalette implements Cloneable {
         setPaletteFullBlock(index, value);
     }
 
-    private void setPaletteFullBlock(int index, char value) {
+    private synchronized void setPaletteFullBlock(int index, char value) {
         CharPalette palette = this.palette;
         BitArray4096 encodedData = this.encodedData;
         if (palette != null && encodedData != null) {
@@ -177,9 +173,7 @@ public final class BlockDataPalette implements Cloneable {
                 }
             }
         } else {
-            synchronized (this) {
-                setFullBlock(index, value);
-            }
+            setFullBlock(index, value);
         }
     }
 
