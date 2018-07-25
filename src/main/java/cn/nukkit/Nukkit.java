@@ -41,7 +41,8 @@ public class Nukkit {
     public final static String DATA_PATH = System.getProperty("user.dir") + "/";
     public final static String PLUGIN_PATH = DATA_PATH + "plugins";
     public static final long START_TIME = System.currentTimeMillis();
-    public static boolean ANSI = false;
+    public static boolean ANSI = true;
+    public static boolean TITLE = false;
     public static boolean shortTitle = false;
     public static int DEBUG = 1;
 
@@ -67,10 +68,12 @@ public class Nukkit {
             }
 
             switch (arg) {
-                case "enable-ansi":
-                    ANSI = true;
+                case "disable-ansi":
+                    ANSI = false;
                     break;
-
+                case "enable-title":
+                    TITLE = true;
+                    break;
                 case "--verbosity":
                 case "-v":
                     skip = true;
