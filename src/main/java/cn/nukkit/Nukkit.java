@@ -48,6 +48,9 @@ public class Nukkit {
 
     public static void main(String[] args) {
 
+        // Force IPv4 since Nukkit is not compatible with IPv6
+        System.setProperty("java.net.preferIPv4Stack" , "true");
+
         //Shorter title for windows 8/2012
         String osName = System.getProperty("os.name").toLowerCase();
         if (osName.contains("windows")) {
