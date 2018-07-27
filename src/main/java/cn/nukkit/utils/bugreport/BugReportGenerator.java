@@ -57,8 +57,6 @@ public class BugReportGenerator extends Thread {
         long totalDiskSpace = 0;
         int diskNum = 0;
         for (Path root : FileSystems.getDefault().getRootDirectories()) {
-
-            System.out.print(root + ": ");
             try {
                 FileStore store = Files.getFileStore(root);
                 model.append("Disk ").append(diskNum++).append(":(avail=").append(getCount(store.getUsableSpace(), true))
@@ -85,7 +83,6 @@ public class BugReportGenerator extends Thread {
         String content = Utils.readFile(this.getClass().getClassLoader().getResourceAsStream("report_template.md"));
 
         Properties properties = getGitRepositoryState();
-        System.out.println(properties.getProperty("git.commit.id.abbrev"));
         String abbrev = properties.getProperty("git.commit.id.abbrev");
 
         String cpuType = System.getenv("PROCESSOR_IDENTIFIER");
