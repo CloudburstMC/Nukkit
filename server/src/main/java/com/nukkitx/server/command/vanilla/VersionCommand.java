@@ -17,6 +17,7 @@ public class VersionCommand extends VanillaCommand {
     private static CommandData data = CommandData.builder()
             .alias("ver")
             .description("nukkit.command.version.description")
+            //.permission("nukkit.command.version")
             .usage("nukkit.command.version.usage")
             .build();
 

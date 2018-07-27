@@ -10,6 +10,7 @@ public class StopCommand extends VanillaCommand {
     public StopCommand() {
         super("stop", CommandData.builder()
                 .description("commands.stop.description")
+                //.permission("nukkit.command.stop")
                 .build());
     }
 
