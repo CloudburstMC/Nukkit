@@ -134,7 +134,7 @@ public class EmptyChunkSection implements ChunkSection {
     }
 
     @Override
-    public ChunkSection clone() {
+    public EmptyChunkSection copy() {
         return this;
     }
 }
