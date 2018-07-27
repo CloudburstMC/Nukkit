@@ -5,6 +5,8 @@ import com.nukkitx.api.command.sender.CommandSender;
 import com.nukkitx.api.entity.Entity;
 import com.nukkitx.api.inventory.PlayerInventory;
 import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.message.Message;
+import com.nukkitx.api.message.TranslationMessage;
 import com.nukkitx.api.permission.Permissible;
 import com.nukkitx.api.util.Skin;
 

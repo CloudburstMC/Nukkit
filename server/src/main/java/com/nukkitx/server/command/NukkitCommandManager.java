@@ -7,8 +7,7 @@ import com.nukkitx.api.command.*;
 import com.nukkitx.api.command.sender.CommandSender;
 import com.nukkitx.api.plugin.PluginDescription;
 import com.nukkitx.server.NukkitServer;
-import com.nukkitx.server.command.vanilla.StopCommand;
-import com.nukkitx.server.command.vanilla.VersionCommand;
+import com.nukkitx.server.command.vanilla.*;
 import com.nukkitx.server.network.bedrock.packet.AvailableCommandsPacket;
 
 import javax.annotation.Nonnull;
@@ -29,17 +28,18 @@ public class NukkitCommandManager implements CommandManager {
 
     private void setDefaultCommands() {
         try {
+            register("minecraft", new GamemodeCommand(), true);
+            register("minecraft", new OpCommand(), true);
+            register("minecraft", new DeOpCommand(), true);
             register("minecraft", new VersionCommand(), true);
             register("minecraft", new StopCommand(), true);
         } catch (CommandException e) {
             throw new RuntimeException("Unable to register default commands", e);
         }
         /*try {
-            register("nukkit", new VersionCommand(server));
             register("nukkit", new PluginsCommand());
             register("nukkit", new SeedCommand("seed"));
             register("nukkit", new HelpCommand("help"));
-            register("nukkit", new StopCommand("stop"));
             register("nukkit", new TellCommand("tell"));
             register("nukkit", new DefaultGamemodeCommand("defaultgamemode"));
             register("nukkit", new BanCommand("ban"));
@@ -52,8 +52,6 @@ public class NukkitCommandManager implements CommandManager {
             register("nukkit", new ListCommand("list"));
             register("nukkit", new DifficultyCommand("difficulty"));
             register("nukkit", new KickCommand("kick"));
-            register("nukkit", new OpCommand("op"));
-            register("nukkit", new DeopCommand("deop"));
             register("nukkit", new WhitelistCommand("whitelist"));
             register("nukkit", new SaveOnCommand("save-on"));
             register("nukkit", new SaveOffCommand("save-off"));
