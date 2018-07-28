@@ -1,5 +1,6 @@
 package cn.nukkit.raknet.server;
 
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.raknet.RakNet;
 import cn.nukkit.raknet.protocol.DataPacket;
 import cn.nukkit.raknet.protocol.EncapsulatedPacket;
@@ -27,6 +28,9 @@ public class Session {
 
     public static final int WINDOW_SIZE = 2048;
 
+    private static final int MAX_MTU_SIZE = 1492;
+    private static final int MIN_MTU_SIZE = 400;
+
     private int messageIndex = 0;
     private final Map<Integer, Integer> channelIndex = new ConcurrentHashMap<>();
 
@@ -35,7 +39,7 @@ public class Session {
     private final int port;
     private int state = STATE_UNCONNECTED;
     //private List<EncapsulatedPacket> preJoinQueue = new ArrayList<>();
-    private int mtuSize = 548; //Min size
+    private int mtuSize = MIN_MTU_SIZE;
     private long id = 0;
     private int splitID = 0;
 
@@ -530,7 +534,7 @@ public class Session {
             } else if (this.state == STATE_CONNECTING_1 && packet instanceof OPEN_CONNECTION_REQUEST_2) {
                 this.id = ((OPEN_CONNECTION_REQUEST_2) packet).clientID;
                 if (((OPEN_CONNECTION_REQUEST_2) packet).serverPort == this.sessionManager.getPort() || !this.sessionManager.portChecking) {
-                    this.mtuSize = Math.min(Math.abs(((OPEN_CONNECTION_REQUEST_2) packet).mtuSize), 1464); //Max size, do not allow creating large buffers to fill server memory
+                    this.mtuSize = NukkitMath.clamp(Math.abs(((OPEN_CONNECTION_REQUEST_2) packet).mtuSize), MIN_MTU_SIZE, MAX_MTU_SIZE);
                     OPEN_CONNECTION_REPLY_2 pk = new OPEN_CONNECTION_REPLY_2();
                     pk.mtuSize = (short) this.mtuSize;
                     pk.serverID = this.sessionManager.getID();

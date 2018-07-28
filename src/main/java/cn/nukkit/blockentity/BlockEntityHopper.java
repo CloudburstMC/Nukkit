@@ -201,6 +201,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
 
             if (items[0].getCount() != originalCount) {
                 update = true;
+                item.setCount(items[0].getCount());
             }
         }
 
