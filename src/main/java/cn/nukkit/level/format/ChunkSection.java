@@ -6,7 +6,7 @@ import cn.nukkit.block.Block;
  * author: MagicDroidX
  * Nukkit Project
  */
-public interface ChunkSection extends Cloneable {
+public interface ChunkSection {
     int getY();
 
     int getBlockId(int x, int y, int z);
@@ -47,5 +47,5 @@ public interface ChunkSection extends Cloneable {
 
     byte[] getBytes();
 
-    ChunkSection clone();
+    ChunkSection copy();
 }

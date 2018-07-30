@@ -29,7 +29,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
         if (sections != null && sections[0] != null) {
             chunk.sections = new ChunkSection[sections.length];
             for (int i = 0; i < sections.length; i++) {
-                chunk.sections[i] = sections[i].clone();
+                chunk.sections[i] = sections[i].copy();
             }
         }
         return chunk;
