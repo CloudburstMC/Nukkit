@@ -1,7 +1,6 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
 import io.netty.util.collection.CharObjectHashMap;
 
@@ -169,8 +168,6 @@ public class ShapedRecipe implements CraftingRecipe {
 
     @Override
     public boolean matchItems(Item[][] input, Item[][] output) {
-        MainLogger logger = MainLogger.getLogger();
-
         if (!matchInputMap(Utils.clone2dArray(input))) {
 
             Item[][] reverse = Utils.clone2dArray(input);
