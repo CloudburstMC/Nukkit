@@ -3735,7 +3735,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         //this is a dirty hack to prevent dying in a different level than the respawn point from breaking everything
         if (this.level != pos.level)   {
-            this.teleportImmediate(new Location(0, -100, 0, pos.level));
+            this.teleport(new Location(pos.x, -100, pos.z, pos.level), null);
+            this.teleport(new Location(pos.x, pos.y, pos.z, pos.level), null);
         }
 
         this.dataPacket(pk);
