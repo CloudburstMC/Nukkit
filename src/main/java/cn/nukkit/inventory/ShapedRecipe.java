@@ -261,6 +261,14 @@ public class ShapedRecipe implements CraftingRecipe {
     }
 
     @Override
+    public String toString() {
+        StringJoiner joiner = new StringJoiner(", ");
+
+        ingredients.forEach((character, item) -> joiner.add(item.getName() + ":" + item.getDamage()));
+        return joiner.toString();
+    }
+
+    @Override
     public boolean requiresCraftingTable() {
         return this.getHeight() > 2 || this.getWidth() > 2;
     }
