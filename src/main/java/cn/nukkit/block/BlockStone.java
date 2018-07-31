@@ -76,4 +76,8 @@ public class BlockStone extends BlockSolidMeta {
         return false;
     }
 
+    @Override
+    public boolean canSilkTouch() {
+        return true;
+    }
 }

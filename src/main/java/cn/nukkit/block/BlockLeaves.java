@@ -199,4 +199,9 @@ public class BlockLeaves extends BlockTransparentMeta {
     public BlockColor getColor() {
         return BlockColor.FOLIAGE_BLOCK_COLOR;
     }
+
+    @Override
+    public boolean canSilkTouch() {
+        return true;
+    }
 }

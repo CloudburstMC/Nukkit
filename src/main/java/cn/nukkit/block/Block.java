@@ -970,4 +970,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public Item toItem() {
         return new ItemBlock(this, this.getDamage(), 1);
     }
+
+    public boolean canSilkTouch() {
+        return false;
+    }
 }

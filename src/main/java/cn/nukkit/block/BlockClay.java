@@ -49,4 +49,9 @@ public class BlockClay extends BlockSolid {
     public BlockColor getColor() {
         return BlockColor.CLAY_BLOCK_COLOR;
     }
+
+    @Override
+    public boolean canSilkTouch() {
+        return true;
+    }
 }

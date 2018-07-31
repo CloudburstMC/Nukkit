@@ -75,4 +75,8 @@ public class BlockOreQuartz extends BlockSolid {
         return false;
     }
 
+    @Override
+    public boolean canSilkTouch() {
+        return true;
+    }
 }
