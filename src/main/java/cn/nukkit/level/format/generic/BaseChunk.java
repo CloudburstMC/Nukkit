@@ -2,6 +2,7 @@ package cn.nukkit.level.format.generic;
 
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.LevelProvider;
@@ -35,6 +36,13 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
         return chunk;
     }
 
+    private void removeInvalidTile(int x, int y, int z) {
+        BlockEntity entity = getTile(x, y, z);
+        if (entity != null && !entity.isBlockEntityValid()) {
+            removeBlockEntity(entity);
+        }
+    }
+
     @Override
     public int getFullBlock(int x, int y, int z) {
         return this.sections[y >> 4].getFullBlock(x, y & 0x0f, z);
@@ -58,6 +66,8 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
                 Server.getInstance().getLogger().logException(e1);
             }
             return this.sections[Y].getAndSetBlock(x, y & 0x0f, z, block);
+        } finally {
+            removeInvalidTile(x, y, z);
         }
     }
 
@@ -74,6 +84,8 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
                 Server.getInstance().getLogger().logException(e1);
             }
             return this.sections[Y].setFullBlockId(x, y & 0x0f, z, fullId);
+        } finally {
+            removeInvalidTile(x, y, z);
         }
     }
 
@@ -90,6 +102,8 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
                 Server.getInstance().getLogger().logException(e1);
             }
             return this.sections[Y].setBlock(x, y & 0x0f, z, blockId, meta);
+        } finally {
+            removeInvalidTile(x, y, z);
         }
     }
 
@@ -106,6 +120,8 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
                 Server.getInstance().getLogger().logException(e1);
             }
             this.sections[Y].setBlockId(x, y & 0x0f, z, id);
+        } finally {
+            removeInvalidTile(x, y, z);
         }
     }
 
@@ -132,6 +148,8 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
                 Server.getInstance().getLogger().logException(e1);
             }
             this.sections[Y].setBlockData(x, y & 0x0f, z, data);
+        } finally {
+            removeInvalidTile(x, y, z);
         }
     }
 

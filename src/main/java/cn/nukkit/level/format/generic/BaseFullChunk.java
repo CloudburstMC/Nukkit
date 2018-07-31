@@ -6,17 +6,15 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
-import cn.nukkit.level.format.anvil.palette.BiomePalette;
-import cn.nukkit.level.biome.Biome;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.NumberTag;
 import cn.nukkit.network.protocol.BatchPacket;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -137,7 +135,6 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
                     Entity entity = Entity.createEntity(nbt.getString("id"), this, nbt);
                     if (entity != null) {
                         changed = true;
-                        continue;
                     }
                 }
                 this.getProvider().getLevel().timings.syncChunkLoadEntitiesTimer.stopTiming();
@@ -159,7 +156,6 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
                         BlockEntity blockEntity = BlockEntity.createBlockEntity(nbt.getString("id"), this, nbt);
                         if (blockEntity == null) {
                             changed = true;
-                            continue;
                         }
                     }
                 }
@@ -340,7 +336,9 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
         this.tiles.put(blockEntity.getId(), blockEntity);
         int index = ((blockEntity.getFloorZ() & 0x0f) << 12) | ((blockEntity.getFloorX() & 0x0f) << 8) | (blockEntity.getFloorY() & 0xff);
         if (this.tileList.containsKey(index) && !this.tileList.get(index).equals(blockEntity)) {
-            this.tileList.get(index).close();
+            BlockEntity entity = this.tileList.get(index);
+            this.tiles.remove(entity.getId());
+            entity.close();
         }
         this.tileList.put(index, blockEntity);
         if (this.isInit) {
