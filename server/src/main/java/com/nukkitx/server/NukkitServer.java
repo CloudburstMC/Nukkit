@@ -58,6 +58,7 @@ import com.nukkitx.server.scheduler.ServerScheduler;
 import com.nukkitx.server.util.ServerKiller;
 import com.spotify.futures.CompletableFutures;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -91,9 +92,9 @@ public class NukkitServer implements Server {
     public static final YAMLMapper YAML_MAPPER = (YAMLMapper) new YAMLMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     public static final JavaPropsMapper PROPERTIES_MAPPER = (JavaPropsMapper) new JavaPropsMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     public static final String NAME;
-    public static final SemVer API_VERSION;
-    public static final String NUKKIT_VERSION;
-    public static final SemVer MINECRAFT_VERSION;
+    @NonNull public static final SemVer API_VERSION;
+    @NonNull public static final String NUKKIT_VERSION;
+    @NonNull public static final SemVer MINECRAFT_VERSION;
     public static final String BROADCAST_CHANNEL_ADMINISTRATIVE = "nukkit.broadcast.admin";
     public static final String BROADCAST_CHANNEL_USERS = "nukkit.broadcast.user";
     private static NukkitServer instance = null;
@@ -151,11 +152,23 @@ public class NukkitServer implements Server {
     private AtomicBoolean running = new AtomicBoolean(true);
 
     static {
-        NAME = NukkitServer.class.getPackage().getImplementationTitle();
+        NAME = NukkitServer.class.getPackage().getImplementationTitle() == null ? "Nukkit" : NukkitServer.class.getPackage().getImplementationTitle();
         Package mainPackage = NukkitServer.class.getPackage();
-        API_VERSION = SemVer.fromString(mainPackage.getSpecificationVersion().replace("-SNAPSHOT", ""));
-        MINECRAFT_VERSION = SemVer.fromString(mainPackage.getImplementationVersion().replace("-SNAPSHOT", ""));
-        NUKKIT_VERSION = mainPackage.getImplementationVendor();
+        SemVer api = null, minecraft = null;
+        String nukkit = null;
+        try {
+            api = SemVer.fromString(mainPackage.getSpecificationVersion().replace("-SNAPSHOT", ""));
+            minecraft = SemVer.fromString(mainPackage.getImplementationVersion().replace("-SNAPSHOT", ""));
+            nukkit = mainPackage.getImplementationVendor();
+        } catch (NullPointerException e)    {
+            //we're running in a development environment!
+            api = SemVer.fromString("2.0.0");
+            minecraft = SemVer.fromString("1.6.0.6");
+            nukkit = "NukkitX Development Build (IDE)";
+        }
+        API_VERSION = api;
+        MINECRAFT_VERSION = minecraft;
+        NUKKIT_VERSION = nukkit;
     }
 
     public NukkitServer(final Path filePath, final Path dataPath, final Path pluginPath, final boolean ansiEnabled) throws Exception {
