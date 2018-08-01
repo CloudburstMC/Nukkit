@@ -20,14 +20,14 @@ public class NukkitRecipeItemInstance extends NukkitItemInstance implements Reci
 
     @Override
     public boolean equals(@Nullable ItemInstance item) {
-        return equals(item, false, true, true, !ignoreMetadata, true);
+        return equals(item, true, !ignoreMetadata, true);
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == this) return true;
         if (!(o instanceof ItemInstance)) return false;
-        return equals((ItemInstance) o, false, true, true, !ignoreMetadata, true);
+        return equals((ItemInstance) o, true, !ignoreMetadata, true);
     }
 
     @Override

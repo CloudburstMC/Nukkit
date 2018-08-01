@@ -32,16 +32,4 @@ public interface Serializer {
     default BlockEntity writeNBT(ItemType type, CompoundTag nbtTag) {
         return null;
     }
-
-    default <T extends Metadata> T getBlockData(BlockState state) {
-        return (T) state.getBlockData().get();
-    }
-
-    default <T extends BlockEntity> T getBlockEntity(BlockState state) {
-        return (T) state.getBlockEntity().get();
-    }
-
-    default <T extends Metadata> T getItemData(ItemInstance item) {
-        return (T) item.getItemData().get();
-    }
 }

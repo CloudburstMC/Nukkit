@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.nukkitx.api.Player;
 import com.nukkitx.api.command.*;
 import com.nukkitx.api.command.sender.CommandSender;
-import com.nukkitx.api.plugin.Plugin;
+import com.nukkitx.api.plugin.PluginDescription;
 import com.nukkitx.server.NukkitServer;
 import com.nukkitx.server.command.vanilla.StopCommand;
 import com.nukkitx.server.command.vanilla.VersionCommand;
@@ -100,7 +100,7 @@ public class NukkitCommandManager implements CommandManager {
     }
 
     @Override
-    public void register(@Nonnull Plugin plugin, @Nonnull Command command) throws CommandException {
+    public void register(@Nonnull PluginDescription plugin, @Nonnull Command command) throws CommandException {
         Preconditions.checkNotNull(plugin, "plugin");
         register(plugin.getName(), command, false);
     }

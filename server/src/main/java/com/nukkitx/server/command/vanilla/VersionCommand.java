@@ -3,7 +3,7 @@ package com.nukkitx.server.command.vanilla;
 import com.nukkitx.api.command.CommandData;
 import com.nukkitx.api.command.sender.CommandSender;
 import com.nukkitx.api.locale.LocaleManager;
-import com.nukkitx.api.plugin.Plugin;
+import com.nukkitx.api.plugin.PluginContainer;
 import com.nukkitx.server.NukkitServer;
 import com.nukkitx.server.command.VanillaCommand;
 
@@ -39,7 +39,7 @@ public class VersionCommand extends VanillaCommand {
         }
 
         String pluginName = args[0];
-        Optional<Plugin> plugin = sender.getServer().getPluginManager().getPlugin(pluginName);
+        Optional<PluginContainer> plugin = sender.getServer().getPluginManager().getPlugin(pluginName);
 
         if (plugin.isPresent()) {
             sender.sendMessage(localeManager.replaceI18n(locale, PLUGIN_VERSION_I18N,

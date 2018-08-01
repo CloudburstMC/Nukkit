@@ -18,7 +18,7 @@ public class StoneSerializer implements Serializer {
 
     @Override
     public short readMetadata(BlockState block) {
-        Stone stone = getBlockData(block);
+        Stone stone = block.ensureBlockData(Stone.class);
         return (short) stone.ordinal();
     }
 
@@ -29,7 +29,7 @@ public class StoneSerializer implements Serializer {
 
     @Override
     public short readMetadata(ItemInstance item) {
-        Stone stone = getItemData(item);
+        Stone stone = item.ensureItemData(Stone.class);
         return (short) stone.ordinal();
     }
 

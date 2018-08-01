@@ -1,15 +1,13 @@
 package com.nukkitx.api.scheduler;
 
-import com.nukkitx.api.plugin.Plugin;
-
 /**
  * @author CreeperFace
  */
-public interface TaskHandler {
+public interface TaskHandler<T> {
 
     int getTaskId();
 
-    Plugin getPlugin();
+    T getPlugin();
 
     void cancel();
 

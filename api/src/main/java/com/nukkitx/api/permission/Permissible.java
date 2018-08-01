@@ -1,6 +1,6 @@
 package com.nukkitx.api.permission;
 
-import com.nukkitx.api.plugin.Plugin;
+import com.nukkitx.api.plugin.PluginContainer;
 
 import java.util.Map;
 
@@ -14,11 +14,11 @@ public interface Permissible extends ServerOperator {
 
     boolean hasPermission(Permission permission);
 
-    PermissionAttachment addAttachment(Plugin plugin);
+    PermissionAttachment addAttachment(PluginContainer plugin);
 
-    PermissionAttachment addAttachment(Plugin plugin, String name);
+    PermissionAttachment addAttachment(PluginContainer plugin, String name);
 
-    PermissionAttachment addAttachment(Plugin plugin, String name, Boolean value);
+    PermissionAttachment addAttachment(PluginContainer plugin, String name, Boolean value);
 
     void removeAttachment(PermissionAttachment attachment);
 

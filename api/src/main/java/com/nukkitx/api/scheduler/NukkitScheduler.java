@@ -1,27 +1,25 @@
 package com.nukkitx.api.scheduler;
 
-import com.nukkitx.api.plugin.Plugin;
-
 /**
  * @author CreeperFace
  */
 public interface NukkitScheduler {
 
-    TaskHandler scheduleTask(Plugin plugin, Runnable task);
+    <T> TaskHandler<T> scheduleTask(T plugin, Runnable task);
 
-    TaskHandler scheduleRepeatingTask(Plugin plugin, Runnable task, int period);
+    <T> TaskHandler<T> scheduleRepeatingTask(T plugin, Runnable task, int period);
 
-    TaskHandler scheduleDelayedTask(Plugin plugin, Runnable task, int delay);
+    <T> TaskHandler<T> scheduleDelayedTask(T plugin, Runnable task, int delay);
 
-    TaskHandler scheduleDelayedRepeatingTask(Plugin plugin, Runnable task, int delay, int period);
+    <T> TaskHandler<T> scheduleDelayedRepeatingTask(T plugin, Runnable task, int delay, int period);
 
-    TaskHandler scheduleAsyncTask(Plugin plugin, Runnable task);
+    <T> TaskHandler<T> scheduleAsyncTask(T plugin, Runnable task);
 
     void cancelTask(int taskId);
 
     void cancelAllTasks();
 
-    void cancelTasks(Plugin plugin);
+    <T> void cancelTasks(T plugin);
 
     boolean isQueued(int taskId);
 }

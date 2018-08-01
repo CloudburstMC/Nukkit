@@ -11,7 +11,7 @@ import static com.nukkitx.api.metadata.item.GoldenApple.REGULAR;
 public class GoldenAppleSerializer implements Serializer {
     @Override
     public short readMetadata(ItemInstance item) {
-        GoldenApple goldenApple = getItemData(item);
+        GoldenApple goldenApple = item.ensureItemData(GoldenApple.class);
         return (short) (goldenApple.isEnchanted() ? 1 : 0);
     }
 

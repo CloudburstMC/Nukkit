@@ -18,10 +18,18 @@ public interface BlockState {
     BlockStateBuilder toBuilder();
 
     default <T extends Metadata> T ensureBlockData(Class<T> clazz) {
-        return (T) getBlockData().get();
+        try {
+            return (T) getBlockData().orElseThrow(() -> new IllegalArgumentException("BlockState has no data"));
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("Invalid class supplied", e);
+        }
     }
 
     default <T extends BlockEntity> T ensureBlockEntity(Class<T> clazz) {
-        return (T) getBlockEntity().get();
+        try {
+            return (T) getBlockEntity().orElseThrow(() -> new IllegalArgumentException("BlockState has no entity"));
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("Invalid class supplied", e);
+        }
     }
 }

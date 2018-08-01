@@ -466,8 +466,9 @@ public final class BedrockUtil {
             writeString(buffer, packInfoEntry.getId().toString());
             writeString(buffer, packInfoEntry.getVersion().toString());
             buffer.writeLongLE(packInfoEntry.getPackSize());
+            writeString(buffer, ""); // TODO: Encryption Key
             writeString(buffer, packInfoEntry.getName());
-            writeString(buffer, packInfoEntry.getDescription());
+            writeString(buffer, ""); // TODO: Content identity
         }
     }
 

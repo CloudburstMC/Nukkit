@@ -1,15 +1,28 @@
 pipeline {
+
     agent any
+
     tools {
         maven 'Maven 3'
         jdk 'Java 8'
     }
+
     options {
         buildDiscarder(logRotator(artifactNumToKeepStr: '2'))
     }
+
+    environment {
+        COMMIT = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
+        VERSION = readMavenPom().getVersion()
+    }
+
     stages {
         stage ('Build') {
             steps {
+                script {
+                    currentBuild.displayName = "${VERSION} #${BUILD_NUMBER}".replace("-SNAPSHOT", "")
+                    currentBuild.description = "git-Nukkit-${COMMIT}"
+                }
                 sh 'mvn clean package'
             }
             post {
@@ -19,31 +32,19 @@ pipeline {
             }
         }
 
-        stage ('Javadoc') {
-            when {
-                branch "master"
-            }
-            steps {
-                sh 'mvn javadoc:aggregate -DskipTests -pl api'
-            }
-            post {
-                success {
-                    step([
-                        $class: 'JavadocArchiver',
-                        javadocDir: 'target/site/apidocs',
-                        keepAll: true
-                    ])
-                }
-            }
-        }
-
         stage ('Deploy') {
             when {
                 branch "rewrite"
             }
             steps {
-                sh 'mvn deploy -DskipTests'
+                sh 'mvn javadoc:jar source:jar deploy -DskipTests'
             }
+        }
+    }
+
+    post {
+        always {
+            deleteDir()
         }
     }
 }

@@ -88,27 +88,26 @@ public class NukkitItemInstance implements ItemInstance {
 
     @Override
     public boolean isMergeable(@Nonnull ItemInstance other) {
-        return equals(other, false, true, true, true, true);
+        return equals(other, false, true, true);
     }
 
     @Override
     public boolean equals(@Nullable ItemInstance item) {
-        return equals(item, true, true, true, true, true);
+        return equals(item, true, true, true);
     }
 
     @Override
     public boolean isSimilar(@Nonnull ItemInstance other) {
-        return equals(other, false, false, false, true, false);
+        return equals(other, false, true, false);
     }
 
-    boolean equals(ItemInstance other, boolean checkAmount, boolean checkName, boolean checkEnchantments,
-                           boolean checkMeta, boolean checkCustom) {
+    @Override
+    public boolean equals(@Nullable ItemInstance other, boolean checkAmount, boolean checkMeta, boolean checkUserData) {
         if (this == other) return true;
-        if (other == null || this.getClass() != other.getClass()) return false;
+        if (other == null) return false;
         NukkitItemInstance that = (NukkitItemInstance) other;
         return this.type == that.type && (!checkAmount || this.amount == that.amount) &&
-                (!checkName || Objects.equals(this.itemName, that.itemName)) &&
-                (!checkEnchantments || Objects.equals(this.enchantments, that.enchantments)) &&
+                (!checkUserData || Objects.equals(this.itemName, that.itemName) && Objects.equals(this.enchantments, that.enchantments)) &&
                 (!checkMeta || Objects.equals(this.data, that.data)); // TODO: Custom data.
     }
 
@@ -116,7 +115,7 @@ public class NukkitItemInstance implements ItemInstance {
     public boolean equals(Object o) {
         if (o == this) return true;
         if (!(o instanceof ItemInstance)) return false;
-        return equals((ItemInstance) o, true, true, true, true, true);
+        return equals((ItemInstance) o, true, true, true);
     }
 
     public int hashCode() {

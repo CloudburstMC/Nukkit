@@ -1,6 +1,5 @@
 package com.nukkitx.server.scheduler;
 
-import com.nukkitx.api.plugin.Plugin;
 import com.nukkitx.api.scheduler.NukkitRunnable;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
@@ -10,11 +9,11 @@ import org.apache.logging.log4j.Level;
  */
 
 @Log4j2
-public class TaskHandler implements com.nukkitx.api.scheduler.TaskHandler {
+public class TaskHandler<T> implements com.nukkitx.api.scheduler.TaskHandler<T> {
     private final int taskId;
     private final boolean asynchronous;
 
-    private final Plugin plugin;
+    private final T plugin;
     private final Runnable task;
 
     private int delay;
@@ -25,7 +24,7 @@ public class TaskHandler implements com.nukkitx.api.scheduler.TaskHandler {
 
     private boolean cancelled;
 
-    public TaskHandler(Plugin plugin, Runnable task, int taskId, boolean asynchronous) {
+    public TaskHandler(T plugin, Runnable task, int taskId, boolean asynchronous) {
         this.asynchronous = asynchronous;
         this.plugin = plugin;
         this.task = task;
@@ -68,7 +67,7 @@ public class TaskHandler implements com.nukkitx.api.scheduler.TaskHandler {
         return this.period;
     }
 
-    public Plugin getPlugin() {
+    public T getPlugin() {
         return plugin;
     }
 
