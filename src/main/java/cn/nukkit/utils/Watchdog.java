@@ -8,7 +8,7 @@ import java.lang.management.ThreadInfo;
 public class Watchdog extends Thread {
     private final Server server;
     private final long time;
-    public boolean running;
+    public boolean running = true;
     private boolean responding = true;
 
     public Watchdog(Server server, long time) {
