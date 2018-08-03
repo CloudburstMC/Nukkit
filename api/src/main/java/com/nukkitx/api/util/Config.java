@@ -114,7 +114,7 @@ public interface Config {
     /**
      * Get root (main) config section of the Config
      *
-     * @return
+     * @return root section
      */
     ConfigSection getRootSection();
 
@@ -122,27 +122,15 @@ public interface Config {
 
     int setDefault(ConfigSection map);
 
-    /**
-     * @deprecated use {@link #get(String)} instead
-     */
     @Deprecated
     Object getNested(String key);
 
-    /**
-     * @deprecated use {@link #get(String, T)} instead
-     */
     @Deprecated
     <T> T getNested(String key, T defaultValue);
 
-    /**
-     * @deprecated use {@link #get(String)} instead
-     */
     @Deprecated
     <T> T getNestedAs(String key, Class<T> type);
 
-    /**
-     * @deprecated use {@link #remove(String)} instead
-     */
     @Deprecated
     void removeNested(String key);
 

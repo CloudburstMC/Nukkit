@@ -12,14 +12,14 @@ public interface ConfigSection {
     /**
      * Get root section as LinkedHashMap
      *
-     * @return
+     * @return root section
      */
     Map<String, Object> getAllMap();
 
     /**
      * Get new instance of config section
      *
-     * @return
+     * @return instance
      */
     ConfigSection getAll();
 
@@ -31,33 +31,33 @@ public interface ConfigSection {
     /**
      * Get object by key. If section does not contain value, return default value
      *
-     * @param key
-     * @param defaultValue
-     * @return
+     * @param key key of object
+     * @param defaultValue value if null
+     * @return value
      */
     <T> T get(String key, T defaultValue);
 
     /**
      * Store value into config section
      *
-     * @param key
-     * @param value
+     * @param key key of object
+     * @param value value to set
      */
     void set(String key, Object value);
 
     /**
      * Check type of section element defined by key. Return true this element is ConfigSection
      *
-     * @param key
-     * @return
+     * @param key key of section
+     * @return is section
      */
     boolean isSection(String key);
 
     /**
      * Get config section element defined by key
      *
-     * @param key
-     * @return
+     * @param key key of section
+     * @return section
      */
     ConfigSection getSection(String key);
 
@@ -78,7 +78,7 @@ public interface ConfigSection {
      * <p>
      * getSections() will return new ConfigSection, that contains sections a1 and a2 only.
      *
-     * @return
+     * @return sections
      */
     ConfigSection getSections();
 
@@ -86,7 +86,7 @@ public interface ConfigSection {
      * Get sections (and only sections) from provided path
      *
      * @param key - config section path, if null or empty root path will used.
-     * @return
+     * @return sections
      */
     ConfigSection getSections(String key);
 
@@ -94,7 +94,7 @@ public interface ConfigSection {
      * Get int value of config section element
      *
      * @param key - key (inside) current section (default value equals to 0)
-     * @return
+     * @return value
      */
     int getInt(String key);
 
@@ -103,15 +103,15 @@ public interface ConfigSection {
      *
      * @param key          - key (inside) current section
      * @param defaultValue - default value that will returned if section element is not exists
-     * @return
+     * @return value
      */
     int getInt(String key, int defaultValue);
 
     /**
      * Check type of section element defined by key. Return true this element is Integer
      *
-     * @param key
-     * @return
+     * @param key          - key (inside) current section
+     * @return is value of integer type
      */
     boolean isInt(String key);
 
@@ -119,7 +119,7 @@ public interface ConfigSection {
      * Get long value of config section element
      *
      * @param key - key (inside) current section
-     * @return
+     * @return value
      */
     long getLong(String key);
 
@@ -128,15 +128,15 @@ public interface ConfigSection {
      *
      * @param key          - key (inside) current section
      * @param defaultValue - default value that will returned if section element is not exists
-     * @return
+     * @return value
      */
     long getLong(String key, long defaultValue);
 
     /**
      * Check type of section element defined by key. Return true this element is Long
      *
-     * @param key
-     * @return
+     * @param key          - key (inside) current section
+     * @return is value long
      */
     boolean isLong(String key);
 
@@ -144,7 +144,7 @@ public interface ConfigSection {
      * Get double value of config section element
      *
      * @param key - key (inside) current section
-     * @return
+     * @return value
      */
     double getDouble(String key);
 
@@ -153,15 +153,15 @@ public interface ConfigSection {
      *
      * @param key          - key (inside) current section
      * @param defaultValue - default value that will returned if section element is not exists
-     * @return
+     * @return value
      */
     double getDouble(String key, double defaultValue);
 
     /**
      * Check type of section element defined by key. Return true this element is Double
      *
-     * @param key
-     * @return
+     * @param key          - key (inside) current section
+     * @return is value double
      */
     boolean isDouble(String key);
 
@@ -169,7 +169,7 @@ public interface ConfigSection {
      * Get String value of config section element
      *
      * @param key - key (inside) current section
-     * @return
+     * @return value
      */
     String getString(String key);
 
@@ -178,7 +178,7 @@ public interface ConfigSection {
      *
      * @param key          - key (inside) current section
      * @param defaultValue - default value that will returned if section element is not exists
-     * @return
+     * @return value
      */
     String getString(String key, String defaultValue);
 
@@ -186,7 +186,7 @@ public interface ConfigSection {
      * Check type of section element defined by key. Return true this element is String
      *
      * @param key
-     * @return
+     * @return is value String
      */
     boolean isString(String key);
 
@@ -194,7 +194,7 @@ public interface ConfigSection {
      * Get boolean value of config section element
      *
      * @param key - key (inside) current section
-     * @return
+     * @return value
      */
     boolean getBoolean(String key);
 
@@ -203,15 +203,15 @@ public interface ConfigSection {
      *
      * @param key          - key (inside) current section
      * @param defaultValue - default value that will returned if section element is not exists
-     * @return
+     * @return value
      */
     boolean getBoolean(String key, boolean defaultValue);
 
     /**
      * Check type of section element defined by key. Return true this element is Integer
      *
-     * @param key
-     * @return
+     * @param key          - key (inside) current section
+     * @return is value Boolean
      */
     boolean isBoolean(String key);
 
@@ -219,7 +219,7 @@ public interface ConfigSection {
      * Get List value of config section element
      *
      * @param key - key (inside) current section
-     * @return
+     * @return value
      */
     List getList(String key);
 
@@ -228,15 +228,15 @@ public interface ConfigSection {
      *
      * @param key         - key (inside) current section
      * @param defaultList - default value that will returned if section element is not exists
-     * @return
+     * @return value
      */
     List getList(String key, List defaultList);
 
     /**
      * Check type of section element defined by key. Return true this element is List
      *
-     * @param key
-     * @return
+     * @param key        - key (inside) current section
+     * @return is value list
      */
     boolean isList(String key);
 
@@ -244,7 +244,7 @@ public interface ConfigSection {
      * Get String List value of config section element
      *
      * @param key - key (inside) current section
-     * @return
+     * @return value
      */
     List<String> getStringList(String key);
 
@@ -252,7 +252,7 @@ public interface ConfigSection {
      * Get Integer List value of config section element
      *
      * @param key - key (inside) current section
-     * @return
+     * @return value
      */
     List<Integer> getIntegerList(String key);
 
@@ -260,7 +260,7 @@ public interface ConfigSection {
      * Get Boolean List value of config section element
      *
      * @param key - key (inside) current section
-     * @return
+     * @return value
      */
     List<Boolean> getBooleanList(String key);
 
@@ -268,7 +268,7 @@ public interface ConfigSection {
      * Get Double List value of config section element
      *
      * @param key - key (inside) current section
-     * @return
+     * @return value
      */
     List<Double> getDoubleList(String key);
 
@@ -276,7 +276,7 @@ public interface ConfigSection {
      * Get Float List value of config section element
      *
      * @param key - key (inside) current section
-     * @return
+     * @return value
      */
     List<Float> getFloatList(String key);
 
@@ -284,7 +284,7 @@ public interface ConfigSection {
      * Get Long List value of config section element
      *
      * @param key - key (inside) current section
-     * @return
+     * @return value
      */
     List<Long> getLongList(String key);
 
@@ -292,7 +292,7 @@ public interface ConfigSection {
      * Get Byte List value of config section element
      *
      * @param key - key (inside) current section
-     * @return
+     * @return value
      */
     List<Byte> getByteList(String key);
 
@@ -300,7 +300,7 @@ public interface ConfigSection {
      * Get Character List value of config section element
      *
      * @param key - key (inside) current section
-     * @return
+     * @return value
      */
     List<Character> getCharacterList(String key);
 
@@ -308,7 +308,7 @@ public interface ConfigSection {
      * Get Short List value of config section element
      *
      * @param key - key (inside) current section
-     * @return
+     * @return value
      */
     List<Short> getShortList(String key);
 
@@ -316,31 +316,31 @@ public interface ConfigSection {
      * Get Map List value of config section element
      *
      * @param key - key (inside) current section
-     * @return
+     * @return value
      */
     List<Map> getMapList(String key);
 
     /**
      * Check existence of config section element
      *
-     * @param key
-     * @param ignoreCase
-     * @return
+     * @param key         - key (inside) current section
+     * @param ignoreCase ignore key case sensitivity
+     * @return value exists
      */
     boolean exists(String key, boolean ignoreCase);
 
     /**
      * Check existence of config section element
      *
-     * @param key
-     * @return
+     * @param key        - key (inside) current section
+     * @return value exists
      */
     boolean exists(String key);
 
     /**
      * Remove config section element
      *
-     * @param key
+     * @param key key to remove
      */
     void remove(String key);
 
@@ -348,14 +348,14 @@ public interface ConfigSection {
      * Get all keys
      *
      * @param child - true = include child keys
-     * @return
+     * @return keys
      */
     Set<String> getKeys(boolean child);
 
     /**
      * Get all keys
      *
-     * @return
+     * @return keys
      */
     Set<String> getKeys();
 }
