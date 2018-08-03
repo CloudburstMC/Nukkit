@@ -25,12 +25,16 @@ public interface ConfigSection {
 
     /**
      * Get object by key. If section does not contain value, return null
+     *
+     * @param key key of object
+     * @return value
      */
     Object get(String key);
 
     /**
      * Get object by key. If section does not contain value, return default value
      *
+     * ll
      * @param key key of object
      * @param defaultValue value if null
      * @return value
@@ -185,7 +189,7 @@ public interface ConfigSection {
     /**
      * Check type of section element defined by key. Return true this element is String
      *
-     * @param key
+     * @param key          - key (inside) current section
      * @return is value String
      */
     boolean isString(String key);
