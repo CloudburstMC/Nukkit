@@ -151,11 +151,28 @@ public class NukkitServer implements Server {
     private AtomicBoolean running = new AtomicBoolean(true);
 
     static {
-        NAME = NukkitServer.class.getPackage().getImplementationTitle();
+        String name;
+        SemVer apiVersion;
+        SemVer minecraftVersion;
+        String nukkitVersion;
         Package mainPackage = NukkitServer.class.getPackage();
-        API_VERSION = SemVer.fromString(mainPackage.getSpecificationVersion().replace("-SNAPSHOT", ""));
-        MINECRAFT_VERSION = SemVer.fromString(mainPackage.getImplementationVersion().replace("-SNAPSHOT", ""));
-        NUKKIT_VERSION = mainPackage.getImplementationVendor();
+
+        try {
+            name = Preconditions.checkNotNull(mainPackage.getImplementationTitle());
+            apiVersion = SemVer.fromString(mainPackage.getSpecificationVersion());
+            minecraftVersion = SemVer.fromString(mainPackage.getImplementationVersion());
+            nukkitVersion = Preconditions.checkNotNull(mainPackage.getImplementationVendor());
+        } catch (NullPointerException e) {
+            name = "Nukkit";
+            apiVersion = new SemVer(0, 0, 0);
+            minecraftVersion = new SemVer(0, 0, 0);
+            nukkitVersion = "git-Nukkit-UNKNOWN";
+        }
+
+        NAME = name;
+        API_VERSION = apiVersion;
+        MINECRAFT_VERSION = minecraftVersion;
+        NUKKIT_VERSION = nukkitVersion;
     }
 
     public NukkitServer(final Path filePath, final Path dataPath, final Path pluginPath, final boolean ansiEnabled) throws Exception {
