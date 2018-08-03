@@ -33,7 +33,6 @@ import com.nukkitx.server.resourcepack.loader.file.PackFile;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Log4j2
 public class PlayerSessionPacketHandler implements NetworkPacketHandler {
@@ -444,8 +443,8 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
                         session.startGame();
                         return;
                     }*/
-                for (UUID id: packet.getPackIds()) {
-                    Optional<ResourcePack> optionalPack = server.getResourcePackManager().getPackById(id);
+                for (ResourcePackClientResponsePacket.Entry entry : packet.getEntries()) {
+                    Optional<ResourcePack> optionalPack = server.getResourcePackManager().getPackById(entry.getUuid());
                     if (!optionalPack.isPresent()) {
                         session.disconnect( "disconnectionScreen.resourcePack");
                         return;
@@ -460,8 +459,8 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
                 session.getMinecraftSession().addToSendQueue(stackPacket);
                 return;
             case SEND_PACKS:
-                for (UUID packId: packet.getPackIds()) {
-                    Optional<ResourcePack> optionalPack = server.getResourcePackManager().getPackById(packId);
+                for (ResourcePackClientResponsePacket.Entry entry : packet.getEntries()) {
+                    Optional<ResourcePack> optionalPack = server.getResourcePackManager().getPackById(entry.getUuid());
                     if (!optionalPack.isPresent()) {
                         session.disconnect( "disconnectionScreen.resourcePack");
                         return;
