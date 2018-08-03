@@ -70,10 +70,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.*;
 
 /**
  * author: MagicDroidX Nukkit Project
@@ -189,6 +186,7 @@ public class Level implements ChunkManager, Metadatable {
 
 
     private final BlockUpdateScheduler updateQueue;
+    private final Queue<Block> normalUpdateQueue = new ConcurrentLinkedDeque<>();
 //    private final TreeSet<BlockUpdateEntry> updateQueue = new TreeSet<>();
 //    private final List<BlockUpdateEntry> nextTickUpdates = Lists.newArrayList();
     //private final Map<BlockVector3, Integer> updateQueueIndex = new HashMap<>();
@@ -750,6 +748,11 @@ public class Level implements ChunkManager, Metadatable {
         this.updateQueue.tick(this.getCurrentTick());
         this.timings.doTickPending.stopTiming();
 
+        Block block;
+        while ((block = this.normalUpdateQueue.poll()) != null) {
+            block.onUpdate(BLOCK_UPDATE_NORMAL);
+        }
+
         TimingsHistory.entityTicks += this.updateEntities.size();
         this.timings.entityTick.startTiming();
 
@@ -1197,37 +1200,37 @@ public class Level implements ChunkManager, Metadatable {
         this.server.getPluginManager().callEvent(
                 ev = new BlockUpdateEvent(this.getBlock(x, y - 1, z)));
         if (!ev.isCancelled()) {
-            ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
+            normalUpdateQueue.add(ev.getBlock());
         }
 
         this.server.getPluginManager().callEvent(
                 ev = new BlockUpdateEvent(this.getBlock(x, y + 1, z)));
         if (!ev.isCancelled()) {
-            ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
+            normalUpdateQueue.add(ev.getBlock());
         }
 
         this.server.getPluginManager().callEvent(
                 ev = new BlockUpdateEvent(this.getBlock(x - 1, y, z)));
         if (!ev.isCancelled()) {
-            ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
+            normalUpdateQueue.add(ev.getBlock());
         }
 
         this.server.getPluginManager().callEvent(
                 ev = new BlockUpdateEvent(this.getBlock(x + 1, y, z)));
         if (!ev.isCancelled()) {
-            ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
+            normalUpdateQueue.add(ev.getBlock());
         }
 
         this.server.getPluginManager().callEvent(
                 ev = new BlockUpdateEvent(this.getBlock(x, y, z - 1)));
         if (!ev.isCancelled()) {
-            ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
+            normalUpdateQueue.add(ev.getBlock());
         }
 
         this.server.getPluginManager().callEvent(
                 ev = new BlockUpdateEvent(this.getBlock(x, y, z + 1)));
         if (!ev.isCancelled()) {
-            ev.getBlock().onUpdate(BLOCK_UPDATE_NORMAL);
+            normalUpdateQueue.add(ev.getBlock());
         }
     }
 
