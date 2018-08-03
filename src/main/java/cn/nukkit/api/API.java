@@ -57,7 +57,7 @@ public @interface API {
 
         /**
          * Intended for features in drafts. Should only be used for tests.
-         * <p>
+         *
          * <p>Might contains notable new features, but will be moved to a new package before remarking to {@link #BLEEDING}.
          * Could be unsafe, might be removed without prior notice. Warnings will be send if used.
          */
@@ -65,7 +65,7 @@ public @interface API {
 
         /**
          * Intended for features in early development. Should only be used for tests.
-         * <p>
+         *
          * <p>Might be unwrapped, unsafe or have unchecked parameters.
          * Further contribution was demanded to enhance, strengthen or simplify before remarking to {@link #EXPERIMENTAL}.
          * Might be removed or modified without prior notice.
@@ -75,7 +75,7 @@ public @interface API {
         /**
          * Intended for new, experimental features where we are looking for feedback.
          * At least stable for development.
-         * <p>
+         *
          * <p>Use with caution, might be remarked to {@link #MAINTAINED} or {@link #STABLE} in the future,
          * but also might be removed without prior notice.
          */
@@ -83,7 +83,7 @@ public @interface API {
 
         /**
          * Intended for features that was tested, documented and at least stable for production use.
-         * <p>
+         *
          * <p>These features will not be modified in a backwards-incompatible way for at least next minor release
          * of the current major version. Will be remarked to {@link #DEPRECATED} first if scheduled for removal.
          */
@@ -91,7 +91,7 @@ public @interface API {
 
         /**
          * Intended for features that was tested, documented and is preferred in production use.
-         * <p>
+         *
          * <p>Will not be changed in a backwards-incompatible way in the current version.
          */
         STABLE
@@ -114,7 +114,7 @@ public @interface API {
 
         /**
          * Intended for features only available on one or several client platforms.
-         * <p>
+         *
          * <p>By using {@code PLATFORM_NATIVE} features, program will lose some cross-platform features provided.
          * Might not available in some client platforms. Read the documents carefully before using this API element.
          */
@@ -122,7 +122,7 @@ public @interface API {
 
         /**
          * Intended for features implemented in all client platforms.
-         * <p>
+         *
          * <p>Preferred to use for production use, but sometimes be lack of platform-native features.
          */
         UNIVERSAL

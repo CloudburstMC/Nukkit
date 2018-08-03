@@ -35,7 +35,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     /**
      * encoded as:
      *
-     * (x << 4) | z
+     * (x &lt;&lt; 4) | z
      */
     protected byte[] biomes;
 

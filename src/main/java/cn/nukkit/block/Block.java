@@ -511,7 +511,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     /**
      * The full id is a combination of the id and data.
-     * @return
+     * @return full id
      */
     public int getFullId() {
         return (getId() << 4);
@@ -636,6 +636,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     /**
      * @deprecated This function is lack of Player class and is not accurate enough, use #getBreakTime(Item, Player)
+     * @param item item used
+     * @return break time
      */
     @Deprecated
     public double getBreakTime(Item item) {

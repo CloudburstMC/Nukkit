@@ -11,7 +11,7 @@ import java.util.Random;
 
 public abstract class TreeGenerator extends cn.nukkit.level.generator.object.BasicGenerator {
 
-    /**
+    /*
      * returns whether or not a tree can grow into a block
      * For example, a tree will not grow into stone
      */
@@ -26,7 +26,7 @@ public abstract class TreeGenerator extends cn.nukkit.level.generator.object.Bas
         setDirtAt(level, new Vector3(pos.x, pos.y, pos.z));
     }
 
-    /**
+    /*
      * sets dirt at a specific location if it isn't already dirt
      */
     protected void setDirtAt(ChunkManager level, Vector3 pos) {

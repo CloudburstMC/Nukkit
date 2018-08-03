@@ -38,6 +38,7 @@ import cn.nukkit.level.biome.impl.taiga.*;
  * <p>
  * A more effective way of accessing specific biomes (to prevent Biome.getBiome(Biome.OCEAN) and such)
  * Also just looks cleaner than listing everything as static final in {@link Biome}
+ * </p>
  */
 public enum EnumBiome {
     OCEAN(0, new OceanBiome()),//
@@ -112,6 +113,9 @@ public enum EnumBiome {
 
     /**
      * You really shouldn't use this method if you can help it, reference the biomes directly!
+     *
+     * @param id biome id
+     * @return biome
      */
     @Deprecated
     public static Biome getBiome(int id) {
@@ -120,6 +124,9 @@ public enum EnumBiome {
 
     /**
      * You really shouldn't use this method if you can help it, reference the biomes directly!
+     *
+     * @param name biome name
+     * @return biome
      */
     @Deprecated
     public static Biome getBiome(String name) {

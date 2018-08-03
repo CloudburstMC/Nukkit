@@ -7,9 +7,7 @@ import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * author: MagicDroidX
@@ -115,6 +113,8 @@ public abstract class Biome implements BlockID {
      * Whether or not overhangs should generate in this biome (places where solid blocks generate over air)
      *
      * This should probably be used with a custom max elevation or things can look stupid
+     *
+     * @return overhang
      */
     public boolean doesOverhang()   {
         return false;
@@ -122,7 +122,10 @@ public abstract class Biome implements BlockID {
 
     /**
      * How much offset should be added to the min/max heights at this position
-     * @return
+     *
+     * @param x x
+     * @param z z
+     * @return height offset
      */
     public int getHeightOffset(int x, int z)    {
         return 0;

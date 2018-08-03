@@ -19,7 +19,7 @@ public class NoiseGeneratorOctavesF {
         }
     }
 
-    /**
+    /*
      * pars:(par2,3,4=noiseOffset ; so that adjacent noise segments connect) (pars5,6,7=x,y,zArraySize),(pars8,10,12 =
      * x,y,z noiseScale)
      */
@@ -53,7 +53,7 @@ public class NoiseGeneratorOctavesF {
         return noiseArray;
     }
 
-    /**
+    /*
      * Bouncer function to the main one with some default arguments.
      */
     public float[] generateNoiseOctaves(float[] noiseArray, int xOffset, int zOffset, int xSize, int zSize, float xScale, float zScale, float p_76305_10_) {

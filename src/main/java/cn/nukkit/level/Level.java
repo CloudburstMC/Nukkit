@@ -480,6 +480,8 @@ public class Level implements ChunkManager, Metadatable {
      *
      * @param pos  position where sound should be played
      * @param type ID of the sound from cn.nukkit.network.protocol.LevelSoundEventPacket
+     * @param pitch pitch of sound
+     * @param data generic data that can affect sound
      */
     public void addLevelSoundEvent(Vector3 pos, int type, int pitch, int data) {
         this.addLevelSoundEvent(pos, type, pitch, data, false);

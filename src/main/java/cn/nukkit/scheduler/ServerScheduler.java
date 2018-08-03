@@ -4,6 +4,7 @@ import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
+
 import java.util.ArrayDeque;
 import java.util.Map;
 import java.util.Queue;
@@ -40,7 +41,7 @@ public class ServerScheduler {
     }
 
     /**
-     * @deprecated Use {@link #scheduleTask(Plugin, Runnable)
+     * @deprecated Use {@link #scheduleTask(Plugin, Runnable)}
      */
     @Deprecated
     public TaskHandler scheduleTask(Runnable task) {
@@ -52,7 +53,7 @@ public class ServerScheduler {
     }
 
     /**
-     * @deprecated Use {@link #scheduleTask(Plugin, Runnable, boolean)
+     * @deprecated Use {@link #scheduleTask(Plugin, Runnable, boolean)}
      */
     @Deprecated
     public TaskHandler scheduleTask(Runnable task, boolean asynchronous) {
@@ -64,7 +65,7 @@ public class ServerScheduler {
     }
 
     /**
-     * @deprecated Use {@link #scheduleAsyncTask(Plugin, AsyncTask)
+     * @deprecated Use {@link #scheduleAsyncTask(Plugin, AsyncTask)}
      */
     @Deprecated
     public TaskHandler scheduleAsyncTask(AsyncTask task) {
@@ -97,7 +98,7 @@ public class ServerScheduler {
     }
 
     /**
-     * @deprecated Use {@link #scheduleDelayedTask(Plugin, Runnable, int)
+     * @deprecated Use {@link #scheduleDelayedTask(Plugin, Runnable, int)}
      */
     @Deprecated
     public TaskHandler scheduleDelayedTask(Runnable task, int delay) {
@@ -109,7 +110,7 @@ public class ServerScheduler {
     }
 
     /**
-     * @deprecated Use {@link #scheduleDelayedTask(Plugin, Runnable, int, boolean)
+     * @deprecated Use {@link #scheduleDelayedTask(Plugin, Runnable, int, boolean)}
      */
     @Deprecated
     public TaskHandler scheduleDelayedTask(Runnable task, int delay, boolean asynchronous) {
@@ -121,7 +122,7 @@ public class ServerScheduler {
     }
 
     /**
-     * @deprecated Use {@link #scheduleRepeatingTask(Plugin, Runnable, int)
+     * @deprecated Use {@link #scheduleRepeatingTask(Plugin, Runnable, int)}
      */
     @Deprecated
     public TaskHandler scheduleRepeatingTask(Runnable task, int period) {
@@ -133,7 +134,7 @@ public class ServerScheduler {
     }
 
     /**
-     * @deprecated Use {@link #scheduleRepeatingTask(Plugin, Runnable, int, boolean)
+     * @deprecated Use {@link #scheduleRepeatingTask(Plugin, Runnable, int, boolean)}
      */
     @Deprecated
     public TaskHandler scheduleRepeatingTask(Runnable task, int period, boolean asynchronous) {
@@ -161,7 +162,7 @@ public class ServerScheduler {
     }
 
     /**
-     * @deprecated Use {@link #scheduleDelayedRepeatingTask(Plugin, Runnable, int, int)
+     * @deprecated Use {@link #scheduleDelayedRepeatingTask(Plugin, Runnable, int, int)}
      */
     @Deprecated
     public TaskHandler scheduleDelayedRepeatingTask(Runnable task, int delay, int period) {
@@ -173,7 +174,7 @@ public class ServerScheduler {
     }
 
     /**
-     * @deprecated Use {@link #scheduleDelayedRepeatingTask(Plugin, Runnable, int, int, boolean)
+     * @deprecated Use {@link #scheduleDelayedRepeatingTask(Plugin, Runnable, int, int, boolean)}
      */
     @Deprecated
     public TaskHandler scheduleDelayedRepeatingTask(Runnable task, int delay, int period, boolean asynchronous) {

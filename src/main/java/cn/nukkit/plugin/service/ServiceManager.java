@@ -45,7 +45,7 @@ public interface ServiceManager {
      * Return the service's provider.
      *
      * @param service the target service
-     * @return a {@lingetProvider()k RegisteredService<T>} registered highest priority, or
+     * @return a {@link RegisteredServiceProvider} registered highest priority, or
      * {@code null} if not exists
      */
     <T> RegisteredServiceProvider<T> getProvider(Class<T> service);

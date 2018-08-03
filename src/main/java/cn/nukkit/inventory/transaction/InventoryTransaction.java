@@ -74,6 +74,8 @@ public class InventoryTransaction {
     /**
      * This method should not be used by plugins, it's used to add tracked inventories for InventoryActions
      * involving inventories.
+     *
+     * @param inventory to add
      */
     public void addInventory(Inventory inventory) {
         if (!this.inventories.contains(inventory)) {
@@ -134,8 +136,9 @@ public class InventoryTransaction {
      * multiple inventorySlot changes referring to the same inventorySlot in a single transaction. These multiples are not even guaranteed
      * to be in the correct order (inventorySlot splitting in the crafting grid for example, causes the actions to be sent in the
      * wrong order), so this method also tries to chain them into order.
+     * </p>
      *
-     * @return bool
+     * @return successful
      */
     protected boolean squashDuplicateSlotChanges() {
         Map<Integer, List<SlotChangeAction>> slotChanges = new HashMap<>();

@@ -46,6 +46,8 @@ public class ProjectileDispenseBehavior implements DispenseBehavior {
 
     /**
      * you can add extra data of projectile here
+     *
+     * @param nbt tag
      */
     protected void correctNBT(CompoundTag nbt) {
 

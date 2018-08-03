@@ -45,6 +45,8 @@ public class PlayerChatEvent extends PlayerMessageEvent implements Cancellable {
 
     /**
      * Changes the player that is sending the message
+     *
+     * @param player messenger
      */
     public void setPlayer(Player player) {
         this.player = player;

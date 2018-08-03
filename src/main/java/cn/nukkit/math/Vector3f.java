@@ -232,7 +232,7 @@ public class Vector3f implements Cloneable {
         );
     }
 
-    /**
+    /*
      * Returns a new vector with x value equal to the second parameter, along the line between this vector and the
      * passed in vector, or null if not possible.
      */
@@ -251,7 +251,7 @@ public class Vector3f implements Cloneable {
         }
     }
 
-    /**
+    /*
      * Returns a new vector with y value equal to the second parameter, along the line between this vector and the
      * passed in vector, or null if not possible.
      */
@@ -270,7 +270,7 @@ public class Vector3f implements Cloneable {
         }
     }
 
-    /**
+    /*
      * Returns a new vector with z value equal to the second parameter, along the line between this vector and the
      * passed in vector, or null if not possible.
      */

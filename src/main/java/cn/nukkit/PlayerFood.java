@@ -183,6 +183,7 @@ public class PlayerFood {
 
     /**
      * @deprecated use {@link #setLevel(int)} instead
+     * @param foodLevel level
      **/
     @Deprecated
     public void setFoodLevel(int foodLevel) {
@@ -191,6 +192,8 @@ public class PlayerFood {
 
     /**
      * @deprecated use {@link #setLevel(int, float)} instead
+     * @param foodLevel level
+     * @param saturationLevel saturation
      **/
     @Deprecated
     public void setFoodLevel(int foodLevel, float saturationLevel) {
