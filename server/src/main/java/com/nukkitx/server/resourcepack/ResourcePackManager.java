@@ -93,7 +93,7 @@ public class ResourcePackManager {
         for (MinecraftPackManifest pack : found) {
             // Verify version is compatible.
             if (pack.getHeader().getMinimumSupportedMinecraftVersion() != null &&
-                    NukkitServer.MINECRAFT_VERSION.isCompatiblePatch(pack.getHeader().getMinimumSupportedMinecraftVersion())) {
+                    NukkitServer.MINECRAFT_VERSION.isCompatible(pack.getHeader().getMinimumSupportedMinecraftVersion())) {
                 log.error("Pack is not compaible with server.");
                 continue;
             }
