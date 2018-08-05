@@ -176,7 +176,7 @@ public enum TextFormat {
         String result = CLEAN_PATTERN.matcher(input).replaceAll("");
 
         if (recursive && CLEAN_PATTERN.matcher(result).find()) {
-            return clean(input, true);
+            return clean(result, true);
         }
         return result;
     }
