@@ -165,11 +165,20 @@ public enum TextFormat {
      * @return A copy of the input string, without any formatting.
      */
     public static String clean(final String input) {
+        return clean(input, false);
+    }
+
+    public static String clean(final String input, final boolean recursive) {
         if (input == null) {
             return null;
         }
 
-        return CLEAN_PATTERN.matcher(input).replaceAll("");
+        String result = CLEAN_PATTERN.matcher(input).replaceAll("");
+
+        if (recursive && CLEAN_PATTERN.matcher(result).find()) {
+            return clean(input, true);
+        }
+        return result;
     }
 
     /**
