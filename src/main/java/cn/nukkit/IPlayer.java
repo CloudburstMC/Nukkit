@@ -3,6 +3,8 @@ package cn.nukkit;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.permission.ServerOperator;
 
+import java.util.UUID;
+
 /**
  * 用来描述一个玩家和获得这个玩家相应信息的接口。<br>
  * An interface to describe a player and get its information.
@@ -39,6 +41,8 @@ public interface IPlayer extends ServerOperator, Metadatable {
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     String getName();
+
+    UUID getUniqueId();
 
     /**
      * 返回这个玩家是否被封禁(ban)。<br>

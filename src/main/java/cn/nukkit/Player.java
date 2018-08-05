@@ -1919,6 +1919,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         nbt.putLong("lastPlayed", System.currentTimeMillis() / 1000);
 
+        UUID uuid = getUniqueId();
+        nbt.putLong("UUIDLeast", uuid.getLeastSignificantBits());
+        nbt.putLong("UUIDMost", uuid.getMostSignificantBits());
+
         if (this.server.getAutoSave()) {
             this.server.saveOfflinePlayerData(this.username, nbt, true);
         }
