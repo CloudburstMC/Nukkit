@@ -141,7 +141,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public final Long2ObjectOpenHashMap<Entity> updateEntities = new Long2ObjectOpenHashMap<>();
 
-    public final Long2ObjectOpenHashMap<BlockEntity> updateBlockEntities = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectOpenHashMap<BlockEntity> updateBlockEntities = new Long2ObjectOpenHashMap<>();
 
     private boolean cacheChunks = false;
 
@@ -768,11 +768,11 @@ public class Level implements ChunkManager, Metadatable {
 
         TimingsHistory.tileEntityTicks += this.updateBlockEntities.size();
         this.timings.blockEntityTick.startTiming();
-        if (!this.updateBlockEntities.isEmpty()) {
-            for (long id : new ArrayList<>(this.updateBlockEntities.keySet())) {
-                if (!this.updateBlockEntities.get(id).onUpdate()) {
-                    this.updateBlockEntities.remove(id);
-                }
+        synchronized (updateBlockEntities) {
+            ObjectIterator<Long2ObjectMap.Entry<BlockEntity>> iterator = updateBlockEntities.long2ObjectEntrySet().fastIterator();
+            while (iterator.hasNext()) {
+                iterator.next().getValue().onUpdate();
+                iterator.remove();
             }
         }
         this.timings.blockEntityTick.stopTiming();
@@ -1875,8 +1875,7 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
-        target.onBreak(item);
-
+        // Close BlockEntity before we check onBreak
         BlockEntity blockEntity = this.getBlockEntity(target);
         if (blockEntity != null) {
             if (blockEntity instanceof InventoryHolder) {
@@ -1893,6 +1892,8 @@ public class Level implements ChunkManager, Metadatable {
 
             this.updateComparatorOutputLevel(target);
         }
+
+        target.onBreak(item);
 
         item.useOn(target);
         if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
@@ -2596,12 +2597,22 @@ public class Level implements ChunkManager, Metadatable {
         blockEntities.put(blockEntity.getId(), blockEntity);
     }
 
+    public void scheduleBlockEntityUpdate(BlockEntity entity) {
+        Preconditions.checkNotNull(entity, "entity");
+        Preconditions.checkArgument(entity.getLevel() == this, "BlockEntity is not in this level");
+        synchronized (updateBlockEntities) {
+            updateBlockEntities.put(entity.getId(), entity);
+        }
+    }
+
     public void removeBlockEntity(BlockEntity blockEntity) {
         if (blockEntity.getLevel() != this) {
             throw new LevelException("Invalid Block Entity level");
         }
         blockEntities.remove(blockEntity.getId());
-        updateBlockEntities.remove(blockEntity.getId());
+        synchronized (updateBlockEntities) {
+            updateBlockEntities.remove(blockEntity.getId());
+        }
     }
 
     public boolean isChunkInUse(int x, int z) {
@@ -2773,7 +2784,7 @@ public class Level implements ChunkManager, Metadatable {
             int x = (int) v.x & 0x0f;
             int z = (int) v.z & 0x0f;
             if (chunk != null) {
-                int y = (int) Math.min(254, v.y);
+                int y = (int) NukkitMath.clamp(v.y, 0, 254);
                 boolean wasAir = chunk.getBlockId(x, y - 1, z) == 0;
                 for (; y > 0; --y) {
                     int b = chunk.getFullBlock(x, y, z);
