@@ -177,4 +177,11 @@ public class BlockLadder extends BlockTransparentMeta {
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
     }
+    
+    @Override
+    public Item[] getDrops(Item item) {
+        return new Item[]{
+            Item.get(Item.LADDER, 0, 1)
+        };
+    }
 }
