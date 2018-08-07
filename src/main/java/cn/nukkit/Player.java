@@ -224,6 +224,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public Block breakingBlock = null;
 
+    private boolean changingToSameDimension = false;
+
     public int pickedXPOrb = 0;
 
     protected int formWindowCount = 0;
