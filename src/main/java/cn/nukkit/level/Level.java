@@ -1879,8 +1879,8 @@ public class Level implements ChunkManager, Metadatable {
         // Close BlockEntity before we check onBreak
         BlockEntity blockEntity = this.getBlockEntity(target);
         if (blockEntity != null) {
-            if (!(blockEntity instanceof BlockEntityShulkerBox)) //Fix shulker boxes dropping contents
-            {
+            //Fix shulker boxes dropping contents
+            if (!(blockEntity instanceof BlockEntityShulkerBox)) {
                 if (blockEntity instanceof InventoryHolder) {
                     if (blockEntity instanceof BlockEntityChest) {
                         ((BlockEntityChest) blockEntity).unpair();

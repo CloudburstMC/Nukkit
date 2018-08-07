@@ -256,7 +256,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[PURPUR_STAIRS] = BlockStairsPurpur.class; //203
             
             list[UNDYED_SHULKER_BOX] = BlockUndyedShulkerBox.class; //205
-
             list[END_BRICKS] = BlockBricksEndStone.class; //206
 
             list[END_ROD] = BlockEndRod.class; //208
