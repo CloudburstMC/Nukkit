@@ -8,6 +8,7 @@ import cn.nukkit.block.BlockRedstoneDiode;
 import cn.nukkit.block.GlobalBlockPalette;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityChest;
+import cn.nukkit.blockentity.BlockEntityShulkerBox;
 import cn.nukkit.collection.PrimitiveList;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
@@ -1878,13 +1879,16 @@ public class Level implements ChunkManager, Metadatable {
         // Close BlockEntity before we check onBreak
         BlockEntity blockEntity = this.getBlockEntity(target);
         if (blockEntity != null) {
-            if (blockEntity instanceof InventoryHolder) {
-                if (blockEntity instanceof BlockEntityChest) {
-                    ((BlockEntityChest) blockEntity).unpair();
-                }
+            if (!(blockEntity instanceof BlockEntityShulkerBox)) //Fix shulker boxes dropping contents
+            {
+                if (blockEntity instanceof InventoryHolder) {
+                    if (blockEntity instanceof BlockEntityChest) {
+                        ((BlockEntityChest) blockEntity).unpair();
+                    }
 
-                for (Item chestItem : ((InventoryHolder) blockEntity).getInventory().getContents().values()) {
-                    this.dropItem(target, chestItem);
+                    for (Item chestItem : ((InventoryHolder) blockEntity).getInventory().getContents().values()) {
+                        this.dropItem(target, chestItem);
+                    }
                 }
             }
 
