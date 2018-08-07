@@ -773,8 +773,9 @@ public class Level implements ChunkManager, Metadatable {
         synchronized (updateBlockEntities) {
             ObjectIterator<Long2ObjectMap.Entry<BlockEntity>> iterator = updateBlockEntities.long2ObjectEntrySet().fastIterator();
             while (iterator.hasNext()) {
-                iterator.next().getValue().onUpdate();
-                iterator.remove();
+                if (!iterator.next().getValue().onUpdate()) {
+                    iterator.remove();
+                }
             }
         }
         this.timings.blockEntityTick.stopTiming();
