@@ -65,23 +65,27 @@ public class BlockShulkerBox extends BlockTransparentMeta {
         
         if (t != null) {
             ShulkerBoxInventory i = t.getRealInventory();
-            
-            CompoundTag nbt = item.getNamedTag();
-            if (nbt == null)
-                nbt = new CompoundTag("");
-            
-            ListTag<CompoundTag> items = new ListTag<>();
-            
-            for (int it = 0; it < i.getSize(); it++) {
-                if (i.getItem(it).getId() != Item.AIR) {
-                    CompoundTag d = NBTIO.putItemHelper(i.getItem(it), it);
-                    items.add(d);
+
+            if (!i.isEmpty()) {
+
+                CompoundTag nbt = item.getNamedTag();
+                if (nbt == null)
+                    nbt = new CompoundTag("");
+
+                ListTag<CompoundTag> items = new ListTag<>();
+
+                for (int it = 0; it < i.getSize(); it++) {
+                    if (i.getItem(it).getId() != Item.AIR) {
+                        CompoundTag d = NBTIO.putItemHelper(i.getItem(it), it);
+                        items.add(d);
+                    }
                 }
-            }
-            
-            nbt.put("Items", items);
+
+                nbt.put("Items", items);
+
                 
-            item.setCompoundTag(nbt);
+                item.setCompoundTag(nbt);
+            }
             
             if (t.hasName()) {
                 item.setCustomName(t.getName());
