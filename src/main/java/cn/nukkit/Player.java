@@ -224,8 +224,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public Block breakingBlock = null;
 
-    private boolean changingToSameDimension = false;
-
     public int pickedXPOrb = 0;
 
     protected int formWindowCount = 0;
@@ -2463,6 +2461,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             }
                             break packetswitch;
                         case PlayerActionPacket.ACTION_DIMENSION_CHANGE_ACK:
+                            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_NORMAL);
                             break; //TODO
                         case PlayerActionPacket.ACTION_START_GLIDE:
                             PlayerToggleGlideEvent playerToggleGlideEvent = new PlayerToggleGlideEvent(this, true);
@@ -4514,6 +4513,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     private void setDimension(int dimension) {
         ChangeDimensionPacket pk = new ChangeDimensionPacket();
         pk.dimension = dimension;
+        pk.x = (float) this.x;
+        pk.y = (float) this.y;
+        pk.z = (float) this.z;
         this.directDataPacket(pk);
     }
 
@@ -4529,6 +4531,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             spawnPosition.z = spawn.getFloorZ();
             this.dataPacket(spawnPosition);
 
+            int dimensionId = level.getDimension();
+            if (oldLevel.getDimension() != dimensionId) {
+                this.setDimension(dimensionId);
+            }
+
             // Remove old chunks
             for (long index : new ArrayList<>(this.usedChunks.keySet())) {
                 int chunkX = Level.getHashX(index);
@@ -4537,14 +4544,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
             this.usedChunks.clear();
 
-            forceSendEmptyChunks();
+            SetTimePacket setTime = new SetTimePacket();
+            setTime.time = level.getTime();
+            this.dataPacket(setTime);
 
-            SetTimePacket pk = new SetTimePacket();
-            pk.time = level.getTime();
-            this.dataPacket(pk);
-
-            int distance = this.viewDistance * 2 * 16 * 2;
-            this.sendPosition(this.add(distance, 0, distance), this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
+            GameRulesChangedPacket gameRulesChanged = new GameRulesChangedPacket();
+            gameRulesChanged.gameRules = level.getGameRules();
+            this.dataPacket(gameRulesChanged);
             return true;
         }
 
