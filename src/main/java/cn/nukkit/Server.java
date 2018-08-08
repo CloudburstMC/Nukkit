@@ -219,6 +219,8 @@ public class Server {
 
     private Level defaultLevel = null;
 
+    private boolean allowNether;
+
     private final Thread currentThread;
 
     private Watchdog watchdog;
@@ -316,6 +318,7 @@ public class Server {
                 put("level-name", "world");
                 put("level-seed", "");
                 put("level-type", "DEFAULT");
+                put("allow-nether", true);
                 put("enable-query", true);
                 put("enable-rcon", false);
                 put("rcon.password", Base64.getEncoder().encodeToString(UUID.randomUUID().toString().replace("-", "").getBytes()).substring(3, 13));
@@ -325,6 +328,9 @@ public class Server {
                 put("xbox-auth", true);
             }
         });
+
+        // Allow Nether? (determines if we create a nether world if one doesn't exist on startup)
+        this.allowNether = this.properties.getBoolean("allow-nether", true);
 
         this.forceLanguage = (Boolean) this.getConfig("settings.force-language", false);
         this.baseLang = new BaseLang((String) this.getConfig("settings.language", BaseLang.FALLBACK_LANGUAGE));
@@ -2100,6 +2106,10 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.BED, BlockEntityBed.class);
         BlockEntity.registerBlockEntity(BlockEntity.JUKEBOX, BlockEntityJukebox.class);
         BlockEntity.registerBlockEntity(BlockEntity.SHULKER_BOX, BlockEntityShulkerBox.class);
+    }
+
+    public boolean isNetherAllowed() {
+        return this.allowNether;
     }
 
     public static Server getInstance() {
