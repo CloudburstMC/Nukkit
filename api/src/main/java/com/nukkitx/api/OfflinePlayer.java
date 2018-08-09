@@ -50,7 +50,7 @@ public interface OfflinePlayer {
     /**
      * Ban the player from the server.
      *
-     * @param value
+     * @param value is banned
      */
     void setBanned(boolean value);
 
@@ -64,7 +64,7 @@ public interface OfflinePlayer {
     /**
      * Set whether the player is whitelisted on the server.
      *
-     * @param value
+     * @param value is whitelisted
      */
     void setWhitelisted(boolean value);
 }

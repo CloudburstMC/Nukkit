@@ -32,31 +32,19 @@ pipeline {
             }
         }
 
-        stage ('Javadoc') {
-            when {
-                branch "master"
-            }
-            steps {
-                sh 'mvn javadoc:aggregate -DskipTests -pl api'
-            }
-            post {
-                success {
-                    step([
-                        $class: 'JavadocArchiver',
-                        javadocDir: 'target/site/apidocs',
-                        keepAll: true
-                    ])
-                }
-            }
-        }
-
         stage ('Deploy') {
             when {
                 branch "rewrite"
             }
             steps {
-                sh 'mvn deploy -DskipTests'
+                sh 'mvn javadoc:jar source:jar deploy -DskipTests'
             }
+        }
+    }
+
+    post {
+        always {
+            deleteDir()
         }
     }
 }

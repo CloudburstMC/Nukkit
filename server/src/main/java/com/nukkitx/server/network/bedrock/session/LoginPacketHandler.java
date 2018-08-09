@@ -109,6 +109,8 @@ public class LoginPacketHandler implements NetworkPacketHandler {
 
             JWSObject clientJwt = JWSObject.parse(packet.getSkinData().toString());
 
+            log.debug("[SKIN DATA]\n {}", packet.getSkinData().toString());
+
             verifyJwt(clientJwt, identityPublicKey);
             JsonNode clientPayload = NukkitServer.JSON_MAPPER.readTree(clientJwt.getPayload().toBytes());
             ClientData clientData = NukkitServer.JSON_MAPPER.convertValue(clientPayload, ClientData.class);

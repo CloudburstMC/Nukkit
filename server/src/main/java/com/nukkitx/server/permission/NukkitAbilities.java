@@ -2,25 +2,25 @@ package com.nukkitx.server.permission;
 
 import com.nukkitx.api.permission.Abilities;
 import com.nukkitx.api.permission.Ability;
-import com.nukkitx.server.util.concurrent.ConcurrentBitSet;
 
 import javax.annotation.Nonnull;
+import java.util.BitSet;
 
 public class NukkitAbilities implements Abilities {
-    private ConcurrentBitSet flags;
-    private ConcurrentBitSet flags2;
-    //private ConcurrentBitSet custom;
+    private BitSet flags;
+    private BitSet flags2;
+    //private BitSet custom;
     private boolean stale = false;
 
     public NukkitAbilities() {
-        flags = ConcurrentBitSet.valueOf(new long[]{0L});
-        flags2 = ConcurrentBitSet.valueOf(new long[]{0L});
-        //custom = ConcurrentBitSet.valueOf(new long[]{0L});
+        flags = new BitSet(64);
+        flags2 = new BitSet(64);
+        //custom = new BitSet(64);
     }
 
     public NukkitAbilities(NukkitAbilities abilities) {
-        flags = ConcurrentBitSet.valueOf(abilities.flags.toLongArray());
-        flags2 = ConcurrentBitSet.valueOf(abilities.flags2.toLongArray());
+        flags = BitSet.valueOf(abilities.flags.toLongArray());
+        flags2 = BitSet.valueOf(abilities.flags2.toLongArray());
     }
 
     public void refresh() {
@@ -32,11 +32,11 @@ public class NukkitAbilities implements Abilities {
     }
 
     public void setFlags(int flags) {
-        this.flags = ConcurrentBitSet.valueOf(new long[]{flags});
+        this.flags = BitSet.valueOf(new long[]{flags});
     }
 
     public void setFlags2(int flags2) {
-        this.flags2 = ConcurrentBitSet.valueOf(new long[]{flags2});
+        this.flags2 = BitSet.valueOf(new long[]{flags2});
     }
 
     public int getFlags() {

@@ -7,7 +7,7 @@
     <parent>
         <artifactId>nukkitx-parent</artifactId>
         <groupId>com.nukkitx</groupId>
-        <version>1.6.0.6-SNAPSHOT</version>
+        <version>1.6.0.8-SNAPSHOT</version>
     </parent>
 
     <artifactId>nukkitx-api</artifactId>
@@ -15,7 +15,7 @@
     <name>NukkitX API</name>
 
     <properties>
-        <jackson.version>2.9.5</jackson.version>
+        <jackson.version>2.9.6</jackson.version>
     </properties>
 
     <dependencies>

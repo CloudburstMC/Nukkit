@@ -26,6 +26,7 @@ public class StartGamePacket implements BedrockPacket {
     private boolean trial;
     private long currentTick;
     private int enchantmentSeed;
+    private String multiplayerCorrelationId;
 
     @Override
     public void encode(ByteBuf buffer) {
@@ -44,6 +45,7 @@ public class StartGamePacket implements BedrockPacket {
 
         ByteBuf cachedPallete = NukkitLevel.getPaletteManager().getCachedPallete();
         buffer.writeBytes(cachedPallete);
+        writeString(buffer, multiplayerCorrelationId);
     }
 
     @Override

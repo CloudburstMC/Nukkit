@@ -41,6 +41,7 @@ public class AddPlayerPacket implements BedrockPacket {
     private int customFlags;
     //private final AdventureSettings adventureSettings = new AdventureSettings;
     private final List<EntityLink> entityLinks = new ArrayList<>();
+    private UUID deviceId;
 
     @Override
     public void encode(ByteBuf buffer) {
@@ -63,6 +64,7 @@ public class AddPlayerPacket implements BedrockPacket {
         writeUnsignedInt(buffer, customFlags);
         buffer.writeLongLE(0);
         writeEntityLinks(buffer, entityLinks);
+        writeString(buffer, deviceId.toString());
     }
 
     @Override

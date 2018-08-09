@@ -95,6 +95,7 @@ public interface Entity {
      * vehicle, it will be dismounted prior to teleportation.
      *
      * @param location New location to teleport this entity to
+     * @param level Level to teleport to
      * @return <code>true</code> if the teleport was successful
      */
     boolean teleport(Vector3f location, Level level);

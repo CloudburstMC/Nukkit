@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nukkitx.api.util.data.DeviceOS;
 import lombok.Value;
 
+import java.util.UUID;
+
 @Value
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ClientData {
@@ -20,6 +22,8 @@ public class ClientData {
     private final int currentInputMode;
     @JsonProperty("DefaultInputMode")
     private final int defaultInputMode;
+    @JsonProperty("DeviceId")
+    private final UUID deviceId;
     @JsonProperty("DeviceModel")
     private final String deviceModel;
     @JsonProperty("DeviceOS")
@@ -29,17 +33,19 @@ public class ClientData {
     @JsonProperty("GuiScale")
     private final int guiScale;
     @JsonProperty("IsEduMode")
-    private final boolean EducationMode;
+    private final boolean educationMode;
     @JsonProperty("LanguageCode")
     private final String languageCode;
-    @JsonProperty("ThirdPartyName")
-    private final String thirdPartyName;
-    @JsonProperty("PlatformChatId")
-    private final String platformChatId;
+    @JsonProperty("PlatformOfflineId")
+    private final String platformOfflineId;
+    @JsonProperty("PlatformOnlineId")
+    private final String platformOnlineId;
+    @JsonProperty("PremiumSkin")
+    private final boolean premiumSkin;
+    @JsonProperty("SelfSignedId")
+    private final UUID selfSignedId;
     @JsonProperty("ServerAddress")
     private final String serverAddress;
-    @JsonProperty("SkinDataLength")
-    private final int skinDataLength;
     @JsonProperty("SkinData")
     private final byte[] skinData; // deserialized
     @JsonProperty("SkinGeometry")
@@ -48,6 +54,8 @@ public class ClientData {
     private final String skinGeometryName;
     @JsonProperty("SkinId")
     private final String skinId;
+    @JsonProperty("ThirdPartyName")
+    private final String thirdPartyName;
     @JsonProperty("UIProfile")
     private final int uiProfile;
 }

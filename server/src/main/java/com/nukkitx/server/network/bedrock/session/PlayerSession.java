@@ -237,6 +237,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         startGame.setTrial(false);
         startGame.setCurrentTick(event.getSpawnLevel().getCurrentTick());
         startGame.setEnchantmentSeed(enchantmentSeed);
+        startGame.setMultiplayerCorrelationId("");
         session.addToSendQueue(startGame);
 
         sendCommandsEnabled();
@@ -491,6 +492,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         addPlayer.setFlags2(data.getAbilities().getFlags2());
         addPlayer.setPlayerPermission(data.getPlayerPermission());
         addPlayer.setCustomFlags(data.getAbilities().getCustomFlags());
+        addPlayer.setDeviceId(session.getClientData().getDeviceId());
         // TODO: Adventure settings
         return addPlayer;
     }

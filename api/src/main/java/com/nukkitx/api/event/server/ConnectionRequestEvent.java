@@ -35,7 +35,7 @@ public class ConnectionRequestEvent implements Event {
 
     /**
      * Set current result of the user connecting.
-     * @param result
+     * @param result result of user connecting
      */
     public void setResult(Result result) {
         this.result = result;

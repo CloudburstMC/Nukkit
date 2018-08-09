@@ -7,9 +7,10 @@ import com.nukkitx.api.resourcepack.BehaviorPack;
 import com.nukkitx.api.resourcepack.MinecraftPackManifest;
 import com.nukkitx.api.resourcepack.PackLoader;
 import com.nukkitx.api.resourcepack.ResourcePack;
+import com.nukkitx.plugin.util.DirectedAcyclicGraph;
+import com.nukkitx.plugin.util.GraphException;
 import com.nukkitx.server.NukkitServer;
 import com.nukkitx.server.console.TranslatableMessage;
-import com.nukkitx.server.math.graph.DirectedAcyclicGraph;
 import io.netty.util.internal.ConcurrentSet;
 import lombok.extern.log4j.Log4j2;
 
@@ -93,7 +94,7 @@ public class ResourcePackManager {
         for (MinecraftPackManifest pack : found) {
             // Verify version is compatible.
             if (pack.getHeader().getMinimumSupportedMinecraftVersion() != null &&
-                    NukkitServer.MINECRAFT_VERSION.isCompatiblePatch(pack.getHeader().getMinimumSupportedMinecraftVersion())) {
+                    NukkitServer.MINECRAFT_VERSION.isCompatible(pack.getHeader().getMinimumSupportedMinecraftVersion())) {
                 log.error("Pack is not compaible with server.");
                 continue;
             }
@@ -123,14 +124,14 @@ public class ResourcePackManager {
     }
 
     public ResourcePack[] getResourceStack() {
-        return resourcePacks.toArray(new ResourcePack[resourcePacks.size()]);
+        return resourcePacks.toArray(new ResourcePack[0]);
     }
 
     public Optional<ResourcePack> getPackById(UUID id) {
         return Optional.ofNullable(packsById.get(id));
     }
 
-    private List<MinecraftPackManifest> sortPackDependencies(List<MinecraftPackManifest> manifests) {
+    private Collection<MinecraftPackManifest> sortPackDependencies(List<MinecraftPackManifest> manifests) {
         // Create the graph.
         DirectedAcyclicGraph<MinecraftPackManifest> graph = new DirectedAcyclicGraph<>();
 
@@ -143,7 +144,14 @@ public class ResourcePackManager {
             }
         }
 
-        return DirectedAcyclicGraph.sort(graph);
+        Collection<MinecraftPackManifest> sorted;
+        try {
+            sorted = graph.sort();
+        } catch (GraphException e) {
+            throw new IllegalStateException("Circular dependency found", e);
+        }
+
+        return sorted;
     }
 
     @Nonnull

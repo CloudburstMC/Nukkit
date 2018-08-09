@@ -28,7 +28,7 @@ public interface ChunkGenerator {
     /**
      * Generator sent to the client.
      *
-     * @return
+     * @return the generator
      */
     default Generator getGenerator() {
         return Generator.UNDEFINED;

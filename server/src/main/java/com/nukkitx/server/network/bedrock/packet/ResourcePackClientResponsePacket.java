@@ -1,9 +1,11 @@
 package com.nukkitx.server.network.bedrock.packet;
 
+import com.google.common.base.Preconditions;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
 import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
+import lombok.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +15,7 @@ import static com.nukkitx.server.network.bedrock.BedrockUtil.readString;
 
 @Data
 public class ResourcePackClientResponsePacket implements BedrockPacket {
-    private final List<UUID> packIds = new ArrayList<>();
+    private final List<Entry> entries = new ArrayList<>();
     private Status status;
 
     @Override
@@ -27,7 +29,9 @@ public class ResourcePackClientResponsePacket implements BedrockPacket {
 
         int packIdsCount = buffer.readShortLE();
         for (int i = 0; i < packIdsCount; i++) {
-            packIds.add(UUID.fromString(readString(buffer)));
+            String[] split = readString(buffer).split("_");
+            Preconditions.checkArgument(split.length == 2);
+            entries.add(new Entry(UUID.fromString(split[0]), split[1]));
         }
     }
 
@@ -42,5 +46,11 @@ public class ResourcePackClientResponsePacket implements BedrockPacket {
         SEND_PACKS,
         HAVE_ALL_PACKS,
         COMPLETED
+    }
+
+    @Value
+    public static class Entry {
+        private final UUID uuid;
+        private String version;
     }
 }
