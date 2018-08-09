@@ -24346,6 +24346,138 @@
       }
     },
     {
+      "type": 1,
+      "output": [
+        {
+          "id": 333,
+          "damage": 0
+        }
+      ],
+      "shape": [
+        "ABA",
+        "AAA"
+      ],
+      "input": {
+        "A": {
+          "id": 5
+          "damage": 0
+        },
+        "B": {
+          "id": 269
+        }
+      }
+    },
+    {
+      "type": 1,
+      "output": [
+        {
+          "id": 333,
+          "damage": 1
+        }
+      ],
+      "shape": [
+        "ABA",
+        "AAA"
+      ],
+      "input": {
+        "A": {
+          "id": 5
+          "damage": 1
+        },
+        "B": {
+          "id": 269
+        }
+      }
+    },
+    {
+      "type": 1,
+      "output": [
+        {
+          "id": 333,
+          "damage": 2
+        }
+      ],
+      "shape": [
+        "ABA",
+        "AAA"
+      ],
+      "input": {
+        "A": {
+          "id": 5
+          "damage": 2
+        },
+        "B": {
+          "id": 269
+        }
+      }
+    },
+    {
+      "type": 1,
+      "output": [
+        {
+          "id": 333,
+          "damage": 3
+        }
+      ],
+      "shape": [
+        "ABA",
+        "AAA"
+      ],
+      "input": {
+        "A": {
+          "id": 5
+          "damage": 3
+        },
+        "B": {
+          "id": 269
+        }
+      }
+    },
+    {
+      "type": 1,
+      "output": [
+        {
+          "id": 333,
+          "damage": 4
+        }
+      ],
+      "shape": [
+        "ABA",
+        "AAA"
+      ],
+      "input": {
+        "A": {
+          "id": 5
+          "damage": 4
+        },
+        "B": {
+          "id": 269
+        }
+      }
+    },
+    {
+      "type": 1,
+      "output": [
+        {
+          "id": 333,
+          "damage": 5
+        }
+      ],
+      "shape": [
+        "ABA",
+        "AAA"
+      ],
+      "input": {
+        "A": {
+          "id": 5
+          "damage": 5
+        },
+        "B": {
+          "id": 269
+        }
+      }
+    },
+    {
       "type": 0,
       "input": [
         {
@@ -24875,7 +25007,7 @@
       "inputDamage": 15,
       "output": {
         "id": 235
-      }
+     },
     }
   ]
 }
