@@ -1,5 +1,6 @@
 package com.nukkitx.server.block.entity.behavior;
 
+import com.nukkitx.api.inventory.FurnaceInventory.SlotType;
 import com.nukkitx.api.item.ItemInstance;
 import com.nukkitx.server.block.entity.NukkitFurnaceBlockEntity;
 import com.nukkitx.server.inventory.NukkitFurnaceInventory;
@@ -24,7 +25,7 @@ public class FurnaceBehavior implements BlockEntityBehaivor {
         if (furnace.getBurnTime() > 0) {
             furnace.burnTime--;
 
-            Optional<ItemInstance> ingredient = inventory.getIngredient();
+            Optional<ItemInstance> ingredient = inventory.getItem(SlotType.INGREDIENT);
 
             if (ingredient.isPresent()) {
                 ItemInstance input = ingredient.get();
@@ -35,7 +36,8 @@ public class FurnaceBehavior implements BlockEntityBehaivor {
 
                     if (furnace.cookTime++ >= 200) {
                         ItemInstance result = furnace.getResult(input);
-                        inventory.countDown();
+                        inventory.countDown(SlotType.INGREDIENT.ordinal());
+                        //TODO
                     }
                 }
             } else {

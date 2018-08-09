@@ -5,10 +5,11 @@ import com.nukkitx.api.metadata.blockentity.SignBlockEntity;
 
 import java.util.Arrays;
 
-public class NukkitSignBlockEntity implements SignBlockEntity {
+public class NukkitSignBlockEntity extends NukkitBlockEntity implements SignBlockEntity {
     private final String[] lines;
 
     public NukkitSignBlockEntity(String[] lines) {
+        super(BlockEntityType.SIGN);
         this.lines = lines;
     }
 

@@ -2,11 +2,15 @@ package com.nukkitx.server.block.entity;
 
 import com.nukkitx.api.metadata.blockentity.BedBlockEntity;
 import com.nukkitx.api.metadata.data.DyeColor;
-import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
-public class NukkitBedBlockEntity implements BedBlockEntity {
+public class NukkitBedBlockEntity extends NukkitBlockEntity implements BedBlockEntity {
+
     private DyeColor dyeColor;
+
+    public NukkitBedBlockEntity(DyeColor dyeColor) {
+        super(BlockEntityType.BED);
+        this.dyeColor = dyeColor;
+    }
 
     @Override
     public DyeColor getDyeColor() {

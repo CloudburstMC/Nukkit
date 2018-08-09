@@ -8,8 +8,12 @@ import com.nukkitx.api.metadata.blockentity.JukeboxBlockEntity;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public class NukkitJukeboxBlockEntity implements JukeboxBlockEntity {
+public class NukkitJukeboxBlockEntity extends NukkitBlockEntity implements JukeboxBlockEntity {
     private ItemInstance record;
+
+    public NukkitJukeboxBlockEntity() {
+        super(BlockEntityType.JUKEBOX);
+    }
 
     @Override
     public Optional<ItemInstance> getRecord() {
