@@ -1,25 +1,24 @@
-package com.nukkitx.server.metadata.serializer;
+package com.nukkitx.server.metadata.serializer.block;
 
 import com.google.common.base.Preconditions;
 import com.nukkitx.api.block.BlockState;
 import com.nukkitx.api.item.ItemInstance;
 import com.nukkitx.api.item.ItemType;
 import com.nukkitx.api.metadata.Metadata;
-import com.nukkitx.api.metadata.block.Stone;
+import com.nukkitx.api.metadata.block.TallGrass;
 import com.nukkitx.nbt.tag.CompoundTag;
+import com.nukkitx.server.metadata.serializer.Serializer;
 
-public class StoneSerializer implements Serializer {
-    private static final Stone[] VALUES = Stone.values();
-
+public class TallGrassSerializer implements Serializer {
+    private static final TallGrass[] VALUES = TallGrass.values();
     @Override
-    public CompoundTag readNBT(BlockState block) {
+    public CompoundTag readNBT(BlockState state) {
         return null;
     }
 
     @Override
-    public short readMetadata(BlockState block) {
-        Stone stone = block.ensureBlockData(Stone.class);
-        return (short) stone.ordinal();
+    public short readMetadata(BlockState state) {
+        return (short) state.ensureBlockData(TallGrass.class).ordinal();
     }
 
     @Override
@@ -29,8 +28,7 @@ public class StoneSerializer implements Serializer {
 
     @Override
     public short readMetadata(ItemInstance item) {
-        Stone stone = item.ensureItemData(Stone.class);
-        return (short) stone.ordinal();
+        return (short) item.ensureItemData(TallGrass.class).ordinal();
     }
 
     @Override

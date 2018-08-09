@@ -1,9 +1,10 @@
-package com.nukkitx.server.metadata.serializer;
+package com.nukkitx.server.metadata.serializer.item;
 
 import com.nukkitx.api.item.ItemInstance;
 import com.nukkitx.api.item.ItemType;
 import com.nukkitx.api.metadata.Metadata;
 import com.nukkitx.api.metadata.item.GoldenApple;
+import com.nukkitx.server.metadata.serializer.Serializer;
 
 import static com.nukkitx.api.metadata.item.GoldenApple.ENCHANTED;
 import static com.nukkitx.api.metadata.item.GoldenApple.REGULAR;

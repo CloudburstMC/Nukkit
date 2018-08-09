@@ -6,13 +6,17 @@ import com.nukkitx.api.item.ItemInstance;
 
 import javax.annotation.Nullable;
 
-public interface FurnaceBlockEntity extends BlockEntity, InventoryHolder {
+public interface FurnaceBlockEntity extends NameableBlockEntity, InventoryHolder {
 
     boolean isFuel(@Nullable ItemInstance item);
 
     int getBurnDuration(@Nullable ItemInstance item);
 
     boolean isIngredient(@Nullable ItemInstance item);
+
+    int getCookTime();
+
+    int getBurnTime();
 
     @Override
     Inventory getInventory();

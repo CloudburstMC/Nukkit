@@ -1,9 +1,10 @@
-package com.nukkitx.server.metadata.serializer;
+package com.nukkitx.server.metadata.serializer.block;
 
 import com.nukkitx.api.block.BlockState;
 import com.nukkitx.api.item.ItemType;
 import com.nukkitx.api.metadata.Metadata;
 import com.nukkitx.api.metadata.block.Cake;
+import com.nukkitx.server.metadata.serializer.Serializer;
 
 public class CakeSerializer implements Serializer {
     @Override

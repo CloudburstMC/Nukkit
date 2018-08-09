@@ -22,7 +22,7 @@ public interface ItemInstance {
     Optional<Metadata> getItemData();
 
     static boolean isNull(@Nullable ItemInstance item) {
-        return item == null || item.getItemType() == BlockTypes.AIR || item.getAmount() == 0;
+        return item == null || item.getItemType() == BlockTypes.AIR || item.getAmount() <= 0;
     }
 
     Optional<String> getName();

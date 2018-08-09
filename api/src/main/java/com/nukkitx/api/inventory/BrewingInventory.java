@@ -14,4 +14,8 @@ public interface BrewingInventory extends Inventory, OpenableInventory {
     Optional<ItemInstance> getFuel();
 
     void setFuel(@Nullable ItemInstance item);
+
+    Optional<ItemInstance> getPotion(int slot);
+
+    void setPotion(int slot, @Nullable ItemInstance item);
 }

@@ -1,7 +1,6 @@
 package com.nukkitx.server.inventory;
 
 import com.google.common.base.Preconditions;
-import com.nukkitx.api.block.BlockTypes;
 import com.nukkitx.api.inventory.Inventory;
 import com.nukkitx.api.inventory.InventoryType;
 import com.nukkitx.api.item.ItemInstance;
@@ -47,7 +46,7 @@ public class NukkitInventory implements Inventory {
     public void setItem(int slot, @Nullable ItemInstance item, PlayerSession session) {
         checkSlot(slot);
 
-        if (isItemNull(item)) {
+        if (ItemInstance.isNull(item)) {
             clearItem(slot);
         } else {
             checkItem(item);
@@ -66,7 +65,7 @@ public class NukkitInventory implements Inventory {
 
 
     public boolean addItem(ItemInstance item, PlayerSession session) {
-        if (isItemNull(item)) {
+        if (ItemInstance.isNull(item)) {
             return false;
         }
         checkItem(item);
@@ -192,6 +191,18 @@ public class NukkitInventory implements Inventory {
         }
     }
 
+    public void countDown(int slot) {
+        checkSlot(slot);
+
+        ItemInstance item = contents[slot];
+
+        if (item.getAmount() <= 1) {
+            clearItem(slot);
+        } else {
+            setItem(slot, item.toBuilder().amount(item.getAmount() - 1).build());
+        }
+    }
+
     @Override
     public ItemInstance[] getAllContents() {
         return Arrays.copyOf(contents, contents.length);
@@ -207,7 +218,7 @@ public class NukkitInventory implements Inventory {
         }
         System.arraycopy(contents, 0, this.contents, 0, this.contents.length);
         for (int i = 0; i < contents.length; i++) {
-            if (isItemNull(contents[i])) {
+            if (ItemInstance.isNull(contents[i])) {
                 contents[i] = null;
             }
         }
@@ -228,10 +239,6 @@ public class NukkitInventory implements Inventory {
 
     private void checkSlot(int slot) {
         Preconditions.checkArgument(slot >= 0 && slot < contents.length, "Slot not within inventory range");
-    }
-
-    private static boolean isItemNull(@Nullable ItemInstance item) {
-        return item == null || item.getItemType() == BlockTypes.AIR || item.getAmount() == 0;
     }
 
     private static void checkItem(@Nonnull ItemInstance item) {

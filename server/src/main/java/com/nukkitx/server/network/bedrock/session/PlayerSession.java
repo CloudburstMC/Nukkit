@@ -425,6 +425,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         } else {
             return OptionalInt.empty(); // Player shouldn't be observing this inventory.
         }
+
         return OptionalInt.of(windowId);
     }
 

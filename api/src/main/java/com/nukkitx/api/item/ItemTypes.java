@@ -92,6 +92,7 @@ public class ItemTypes {
     public static final ItemType SNOWBALL = IntItem.builder().id(332).name("snowball").maxStackSize(16).build();
     public static final ItemType BOAT = IntItem.builder().id(333).name("boat").maxStackSize(1).build();
     public static final ItemType LEATHER = IntItem.builder().id(334).name("leather").maxStackSize(64).build();
+    public static final ItemType KELP = IntItem.builder().id(335).name("kelp").maxStackSize(64).build();
     public static final ItemType BRICK = IntItem.builder().id(336).name("brick").maxStackSize(64).build();
     public static final ItemType CLAY = IntItem.builder().id(337).name("clay_ball").maxStackSize(64).build();
     public static final ItemType SUGAR_CANE = IntItem.builder().id(338).name("reeds").maxStackSize(64).build();
@@ -207,6 +208,7 @@ public class ItemTypes {
     public static final ItemType CLOWNFISH = IntItem.builder().id(461).name("clownfish").maxStackSize(64).build();
     public static final ItemType PUFFERFISH = IntItem.builder().id(462).name("pufferfish").maxStackSize(64).build();
     public static final ItemType COOKED_SALMON = IntItem.builder().id(463).name("cooked_salmon").maxStackSize(64).build();
+    public static final ItemType DRIED_KELP = IntItem.builder().id(464).name("dried_kelp").maxStackSize(64).build();
     public static final ItemType ENCHANTED_GOLDEN_APPLE = IntItem.builder().id(466).name("appleenchanted").maxStackSize(64).build();
     public static final ItemType CAMERA = IntItem.builder().id(498).name("camera").maxStackSize(64).build();
     public static final ItemType DISC_13 = IntItem.builder().id(500).name("record_13").maxStackSize(1).build();

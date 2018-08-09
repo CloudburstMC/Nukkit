@@ -4,7 +4,6 @@ import com.flowpowered.math.vector.Vector2f;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Preconditions;
-import com.nukkitx.api.block.BlockTypes;
 import com.nukkitx.api.item.ItemInstance;
 import com.nukkitx.api.item.ItemInstanceBuilder;
 import com.nukkitx.api.item.ItemType;
@@ -24,7 +23,6 @@ import com.nukkitx.server.block.BlockUtil;
 import com.nukkitx.server.entity.Attribute;
 import com.nukkitx.server.entity.EntityLink;
 import com.nukkitx.server.item.ItemUtil;
-import com.nukkitx.server.item.NukkitItemInstance;
 import com.nukkitx.server.item.NukkitItemInstanceBuilder;
 import com.nukkitx.server.level.NukkitGameRules;
 import com.nukkitx.server.metadata.MetadataSerializers;
@@ -123,7 +121,7 @@ public final class BedrockUtil {
 
     public static void writeUuid(ByteBuf buffer, UUID uuid) {
         Preconditions.checkNotNull(buffer, "buffer");
-        Preconditions.checkNotNull(uuid , "uuid");
+        Preconditions.checkNotNull(uuid, "uuid");
         buffer.writeLong(uuid.getMostSignificantBits());
         buffer.writeLong(uuid.getLeastSignificantBits());
     }
@@ -236,7 +234,7 @@ public final class BedrockUtil {
         Preconditions.checkNotNull(buffer, "buffer");
         Preconditions.checkNotNull(entityLinkList, "entityLinkList");
         writeUnsignedInt(buffer, entityLinkList.size());
-        for (EntityLink entityLink: entityLinkList) {
+        for (EntityLink entityLink : entityLinkList) {
             writeUniqueEntityId(buffer, entityLink.getFromUniqueEntityId());
             writeUniqueEntityId(buffer, entityLink.getToUniqueEntityId());
             buffer.writeByte(entityLink.getType());
@@ -325,7 +323,7 @@ public final class BedrockUtil {
 
     public static void writeItemInstance(ByteBuf buffer, ItemInstance itemInstance) {
         Preconditions.checkNotNull(buffer, "buffer");
-        if (itemInstance == null || itemInstance.getItemType() == BlockTypes.AIR) {
+        if (ItemInstance.isNull(itemInstance)) {
             buffer.writeByte(0); // Save having to send all other data.
             return;
         }
@@ -340,17 +338,15 @@ public final class BedrockUtil {
         buffer.writeShort(0);
         int afterSizeIndex = buffer.writerIndex();
 
-        if (itemInstance instanceof NukkitItemInstance) {
-            try (NBTOutputStream stream = new NBTOutputStream(new LittleEndianByteBufOutputStream(buffer))) {
-                stream.write(((NukkitItemInstance) itemInstance).toSpecificNBT());
-            } catch (IOException e) {
-                // This shouldn't happen (as this is backed by a Netty ByteBuf), but okay...
-                throw new IllegalStateException("Unable to save NBT data", e);
-            }
-
-            // Set to the written NBT size
-            buffer.setShortLE(sizeIndex, buffer.writerIndex() - afterSizeIndex);
+        try (NBTOutputStream stream = new NBTOutputStream(new LittleEndianByteBufOutputStream(buffer))) {
+            stream.write(ItemUtil.toSpecificNBT(itemInstance));
+        } catch (IOException e) {
+            // This shouldn't happen (as this is backed by a Netty ByteBuf), but okay...
+            throw new IllegalStateException("Unable to write NBT data", e);
         }
+
+        // Set to the written NBT size
+        buffer.setShortLE(sizeIndex, buffer.writerIndex() - afterSizeIndex);
 
         // TODO: Use these instead of just ignoring.
         writeInt(buffer, 0); // can place
@@ -451,7 +447,7 @@ public final class BedrockUtil {
         Preconditions.checkNotNull(buffer, "buffer");
         Preconditions.checkNotNull(packInstanceEntries, "packInstanceEntries");
         buffer.writeShortLE(packInstanceEntries.size());
-        for (ResourcePack packInstanceEntry: packInstanceEntries) {
+        for (ResourcePack packInstanceEntry : packInstanceEntries) {
             writeString(buffer, packInstanceEntry.getId().toString());
             writeString(buffer, packInstanceEntry.getVersion().toString());
             writeString(buffer, packInstanceEntry.getName());
@@ -462,7 +458,7 @@ public final class BedrockUtil {
         Preconditions.checkNotNull(buffer, "buffer");
         Preconditions.checkNotNull(packInfoEntries, "packInfoEntries");
         buffer.writeShortLE(packInfoEntries.size());
-        for (ResourcePack packInfoEntry: packInfoEntries) {
+        for (ResourcePack packInfoEntry : packInfoEntries) {
             writeString(buffer, packInfoEntry.getId().toString());
             writeString(buffer, packInfoEntry.getVersion().toString());
             buffer.writeLongLE(packInfoEntry.getPackSize());

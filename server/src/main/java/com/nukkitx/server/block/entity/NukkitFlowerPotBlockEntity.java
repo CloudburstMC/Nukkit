@@ -2,11 +2,15 @@ package com.nukkitx.server.block.entity;
 
 import com.nukkitx.api.metadata.blockentity.FlowerPotBlockEntity;
 import com.nukkitx.api.metadata.data.PlantType;
-import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
-public class NukkitFlowerPotBlockEntity implements FlowerPotBlockEntity {
+public class NukkitFlowerPotBlockEntity extends NukkitBlockEntity implements FlowerPotBlockEntity {
+
     private PlantType type;
+
+    public NukkitFlowerPotBlockEntity(PlantType type) {
+        super(BlockEntityType.FLOWER_POT);
+        this.type = type;
+    }
 
     @Override
     public PlantType getPlantType() {

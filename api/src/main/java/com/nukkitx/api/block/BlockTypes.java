@@ -179,10 +179,10 @@ public class BlockTypes {
     public static final BlockType QUARTZ_STAIRS = IntBlock.builder().name("quartz_stairs").id(156).maxStackSize(64).diggable(true).transparent(true).solid(true).filterLight(15).hardness(0.8f).build();
     public static final BlockType WOODEN_DOUBLE_SLAB = IntBlock.builder().name("double_wooden_slab").id(157).maxStackSize(64).diggable(true).transparent(true).solid(true).flammable(true).hardness(2f).build();
     public static final BlockType WOODEN_SLAB = IntBlock.builder().name("wooden_slab").id(158).maxStackSize(64).diggable(true).transparent(true).solid(true).flammable(true).hardness(2f).build();
-    public static final BlockType STAINED_CLAY = IntBlock.builder().name("stained_hardened_clay").id(159).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(1.25f).metadataClass(Dyed.class).build();
+    public static final BlockType COLORED_TERRACOTTA = IntBlock.builder().name("stained_hardened_clay").id(159).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(1.25f).metadataClass(Dyed.class).build();
     public static final BlockType STAINED_GLASS_PANE = IntBlock.builder().name("stained_glass_pane").id(160).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.3f).build();
-    public static final BlockType ACACIA_LEAVES = IntBlock.builder().name("leaves2").id(161).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.2f).build();
-    public static final BlockType ACACIA_WOOD = IntBlock.builder().name("log2").id(162).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(2f).metadataClass(Log.class).flammable(true).build();
+    public static final BlockType LEAVES2 = IntBlock.builder().name("leaves2").id(161).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.2f).build();
+    public static final BlockType WOOD2 = IntBlock.builder().name("log2").id(162).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(2f).metadataClass(Log.class).flammable(true).build();
     public static final BlockType ACACIA_WOOD_STAIRS = IntBlock.builder().name("acacia_stairs").id(163).maxStackSize(64).diggable(true).transparent(true).solid(true).filterLight(15).flammable(true).hardness(2f).build();
     public static final BlockType DARK_OAK_WOOD_STAIRS = IntBlock.builder().name("dark_oak_stairs").id(164).maxStackSize(64).diggable(true).transparent(true).solid(true).filterLight(15).flammable(true).hardness(2f).build();
     public static final BlockType SLIME_BLOCK = IntBlock.builder().name("slime").id(165).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0f).build();
@@ -192,7 +192,7 @@ public class BlockTypes {
     public static final BlockType SEA_LANTERN = IntBlock.builder().name("sealantern").id(169).maxStackSize(64).diggable(true).transparent(true).solid(true).emitLight(15).hardness(0.3f).build();
     public static final BlockType HAY_BALE = IntBlock.builder().name("hay_block").id(170).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(0.5f).build();
     public static final BlockType CARPET = IntBlock.builder().name("carpet").id(171).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0.1f).metadataClass(Dyed.class).floodable(true).build();
-    public static final BlockType HARDENED_CLAY = IntBlock.builder().name("hardened_clay").id(172).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(1.25f).build();
+    public static final BlockType TERRACOTTA = IntBlock.builder().name("hardened_clay").id(172).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(1.25f).build();
     public static final BlockType COAL_BLOCK = IntBlock.builder().name("coal_block").id(173).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(5f).build();
     public static final BlockType PACKED_ICE = IntBlock.builder().name("packed_ice").id(174).maxStackSize(64).diggable(true).solid(true).filterLight(15).hardness(0.5f).build();
     public static final BlockType SUNFLOWER = IntBlock.builder().name("double_plant").id(175).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0f).floodable(true).build();

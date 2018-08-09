@@ -1,6 +1,7 @@
 package com.nukkitx.server.inventory;
 
 import com.flowpowered.math.vector.Vector3i;
+import com.google.common.base.Preconditions;
 import com.nukkitx.api.inventory.BrewingInventory;
 import com.nukkitx.api.item.ItemInstance;
 
@@ -38,5 +39,16 @@ public class NukkitBrewingInventory extends NukkitInventory implements BrewingIn
     @Override
     public void setFuel(@Nullable ItemInstance item) {
         setItem(4, item);
+    }
+
+    @Override
+    public Optional<ItemInstance> getPotion(int slot) {
+        Preconditions.checkArgument(slot >= 1 && slot <= 3, "potion");
+        return getItem(slot);
+    }
+
+    @Override
+    public void setPotion(int slot, @Nullable ItemInstance item) {
+        setItem(slot, item);
     }
 }

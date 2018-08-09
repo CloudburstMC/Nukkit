@@ -14,6 +14,7 @@ import java.util.Optional;
 
 @Immutable
 public class NukkitBlockState implements BlockState {
+
     public static final NukkitBlockState AIR = new NukkitBlockState(BlockTypes.AIR, null, null);
     private final BlockType type;
     private final Metadata metadata;
