@@ -24,7 +24,7 @@ public class ChestSerializer implements Serializer {
 
     @Override
     public CompoundTag readNBT(ItemInstance item) {
-        return read(item.ensureItemData(NukkitChestBlockEntity.class));
+        return read(item.ensureMetadata(NukkitChestBlockEntity.class));
     }
 
     protected CompoundTag read(NukkitChestBlockEntity entity) {

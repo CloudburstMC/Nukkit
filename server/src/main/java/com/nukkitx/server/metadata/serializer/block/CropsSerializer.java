@@ -9,7 +9,7 @@ import com.nukkitx.server.metadata.serializer.Serializer;
 public class CropsSerializer implements Serializer {
     @Override
     public short readMetadata(BlockState state) {
-        Crops crops = state.ensureBlockData(Crops.class);
+        Crops crops = state.ensureMetadata(Crops.class);
         return (short) crops.getStage();
     }
 

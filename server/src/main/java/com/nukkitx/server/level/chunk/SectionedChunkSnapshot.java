@@ -92,7 +92,7 @@ public class SectionedChunkSnapshot implements ChunkSnapshot {
         BlockEntity blockEntity = blockEntities.get(xyzIdx(x, y, z));
 
         if (blockEntity != null) {
-            state = new NukkitBlockState(state.getBlockType(), state.getBlockData().orElse(null), blockEntity);
+            state = new NukkitBlockState(state.getBlockType(), state.getMetadata().orElse(null), blockEntity);
         }
 
         return new NukkitBlock(level, chunk, full, state);

@@ -9,7 +9,7 @@ import com.nukkitx.server.metadata.serializer.Serializer;
 public class CakeSerializer implements Serializer {
     @Override
     public short readMetadata(BlockState state) {
-        return state.ensureBlockData(Cake.class).getLevel();
+        return state.ensureMetadata(Cake.class).getLevel();
     }
 
     @Override

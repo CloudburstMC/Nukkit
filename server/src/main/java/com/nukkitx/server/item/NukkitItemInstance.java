@@ -57,7 +57,7 @@ public class NukkitItemInstance implements ItemInstance {
     }
 
     @Override
-    public Optional<Metadata> getItemData() {
+    public Optional<Metadata> getMetadata() {
         return Optional.ofNullable(data);
     }
 

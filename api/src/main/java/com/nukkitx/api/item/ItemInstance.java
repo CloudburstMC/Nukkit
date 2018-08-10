@@ -3,6 +3,7 @@ package com.nukkitx.api.item;
 import com.nukkitx.api.block.BlockTypes;
 import com.nukkitx.api.enchantment.EnchantmentInstance;
 import com.nukkitx.api.metadata.Metadata;
+import com.nukkitx.api.metadata.Metadatable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -13,13 +14,11 @@ import java.util.Optional;
 
 @Nonnull
 @Immutable
-public interface ItemInstance {
+public interface ItemInstance extends Metadatable {
 
     ItemType getItemType();
 
     int getAmount();
-
-    Optional<Metadata> getItemData();
 
     static boolean isNull(@Nullable ItemInstance item) {
         return item == null || item.getItemType() == BlockTypes.AIR || item.getAmount() <= 0;
@@ -40,14 +39,6 @@ public interface ItemInstance {
     boolean isMergeable(@Nonnull ItemInstance itemInstance);
 
     boolean equals(@Nullable ItemInstance item);
-
-    default <T extends Metadata> T ensureItemData(Class<T> clazz) {
-        try {
-            return (T) getItemData().orElseThrow(() -> new IllegalArgumentException("ItemInstance has no data"));
-        } catch (ClassCastException e) {
-            throw new IllegalArgumentException("Invalid class supplied", e);
-        }
-    }
 
     default boolean isFull() {
         return getAmount() >= getItemType().getMaximumStackSize();

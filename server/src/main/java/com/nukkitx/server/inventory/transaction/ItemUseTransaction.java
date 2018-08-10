@@ -88,7 +88,7 @@ public class ItemUseTransaction extends ComplexTransaction {
             if (data.getGameMode() == GameMode.SURVIVAL) {
                 switch (blockBehavior.onBreak(session, block, withItem)) {
                     case REDUCE_DURABILITY:
-                        withItem.getItemData().ifPresent(metadata -> {
+                        withItem.getMetadata().ifPresent(metadata -> {
                             if (metadata instanceof GenericDamageValue) {
                                 int damage = ((GenericDamageValue) metadata).getDamage() + 1;
                                 session.getInventory().setItem(session.getInventory().getHeldHotbarSlot(),

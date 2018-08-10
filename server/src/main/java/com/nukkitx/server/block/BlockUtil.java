@@ -59,7 +59,7 @@ public class BlockUtil {
         }
 
         BlockType blockType = (BlockType) item.getItemType();
-        Optional<Metadata> itemData = item.getItemData();
+        Optional<Metadata> itemData = item.getMetadata();
         Metadata blockData = itemData.orElse(null);
         return new NukkitBlockState(blockType, blockData, null);
     }

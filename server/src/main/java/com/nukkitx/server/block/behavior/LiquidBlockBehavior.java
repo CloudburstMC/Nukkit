@@ -16,7 +16,7 @@ public abstract class LiquidBlockBehavior extends SimpleBlockBehavior {
     @Override
     public boolean onUpdate(Block block) {
         BlockState state = block.getBlockState();
-        Liquid liquid = state.ensureBlockData(Liquid.class);
+        Liquid liquid = state.ensureMetadata(Liquid.class);
         byte level = liquid.getLevel();
         int multiplier = getFlowDecayPerBlock();
 
@@ -34,7 +34,7 @@ public abstract class LiquidBlockBehavior extends SimpleBlockBehavior {
     protected boolean canFlowInto(Block block) {
         BlockState state = block.getBlockState();
         return state.getBlockType().isFloodable() &&
-                !(state.getBlockData().isPresent() && state.getBlockData().get() instanceof Liquid && ((Liquid) state.getBlockData().get()).getLevel() == 0);
+                !(state.getMetadata().isPresent() && state.getMetadata().get() instanceof Liquid && ((Liquid) state.getMetadata().get()).getLevel() == 0);
     }
 
     protected int getFlowDecayPerBlock() {
@@ -44,7 +44,7 @@ public abstract class LiquidBlockBehavior extends SimpleBlockBehavior {
     protected Vector3i getFlowVector(Block liquid) {
         Vector3i flowVector = Vector3i.ZERO;
 
-        int level = liquid.getBlockState().ensureBlockData(Liquid.class).getLevel();
+        int level = liquid.getBlockState().ensureMetadata(Liquid.class).getLevel();
 
         List<Block> neighbors = liquid.getNeighboringBlocksIfLoaded();
         for (Block neighbor : neighbors) {
@@ -90,7 +90,7 @@ public abstract class LiquidBlockBehavior extends SimpleBlockBehavior {
         if (block.getBlockState().getBlockType() != neighbor.getBlockState().getBlockType()) {
             return -1;
         } else {
-            return neighbor.getBlockState().ensureBlockData(Liquid.class).getLevel();
+            return neighbor.getBlockState().ensureMetadata(Liquid.class).getLevel();
         }
     }
 }

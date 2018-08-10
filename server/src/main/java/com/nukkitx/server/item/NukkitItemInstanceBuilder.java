@@ -31,7 +31,7 @@ public class NukkitItemInstanceBuilder implements ItemInstanceBuilder {
     public NukkitItemInstanceBuilder(@Nonnull ItemInstance item) {
         itemType = item.getItemType();
         amount = item.getAmount();
-        data = item.getItemData().orElse(null);
+        data = item.getMetadata().orElse(null);
         itemLore = item.getLore();
         enchantments.addAll(item.getEnchantments());
     }

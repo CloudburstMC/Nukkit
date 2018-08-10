@@ -31,7 +31,7 @@ public class NukkitRecipeItemInstanceBuilder implements RecipeItemInstanceBuilde
         Preconditions.checkNotNull(item, "item");
         itemType = item.getItemType();
         amount = item.getAmount();
-        data = item.getItemData().orElse(null);
+        data = item.getMetadata().orElse(null);
         itemLore = item.getLore();
         enchantments.addAll(item.getEnchantments());
         ignoreMetadata = item.isIgnoringMetadata();
@@ -41,7 +41,7 @@ public class NukkitRecipeItemInstanceBuilder implements RecipeItemInstanceBuilde
         Preconditions.checkNotNull(item, "item");
         itemType = item.getItemType();
         amount = item.getAmount();
-        data = item.getItemData().orElse(null);
+        data = item.getMetadata().orElse(null);
         itemLore = item.getLore();
         enchantments.addAll(item.getEnchantments());
     }

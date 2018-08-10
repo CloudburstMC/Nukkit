@@ -25,7 +25,7 @@ public class SimpleBlockBehavior implements BlockBehavior {
                 .itemType(block.getBlockState().getBlockType())
                 .amount(1);
 
-        block.getBlockState().getBlockData().ifPresent(builder::itemData);
+        block.getBlockState().getMetadata().ifPresent(builder::itemData);
 
         return ImmutableList.of(builder.build());
     }

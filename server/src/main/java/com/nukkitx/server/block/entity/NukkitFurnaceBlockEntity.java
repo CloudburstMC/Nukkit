@@ -182,7 +182,7 @@ public class NukkitFurnaceBlockEntity extends NukkitNameableBlockEntity implemen
         }
 
         if (item.getItemType() == ItemTypes.BUCKET) {
-            Bucket data = item.ensureItemData(Bucket.class);
+            Bucket data = item.ensureMetadata(Bucket.class);
 
             if (data == Bucket.LAVA) {
                 return 20000;

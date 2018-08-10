@@ -22,7 +22,7 @@ public class FlowerPotSerializer implements Serializer {
 
     @Override
     public CompoundTag readNBT(ItemInstance item) {
-        NukkitFlowerPotBlockEntity blockEntity = item.ensureItemData(NukkitFlowerPotBlockEntity.class);
+        NukkitFlowerPotBlockEntity blockEntity = item.ensureMetadata(NukkitFlowerPotBlockEntity.class);
         return CompoundTagBuilder.builder()
                 .stringTag("contents", blockEntity.getPlantType().name().toLowerCase())
                 .buildRootTag();

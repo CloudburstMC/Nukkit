@@ -12,7 +12,7 @@ import static com.nukkitx.api.metadata.item.Coal.REGULAR;
 public class CoalSerializer implements Serializer {
     @Override
     public short readMetadata(ItemInstance item) {
-        Coal coal = item.ensureItemData(Coal.class);
+        Coal coal = item.ensureMetadata(Coal.class);
         return (short) coal.ordinal();
     }
 
