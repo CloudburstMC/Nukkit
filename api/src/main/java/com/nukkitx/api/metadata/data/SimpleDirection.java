@@ -1,8 +1,18 @@
 package com.nukkitx.api.metadata.data;
 
+import com.nukkitx.api.util.data.BlockFace;
+
 public enum SimpleDirection {
-    EAST,
-    WEST,
+    NORTH,
     SOUTH,
-    NORTH
+    EAST,
+    WEST;
+
+    public BlockFace toBlockFace() {
+        return BlockFace.getFace(ordinal() + 2);
+    }
+
+    public static SimpleDirection fromIndex(int index) {
+        return values()[index];
+    }
 }

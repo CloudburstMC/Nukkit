@@ -1,6 +1,7 @@
 package com.nukkitx.api.metadata.block;
 
 import com.google.common.base.Preconditions;
+import com.nukkitx.api.metadata.Metadata;
 import com.nukkitx.api.metadata.data.CardinalDirection;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -8,7 +9,7 @@ import lombok.AllArgsConstructor;
 import javax.annotation.Nonnull;
 
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
-public class CardinalDirectional {
+public class CardinalDirectional implements Metadata {
     private final CardinalDirection direction;
 
     public static CardinalDirectional of(@Nonnull CardinalDirection direction) {

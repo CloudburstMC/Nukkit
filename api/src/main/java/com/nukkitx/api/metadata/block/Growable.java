@@ -11,14 +11,18 @@ import java.util.Objects;
  * @author CreeperFace
  */
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Cactus implements Metadata {
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
+public class Growable implements Metadata {
 
     @Getter
-    private final int age;
+    final int age;
 
-    public static Cactus of(int age) {
-        return new Cactus(age);
+    public static Growable of(int age) {
+        return new Growable(age);
+    }
+
+    public boolean isFullyGrown() {
+        return age >= 7;
     }
 
     @Override
@@ -30,13 +34,13 @@ public class Cactus implements Metadata {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Cactus that = (Cactus) o;
+        Growable that = (Growable) o;
         return this.age == that.age;
     }
 
     @Override
     public String toString() {
-        return "Cactus(" +
+        return "Growable(" +
                 "age=" + age +
                 ')';
     }
