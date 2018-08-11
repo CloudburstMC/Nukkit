@@ -1774,6 +1774,8 @@ public class Level implements ChunkManager, Metadatable {
             item = new ItemBlock(new BlockAir(), 0, 0);
         }
 
+        boolean isSilkTouch = item.getEnchantment(Enchantment.ID_SILK_TOUCH) != null;
+
         if (player != null) {
             double breakTime = target.getBreakTime(item, player);
             // this in
@@ -1803,7 +1805,7 @@ public class Level implements ChunkManager, Metadatable {
             Item[] eventDrops;
             if (!player.isSurvival()) {
                 eventDrops = new Item[0];
-            } else if (item.getEnchantment(Enchantment.ID_SILK_TOUCH) != null && target.canSilkTouch()) {
+            } else if (isSilkTouch && target.canSilkTouch()) {
                 eventDrops = new Item[]{target.toItem()};
             } else {
                 eventDrops = target.getDrops(item);
@@ -1908,7 +1910,7 @@ public class Level implements ChunkManager, Metadatable {
 
         if (this.gameRules.getBoolean(GameRule.DO_TILE_DROPS)) {
             int dropExp = target.getDropExp();
-            if (player != null) {
+            if (!isSilkTouch && player != null) {
                 player.addExperience(dropExp);
                 if (player.isSurvival()) {
                     for (int ii = 1; ii <= dropExp; ii++) {
