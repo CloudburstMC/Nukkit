@@ -696,6 +696,10 @@ public class Level implements ChunkManager, Metadatable {
 
         updateBlockLight(lightQueue);
         this.checkTime();
+        
+        if(stopTime) {
+            this.sendTime();
+        }
 
         // Tick Weather
         if (gameRules.getBoolean(GameRule.DO_WEATHER_CYCLE)) {
