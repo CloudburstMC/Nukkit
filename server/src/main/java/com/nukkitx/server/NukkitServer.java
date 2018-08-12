@@ -159,8 +159,8 @@ public class NukkitServer implements Server {
 
         try {
             name = Preconditions.checkNotNull(mainPackage.getImplementationTitle());
-            apiVersion = SemVer.fromString(mainPackage.getSpecificationVersion());
-            minecraftVersion = SemVer.fromString(mainPackage.getImplementationVersion());
+            apiVersion = SemVer.fromString(mainPackage.getSpecificationVersion().split("-")[0]);
+            minecraftVersion = SemVer.fromString(mainPackage.getImplementationVersion().split("-")[0]);
             nukkitVersion = Preconditions.checkNotNull(mainPackage.getImplementationVendor());
         } catch (NullPointerException e) {
             name = "Nukkit";

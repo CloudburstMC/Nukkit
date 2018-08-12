@@ -1,28 +1,25 @@
 package com.nukkitx.api.metadata.block;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
+import com.nukkitx.api.metadata.Anvil;
 import com.nukkitx.api.metadata.data.SimpleDirection;
+import lombok.Getter;
 
 /**
  * @author CreeperFace
  */
-public class Anvil extends SimpleDirectional {
+public class AnvilBlock extends SimpleDirectional implements Anvil {
 
-    final int damage;
+    @Getter
+    final Damage damage;
 
-    Anvil(SimpleDirection direction, int damage) {
+    AnvilBlock(SimpleDirection direction, Damage damage) {
         super(direction);
-        Preconditions.checkArgument(damage >= 0 && damage <= 2, "damage");
         this.damage = damage;
     }
 
-    public Damage getDamage() {
-        return Damage.values()[damage];
-    }
-
-    public static Anvil of(SimpleDirection direction, int damage) {
-        return new Anvil(direction, damage);
+    public static AnvilBlock of(SimpleDirection direction, Damage damage) {
+        return new AnvilBlock(direction, damage);
     }
 
     @Override
@@ -34,21 +31,15 @@ public class Anvil extends SimpleDirectional {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Anvil that = (Anvil) o;
+        AnvilBlock that = (AnvilBlock) o;
         return this.getDirection() == that.getDirection() && this.damage == that.damage;
     }
 
     @Override
     public String toString() {
-        return "Anvil(" +
+        return "AnvilBlock(" +
                 "direction=" + getDirection() +
-                "damage=" + damage +
+                "damage=" + damage.name() +
                 ')';
-    }
-
-    public enum Damage {
-        NEW,
-        SLIGHTLY,
-        VERY
     }
 }
