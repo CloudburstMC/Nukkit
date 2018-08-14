@@ -165,7 +165,6 @@ public class BlockTrapdoor extends BlockTransparentMeta {
         if (type == Level.BLOCK_UPDATE_REDSTONE || type == Level.BLOCK_UPDATE_NORMAL) {
             if ((!isOpen() && this.level.isBlockPowered(this)) || (isOpen() && !this.level.isBlockPowered(this))) {
                 this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isOpen() ? 15 : 0, isOpen() ? 0 : 15));
-                this.toggle(null);
                 return type;
             }
         }
@@ -206,10 +205,8 @@ public class BlockTrapdoor extends BlockTransparentMeta {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (!this.toggle(player)) {
-            return false;
-        }
-
+        this.setDamage(this.getDamage() ^ 0x08);
+        this.level.setBlock(this, this, true);
         this.level.addSound(this, isOpen() ? Sound.RANDOM_DOOR_OPEN : Sound.RANDOM_DOOR_CLOSE);
         return true;
     }
@@ -217,28 +214,6 @@ public class BlockTrapdoor extends BlockTransparentMeta {
     @Override
     public BlockColor getColor() {
         return BlockColor.WOOD_BLOCK_COLOR;
-    }
-
-    public boolean toggle(Player player) {
-        DoorToggleEvent event = new DoorToggleEvent(this, player);
-        this.getLevel().getServer().getPluginManager().callEvent(event);
-
-        if (event.isCancelled()) {
-            return false;
-        }
-
-
-        int sideBit = this.getDamage() & 0x07;
-        boolean open = isOpen();
-
-        this.setDamage(sideBit);
-
-        if (open) {
-            this.setDamage(this.getDamage() | 0x08);
-        }
-
-        this.level.setBlock(this, this, false, false);
-        return true;
     }
 
     public BlockFace getFacing() {
