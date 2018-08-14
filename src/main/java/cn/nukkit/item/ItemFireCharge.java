@@ -3,6 +3,7 @@ package cn.nukkit.item;
 import cn.nukkit.block.Block;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.Player;
 import cn.nukkit.block.BlockSolid;
 import cn.nukkit.block.BlockSolidMeta;
@@ -47,6 +48,7 @@ public class ItemFireCharge extends Item {
 
                 if (!e.isCancelled()) {
                     level.setBlock(fire, fire, true);
+                    level.addSound(block, Sound.MOB_GHAST_FIREBALL);
                     level.scheduleUpdate(fire, fire.tickRate() + ThreadLocalRandom.current().nextInt(10));
                 }
                 if (player.isSurvival()) {
