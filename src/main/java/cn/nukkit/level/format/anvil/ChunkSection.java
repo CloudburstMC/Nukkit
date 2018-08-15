@@ -368,9 +368,9 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         return new ChunkSection(
                 this.y,
                 this.storage.copy(),
-                this.blockLight.clone(),
-                this.skyLight.clone(),
-                this.compressedLight.clone(),
+                this.blockLight == null ? null : this.blockLight.clone(),
+                this.skyLight == null ? null : this.skyLight.clone(),
+                this.compressedLight == null ? null : this.compressedLight.clone(),
                 this.hasBlockLight,
                 this.hasSkyLight
         );
