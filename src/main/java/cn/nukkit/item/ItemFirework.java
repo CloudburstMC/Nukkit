@@ -77,6 +77,11 @@ public class ItemFirework extends Item {
             EntityFirework entity = new EntityFirework(level.getChunk(block.getFloorX() >> 4,
                     block.getFloorZ() >> 4), nbt);
             entity.spawnToAll();
+
+            if (!player.isCreative()) {
+                player.getInventory().decreaseCount(player.getInventory().getHeldItemIndex());
+            }
+
             return true;
         }
 
