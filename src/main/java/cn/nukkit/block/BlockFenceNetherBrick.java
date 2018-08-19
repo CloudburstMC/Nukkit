@@ -68,5 +68,4 @@ public class BlockFenceNetherBrick extends BlockFence {
     public boolean canHarvestWithHand() {
         return false;
     }
-
 }
