@@ -26,9 +26,7 @@ public class BlockFenceGateDarkOak extends BlockFenceGate {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        return new Item[]{
-                Item.get(Item.FENCE_GATE_DARK_OAK, 0, 1)
-        };
+    public Item toItem() {
+        return Item.get(Item.FENCE_GATE_DARK_OAK, 0, 1);
     }
 }
