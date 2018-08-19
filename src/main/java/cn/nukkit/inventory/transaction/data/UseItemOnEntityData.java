@@ -12,7 +12,7 @@ public class UseItemOnEntityData implements TransactionData {
     public int actionType;
     public int hotbarSlot;
     public Item itemInHand;
-    public Vector3 vector1;
-    public Vector3 vector2;
+    public Vector3 playerPos;
+    public Vector3 clickPos;
 
 }
