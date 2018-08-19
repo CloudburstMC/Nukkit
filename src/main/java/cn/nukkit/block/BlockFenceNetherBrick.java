@@ -47,7 +47,7 @@ public class BlockFenceNetherBrick extends BlockFence {
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
-                    toItem()
+                    Item.get(Item.NETHER_BRICK_FENCE, 0, 1)
             };
         } else {
             return new Item[0];

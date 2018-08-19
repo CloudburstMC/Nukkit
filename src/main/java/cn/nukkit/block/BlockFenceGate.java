@@ -192,4 +192,11 @@ public class BlockFenceGate extends BlockTransparentMeta {
 
         return 0;
     }
+
+    @Override
+    public Item[] getDrops(Item item) {
+        return new Item[]{
+                Item.get(Item.FENCE_GATE, 0, 1)
+        };
+    }
 }
