@@ -3,7 +3,7 @@ package com.nukkitx.server.metadata.serializer.block;
 import com.nukkitx.api.item.ItemType;
 import com.nukkitx.api.metadata.block.Door;
 import com.nukkitx.server.math.DirectionHelper;
-import com.nukkitx.server.metadata.serializer.MetadataSerializer;
+import com.nukkitx.server.metadata.serializer.Serializer;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
  * @author CreeperFace
  */
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-public class DoorSerializer implements MetadataSerializer<Door> {
+public class DoorSerializer implements Serializer<Door> {
 
-    public static final MetadataSerializer INSTANCE = new DoorSerializer();
+    public static final Serializer INSTANCE = new DoorSerializer();
 
     @Override
     public short readMetadata(Door data) {

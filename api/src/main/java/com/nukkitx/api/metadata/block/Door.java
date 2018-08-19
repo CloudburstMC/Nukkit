@@ -10,18 +10,15 @@ import java.util.Objects;
 /**
  * @author CreeperFace
  */
+@Getter
 public class Door extends SimpleDirectional {
 
-    @Getter
     private final boolean open;
 
-    @Getter
     private final boolean powered;
 
-    @Getter
     private final boolean rightHinge;
 
-    @Getter
     private final boolean upperPart;
 
     Door(boolean rightHinge, boolean powered) {

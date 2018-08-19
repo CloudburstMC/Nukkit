@@ -5,7 +5,7 @@ import com.nukkitx.api.item.ItemType;
 import com.nukkitx.api.metadata.Anvil;
 import com.nukkitx.api.metadata.block.AnvilBlock;
 import com.nukkitx.server.math.DirectionHelper;
-import com.nukkitx.server.metadata.serializer.MetadataSerializer;
+import com.nukkitx.server.metadata.serializer.Serializer;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
  * @author CreeperFace
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class AnvilSerializer implements MetadataSerializer<AnvilBlock> {
+public class AnvilSerializer implements Serializer<AnvilBlock> {
 
-    public static final MetadataSerializer INSTANCE = new AnvilSerializer();
+    public static final Serializer INSTANCE = new AnvilSerializer();
 
     @Override
     public short readMetadata(AnvilBlock anvil) {

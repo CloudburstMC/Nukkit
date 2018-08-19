@@ -2,7 +2,7 @@ package com.nukkitx.server.metadata.serializer.block;
 
 import com.nukkitx.api.item.ItemType;
 import com.nukkitx.api.metadata.block.BrewingStand;
-import com.nukkitx.server.metadata.serializer.MetadataSerializer;
+import com.nukkitx.server.metadata.serializer.Serializer;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
  * @author CreeperFace
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class BrewingStandSerializer implements MetadataSerializer<BrewingStand> {
+public class BrewingStandSerializer implements Serializer<BrewingStand> {
 
-    public static final MetadataSerializer INSTANCE = new BrewingStandSerializer();
+    public static final Serializer INSTANCE = new BrewingStandSerializer();
 
     @Override
     public short readMetadata(BrewingStand data) {

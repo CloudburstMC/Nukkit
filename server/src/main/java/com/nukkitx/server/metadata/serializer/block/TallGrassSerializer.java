@@ -3,14 +3,14 @@ package com.nukkitx.server.metadata.serializer.block;
 import com.flowpowered.math.GenericMath;
 import com.nukkitx.api.item.ItemType;
 import com.nukkitx.api.metadata.block.TallGrass;
-import com.nukkitx.server.metadata.serializer.MetadataSerializer;
+import com.nukkitx.server.metadata.serializer.Serializer;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class TallGrassSerializer implements MetadataSerializer<TallGrass> {
+public class TallGrassSerializer implements Serializer<TallGrass> {
 
-    public static final MetadataSerializer INSTANCE = new TallGrassSerializer();
+    public static final Serializer INSTANCE = new TallGrassSerializer();
 
     private static final TallGrass[] VALUES = TallGrass.values();
 

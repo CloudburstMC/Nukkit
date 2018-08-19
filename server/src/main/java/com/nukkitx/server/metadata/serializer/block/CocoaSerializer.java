@@ -5,7 +5,7 @@ import com.nukkitx.api.item.ItemType;
 import com.nukkitx.api.metadata.block.Cocoa;
 import com.nukkitx.api.metadata.data.SimpleDirection;
 import com.nukkitx.server.math.DirectionHelper;
-import com.nukkitx.server.metadata.serializer.MetadataSerializer;
+import com.nukkitx.server.metadata.serializer.Serializer;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
  * @author CreeperFace
  */
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-public class CocoaSerializer implements MetadataSerializer<Cocoa> {
+public class CocoaSerializer implements Serializer<Cocoa> {
 
-    public static final MetadataSerializer INSTANCE = new CocoaSerializer();
+    public static final Serializer INSTANCE = new CocoaSerializer();
 
     @Override
     public short readMetadata(Cocoa data) {

@@ -4,7 +4,7 @@ import com.nukkitx.api.item.ItemType;
 import com.nukkitx.api.metadata.block.Bed;
 import com.nukkitx.api.metadata.data.SimpleDirection;
 import com.nukkitx.server.math.DirectionHelper;
-import com.nukkitx.server.metadata.serializer.MetadataSerializer;
+import com.nukkitx.server.metadata.serializer.Serializer;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
  * @author CreeperFace
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class BedSerializer implements MetadataSerializer<Bed> {
+public class BedSerializer implements Serializer<Bed> {
 
-    public static final MetadataSerializer INSTANCE = new BedSerializer();
+    public static final Serializer INSTANCE = new BedSerializer();
 
     @Override
     public short readMetadata(Bed data) {

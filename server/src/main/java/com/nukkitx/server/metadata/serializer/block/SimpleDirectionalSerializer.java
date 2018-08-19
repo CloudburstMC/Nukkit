@@ -4,7 +4,7 @@ import com.flowpowered.math.GenericMath;
 import com.nukkitx.api.item.ItemType;
 import com.nukkitx.api.metadata.block.SimpleDirectional;
 import com.nukkitx.api.metadata.data.SimpleDirection;
-import com.nukkitx.server.metadata.serializer.MetadataSerializer;
+import com.nukkitx.server.metadata.serializer.Serializer;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
  * @author CreeperFace
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class SimpleDirectionalSerializer implements MetadataSerializer<SimpleDirectional> {
+public class SimpleDirectionalSerializer implements Serializer<SimpleDirectional> {
 
-    public static final MetadataSerializer INSTANCE = new SimpleDirectionalSerializer();
+    public static final Serializer INSTANCE = new SimpleDirectionalSerializer();
 
     @Override
     public short readMetadata(SimpleDirectional data) {

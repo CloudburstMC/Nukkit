@@ -8,8 +8,7 @@ import com.nukkitx.api.item.ItemTypes;
 import com.nukkitx.api.metadata.Metadata;
 import com.nukkitx.api.metadata.blockentity.BlockEntity;
 import com.nukkitx.nbt.tag.CompoundTag;
-import com.nukkitx.server.metadata.serializer.MetadataSerializer;
-import com.nukkitx.server.metadata.serializer.NBTSerializer;
+import com.nukkitx.server.metadata.serializer.Serializer;
 import com.nukkitx.server.metadata.serializer.block.*;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.experimental.UtilityClass;
@@ -17,40 +16,39 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class MetadataSerializers {
 
-    private static final TIntObjectHashMap<MetadataSerializer> META_SERIALIZERS = new TIntObjectHashMap<>();
-    private static final TIntObjectHashMap<NBTSerializer> NBT_SERIALIZERS = new TIntObjectHashMap<>();
+    private static final TIntObjectHashMap<Serializer> SERIALIZERS = new TIntObjectHashMap<>();
 
     static {
-        META_SERIALIZERS.put(BlockTypes.FURNACE.getId(), SimpleDirectionalSerializer.INSTANCE);
-        META_SERIALIZERS.put(BlockTypes.BURNING_FURNACE.getId(), SimpleDirectionalSerializer.INSTANCE);
-        META_SERIALIZERS.put(BlockTypes.CHEST.getId(), SimpleDirectionalSerializer.INSTANCE);
-        META_SERIALIZERS.put(BlockTypes.CAKE.getId(), CakeSerializer.INSTANCE);
-        META_SERIALIZERS.put(ItemTypes.COAL.getId(), CoalSerializer.INSTANCE);
-        META_SERIALIZERS.put(BlockTypes.CROPS.getId(), CropsSerializer.INSTANCE);
-        META_SERIALIZERS.put(BlockTypes.STONE.getId(), StoneSerializer.INSTANCE);
-        META_SERIALIZERS.put(BlockTypes.TALL_GRASS.getId(), TallGrassSerializer.INSTANCE);
-        META_SERIALIZERS.put(BlockTypes.PUMPKIN_STEM.getId(), CropsSerializer.INSTANCE);
-        META_SERIALIZERS.put(BlockTypes.MELON_STEM.getId(), CropsSerializer.INSTANCE);
-        META_SERIALIZERS.put(BlockTypes.CARROTS.getId(), CropsSerializer.INSTANCE);
-        META_SERIALIZERS.put(BlockTypes.POTATO.getId(), CropsSerializer.INSTANCE);
-        META_SERIALIZERS.put(BlockTypes.BEETROOT.getId(), CropsSerializer.INSTANCE);
-        META_SERIALIZERS.put(BlockTypes.BED.getId(), BedSerializer.INSTANCE);
-        META_SERIALIZERS.put(BlockTypes.WOOL.getId(), DyedSerializer.INSTANCE);
-        META_SERIALIZERS.put(BlockTypes.COLORED_TERRACOTTA.getId(), DyedSerializer.INSTANCE);
-        META_SERIALIZERS.put(BlockTypes.STAINED_GLASS_PANE.getId(), DyedSerializer.INSTANCE);
-        META_SERIALIZERS.put(BlockTypes.CARPET.getId(), DyedSerializer.INSTANCE);
-        META_SERIALIZERS.put(BlockTypes.HARD_STAINED_GLASS_PANE.getId(), DyedSerializer.INSTANCE);
-        META_SERIALIZERS.put(BlockTypes.SHULKER_BOX.getId(), DyedSerializer.INSTANCE);
-        META_SERIALIZERS.put(BlockTypes.STAINED_GLASS.getId(), DyedSerializer.INSTANCE);
-        META_SERIALIZERS.put(BlockTypes.HARD_STAINED_GLASS.getId(), DyedSerializer.INSTANCE);
-        META_SERIALIZERS.put(BlockTypes.ANVIL.getId(), AnvilSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.FURNACE.getId(), SimpleDirectionalSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.BURNING_FURNACE.getId(), SimpleDirectionalSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.CHEST.getId(), SimpleDirectionalSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.CAKE.getId(), CakeSerializer.INSTANCE);
+        SERIALIZERS.put(ItemTypes.COAL.getId(), CoalSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.CROPS.getId(), CropsSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.STONE.getId(), StoneSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.TALL_GRASS.getId(), TallGrassSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.PUMPKIN_STEM.getId(), CropsSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.MELON_STEM.getId(), CropsSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.CARROTS.getId(), CropsSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.POTATO.getId(), CropsSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.BEETROOT.getId(), CropsSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.BED.getId(), BedSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.WOOL.getId(), DyedSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.COLORED_TERRACOTTA.getId(), DyedSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.STAINED_GLASS_PANE.getId(), DyedSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.CARPET.getId(), DyedSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.HARD_STAINED_GLASS_PANE.getId(), DyedSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.SHULKER_BOX.getId(), DyedSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.STAINED_GLASS.getId(), DyedSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.HARD_STAINED_GLASS.getId(), DyedSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.ANVIL.getId(), AnvilSerializer.INSTANCE);
 
-//        META_SERIALIZERS.put(BlockTypes..getId(), .INSTANCE); template
-//        META_SERIALIZERS.put(ItemTypes..getId(), .INSTANCE); template
+//        SERIALIZERS.put(BlockTypes..getId(), .INSTANCE); template
+//        SERIALIZERS.put(ItemTypes..getId(), .INSTANCE); template
     }
 
     public static Metadata deserializeMetadata(ItemType type, short metadata) {
-        MetadataSerializer serializer = META_SERIALIZERS.get(type.getId());
+        Serializer serializer = SERIALIZERS.get(type.getId());
         if (serializer == null) {
             return null;
         }
@@ -59,7 +57,7 @@ public class MetadataSerializers {
     }
 
     public static BlockEntity deserializeNBT(ItemType type, CompoundTag tag) {
-        NBTSerializer serializer = NBT_SERIALIZERS.get(type.getId());
+        Serializer serializer = SERIALIZERS.get(type.getId());
         if (serializer == null) {
             return null;
         }
@@ -69,7 +67,7 @@ public class MetadataSerializers {
 
     @SuppressWarnings("unchecked")
     public static short serializeMetadata(BlockState block) {
-        MetadataSerializer dataSerializer = META_SERIALIZERS.get(block.getBlockType().getId());
+        Serializer dataSerializer = SERIALIZERS.get(block.getBlockType().getId());
         if (dataSerializer == null) {
             return 0;
         }
@@ -83,7 +81,7 @@ public class MetadataSerializers {
 
     @SuppressWarnings("unchecked")
     public static short serializeMetadata(ItemInstance itemStack) {
-        MetadataSerializer dataSerializer = META_SERIALIZERS.get(itemStack.getItemType().getId());
+        Serializer dataSerializer = SERIALIZERS.get(itemStack.getItemType().getId());
         if (dataSerializer == null) {
             return 0;
         }
@@ -96,7 +94,7 @@ public class MetadataSerializers {
     }
 
     public static CompoundTag serializeNBT(BlockState block) {
-        NBTSerializer dataSerializer = NBT_SERIALIZERS.get(block.getBlockType().getId());
+        Serializer dataSerializer = SERIALIZERS.get(block.getBlockType().getId());
         if (dataSerializer == null) {
             return null;
         }

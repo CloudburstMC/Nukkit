@@ -10,12 +10,12 @@ import com.nukkitx.server.block.entity.NukkitChestBlockEntity;
 import com.nukkitx.server.inventory.NukkitInventory;
 import com.nukkitx.server.inventory.NukkitInventoryType;
 import com.nukkitx.server.item.ItemUtil;
-import com.nukkitx.server.metadata.serializer.NBTSerializer;
+import com.nukkitx.server.metadata.serializer.Serializer;
 
 /**
  * @author CreeperFace
  */
-public class ChestSerializer implements NBTSerializer {
+public class ChestSerializer implements Serializer {
 
     @Override
     public CompoundTag readNBT(BlockState state) {
