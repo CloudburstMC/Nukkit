@@ -1,9 +1,8 @@
 package com.nukkitx.server.metadata.serializer.block;
 
-import com.nukkitx.api.block.BlockState;
 import com.nukkitx.api.item.ItemType;
-import com.nukkitx.api.metadata.Metadata;
-import com.nukkitx.server.metadata.serializer.Serializer;
+import com.nukkitx.api.metadata.block.BrewingStand;
+import com.nukkitx.server.metadata.serializer.MetadataSerializer;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -11,17 +10,31 @@ import lombok.NoArgsConstructor;
  * @author CreeperFace
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class BrewingStandSerializer implements Serializer {
+public class BrewingStandSerializer implements MetadataSerializer<BrewingStand> {
 
-    public static final Serializer INSTANCE = new BrewingStandSerializer();
+    public static final MetadataSerializer INSTANCE = new BrewingStandSerializer();
 
     @Override
-    public short readMetadata(BlockState block) {
-        return 0;
+    public short readMetadata(BrewingStand data) {
+        short meta = 0;
+
+        if (data.isSlotFilled(BrewingStand.SlotType.EAST)) {
+            meta |= 0x01;
+        }
+
+        if (data.isSlotFilled(BrewingStand.SlotType.SOUTHWEST)) {
+            meta |= 0x02;
+        }
+
+        if (data.isSlotFilled(BrewingStand.SlotType.NORTHWEST)) {
+            meta |= 0x04;
+        }
+
+        return meta;
     }
 
     @Override
-    public Metadata writeMetadata(ItemType type, short metadata) {
-        return null;
+    public BrewingStand writeMetadata(ItemType type, short metadata) {
+        return BrewingStand.of((metadata & 0x01) == 1, (metadata & 0x02) == 0x02, (metadata & 0x03) == 0x03);
     }
 }

@@ -1,7 +1,6 @@
 package com.nukkitx.api.metadata.block;
 
 import com.nukkitx.api.metadata.Metadata;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,7 +9,7 @@ import java.util.Objects;
 /**
  * @author CreeperFace
  */
-@AllArgsConstructor(access = AccessLevel.PACKAGE, staticName = "of")
+@AllArgsConstructor(staticName = "of")
 public class ChorusFlower implements Metadata {
 
     @Getter

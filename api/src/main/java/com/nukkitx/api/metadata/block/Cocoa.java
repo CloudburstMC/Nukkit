@@ -1,28 +1,24 @@
 package com.nukkitx.api.metadata.block;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
 import com.nukkitx.api.metadata.data.SimpleDirection;
+import lombok.Getter;
 
 /**
  * @author CreeperFace
  */
 public class Cocoa extends SimpleDirectional {
 
-    final int stage;
+    @Getter
+    final Stage stage;
 
-    Cocoa(SimpleDirection direction, int stage) {
+    Cocoa(SimpleDirection direction, Stage stage) {
         super(direction);
-        Preconditions.checkArgument(stage >= 0 && stage <= 2, "stage");
         this.stage = stage;
     }
 
-    public static Cocoa of(SimpleDirection direction, int stage) {
+    public static Cocoa of(SimpleDirection direction, Stage stage) {
         return new Cocoa(direction, stage);
-    }
-
-    public Stage getStage() {
-        return Stage.values()[stage];
     }
 
     @Override

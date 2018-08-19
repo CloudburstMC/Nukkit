@@ -1,20 +1,17 @@
 package com.nukkitx.server.metadata.serializer;
 
-import com.nukkitx.api.item.ItemInstance;
 import com.nukkitx.api.item.ItemType;
-import com.nukkitx.api.metadata.Metadata;
 import com.nukkitx.api.metadata.item.GenericDamageValue;
 
-public class GernericDamageSerializer implements Serializer {
+public class GernericDamageSerializer implements MetadataSerializer<GenericDamageValue> {
 
     @Override
-    public short readMetadata(ItemInstance item) {
-        GenericDamageValue damage = item.ensureMetadata(GenericDamageValue.class);
-        return damage.getDamage();
+    public short readMetadata(GenericDamageValue data) {
+        return data.getDamage();
     }
 
     @Override
-    public Metadata writeMetadata(ItemType type, short metadata) {
+    public GenericDamageValue writeMetadata(ItemType type, short metadata) {
         return new GenericDamageValue(metadata);
     }
 }

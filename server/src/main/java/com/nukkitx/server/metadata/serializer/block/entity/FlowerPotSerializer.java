@@ -8,9 +8,9 @@ import com.nukkitx.api.metadata.data.PlantType;
 import com.nukkitx.nbt.CompoundTagBuilder;
 import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.server.block.entity.NukkitFlowerPotBlockEntity;
-import com.nukkitx.server.metadata.serializer.Serializer;
+import com.nukkitx.server.metadata.serializer.NBTSerializer;
 
-public class FlowerPotSerializer implements Serializer {
+public class FlowerPotSerializer implements NBTSerializer {
 
     @Override
     public CompoundTag readNBT(BlockState state) {
