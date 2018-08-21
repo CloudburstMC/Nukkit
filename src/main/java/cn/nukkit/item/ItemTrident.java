@@ -88,7 +88,7 @@ public class ItemTrident extends ItemTool {
                             public void run() {
                                 player.getInventory().removeItem(Item.get(Item.TRIDENT, 0, 1));
                             }
-                        }.runTaskLater(null, 2);
+                        }.runTaskLater(null, 1);
                     }
                 }
             }
