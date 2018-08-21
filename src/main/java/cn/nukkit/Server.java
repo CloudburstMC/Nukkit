@@ -15,6 +15,7 @@ import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntityEgg;
 import cn.nukkit.entity.projectile.EntityEnderPearl;
 import cn.nukkit.entity.projectile.EntitySnowball;
+import cn.nukkit.entity.projectile.EntityThrownTrident;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
@@ -2072,6 +2073,7 @@ public class Server {
         Entity.registerEntity("XpOrb", EntityXPOrb.class);
         Entity.registerEntity("ThrownPotion", EntityPotion.class);
         Entity.registerEntity("Egg", EntityEgg.class);
+        Entity.registerEntity("ThrownTrident", EntityThrownTrident.class);
 
         Entity.registerEntity("Human", EntityHuman.class, true);
 
