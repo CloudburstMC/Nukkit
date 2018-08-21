@@ -78,7 +78,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[GLASS] = BlockGlass.class; //20
             list[LAPIS_ORE] = BlockOreLapis.class; //21
             list[LAPIS_BLOCK] = BlockLapis.class; //22
-            //TODO: list[DISPENSER] = BlockDispenser.class; //23
+            list[DISPENSER] = BlockDispenser.class; //23
             list[SANDSTONE] = BlockSandstone.class; //24
             list[NOTEBLOCK] = BlockNoteblock.class; //25
             list[BED_BLOCK] = BlockBed.class; //26
@@ -292,11 +292,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[PODZOL] = BlockPodzol.class; //243
             list[BEETROOT_BLOCK] = BlockBeetroot.class; //244
             list[GLOWING_OBSIDIAN] = BlockObsidianGlowing.class; //246
-            //TODO: list[NETHER_REACTOR] = BlockNetherReactor.class; //247 Should not be removed
+            list[NETHER_REACTOR] = BlockNetherReactor.class; //247 Should not be removed
 
             //TODO: list[PISTON_EXTENSION] = BlockPistonExtension.class; //250
 
-            //TODO: list[OBSERVER] = BlockObserver.class; //251
+            list[OBSERVER] = BlockObserver.class; //251
 
             for (int id = 0; id < 256; id++) {
                 Class c = list[id];

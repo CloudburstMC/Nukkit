@@ -201,19 +201,19 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[ROTTEN_FLESH] = ItemRottenFlesh.class; //367
             list[ENDER_PEARL] = ItemEnderPearl.class; //368
             list[BLAZE_ROD] = ItemBlazeRod.class; //369
-            //TODO: list[GHAST_TEAR] = ItemGhastTear.class; //370
+            list[GHAST_TEAR] = ItemGhastTear.class; //370
             list[GOLD_NUGGET] = ItemNuggetGold.class; //371
             list[NETHER_WART] = ItemNetherWart.class; //372
             list[POTION] = ItemPotion.class; //373
             list[GLASS_BOTTLE] = ItemGlassBottle.class; //374
             list[SPIDER_EYE] = ItemSpiderEye.class; //375
-            //TODO: list[FERMENTED_SPIDER_EYE] = ItemSpiderEyeFermented.class; //376
-            //TODO: list[BLAZE_POWDER] = ItemBlazePowder.class; //377
-            //TODO: list[MAGMA_CREAM] = ItemMagmaCream.class; //378
+            list[FERMENTED_SPIDER_EYE] = ItemSpiderEyeFermented.class; //376
+            list[BLAZE_POWDER] = ItemBlazePowder.class; //377
+            list[MAGMA_CREAM] = ItemMagmaCream.class; //378
             list[BREWING_STAND] = ItemBrewingStand.class; //379
             list[CAULDRON] = ItemCauldron.class; //380
             list[ENDER_EYE] = ItemEnderEye.class; //381
-            //TODO: list[GLISTERING_MELON] = ItemMelonGlistering.class; //382
+            list[GLISTERING_MELON] = ItemMelonGlistering.class; //382
             list[SPAWN_EGG] = ItemSpawnEgg.class; //383
             list[EXPERIENCE_BOTTLE] = ItemExpBottle.class; //384
             list[FIRE_CHARGE] = ItemFireCharge.class; //385
@@ -262,7 +262,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[JUNGLE_DOOR] = ItemDoorJungle.class; //429
             list[ACACIA_DOOR] = ItemDoorAcacia.class; //430
             list[DARK_OAK_DOOR] = ItemDoorDarkOak.class; //431
-            //TODO: list[CHORUS_FRUIT] = ItemChorusFruit.class; //432
+            list[CHORUS_FRUIT] = ItemChorusFruit.class; //432
             //TODO: list[POPPED_CHORUS_FRUIT] = ItemChorusFruitPopped.class; //433
 
             //TODO: list[DRAGON_BREATH] = ItemDragonBreath.class; //437
