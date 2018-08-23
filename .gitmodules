@@ -1,3 +1,3 @@
 [submodule "server/src/main/resources/lang"]
 	path = server/src/main/resources/lang
-	url = github.com:NukkitX/Languages/tree/rewrite.git
+	url = https://github.com/NukkitX/Languages
