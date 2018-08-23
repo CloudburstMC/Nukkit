@@ -17,15 +17,12 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.nukkitx.server.network.bedrock.BedrockUtil.*;
-import static com.nukkitx.server.network.util.VarInts.writeInt;
 import static com.nukkitx.server.network.util.VarInts.writeUnsignedInt;
 
 @Data
 public class AddPlayerPacket implements BedrockPacket {
     private UUID uuid;
     private String username;
-    private String thirdPartyName;
-    private int platformId;
     private long uniqueEntityId;
     private long runtimeEntityId;
     private String platformChatId;
@@ -41,14 +38,12 @@ public class AddPlayerPacket implements BedrockPacket {
     private int customFlags;
     //private final AdventureSettings adventureSettings = new AdventureSettings;
     private final List<EntityLink> entityLinks = new ArrayList<>();
-    private UUID deviceId;
+    private String deviceId;
 
     @Override
     public void encode(ByteBuf buffer) {
         writeUuid(buffer, uuid);
         writeString(buffer, username);
-        writeString(buffer, thirdPartyName);
-        writeInt(buffer, platformId);
         writeUniqueEntityId(buffer, uniqueEntityId);
         writeRuntimeEntityId(buffer, runtimeEntityId);
         writeString(buffer, platformChatId);
@@ -64,7 +59,7 @@ public class AddPlayerPacket implements BedrockPacket {
         writeUnsignedInt(buffer, customFlags);
         buffer.writeLongLE(0);
         writeEntityLinks(buffer, entityLinks);
-        writeString(buffer, deviceId.toString());
+        writeString(buffer, deviceId);
     }
 
     @Override

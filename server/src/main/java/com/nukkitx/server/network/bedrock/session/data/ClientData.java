@@ -23,7 +23,7 @@ public class ClientData {
     @JsonProperty("DefaultInputMode")
     private final int defaultInputMode;
     @JsonProperty("DeviceId")
-    private final UUID deviceId;
+    private final String deviceId;
     @JsonProperty("DeviceModel")
     private final String deviceModel;
     @JsonProperty("DeviceOS")

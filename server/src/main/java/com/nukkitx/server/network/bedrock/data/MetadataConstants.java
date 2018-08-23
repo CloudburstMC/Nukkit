@@ -90,7 +90,7 @@ public enum MetadataConstants {
     LIMITED_LIFE(Type.INT),
     ARMOR_STAND_POSE_INDEX(Type.INT),
     ENDER_CRYSTAL_TIME_OFFSET(Type.INT),
-    UNKNOWN_80(null),
+    ALWAYS_SHOW_NAMETAG(Type.BYTE),
     COLOR_2(Type.BYTE),
     UNKNOWN_82(null),
     SCORE_TAG(Type.STRING),
@@ -135,6 +135,7 @@ public enum MetadataConstants {
         INTERESTED,
         CHARGED,
         TAMED,
+        ORPHANED,
         LEASHED,
         SHEARED,
         GLIDING,
@@ -157,12 +158,14 @@ public enum MetadataConstants {
         FIRE_IMMUNE,
         DANCING,
         ENCHANTED,
-        UNKNOWN_TRIDENT,
+        SHOW_TRIDENT_ROPE,
         CONTAINER_PRIVATE,
         TRANSFORM,
         SPIN_ATTACK,
         SWIMMING,
-        BRIBED
+        BRIBED,
+        PREGNANT,
+        LAYING_EGG
     }
 
     public enum Type {

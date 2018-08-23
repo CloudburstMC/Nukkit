@@ -501,6 +501,7 @@ public final class BedrockUtil {
         buffer.writeBoolean(levelSettings.isBehaviorPackLocked());
         buffer.writeBoolean(levelSettings.isResourcePackLocked());
         buffer.writeBoolean(levelSettings.isFromLockedWorldTemplate());
+        buffer.writeBoolean(levelSettings.isUsingMsaGamertagsOnly());
     }
 
     public static void writeStructureEditorData(ByteBuf buffer, StructureEditorData structureEditorData) {
