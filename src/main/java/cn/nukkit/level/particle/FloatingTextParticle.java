@@ -64,6 +64,10 @@ public class FloatingTextParticle extends Particle {
     public void setInvisible() {
         this.setInvisible(true);
     }
+    
+    public long getEntityId() {
+        return entityId;   
+    }
 
     @Override
     public DataPacket[] encode() {
