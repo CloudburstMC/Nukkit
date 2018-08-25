@@ -2,11 +2,11 @@ package com.nukkitx.api.block;
 
 import com.google.common.base.Preconditions;
 import com.nukkitx.api.metadata.Dyed;
-import com.nukkitx.api.metadata.Log;
 import com.nukkitx.api.metadata.Metadata;
 import com.nukkitx.api.metadata.Wood;
 import com.nukkitx.api.metadata.block.*;
 import com.nukkitx.api.metadata.blockentity.*;
+import com.nukkitx.api.metadata.data.LogDirectional;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Builder;

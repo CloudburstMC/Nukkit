@@ -1,9 +1,12 @@
 package com.nukkitx.server.math;
 
+import lombok.experimental.UtilityClass;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
+@UtilityClass
 public class NukkitMath {
 
     public static int floorDouble(double n) {
@@ -46,8 +49,8 @@ public class NukkitMath {
         return ((double) Math.round(d * Math.pow(10, precision))) / Math.pow(10, precision);
     }
 
-    public static double clamp(double check, double min, double max) {
-        return check > max ? max : (check < min ? min : check);
+    public static short clampShort(short value, short min, short max) {
+        return value < min ? min : value > max ? max : value;
     }
 
     public static double getDirection(double d0, double d1) {

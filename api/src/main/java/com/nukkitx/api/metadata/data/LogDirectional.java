@@ -1,9 +1,7 @@
-package com.nukkitx.api.metadata.block;
+package com.nukkitx.api.metadata.data;
 
 import com.google.common.base.Preconditions;
 import com.nukkitx.api.metadata.Metadata;
-import com.nukkitx.api.metadata.data.LogDirection;
-import com.nukkitx.api.metadata.data.SimpleDirection;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

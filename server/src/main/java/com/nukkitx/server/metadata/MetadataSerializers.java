@@ -6,12 +6,15 @@ import com.nukkitx.api.item.ItemInstance;
 import com.nukkitx.api.item.ItemType;
 import com.nukkitx.api.item.ItemTypes;
 import com.nukkitx.api.metadata.Metadata;
+import com.nukkitx.api.metadata.Metadatable;
 import com.nukkitx.api.metadata.blockentity.BlockEntity;
 import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.server.metadata.serializer.Serializer;
 import com.nukkitx.server.metadata.serializer.block.*;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.experimental.UtilityClass;
+
+import java.util.Objects;
 
 @UtilityClass
 public class MetadataSerializers {
@@ -42,6 +45,21 @@ public class MetadataSerializers {
         SERIALIZERS.put(BlockTypes.STAINED_GLASS.getId(), DyedSerializer.INSTANCE);
         SERIALIZERS.put(BlockTypes.HARD_STAINED_GLASS.getId(), DyedSerializer.INSTANCE);
         SERIALIZERS.put(BlockTypes.ANVIL.getId(), AnvilSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.END_PORTAL_FRAME.getId(), SimpleDirectionalSerializer.INSTANCE_1);
+        SERIALIZERS.put(BlockTypes.FARMLAND.getId(), FarmlandSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.FLOWER.getId(), FlowerSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.JUKEBOX.getId(), JukeboxSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.LEAVES.getId(), LeavesSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.LEAVES2.getId(), Leaves2Serializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.LEVER.getId(), LeverSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.WATER.getId(), LiquidSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.STATIONARY_WATER.getId(), LiquidSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.LAVA.getId(), LiquidSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.STATIONARY_LAVA.getId(), LiquidSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.WOOD.getId(), LogSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.WOOD2.getId(), LogSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.MONSTER_EGG.getId(), MonsterEggSerializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.STONE_BRICK.getId(), StoneBrickSerializer.INSTANCE);
 
 //        SERIALIZERS.put(BlockTypes..getId(), .INSTANCE); template
 //        SERIALIZERS.put(ItemTypes..getId(), .INSTANCE); template
@@ -65,29 +83,23 @@ public class MetadataSerializers {
         return serializer.writeNBT(type, tag);
     }
 
-    @SuppressWarnings("unchecked")
     public static short serializeMetadata(BlockState block) {
-        Serializer dataSerializer = SERIALIZERS.get(block.getBlockType().getId());
-        if (dataSerializer == null) {
-            return 0;
-        }
+        return serializeMetadata(block.getBlockType(), block);
+    }
 
-        try {
-            return dataSerializer.readMetadata(block.getMetadata().orElseThrow(() -> new NullPointerException("BlockState instance has no data")));
-        } catch (ClassCastException e) {
-            throw new IllegalArgumentException("Invalid class supplied", e);
-        }
+    public static short serializeMetadata(ItemInstance itemStack) {
+        return serializeMetadata(itemStack.getItemType(), itemStack);
     }
 
     @SuppressWarnings("unchecked")
-    public static short serializeMetadata(ItemInstance itemStack) {
-        Serializer dataSerializer = SERIALIZERS.get(itemStack.getItemType().getId());
+    public static short serializeMetadata(ItemType type, Metadatable metadatable) {
+        Serializer dataSerializer = SERIALIZERS.get(type.getId());
         if (dataSerializer == null) {
             return 0;
         }
 
         try {
-            return dataSerializer.readMetadata(itemStack.getMetadata().orElseThrow(() -> new NullPointerException("BlockState instance has no data")));
+            return dataSerializer.readMetadata(metadatable.getMetadata().orElseThrow(() -> new NullPointerException(Objects.toString(metadatable) + " instance has no data")));
         } catch (ClassCastException e) {
             throw new IllegalArgumentException("Invalid class supplied", e);
         }
