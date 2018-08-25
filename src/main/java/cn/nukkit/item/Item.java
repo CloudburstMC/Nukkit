@@ -223,6 +223,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[ITEM_FRAME] = ItemItemFrame.class; //389
             list[FLOWER_POT] = ItemFlowerPot.class; //390
             list[CARROT] = ItemCarrot.class; //391
+            list[POTATO] = ItemPotato.class;
             list[BAKED_POTATO] = ItemPotatoBaked.class; //393
             list[POISONOUS_POTATO] = ItemPotatoPoisonous.class; //394
             //TODO: list[EMPTY_MAP] = ItemEmptyMap.class; //395
