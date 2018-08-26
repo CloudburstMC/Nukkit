@@ -19,7 +19,7 @@ public class CocoaSerializer implements Serializer<Cocoa> {
 
     @Override
     public short readMetadata(Cocoa data) {
-        short meta = DirectionHelper.toMeta(data.getDirection(), DirectionHelper.SeqType.TYPE_2_REVERSED);
+        short meta = DirectionHelper.toMeta(data.getDirection(), DirectionHelper.SeqType.TYPE_6);
 
         meta |= (data.getStage().ordinal() << 2);
 
@@ -28,7 +28,7 @@ public class CocoaSerializer implements Serializer<Cocoa> {
 
     @Override
     public Cocoa writeMetadata(ItemType type, short metadata) {
-        SimpleDirection direction = DirectionHelper.fromMeta(metadata & 0x03, DirectionHelper.SeqType.TYPE_2_REVERSED);
+        SimpleDirection direction = DirectionHelper.fromMeta(metadata & 0x03, DirectionHelper.SeqType.TYPE_6);
 
         Cocoa.Stage stage = Cocoa.Stage.values()[GenericMath.clamp((metadata & 0xc) >> 2, 0, Cocoa.Stage.values().length)];
 

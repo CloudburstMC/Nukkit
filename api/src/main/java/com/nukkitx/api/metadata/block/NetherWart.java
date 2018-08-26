@@ -1,15 +1,20 @@
 package com.nukkitx.api.metadata.block;
 
+import com.nukkitx.api.metadata.Metadata;
+import lombok.Value;
+
 /**
  * @author CreeperFace
  */
-public class NetherWart extends Growable {
+@Value
+public class NetherWart implements Metadata {
 
-    public NetherWart(int age) {
-        super(age);
+    final byte age;
+
+    public static NetherWart of(int age) {
+        return new NetherWart((byte) age);
     }
 
-    @Override
     public boolean isFullyGrown() {
         return this.age >= 3;
     }

@@ -18,7 +18,7 @@ public class SimpleDirectionalSerializer implements Serializer<SimpleDirectional
     public static final Serializer INSTANCE_2 = new SimpleDirectionalSerializer(DirectionHelper.SeqType.TYPE_2, 0);
     public static final Serializer INSTANCE_3 = new SimpleDirectionalSerializer(DirectionHelper.SeqType.TYPE_3, 0);
     public static final Serializer INSTANCE_4 = new SimpleDirectionalSerializer(DirectionHelper.SeqType.TYPE_4, 0);
-    public static final Serializer INSTANCE_2_REVERSED = new SimpleDirectionalSerializer(DirectionHelper.SeqType.TYPE_2_REVERSED, 0);
+    public static final Serializer INSTANCE_2_REVERSED = new SimpleDirectionalSerializer(DirectionHelper.SeqType.TYPE_6, 0);
 
     private final DirectionHelper.SeqType type;
     private final int offset;

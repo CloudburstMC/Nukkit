@@ -10,42 +10,39 @@ import java.util.Objects;
 /**
  * @author CreeperFace
  */
-@Getter
-public class Trapdoor extends SimpleDirectional {
+public class FenceGate extends SimpleDirectional {
 
-    private final boolean topHalf;
+    @Getter
     private final boolean open;
 
-    Trapdoor(SimpleDirection direction, boolean open, boolean topHalf) {
+    FenceGate(SimpleDirection direction, boolean open) {
         super(direction);
-        this.topHalf = topHalf;
         this.open = open;
     }
 
-    public static Trapdoor of(@Nonnull SimpleDirection direction, boolean open, boolean topHalf) {
+    public static FenceGate of(@Nonnull SimpleDirection direction, boolean open) {
         Preconditions.checkNotNull(direction, "direction");
-        return new Trapdoor(direction, open, topHalf);
+        return new FenceGate(direction, open);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Trapdoor)) return false;
+        if (!(o instanceof FenceGate)) return false;
 
-        Trapdoor that = (Trapdoor) o;
-        return topHalf == that.topHalf && open == that.open && that.getDirection() == getDirection();
+        FenceGate that = (FenceGate) o;
+        return open == that.open && that.getDirection() == getDirection();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), topHalf, open);
+        return Objects.hash(super.hashCode(), open);
     }
 
     @Override
     public String toString() {
         return "Trapdoor(" +
-                "topHalf=" + topHalf +
-                ", direction=" + getDirection() +
+                "direction=" + getDirection() +
                 ", open=" + open +
                 ')';
     }

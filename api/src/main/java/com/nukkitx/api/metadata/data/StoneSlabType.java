@@ -11,10 +11,5 @@ public enum StoneSlabType {
     BRICKS,
     STONE_BRICK,
     NETHER_BRICK,
-    QUARTZ,
-    RED_SANDSTONE,
-    PURPUR,
-    PRISMARINE,
-    PRISMARINE_BRICK,
-    DARK_PRISMARINE;
+    QUARTZ
 }

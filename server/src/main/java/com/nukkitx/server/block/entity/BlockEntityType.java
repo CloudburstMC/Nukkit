@@ -20,7 +20,7 @@ public enum BlockEntityType {
     SKULL("Skull"),
     FLOWER_POT("FlowerPot"),
     BREWING_STAND("BrewingStand"),
-    DAYLIGHT_DETECTOR("DaylightDetector"),
+    DAYLIGHT_DETECTOR("DaylightSensor"),
     MUSIC("Music"),
     ITEM_FRAME("ItemFrame"),
     CAULDRON("Cauldron"),
