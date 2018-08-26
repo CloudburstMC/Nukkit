@@ -841,13 +841,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         if (this.getHealth() <= 0) {
             pos = this.getSpawn();
-        }
 
-        RespawnPacket respawnPacket = new RespawnPacket();
-        respawnPacket.x = (float) pos.x;
-        respawnPacket.y = (float) pos.y;
-        respawnPacket.z = (float) pos.z;
-        this.dataPacket(respawnPacket);
+            RespawnPacket respawnPacket = new RespawnPacket();
+            respawnPacket.x = (float) pos.x;
+            respawnPacket.y = (float) pos.y;
+            respawnPacket.z = (float) pos.z;
+            this.dataPacket(respawnPacket);
+        }
 
         this.sendPlayStatus(PlayStatusPacket.PLAYER_SPAWN);
 
