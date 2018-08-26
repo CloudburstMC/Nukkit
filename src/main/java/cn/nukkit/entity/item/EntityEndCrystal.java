@@ -1,11 +1,11 @@
 package cn.nukkit.entity.item;
 
-import cn.nukkit.level.GameRule;
-import cn.nukkit.level.Position;
-import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.level.Explosion;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.level.Explosion;
+import cn.nukkit.level.GameRule;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
@@ -42,15 +42,19 @@ public class EntityEndCrystal extends Entity {
     }
 
     public boolean attack(EntityDamageEvent source){
-        if (this.closed) return false;
-        close();
-        kill();
+        if (!super.attack(source)) {
+            return false;
+        }
+
 		Position pos = this.getPosition();
 		Explosion explode = new Explosion(pos, 6, this);
+
         if (this.level.getGameRules().getBoolean(GameRule.TNT_EXPLODES)) {
             explode.explodeA();
             explode.explodeB();
         }
+
+        close();
         return true;
 	}
 
