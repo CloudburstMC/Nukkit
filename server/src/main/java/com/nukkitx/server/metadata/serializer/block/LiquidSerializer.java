@@ -16,11 +16,19 @@ public class LiquidSerializer implements Serializer<Liquid> {
 
     @Override
     public short readMetadata(Liquid metadata) {
-        return metadata.getLevel();
+        short meta = metadata.getLevel();
+
+        if (metadata.isFalling()) {
+            meta |= 0x08;
+        }
+
+        return meta;
     }
 
     @Override
     public Liquid writeMetadata(ItemType type, short metadata) {
-        return Liquid.of(metadata);
+        boolean falling = (metadata & 0x08) > 0;
+
+        return Liquid.of(metadata & 0x07, falling);
     }
 }

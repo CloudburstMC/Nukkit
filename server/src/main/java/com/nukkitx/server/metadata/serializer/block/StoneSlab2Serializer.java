@@ -30,7 +30,7 @@ public class StoneSlab2Serializer implements Serializer<StoneSlab2> {
 
     @Override
     public StoneSlab2 writeMetadata(ItemType type, short metadata) {
-        StoneSlabType2 slabType = VALUES[metadata & 0x0c];
+        StoneSlabType2 slabType = VALUES[Math.min(metadata & 0x0c, VALUES.length - 1)];
 
         return StoneSlab2.of(slabType, (metadata & 0x08) > 0, false);
     }

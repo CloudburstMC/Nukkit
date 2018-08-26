@@ -60,7 +60,7 @@ public class DirectionHelper {
     public static SimpleDirection fromMeta(int meta, SeqType type) {
         List<SimpleDirection> list = objTranslators.get(type);
 
-        meta = GenericMath.clamp(meta, 0, list.size());
+        meta = GenericMath.clamp(meta, 0, list.size() - 1);
 
         return list.get(meta);
     }
@@ -68,7 +68,7 @@ public class DirectionHelper {
     public static BlockFace faceFromMeta(int meta, SeqType type) {
         List<BlockFace> list = faceObjTranslators.get(type);
 
-        meta = GenericMath.clamp(meta, 0, list.size());
+        meta = GenericMath.clamp(meta, 0, list.size() - 1);
 
         return list.get(meta);
     }

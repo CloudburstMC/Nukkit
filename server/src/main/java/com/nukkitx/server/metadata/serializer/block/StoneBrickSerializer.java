@@ -23,6 +23,6 @@ public class StoneBrickSerializer implements Serializer<StoneBrick> {
 
     @Override
     public StoneBrick writeMetadata(ItemType type, short metadata) {
-        return VALUES[Math.min(VALUES.length, metadata)];
+        return VALUES[Math.min(VALUES.length - 1, metadata)];
     }
 }

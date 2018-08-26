@@ -26,6 +26,6 @@ public class Leaves2Serializer implements Serializer<Leaves2> {
 
     @Override
     public Leaves2 writeMetadata(ItemType type, short metadata) {
-        return Leaves2.of(TreeSpecies.values()[GenericMath.clamp((metadata & 0x03) + 4, 0, 1)], Leaves.DecayState.values()[(metadata >> 2) & 0x03]);
+        return Leaves2.of(TreeSpecies.values()[Math.min((metadata & 0x03), 1) + 4], Leaves.DecayState.values()[(metadata >> 2) & 0x03]);
     }
 }

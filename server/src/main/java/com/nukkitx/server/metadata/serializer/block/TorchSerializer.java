@@ -27,6 +27,6 @@ public class TorchSerializer implements Serializer<Directional> {
 
     @Override
     public Directional writeMetadata(ItemType type, short metadata) {
-        return Directional.of(VALUES.get(Math.min(VALUES.size(), metadata) - 1));
+        return Directional.of(VALUES.get(Math.min(VALUES.size() - 1, Math.max(metadata - 1, 0))));
     }
 }

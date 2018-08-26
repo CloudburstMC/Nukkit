@@ -27,7 +27,7 @@ public class WoodSlabSerializer implements Serializer<WoodSlab> {
 
     @Override
     public WoodSlab writeMetadata(ItemType type, short metadata) {
-        TreeSpecies slabType = VALUES[metadata & 0x0c];
+        TreeSpecies slabType = VALUES[Math.min(metadata & 0x0c, VALUES.length - 1)];
 
         return WoodSlab.of(slabType, (metadata & 0x08) > 0, false);
     }

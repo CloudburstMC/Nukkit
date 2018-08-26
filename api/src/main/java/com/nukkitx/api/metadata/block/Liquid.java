@@ -7,14 +7,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Getter
 public class Liquid implements Metadata {
 
-    @Getter
     private final byte level;
+    private final boolean falling;
 
-    public static Liquid of(int level) {
+    public static Liquid of(int level, boolean falling) {
         Preconditions.checkArgument(level >= 0 && level < 8, "level is not valid (wanted 0-7)");
-        return new Liquid((byte) level);
+        return new Liquid((byte) level, falling);
     }
 
     @Override
