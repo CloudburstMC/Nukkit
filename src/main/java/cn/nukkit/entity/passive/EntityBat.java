@@ -31,11 +31,11 @@ public class EntityBat extends EntityAnimal {
         return 0.9f;
     }
 
-	@Override
+    @Override
     public String getName() {
         return "Bat";
     }
-	
+    
     @Override
     public void initEntity() {
         super.initEntity();

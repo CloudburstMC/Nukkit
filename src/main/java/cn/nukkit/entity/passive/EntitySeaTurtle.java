@@ -29,7 +29,7 @@ public class EntitySeaTurtle extends EntityAnimal {
 
     @Override
     public float getWidth() {
-		if (this.isBaby()) {
+        if (this.isBaby()) {
             return 0.36f;
         }
         return 1.2f;
@@ -37,7 +37,7 @@ public class EntitySeaTurtle extends EntityAnimal {
 
     @Override
     public float getHeight() {
-		if (this.isBaby()) {
+        if (this.isBaby()) {
             return 0.12f;
         }
         return 0.4f;

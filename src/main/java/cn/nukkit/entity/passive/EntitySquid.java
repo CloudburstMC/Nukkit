@@ -24,7 +24,7 @@ public class EntitySquid extends EntityWaterAnimal {
         return NETWORK_ID;
     }
 
-	@Override
+    @Override
     public String getName() {
         return "Squid";
     }

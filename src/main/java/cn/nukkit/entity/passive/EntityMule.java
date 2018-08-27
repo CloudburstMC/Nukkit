@@ -27,7 +27,7 @@ public class EntityMule extends EntityAnimal {
         return NETWORK_ID;
     }
 
-	@Override
+    @Override
     public String getName() {
         return "Mule";
     }

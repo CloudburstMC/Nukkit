@@ -22,7 +22,7 @@ public class EntityHorse extends EntityAnimal {
         return NETWORK_ID;
     }
 
-	@Override
+    @Override
     public String getName() {
         return "Horse";
     }

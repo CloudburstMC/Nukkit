@@ -22,7 +22,7 @@ public class EntityPolarBear extends EntityAnimal {
         return NETWORK_ID;
     }
 
-	@Override
+    @Override
     public String getName() {
         return "Polar Bear";
     }
