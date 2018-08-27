@@ -105,6 +105,12 @@ public class BlockTNT extends BlockSolid {
             this.prime(80, player);
             return true;
         }
+        if (item.getId() == Item.FIRE_CHARGE) {
+            if (!player.isCreative()) player.getInventory().removeItem(Item.get(Item.FIRE_CHARGE, 0, 1));
+            this.level.addSound(player, Sound.MOB_GHAST_FIREBALL);
+            this.prime(80, player);
+            return true;
+        }
         return false;
     }
 
