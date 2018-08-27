@@ -1,10 +1,9 @@
 package cn.nukkit.entity.projectile;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.AddEntityPacket;
+
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -119,25 +118,5 @@ public class EntityArrow extends EntityProjectile {
         this.timing.stopTiming();
 
         return hasUpdate;
-    }
-
-    @Override
-    public void spawnTo(Player player) {
-        AddEntityPacket pk = new AddEntityPacket();
-        pk.type = EntityArrow.NETWORK_ID;
-        pk.entityUniqueId = this.getId();
-        pk.entityRuntimeId = this.getId();
-        pk.x = (float) this.x;
-        pk.y = (float) this.y;
-        pk.z = (float) this.z;
-        pk.speedX = (float) this.motionX;
-        pk.speedY = (float) this.motionY;
-        pk.speedZ = (float) this.motionZ;
-        pk.yaw = (float) this.yaw;
-        pk.pitch = (float) this.pitch;
-        pk.metadata = this.dataProperties;
-        player.dataPacket(pk);
-
-        super.spawnTo(player);
     }
 }
