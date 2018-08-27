@@ -26,7 +26,7 @@ public class EntityAreaEffectCloud extends Entity {
         if (this.closed) {
             return false;
         }
-		
+        
         boolean hasUpdate = true;
 
         return hasUpdate;
