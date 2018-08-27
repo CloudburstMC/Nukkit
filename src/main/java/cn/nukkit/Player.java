@@ -12,6 +12,7 @@ import cn.nukkit.entity.*;
 import cn.nukkit.entity.data.*;
 import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.projectile.EntityArrow;
+import cn.nukkit.entity.projectile.EntityThrownTrident;
 import cn.nukkit.event.block.ItemFrameDropItemEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -840,13 +841,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         pos = respawnEvent.getRespawnPosition();
 
         if (this.getHealth() <= 0) {
-            RespawnPacket  respawnPacket = new RespawnPacket();
             pos = this.getSpawn();
-            respawnPacket.x = (float) pos.x;
-            respawnPacket.y = (float) pos.y;
-            respawnPacket.z = (float) pos.z;
-            this.dataPacket(respawnPacket);
-        } else {
+
             RespawnPacket respawnPacket = new RespawnPacket();
             respawnPacket.x = (float) pos.x;
             respawnPacket.y = (float) pos.y;
@@ -1960,13 +1956,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return;
         }
 
-        Level level;
-        if (this.spawnPosition == null && this.namedTag.contains("SpawnLevel") && (level = this.server.getLevelByName(this.namedTag.getString("SpawnLevel"))) != null) {
-            this.spawnPosition = new Position(this.namedTag.getInt("SpawnX"), this.namedTag.getInt("SpawnY"), this.namedTag.getInt("SpawnZ"), level);
-        }
-
-        Position spawnPosition = this.getSpawn();
-
         StartGamePacket startGamePacket = new StartGamePacket();
         startGamePacket.entityUniqueId = this.id;
         startGamePacket.entityRuntimeId = this.id;
@@ -1977,12 +1966,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         startGamePacket.yaw = (float) this.yaw;
         startGamePacket.pitch = (float) this.pitch;
         startGamePacket.seed = -1;
-        startGamePacket.dimension = (byte) (spawnPosition.level.getDimension() & 0xff);
+        startGamePacket.dimension = (byte) (this.level.getDimension() & 0xff);
         startGamePacket.worldGamemode = getClientFriendlyGamemode(this.gamemode);
         startGamePacket.difficulty = this.server.getDifficulty();
-        startGamePacket.spawnX = (int) spawnPosition.x;
-        startGamePacket.spawnY = (int) spawnPosition.y;
-        startGamePacket.spawnZ = (int) spawnPosition.z;
+        startGamePacket.spawnX = (int) this.x;
+        startGamePacket.spawnY = (int) this.y;
+        startGamePacket.spawnZ = (int) this.z;
         startGamePacket.hasAchievementsDisabled = true;
         startGamePacket.dayCycleStopTime = -1;
         startGamePacket.eduMode = false;
@@ -1997,7 +1986,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.loggedIn = true;
 
-        spawnPosition.level.sendTime(this);
+        this.level.sendTime(this);
 
         this.setMovementSpeed(DEFAULT_SPEED);
         this.sendAttributes();
@@ -4623,6 +4612,21 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 InventoryPickupArrowEvent ev;
                 this.server.getPluginManager().callEvent(ev = new InventoryPickupArrowEvent(this.inventory, (EntityArrow) entity));
                 if (ev.isCancelled()) {
+                    return false;
+                }
+
+                TakeItemEntityPacket pk = new TakeItemEntityPacket();
+                pk.entityId = this.getId();
+                pk.target = entity.getId();
+                Server.broadcastPacket(entity.getViewers().values(), pk);
+                this.dataPacket(pk);
+
+                this.inventory.addItem(item.clone());
+                entity.close();
+                return true;
+            } else if (entity instanceof EntityThrownTrident && ((EntityThrownTrident) entity).hadCollision) {
+                ItemTrident item = new ItemTrident();
+                if (this.isSurvival() && !this.inventory.canAddItem(item)) {
                     return false;
                 }
 
