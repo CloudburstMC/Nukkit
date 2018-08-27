@@ -1,5 +1,6 @@
 package com.nukkitx.server.network.bedrock.packet;
 
+import com.nukkitx.api.scoreboard.Objective;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
 import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
 import io.netty.buffer.ByteBuf;
@@ -9,11 +10,11 @@ import static com.nukkitx.server.network.bedrock.BedrockUtil.writeString;
 
 @Data
 public class RemoveObjectivePacket implements BedrockPacket {
-    private String objectiveId;
+    private Objective objective;
 
     @Override
     public void encode(ByteBuf buffer) {
-        writeString(buffer, objectiveId);
+        writeString(buffer, objective.getName());
     }
 
     @Override

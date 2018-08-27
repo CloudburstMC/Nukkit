@@ -45,6 +45,8 @@ public class NukkitLevel implements Level {
     @Getter
     private final LevelChunkManager chunkManager;
     @Getter
+    private final LevelScoreboardManager scoreboard;
+    @Getter
     private final NukkitServer server;
     private long currentTick;
 
@@ -57,6 +59,7 @@ public class NukkitLevel implements Level {
         this.packetManager = new LevelPacketManager(this, server.getConfiguration().getMechanics().getViewDistance());
         this.blockManager = new LevelBlockManager(this);
         this.chunkManager = new LevelChunkManager(server, this, chunkProvider, generator);
+        this.scoreboard = new LevelScoreboardManager(this);
 
         if (levelData.getDefaultSpawn() == null) {
             levelData.setDefaultSpawn(generator.getDefaultSpawn());
@@ -127,6 +130,7 @@ public class NukkitLevel implements Level {
         entityManager.onTick();
         packetManager.onTick();
         blockManager.onTick();
+        scoreboard.onTick();
 
         if (currentTick % 20 == 0) {
             chunkManager.onTick();

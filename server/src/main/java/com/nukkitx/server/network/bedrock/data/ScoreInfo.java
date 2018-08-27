@@ -1,12 +1,11 @@
 package com.nukkitx.server.network.bedrock.data;
 
+import com.nukkitx.server.scoreboard.NukkitScorer;
 import lombok.Value;
-
-import java.util.UUID;
 
 @Value
 public class ScoreInfo {
-    private final UUID playerUuid;
-    private final String objectiveId;
+    private final NukkitScorer scorer;
+    private final String objective;
     private final int score;
 }

@@ -542,9 +542,10 @@ public final class BedrockUtil {
         Preconditions.checkNotNull(infos, "infos");
         writeUnsignedInt(buffer, infos.size());
         for (ScoreInfo info : infos) {
-            writeUuid(buffer, info.getPlayerUuid());
-            writeString(buffer, info.getObjectiveId());
+            writeLong(buffer, info.getScorer().getId());
+            writeString(buffer, info.getObjective());
             buffer.writeIntLE(info.getScore());
+            info.getScorer().writeTo(buffer);
         }
     }
 }

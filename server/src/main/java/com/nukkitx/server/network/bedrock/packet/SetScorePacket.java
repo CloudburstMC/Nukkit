@@ -33,7 +33,7 @@ public class SetScorePacket implements BedrockPacket {
     }
 
     public enum Action {
-        MODIFY,
-        RESET
+        SET,
+        REMOVE
     }
 }
