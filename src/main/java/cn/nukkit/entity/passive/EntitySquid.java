@@ -24,6 +24,11 @@ public class EntitySquid extends EntityWaterAnimal {
         return NETWORK_ID;
     }
 
+	@Override
+    public String getName() {
+        return "Squid";
+    }
+
     @Override
     public float getWidth() {
         return 0.8f;

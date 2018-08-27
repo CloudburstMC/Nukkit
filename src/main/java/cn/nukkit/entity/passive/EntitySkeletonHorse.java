@@ -22,13 +22,24 @@ public class EntitySkeletonHorse extends EntityAnimal {
         return NETWORK_ID;
     }
 
+	@Override
+    public String getName() {
+        return "Skeleton Horse";
+    }
+
     @Override
     public float getWidth() {
+		if (this.isBaby()) {
+            return 0.7f;
+        }
         return 1.4f;
     }
 
     @Override
     public float getHeight() {
+		if (this.isBaby()) {
+            return 0.8f;
+        }
         return 1.6f;
     }
 

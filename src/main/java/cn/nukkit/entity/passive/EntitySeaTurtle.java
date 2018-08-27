@@ -1,51 +1,51 @@
 package cn.nukkit.entity.passive;
 
 import cn.nukkit.Player;
-import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 
 /**
- * @author PikyCZ
+ * @author wode490390
  */
-public class EntityParrot extends EntityAnimal {
+public class EntitySeaTurtle extends EntityAnimal {
 
-    public static final int NETWORK_ID = 30;
-
-    public EntityParrot(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
-    }
+    public static final int NETWORK_ID = 74;
 
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
     }
 
-	@Override
-    public String getName() {
-        return "Parrot";
+    public EntitySeaTurtle(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+    }
+
+    @Override
+    protected void initEntity() {
+        super.initEntity();
+        this.setMaxHealth(30);
     }
 
     @Override
     public float getWidth() {
-        return 0.5f;
+		if (this.isBaby()) {
+            return 0.36f;
+        }
+        return 1.2f;
     }
 
     @Override
     public float getHeight() {
-        return 0.9f;
+		if (this.isBaby()) {
+            return 0.12f;
+        }
+        return 0.4f;
     }
 
     @Override
-    public void initEntity() {
-        super.initEntity();
-        this.setMaxHealth(6);
-    }
-
-    @Override
-    public Item[] getDrops() {
-        return new Item[]{Item.get(Item.FEATHER)};
+    public String getName() {
+        return "Sea Turtle";
     }
 
     @Override
@@ -65,5 +65,4 @@ public class EntityParrot extends EntityAnimal {
 
         super.spawnTo(player);
     }
-
 }

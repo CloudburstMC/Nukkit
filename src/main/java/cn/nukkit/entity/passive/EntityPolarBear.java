@@ -22,6 +22,11 @@ public class EntityPolarBear extends EntityAnimal {
         return NETWORK_ID;
     }
 
+	@Override
+    public String getName() {
+        return "Polar Bear";
+    }
+
     @Override
     public float getWidth() {
         if (this.isBaby()) {

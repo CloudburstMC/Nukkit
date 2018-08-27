@@ -22,6 +22,11 @@ public class EntityDonkey extends EntityAnimal {
         return NETWORK_ID;
     }
 
+	@Override
+    public String getName() {
+        return "Donkey";
+    }
+
     @Override
     public float getWidth() {
         if (this.isBaby()) {
