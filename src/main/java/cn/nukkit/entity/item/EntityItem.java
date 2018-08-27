@@ -11,6 +11,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddItemEntityPacket;
+import cn.nukkit.network.protocol.DataPacket;
 
 /**
  * @author MagicDroidX
@@ -256,21 +257,19 @@ public class EntityItem extends Entity {
     }
 
     @Override
-    public void spawnTo(Player player) {
-        AddItemEntityPacket pk = new AddItemEntityPacket();
-        pk.entityUniqueId = this.getId();
-        pk.entityRuntimeId = this.getId();
-        pk.x = (float) this.x;
-        pk.y = (float) this.y;
-        pk.z = (float) this.z;
-        pk.speedX = (float) this.motionX;
-        pk.speedY = (float) this.motionY;
-        pk.speedZ = (float) this.motionZ;
-        pk.metadata = this.dataProperties;
-        pk.item = this.getItem();
-        player.dataPacket(pk);
-
-        super.spawnTo(player);
+    public DataPacket createAddEntityPacket() {
+        AddItemEntityPacket addEntity = new AddItemEntityPacket();
+        addEntity.entityUniqueId = this.getId();
+        addEntity.entityRuntimeId = this.getId();
+        addEntity.x = (float) this.x;
+        addEntity.y = (float) this.y;
+        addEntity.z = (float) this.z;
+        addEntity.speedX = (float) this.motionX;
+        addEntity.speedY = (float) this.motionY;
+        addEntity.speedZ = (float) this.motionZ;
+        addEntity.metadata = this.dataProperties;
+        addEntity.item = this.getItem();
+        return addEntity;
     }
 
     @Override
