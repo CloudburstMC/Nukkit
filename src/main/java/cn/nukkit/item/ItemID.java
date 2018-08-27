@@ -208,6 +208,8 @@ public interface ItemID {
     int ELYTRA = 444;
 
     int SHULKER_SHELL = 445;
+    
+    int TRIDENT = 455;
 
     int BEETROOT = 457;
     int BEETROOT_SEEDS = 458;
@@ -219,6 +221,8 @@ public interface ItemID {
     int COOKED_SALMON = 463;
 
     int GOLDEN_APPLE_ENCHANTED = 466;
+    
+    int TURTLE_SHELL = 469;
 
     int RECORD_13 = 500;
     int RECORD_CAT = 501;

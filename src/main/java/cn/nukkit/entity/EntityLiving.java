@@ -209,31 +209,31 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
             if (!this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()) {
                 if (this instanceof EntityWaterAnimal || (this instanceof Player && ((Player) this).isCreative())) {
-                    this.setDataProperty(new ShortEntityData(DATA_AIR, 400));
+                    this.setAirTicks(400);
                 } else {
                     hasUpdate = true;
-                    int airTicks = this.getDataPropertyShort(DATA_AIR) - tickDiff;
+                    int airTicks = getAirTicks() - tickDiff;
 
                     if (airTicks <= -20) {
                         airTicks = 0;
                         this.attack(new EntityDamageEvent(this, DamageCause.DROWNING, 2));
                     }
 
-                    this.setDataProperty(new ShortEntityData(DATA_AIR, airTicks));
+                    setAirTicks(airTicks);
                 }
             } else {
                 if (this instanceof EntityWaterAnimal) {
                     hasUpdate = true;
-                    int airTicks = this.getDataPropertyInt(DATA_AIR) - tickDiff;
+                    int airTicks = getAirTicks() - tickDiff;
 
                     if (airTicks <= -20) {
                         airTicks = 0;
                         this.attack(new EntityDamageEvent(this, DamageCause.SUFFOCATION, 2));
                     }
 
-                    this.setDataProperty(new ShortEntityData(DATA_AIR, airTicks));
+                    setAirTicks(airTicks);
                 } else {
-                    this.setDataProperty(new ShortEntityData(DATA_AIR, 400));
+                    setAirTicks(getAirTicks() + tickDiff * 5);
                 }
             }
         }
@@ -343,5 +343,13 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
     public float getMovementSpeed() {
         return this.movementSpeed;
+    }
+
+    public int getAirTicks() {
+        return this.getDataPropertyShort(DATA_AIR);
+    }
+
+    public void setAirTicks(int ticks) {
+        this.setDataProperty(new ShortEntityData(DATA_AIR, ticks));
     }
 }

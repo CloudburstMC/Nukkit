@@ -14,6 +14,7 @@ abstract public class ItemArmor extends Item {
     public static final int TIER_CHAIN = 3;
     public static final int TIER_GOLD = 4;
     public static final int TIER_DIAMOND = 5;
+    public static final int TIER_OTHER = 6;
 
     public ItemArmor(int id) {
         super(id);
