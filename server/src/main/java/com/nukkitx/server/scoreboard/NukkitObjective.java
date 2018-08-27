@@ -35,15 +35,6 @@ public class NukkitObjective implements Objective {
     }
 
     @Override
-    public OptionalInt getScore(Scorer scorer) {
-        Preconditions.checkNotNull(scorer, "scorer");
-        if (scores.containsKey(scorer.getId())) {
-            return OptionalInt.of(scores.get(scorer.getId()));
-        }
-        return OptionalInt.empty();
-    }
-
-    @Override
     public TIntList getScores() {
         return new TIntArrayList(scores.values());
     }
@@ -64,19 +55,24 @@ public class NukkitObjective implements Objective {
         return players;
     }
 
-    OptionalInt getScore(long id) {
+    @Override
+    public OptionalInt getScore(long id) {
         if (scores.containsKey(id)) {
             return OptionalInt.of(scores.get(id));
         }
         return OptionalInt.empty();
     }
 
-    void setScore(long id, int score) {
+    @Override
+    public void setScore(long id, int score) {
         scores.put(id, score);
         scoreboard.setScore(id, this, score);
     }
 
-    void modifyScore(long id, ModifyScoreFunction function) {
+    @Override
+    public void modifyScore(long id, ModifyScoreFunction function) {
+        Preconditions.checkNotNull(function, "function");
+
         if (scores.containsKey(id)) {
             int score = scores.get(id);
             score = function.modify(score);
@@ -86,7 +82,8 @@ public class NukkitObjective implements Objective {
         }
     }
 
-    void resetScore(long id) {
+    @Override
+    public void resetScore(long id) {
         if (scores.containsKey(id)) {
             scoreboard.removeScore(id, this, scores.remove(id));
         }

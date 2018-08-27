@@ -20,7 +20,13 @@ public interface Objective {
 
     TIntList getScores();
 
-    OptionalInt getScore(Scorer scorer);
-
     List<Player> getPlayers();
+
+    OptionalInt getScore(long id);
+
+    void setScore(long id, int score);
+
+    void modifyScore(long id, ModifyScoreFunction function);
+
+    void resetScore(long id);
 }

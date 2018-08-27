@@ -26,27 +26,26 @@ public abstract class NukkitScorer implements Scorer {
     @Nonnull
     @Override
     public OptionalInt getScoreIn(Objective objective) {
-        checkObjective(objective);
-        return ((NukkitObjective) objective).getScore(id);
+        Preconditions.checkNotNull(objective, "objective");
+        return objective.getScore(id);
     }
 
     @Override
     public void resetScoreIn(Objective objective) {
-        checkObjective(objective);
-        ((NukkitObjective) objective).resetScore(id);
+        Preconditions.checkNotNull(objective, "objective");
+        objective.resetScore(id);
     }
 
     @Override
     public void setScoreIn(Objective objective, int score) {
-        checkObjective(objective);
-        ((NukkitObjective) objective).setScore(id, score);
+        Preconditions.checkNotNull(objective, "objective");
+        objective.setScore(id, score);
     }
 
     @Override
     public void modifyScoreIn(Objective objective, ModifyScoreFunction function) {
-        Preconditions.checkNotNull(function, "function");
-        checkObjective(objective);
-        ((NukkitObjective) objective).modifyScore(id, function);
+        Preconditions.checkNotNull(objective, "objective");
+        objective.modifyScore(id, function);
     }
 
     public final void writeTo(ByteBuf buffer) {
@@ -72,10 +71,5 @@ public abstract class NukkitScorer implements Scorer {
     @Override
     public String toString() {
         return "type=" + type + ", id=" + id;
-    }
-
-    private static void checkObjective(Objective objective) {
-        Preconditions.checkNotNull(objective, "objective");
-        Preconditions.checkArgument(objective instanceof NukkitObjective, "Invalid objective");
     }
 }
