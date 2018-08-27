@@ -39,7 +39,7 @@ public class EntityCaveSpider extends EntityMob {
 
     @Override
     public String getName() {
-        return "CaveSpider";
+        return "Cave Spider";
     }
 
     @Override

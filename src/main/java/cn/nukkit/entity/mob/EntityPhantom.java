@@ -6,18 +6,18 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 
 /**
- * @author PikyCZ
+ * @author wode490390
  */
-public class EntityHusk extends EntityMob {
+public class EntityPhantom extends EntityMob {
 
-    public static final int NETWORK_ID = 47;
+    public static final int NETWORK_ID = 113;
 
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
     }
 
-    public EntityHusk(FullChunk chunk, CompoundTag nbt) {
+    public EntityPhantom(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -29,23 +29,17 @@ public class EntityHusk extends EntityMob {
 
     @Override
     public float getWidth() {
-        if (this.isBaby()) {
-            return 0.3f;
-        }
-        return 0.6f;
+        return 0.38f;
     }
 
     @Override
     public float getHeight() {
-        if (this.isBaby()) {
-            return 0.975f;
-        }
-        return 1.95f;
+        return 0.15f;
     }
 
     @Override
     public String getName() {
-        return "Husk";
+        return "Phantom";
     }
 
     @Override

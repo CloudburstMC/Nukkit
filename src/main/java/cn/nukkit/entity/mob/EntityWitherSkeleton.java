@@ -40,7 +40,7 @@ public class EntityWitherSkeleton extends EntityMob {
 
     @Override
     public String getName() {
-        return "WitherSkeleton";
+        return "Wither Skeleton";
     }
 
     @Override

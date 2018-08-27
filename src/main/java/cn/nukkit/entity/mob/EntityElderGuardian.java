@@ -39,7 +39,7 @@ public class EntityElderGuardian extends EntityMob {
 
     @Override
     public String getName() {
-        return "ElderGuardian";
+        return "Elder Guardian";
     }
 
     @Override

@@ -6,18 +6,18 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 
 /**
- * @author PikyCZ
+ * @author wode490390
  */
-public class EntityHusk extends EntityMob {
+public class EntityDrowned extends EntityMob {
 
-    public static final int NETWORK_ID = 47;
+    public static final int NETWORK_ID = 110;
 
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
     }
 
-    public EntityHusk(FullChunk chunk, CompoundTag nbt) {
+    public EntityDrowned(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -45,7 +45,7 @@ public class EntityHusk extends EntityMob {
 
     @Override
     public String getName() {
-        return "Husk";
+        return "Drowned";
     }
 
     @Override
