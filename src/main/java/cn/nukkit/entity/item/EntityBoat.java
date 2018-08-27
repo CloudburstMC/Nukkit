@@ -76,7 +76,7 @@ public class EntityBoat extends EntityVehicle {
         AddEntityPacket pk = new AddEntityPacket();
         pk.entityUniqueId = this.getId();
         pk.entityRuntimeId = this.getId();
-        pk.type = EntityBoat.NETWORK_ID;
+        pk.type = this.getNetworkId();
         pk.x = (float) this.x;
         pk.y = (float) this.y;
         pk.z = (float) this.z;

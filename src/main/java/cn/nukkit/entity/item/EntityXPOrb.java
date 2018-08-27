@@ -212,9 +212,9 @@ public class EntityXPOrb extends Entity {
     @Override
     public void spawnTo(Player player) {
         AddEntityPacket packet = new AddEntityPacket();
-        packet.type = getNetworkId();
+        packet.type = this.getNetworkId();
         packet.entityUniqueId = this.getId();
-        packet.entityRuntimeId = getId();
+        packet.entityRuntimeId = this.getId();
         packet.x = (float) this.x;
         packet.y = (float) this.y;
         packet.z = (float) this.z;

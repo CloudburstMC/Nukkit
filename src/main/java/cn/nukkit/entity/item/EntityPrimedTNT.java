@@ -122,28 +122,28 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
             this.setDataProperty(new IntEntityData(DATA_FUSE_LENGTH, fuse));
         }
 
-        lastUpdate = currentTick;
+        this.lastUpdate = currentTick;
 
         boolean hasUpdate = entityBaseTick(tickDiff);
 
-        if (isAlive()) {
+        if (this.isAlive()) {
 
-            motionY -= getGravity();
+            this.motionY -= getGravity();
 
-            move(motionX, motionY, motionZ);
+            this.move(this.motionX, this.motionY, this.motionZ);
 
             float friction = 1 - getDrag();
 
-            motionX *= friction;
-            motionY *= friction;
-            motionZ *= friction;
+            this.motionX *= friction;
+            this.motionY *= friction;
+            this.motionZ *= friction;
 
-            updateMovement();
+            this.updateMovement();
 
-            if (onGround) {
-                motionY *= -0.5;
-                motionX *= 0.7;
-                motionZ *= 0.7;
+            if (this.onGround) {
+                this.motionY *= -0.5;
+                this.motionX *= 0.7;
+                this.motionZ *= 0.7;
             }
 
             fuse -= tickDiff;
@@ -151,14 +151,14 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
             if (fuse <= 0) {
                 if (this.level.getGameRules().getBoolean(GameRule.TNT_EXPLODES))
                     explode();
-                kill();
+                this.kill();
             }
 
         }
 
         this.timing.stopTiming();
 
-        return hasUpdate || fuse >= 0 || Math.abs(motionX) > 0.00001 || Math.abs(motionY) > 0.00001 || Math.abs(motionZ) > 0.00001;
+        return hasUpdate || fuse >= 0 || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001;
     }
 
     public void explode() {
@@ -176,16 +176,16 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
 
     public void spawnTo(Player player) {
         AddEntityPacket packet = new AddEntityPacket();
-        packet.type = EntityPrimedTNT.NETWORK_ID;
+        packet.type = this.getNetworkId();
         packet.entityUniqueId = this.getId();
-        packet.entityRuntimeId = getId();
-        packet.x = (float) x;
-        packet.y = (float) y;
-        packet.z = (float) z;
-        packet.speedX = (float) motionX;
-        packet.speedY = (float) motionY;
-        packet.speedZ = (float) motionZ;
-        packet.metadata = dataProperties;
+        packet.entityRuntimeId = this.getId();
+        packet.x = (float) this.x;
+        packet.y = (float) this.y;
+        packet.z = (float) this.z;
+        packet.speedX = (float) this.motionX;
+        packet.speedY = (float) this.motionY;
+        packet.speedZ = (float) this.motionZ;
+        packet.metadata = this.dataProperties;
         player.dataPacket(packet);
         super.spawnTo(player);
     }

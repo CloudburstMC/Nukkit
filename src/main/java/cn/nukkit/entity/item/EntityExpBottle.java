@@ -96,7 +96,7 @@ public class EntityExpBottle extends EntityProjectile {
     @Override
     public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
-        pk.type = EntityExpBottle.NETWORK_ID;
+        pk.type = this.getNetworkId();
         pk.entityUniqueId = this.getId();
         pk.entityRuntimeId = this.getId();
         pk.x = (float) this.x;

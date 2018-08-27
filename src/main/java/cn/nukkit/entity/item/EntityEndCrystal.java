@@ -61,7 +61,7 @@ public class EntityEndCrystal extends Entity {
     @Override
     public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
-        pk.type = EntityEndCrystal.NETWORK_ID;
+        pk.type = this.getNetworkId();
         pk.entityUniqueId = this.getId();
         pk.entityRuntimeId = this.getId();
         pk.x = (float) this.x;

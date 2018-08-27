@@ -155,7 +155,7 @@ public class EntityFirework extends Entity {
         super.spawnTo(player);
 
         AddEntityPacket pk = new AddEntityPacket();
-        pk.type = NETWORK_ID;
+        pk.type = this.getNetworkId();
         pk.entityUniqueId = this.getId();
         pk.entityRuntimeId = this.getId();
         pk.x = (float) this.x;
