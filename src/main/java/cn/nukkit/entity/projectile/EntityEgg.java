@@ -19,6 +19,11 @@ public class EntityEgg extends EntityProjectile {
     }
 
     @Override
+    public String getName() {
+        return "Egg";
+    }
+
+    @Override
     public float getWidth() {
         return 0.25f;
     }
@@ -70,7 +75,7 @@ public class EntityEgg extends EntityProjectile {
     @Override
     public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
-        pk.type = EntityEgg.NETWORK_ID;
+        pk.type = this.getNetworkId();
         pk.entityUniqueId = this.getId();
         pk.entityRuntimeId = this.getId();
         pk.x = (float) this.x;

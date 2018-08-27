@@ -22,6 +22,11 @@ public class EntityThrownTrident extends EntityProjectile {
     }
 
     @Override
+    public String getName() {
+        return "Thrown Trident";
+    }
+
+    @Override
     public float getWidth() {
         return 0.05f;
     }
@@ -124,7 +129,7 @@ public class EntityThrownTrident extends EntityProjectile {
     @Override
     public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
-        pk.type = EntityThrownTrident.NETWORK_ID;
+        pk.type = this.getNetworkId();
         pk.entityUniqueId = this.getId();
         pk.entityRuntimeId = this.getId();
         pk.x = (float) this.x;
