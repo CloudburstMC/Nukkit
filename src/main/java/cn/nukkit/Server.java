@@ -1029,12 +1029,9 @@ public class Server {
                     }
                 }
             } catch (Exception e) {
-                if (Nukkit.DEBUG > 1 && this.logger != null) {
-                    this.logger.logException(e);
+                if (this.logger != null) {
+                    this.logger.critical(this.getLanguage().translateString("nukkit.level.tickError"), e);
                 }
-
-                this.logger.critical(this.getLanguage().translateString("nukkit.level.tickError", new String[]{level.getName(), e.toString()}));
-                this.logger.logException(e);
             }
         }
     }
