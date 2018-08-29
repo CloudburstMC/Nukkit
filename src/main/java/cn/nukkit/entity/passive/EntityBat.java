@@ -32,6 +32,11 @@ public class EntityBat extends EntityAnimal {
     }
 
     @Override
+    public String getName() {
+        return "Bat";
+    }
+    
+    @Override
     public void initEntity() {
         super.initEntity();
         this.setMaxHealth(6);

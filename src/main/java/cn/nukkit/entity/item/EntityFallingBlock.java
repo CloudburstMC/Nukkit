@@ -181,18 +181,18 @@ public class EntityFallingBlock extends Entity {
     @Override
     public void spawnTo(Player player) {
         AddEntityPacket packet = new AddEntityPacket();
-        packet.type = EntityFallingBlock.NETWORK_ID;
+        packet.type = this.getNetworkId();
         packet.entityUniqueId = this.getId();
-        packet.entityRuntimeId = getId();
-        packet.x = (float) x;
-        packet.y = (float) y;
-        packet.z = (float) z;
-        packet.speedX = (float) motionX;
-        packet.speedY = (float) motionY;
-        packet.speedZ = (float) motionZ;
-        packet.yaw = (float) yaw;
-        packet.pitch = (float) pitch;
-        packet.metadata = dataProperties;
+        packet.entityRuntimeId = this.getId();
+        packet.x = (float) this.x;
+        packet.y = (float) this.y;
+        packet.z = (float) this.z;
+        packet.speedX = (float) this.motionX;
+        packet.speedY = (float) this.motionY;
+        packet.speedZ = (float) this.motionZ;
+        packet.yaw = (float) this.yaw;
+        packet.pitch = (float) this.pitch;
+        packet.metadata = this.dataProperties;
         player.dataPacket(packet);
         super.spawnTo(player);
     }

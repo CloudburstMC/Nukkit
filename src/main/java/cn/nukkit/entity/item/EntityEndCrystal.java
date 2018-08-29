@@ -46,8 +46,8 @@ public class EntityEndCrystal extends Entity {
             return false;
         }
 
-		Position pos = this.getPosition();
-		Explosion explode = new Explosion(pos, 6, this);
+        Position pos = this.getPosition();
+        Explosion explode = new Explosion(pos, 6, this);
 
         if (this.level.getGameRules().getBoolean(GameRule.TNT_EXPLODES)) {
             explode.explodeA();
@@ -56,12 +56,12 @@ public class EntityEndCrystal extends Entity {
 
         close();
         return true;
-	}
+    }
 
     @Override
     public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
-        pk.type = EntityEndCrystal.NETWORK_ID;
+        pk.type = this.getNetworkId();
         pk.entityUniqueId = this.getId();
         pk.entityRuntimeId = this.getId();
         pk.x = (float) this.x;
@@ -77,9 +77,9 @@ public class EntityEndCrystal extends Entity {
     }
 
     @Override
-	public boolean canCollideWith(Entity entity) {
-		return false;
-	}
+    public boolean canCollideWith(Entity entity) {
+        return false;
+    }
 
     public boolean showBase() {
         return this.getDataFlag(DATA_FLAGS, DATA_FLAG_SHOWBASE);

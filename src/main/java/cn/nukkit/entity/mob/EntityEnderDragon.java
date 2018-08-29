@@ -39,7 +39,7 @@ public class EntityEnderDragon extends EntityMob {
 
     @Override
     public String getName() {
-        return "EnderDragon";
+        return "Ender Dragon";
     }
 
     @Override

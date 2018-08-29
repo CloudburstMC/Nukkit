@@ -31,17 +31,23 @@ public class EntityZombiePigman extends EntityMob {
 
     @Override
     public float getWidth() {
+        if (this.isBaby()) {
+            return 0.3f;
+        }
         return 0.6f;
     }
 
     @Override
     public float getHeight() {
+        if (this.isBaby()) {
+            return 0.975f;
+        }
         return 1.95f;
     }
 
     @Override
     public String getName() {
-        return "ZombiePigman";
+        return "Zombie Pigman";
     }
 
     @Override

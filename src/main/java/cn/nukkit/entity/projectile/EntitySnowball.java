@@ -19,6 +19,11 @@ public class EntitySnowball extends EntityProjectile {
     }
 
     @Override
+    public String getName() {
+        return "Snowball";
+    }
+
+    @Override
     public float getWidth() {
         return 0.25f;
     }
@@ -74,7 +79,7 @@ public class EntitySnowball extends EntityProjectile {
     @Override
     public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
-        pk.type = EntitySnowball.NETWORK_ID;
+        pk.type = this.getNetworkId();
         pk.entityUniqueId = this.getId();
         pk.entityRuntimeId = this.getId();
         pk.x = (float) this.x;

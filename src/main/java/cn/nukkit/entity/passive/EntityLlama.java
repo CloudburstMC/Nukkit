@@ -22,6 +22,11 @@ public class EntityLlama extends EntityAnimal {
     }
 
     @Override
+    public String getName() {
+        return "Llama";
+    }
+
+    @Override
     public float getWidth() {
         if (this.isBaby()) {
             return 0.45f;

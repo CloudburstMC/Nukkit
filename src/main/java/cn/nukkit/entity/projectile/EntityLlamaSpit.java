@@ -1,21 +1,16 @@
-package cn.nukkit.entity.passive;
+package cn.nukkit.entity.projectile;
 
 import cn.nukkit.Player;
-import cn.nukkit.item.Item;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 
 /**
- * @author PikyCZ
+ * @author wode490390
  */
-public class EntitySkeletonHorse extends EntityAnimal {
-
-    public static final int NETWORK_ID = 26;
-
-    public EntitySkeletonHorse(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
-    }
+public class EntityLlamaSpit extends EntityProjectile {
+    public static final int NETWORK_ID = 102;
 
     @Override
     public int getNetworkId() {
@@ -24,34 +19,35 @@ public class EntitySkeletonHorse extends EntityAnimal {
 
     @Override
     public String getName() {
-        return "Skeleton Horse";
+        return "Llama Spit";
+    }
+
+    public EntityLlamaSpit(FullChunk chunk, CompoundTag nbt) {
+        this(chunk, nbt, null);
+    }
+
+    public EntityLlamaSpit(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+        super(chunk, nbt, shootingEntity);
     }
 
     @Override
-    public float getWidth() {
-        if (this.isBaby()) {
-            return 0.7f;
+    public boolean onUpdate(int currentTick) {
+        if (this.closed) {
+            return false;
         }
-        return 1.4f;
-    }
 
-    @Override
-    public float getHeight() {
-        if (this.isBaby()) {
-            return 0.8f;
+        this.timing.startTiming();
+
+        boolean hasUpdate = super.onUpdate(currentTick);
+
+        if (this.age > 1200 || this.isCollided) {
+            this.kill();
+            hasUpdate = true;
         }
-        return 1.6f;
-    }
 
-    @Override
-    public void initEntity() {
-        super.initEntity();
-        this.setMaxHealth(15);
-    }
+        this.timing.stopTiming();
 
-    @Override
-    public Item[] getDrops() {
-        return new Item[]{Item.get(Item.BONE)};
+        return hasUpdate;
     }
 
     @Override

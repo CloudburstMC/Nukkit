@@ -28,6 +28,11 @@ public class EntityMule extends EntityAnimal {
     }
 
     @Override
+    public String getName() {
+        return "Mule";
+    }
+
+    @Override
     public float getWidth() {
         if (this.isBaby()) {
             return 0.6982f;
