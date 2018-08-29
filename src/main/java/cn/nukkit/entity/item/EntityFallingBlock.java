@@ -2,7 +2,6 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.GlobalBlockPalette;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityBlockChangeEvent;
@@ -10,6 +9,7 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.GameRule;
+import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;

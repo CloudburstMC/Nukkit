@@ -2157,8 +2157,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.close("", "disconnectionScreen.noReason");
                             break;
                         case ResourcePackClientResponsePacket.STATUS_SEND_PACKS:
-                            for (String id : responsePacket.packIds) {
-                                ResourcePack resourcePack = this.server.getResourcePackManager().getPackById(id);
+                            for (ResourcePackClientResponsePacket.Entry entry : responsePacket.packEntries) {
+                                ResourcePack resourcePack = this.server.getResourcePackManager().getPackById(entry.uuid);
                                 if (resourcePack == null) {
                                     this.close("", "disconnectionScreen.resourcePack");
                                     break;

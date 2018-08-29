@@ -148,8 +148,9 @@ public class Network {
 
                 DataPacket pk;
 
+                //TODO: This needs to be an unsigned VarInt
                 if ((pk = this.getPacket(buf[0])) != null) {
-                    pk.setBuffer(buf, 3); //skip 2 more bytes
+                    pk.setBuffer(buf, 1);
 
                     pk.decode();
 
@@ -297,5 +298,7 @@ public class Network {
         this.registerPacket(ProtocolInfo.UPDATE_TRADE_PACKET, UpdateTradePacket.class);
         this.registerPacket(ProtocolInfo.MOVE_ENTITY_DELTA_PACKET, MoveEntityDeltaPacket.class);
         this.registerPacket(ProtocolInfo.SET_LOCAL_PLAYER_AS_INITIALIZED_PACKET, SetLocalPlayerAsInitializedPacket.class);
+        this.registerPacket(ProtocolInfo.NETWORK_STACK_LATENCY_PACKET, NetworkStackLatencyPacket.class);
+        this.registerPacket(ProtocolInfo.UPDATE_SOFT_ENUM_PACKET, UpdateSoftEnumPacket.class);
     }
 }
