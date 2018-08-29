@@ -32,6 +32,8 @@ public abstract class EntityProjectile extends Entity {
 
     public boolean hadCollision = false;
 
+    public boolean closeOnCollide = false;
+
     protected double damage = 0;
 
     public EntityProjectile(FullChunk chunk, CompoundTag nbt) {
@@ -74,7 +76,9 @@ public abstract class EntityProjectile extends Entity {
                 entity.setOnFire(event.getDuration());
             }
         }
-        this.close();
+        if (closeOnCollide) {
+            this.close();
+        }
     }
 
     @Override
