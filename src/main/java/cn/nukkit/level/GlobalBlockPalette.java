@@ -39,7 +39,7 @@ public class GlobalBlockPalette {
         table.putUnsignedVarInt(entries.size());
 
         for (TableEntry entry : entries) {
-            registerMapping(entry.runtimeID, (entry.id << 4) | entry.data);
+            registerMapping((entry.id << 4) | entry.data);
             table.putString(entry.name);
             table.putLShort(entry.data);
         }
@@ -60,10 +60,10 @@ public class GlobalBlockPalette {
         return runtimeId;
     }
 
-    private static int registerMapping(int runtimeId, int legacyId) {
+    private static int registerMapping(int legacyId) {
+        int runtimeId = runtimeIdAllocator.getAndIncrement();
         runtimeIdToLegacy.put(runtimeId, legacyId);
         legacyToRuntimeId.put(legacyId, runtimeId);
-        runtimeIdAllocator.set(Math.max(runtimeIdAllocator.get(), runtimeId));
         return runtimeId;
     }
 
@@ -74,7 +74,6 @@ public class GlobalBlockPalette {
     private static class TableEntry {
         private int id;
         private int data;
-        private int runtimeID;
         private String name;
     }
 }
