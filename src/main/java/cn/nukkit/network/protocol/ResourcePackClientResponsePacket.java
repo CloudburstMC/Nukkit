@@ -10,14 +10,15 @@ public class ResourcePackClientResponsePacket extends DataPacket {
     public static final byte STATUS_COMPLETED = 4;
 
     public byte responseStatus;
-    public String[] packIds;
+    public Entry[] packEntries;
 
     @Override
     public void decode() {
         this.responseStatus = (byte) this.getByte();
-        this.packIds = new String[this.getLShort()];
-        for (int i = 0; i < this.packIds.length; i++) {
-            this.packIds[i] = this.getString();
+        this.packEntries = new Entry[this.getLShort()];
+        for (int i = 0; i < this.packEntries.length; i++) {
+            String[] entry = this.getString().split("_");
+            this.packEntries[i] = new Entry(entry[0], entry[1]);
         }
     }
 
@@ -25,14 +26,24 @@ public class ResourcePackClientResponsePacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putByte(this.responseStatus);
-        this.putLShort(this.packIds.length);
-        for (String id : this.packIds) {
-            this.putString(id);
+        this.putLShort(this.packEntries.length);
+        for (Entry entry : this.packEntries) {
+            this.putString(entry.uuid.toString() + '_' + entry.version);
         }
     }
 
     @Override
     public byte pid() {
         return NETWORK_ID;
+    }
+
+    public static class Entry {
+        public final String uuid;
+        public final String version;
+
+        public Entry(String uuid, String version) {
+            this.uuid = uuid;
+            this.version = version;
+        }
     }
 }

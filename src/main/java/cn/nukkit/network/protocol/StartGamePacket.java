@@ -1,6 +1,7 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.level.GameRules;
+import cn.nukkit.level.GlobalBlockPalette;
 
 /**
  * Created on 15-10-13.
@@ -62,6 +63,8 @@ public class StartGamePacket extends DataPacket {
 
     public int enchantmentSeed;
 
+    public String multiplayerCorrelationId = "";
+
     @Override
     public void decode() {
 
@@ -113,6 +116,8 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(this.isTrial);
         this.putLLong(this.currentTick);
         this.putVarInt(this.enchantmentSeed);
+        this.put(GlobalBlockPalette.getCompiledTable());
+        this.putString(this.multiplayerCorrelationId);
     }
 
 }
