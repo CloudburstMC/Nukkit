@@ -10,7 +10,7 @@ import cn.nukkit.network.protocol.AddEntityPacket;
  */
 public class EntityPhantom extends EntityMob {
 
-    public static final int NETWORK_ID = 113;
+    public static final int NETWORK_ID = 59;
 
     @Override
     public int getNetworkId() {
