@@ -32,7 +32,7 @@ public abstract class EntityProjectile extends Entity {
 
     public boolean hadCollision = false;
 
-    public boolean closeOnCollide = false;
+    public boolean closeOnCollide = true;
 
     protected double damage = 0;
 
