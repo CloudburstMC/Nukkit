@@ -380,7 +380,7 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
         int radius = Math.max(5, Math.min(server.getConfiguration().getMechanics().getMaximumChunkRadius(), packet.getRadius()));
         ChunkRadiusUpdatePacket radiusPacket = new ChunkRadiusUpdatePacket();
         radiusPacket.setRadius(radius);
-        session.getMinecraftSession().sendImmediatePackage(radiusPacket);
+        session.getMinecraftSession().addToSendQueue(radiusPacket);
         session.setViewDistance(radius);
 
         session.sendNewChunks().whenComplete((chunks, throwable) -> {
@@ -395,7 +395,7 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
 
                 PlayStatusPacket playStatus = new PlayStatusPacket();
                 playStatus.setStatus(PlayStatusPacket.Status.PLAYER_SPAWN);
-                session.getMinecraftSession().sendImmediatePackage(playStatus);
+                session.getMinecraftSession().addToSendQueue(playStatus);
 
                 session.sendMovePlayer();
                 session.updateViewableEntities();

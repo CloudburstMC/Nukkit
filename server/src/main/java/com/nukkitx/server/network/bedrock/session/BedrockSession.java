@@ -37,6 +37,8 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Log4j2
 public class BedrockSession implements NetworkSession<RakNetPacket> {
@@ -46,6 +48,7 @@ public class BedrockSession implements NetworkSession<RakNetPacket> {
     private final AtomicLong lastKnownUpdate = new AtomicLong(System.currentTimeMillis());
     private final Queue<BedrockPacket> currentlyQueued = new ConcurrentLinkedQueue<>();
     private final AtomicLong sentEncryptedPacketCount = new AtomicLong();
+    private final Lock handlingWrapper = new ReentrantLock();
     private final NukkitServer server;
     private BedrockPacketCodec packetCodec = BedrockPacketCodec.DEFAULT;
     private NetworkPacketHandler handler = new LoginPacketHandler(this);
@@ -381,6 +384,7 @@ public class BedrockSession implements NetworkSession<RakNetPacket> {
         ByteBuf wrappedData = packet.getPayload();
         ByteBuf unwrappedData = null;
         try {
+            handlingWrapper.lock();
             if (isEncrypted()) {
                 // Decryption
                 unwrappedData = PooledByteBufAllocator.DEFAULT.directBuffer(wrappedData.readableBytes());
@@ -401,6 +405,7 @@ public class BedrockSession implements NetworkSession<RakNetPacket> {
                 pk.handle(handler);
             }
         } finally {
+            handlingWrapper.unlock();
             wrappedData.release();
             if (unwrappedData != null && unwrappedData != wrappedData) {
                 unwrappedData.release();
