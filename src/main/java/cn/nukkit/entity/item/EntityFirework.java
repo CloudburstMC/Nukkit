@@ -1,6 +1,5 @@
 package cn.nukkit.entity.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.ByteEntityData;
@@ -14,7 +13,6 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.network.protocol.PlaySoundPacket;
@@ -148,24 +146,6 @@ public class EntityFirework extends Entity {
     public void setFirework(Item item) {
         this.firework = item;
         this.setDataProperty(new SlotEntityData(Entity.DATA_DISPLAY_ITEM, item));
-    }
-
-    @Override
-    public void spawnTo(Player player) {
-        super.spawnTo(player);
-
-        AddEntityPacket pk = new AddEntityPacket();
-        pk.type = NETWORK_ID;
-        pk.entityUniqueId = this.getId();
-        pk.entityRuntimeId = this.getId();
-        pk.x = (float) this.x;
-        pk.y = (float) this.y;
-        pk.z = (float) this.z;
-        pk.speedX = (float) this.motionX;
-        pk.speedY = (float) this.motionY;
-        pk.speedZ = (float) this.motionZ;
-        pk.metadata = this.dataProperties;
-        player.dataPacket(pk);
     }
 
     @Override

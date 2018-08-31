@@ -17,7 +17,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Properties;
 
 /**
  * Project nukkit
@@ -82,13 +81,9 @@ public class BugReportGenerator extends Thread {
         mdReport.createNewFile();
         String content = Utils.readFile(this.getClass().getClassLoader().getResourceAsStream("report_template.md"));
 
-        Properties properties = getGitRepositoryState();
-        String abbrev = properties.getProperty("git.commit.id.abbrev");
-
         String cpuType = System.getenv("PROCESSOR_IDENTIFIER");
         OperatingSystemMXBean osMXBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
         content = content.replace("${NUKKIT_VERSION}", Nukkit.VERSION);
-        content = content.replace("${GIT_COMMIT_ABBREV}", abbrev);
         content = content.replace("${JAVA_VERSION}", System.getProperty("java.vm.name") + " (" + System.getProperty("java.runtime.version") + ")");
         content = content.replace("${HOSTOS}", osMXBean.getName() + "-" + osMXBean.getArch() + " [" + osMXBean.getVersion() + "]");
         content = content.replace("${MEMORY}", getCount(osMXBean.getTotalPhysicalMemorySize(), true));
@@ -102,12 +97,6 @@ public class BugReportGenerator extends Thread {
         Utils.writeFile(mdReport, content);
 
         return mdReport.getAbsolutePath();
-    }
-
-    public Properties getGitRepositoryState() throws IOException {
-        Properties properties = new Properties();
-        properties.load(getClass().getClassLoader().getResourceAsStream("git.properties"));
-        return properties;
     }
 
     //Code section from SOF

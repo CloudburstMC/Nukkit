@@ -6,7 +6,10 @@ import cn.nukkit.utils.LogLevel;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.ServerKiller;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,9 +32,10 @@ import java.util.stream.Collectors;
  */
 public class Nukkit {
 
-    public final static String VERSION = "1.0dev";
-    public final static String API_VERSION = "1.0.6";
-    public final static String CODENAME = "蘋果(Apple)派(Pie)";
+    public final static Properties GIT_INFO = getGitInfo();
+    public final static String VERSION = getVersion();
+    public final static String API_VERSION = "1.0.7";
+    public final static String CODENAME = "";
     @Deprecated
     public final static String MINECRAFT_VERSION = ProtocolInfo.MINECRAFT_VERSION;
     @Deprecated
@@ -134,5 +138,27 @@ public class Nukkit {
         System.exit(0);
     }
 
+    private static Properties getGitInfo() {
+        InputStream gitFileStream = Nukkit.class.getClassLoader().getResourceAsStream("git.properties");
+        if (gitFileStream == null) {
+            return null;
+        }
+        Properties properties = new Properties();
+        try {
+            properties.load(gitFileStream);
+        } catch (IOException e) {
+            return null;
+        }
+        return properties;
+    }
 
+    private static String getVersion() {
+        StringBuilder version = new StringBuilder();
+        version.append("git-");
+        String commitId;
+        if (GIT_INFO == null || (commitId = GIT_INFO.getProperty("git.commit.id.abbrev")) == null) {
+            return version.append("null").toString();
+        }
+        return version.append(commitId).toString();
+    }
 }
