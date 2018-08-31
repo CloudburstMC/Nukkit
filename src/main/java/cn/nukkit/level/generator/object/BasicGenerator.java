@@ -24,6 +24,6 @@ public abstract class BasicGenerator {
 
     //what autism is this? why are we using floating-point vectors for setting block IDs?
     protected void setBlock(ChunkManager level, Vector3 v, Block b) {
-        level.setBlockAt((int) v.x, (int) v.y, (int) v.z, b.getId() << 4, b.getDamage());
+        level.setBlockAt((int) v.x, (int) v.y, (int) v.z, b.getId(), b.getDamage());
     }
 }
