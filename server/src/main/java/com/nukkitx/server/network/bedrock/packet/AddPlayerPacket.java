@@ -41,7 +41,7 @@ public class AddPlayerPacket implements BedrockPacket {
     private int customFlags;
     //private final AdventureSettings adventureSettings = new AdventureSettings;
     private final List<EntityLink> entityLinks = new ArrayList<>();
-    private UUID deviceId;
+    private String deviceId;
 
     @Override
     public void encode(ByteBuf buffer) {

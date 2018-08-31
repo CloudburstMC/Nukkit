@@ -34,7 +34,7 @@ public class BedrockPacketCodec implements PacketCodec<BedrockPacket> {
 
     static {
         DEFAULT = builder()
-                .addCompatibleVersion(281)
+                .addCompatibleVersion(BROADCAST_PROTOCOL_VERSION)
                 .registerPacket(LoginPacket::new, 1)
                 .registerPacket(PlayStatusPacket::new, 2)
                 .registerPacket(ServerToClientHandshakePacket::new, 3)
