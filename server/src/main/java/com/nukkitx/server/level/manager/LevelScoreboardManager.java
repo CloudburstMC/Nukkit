@@ -14,14 +14,12 @@ import com.nukkitx.server.network.bedrock.packet.SetScorePacket;
 import com.nukkitx.server.scoreboard.*;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
-import lombok.RequiredArgsConstructor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@RequiredArgsConstructor
 @ParametersAreNonnullByDefault
 public class LevelScoreboardManager implements Scoreboard {
     private static final TLongObjectMap<NukkitScorer> scorers = new TLongObjectHashMap<>();
@@ -32,6 +30,11 @@ public class LevelScoreboardManager implements Scoreboard {
     private final Queue<ScoreInfo> setScoreQueue = new ArrayDeque<>();
     private final Queue<ScoreInfo> removeScoreQueue = new ArrayDeque<>();
     private final NukkitLevel level;
+
+    public LevelScoreboardManager(NukkitLevel level) {
+        this.level = level;
+        createObjectiveCriteria("dummy", false);
+    }
 
     @Override
     public void removedObjective(Objective objective) {
@@ -53,6 +56,7 @@ public class LevelScoreboardManager implements Scoreboard {
     public NukkitObjectiveCriteria createObjectiveCriteria(String name, boolean readOnly) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "name is null or empty");
         Preconditions.checkArgument(!criterion.containsKey(name), "criteria already registered");
+        name = name.toLowerCase();
 
         NukkitObjectiveCriteria criteria = new NukkitObjectiveCriteria(name, readOnly);
         criterion.put(name, criteria);
@@ -64,7 +68,7 @@ public class LevelScoreboardManager implements Scoreboard {
     @Override
     public Optional<ObjectiveCriteria> getCriteria(String name) {
         Preconditions.checkNotNull(name, "name");
-        return Optional.ofNullable(criterion.get(name));
+        return Optional.ofNullable(criterion.get(name.toLowerCase()));
     }
 
     @Nonnull
@@ -79,6 +83,8 @@ public class LevelScoreboardManager implements Scoreboard {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "name is null or empty");
         Preconditions.checkNotNull(displayName, "displayName");
         Preconditions.checkNotNull(criteria, "criteria");
+
+        name = name.toLowerCase();
 
         synchronized (objectives) {
             Preconditions.checkArgument(!objectives.containsKey(name), "objective name already registered");
@@ -96,7 +102,7 @@ public class LevelScoreboardManager implements Scoreboard {
     public Optional<Objective> getObjective(String name) {
         Preconditions.checkNotNull(name, "name");
         synchronized (objectives) {
-            return Optional.ofNullable(objectives.get(name));
+            return Optional.ofNullable(objectives.get(name.toLowerCase()));
         }
     }
 
@@ -183,13 +189,13 @@ public class LevelScoreboardManager implements Scoreboard {
 
     @Nonnull
     @Override
-    public NukkitScorer registerScorer(String name) {
+    public NukkitFakeScorer registerScorer(String name) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "name is null or empty");
 
-        NukkitScorer scorer = null;
+        NukkitFakeScorer scorer = null;
         for (NukkitScorer s : scorers.valueCollection()) {
-            if (!(s instanceof NukkitEntityScorer)) {
-                scorer = s;
+            if (s instanceof NukkitFakeScorer && ((NukkitFakeScorer) s).getName().equals(name)) {
+                scorer = (NukkitFakeScorer) s;
                 break;
             }
         }

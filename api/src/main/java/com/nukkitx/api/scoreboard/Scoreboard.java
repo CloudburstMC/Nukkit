@@ -40,7 +40,7 @@ public interface Scoreboard {
     EntityScorer registerScorer(Entity entity);
 
     @Nonnull
-    Scorer registerScorer(String string);
+    FakeScorer registerScorer(String string);
 
     @Nonnull
     Optional<Scorer> getScorer(long id);
