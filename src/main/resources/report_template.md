@@ -20,7 +20,6 @@ PLUGIN ERROR: ${PLUGIN_ERROR}
 ### OS and Versions
 
 * Nukkit Version: ${NUKKIT_VERSION} 
-* Git Commit Abbrev: ${GIT_COMMIT_ABBREV}
 * Java Version: ${JAVA_VERSION}
 
 * Host Configuration: 
