@@ -32,6 +32,14 @@ public abstract class SimpleChunkManager implements ChunkManager {
         }
     }
 
+    @Override
+    public void setBlockAt(int x, int y, int z, int id, int data) {
+        FullChunk chunk = this.getChunk(x >> 4, z >> 4);
+        if (chunk != null) {
+            chunk.setBlock(x & 0xf, y & 0xff, z & 0xf, id, data);
+        }
+    }
+
 
     @Override
     public void setBlockFullIdAt(int x, int y, int z, int fullId) {

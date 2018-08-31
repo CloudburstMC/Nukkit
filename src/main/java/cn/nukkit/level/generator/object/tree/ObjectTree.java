@@ -106,7 +106,7 @@ public abstract class ObjectTree {
                         continue;
                     }
                     if (!Block.solid[level.getBlockIdAt(xx, yy, zz)]) {
-                        level.setBlockFullIdAt(xx, yy, zz, (this.getLeafBlock() << 4) | this.getType());
+                        level.setBlockAt(xx, yy, zz, this.getLeafBlock(), this.getType());
                     }
                 }
             }
@@ -115,12 +115,12 @@ public abstract class ObjectTree {
 
     protected void placeTrunk(ChunkManager level, int x, int y, int z, NukkitRandom random, int trunkHeight) {
         // The base dirt block
-        level.setBlockIdAt(x, y - 1, z, Block.DIRT);
+        level.setBlockAt(x, y - 1, z, Block.DIRT);
 
         for (int yy = 0; yy < trunkHeight; ++yy) {
             int blockId = level.getBlockIdAt(x, y + yy, z);
             if (this.overridable(blockId)) {
-                level.setBlockFullIdAt(x, y + yy, z, (this.getTrunkBlock() << 4) | this.getType());
+                level.setBlockAt(x, y + yy, z, this.getTrunkBlock(), this.getType());
             }
         }
     }

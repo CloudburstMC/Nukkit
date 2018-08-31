@@ -2259,6 +2259,17 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
+    public synchronized void setBlockAt(int x, int y, int z, int id, int data) {
+        BaseFullChunk chunk = this.getChunk(x >> 4, z >> 4, true);
+        chunk.setBlockId(x & 0x0f, y & 0xff, z & 0x0f, id & 0xff);
+        chunk.setBlockData(x & 0x0f, y & 0xff, z & 0x0f, data & 0xf);
+        addBlockChange(x, y, z);
+        temporalVector.setComponents(x, y, z);
+        for (ChunkLoader loader : this.getChunkLoaders(x >> 4, z >> 4)) {
+            loader.onBlockChanged(temporalVector);
+        }
+    }
+
     public synchronized int getBlockExtraDataAt(int x, int y, int z) {
         return this.getChunk(x >> 4, z >> 4, true).getBlockExtraData(x & 0x0f, y & 0xff, z & 0x0f);
     }
