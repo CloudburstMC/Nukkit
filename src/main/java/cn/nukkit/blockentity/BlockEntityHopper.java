@@ -292,9 +292,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
                                     item.count--;
                                 }
                             }
-                        }
-                        else //Must be an input, try to cook it
-                        {
+                        } else { //Must be an input, try to cook it
                             if (inventory.getSmelting().getId() == Item.AIR) {
                                 inventory.setSmelting(itemToAdd);
                                 item.count--;
