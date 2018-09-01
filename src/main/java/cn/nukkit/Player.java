@@ -2004,7 +2004,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 String.valueOf(NukkitMath.round(this.y, 4)),
                 String.valueOf(NukkitMath.round(this.z, 4))));
 
-        if (this.isOp()) {
+        if (this.isOp() || this.hasPermission("nukkit.textcolor") {
             this.setRemoveFormat(false);
         }
 
