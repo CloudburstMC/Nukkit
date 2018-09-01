@@ -298,8 +298,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
                                 item.count--;
                             } else if (inventory.getSmelting().getId() == itemToAdd.getId()) {
                                 Item smelting = inventory.getSmelting();
-                                if (smelting.count < smelting.getMaxStackSize())
-                                {
+                                if (smelting.count < smelting.getMaxStackSize())  {
                                     smelting.count++;
                                     inventory.setSmelting(smelting);
                                     item.count--;
