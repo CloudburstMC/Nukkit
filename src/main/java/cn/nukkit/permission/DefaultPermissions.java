@@ -112,6 +112,8 @@ public abstract class DefaultPermissions {
         registerPermission(new Permission(ROOT + ".command.setworldspawn", "Allows the user to change the world spawn", Permission.DEFAULT_OP), commands);
         registerPermission(new Permission(ROOT + ".command.weather", "Allows the user to change the weather", Permission.DEFAULT_OP), commands);
         registerPermission(new Permission(ROOT + ".command.xp", "Allows the user to give experience", Permission.DEFAULT_OP), commands);
+        
+        registerPermission(new Permission(ROOT + ".textcolor", "Allows the user to write colored text", Permission.DEFAULT_OP), commands);
 
         commands.recalculatePermissibles();
 
