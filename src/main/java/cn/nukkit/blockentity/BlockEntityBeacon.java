@@ -106,7 +106,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
                 //For now, default to haste
                 Effect e = Effect.getEffect(Effect.HASTE);
                 e.setDuration(duration * 20);
-                if (getPowerLevel() > 4) {
+                if (getPowerLevel() == 4) {
                     e.setAmplifier(2);
                 } else {
                     e.setAmplifier(1);
@@ -114,7 +114,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
                 e.setVisible(false);
                 p.addEffect(e);
 
-                if (getPowerLevel() > 4) {
+                if (getPowerLevel() == 4) {
                     e = Effect.getEffect(Effect.REGENERATION);
                     e.setDuration(duration * 20);
                     e.setAmplifier(1);
