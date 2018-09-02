@@ -9,7 +9,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
  */
 public class EntityParrot extends EntityAnimal {
 
-    public static final int NETWORK_ID = 105;
+    public static final int NETWORK_ID = 30;
 
     public EntityParrot(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -21,7 +21,7 @@ public class EntityParrot extends EntityAnimal {
     }
 
     public String getName() {
-        return "Bat";
+        return "Parrot";
     }
 
     @Override
