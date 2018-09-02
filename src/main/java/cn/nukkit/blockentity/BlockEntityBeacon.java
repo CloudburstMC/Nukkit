@@ -82,6 +82,8 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
             return true;
         }
 
+        setPowerLevel(calculatePowerLevel());
+
         Map<Long, Player> players = this.level.getPlayers();
 
         Integer range = 10 + getPowerLevel() * 10;
