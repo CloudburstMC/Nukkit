@@ -4,6 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
+import cn.nukkit.inventory.FurnaceInventory;
 import cn.nukkit.inventory.HopperInventory;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.InventoryHolder;
@@ -16,6 +17,7 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.inventory.Fuel;
 
 /**
  * Created by CreeperFace on 8.5.2017.
@@ -206,7 +208,24 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
         }
 
         BlockEntity blockEntity = this.level.getBlockEntity(this.up());
-        if (blockEntity instanceof InventoryHolder) {
+        //Fix for furnace outputs
+        if (blockEntity instanceof BlockEntityFurnace) {
+            FurnaceInventory inv = ((BlockEntityFurnace) blockEntity).getInventory();
+            Item item = inv.getResult();
+            if (item.getId() != 0 && item.getCount() > 0) {
+                Item itemToAdd = item.clone();
+                itemToAdd.count = 1;
+                Item[] items = this.inventory.addItem(itemToAdd);
+                if (items.length < 1) {
+                    item.count--;
+                    if (item.count <= 0) {
+                        item = Item.get(0);
+                    }
+                    inv.setResult(item);
+                    update = true;
+                }
+            }
+        } else if (blockEntity instanceof InventoryHolder) {
             Inventory inv = ((InventoryHolder) blockEntity).getInventory();
 
             for (int i = 0; i < inv.getSize(); i++) {
@@ -247,7 +266,51 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
         if (!(this.level.getBlockEntity(this.down()) instanceof BlockEntityHopper)) {
             BlockEntity be = this.level.getBlockEntity(this.getSide(BlockFace.fromIndex(this.level.getBlockDataAt(this.getFloorX(), this.getFloorY(), this.getFloorZ()))));
 
-            if (be instanceof InventoryHolder) {
+            //Fix for furnace inputs
+            if (be instanceof BlockEntityFurnace) {
+                BlockEntityFurnace furnace = (BlockEntityFurnace) be;
+                FurnaceInventory inventory = furnace.getInventory();
+                if (inventory.isFull()) {
+                    return false;
+                }
+                for (int i = 0; i < inventory.getSize(); i++) {
+                    Item item = this.inventory.getItem(i);
+                    if (item.getId() != 0 && item.getCount() > 0) {
+                        Item itemToAdd = item.clone();
+                        itemToAdd.setCount(1);
+                        //If it is a fuel
+                        if (Fuel.duration.containsKey(item.getId())) {
+                            if (inventory.getFuel().getId() == Item.AIR) {
+                                inventory.setFuel(itemToAdd);
+                                item.count--;
+                            } else if (inventory.getFuel().getId() == itemToAdd.getId()) {
+                                Item fuel = inventory.getFuel();
+                                if (fuel.count < fuel.getMaxStackSize())
+                                {
+                                    fuel.count++;
+                                    inventory.setFuel(fuel);
+                                    item.count--;
+                                }
+                            }
+                        } else { //Must be an input, try to cook it
+                            if (inventory.getSmelting().getId() == Item.AIR) {
+                                inventory.setSmelting(itemToAdd);
+                                item.count--;
+                            } else if (inventory.getSmelting().getId() == itemToAdd.getId()) {
+                                Item smelting = inventory.getSmelting();
+                                if (smelting.count < smelting.getMaxStackSize())  {
+                                    smelting.count++;
+                                    inventory.setSmelting(smelting);
+                                    item.count--;
+                                }
+                            }
+                        }
+                        inventory.sendContents(inventory.getViewers()); //whats wrong?
+                        this.inventory.setItem(i, item);
+                        return true;
+                    }
+                }
+            } else if (be instanceof InventoryHolder) {
                 Inventory inventory = ((InventoryHolder) be).getInventory();
 
                 if (inventory.isFull()) {
