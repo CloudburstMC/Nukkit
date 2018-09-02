@@ -237,8 +237,6 @@ public class NetworkInventoryAction {
                     return new SlotChangeAction(enchant, this.inventorySlot, this.oldItem, this.newItem);
                 }
 
-                player.getServer().getLogger().notice("Player " + player.getName() + " has interacted with windowId: " + windowId);
-
                 if (this.windowId == SOURCE_TYPE_BEACON) {
                     Inventory inv = player.getWindowById(Player.BEACON_WINDOW_ID);
 
@@ -248,19 +246,11 @@ public class NetworkInventoryAction {
                     }
                     BeaconInventory beacon = (BeaconInventory) inv;
 
-                    //Item local = inv.getItem(0);
-                    //if (local.equals(this.newItem, true, false)) {
-                    //    inv.setItem(0, this.newItem);
-                    //}
+                    Item local = inv.getItem(0);
+                    if (local.equals(this.newItem, true, false)) {
+                        inv.setItem(0, this.newItem);
+                    }
 
-                    player.getServer().getLogger().notice("sourceType: " + this.sourceType);
-                    player.getServer().getLogger().notice("windowId: " + this.windowId);
-                    player.getServer().getLogger().notice("unknown: " + this.unknown);
-                    player.getServer().getLogger().notice("inventorySlot: " + this.inventorySlot);
-                    player.getServer().getLogger().notice("newItem id: " + this.newItem.getId());
-                    player.getServer().getLogger().notice("oldItem id: " + this.oldItem.getId());
-
-                    player.getServer().getLogger().notice("Player " + player.getName() + " has attempted to interact with the beacon");
                     return new SlotChangeAction(beacon, this.inventorySlot, this.oldItem, this.newItem);
                 }
 

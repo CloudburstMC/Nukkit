@@ -2,14 +2,22 @@ package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockAir;
+import cn.nukkit.event.block.SignChangeEvent;
 import cn.nukkit.inventory.BeaconInventory;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.InventoryHolder;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.potion.Effect;
+import cn.nukkit.scheduler.NukkitRunnable;
+import cn.nukkit.utils.TextFormat;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class BlockEntityBeacon extends BlockEntitySpawnable implements InventoryHolder {
 
@@ -66,11 +74,6 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
 
     @Override
     public boolean onUpdate() {
-        //Check power level every 10 secs
-        if (currentTick++ % 200 != 0) {
-            setPowerLevel(calculatePowerLevel());
-        }
-
         //Only apply effects every 4 secs
         if (currentTick++ % 80 != 0) {
             return true;
@@ -86,25 +89,28 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
 
             //If the player is in range
             if (p.distance(this) < range) {
+                Effect e;
 
-                //Apply the primary power
-                Effect e = Effect.getEffect(getPrimaryPower());
+                if (getPrimaryPower() != 0) {
+                    //Apply the primary power
+                    e = Effect.getEffect(getPrimaryPower());
 
-                //Set duration
-                e.setDuration(duration * 20);
+                    //Set duration
+                    e.setDuration(duration * 20);
 
-                //If secondary is selected as the primary too, apply 2 amplification
-                if (getSecondaryPower() == getPrimaryPower()) {
-                    e.setAmplifier(2);
-                } else {
-                    e.setAmplifier(1);
+                    //If secondary is selected as the primary too, apply 2 amplification
+                    if (getSecondaryPower() == getPrimaryPower()) {
+                        e.setAmplifier(2);
+                    } else {
+                        e.setAmplifier(1);
+                    }
+
+                    //Hide particles
+                    e.setVisible(false);
+
+                    //Add the effect
+                    p.addEffect(e);
                 }
-
-                //Hide particles
-                e.setVisible(false);
-
-                //Add the effect
-                p.addEffect(e);
 
                 //If we have a secondary power as regen, apply it
                 if (getSecondaryPower() == Effect.REGENERATION) {
@@ -202,5 +208,19 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
     @Override
     public Inventory getInventory() {
         return this.inventory;
+    }
+
+    @Override
+    public boolean updateCompoundTag(CompoundTag nbt, Player player) {
+        if (!nbt.getString("id").equals(BlockEntity.BEACON)) {
+            return false;
+        }
+
+        this.setPrimaryPower(nbt.getInt("primary"));
+        this.setSecondaryPower(nbt.getInt("secondary"));
+
+        //Bug, doesn't delete the item some reason
+        this.inventory.setItem(0, new ItemBlock(new BlockAir(), 0, 0));
+        return true;
     }
 }
