@@ -1,13 +1,23 @@
 package cn.nukkit.blockentity;
 
+import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.inventory.BeaconInventory;
+import cn.nukkit.inventory.Inventory;
+import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.potion.Effect;
 
-public class BlockEntityBeacon extends BlockEntitySpawnable {
+import java.util.Map;
+
+public class BlockEntityBeacon extends BlockEntitySpawnable implements InventoryHolder {
+
+    protected final BeaconInventory inventory;
 
     public BlockEntityBeacon(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+        this.inventory = new BeaconInventory(this);
     }
 
     @Override
@@ -56,12 +66,63 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
 
     @Override
     public boolean onUpdate() {
-        //Only check every 100 ticks
-        if (currentTick++ % 100 != 0) {
+        //Only check every 2 secs
+        if (currentTick++ % 40 != 0) {
             return true;
         }
 
-        setPowerLevel(calculatePowerLevel());
+        //Check power level every 10 secs
+        if (currentTick++ % 200 != 0) {
+            setPowerLevel(calculatePowerLevel());
+        }
+
+        Map<Long, Player> players = this.level.getPlayers();
+
+        Integer range = 0;
+        Integer duration = 0;
+
+        switch(getPowerLevel()) {
+            case 1:
+                range = 20;
+                duration = 11;
+                break;
+            case 2:
+                range = 30;
+                duration = 13;
+                break;
+            case 3:
+                range = 40;
+                duration = 15;
+                break;
+            case 4:
+                range = 50;
+                duration = 17;
+                break;
+        }
+
+        for(Map.Entry<Long, Player> entry : players.entrySet()) {
+            Player p = entry.getValue();
+            if (p.distance(this) < range) {
+                //For now, default to haste
+                Effect e = Effect.getEffect(Effect.HASTE);
+                e.setDuration(duration * 20);
+                if (getPowerLevel() > 4) {
+                    e.setAmplifier(2);
+                } else {
+                    e.setAmplifier(1);
+                }
+                e.setVisible(false);
+                p.addEffect(e);
+
+                if (getPowerLevel() > 4) {
+                    e = Effect.getEffect(Effect.REGENERATION);
+                    e.setDuration(duration * 20);
+                    e.setAmplifier(1);
+                    e.setVisible(false);
+                    p.addEffect(e);
+                }
+            }
+        }
 
         return true;
     }
@@ -108,5 +169,10 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
             chunk.setChanged();
             this.spawnToAll();
         }
+    }
+
+    @Override
+    public Inventory getInventory() {
+        return this.inventory;
     }
 }

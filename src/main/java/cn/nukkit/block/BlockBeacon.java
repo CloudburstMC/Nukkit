@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBeacon;
+import cn.nukkit.inventory.BeaconInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
@@ -53,8 +54,23 @@ public class BlockBeacon extends BlockTransparent {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        // TODO handle GUI
-        //Server.getInstance().getLogger().info("BlockBeacon.onActivate called");
+        if (player != null) {
+
+            BlockEntity t = this.getLevel().getBlockEntity(this);
+            BlockEntityBeacon beacon;
+            if (t instanceof BlockEntityBeacon) {
+                beacon = (BlockEntityBeacon) t;
+            } else {
+                CompoundTag nbt = new CompoundTag("")
+                        .putString("id", BlockEntity.BEACON)
+                        .putInt("x", (int) this.x)
+                        .putInt("y", (int) this.y)
+                        .putInt("z", (int) this.z);
+                beacon = new BlockEntityBeacon(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+            }
+
+            player.addWindow(new BeaconInventory(this), Player.BEACON_WINDOW_ID);
+        }
         return true;
     }
 
