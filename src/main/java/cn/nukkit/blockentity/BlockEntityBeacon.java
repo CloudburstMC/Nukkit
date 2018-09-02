@@ -66,59 +66,61 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
 
     @Override
     public boolean onUpdate() {
-        //Only check every 2 secs
-        if (currentTick++ % 40 != 0) {
-            return true;
-        }
-
         //Check power level every 10 secs
         if (currentTick++ % 200 != 0) {
             setPowerLevel(calculatePowerLevel());
         }
 
+        //Only apply effects every 4 secs
+        if (currentTick++ % 80 != 0) {
+            return true;
+        }
+
         Map<Long, Player> players = this.level.getPlayers();
 
-        Integer range = 0;
-        Integer duration = 0;
-
-        switch(getPowerLevel()) {
-            case 1:
-                range = 20;
-                duration = 11;
-                break;
-            case 2:
-                range = 30;
-                duration = 13;
-                break;
-            case 3:
-                range = 40;
-                duration = 15;
-                break;
-            case 4:
-                range = 50;
-                duration = 17;
-                break;
-        }
+        Integer range = 10 + getPowerLevel() * 10;
+        Integer duration = 9 + getPowerLevel() * 2;
 
         for(Map.Entry<Long, Player> entry : players.entrySet()) {
             Player p = entry.getValue();
+
+            //If the player is in range
             if (p.distance(this) < range) {
-                //For now, default to haste
-                Effect e = Effect.getEffect(Effect.HASTE);
+
+                //Apply the primary power
+                Effect e = Effect.getEffect(getPrimaryPower());
+
+                //Set duration
                 e.setDuration(duration * 20);
-                if (getPowerLevel() == 4) {
+
+                //If secondary is selected as the primary too, apply 2 amplification
+                if (getSecondaryPower() == getPrimaryPower()) {
                     e.setAmplifier(2);
                 } else {
                     e.setAmplifier(1);
                 }
+
+                //Hide particles
                 e.setVisible(false);
+
+                //Add the effect
                 p.addEffect(e);
 
-                if (getPowerLevel() == 4) {
+                //If we have a secondary power as regen, apply it
+                if (getSecondaryPower() == Effect.REGENERATION) {
+                    //Get the regen effect
                     e = Effect.getEffect(Effect.REGENERATION);
+
+                    //Set duration
                     e.setDuration(duration * 20);
+
+                    //Regen I
                     e.setAmplifier(1);
+
+                    //Hide particles
                     e.setVisible(false);
+
+                    //Add effect
                     p.addEffect(e);
                 }
             }
@@ -166,6 +168,32 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
         int currentLevel = getPowerLevel();
         if (level != currentLevel) {
             namedTag.putInt("Level", level);
+            chunk.setChanged();
+            this.spawnToAll();
+        }
+    }
+
+    public int getPrimaryPower() {
+        return namedTag.getInt("Primary");
+    }
+
+    public void setPrimaryPower(int power) {
+        int currentPower = getPrimaryPower();
+        if (power != currentPower) {
+            namedTag.putInt("Primary", power);
+            chunk.setChanged();
+            this.spawnToAll();
+        }
+    }
+
+    public int getSecondaryPower() {
+        return namedTag.getInt("Secondary");
+    }
+
+    public void setSecondaryPower(int power) {
+        int currentPower = getSecondaryPower();
+        if (power != currentPower) {
+            namedTag.putInt("Secondary", power);
             chunk.setChanged();
             this.spawnToAll();
         }
