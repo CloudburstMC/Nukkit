@@ -21,6 +21,8 @@ public interface LoginChainData {
 
     int getDeviceOS();
 
+    String getDeviceId();
+
     String getGameVersion();
 
     int getGuiScale();

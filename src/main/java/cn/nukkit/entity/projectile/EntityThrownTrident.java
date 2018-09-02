@@ -59,7 +59,6 @@ public class EntityThrownTrident extends EntityProjectile {
 
     public EntityThrownTrident(FullChunk chunk, CompoundTag nbt, Entity shootingEntity, boolean critical) {
         super(chunk, nbt, shootingEntity);
-        this.setCritical(critical);
     }
 
     @Override
@@ -67,6 +66,7 @@ public class EntityThrownTrident extends EntityProjectile {
         super.initEntity();
 
         this.damage = namedTag.contains("damage") ? namedTag.getDouble("damage") : 8;
+        closeOnCollide = false;
     }
 
     public void setCritical() {
