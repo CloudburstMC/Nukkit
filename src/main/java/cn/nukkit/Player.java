@@ -4691,10 +4691,37 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             EntityXPOrb xpOrb = (EntityXPOrb) entity;
             if (xpOrb.getPickupDelay() <= 0) {
                 int exp = xpOrb.getExp();
-                this.addExperience(exp);
                 entity.kill();
                 this.getLevel().addSound(this, Sound.RANDOM_ORB);
                 pickedXPOrb = tick;
+
+                //Mending
+                ArrayList<Integer> itemsWithMending = new ArrayList<>();
+                for (int i = 0; i < 4; i++) {
+                    if (inventory.getArmorItem(i).getEnchantment((short)Enchantment.ID_MENDING) != null) {
+                        itemsWithMending.add(inventory.getSize() + i);
+                    }
+                }
+                if (inventory.getItemInHand().getEnchantment((short)Enchantment.ID_MENDING) != null) {
+                    itemsWithMending.add(inventory.getHeldItemIndex());
+                }
+                if (itemsWithMending.size() > 0) {
+                    Random rand = new Random();
+                    Integer itemToRepair = itemsWithMending.get(rand.nextInt(itemsWithMending.size()));
+                    Item toRepair = inventory.getItem(itemToRepair);
+                    if (toRepair instanceof ItemTool || toRepair instanceof ItemArmor) {
+                        if (toRepair.getDamage() > 0) {
+                            int dmg = toRepair.getDamage() - 2;
+                            if (dmg < 0)
+                                dmg = 0;
+                            toRepair.setDamage(dmg);
+                            inventory.setItem(itemToRepair, toRepair);
+                            return true;
+                        }
+                    }
+                }
+
+                this.addExperience(exp);
                 return true;
             }
         }
