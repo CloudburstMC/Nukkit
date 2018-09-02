@@ -19,6 +19,9 @@ import cn.nukkit.utils.TextFormat;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * author: Rover656
+ */
 public class BlockEntityBeacon extends BlockEntitySpawnable implements InventoryHolder {
 
     protected final BeaconInventory inventory;
