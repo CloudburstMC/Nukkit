@@ -2,6 +2,7 @@ package cn.nukkit.network.protocol.types;
 
 import cn.nukkit.Player;
 import cn.nukkit.inventory.AnvilInventory;
+import cn.nukkit.inventory.BeaconInventory;
 import cn.nukkit.inventory.EnchantInventory;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.transaction.action.*;
@@ -234,6 +235,21 @@ public class NetworkInventoryAction {
                     }
 
                     return new SlotChangeAction(enchant, this.inventorySlot, this.oldItem, this.newItem);
+                }
+
+                if (this.windowId == SOURCE_TYPE_BEACON) {
+                    Inventory inv = player.getWindowById(Player.BEACON_WINDOW_ID);
+
+                    if (!(inv instanceof BeaconInventory)) {
+                        player.getServer().getLogger().debug("Player " + player.getName() + " has no open beacon inventory");
+                        return null;
+                    }
+                    BeaconInventory beacon = (BeaconInventory) inv;
+
+                    player.getServer().getLogger().notice("Inventory slot change action");
+
+                    this.inventorySlot = 0;
+                    return new SlotChangeAction(beacon, this.inventorySlot, this.oldItem, this.newItem);
                 }
 
                 //TODO: more stuff
