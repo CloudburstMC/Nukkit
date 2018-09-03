@@ -251,7 +251,6 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
 
         BeaconInventory inv = (BeaconInventory)player.getWindowById(Player.BEACON_WINDOW_ID);
 
-        //Bug, doesn't delete the item some reason
         inv.setItem(0, new ItemBlock(new BlockAir(), 0, 0));
         return true;
     }
