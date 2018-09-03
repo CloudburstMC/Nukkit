@@ -62,7 +62,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
 
     @Override
     public String getName() {
-        return this.hasName() ? this.namedTag.getString("CustomName") : "Furnace";
+        return this.hasName() ? this.namedTag.getString("CustomName") : "Hopper";
     }
 
     @Override
