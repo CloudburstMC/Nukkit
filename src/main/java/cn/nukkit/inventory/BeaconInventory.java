@@ -4,8 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.level.Position;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * author: Rover656
  */
 public class BeaconInventory extends ContainerInventory {
 
