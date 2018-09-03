@@ -83,6 +83,11 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
         }
 
         setPowerLevel(calculatePowerLevel());
+        
+        //Skip beacons that do not have a pyramid
+        if (getPowerLevel() < 1) {
+            return true;
+        }
 
         Map<Long, Player> players = this.level.getPlayers();
 
