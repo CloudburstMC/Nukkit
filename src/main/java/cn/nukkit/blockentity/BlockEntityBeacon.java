@@ -249,8 +249,10 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
         this.setPrimaryPower(nbt.getInt("primary"));
         this.setSecondaryPower(nbt.getInt("secondary"));
 
+        BeaconInventory inv = (BeaconInventory)player.getWindowById(Player.BEACON_WINDOW_ID);
+
         //Bug, doesn't delete the item some reason
-        this.inventory.setItem(0, new ItemBlock(new BlockAir(), 0, 0));
+        inv.setItem(0, new ItemBlock(new BlockAir(), 0, 0));
         return true;
     }
 }
