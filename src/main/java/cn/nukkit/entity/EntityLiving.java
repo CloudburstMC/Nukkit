@@ -249,6 +249,9 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
             }
         }
 
+        // Used to check collisions with magma blocks
+        this.level.getBlock((int) x, (int) y - 1, (int) z).onEntityCollide(this);
+
         Timings.livingEntityBaseTickTimer.stopTiming();
 
         return hasUpdate;
