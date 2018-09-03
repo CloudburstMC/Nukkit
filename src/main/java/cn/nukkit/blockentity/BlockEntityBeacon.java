@@ -82,6 +82,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
             return true;
         }
 
+        //TODO: Check for sky access
         setPowerLevel(calculatePowerLevel());
         
         //Skip beacons that do not have a pyramid
