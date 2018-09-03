@@ -245,7 +245,7 @@ public class NetworkInventoryAction {
                         return null;
                     }
                     BeaconInventory beacon = (BeaconInventory) inv;
-                    
+
                     this.inventorySlot = 0;
                     return new SlotChangeAction(beacon, this.inventorySlot, this.oldItem, this.newItem);
                 }
