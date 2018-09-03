@@ -150,7 +150,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
 
     private static final int POWER_LEVEL_MAX = 4;
     
-    private bool hasSkyAccess() {
+    private boolean hasSkyAccess() {
         int tileX = getFloorX();
         int tileY = getFloorY();
         int tileZ = getFloorZ();
