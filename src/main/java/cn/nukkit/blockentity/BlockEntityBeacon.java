@@ -82,23 +82,21 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
             return true;
         }
 
-        //TODO: Check for sky access
+        //Get the power level based on the pyramid
         setPowerLevel(calculatePowerLevel());
         
-        //Skip beacons that do not have a pyramid
-        if (getPowerLevel() < 1) {
-            return true;
-        }
-        
-        if (!hasSkyAccess()) {
+        //Skip beacons that do not have a pyramid or sky access
+        if (getPowerLevel() < 1 || !hasSkyAccess()) {
             return true;
         }
 
+        //Get all players in game
         Map<Long, Player> players = this.level.getPlayers();
 
+        //Calculate vars for beacon power
         Integer range = 10 + getPowerLevel() * 10;
         Integer duration = 9 + getPowerLevel() * 2;
-
+        
         for(Map.Entry<Long, Player> entry : players.entrySet()) {
             Player p = entry.getValue();
 
@@ -153,7 +151,19 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
     private static final int POWER_LEVEL_MAX = 4;
     
     private bool hasSkyAccess() {
-        //TODO: When I get to lunch break, I will add
+        int tileX = getFloorX();
+        int tileY = getFloorY();
+        int tileZ = getFloorZ();
+        
+        //Check every block from our y coord to the top of the world
+        for (int y = tileY + 1; y <= 255; y++) {
+            int testBlockId = level.getBlockIdAt(tileX, y, tileZ);
+            if (!testBlockId != Block.AIR) {
+                //There is no sky access
+                return false;
+            }
+        }
+        
         return true;
     }
 
