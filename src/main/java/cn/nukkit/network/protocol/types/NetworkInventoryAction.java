@@ -246,8 +246,6 @@ public class NetworkInventoryAction {
                     }
                     BeaconInventory beacon = (BeaconInventory) inv;
 
-                    player.getServer().getLogger().notice("Inventory slot change action");
-
                     this.inventorySlot = 0;
                     return new SlotChangeAction(beacon, this.inventorySlot, this.oldItem, this.newItem);
                 }
