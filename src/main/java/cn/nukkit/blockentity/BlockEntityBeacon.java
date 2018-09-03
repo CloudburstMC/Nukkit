@@ -89,6 +89,10 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
         if (getPowerLevel() < 1) {
             return true;
         }
+        
+        if (!hasSkyAccess()) {
+            return true;
+        }
 
         Map<Long, Player> players = this.level.getPlayers();
 
@@ -147,6 +151,11 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
     }
 
     private static final int POWER_LEVEL_MAX = 4;
+    
+    private bool hasSkyAccess() {
+        //TODO: When I get to lunch break, I will add
+        return true;
+    }
 
     private int calculatePowerLevel() {
         int tileX = getFloorX();
