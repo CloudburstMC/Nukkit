@@ -158,7 +158,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
         //Check every block from our y coord to the top of the world
         for (int y = tileY + 1; y <= 255; y++) {
             int testBlockId = level.getBlockIdAt(tileX, y, tileZ);
-            if (!testBlockId != Block.AIR) {
+            if (testBlockId != Block.AIR) {
                 //There is no sky access
                 return false;
             }
