@@ -393,7 +393,7 @@ public class BedrockSession implements NetworkSession<RakNetPacket> {
                 // Decryption
                 unwrappedData = PooledByteBufAllocator.DEFAULT.directBuffer(wrappedData.readableBytes());
                 decryptionCipher.cipher(wrappedData, unwrappedData);
-                validateIntegrity(unwrappedData);
+                //validateIntegrity(unwrappedData);
                 unwrappedData = unwrappedData.slice(0, unwrappedData.readableBytes() - 8);
             } else {
                 // Encryption not enabled so it should be readable.

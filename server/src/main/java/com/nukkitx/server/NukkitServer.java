@@ -256,9 +256,9 @@ public class NukkitServer implements Server {
 
         // Try to initialize natives.
         if (!Boolean.getBoolean("nukkit.disable-natives")) {
-            if (NativeCodeFactory.cipher.load()) {
+            /*if (NativeCodeFactory.cipher.load()) {
                 log.info("Loaded native ciphers");
-            }
+            }*/
 
             if (NativeCodeFactory.zlib.load()) {
                 log.info("Loaded native compression");
