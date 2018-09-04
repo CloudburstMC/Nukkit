@@ -24,6 +24,7 @@ public class NukkitSessionManager implements SessionManager<BedrockSession> {
     private final ThreadPoolExecutor sessionTicker = new ThreadPoolExecutor(1, 1, 1, TimeUnit.MINUTES,
             new LinkedBlockingQueue<>(), new ThreadFactoryBuilder().setNameFormat("Session Ticker - #%d").setDaemon(true).build());
 
+    @Override
     public boolean add(InetSocketAddress address, BedrockSession session) {
         boolean added = sessions.putIfAbsent(address, session) == null;
         if (added) {
@@ -32,6 +33,7 @@ public class NukkitSessionManager implements SessionManager<BedrockSession> {
         return added;
     }
 
+    @Override
     public boolean remove(BedrockSession session) {
         boolean removed = sessions.values().remove(session);
         if (session.getPlayerSession() != null) {
@@ -43,10 +45,12 @@ public class NukkitSessionManager implements SessionManager<BedrockSession> {
         return removed;
     }
 
+    @Override
     public BedrockSession get(InetSocketAddress address) {
         return sessions.get(address);
     }
 
+    @Override
     public Collection<BedrockSession> all() {
         return ImmutableList.copyOf(sessions.values());
     }

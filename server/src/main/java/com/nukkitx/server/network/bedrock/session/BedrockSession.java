@@ -327,7 +327,7 @@ public class BedrockSession implements NetworkSession<RakNetPacket> {
             playerSession = new PlayerSession(this, level);
         }
         if (!server.getSessionManager().add(this)) {
-            throw new IllegalStateException("Player could not be added to SessionManager");
+            throw new IllegalStateException("This player is already online.");
         }
         return playerSession;
     }
