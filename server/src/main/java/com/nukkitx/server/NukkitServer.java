@@ -55,6 +55,7 @@ import com.nukkitx.server.permission.NukkitAbilities;
 import com.nukkitx.server.permission.NukkitPermissionManager;
 import com.nukkitx.server.resourcepack.ResourcePackManager;
 import com.nukkitx.server.scheduler.ServerScheduler;
+import com.nukkitx.server.util.NativeCodeFactory;
 import com.nukkitx.server.util.ServerKiller;
 import com.spotify.futures.CompletableFutures;
 import lombok.Getter;
@@ -251,6 +252,21 @@ public class NukkitServer implements Server {
             Locale.setDefault(Locale.US);
         } else {
             throw new IllegalStateException("Selected and fallback Locale could not be loaded");
+        }
+
+        // Try to initialize natives.
+        if (!Boolean.getBoolean("nukkit.disable-natives")) {
+            if (NativeCodeFactory.cipher.load()) {
+                log.info("Loaded native ciphers");
+            }
+
+            if (NativeCodeFactory.zlib.load()) {
+                log.info("Loaded native compression");
+            }
+
+            if (NativeCodeFactory.hash.load()) {
+                log.info("Loaded native hashing");
+            }
         }
 
         // Register plugin loaders
