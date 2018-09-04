@@ -22,7 +22,10 @@ import com.nukkitx.server.network.bedrock.wrapper.WrapperHandler;
 import com.nukkitx.server.util.NativeCodeFactory;
 import com.voxelwind.server.jni.hash.VoxelwindHash;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.CorruptedFrameException;
 import lombok.extern.log4j.Log4j2;
 import net.md_5.bungee.jni.cipher.BungeeCipher;
 
@@ -48,6 +51,7 @@ public class BedrockSession implements NetworkSession<RakNetPacket> {
     private final AtomicLong lastKnownUpdate = new AtomicLong(System.currentTimeMillis());
     private final Queue<BedrockPacket> currentlyQueued = new ConcurrentLinkedQueue<>();
     private final AtomicLong sentEncryptedPacketCount = new AtomicLong();
+    private final AtomicLong recvEncryptedPacketCount = new AtomicLong();
     private final Lock handlingWrapper = new ReentrantLock();
     private final NukkitServer server;
     private BedrockPacketCodec packetCodec = BedrockPacketCodec.DEFAULT;
@@ -389,7 +393,7 @@ public class BedrockSession implements NetworkSession<RakNetPacket> {
                 // Decryption
                 unwrappedData = PooledByteBufAllocator.DEFAULT.directBuffer(wrappedData.readableBytes());
                 decryptionCipher.cipher(wrappedData, unwrappedData);
-                // TODO: Persuade Microjang into removing adler32
+                validateIntegrity(unwrappedData);
                 unwrappedData = unwrappedData.slice(0, unwrappedData.readableBytes() - 8);
             } else {
                 // Encryption not enabled so it should be readable.
@@ -410,6 +414,34 @@ public class BedrockSession implements NetworkSession<RakNetPacket> {
             if (unwrappedData != null && unwrappedData != wrappedData) {
                 unwrappedData.release();
             }
+        }
+    }
+
+    private void validateIntegrity(ByteBuf fullData) {
+        VoxelwindHash hash = hashLocal.get();
+        ByteBuf counterBuf = PooledByteBufAllocator.DEFAULT.directBuffer(8);
+        ByteBuf keyBuf = PooledByteBufAllocator.DEFAULT.directBuffer(serverKey.length);
+        try {
+            ByteBuf rawData = fullData.slice(0, fullData.readableBytes() - 8);
+            ByteBuf packetTrailer = fullData.slice(fullData.readableBytes() - 8, 8);
+
+            long count = recvEncryptedPacketCount.getAndIncrement();
+            counterBuf.writeLongLE(count);
+            keyBuf.writeBytes(serverKey);
+
+            hash.update(counterBuf);
+            hash.update(rawData);
+            hash.update(keyBuf);
+            byte[] computedFullTrailer = hash.digest();
+
+            ByteBuf trailer = Unpooled.wrappedBuffer(computedFullTrailer, 0, 8);
+            if (!ByteBufUtil.equals(trailer, packetTrailer)) {
+                throw new CorruptedFrameException("Invalid trailer from received packet; packet recv count " + count +
+                        ", found trailer: " + ByteBufUtil.hexDump(packetTrailer) + ", expected: " + ByteBufUtil.hexDump(trailer));
+            }
+        } finally {
+            counterBuf.release();
+            keyBuf.release();
         }
     }
 
