@@ -81,6 +81,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -235,6 +236,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     private AsyncTask preLoginEventTask = null;
     protected boolean shouldLogin = false;
+
+    public AtomicBoolean hasInteracted = new AtomicBoolean();
 
     public int getStartActionTick() {
         return startAction;
@@ -1713,6 +1716,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (this.spawned && this.dummyBossBars.size() > 0 && currentTick % 100 == 0) {
             this.dummyBossBars.values().forEach(DummyBossBar::updateBossEntityPosition);
         }
+
+        this.hasInteracted.compareAndSet(true, false);
 
         return true;
     }
