@@ -8,6 +8,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.generator.object.ObjectTallGrass;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.scheduler.NukkitRunnable;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -57,10 +58,22 @@ public class BlockGrass extends BlockDirt {
             return true;
         } else if (item.isHoe()) {
             item.useOn(this);
+            // Fix infinity hoe
+            new NukkitRunnable() {
+                public void run() {
+                    if (item.getDamage() >= item.getMaxDurability()) player.getInventory().removeItem(item);
+                }
+            }.runTaskLater(null, 1);
             this.getLevel().setBlock(this, new BlockFarmland());
             return true;
         } else if (item.isShovel()) {
             item.useOn(this);
+            // Fix infinity hoe
+            new NukkitRunnable() {
+                public void run() {
+                    if (item.getDamage() >= item.getMaxDurability()) player.getInventory().removeItem(item);
+                }
+            }.runTaskLater(null, 1);
             this.getLevel().setBlock(this, new BlockGrassPath());
             return true;
         }
