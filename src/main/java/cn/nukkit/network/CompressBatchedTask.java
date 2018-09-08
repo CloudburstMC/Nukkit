@@ -13,14 +13,14 @@ import java.util.List;
  */
 public class CompressBatchedTask extends AsyncTask {
 
-    public int level = 7;
+    public int level = 9;
     public byte[][] data;
     public byte[] finalData;
     public int channel = 0;
     public List<String> targets = new ArrayList<>();
 
     public CompressBatchedTask(byte[][] data, List<String> targets) {
-        this(data, targets, 7);
+        this(data, targets, 9);
     }
 
     public CompressBatchedTask(byte[][] data, List<String> targets, int level) {

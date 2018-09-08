@@ -6,12 +6,13 @@
     import cn.nukkit.level.generator.Generator;
     import cn.nukkit.level.generator.SimpleChunkManager;
     import cn.nukkit.scheduler.AsyncTask;
+    import cn.nukkit.scheduler.Task;
 
-/**
+    /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public class PopulationTask extends AsyncTask {
+public class PopulationTask extends Task {
     private final long seed;
     private final Level level;
     private boolean state;
@@ -39,18 +40,40 @@ public class PopulationTask extends AsyncTask {
 
 
     @Override
-    public void onRun() {
+    public void onRun(int i) {
         syncGen(0);
     }
 
     private void syncGen(int i) {
-        if (i == chunks.length) {
-            generationTask();
-        } else {
-            BaseFullChunk chunk = chunks[i];
-            if (chunk != null) {
-                synchronized (chunk) {
-                    syncGen(i + 1);
+        try {
+            if (i == chunks.length) {
+                generationTask();
+            } else {
+                BaseFullChunk chunk = chunks[i];
+                if (chunk != null) {
+                    synchronized (chunk) {
+                        syncGen(i + 1);
+                    }
+                }
+            }
+        } finally {
+            if (level != null) {
+                if (!this.state) {
+                    //return;
+                }
+
+                BaseFullChunk centerChunk = this.centerChunk;
+
+                if (centerChunk == null) {
+                    // return;
+                } else {
+                    level.generateChunkCallback(centerChunk.getX(), centerChunk.getZ(), centerChunk);
+                }
+
+                for (BaseFullChunk chunk : this.chunks) {
+                    if (chunk != null) {
+                        level.generateChunkCallback(chunk.getX(), chunk.getZ(), chunk);
+                    }
                 }
             }
         }
@@ -136,29 +159,6 @@ public class PopulationTask extends AsyncTask {
             } finally {
                 manager.cleanChunks(this.seed);
             }
-        }
-    }
-
-    @Override
-    public void onCompletion(Server server) {
-        if (level != null) {
-            if (!this.state) {
-                return;
-            }
-
-            BaseFullChunk centerChunk = this.centerChunk;
-
-            if (centerChunk == null) {
-                return;
-            }
-
-            for (BaseFullChunk chunk : this.chunks) {
-                if (chunk != null) {
-                    level.generateChunkCallback(chunk.getX(), chunk.getZ(), chunk);
-                }
-            }
-
-            level.generateChunkCallback(centerChunk.getX(), centerChunk.getZ(), centerChunk);
         }
     }
 }

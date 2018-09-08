@@ -151,8 +151,8 @@ public class Server {
     private Network network;
 
     private boolean networkCompressionAsync = true;
-    public int networkCompressionLevel = 7;
-    private int networkZlibProvider = 0;
+    public int networkCompressionLevel = 9;
+    private int networkZlibProvider = 4;
 
     private boolean autoTickRate = true;
     private int autoTickRateLimit = 20;

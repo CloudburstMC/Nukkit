@@ -64,6 +64,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.*;
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 
 import java.io.File;
@@ -198,8 +199,8 @@ public class Level implements ChunkManager, Metadatable {
     private final Long2ObjectOpenHashMap<Boolean> chunkPopulationQueue = new Long2ObjectOpenHashMap<>();
     private final Long2ObjectOpenHashMap<Boolean> chunkPopulationLock = new Long2ObjectOpenHashMap<>();
     private final Long2ObjectOpenHashMap<Boolean> chunkGenerationQueue = new Long2ObjectOpenHashMap<>();
-    private int chunkGenerationQueueSize = 8;
-    private int chunkPopulationQueueSize = 2;
+    private int chunkGenerationQueueSize = 9;
+    private int chunkPopulationQueueSize = 4;
 
     private boolean autoSave = true;
 
@@ -725,19 +726,19 @@ public class Level implements ChunkManager, Metadatable {
             }
 
             if (this.isThundering()) {
-                Map<Long, ? extends FullChunk> chunks = getChunks();
-                if (chunks instanceof Long2ObjectOpenHashMap) {
-                    Long2ObjectOpenHashMap<? extends FullChunk> fastChunks = (Long2ObjectOpenHashMap) chunks;
+                //Long2ObjectOpenHashMap<? extends FullChunk> chunks = getChunks();
+                //if (chunks instanceof Long2ObjectOpenHashMap) {
+                    Long2ObjectOpenHashMap<? extends FullChunk> fastChunks = getChunks();
                     ObjectIterator<? extends Long2ObjectMap.Entry<? extends FullChunk>> iter = fastChunks.long2ObjectEntrySet().fastIterator();
                     while (iter.hasNext()) {
                         Long2ObjectMap.Entry<? extends FullChunk> entry = iter.next();
                         performThunder(entry.getLongKey(), entry.getValue());
                     }
-                } else {
+                /*} else {
                     for (Map.Entry<Long, ? extends FullChunk> entry : getChunks().entrySet()) {
                         performThunder(entry.getKey(), entry.getValue());
                     }
-                }
+                }*/
             }
         }
 
@@ -2334,7 +2335,7 @@ public class Level implements ChunkManager, Metadatable {
         this.getChunk(x >> 4, z >> 4, true).setHeightMap(x & 0x0f, z & 0x0f, value & 0x0f);
     }
 
-    public Map<Long,? extends FullChunk> getChunks() {
+    public Long2ObjectOpenHashMap<? extends FullChunk> getChunks() {
         return provider.getLoadedChunks();
     }
 
@@ -2415,12 +2416,12 @@ public class Level implements ChunkManager, Metadatable {
 
                 this.provider.setChunk(chunkX, chunkZ, chunk);
             } else {
-                Map<Long, Entity> oldEntities = oldChunk != null ? oldChunk.getEntities() : Collections.emptyMap();
+                Long2ObjectMap<Entity> oldEntities = oldChunk != null ? oldChunk.getEntities() : new Long2ObjectOpenHashMap<>();
 
-                Map<Long, BlockEntity> oldBlockEntities = oldChunk != null ? oldChunk.getBlockEntities() : Collections.emptyMap();
+                Long2ObjectMap<BlockEntity> oldBlockEntities = oldChunk != null ? oldChunk.getBlockEntities() : new Long2ObjectOpenHashMap<>();
 
                 if (!oldEntities.isEmpty()) {
-                    Iterator<Map.Entry<Long, Entity>> iter = oldEntities.entrySet().iterator();
+                    ObjectIterator<Map.Entry<Long, Entity>> iter = oldEntities.entrySet().iterator();
                     while (iter.hasNext()) {
                         Map.Entry<Long, Entity> entry = iter.next();
                         Entity entity = entry.getValue();
@@ -2434,7 +2435,7 @@ public class Level implements ChunkManager, Metadatable {
                 }
 
                 if (!oldBlockEntities.isEmpty()) {
-                    Iterator<Map.Entry<Long, BlockEntity>> iter = oldBlockEntities.entrySet().iterator();
+                    ObjectIterator<Map.Entry<Long, BlockEntity>> iter = oldBlockEntities.entrySet().iterator();
                     while (iter.hasNext()) {
                         Map.Entry<Long, BlockEntity> entry = iter.next();
                         BlockEntity blockEntity = entry.getValue();
@@ -2691,7 +2692,7 @@ public class Level implements ChunkManager, Metadatable {
 
         if (!chunk.isLightPopulated() && chunk.isPopulated()
                 && (boolean) this.getServer().getConfig("chunk-ticking.light-updates", false)) {
-            this.getServer().getScheduler().scheduleAsyncTask(new LightPopulationTask(this, chunk));
+            this.getServer().getScheduler().scheduleTask(null, new LightPopulationTask(this, chunk), true);
         }
 
         if (this.isChunkInUse(index)) {
@@ -2934,7 +2935,7 @@ public class Level implements ChunkManager, Metadatable {
                     }
 
                     PopulationTask task = new PopulationTask(this, chunk);
-                    this.server.getScheduler().scheduleAsyncTask(task);
+                    this.server.getScheduler().scheduleTask(null, task, true);
                 }
             }
             Timings.populationTimer.stopTiming();
@@ -2958,7 +2959,7 @@ public class Level implements ChunkManager, Metadatable {
             Timings.generationTimer.startTiming();
             this.chunkGenerationQueue.put(index, Boolean.TRUE);
             GenerationTask task = new GenerationTask(this, this.getChunk(x, z, true));
-            this.server.getScheduler().scheduleAsyncTask(task);
+            this.server.getScheduler().scheduleTask(null, task, true);
             Timings.generationTimer.stopTiming();
         }
     }
