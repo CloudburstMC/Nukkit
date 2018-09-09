@@ -1717,8 +1717,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.dummyBossBars.values().forEach(DummyBossBar::updateBossEntityPosition);
         }
 
-        this.hasInteracted.compareAndSet(true, false);
-
         return true;
     }
 
