@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ServerScheduler {
 
-    public static int WORKERS = 4;
+    public static int WORKERS = 8;
 
     private final AsyncPool asyncPool;
 

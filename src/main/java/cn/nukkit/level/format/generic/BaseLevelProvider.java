@@ -108,7 +108,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
     }
 
     @Override
-    public Map<Long, BaseFullChunk> getLoadedChunks() {
+    public Long2ObjectOpenHashMap<BaseFullChunk> getLoadedChunks() {
         return this.chunks;
     }
 

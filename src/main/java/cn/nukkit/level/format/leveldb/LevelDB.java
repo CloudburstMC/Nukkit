@@ -19,6 +19,8 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.*;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
 import org.iq80.leveldb.impl.Iq80DBFactory;
@@ -33,7 +35,7 @@ import java.util.*;
  */
 public class LevelDB implements LevelProvider {
 
-    protected Map<Long, Chunk> chunks = new HashMap<>();
+    protected Long2ObjectOpenHashMap<Chunk> chunks = new Long2ObjectOpenHashMap<>();
 
     protected DB db;
 
@@ -219,7 +221,7 @@ public class LevelDB implements LevelProvider {
         for (Chunk chunk : new ArrayList<>(this.chunks.values())) {
             this.unloadChunk(chunk.getX(), chunk.getZ(), false);
         }
-        this.chunks = new HashMap<>();
+        this.chunks = new Long2ObjectOpenHashMap<>();
     }
 
     @Override
@@ -247,7 +249,7 @@ public class LevelDB implements LevelProvider {
     }
 
     @Override
-    public Map<Long, Chunk> getLoadedChunks() {
+    public Long2ObjectOpenHashMap<Chunk> getLoadedChunks() {
         return this.chunks;
     }
 

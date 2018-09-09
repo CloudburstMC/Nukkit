@@ -5,6 +5,8 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.scheduler.AsyncTask;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
 import java.util.Map;
 
@@ -92,7 +94,7 @@ public interface LevelProvider {
 
     void setSpawn(Vector3 pos);
 
-    Map<Long, ? extends FullChunk> getLoadedChunks();
+    Long2ObjectOpenHashMap<? extends FullChunk> getLoadedChunks();
 
     void doGarbageCollection();
 

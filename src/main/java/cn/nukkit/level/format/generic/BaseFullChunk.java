@@ -13,6 +13,7 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.NumberTag;
 import cn.nukkit.network.protocol.BatchPacket;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
 import java.io.IOException;
@@ -26,9 +27,9 @@ import java.util.Map;
  * Nukkit Project
  */
 public abstract class BaseFullChunk implements FullChunk, ChunkManager {
-    protected Map<Long, Entity> entities;
+    protected Long2ObjectMap<Entity> entities;
 
-    protected Map<Long, BlockEntity> tiles;
+    protected Long2ObjectMap<BlockEntity> tiles;
 
     protected Map<Integer, BlockEntity> tileList;
 
@@ -359,13 +360,13 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     }
 
     @Override
-    public Map<Long, Entity> getEntities() {
-        return entities == null ? Collections.emptyMap() : entities;
+    public Long2ObjectMap<Entity> getEntities() {
+        return entities == null ? new Long2ObjectOpenHashMap<>() : entities;
     }
 
     @Override
-    public Map<Long, BlockEntity> getBlockEntities() {
-        return tiles == null ? Collections.emptyMap() : tiles;
+    public Long2ObjectMap<BlockEntity> getBlockEntities() {
+        return tiles == null ? new Long2ObjectOpenHashMap<>() : tiles;
     }
 
     @Override
