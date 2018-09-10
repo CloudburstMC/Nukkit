@@ -134,7 +134,7 @@ public class BlockCactus extends BlockTransparentMeta {
             Block block1 = south();
             Block block2 = west();
             Block block3 = east();
-            if (block0.isTransparent() && block1.isTransparent() && block2.isTransparent() && block3.isTransparent()) {
+            if (block0.canBeFlowedInto() && block1.canBeFlowedInto() && block2.canBeFlowedInto() && block3.canBeFlowedInto()) {
                 this.getLevel().setBlock(this, this, true);
 
                 return true;
@@ -151,5 +151,12 @@ public class BlockCactus extends BlockTransparentMeta {
     @Override
     public BlockColor getColor() {
         return BlockColor.FOLIAGE_BLOCK_COLOR;
+    }
+    
+    @Override
+    public Item[] getDrops(Item item) {
+        return new Item[]{
+            Item.get(Item.CACTUS, 0, 1)
+        };
     }
 }

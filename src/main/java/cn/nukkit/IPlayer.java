@@ -3,10 +3,12 @@ package cn.nukkit;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.permission.ServerOperator;
 
+import java.util.UUID;
+
 /**
  * 用来描述一个玩家和获得这个玩家相应信息的接口。<br>
  * An interface to describe a player and get its information.
- * <p>
+ *
  * <p>这个玩家可以在线，也可以是不在线。<br>
  * This player can be online or offline.</p>
  *
@@ -30,7 +32,7 @@ public interface IPlayer extends ServerOperator, Metadatable {
     /**
      * 返回这个玩家的名称。<br>
      * Returns the name of this player.
-     * <p>
+     *
      * <p>如果是在线的玩家，这个函数只会返回登录名字。如果要返回显示的名字，参见{@link cn.nukkit.Player#getDisplayName}<br>
      * Notice that this will only return its login name. If you need its display name, turn to
      * {@link cn.nukkit.Player#getDisplayName}</p>
@@ -39,6 +41,8 @@ public interface IPlayer extends ServerOperator, Metadatable {
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     String getName();
+
+    UUID getUniqueId();
 
     /**
      * 返回这个玩家是否被封禁(ban)。<br>
@@ -124,10 +128,11 @@ public interface IPlayer extends ServerOperator, Metadatable {
     /**
      * 返回这个玩家以前是否来过服务器。<br>
      * Returns if this player has played in this server before.
-     * <p>
+     *
      * <p>如果想得到这个玩家是不是第一次玩，可以使用：<br>
      * If you want to know if this player is the first time playing in this server, you can use:<br>
-     * <pre>if(!player.hasPlayerBefore()) {...}</pre></p>
+     * </p>
+     * <pre>if(!player.hasPlayerBefore()) {...}</pre>
      *
      * @return 这个玩家以前是不是玩过游戏。<br>If this player has played in this server before.
      * @since Nukkit 1.0 | Nukkit API 1.0.0

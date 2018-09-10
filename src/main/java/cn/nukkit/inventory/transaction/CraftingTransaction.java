@@ -33,7 +33,6 @@ public class CraftingTransaction extends InventoryTransaction {
         super(source, actions, false);
 
         this.gridSize = (source.getCraftingGrid() instanceof BigCraftingGrid) ? 3 : 2;
-
         Item air = Item.get(Item.AIR, 0, 1);
         this.inputs = new Item[gridSize][gridSize];
         for (Item[] a : this.inputs) {
@@ -91,11 +90,11 @@ public class CraftingTransaction extends InventoryTransaction {
     }
 
     private Item[][] reindexInputs() {
-        int xOffset = gridSize;
-        int yOffset = gridSize;
+        int xMin = gridSize - 1;
+        int yMin = gridSize - 1;
 
-        int height = 0;
-        int width = 0;
+        int xMax = 0;
+        int yMax = 0;
 
         for (int y = 0; y < this.inputs.length; y++) {
             Item[] row = this.inputs[y];
@@ -104,32 +103,26 @@ public class CraftingTransaction extends InventoryTransaction {
                 Item item = row[x];
 
                 if (!item.isNull()) {
-                    xOffset = Math.min(x, xOffset);
-                    yOffset = Math.min(y, yOffset);
+                    xMin = Math.min(x, xMin);
+                    yMin = Math.min(y, yMin);
 
-                    height = Math.max(y + 1 - yOffset, height);
-                    width = Math.max(x + 1 - xOffset, width);
+                    xMax = Math.max(x, xMax);
+                    yMax = Math.max(y, yMax);
                 }
             }
         }
+
+        final int height = yMax - yMin + 1;
+        final int width = xMax - xMin + 1;
 
         if (height == 0 || width == 0) {
             return new Item[0][];
         }
 
-        Item air = Item.get(Item.AIR, 0, 0);
         Item[][] reindexed = new Item[height][width];
-        for (Item[] i : reindexed) {
-            Arrays.fill(i, air);
-        }
 
-        for (int y = 0; y < reindexed.length; y++) {
-            Item[] row = reindexed[y];
-
-            System.arraycopy(this.inputs[y + yOffset], xOffset, reindexed[y], 0, row.length); //hope I converted it right :D
-            /*for (int x = 0; x < row.length; x++) {
-                reindexed[y][x] = this.inputs[y + yOffset][x + xOffset];
-            }*/
+        for (int y = yMin, i = 0; y <= yMax; y++, i++) {
+            System.arraycopy(inputs[y], xMin, reindexed[i], 0, width);
         }
 
         return reindexed;

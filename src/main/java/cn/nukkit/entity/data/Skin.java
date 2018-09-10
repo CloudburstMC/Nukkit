@@ -2,7 +2,7 @@ package cn.nukkit.entity.data;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
-import java.awt.*;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -19,6 +19,8 @@ public class Skin {
 
     public static final int SINGLE_SKIN_SIZE = 64 * 32 * 4;
     public static final int DOUBLE_SKIN_SIZE = 64 * 64 * 4;
+    public static final int SKIN_128_64_SIZE = 128 * 64 * 4;
+    public static final int SKIN_128_128_SIZE = 128 * 128 * 4;
 
     public static final String MODEL_STEVE = "Standard_Steve";
     public static final String MODEL_ALEX = "Standard_Alex";
@@ -137,7 +139,7 @@ public class Skin {
     }
 
     public void setData(byte[] data) {
-        if (data.length != SINGLE_SKIN_SIZE && data.length != DOUBLE_SKIN_SIZE) {
+        if (data.length != SINGLE_SKIN_SIZE && data.length != DOUBLE_SKIN_SIZE && data.length != SKIN_128_64_SIZE && data.length != SKIN_128_128_SIZE) {
             throw new IllegalArgumentException("Invalid skin");
         }
         this.data = data;
@@ -160,7 +162,7 @@ public class Skin {
     }
 
     public boolean isValid() {
-        return this.data.length == SINGLE_SKIN_SIZE || this.data.length == DOUBLE_SKIN_SIZE;
+        return this.data.length == SINGLE_SKIN_SIZE || this.data.length == DOUBLE_SKIN_SIZE || this.data.length == SKIN_128_64_SIZE || this.data.length == SKIN_128_128_SIZE;
     }
 
     public class Cape {

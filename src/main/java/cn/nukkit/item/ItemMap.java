@@ -6,7 +6,7 @@ import cn.nukkit.network.protocol.ClientboundMapItemDataPacket;
 import cn.nukkit.utils.MainLogger;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

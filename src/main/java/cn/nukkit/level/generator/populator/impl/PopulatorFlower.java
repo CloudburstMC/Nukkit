@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: Angelic47
- * contributer: Niall Lindsay <Niall7459>
+ * @author Angelic47, Niall Lindsay (Niall7459)
  * <p>
  * Nukkit Project
+ * </p>
  */
 public class PopulatorFlower extends PopulatorSurfaceBlock {
     private final List<int[]> flowerTypes = new ArrayList<>();

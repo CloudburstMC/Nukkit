@@ -24,6 +24,8 @@ public class SlotChangeAction extends InventoryAction {
 
     /**
      * Returns the inventory involved in this action.
+     *
+     * @return inventory
      */
     public Inventory getInventory() {
         return this.inventory;
@@ -31,6 +33,8 @@ public class SlotChangeAction extends InventoryAction {
 
     /**
      * Returns the inventorySlot in the inventory which this action modified.
+     *
+     * @return slot
      */
     public int getSlot() {
         return inventorySlot;
@@ -38,6 +42,9 @@ public class SlotChangeAction extends InventoryAction {
 
     /**
      * Checks if the item in the inventory at the specified inventorySlot is the same as this action's source item.
+     *
+     * @param source player
+     * @return valid
      */
     public boolean isValid(Player source) {
         Item check = inventory.getItem(this.inventorySlot);
@@ -47,6 +54,9 @@ public class SlotChangeAction extends InventoryAction {
 
     /**
      * Sets the item into the target inventory.
+     *
+     * @param source player
+     * @return successfully executed
      */
     public boolean execute(Player source) {
         return this.inventory.setItem(this.inventorySlot, this.targetItem, false);
@@ -54,6 +64,8 @@ public class SlotChangeAction extends InventoryAction {
 
     /**
      * Sends inventorySlot changes to other viewers of the inventory. This will not send any change back to the source Player.
+     *
+     * @param source player
      */
     public void onExecuteSuccess(Player source) {
         Set<Player> viewers = new HashSet<>(this.inventory.getViewers());
@@ -64,6 +76,8 @@ public class SlotChangeAction extends InventoryAction {
 
     /**
      * Sends the original inventorySlot contents to the source player to revert the action.
+     *
+     * @param source player
      */
     public void onExecuteFail(Player source) {
         this.inventory.sendSlot(this.inventorySlot, source);

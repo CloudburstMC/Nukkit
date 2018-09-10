@@ -53,4 +53,9 @@ public class BlockLeaves2 extends BlockLeaves {
         }
         return new Item[0];
     }
+
+    @Override
+    public boolean canSilkTouch() {
+        return true;
+    }
 }

@@ -1,6 +1,5 @@
 package cn.nukkit.entity.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityExplosive;
 import cn.nukkit.entity.data.IntEntityData;
@@ -12,7 +11,6 @@ import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.AddEntityPacket;
 
 /**
  * @author MagicDroidX
@@ -172,22 +170,6 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
             explosion.explodeA();
         }
         explosion.explodeB();
-    }
-
-    public void spawnTo(Player player) {
-        AddEntityPacket packet = new AddEntityPacket();
-        packet.type = EntityPrimedTNT.NETWORK_ID;
-        packet.entityUniqueId = this.getId();
-        packet.entityRuntimeId = getId();
-        packet.x = (float) x;
-        packet.y = (float) y;
-        packet.z = (float) z;
-        packet.speedX = (float) motionX;
-        packet.speedY = (float) motionY;
-        packet.speedZ = (float) motionZ;
-        packet.metadata = dataProperties;
-        player.dataPacket(packet);
-        super.spawnTo(player);
     }
 
     public Entity getSource() {

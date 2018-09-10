@@ -51,4 +51,9 @@ public class BlockGlassStained extends BlockGlass {
     public final void setDamage(int meta) {
         this.meta = meta;
     }
+
+    @Override
+    public boolean canSilkTouch() {
+        return true;
+    }
 }

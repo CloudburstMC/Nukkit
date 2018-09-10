@@ -227,6 +227,7 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
                         to = getBlock(decay);
                     }
                     BlockFromToEvent event = new BlockFromToEvent(this, to);
+                    level.getServer().getPluginManager().callEvent(event);
                     if (!event.isCancelled()) {
                         this.level.setBlock(this, to, true, true);
                         if (!decayed) {
@@ -274,6 +275,7 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
             }
             Block to = getBlock(newFlowDecay);
             BlockFromToEvent event = new BlockFromToEvent(block, to);
+            level.getServer().getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
                 this.level.setBlock(block, getBlock(newFlowDecay), true, true);
                 this.level.scheduleUpdate(block, this.tickRate());

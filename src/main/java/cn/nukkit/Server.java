@@ -1,7 +1,6 @@
 package cn.nukkit;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.GlobalBlockPalette;
 import cn.nukkit.blockentity.*;
 import cn.nukkit.command.*;
 import cn.nukkit.entity.Attribute;
@@ -11,10 +10,7 @@ import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.mob.*;
 import cn.nukkit.entity.passive.*;
-import cn.nukkit.entity.projectile.EntityArrow;
-import cn.nukkit.entity.projectile.EntityEgg;
-import cn.nukkit.entity.projectile.EntityEnderPearl;
-import cn.nukkit.entity.projectile.EntitySnowball;
+import cn.nukkit.entity.projectile.*;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
@@ -27,6 +23,7 @@ import cn.nukkit.lang.BaseLang;
 import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.EnumLevel;
+import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.biome.EnumBiome;
@@ -219,6 +216,8 @@ public class Server {
 
     private Level defaultLevel = null;
 
+    private boolean allowNether;
+
     private final Thread currentThread;
 
     private Watchdog watchdog;
@@ -316,6 +315,7 @@ public class Server {
                 put("level-name", "world");
                 put("level-seed", "");
                 put("level-type", "DEFAULT");
+                put("allow-nether", true);
                 put("enable-query", true);
                 put("enable-rcon", false);
                 put("rcon.password", Base64.getEncoder().encodeToString(UUID.randomUUID().toString().replace("-", "").getBytes()).substring(3, 13));
@@ -325,6 +325,9 @@ public class Server {
                 put("xbox-auth", true);
             }
         });
+
+        // Allow Nether? (determines if we create a nether world if one doesn't exist on startup)
+        this.allowNether = this.properties.getBoolean("allow-nether", true);
 
         this.forceLanguage = (Boolean) this.getConfig("settings.force-language", false);
         this.baseLang = new BaseLang((String) this.getConfig("settings.language", BaseLang.FALLBACK_LANGUAGE));
@@ -1022,12 +1025,9 @@ public class Server {
                     }
                 }
             } catch (Exception e) {
-                if (Nukkit.DEBUG > 1 && this.logger != null) {
-                    this.logger.logException(e);
+                if (this.logger != null) {
+                    this.logger.critical(this.getLanguage().translateString("nukkit.level.tickError"), e);
                 }
-
-                this.logger.critical(this.getLanguage().translateString("nukkit.level.tickError", new String[]{level.getName(), e.toString()}));
-                this.logger.logException(e);
             }
         }
     }
@@ -1164,7 +1164,7 @@ public class Server {
 
     // TODO: Fix title tick
     public void titleTick() {
-        if (!Nukkit.ANSI) {
+        if (!Nukkit.ANSI || !Nukkit.TITLE) {
             return;
         }
 
@@ -2072,6 +2072,7 @@ public class Server {
         Entity.registerEntity("XpOrb", EntityXPOrb.class);
         Entity.registerEntity("ThrownPotion", EntityPotion.class);
         Entity.registerEntity("Egg", EntityEgg.class);
+        Entity.registerEntity("ThrownTrident", EntityThrownTrident.class);
 
         Entity.registerEntity("Human", EntityHuman.class, true);
 
@@ -2099,6 +2100,11 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.HOPPER, BlockEntityHopper.class);
         BlockEntity.registerBlockEntity(BlockEntity.BED, BlockEntityBed.class);
         BlockEntity.registerBlockEntity(BlockEntity.JUKEBOX, BlockEntityJukebox.class);
+        BlockEntity.registerBlockEntity(BlockEntity.SHULKER_BOX, BlockEntityShulkerBox.class);
+    }
+
+    public boolean isNetherAllowed() {
+        return this.allowNether;
     }
 
     public static Server getInstance() {

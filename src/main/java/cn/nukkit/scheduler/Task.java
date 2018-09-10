@@ -4,11 +4,11 @@ import cn.nukkit.Server;
 
 /**
  * 表达一个任务的类。<br>A class that describes a task.
- * <p>
+ *
  * <p>一个任务可以被Nukkit服务器立即，延时，循环或延时循环执行。参见:{@link ServerScheduler}<br>
- * A task can be executed by Nukkit server with a/an express, delay, repeat or delay&repeat.
+ * A task can be executed by Nukkit server with a/an express, delay, repeat or delay&amp;repeat.
  * See:{@link ServerScheduler}</p>
- * <p>
+ *
  * <p>对于插件开发者，为确保自己任务能够在安全的情况下执行（比如：在插件被禁用时不执行），
  * 建议让任务继承{@link PluginTask}类而不是这个类。<br>
  * For plugin developers: To make sure your task will only be executed in the case of safety

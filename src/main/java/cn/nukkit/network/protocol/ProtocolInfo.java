@@ -5,7 +5,7 @@ import com.google.common.primitives.Ints;
 import java.util.List;
 
 /**
- * author: MagicDroidX & iNevet
+ * author: MagicDroidX &amp; iNevet
  * Nukkit Project
  */
 public interface ProtocolInfo {
@@ -13,12 +13,12 @@ public interface ProtocolInfo {
     /**
      * Actual Minecraft: PE protocol version
      */
-    int CURRENT_PROTOCOL = Integer.valueOf("261"); //plugins can change it
+    int CURRENT_PROTOCOL = Integer.valueOf("282"); //plugins can change it
 
     List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(CURRENT_PROTOCOL);
 
-    String MINECRAFT_VERSION = "v1.4";
-    String MINECRAFT_VERSION_NETWORK = "1.4";
+    String MINECRAFT_VERSION = "v1.6";
+    String MINECRAFT_VERSION_NETWORK = "1.6";
 
     byte LOGIN_PACKET = 0x01;
     byte PLAY_STATUS_PACKET = 0x02;
@@ -37,7 +37,7 @@ public interface ProtocolInfo {
     byte ADD_ITEM_ENTITY_PACKET = 0x0f;
     byte ADD_HANGING_ENTITY_PACKET = 0x10;
     byte TAKE_ITEM_ENTITY_PACKET = 0x11;
-    byte MOVE_ENTITY_PACKET = 0x12;
+    byte MOVE_ENTITY_ABSOLUTE_PACKET = 0x12;
     byte MOVE_PLAYER_PACKET = 0x13;
     byte RIDER_JUMP_PACKET = 0x14;
     byte UPDATE_BLOCK_PACKET = 0x15;
@@ -125,5 +125,10 @@ public interface ProtocolInfo {
     byte SERVER_SETTINGS_RESPONSE_PACKET = 0x67;
     byte SHOW_PROFILE_PACKET = 0x68;
     byte SET_DEFAULT_GAME_TYPE_PACKET = 0x69;
+    byte MOVE_ENTITY_DELTA_PACKET = 0x6f;
+    byte SET_SCOREBOARD_IDENTITY_PACKET = 0x70;
+    byte SET_LOCAL_PLAYER_AS_INITIALIZED_PACKET = 0x71;
+    byte UPDATE_SOFT_ENUM_PACKET = 0x72;
+    byte NETWORK_STACK_LATENCY_PACKET = 0x73;
     byte BATCH_PACKET = (byte) 0xff;
 }

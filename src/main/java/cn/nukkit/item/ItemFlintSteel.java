@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.block.*;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import java.util.concurrent.ThreadLocalRandom;
@@ -263,6 +264,7 @@ public class ItemFlintSteel extends ItemTool {
 
                 if (!e.isCancelled()) {
                     level.setBlock(fire, fire, true);
+                    level.addSound(block, Sound.FIRE_IGNITE);
                     level.scheduleUpdate(fire, fire.tickRate() + ThreadLocalRandom.current().nextInt(10));
                 }
                 return true;

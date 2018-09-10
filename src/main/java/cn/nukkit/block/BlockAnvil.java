@@ -89,7 +89,7 @@ public class BlockAnvil extends BlockFallable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (!target.isTransparent()) {
+        if (!target.isTransparent() || target.getId() == Block.SNOW_LAYER) {
             int damage = this.getDamage();
             int[] faces = {1, 2, 3, 0};
             this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
@@ -119,10 +119,14 @@ public class BlockAnvil extends BlockFallable {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             Item drop = this.toItem();
 
-            if (damage >= 4 && damage <= 7) { //Slightly Anvil
+            if (damage >= 4 && damage <= 7) { //Slightly Damaged Anvil
                 drop.setDamage(drop.getDamage() & 0x04);
+                return new Item[]{drop};
             } else if (damage >= 8 && damage <= 11) { //Very Damaged Anvil
                 drop.setDamage(drop.getDamage() & 0x08);
+                return new Item[]{drop};
+            } else { //Normal Anvil
+                return new Item[]{drop};
             }
         }
         return new Item[0];

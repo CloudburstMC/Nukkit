@@ -46,6 +46,7 @@ public class StartBrewEvent extends InventoryEvent implements Cancellable {
 
     /**
      * @param index Potion index in range 0 - 2
+     * @return potion
      */
     public Item getPotion(int index) {
         return this.potions[index];

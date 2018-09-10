@@ -192,4 +192,9 @@ public class BlockFenceGate extends BlockTransparentMeta {
 
         return 0;
     }
+
+    @Override
+    public Item toItem() {
+        return Item.get(Item.FENCE_GATE, 0, 1);
+    }
 }

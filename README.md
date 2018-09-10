@@ -1,8 +1,8 @@
-![nukkit](https://github.com/Nukkit/Nukkit/blob/master/images/banner.png)
+![nukkit](.github/images/banner.png)
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
-[![Build Status](https://ci.potestas.xyz/job/NukkitX/job/master/badge/icon)](https://ci.potestas.xyz/job/NukkitX/job/master/)
-![Tests](https://img.shields.io/jenkins/t/https/ci.nukkitx.com/job/NukkitX/job/master.svg)
+[![Build Status](https://ci.nukkitx.com/job/NukkitX/job/Nukkit/job/master/badge/icon)](https://ci.nukkitx.com/job/NukkitX/job/Nukkit/job/master/)
+![Tests](https://img.shields.io/jenkins/t/https/ci.nukkitx.com/job/NukkitX/job/Nukkit/job/master.svg)
 [![Discord](https://img.shields.io/discord/393465748535640064.svg)](https://discord.gg/5PzMkyK)
 
 Introduction
@@ -21,9 +21,10 @@ Links
 
 * __[News](https://nukkitx.com)__
 * __[Forums](https://nukkitx.com/forums)__
-* __[Download](https://ci.nukkitx.com/job/NukkitX/job/master)__
-* __[Plugins](https://nukkitx.com/resources)__
-* __[Wiki](https://nukkitx.com/wiki)__
+* __[Discord](https://discord.gg/5PzMkyK)__
+* __[Download](https://ci.nukkitx.com/job/NukkitX/job/Nukkit/job/master)__
+* __[Plugins](https://nukkitx.com/resources/categories/nukkit-plugins.1)__
+* __[Wiki](https://nukkitx.com/wiki/nukkit)__
 
 *Thank you for visiting our official sites. Our official websites are provided free of charge, and we do not like to place ads on the home page affecting your reading. If you like this project, please [donate to us](https://nukkitx.com/donate). All the donations will only be used for Nukkit websites and services.*
 

@@ -1,7 +1,7 @@
 package cn.nukkit.level.particle;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.GlobalBlockPalette;
+import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.DataPacket;

@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
@@ -69,6 +70,12 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
                 }
             }
         } else if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) {
+            // Redstone event
+            RedstoneUpdateEvent ev = new RedstoneUpdateEvent(this);
+            getLevel().getServer().getPluginManager().callEvent(ev);
+            if (ev.isCancelled()) {
+                return 0;
+            }
             if (type == Level.BLOCK_UPDATE_NORMAL && this.getSide(BlockFace.DOWN).isTransparent()) {
                 this.level.useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;

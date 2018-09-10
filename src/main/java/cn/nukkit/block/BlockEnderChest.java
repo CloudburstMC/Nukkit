@@ -10,6 +10,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
+
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -175,5 +176,10 @@ public class BlockEnderChest extends BlockTransparentMeta {
     @Override
     public boolean canHarvestWithHand() {
         return false;
+    }
+
+    @Override
+    public boolean canSilkTouch() {
+        return true;
     }
 }

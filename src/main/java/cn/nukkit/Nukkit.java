@@ -6,7 +6,10 @@ import cn.nukkit.utils.LogLevel;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.ServerKiller;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,9 +32,10 @@ import java.util.stream.Collectors;
  */
 public class Nukkit {
 
-    public final static String VERSION = "1.0dev";
-    public final static String API_VERSION = "1.0.6";
-    public final static String CODENAME = "蘋果(Apple)派(Pie)";
+    public final static Properties GIT_INFO = getGitInfo();
+    public final static String VERSION = getVersion();
+    public final static String API_VERSION = "1.0.7";
+    public final static String CODENAME = "";
     @Deprecated
     public final static String MINECRAFT_VERSION = ProtocolInfo.MINECRAFT_VERSION;
     @Deprecated
@@ -42,10 +46,14 @@ public class Nukkit {
     public final static String PLUGIN_PATH = DATA_PATH + "plugins";
     public static final long START_TIME = System.currentTimeMillis();
     public static boolean ANSI = true;
+    public static boolean TITLE = false;
     public static boolean shortTitle = false;
     public static int DEBUG = 1;
 
     public static void main(String[] args) {
+
+        // Force IPv4 since Nukkit is not compatible with IPv6
+        System.setProperty("java.net.preferIPv4Stack" , "true");
 
         //Shorter title for windows 8/2012
         String osName = System.getProperty("os.name").toLowerCase();
@@ -70,7 +78,9 @@ public class Nukkit {
                 case "disable-ansi":
                     ANSI = false;
                     break;
-
+                case "enable-title":
+                    TITLE = true;
+                    break;
                 case "--verbosity":
                 case "-v":
                     skip = true;
@@ -128,5 +138,27 @@ public class Nukkit {
         System.exit(0);
     }
 
+    private static Properties getGitInfo() {
+        InputStream gitFileStream = Nukkit.class.getClassLoader().getResourceAsStream("git.properties");
+        if (gitFileStream == null) {
+            return null;
+        }
+        Properties properties = new Properties();
+        try {
+            properties.load(gitFileStream);
+        } catch (IOException e) {
+            return null;
+        }
+        return properties;
+    }
 
+    private static String getVersion() {
+        StringBuilder version = new StringBuilder();
+        version.append("git-");
+        String commitId;
+        if (GIT_INFO == null || (commitId = GIT_INFO.getProperty("git.commit.id.abbrev")) == null) {
+            return version.append("null").toString();
+        }
+        return version.append(commitId).toString();
+    }
 }

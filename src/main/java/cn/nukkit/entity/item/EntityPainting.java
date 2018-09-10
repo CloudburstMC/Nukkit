@@ -10,6 +10,7 @@ import cn.nukkit.level.GameRule;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddPaintingPacket;
+import cn.nukkit.network.protocol.DataPacket;
 
 /**
  * author: MagicDroidX
@@ -75,19 +76,16 @@ public class EntityPainting extends EntityHanging {
     }
 
     @Override
-    public void spawnTo(Player player) {
-        AddPaintingPacket pk = new AddPaintingPacket();
-        pk.entityUniqueId = this.getId();
-        pk.entityRuntimeId = this.getId();
-        pk.x = (int) this.x;
-        pk.y = (int) this.y;
-        pk.z = (int) this.z;
-        pk.direction = this.getDirection().getHorizontalIndex();
-        pk.title = this.namedTag.getString("Motive");
-
-        player.dataPacket(pk);
-
-        super.spawnTo(player);
+    public DataPacket createAddEntityPacket() {
+        AddPaintingPacket addPainting = new AddPaintingPacket();
+        addPainting.entityUniqueId = this.getId();
+        addPainting.entityRuntimeId = this.getId();
+        addPainting.x = (int) this.x;
+        addPainting.y = (int) this.y;
+        addPainting.z = (int) this.z;
+        addPainting.direction = this.getDirection().getHorizontalIndex();
+        addPainting.title = this.namedTag.getString("Motive");
+        return addPainting;
     }
 
     @Override

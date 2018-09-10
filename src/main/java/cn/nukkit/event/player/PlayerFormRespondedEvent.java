@@ -34,6 +34,8 @@ public class PlayerFormRespondedEvent extends PlayerEvent {
 
     /**
      * Can be null if player closed the window instead of submitting it
+     *
+     * @return response
      */
     public FormResponse getResponse() {
         return window.getResponse();
@@ -41,6 +43,8 @@ public class PlayerFormRespondedEvent extends PlayerEvent {
 
     /**
      * Defines if player closed the window or submitted it
+     *
+     * @return form closed
      */
     public boolean wasClosed() {
         return window.wasClosed();

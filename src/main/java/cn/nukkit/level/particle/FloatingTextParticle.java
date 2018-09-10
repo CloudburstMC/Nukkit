@@ -2,10 +2,12 @@ package cn.nukkit.level.particle;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.EntityMetadata;
+import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.AddPlayerPacket;
 import cn.nukkit.network.protocol.DataPacket;
+import cn.nukkit.network.protocol.PlayerListPacket;
 import cn.nukkit.network.protocol.RemoveEntityPacket;
 
 import java.util.ArrayList;
@@ -17,7 +19,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class FloatingTextParticle extends Particle {
-
+    private static final Skin EMPTY_SKIN = new Skin(new byte[8192]);
 
     protected String text;
     protected String title;
@@ -62,6 +64,10 @@ public class FloatingTextParticle extends Particle {
     public void setInvisible() {
         this.setInvisible(true);
     }
+    
+    public long getEntityId() {
+        return entityId;   
+    }
 
     @Override
     public DataPacket[] encode() {
@@ -76,9 +82,18 @@ public class FloatingTextParticle extends Particle {
             packets.add(pk);
         }
 
+        UUID uuid = UUID.randomUUID();
+
         if (!this.invisible) {
+            PlayerListPacket playerAdd = new PlayerListPacket();
+            playerAdd.entries = new PlayerListPacket.Entry[] {
+                    new PlayerListPacket.Entry(uuid, this.entityId, this.title, EMPTY_SKIN)
+            };
+            playerAdd.type = PlayerListPacket.TYPE_ADD;
+            packets.add(playerAdd);
+
             AddPlayerPacket pk = new AddPlayerPacket();
-            pk.uuid = UUID.randomUUID();
+            pk.uuid = uuid;
             pk.username = this.title + (this.text.isEmpty() ? "" : "\n" + this.text);
             pk.entityUniqueId = this.entityId;
             pk.entityRuntimeId = this.entityId;
@@ -99,6 +114,13 @@ public class FloatingTextParticle extends Particle {
                     .putFloat(Entity.DATA_SCALE, 0.01f); //zero causes problems on debug builds?
             pk.item = Item.get(Item.AIR);
             packets.add(pk);
+
+            PlayerListPacket playerRemove = new PlayerListPacket();
+            playerRemove.entries = new PlayerListPacket.Entry[] {
+                    new PlayerListPacket.Entry(uuid)
+            };
+            playerRemove.type = PlayerListPacket.TYPE_REMOVE;
+            packets.add(playerRemove);
         }
 
         return packets.toArray(new DataPacket[0]);

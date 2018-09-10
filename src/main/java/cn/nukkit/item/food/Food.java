@@ -43,7 +43,7 @@ public abstract class Food {
             .addChanceEffect(0.3F, Effect.getEffect(Effect.HUNGER).setDuration(30 * 20))
             .addRelative(Item.RAW_CHICKEN));
     public static final Food chicken_cooked = registerDefaultFood(new FoodNormal(6, 7.2F).addRelative(Item.COOKED_CHICKEN));
-    public static final Food chorus_fruit = registerDefaultFood(new FoodNormal(4, 2.4F));
+    public static final Food chorus_fruit = registerDefaultFood(new FoodChorusFruit());
     public static final Food cookie = registerDefaultFood(new FoodNormal(2, 0.4F).addRelative(Item.COOKIE));
     public static final Food melon_slice = registerDefaultFood(new FoodNormal(2, 1.2F).addRelative(Item.MELON_SLICE));
     public static final Food milk = registerDefaultFood(new FoodMilk().addRelative(Item.BUCKET, 1));

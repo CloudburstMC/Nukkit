@@ -509,7 +509,7 @@ public class Config {
     }
 
     /**
-     * @deprecated use {@link #get(String, T)} instead
+     * @deprecated use {@link #get(String, Object)} instead
      */
     @Deprecated
     public <T> T getNested(String key, T defaultValue) {

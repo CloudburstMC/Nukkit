@@ -3,6 +3,7 @@ package cn.nukkit.level.format.anvil.palette;
 import cn.nukkit.Server;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.utils.ThreadCache;
+import com.google.common.base.Preconditions;
 
 import java.util.Arrays;
 
@@ -10,6 +11,7 @@ import java.util.Arrays;
  * @author https://github.com/boy0001/
  */
 public final class BlockDataPalette implements Cloneable {
+    private static final int BLOCK_SIZE = 4096;
     private volatile char[] rawData;
 
     private volatile BitArray4096 encodedData;
@@ -19,43 +21,45 @@ public final class BlockDataPalette implements Cloneable {
     // private byte[] compressedData;
 
     public BlockDataPalette() {
-        this(new char[4096]);
+        this(new char[BLOCK_SIZE]);
     }
 
     public BlockDataPalette(char[] rawData) {
+        Preconditions.checkArgument(rawData.length == BLOCK_SIZE, "Data is not 4096");
         this.rawData = rawData;
     }
 
     private char[] getCachedRaw() {
         char[] raw = rawData;
-        if (raw != null) return raw;
-        else if (!Server.getInstance().isPrimaryThread()) {
+        if (raw != null) {
+            return raw;
+        } else if (!Server.getInstance().isPrimaryThread()) {
             return getRaw();
         }
         return rawData;
     }
 
-    public char[] getRaw() {
-        synchronized (this) {
-            CharPalette palette = this.palette;
-            BitArray4096 encodedData = this.encodedData;
-            this.encodedData = null;
-            this.palette = null;
+    public synchronized char[] getRaw() {
+        CharPalette palette = this.palette;
+        BitArray4096 encodedData = this.encodedData;
+        this.encodedData = null;
+        this.palette = null;
 
-            char[] raw = rawData;
-            if (raw == null) {
-                if (encodedData != null) {
-                    raw = encodedData.toRaw();
-                } else {
-                    raw = new char[4096];
-                }
-                for (int i = 0; i < 4096; i++) {
-                    raw[i] = palette.getKey(raw[i]);
-                }
+        char[] raw = rawData;
+        if (raw == null && palette != null) {
+            if (encodedData != null) {
+                raw = encodedData.toRaw();
+            } else {
+                raw = new char[BLOCK_SIZE];
             }
-            rawData = raw;
-            return rawData;
+            for (int i = 0; i < BLOCK_SIZE; i++) {
+                raw[i] = palette.getKey(raw[i]);
+            }
+        } else {
+            raw = new char[BLOCK_SIZE];
         }
+        rawData = raw;
+        return rawData;
     }
 
     private int getIndex(int x, int y, int z) {
@@ -74,27 +78,21 @@ public final class BlockDataPalette implements Cloneable {
         setFullBlock(x, y, z, (char) (id << 4));
     }
 
-    public void setBlockData(int x, int y, int z, int data) {
+    public synchronized void setBlockData(int x, int y, int z, int data) {
         int index = getIndex(x, y, z);
         char[] raw = getCachedRaw();
+
         if (raw != null) {
             int fullId = raw[index];
             raw[index] = (char) ((fullId & 0xFFF0) | data);
-        } else {
-            CharPalette palette = this.palette;
-            BitArray4096 encodedData = this.encodedData;
-            if (palette != null && encodedData != null) {
-                char fullId = palette.getKey(encodedData.getAt(index));
-                if ((fullId & 0xF) != data) {
-                    setPaletteFullBlock(index, (char) ((fullId & 0xFFF0) | data));
-                }
-            } else {
-                synchronized (this) {
-                    setBlockData(x, y, z, data);
-                }
+        } if (palette != null && encodedData != null) {
+            char fullId = palette.getKey(encodedData.getAt(index));
+            if ((fullId & 0xF) != data) {
+                setPaletteFullBlock(index, (char) ((fullId & 0xFFF0) | data));
             }
+        } else {
+            throw new IllegalStateException("Raw data and pallete was null");
         }
-
     }
 
     public int getFullBlock(int x, int y, int z) {
@@ -115,20 +113,14 @@ public final class BlockDataPalette implements Cloneable {
             char result = raw[index];
             raw[index] = value;
             return result;
-        } else {
-            CharPalette palette = this.palette;
-            BitArray4096 encodedData = this.encodedData;
-            if (palette != null && encodedData != null) {
-                char fullId = palette.getKey(encodedData.getAt(index));
-                if (fullId != value) {
-                    setPaletteFullBlock(index, value);
-                }
-                return fullId;
-            } else {
-                synchronized (this) {
-                    return getAndSetFullBlock(index, value);
-                }
+        } else if (palette != null && encodedData != null) {
+            char result = palette.getKey(encodedData.getAt(index));
+            if (result != value) {
+                setPaletteFullBlock(index, value);
             }
+            return result;
+        } else {
+            throw new IllegalStateException("Raw data and pallete was null");
         }
     }
 
@@ -136,15 +128,10 @@ public final class BlockDataPalette implements Cloneable {
         char[] raw = getCachedRaw();
         if (raw != null) {
             return raw[index];
-        }
-        CharPalette palette = this.palette;
-        BitArray4096 encodedData = this.encodedData;
-        if (palette != null && encodedData != null) {
+        } else if (palette != null && encodedData != null) {
             return palette.getKey(encodedData.getAt(index));
         } else {
-            synchronized (this) {
-                return getFullBlock(index);
-            }
+            throw new IllegalStateException("Raw data and pallete was null");
         }
     }
 
@@ -152,84 +139,76 @@ public final class BlockDataPalette implements Cloneable {
         char[] raw = getCachedRaw();
         if (raw != null) {
             raw[index] = value;
-            return;
+        } else if (!setPaletteFullBlock(index, value)) {
+            throw new IllegalStateException("Raw data and pallete was null");
         }
-        setPaletteFullBlock(index, value);
     }
 
-    private void setPaletteFullBlock(int index, char value) {
+    private synchronized boolean setPaletteFullBlock(int index, char value) {
         CharPalette palette = this.palette;
         BitArray4096 encodedData = this.encodedData;
         if (palette != null && encodedData != null) {
             char encodedValue = palette.getValue(value);
             if (encodedValue != Character.MAX_VALUE) {
-                synchronized (this) {
-                    encodedData.setAt(index, encodedValue);
-                }
+                encodedData.setAt(index, encodedValue);
             } else {
-                synchronized (this) {
-                    char[] raw = encodedData.toRaw();
-                    for (int i = 0; i < 4096; i++) {
-                        raw[i] = palette.getKey(raw[i]);
-                    }
-                    raw[index] = value;
-                    this.rawData = raw;
-                    this.encodedData = null;
-                    this.palette = null;
+                char[] raw = encodedData.toRaw();
+                for (int i = 0; i < BLOCK_SIZE; i++) {
+                    raw[i] = palette.getKey(raw[i]);
                 }
+                raw[index] = value;
+                this.rawData = raw;
+                this.encodedData = null;
+                this.palette = null;
             }
-        } else {
-            synchronized (this) {
-                setFullBlock(index, value);
-            }
+            return true;
         }
+        return false;
     }
 
-    public boolean compress() {
+    public synchronized boolean compress() {
         char[] raw = rawData;
         if (raw != null) {
-            synchronized (this) {
-                char unique = 0;
+            char unique = 0;
 
-                boolean[] countTable = ThreadCache.boolCache4096.get();
-                char[] mapFullTable = ThreadCache.charCache4096.get();
-                char[] mapBitTable = ThreadCache.charCache4096v2.get();
-                Arrays.fill(countTable, false);
-                for (char c : raw) {
-                    if (!countTable[c]) {
-                        mapBitTable[unique] = c;
-                        countTable[c] = true;
-                        unique++;
-                    }
+            boolean[] countTable = ThreadCache.boolCache4096.get();
+            char[] mapFullTable = ThreadCache.charCache4096.get();
+            char[] mapBitTable = ThreadCache.charCache4096v2.get();
+            Arrays.fill(countTable, false);
+            for (char c : raw) {
+                if (!countTable[c]) {
+                    mapBitTable[unique] = c;
+                    countTable[c] = true;
+                    unique++;
                 }
-
-                char[] keys = Arrays.copyOfRange(mapBitTable, 0, unique);
-                if (keys.length > 1) {
-                    Arrays.sort(keys);
-                    for (char c = 0; c < keys.length; c++) {
-                        mapFullTable[keys[c]] = c;
-                    }
-                } else {
-                    mapFullTable[keys[0]] = 0;
-                }
-
-                CharPalette palette = new CharPalette();
-                palette.set(keys);
-
-                int bits = MathHelper.log2(unique - 1);
-                BitArray4096 encodedData = new BitArray4096(bits);
-
-                for (int i = 0; i < raw.length; i++) {
-                    mapBitTable[i] = mapFullTable[raw[i]];
-                }
-
-                encodedData.fromRaw(mapBitTable);
-
-                this.palette = palette;
-                this.encodedData = encodedData;
-                rawData = null;
-                return true;
             }
+
+            char[] keys = Arrays.copyOfRange(mapBitTable, 0, unique);
+            if (keys.length > 1) {
+                Arrays.sort(keys);
+                for (char c = 0; c < keys.length; c++) {
+                    mapFullTable[keys[c]] = c;
+                }
+            } else {
+                mapFullTable[keys[0]] = 0;
+            }
+
+            CharPalette palette = new CharPalette();
+            palette.set(keys);
+
+            int bits = MathHelper.log2(unique - 1);
+            BitArray4096 encodedData = new BitArray4096(bits);
+
+            for (int i = 0; i < raw.length; i++) {
+                mapBitTable[i] = mapFullTable[raw[i]];
+            }
+
+            encodedData.fromRaw(mapBitTable);
+
+            this.palette = palette;
+            this.encodedData = encodedData;
+            rawData = null;
+            return true;
         }
         return false;
     }
