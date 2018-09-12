@@ -88,7 +88,7 @@ public interface ItemID {
     int SNOWBALL = 332;
     int BOAT = 333;
     int LEATHER = 334;
-
+    int KELP = 335;
     int BRICK = 336;
     int CLAY = 337;
     int SUGARCANE = 338;
@@ -165,7 +165,7 @@ public interface ItemID {
     int NETHER_STAR = 399;
     int PUMPKIN_PIE = 400;
     int FIREWORKS = 401;
-
+    int FIREWORKSCHARGE = 402;
     int ENCHANTED_BOOK = 403;
     int ENCHANT_BOOK = 403;
     int COMPARATOR = 404;
@@ -190,7 +190,7 @@ public interface ItemID {
     int PRISMARINE_CRYSTALS = 422;
     int RAW_MUTTON = 423;
     int COOKED_MUTTON = 424;
-
+    int ARMOR_STAND = 425;
     int END_CRYSTAL = 426;
     int SPRUCE_DOOR = 427;
     int BIRCH_DOOR = 428;
@@ -205,10 +205,13 @@ public interface ItemID {
 
     int LINGERING_POTION = 441;
 
+    int COMMAND_BLOCK_MINECART = 443;
     int ELYTRA = 444;
-
     int SHULKER_SHELL = 445;
-    
+    int BANNER = 446;
+    int TOTEM = 450;
+    int IRON_NUGGET = 452;
+
     int TRIDENT = 455;
 
     int BEETROOT = 457;
@@ -219,10 +222,13 @@ public interface ItemID {
     int CLOWNFISH = 461;
     int PUFFERFISH = 462;
     int COOKED_SALMON = 463;
-
+    int DRIED_KELP = 464;
+    int NAUTILUS_SHELL = 465;
     int GOLDEN_APPLE_ENCHANTED = 466;
-    
+    int HEART_OF_THE_SEA = 467;
+    int SCUTE = 468;
     int TURTLE_SHELL = 469;
+    int PHANTOM_MEMBRANE = 470;
 
     int RECORD_13 = 500;
     int RECORD_CAT = 501;
