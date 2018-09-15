@@ -210,6 +210,8 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected long id;
 
+    protected UUID uniqueId;
+
     protected final EntityMetadata dataProperties = new EntityMetadata()
             .putLong(DATA_FLAGS, 0)
             .putShort(DATA_AIR, 400)
@@ -379,6 +381,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.temporalVector = new Vector3();
 
         this.id = Entity.entityCount++;
+        this.uniqueId = UUID.randomUUID();
         this.justCreated = true;
         this.namedTag = nbt;
 
@@ -2126,5 +2129,14 @@ public abstract class Entity extends Location implements Metadatable {
         int hash = 7;
         hash = (int) (29 * hash + this.getId());
         return hash;
+    }
+
+    /**
+     * Gets the uniqueId of this instance.
+     *
+     * @return The uniqueId
+     */
+    public UUID getUniqueId() {
+        return uniqueId;
     }
 }

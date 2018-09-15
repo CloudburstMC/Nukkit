@@ -606,7 +606,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         //this.newPosition = new Vector3(0, 0, 0);
         this.boundingBox = new SimpleAxisAlignedBB(0, 0, 0, 0, 0, 0);
 
-        this.uuid = null;
+        this.uniqueId = null;
         this.rawUUID = null;
 
         this.creationTime = System.currentTimeMillis();
@@ -2077,8 +2077,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     this.randomClientId = loginPacket.clientId;
 
-                    this.uuid = loginPacket.clientUUID;
-                    this.rawUUID = Binary.writeUUID(this.uuid);
+                    this.uniqueId = loginPacket.clientUUID;
+                    this.rawUUID = Binary.writeUUID(this.uniqueId);
 
                     boolean valid = true;
                     int len = loginPacket.username.length();
@@ -2128,7 +2128,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                         @Override
                         public void onRun() {
-                            e = new PlayerAsyncPreLoginEvent(username, uuid, ip, port);
+                            e = new PlayerAsyncPreLoginEvent(username, uniqueId, ip, port);
                             server.getPluginManager().callEvent(e);
                         }
 

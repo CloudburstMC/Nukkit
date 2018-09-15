@@ -26,8 +26,6 @@ public class EntityHuman extends EntityHumanType {
 
     public static final int DATA_PLAYER_BED_POSITION = 29;
     public static final int DATA_PLAYER_BUTTON_TEXT = 40;
-
-    protected UUID uuid;
     protected byte[] rawUUID;
 
     @Override
@@ -71,7 +69,7 @@ public class EntityHuman extends EntityHumanType {
     }
 
     public UUID getUniqueId() {
-        return uuid;
+        return uniqueId;
     }
 
     public byte[] getRawUniqueId() {
@@ -101,7 +99,7 @@ public class EntityHuman extends EntityHumanType {
                 this.setSkin(new Skin(this.namedTag.getCompound("Skin").getByteArray("Data"), this.namedTag.getCompound("Skin").getString("ModelId")));
             }
 
-            this.uuid = Utils.dataToUUID(String.valueOf(this.getId()).getBytes(StandardCharsets.UTF_8), this.getSkin()
+            this.uniqueId = Utils.dataToUUID(String.valueOf(this.getId()).getBytes(StandardCharsets.UTF_8), this.getSkin()
                     .getData(), this.getNameTag().getBytes(StandardCharsets.UTF_8));
         }
 
