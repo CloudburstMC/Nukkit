@@ -1,5 +1,6 @@
 package cn.nukkit.entity.passive;
 
+import cn.nukkit.entity.EntityType;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -50,6 +51,11 @@ public class EntityPig extends EntityAnimal {
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.PIG;
     }
 
     @Override

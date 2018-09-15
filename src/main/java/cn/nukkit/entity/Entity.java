@@ -301,6 +301,13 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected boolean isPlayer = false;
 
+    /**
+     * Get the {@link EntityType} of the entity.
+     * @return The {@link EntityType} of the entity.
+     * @author Lss233
+     */
+    public abstract EntityType getEntityType();
+
     public float getHeight() {
         return 0;
     }
@@ -2161,9 +2168,9 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     /**
-     * Gets the uniqueId of this instance.
-     *
-     * @return The uniqueId
+     * Gets the unique {@link UUID} of this entity.
+     * @return The unique id.
+     * @author Lss233
      */
     public UUID getUniqueId() {
         return uniqueId;

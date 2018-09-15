@@ -60,6 +60,11 @@ public class EntityHuman extends EntityHumanType {
         return -1;
     }
 
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.PLAYER;
+    }
+
     public EntityHuman(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }

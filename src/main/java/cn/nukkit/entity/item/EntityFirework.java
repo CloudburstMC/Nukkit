@@ -2,6 +2,7 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.entity.data.SlotEntityData;
@@ -55,6 +56,11 @@ public class EntityFirework extends Entity {
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.FIREWORK;
     }
 
     @Override

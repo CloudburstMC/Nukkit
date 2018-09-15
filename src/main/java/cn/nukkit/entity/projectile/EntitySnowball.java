@@ -1,6 +1,7 @@
 package cn.nukkit.entity.projectile;
 
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityType;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -14,6 +15,11 @@ public class EntitySnowball extends EntityProjectile {
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.SNOWBALL;
     }
 
     @Override

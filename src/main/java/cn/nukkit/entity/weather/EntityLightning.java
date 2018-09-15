@@ -3,6 +3,7 @@ package cn.nukkit.entity.weather;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockFire;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityType;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.GameRule;
@@ -29,6 +30,11 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.LIGHTNING;
     }
 
     public EntityLightning(FullChunk chunk, CompoundTag nbt) {

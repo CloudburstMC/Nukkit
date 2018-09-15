@@ -1,6 +1,7 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.EnchantParticle;
@@ -19,6 +20,11 @@ public class EntityExpBottle extends EntityProjectile {
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.THROWN_EXP_BOTTLE;
     }
 
     @Override

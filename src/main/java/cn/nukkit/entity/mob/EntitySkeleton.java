@@ -1,5 +1,6 @@
 package cn.nukkit.entity.mob;
 
+import cn.nukkit.entity.EntityType;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -14,6 +15,11 @@ public class EntitySkeleton extends EntityMob {
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.SKELETON;
     }
 
     public EntitySkeleton(FullChunk chunk, CompoundTag nbt) {

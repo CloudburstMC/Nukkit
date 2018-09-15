@@ -1,6 +1,7 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.block.BlockChest;
+import cn.nukkit.entity.EntityType;
 import cn.nukkit.item.ItemMinecartChest;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -29,6 +30,11 @@ public class EntityMinecartChest extends EntityMinecartAbstract {
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.CHESTED_MINECART;
     }
 
     @Override

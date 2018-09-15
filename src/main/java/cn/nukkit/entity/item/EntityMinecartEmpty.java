@@ -1,5 +1,6 @@
 package cn.nukkit.entity.item;
 
+import cn.nukkit.entity.EntityType;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.MinecartType;
@@ -15,6 +16,11 @@ public class EntityMinecartEmpty extends EntityMinecartAbstract {
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.RIDEABLE_MINECART;
     }
 
     public EntityMinecartEmpty(FullChunk chunk, CompoundTag nbt) {

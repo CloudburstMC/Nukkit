@@ -1,6 +1,7 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.block.BlockHopper;
+import cn.nukkit.entity.EntityType;
 import cn.nukkit.item.ItemMinecartHopper;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -25,6 +26,11 @@ public class EntityMinecartHopper extends EntityMinecartAbstract {
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.HOPPER_MINECART;
     }
 
     @Override

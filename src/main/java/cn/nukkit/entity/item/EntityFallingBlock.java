@@ -2,6 +2,7 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityBlockChangeEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -168,6 +169,11 @@ public class EntityFallingBlock extends Entity {
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.FALLING_BLOCK;
     }
 
     @Override

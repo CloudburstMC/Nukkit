@@ -2,6 +2,7 @@ package cn.nukkit.entity.projectile;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityType;
 import cn.nukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
@@ -15,6 +16,11 @@ public class EntityEnderPearl extends EntityProjectile {
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.ENDER_PEARL;
     }
 
     @Override

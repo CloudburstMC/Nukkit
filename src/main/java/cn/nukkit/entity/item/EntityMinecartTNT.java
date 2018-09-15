@@ -2,6 +2,7 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.block.BlockTNT;
 import cn.nukkit.entity.EntityExplosive;
+import cn.nukkit.entity.EntityType;
 import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.item.ItemMinecartTNT;
 import cn.nukkit.level.Explosion;
@@ -79,6 +80,11 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
     @Override
     public int getNetworkId() {
         return EntityMinecartTNT.NETWORK_ID;
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.TNT_MINECART;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package cn.nukkit.entity.mob;
 
+import cn.nukkit.entity.EntityType;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -13,6 +14,11 @@ public class EntityHusk extends EntityMob {
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.HUSK;
     }
 
     public EntityHusk(FullChunk chunk, CompoundTag nbt) {

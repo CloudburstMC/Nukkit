@@ -1,6 +1,7 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityType;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.Explosion;
 import cn.nukkit.level.GameRule;
@@ -18,6 +19,11 @@ public class EntityEndCrystal extends Entity {
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.ENDER_CRYSTAL;
     }
 
     public EntityEndCrystal(FullChunk chunk, CompoundTag nbt) {
