@@ -16,7 +16,7 @@ public abstract class PopulatorSurfaceBlock extends PopulatorCount {
         int x = random.nextBoundedInt(16);
         int z = random.nextBoundedInt(16);
         int y = getHighestWorkableBlock(level, x, z, chunk);
-        if (y != -1 && canStay(x, y, z, chunk)) {
+        if (y > 0 && canStay(x, y, z, chunk)) {
             placeBlock(x, y, z, getBlockId(x, z, random, chunk), chunk, random);
         }
     }

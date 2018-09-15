@@ -50,7 +50,7 @@ public class NoiseGeneratorImprovedD {
         return GRAD_X[i] * p_76310_2_ + GRAD_Y[i] * p_76310_4_ + GRAD_Z[i] * p_76310_6_;
     }
 
-    /**
+    /*
      * noiseArray should be xSize*ySize*zSize in size
      */
     public void populateNoiseArray(double[] noiseArray, double xOffset, double yOffset, double zOffset, int xSize, int ySize, int zSize, double xScale, double yScale, double zScale, double noiseScale) {

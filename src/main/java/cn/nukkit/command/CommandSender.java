@@ -7,7 +7,7 @@ import cn.nukkit.permission.Permissible;
 /**
  * 能发送命令的人。<br>
  * Who sends commands.
- * <p>
+ *
  * <p>可以是一个玩家或者一个控制台。<br>
  * That can be a player or a console.</p>
  *
@@ -49,7 +49,7 @@ public interface CommandSender extends Permissible {
     /**
      * 返回命令发送者的名称。<br>
      * Returns the name of the command sender.
-     * <p>
+     *
      * <p>如果命令发送者是一个玩家，将会返回他的玩家名字(name)不是显示名字(display name)。
      * 如果命令发送者是控制台，将会返回{@code "CONSOLE"}。<br>
      * If this command sender is a player, will return his/her player name(not display name).

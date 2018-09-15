@@ -78,8 +78,8 @@ public class InventoryTransactionPacket extends DataPacket {
                 this.putUnsignedVarInt(useItemOnEntityData.actionType);
                 this.putVarInt(useItemOnEntityData.hotbarSlot);
                 this.putSlot(useItemOnEntityData.itemInHand);
-                this.putVector3f(useItemOnEntityData.vector1.asVector3f());
-                this.putVector3f(useItemOnEntityData.vector2.asVector3f());
+                this.putVector3f(useItemOnEntityData.playerPos.asVector3f());
+                this.putVector3f(useItemOnEntityData.clickPos.asVector3f());
                 break;
             case TYPE_RELEASE_ITEM:
                 ReleaseItemData releaseItemData = (ReleaseItemData) this.transactionData;
@@ -128,8 +128,8 @@ public class InventoryTransactionPacket extends DataPacket {
                 useItemOnEntityData.actionType = (int) this.getUnsignedVarInt();
                 useItemOnEntityData.hotbarSlot = this.getVarInt();
                 useItemOnEntityData.itemInHand = this.getSlot();
-                useItemOnEntityData.vector1 = this.getVector3f().asVector3();
-                useItemOnEntityData.vector2 = this.getVector3f().asVector3();
+                useItemOnEntityData.playerPos = this.getVector3f().asVector3();
+                useItemOnEntityData.clickPos = this.getVector3f().asVector3();
 
                 this.transactionData = useItemOnEntityData;
                 break;

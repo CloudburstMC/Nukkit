@@ -258,4 +258,11 @@ public class BlockRail extends BlockFlowable {
         }
         level.setBlock(this, this, true, true);
     }
+
+    @Override
+    public Item[] getDrops(Item item) {
+        return new Item[]{
+                Item.get(Item.RAIL, 0, 1)
+        };
+    }
 }

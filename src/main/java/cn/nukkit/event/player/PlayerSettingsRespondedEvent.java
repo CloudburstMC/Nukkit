@@ -35,6 +35,8 @@ public class PlayerSettingsRespondedEvent extends PlayerEvent implements Cancell
 
     /**
      * Can be null if player closed the window instead of submitting it
+     *
+     * @return response
      */
     public FormResponse getResponse() {
         return window.getResponse();
@@ -42,6 +44,8 @@ public class PlayerSettingsRespondedEvent extends PlayerEvent implements Cancell
 
     /**
      * Defines if player closed the window or submitted it
+     *
+     * @return form closed
      */
     public boolean wasClosed() {
         return window.wasClosed();

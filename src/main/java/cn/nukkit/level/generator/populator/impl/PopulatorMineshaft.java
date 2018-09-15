@@ -8,8 +8,12 @@ import cn.nukkit.math.NukkitRandom;
 public class PopulatorMineshaft extends Populator {
 
     /**
-     * Author: Niall Lindsay <Niall7459>
-     * Unfinished <WIP>
+     * @author Niall Lindsay (Niall7459)
+     * <p>
+     * Nukkit Project
+     * </p>
+     *
+     * WIP
      */
 
     @Override

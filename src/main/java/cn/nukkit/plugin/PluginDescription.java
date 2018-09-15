@@ -19,8 +19,8 @@ import java.util.*;
 /**
  * 描述一个Nukkit插件的类。<br>
  * Describes a Nukkit plugin.
- * <p>
- * <p>在jar格式的插件中，插件的描述内容可以在plugin.yml中定义。比如这个：<br>
+ *
+ * 在jar格式的插件中，插件的描述内容可以在plugin.yml中定义。比如这个：<br>
  * The description of a jar-packed plugin can be defined in the 'plugin.yml' file. For example:
  * <blockquote><pre>
  * <b>name:</b> HelloWorldPlugin
@@ -48,12 +48,12 @@ import java.util.*;
  * When using plugin.yml file to define your plugin, it's REQUIRED to fill these items:
  * {@code name},{@code main},{@code version} and {@code api}.You are supposed to fill these items to make sure
  * your plugin can be normally loaded by Nukkit.<br>
- * </p>
- * <p>
+ *
  * <p>接下来对所有的字段做一些说明，<b>加粗</b>的字段表示必需，<i>斜体</i>表示可选：（来自
  * <a href="http://www.cnblogs.com/xtypr/p/nukkit_plugin_start_from_0_about_config.html">粉鞋大妈的博客文章</a>）<br>
  * Here are some instructions for there items, <b>bold</b> means required, <i>italic</i> means optional: (From
  * <a href="http://www.cnblogs.com/xtypr/p/nukkit_plugin_start_from_0_about_config.html">a blog article of @粉鞋大妈</a>)
+ * </p>
  * <ul>
  * <li><b>name</b><br>
  * 字符串，表示这个插件的名字，名字是区分不同插件的标准之一。
@@ -98,7 +98,7 @@ import java.util.*;
  * <li><i>permissions</i><br>
  * 序列，表示这个插件的权限组列表。<br>
  * List, the list of permission groups defined.</li>
- * </ul></p>
+ * </ul>
  *
  * @author MagicDroidX(code) @ Nukkit Project
  * @author iNevet(code and javadoc) @ Nukkit Project
@@ -209,7 +209,7 @@ public class PluginDescription {
     /**
      * 返回这个插件完整的名字。<br>
      * Returns the full name of this plugin.
-     * <p>
+     *
      * <p>一个插件完整的名字由{@code 名字+" v"+版本号}组成。比如：<br>
      * A full name of a plugin is composed by {@code name+" v"+version}.for example:</p>
      * <p>{@code HelloWorld v1.0.0}</p>
@@ -249,7 +249,7 @@ public class PluginDescription {
     /**
      * 返回这个插件的信息前缀。<br>
      * Returns the message title of this plugin.
-     * <p>
+     *
      * <p>插件的信息前缀在记录器记录信息时，会作为信息头衔使用。如果没有定义记录器，会使用插件的名字作为信息头衔。<br>
      * When a PluginLogger logs, the message title is used as the prefix of message. If prefix is undefined,
      * the plugin name will be used instead. </p>
@@ -279,8 +279,8 @@ public class PluginDescription {
     /**
      * 返回这个插件所依赖的插件名字。<br>
      * The names of the plugins what is depended by this plugin.
-     * <p>
-     * <p>Nukkit插件的依赖有这些注意事项：<br>Here are some note for Nukkit plugin depending:
+     *
+     * Nukkit插件的依赖有这些注意事项：<br>Here are some note for Nukkit plugin depending:
      * <ul>
      * <li>一个插件不能依赖自己（否则会报错）。<br>A plugin can not depend on itself (or there will be an exception).</li>
      * <li>如果一个插件依赖另一个插件，那么必须要安装依赖的插件后才能加载这个插件。<br>
@@ -289,8 +289,8 @@ public class PluginDescription {
      * <li>当一个插件所依赖的插件不存在时，Nukkit不会加载这个插件，但是会提醒用户去安装所依赖的插件。<br>
      * When the required dependency plugin does not exists, Nukkit won't load this plugin, but will tell the
      * user that this dependency is required.</li>
-     * </ul></p>
-     * <p>
+     * </ul>
+     *
      * <p>举个例子，如果A插件依赖于B插件，在没有安装B插件而安装A插件的情况下，Nukkit会阻止A插件的加载。
      * 只有在安装B插件前安装了它所依赖的A插件，Nukkit才会允许加载B插件。<br>
      * For example, there is a Plugin A which relies on Plugin B. If you installed A without installing B,
@@ -327,7 +327,7 @@ public class PluginDescription {
     /**
      * 返回这个插件的主类名。<br>
      * Returns the main class name of this plugin.
-     * <p>
+     *
      * <p>一个插件的加载都是从主类开始的。主类的名字在插件的配置文件中定义后可以通过这个函数返回。一个返回值例子：<br>
      * The load action of a Nukkit plugin begins from main class. The name of main class should be defined
      * in the plugin configuration, and it can be returned by this function. An example for return value: <br>

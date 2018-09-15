@@ -6,9 +6,11 @@ import cn.nukkit.math.NukkitRandom;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Nukkit Minecraft PE Server Software
- * This class was written by Niall Lindsay <Niall7459>
- **/
+ * @author Niall Lindsay (Niall7459)
+ * <p>
+ * Nukkit Project
+ * </p>
+ */
 
 public class PopulatorTallSugarcane extends PopulatorSugarcane {
     @Override

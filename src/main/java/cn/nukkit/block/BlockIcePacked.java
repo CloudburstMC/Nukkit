@@ -42,4 +42,9 @@ public class BlockIcePacked extends BlockIce {
         this.getLevel().setBlock(this, new BlockAir(), true); //no water
         return true;
     }
+
+    @Override
+    public boolean canSilkTouch() {
+        return true;
+    }
 }

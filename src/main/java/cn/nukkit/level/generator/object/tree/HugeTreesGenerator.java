@@ -29,8 +29,8 @@ public abstract class HugeTreesGenerator extends TreeGenerator {
         this.leavesMetadata = leavesMetadataIn;
     }
 
-    /**
-     * calculates the height based on this trees base height and its extra random height
+    /*
+     * Calculates the height based on this trees base height and its extra random height
      */
     protected int getHeight(NukkitRandom rand) {
         int i = rand.nextBoundedInt(3) + this.baseHeight;
@@ -42,7 +42,7 @@ public abstract class HugeTreesGenerator extends TreeGenerator {
         return i;
     }
 
-    /**
+    /*
      * returns whether or not there is space for a tree to grow at a certain position
      */
     private boolean isSpaceAt(ChunkManager worldIn, Vector3 leavesPos, int height) {
@@ -74,7 +74,7 @@ public abstract class HugeTreesGenerator extends TreeGenerator {
         }
     }
 
-    /**
+    /*
      * returns whether or not there is dirt underneath the block where the tree will be grown.
      * It also generates dirt around the block in a 2x2 square if there is dirt underneath the blockpos.
      */
@@ -93,7 +93,7 @@ public abstract class HugeTreesGenerator extends TreeGenerator {
         }
     }
 
-    /**
+    /*
      * returns whether or not a tree can grow at a specific position.
      * If it can, it generates surrounding dirt underneath.
      */
@@ -101,7 +101,7 @@ public abstract class HugeTreesGenerator extends TreeGenerator {
         return this.isSpaceAt(worldIn, treePos, p_175929_4_) && this.ensureDirtsUnderneath(treePos, worldIn);
     }
 
-    /**
+    /*
      * grow leaves in a circle with the outsides being within the circle
      */
     protected void growLeavesLayerStrict(ChunkManager worldIn, Vector3 layerCenter, int width) {
@@ -124,7 +124,7 @@ public abstract class HugeTreesGenerator extends TreeGenerator {
         }
     }
 
-    /**
+    /*
      * grow leaves in a circle
      */
     protected void growLeavesLayer(ChunkManager worldIn, Vector3 layerCenter, int width) {

@@ -10,6 +10,7 @@ import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.MainLogger;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
@@ -179,13 +180,12 @@ public abstract class BlockEntity extends Position {
     }
 
     public final void scheduleUpdate() {
-        this.level.updateBlockEntities.put(this.id, this);
+        this.level.scheduleBlockEntityUpdate(this);
     }
 
     public void close() {
         if (!this.closed) {
             this.closed = true;
-            this.level.updateBlockEntities.remove(this.id);
             if (this.chunk != null) {
                 this.chunk.removeBlockEntity(this);
             }

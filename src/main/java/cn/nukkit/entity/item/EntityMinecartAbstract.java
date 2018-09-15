@@ -27,7 +27,6 @@ import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.utils.MinecartType;
 import cn.nukkit.utils.Rail;
 import cn.nukkit.utils.Rail.Orientation;
@@ -281,26 +280,6 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
             mountEntity(p); // Simple
         }
         return true;
-    }
-
-    @Override
-    public void spawnTo(Player player) {
-        AddEntityPacket pk = new AddEntityPacket();
-        pk.entityUniqueId = getId();
-        pk.entityRuntimeId = getId();
-        pk.type = getNetworkId();
-        pk.x = (float) x;
-        pk.y = (float) y;
-        pk.z = (float) z;
-        pk.speedX = 0;
-        pk.speedY = 0;
-        pk.speedZ = 0;
-        pk.yaw = 0;
-        pk.pitch = 0;
-        pk.metadata = dataProperties;
-        player.dataPacket(pk);
-
-        super.spawnTo(player);
     }
 
     @Override

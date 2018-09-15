@@ -1,7 +1,6 @@
 package cn.nukkit.level.generator.object.tree;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockWood;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.NukkitRandom;
 
@@ -33,7 +32,7 @@ public class ObjectBigSpruceTree extends ObjectSpruceTree {
     @Override
     protected void placeTrunk(ChunkManager level, int x, int y, int z, NukkitRandom random, int trunkHeight) {
         // The base dirt block
-        level.setBlockIdAt(x, y - 1, z, Block.DIRT);
+        level.setBlockAt(x, y - 1, z, Block.DIRT);
         int radius = 2;
 
         for (int yy = 0; yy < trunkHeight; ++yy) {
@@ -41,7 +40,7 @@ public class ObjectBigSpruceTree extends ObjectSpruceTree {
                 for (int zz = 0; zz < radius; zz++) {
                     int blockId = level.getBlockIdAt(x, y + yy, z);
                     if (this.overridable(blockId)) {
-                        level.setBlockFullIdAt(x + xx, y + yy, z + zz, (this.getTrunkBlock() << 4) | this.getType());
+                        level.setBlockAt(x + xx, y + yy, z + zz, this.getTrunkBlock(), this.getType());
                     }
                 }
             }

@@ -40,6 +40,7 @@ public enum DyeColor {
         this.woolColorMeta = woolColorMeta;
         this.colorName = colorName;
         this.blockColor = blockColor;
+        this.dyeName = dyeName;
     }
 
     public BlockColor getColor() {
@@ -79,6 +80,4 @@ public enum DyeColor {
     public static DyeColor getByWoolData(int woolColorMeta) {
         return BY_WOOL_DATA[woolColorMeta & 0x0f];
     }
-
-
 }

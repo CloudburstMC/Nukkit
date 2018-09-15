@@ -1,21 +1,20 @@
 package cn.nukkit.level.generator.populator.impl;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.populator.helper.EnsureBelow;
 import cn.nukkit.level.generator.populator.helper.EnsureCover;
 import cn.nukkit.level.generator.populator.helper.EnsureGrassBelow;
-import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.level.generator.populator.type.PopulatorSurfaceBlock;
-import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
 
 /**
- * Nukkit Minecraft PE Server Software
- * This class was written by Niall Lindsay <Niall7459>
- **/
+ * @author Niall Lindsay (Niall7459)
+ * <p>
+ * Nukkit Project
+ * </p>
+ */
 public class PopulatorSugarcane extends PopulatorSurfaceBlock {
 
     private boolean findWater(int x, int y, int z, Level level) {

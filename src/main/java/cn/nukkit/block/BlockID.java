@@ -260,8 +260,8 @@ public interface BlockID {
     int PURPUR_BLOCK = 201;
 
     int PURPUR_STAIRS = 203;
-    int DOUBLE_PURPUR_SLAB = 204;
-    int PURPUR_SLAB = 205;
+    //int DOUBLE_PURPUR_SLAB = 204;
+    int UNDYED_SHULKER_BOX = 205;
     int END_BRICKS = 206;
     //Note: frosted ice CAN NOT BE HARVESTED WITH HAND -- canHarvestWithHand method should be overridden FALSE.
     int ICE_FROSTED = 207;

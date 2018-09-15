@@ -27,20 +27,20 @@ public class BlockBreakEvent extends BlockEvent implements Cancellable {
 
     protected boolean fastBreak = false;
 
-    public BlockBreakEvent(Player player, Block block, Item item) {
-        this(player, block, item, false, false);
+    public BlockBreakEvent(Player player, Block block, Item item, Item[] drops) {
+        this(player, block, item, drops, false, false);
     }
 
-    public BlockBreakEvent(Player player, Block block, Item item, boolean instaBreak) {
-        this(player, block, item, instaBreak, false);
+    public BlockBreakEvent(Player player, Block block, Item item, Item[] drops, boolean instaBreak) {
+        this(player, block, item, drops, instaBreak, false);
     }
 
-    public BlockBreakEvent(Player player, Block block, Item item, boolean instaBreak, boolean fastBreak) {
+    public BlockBreakEvent(Player player, Block block, Item item, Item[] drops, boolean instaBreak, boolean fastBreak) {
         super(block);
         this.item = item;
         this.player = player;
         this.instaBreak = instaBreak;
-        this.blockDrops = player.isSurvival() ? block.getDrops(item) : new Item[0];
+        this.blockDrops = drops;
         this.fastBreak = fastBreak;
     }
 

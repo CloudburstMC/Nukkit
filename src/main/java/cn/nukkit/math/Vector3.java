@@ -255,6 +255,10 @@ public class Vector3 implements Cloneable {
     /**
      * Returns a new vector with x value equal to the second parameter, along the line between this vector and the
      * passed in vector, or null if not possible.
+     *
+     * @param v vector
+     * @param x x value
+     * @return intermediate vector
      */
     public Vector3 getIntermediateWithXValue(Vector3 v, double x) {
         double xDiff = v.x - this.x;
@@ -274,6 +278,10 @@ public class Vector3 implements Cloneable {
     /**
      * Returns a new vector with y value equal to the second parameter, along the line between this vector and the
      * passed in vector, or null if not possible.
+     *
+     * @param v vector
+     * @param y y value
+     * @return intermediate vector
      */
     public Vector3 getIntermediateWithYValue(Vector3 v, double y) {
         double xDiff = v.x - this.x;
@@ -293,6 +301,10 @@ public class Vector3 implements Cloneable {
     /**
      * Returns a new vector with z value equal to the second parameter, along the line between this vector and the
      * passed in vector, or null if not possible.
+     *
+     * @param v vector
+     * @param z z value
+     * @return intermediate vector
      */
     public Vector3 getIntermediateWithZValue(Vector3 v, double z) {
         double xDiff = v.x - this.x;

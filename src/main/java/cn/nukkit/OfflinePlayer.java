@@ -6,6 +6,7 @@ import cn.nukkit.plugin.Plugin;
 
 import java.io.File;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 描述一个不在线的玩家的类。<br>
@@ -50,6 +51,19 @@ public class OfflinePlayer implements IPlayer {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public UUID getUniqueId() {
+        if (namedTag != null) {
+            long least = namedTag.getLong("UUIDLeast");
+            long most = namedTag.getLong("UUIDMost");
+
+            if (least != 0 && most != 0) {
+                return new UUID(least, most);
+            }
+        }
+        return null;
     }
 
     public Server getServer() {
