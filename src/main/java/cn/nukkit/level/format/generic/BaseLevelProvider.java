@@ -11,6 +11,8 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.LevelException;
+import com.google.common.collect.ImmutableMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 
@@ -20,8 +22,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * author: MagicDroidX
@@ -36,11 +38,13 @@ public abstract class BaseLevelProvider implements LevelProvider {
 
     private Vector3 spawn;
 
-    protected BaseRegionLoader lastRegion;
+    protected final AtomicReference<BaseRegionLoader> lastRegion = new AtomicReference<>();
 
-    protected final Map<Long, BaseRegionLoader> regions = new HashMap<>();
+    protected final Long2ObjectMap<BaseRegionLoader> regions = new Long2ObjectOpenHashMap<>();
 
-    private final Long2ObjectOpenHashMap<BaseFullChunk> chunks = new Long2ObjectOpenHashMap<>();
+    protected final Long2ObjectMap<BaseFullChunk> chunks = new Long2ObjectOpenHashMap<>();
+
+    private final AtomicReference<BaseFullChunk> lastChunk = new AtomicReference<>();
 
     public BaseLevelProvider(Level level, String path) throws IOException {
         this.level = level;
@@ -70,25 +74,16 @@ public abstract class BaseLevelProvider implements LevelProvider {
     public abstract BaseFullChunk loadChunk(long index, int chunkX, int chunkZ, boolean create);
 
     public int size() {
-        return this.chunks.size();
-    }
-
-    public ObjectIterator<BaseFullChunk> getChunks() {
-        return chunks.values().iterator();
-    }
-
-    protected void putChunk(long index, BaseFullChunk chunk) {
-        this.chunks.put(index, chunk);
+        synchronized (chunks) {
+            return this.chunks.size();
+        }
     }
 
     @Override
     public void unloadChunks() {
-        Iterator<Map.Entry<Long, BaseFullChunk>> iter = chunks.entrySet().iterator();
+        ObjectIterator<BaseFullChunk> iter = chunks.values().iterator();
         while (iter.hasNext()) {
-            Map.Entry<Long, BaseFullChunk> entry = iter.next();
-            long index = entry.getKey();
-            BaseFullChunk chunk = entry.getValue();
-            chunk.unload(true, false);
+            iter.next().unload(true, false);
             iter.remove();
         }
     }
@@ -109,22 +104,34 @@ public abstract class BaseLevelProvider implements LevelProvider {
 
     @Override
     public Map<Long, BaseFullChunk> getLoadedChunks() {
-        return this.chunks;
+        synchronized (chunks) {
+            return ImmutableMap.copyOf(chunks);
+        }
     }
 
     @Override
     public boolean isChunkLoaded(int X, int Z) {
-        return this.chunks.containsKey(Level.chunkHash(X, Z));
+        return isChunkLoaded(Level.chunkHash(X, Z));
+    }
+
+    public void putChunk(long index, BaseFullChunk chunk) {
+        synchronized (chunks) {
+            chunks.put(index, chunk);
+        }
     }
 
     @Override
     public boolean isChunkLoaded(long hash) {
-        return this.chunks.containsKey(hash);
+        synchronized (chunks) {
+            return this.chunks.containsKey(hash);
+        }
     }
 
     public BaseRegionLoader getRegion(int x, int z) {
         long index = Level.chunkHash(x, z);
-        return this.regions.get(index);
+        synchronized (regions) {
+            return this.regions.get(index);
+        }
     }
 
     protected static int getRegionIndexX(int chunkX) {
@@ -255,27 +262,37 @@ public abstract class BaseLevelProvider implements LevelProvider {
     @Override
     public void doGarbageCollection() {
         int limit = (int) (System.currentTimeMillis() - 50);
-        for (Map.Entry<Long, BaseRegionLoader> entry : this.regions.entrySet()) {
-            long index = entry.getKey();
-            BaseRegionLoader region = entry.getValue();
-            if (region.lastUsed <= limit) {
-                try {
-                    region.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+        synchronized (regions) {
+            if (regions.isEmpty()) {
+                return;
+            }
+
+            ObjectIterator<BaseRegionLoader> iter = regions.values().iterator();
+            while (iter.hasNext()) {
+                BaseRegionLoader loader = iter.next();
+
+                if (loader.lastUsed <= limit) {
+                    try {
+                        loader.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException("Unable to close RegionLoader", e);
+                    }
+                    lastRegion.set(null);
+                    iter.remove();
                 }
-                lastRegion = null;
-                this.regions.remove(index);
+
             }
         }
     }
 
     @Override
     public void saveChunks() {
-        for (BaseFullChunk chunk : this.chunks.values()) {
-            if (chunk.getChanges() != 0) {
-                chunk.setChanged(false);
-                this.saveChunk(chunk.getX(), chunk.getZ());
+        synchronized (chunks) {
+            for (BaseFullChunk chunk : this.chunks.values()) {
+                if (chunk.getChanges() != 0) {
+                    chunk.setChanged(false);
+                    this.saveChunk(chunk.getX(), chunk.getZ());
+                }
             }
         }
     }
@@ -307,8 +324,10 @@ public abstract class BaseLevelProvider implements LevelProvider {
     @Override
     public boolean loadChunk(int chunkX, int chunkZ, boolean create) {
         long index = Level.chunkHash(chunkX, chunkZ);
-        if (this.chunks.containsKey(index)) {
-            return true;
+        synchronized (chunks) {
+            if (this.chunks.containsKey(index)) {
+                return true;
+            }
         }
         return loadChunk(index, chunkX, chunkZ, create) != null;
     }
@@ -321,11 +340,13 @@ public abstract class BaseLevelProvider implements LevelProvider {
     @Override
     public boolean unloadChunk(int X, int Z, boolean safe) {
         long index = Level.chunkHash(X, Z);
-        BaseFullChunk chunk = this.chunks.get(index);
-        if (chunk != null && chunk.unload(false, safe)) {
-            lastChunk = null;
-            this.chunks.remove(index, chunk);
-            return true;
+        synchronized (chunks) {
+            BaseFullChunk chunk = this.chunks.get(index);
+            if (chunk != null && chunk.unload(false, safe)) {
+                lastChunk.set(null);
+                this.chunks.remove(index, chunk);
+                return true;
+            }
         }
         return false;
     }
@@ -335,42 +356,46 @@ public abstract class BaseLevelProvider implements LevelProvider {
         return this.getChunk(chunkX, chunkZ, false);
     }
 
-    private volatile BaseFullChunk lastChunk;
-
     @Override
     public BaseFullChunk getLoadedChunk(int chunkX, int chunkZ) {
-        BaseFullChunk tmp = lastChunk;
+        BaseFullChunk tmp = lastChunk.get();
         if (tmp != null && tmp.getX() == chunkX && tmp.getZ() == chunkZ) {
             return tmp;
         }
         long index = Level.chunkHash(chunkX, chunkZ);
-        lastChunk = tmp = chunks.get(index);
+        synchronized (chunks) {
+            lastChunk.set(tmp = chunks.get(index));
+        }
         return tmp;
     }
 
     @Override
     public BaseFullChunk getLoadedChunk(long hash) {
-        BaseFullChunk tmp = lastChunk;
+        BaseFullChunk tmp = lastChunk.get();
         if (tmp != null && tmp.getIndex() == hash) {
             return tmp;
         }
-        lastChunk = tmp = chunks.get(hash);
+        synchronized (chunks) {
+            lastChunk.set(tmp = chunks.get(hash));
+        }
         return tmp;
     }
 
     @Override
     public BaseFullChunk getChunk(int chunkX, int chunkZ, boolean create) {
-        BaseFullChunk tmp = lastChunk;
+        BaseFullChunk tmp = lastChunk.get();
         if (tmp != null && tmp.getX() == chunkX && tmp.getZ() == chunkZ) {
             return tmp;
         }
         long index = Level.chunkHash(chunkX, chunkZ);
-        lastChunk = tmp = chunks.get(index);
+        synchronized (chunks) {
+            lastChunk.set(tmp = chunks.get(index));
+        }
         if (tmp != null) {
             return tmp;
         } else {
             tmp = this.loadChunk(index, chunkX, chunkZ, create);
-            lastChunk = tmp;
+            lastChunk.set(tmp);
             return tmp;
         }
     }
@@ -383,10 +408,12 @@ public abstract class BaseLevelProvider implements LevelProvider {
         chunk.setProvider(this);
         chunk.setPosition(chunkX, chunkZ);
         long index = Level.chunkHash(chunkX, chunkZ);
-        if (this.chunks.containsKey(index) && !this.chunks.get(index).equals(chunk)) {
-            this.unloadChunk(chunkX, chunkZ, false);
+        synchronized (chunks) {
+            if (this.chunks.containsKey(index) && !this.chunks.get(index).equals(chunk)) {
+                this.unloadChunk(chunkX, chunkZ, false);
+            }
+            this.chunks.put(index, (BaseFullChunk) chunk);
         }
-        this.chunks.put(index, (BaseFullChunk) chunk);
     }
 
     @Override
@@ -398,18 +425,18 @@ public abstract class BaseLevelProvider implements LevelProvider {
     @Override
     public synchronized void close() {
         this.unloadChunks();
-        Iterator<Map.Entry<Long, BaseRegionLoader>> iter = this.regions.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry<Long, BaseRegionLoader> entry = iter.next();
-            long index = entry.getKey();
-            BaseRegionLoader region = entry.getValue();
-            try {
-                region.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        synchronized (regions) {
+            ObjectIterator<BaseRegionLoader> iter = this.regions.values().iterator();
+
+            while (iter.hasNext()) {
+                try {
+                    iter.next().close();
+                } catch (IOException e) {
+                    throw new RuntimeException("Unable to close RegionLoader", e);
+                }
+                lastRegion.set(null);
+                iter.remove();
             }
-            lastRegion = null;
-            iter.remove();
         }
         this.level = null;
     }

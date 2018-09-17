@@ -178,43 +178,28 @@ public class Anvil extends BaseLevelProvider {
         long start = System.currentTimeMillis();
         int maxIterations = size();
         if (lastPosition > maxIterations) lastPosition = 0;
-        ObjectIterator<BaseFullChunk> iter = getChunks();
-        if (lastPosition != 0) iter.skip(lastPosition);
         int i;
-        for (i = 0; i < maxIterations; i++) {
-            if (!iter.hasNext()) {
-                iter = getChunks();
-            }
-            BaseFullChunk chunk = iter.next();
-            if (chunk == null) continue;
-            if (chunk.isGenerated() && chunk.isPopulated() && chunk instanceof Chunk) {
-                Chunk anvilChunk = (Chunk) chunk;
-                chunk.compress();
-                if (System.currentTimeMillis() - start >= time) break;
+        synchronized (chunks) {
+            ObjectIterator<BaseFullChunk> iter = chunks.values().iterator();
+            if (lastPosition != 0) iter.skip(lastPosition);
+            for (i = 0; i < maxIterations; i++) {
+                if (!iter.hasNext()) {
+                    iter = chunks.values().iterator();
+                }
+                BaseFullChunk chunk = iter.next();
+                if (chunk == null) continue;
+                if (chunk.isGenerated() && chunk.isPopulated() && chunk instanceof Chunk) {
+                    Chunk anvilChunk = (Chunk) chunk;
+                    chunk.compress();
+                    if (System.currentTimeMillis() - start >= time) break;
+                }
             }
         }
         lastPosition += i;
     }
 
     @Override
-    public void doGarbageCollection() {
-        int limit = (int) (System.currentTimeMillis() - 50);
-        for (Map.Entry<Long, BaseRegionLoader> entry : this.regions.entrySet()) {
-            long index = entry.getKey();
-            BaseRegionLoader region = entry.getValue();
-            if (region.lastUsed <= limit) {
-                try {
-                    region.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                this.regions.remove(index);
-            }
-        }
-    }
-
-    @Override
-    public BaseFullChunk loadChunk(long index, int chunkX, int chunkZ, boolean create) {
+    public synchronized BaseFullChunk loadChunk(long index, int chunkX, int chunkZ, boolean create) {
         int regionX = getRegionIndexX(chunkX);
         int regionZ = getRegionIndexZ(chunkZ);
         BaseRegionLoader region = this.loadRegion(regionX, regionZ);
@@ -238,7 +223,7 @@ public class Anvil extends BaseLevelProvider {
     }
 
     @Override
-    public void saveChunk(int X, int Z) {
+    public synchronized void saveChunk(int X, int Z) {
         BaseFullChunk chunk = this.getChunk(X, Z);
         if (chunk != null) {
             try {
@@ -251,7 +236,7 @@ public class Anvil extends BaseLevelProvider {
 
 
     @Override
-    public void saveChunk(int x, int z, FullChunk chunk) {
+    public synchronized void saveChunk(int x, int z, FullChunk chunk) {
         if (!(chunk instanceof Chunk)) {
             throw new ChunkException("Invalid Chunk class");
         }
@@ -273,23 +258,24 @@ public class Anvil extends BaseLevelProvider {
         return cs;
     }
 
-    protected BaseRegionLoader loadRegion(int x, int z) {
-        BaseRegionLoader tmp = lastRegion;
+    protected synchronized BaseRegionLoader loadRegion(int x, int z) {
+        BaseRegionLoader tmp = lastRegion.get();
         if (tmp != null && x == tmp.getX() && z == tmp.getZ()) {
             return tmp;
         }
         long index = Level.chunkHash(x, z);
-        BaseRegionLoader region = this.regions.get(index);
-        if (region == null) {
-            try {
-                region = new RegionLoader(this, x, z);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        synchronized (regions) {
+            BaseRegionLoader region = this.regions.get(index);
+            if (region == null) {
+                try {
+                    region = new RegionLoader(this, x, z);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                this.regions.put(index, region);
             }
-            this.regions.put(index, region);
-            return lastRegion = region;
-        } else {
-            return lastRegion = region;
+            lastRegion.set(region);
+            return region;
         }
     }
 }
