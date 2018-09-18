@@ -46,15 +46,19 @@ public class JavaPluginLoader implements PluginLoader {
             try {
                 Class javaClass = classLoader.loadClass(className);
 
+                if (!PluginBase.class.isAssignableFrom(javaClass)) {
+                    throw new PluginException("Main class `" + description.getMain() + "' does not extend PluginBase");
+                }
+
                 try {
-                    Class<? extends PluginBase> pluginClass = javaClass.asSubclass(PluginBase.class);
+                    Class<PluginBase> pluginClass = (Class<PluginBase>) javaClass.asSubclass(PluginBase.class);
 
                     plugin = pluginClass.newInstance();
                     this.initPlugin(plugin, description, dataFolder, file);
 
                     return plugin;
                 } catch (ClassCastException e) {
-                    throw new PluginException("main class `" + description.getMain() + "' does not extend PluginBase");
+                    throw new PluginException("Error whilst initializing main class `" + description.getMain() + "'", e);
                 } catch (InstantiationException | IllegalAccessException e) {
                     Server.getInstance().getLogger().logException(e);
                 }
