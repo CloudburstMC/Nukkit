@@ -95,14 +95,31 @@ public class EntityHuman extends EntityHumanType {
             }
 
             if (this.namedTag.contains("Skin") && this.namedTag.get("Skin") instanceof CompoundTag) {
-                if (!this.namedTag.getCompound("Skin").contains("Transparent")) {
-                    this.namedTag.getCompound("Skin").putBoolean("Transparent", false);
+                CompoundTag skinTag = this.namedTag.getCompound("Skin");
+                if (!skinTag.contains("Transparent")) {
+                    skinTag.putBoolean("Transparent", false);
                 }
-                this.setSkin(new Skin(this.namedTag.getCompound("Skin").getByteArray("Data"), this.namedTag.getCompound("Skin").getString("ModelId")));
+                Skin newSkin = new Skin();
+                if (skinTag.contains("ModelId")) {
+                    newSkin.setSkinId(skinTag.getString("ModelId"));
+                }
+                if (skinTag.contains("Data")) {
+                    newSkin.setSkinData(skinTag.getByteArray("Data"));
+                }
+                if (skinTag.contains("CapeData")) {
+                    newSkin.setCapeData(skinTag.getByteArray("CapeData"));
+                }
+                if (skinTag.contains("GeometryName")) {
+                    newSkin.setGeometryName(skinTag.getString("GeometryName"));
+                }
+                if (skinTag.contains("GeometryData")) {
+                    newSkin.setGeometryData(new String(skinTag.getByteArray("GeometryData"), StandardCharsets.UTF_8));
+                }
+                this.setSkin(newSkin);
             }
 
             this.uuid = Utils.dataToUUID(String.valueOf(this.getId()).getBytes(StandardCharsets.UTF_8), this.getSkin()
-                    .getData(), this.getNameTag().getBytes(StandardCharsets.UTF_8));
+                    .getSkinData(), this.getNameTag().getBytes(StandardCharsets.UTF_8));
         }
 
         super.initEntity();
@@ -117,10 +134,13 @@ public class EntityHuman extends EntityHumanType {
     public void saveNBT() {
         super.saveNBT();
 
-        if (this.getSkin().getData().length > 0) {
+        if (skin != null) {
             this.namedTag.putCompound("Skin", new CompoundTag()
-                    .putByteArray("Data", this.getSkin().getData())
-                    .putString("ModelId", this.getSkin().getModel())
+                    .putByteArray("Data", this.getSkin().getSkinData())
+                    .putString("ModelId", this.getSkin().getSkinId())
+                    .putByteArray("CapeData", this.getSkin().getCapeData())
+                    .putString("GeometryName", this.getSkin().getGeometryName())
+                    .putByteArray("GeometryData", this.getSkin().getGeometryData().getBytes(StandardCharsets.UTF_8))
             );
         }
     }
@@ -130,7 +150,7 @@ public class EntityHuman extends EntityHumanType {
         if (this != player && !this.hasSpawned.containsKey(player.getLoaderId())) {
             this.hasSpawned.put(player.getLoaderId(), player);
 
-            if (this.skin.getData().length < 64 * 32 * 4) {
+            if (!this.skin.isValid()) {
                 throw new IllegalStateException(this.getClass().getSimpleName() + " must have a valid skin set");
             }
 

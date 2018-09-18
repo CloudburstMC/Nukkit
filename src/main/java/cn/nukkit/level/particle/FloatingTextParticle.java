@@ -19,7 +19,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class FloatingTextParticle extends Particle {
-    private static final Skin EMPTY_SKIN = new Skin(new byte[8192]);
+    private static final Skin EMPTY_SKIN = new Skin();
 
     protected String text;
     protected String title;
