@@ -2172,6 +2172,10 @@ public class Level implements ChunkManager, Metadatable {
     private static Entity[] ENTITY_BUFFER = new Entity[512];
 
     public Entity[] getNearbyEntities(AxisAlignedBB bb, Entity entity) {
+        return getNearbyEntities(bb, entity, false);
+    }
+
+    public Entity[] getNearbyEntities(AxisAlignedBB bb, Entity entity, boolean loadChunks) {
         int index = 0;
 
         int minX = NukkitMath.floorDouble((bb.getMinX() - 2) * 0.0625);
@@ -2183,7 +2187,7 @@ public class Level implements ChunkManager, Metadatable {
 
         for (int x = minX; x <= maxX; ++x) {
             for (int z = minZ; z <= maxZ; ++z) {
-                for (Entity ent : this.getChunkEntities(x, z).values()) {
+                for (Entity ent : this.getChunkEntities(x, z, loadChunks).values()) {
                     if (ent != entity && ent.boundingBox.intersectsWith(bb)) {
                         if (index < ENTITY_BUFFER.length) {
                             ENTITY_BUFFER[index] = ent;
