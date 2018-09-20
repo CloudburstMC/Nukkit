@@ -775,17 +775,12 @@ public class Level implements ChunkManager, Metadatable {
         }
         this.timings.entityTick.stopTiming();
 
-        TimingsHistory.tileEntityTicks += this.updateBlockEntities.size();
-        this.timings.blockEntityTick.startTiming();
         synchronized (updateBlockEntities) {
-            ObjectIterator<Long2ObjectMap.Entry<BlockEntity>> iterator = updateBlockEntities.long2ObjectEntrySet().fastIterator();
-            while (iterator.hasNext()) {
-                if (!iterator.next().getValue().onUpdate()) {
-                    iterator.remove();
-                }
-            }
+            TimingsHistory.tileEntityTicks += this.updateBlockEntities.size();
+            this.timings.blockEntityTick.startTiming();
+            updateBlockEntities.values().removeIf(blockEntity -> !blockEntity.onUpdate());
+            this.timings.blockEntityTick.stopTiming();
         }
-        this.timings.blockEntityTick.stopTiming();
 
         this.timings.tickChunks.startTiming();
         this.tickChunks();
