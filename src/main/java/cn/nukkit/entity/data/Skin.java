@@ -1,13 +1,9 @@
 package cn.nukkit.entity.data;
 
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
-import sun.misc.IOUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Base64;
 
 /**
  * author: MagicDroidX
@@ -90,14 +86,6 @@ public class Skin {
 
     public String getGeometryData() {
         return geometryData;
-    }
-
-    public void setGeometryData(InputStream stream) {
-        try {
-            setGeometryData(Base64.getEncoder().encodeToString(IOUtils.readFully(stream, -1, true)));
-        } catch (IOException e) {
-            // Ignore
-        }
     }
 
     public void setGeometryData(String geometryData) {
