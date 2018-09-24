@@ -109,7 +109,10 @@ public class LoginPacketHandler implements NetworkPacketHandler {
 
             JWSObject clientJwt = JWSObject.parse(packet.getSkinData().toString());
 
-            verifyJwt(clientJwt, identityPublicKey);
+            if (!verifyJwt(clientJwt, identityPublicKey)) {
+                session.disconnect("disconnectionScreen.invalidSkin");
+            }
+
             JsonNode clientPayload = NukkitServer.JSON_MAPPER.readTree(clientJwt.getPayload().toBytes());
             ClientData clientData = NukkitServer.JSON_MAPPER.convertValue(clientPayload, ClientData.class);
             session.setClientData(clientData);
@@ -123,7 +126,7 @@ public class LoginPacketHandler implements NetworkPacketHandler {
                 // Stop spoofing.
                 session.getAuthData().setXuid(null);
                 // Check for valid name characters
-                if (USERNAME_PATTERN.matcher(authData.getDisplayName()).find()) {
+                if (USERNAME_PATTERN.matcher(authData.getDisplayName()).matches()) {
                     session.disconnect("disconnectionScreen.invalidName");
                 }
                 // Use server side UUID.
