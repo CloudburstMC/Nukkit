@@ -4,6 +4,7 @@ import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 /**
  * author: MagicDroidX
@@ -24,7 +25,7 @@ public class Skin {
     private byte[] skinData = new byte[SINGLE_SKIN_SIZE];
     private byte[] capeData = new byte[0];
     private String geometryName = GEOMETRY_CUSTOM;
-    private String geometryData = null;
+    private String geometryData = "";
 
     public boolean isValid() {
         return isValidSkin(skinData.length);
@@ -89,7 +90,20 @@ public class Skin {
     }
 
     public void setGeometryData(String geometryData) {
+        if (geometryData == null) {
+            this.geometryData = "";
+        }
         this.geometryData = geometryData;
+    }
+
+    public Skin copy() {
+        Skin skin = new Skin();
+        skin.skinId = this.skinId;
+        skin.skinData = Arrays.copyOf(this.skinData, this.skinData.length);
+        skin.capeData = Arrays.copyOf(this.capeData, this.capeData.length);
+        skin.geometryName = this.geometryName;
+        skin.geometryData = this.geometryData;
+        return skin;
     }
 
     private static byte[] parseBufferedImage(BufferedImage image) {
