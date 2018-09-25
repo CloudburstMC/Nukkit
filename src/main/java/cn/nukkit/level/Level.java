@@ -1815,7 +1815,7 @@ public class Level implements ChunkManager, Metadatable {
                 eventDrops = target.getDrops(item);
             }
 
-            BlockBreakEvent ev = new BlockBreakEvent(player, target, item, eventDrops, player.isCreative(),
+            BlockBreakEvent ev = new BlockBreakEvent(player, target, face, item, eventDrops, player.isCreative(),
                     (player.lastBreak + breakTime * 1000) > System.currentTimeMillis());
 
             double distance;
