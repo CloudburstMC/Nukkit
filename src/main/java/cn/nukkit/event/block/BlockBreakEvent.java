@@ -5,6 +5,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.item.Item;
+import cn.nukkit.math.BlockFace;
 
 /**
  * author: MagicDroidX
@@ -21,6 +22,7 @@ public class BlockBreakEvent extends BlockEvent implements Cancellable {
     protected final Player player;
 
     protected final Item item;
+    protected final BlockFace face;
 
     protected boolean instaBreak = false;
     protected Item[] blockDrops = new Item[0];
@@ -36,7 +38,12 @@ public class BlockBreakEvent extends BlockEvent implements Cancellable {
     }
 
     public BlockBreakEvent(Player player, Block block, Item item, Item[] drops, boolean instaBreak, boolean fastBreak) {
+        this(player, block, null, item, drops, instaBreak, fastBreak);
+    }
+
+    public BlockBreakEvent(Player player, Block block, BlockFace face, Item item, Item[] drops, boolean instaBreak, boolean fastBreak) {
         super(block);
+        this.face = face;
         this.item = item;
         this.player = player;
         this.instaBreak = instaBreak;
@@ -46,6 +53,10 @@ public class BlockBreakEvent extends BlockEvent implements Cancellable {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public BlockFace getFace() {
+        return face;
     }
 
     public Item getItem() {

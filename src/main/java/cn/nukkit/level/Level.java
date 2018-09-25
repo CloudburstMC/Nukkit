@@ -142,7 +142,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public final Long2ObjectOpenHashMap<Entity> updateEntities = new Long2ObjectOpenHashMap<>();
 
-    private final Long2ObjectOpenHashMap<BlockEntity> updateBlockEntities = new Long2ObjectOpenHashMap<>();
+    private final ConcurrentLinkedQueue<BlockEntity> updateBlockEntities = new ConcurrentLinkedQueue<>();
 
     private boolean cacheChunks = false;
 
@@ -775,12 +775,10 @@ public class Level implements ChunkManager, Metadatable {
         }
         this.timings.entityTick.stopTiming();
 
-        synchronized (updateBlockEntities) {
-            TimingsHistory.tileEntityTicks += this.updateBlockEntities.size();
-            this.timings.blockEntityTick.startTiming();
-            updateBlockEntities.values().removeIf(blockEntity -> blockEntity == null || !blockEntity.onUpdate());
-            this.timings.blockEntityTick.stopTiming();
-        }
+        TimingsHistory.tileEntityTicks += this.updateBlockEntities.size();
+        this.timings.blockEntityTick.startTiming();
+        this.updateBlockEntities.removeIf(blockEntity -> !blockEntity.onUpdate());
+        this.timings.blockEntityTick.stopTiming();
 
         this.timings.tickChunks.startTiming();
         this.tickChunks();
@@ -1767,6 +1765,10 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public Item useBreakOn(Vector3 vector, Item item, Player player, boolean createParticles) {
+        return useBreakOn(vector, null, item, player, createParticles);
+    }
+
+    public Item useBreakOn(Vector3 vector, BlockFace face, Item item, Player player, boolean createParticles) {
         if (player != null && player.getGamemode() > 1) {
             return null;
         }
@@ -2633,19 +2635,14 @@ public class Level implements ChunkManager, Metadatable {
     public void scheduleBlockEntityUpdate(BlockEntity entity) {
         Preconditions.checkNotNull(entity, "entity");
         Preconditions.checkArgument(entity.getLevel() == this, "BlockEntity is not in this level");
-        synchronized (updateBlockEntities) {
-            updateBlockEntities.put(entity.getId(), entity);
-        }
+        updateBlockEntities.add(entity);
     }
 
-    public void removeBlockEntity(BlockEntity blockEntity) {
-        if (blockEntity.getLevel() != this) {
-            throw new LevelException("Invalid Block Entity level");
-        }
-        blockEntities.remove(blockEntity.getId());
-        synchronized (updateBlockEntities) {
-            updateBlockEntities.remove(blockEntity.getId());
-        }
+    public void removeBlockEntity(BlockEntity entity) {
+        Preconditions.checkNotNull(entity, "entity");
+        Preconditions.checkArgument(entity.getLevel() == this, "BlockEntity is not in this level");
+        blockEntities.remove(entity.getId());
+        updateBlockEntities.remove(entity);
     }
 
     public boolean isChunkInUse(int x, int z) {
