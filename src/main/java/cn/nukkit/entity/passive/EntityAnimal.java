@@ -24,4 +24,17 @@ public abstract class EntityAnimal extends EntityCreature implements EntityAgeab
     public boolean isBreedingItem(Item item) {
         return item.getId() == Item.WHEAT; //default
     }
+
+    @Override
+    public boolean onInteract(Player player, Item item) {
+        if (item.getId() == Item.NAME_TAG) {
+            if (item.hasCustomName()) {
+                this.setNameTag(item.getCustomName());
+                this.setNameTagVisible(true);
+                player.getInventory().removeItem(item);
+                return true;
+            }
+        }
+        return false;
+    }
 }
