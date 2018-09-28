@@ -1,6 +1,7 @@
 package cn.nukkit.math;
 
 import cn.nukkit.utils.MainLogger;
+import cn.nukkit.Server;
 
 import java.lang.Math;
 
@@ -81,7 +82,10 @@ public class NukkitMath {
             MainLogger logger = Server.getInstance().getLogger();
             logger.info("X1: " + real + x1Imaginary);
             logger.info("X2: " + real + x2Imaginary);
-            return 0;
+            double[] nulls = {
+                0
+            };
+            return nulls;
         }
     }
 
