@@ -1,5 +1,9 @@
 package cn.nukkit.math;
 
+import cn.nukkit.utils.MainLogger;
+
+import java.lang.Math;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -52,6 +56,33 @@ public class NukkitMath {
 
     public static int clamp(int value, int min, int max) {
         return value < min ? min : (value > max ? max : value);
+    }
+    
+    public static double[] calculateQuadratic(double a, double b, double c) {
+        double square = (b * b) - (4 * a * c);
+        if (square > 0) {
+            double x1 = (-b + Math.sqrt(square)) / 2;
+            double x2 = (-b - Math.sqrt(square)) / 2;
+            double[] list = {
+                x1,
+                x2
+            };
+            return list;
+        } else if (square == 0) {
+            double x = (-b / (2 * a));
+            double[] one = {
+                x
+            };
+            return one;
+        } else {
+            String real = String.valueOf(-b / 2);
+            String x1Imaginary = String.valueOf(" + " + Math.sqrt(-square) / 2) + "i";
+            String x2Imaginary = String.valueOf(" - " + Math.sqrt(-square) / 2) + "i";
+            MainLogger logger = Server.getInstance().getLogger();
+            logger.info("X1: " + real + x1Imaginary);
+            logger.info("X2: " + real + x2Imaginary);
+            return 0;
+        }
     }
 
     public static double getDirection(double d0, double d1) {
