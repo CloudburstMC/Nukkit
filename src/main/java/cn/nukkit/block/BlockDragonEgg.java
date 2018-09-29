@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.utils.BlockColor;
 
-public class BlockDragonEgg extends BlockTransparent {
+public class BlockDragonEgg extends BlockFallable {
 
     public BlockDragonEgg() {
     }
