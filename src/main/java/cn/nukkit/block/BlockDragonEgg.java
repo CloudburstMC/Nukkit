@@ -36,4 +36,9 @@ public class BlockDragonEgg extends BlockFallable {
     public BlockColor getColor() {
         return BlockColor.OBSIDIAN_BLOCK_COLOR;
     }
+
+    @Override
+    public boolean isTransparent() {
+        return true;
+    }
 }
