@@ -204,12 +204,10 @@ public class LoginPacketHandler implements NetworkPacketHandler {
         for (JsonNode node : data) {
             JWSObject jwt = JWSObject.parse(node.asText());
 
-            if (!validChain) {
+            if (lastKey == null) {
                 validChain = verifyJwt(jwt, MOJANG_PUBLIC_KEY);
-            }
-
-            if (lastKey != null) {
-                verifyJwt(jwt, lastKey);
+            } else {
+                validChain = verifyJwt(jwt, lastKey);
             }
 
             JsonNode payloadNode = NukkitServer.JSON_MAPPER.readTree(jwt.getPayload().toString());
