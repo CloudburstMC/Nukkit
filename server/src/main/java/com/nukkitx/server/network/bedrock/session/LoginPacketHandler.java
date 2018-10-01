@@ -105,11 +105,29 @@ public class LoginPacketHandler implements NetworkPacketHandler {
             if (payload.get("identityPublicKey").getNodeType() != JsonNodeType.STRING) {
                 throw new RuntimeException("Identity Public Key was not found!");
             }
+
+            if (!validChain) {
+                // Disconnect if xbox auth is enabled.
+                if (session.getServer().getConfiguration().getGeneral().isXboxAuthenticated()) {
+                    session.disconnect("disconnectionScreen.notAuthenticated");
+                    return;
+                }
+                // Stop spoofing.
+                session.getAuthData().setXuid(null);
+                // Check for valid name characters
+                if (!USERNAME_PATTERN.matcher(authData.getDisplayName()).matches()) {
+                    session.disconnect("disconnectionScreen.invalidName");
+                    return;
+                }
+                // Use server side UUID.
+                session.getAuthData().setOfflineIdentity(UUID.nameUUIDFromBytes(authData.getDisplayName().toLowerCase().getBytes(StandardCharsets.UTF_8)));
+            }
+
             ECPublicKey identityPublicKey = generateKey(payload.get("identityPublicKey").textValue());
 
             JWSObject clientJwt = JWSObject.parse(packet.getSkinData().toString());
 
-            if (!verifyJwt(clientJwt, identityPublicKey)) {
+            if (!verifyJwt(clientJwt, identityPublicKey) && session.getServer().getConfiguration().getGeneral().isXboxAuthenticated()) {
                 session.disconnect("disconnectionScreen.invalidSkin");
             }
 
@@ -117,21 +135,6 @@ public class LoginPacketHandler implements NetworkPacketHandler {
             ClientData clientData = NukkitServer.JSON_MAPPER.convertValue(clientPayload, ClientData.class);
             session.setClientData(clientData);
 
-            if (!validChain && session.getServer().getConfiguration().getGeneral().isXboxAuthenticated()) {
-                session.disconnect("disconnectionScreen.notAuthenticated");
-                return;
-            }
-
-            if (!validChain) {
-                // Stop spoofing.
-                session.getAuthData().setXuid(null);
-                // Check for valid name characters
-                if (USERNAME_PATTERN.matcher(authData.getDisplayName()).matches()) {
-                    session.disconnect("disconnectionScreen.invalidName");
-                }
-                // Use server side UUID.
-                session.getAuthData().setOfflineIdentity(UUID.nameUUIDFromBytes(authData.getDisplayName().toLowerCase().getBytes(StandardCharsets.UTF_8)));
-            }
 
             if (CAN_USE_ENCRYPTION) {
                 startEncryptionHandshake(identityPublicKey);
