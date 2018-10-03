@@ -2022,7 +2022,7 @@ public class Level implements ChunkManager, Metadatable {
                 return null;
             }
 
-        } else if (target.canBeActivated() && target.onActivate(item, null)) {
+        } else if (target.canBeActivated() && target.onActivate(item, player)) {
             if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
                 item = new ItemBlock(new BlockAir(), 0, 0);
             }

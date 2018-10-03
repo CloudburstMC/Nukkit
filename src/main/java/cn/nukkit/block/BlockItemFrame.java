@@ -59,30 +59,16 @@ public class BlockItemFrame extends BlockTransparentMeta {
         BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
         BlockEntityItemFrame itemFrame = (BlockEntityItemFrame) blockEntity;
         if (itemFrame.getItem().getId() == Item.AIR) {
-            // We can't use Item.get(item.getId(), item.getDamage(), 1) because
-            // we need to keep the item's NBT tags
-            Item itemOnFrame = item.clone(); // So we clone the item
-            itemOnFrame.setCount(1); // Change it to only one item (if we keep +1, visual glitches will happen)
-            itemFrame.setItem(itemOnFrame); // And then we set it on the item frame
-            // The item will be removed from the player's hand a few lines ahead
+        	Item itemOnFrame = item.clone();
+        	if (player != null && player.isSurvival()) {
+        		itemOnFrame.setCount(itemOnFrame.getCount() - 1);
+                player.getInventory().setItemInHand(itemOnFrame);
+        	}
+            itemOnFrame.setCount(1);
+            itemFrame.setItem(itemOnFrame);
             this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_ADD_ITEM);
-            if (player != null && player.isSurvival()) {
-                int count = item.getCount();
-                if (count-- <= 0) {
-                    player.getInventory().setItemInHand(new ItemBlock(new BlockAir(), 0, 0));
-                    return true;
-                }
-                item.setCount(count);
-                player.getInventory().setItemInHand(item);
-            }
         } else {
-            int itemRot = itemFrame.getItemRotation();
-            if (itemRot >= 7) {
-                itemRot = 0;
-            } else {
-                itemRot++;
-            }
-            itemFrame.setItemRotation(itemRot);
+            itemFrame.setItemRotation((itemFrame.getItemRotation() + 1) % 8);
             this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_ROTATE_ITEM);
         }
         return true;
