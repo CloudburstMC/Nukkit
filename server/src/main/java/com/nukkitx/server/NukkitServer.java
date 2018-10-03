@@ -347,7 +347,8 @@ public class NukkitServer implements Server {
         }
         int configNetThreads = configuration.getAdvanced().getNetworkThreads();
         int maxThreads = configNetThreads < 1 ? Runtime.getRuntime().availableProcessors() : configNetThreads;
-        RakNetServer<BedrockSession> rakNetServer = RakNetServer.<BedrockSession>builder().address(configuration.getNetwork().getAddress(), configuration.getNetwork().getPort())
+        RakNetServer<BedrockSession> rakNetServer = RakNetServer.<BedrockSession>builder()
+                .address(configuration.getNetwork().getAddress(), configuration.getNetwork().getPort())
                 .listener(new NukkitRakNetEventListener(this))
                 .packet(WrappedPacket::new, 0xfe)
                 .maximumThreads(maxThreads)
