@@ -1483,7 +1483,7 @@ public class Server {
                 file.renameTo(new File(path + name + ".dat.bak"));
                 this.logger.notice(this.getLanguage().translateString("nukkit.data.playerCorrupted", name));
             }
-        } else {
+        } else if (this.shouldSavePlayerData()) {
             this.logger.notice(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
         }
 
