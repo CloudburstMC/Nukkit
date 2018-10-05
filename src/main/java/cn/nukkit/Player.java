@@ -4674,14 +4674,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 this.awardAchievement("diamond");
                                 break;
                         }
-                        /*switch (item.getId()) {
-                            case Item.WOOD:
-                                this.awardAchievement("mineWood");
-                                break;
-                            case Item.DIAMOND:
-                                this.awardAchievement("diamond");
-                                break;
-                        }*/
 
                         TakeItemEntityPacket pk = new TakeItemEntityPacket();
                         pk.entityId = this.getId();
@@ -4689,8 +4681,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         Server.broadcastPacket(entity.getViewers().values(), pk);
                         this.dataPacket(pk);
 
-                        this.inventory.addItem(item.clone());
                         entity.close();
+                        this.inventory.addItem(item.clone());
                         return true;
                     }
                 }
