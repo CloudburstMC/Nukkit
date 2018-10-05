@@ -1484,7 +1484,7 @@ public class Server {
                 this.logger.notice(this.getLanguage().translateString("nukkit.data.playerCorrupted", name));
             }
         } else {
-            this.logger.notice(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
+            if (!this.shouldSavePlayerData()) this.logger.notice(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
         }
 
         Position spawn = this.getDefaultLevel().getSafeSpawn();
