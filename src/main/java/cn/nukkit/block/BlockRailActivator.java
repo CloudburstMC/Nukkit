@@ -34,7 +34,7 @@ public class BlockRailActivator extends BlockRail {
         if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE || type == Level.BLOCK_UPDATE_SCHEDULED) {
             super.onUpdate(type);
             boolean wasPowered = isActive();
-            boolean isPowered = level.isBlockPowered(this)
+            boolean isPowered = level.isBlockPowered(this.getLocation())
                     || checkSurrounding(this, true, 0)
                     || checkSurrounding(this, false, 0);
             boolean hasUpdate = false;

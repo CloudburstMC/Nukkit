@@ -1,8 +1,9 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
-import cn.nukkit.item.Item;
+import cn.nukkit.event.redstone.RedstoneUpdateEvent;
+import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3;
 
 /**
  * Created by CreeperFace on 10.4.2017.
@@ -19,45 +20,17 @@ public class BlockRedstoneTorchUnlit extends BlockTorch {
 
     @Override
     public String getName() {
-        return "Redstone Torch";
+        return "Unlit Redstone Torch";
     }
 
     @Override
     public int getId() {
-        return REDSTONE_TORCH;
+        return UNLIT_REDSTONE_TORCH;
     }
 
     @Override
     public int getLightLevel() {
         return 7;
-    }
-
-    @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        Block below = this.down();
-
-        if (!target.isTransparent() && face != BlockFace.DOWN) {
-            int[] faces = new int[]{
-                    0, //0, nerver used
-                    5, //1
-                    4, //2
-                    3, //3
-                    2, //4
-                    1, //5
-            };
-            this.setDamage(faces[face.getIndex()]);
-            this.getLevel().setBlock(block, this, true, true);
-            //Redstone.active(this);
-
-            return true;
-        } else if (!below.isTransparent() || below instanceof BlockFence || below.getId() == COBBLE_WALL) {
-            this.setDamage(0);
-            this.getLevel().setBlock(block, this, true, true);
-            //Redstone.active(this);
-
-            return true;
-        }
-        return false;
     }
 
     @Override
@@ -71,9 +44,41 @@ public class BlockRedstoneTorchUnlit extends BlockTorch {
     }
 
     @Override
-    public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, new BlockAir(), true, true);
-        //TODO: redstone
-        return true;
+    public int onUpdate(int type) {
+        if (super.onUpdate(type) == 0) {
+            if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) {
+                RedstoneUpdateEvent ev = new RedstoneUpdateEvent(this);
+                getLevel().getServer().getPluginManager().callEvent(ev);
+                if (ev.isCancelled()) {
+                    return 0;
+                }
+
+                if (checkState()) {
+                    return 1;
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    protected boolean checkState() {
+        BlockFace face = getFacing().getOpposite();
+        Vector3 pos = getLocation();
+
+        if (!this.level.isSidePowered(pos.getSide(face), face)) {
+            this.level.setBlock(pos, new BlockRedstoneTorch(getDamage()), false, true);
+
+            for (BlockFace side : BlockFace.values()) {
+                if (side == face) {
+                    continue;
+                }
+
+                this.level.updateAroundRedstone(pos.getSide(side), null);
+            }
+            return true;
+        }
+
+        return false;
     }
 }
