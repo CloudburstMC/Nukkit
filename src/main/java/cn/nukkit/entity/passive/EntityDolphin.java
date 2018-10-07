@@ -5,13 +5,13 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
- * @author PikyCZ
+ * Created by PetteriM1
  */
-public class EntityParrot extends EntityAnimal {
+public class EntityDolphin extends EntityAnimal {
 
-    public static final int NETWORK_ID = 30;
+    public static final int NETWORK_ID = 31;
 
-    public EntityParrot(FullChunk chunk, CompoundTag nbt) {
+    public EntityDolphin(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -21,27 +21,27 @@ public class EntityParrot extends EntityAnimal {
     }
 
     public String getName() {
-        return "Parrot";
+        return "Dolphin";
     }
 
     @Override
     public float getWidth() {
-        return 0.5f;
+        return 0.9f;
     }
 
     @Override
     public float getHeight() {
-        return 0.9f;
+        return 0.6f;
     }
 
     @Override
     public void initEntity() {
         super.initEntity();
-        this.setMaxHealth(6);
+        this.setMaxHealth(10);
     }
 
     @Override
     public Item[] getDrops() {
-        return new Item[]{Item.get(Item.FEATHER)};
+        return new Item[]{Item.get(Item.RAW_FISH)};
     }
 }

@@ -1,17 +1,16 @@
 package cn.nukkit.entity.passive;
 
-import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
- * @author PikyCZ
+ * Created by PetteriM1
  */
-public class EntityParrot extends EntityAnimal {
+public class EntityTurtle extends EntityAnimal {
 
-    public static final int NETWORK_ID = 30;
+    public static final int NETWORK_ID = 74;
 
-    public EntityParrot(FullChunk chunk, CompoundTag nbt) {
+    public EntityTurtle(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -21,27 +20,22 @@ public class EntityParrot extends EntityAnimal {
     }
 
     public String getName() {
-        return "Parrot";
+        return "Turtle";
     }
 
     @Override
     public float getWidth() {
-        return 0.5f;
+        return 1.2f;
     }
 
     @Override
     public float getHeight() {
-        return 0.9f;
+        return 0.4f;
     }
 
     @Override
     public void initEntity() {
         super.initEntity();
-        this.setMaxHealth(6);
-    }
-
-    @Override
-    public Item[] getDrops() {
-        return new Item[]{Item.get(Item.FEATHER)};
+        this.setMaxHealth(30);
     }
 }

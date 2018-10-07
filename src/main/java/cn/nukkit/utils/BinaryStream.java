@@ -248,15 +248,21 @@ public class BinaryStream {
     }
 
     public void putSkin(Skin skin) {
-        this.putString(skin.getModel());
-        this.putByteArray(skin.getData());
-        this.putByteArray(skin.getCape().getData());
+        this.putString(skin.getSkinId());
+        this.putByteArray(skin.getSkinData());
+        this.putByteArray(skin.getCapeData());
+        this.putString(skin.getGeometryName());
+        this.putString(skin.getGeometryData());
     }
 
     public Skin getSkin() {
-        String modelId = this.getString();
-        byte[] skinData = this.getByteArray();
-        return new Skin(skinData, modelId);
+        Skin skin = new Skin();
+        skin.setSkinId(this.getString());
+        skin.setSkinData(this.getByteArray());
+        skin.setCapeData(this.getByteArray());
+        skin.setGeometryName(this.getString());
+        skin.setGeometryData(skin.getGeometryData());
+        return skin;
     }
 
     public Item getSlot() {

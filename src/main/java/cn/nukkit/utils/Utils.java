@@ -35,13 +35,13 @@ public class Utils {
         if (!file.exists()) {
             file.createNewFile();
         }
-        FileOutputStream stream = new FileOutputStream(file);
-        byte[] buffer = new byte[1024];
-        int length;
-        while ((length = content.read(buffer)) != -1) {
-            stream.write(buffer, 0, length);
+        try (FileOutputStream stream = new FileOutputStream(file)) {
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = content.read(buffer)) != -1) {
+                stream.write(buffer, 0, length);
+            }
         }
-        stream.close();
         content.close();
     }
 
@@ -65,20 +65,19 @@ public class Utils {
     }
 
     private static String readFile(Reader reader) throws IOException {
-        BufferedReader br = new BufferedReader(reader);
-        String temp;
-        StringBuilder stringBuilder = new StringBuilder();
-        temp = br.readLine();
-        while (temp != null) {
-            if (stringBuilder.length() != 0) {
-                stringBuilder.append("\n");
-            }
-            stringBuilder.append(temp);
+        try (BufferedReader br = new BufferedReader(reader)) {
+            String temp;
+            StringBuilder stringBuilder = new StringBuilder();
             temp = br.readLine();
+            while (temp != null) {
+                if (stringBuilder.length() != 0) {
+                    stringBuilder.append("\n");
+                }
+                stringBuilder.append(temp);
+                temp = br.readLine();
+            }
+            return stringBuilder.toString();
         }
-        br.close();
-        reader.close();
-        return stringBuilder.toString();
     }
 
     public static void copyFile(File from, File to) throws IOException {
@@ -121,9 +120,10 @@ public class Utils {
 
     public static String getExceptionMessage(Throwable e) {
         StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
-        e.printStackTrace(printWriter);
-        printWriter.flush();
+        try (PrintWriter printWriter = new PrintWriter(stringWriter)) {
+            e.printStackTrace(printWriter);
+            printWriter.flush();
+        }
         return stringWriter.toString();
     }
 

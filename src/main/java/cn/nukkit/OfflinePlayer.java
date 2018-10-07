@@ -60,7 +60,7 @@ public class OfflinePlayer implements IPlayer {
             long most = namedTag.getLong("UUIDMost");
 
             if (least != 0 && most != 0) {
-                return new UUID(least, most);
+                return new UUID(most, least);
             }
         }
         return null;

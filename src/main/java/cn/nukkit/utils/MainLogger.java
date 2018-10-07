@@ -233,7 +233,7 @@ public class MainLogger extends ThreadedLogger {
         }
     }
 
-    private void flushBuffer(File logFile) {
+    private synchronized void flushBuffer(File logFile) {
         Writer writer = null;
         try {
             writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile, true), StandardCharsets.UTF_8), 1024);
