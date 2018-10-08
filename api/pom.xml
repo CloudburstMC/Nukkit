@@ -21,14 +21,8 @@
     <dependencies>
         <dependency>
             <groupId>com.nukkitx</groupId>
-            <artifactId>event-api</artifactId>
-            <version>${event.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.nukkitx</groupId>
-            <artifactId>plugin-api</artifactId>
-            <version>${plugin.version}</version>
+            <artifactId>common-api</artifactId>
+            <version>${common.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -88,6 +82,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
                     <links>
+                        <link>https://ci.nukkitx.com/job/NukkitX/job/common/job/master/javadoc</link>
                         <link>https://flowpowered.com/math</link>
                         <link>https://www.slf4j.org/api</link>
                         <link>https://spotify.github.io/completable-futures/apidocs</link>

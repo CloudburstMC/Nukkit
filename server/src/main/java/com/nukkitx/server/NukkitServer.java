@@ -27,12 +27,11 @@ import com.nukkitx.api.permission.Permissible;
 import com.nukkitx.api.util.Config;
 import com.nukkitx.api.util.ConfigBuilder;
 import com.nukkitx.api.util.SemVer;
-import com.nukkitx.event.EventManagerImpl;
+import com.nukkitx.event.SimpleEventManager;
 import com.nukkitx.network.NetworkListener;
 import com.nukkitx.network.raknet.RakNetServer;
+import com.nukkitx.plugin.JavaPluginLoader;
 import com.nukkitx.plugin.SimplePluginManager;
-import com.nukkitx.plugin.loader.JavaPluginLoader;
-import com.nukkitx.plugin.service.SimpleServiceManager;
 import com.nukkitx.server.command.NukkitCommandManager;
 import com.nukkitx.server.console.*;
 import com.nukkitx.server.entity.EntitySpawner;
@@ -50,12 +49,12 @@ import com.nukkitx.server.network.NukkitSessionManager;
 import com.nukkitx.server.network.bedrock.packet.WrappedPacket;
 import com.nukkitx.server.network.bedrock.session.BedrockSession;
 import com.nukkitx.server.network.bedrock.session.PlayerSession;
-import com.nukkitx.server.network.util.EncryptionUtil;
 import com.nukkitx.server.permission.NukkitAbilities;
 import com.nukkitx.server.permission.NukkitPermissionManager;
 import com.nukkitx.server.resourcepack.ResourcePackManager;
 import com.nukkitx.server.scheduler.ServerScheduler;
 import com.nukkitx.server.util.ServerKiller;
+import com.nukkitx.service.SimpleServiceManager;
 import com.spotify.futures.CompletableFutures;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
@@ -111,20 +110,20 @@ public class NukkitServer implements Server {
     @Getter
     private final NukkitPermissionManager permissionManager = new NukkitPermissionManager();
     @Getter
-    private final SimplePluginManager pluginManager = new SimplePluginManager();
-    @Getter
     private final NukkitLocaleManager localeManager = new NukkitLocaleManager();
     @Getter
     private final EntitySpawner entitySpawner = new EntitySpawner(this);
     @Getter
-    private final EventManagerImpl eventManager = new EventManagerImpl();
+    private final SimpleEventManager eventManager = new SimpleEventManager();
+    @Getter
+    private final SimplePluginManager pluginManager = new SimplePluginManager(eventManager);
     @Getter
     private final SimpleServiceManager serviceManager = new SimpleServiceManager();
     @Getter
     private final NukkitSessionManager sessionManager = new NukkitSessionManager();
     @Getter
     private final ServerScheduler scheduler = new ServerScheduler(this);
-    private final List<NetworkListener> listeners = new CopyOnWriteArrayList<>();
+    private final List<NetworkListener> listeners = new ArrayList<>();
     private final LevelManager levelManager = new LevelManager();
     @Getter
     private final Path pluginPath;
@@ -349,15 +348,17 @@ public class NukkitServer implements Server {
         int maxThreads = configNetThreads < 1 ? Runtime.getRuntime().availableProcessors() : configNetThreads;
         RakNetServer<BedrockSession> rakNetServer = RakNetServer.<BedrockSession>builder()
                 .address(configuration.getNetwork().getAddress(), configuration.getNetwork().getPort())
-                .listener(new NukkitRakNetEventListener(this))
+                .eventListener(new NukkitRakNetEventListener(this))
                 .packet(WrappedPacket::new, 0xfe)
+                .id(12345)
                 .maximumThreads(maxThreads)
-                .serverId(EncryptionUtil.generateServerId())
                 .sessionFactory((connection) -> new BedrockSession(this, connection))
                 .sessionManager(sessionManager)
                 .build();
-        rakNetServer.getRakNetNetworkListener().bind();
-        listeners.add(rakNetServer.getRakNetNetworkListener());
+        if (!rakNetServer.bind()) {
+            throw new IllegalStateException("Unable to bind RakNet listener");
+        }
+        listeners.add(rakNetServer);
 
         /*if (configuration.getRcon().isEnabled()) {
             RconNetworkListener rconListener = new RconNetworkListener(

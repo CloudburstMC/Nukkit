@@ -3,7 +3,6 @@ package com.nukkitx.server.network.bedrock.session;
 import com.google.common.base.Preconditions;
 import com.nukkitx.network.NetworkPacket;
 import com.nukkitx.network.NetworkSession;
-import com.nukkitx.network.SessionConnection;
 import com.nukkitx.network.raknet.RakNetPacket;
 import com.nukkitx.network.raknet.session.RakNetSession;
 import com.nukkitx.server.NukkitServer;
@@ -41,11 +40,10 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Log4j2
-public class BedrockSession implements NetworkSession<RakNetPacket> {
+public class BedrockSession implements NetworkSession<RakNetSession> {
     private static final ThreadLocal<VoxelwindHash> hashLocal = ThreadLocal.withInitial(NativeCodeFactory.hash::newInstance);
     private static final InetSocketAddress LOOPBACK_BEDROCK = new InetSocketAddress(InetAddress.getLoopbackAddress(), 19132);
     private static final int TIMEOUT_MS = 30000;
-    private final AtomicLong lastKnownUpdate = new AtomicLong(System.currentTimeMillis());
     private final Queue<BedrockPacket> currentlyQueued = new ConcurrentLinkedQueue<>();
     private final AtomicLong sentEncryptedPacketCount = new AtomicLong();
     private final Lock handlingWrapper = new ReentrantLock();
@@ -53,7 +51,7 @@ public class BedrockSession implements NetworkSession<RakNetPacket> {
     private BedrockPacketCodec packetCodec = BedrockPacketCodec.DEFAULT;
     private NetworkPacketHandler handler = new LoginPacketHandler(this);
     private WrapperHandler wrapperHandler = DefaultWrapperHandler.DEFAULT;
-    private SessionConnection<RakNetPacket> connection;
+    private RakNetSession connection;
     private AuthData authData;
     private ClientData clientData;
     private BungeeCipher encryptionCipher;
@@ -62,7 +60,7 @@ public class BedrockSession implements NetworkSession<RakNetPacket> {
     private byte[] serverKey;
     private int protocolVersion;
 
-    public BedrockSession(NukkitServer server, SessionConnection<RakNetPacket> connection) {
+    public BedrockSession(NukkitServer server, RakNetSession connection) {
         this.server = server;
         this.connection = connection;
     }
@@ -422,15 +420,10 @@ public class BedrockSession implements NetworkSession<RakNetPacket> {
     }
 
     private boolean isTimedOut() {
-        return System.currentTimeMillis() - lastKnownUpdate.get() >= TIMEOUT_MS;
+        return connection.isTimedOut();
     }
 
-    public void touch() {
-        checkForClosed();
-        lastKnownUpdate.set(System.currentTimeMillis());
-    }
-
-    public SessionConnection<RakNetPacket> getConnection() {
+    public RakNetSession getConnection() {
         return connection;
     }
 

@@ -15,7 +15,6 @@ import lombok.extern.log4j.Log4j2;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -243,9 +242,5 @@ public class NukkitInventory implements Inventory {
 
     private static void checkItem(@Nonnull ItemInstance item) {
         Preconditions.checkArgument(item instanceof NukkitItemInstance, "Invalid item found");
-    }
-
-    public Collection<InventoryObserver> getObservers() {
-        return observers;
     }
 }
