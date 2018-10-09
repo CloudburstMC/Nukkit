@@ -53,7 +53,6 @@ import com.nukkitx.server.permission.NukkitAbilities;
 import com.nukkitx.server.permission.NukkitPermissionManager;
 import com.nukkitx.server.resourcepack.ResourcePackManager;
 import com.nukkitx.server.scheduler.ServerScheduler;
-import com.nukkitx.server.util.NativeCodeFactory;
 import com.nukkitx.server.util.ServerKiller;
 import com.nukkitx.service.SimpleServiceManager;
 import com.spotify.futures.CompletableFutures;
@@ -252,7 +251,7 @@ public class NukkitServer implements Server {
             throw new IllegalStateException("Selected and fallback Locale could not be loaded");
         }
 
-        if (NativeCodeFactory.cipher.load()) {
+        /*if (NativeCodeFactory.cipher.load()) {
             log.debug("Loaded native cipher");
         }
 
@@ -260,7 +259,7 @@ public class NukkitServer implements Server {
             log.debug("Loaded native compression");
         }
 
-        /*if (NativeCodeFactory.hash.load()) {
+        if (NativeCodeFactory.hash.load()) {
             log.debug("Loaded native hash");
         }*/
 

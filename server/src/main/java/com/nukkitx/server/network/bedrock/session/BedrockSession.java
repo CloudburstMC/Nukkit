@@ -35,13 +35,14 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Log4j2
 public class BedrockSession implements NetworkSession<RakNetSession> {
     private static final ThreadLocal<VoxelwindHash> hashLocal = ThreadLocal.withInitial(NativeCodeFactory.hash::newInstance);
     private static final InetSocketAddress LOOPBACK_BEDROCK = new InetSocketAddress(InetAddress.getLoopbackAddress(), 19132);
-    private static final int TIMEOUT_MS = 30000;
+    private final AtomicBoolean closed = new AtomicBoolean();
     private final Queue<BedrockPacket> currentlyQueued = new ConcurrentLinkedQueue<>();
     private final AtomicLong sentEncryptedPacketCount = new AtomicLong();
     private final NukkitServer server;
@@ -176,11 +177,11 @@ public class BedrockSession implements NetworkSession<RakNetSession> {
     }
 
     public void onTick() {
-        if (isClosed()) {
+        if (closed.get()) {
             return;
         }
 
-        if (isTimedOut()) {
+        if (connection.isClosed()) {
             disconnect("disconnect.timeout");
             return;
         }
@@ -274,7 +275,9 @@ public class BedrockSession implements NetworkSession<RakNetSession> {
     }
 
     public void close() {
-        connection.close();
+        if (!connection.isClosed()) {
+            connection.close();
+        }
 
         server.getSessionManager().remove(this);
 
@@ -405,7 +408,7 @@ public class BedrockSession implements NetworkSession<RakNetSession> {
     }
 
     public boolean isClosed() {
-        return connection.isClosed();
+        return closed.get();
     }
 
     public Optional<InetSocketAddress> getRemoteAddress() {
