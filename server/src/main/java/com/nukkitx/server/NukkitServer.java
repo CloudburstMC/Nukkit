@@ -252,17 +252,17 @@ public class NukkitServer implements Server {
             throw new IllegalStateException("Selected and fallback Locale could not be loaded");
         }
 
-        /*if (NativeCodeFactory.cipher.load()) {
+        if (NativeCodeFactory.cipher.load()) {
             log.debug("Loaded native cipher");
-        }*/
+        }
 
         if (NativeCodeFactory.zlib.load()) {
             log.debug("Loaded native compression");
         }
 
-        if (NativeCodeFactory.hash.load()) {
+        /*if (NativeCodeFactory.hash.load()) {
             log.debug("Loaded native hash");
-        }
+        }*/
 
         // Register plugin loaders
         pluginManager.registerLoader(JavaPluginLoader.class, JavaPluginLoader.builder()
