@@ -74,7 +74,7 @@
 
         <!-- Common library versions -->
         <api.version>2.0.0-SNAPSHOT</api.version>
-        <common.version>1.0.0-SNAPSHOT</common.version>
+        <common.version>1.0.1-SNAPSHOT</common.version>
     </properties>
 
     <!-- Custom repositories -->

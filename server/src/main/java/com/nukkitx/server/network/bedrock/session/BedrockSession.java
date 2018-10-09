@@ -250,9 +250,7 @@ public class BedrockSession implements NetworkSession<RakNetSession> {
             throw new RuntimeException("Unable to initialize ciphers", e);
         }
 
-        if (connection instanceof RakNetSession) {
-            ((RakNetSession) connection).setUseOrdering(true);
-        }
+        connection.setUseOrdering(true);
     }
 
     private byte[] generateTrailer(ByteBuf buf) {

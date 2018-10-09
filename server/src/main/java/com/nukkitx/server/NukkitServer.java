@@ -30,8 +30,8 @@ import com.nukkitx.api.util.SemVer;
 import com.nukkitx.event.SimpleEventManager;
 import com.nukkitx.network.NetworkListener;
 import com.nukkitx.network.raknet.RakNetServer;
-import com.nukkitx.plugin.JavaPluginLoader;
 import com.nukkitx.plugin.SimplePluginManager;
+import com.nukkitx.plugin.loader.JavaPluginLoader;
 import com.nukkitx.server.command.NukkitCommandManager;
 import com.nukkitx.server.console.*;
 import com.nukkitx.server.entity.EntitySpawner;
@@ -53,6 +53,7 @@ import com.nukkitx.server.permission.NukkitAbilities;
 import com.nukkitx.server.permission.NukkitPermissionManager;
 import com.nukkitx.server.resourcepack.ResourcePackManager;
 import com.nukkitx.server.scheduler.ServerScheduler;
+import com.nukkitx.server.util.NativeCodeFactory;
 import com.nukkitx.server.util.ServerKiller;
 import com.nukkitx.service.SimpleServiceManager;
 import com.spotify.futures.CompletableFutures;
@@ -77,7 +78,6 @@ import java.lang.management.OperatingSystemMXBean;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -252,6 +252,18 @@ public class NukkitServer implements Server {
             throw new IllegalStateException("Selected and fallback Locale could not be loaded");
         }
 
+        /*if (NativeCodeFactory.cipher.load()) {
+            log.debug("Loaded native cipher");
+        }*/
+
+        if (NativeCodeFactory.zlib.load()) {
+            log.debug("Loaded native compression");
+        }
+
+        if (NativeCodeFactory.hash.load()) {
+            log.debug("Loaded native hash");
+        }
+
         // Register plugin loaders
         pluginManager.registerLoader(JavaPluginLoader.class, JavaPluginLoader.builder()
                 .dataPath(dataPath)
@@ -337,8 +349,6 @@ public class NukkitServer implements Server {
             log.fatal("No default level specified.");
             System.exit(1);
         }
-
-        eventManager.fire(ServerInitializationEvent.INSTANCE);
 
         log.info(TranslatableMessage.of("nukkit.server.networkStart", configuration.getNetwork().getAddress(), Integer.toString(configuration.getNetwork().getPort())));
         if (configuration.getNetwork().isQueryEnabled()) {
@@ -671,7 +681,7 @@ public class NukkitServer implements Server {
     private void loadPlugins() {
         log.info("Loading Plugins...");
         try {
-            Path pluginPath = Paths.get("plugins");
+            Path pluginPath = dataPath.resolve("plugins");
             if (Files.notExists(pluginPath)) {
                 Files.createDirectory(pluginPath);
             } else {
