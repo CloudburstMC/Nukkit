@@ -485,7 +485,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         addPlayer.setPosition(getGamePosition());
         addPlayer.setMotion(getMotion());
         addPlayer.setRotation(getRotation());
-        addPlayer.setHand(inventory.getItemInHand().orElse(null));
+        addPlayer.setHand(inventory.getItemInHand().orElse(null)); // todo: item air, not null
         addPlayer.getMetadata().putAll(getMetadata());
         addPlayer.setFlags(data.getAbilities().getFlags());
         addPlayer.setCommandPermission(data.getCommandPermission());
@@ -832,6 +832,53 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         InventoryContentPacket packet = new InventoryContentPacket();
         packet.setWindowId(windowId);
         packet.setItems(contents);
+    }
+    
+        private void breakBlock(Vector3i position) {
+        PlayerData playerData = ensureAndGet(PlayerData.class);
+        int chunkX = position.getX() >> 4;
+        int chunkZ = position.getZ() >> 4;
+
+        Optional<Chunk> chunkOptional = getLevel().getChunkIfLoaded(chunkX, chunkZ);
+        if (!chunkOptional.isPresent()) {
+            // Chunk not loaded, danger ahead!
+            log.error("{} tried to remove block at unloaded chunk ({}, {})", getName(), chunkX, chunkZ);
+            return;
+        }
+
+        int inChunkX = position.getX() & 0x0f;
+        int inChunkZ = position.getZ() & 0x0f;
+
+        Block block = chunkOptional.get().getBlock(inChunkX, position.getY(), inChunkZ);
+        // Call BlockReplaceEvent.
+        BlockReplaceEvent event = new BlockReplaceEvent(block, block.getBlockState(), new BasicBlockState(BlockTypes.AIR, null, null),
+                PlayerSession.this, BlockReplaceEvent.ReplaceReason.PLAYER_BREAK);
+        getServer().getEventManager().fire(event);
+        if (event.getResult() == BlockReplaceEvent.Result.CONTINUE) {
+            if (playerData.getGameMode() != GameMode.CREATIVE) {
+                BlockBehavior blockBehavior = BlockBehaviors.getBlockBehavior(block.getBlockState().getBlockType());
+                switch (blockBehavior.handleBreak(getServer(), PlayerSession.this, block, playerInventory.getStackInHand().orElse(null))) {
+                    case REDUCE_DURABILITY:
+                        int damage = ((GenericDamageValue) playerInventory.getStackInHand().get().getItemData().get()).getDamage() + 1;
+                        playerInventory.getStackInHand().get().toBuilder().itemData(new GenericDamageValue((short) damage));
+                        // Intentional fall through
+                    case BREAK_BLOCK:
+                        Collection<ItemStack> drops = blockBehavior.getDrops(getServer(), PlayerSession.this, block, playerInventory.getStackInHand().orElse(null));
+                        for (ItemStack drop : drops) {
+                            DroppedItem item = getLevel().dropItem(drop, block.getLevelLocation().toFloat().add(0.5, 0.5, 0.5));
+                            item.ensureAndGet(PickupDelay.class).setDelayPickupTicks(5);
+                        }
+                        chunkOptional.get().setBlock(inChunkX, position.getY(), inChunkZ, new BasicBlockState(BlockTypes.AIR, null, null));
+                        break;
+                }
+            } else {
+                chunkOptional.get().setBlock(inChunkX, position.getY(), inChunkZ, new BasicBlockState(BlockTypes.AIR, null, null));
+            }
+        }
+
+        int blockMetadata = MetadataSerializer.serializeMetadata(block.getBlockState());
+        getLevel().broadcastLevelEvent(LevelEventConstants.EVENT_PARTICLE_DESTROY, position.toFloat(), block.getBlockState().getBlockType().getId() | blockMetadata << 8);
+        getLevel().broadcastBlockUpdate(position);
     }
 
     @Override
