@@ -32,6 +32,7 @@ import com.nukkitx.network.NetworkListener;
 import com.nukkitx.network.raknet.RakNetServer;
 import com.nukkitx.plugin.SimplePluginManager;
 import com.nukkitx.plugin.loader.JavaPluginLoader;
+import com.nukkitx.server.block.NukkitBlockStateBuilder;
 import com.nukkitx.server.command.NukkitCommandManager;
 import com.nukkitx.server.console.*;
 import com.nukkitx.server.entity.EntitySpawner;
@@ -649,6 +650,12 @@ public class NukkitServer implements Server {
     @Override
     public NukkitItemInstanceBuilder itemInstanceBuilder() {
         return new NukkitItemInstanceBuilder();
+    }
+
+    @Nonnull
+    @Override
+    public NukkitBlockStateBuilder blockStateBuilder() {
+        return new NukkitBlockStateBuilder();
     }
 
     @Nonnull
