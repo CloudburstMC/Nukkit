@@ -10,7 +10,7 @@ public class EnchantmentMending extends Enchantment {
 
     @Override
     public int getMinEnchantAbility(int level) {
-        return 25 + (level - 1) * 9;
+        return level * 25;
     }
 
     @Override
