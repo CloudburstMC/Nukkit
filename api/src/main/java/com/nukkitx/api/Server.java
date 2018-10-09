@@ -1,5 +1,6 @@
 package com.nukkitx.api;
 
+import com.nukkitx.api.command.CommandManager;
 import com.nukkitx.api.command.sender.ConsoleCommandSender;
 import com.nukkitx.api.event.EventManager;
 import com.nukkitx.api.item.ItemInstanceBuilder;
@@ -44,6 +45,9 @@ public interface Server {
 
     @Nonnull
     EventManager getEventManager();
+
+    @Nonnull
+    CommandManager getCommandManager();
 
     @Nonnull
     PluginManager getPluginManager();
