@@ -266,7 +266,6 @@ public class NukkitServer implements Server {
 
         // Register plugin loaders
         pluginManager.registerLoader(JavaPluginLoader.class, JavaPluginLoader.builder()
-                .dataPath(dataPath)
                 .registerDependency(NukkitServer.class, this)
                 .registerDependency(Server.class, this)
                 .build()
