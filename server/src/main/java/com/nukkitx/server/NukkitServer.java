@@ -56,6 +56,7 @@ import com.nukkitx.server.scheduler.ServerScheduler;
 import com.nukkitx.server.util.ServerKiller;
 import com.nukkitx.service.SimpleServiceManager;
 import com.spotify.futures.CompletableFutures;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
@@ -84,6 +85,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Log4j2
+@Getter
 public class NukkitServer implements Server {
     public static final ObjectMapper JSON_MAPPER = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     public static final YAMLMapper YAML_MAPPER = (YAMLMapper) new YAMLMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -92,60 +94,51 @@ public class NukkitServer implements Server {
     public static final SemVer API_VERSION;
     public static final String NUKKIT_VERSION;
     public static final SemVer MINECRAFT_VERSION;
+    @Getter(AccessLevel.NONE)
     public static final String BROADCAST_CHANNEL_ADMINISTRATIVE = "nukkit.broadcast.admin";
+    @Getter(AccessLevel.NONE)
     public static final String BROADCAST_CHANNEL_USERS = "nukkit.broadcast.user";
     private static NukkitServer instance = null;
+    @Getter(AccessLevel.NONE)
     private final boolean ansiEnabled;
+    @Getter(AccessLevel.NONE)
     private final ScheduledExecutorService timerService = Executors.unconfigurableScheduledExecutorService(
             Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("Nukkit Ticker").setDaemon(true).build()));
-    @Getter
     private final NukkitConsoleCommandSender consoleCommandSender = new NukkitConsoleCommandSender(this);
-    @Getter
-    private final NukkitChunkGeneratorRegistry GeneratorRegistry = new NukkitChunkGeneratorRegistry(this);
-    @Getter
+    private final NukkitChunkGeneratorRegistry generatorRegistry = new NukkitChunkGeneratorRegistry(this);
     private final ResourcePackManager resourcePackManager = new ResourcePackManager(this);
-    @Getter
     private final NukkitCommandManager commandManager = new NukkitCommandManager(this);
-    @Getter
     private final NukkitPermissionManager permissionManager = new NukkitPermissionManager();
-    @Getter
     private final NukkitLocaleManager localeManager = new NukkitLocaleManager();
-    @Getter
     private final EntitySpawner entitySpawner = new EntitySpawner(this);
-    @Getter
     private final SimpleEventManager eventManager = new SimpleEventManager();
-    @Getter
     private final SimplePluginManager pluginManager = new SimplePluginManager(eventManager);
-    @Getter
     private final SimpleServiceManager serviceManager = new SimpleServiceManager();
-    @Getter
     private final NukkitSessionManager sessionManager = new NukkitSessionManager();
-    @Getter
     private final ServerScheduler scheduler = new ServerScheduler(this);
+    @Getter(AccessLevel.NONE)
     private final List<NetworkListener> listeners = new ArrayList<>();
+    @Getter(AccessLevel.NONE)
     private final LevelManager levelManager = new LevelManager();
-    @Getter
     private final Path pluginPath;
-    @Getter
     private final Path jarPath;
-    @Getter
     private final Path dataPath;
-    @Getter
     private final Path playersPath;
-    @Getter
     private final Path levelsPath;
-    @Getter
     private NukkitConfiguration configuration;
-    @Getter
     private NukkitWhitelist whitelist;
-    @Getter
     private NukkitLevel defaultLevel;
     private NukkitBanlist banlist;
+    @Getter(AccessLevel.NONE)
     private LineReader lineReader;
+    @Getter(AccessLevel.NONE)
     private AtomicBoolean reading = new AtomicBoolean(false);
     private Config operators = null;
+    @Getter(AccessLevel.NONE)
     private BlockingQueue<String> inputLines;
+    @Getter(AccessLevel.NONE)
     private ConsoleReader consoleReader;
+    @Getter(AccessLevel.NONE)
     private AtomicBoolean running = new AtomicBoolean(true);
 
     static {
@@ -437,6 +430,12 @@ public class NukkitServer implements Server {
 
     @Nonnull
     @Override
+    public String getNukkitVersion() {
+        return NUKKIT_VERSION;
+    }
+
+    @Nonnull
+    @Override
     public SemVer getMinecraftVersion() {
         return MINECRAFT_VERSION;
     }
@@ -648,18 +647,6 @@ public class NukkitServer implements Server {
 
     @Nonnull
     @Override
-    public NukkitBanlist getBanlist() {
-        return banlist;
-    }
-
-    @Nonnull
-    @Override
-    public NukkitWhitelist getWhitelist() {
-        return whitelist;
-    }
-
-    @Nonnull
-    @Override
     public NukkitItemInstanceBuilder itemInstanceBuilder() {
         return new NukkitItemInstanceBuilder();
     }
@@ -667,13 +654,7 @@ public class NukkitServer implements Server {
     @Nonnull
     @Override
     public ConfigBuilder createConfigBuilder() {
-        return null;//new NukkitConfigBuilder();
-    }
-
-    @Nonnull
-    @Override
-    public NukkitPermissionManager getPermissionManager() {
-        return permissionManager;
+        throw new UnsupportedOperationException();
     }
 
     private void loadPlugins() {
@@ -862,12 +843,6 @@ public class NukkitServer implements Server {
         ((NukkitLevel) level).getChunkManager()
         */
         return false;
-    }
-
-    @Nonnull
-    @Override
-    public String getNukkitVersion() {
-        return NUKKIT_VERSION;
     }
 
     private class ConsoleReader extends Thread implements InterruptibleThread {

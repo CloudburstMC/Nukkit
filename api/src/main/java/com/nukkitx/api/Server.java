@@ -6,6 +6,7 @@ import com.nukkitx.api.event.EventManager;
 import com.nukkitx.api.item.ItemInstanceBuilder;
 import com.nukkitx.api.level.Level;
 import com.nukkitx.api.level.LevelCreator;
+import com.nukkitx.api.level.chunk.generator.ChunkGeneratorRegistry;
 import com.nukkitx.api.locale.LocaleManager;
 import com.nukkitx.api.permission.Abilities;
 import com.nukkitx.api.permission.PermissionManager;
@@ -91,4 +92,7 @@ public interface Server {
 
     @Nonnull
     CompletableFuture<Level> loadLevel(LevelCreator creator);
+
+    @Nonnull
+    ChunkGeneratorRegistry getGeneratorRegistry();
 }
