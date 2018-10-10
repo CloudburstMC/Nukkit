@@ -2,7 +2,9 @@ package cn.nukkit.entity.projectile;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import java.util.concurrent.ThreadLocalRandom;
@@ -15,6 +17,8 @@ public class EntityThrownTrident extends EntityProjectile {
     public static final int NETWORK_ID = 73;
 
     public static final int DATA_SOURCE_ID = 17;
+
+    protected Item trident;
 
     @Override
     public int getNetworkId() {
@@ -66,7 +70,24 @@ public class EntityThrownTrident extends EntityProjectile {
         super.initEntity();
 
         this.damage = namedTag.contains("damage") ? namedTag.getDouble("damage") : 8;
+        this.trident = namedTag.contains("trident") ? NBTIO.getItemHelper(namedTag.getCompound("trident")) : Item.get(0);
+
         closeOnCollide = false;
+    }
+
+    @Override
+    public void saveNBT() {
+        super.saveNBT();
+
+        this.namedTag.put("trident", NBTIO.putItemHelper(this.trident));
+    }
+
+    public Item getItem() {
+        return this.trident != null ? this.trident.clone() : Item.get(0);
+    }
+
+    public void setItem(Item item) {
+        this.trident = item.clone();
     }
 
     public void setCritical() {

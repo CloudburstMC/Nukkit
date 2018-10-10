@@ -46,6 +46,8 @@ public class ItemTrident extends ItemTool {
     }
     
     public boolean onReleaseUsing(Player player) {
+        this.useOn(player);
+
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", player.x))
@@ -63,7 +65,10 @@ public class ItemTrident extends ItemTool {
         double p = (double) diff / 20;
 
         double f = Math.min((p * p + p * 2) / 3, 1) * 2;
-        EntityShootBowEvent entityShootBowEvent = new EntityShootBowEvent(player, this, new EntityThrownTrident(player.chunk, nbt, player, f == 2), f);
+        EntityThrownTrident trident = new EntityThrownTrident(player.chunk, nbt, player, f == 2);
+        trident.setItem(this);
+
+        EntityShootBowEvent entityShootBowEvent = new EntityShootBowEvent(player, this, trident, f);
 
         if (f < 0.1 || diff < 5) {
             entityShootBowEvent.setCancelled();
