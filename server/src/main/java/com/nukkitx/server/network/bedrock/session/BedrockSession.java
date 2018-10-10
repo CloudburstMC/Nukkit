@@ -101,7 +101,7 @@ public class BedrockSession implements NetworkSession<RakNetSession> {
     }
 
     private void checkForClosed() {
-        Preconditions.checkState(!connection.isClosed(), "Connection has been closed!");
+        Preconditions.checkState(!closed.get(), "Connection has been closed!");
     }
 
     public void addToSendQueue(BedrockPacket packet) {

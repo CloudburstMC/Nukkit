@@ -168,8 +168,10 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         // From the top, however...
         boolean blocked = false;
         for (int y = maxHeight; y > 0; y--) {
+            int chunkY = y & 0xf;
+            Optional<ChunkSection> section = getSection(y >> 4);
             BlockState state = NukkitLevel.getPaletteManager()
-                    .getBlockState(sections[y >> 4].getBlockId(x, y & 15, z, 0))
+                    .getBlockState(section.map(s -> s.getBlockId(x, chunkY, z, 0)).orElse(0))
                     .orElseThrow(() -> new IllegalStateException("Runtime ID is not registered"));
             BlockType type = state.getBlockType();
             byte light = 15;
@@ -182,9 +184,8 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
                 light = 0;
             }
 
-            ChunkSection section = sections[y >> 4];
-            if (section != null) {
-                section.setSkyLight(x, y & 15, z, light);
+            if (section.isPresent()) {
+                section.get().setSkyLight(x, chunkY, z, light);
             }
         }
     }
