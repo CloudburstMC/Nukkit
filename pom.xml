@@ -7,7 +7,7 @@
     <!-- Maven coordinates -->
     <groupId>com.nukkitx</groupId>
     <artifactId>nukkitx-parent</artifactId>
-    <version>1.7.0.9-SNAPSHOT</version>
+    <version>1.8.0.8-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <!-- Project information -->

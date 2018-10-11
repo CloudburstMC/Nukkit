@@ -7,7 +7,7 @@
     <parent>
         <artifactId>nukkitx-parent</artifactId>
         <groupId>com.nukkitx</groupId>
-        <version>1.7.0.9-SNAPSHOT</version>
+        <version>1.8.0.8-SNAPSHOT</version>
     </parent>
 
     <artifactId>nukkitx-server</artifactId>
