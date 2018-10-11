@@ -1,0 +1,15 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+      - run:
+          command: |
+            git submodule sync
+            git submodule update --init
+            mvn clean
+            mvn package
+      - store_artifacts:
+          path: ./target/nukkit-1.0-SNAPSHOT.jar
