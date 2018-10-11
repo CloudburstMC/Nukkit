@@ -13,3 +13,8 @@ jobs:
             mvn package
       - store_artifacts:
           path: ./target/nukkit-1.0-SNAPSHOT.jar
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build
