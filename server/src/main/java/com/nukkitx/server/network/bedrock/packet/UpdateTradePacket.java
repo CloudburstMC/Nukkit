@@ -4,7 +4,7 @@ import com.nukkitx.nbt.NBTEncodingType;
 import com.nukkitx.nbt.stream.NBTOutputStream;
 import com.nukkitx.nbt.tag.Tag;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import com.nukkitx.server.network.util.LittleEndianByteBufOutputStream;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
@@ -50,7 +50,7 @@ public class UpdateTradePacket implements BedrockPacket {
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(BedrockPacketHandler handler) {
         // Only client bound.
     }
 }

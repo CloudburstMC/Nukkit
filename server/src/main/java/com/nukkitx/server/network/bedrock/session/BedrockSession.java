@@ -11,7 +11,7 @@ import com.nukkitx.server.event.player.PlayerInitializationEvent;
 import com.nukkitx.server.level.NukkitLevel;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
 import com.nukkitx.server.network.bedrock.BedrockPacketCodec;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import com.nukkitx.server.network.bedrock.annotations.NoEncryption;
 import com.nukkitx.server.network.bedrock.packet.DisconnectPacket;
 import com.nukkitx.server.network.bedrock.packet.WrappedPacket;
@@ -48,7 +48,7 @@ public class BedrockSession implements NetworkSession<RakNetPacket> {
     private final AtomicLong sentEncryptedPacketCount = new AtomicLong();
     private final NukkitServer server;
     private BedrockPacketCodec packetCodec = BedrockPacketCodec.DEFAULT;
-    private NetworkPacketHandler handler = new LoginPacketHandler(this);
+    private BedrockPacketHandler handler = new LoginPacketHandler(this);
     private WrapperHandler wrapperHandler = DefaultWrapperHandler.DEFAULT;
     private SessionConnection<RakNetPacket> connection;
     private AuthData authData;
@@ -73,11 +73,11 @@ public class BedrockSession implements NetworkSession<RakNetPacket> {
         this.authData = authData;
     }
 
-    public NetworkPacketHandler getHandler() {
+    public BedrockPacketHandler getHandler() {
         return handler;
     }
 
-    public void setHandler(NetworkPacketHandler handler) {
+    public void setHandler(BedrockPacketHandler handler) {
         checkForClosed();
         Preconditions.checkNotNull(handler, "handler");
         this.handler = handler;

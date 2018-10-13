@@ -2,7 +2,7 @@ package com.nukkitx.server.network.bedrock.packet;
 
 import com.google.common.base.Preconditions;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.Value;
@@ -36,7 +36,7 @@ public class ResourcePackClientResponsePacket implements BedrockPacket {
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(BedrockPacketHandler handler) {
         handler.handle(this);
     }
 

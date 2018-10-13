@@ -3,14 +3,14 @@ package com.nukkitx.server.network.bedrock.packet;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.collect.Sets;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.nukkitx.server.network.bedrock.BedrockUtil.writeVector3i;
+import static com.nukkitx.server.network.bedrock.BedrockUtil.writeBlockPosition;
 import static com.nukkitx.server.network.util.VarInts.writeUnsignedInt;
 
 @Data
@@ -24,7 +24,7 @@ public class UpdateBlockPacket implements BedrockPacket {
 
     @Override
     public void encode(ByteBuf buffer) {
-        writeVector3i(buffer, blockPosition);
+        writeBlockPosition(buffer, blockPosition);
         writeUnsignedInt(buffer, runtimeId);
         int flagValue = 0;
         for (Flag flag: flags) {
@@ -40,7 +40,7 @@ public class UpdateBlockPacket implements BedrockPacket {
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(BedrockPacketHandler handler) {
         // Only client bound.
     }
 

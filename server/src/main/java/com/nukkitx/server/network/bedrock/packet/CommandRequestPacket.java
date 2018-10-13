@@ -1,7 +1,7 @@
 package com.nukkitx.server.network.bedrock.packet;
 
 import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import com.nukkitx.server.network.bedrock.data.CommandOriginData;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
@@ -29,7 +29,7 @@ public class CommandRequestPacket implements BedrockPacket {
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(BedrockPacketHandler handler) {
         handler.handle(this);
     }
 }

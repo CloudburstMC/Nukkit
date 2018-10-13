@@ -26,7 +26,7 @@ import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.entity.component.PlayerDataComponent;
 import com.nukkitx.server.inventory.NukkitInventory;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import com.nukkitx.server.network.bedrock.packet.*;
 import com.nukkitx.server.permission.NukkitAbilities;
 import com.nukkitx.server.resourcepack.loader.file.PackFile;
@@ -35,7 +35,7 @@ import lombok.extern.log4j.Log4j2;
 import java.util.Optional;
 
 @Log4j2
-public class PlayerSessionPacketHandler implements NetworkPacketHandler {
+public class PlayerSessionPacketHandler implements BedrockPacketHandler {
     private final PlayerSession session;
     private final NukkitServer server;
 

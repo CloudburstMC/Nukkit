@@ -2,13 +2,13 @@ package com.nukkitx.server.network.bedrock.packet;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import com.nukkitx.server.network.bedrock.data.StructureEditorData;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
+import static com.nukkitx.server.network.bedrock.BedrockUtil.writeBlockPosition;
 import static com.nukkitx.server.network.bedrock.BedrockUtil.writeStructureEditorData;
-import static com.nukkitx.server.network.bedrock.BedrockUtil.writeVector3i;
 import static com.nukkitx.server.network.util.VarInts.writeUnsignedInt;
 
 @Data
@@ -21,7 +21,7 @@ public class StructureBlockUpdatePacket implements BedrockPacket {
 
     @Override
     public void encode(ByteBuf buffer) {
-        writeVector3i(buffer, blockPosition);
+        writeBlockPosition(buffer, blockPosition);
         writeUnsignedInt(buffer, structureType);
         writeStructureEditorData(buffer, structureEditorData);
         buffer.writeBoolean(boundingBoxVisible);
@@ -34,7 +34,7 @@ public class StructureBlockUpdatePacket implements BedrockPacket {
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(BedrockPacketHandler handler) {
     }
 
     public enum Type {

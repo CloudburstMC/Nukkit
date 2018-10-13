@@ -68,7 +68,7 @@ public class BaseEntity implements Entity {
         AddEntityPacket packet = new AddEntityPacket();
         packet.setUniqueEntityId(entityId);
         packet.setRuntimeEntityId(entityId);
-        packet.setEntityType(entityType.getType());
+        packet.setIdentifier(entityType.getIdentifier());
         packet.setPosition(position);
         packet.setMotion(motion);
         packet.setRotation(rotation);

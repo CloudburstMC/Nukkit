@@ -2,7 +2,7 @@ package com.nukkitx.server.network.bedrock.packet;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
@@ -31,7 +31,7 @@ public class CommandBlockUpdatePacket implements BedrockPacket {
     public void decode(ByteBuf buffer) {
         block = buffer.readBoolean();
         if (block) {
-            blockPosition = readVector3i(buffer);
+            blockPosition = readBlockPosition(buffer);
             commandBlockMode = readUnsignedInt(buffer);
             redstoneMode = buffer.readBoolean();
             conditional = buffer.readBoolean();
@@ -46,7 +46,7 @@ public class CommandBlockUpdatePacket implements BedrockPacket {
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(BedrockPacketHandler handler) {
         handler.handle(this);
     }
 }

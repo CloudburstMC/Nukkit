@@ -2,7 +2,7 @@ package com.nukkitx.server.network.bedrock.packet;
 
 import com.nukkitx.api.resourcepack.ResourcePack;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
@@ -13,15 +13,17 @@ import static com.nukkitx.server.network.bedrock.BedrockUtil.writePackInstanceEn
 
 @Data
 public class ResourcePackStackPacket implements BedrockPacket {
+    private boolean forcedToAccept;
     private final List<ResourcePack> behaviorPacks = new ArrayList<>();
     private final List<ResourcePack> resourcePacks = new ArrayList<>();
-    private boolean forcedToAccept;
+    private boolean experimental;
 
     @Override
     public void encode(ByteBuf buffer) {
         buffer.writeBoolean(forcedToAccept);
         writePackInstanceEntries(buffer, behaviorPacks);
         writePackInstanceEntries(buffer, resourcePacks);
+        buffer.writeBoolean(experimental);
     }
 
     @Override
@@ -30,7 +32,7 @@ public class ResourcePackStackPacket implements BedrockPacket {
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(BedrockPacketHandler handler) {
         // Only client bound
     }
 }

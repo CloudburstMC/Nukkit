@@ -3,7 +3,7 @@ package com.nukkitx.server.network.bedrock.packet;
 import com.nukkitx.api.scoreboard.DisplayObjective;
 import com.nukkitx.api.scoreboard.Objective;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
@@ -31,7 +31,7 @@ public class SetDisplayObjectivePacket implements BedrockPacket {
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(BedrockPacketHandler handler) {
         // Client bound only
     }
 }

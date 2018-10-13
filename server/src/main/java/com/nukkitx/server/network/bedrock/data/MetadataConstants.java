@@ -238,12 +238,12 @@ public enum MetadataConstants {
         VECTOR3I {
             @Override
             public Object read(ByteBuf buf) {
-                return BedrockUtil.readVector3i(buf);
+                return BedrockUtil.readBlockPosition(buf);
             }
 
             @Override
             public void write(ByteBuf buf, Object o) {
-                BedrockUtil.writeVector3i(buf, (Vector3i) o);
+                BedrockUtil.writeBlockPosition(buf, (Vector3i) o);
             }
         },
         LONG {

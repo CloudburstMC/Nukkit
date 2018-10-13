@@ -1,9 +1,11 @@
 package com.nukkitx.server.entity;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
 @Value
+@RequiredArgsConstructor
 public final class Attribute {
     @NonNull
     private final String name;
@@ -12,19 +14,7 @@ public final class Attribute {
     private final float maximumValue;
     private final float defaultValue;
 
-    public Attribute(@NonNull String name, float value, float minimumValue, float maximumValue) {
-        this.name = name;
-        this.value = value;
-        this.minimumValue = minimumValue;
-        this.maximumValue = maximumValue;
-        this.defaultValue = maximumValue;
-    }
-
-    public Attribute(@NonNull String name, float value, float minimumValue, float maximumValue, float defaultValue) {
-        this.name = name;
-        this.value = value;
-        this.minimumValue = minimumValue;
-        this.maximumValue = maximumValue;
-        this.defaultValue = defaultValue;
+    public Attribute(String name, float value, float minimumValue, float maximumValue) {
+        this(name, value, minimumValue, maximumValue, minimumValue);
     }
 }

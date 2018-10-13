@@ -7,7 +7,7 @@ import com.nukkitx.api.permission.PlayerPermission;
 import com.nukkitx.api.util.Rotation;
 import com.nukkitx.server.entity.EntityLink;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import com.nukkitx.server.network.bedrock.util.MetadataDictionary;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
@@ -68,7 +68,7 @@ public class AddPlayerPacket implements BedrockPacket {
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(BedrockPacketHandler handler) {
         // This packet isn't handled
     }
 }

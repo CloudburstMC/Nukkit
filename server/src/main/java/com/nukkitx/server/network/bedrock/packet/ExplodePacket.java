@@ -3,15 +3,15 @@ package com.nukkitx.server.network.bedrock.packet;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.nukkitx.server.network.bedrock.BedrockUtil.writeSignedBlockPosition;
 import static com.nukkitx.server.network.bedrock.BedrockUtil.writeVector3f;
+import static com.nukkitx.server.network.bedrock.BedrockUtil.writeVector3i;
 import static com.nukkitx.server.network.util.VarInts.writeUnsignedInt;
 
 @Data
@@ -25,7 +25,7 @@ public class ExplodePacket implements BedrockPacket {
         writeVector3f(buffer, position);
         buffer.writeFloatLE(radius);
         writeUnsignedInt(buffer, records.size());
-        records.forEach(blockPos -> writeSignedBlockPosition(buffer, blockPos));
+        records.forEach(blockPos -> writeVector3i(buffer, blockPos));
     }
 
     @Override
@@ -34,7 +34,7 @@ public class ExplodePacket implements BedrockPacket {
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(BedrockPacketHandler handler) {
         // This packet isn't handled
     }
 }

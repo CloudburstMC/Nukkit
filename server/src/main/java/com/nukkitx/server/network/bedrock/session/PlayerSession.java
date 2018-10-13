@@ -42,7 +42,7 @@ import com.nukkitx.server.level.NukkitLevel;
 import com.nukkitx.server.level.chunk.FullChunkDataPacketCreator;
 import com.nukkitx.server.level.util.AroundPointChunkComparator;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import com.nukkitx.server.network.bedrock.packet.*;
 import com.nukkitx.server.network.bedrock.util.MetadataDictionary;
 import com.nukkitx.server.permission.NukkitAbilities;
@@ -123,8 +123,12 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
             chunks.sort(new AroundPointChunkComparator(chunkX, chunkZ));
 
+            NetworkChunkPublisherUpdatePacket networkChunkPublisherUpdate = new NetworkChunkPublisherUpdatePacket();
+            networkChunkPublisherUpdate.setPosition(position.toInt());
+            networkChunkPublisherUpdate.setRadius(viewDistance << 4);
+            session.addToSendQueue(networkChunkPublisherUpdate);
+
             for (Chunk chunk : chunks) {
-                // Already wrapped so we can send immediately.
                 session.addToSendQueue(((FullChunkDataPacketCreator) chunk).createFullChunkDataPacket());
             }
         }));
@@ -794,7 +798,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         return inventory.addItem(item);
     }
 
-    public NetworkPacketHandler getNetworkPacketHandler() {
+    public BedrockPacketHandler getNetworkPacketHandler() {
         return new PlayerSessionPacketHandler(this);
     }
 

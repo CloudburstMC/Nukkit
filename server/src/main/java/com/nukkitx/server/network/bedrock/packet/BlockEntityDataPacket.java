@@ -6,7 +6,7 @@ import com.nukkitx.nbt.stream.NBTInputStream;
 import com.nukkitx.nbt.stream.NBTOutputStream;
 import com.nukkitx.nbt.tag.Tag;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import com.nukkitx.server.network.util.LittleEndianByteBufInputStream;
 import com.nukkitx.server.network.util.LittleEndianByteBufOutputStream;
 import io.netty.buffer.ByteBuf;
@@ -14,8 +14,8 @@ import lombok.Data;
 
 import java.io.IOException;
 
-import static com.nukkitx.server.network.bedrock.BedrockUtil.readVector3i;
-import static com.nukkitx.server.network.bedrock.BedrockUtil.writeVector3i;
+import static com.nukkitx.server.network.bedrock.BedrockUtil.readBlockPosition;
+import static com.nukkitx.server.network.bedrock.BedrockUtil.writeBlockPosition;
 
 @Data
 public class BlockEntityDataPacket implements BedrockPacket {
@@ -24,7 +24,7 @@ public class BlockEntityDataPacket implements BedrockPacket {
 
     @Override
     public void encode(ByteBuf buffer) {
-        writeVector3i(buffer, blockPostion);
+        writeBlockPosition(buffer, blockPostion);
         try (NBTOutputStream writer = new NBTOutputStream(new LittleEndianByteBufOutputStream(buffer), NBTEncodingType.BEDROCK)) {
             writer.write(data);
         } catch (IOException e) {
@@ -34,7 +34,7 @@ public class BlockEntityDataPacket implements BedrockPacket {
 
     @Override
     public void decode(ByteBuf buffer) {
-        blockPostion = readVector3i(buffer);
+        blockPostion = readBlockPosition(buffer);
         try (NBTInputStream reader = new NBTInputStream(new LittleEndianByteBufInputStream(buffer), NBTEncodingType.BEDROCK)) {
             data = reader.readTag();
         } catch (IOException e) {
@@ -43,7 +43,7 @@ public class BlockEntityDataPacket implements BedrockPacket {
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(BedrockPacketHandler handler) {
         handler.handle(this);
     }
 }

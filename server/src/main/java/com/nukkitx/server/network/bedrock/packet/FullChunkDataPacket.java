@@ -1,7 +1,7 @@
 package com.nukkitx.server.network.bedrock.packet;
 
 import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,14 +16,16 @@ import static com.nukkitx.server.network.util.VarInts.writeUnsignedInt;
 public class FullChunkDataPacket implements BedrockPacket {
     private int chunkX;
     private int chunkZ;
-    private byte[] data;
+    private ByteBuf data;
 
     @Override
     public void encode(ByteBuf buffer) {
         writeInt(buffer, chunkX);
         writeInt(buffer, chunkZ);
-        writeUnsignedInt(buffer, data.length);
+        writeUnsignedInt(buffer, data.readableBytes());
         buffer.writeBytes(data);
+        data.release();
+        data = null;
     }
 
     @Override
@@ -32,7 +34,7 @@ public class FullChunkDataPacket implements BedrockPacket {
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(BedrockPacketHandler handler) {
         // Only client bound.
     }
 }

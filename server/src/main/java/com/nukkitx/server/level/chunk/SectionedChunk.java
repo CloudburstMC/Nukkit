@@ -27,19 +27,18 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.buffer.UnpooledByteBufAllocator;
 import lombok.Synchronized;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
-import java.lang.ref.SoftReference;
 import java.util.*;
 
 @Log4j2
 public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, FullChunkDataPacketCreator {
     private final Level level;
     private final TIntObjectMap<CompoundTag> serializedBlockEntities = new TIntObjectHashMap<>();
-    private SoftReference<byte[]> cached = null;
+    private volatile ByteBuf cached = null;
 
     public SectionedChunk(int x, int z, Level level) {
         this(new ChunkSection[16], x, z, level);
@@ -322,6 +321,7 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
     }
 
     private void refreshCache() {
+        cached.release();
         cached = null;
     }
 
@@ -332,8 +332,9 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         packet.setChunkX(x);
         packet.setChunkZ(z);
 
-        if (cached != null && cached.get() != null) {
-            packet.setData(cached.get());
+        if (cached != null) {
+            // We don't want reader indexes to get messed up with multiple writes
+            packet.setData(cached.duplicate().retain());
 
             return packet;
         }
@@ -366,35 +367,31 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
 
         // Chunk sections
         int bufferSize = 1 + 4096 * topBlank + 768 + 2 + nbtSize;
-        ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.buffer(bufferSize);
-        try {
-            byteBuf.markReaderIndex();
-            byteBuf.writeByte((byte) topBlank);
+        ByteBuf byteBuf = UnpooledByteBufAllocator.DEFAULT.directBuffer(bufferSize);
+        byteBuf.markReaderIndex();
 
-            for (int i = 0; i < topBlank; i++) {
-                getOrCreateSection(i).writeTo(byteBuf);
-            }
+        byteBuf.writeByte((byte) topBlank);
 
-            // Heightmap
-            byteBuf.writeBytes(height);
-            // Biomes
-            byteBuf.writeBytes(biomeId);
-
-            // Extra data TODO: Implement
-            VarInts.writeInt(byteBuf, 0);
-            VarInts.writeInt(byteBuf, 0);
-
-            if (blockEntitiesStream != null) {
-                blockEntitiesStream.writeTo(byteBuf);
-            }
-
-            byte[] chunkData = new byte[byteBuf.readableBytes()];
-            cached = new SoftReference<>(chunkData);
-            byteBuf.readBytes(chunkData);
-            packet.setData(chunkData);
-        } finally {
-            byteBuf.release();
+        for (int i = 0; i < topBlank; i++) {
+            getOrCreateSection(i).writeTo(byteBuf);
         }
+
+        // Heightmap
+        byteBuf.writeBytes(height);
+        // Biomes
+        byteBuf.writeBytes(biomeId);
+
+        // Extra data TODO: Implement
+        VarInts.writeInt(byteBuf, 0);
+        VarInts.writeInt(byteBuf, 0);
+
+        if (blockEntitiesStream != null) {
+            blockEntitiesStream.writeTo(byteBuf);
+        }
+
+        packet.setData(byteBuf.duplicate().retain());
+
+        cached = byteBuf;
 
         return packet;
     }

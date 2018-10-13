@@ -177,7 +177,7 @@ public class ItemUseTransaction extends ComplexTransaction {
 
     public void read(ByteBuf buffer){
         action = Action.values()[VarInts.readUnsignedInt(buffer)];
-        position = BedrockUtil.readVector3i(buffer);
+        position = BedrockUtil.readBlockPosition(buffer);
         face = VarInts.readInt(buffer);
         super.read(buffer);
         clickPosition = BedrockUtil.readVector3f(buffer);
@@ -185,7 +185,7 @@ public class ItemUseTransaction extends ComplexTransaction {
 
     public void write(ByteBuf buffer){
         VarInts.writeUnsignedInt(buffer, action.ordinal());
-        BedrockUtil.writeVector3i(buffer, position);
+        BedrockUtil.writeBlockPosition(buffer, position);
         VarInts.writeInt(buffer, face);
         super.write(buffer);
         BedrockUtil.writeVector3f(buffer, clickPosition);

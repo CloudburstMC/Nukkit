@@ -2,7 +2,7 @@ package com.nukkitx.server.network.bedrock;
 
 import com.nukkitx.server.network.bedrock.packet.*;
 
-public interface NetworkPacketHandler {
+public interface BedrockPacketHandler {
 
     default void handle(AdventureSettingsPacket packet) {
     }

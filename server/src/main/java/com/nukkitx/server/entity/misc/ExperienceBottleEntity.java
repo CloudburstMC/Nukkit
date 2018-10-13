@@ -14,7 +14,7 @@ import com.nukkitx.server.level.NukkitLevel;
 public class ExperienceBottleEntity extends BaseEntity implements ExperienceBottle {
 
     public ExperienceBottleEntity(Vector3f position, NukkitLevel level, NukkitServer server) {
-        super(EntityType.EXPERIENCE_BOTTLE, position, level, server);
+        super(EntityType.XP_BOTTLE, position, level, server);
 
         registerComponent(Physics.class, new PhysicsComponent(0.1f, 0.01f));
         registerComponent(ContainedExperience.class, new ContainedExperienceComponent(20));

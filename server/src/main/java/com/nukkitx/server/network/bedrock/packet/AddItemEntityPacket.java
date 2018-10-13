@@ -3,7 +3,7 @@ package com.nukkitx.server.network.bedrock.packet;
 import com.flowpowered.math.vector.Vector3f;
 import com.nukkitx.api.item.ItemInstance;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import com.nukkitx.server.network.bedrock.util.MetadataDictionary;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
@@ -27,6 +27,7 @@ public class AddItemEntityPacket implements BedrockPacket {
         writeItemInstance(buffer, itemInstance);
         writeVector3f(buffer, position);
         writeVector3f(buffer, motion);
+        metadata.writeTo(buffer);
         buffer.writeBoolean(fishing);
     }
 
@@ -36,7 +37,7 @@ public class AddItemEntityPacket implements BedrockPacket {
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(BedrockPacketHandler handler) {
         // This packet isn't handled
     }
 }

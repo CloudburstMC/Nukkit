@@ -17,7 +17,7 @@ import com.nukkitx.server.level.NukkitLevel;
 public class ExperienceOrbEntity extends BaseEntity implements ExperienceOrb {
 
     public ExperienceOrbEntity(Vector3f position, NukkitLevel level, NukkitServer server, int experience) {
-        super(EntityType.EXPERIENCE_ORB, position, level, server);
+        super(EntityType.XP_ORB, position, level, server);
 
         registerComponent(ContainedExperience.class, new ContainedExperienceComponent(experience));
         registerComponent(PickupDelay.class, new PickupDelayComponent(20));

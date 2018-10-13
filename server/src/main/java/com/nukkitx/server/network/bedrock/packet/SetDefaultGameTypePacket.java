@@ -2,7 +2,7 @@ package com.nukkitx.server.network.bedrock.packet;
 
 import com.nukkitx.api.util.GameMode;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
@@ -23,7 +23,7 @@ public class SetDefaultGameTypePacket implements BedrockPacket {
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(BedrockPacketHandler handler) {
         // Client bound only.
     }
 }

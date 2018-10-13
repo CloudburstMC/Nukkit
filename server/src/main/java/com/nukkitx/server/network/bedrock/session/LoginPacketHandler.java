@@ -9,7 +9,7 @@ import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
 import com.nukkitx.api.event.player.PlayerPreLoginEvent;
 import com.nukkitx.server.NukkitServer;
 import com.nukkitx.server.network.bedrock.BedrockPacketCodec;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import com.nukkitx.server.network.bedrock.packet.ClientToServerHandshakePacket;
 import com.nukkitx.server.network.bedrock.packet.LoginPacket;
 import com.nukkitx.server.network.bedrock.packet.PlayStatusPacket;
@@ -33,7 +33,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Log4j2
-public class LoginPacketHandler implements NetworkPacketHandler {
+public class LoginPacketHandler implements BedrockPacketHandler {
     private static final boolean CAN_USE_ENCRYPTION = CryptoUtil.isJCEUnlimitedStrength() || NativeCodeFactory.cipher.isLoaded();
     private static final String MOJANG_PUBLIC_KEY_BASE64 =
             "MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAE8ELkixyLcwlZryUQcu1TvPOmI2B7vX83ndnWRUaXm74wFfa5f/lwQNTfrLVHa2PmenpGI6JhIMUJaWZrjmMj90NoKNFSNBuKdm8rYiXsfaz3K36x/1U26HpG0ZxK/V1V";

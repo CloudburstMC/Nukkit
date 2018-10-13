@@ -3,7 +3,7 @@ package com.nukkitx.server.network.bedrock.packet;
 import com.flowpowered.math.vector.Vector3f;
 import com.nukkitx.api.util.Rotation;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import com.nukkitx.server.util.bitset.IntBitSet;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
@@ -36,7 +36,7 @@ public class MoveEntityAbsolutePacket implements BedrockPacket {
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(BedrockPacketHandler handler) {
         handler.handle(this);
     }
 

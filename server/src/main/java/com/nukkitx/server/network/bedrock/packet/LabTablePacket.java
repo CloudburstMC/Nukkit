@@ -2,12 +2,12 @@ package com.nukkitx.server.network.bedrock.packet;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
-import static com.nukkitx.server.network.bedrock.BedrockUtil.readVector3i;
-import static com.nukkitx.server.network.bedrock.BedrockUtil.writeVector3i;
+import static com.nukkitx.server.network.bedrock.BedrockUtil.readBlockPosition;
+import static com.nukkitx.server.network.bedrock.BedrockUtil.writeBlockPosition;
 
 @Data
 public class LabTablePacket implements BedrockPacket {
@@ -18,19 +18,19 @@ public class LabTablePacket implements BedrockPacket {
     @Override
     public void encode(ByteBuf buffer) {
         buffer.writeByte(unknownByte0);
-        writeVector3i(buffer, blockEntityPosition);
+        writeBlockPosition(buffer, blockEntityPosition);
         buffer.writeByte(reactionType);
     }
 
     @Override
     public void decode(ByteBuf buffer) {
         unknownByte0 = buffer.readByte();
-        blockEntityPosition = readVector3i(buffer);
+        blockEntityPosition = readBlockPosition(buffer);
         reactionType = buffer.readByte();
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(BedrockPacketHandler handler) {
         handler.handle(this);
     }
 }

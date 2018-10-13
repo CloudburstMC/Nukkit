@@ -5,7 +5,7 @@ import org.apache.logging.log4j.LogManager;
 
 public interface BedrockPacket extends NetworkPacket {
 
-    default void handle(NetworkPacketHandler handler) {
+    default void handle(BedrockPacketHandler handler) {
         Class<?> clazz = getClass();
         LogManager.getLogger(clazz).debug("Received client-bound only " + clazz.getSimpleName());
     }

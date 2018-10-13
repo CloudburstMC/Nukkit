@@ -242,7 +242,7 @@ public final class BedrockUtil {
         }
     }
 
-    public static Vector3i readVector3i(ByteBuf buffer) {
+    public static Vector3i readBlockPosition(ByteBuf buffer) {
         Preconditions.checkNotNull(buffer, "buffer");
         int x = readInt(buffer);
         int y = readUnsignedInt(buffer);
@@ -251,7 +251,7 @@ public final class BedrockUtil {
         return new Vector3i(x, y, z);
     }
 
-    public static void writeVector3i(ByteBuf buffer, Vector3i blockPosition) {
+    public static void writeBlockPosition(ByteBuf buffer, Vector3i blockPosition) {
         Preconditions.checkNotNull(buffer, "buffer");
         Preconditions.checkNotNull(blockPosition, "blockPosition");
         writeInt(buffer, blockPosition.getX());
@@ -259,7 +259,7 @@ public final class BedrockUtil {
         writeInt(buffer, blockPosition.getZ());
     }
 
-    public static Vector3i readSignedBlockPosition(ByteBuf buffer) {
+    public static Vector3i readVector3i(ByteBuf buffer) {
         Preconditions.checkNotNull(buffer, "buffer");
         int x = readInt(buffer);
         int y = readInt(buffer);
@@ -268,7 +268,7 @@ public final class BedrockUtil {
         return new Vector3i(x, y, z);
     }
 
-    public static void writeSignedBlockPosition(ByteBuf buffer, Vector3i blockPosition) {
+    public static void writeVector3i(ByteBuf buffer, Vector3i blockPosition) {
         Preconditions.checkNotNull(buffer, "buffer");
         Preconditions.checkNotNull(blockPosition, "blockPosition");
         writeInt(buffer, blockPosition.getX());
@@ -476,7 +476,7 @@ public final class BedrockUtil {
         writeInt(buffer, levelSettings.getGenerator().ordinal());
         writeInt(buffer, levelSettings.getGameMode().ordinal());
         writeInt(buffer, levelSettings.getDifficulty().ordinal());
-        writeVector3i(buffer, levelSettings.getDefaultSpawn().toInt());
+        writeBlockPosition(buffer, levelSettings.getDefaultSpawn().toInt());
         buffer.writeBoolean(levelSettings.isAchievementsDisabled());
         writeInt(buffer, levelSettings.getTime());
         buffer.writeBoolean(levelSettings.isEduWorld());
@@ -509,8 +509,8 @@ public final class BedrockUtil {
         Preconditions.checkNotNull(structureEditorData, "structureEditorData");
         writeString(buffer, structureEditorData.getUnknown0());
         writeString(buffer, structureEditorData.getMetadata());
-        writeVector3i(buffer, structureEditorData.getStructureOffset());
-        writeVector3i(buffer, structureEditorData.getStructureSize());
+        writeBlockPosition(buffer, structureEditorData.getStructureOffset());
+        writeBlockPosition(buffer, structureEditorData.getStructureSize());
         buffer.writeBoolean(structureEditorData.isIncludingEntities());
         buffer.writeBoolean(structureEditorData.isIgnoringBlocks());
         buffer.writeBoolean(structureEditorData.isIncludingPlayers());
@@ -533,8 +533,8 @@ public final class BedrockUtil {
     public static void writeIntBoundingBox(ByteBuf buffer, BoundingBox bb) {
         Preconditions.checkNotNull(buffer, "buffer");
         Preconditions.checkNotNull(bb, "bb");
-        writeVector3i(buffer, bb.getMax().toInt());
-        writeVector3i(buffer, bb.getMin().toInt());
+        writeBlockPosition(buffer, bb.getMax().toInt());
+        writeBlockPosition(buffer, bb.getMin().toInt());
     }
 
     public static void writeScoreInfo(ByteBuf buffer, Collection<ScoreInfo> infos) {

@@ -2,12 +2,12 @@ package com.nukkitx.server.network.bedrock.packet;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
-import static com.nukkitx.server.network.bedrock.BedrockUtil.readVector3i;
-import static com.nukkitx.server.network.bedrock.BedrockUtil.writeVector3i;
+import static com.nukkitx.server.network.bedrock.BedrockUtil.readBlockPosition;
+import static com.nukkitx.server.network.bedrock.BedrockUtil.writeBlockPosition;
 
 @Data
 public class ItemFrameDropItemPacket implements BedrockPacket {
@@ -15,16 +15,16 @@ public class ItemFrameDropItemPacket implements BedrockPacket {
 
     @Override
     public void encode(ByteBuf buffer) {
-        writeVector3i(buffer, blockPosition);
+        writeBlockPosition(buffer, blockPosition);
     }
 
     @Override
     public void decode(ByteBuf buffer) {
-        blockPosition = readVector3i(buffer);
+        blockPosition = readBlockPosition(buffer);
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(BedrockPacketHandler handler) {
         handler.handle(this);
     }
 }

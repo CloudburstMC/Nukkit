@@ -2,7 +2,7 @@ package com.nukkitx.server.network.bedrock.packet;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
@@ -21,7 +21,7 @@ public class AddPaintingPacket implements BedrockPacket {
     public void encode(ByteBuf buffer) {
         writeUniqueEntityId(buffer, uniqueEntityId);
         writeRuntimeEntityId(buffer, runtimeEntityId);
-        writeVector3i(buffer, blockPosition);
+        writeBlockPosition(buffer, blockPosition);
         writeInt(buffer, direction);
         writeString(buffer, title);
     }
@@ -32,7 +32,7 @@ public class AddPaintingPacket implements BedrockPacket {
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(BedrockPacketHandler handler) {
         // This packet isn't handled
     }
 }

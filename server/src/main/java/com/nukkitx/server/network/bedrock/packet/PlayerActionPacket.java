@@ -3,12 +3,12 @@ package com.nukkitx.server.network.bedrock.packet;
 import com.flowpowered.math.vector.Vector3i;
 import com.nukkitx.api.util.data.BlockFace;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
+import com.nukkitx.server.network.bedrock.BedrockPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
+import static com.nukkitx.server.network.bedrock.BedrockUtil.readBlockPosition;
 import static com.nukkitx.server.network.bedrock.BedrockUtil.readRuntimeEntityId;
-import static com.nukkitx.server.network.bedrock.BedrockUtil.readVector3i;
 import static com.nukkitx.server.network.util.VarInts.readInt;
 
 @Data
@@ -27,12 +27,12 @@ public class PlayerActionPacket implements BedrockPacket {
     public void decode(ByteBuf buffer) {
         runtimeEntityId = readRuntimeEntityId(buffer);
         action = Action.values()[readInt(buffer)];
-        blockPosition = readVector3i(buffer);
+        blockPosition = readBlockPosition(buffer);
         face = BlockFace.values()[readInt(buffer)];
     }
 
     @Override
-    public void handle(NetworkPacketHandler handler) {
+    public void handle(BedrockPacketHandler handler) {
         handler.handle(this);
     }
 
