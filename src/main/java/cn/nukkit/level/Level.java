@@ -188,6 +188,7 @@ public class Level implements ChunkManager, Metadatable {
 
     private final BlockUpdateScheduler updateQueue;
     private final Queue<Block> normalUpdateQueue = new ConcurrentLinkedDeque<>();
+    private final Queue<Block> redstoneUpdateQueue = new ConcurrentLinkedDeque<>();
 //    private final TreeSet<BlockUpdateEntry> updateQueue = new TreeSet<>();
 //    private final List<BlockUpdateEntry> nextTickUpdates = Lists.newArrayList();
     //private final Map<BlockVector3, Integer> updateQueueIndex = new HashMap<>();
@@ -758,6 +759,10 @@ public class Level implements ChunkManager, Metadatable {
             block.onUpdate(BLOCK_UPDATE_NORMAL);
         }
 
+        while ((block = this.redstoneUpdateQueue.poll()) != null) {
+            block.onUpdate(BLOCK_UPDATE_REDSTONE);
+        }
+
         TimingsHistory.entityTicks += this.updateEntities.size();
         this.timings.entityTick.startTiming();
 
@@ -1169,7 +1174,7 @@ public class Level implements ChunkManager, Metadatable {
                 continue;
             }
 
-            this.getBlock(pos.getSide(side)).onUpdate(BLOCK_UPDATE_REDSTONE);
+            redstoneUpdateQueue.add(this.getBlock(pos.getSide(side)));
         }
     }
 
@@ -1181,13 +1186,13 @@ public class Level implements ChunkManager, Metadatable {
                 Block block1 = this.getBlock(pos);
 
                 if (BlockRedstoneDiode.isDiode(block1)) {
-                    block1.onUpdate(BLOCK_UPDATE_REDSTONE);
+                    redstoneUpdateQueue.add(block1);
                 } else if (block1.isNormalBlock()) {
                     pos = pos.getSide(face);
                     block1 = this.getBlock(pos);
 
                     if (BlockRedstoneDiode.isDiode(block1)) {
-                        block1.onUpdate(BLOCK_UPDATE_REDSTONE);
+                        redstoneUpdateQueue.add(block1);
                     }
                 }
             }
