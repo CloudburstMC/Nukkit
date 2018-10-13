@@ -1,5 +1,6 @@
 package com.nukkitx.server.network.bedrock.session;
 
+import com.flowpowered.math.GenericMath;
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
 import com.google.common.base.Preconditions;
@@ -111,7 +112,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
     public CompletableFuture<List<Chunk>> sendNewChunks() {
         return getChunksForRadius(viewDistance).whenComplete(((chunks, throwable) -> {
             if (throwable != null) {
-                log.error("Cannot load chunks for" + session.getAuthData().getDisplayName());
+                log.error("Cannot load chunks for {}", session.getAuthData().getDisplayName());
                 session.disconnect("Internal Error");
                 return;
             }
@@ -126,7 +127,6 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
             NetworkChunkPublisherUpdatePacket networkChunkPublisherUpdate = new NetworkChunkPublisherUpdatePacket();
             networkChunkPublisherUpdate.setPosition(position.toInt());
             networkChunkPublisherUpdate.setRadius(viewDistance << 4);
-            session.addToSendQueue(networkChunkPublisherUpdate);
 
             for (Chunk chunk : chunks) {
                 session.addToSendQueue(((FullChunkDataPacketCreator) chunk).createFullChunkDataPacket());
@@ -235,11 +235,11 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         startGame.setPlayerPosition(event.getSpawnPosition());
         startGame.setRotation(event.getRotation());
         startGame.setLevelSettings(event.getSpawnLevel().getData());
-        startGame.setLevelId(event.getSpawnLevel().getId());
-        startGame.setWorldName("world"); //level.getName()
+        startGame.setLevelId("");
+        startGame.setWorldName("defaultWorld"); //level.getName()
         startGame.setPremiumWorldTemplateId("");
         startGame.setTrial(false);
-        startGame.setCurrentTick(event.getSpawnLevel().getCurrentTick());
+        startGame.setCurrentTick(0);
         startGame.setEnchantmentSeed(enchantmentSeed);
         startGame.setMultiplayerCorrelationId("");
         session.addToSendQueue(startGame);
@@ -621,6 +621,12 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
     @Override
     public void setViewDistance(int viewDistance) {
+        viewDistance = GenericMath.clamp(viewDistance, 5, server.getConfiguration().getMechanics().getMaximumChunkRadius());
+
+        ChunkRadiusUpdatePacket chunkRadiusUpdate = new ChunkRadiusUpdatePacket();
+        chunkRadiusUpdate.setRadius(viewDistance);
+        session.addToSendQueue(chunkRadiusUpdate);
+
         this.viewDistance = viewDistance;
     }
 

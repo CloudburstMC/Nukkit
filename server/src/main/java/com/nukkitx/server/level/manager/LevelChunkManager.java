@@ -162,9 +162,9 @@ public class LevelChunkManager {
                 // No chunk found so we need to generate it.
                 if (chunk == null) {
                     long seed = getChunkSeed(x, z);
-                    if (log.isTraceEnabled()) {
+                    /*if (log.isTraceEnabled()) {
                         log.trace("Generating chunk {},{} using {} with seed {}", x, z, chunkGenerator.getClass().getName(), seed);
-                    }
+                    }*/
                     SectionedChunk newChunk = new SectionedChunk(x, z, level);
                     chunkGenerator.generateChunk(level, newChunk, new Random(seed));
                     newChunk.recalculateLight();

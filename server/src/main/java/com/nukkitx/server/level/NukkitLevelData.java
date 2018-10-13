@@ -28,7 +28,7 @@ public abstract class NukkitLevelData implements LevelData {
     private Vector3f defaultSpawn;
     private boolean achievementsDisabled = false;
     private boolean eduWorld = false;
-    private boolean eduFeaturesEnabled = true;
+    private boolean eduFeaturesEnabled = false;
     private float rainLevel = 0;
     private float lightningLevel = 0;
     private boolean forceGameType = false;
@@ -40,7 +40,7 @@ public abstract class NukkitLevelData implements LevelData {
     private boolean bonusChestEnabled = false;
     private boolean startingWithMap = false;
     private boolean trustingPlayers = false;
-    private NukkitAbilities defaultAbilities;
+    private NukkitAbilities defaultAbilities = new NukkitAbilities();
     private PlayerPermission defaultPlayerPermission = PlayerPermission.MEMBER;
     private int XBLBroadcastMode = 3;
     private int serverChunkTickRange = 8; // Simulated render distance.

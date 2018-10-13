@@ -323,6 +323,10 @@ public class BlockTypes {
 
     public static final BlockType TURTLE_EGG = IntBlock.builder().name("turtle_egg").id(414).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0f).build();
     public static final BlockType BUBBLE_COLUMN = IntBlock.builder().name("bubble_column").id(415).maxStackSize(64).diggable(false).transparent(true).solid(false).hardness(0f).build();
+    public static final BlockType BARRIER = IntBlock.builder().name("barrier").id(416).maxStackSize(64).solid(true).hardness(-1f).filterLight(15).build();
+    public static final BlockType BAMBOO = IntBlock.builder().name("bamboo").id(418).maxStackSize(64).diggable(true).hardness(1f).transparent(true).build();
+    public static final BlockType BAMBOO_SAPLING = IntBlock.builder().name("bamboo_sapling").id(419).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0f).floodable(true).build();
+    public static final BlockType SCAFFOLDING = IntBlock.builder().name("scaffolding").id(420).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(2f).build();
 
     public static BlockType byName(@Nonnull String name) {
         Preconditions.checkNotNull(name, "name");

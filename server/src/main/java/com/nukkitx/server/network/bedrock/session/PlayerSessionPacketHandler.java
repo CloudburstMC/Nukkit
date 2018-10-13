@@ -377,11 +377,7 @@ public class PlayerSessionPacketHandler implements BedrockPacketHandler {
 
     @Override
     public void handle(RequestChunkRadiusPacket packet) {
-        int radius = Math.max(5, Math.min(server.getConfiguration().getMechanics().getMaximumChunkRadius(), packet.getRadius()));
-        ChunkRadiusUpdatePacket radiusPacket = new ChunkRadiusUpdatePacket();
-        radiusPacket.setRadius(radius);
-        session.getMinecraftSession().sendImmediatePackage(radiusPacket);
-        session.setViewDistance(radius);
+        session.setViewDistance(packet.getRadius());
 
         session.sendNewChunks().whenComplete((chunks, throwable) -> {
             if (throwable != null) {

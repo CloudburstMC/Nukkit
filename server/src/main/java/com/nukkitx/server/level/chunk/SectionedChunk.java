@@ -321,8 +321,10 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
     }
 
     private void refreshCache() {
-        cached.release();
-        cached = null;
+        if (cached != null) {
+            cached.release();
+            cached = null;
+        }
     }
 
     @Override
