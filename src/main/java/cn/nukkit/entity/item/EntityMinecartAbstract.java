@@ -273,6 +273,8 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
             return false;
         }
 
+        if (!(this instanceof EntityMinecartEmpty)) return false;
+    
         // Simple
         return blockInside == null && mountEntity(p);
     }
