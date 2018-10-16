@@ -501,6 +501,7 @@ public final class BedrockUtil {
         buffer.writeBoolean(levelSettings.isBehaviorPackLocked());
         buffer.writeBoolean(levelSettings.isResourcePackLocked());
         buffer.writeBoolean(levelSettings.isFromLockedWorldTemplate());
+        buffer.writeBoolean(levelSettings.isUsingMsaGamertagsOnly());
     }
 
     public static void writeStructureEditorData(ByteBuf buffer, StructureEditorData structureEditorData) {
@@ -541,9 +542,10 @@ public final class BedrockUtil {
         Preconditions.checkNotNull(infos, "infos");
         writeUnsignedInt(buffer, infos.size());
         for (ScoreInfo info : infos) {
-            writeUuid(buffer, info.getPlayerUuid());
-            writeString(buffer, info.getObjectiveId());
+            writeLong(buffer, info.getScorer().getId());
+            writeString(buffer, info.getObjective());
             buffer.writeIntLE(info.getScore());
+            info.getScorer().writeTo(buffer);
         }
     }
 }

@@ -70,4 +70,6 @@ public interface LevelSettings {
     boolean isResourcePackLocked();
 
     boolean isFromLockedWorldTemplate();
+
+    boolean isUsingMsaGamertagsOnly();
 }

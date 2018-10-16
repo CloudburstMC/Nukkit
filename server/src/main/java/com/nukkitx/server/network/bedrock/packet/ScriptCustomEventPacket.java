@@ -1,24 +1,24 @@
 package com.nukkitx.server.network.bedrock.packet;
 
-import com.nukkitx.api.scoreboard.Objective;
 import com.nukkitx.server.network.bedrock.BedrockPacket;
+import com.nukkitx.server.network.bedrock.BedrockUtil;
 import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
-import static com.nukkitx.server.network.bedrock.BedrockUtil.writeString;
-
 @Data
-public class RemoveObjectivePacket implements BedrockPacket {
-    private Objective objective;
+public class ScriptCustomEventPacket implements BedrockPacket {
+    private String eventName;
+    private String data;
 
     @Override
     public void encode(ByteBuf buffer) {
-        writeString(buffer, objective.getName());
+        BedrockUtil.writeString(buffer, eventName);
+        BedrockUtil.writeString(buffer, data);
     }
 
     @Override
-    public void decode(ByteBuf buffer) {
+    public void decode(ByteBuf byteBuf) {
         throw new UnsupportedOperationException();
     }
 
@@ -27,3 +27,4 @@ public class RemoveObjectivePacket implements BedrockPacket {
         // Client bound only
     }
 }
+
