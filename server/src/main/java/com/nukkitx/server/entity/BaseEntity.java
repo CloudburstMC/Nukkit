@@ -54,7 +54,6 @@ public class BaseEntity implements Entity {
         this.rotation = Rotation.ZERO;
         this.motion = Vector3f.ZERO;
         this.entityId = level.getEntityManager().allocateEntityId();
-        this.level.getEntityManager().registerEntity(this);
         this.tickCreated = level.getCurrentTick();
 
         setFlag(HAS_COLLISION, true);
@@ -62,6 +61,9 @@ public class BaseEntity implements Entity {
         setFlag(CAN_SHOW_NAMETAG, true);
 
         refreshBoundingBox();
+
+        // TODO: Race condition to component registration.
+        this.level.getEntityManager().registerEntity(this);
     }
 
     public BedrockPacket createAddEntityPacket() {

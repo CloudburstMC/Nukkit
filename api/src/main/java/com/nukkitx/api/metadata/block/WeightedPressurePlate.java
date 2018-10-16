@@ -14,10 +14,10 @@ import java.util.Objects;
 public class WeightedPressurePlate implements Metadata {
 
     @Getter
-    private final int powerLevel;
+    private final byte powerLevel;
 
     public static WeightedPressurePlate of(int powerLevel) {
-        return new WeightedPressurePlate(powerLevel);
+        return new WeightedPressurePlate((byte) powerLevel);
     }
 
     @Override

@@ -380,7 +380,7 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
         int radius = Math.max(5, Math.min(server.getConfiguration().getMechanics().getMaximumChunkRadius(), packet.getRadius()));
         ChunkRadiusUpdatePacket radiusPacket = new ChunkRadiusUpdatePacket();
         radiusPacket.setRadius(radius);
-        session.getMinecraftSession().sendImmediatePackage(radiusPacket);
+        session.getMinecraftSession().addToSendQueue(radiusPacket);
         session.setViewDistance(radius);
 
         session.sendNewChunks().whenComplete((chunks, throwable) -> {
@@ -395,20 +395,12 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
 
                 PlayStatusPacket playStatus = new PlayStatusPacket();
                 playStatus.setStatus(PlayStatusPacket.Status.PLAYER_SPAWN);
-                session.getMinecraftSession().sendImmediatePackage(playStatus);
+                session.getMinecraftSession().addToSendQueue(playStatus);
 
                 session.sendMovePlayer();
                 session.updateViewableEntities();
 
                 //session.addToSendQueue(server.getCommandManager().createAvailableCommandsPacket(PlayerSession.this));
-
-                TranslationMessage joinMessage = new TranslationMessage(TextFormat.YELLOW + "%multiplayer.player.joined", session.getName());
-                log.info(TranslatableMessage.of(joinMessage));
-
-                PlayerJoinEvent event = new PlayerJoinEvent(session, joinMessage);
-                server.getEventManager().fire(event);
-
-                event.getJoinMessage().ifPresent(server::broadcastMessage);
             }
         });
 
@@ -506,6 +498,14 @@ public class PlayerSessionPacketHandler implements NetworkPacketHandler {
         session.setSpawned(true);
 
         session.updatePlayerList();
+
+        TranslationMessage joinMessage = new TranslationMessage(TextFormat.YELLOW + "%multiplayer.player.joined", session.getName());
+        log.info(TranslatableMessage.of(joinMessage));
+
+        PlayerJoinEvent event = new PlayerJoinEvent(session, joinMessage);
+        server.getEventManager().fire(event);
+
+        event.getJoinMessage().ifPresent(server::broadcastMessage);
     }
 
     @Override

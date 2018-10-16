@@ -34,12 +34,6 @@ public class NukkitChunkGeneratorRegistry implements ChunkGeneratorRegistry {
     }
 
     @Override
-    public ChunkGenerator ensureAndGetChunkGenerator(@Nonnull String name) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Null or empty Generator name");
-        return generators.get(name.toUpperCase()).createChunkGenerator(server);
-    }
-
-    @Override
     public void register(@Nonnull String name, @Nonnull ChunkGeneratorFactory factory) throws RuntimeException {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Null or empty Generator name.");
         Preconditions.checkNotNull(factory, "generatorFactory");

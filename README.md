@@ -38,3 +38,8 @@ Information on Nukkit's API can be found at the [wiki](https://nukkitx.com/wiki/
 Contributing
 ------------
 Please read the [CONTRIBUTING](.github/CONTRIBUTING.md) guide before submitting any issue. Issues with insufficient information or in the wrong format will be closed and will not be reviewed.
+
+Credits
+------------
+
+- [Voxelwind](https://github.com/voxelwind/voxelwind) for the base design and structure of the software.

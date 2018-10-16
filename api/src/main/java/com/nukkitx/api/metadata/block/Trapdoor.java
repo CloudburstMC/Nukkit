@@ -1,40 +1,52 @@
 package com.nukkitx.api.metadata.block;
 
+import com.google.common.base.Preconditions;
 import com.nukkitx.api.metadata.data.SimpleDirection;
+import lombok.Getter;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 /**
  * @author CreeperFace
  */
-public class Trapdoor extends Door {
+@Getter
+public class Trapdoor extends SimpleDirectional {
 
     private final boolean topHalf;
+    private final boolean open;
 
-    public Trapdoor(SimpleDirection direction, boolean open, boolean topHalf) {
-        super(direction, open);
+    Trapdoor(SimpleDirection direction, boolean open, boolean topHalf) {
+        super(direction);
         this.topHalf = topHalf;
+        this.open = open;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getDirection(), isOpen(), topHalf);
+    public static Trapdoor of(@Nonnull SimpleDirection direction, boolean open, boolean topHalf) {
+        Preconditions.checkNotNull(direction, "direction");
+        return new Trapdoor(direction, open, topHalf);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Trapdoor)) return false;
+
         Trapdoor that = (Trapdoor) o;
-        return this.getDirection() == that.getDirection() && this.isOpen() == that.isOpen() && this.topHalf == that.topHalf;
+        return topHalf == that.topHalf && open == that.open && that.getDirection() == getDirection();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), topHalf, open);
     }
 
     @Override
     public String toString() {
         return "Trapdoor(" +
-                "direction=" + getDirection() +
-                ", isOpen=" + isOpen() +
-                ", isOnTopHalf=" + topHalf +
+                "topHalf=" + topHalf +
+                ", direction=" + getDirection() +
+                ", open=" + open +
                 ')';
     }
 }

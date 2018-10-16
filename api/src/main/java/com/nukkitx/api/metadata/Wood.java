@@ -4,20 +4,19 @@ import com.google.common.base.Preconditions;
 import com.nukkitx.api.metadata.data.TreeSpecies;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.Objects;
 
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Wood implements Metadata {
+
+    @Getter
     private final TreeSpecies species;
 
     public static Wood of(TreeSpecies species) {
         Preconditions.checkNotNull(species, "species");
         return new Wood(species);
-    }
-
-    public TreeSpecies getSpecies() {
-        return species;
     }
 
     @Override

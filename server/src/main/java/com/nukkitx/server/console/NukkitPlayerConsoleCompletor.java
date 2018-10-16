@@ -36,7 +36,7 @@ public class NukkitPlayerConsoleCompletor implements Completer {
             split[split.length - 1] = ""; // And now clear the last value
             String cmd = String.join(" ", split);
             SortedSet<String> names = new TreeSet<String>();
-            NukkitServer.getInstance().getOnlinePlayers().forEach((p) -> names.add(p.getName()));
+            server.getOnlinePlayers().forEach((p) -> names.add(p.getName()));
             for (String match : names) {
                 if (!match.toLowerCase().startsWith(buffer.toLowerCase())) {
                     continue;

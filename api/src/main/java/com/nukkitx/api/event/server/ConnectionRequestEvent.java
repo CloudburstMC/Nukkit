@@ -47,6 +47,10 @@ public class ConnectionRequestEvent implements Event {
          */
         CONTINUE,
         /**
+         * Invalid RakNet protocol version
+         */
+        INVALID_PROTOCOL_VERSION,
+        /**
          * Connecting user will be sent banned packet.
          */
         BANNED,
