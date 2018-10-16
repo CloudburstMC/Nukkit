@@ -391,20 +391,12 @@ public class PlayerSessionPacketHandler implements BedrockPacketHandler {
 
                 PlayStatusPacket playStatus = new PlayStatusPacket();
                 playStatus.setStatus(PlayStatusPacket.Status.PLAYER_SPAWN);
-                session.getMinecraftSession().sendImmediatePackage(playStatus);
+                session.getMinecraftSession().addToSendQueue(playStatus);
 
                 session.sendMovePlayer();
                 session.updateViewableEntities();
 
                 //session.addToSendQueue(server.getCommandManager().createAvailableCommandsPacket(PlayerSession.this));
-
-                TranslationMessage joinMessage = new TranslationMessage(TextFormat.YELLOW + "%multiplayer.player.joined", session.getName());
-                log.info(TranslatableMessage.of(joinMessage));
-
-                PlayerJoinEvent event = new PlayerJoinEvent(session, joinMessage);
-                server.getEventManager().fire(event);
-
-                event.getJoinMessage().ifPresent(server::broadcastMessage);
             }
         });
 
@@ -502,6 +494,14 @@ public class PlayerSessionPacketHandler implements BedrockPacketHandler {
         session.setSpawned(true);
 
         session.updatePlayerList();
+
+        TranslationMessage joinMessage = new TranslationMessage(TextFormat.YELLOW + "%multiplayer.player.joined", session.getName());
+        log.info(TranslatableMessage.of(joinMessage));
+
+        PlayerJoinEvent event = new PlayerJoinEvent(session, joinMessage);
+        server.getEventManager().fire(event);
+
+        event.getJoinMessage().ifPresent(server::broadcastMessage);
     }
 
     @Override

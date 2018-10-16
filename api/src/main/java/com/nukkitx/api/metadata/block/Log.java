@@ -1,6 +1,7 @@
-package com.nukkitx.api.metadata;
+package com.nukkitx.api.metadata.block;
 
 import com.google.common.base.Preconditions;
+import com.nukkitx.api.metadata.Wood;
 import com.nukkitx.api.metadata.data.LogDirection;
 import com.nukkitx.api.metadata.data.TreeSpecies;
 

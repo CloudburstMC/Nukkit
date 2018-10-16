@@ -29,7 +29,7 @@ public class LevelPaletteManager {
     private static final int RUNTIMEID_TABLE_CAPACITY = 4467;
     private final ArrayList<BlockState> runtimeId2BlockState;
     private final TObjectIntMap<BlockState> blockState2RuntimeId = new TObjectIntHashMap<>(RUNTIMEID_TABLE_CAPACITY, 0.5f, -1);
-    private final TIntIntMap legacyId2RuntimeId = new TIntIntHashMap(RUNTIMEID_TABLE_CAPACITY, 0.5f, -1,-1);
+    private final TIntIntMap legacyId2RuntimeId = new TIntIntHashMap(RUNTIMEID_TABLE_CAPACITY, 0.5f, -1, -1);
     private final ByteBuf cachedPallete;
     private final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
     private int runtimeIdAllocator = 0;
@@ -54,6 +54,7 @@ public class LevelPaletteManager {
         VarInts.writeUnsignedInt(cachedPallete, entries.size());
 
         runtimeId2BlockState = new ArrayList<>(entries.size());
+
         for (RuntimeEntry entry : entries) {
             BlockType blockType = BlockTypes.byId(entry.id > 255 ? 255 - entry.id : entry.id);
             Metadata metadata = entry.data == 0 ? null : MetadataSerializers.deserializeMetadata(blockType, (short) entry.data);

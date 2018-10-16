@@ -14,7 +14,7 @@
     <name>NukkitX Server</name>
 
     <properties>
-        <network.version>1.0.13-SNAPSHOT</network.version>
+        <network.version>1.2.2-SNAPSHOT</network.version>
     </properties>
 
     <dependencies>
@@ -26,14 +26,8 @@
         </dependency>
         <dependency>
             <groupId>com.nukkitx</groupId>
-            <artifactId>event-core</artifactId>
-            <version>${event.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.nukkitx</groupId>
-            <artifactId>plugin-core</artifactId>
-            <version>${plugin.version}</version>
+            <artifactId>common</artifactId>
+            <version>${common.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -88,12 +82,6 @@
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>4.41.2</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
-            <version>5.2</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

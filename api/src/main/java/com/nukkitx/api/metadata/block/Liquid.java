@@ -4,18 +4,18 @@ import com.google.common.base.Preconditions;
 import com.nukkitx.api.metadata.Metadata;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Getter
 public class Liquid implements Metadata {
+
     private final byte level;
+    private final boolean falling;
 
-    public static Liquid of(int level) {
+    public static Liquid of(int level, boolean falling) {
         Preconditions.checkArgument(level >= 0 && level < 8, "level is not valid (wanted 0-7)");
-        return new Liquid((byte) level);
-    }
-
-    public byte getLevel() {
-        return level;
+        return new Liquid((byte) level, falling);
     }
 
     @Override

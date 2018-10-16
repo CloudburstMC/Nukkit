@@ -27,12 +27,12 @@ import com.nukkitx.api.permission.Permissible;
 import com.nukkitx.api.util.Config;
 import com.nukkitx.api.util.ConfigBuilder;
 import com.nukkitx.api.util.SemVer;
-import com.nukkitx.event.EventManagerImpl;
+import com.nukkitx.event.SimpleEventManager;
 import com.nukkitx.network.NetworkListener;
 import com.nukkitx.network.raknet.RakNetServer;
 import com.nukkitx.plugin.SimplePluginManager;
 import com.nukkitx.plugin.loader.JavaPluginLoader;
-import com.nukkitx.plugin.service.SimpleServiceManager;
+import com.nukkitx.server.block.NukkitBlockStateBuilder;
 import com.nukkitx.server.command.NukkitCommandManager;
 import com.nukkitx.server.console.*;
 import com.nukkitx.server.entity.EntitySpawner;
@@ -50,13 +50,14 @@ import com.nukkitx.server.network.NukkitSessionManager;
 import com.nukkitx.server.network.bedrock.packet.WrappedPacket;
 import com.nukkitx.server.network.bedrock.session.BedrockSession;
 import com.nukkitx.server.network.bedrock.session.PlayerSession;
-import com.nukkitx.server.network.util.EncryptionUtil;
 import com.nukkitx.server.permission.NukkitAbilities;
 import com.nukkitx.server.permission.NukkitPermissionManager;
 import com.nukkitx.server.resourcepack.ResourcePackManager;
 import com.nukkitx.server.scheduler.ServerScheduler;
 import com.nukkitx.server.util.ServerKiller;
+import com.nukkitx.service.SimpleServiceManager;
 import com.spotify.futures.CompletableFutures;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
@@ -78,7 +79,6 @@ import java.lang.management.OperatingSystemMXBean;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -86,6 +86,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Log4j2
+@Getter
 public class NukkitServer implements Server {
     public static final ObjectMapper JSON_MAPPER = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     public static final YAMLMapper YAML_MAPPER = (YAMLMapper) new YAMLMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -94,60 +95,51 @@ public class NukkitServer implements Server {
     public static final SemVer API_VERSION;
     public static final String NUKKIT_VERSION;
     public static final SemVer MINECRAFT_VERSION;
+    @Getter(AccessLevel.NONE)
     public static final String BROADCAST_CHANNEL_ADMINISTRATIVE = "nukkit.broadcast.admin";
+    @Getter(AccessLevel.NONE)
     public static final String BROADCAST_CHANNEL_USERS = "nukkit.broadcast.user";
     private static NukkitServer instance = null;
+    @Getter(AccessLevel.NONE)
     private final boolean ansiEnabled;
+    @Getter(AccessLevel.NONE)
     private final ScheduledExecutorService timerService = Executors.unconfigurableScheduledExecutorService(
             Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("Nukkit Ticker").setDaemon(true).build()));
-    @Getter
     private final NukkitConsoleCommandSender consoleCommandSender = new NukkitConsoleCommandSender(this);
-    @Getter
-    private final NukkitChunkGeneratorRegistry GeneratorRegistry = new NukkitChunkGeneratorRegistry(this);
-    @Getter
+    private final NukkitChunkGeneratorRegistry generatorRegistry = new NukkitChunkGeneratorRegistry(this);
     private final ResourcePackManager resourcePackManager = new ResourcePackManager(this);
-    @Getter
     private final NukkitCommandManager commandManager = new NukkitCommandManager(this);
-    @Getter
     private final NukkitPermissionManager permissionManager = new NukkitPermissionManager();
-    @Getter
-    private final SimplePluginManager pluginManager = new SimplePluginManager();
-    @Getter
     private final NukkitLocaleManager localeManager = new NukkitLocaleManager();
-    @Getter
     private final EntitySpawner entitySpawner = new EntitySpawner(this);
-    @Getter
-    private final EventManagerImpl eventManager = new EventManagerImpl();
-    @Getter
+    private final SimpleEventManager eventManager = new SimpleEventManager();
+    private final SimplePluginManager pluginManager = new SimplePluginManager(eventManager);
     private final SimpleServiceManager serviceManager = new SimpleServiceManager();
-    @Getter
     private final NukkitSessionManager sessionManager = new NukkitSessionManager();
-    @Getter
     private final ServerScheduler scheduler = new ServerScheduler(this);
-    private final List<NetworkListener> listeners = new CopyOnWriteArrayList<>();
+    @Getter(AccessLevel.NONE)
+    private final List<NetworkListener> listeners = new ArrayList<>();
+    @Getter(AccessLevel.NONE)
     private final LevelManager levelManager = new LevelManager();
-    @Getter
     private final Path pluginPath;
-    @Getter
     private final Path jarPath;
-    @Getter
     private final Path dataPath;
-    @Getter
     private final Path playersPath;
-    @Getter
     private final Path levelsPath;
-    @Getter
     private NukkitConfiguration configuration;
-    @Getter
     private NukkitWhitelist whitelist;
-    @Getter
     private NukkitLevel defaultLevel;
     private NukkitBanlist banlist;
+    @Getter(AccessLevel.NONE)
     private LineReader lineReader;
+    @Getter(AccessLevel.NONE)
     private AtomicBoolean reading = new AtomicBoolean(false);
     private Config operators = null;
+    @Getter(AccessLevel.NONE)
     private BlockingQueue<String> inputLines;
+    @Getter(AccessLevel.NONE)
     private ConsoleReader consoleReader;
+    @Getter(AccessLevel.NONE)
     private AtomicBoolean running = new AtomicBoolean(true);
 
     static {
@@ -253,9 +245,20 @@ public class NukkitServer implements Server {
             throw new IllegalStateException("Selected and fallback Locale could not be loaded");
         }
 
+        /*if (NativeCodeFactory.cipher.load()) {
+            log.debug("Loaded native cipher");
+        }
+
+        if (NativeCodeFactory.zlib.load()) {
+            log.debug("Loaded native compression");
+        }
+
+        if (NativeCodeFactory.hash.load()) {
+            log.debug("Loaded native hash");
+        }*/
+
         // Register plugin loaders
         pluginManager.registerLoader(JavaPluginLoader.class, JavaPluginLoader.builder()
-                .dataPath(dataPath)
                 .registerDependency(NukkitServer.class, this)
                 .registerDependency(Server.class, this)
                 .build()
@@ -339,24 +342,25 @@ public class NukkitServer implements Server {
             System.exit(1);
         }
 
-        eventManager.fire(ServerInitializationEvent.INSTANCE);
-
         log.info(TranslatableMessage.of("nukkit.server.networkStart", configuration.getNetwork().getAddress(), Integer.toString(configuration.getNetwork().getPort())));
         if (configuration.getNetwork().isQueryEnabled()) {
             log.info(TranslatableMessage.of("nukkit.server.query.start"));
         }
         int configNetThreads = configuration.getAdvanced().getNetworkThreads();
         int maxThreads = configNetThreads < 1 ? Runtime.getRuntime().availableProcessors() : configNetThreads;
-        RakNetServer<BedrockSession> rakNetServer = RakNetServer.<BedrockSession>builder().address(configuration.getNetwork().getAddress(), configuration.getNetwork().getPort())
-                .listener(new NukkitRakNetEventListener(this))
+        RakNetServer<BedrockSession> rakNetServer = RakNetServer.<BedrockSession>builder()
+                .address(configuration.getNetwork().getAddress(), configuration.getNetwork().getPort())
+                .eventListener(new NukkitRakNetEventListener(this))
                 .packet(WrappedPacket::new, 0xfe)
+                .id(12345)
                 .maximumThreads(maxThreads)
-                .serverId(EncryptionUtil.generateServerId())
                 .sessionFactory((connection) -> new BedrockSession(this, connection))
                 .sessionManager(sessionManager)
                 .build();
-        rakNetServer.getRakNetNetworkListener().bind();
-        listeners.add(rakNetServer.getRakNetNetworkListener());
+        if (!rakNetServer.bind()) {
+            throw new IllegalStateException("Unable to bind RakNet listener");
+        }
+        listeners.add(rakNetServer);
 
         /*if (configuration.getRcon().isEnabled()) {
             RconNetworkListener rconListener = new RconNetworkListener(
@@ -423,6 +427,12 @@ public class NukkitServer implements Server {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Nonnull
+    @Override
+    public String getNukkitVersion() {
+        return NUKKIT_VERSION;
     }
 
     @Nonnull
@@ -638,38 +648,26 @@ public class NukkitServer implements Server {
 
     @Nonnull
     @Override
-    public NukkitBanlist getBanlist() {
-        return banlist;
-    }
-
-    @Nonnull
-    @Override
-    public NukkitWhitelist getWhitelist() {
-        return whitelist;
-    }
-
-    @Nonnull
-    @Override
     public NukkitItemInstanceBuilder itemInstanceBuilder() {
         return new NukkitItemInstanceBuilder();
     }
 
     @Nonnull
     @Override
-    public ConfigBuilder createConfigBuilder() {
-        return null;//new NukkitConfigBuilder();
+    public NukkitBlockStateBuilder blockStateBuilder() {
+        return new NukkitBlockStateBuilder();
     }
 
     @Nonnull
     @Override
-    public NukkitPermissionManager getPermissionManager() {
-        return permissionManager;
+    public ConfigBuilder createConfigBuilder() {
+        throw new UnsupportedOperationException();
     }
 
     private void loadPlugins() {
         log.info("Loading Plugins...");
         try {
-            Path pluginPath = Paths.get("plugins");
+            Path pluginPath = dataPath.resolve("plugins");
             if (Files.notExists(pluginPath)) {
                 Files.createDirectory(pluginPath);
             } else {
@@ -852,12 +850,6 @@ public class NukkitServer implements Server {
         ((NukkitLevel) level).getChunkManager()
         */
         return false;
-    }
-
-    @Nonnull
-    @Override
-    public String getNukkitVersion() {
-        return NUKKIT_VERSION;
     }
 
     private class ConsoleReader extends Thread implements InterruptibleThread {

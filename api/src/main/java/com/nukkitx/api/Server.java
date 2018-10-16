@@ -1,10 +1,13 @@
 package com.nukkitx.api;
 
+import com.nukkitx.api.block.BlockStateBuilder;
+import com.nukkitx.api.command.CommandManager;
 import com.nukkitx.api.command.sender.ConsoleCommandSender;
 import com.nukkitx.api.event.EventManager;
 import com.nukkitx.api.item.ItemInstanceBuilder;
 import com.nukkitx.api.level.Level;
 import com.nukkitx.api.level.LevelCreator;
+import com.nukkitx.api.level.chunk.generator.ChunkGeneratorRegistry;
 import com.nukkitx.api.locale.LocaleManager;
 import com.nukkitx.api.permission.Abilities;
 import com.nukkitx.api.permission.PermissionManager;
@@ -46,6 +49,9 @@ public interface Server {
     EventManager getEventManager();
 
     @Nonnull
+    CommandManager getCommandManager();
+
+    @Nonnull
     PluginManager getPluginManager();
 
     @Nonnull
@@ -69,6 +75,9 @@ public interface Server {
     ItemInstanceBuilder itemInstanceBuilder();
 
     @Nonnull
+    BlockStateBuilder blockStateBuilder();
+
+    @Nonnull
     ConfigBuilder createConfigBuilder();
 
     @Nonnull
@@ -87,4 +96,7 @@ public interface Server {
 
     @Nonnull
     CompletableFuture<Level> loadLevel(LevelCreator creator);
+
+    @Nonnull
+    ChunkGeneratorRegistry getGeneratorRegistry();
 }

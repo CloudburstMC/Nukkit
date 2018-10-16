@@ -105,32 +105,36 @@ public class LoginPacketHandler implements BedrockPacketHandler {
             if (payload.get("identityPublicKey").getNodeType() != JsonNodeType.STRING) {
                 throw new RuntimeException("Identity Public Key was not found!");
             }
-            ECPublicKey identityPublicKey = generateKey(payload.get("identityPublicKey").textValue());
-
-            JWSObject clientJwt = JWSObject.parse(packet.getSkinData().toString());
-
-            log.debug("[SKIN DATA]\n {}", packet.getSkinData().toString());
-
-            verifyJwt(clientJwt, identityPublicKey);
-            JsonNode clientPayload = NukkitServer.JSON_MAPPER.readTree(clientJwt.getPayload().toBytes());
-            ClientData clientData = NukkitServer.JSON_MAPPER.convertValue(clientPayload, ClientData.class);
-            session.setClientData(clientData);
-
-            if (!validChain && session.getServer().getConfiguration().getGeneral().isXboxAuthenticated()) {
-                session.disconnect("disconnectionScreen.notAuthenticated");
-                return;
-            }
 
             if (!validChain) {
+                // Disconnect if xbox auth is enabled.
+                if (session.getServer().getConfiguration().getGeneral().isXboxAuthenticated()) {
+                    session.disconnect("disconnectionScreen.notAuthenticated");
+                    return;
+                }
                 // Stop spoofing.
                 session.getAuthData().setXuid(null);
                 // Check for valid name characters
-                if (USERNAME_PATTERN.matcher(authData.getDisplayName()).find()) {
+                if (!USERNAME_PATTERN.matcher(authData.getDisplayName()).matches()) {
                     session.disconnect("disconnectionScreen.invalidName");
+                    return;
                 }
                 // Use server side UUID.
                 session.getAuthData().setOfflineIdentity(UUID.nameUUIDFromBytes(authData.getDisplayName().toLowerCase().getBytes(StandardCharsets.UTF_8)));
             }
+
+            ECPublicKey identityPublicKey = generateKey(payload.get("identityPublicKey").textValue());
+
+            JWSObject clientJwt = JWSObject.parse(packet.getSkinData().toString());
+
+            if (!verifyJwt(clientJwt, identityPublicKey) && session.getServer().getConfiguration().getGeneral().isXboxAuthenticated()) {
+                session.disconnect("disconnectionScreen.invalidSkin");
+            }
+
+            JsonNode clientPayload = NukkitServer.JSON_MAPPER.readTree(clientJwt.getPayload().toBytes());
+            ClientData clientData = NukkitServer.JSON_MAPPER.convertValue(clientPayload, ClientData.class);
+            session.setClientData(clientData);
+
 
             if (CAN_USE_ENCRYPTION) {
                 startEncryptionHandshake(identityPublicKey);
@@ -200,12 +204,10 @@ public class LoginPacketHandler implements BedrockPacketHandler {
         for (JsonNode node : data) {
             JWSObject jwt = JWSObject.parse(node.asText());
 
-            if (!validChain) {
+            if (lastKey == null) {
                 validChain = verifyJwt(jwt, MOJANG_PUBLIC_KEY);
-            }
-
-            if (lastKey != null) {
-                verifyJwt(jwt, lastKey);
+            } else {
+                validChain = verifyJwt(jwt, lastKey);
             }
 
             JsonNode payloadNode = NukkitServer.JSON_MAPPER.readTree(jwt.getPayload().toString());

@@ -20,9 +20,9 @@ public class DroppedItemEntity extends BaseEntity implements DroppedItem {
     public DroppedItemEntity(Vector3f position, NukkitLevel level, NukkitServer server, ItemInstance itemDropped) {
         super(EntityType.ITEM, position, level, server);
 
+        this.registerComponent(ContainedItem.class, new ContainedItemComponent(itemDropped));
         this.registerComponent(Physics.class, new PhysicsComponent(0.04f, 0.08f));
         this.registerComponent(PickupDelay.class, new PickupDelayComponent(20));
-        this.registerComponent(ContainedItem.class, new ContainedItemComponent(itemDropped));
     }
 
     @Override

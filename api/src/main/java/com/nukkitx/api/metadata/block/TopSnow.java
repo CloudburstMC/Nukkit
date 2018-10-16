@@ -4,20 +4,19 @@ import com.google.common.base.Preconditions;
 import com.nukkitx.api.metadata.Metadata;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.Objects;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class TopSnow implements Metadata {
-    private final int layers;
 
-    public static TopSnow of(int layer) {
-        Preconditions.checkArgument(layer >= 0 && layer <= 7, "layers %s is not between 0 and 7", layer);
-        return new TopSnow(layer);
-    }
+    @Getter
+    private final byte layers;
 
-    public int getLayers() {
-        return layers;
+    public static TopSnow of(int layers) {
+        Preconditions.checkArgument(layers >= 0 && layers <= 7, "layers %s is not between 0 and 7", layers);
+        return new TopSnow((byte) layers);
     }
 
     @Override

@@ -178,7 +178,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
             });
 
             for (BaseEntity entity : toAdd) {
-                session.sendImmediatePackage(entity.createAddEntityPacket());
+                session.addToSendQueue(entity.createAddEntityPacket());
             }
         }
     }
