@@ -1,6 +1,6 @@
 package cn.nukkit.form.element;
 
-public class ElementButton {
+public class ElementButton extends Element {
 
     private String text = "";
     private ElementButtonImageData image;
