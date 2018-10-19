@@ -13,12 +13,12 @@ public interface ProtocolInfo {
     /**
      * Actual Minecraft: PE protocol version
      */
-    int CURRENT_PROTOCOL = Integer.valueOf("282"); //plugins can change it
+    int CURRENT_PROTOCOL = Integer.valueOf("291"); //plugins can change it
 
     List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(CURRENT_PROTOCOL);
 
-    String MINECRAFT_VERSION = "v1.6";
-    String MINECRAFT_VERSION_NETWORK = "1.6";
+    String MINECRAFT_VERSION = "v1.7.0";
+    String MINECRAFT_VERSION_NETWORK = "1.7.0";
 
     byte LOGIN_PACKET = 0x01;
     byte PLAY_STATUS_PACKET = 0x02;
@@ -84,7 +84,7 @@ public interface ProtocolInfo {
     byte SET_PLAYER_GAME_TYPE_PACKET = 0x3e;
     byte PLAYER_LIST_PACKET = 0x3f;
     byte SIMPLE_EVENT_PACKET = 0x40;
-    byte TELEMETRY_EVENT_PACKET = 0x41;
+    byte EVENT_PACKET = 0x41;
     byte SPAWN_EXPERIENCE_ORB_PACKET = 0x42;
     byte CLIENTBOUND_MAP_ITEM_DATA_PACKET = 0x43;
     byte MAP_INFO_REQUEST_PACKET = 0x44;
