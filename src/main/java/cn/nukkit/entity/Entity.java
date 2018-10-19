@@ -170,34 +170,37 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_INTERESTED = 26;
     public static final int DATA_FLAG_CHARGED = 27;
     public static final int DATA_FLAG_TAMED = 28;
-    public static final int DATA_FLAG_LEASHED = 29;
-    public static final int DATA_FLAG_SHEARED = 30;
-    public static final int DATA_FLAG_GLIDING = 31;
-    public static final int DATA_FLAG_ELDER = 32;
-    public static final int DATA_FLAG_MOVING = 33;
-    public static final int DATA_FLAG_BREATHING = 34;
-    public static final int DATA_FLAG_CHESTED = 35;
-    public static final int DATA_FLAG_STACKABLE = 36;
-    public static final int DATA_FLAG_SHOWBASE = 37;
-    public static final int DATA_FLAG_REARING = 38;
-    public static final int DATA_FLAG_VIBRATING = 39;
-    public static final int DATA_FLAG_IDLING = 40;
-    public static final int DATA_FLAG_EVOKER_SPELL = 41;
-    public static final int DATA_FLAG_CHARGE_ATTACK = 42;
-    public static final int DATA_FLAG_WASD_CONTROLLED = 43;
-    public static final int DATA_FLAG_CAN_POWER_JUMP = 44;
-    public static final int DATA_FLAG_LINGER = 45;
-    public static final int DATA_FLAG_HAS_COLLISION = 46;
-    public static final int DATA_FLAG_GRAVITY = 47;
-    public static final int DATA_FLAG_FIRE_IMMUNE = 48;
-    public static final int DATA_FLAG_DANCING = 49;
-    public static final int DATA_FLAG_ENCHANTED = 50;
-    // 51 trident flag
-    public static final int DATA_FLAG_CONTAINER_PRIVATE = 52; //disable content drop when killed
-    // 53 TransformationComponent
-    public static final int DATA_FLAG_SPIN_ATTACK = 54;
-    public static final int DATA_FLAG_SWIMMING = 55;
-    public static final int DATA_FLAG_BRIBED = 56;
+    public static final int DATA_FLAG_ORPHANED = 29;
+    public static final int DATA_FLAG_LEASHED = 30;
+    public static final int DATA_FLAG_SHEARED = 31;
+    public static final int DATA_FLAG_GLIDING = 32;
+    public static final int DATA_FLAG_ELDER = 33;
+    public static final int DATA_FLAG_MOVING = 34;
+    public static final int DATA_FLAG_BREATHING = 35;
+    public static final int DATA_FLAG_CHESTED = 36;
+    public static final int DATA_FLAG_STACKABLE = 37;
+    public static final int DATA_FLAG_SHOWBASE = 38;
+    public static final int DATA_FLAG_REARING = 39;
+    public static final int DATA_FLAG_VIBRATING = 40;
+    public static final int DATA_FLAG_IDLING = 41;
+    public static final int DATA_FLAG_EVOKER_SPELL = 42;
+    public static final int DATA_FLAG_CHARGE_ATTACK = 43;
+    public static final int DATA_FLAG_WASD_CONTROLLED = 44;
+    public static final int DATA_FLAG_CAN_POWER_JUMP = 45;
+    public static final int DATA_FLAG_LINGER = 46;
+    public static final int DATA_FLAG_HAS_COLLISION = 47;
+    public static final int DATA_FLAG_GRAVITY = 48;
+    public static final int DATA_FLAG_FIRE_IMMUNE = 49;
+    public static final int DATA_FLAG_DANCING = 50;
+    public static final int DATA_FLAG_ENCHANTED = 51;
+    public static final int DATA_FLAG_SHOW_TRIDENT_ROPE = 52; // tridents show an animated rope when enchanted with loyalty after they are thrown and return to their owner. To be combined with DATA_OWNER_EID
+    public static final int DATA_FLAG_CONTAINER_PRIVATE = 53; //inventory is private, doesn't drop contents when killed if true
+    //public static final int TransformationComponent 54; ???
+    public static final int DATA_FLAG_SPIN_ATTACK = 55;
+    public static final int DATA_FLAG_SWIMMING = 56;
+    public static final int DATA_FLAG_BRIBED = 57; //dolphins have this set when they go to find treasure for the player
+    public static final int DATA_FLAG_PREGNANT = 58;
+    public static final int DATA_FLAG_LAYING_EGG = 59;
 
     public static long entityCount = 1;
 
@@ -1157,8 +1160,13 @@ public abstract class Entity extends Location implements Metadatable {
         this.checkBlockCollision();
 
         if (this.y <= -16 && this.isAlive()) {
-            this.attack(new EntityDamageEvent(this, DamageCause.VOID, 10));
-            hasUpdate = true;
+            if (this instanceof Player) {
+                Player player = (Player) this;
+                if (player.getGamemode() != 1) this.attack(new EntityDamageEvent(this, DamageCause.VOID, 10));
+            } else {
+                this.attack(new EntityDamageEvent(this, DamageCause.VOID, 10));
+                hasUpdate = true;
+            }
         }
 
         if (this.fireTicks > 0) {
