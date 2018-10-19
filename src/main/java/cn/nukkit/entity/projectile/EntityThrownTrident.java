@@ -167,7 +167,7 @@ public class EntityThrownTrident extends EntityProjectile {
         entity.attack(ev);
         this.hadCollision = true;
         this.close();
-        Entity newTrident = this.create("ThrownTrident", this);
+        Entity newTrident = create("ThrownTrident", this);
         newTrident.spawnToAll();
     }
 
