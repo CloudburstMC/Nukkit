@@ -140,4 +140,42 @@ public class EntityThrownTrident extends EntityProjectile {
 
         super.spawnTo(player);
     }
+
+    @Override
+    public void onCollideWithEntity(Entity entity) {
+        this.server.getPluginManager().callEvent(new ProjectileHitEvent(this, MovingObjectPosition.fromEntity(entity)));
+        float damage = this.getResultDamage();
+
+        EntityDamageEvent ev;
+        if (this.shootingEntity == null) {
+            ev = new EntityDamageByEntityEvent(this, entity, DamageCause.PROJECTILE, damage);
+        } else {
+            ev = new EntityDamageByChildEntityEvent(this.shootingEntity, this, entity, DamageCause.PROJECTILE, damage);
+        }
+        entity.attack(ev);
+        this.hadCollision = true;
+        this.close();
+        Entity newTrident = this.create("ThrownTrident", this);
+        newTrident.spawnToAll();
+    }
+
+    public static Entity create(Object type, Position source, Object... args) {
+        FullChunk chunk = source.getLevel().getChunk((int) source.x >> 4, (int) source.z >> 4);
+        if (chunk == null) return null;
+
+        CompoundTag nbt = new CompoundTag()
+                .putList(new ListTag<DoubleTag>("Pos")
+                        .add(new DoubleTag("", source.x + 0.5))
+                        .add(new DoubleTag("", source.y))
+                        .add(new DoubleTag("", source.z + 0.5)))
+                .putList(new ListTag<DoubleTag>("Motion")
+                        .add(new DoubleTag("", 0))
+                        .add(new DoubleTag("", 0))
+                        .add(new DoubleTag("", 0)))
+                .putList(new ListTag<FloatTag>("Rotation")
+                        .add(new FloatTag("", new Random().nextFloat() * 360))
+                        .add(new FloatTag("", 0)));
+
+        return Entity.createEntity(type.toString(), chunk, nbt, args);
+    }
 }
