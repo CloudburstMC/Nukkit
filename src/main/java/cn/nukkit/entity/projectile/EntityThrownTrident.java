@@ -2,9 +2,21 @@ package cn.nukkit.entity.projectile;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
+import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.ProjectileHitEvent;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.MovingObjectPosition;
+import cn.nukkit.level.Position;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.DoubleTag;
+import cn.nukkit.nbt.tag.FloatTag;
+import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
+
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -159,7 +171,7 @@ public class EntityThrownTrident extends EntityProjectile {
         newTrident.spawnToAll();
     }
 
-    public static Entity create(Object type, Position source, Object... args) {
+    public Entity create(Object type, Position source, Object... args) {
         FullChunk chunk = source.getLevel().getChunk((int) source.x >> 4, (int) source.z >> 4);
         if (chunk == null) return null;
 
