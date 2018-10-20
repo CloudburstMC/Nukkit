@@ -1,6 +1,6 @@
 package cn.nukkit.network.protocol;
 
-public class TelemetryEventPacket extends DataPacket {
+public class EventPacket extends DataPacket {
 
     public long eid;
     public int unknown1;
@@ -8,7 +8,7 @@ public class TelemetryEventPacket extends DataPacket {
 
     @Override
     public byte pid() {
-        return ProtocolInfo.TELEMETRY_EVENT_PACKET;
+        return ProtocolInfo.EVENT_PACKET;
     }
 
     @Override
