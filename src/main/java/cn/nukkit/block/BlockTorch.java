@@ -56,8 +56,8 @@ public class BlockTorch extends BlockFlowable {
 
                 return Level.BLOCK_UPDATE_NORMAL;
             }
-
         }
+
         return 0;
     }
 
@@ -111,7 +111,6 @@ public class BlockTorch extends BlockFlowable {
                 return BlockFace.SOUTH;
             case 4:
                 return BlockFace.NORTH;
-            case 5:
             default:
                 return BlockFace.UP;
         }

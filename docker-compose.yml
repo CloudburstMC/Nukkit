@@ -1,0 +1,11 @@
+version: '3'
+services:
+  nukkit:
+    build: ./
+    ports:
+      - "19132:19132"
+      - "19132:19132/udp"
+    volumes:
+      - ./data:/data
+    stdin_open: true
+    tty: true
