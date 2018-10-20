@@ -623,15 +623,15 @@ public class NukkitServer implements Server {
     }
 
     public void deop(String name) {
-        this.operators.set(name.toLowerCase(), true);
-        getPlayerExact(name).ifPresent(Player::recalculatePermissions);
-        this.operators.save(true);
-    }
-
-    public void op(String name) {
         this.operators.remove(name.toLowerCase());
         getPlayerExact(name).ifPresent(Player::recalculatePermissions);
         this.operators.save();
+    }
+
+    public void op(String name) {
+        this.operators.set(name.toLowerCase(), true);
+        getPlayerExact(name).ifPresent(Player::recalculatePermissions);
+        this.operators.save(true);
     }
 
     public boolean isOp(String name) {
