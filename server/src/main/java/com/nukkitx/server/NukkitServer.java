@@ -24,7 +24,6 @@ import com.nukkitx.api.level.chunk.generator.ChunkGenerator;
 import com.nukkitx.api.message.Message;
 import com.nukkitx.api.message.TranslationMessage;
 import com.nukkitx.api.permission.Permissible;
-import com.nukkitx.api.util.Config;
 import com.nukkitx.api.util.ConfigBuilder;
 import com.nukkitx.api.util.SemVer;
 import com.nukkitx.event.SimpleEventManager;
@@ -128,13 +127,13 @@ public class NukkitServer implements Server {
     private final Path levelsPath;
     private NukkitConfiguration configuration;
     private NukkitWhitelist whitelist;
+    private NukkitOperators operators;
     private NukkitLevel defaultLevel;
     private NukkitBanlist banlist;
     @Getter(AccessLevel.NONE)
     private LineReader lineReader;
     @Getter(AccessLevel.NONE)
     private AtomicBoolean reading = new AtomicBoolean(false);
-    private Config operators = null;
     @Getter(AccessLevel.NONE)
     private BlockingQueue<String> inputLines;
     @Getter(AccessLevel.NONE)
@@ -227,6 +226,11 @@ public class NukkitServer implements Server {
 
         // Load configuration
         loadConfiguration();
+
+        // Load other files
+        loadBanlist();
+        loadOperators();
+        loadWhitelist();
 
         // Set logger level as soon as we have the configuration
         LoggerContext ctx = (LoggerContext) org.apache.logging.log4j.LogManager.getContext(false);
@@ -511,32 +515,43 @@ public class NukkitServer implements Server {
     }
 
     public void shutdown(@Nonnull String reason) {
-        // Stop reading the console
-        reading.compareAndSet(true, false);
-        running.compareAndSet(true, false);
+        try {
+            Preconditions.checkNotNull(reason, "reason");
+            // Stop reading the console
+            reading.compareAndSet(true, false);
+            running.compareAndSet(true, false);
 
-        // Disconnect all players
-        getSessionManager().allPlayers().forEach(p -> p.disconnect(reason));
+            // Disconnect all players
+            getSessionManager().allPlayers().forEach(p -> p.disconnect(reason));
 
-        // Close com.nukkitx.network listeners so we don't get people rejoining.
-        listeners.forEach(NetworkListener::close);
+            // Close com.nukkitx.network listeners so we don't get people rejoining.
+            listeners.forEach(NetworkListener::close);
 
-        // Safely disable plugins.
+            saveBanlist();
 
-        eventManager.fire(ServerShutdownEvent.INSTANCE);
+            saveOperators();
 
-        this.pluginManager.deregisterLoader(JavaPluginLoader.class);
+            saveWhitelist();
 
-        // Unload all levels.
-        levelManager.getLevels().forEach(this::unloadLevel);
+            // Safely disable plugins.
 
-        // Shutdown logger
-        LogManager.shutdown();
+            eventManager.fire(ServerShutdownEvent.INSTANCE);
 
-        // If still running then it's time to kill
-        if (running.get()) {
-            ServerKiller killer = new ServerKiller(90);
-            killer.start();
+            this.pluginManager.deregisterLoader(JavaPluginLoader.class);
+
+            // Unload all levels.
+            levelManager.getLevels().forEach(this::unloadLevel);
+
+            // Shutdown logger
+            LogManager.shutdown();
+
+            // If still running then it's time to kill
+            if (running.get()) {
+                ServerKiller killer = new ServerKiller(90);
+                killer.start();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -622,28 +637,21 @@ public class NukkitServer implements Server {
         //}
     }
 
-    public void deop(String name) {
-        this.operators.set(name.toLowerCase(), true);
-        getPlayerExact(name).ifPresent(Player::recalculatePermissions);
-        this.operators.save(true);
-    }
-
-    public void op(String name) {
-        this.operators.remove(name.toLowerCase());
-        getPlayerExact(name).ifPresent(Player::recalculatePermissions);
-        this.operators.save();
-    }
-
-    public boolean isOp(String name) {
-        return this.operators.exists(name, true);
-    }
-
-    public boolean isWhitelisted(String name) {
-        return !configuration.getGeneral().isWhitelisted() || this.operators.exists(name, true) || whitelist.isWhitelisted(name);
-    }
-
-    public Config getOps() {
+    @Nonnull
+    public NukkitOperators getOperators() {
         return operators;
+    }
+
+    public boolean isWhitelisted(@Nonnull String name) {
+        return !configuration.getGeneral().isWhitelisted() || whitelist.isWhitelisted(name) || operators.isOperator(name);
+    }
+
+    public boolean isWhitelisted(@Nonnull Player player) {
+        return !configuration.getGeneral().isWhitelisted() || whitelist.isWhitelisted(player) || operators.isOperator(player);
+    }
+
+    public boolean isWhitelisted(@Nonnull UUID uuid) {
+        return !configuration.getGeneral().isWhitelisted() || whitelist.isWhitelisted(uuid) || operators.isOperator(uuid);
     }
 
     @Nonnull
@@ -681,22 +689,6 @@ public class NukkitServer implements Server {
             log.error("Can't load plugins", e);
         }
         log.info("Loaded {} plugins.", pluginManager.getAllPlugins().size());
-    }
-
-    private void loadBanlist() throws IOException {
-        Path bansPath = dataPath.resolve("bans.json");
-        try {
-            banlist = NukkitBanlist.load(bansPath);
-        } catch (NoSuchFileException e) {
-            banlist = NukkitBanlist.defaultConfiguration();
-            NukkitBanlist.save(bansPath, banlist);
-        }
-    }
-
-    private void saveBanlist() throws IOException {
-        Preconditions.checkNotNull(banlist, "banlist");
-        Path banPath = dataPath.resolve("bans.json");
-        NukkitBanlist.save(banPath, banlist);
     }
 
     private void loadConfiguration() throws Exception {
@@ -757,6 +749,38 @@ public class NukkitServer implements Server {
         NukkitConfiguration.save(configFile, configuration);
     }
 
+    private void loadOperators() throws IOException {
+        Path operatorsPath = dataPath.resolve("ops.json");
+        try {
+            operators = NukkitOperators.load(operatorsPath);
+        } catch (NoSuchFileException e) {
+            operators = NukkitOperators.defaultConfiguration();
+            NukkitOperators.save(operatorsPath, operators);
+        }
+    }
+
+    private void saveOperators() throws IOException {
+        Preconditions.checkNotNull(operators, "operators");
+        Path operatorsPath = dataPath.resolve("ops.json");
+        NukkitOperators.save(operatorsPath, operators);
+    }
+
+    private void loadBanlist() throws IOException {
+        Path bansPath = dataPath.resolve("bans.json");
+        try {
+            banlist = NukkitBanlist.load(bansPath);
+        } catch (NoSuchFileException e) {
+            banlist = NukkitBanlist.defaultConfiguration();
+            NukkitBanlist.save(bansPath, banlist);
+        }
+    }
+
+    private void saveBanlist() throws IOException {
+        Preconditions.checkNotNull(banlist, "banlist");
+        Path banPath = dataPath.resolve("bans.json");
+        NukkitBanlist.save(banPath, banlist);
+    }
+
     private void loadWhitelist() throws Exception {
         Path whitelistFile = dataPath.resolve("whitelist.json");
         try {
@@ -765,6 +789,12 @@ public class NukkitServer implements Server {
             whitelist = NukkitWhitelist.defaultConfiguration();
             NukkitWhitelist.save(whitelistFile, whitelist);
         }
+    }
+
+    private void saveWhitelist() throws IOException {
+        Preconditions.checkNotNull(whitelist, "whitelist");
+        Path whitelistPath = dataPath.resolve("whitelist.json");
+        NukkitWhitelist.save(whitelistPath, whitelist);
     }
 
     private void loadResourcePacks() throws IOException {

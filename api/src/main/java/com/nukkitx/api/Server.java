@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @ParametersAreNonnullByDefault
@@ -72,6 +73,9 @@ public interface Server {
     Whitelist getWhitelist();
 
     @Nonnull
+    Operators getOperators();
+
+    @Nonnull
     ItemInstanceBuilder itemInstanceBuilder();
 
     @Nonnull
@@ -99,4 +103,10 @@ public interface Server {
 
     @Nonnull
     ChunkGeneratorRegistry getGeneratorRegistry();
+
+    boolean isWhitelisted(String name);
+
+    boolean isWhitelisted(Player player);
+
+    boolean isWhitelisted(UUID uuid);
 }

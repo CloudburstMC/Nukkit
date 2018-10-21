@@ -60,7 +60,7 @@ public class NukkitWhitelist implements Whitelist{
     }
 
     @Synchronized("entries")
-    private void deWhitelist(UUID uuid, String name) {
+    public void deWhitelist(UUID uuid, String name) {
         for (NukkitWhitelist.Entry entry : entries) {
             if (entry.uuid != null && entry.uuid.equals(uuid)) {
                 entries.remove(entry);
@@ -85,7 +85,8 @@ public class NukkitWhitelist implements Whitelist{
         whitelist(uuid, null);
     }
 
-    private void whitelist(UUID uuid, String name) {
+    @Synchronized("entries")
+    public void whitelist(UUID uuid, String name) {
         if (isWhitelisted(uuid, name)) {
             return;
         }
@@ -105,7 +106,7 @@ public class NukkitWhitelist implements Whitelist{
     }
 
     @Synchronized("entries")
-    private boolean isWhitelisted(UUID uuid, String name) {
+    public boolean isWhitelisted(UUID uuid, String name) {
         entries.removeIf(Objects::isNull);
         for (NukkitWhitelist.Entry entry : entries) {
             if (entry.uuid != null && entry.uuid.equals(uuid)) {

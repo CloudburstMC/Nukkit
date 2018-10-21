@@ -10,11 +10,15 @@ public interface Whitelist {
 
     void whitelist(Player player);
 
+    void whitelist(UUID uuid, String name);
+
     void deWhitelist(String name);
 
     void deWhitelist(UUID uuid);
 
     void deWhitelist(Player player);
+
+    void deWhitelist(UUID uuid, String name);
 
     boolean isWhitelisted(String name);
 
@@ -22,4 +26,5 @@ public interface Whitelist {
 
     boolean isWhitelisted(Player player);
 
+    boolean isWhitelisted(UUID uuid, String name);
 }
