@@ -737,9 +737,10 @@ public class NukkitServer implements Server {
                 }
                 locale = newLocale;
             }
+            localeManager.loadDefaultLocale(locale);
             log.info("{} selected", locale.getDisplayName(locale));
 
-            InputStream advancedConf = NukkitServer.class.getClassLoader().getResourceAsStream("lang/" + locale.toString() + ".yml");
+            InputStream advancedConf = NukkitServer.class.getClassLoader().getResourceAsStream("lang/nukkit/" + locale.toString() + ".yml");
             if (advancedConf != null) {
                 configuration = NukkitConfiguration.load(advancedConf);
             } else {

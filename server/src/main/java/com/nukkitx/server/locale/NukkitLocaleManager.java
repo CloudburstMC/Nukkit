@@ -15,10 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Formatter;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,13 +27,14 @@ public class NukkitLocaleManager implements LocaleManager {
     private static final String LANGUAGE_PATH = "lang/";
     private static final String EXTENSION = ".lang";
     private final Map<Locale, Properties> locales = new ConcurrentHashMap<>();
+    private final Set<Locale> availableLocales = new HashSet<>();
 
     public NukkitLocaleManager() throws Exception {
-        loadDefaultLocales();
+        loadAvailableLocales();
     }
 
-    private void loadDefaultLocales() throws Exception {
-        InputStream langList = LOADER.getResourceAsStream(LANGUAGE_PATH + "languages.json");
+    private void loadAvailableLocales() throws Exception {
+        InputStream langList = LOADER.getResourceAsStream(LANGUAGE_PATH + "nukkit/languages.json");
         JsonNode langNode = NukkitServer.JSON_MAPPER.readTree(langList);
         Preconditions.checkNotNull(langNode, "Unable to load language list");
         Preconditions.checkArgument(langNode.getNodeType() == JsonNodeType.ARRAY, "Language array not found");
@@ -47,13 +45,33 @@ public class NukkitLocaleManager implements LocaleManager {
 
             Locale locale = getLocaleByString(localeCode);
 
-            InputStream stream = LOADER.getResourceAsStream(LANGUAGE_PATH + locale.toString() + EXTENSION);
-            if (stream == null) {
-                continue;
-            }
-
-            loadLocale(stream, locale);
+            availableLocales.add(locale);
         }
+    }
+
+    public void loadDefaultLocale(Locale locale) throws IOException {
+        Preconditions.checkNotNull(locale, "locale");
+        Preconditions.checkArgument(availableLocales().contains(locale), "Locale unknown");
+
+        locale = loadLocale("nukkit/", locale);
+
+        loadLocale("vanilla/", locale);
+
+        Locale.setDefault(locale);
+    }
+
+    private Locale loadLocale(String directory, Locale locale) throws IOException {
+        InputStream stream = LOADER.getResourceAsStream(LANGUAGE_PATH + directory + locale.toString() + EXTENSION);
+        if (stream == null) {
+            if (isFallbackAvailable()) {
+                stream = LOADER.getResourceAsStream(LANGUAGE_PATH + directory + Locale.US.toString() + EXTENSION);
+                locale = Locale.US;
+            } else {
+                throw new IllegalStateException("Unable to retrieve fallback locale");
+            }
+        }
+        loadLocale(stream, locale);
+        return locale;
     }
 
     public void loadLocale(Path pathToLanguage, Locale locale) throws IOException {
@@ -70,6 +88,7 @@ public class NukkitLocaleManager implements LocaleManager {
         if ((properties = locales.get(locale)) == null) {
             properties = new Properties();
             locales.put(locale, properties);
+            availableLocales.add(locale);
         }
         properties.load(stream);
     }
@@ -119,11 +138,11 @@ public class NukkitLocaleManager implements LocaleManager {
     }
 
     public boolean isFallbackAvailable() {
-        return locales.containsKey(Locale.US);
+        return availableLocales.contains(Locale.US);
     }
 
     public boolean isLocaleAvailable(Locale locale) {
-        return locales.containsKey(locale);
+        return availableLocales.contains(locale);
     }
 
     public String getMessage(Message message) {

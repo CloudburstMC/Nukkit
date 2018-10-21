@@ -1,3 +1,6 @@
-[submodule "server/src/main/resources/lang"]
-	path = server/src/main/resources/lang
+[submodule "server/src/main/resources/lang/vanilla"]
+	path = server/src/main/resources/lang/vanilla
+	url = https://github.com/NukkitX/Language
+[submodule "server/src/main/resources/lang/nukkit"]
+	path = server/src/main/resources/lang/nukkit
 	url = https://github.com/NukkitX/Languages
