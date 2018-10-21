@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.nukkitx.server.network.bedrock.BedrockUtil.*;
-import static com.nukkitx.server.network.util.VarInts.writeInt;
 import static com.nukkitx.server.network.util.VarInts.writeUnsignedInt;
 
 @Data
@@ -32,8 +31,6 @@ public class PlayerListPacket implements BedrockPacket {
             if (type == Type.ADD) {
                 writeUniqueEntityId(buffer, entry.getEntityId());
                 writeString(buffer, entry.getName());
-                writeString(buffer, entry.getThirdPartyName());
-                writeInt(buffer, entry.getPlatformId());
                 writeSkin(buffer, entry.getSkin());
                 writeString(buffer, entry.getXuid());
                 writeString(buffer, entry.getPlatformChatId());
@@ -56,15 +53,13 @@ public class PlayerListPacket implements BedrockPacket {
         REMOVE
     }
 
-    @ToString(exclude = {"entityId", "name", "thirdPartyName", "platformId", "skin", "xuid", "platformChatId"})
+    @ToString(exclude = {"entityId", "name", "skin", "xuid", "platformChatId"})
     @EqualsAndHashCode(exclude = {"skin"})
     @Data
     public final static class Entry {
         private final UUID uuid;
         private long entityId;
         private String name;
-        private String thirdPartyName;
-        private int platformId;
         private Skin skin;
         private String xuid;
         private String platformChatId;

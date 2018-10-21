@@ -50,6 +50,7 @@ public abstract class NukkitLevelData implements LevelData {
     private boolean behaviorPackLocked = false;
     private boolean resourcePackLocked = false;
     private boolean fromLockedWorldTemplate = false;
+    private boolean usingMsaGamertagsOnly = false;
 
     // Level Data
     private String name;

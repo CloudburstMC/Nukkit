@@ -300,8 +300,6 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
                 entry.setEntityId(player.getEntityId());
                 entry.setSkin(data.getSkin());
                 entry.setName(player.getName());
-                entry.setThirdPartyName(session.getClientData().getThirdPartyName());
-                entry.setPlatformId(0);
                 entry.setXuid(player.getXuid().orElse(""));
                 entry.setPlatformChatId("");
                 list.getEntries().add(entry);
@@ -477,8 +475,6 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         AddPlayerPacket addPlayer = new AddPlayerPacket();
         addPlayer.setUuid(session.getAuthData().getIdentity());
         addPlayer.setUsername(session.getAuthData().getDisplayName());
-        addPlayer.setThirdPartyName(session.getClientData().getThirdPartyName());
-        addPlayer.setPlatformId(0);
         addPlayer.setUniqueEntityId(getEntityId());
         addPlayer.setRuntimeEntityId(getEntityId());
         addPlayer.setPlatformChatId("");

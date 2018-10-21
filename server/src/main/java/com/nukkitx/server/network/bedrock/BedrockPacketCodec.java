@@ -25,7 +25,7 @@ import java.util.Arrays;
 @Immutable
 @RequiredArgsConstructor
 public class BedrockPacketCodec implements PacketCodec<BedrockPacket> {
-    public static final int BROADCAST_PROTOCOL_VERSION = 282;
+    public static final int BROADCAST_PROTOCOL_VERSION = 291;
     public static final BedrockPacketCodec DEFAULT;
 
     private final int[] compatibleVersions;
@@ -150,6 +150,7 @@ public class BedrockPacketCodec implements PacketCodec<BedrockPacket> {
                 .registerPacket(SetLocalPlayerAsInitializedPacket::new, 113)
                 .registerPacket(UpdateSoftEnumPacket::new, 114)
                 .registerPacket(NetworkStackLatencyPacket::new, 115)
+                .registerPacket(ScriptCustomEventPacket::new, 117)
                 .build();
 
     }

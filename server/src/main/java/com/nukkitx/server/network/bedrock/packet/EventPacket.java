@@ -43,6 +43,9 @@ public class EventPacket implements BedrockPacket {
         PLAYER_DEATH,
         BOSS_KILLED,
         AGENT_COMMAND,
-        AGENT_CREATED
+        AGENT_CREATED,
+        PATTERN_REMOVED,
+        COMMAND_EXECUTED,
+        FISH_BUCKETED
     }
 }

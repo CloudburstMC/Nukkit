@@ -8,7 +8,8 @@ import lombok.Data;
 
 import static com.nukkitx.server.network.bedrock.BedrockUtil.readString;
 import static com.nukkitx.server.network.bedrock.BedrockUtil.writeString;
-import static com.nukkitx.server.network.util.VarInts.*;
+import static com.nukkitx.server.network.util.VarInts.readUnsignedInt;
+import static com.nukkitx.server.network.util.VarInts.writeUnsignedInt;
 
 @Data
 public class TextPacket implements BedrockPacket {
@@ -23,8 +24,6 @@ public class TextPacket implements BedrockPacket {
 
         if (message instanceof SourceMessage) {
             writeString(buffer, ((SourceMessage) message).getSender());
-            writeString(buffer, ""); //sourceThirdPartyName
-            writeInt(buffer, 0); //PlatformID
         }
 
         writeString(buffer, message.getMessage());
@@ -52,8 +51,6 @@ public class TextPacket implements BedrockPacket {
             case WHISPER:
             case ANNOUNCEMENT:
                 source = readString(buffer);
-                readString(buffer);//TODO
-                readInt(buffer);//TODO
             case RAW:
             case TIP:
             case SYSTEM:

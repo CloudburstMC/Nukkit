@@ -9,6 +9,7 @@ import com.nukkitx.api.entity.misc.DroppedItem;
 import com.nukkitx.api.entity.system.System;
 import com.nukkitx.api.item.ItemInstance;
 import com.nukkitx.api.level.chunk.Chunk;
+import com.nukkitx.api.scoreboard.Scoreboard;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
@@ -25,6 +26,8 @@ public interface Level {
     long getCurrentTick();
 
     LevelData getData();
+
+    Scoreboard getScoreboard();
 
     Optional<Chunk> getChunkIfLoaded(int x, int z);
 
