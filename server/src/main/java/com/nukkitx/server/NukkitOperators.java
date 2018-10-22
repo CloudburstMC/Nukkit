@@ -1,8 +1,12 @@
 package com.nukkitx.server;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.common.base.Preconditions;
+import com.nukkitx.api.Operators;
 import com.nukkitx.api.Player;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Synchronized;
 
 import java.io.BufferedReader;
@@ -16,7 +20,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public class NukkitOperators {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class NukkitOperators implements Operators {
     private List<Entry> entries;
 
     public static NukkitOperators load(Path path) throws IOException {
@@ -59,7 +64,8 @@ public class NukkitOperators {
     }
 
     @Synchronized("entries")
-    private void removeOperator(UUID uuid, String name) {
+    public void removeOperator(UUID uuid, String name) {
+        Preconditions.checkArgument(uuid != null || name != null, "uuid and name cannot both be null");
         for (Entry entry : entries) {
             if (entry.uuid != null && entry.uuid.equals(uuid)) {
                 entries.remove(entry);
@@ -84,7 +90,9 @@ public class NukkitOperators {
         addOperator(uuid, null);
     }
 
-    private void addOperator(UUID uuid, String name) {
+    @Synchronized("entries")
+    public void addOperator(UUID uuid, String name) {
+        Preconditions.checkArgument(uuid != null || name != null, "uuid and name cannot both be null");
         if (isOperator(uuid, name)) {
             return;
         }
@@ -104,7 +112,8 @@ public class NukkitOperators {
     }
 
     @Synchronized("entries")
-    private boolean isOperator(UUID uuid, String name) {
+    public boolean isOperator(UUID uuid, String name) {
+        Preconditions.checkArgument(uuid != null || name != null, "uuid and name cannot both be null");
         entries.removeIf(Objects::isNull);
         for (Entry entry : entries) {
             if (entry.uuid != null && entry.uuid.equals(uuid)) {
