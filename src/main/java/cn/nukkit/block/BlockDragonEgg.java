@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.utils.BlockColor;
 
-public class BlockDragonEgg extends BlockTransparent {
+public class BlockDragonEgg extends BlockFallable {
 
     public BlockDragonEgg() {
     }
@@ -35,5 +35,10 @@ public class BlockDragonEgg extends BlockTransparent {
     @Override
     public BlockColor getColor() {
         return BlockColor.OBSIDIAN_BLOCK_COLOR;
+    }
+
+    @Override
+    public boolean isTransparent() {
+        return true;
     }
 }
