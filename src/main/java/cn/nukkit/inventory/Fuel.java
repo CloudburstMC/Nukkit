@@ -60,7 +60,7 @@ public abstract class Fuel {
         duration.put(Item.RED_MUSHROOM_BLOCK, (short) 300);
         duration.put(Item.FISHING_ROD, (short) 300);
         duration.put(Item.WOODEN_BUTTON, (short) 100); //TODO: more wooden buttons
-        duration.put(Item.WOOD_DOOR, (short) 200);
+        duration.put(Item.WOODEN_DOOR, (short) 200);
         duration.put(Item.SPRUCE_DOOR, (short) 200);
         duration.put(Item.BIRCH_DOOR, (short) 200);
         duration.put(Item.JUNGLE_DOOR, (short) 200);
