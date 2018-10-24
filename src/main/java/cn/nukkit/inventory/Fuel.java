@@ -15,7 +15,7 @@ public abstract class Fuel {
     static {
         duration.put(Item.COAL, (short) 1600);
         duration.put(Item.COAL_BLOCK, (short) 16000);
-        duration.put(Item.TRUNK, (short) 300);
+        duration.put(Item.TRUNK, (short) 300);  //TODO: stripped woods
         duration.put(Item.WOODEN_PLANKS, (short) 300);
         duration.put(Item.SAPLING, (short) 100);
         duration.put(Item.WOODEN_AXE, (short) 200);
@@ -35,12 +35,38 @@ public abstract class Fuel {
         duration.put(Item.SPRUCE_WOOD_STAIRS, (short) 300);
         duration.put(Item.BIRCH_WOOD_STAIRS, (short) 300);
         duration.put(Item.JUNGLE_WOOD_STAIRS, (short) 300);
-        duration.put(Item.TRAPDOOR, (short) 300);
+        duration.put(Item.TRAPDOOR, (short) 300); //TODO: more wooden trapdoors
         duration.put(Item.WORKBENCH, (short) 300);
         duration.put(Item.BOOKSHELF, (short) 300);
         duration.put(Item.CHEST, (short) 300);
         duration.put(Item.BUCKET, (short) 20000);
-        duration.put(Item.SIGN, (short) 200);
         duration.put(Item.LADDER, (short) 300);
+        duration.put(Item.BOW, (short) 200);
+        duration.put(Item.BOWL, (short) 200);
+        duration.put(Item.WOOD2, (short) 300);
+        duration.put(Item.WOODEN_PRESSURE_PLATE, (short) 300); //TODO: more wooden pressure plates
+        duration.put(Item.ACACIA_WOOD_STAIRS, (short) 300);
+        duration.put(Item.DARK_OAK_WOOD_STAIRS, (short) 300);
+        duration.put(Item.TRAPPED_CHEST, (short) 300);
+        duration.put(Item.DAYLIGHT_DETECTOR, (short) 300);
+        duration.put(Item.DAYLIGHT_DETECTOR_INVERTED, (short) 300);
+        duration.put(Item.JUKEBOX, (short) 300);
+        duration.put(Item.NOTEBLOCK, (short) 300);
+        duration.put(Item.WOOD_SLAB, (short) 300);
+        duration.put(Item.DOUBLE_WOOD_SLAB, (short) 300);
+        duration.put(Item.BOAT, (short) 1200);
+        duration.put(Item.BLAZE_ROD, (short) 2400);
+        duration.put(Item.BROWN_MUSHROOM_BLOCK, (short) 300);
+        duration.put(Item.RED_MUSHROOM_BLOCK, (short) 300);
+        duration.put(Item.FISHING_ROD, (short) 300);
+        duration.put(Item.WOODEN_BUTTON, (short) 100); //TODO: more wooden buttons
+        duration.put(Item.WOOD_DOOR_BLOCK, (short) 200);
+        duration.put(Item.SPRUCE_DOOR_BLOCK, (short) 200);
+        duration.put(Item.BIRCH_DOOR_BLOCK, (short) 200);
+        duration.put(Item.JUNGLE_DOOR_BLOCK, (short) 200);
+        duration.put(Item.ACACIA_DOOR_BLOCK, (short) 200);
+        duration.put(Item.DARK_OAK_DOOR_BLOCK, (short) 200);
+        //TODO: duration.put(Item.BANNER, (short) 300);
+        //TODO: duration.put(Item.DRIED_KELP_BLOCK, (short) 4000);
     }
 }
