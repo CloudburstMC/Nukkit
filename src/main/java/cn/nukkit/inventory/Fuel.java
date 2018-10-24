@@ -15,7 +15,7 @@ public abstract class Fuel {
     static {
         duration.put(Item.COAL, (short) 1600);
         duration.put(Item.COAL_BLOCK, (short) 16000);
-        duration.put(Item.TRUNK, (short) 300);  //TODO: stripped woods
+        duration.put(Item.TRUNK, (short) 300); //TODO: stripped woods
         duration.put(Item.WOODEN_PLANKS, (short) 300);
         duration.put(Item.SAPLING, (short) 100);
         duration.put(Item.WOODEN_AXE, (short) 200);
@@ -60,12 +60,12 @@ public abstract class Fuel {
         duration.put(Item.RED_MUSHROOM_BLOCK, (short) 300);
         duration.put(Item.FISHING_ROD, (short) 300);
         duration.put(Item.WOODEN_BUTTON, (short) 100); //TODO: more wooden buttons
-        duration.put(Item.WOOD_DOOR_BLOCK, (short) 200);
-        duration.put(Item.SPRUCE_DOOR_BLOCK, (short) 200);
-        duration.put(Item.BIRCH_DOOR_BLOCK, (short) 200);
-        duration.put(Item.JUNGLE_DOOR_BLOCK, (short) 200);
-        duration.put(Item.ACACIA_DOOR_BLOCK, (short) 200);
-        duration.put(Item.DARK_OAK_DOOR_BLOCK, (short) 200);
+        duration.put(Item.WOOD_DOOR, (short) 200);
+        duration.put(Item.SPRUCE_DOOR, (short) 200);
+        duration.put(Item.BIRCH_DOOR, (short) 200);
+        duration.put(Item.JUNGLE_DOOR, (short) 200);
+        duration.put(Item.ACACIA_DOOR, (short) 200);
+        duration.put(Item.DARK_OAK_DOOR, (short) 200);
         //TODO: duration.put(Item.BANNER, (short) 300);
         //TODO: duration.put(Item.DRIED_KELP_BLOCK, (short) 4000);
     }
