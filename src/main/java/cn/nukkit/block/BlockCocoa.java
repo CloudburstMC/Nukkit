@@ -124,7 +124,7 @@ public class BlockCocoa extends BlockTransparentMeta {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (target.getId() == Block.WOOD && target.getDamage() == BlockWood.JUNGLE) {
+        if (target.getId() == Block.WOOD && (target.getDamage() & 0x03) == BlockWood.JUNGLE) {
             if (face != BlockFace.DOWN && face != BlockFace.UP) {
                 int[] faces = new int[]{
                         0,
@@ -219,6 +219,11 @@ public class BlockCocoa extends BlockTransparentMeta {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_AXE;
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemDye(ItemDye.BROWN);
     }
 
     @Override
