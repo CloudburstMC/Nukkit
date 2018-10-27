@@ -13,6 +13,21 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockAnvil extends BlockFallable {
 
+    private static final String[] NAMES = new String[]{
+            "Anvil",
+            "Anvil",
+            "Anvil",
+            "Anvil",
+            "Slighty Damaged Anvil",
+            "Slighty Damaged Anvil",
+            "Slighty Damaged Anvil",
+            "Slighty Damaged Anvil",
+            "Very Damaged Anvil",
+            "Very Damaged Anvil",
+            "Very Damaged Anvil",
+            "Very Damaged Anvil"
+    };
+
     private int meta;
 
     public BlockAnvil() {
@@ -70,21 +85,7 @@ public class BlockAnvil extends BlockFallable {
 
     @Override
     public String getName() {
-        String[] names = new String[]{
-                "Anvil",
-                "Anvil",
-                "Anvil",
-                "Anvil",
-                "Slighty Damaged Anvil",
-                "Slighty Damaged Anvil",
-                "Slighty Damaged Anvil",
-                "Slighty Damaged Anvil",
-                "Very Damaged Anvil",
-                "Very Damaged Anvil",
-                "Very Damaged Anvil",
-                "Very Damaged Anvil"
-        };
-        return names[this.getDamage()];
+        return NAMES[this.getDamage() > 11 ? 0 : this.getDamage()];
     }
 
     @Override
