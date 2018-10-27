@@ -3046,18 +3046,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         }
                                     }
 
-                                    float knockback = 0.8f;
-
-                                    Enchantment kb = this.inventory.getItemInHand().getEnchantment(Enchantment.ID_KNOCKBACK);
-                                    if (kb != null) {
-                                        knockback += kb.getLevel();
-                                    }
-
-                                    if (this.isSprinting()) {
-                                        knockback++;
-                                    }
-
-                                    EntityDamageByEntityEvent entityDamageByEntityEvent = new EntityDamageByEntityEvent(this, target, DamageCause.ENTITY_ATTACK, damage, knockback * 0.5f);
+                                    EntityDamageByEntityEvent entityDamageByEntityEvent = new EntityDamageByEntityEvent(this, target, DamageCause.ENTITY_ATTACK, damage);
                                     if (this.isSpectator()) entityDamageByEntityEvent.setCancelled();
                                     if ((target instanceof Player) && !this.level.getGameRules().getBoolean(GameRule.PVP)) {
                                         entityDamageByEntityEvent.setCancelled();
