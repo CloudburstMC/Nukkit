@@ -3046,7 +3046,18 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         }
                                     }
 
-                                    EntityDamageByEntityEvent entityDamageByEntityEvent = new EntityDamageByEntityEvent(this, target, DamageCause.ENTITY_ATTACK, damage);
+                                    float knockback = 0.8f;
+
+                                    Enchantment kb = this.inventory.getItemInHand().getEnchantment(Enchantment.ID_KNOCKBACK);
+                                    if (kb != null) {
+                                        knockback += kb.getLevel();
+                                    }
+
+                                    if (this.isSprinting()) {
+                                        knockback++;
+                                    }
+
+                                    EntityDamageByEntityEvent entityDamageByEntityEvent = new EntityDamageByEntityEvent(this, target, DamageCause.ENTITY_ATTACK, damage, knockback * 0.5f);
                                     if (this.isSpectator()) entityDamageByEntityEvent.setCancelled();
                                     if ((target instanceof Player) && !this.level.getGameRules().getBoolean(GameRule.PVP)) {
                                         entityDamageByEntityEvent.setCancelled();
@@ -4542,11 +4553,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             spawnPosition.y = spawn.getFloorY();
             spawnPosition.z = spawn.getFloorZ();
             this.dataPacket(spawnPosition);
-
-            int dimensionId = level.getDimension();
-            if (oldLevel.getDimension() != dimensionId) {
-                this.setDimension(dimensionId);
-            }
 
             // Remove old chunks
             for (long index : new ArrayList<>(this.usedChunks.keySet())) {
