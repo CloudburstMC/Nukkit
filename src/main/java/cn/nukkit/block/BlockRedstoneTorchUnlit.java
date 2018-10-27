@@ -47,6 +47,8 @@ public class BlockRedstoneTorchUnlit extends BlockTorch {
     public int onUpdate(int type) {
         if (super.onUpdate(type) == 0) {
             if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) {
+                this.level.scheduleUpdate(this, tickRate());
+            } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
                 RedstoneUpdateEvent ev = new RedstoneUpdateEvent(this);
                 getLevel().getServer().getPluginManager().callEvent(ev);
                 if (ev.isCancelled()) {
@@ -80,5 +82,10 @@ public class BlockRedstoneTorchUnlit extends BlockTorch {
         }
 
         return false;
+    }
+
+    @Override
+    public int tickRate() {
+        return 2;
     }
 }
