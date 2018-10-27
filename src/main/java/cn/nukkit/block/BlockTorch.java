@@ -33,7 +33,7 @@ public class BlockTorch extends BlockFlowable {
 
     @Override
     public int getLightLevel() {
-        return 15;
+        return 14;
     }
 
     @Override
