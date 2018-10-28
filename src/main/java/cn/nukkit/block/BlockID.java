@@ -46,6 +46,7 @@ public interface BlockID {
     int PISTON = 33;
     int PISTON_HEAD = 34;
     int WOOL = 35;
+
     int DANDELION = 37;
     int POPPY = 38;
     int ROSE = 38;
@@ -99,7 +100,6 @@ public interface BlockID {
     int STONE_PRESSURE_PLATE = 70;
     int IRON_DOOR_BLOCK = 71;
     int WOODEN_PRESSURE_PLATE = 72;
-
     int REDSTONE_ORE = 73;
     int GLOWING_REDSTONE_ORE = 74;
     int LIT_REDSTONE_ORE = 74;
@@ -184,7 +184,7 @@ public interface BlockID {
     int BIRCH_WOODEN_STAIRS = 135;
     int JUNGLE_WOOD_STAIRS = 136;
     int JUNGLE_WOODEN_STAIRS = 136;
-
+    int COMMAND_BLOCK = 137;
     int BEACON = 138;
     int COBBLE_WALL = 139;
     int STONE_WALL = 139;
@@ -237,7 +237,8 @@ public interface BlockID {
     int COAL_BLOCK = 173;
     int PACKED_ICE = 174;
     int DOUBLE_PLANT = 175;
-
+    int STANDING_BANNER = 176;
+    int WALL_BANNER = 177;
     int DAYLIGHT_DETECTOR_INVERTED = 178;
     int RED_SANDSTONE = 179;
     int RED_SANDSTONE_STAIRS = 180;
@@ -248,6 +249,8 @@ public interface BlockID {
     int FENCE_GATE_JUNGLE = 185;
     int FENCE_GATE_DARK_OAK = 186;
     int FENCE_GATE_ACACIA = 187;
+    int REPEATING_COMMAND_BLOCK = 188;
+    int CHAIN_COMMAND_BLOCK = 189;
 
     int SPRUCE_DOOR_BLOCK = 193;
     int BIRCH_DOOR_BLOCK = 194;
@@ -260,11 +263,11 @@ public interface BlockID {
     int PURPUR_BLOCK = 201;
 
     int PURPUR_STAIRS = 203;
-    //int DOUBLE_PURPUR_SLAB = 204;
+
     int UNDYED_SHULKER_BOX = 205;
     int END_BRICKS = 206;
-    //Note: frosted ice CAN NOT BE HARVESTED WITH HAND -- canHarvestWithHand method should be overridden FALSE.
     int ICE_FROSTED = 207;
+    int FROSTED_ICE = 207;
     int END_ROD = 208;
     int END_GATEWAY = 209;
 
@@ -295,6 +298,7 @@ public interface BlockID {
 
     int CHORUS_PLANT = 240;
     int STAINED_GLASS = 241;
+
     int PODZOL = 243;
     int BEETROOT_BLOCK = 244;
     int STONECUTTER = 245;
@@ -302,6 +306,7 @@ public interface BlockID {
     int NETHER_REACTOR = 247; //Should not be removed
 
     int PISTON_EXTENSION = 250;
-
     int OBSERVER = 251;
+    int STRUCTURE_BLOCK = 252;
+
 }

@@ -128,7 +128,7 @@ public class BlockSugarcane extends BlockFlowable {
             Block block1 = down.south();
             Block block2 = down.west();
             Block block3 = down.east();
-            if ((block0 instanceof BlockWater) || (block1 instanceof BlockWater) || (block2 instanceof BlockWater) || (block3 instanceof BlockWater)) {
+            if (block0 instanceof BlockWater || block1 instanceof BlockWater || block2 instanceof BlockWater || block3 instanceof BlockWater || block0 instanceof BlockIceFrosted || block1 instanceof BlockIceFrosted || block2 instanceof BlockIceFrosted || block3 instanceof BlockIceFrosted) {
                 this.getLevel().setBlock(block, new BlockSugarcane(), true);
                 return true;
             }

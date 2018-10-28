@@ -35,6 +35,17 @@ public class BlockDaylightDetector extends BlockTransparent {
     }
 
     @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+
+    @Override
+    public boolean onActivate(Item item, Player player) {
+        this.getLevel().setBlock(this, new BlockDaylightDetectorInverted());
+        return true;
+    }
+
+    @Override
     public Item toItem() {
         return new ItemBlock(this, 0);
     }

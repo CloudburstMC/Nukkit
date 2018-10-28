@@ -6,6 +6,7 @@ import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
 
@@ -61,6 +62,14 @@ public class BlockMagma extends BlockSolid {
         if (!entity.hasEffect(Effect.FIRE_RESISTANCE)) {
             if (entity instanceof Player) {
                 Player p = (Player) entity;
+                if (p.getInventory().getBoots() != null) {
+                    Enchantment[] enchantments = p.getInventory().getBoots().getEnchantments();
+                    for (Enchantment enchantment : enchantments) {
+                        if (enchantment.getId() == Enchantment.ID_FROST_WALKER) {
+                            return;
+                        }
+                    }
+                }
                 if (!p.isCreative() && !p.isSpectator() && !p.isSneaking()) {
                     entity.attack(new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.DamageCause.LAVA, 1));
                 }

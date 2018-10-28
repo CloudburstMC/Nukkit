@@ -209,7 +209,9 @@ public interface ItemID {
     int ELYTRA = 444;
     int SHULKER_SHELL = 445;
     int BANNER = 446;
+
     int TOTEM = 450;
+
     int IRON_NUGGET = 452;
 
     int TRIDENT = 455;

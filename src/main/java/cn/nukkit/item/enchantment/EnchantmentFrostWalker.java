@@ -19,4 +19,14 @@ public class EnchantmentFrostWalker extends Enchantment {
     public int getMaxLevel() {
         return 2;
     }
+
+    @Override
+    public boolean isTreasure() {
+        return true;
+    }
+
+    @Override
+    public boolean isCompatibleWith(Enchantment enchantment) {
+        return super.isCompatibleWith(enchantment) && enchantment.id != ID_WATER_WALKER;
+    }
 }
