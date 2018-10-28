@@ -52,7 +52,7 @@ public class BlockSnowLayer extends BlockFlowable {
         return true;
     }
 
-    //TODO:雪片叠垒乐
+    //TODO: layer
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
@@ -83,10 +83,15 @@ public class BlockSnowLayer extends BlockFlowable {
     }
 
     @Override
+    public Item toItem() {
+        return new ItemSnowball();
+    }
+
+    @Override
     public Item[] getDrops(Item item) {
         if (item.isShovel() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
-                    new ItemSnowball()
+                    this.toItem()
             };
         } else {
             return new Item[0];

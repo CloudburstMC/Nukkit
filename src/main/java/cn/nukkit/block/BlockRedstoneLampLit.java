@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 
 /**
@@ -24,6 +26,11 @@ public class BlockRedstoneLampLit extends BlockRedstoneLamp {
     @Override
     public int getLightLevel() {
         return 15;
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(new BlockRedstoneLamp());
     }
 
     @Override

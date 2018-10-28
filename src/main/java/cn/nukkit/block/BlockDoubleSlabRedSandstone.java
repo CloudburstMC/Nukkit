@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 
 /**
@@ -50,6 +51,11 @@ public class BlockDoubleSlabRedSandstone extends BlockSolidMeta {
         };
 
         return "Double " + names[this.getDamage() & 0x07] + " Slab";
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(new BlockSlabRedSandstone(), this.getDamage() & 0x07);
     }
 
     @Override

@@ -113,10 +113,8 @@ public class BlockFarmland extends BlockTransparentMeta {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        return new Item[]{
-                new ItemBlock(new BlockDirt())
-        };
+    public Item toItem() {
+        return new ItemBlock(new BlockDirt());
     }
 
     @Override
