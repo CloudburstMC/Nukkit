@@ -24,12 +24,6 @@ public class BlockDaylightDetectorInverted extends BlockDaylightDetector {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
-        this.getLevel().setBlock(this, new BlockDaylightDetector());
-        return true;
-    }
-
-    @Override
     public Item toItem() {
         return new ItemBlock(new BlockDaylightDetector(), 0);
     }

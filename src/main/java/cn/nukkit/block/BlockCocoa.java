@@ -152,7 +152,7 @@ public class BlockCocoa extends BlockTransparentMeta {
 
             Block side = this.getSide(BlockFace.fromIndex(faces[this.getDamage()]));
 
-            if (side.getId() != Block.WOOD && (side.getDamage() & 0x03) != BlockWood.JUNGLE) {
+            if (side.getId() != Block.WOOD && side.getDamage() != BlockWood.JUNGLE) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
