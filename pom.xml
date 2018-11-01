@@ -159,6 +159,9 @@
                         <version>${junit.platform.version}</version>
                     </dependency>
                 </dependencies>
+                <configuration>
+                    <useSystemClassLoader>false</useSystemClassLoader>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
