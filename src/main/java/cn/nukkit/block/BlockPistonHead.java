@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.math.BlockFace;
 
 /**
@@ -59,5 +60,10 @@ public class BlockPistonHead extends BlockTransparentMeta {
     @Override
     public boolean canBePushed() {
         return false;
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(new BlockAir());
     }
 }

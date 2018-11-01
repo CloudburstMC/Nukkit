@@ -10,6 +10,11 @@ public class BlockPrismarine extends BlockSolidMeta {
     public static final int BRICKS = 1;
     public static final int DARK = 2;
 
+    private static final String[] NAMES = new String[]{
+            "Prismarine",
+            "Prismarine bricks",
+            "Dark prismarine"
+    };
 
     public BlockPrismarine() {
         this(0);
@@ -41,12 +46,7 @@ public class BlockPrismarine extends BlockSolidMeta {
 
     @Override
     public String getName() {
-        String[] names = new String[]{
-                "Prismarine",
-                "Prismarine bricks",
-                "Dark prismarine"
-        };
-        return names[this.getDamage() & 0x07];
+        return NAMES[this.getDamage() > 2 ? 0 : this.getDamage()];
     }
 
     @Override
