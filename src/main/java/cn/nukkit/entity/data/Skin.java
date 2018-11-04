@@ -1,10 +1,13 @@
 package cn.nukkit.entity.data;
 
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
+import com.google.common.base.Preconditions;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Base64;
 
 /**
  * author: MagicDroidX
@@ -21,18 +24,39 @@ public class Skin {
     public static final String GEOMETRY_CUSTOM = "geometry.humanoid.custom";
     public static final String GEOMETRY_CUSTOM_SLIM = "geometry.humanoid.customSlim";
 
+    private static final byte[] EMPTY = new byte[0];
+
     private String skinId = "Steve";
     private byte[] skinData = new byte[SINGLE_SKIN_SIZE];
+    private byte[] encodedSkinData = null;
     private byte[] capeData = new byte[0];
+    private byte[] encodedCapeData = null;
     private String geometryName = GEOMETRY_CUSTOM;
     private String geometryData = "";
+    private byte[] encodedGeometryData = null;
 
     public boolean isValid() {
         return isValidSkin(skinData.length);
     }
 
     public byte[] getSkinData() {
+        if (skinData == null) {
+            if (encodedSkinData == null) {
+                return EMPTY;
+            }
+            skinData = Base64.getDecoder().decode(encodedSkinData);
+        }
         return skinData;
+    }
+
+    public byte[] getEncodedSkinData() {
+        if (encodedSkinData == null) {
+            if (skinData == null) {
+                return EMPTY;
+            }
+            encodedSkinData = Base64.getEncoder().encode(skinData);
+        }
+        return encodedSkinData;
     }
 
     public String getGeometryName() {
@@ -58,7 +82,17 @@ public class Skin {
         if (data == null || !isValidSkin(data.length)) {
             throw new IllegalArgumentException("Invalid skin");
         }
-        this.skinData = data;
+        if (!Arrays.equals(skinData, this.skinData)) {
+            this.skinData = data;
+            this.encodedSkinData = null;
+        }
+    }
+
+    public void setEncodedSkinData(byte[] encodedSkinData) {
+        if (encodedSkinData != null && !Arrays.equals(encodedSkinData, this.encodedSkinData)) {
+            skinData = null;
+            this.encodedSkinData = encodedSkinData;
+        }
     }
 
     public void setGeometryName(String model) {
@@ -70,7 +104,23 @@ public class Skin {
     }
 
     public byte[] getCapeData() {
+        if (capeData == null) {
+            if (encodedCapeData == null) {
+                return EMPTY;
+            }
+            capeData = Base64.getDecoder().decode(encodedCapeData);
+        }
         return capeData;
+    }
+
+    public byte[] getEncodedCapeData() {
+        if (encodedCapeData == null) {
+            if (capeData == null) {
+                return EMPTY;
+            }
+            encodedCapeData = Base64.getEncoder().encode(capeData);
+        }
+        return encodedCapeData;
     }
 
     public void setCapeData(BufferedImage image) {
@@ -78,22 +128,53 @@ public class Skin {
     }
 
     public void setCapeData(byte[] capeData) {
-        if (capeData == null) {
-            this.capeData = new byte[0];
-        } else {
+        Preconditions.checkNotNull(capeData, "capeData");
+        if (!Arrays.equals(capeData, this.capeData)) {
             this.capeData = capeData;
+            this.encodedCapeData = null;
+        }
+    }
+
+    public void setEncodedCapeData(byte[] encodedCapeData) {
+        if (encodedCapeData != null && !Arrays.equals(encodedCapeData, this.encodedCapeData)) {
+            capeData = null;
+            this.encodedCapeData = encodedCapeData;
         }
     }
 
     public String getGeometryData() {
+        if (geometryData == null) {
+            if (encodedGeometryData == null) {
+                return "";
+            }
+            geometryData = new String(Base64.getDecoder().decode(encodedGeometryData), StandardCharsets.UTF_8);
+        }
         return geometryData;
     }
 
-    public void setGeometryData(String geometryData) {
-        if (geometryData == null) {
-            this.geometryData = "";
+    public byte[] getEncodedGeometryData() {
+        if (encodedGeometryData == null) {
+            if (geometryData == null) {
+                return EMPTY;
+            }
+            encodedGeometryData = Base64.getEncoder().encode(geometryData.getBytes(StandardCharsets.UTF_8));
         }
-        this.geometryData = geometryData;
+        return encodedGeometryData;
+    }
+
+    public void setGeometryData(String geometryData) {
+        Preconditions.checkNotNull(geometryData, "geometryData");
+        if (!geometryData.equals(this.geometryData)) {
+            this.geometryData = geometryData;
+            this.encodedGeometryData = null;
+        }
+    }
+
+    public void setEncodedGeometryData(byte[] encodedGeometryData) {
+        if (encodedGeometryData != null && !Arrays.equals(encodedGeometryData, this.encodedGeometryData)) {
+            geometryData = null;
+            this.encodedGeometryData = encodedGeometryData;
+        }
     }
 
     public Skin copy() {

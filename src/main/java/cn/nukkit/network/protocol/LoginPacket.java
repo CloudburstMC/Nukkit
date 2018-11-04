@@ -76,11 +76,11 @@ public class LoginPacket extends DataPacket {
             skin.setSkinId(skinToken.get("SkinId").getAsString());
         }
         if (skinToken.has("SkinData")) {
-            skin.setSkinData(Base64.getDecoder().decode(skinToken.get("SkinData").getAsString()));
+            skin.setEncodedSkinData(skinToken.get("SkinData").getAsString().getBytes(StandardCharsets.UTF_8));
         }
 
         if (skinToken.has("CapeData")) {
-            this.skin.setCapeData(Base64.getDecoder().decode(skinToken.get("CapeData").getAsString()));
+            this.skin.setEncodedCapeData(skinToken.get("CapeData").getAsString().getBytes(StandardCharsets.UTF_8));
         }
 
         if (skinToken.has("SkinGeometryName")) {
@@ -88,7 +88,7 @@ public class LoginPacket extends DataPacket {
         }
 
         if (skinToken.has("SkinGeometry")) {
-            skin.setGeometryData(skinToken.get("SkinGeometry").getAsString());
+            skin.setEncodedGeometryData(skinToken.get("SkinGeometry").getAsString().getBytes(StandardCharsets.UTF_8));
         }
     }
 
