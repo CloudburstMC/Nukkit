@@ -36,7 +36,13 @@ public class Skin {
     private byte[] encodedGeometryData = null;
 
     public boolean isValid() {
-        return isValidSkin(skinData.length);
+        if (encodedSkinData != null) {
+            return true;
+        }
+        if (skinData != null) {
+            return isValidSkin(skinData.length);
+        }
+        return false;
     }
 
     public byte[] getSkinData() {
