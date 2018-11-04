@@ -3046,7 +3046,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         }
                                     }
 
-                                    EntityDamageByEntityEvent entityDamageByEntityEvent = new EntityDamageByEntityEvent(this, target, DamageCause.ENTITY_ATTACK, damage);
+                                    EntityDamageByEntityEvent entityDamageByEntityEvent = new EntityDamageByEntityEvent(this, target, DamageCause.ENTITY_ATTACK, damage, knockback 0,5f);
                                     if (this.isSpectator()) entityDamageByEntityEvent.setCancelled();
                                     if ((target instanceof Player) && !this.level.getGameRules().getBoolean(GameRule.PVP)) {
                                         entityDamageByEntityEvent.setCancelled();
