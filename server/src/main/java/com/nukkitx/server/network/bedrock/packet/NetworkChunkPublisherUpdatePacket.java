@@ -5,7 +5,7 @@ import com.nukkitx.server.network.bedrock.BedrockPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 
-import static com.nukkitx.server.network.bedrock.BedrockUtil.writeBlockPosition;
+import static com.nukkitx.server.network.bedrock.BedrockUtil.writeVector3i;
 import static com.nukkitx.server.network.util.VarInts.writeUnsignedInt;
 
 @Data
@@ -15,7 +15,7 @@ public class NetworkChunkPublisherUpdatePacket implements BedrockPacket {
 
     @Override
     public void encode(ByteBuf buffer) {
-        writeBlockPosition(buffer, position);
+        writeVector3i(buffer, position);
         writeUnsignedInt(buffer, radius);
     }
 

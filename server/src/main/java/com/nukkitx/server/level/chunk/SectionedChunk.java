@@ -337,7 +337,8 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
 
         if (cached != null) {
             // We don't want reader indexes to get messed up with multiple writes
-            packet.setData(cached.duplicate().retain());
+            cached.readerIndex(0);
+            packet.setData(cached.retainedSlice());
 
             return packet;
         }
@@ -392,9 +393,10 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
             blockEntitiesStream.writeTo(byteBuf);
         }
 
-        packet.setData(byteBuf.duplicate().retain());
-
         cached = byteBuf;
+
+        cached.readerIndex(0);
+        packet.setData(byteBuf.retainedSlice());
 
         return packet;
     }

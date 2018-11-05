@@ -81,7 +81,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
     private final NukkitPlayerInventory inventory = new NukkitPlayerInventory(this);
     @Getter
     private Inventory openInventory;
-    private int enchantmentSeed;
+    private int enchantmentSeed = ThreadLocalRandom.current().nextInt();
     private int viewDistance;
 
     private boolean spawned = false;
@@ -94,7 +94,6 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         Path playerDatPath = server.getPlayersPath().resolve(getXuid().isPresent() ? getUniqueId().toString() : getName());
         locale.set(server.getLocaleManager().getLocaleByString(session.getClientData().getLanguageCode()));
 
-        enchantmentSeed = ThreadLocalRandom.current().nextInt();
         viewDistance = server.getConfiguration().getMechanics().getViewDistance();
 
         // Register components
@@ -127,6 +126,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
             NetworkChunkPublisherUpdatePacket networkChunkPublisherUpdate = new NetworkChunkPublisherUpdatePacket();
             networkChunkPublisherUpdate.setPosition(position.toInt());
             networkChunkPublisherUpdate.setRadius(viewDistance << 4);
+            session.addToSendQueue(networkChunkPublisherUpdate);
 
             for (Chunk chunk : chunks) {
                 session.addToSendQueue(((FullChunkDataPacketCreator) chunk).createFullChunkDataPacket());
@@ -235,14 +235,18 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         startGame.setPlayerPosition(event.getSpawnPosition());
         startGame.setRotation(event.getRotation());
         startGame.setLevelSettings(event.getSpawnLevel().getData());
-        startGame.setLevelId("");
-        startGame.setWorldName("defaultWorld"); //level.getName()
+        startGame.setLevelId(level.getId());
+        startGame.setWorldName("default"); //level.getName()
         startGame.setPremiumWorldTemplateId("");
         startGame.setTrial(false);
-        startGame.setCurrentTick(0);
+        startGame.setCurrentTick(level.getCurrentTick());
         startGame.setEnchantmentSeed(enchantmentSeed);
         startGame.setMultiplayerCorrelationId("");
         session.addToSendQueue(startGame);
+
+        SetTimePacket setTime = new SetTimePacket();
+        setTime.setTime(level.getTime());
+        session.addToSendQueue(setTime);
 
         sendCommandsEnabled();
 
@@ -353,12 +357,12 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
         session.addToSendQueue(inventoryContents);
 
-        MobEquipmentPacket mobEquipment = new MobEquipmentPacket();
+        /*MobEquipmentPacket mobEquipment = new MobEquipmentPacket();
         mobEquipment.setRuntimeEntityId(getEntityId());
         mobEquipment.setItem(getInventory().getItemInHand().orElse(null));
         mobEquipment.setInventorySlot((byte) getInventory().getHeldHotbarSlot());
 
-        session.addToSendQueue(mobEquipment);
+        session.addToSendQueue(mobEquipment);*/
     }
 
     void sendMovePlayer() {
@@ -623,9 +627,9 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
     public void setViewDistance(int viewDistance) {
         viewDistance = GenericMath.clamp(viewDistance, 5, server.getConfiguration().getMechanics().getMaximumChunkRadius());
 
-        ChunkRadiusUpdatePacket chunkRadiusUpdate = new ChunkRadiusUpdatePacket();
+        ChunkRadiusUpdatedPacket chunkRadiusUpdate = new ChunkRadiusUpdatedPacket();
         chunkRadiusUpdate.setRadius(viewDistance);
-        session.addToSendQueue(chunkRadiusUpdate);
+        session.sendImmediatePackage(chunkRadiusUpdate);
 
         this.viewDistance = viewDistance;
     }
@@ -805,7 +809,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
     }
 
     public BedrockPacketHandler getNetworkPacketHandler() {
-        return new PlayerSessionPacketHandler(this);
+        return new PlayerSessionHandler(this);
     }
 
     @Override

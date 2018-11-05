@@ -1,7 +1,6 @@
 package com.nukkitx.server.level.util;
 
 import com.flowpowered.math.GenericMath;
-import com.nukkitx.server.util.bitset.IntBitSet;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 
@@ -14,22 +13,22 @@ public class Palette {
     }
 
     public void writeIndexes(ByteBuf buf, short[] indexes) {
-        IntBitSet bitSet = new IntBitSet();
+        int bits = 0;
         int bitSetOffset = 0;
         int wordsWritten = 0;
 
         for (int index : indexes) {
             if (wordsWritten == version.blocksPerWord) {
-                buf.writeIntLE(bitSet.get());
+                buf.writeIntLE(bits);
 
-                bitSet.clear();
+                bits = 0;
                 bitSetOffset = 0;
                 wordsWritten = 0;
             }
 
             while (index != 0L) {
                 if ((index % 2L) != 0) {
-                    bitSet.flip(bitSetOffset);
+                    bits |= (1 << bitSetOffset);
                 }
 
                 bitSetOffset++;
@@ -40,7 +39,7 @@ public class Palette {
 
             bitSetOffset = wordsWritten * version.id;
         }
-        buf.writeIntLE(bitSet.get());
+        buf.writeIntLE(bits);
     }
 
     public short[] readIndexes() {

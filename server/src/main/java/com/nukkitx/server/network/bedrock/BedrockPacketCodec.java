@@ -25,7 +25,7 @@ import java.util.Arrays;
 @Immutable
 @RequiredArgsConstructor
 public class BedrockPacketCodec implements PacketCodec<BedrockPacket> {
-    public static final int BROADCAST_PROTOCOL_VERSION = 310;
+    public static final int BROADCAST_PROTOCOL_VERSION = 311;
     public static final BedrockPacketCodec DEFAULT;
 
     private final int[] compatibleVersions;
@@ -104,7 +104,7 @@ public class BedrockPacketCodec implements PacketCodec<BedrockPacket> {
                 .registerPacket(ClientboundMapItemDataPacket::new, 67)
                 .registerPacket(MapInfoRequestPacket::new, 68)
                 .registerPacket(RequestChunkRadiusPacket::new, 69)
-                .registerPacket(ChunkRadiusUpdatePacket::new, 70)
+                .registerPacket(ChunkRadiusUpdatedPacket::new, 70)
                 .registerPacket(ItemFrameDropItemPacket::new, 71)
                 .registerPacket(GameRulesChangedPacket::new, 72)
                 .registerPacket(CameraPacket::new, 73)
@@ -155,6 +155,7 @@ public class BedrockPacketCodec implements PacketCodec<BedrockPacket> {
                 .registerPacket(AvailableEntityIdentifiersPacket::new, 119)
                 .registerPacket(LevelSoundEvent2Packet::new, 120)
                 .registerPacket(NetworkChunkPublisherUpdatePacket::new, 121)
+                .registerPacket(BiomeDefinitionListPacket::new, 122)
                 .build();
 
     }

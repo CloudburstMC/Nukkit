@@ -3,7 +3,7 @@ package com.nukkitx.api.scheduler;
 /**
  * @author CreeperFace
  */
-public interface NukkitScheduler {
+public interface Scheduler {
 
     <T> TaskHandler<T> scheduleTask(T plugin, Runnable task);
 

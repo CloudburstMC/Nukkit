@@ -12,7 +12,7 @@ import com.nukkitx.api.locale.LocaleManager;
 import com.nukkitx.api.permission.Abilities;
 import com.nukkitx.api.permission.PermissionManager;
 import com.nukkitx.api.plugin.PluginManager;
-import com.nukkitx.api.scheduler.NukkitScheduler;
+import com.nukkitx.api.scheduler.Scheduler;
 import com.nukkitx.api.util.ConfigBuilder;
 import com.nukkitx.api.util.SemVer;
 
@@ -58,7 +58,7 @@ public interface Server {
     @Nonnull
     LocaleManager getLocaleManager();
 
-    NukkitScheduler getScheduler();
+    Scheduler getScheduler();
 
     @Nonnull
     ConsoleCommandSender getConsoleCommandSender();

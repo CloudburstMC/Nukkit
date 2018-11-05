@@ -1,7 +1,7 @@
 package com.nukkitx.server.scheduler;
 
 import com.nukkitx.api.scheduler.NukkitRunnable;
-import com.nukkitx.api.scheduler.NukkitScheduler;
+import com.nukkitx.api.scheduler.Scheduler;
 import com.nukkitx.server.NukkitServer;
 import com.nukkitx.server.util.PluginException;
 import lombok.extern.log4j.Log4j2;
@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Nukkit Project Team
  */
 @Log4j2
-public class ServerScheduler implements NukkitScheduler {
+public class NukkitScheduler implements Scheduler {
 
     public static int WORKERS = 4;
 
@@ -31,7 +31,7 @@ public class ServerScheduler implements NukkitScheduler {
 
     private volatile int currentTick;
 
-    public ServerScheduler(NukkitServer server) {
+    public NukkitScheduler(NukkitServer server) {
         this.pending = new ConcurrentLinkedQueue<>();
         this.currentTaskId = new AtomicInteger();
         this.queue = new PriorityQueue<>(11, (left, right) -> {
@@ -195,5 +195,4 @@ public class ServerScheduler implements NukkitScheduler {
     private int nextTaskId() {
         return currentTaskId.incrementAndGet();
     }
-
 }

@@ -52,7 +52,7 @@ import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import com.nukkitx.server.permission.NukkitAbilities;
 import com.nukkitx.server.permission.NukkitPermissionManager;
 import com.nukkitx.server.resourcepack.ResourcePackManager;
-import com.nukkitx.server.scheduler.ServerScheduler;
+import com.nukkitx.server.scheduler.NukkitScheduler;
 import com.nukkitx.server.util.ServerKiller;
 import com.nukkitx.service.SimpleServiceManager;
 import com.spotify.futures.CompletableFutures;
@@ -115,7 +115,7 @@ public class NukkitServer implements Server {
     private final SimplePluginManager pluginManager = new SimplePluginManager(eventManager);
     private final SimpleServiceManager serviceManager = new SimpleServiceManager();
     private final NukkitSessionManager sessionManager = new NukkitSessionManager();
-    private final ServerScheduler scheduler = new ServerScheduler(this);
+    private final NukkitScheduler scheduler = new NukkitScheduler(this);
     @Getter(AccessLevel.NONE)
     private final List<NetworkListener> listeners = new ArrayList<>();
     @Getter(AccessLevel.NONE)

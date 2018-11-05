@@ -24,8 +24,6 @@ public class FullChunkDataPacket implements BedrockPacket {
         writeInt(buffer, chunkZ);
         writeUnsignedInt(buffer, data.readableBytes());
         buffer.writeBytes(data);
-        data.release();
-        data = null;
     }
 
     @Override

@@ -34,7 +34,7 @@ public abstract class NukkitLevelData implements LevelData {
     private boolean forceGameType = false;
     private boolean multiplayerGame = true;
     private boolean broadcastingToLan = true;
-    private boolean broadcastingToXBL = true;
+    private boolean broadcastingToXBL = false;
     private boolean commandsEnabled = true;
     private boolean texturepacksRequired = false;
     private boolean bonusChestEnabled = false;
@@ -42,15 +42,17 @@ public abstract class NukkitLevelData implements LevelData {
     private boolean trustingPlayers = false;
     private NukkitAbilities defaultAbilities = new NukkitAbilities();
     private PlayerPermission defaultPlayerPermission = PlayerPermission.MEMBER;
-    private int XBLBroadcastMode = 3;
-    private int serverChunkTickRange = 8; // Simulated render distance.
-    private boolean broadcastingToPlatform = true;
+    private int XBLBroadcastMode = 0;
+    private int serverChunkTickRange = 4; // Simulated render distance.
+    private boolean broadcastingToPlatform = false;
     private int platformBroadcastMode = 0;
-    private boolean intentOnXBLBroadcast = true;
+    private boolean intentOnXBLBroadcast = false;
     private boolean behaviorPackLocked = false;
     private boolean resourcePackLocked = false;
     private boolean fromLockedWorldTemplate = false;
     private boolean usingMsaGamertagsOnly = false;
+    private boolean fromWorldTemplate = false;
+    private boolean worldTemplateOptionLocked = false;
 
     // Level Data
     private String name;

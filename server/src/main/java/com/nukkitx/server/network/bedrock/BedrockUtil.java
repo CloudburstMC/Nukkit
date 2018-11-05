@@ -496,12 +496,14 @@ public final class BedrockUtil {
         writeInt(buffer, levelSettings.getXBLBroadcastMode());
         buffer.writeIntLE(levelSettings.getServerChunkTickRange());
         buffer.writeBoolean(levelSettings.isBroadcastingToPlatform());
-        writeUnsignedInt(buffer, levelSettings.getPlatformBroadcastMode());
+        writeInt(buffer, levelSettings.getPlatformBroadcastMode());
         buffer.writeBoolean(levelSettings.isIntentOnXBLBroadcast());
         buffer.writeBoolean(levelSettings.isBehaviorPackLocked());
         buffer.writeBoolean(levelSettings.isResourcePackLocked());
         buffer.writeBoolean(levelSettings.isFromLockedWorldTemplate());
         buffer.writeBoolean(levelSettings.isUsingMsaGamertagsOnly());
+        buffer.writeBoolean(levelSettings.isFromWorldTemplate());
+        buffer.writeBoolean(levelSettings.isWorldTemplateOptionLocked());
     }
 
     public static void writeStructureEditorData(ByteBuf buffer, StructureEditorData structureEditorData) {

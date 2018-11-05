@@ -51,7 +51,6 @@ public class EncryptionUtil {
     }
 
     public static ServerToClientHandshakePacket createHandshakePacket(KeyPair pair, byte[] token) {
-        ECPrivateKey privKey = (ECPrivateKey) pair.getPrivate();
         URI x5u = URI.create(Base64.getEncoder().encodeToString(pair.getPublic().getEncoded()));
         ServerToClientHandshakePacket packet = new ServerToClientHandshakePacket();
 
@@ -59,7 +58,7 @@ public class EncryptionUtil {
         SignedJWT jwt = new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.ES384).x509CertURL(x5u).build(), claimsSet);
 
         try {
-            JWSSigner signer = new ECDSASigner(privKey);
+            JWSSigner signer = new ECDSASigner((ECPrivateKey) pair.getPrivate());
             jwt.sign(signer);
         } catch (JOSEException e) {
             throw new RuntimeException("Unable to sign JWT", e);

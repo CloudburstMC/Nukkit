@@ -8,7 +8,7 @@ import lombok.Data;
 import static com.nukkitx.server.network.util.VarInts.writeInt;
 
 @Data
-public class ChunkRadiusUpdatePacket implements BedrockPacket {
+public class ChunkRadiusUpdatedPacket implements BedrockPacket {
     private int radius;
 
     @Override

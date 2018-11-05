@@ -35,11 +35,11 @@ import lombok.extern.log4j.Log4j2;
 import java.util.Optional;
 
 @Log4j2
-public class PlayerSessionPacketHandler implements BedrockPacketHandler {
+public class PlayerSessionHandler implements BedrockPacketHandler {
     private final PlayerSession session;
     private final NukkitServer server;
 
-    PlayerSessionPacketHandler(PlayerSession session) {
+    PlayerSessionHandler(PlayerSession session) {
         this.session = session;
         this.server = session.getServer();
     }
@@ -393,13 +393,12 @@ public class PlayerSessionPacketHandler implements BedrockPacketHandler {
                 playStatus.setStatus(PlayStatusPacket.Status.PLAYER_SPAWN);
                 session.getMinecraftSession().addToSendQueue(playStatus);
 
-                session.sendMovePlayer();
+                //session.sendMovePlayer();
                 session.updateViewableEntities();
 
                 //session.addToSendQueue(server.getCommandManager().createAvailableCommandsPacket(PlayerSession.this));
             }
         });
-
     }
 
     @Override

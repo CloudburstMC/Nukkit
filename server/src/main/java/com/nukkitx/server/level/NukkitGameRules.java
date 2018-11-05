@@ -154,7 +154,7 @@ public class NukkitGameRules implements GameRules {
         }
 
         public void write(ByteBuf buffer) {
-            buffer.writeByte(type.ordinal());
+            writeUnsignedInt(buffer, type.ordinal());
             switch (type) {
                 case BOOLEAN:
                     buffer.writeBoolean(getValueAsBoolean());

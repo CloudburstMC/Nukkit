@@ -110,7 +110,7 @@ public class NukkitLocaleManager implements LocaleManager {
         Properties properties = locales.get(locale);
 
         if (properties == null) {
-            properties = locales.get(Locale.US);
+            return string;
         }
         String i18n;
         boolean percentBreak = false;

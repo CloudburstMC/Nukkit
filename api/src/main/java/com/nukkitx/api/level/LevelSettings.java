@@ -72,4 +72,8 @@ public interface LevelSettings {
     boolean isFromLockedWorldTemplate();
 
     boolean isUsingMsaGamertagsOnly();
+
+    boolean isFromWorldTemplate();
+
+    boolean isWorldTemplateOptionLocked();
 }
