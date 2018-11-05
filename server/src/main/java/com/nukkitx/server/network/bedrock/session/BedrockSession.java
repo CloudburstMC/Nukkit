@@ -35,14 +35,12 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Log4j2
 public class BedrockSession implements NetworkSession<RakNetSession> {
     private static final ThreadLocal<VoxelwindHash> hashLocal = ThreadLocal.withInitial(NativeCodeFactory.hash::newInstance);
     private static final InetSocketAddress LOOPBACK_BEDROCK = new InetSocketAddress(InetAddress.getLoopbackAddress(), 19132);
-    private final AtomicBoolean closed = new AtomicBoolean();
     private final Queue<BedrockPacket> currentlyQueued = new ConcurrentLinkedQueue<>();
     private final AtomicLong sentEncryptedPacketCount = new AtomicLong();
     private final NukkitServer server;
@@ -101,7 +99,7 @@ public class BedrockSession implements NetworkSession<RakNetSession> {
     }
 
     private void checkForClosed() {
-        Preconditions.checkState(!closed.get(), "Connection has been closed!");
+        Preconditions.checkState(!connection.isClosed(), "Connection has been closed!");
     }
 
     public void addToSendQueue(BedrockPacket packet) {
@@ -177,16 +175,10 @@ public class BedrockSession implements NetworkSession<RakNetSession> {
     }
 
     public void onTick() {
-        if (closed.get()) {
-            return;
-        }
-
         if (connection.isClosed()) {
-            disconnect("disconnect.timeout");
             return;
         }
 
-        connection.onTick();
         sendQueued();
     }
 
@@ -274,7 +266,7 @@ public class BedrockSession implements NetworkSession<RakNetSession> {
         return encryptionCipher != null;
     }
 
-    public void close() {
+    private void close() {
         if (!connection.isClosed()) {
             connection.close();
         }
@@ -371,6 +363,19 @@ public class BedrockSession implements NetworkSession<RakNetSession> {
         close();
     }
 
+    @Override
+    public void onTimeout() {
+        if (authData != null) {
+            log.info("{} ({}) has been disconnected from the server: {}", authData.getDisplayName(),
+                    getRemoteAddress().map(Object::toString).orElse("UNKNOWN"), server.getLocaleManager().replaceI18n("disconnect.timeout"));
+        } else {
+            log.info("{} has lost connection to the server: {}", getRemoteAddress().map(Object::toString).orElse("UNKNOWN"),
+                    "disconnect.timeout");
+        }
+
+        close();
+    }
+
     public void onWrappedPacket(WrappedPacket packet) throws Exception {
         Preconditions.checkNotNull(packet, "packet");
         if (wrapperHandler == null) {
@@ -408,15 +413,11 @@ public class BedrockSession implements NetworkSession<RakNetSession> {
     }
 
     public boolean isClosed() {
-        return closed.get();
+        return connection.isClosed();
     }
 
     public Optional<InetSocketAddress> getRemoteAddress() {
         return connection.getRemoteAddress();
-    }
-
-    private boolean isTimedOut() {
-        return connection.isTimedOut();
     }
 
     public RakNetSession getConnection() {

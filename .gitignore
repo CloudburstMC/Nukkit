@@ -98,8 +98,9 @@ nbdist/
 .nb-gradle/
 
 ### Nukkit ###
-banned-ips.json
-banned-players.json
+bans.json
+ops.json
+whitelist.json
 nukkit.yml
 levels
 levels/*

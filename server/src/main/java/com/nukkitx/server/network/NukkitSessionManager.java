@@ -1,59 +1,40 @@
 package com.nukkitx.server.network;
 
 import com.flowpowered.math.GenericMath;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.nukkitx.api.Player;
 import com.nukkitx.network.SessionManager;
 import com.nukkitx.server.network.bedrock.session.BedrockSession;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nullable;
-import java.net.InetSocketAddress;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.*;
 
 @Log4j2
-public class NukkitSessionManager implements SessionManager<BedrockSession> {
+public class NukkitSessionManager extends SessionManager<BedrockSession> {
     private static final int SESSIONS_PER_THREAD = 50;
 
-    private final ConcurrentMap<InetSocketAddress, BedrockSession> sessions = new ConcurrentHashMap<>();
     private final ConcurrentMap<UUID, Player> playerSessions = new ConcurrentHashMap<>();
+    @Getter
     private final ThreadPoolExecutor sessionTicker = new ThreadPoolExecutor(1, 1, 1, TimeUnit.MINUTES,
             new LinkedBlockingQueue<>(), new ThreadFactoryBuilder().setNameFormat("Session Ticker - #%d").setDaemon(true).build());
 
-    public boolean add(InetSocketAddress address, BedrockSession session) {
-        boolean added = sessions.putIfAbsent(address, session) == null;
-        if (added) {
-            adjustPoolSize();
-        }
-        return added;
-    }
-
-    public boolean remove(BedrockSession session) {
-        boolean removed = sessions.values().remove(session);
-        if (session.getPlayerSession() != null) {
-            playerSessions.values().remove(session.getPlayerSession());
-        }
-        if (removed) {
-            adjustPoolSize();
-        }
-        return removed;
-    }
-
-    public BedrockSession get(InetSocketAddress address) {
-        return sessions.get(address);
-    }
-
-    public Collection<BedrockSession> all() {
-        return ImmutableList.copyOf(sessions.values());
+    @Override
+    protected void onAddSession(BedrockSession session) {
+        adjustPoolSize();
     }
 
     @Override
-    public int getCount() {
-        return sessions.size();
+    protected void onRemoveSession(BedrockSession session) {
+        if (session.getPlayerSession() != null) {
+            playerSessions.values().remove(session.getPlayerSession());
+        }
+        adjustPoolSize();
     }
 
     public int playerSessionCount() {
@@ -66,11 +47,13 @@ public class NukkitSessionManager implements SessionManager<BedrockSession> {
 
     @Nullable
     public Player getPlayer(UUID uuid) {
+        Preconditions.checkNotNull(uuid, "uuid");
         return playerSessions.get(uuid);
     }
 
     @Nullable
     public Player getPlayer(String name) {
+        Preconditions.checkNotNull(name, "name");
         Player found = null;
         name = name.toLowerCase();
         int delta = Integer.MAX_VALUE;

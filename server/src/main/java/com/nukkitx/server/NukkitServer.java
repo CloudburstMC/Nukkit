@@ -166,7 +166,7 @@ public class NukkitServer implements Server {
         NUKKIT_VERSION = nukkitVersion;
     }
 
-    public NukkitServer(final Path filePath, final Path dataPath, final Path pluginPath, final boolean ansiEnabled) throws Exception {
+    public NukkitServer(final Path filePath, final Path dataPath, final Path pluginPath, final boolean ansiEnabled) throws IOException {
         this.jarPath = filePath;
         this.dataPath = dataPath;
         this.pluginPath = pluginPath;
@@ -241,15 +241,20 @@ public class NukkitServer implements Server {
 
         // Set the default locale.
         Locale locale = localeManager.getLocaleByString(configuration.getGeneral().getLocale());
-        if (localeManager.isLocaleAvailable(locale)) {
-            Locale.setDefault(locale);
-        } else if (localeManager.isFallbackAvailable()) {
-            Locale.setDefault(Locale.US);
-        } else {
-            throw new IllegalStateException("Selected and fallback Locale could not be loaded");
+        if (!localeManager.isLocaleAvailable(locale)) {
+            if (localeManager.isFallbackAvailable()) {
+                log.info("Locale not available. Reverting to US");
+                locale = Locale.US;
+            } else {
+                throw new IllegalStateException("Selected and fallback Locale could not be loaded");
+            }
         }
+        Locale.setDefault(locale);
 
-        localeManager.loadDefaultLocale(Locale.getDefault());
+        if (!localeManager.loadDefaultLocale(locale)) {
+            log.fatal("Unable to load locale. Shutting down...");
+            return;
+        }
 
         /*if (NativeCodeFactory.cipher.load()) {
             log.debug("Loaded native cipher");
@@ -358,13 +363,14 @@ public class NukkitServer implements Server {
                 .address(configuration.getNetwork().getAddress(), configuration.getNetwork().getPort())
                 .eventListener(new NukkitRakNetEventListener(this))
                 .packet(WrappedPacket::new, 0xfe)
-                .id(12345)
+                .executor(sessionManager.getSessionTicker())
+                .scheduler(timerService)
                 .maximumThreads(maxThreads)
                 .sessionFactory((connection) -> new BedrockSession(this, connection))
                 .sessionManager(sessionManager)
                 .build();
         if (!rakNetServer.bind()) {
-            throw new IllegalStateException("Unable to bind RakNet listener");
+            log.fatal("Unable to bind server to {}:{}!", configuration.getNetwork().getAddress(), configuration.getNetwork().getPort());
         }
         listeners.add(rakNetServer);
 
@@ -587,6 +593,13 @@ public class NukkitServer implements Server {
         return sessionManager.allPlayers();
     }
 
+    @Nonnull
+    public Optional<Player> getPlayer(@Nonnull UUID uuid) {
+        return Optional.ofNullable(sessionManager.getPlayer(uuid));
+    }
+
+    @Nonnull
+    @Override
     public Optional<Player> getPlayer(@Nonnull String name) {
         return Optional.ofNullable(sessionManager.getPlayer(name));
     }
@@ -731,7 +744,6 @@ public class NukkitServer implements Server {
                 }
                 locale = newLocale;
             }
-            localeManager.loadDefaultLocale(locale);
             log.info("{} selected", locale.getDisplayName(locale));
 
             InputStream advancedConf = NukkitServer.class.getClassLoader().getResourceAsStream("lang/nukkit/" + locale.toString() + ".yml");
