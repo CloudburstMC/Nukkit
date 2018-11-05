@@ -25,6 +25,7 @@ public class Skin {
     public static final String GEOMETRY_CUSTOM_SLIM = "geometry.humanoid.customSlim";
 
     private static final byte[] EMPTY = new byte[0];
+    private static final byte[] EMPTY_SKIN = new byte[SINGLE_SKIN_SIZE];
 
     private String skinId = "Steve";
     private byte[] skinData = new byte[SINGLE_SKIN_SIZE];
@@ -32,7 +33,7 @@ public class Skin {
     private byte[] capeData = new byte[0];
     private byte[] encodedCapeData = null;
     private String geometryName = GEOMETRY_CUSTOM;
-    private String geometryData = "";
+    private String geometryData = null;
     private byte[] encodedGeometryData = null;
 
     public boolean isValid() {
@@ -48,7 +49,7 @@ public class Skin {
     public byte[] getSkinData() {
         if (skinData == null) {
             if (encodedSkinData == null) {
-                return EMPTY;
+                return EMPTY_SKIN;
             }
             skinData = Base64.getDecoder().decode(encodedSkinData);
         }
@@ -58,7 +59,7 @@ public class Skin {
     public byte[] getEncodedSkinData() {
         if (encodedSkinData == null) {
             if (skinData == null) {
-                return EMPTY;
+                return EMPTY_SKIN;
             }
             encodedSkinData = Base64.getEncoder().encode(skinData);
         }
@@ -112,7 +113,7 @@ public class Skin {
     public byte[] getCapeData() {
         if (capeData == null) {
             if (encodedCapeData == null) {
-                return EMPTY;
+                return EMPTY_SKIN;
             }
             capeData = Base64.getDecoder().decode(encodedCapeData);
         }
@@ -122,7 +123,7 @@ public class Skin {
     public byte[] getEncodedCapeData() {
         if (encodedCapeData == null) {
             if (capeData == null) {
-                return EMPTY;
+                return EMPTY_SKIN;
             }
             encodedCapeData = Base64.getEncoder().encode(capeData);
         }
