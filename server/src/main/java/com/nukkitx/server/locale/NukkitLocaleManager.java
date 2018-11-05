@@ -134,7 +134,7 @@ public class NukkitLocaleManager implements LocaleManager {
     }
 
     public ImmutableList<Locale> availableLocales() {
-        return ImmutableList.copyOf(locales.keySet());
+        return ImmutableList.copyOf(availableLocales);
     }
 
     public boolean isFallbackAvailable() {

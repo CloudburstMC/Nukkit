@@ -249,6 +249,8 @@ public class NukkitServer implements Server {
             throw new IllegalStateException("Selected and fallback Locale could not be loaded");
         }
 
+        localeManager.loadDefaultLocale(Locale.getDefault());
+
         /*if (NativeCodeFactory.cipher.load()) {
             log.debug("Loaded native cipher");
         }
