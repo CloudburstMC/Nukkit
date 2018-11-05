@@ -249,19 +249,19 @@ public class BinaryStream {
 
     public void putSkin(Skin skin) {
         this.putString(skin.getSkinId());
-        this.putByteArray(skin.getEncodedSkinData());
-        this.putByteArray(skin.getEncodedCapeData());
+        this.putByteArray(skin.getSkinData());
+        this.putByteArray(skin.getCapeData());
         this.putString(skin.getGeometryName());
-        this.putByteArray(skin.getEncodedGeometryData());
+        this.putString(skin.getGeometryData());
     }
 
     public Skin getSkin() {
         Skin skin = new Skin();
         skin.setSkinId(this.getString());
-        skin.setEncodedSkinData(this.getByteArray());
-        skin.setEncodedCapeData(this.getByteArray());
+        skin.setSkinData(this.getByteArray());
+        skin.setCapeData(this.getByteArray());
         skin.setGeometryName(this.getString());
-        skin.setEncodedGeometryData(this.getByteArray());
+        skin.setGeometryData(this.getString());
         return skin;
     }
 

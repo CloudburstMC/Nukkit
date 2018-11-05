@@ -24,10 +24,10 @@ public class PlayerSkinPacket extends DataPacket {
         skin.setSkinId(getString());
         newSkinName = getString();
         oldSkinName = getString();
-        skin.setEncodedSkinData(getByteArray());
-        skin.setEncodedCapeData(getByteArray());
+        skin.setSkinData(getByteArray());
+        skin.setCapeData(getByteArray());
         skin.setGeometryName(getString());
-        skin.setEncodedGeometryData(getByteArray());
+        skin.setGeometryData(getString());
         premium = getBoolean();
     }
 
@@ -38,10 +38,10 @@ public class PlayerSkinPacket extends DataPacket {
         putString(skin.getGeometryName());
         putString(newSkinName);
         putString(oldSkinName);
-        putByteArray(skin.getEncodedSkinData());
-        putByteArray(skin.getEncodedCapeData());
+        putByteArray(skin.getSkinData());
+        putByteArray(skin.getCapeData());
         putString(skin.getGeometryName());
-        putByteArray(skin.getEncodedGeometryData());
+        putString(skin.getGeometryData());
         putBoolean(premium);
     }
 }
