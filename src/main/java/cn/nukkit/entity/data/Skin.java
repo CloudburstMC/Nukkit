@@ -25,8 +25,8 @@ public class Skin {
     private static final byte[] EMPTY = new byte[0];
 
     private String skinId = "Steve";
-    private byte[] skinData = new byte[SINGLE_SKIN_SIZE];
-    private byte[] capeData = new byte[0];
+    private byte[] skinData = null;
+    private byte[] capeData = null;
     private String geometryName = GEOMETRY_CUSTOM;
     private String geometryData = null;
 
@@ -63,21 +63,19 @@ public class Skin {
         setSkinData(parseBufferedImage(image));
     }
 
-    public void setSkinData(byte[] data) {
-        if (data == null || !isValidSkin(data.length)) {
+    public void setSkinData(byte[] skinData) {
+        if (skinData == null || !isValidSkin(skinData.length)) {
             throw new IllegalArgumentException("Invalid skin");
         }
-        if (!Arrays.equals(skinData, this.skinData)) {
-            this.skinData = data;
-        }
+        this.skinData = skinData;
     }
 
-    public void setGeometryName(String model) {
-        if (model == null || model.trim().isEmpty()) {
-            model = GEOMETRY_CUSTOM;
+    public void setGeometryName(String geometryName) {
+        if (geometryName == null || geometryName.trim().isEmpty()) {
+            geometryName = GEOMETRY_CUSTOM;
         }
 
-        this.geometryName = model;
+        this.geometryName = geometryName;
     }
 
     public byte[] getCapeData() {
@@ -93,9 +91,7 @@ public class Skin {
 
     public void setCapeData(byte[] capeData) {
         Preconditions.checkNotNull(capeData, "capeData");
-        if (!Arrays.equals(capeData, this.capeData)) {
-            this.capeData = capeData;
-        }
+        this.capeData = capeData;
     }
 
     public String getGeometryData() {
