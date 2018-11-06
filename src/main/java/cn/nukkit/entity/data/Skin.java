@@ -22,7 +22,7 @@ public class Skin {
     public static final String GEOMETRY_CUSTOM = "geometry.humanoid.custom";
     public static final String GEOMETRY_CUSTOM_SLIM = "geometry.humanoid.customSlim";
 
-    private static final byte[] EMPTY = new byte[0];
+    private static final byte[] EMPTY = new byte[SINGLE_SKIN_SIZE];
 
     private String skinId = "Steve";
     private byte[] skinData = null;
