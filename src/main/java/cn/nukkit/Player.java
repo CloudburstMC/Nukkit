@@ -1519,7 +1519,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         if (inventory.getBoots() != null) {
                             Enchantment[] enchantments = inventory.getBoots().getEnchantments();
                             for (Enchantment enchantment : enchantments) {
-                                if (enchantment.getId() == Enchantment.ID_FROST_WALKER && this.y >= 1 && this.y < 257) {
+                                if (enchantment.getId() == Enchantment.ID_FROST_WALKER && this.y >= 1 && this.y <= 255) {
                                     int lvl = 2 + enchantment.getLevel();
                                     int floorX = this.getFloorX();
                                     int coordX1 = floorX - lvl;
