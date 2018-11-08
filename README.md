@@ -1,7 +1,8 @@
 ![nukkit](.github/images/banner.png)
 
+[![Crowdin](https://d322cqt584bo4o.cloudfront.net/nukkit/localized.svg)](https://translate.nukkitx.com)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
-[![Build Status](https://ci.potestas.xyz/job/NukkitX/job/master/badge/icon)](https://ci.potestas.xyz/job/NukkitX/job/master/)
+[![Build Status](https://ci.nukkitx.com/job/NukkitX/job/Nukkit/job/rewrite/badge/icon)](https://ci.nukkitx.com/job/NukkitX/job/Nukkit/job/rewrite/)
 [![Discord](https://img.shields.io/discord/393465748535640064.svg)](https://discord.gg/5PzMkyK)
 
 Introduction
