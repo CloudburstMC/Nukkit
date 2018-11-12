@@ -6,6 +6,8 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * author: Angelic47
  * Nukkit Project
