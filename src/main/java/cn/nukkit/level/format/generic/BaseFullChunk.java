@@ -404,7 +404,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     }
 
     @Override
-    public synchronized boolean unload(boolean save, boolean safe) {
+    public boolean unload(boolean save, boolean safe) {
         LevelProvider level = this.getProvider();
         if (level == null) {
             return true;

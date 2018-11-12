@@ -1,10 +1,13 @@
 package cn.nukkit.entity.item;
 
+import cn.nukkit.Server;
 import cn.nukkit.block.BlockTNT;
 import cn.nukkit.entity.EntityExplosive;
+import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.item.ItemMinecartTNT;
 import cn.nukkit.level.Explosion;
+import cn.nukkit.level.GameRule;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.MinecartType;
@@ -20,25 +23,66 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
 
     public static final int NETWORK_ID = 97; //wtf?
     private int fuse;
-    private boolean activated;
+    private boolean activated = false;
 
     public EntityMinecartTNT(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
-        super.setDisplayBlock(new BlockTNT());
+        super.setDisplayBlock(new BlockTNT(), false);
+    }
+
+    @Override
+    public boolean isRideable() {
+        return false;
     }
 
     @Override
     public void initEntity() {
         super.initEntity();
 
-        this.fuse = namedTag.getInt("TNTFuse");
+        if (namedTag.contains("TNTFuse")) {
+            fuse = namedTag.getByte("TNTFuse");
+        } else {
+            fuse = 80;
+        }
+
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_CHARGED, false);
+        this.setDataProperty(new IntEntityData(DATA_FUSE_LENGTH, fuse));
     }
 
     @Override
-    public void activate(int i, int j, int k, boolean flag) {
-        // TODO: Find out why minecart doesnt have a right TNT fuse length
-        // Could be implemented in the future!
+    public boolean onUpdate(int currentTick) {
+        this.timing.startTiming();
+
+        // Todo: Check why the TNT doesn't want to tick
+        if (activated || fuse < 80) {
+            int tickDiff = currentTick - lastUpdate;
+
+            lastUpdate = currentTick;
+
+            if (fuse % 5 == 0) {
+                setDataProperty(new IntEntityData(DATA_FUSE_LENGTH, fuse));
+            }
+
+            fuse -= tickDiff;
+
+            if (isAlive() && fuse <= 0) {
+                if (level.getGameRules().getBoolean(GameRule.TNT_EXPLODES)) {
+                    explode(new Random().nextInt(5));
+                }
+                kill();
+            }
+
+            Server.getInstance().getLogger().info("Debug:" + fuse);
+        }
+
+        this.timing.stopTiming();
+
+        return super.onUpdate(currentTick);
+    }
+
+    @Override
+    public void activate(int x, int y, int z, boolean flag) {
+
     }
 
     @Override
