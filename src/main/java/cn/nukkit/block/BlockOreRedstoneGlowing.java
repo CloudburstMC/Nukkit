@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 
 //和pm源码有点出入，这里参考了wiki
@@ -26,6 +28,11 @@ public class BlockOreRedstoneGlowing extends BlockOreRedstone {
     @Override
     public int getLightLevel() {
         return 9;
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(new BlockOreRedstone());
     }
 
     @Override

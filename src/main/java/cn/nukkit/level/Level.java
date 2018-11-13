@@ -2002,8 +2002,10 @@ public class Level implements ChunkManager, Metadatable {
 
             this.server.getPluginManager().callEvent(ev);
             if (!ev.isCancelled()) {
-                player.hasInteracted.set(true);
-                server.getScheduler().scheduleDelayedTask(() -> player.hasInteracted.compareAndSet(true, false), 4);
+                if (getBlockEntity(target) == null) {
+                    player.hasInteracted.set(true);
+                    server.getScheduler().scheduleDelayedTask(() -> player.hasInteracted.compareAndSet(true, false), 4);
+                }
                 target.onUpdate(BLOCK_UPDATE_TOUCH);
                 if ((!player.isSneaking() || player.getInventory().getItemInHand().isNull()) && target.canBeActivated() && target.onActivate(item, player)) {
                     if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {

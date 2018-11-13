@@ -23,6 +23,7 @@ public class EntityElderGuardian extends EntityMob {
     protected void initEntity() {
         super.initEntity();
         this.setMaxHealth(80);
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_ELDER, true);
     }
 
     @Override
@@ -37,6 +38,6 @@ public class EntityElderGuardian extends EntityMob {
 
     @Override
     public String getName() {
-        return "ElderGuardian";
+        return "Elder Guardian";
     }
 }

@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -39,10 +40,15 @@ public class BlockIronBars extends BlockThin {
     }
 
     @Override
+    public Item toItem() {
+        return new ItemBlock(this, 0);
+    }
+
+    @Override
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
-                    toItem()
+                    this.toItem()
             };
         } else {
             return new Item[0];
