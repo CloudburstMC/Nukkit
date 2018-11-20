@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 
 /**
  * Created by Pub4Game on 26.12.2015.
@@ -83,5 +84,10 @@ public class BlockEndPortalFrame extends BlockTransparentMeta {
     @Override
     public boolean canHarvestWithHand() {
         return false;
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(this, 0);
     }
 }

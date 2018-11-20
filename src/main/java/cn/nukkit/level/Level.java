@@ -1983,7 +1983,7 @@ public class Level implements ChunkManager, Metadatable {
             return null;
         }
 
-        if (player != null && !player.hasInteracted.get()) {
+        if (player != null) {
             PlayerInteractEvent ev = new PlayerInteractEvent(player, item, target, face,
                     target.getId() == 0 ? Action.RIGHT_CLICK_AIR : Action.RIGHT_CLICK_BLOCK);
 
@@ -2002,8 +2002,6 @@ public class Level implements ChunkManager, Metadatable {
 
             this.server.getPluginManager().callEvent(ev);
             if (!ev.isCancelled()) {
-                player.hasInteracted.set(true);
-                server.getScheduler().scheduleDelayedTask(() -> player.hasInteracted.compareAndSet(true, false), 4);
                 target.onUpdate(BLOCK_UPDATE_TOUCH);
                 if ((!player.isSneaking() || player.getInventory().getItemInHand().isNull()) && target.canBeActivated() && target.onActivate(item, player)) {
                     if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
@@ -2021,7 +2019,6 @@ public class Level implements ChunkManager, Metadatable {
             } else {
                 return null;
             }
-
         } else if (target.canBeActivated() && target.onActivate(item, player)) {
             if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
                 item = new ItemBlock(new BlockAir(), 0, 0);
