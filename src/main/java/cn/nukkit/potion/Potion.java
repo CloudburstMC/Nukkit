@@ -52,6 +52,12 @@ public class Potion implements Cloneable {
     public static final int STRENGTH_II = 33;
     public static final int WEAKNESS = 34;
     public static final int WEAKNESS_LONG = 35;
+    public static final int WITHER_II = 36;
+    public static final int TURTLE_MASTER = 37;
+    public static final int TURTLE_MASTER_LONG = 38;
+    public static final int TURTLE_MASTER_II = 39;
+    public static final int SLOW_FALLING = 40;
+    public static final int SLOW_FALLING_LONG = 41;
 
     protected static Potion[] potions;
 
@@ -94,6 +100,12 @@ public class Potion implements Cloneable {
         potions[Potion.STRENGTH_II] = new Potion(Potion.STRENGTH_II, 2);
         potions[Potion.WEAKNESS] = new Potion(Potion.WEAKNESS);
         potions[Potion.WEAKNESS_LONG] = new Potion(Potion.WEAKNESS_LONG);
+        potions[Potion.WITHER_II] = new Potion(Potion.WITHER_II, 2);
+        potions[Potion.TURTLE_MASTER] = new Potion(Potion.TURTLE_MASTER);
+        potions[Potion.TURTLE_MASTER_LONG] = new Potion(Potion.TURTLE_MASTER_LONG);
+        potions[Potion.TURTLE_MASTER_II] = new Potion(Potion.TURTLE_MASTER_II, 2);
+        potions[Potion.SLOW_FALLING] = new Potion(Potion.SLOW_FALLING);
+        potions[Potion.SLOW_FALLING_LONG] = new Potion(Potion.SLOW_FALLING_LONG);
     }
 
     public static Potion getPotion(int id) {
@@ -273,6 +285,9 @@ public class Potion implements Cloneable {
             case WEAKNESS_LONG:
                 effect = Effect.getEffect(Effect.WEAKNESS);
                 break;
+            case WITHER_II:
+                effect = Effect.getEffect(Effect.WITHER);
+                break;
             default:
                 return null;
         }
@@ -298,6 +313,8 @@ public class Potion implements Cloneable {
             case POISON_II:
             case REGENERATION_II:
             case STRENGTH_II:
+            case WITHER_II:
+            case TURTLE_MASTER_II:
                 return 2;
             default:
                 return 1;
@@ -391,6 +408,8 @@ public class Potion implements Cloneable {
                     return 67;
                 case WEAKNESS_LONG:
                     return 180;
+                case WITHER_II:
+                    return 30;
                 default:
                     return 0;
             }
@@ -468,6 +487,8 @@ public class Potion implements Cloneable {
                     return 90;
                 case WEAKNESS_LONG:
                     return 240;
+                case WITHER_II:
+                    return 30;
                 default:
                     return 0;
             }

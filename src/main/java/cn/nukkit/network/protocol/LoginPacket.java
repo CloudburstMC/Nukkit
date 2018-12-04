@@ -33,6 +33,10 @@ public class LoginPacket extends DataPacket {
     @Override
     public void decode() {
         this.protocol = this.getInt();
+        if (protocol == 0) {
+            setOffset(getOffset() + 2);
+            this.protocol = getInt();
+        }
         this.setBuffer(this.getByteArray(), 0);
         decodeChainData();
         decodeSkinData();
@@ -84,7 +88,7 @@ public class LoginPacket extends DataPacket {
         }
 
         if (skinToken.has("SkinGeometry")) {
-            skin.setGeometryData(skinToken.get("SkinGeometry").getAsString());
+            skin.setGeometryData(new String(Base64.getDecoder().decode(skinToken.get("SkinGeometry").getAsString()), StandardCharsets.UTF_8));
         }
     }
 

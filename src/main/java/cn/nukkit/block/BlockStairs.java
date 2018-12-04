@@ -30,11 +30,6 @@ public abstract class BlockStairs extends BlockTransparentMeta {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
-        return this.place(item, block, target, face, fx, fy, fz, null);
-    }
-
-    @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         int[] faces = new int[]{2, 1, 3, 0};
         this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
