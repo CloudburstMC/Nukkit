@@ -63,8 +63,8 @@ public abstract class Enchantment implements Cloneable {
     public static final int ID_BINDING_CURSE = 27;
     public static final int ID_VANISHING_CURSE = 28;
     public static final int ID_TRIDENT_IMPALING = 29;
-    public static final int ID_TRIDENT_LOYALTY = 30;
-    public static final int ID_TRIDENT_RIPTIDE = 31;
+    public static final int ID_TRIDENT_RIPTIDE = 30;
+    public static final int ID_TRIDENT_LOYALTY = 31;
     public static final int ID_TRIDENT_CHANNELING = 32;
 
     public static void init() {
