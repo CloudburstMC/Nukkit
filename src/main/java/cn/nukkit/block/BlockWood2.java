@@ -9,6 +9,12 @@ public class BlockWood2 extends BlockWood {
     public static final int ACACIA = 0;
     public static final int DARK_OAK = 1;
 
+    private static final String[] NAMES = new String[]{
+            "Acacia Wood",
+            "Dark Oak Wood",
+            ""
+    };
+
     public BlockWood2() {
         this(0);
     }
@@ -24,13 +30,6 @@ public class BlockWood2 extends BlockWood {
 
     @Override
     public String getName() {
-        String[] names = new String[]{
-                "Acacia Wood",
-                "Dark Oak Wood",
-                ""
-        };
-
-        return names[this.getDamage() & 0x03];
+        return NAMES[this.getDamage() > 2 ? 0 : this.getDamage()];
     }
-
 }

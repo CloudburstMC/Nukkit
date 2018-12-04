@@ -261,7 +261,7 @@ public class BinaryStream {
         skin.setSkinData(this.getByteArray());
         skin.setCapeData(this.getByteArray());
         skin.setGeometryName(this.getString());
-        skin.setGeometryData(skin.getGeometryData());
+        skin.setGeometryData(this.getString());
         return skin;
     }
 

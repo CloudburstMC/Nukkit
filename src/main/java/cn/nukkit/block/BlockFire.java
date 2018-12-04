@@ -10,6 +10,7 @@ import cn.nukkit.event.entity.EntityCombustByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
@@ -285,5 +286,10 @@ public class BlockFire extends BlockFlowable {
     @Override
     protected AxisAlignedBB recalculateCollisionBoundingBox() {
         return this;
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(new BlockAir());
     }
 }
