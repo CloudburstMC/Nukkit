@@ -969,58 +969,39 @@ public class Level implements ChunkManager, Metadatable {
         }
         int packetIndex = 0;
         UpdateBlockPacket[] packets = new UpdateBlockPacket[size];
+        LongSet chunks = null;
         if (optimizeRebuilds) {
-            Map<Long, Boolean> chunks = new HashMap<>();
-            for (Vector3 b : blocks) {
-                if (b == null) {
-                    continue;
-                }
-                boolean first = false;
+            chunks = new LongOpenHashSet();
+        }
+        for (Vector3 b : blocks) {
+            if (b == null) {
+                continue;
+            }
+            boolean first = !optimizeRebuilds;
 
+            if (optimizeRebuilds) {
                 long index = Level.chunkHash((int) b.x >> 4, (int) b.z >> 4);
-                if (!chunks.containsKey(index)) {
-                    chunks.put(index, true);
+                if (!chunks.contains(index)) {
+                    chunks.add(index);
                     first = true;
                 }
-                UpdateBlockPacket updateBlockPacket = new UpdateBlockPacket();
-                if (b instanceof Block) {
-                    updateBlockPacket.x = (int) ((Block) b).x;
-                    updateBlockPacket.y = (int) ((Block) b).y;
-                    updateBlockPacket.z = (int) ((Block) b).z;
-                    updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(((Block) b).getId(), ((Block) b).getDamage());
-                    updateBlockPacket.flags = first ? flags : UpdateBlockPacket.FLAG_NONE;
-                } else {
-                    int fullBlock = this.getFullBlock((int) b.x, (int) b.y, (int) b.z);
-                    updateBlockPacket.x = (int) b.x;
-                    updateBlockPacket.y = (int) b.y;
-                    updateBlockPacket.z = (int) b.z;
-                    updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(fullBlock);
-                    updateBlockPacket.flags = first ? flags : UpdateBlockPacket.FLAG_NONE;
-                }
-                packets[packetIndex++] = updateBlockPacket;
             }
-        } else {
-            for (Vector3 b : blocks) {
-                if (b == null) {
-                    continue;
-                }
-                UpdateBlockPacket updateBlockPacket = new UpdateBlockPacket();
+
+            UpdateBlockPacket updateBlockPacket = new UpdateBlockPacket();
+            updateBlockPacket.x = (int) b.x;
+            updateBlockPacket.y = (int) b.y;
+            updateBlockPacket.z = (int) b.z;
+            updateBlockPacket.flags = first ? flags : UpdateBlockPacket.FLAG_NONE;
+            try {
                 if (b instanceof Block) {
-                    updateBlockPacket.x = (int) ((Block) b).x;
-                    updateBlockPacket.y = (int) ((Block) b).y;
-                    updateBlockPacket.z = (int) ((Block) b).z;
-                    updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(((Block) b).getId(), ((Block) b).getDamage());
-                    updateBlockPacket.flags = flags;
+                    updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(((Block) b).getFullId());
                 } else {
-                    int fullBlock = this.getFullBlock((int) b.x, (int) b.y, (int) b.z);
-                    updateBlockPacket.x = (int) b.x;
-                    updateBlockPacket.y = (int) b.y;
-                    updateBlockPacket.z = (int) b.z;
-                    updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(fullBlock);
-                    updateBlockPacket.flags = flags;
+                    updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(getFullBlock((int) b.x, (int) b.y, (int) b.z));
                 }
-                packets[packetIndex++] = updateBlockPacket;
+            } catch (NoSuchElementException e) {
+                throw new IllegalStateException("Unable to create BlockUpdatePacket at (" + b.x + ", " + b.y + ", " + b.z + ") in " + getName());
             }
+            packets[packetIndex++] = updateBlockPacket;
         }
         this.server.batchPackets(target, packets);
     }
@@ -1119,7 +1100,7 @@ public class Level implements ChunkManager, Metadatable {
                                 int fullId = chunk.getFullBlock(x, y + (Y << 4), z);
                                 int blockId = fullId >> 4;
                                 blockTest |= fullId;
-                                if (this.randomTickBlocks[blockId]) {
+                                if (Level.randomTickBlocks[blockId]) {
                                     Block block = Block.get(fullId, this, x, y + (Y << 4), z);
                                     block.onUpdate(BLOCK_UPDATE_RANDOM);
                                 }
