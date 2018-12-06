@@ -34,11 +34,6 @@ public class EntityBoat extends EntityVehicle {
     protected void initEntity() {
         super.initEntity();
 
-        this.dataProperties.putByte(DATA_WOOD_ID, this.namedTag.getByte("woodID"));
-        this.dataProperties.putFloat(DATA_BOUNDING_BOX_HEIGHT, this.getHeight());
-        this.dataProperties.putFloat(DATA_BOUNDING_BOX_WIDTH, this.getWidth());
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_HAS_COLLISION, true);
-
         this.setHealth(4);
         this.setMaxHealth(4);
     }
