@@ -35,6 +35,9 @@ public class EntityBoat extends EntityVehicle {
         super.initEntity();
 
         this.dataProperties.putByte(DATA_WOOD_ID, this.namedTag.getByte("woodID"));
+        this.dataProperties.putFloat(DATA_BOUNDING_BOX_HEIGHT, this.getHeight());
+        this.dataProperties.putFloat(DATA_BOUNDING_BOX_WIDTH, this.getWidth());
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_HAS_COLLISION, true);
 
         this.setHealth(4);
         this.setMaxHealth(4);
@@ -42,7 +45,7 @@ public class EntityBoat extends EntityVehicle {
 
     @Override
     public float getHeight() {
-        return 0.7f;
+        return 0.5f;
     }
 
     @Override
@@ -63,6 +66,11 @@ public class EntityBoat extends EntityVehicle {
     @Override
     public float getBaseOffset() {
         return 0.35F;
+    }
+
+    @Override
+    public float getMountedYOffset() {
+        return 0.71f;
     }
 
     @Override
