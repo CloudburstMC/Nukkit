@@ -34,6 +34,8 @@ public class EntityBoat extends EntityVehicle {
     protected void initEntity() {
         super.initEntity();
 
+        this.dataProperties.putByte(DATA_WOOD_ID, this.namedTag.getByte("woodID"));
+    
         this.setHealth(4);
         this.setMaxHealth(4);
     }
