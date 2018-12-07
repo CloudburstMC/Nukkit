@@ -111,10 +111,10 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(this.hasLockedBehaviorPack);
         this.putBoolean(this.hasLockedResourcePack);
         this.putBoolean(this.isFromLockedWorldTemplate);
+        this.putBoolean(this.isUsingMsaGamertagsOnly);
         this.putString(this.levelId);
         this.putString(this.worldName);
         this.putString(this.premiumWorldTemplateId);
-        this.putBoolean(this.isUsingMsaGamertagsOnly);
         this.putBoolean(this.isTrial);
         this.putLLong(this.currentTick);
         this.putVarInt(this.enchantmentSeed);
