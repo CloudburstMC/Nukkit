@@ -10,6 +10,10 @@ public class BlockSponge extends BlockSolidMeta {
 
     public static final int DRY = 0;
     public static final int WET = 1;
+    private static final String[] NAMES = new String[]{
+            "Sponge",
+            "Wet sponge"
+    };
 
     public BlockSponge() {
         this(0);
@@ -36,11 +40,7 @@ public class BlockSponge extends BlockSolidMeta {
 
     @Override
     public String getName() {
-        String[] names = new String[]{
-                "Sponge",
-                "Wet sponge"
-        };
-        return names[this.getDamage() & 0x07];
+        return NAMES[this.getDamage() & 0b1];
     }
 
     @Override

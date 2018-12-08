@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.inventory.AnvilInventory;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
@@ -12,6 +13,21 @@ import cn.nukkit.utils.BlockColor;
  * Created by Pub4Game on 27.12.2015.
  */
 public class BlockAnvil extends BlockFallable {
+
+    private static final String[] NAMES = new String[]{
+            "Anvil",
+            "Anvil",
+            "Anvil",
+            "Anvil",
+            "Slighty Damaged Anvil",
+            "Slighty Damaged Anvil",
+            "Slighty Damaged Anvil",
+            "Slighty Damaged Anvil",
+            "Very Damaged Anvil",
+            "Very Damaged Anvil",
+            "Very Damaged Anvil",
+            "Very Damaged Anvil"
+    };
 
     private int meta;
 
@@ -70,21 +86,7 @@ public class BlockAnvil extends BlockFallable {
 
     @Override
     public String getName() {
-        String[] names = new String[]{
-                "Anvil",
-                "Anvil",
-                "Anvil",
-                "Anvil",
-                "Slighty Damaged Anvil",
-                "Slighty Damaged Anvil",
-                "Slighty Damaged Anvil",
-                "Slighty Damaged Anvil",
-                "Very Damaged Anvil",
-                "Very Damaged Anvil",
-                "Very Damaged Anvil",
-                "Very Damaged Anvil"
-        };
-        return names[this.getDamage()];
+        return NAMES[this.getDamage() > 11 ? 0 : this.getDamage()];
     }
 
     @Override
@@ -114,20 +116,23 @@ public class BlockAnvil extends BlockFallable {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
+    public Item toItem() {
         int damage = this.getDamage();
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            Item drop = this.toItem();
+        if (damage >= 4 && damage <= 7) {
+            return new ItemBlock(this, this.getDamage() & 0x04);
+        } else if (damage >= 8 && damage <= 11) {
+            return new ItemBlock(this, this.getDamage() & 0x08);
+        } else {
+            return new ItemBlock(this);
+        }
+    }
 
-            if (damage >= 4 && damage <= 7) { //Slightly Damaged Anvil
-                drop.setDamage(drop.getDamage() & 0x04);
-                return new Item[]{drop};
-            } else if (damage >= 8 && damage <= 11) { //Very Damaged Anvil
-                drop.setDamage(drop.getDamage() & 0x08);
-                return new Item[]{drop};
-            } else { //Normal Anvil
-                return new Item[]{drop};
-            }
+    @Override
+    public Item[] getDrops(Item item) {
+        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+            return new Item[]{
+                    this.toItem()
+            };
         }
         return new Item[0];
     }

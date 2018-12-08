@@ -5,6 +5,7 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -203,5 +204,10 @@ public class BlockChest extends BlockTransparentMeta {
         }
 
         return super.getComparatorInputOverride();
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(this, 0);
     }
 }

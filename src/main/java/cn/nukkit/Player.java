@@ -81,7 +81,6 @@ import java.net.InetSocketAddress;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -236,8 +235,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     private AsyncTask preLoginEventTask = null;
     protected boolean shouldLogin = false;
-
-    public AtomicBoolean hasInteracted = new AtomicBoolean();
 
     public int getStartActionTick() {
         return startAction;
@@ -4542,11 +4539,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             spawnPosition.y = spawn.getFloorY();
             spawnPosition.z = spawn.getFloorZ();
             this.dataPacket(spawnPosition);
-
-            int dimensionId = level.getDimension();
-            if (oldLevel.getDimension() != dimensionId) {
-                this.setDimension(dimensionId);
-            }
 
             // Remove old chunks
             for (long index : new ArrayList<>(this.usedChunks.keySet())) {

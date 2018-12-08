@@ -174,7 +174,7 @@ public class Level implements ChunkManager, Metadatable {
     private Vector3 mutableBlock;
 
     // Avoid OOM, gc'd references result in whole chunk being sent (possibly higher cpu)
-    private Long2ObjectOpenHashMap<SoftReference<Map<Character, Object>>> changedBlocks = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectOpenHashMap<SoftReference<Map<Character, Object>>> changedBlocks = new Long2ObjectOpenHashMap<>();
     // Storing the vector is redundant
     private final Object changeBlocksPresent = new Object();
     // Storing extra blocks past 512 is redundant
@@ -784,35 +784,37 @@ public class Level implements ChunkManager, Metadatable {
         this.tickChunks();
         this.timings.tickChunks.stopTiming();
 
-        if (!this.changedBlocks.isEmpty()) {
-            if (!this.players.isEmpty()) {
-                ObjectIterator<Long2ObjectMap.Entry<SoftReference<Map<Character, Object>>>> iter = changedBlocks.long2ObjectEntrySet().fastIterator();
-                while (iter.hasNext()) {
-                    Long2ObjectMap.Entry<SoftReference<Map<Character, Object>>> entry = iter.next();
-                    long index = entry.getKey();
-                    Map<Character, Object> blocks = entry.getValue().get();
-                    int chunkX = Level.getHashX(index);
-                    int chunkZ = Level.getHashZ(index);
-                    if (blocks == null || blocks.size() > MAX_BLOCK_CACHE) {
-                        FullChunk chunk = this.getChunk(chunkX, chunkZ);
-                        for (Player p : this.getChunkPlayers(chunkX, chunkZ).values()) {
-                            p.onChunkChanged(chunk);
+        synchronized (changedBlocks) {
+            if (!this.changedBlocks.isEmpty()) {
+                if (!this.players.isEmpty()) {
+                    ObjectIterator<Long2ObjectMap.Entry<SoftReference<Map<Character, Object>>>> iter = changedBlocks.long2ObjectEntrySet().fastIterator();
+                    while (iter.hasNext()) {
+                        Long2ObjectMap.Entry<SoftReference<Map<Character, Object>>> entry = iter.next();
+                        long index = entry.getKey();
+                        Map<Character, Object> blocks = entry.getValue().get();
+                        int chunkX = Level.getHashX(index);
+                        int chunkZ = Level.getHashZ(index);
+                        if (blocks == null || blocks.size() > MAX_BLOCK_CACHE) {
+                            FullChunk chunk = this.getChunk(chunkX, chunkZ);
+                            for (Player p : this.getChunkPlayers(chunkX, chunkZ).values()) {
+                                p.onChunkChanged(chunk);
+                            }
+                        } else {
+                            Collection<Player> toSend = this.getChunkPlayers(chunkX, chunkZ).values();
+                            Player[] playerArray = toSend.toArray(new Player[0]);
+                            Vector3[] blocksArray = new Vector3[blocks.size()];
+                            int i = 0;
+                            for (char blockHash : blocks.keySet()) {
+                                Vector3 hash = getBlockXYZ(index, blockHash);
+                                blocksArray[i++] = hash;
+                            }
+                            this.sendBlocks(playerArray, blocksArray, UpdateBlockPacket.FLAG_ALL);
                         }
-                    } else {
-                        Collection<Player> toSend = this.getChunkPlayers(chunkX, chunkZ).values();
-                        Player[] playerArray = toSend.toArray(new Player[0]);
-                        Vector3[] blocksArray = new Vector3[blocks.size()];
-                        int i = 0;
-                        for (char blockHash : blocks.keySet()) {
-                            Vector3 hash = getBlockXYZ(index, blockHash);
-                            blocksArray[i++] = hash;
-                        }
-                        this.sendBlocks(playerArray, blocksArray, UpdateBlockPacket.FLAG_ALL);
                     }
                 }
-            }
 
-            this.changedBlocks.clear();
+                this.changedBlocks.clear();
+            }
         }
 
         this.processChunkRequest();
@@ -967,58 +969,39 @@ public class Level implements ChunkManager, Metadatable {
         }
         int packetIndex = 0;
         UpdateBlockPacket[] packets = new UpdateBlockPacket[size];
+        LongSet chunks = null;
         if (optimizeRebuilds) {
-            Map<Long, Boolean> chunks = new HashMap<>();
-            for (Vector3 b : blocks) {
-                if (b == null) {
-                    continue;
-                }
-                boolean first = false;
+            chunks = new LongOpenHashSet();
+        }
+        for (Vector3 b : blocks) {
+            if (b == null) {
+                continue;
+            }
+            boolean first = !optimizeRebuilds;
 
+            if (optimizeRebuilds) {
                 long index = Level.chunkHash((int) b.x >> 4, (int) b.z >> 4);
-                if (!chunks.containsKey(index)) {
-                    chunks.put(index, true);
+                if (!chunks.contains(index)) {
+                    chunks.add(index);
                     first = true;
                 }
-                UpdateBlockPacket updateBlockPacket = new UpdateBlockPacket();
-                if (b instanceof Block) {
-                    updateBlockPacket.x = (int) ((Block) b).x;
-                    updateBlockPacket.y = (int) ((Block) b).y;
-                    updateBlockPacket.z = (int) ((Block) b).z;
-                    updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(((Block) b).getId(), ((Block) b).getDamage());
-                    updateBlockPacket.flags = first ? flags : UpdateBlockPacket.FLAG_NONE;
-                } else {
-                    int fullBlock = this.getFullBlock((int) b.x, (int) b.y, (int) b.z);
-                    updateBlockPacket.x = (int) b.x;
-                    updateBlockPacket.y = (int) b.y;
-                    updateBlockPacket.z = (int) b.z;
-                    updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(fullBlock);
-                    updateBlockPacket.flags = first ? flags : UpdateBlockPacket.FLAG_NONE;
-                }
-                packets[packetIndex++] = updateBlockPacket;
             }
-        } else {
-            for (Vector3 b : blocks) {
-                if (b == null) {
-                    continue;
-                }
-                UpdateBlockPacket updateBlockPacket = new UpdateBlockPacket();
+
+            UpdateBlockPacket updateBlockPacket = new UpdateBlockPacket();
+            updateBlockPacket.x = (int) b.x;
+            updateBlockPacket.y = (int) b.y;
+            updateBlockPacket.z = (int) b.z;
+            updateBlockPacket.flags = first ? flags : UpdateBlockPacket.FLAG_NONE;
+            try {
                 if (b instanceof Block) {
-                    updateBlockPacket.x = (int) ((Block) b).x;
-                    updateBlockPacket.y = (int) ((Block) b).y;
-                    updateBlockPacket.z = (int) ((Block) b).z;
-                    updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(((Block) b).getId(), ((Block) b).getDamage());
-                    updateBlockPacket.flags = flags;
+                    updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(((Block) b).getFullId());
                 } else {
-                    int fullBlock = this.getFullBlock((int) b.x, (int) b.y, (int) b.z);
-                    updateBlockPacket.x = (int) b.x;
-                    updateBlockPacket.y = (int) b.y;
-                    updateBlockPacket.z = (int) b.z;
-                    updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(fullBlock);
-                    updateBlockPacket.flags = flags;
+                    updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(getFullBlock((int) b.x, (int) b.y, (int) b.z));
                 }
-                packets[packetIndex++] = updateBlockPacket;
+            } catch (NoSuchElementException e) {
+                throw new IllegalStateException("Unable to create BlockUpdatePacket at (" + b.x + ", " + b.y + ", " + b.z + ") in " + getName());
             }
+            packets[packetIndex++] = updateBlockPacket;
         }
         this.server.batchPackets(target, packets);
     }
@@ -1117,7 +1100,7 @@ public class Level implements ChunkManager, Metadatable {
                                 int fullId = chunk.getFullBlock(x, y + (Y << 4), z);
                                 int blockId = fullId >> 4;
                                 blockTest |= fullId;
-                                if (this.randomTickBlocks[blockId]) {
+                                if (Level.randomTickBlocks[blockId]) {
                                     Block block = Block.get(fullId, this, x, y + (Y << 4), z);
                                     block.onUpdate(BLOCK_UPDATE_RANDOM);
                                 }
@@ -1694,13 +1677,15 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     private void addBlockChange(long index, int x, int y, int z) {
-        SoftReference<Map<Character, Object>> current = changedBlocks.computeIfAbsent(index, k -> new SoftReference<>(new HashMap<>()));
-        Map<Character, Object> currentMap = current.get();
-        if (currentMap != changeBlocksFullMap && currentMap != null) {
-            if (currentMap.size() > MAX_BLOCK_CACHE) {
-                this.changedBlocks.put(index, new SoftReference<>(changeBlocksFullMap));
-            } else {
-                currentMap.put(Level.localBlockHash(x, y, z), changeBlocksPresent);
+        synchronized (changedBlocks) {
+            SoftReference<Map<Character, Object>> current = changedBlocks.computeIfAbsent(index, k -> new SoftReference<>(new HashMap<>()));
+            Map<Character, Object> currentMap = current.get();
+            if (currentMap != changeBlocksFullMap && currentMap != null) {
+                if (currentMap.size() > MAX_BLOCK_CACHE) {
+                    this.changedBlocks.put(index, new SoftReference<>(changeBlocksFullMap));
+                } else {
+                    currentMap.put(Level.localBlockHash(x, y, z), changeBlocksPresent);
+                }
             }
         }
     }
@@ -1983,7 +1968,7 @@ public class Level implements ChunkManager, Metadatable {
             return null;
         }
 
-        if (player != null && !player.hasInteracted.get()) {
+        if (player != null) {
             PlayerInteractEvent ev = new PlayerInteractEvent(player, item, target, face,
                     target.getId() == 0 ? Action.RIGHT_CLICK_AIR : Action.RIGHT_CLICK_BLOCK);
 
@@ -2002,8 +1987,6 @@ public class Level implements ChunkManager, Metadatable {
 
             this.server.getPluginManager().callEvent(ev);
             if (!ev.isCancelled()) {
-                player.hasInteracted.set(true);
-                server.getScheduler().scheduleDelayedTask(() -> player.hasInteracted.compareAndSet(true, false), 4);
                 target.onUpdate(BLOCK_UPDATE_TOUCH);
                 if ((!player.isSneaking() || player.getInventory().getItemInHand().isNull()) && target.canBeActivated() && target.onActivate(item, player)) {
                     if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
@@ -2021,7 +2004,6 @@ public class Level implements ChunkManager, Metadatable {
             } else {
                 return null;
             }
-
         } else if (target.canBeActivated() && target.onActivate(item, player)) {
             if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
                 item = new ItemBlock(new BlockAir(), 0, 0);
