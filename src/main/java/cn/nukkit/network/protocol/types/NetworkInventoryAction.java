@@ -19,6 +19,7 @@ public class NetworkInventoryAction {
     public static final int SOURCE_WORLD = 2; //drop/pickup item entity
     public static final int SOURCE_CREATIVE = 3;
     public static final int SOURCE_TODO = 99999;
+    public static final int SOURCE_CRAFT_SLOT = 100;
 
     /**
      * Fake window IDs for the SOURCE_TODO type (99999)
@@ -75,6 +76,7 @@ public class NetworkInventoryAction {
                 break;
             case SOURCE_CREATIVE:
                 break;
+            case SOURCE_CRAFT_SLOT:
             case SOURCE_TODO:
                 this.windowId = packet.getVarInt();
 
