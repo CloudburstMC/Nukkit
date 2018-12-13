@@ -30,8 +30,8 @@ public class NetworkInventoryAction {
      * <p>
      * Expect these to change in the future.
      */
-    public static final int SOURCE_TYPE_CRAFTING_EDIT_INGREDIENT = -2;
-
+    public static final int SOURCE_TYPE_CRAFTING_ADD_INGREDIENT = -2;
+    public static final int SOURCE_TYPE_CRAFTING_REMOVE_INGREDIENT = -3;
     public static final int SOURCE_TYPE_CRAFTING_RESULT = -4;
     public static final int SOURCE_TYPE_CRAFTING_USE_INGREDIENT = -5;
 
@@ -77,8 +77,6 @@ public class NetworkInventoryAction {
             case SOURCE_CREATIVE:
                 break;
             case SOURCE_CRAFT_SLOT:
-                windowId = packet.getVarInt();
-                break;
             case SOURCE_TODO:
                 this.windowId = packet.getVarInt();
 
@@ -110,10 +108,9 @@ public class NetworkInventoryAction {
                 break;
             case SOURCE_CREATIVE:
                 break;
+            case SOURCE_CRAFT_SLOT:
             case SOURCE_TODO:
                 packet.putVarInt(this.windowId);
-            case SOURCE_CRAFT_SLOT:
-                packet.putVarInt(SOURCE_TYPE_CRAFTING_EDIT_INGREDIENT);
                 break;
         }
 
@@ -162,22 +159,14 @@ public class NetworkInventoryAction {
 
                 return new CreativeInventoryAction(this.oldItem, this.newItem, type);
             case SOURCE_CRAFT_SLOT:
-                switch (this.windowId) {
-                    case SOURCE_TYPE_CRAFTING_EDIT_INGREDIENT:
-                        return new SlotChangeAction(player.getCraftingGrid(), this.inventorySlot, this.oldItem, this.newItem);
-                    case SOURCE_TYPE_CONTAINER_DROP_CONTENTS:
-                        window = player.getCraftingGrid();
-                        inventorySlot = window.first(this.oldItem, true);
-
-                        if (inventorySlot == -1) {
-                            return null;
-                        }
-
-                        return new SlotChangeAction(window, inventorySlot, this.oldItem, this.newItem);
-                }
             case SOURCE_TODO:
                 //These types need special handling.
                 switch (this.windowId) {
+                    case SOURCE_TYPE_CRAFTING_ADD_INGREDIENT:
+                    case SOURCE_TYPE_CRAFTING_REMOVE_INGREDIENT:
+                        return new SlotChangeAction(player.getCraftingGrid(), this.inventorySlot, this.oldItem, this.newItem);
+                    case SOURCE_TYPE_CONTAINER_DROP_CONTENTS:
+                        return new SlotChangeAction(player.getCraftingGrid(), this.inventorySlot, this.oldItem, this.newItem);
                     case SOURCE_TYPE_CRAFTING_RESULT:
                         return new CraftingTakeResultAction(this.oldItem, this.newItem);
                     case SOURCE_TYPE_CRAFTING_USE_INGREDIENT:

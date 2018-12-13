@@ -115,7 +115,7 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(this.isFromLockedWorldTemplate);
         this.putBoolean(this.isUsingMsaGamertagsOnly);
         this.putBoolean(this.isFromWorldTemplate);
-        this.putBoolean(this.isFromLockedWorldTemplate);
+        this.putBoolean(this.isWorldTemplateOptionLocked);
         this.putString(this.levelId);
         this.putString(this.worldName);
         this.putString(this.premiumWorldTemplateId);
