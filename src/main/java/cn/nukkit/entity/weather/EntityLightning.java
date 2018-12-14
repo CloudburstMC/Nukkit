@@ -100,8 +100,8 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
         this.entityBaseTick(tickDiff);
 
         if (this.state == 2) {
-            this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_THUNDER, 93, -1);
-            this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_EXPLODE, 93, -1);
+            this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_THUNDER);
+            this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_EXPLODE);
         }
 
         this.state--;

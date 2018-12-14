@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.StringJoiner;
 
 public class ListTag<T extends Tag> extends Tag {
 
@@ -54,7 +55,9 @@ public class ListTag<T extends Tag> extends Tag {
 
     @Override
     public String toString() {
-        return "ListTag " + this.getName() + " [" + list.size() + " entries of type " + Tag.getTagName(type) + "]";
+        StringJoiner joiner = new StringJoiner(",\n\t");
+        list.forEach(tag -> joiner.add(tag.toString()));
+        return "ListTag '" + this.getName() + "' (" + list.size() + " entries of type " + Tag.getTagName(type) + ") {\n\t" + joiner.toString() + "\n}";
     }
 
     public void print(String prefix, PrintStream out) {

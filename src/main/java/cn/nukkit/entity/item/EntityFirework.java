@@ -15,6 +15,7 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.LevelSoundEventPacketV1;
 import cn.nukkit.network.protocol.PlaySoundPacket;
 
 import java.util.Random;
@@ -113,7 +114,7 @@ public class EntityFirework extends Entity {
                 pk.event = EntityEventPacket.FIREWORK_EXPLOSION;
                 pk.eid = this.getId();
 
-                LevelSoundEventPacket pk2 = new LevelSoundEventPacket();
+                LevelSoundEventPacketV1 pk2 = new LevelSoundEventPacketV1();
                 pk2.sound = LevelSoundEventPacket.SOUND_LARGE_BLAST;
                 pk2.extraData = -1;
                 pk2.pitch = -1;
