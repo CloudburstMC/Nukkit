@@ -1,6 +1,6 @@
 package com.nukkitx.server.inventory.transaction;
 
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -10,7 +10,7 @@ public class InventoryMismatchTransaction extends SimpleTransaction {
     private static final Type type = Type.INVENTORY_MISMATCH;
 
     @Override
-    public void execute(PlayerSession session) {
+    public void execute(NukkitPlayerSession session) {
 
     }
 

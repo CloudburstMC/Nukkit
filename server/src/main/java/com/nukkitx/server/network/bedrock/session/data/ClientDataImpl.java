@@ -3,13 +3,14 @@ package com.nukkitx.server.network.bedrock.session.data;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nukkitx.api.util.data.DeviceOS;
+import com.nukkitx.protocol.bedrock.session.data.ClientData;
 import lombok.Value;
 
 import java.util.UUID;
 
 @Value
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ClientData {
+public class ClientDataImpl implements ClientData {
     @JsonProperty("TenantId")
     private final String tenantId;
     @JsonProperty("ADRole")
@@ -33,7 +34,7 @@ public class ClientData {
     @JsonProperty("GuiScale")
     private final int guiScale;
     @JsonProperty("IsEduMode")
-    private final boolean educationMode;
+    private final boolean eduMode;
     @JsonProperty("LanguageCode")
     private final String languageCode;
     @JsonProperty("PlatformOfflineId")

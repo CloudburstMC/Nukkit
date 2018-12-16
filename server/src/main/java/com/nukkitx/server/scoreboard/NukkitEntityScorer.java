@@ -2,7 +2,6 @@ package com.nukkitx.server.scoreboard;
 
 import com.nukkitx.api.entity.Entity;
 import com.nukkitx.api.scoreboard.EntityScorer;
-import com.nukkitx.server.network.bedrock.BedrockUtil;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 

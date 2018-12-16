@@ -1,7 +1,7 @@
 package com.nukkitx.server.inventory.transaction;
 
 import com.nukkitx.server.inventory.transaction.action.InventoryAction;
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -19,7 +19,7 @@ public class NormalTransaction extends SimpleTransaction {
     private static final Type type = Type.NORMAL;
 
     @Override
-    public void execute(PlayerSession session) {
+    public void execute(NukkitPlayerSession session) {
         for (InventoryAction action : getActions()) {
             action.execute(session);
         }

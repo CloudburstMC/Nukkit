@@ -6,12 +6,12 @@ import com.google.common.collect.ImmutableList;
 import com.nukkitx.api.entity.Entity;
 import com.nukkitx.api.entity.system.System;
 import com.nukkitx.api.util.BoundingBox;
+import com.nukkitx.protocol.bedrock.packet.MoveEntityAbsolutePacket;
+import com.nukkitx.protocol.bedrock.packet.SetEntityMotionPacket;
+import com.nukkitx.protocol.bedrock.session.BedrockSession;
 import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.bedrock.packet.MoveEntityAbsolutePacket;
-import com.nukkitx.server.network.bedrock.packet.SetEntityMotionPacket;
-import com.nukkitx.server.network.bedrock.session.BedrockSession;
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 import gnu.trove.iterator.TLongObjectIterator;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
@@ -72,15 +72,15 @@ public class LevelEntityManager {
         }
     }
 
-    public List<PlayerSession> getPlayers() {
+    public List<NukkitPlayerSession> getPlayers() {
         synchronized (entities) {
-            List<PlayerSession> sessions = new ArrayList<>();
+            List<NukkitPlayerSession> sessions = new ArrayList<>();
             entities.forEachValue(entity -> {
-                if (entity instanceof PlayerSession) {
-                    PlayerSession session = (PlayerSession) entity;
-                    BedrockSession mcpeSession = session.getMinecraftSession();
-                    if (mcpeSession != null && !mcpeSession.isClosed() && session.isSpawned()) {
-                        sessions.add((PlayerSession) entity);
+                if (entity instanceof NukkitPlayerSession) {
+                    NukkitPlayerSession session = (NukkitPlayerSession) entity;
+                    BedrockSession bedrockSession = session.getBedrockSession();
+                    if (bedrockSession != null && !bedrockSession.isClosed() && session.isSpawned()) {
+                        sessions.add((NukkitPlayerSession) entity);
                     }
                 }
                 return true;
@@ -185,7 +185,7 @@ public class LevelEntityManager {
                         MoveEntityAbsolutePacket moveEntity = new MoveEntityAbsolutePacket();
                         moveEntity.setRuntimeEntityId(entity.getEntityId());
                         moveEntity.setPosition(entity.getGamePosition());
-                        moveEntity.setRotation(entity.getRotation());
+                        moveEntity.setRotation(entity.getRotation().toVector3f());
                         moveEntity.setOnGround(entity.isOnGround());
                         level.getPacketManager().queuePacketForViewers(entity, moveEntity);
 
@@ -212,8 +212,8 @@ public class LevelEntityManager {
 
         // Update viewable entities if something changed
         if (entitiesChanged.compareAndSet(true, false)) {
-            List<PlayerSession> players = getPlayers();
-            players.forEach(PlayerSession::updateViewableEntities);
+            List<NukkitPlayerSession> players = getPlayers();
+            players.forEach(NukkitPlayerSession::updateViewableEntities);
         }
     }
 

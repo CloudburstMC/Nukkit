@@ -2,9 +2,9 @@ package com.nukkitx.server.block.entity.behavior;
 
 import com.nukkitx.api.inventory.FurnaceInventory.SlotType;
 import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.protocol.bedrock.packet.ContainerSetDataPacket;
 import com.nukkitx.server.block.entity.NukkitFurnaceBlockEntity;
 import com.nukkitx.server.inventory.NukkitFurnaceInventory;
-import com.nukkitx.server.network.bedrock.packet.ContainerSetDataPacket;
 import lombok.AllArgsConstructor;
 
 import java.util.Optional;

@@ -3,7 +3,7 @@ package com.nukkitx.server.event.server;
 import com.nukkitx.api.Player;
 import com.nukkitx.api.event.Cancellable;
 import com.nukkitx.api.event.server.ServerEvent;
-import com.nukkitx.server.network.bedrock.BedrockPacket;
+import com.nukkitx.protocol.bedrock.BedrockPacket;
 
 public class NetworkPacketReceiveEvent implements ServerEvent, Cancellable {
     private final BedrockPacket packet;

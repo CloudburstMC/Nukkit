@@ -3,8 +3,10 @@ package com.nukkitx.server.inventory;
 import com.google.common.base.Preconditions;
 import com.nukkitx.api.inventory.PlayerInventory;
 import com.nukkitx.api.item.ItemInstance;
-import com.nukkitx.server.network.bedrock.packet.MobEquipmentPacket;
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.protocol.bedrock.packet.MobEquipmentPacket;
+import com.nukkitx.server.block.BlockUtil;
+import com.nukkitx.server.item.ItemUtil;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -12,12 +14,12 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class NukkitPlayerInventory extends NukkitInventory implements PlayerInventory {
-    private final PlayerSession session;
+    private final NukkitPlayerSession session;
     private final int[] hotbarLinks = new int[9];
     private int heldHotbarSlot = -1;
     private AtomicReference<ItemInstance> cursorItem = new AtomicReference<>(null);
 
-    public NukkitPlayerInventory(PlayerSession session) {
+    public NukkitPlayerInventory(NukkitPlayerSession session) {
         super(NukkitInventoryType.PLAYER);
         this.session = session;
         getObservers().add(session);
@@ -25,7 +27,7 @@ public class NukkitPlayerInventory extends NukkitInventory implements PlayerInve
     }
 
     @Override
-    public PlayerSession getPlayer() {
+    public NukkitPlayerSession getPlayer() {
         return session;
     }
 
@@ -72,10 +74,10 @@ public class NukkitPlayerInventory extends NukkitInventory implements PlayerInve
         packet.setHotbarSlot((byte) slot);
         packet.setInventorySlot((byte) hotbarLinks[slot]);
         packet.setWindowId(type.getId());
-        packet.setItem(getItemInHand().orElse(null));
+        packet.setItem(ItemUtil.toNetwork(getItemInHand().orElse(BlockUtil.AIR)));
 
         if (sendToPlayer) {
-            session.getMinecraftSession().addToSendQueue(packet);
+            session.getBedrockSession().sendPacket(packet);
         }
         session.getLevel().getPacketManager().queuePacketForViewers(session, packet);
     }

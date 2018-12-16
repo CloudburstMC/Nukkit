@@ -14,7 +14,6 @@ import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface Player extends Session, CommandSender, Entity, Permissible {
 
@@ -25,9 +24,6 @@ public interface Player extends Session, CommandSender, Entity, Permissible {
 
     @Nonnull
     Optional<InetSocketAddress> getRemoteAddress();
-
-    @Nonnull
-    Optional<UUID> getOfflineUuid();
 
     int getExperienceLevel();
 

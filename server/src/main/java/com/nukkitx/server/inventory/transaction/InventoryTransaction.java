@@ -2,7 +2,7 @@ package com.nukkitx.server.inventory.transaction;
 
 
 import com.nukkitx.server.inventory.transaction.action.InventoryAction;
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 import io.netty.buffer.ByteBuf;
 
 import java.util.Collection;
@@ -23,7 +23,7 @@ public interface InventoryTransaction {
 
     boolean hasExecuted();*/
 
-    void execute(PlayerSession session);
+    void execute(NukkitPlayerSession session);
 
     Collection<InventoryAction> getActions();
 

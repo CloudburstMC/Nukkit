@@ -7,10 +7,9 @@ import com.nukkitx.api.entity.system.System;
 import com.nukkitx.api.entity.system.SystemRunner;
 import com.nukkitx.api.item.ItemInstance;
 import com.nukkitx.api.util.BoundingBox;
+import com.nukkitx.protocol.bedrock.packet.EntityEventPacket;
 import com.nukkitx.server.entity.BaseEntity;
-import com.nukkitx.server.entity.EntityEvent;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.bedrock.packet.EntityEventPacket;
 
 public class MergeItemsSystem implements SystemRunner {
     public static final System SYSTEM = System.builder()
@@ -51,7 +50,7 @@ public class MergeItemsSystem implements SystemRunner {
                     EntityEventPacket entityEvent = new EntityEventPacket();
                     entityEvent.setRuntimeEntityId(entity.getEntityId());
                     entityEvent.setData(newAmount);
-                    entityEvent.setEvent(EntityEvent.ITEM_ENTITY_MERGE);
+                    entityEvent.setEvent(EntityEventPacket.Event.MERGE_ITEMS);
 
                     ((NukkitLevel) entity.getLevel()).getPacketManager().queuePacketForViewers(entity, entityEvent);
                     // Remove entity.

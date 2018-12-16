@@ -9,8 +9,6 @@ import com.nukkitx.api.metadata.Metadata;
 import com.nukkitx.server.NukkitServer;
 import com.nukkitx.server.block.NukkitBlockStateBuilder;
 import com.nukkitx.server.metadata.MetadataSerializers;
-import com.nukkitx.server.network.bedrock.BedrockUtil;
-import com.nukkitx.server.network.util.VarInts;
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TIntIntHashMap;

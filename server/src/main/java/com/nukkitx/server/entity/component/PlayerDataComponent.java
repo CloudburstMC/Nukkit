@@ -7,18 +7,19 @@ import com.nukkitx.api.permission.CommandPermission;
 import com.nukkitx.api.permission.PlayerPermission;
 import com.nukkitx.api.util.GameMode;
 import com.nukkitx.api.util.Skin;
-import com.nukkitx.server.entity.Attribute;
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
-import com.nukkitx.server.network.bedrock.session.data.ClientData;
+import com.nukkitx.protocol.bedrock.data.Attribute;
+import com.nukkitx.protocol.bedrock.session.data.ClientData;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 import com.nukkitx.server.permission.NukkitAbilities;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerDataComponent implements PlayerData {
-    private final PlayerSession session;
+    private final NukkitPlayerSession session;
 
     private volatile boolean gamemodeTouched = false;
 
@@ -35,11 +36,11 @@ public class PlayerDataComponent implements PlayerData {
     private volatile float exhaustion = 0f;
     private volatile int experience = 0;
 
-    public PlayerDataComponent(PlayerSession session) {
+    public PlayerDataComponent(NukkitPlayerSession session) {
         this.session = session;
         abilities = new NukkitAbilities(session.getServer().getDefaultAbilities());
-        ClientData data = session.getMinecraftSession().getClientData();
-        skin = new Skin(data.getSkinId(), data.getSkinData(), data.getCapeData(), data.getSkinGeometryName(), data.getSkinGeometry());
+        ClientData data = session.getBedrockSession().getClientData();
+        skin = new Skin(data.getSkinId(), data.getSkinData(), data.getCapeData(), data.getSkinGeometryName(), new String(data.getSkinGeometry(), StandardCharsets.UTF_8));
     }
 
     public boolean isSprinting() {
@@ -196,10 +197,10 @@ public class PlayerDataComponent implements PlayerData {
 
     public List<Attribute> getAttributes() {
         List<Attribute> list = new ArrayList<>();
-        list.add(new Attribute("minecraft:movement", getEffectiveSpeed(), 0, 0.5f, 0.1f));
-        list.add(new Attribute("minecraft:player.hunger", hunger, 0f, 20f, 20f));
-        list.add(new Attribute("minecraft:player.saturation", saturation, 0f, 20f, 20f));
-        list.add(new Attribute("minecraft:player.exhaustion", exhaustion, 0f, 4f, 4f));
+        list.add(new Attribute("minecraft:movement", 0, 0.5f, getEffectiveSpeed(), 0.1f));
+        list.add(new Attribute("minecraft:player.hunger", 0f, 20f, hunger, 20f));
+        list.add(new Attribute("minecraft:player.saturation", 0f, 20f, saturation, 20f));
+        list.add(new Attribute("minecraft:player.exhaustion", 0f, 4f, exhaustion, 4f));
         return list;
     }
 }

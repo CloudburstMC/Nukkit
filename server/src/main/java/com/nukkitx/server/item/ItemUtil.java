@@ -7,9 +7,11 @@ import com.nukkitx.api.item.ItemType;
 import com.nukkitx.api.item.ItemTypes;
 import com.nukkitx.nbt.CompoundTagBuilder;
 import com.nukkitx.nbt.tag.*;
+import com.nukkitx.protocol.bedrock.data.Item;
 import com.nukkitx.server.metadata.MetadataSerializers;
 import lombok.experimental.UtilityClass;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +19,7 @@ import java.util.Map;
 @UtilityClass
 public class ItemUtil {
 
-    public static ItemInstance createItemStack(Map<String, Tag<?>> map) {
+    public static ItemInstance createItemInstance(Map<String, Tag<?>> map) {
         ByteTag countTag = (ByteTag) map.get("Count");
         ShortTag damageTag = (ShortTag) map.get("Damage");
         ShortTag idTag = (ShortTag) map.get("id");
@@ -29,18 +31,20 @@ public class ItemUtil {
                 .itemData(MetadataSerializers.deserializeMetadata(type, damageTag.getValue()));
 
         Tag<?> tagTag = map.get("tag");
-        if (tagTag != null) {
-            applyItemData(builder, (Map<String, Tag<?>>) tagTag.getValue());
+        if (tagTag instanceof CompoundTag) {
+            applyItemData(builder, (CompoundTag) tagTag);
         }
 
         return builder.build();
     }
 
-    public static void applyItemData(ItemInstanceBuilder builder, Map<String, Tag<?>> map) {
-        if (map.containsKey("display")) {
-            Map<String, Tag<?>> displayTag = ((CompoundTag) map.get("display")).getValue();
-            if (displayTag.containsKey("Name")) {
-                builder.name((String) displayTag.get("Name").getValue());
+    public static void applyItemData(ItemInstanceBuilder builder, CompoundTag tag) {
+        Tag<?> displayTag = tag.get("display");
+        if (displayTag instanceof CompoundTag) {
+            ((CompoundTag) displayTag).get("Name");
+            Tag<?> nameTag = ((CompoundTag) displayTag).get("Name");
+            if (nameTag instanceof StringTag) {
+                builder.name(((StringTag) nameTag).getValue());
             }
         }
     }
@@ -56,7 +60,7 @@ public class ItemUtil {
             if (inSlotTag.getValue() < 0 || inSlotTag.getValue() >= knownSize) {
                 throw new IllegalArgumentException("Found illegal slot " + inSlotTag.getValue());
             }
-            all[inSlotTag.getValue()] = createItemStack(slotMap);
+            all[inSlotTag.getValue()] = createItemInstance(slotMap);
         }
         return all;
     }
@@ -75,25 +79,24 @@ public class ItemUtil {
                 continue;
             }
 
-            CompoundTag tag = toFullNBT(item);
+            CompoundTagBuilder tag = toFullNBT(item);
 
             if (saveSlot) {
-                tag.tagByte("Slot", (byte) i);
+                tag.byteTag("Slot", (byte) i);
             }
 
-            list.add(tag);
+            list.add(tag.buildRootTag());
         }
 
         return list;
     }
 
-    public static CompoundTag toFullNBT(ItemInstance item) {
+    public static CompoundTagBuilder toFullNBT(ItemInstance item) {
         return CompoundTagBuilder.builder()
                 .byteTag("Count", (byte) item.getAmount())
                 .shortTag("Damage", MetadataSerializers.serializeMetadata(item))
                 .shortTag("id", (short) item.getItemType().getId())
-                .tag(toSpecificNBT(item))
-                .buildRootTag();
+                .tag(toSpecificNBT(item));
     }
 
     public static CompoundTag toSpecificNBT(ItemInstance item) {
@@ -115,5 +118,38 @@ public class ItemUtil {
 
     public static int hash(int id, int damage) {
         return damage << 4 | id;
+    }
+
+    public Item[] toNetwork(@Nonnull ItemInstance... items) {
+        Preconditions.checkNotNull(items, "items");
+        Item[] networkItems = new Item[items.length];
+
+        for (int i = 0; i < items.length; i++) {
+            networkItems[i] = toNetwork(items[i]);
+        }
+        return networkItems;
+    }
+
+    public Item toNetwork(@Nonnull ItemInstance item) {
+        Preconditions.checkNotNull(item, "item");
+        return Item.of(
+                item.getItemType().getId(),
+                MetadataSerializers.serializeMetadata(item),
+                item.getAmount(),
+                toSpecificNBT(item)
+        );
+    }
+
+    public ItemInstance fromNetwork(@Nonnull Item item) {
+        Preconditions.checkNotNull(item, "item");
+
+        ItemType type = ItemTypes.byId(item.getId());
+
+        ItemInstanceBuilder builder = new NukkitItemInstanceBuilder()
+                .itemType(type)
+                .amount(item.getCount())
+                .itemData(MetadataSerializers.deserializeMetadata(type, item.getDamage()));
+        applyItemData(builder, item.getTag());
+        return builder.build();
     }
 }

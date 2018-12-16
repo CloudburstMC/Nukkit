@@ -7,33 +7,31 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
 import com.nukkitx.api.event.player.PlayerPreLoginEvent;
+import com.nukkitx.protocol.bedrock.handler.BedrockPacketHandler;
+import com.nukkitx.protocol.bedrock.packet.ClientToServerHandshakePacket;
+import com.nukkitx.protocol.bedrock.packet.LoginPacket;
+import com.nukkitx.protocol.bedrock.packet.PlayStatusPacket;
+import com.nukkitx.protocol.bedrock.session.BedrockSession;
 import com.nukkitx.server.NukkitServer;
-import com.nukkitx.server.network.bedrock.BedrockPacketCodec;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
-import com.nukkitx.server.network.bedrock.packet.ClientToServerHandshakePacket;
-import com.nukkitx.server.network.bedrock.packet.LoginPacket;
-import com.nukkitx.server.network.bedrock.packet.PlayStatusPacket;
 import com.nukkitx.server.network.bedrock.packet.ResourcePacksInfoPacket;
-import com.nukkitx.server.network.bedrock.session.data.AuthData;
-import com.nukkitx.server.network.bedrock.session.data.ClientData;
+import com.nukkitx.server.network.bedrock.session.data.AuthDataImpl;
+import com.nukkitx.server.network.bedrock.session.data.ClientDataImpl;
 import com.nukkitx.server.network.util.EncryptionUtil;
 import com.nukkitx.server.util.NativeCodeFactory;
 import com.voxelwind.server.jni.CryptoUtil;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Log4j2
-public class LoginPacketHandler implements NetworkPacketHandler {
+public class LoginPacketHandler implements BedrockPacketHandler {
     private static final boolean CAN_USE_ENCRYPTION = CryptoUtil.isJCEUnlimitedStrength() || NativeCodeFactory.cipher.isLoaded();
     private static final String MOJANG_PUBLIC_KEY_BASE64 =
             "MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAE8ELkixyLcwlZryUQcu1TvPOmI2B7vX83ndnWRUaXm74wFfa5f/lwQNTfrLVHa2PmenpGI6JhIMUJaWZrjmMj90NoKNFSNBuKdm8rYiXsfaz3K36x/1U26HpG0ZxK/V1V";
@@ -48,10 +46,12 @@ public class LoginPacketHandler implements NetworkPacketHandler {
         }
     }
 
-    private final BedrockSession session;
+    private final BedrockSession<NukkitPlayerSession> session;
+    private final NukkitServer server;
 
-    public LoginPacketHandler(BedrockSession session) {
+    public LoginPacketHandler(BedrockSession<NukkitPlayerSession> session, NukkitServer server) {
         this.session = session;
+        this.server = server;
     }
 
     private static ECPublicKey generateKey(String b64) throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -59,12 +59,13 @@ public class LoginPacketHandler implements NetworkPacketHandler {
     }
 
     @Override
-    public void handle(ClientToServerHandshakePacket packet) {
+    public boolean handle(ClientToServerHandshakePacket packet) {
         initializePlayerSession();
+        return true;
     }
 
     @Override
-    public void handle(LoginPacket packet) {
+    public boolean handle(LoginPacket packet) {
         int protocolVersion = packet.getProtocolVersion();
         session.setProtocolVersion(protocolVersion);
 
@@ -97,9 +98,9 @@ public class LoginPacketHandler implements NetworkPacketHandler {
             JsonNode payload = NukkitServer.JSON_MAPPER.readTree(jwt.getPayload().toBytes());
 
             if (payload.get("extraData").getNodeType() != JsonNodeType.OBJECT) {
-                throw new RuntimeException("AuthData was not found!");
+                throw new RuntimeException("AuthDataImpl was not found!");
             }
-            AuthData authData = NukkitServer.JSON_MAPPER.convertValue(payload.get("extraData"), AuthData.class);
+            AuthDataImpl authData = NukkitServer.JSON_MAPPER.convertValue(payload.get("extraData"), AuthDataImpl.class);
             session.setAuthData(authData);
 
             if (payload.get("identityPublicKey").getNodeType() != JsonNodeType.STRING) {
@@ -108,31 +109,29 @@ public class LoginPacketHandler implements NetworkPacketHandler {
 
             if (!validChain) {
                 // Disconnect if xbox auth is enabled.
-                if (session.getServer().getConfiguration().getGeneral().isXboxAuthenticated()) {
+                if (server.getConfiguration().getGeneral().isXboxAuthenticated()) {
                     session.disconnect("disconnectionScreen.notAuthenticated");
-                    return;
+                    return true;
                 }
                 // Stop spoofing.
-                session.getAuthData().setXuid(null);
+                authData.setXuid(null);
                 // Check for valid name characters
                 if (!USERNAME_PATTERN.matcher(authData.getDisplayName()).matches()) {
                     session.disconnect("disconnectionScreen.invalidName");
-                    return;
+                    return true;
                 }
-                // Use server side UUID.
-                session.getAuthData().setOfflineIdentity(UUID.nameUUIDFromBytes(authData.getDisplayName().toLowerCase().getBytes(StandardCharsets.UTF_8)));
             }
 
             ECPublicKey identityPublicKey = generateKey(payload.get("identityPublicKey").textValue());
 
             JWSObject clientJwt = JWSObject.parse(packet.getSkinData().toString());
 
-            if (!verifyJwt(clientJwt, identityPublicKey) && session.getServer().getConfiguration().getGeneral().isXboxAuthenticated()) {
+            if (!verifyJwt(clientJwt, identityPublicKey) && server.getConfiguration().getGeneral().isXboxAuthenticated()) {
                 session.disconnect("disconnectionScreen.invalidSkin");
             }
 
             JsonNode clientPayload = NukkitServer.JSON_MAPPER.readTree(clientJwt.getPayload().toBytes());
-            ClientData clientData = NukkitServer.JSON_MAPPER.convertValue(clientPayload, ClientData.class);
+            ClientDataImpl clientData = NukkitServer.JSON_MAPPER.convertValue(clientPayload, ClientDataImpl.class);
             session.setClientData(clientData);
 
 
@@ -189,13 +188,13 @@ public class LoginPacketHandler implements NetworkPacketHandler {
 
         PlayStatusPacket status = new PlayStatusPacket();
         status.setStatus(PlayStatusPacket.Status.LOGIN_SUCCESS);
-        session.addToSendQueue(status);
+        session.sendPacket(status);
 
-        PlayerSession playerSession = session.initializePlayerSession(session.getServer().getDefaultLevel());
+        NukkitPlayerSession playerSession = session.initializePlayerSession(session.getServer().getDefaultLevel());
         session.setHandler(playerSession.getNetworkPacketHandler());
 
         ResourcePacksInfoPacket info = new ResourcePacksInfoPacket();
-        session.addToSendQueue(info);
+        session.sendPacket(info);
     }
 
     private boolean validateChainData(JsonNode data) throws Exception {

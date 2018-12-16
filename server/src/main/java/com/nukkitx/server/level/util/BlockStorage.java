@@ -1,7 +1,6 @@
 package com.nukkitx.server.level.util;
 
 import com.google.common.base.Preconditions;
-import com.nukkitx.server.network.util.VarInts;
 import gnu.trove.list.array.TIntArrayList;
 import io.netty.buffer.ByteBuf;
 

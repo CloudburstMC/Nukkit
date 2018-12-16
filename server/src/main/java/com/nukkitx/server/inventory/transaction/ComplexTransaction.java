@@ -6,7 +6,7 @@ import com.nukkitx.api.item.ItemInstance;
 import com.nukkitx.server.inventory.transaction.action.InventoryAction;
 import com.nukkitx.server.level.NukkitLevel;
 import com.nukkitx.server.network.bedrock.packet.UpdateBlockPacket;
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -46,7 +46,7 @@ public abstract class ComplexTransaction implements InventoryTransaction {
         writeVector3f(buffer, fromPosition);
     }
 
-    protected boolean isHandValid(ItemInstance withItem, PlayerSession session) {
+    protected boolean isHandValid(ItemInstance withItem, NukkitPlayerSession session) {
         if (!withItem.equals(getItem())) {
             if (log.isDebugEnabled()) {
                 log.debug("{} interacted with an object using {} but has {} in hand {}", session.getName(), getItem(), withItem, getSlot());
@@ -57,7 +57,7 @@ public abstract class ComplexTransaction implements InventoryTransaction {
         return true;
     }
 
-    protected void resetBlock(Block block, PlayerSession session) {
+    protected void resetBlock(Block block, NukkitPlayerSession session) {
         UpdateBlockPacket resetBlock = new UpdateBlockPacket();
         resetBlock.setRuntimeId(NukkitLevel.getPaletteManager().getOrCreateRuntimeId(block.getBlockState()));
         resetBlock.setDataLayer(UpdateBlockPacket.DataLayer.NORMAL); //TODO: Remove hardcoding

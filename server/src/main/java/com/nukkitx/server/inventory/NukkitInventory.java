@@ -5,7 +5,7 @@ import com.nukkitx.api.inventory.Inventory;
 import com.nukkitx.api.inventory.InventoryType;
 import com.nukkitx.api.item.ItemInstance;
 import com.nukkitx.server.item.NukkitItemInstance;
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -42,7 +42,7 @@ public class NukkitInventory implements Inventory {
         setItem(slot, item, null);
     }
 
-    public void setItem(int slot, @Nullable ItemInstance item, PlayerSession session) {
+    public void setItem(int slot, @Nullable ItemInstance item, NukkitPlayerSession session) {
         checkSlot(slot);
 
         if (ItemInstance.isNull(item)) {
@@ -63,7 +63,7 @@ public class NukkitInventory implements Inventory {
     }
 
 
-    public boolean addItem(ItemInstance item, PlayerSession session) {
+    public boolean addItem(ItemInstance item, NukkitPlayerSession session) {
         if (ItemInstance.isNull(item)) {
             return false;
         }
@@ -129,7 +129,7 @@ public class NukkitInventory implements Inventory {
         }
     }
 
-    private boolean addDirectly(@Nonnull ItemInstance item, PlayerSession session) {
+    private boolean addDirectly(@Nonnull ItemInstance item, NukkitPlayerSession session) {
         for (int i = 0; i < contents.length; i++) {
             if (contents[i] == null) {
                 contents[i] = item;
@@ -171,7 +171,7 @@ public class NukkitInventory implements Inventory {
         return free;
     }
 
-    private void clearItem(int slot, PlayerSession session) {
+    private void clearItem(int slot, NukkitPlayerSession session) {
         checkSlot(slot);
         ItemInstance item = contents[slot];
         if (item != null) {

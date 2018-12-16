@@ -2,7 +2,7 @@ package com.nukkitx.server.inventory.transaction.action;
 
 import com.nukkitx.api.item.ItemInstance;
 import com.nukkitx.server.block.BlockUtil;
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -36,7 +36,7 @@ public class WorldInteractionInventoryAction extends InventoryAction {
     }
 
     @Override
-    public void execute(PlayerSession session) {
+    public void execute(NukkitPlayerSession session) {
         ItemInstance serverItem = session.getInventory().getItemInHand().orElse(BlockUtil.AIR);
         if (!serverItem.isMergeable(getNewItem())) {
             if (log.isDebugEnabled()) {

@@ -18,10 +18,8 @@ import com.nukkitx.server.block.NukkitBlockState;
 import com.nukkitx.server.block.behavior.BlockBehavior;
 import com.nukkitx.server.block.behavior.BlockBehaviors;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.bedrock.BedrockUtil;
 import com.nukkitx.server.network.bedrock.packet.LevelEventPacket;
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
-import com.nukkitx.server.network.util.VarInts;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -40,7 +38,7 @@ public class ItemUseTransaction extends ComplexTransaction {
     private Vector3f clickPosition;
 
     @Override
-    public void execute(PlayerSession session) {
+    public void execute(NukkitPlayerSession session) {
         ItemInstance serverItem = session.getInventory().getItemInHand().orElse(BlockUtil.AIR);
         switch (action) {
             case BREAK:
@@ -54,7 +52,7 @@ public class ItemUseTransaction extends ComplexTransaction {
         }
     }
 
-    private void breakBlock(PlayerSession session, ItemInstance withItem) {
+    private void breakBlock(NukkitPlayerSession session, ItemInstance withItem) {
         PlayerData data = session.ensureAndGet(PlayerData.class);
 
         int chunkX = position.getX() >> 4;
@@ -113,7 +111,7 @@ public class ItemUseTransaction extends ComplexTransaction {
         }
     }
 
-    private void placeBlock(PlayerSession session, ItemInstance withItem) {
+    private void placeBlock(NukkitPlayerSession session, ItemInstance withItem) {
         if (!session.ensureAndGet(PlayerData.class).getGameMode().canPlace()) {
             if (log.isDebugEnabled()) {
                 log.debug("{} is in a gamemode which cannot place blocks");
@@ -171,7 +169,7 @@ public class ItemUseTransaction extends ComplexTransaction {
         }
     }
 
-    private void useBlock(PlayerSession session, ItemInstance withItem) {
+    private void useBlock(NukkitPlayerSession session, ItemInstance withItem) {
 
     }
 

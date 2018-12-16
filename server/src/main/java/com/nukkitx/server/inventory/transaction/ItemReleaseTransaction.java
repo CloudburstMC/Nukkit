@@ -1,6 +1,6 @@
 package com.nukkitx.server.inventory.transaction;
 
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,7 +15,7 @@ public class ItemReleaseTransaction extends ComplexTransaction {
     private Action action;
 
     @Override
-    public void execute(PlayerSession session) {
+    public void execute(NukkitPlayerSession session) {
 
     }
 

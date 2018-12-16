@@ -13,20 +13,21 @@ import com.nukkitx.api.level.Level;
 import com.nukkitx.api.level.chunk.Chunk;
 import com.nukkitx.api.util.BoundingBox;
 import com.nukkitx.api.util.Rotation;
+import com.nukkitx.protocol.bedrock.BedrockPacket;
+import com.nukkitx.protocol.bedrock.data.Attribute;
+import com.nukkitx.protocol.bedrock.data.Metadata;
+import com.nukkitx.protocol.bedrock.data.MetadataDictionary;
+import com.nukkitx.protocol.bedrock.packet.AddEntityPacket;
+import com.nukkitx.protocol.bedrock.packet.SetEntityDataPacket;
 import com.nukkitx.server.NukkitServer;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.data.MetadataConstants;
-import com.nukkitx.server.network.bedrock.packet.AddEntityPacket;
-import com.nukkitx.server.network.bedrock.packet.SetEntityDataPacket;
-import com.nukkitx.server.network.bedrock.util.MetadataDictionary;
 import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 
-import static com.nukkitx.server.network.bedrock.data.MetadataConstants.*;
-import static com.nukkitx.server.network.bedrock.data.MetadataConstants.Flag.*;
+import static com.nukkitx.protocol.bedrock.data.Metadata.*;
+import static com.nukkitx.protocol.bedrock.data.Metadata.Flag.*;
 
 @Log4j2
 public class BaseEntity implements Entity {
@@ -73,7 +74,7 @@ public class BaseEntity implements Entity {
         packet.setEntityType(entityType.getType());
         packet.setPosition(position);
         packet.setMotion(motion);
-        packet.setRotation(rotation);
+        packet.setRotation(rotation.toVector3f());
         packet.getMetadata().putAll(getMetadata());
         return packet;
     }
@@ -362,7 +363,7 @@ public class BaseEntity implements Entity {
         return Optional.ofNullable((C) componentMap.get(clazz));
     }
 
-    protected void setFlag(MetadataConstants.Flag flag, boolean value) {
+    protected void setFlag(Metadata.Flag flag, boolean value) {
         if (value != metadataFlags.get(flag.ordinal())) {
             metadataFlags.flip(flag.ordinal());
             onMetadataUpdate(getMetadataFlags());
@@ -376,7 +377,7 @@ public class BaseEntity implements Entity {
         level.getPacketManager().queuePacketForViewers(this, packet);
     }
 
-    protected boolean getFlag(MetadataConstants.Flag flag) {
+    protected boolean getFlag(Metadata.Flag flag) {
         return metadataFlags.get(flag.ordinal());
     }
 

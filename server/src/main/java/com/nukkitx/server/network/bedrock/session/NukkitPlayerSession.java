@@ -16,10 +16,10 @@ import com.nukkitx.api.event.player.PlayerLoginEvent;
 import com.nukkitx.api.event.player.PlayerTransferEvent;
 import com.nukkitx.api.inventory.Inventory;
 import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.level.GameRules;
+import com.nukkitx.api.level.LevelData;
 import com.nukkitx.api.level.chunk.Chunk;
-import com.nukkitx.api.message.Message;
-import com.nukkitx.api.message.RawMessage;
-import com.nukkitx.api.message.TranslationMessage;
+import com.nukkitx.api.message.*;
 import com.nukkitx.api.permission.Permission;
 import com.nukkitx.api.permission.PermissionAttachment;
 import com.nukkitx.api.permission.PermissionAttachmentInfo;
@@ -27,8 +27,14 @@ import com.nukkitx.api.plugin.PluginContainer;
 import com.nukkitx.api.util.Rotation;
 import com.nukkitx.api.util.Skin;
 import com.nukkitx.api.util.data.DeviceOS;
+import com.nukkitx.protocol.PlayerSession;
+import com.nukkitx.protocol.bedrock.BedrockPacket;
+import com.nukkitx.protocol.bedrock.data.Attribute;
+import com.nukkitx.protocol.bedrock.data.MetadataDictionary;
+import com.nukkitx.protocol.bedrock.handler.BedrockPacketHandler;
+import com.nukkitx.protocol.bedrock.packet.*;
+import com.nukkitx.protocol.bedrock.session.BedrockSession;
 import com.nukkitx.server.NukkitServer;
-import com.nukkitx.server.entity.Attribute;
 import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.entity.EntityType;
 import com.nukkitx.server.entity.LivingEntity;
@@ -37,21 +43,17 @@ import com.nukkitx.server.entity.component.PlayerDataComponent;
 import com.nukkitx.server.inventory.InventoryObserver;
 import com.nukkitx.server.inventory.NukkitInventoryType;
 import com.nukkitx.server.inventory.NukkitPlayerInventory;
-import com.nukkitx.server.item.NukkitItemInstance;
+import com.nukkitx.server.item.ItemUtil;
+import com.nukkitx.server.level.NukkitGameRules;
 import com.nukkitx.server.level.NukkitLevel;
 import com.nukkitx.server.level.chunk.FullChunkDataPacketCreator;
 import com.nukkitx.server.level.util.AroundPointChunkComparator;
-import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.NetworkPacketHandler;
-import com.nukkitx.server.network.bedrock.packet.*;
-import com.nukkitx.server.network.bedrock.util.MetadataDictionary;
 import com.nukkitx.server.permission.NukkitAbilities;
 import com.spotify.futures.CompletableFutures;
 import gnu.trove.TCollections;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
-import lombok.Getter;
-import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -64,9 +66,13 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 
-@Log4j2
-public class PlayerSession extends LivingEntity implements Player, InventoryObserver {
-    private final BedrockSession session;
+public class NukkitPlayerSession extends LivingEntity implements PlayerSession, Player, InventoryObserver {
+    public static final System SYSTEM = System.builder()
+            .expectComponent(PlayerData.class)
+            .runner(new PlayerTickSystem())
+            .build();
+    private static final Logger log = org.apache.logging.log4j.LogManager.getLogger(NukkitPlayerSession.class);
+    private final BedrockSession<NukkitPlayerSession> session;
     private final NukkitServer server;
     private final NukkitLevel level;
     private final TLongSet viewableEntities = new TLongHashSet();
@@ -74,22 +80,19 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
     private final TLongSet sentChunks = TCollections.synchronizedSet(new TLongHashSet());
     private final AtomicReference<Locale> locale = new AtomicReference<>();
     private final Set<UUID> playersListed = new CopyOnWriteArraySet<>();
+    private final NukkitPlayerInventory inventory = new NukkitPlayerInventory(this);
     private boolean commandsEnabled = true;
     private boolean hasMoved;
-    @Getter
-    private final NukkitPlayerInventory inventory = new NukkitPlayerInventory(this);
-    @Getter
     private Inventory openInventory;
     private int enchantmentSeed;
     private int viewDistance;
-
     private boolean spawned = false;
 
-    public PlayerSession(BedrockSession session, NukkitLevel level) {
-        super(EntityType.PLAYER, level.getData().getDefaultSpawn(), level, session.getServer(), 20);
+    public NukkitPlayerSession(BedrockSession<NukkitPlayerSession> session, NukkitLevel level) {
+        super(EntityType.PLAYER, level.getData().getDefaultSpawn(), level, level.getServer(), 20);
         this.level = level;
         this.session = session;
-        this.server = session.getServer();
+        this.server = level.getServer();
         Path playerDatPath = server.getPlayersPath().resolve(getXuid().isPresent() ? getUniqueId().toString() : getName());
         locale.set(server.getLocaleManager().getLocaleByString(session.getClientData().getLanguageCode()));
 
@@ -100,7 +103,15 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         registerComponent(PlayerData.class, new PlayerDataComponent(this));
     }
 
-    public BedrockSession getMinecraftSession() {
+    private static long getChunkKey(int x, int z) {
+        return ((long) x << 32) + z - Integer.MIN_VALUE;
+    }
+
+    static boolean hasSubstantiallyMoved(Vector3f oldPos, Vector3f newPos) {
+        return (Float.compare(oldPos.getX(), newPos.getX()) != 0 || Float.compare(oldPos.getZ(), newPos.getZ()) != 0);
+    }
+
+    public BedrockSession<NukkitPlayerSession> getBedrockSession() {
         return session;
     }
 
@@ -124,8 +135,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
             chunks.sort(new AroundPointChunkComparator(chunkX, chunkZ));
 
             for (Chunk chunk : chunks) {
-                // Already wrapped so we can send immediately.
-                session.addToSendQueue(((FullChunkDataPacketCreator) chunk).createFullChunkDataPacket());
+                session.sendPacket(((FullChunkDataPacketCreator) chunk).createFullChunkDataPacket());
             }
         }));
     }
@@ -153,8 +163,8 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
             });
 
             for (BaseEntity entity : inView) {
-                if (entity == this || (entity instanceof PlayerSession &&
-                        (!playersListed.contains(((PlayerSession) entity).getUniqueId())))) {
+                if (entity == this || (entity instanceof NukkitPlayerSession &&
+                        (!playersListed.contains(((NukkitPlayerSession) entity).getUniqueId())))) {
                     continue; // Can't add our self.
                 }
 
@@ -169,12 +179,12 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
             toRemove.forEach(id -> {
                 RemoveEntityPacket packet = new RemoveEntityPacket();
                 packet.setUniqueEntityId(id);
-                session.addToSendQueue(packet);
+                session.sendPacket(packet);
                 return true;
             });
 
             for (BaseEntity entity : toAdd) {
-                session.addToSendQueue(entity.createAddEntityPacket());
+                session.sendPacket(entity.createAddEntityPacket());
             }
         }
     }
@@ -227,10 +237,44 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         StartGamePacket startGame = new StartGamePacket();
         startGame.setUniqueEntityId(getEntityId());
         startGame.setRuntimeEntityId(getEntityId());
-        startGame.setGamemode(event.getGameMode());
+        startGame.setPlayerGamemode(event.getGameMode().ordinal());
         startGame.setPlayerPosition(event.getSpawnPosition());
-        startGame.setRotation(event.getRotation());
-        startGame.setLevelSettings(event.getSpawnLevel().getData());
+        startGame.setRotation(event.getRotation().toVector2f());
+        // Level Settings
+        LevelData data = event.getSpawnLevel().getData();
+        startGame.setSeed(data.getSeed());
+        startGame.setDimensionId(data.getDimension().ordinal());
+        startGame.setGeneratorId(data.getGenerator().ordinal());
+        startGame.setLevelGamemode(data.getGameMode().ordinal());
+        startGame.setDifficulty(data.getDifficulty().ordinal());
+        startGame.setDefaultSpawn(data.getDefaultSpawn().toInt());
+        startGame.setAcheivementsDisabled(data.isAchievementsDisabled());
+        startGame.setTime(data.getTime());
+        startGame.setEduLevel(data.isEduWorld());
+        startGame.setEduFeaturesEnabled(data.isEduFeaturesEnabled());
+        startGame.setRainLevel(data.getRainLevel());
+        startGame.setLightningLevel(data.getLightningLevel());
+        startGame.setMultiplayerGame(data.isMultiplayerGame());
+        startGame.setBroadcastingToLan(data.isBroadcastingToLan());
+        startGame.setBroadcastingToXbl(data.isBroadcastingToXBL());
+        startGame.setCommandsEnabled(data.isCommandsEnabled());
+        startGame.setTexturePacksRequired(data.isTexturepacksRequired());
+        startGame.setBonusChestEnabled(data.isBonusChestEnabled());
+        startGame.setStartingWithMap(data.isStartingWithMap());
+        startGame.setTrustingPlayers(data.isTrustingPlayers());
+        startGame.setDefaultPlayerPermission(data.getDefaultPlayerPermission().ordinal());
+        startGame.setXblBroadcastMode(data.getXBLBroadcastMode());
+        startGame.setServerChunkTickRange(data.getServerChunkTickRange());
+        startGame.setBroadcastingToPlatform(data.isBroadcastingToPlatform());
+        startGame.setPlatformBroadcastMode(data.getPlatformBroadcastMode());
+        startGame.setIntentOnXblBroadcast(data.isIntentOnXBLBroadcast());
+        startGame.setBehaviorPackLocked(data.isBehaviorPackLocked());
+        startGame.setResourcePackLocked(data.isResourcePackLocked());
+        startGame.setFromLockedWorldTemplate(data.isFromLockedWorldTemplate());
+        startGame.setUsingMsaGamertagsOnly(data.isUsingMsaGamertagsOnly());
+        startGame.setFromWorldTemplate(false);
+        startGame.setWorldTemplateOptionLocked(false);
+
         startGame.setLevelId(event.getSpawnLevel().getId());
         startGame.setWorldName("world"); //level.getName()
         startGame.setPremiumWorldTemplateId("");
@@ -238,7 +282,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         startGame.setCurrentTick(event.getSpawnLevel().getCurrentTick());
         startGame.setEnchantmentSeed(enchantmentSeed);
         startGame.setMultiplayerCorrelationId("");
-        session.addToSendQueue(startGame);
+        session.sendPacket(startGame);
 
         sendCommandsEnabled();
 
@@ -265,21 +309,17 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         this.spawned = spawned;
     }
 
-    void setOpenInventory(Inventory inventory) {
-        this.openInventory = inventory;
-    }
-
     public void updatePlayerList() {
         Set<Player> toAdd = new HashSet<>();
         Set<UUID> toRemove = new HashSet<>();
-        Map<UUID, PlayerSession> availableSessions = new HashMap<>();
+        Map<UUID, NukkitPlayerSession> availableSessions = new HashMap<>();
 
-        for (PlayerSession session : getLevel().getEntityManager().getPlayers()) {
+        for (NukkitPlayerSession session : getLevel().getEntityManager().getPlayers()) {
             if (session == this) continue;
             availableSessions.put(session.getUniqueId(), session);
         }
 
-        for (PlayerSession session : availableSessions.values()) {
+        for (NukkitPlayerSession session : availableSessions.values()) {
             if (playersListed.add(session.getUniqueId())) {
                 toAdd.add(session);
             }
@@ -298,13 +338,18 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
                 PlayerData data = player.ensureAndGet(PlayerData.class);
                 PlayerListPacket.Entry entry = new PlayerListPacket.Entry(player.getUniqueId());
                 entry.setEntityId(player.getEntityId());
-                entry.setSkin(data.getSkin());
+                Skin skin = data.getSkin();
+                entry.setSkinId(skin.getSkinId());
+                entry.setSkinData(skin.getSkinData());
+                entry.setCapeData(skin.getCapeData());
+                entry.setGeometryName(skin.getGeometryName());
+                entry.setGeometryData(skin.getGeometryData());
                 entry.setName(player.getName());
                 entry.setXuid(player.getXuid().orElse(""));
                 entry.setPlatformChatId("");
                 list.getEntries().add(entry);
             }
-            session.addToSendQueue(list);
+            session.sendPacket(list);
         }
 
         if (!toRemove.isEmpty()) {
@@ -315,21 +360,21 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
             for (UUID uuid : toRemove) {
                 list.getEntries().add(new PlayerListPacket.Entry(uuid));
             }
-            session.addToSendQueue(list);
+            session.sendPacket(list);
         }
     }
 
     private void sendAttributes() {
         Damageable damageable = ensureAndGet(Damageable.class);
         PlayerDataComponent data = (PlayerDataComponent) ensureAndGet(PlayerData.class);
-        Attribute health = new Attribute("minecraft:health", damageable.getFixedHealth(), 0f,
-                damageable.getMaximumHealth());
+        Attribute health = new Attribute("minecraft:health", 0f,
+                damageable.getMaximumHealth(), damageable.getFixedHealth(), 10f);
 
         UpdateAttributesPacket packet = new UpdateAttributesPacket();
         packet.setRuntimeEntityId(getEntityId());
         packet.getAttributes().add(health);
         packet.getAttributes().addAll(data.getAttributes());
-        session.addToSendQueue(packet);
+        session.sendPacket(packet);
     }
 
     private void sendCreativeInventory() {
@@ -339,22 +384,21 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
     public void sendPlayerInventory() {
         InventoryContentPacket initContents = new InventoryContentPacket();
         initContents.setWindowId(0x7b);
-        initContents.setItems(new NukkitItemInstance[0]);
-        session.addToSendQueue(initContents);
+        session.sendPacket(initContents);
 
         // Because MCPE sends the hotbar as inventory, we have to add 9 more slots.
         InventoryContentPacket inventoryContents = new InventoryContentPacket();
         inventoryContents.setWindowId(0x00);
-        inventoryContents.setItems(Arrays.copyOf(inventory.getAllContents(), inventory.getInventoryType().getSize() + 9));
+        inventoryContents.setContents(ItemUtil.toNetwork(Arrays.copyOf(inventory.getAllContents(), inventory.getInventoryType().getSize() + 9)));
 
-        session.addToSendQueue(inventoryContents);
+        session.sendPacket(inventoryContents);
 
         MobEquipmentPacket mobEquipment = new MobEquipmentPacket();
         mobEquipment.setRuntimeEntityId(getEntityId());
-        mobEquipment.setItem(getInventory().getItemInHand().orElse(null));
-        mobEquipment.setInventorySlot((byte) getInventory().getHeldHotbarSlot());
+        mobEquipment.setItem(ItemUtil.toNetwork(getInventory().getItemInHand().orElse(null)));
+        mobEquipment.setInventorySlot(getInventory().getHeldHotbarSlot());
 
-        session.addToSendQueue(mobEquipment);
+        session.sendPacket(mobEquipment);
     }
 
     void sendMovePlayer() {
@@ -362,7 +406,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
         packet.setRuntimeEntityId(getEntityId());
         packet.setPosition(getGamePosition());
-        packet.setRotation(getRotation());
+        packet.setRotation(getRotation().toVector3f());
         packet.setOnGround(isOnGround());
         packet.setRidingRuntimeEntityId(0);
         if (isTeleported()) {
@@ -372,27 +416,31 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         } else {
             packet.setMode(MovePlayerPacket.Mode.NORMAL);
         }
-        session.addToSendQueue(packet);
+        session.sendPacket(packet);
     }
 
     void sendEntityData() {
         SetEntityDataPacket packet = new SetEntityDataPacket();
         packet.setRuntimeEntityId(getEntityId());
         packet.getMetadata().putAll(getMetadataFlags());
-        session.addToSendQueue(packet);
+        session.sendPacket(packet);
     }
 
     void sendHealth() {
         Damageable damageable = ensureAndGet(Damageable.class);
         SetHealthPacket packet = new SetHealthPacket();
         packet.setHealth(Math.round(damageable.getFixedHealth()));
-        session.addToSendQueue(packet);
+        session.sendPacket(packet);
     }
 
     private void sendGamerules() {
         GameRulesChangedPacket packet = new GameRulesChangedPacket();
-        packet.setGameRules(level.getData().getGameRules());
-        session.addToSendQueue(packet);
+        GameRules gameRules = level.getData().getGameRules();
+        if (!(gameRules instanceof NukkitGameRules)) {
+            throw new IllegalArgumentException("GameRules not of type NukkitGameRules");
+        }
+        packet.getGameRules().addAll(((NukkitGameRules) gameRules).getGameRules());
+        session.sendPacket(packet);
     }
 
     private void sendAdventureSettings() {
@@ -401,18 +449,18 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
         AdventureSettingsPacket packet = new AdventureSettingsPacket();
         packet.setUniqueEntityId(getEntityId());
-        packet.setFlags(abilities.getFlags());
-        packet.setFlags2(abilities.getFlags2());
+        packet.setPlayerFlags(abilities.getFlags());
+        packet.setWorldFlags(abilities.getFlags2());
         packet.setCustomFlags(abilities.getCustomFlags());
-        packet.setCommandPermission(data.getCommandPermission());
-        packet.setPlayerPermission(data.getPlayerPermission());
-        session.addToSendQueue(packet);
+        packet.setCommandPermission(data.getCommandPermission().ordinal());
+        packet.setPlayerPermission(data.getPlayerPermission().ordinal());
+        session.sendPacket(packet);
     }
 
     private void sendCommandsEnabled() {
         SetCommandsEnabledPacket packet = new SetCommandsEnabledPacket();
         packet.setCommandsEnabled(this.commandsEnabled);
-        session.addToSendQueue(packet);
+        session.sendPacket(packet);
     }
 
     private OptionalInt testInventoryChange(Inventory inventory) {
@@ -465,10 +513,6 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         server.getWhitelist().whitelist(this);
     }
 
-    public Optional<UUID> getOfflineUniqueId() {
-        return Optional.ofNullable(session.getAuthData().getOfflineIdentity());
-    }
-
     @Override
     public BedrockPacket createAddEntityPacket() {
         PlayerDataComponent data = (PlayerDataComponent) ensureAndGet(PlayerData.class);
@@ -480,13 +524,13 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         addPlayer.setPlatformChatId("");
         addPlayer.setPosition(getGamePosition());
         addPlayer.setMotion(getMotion());
-        addPlayer.setRotation(getRotation());
-        addPlayer.setHand(inventory.getItemInHand().orElse(null));
+        addPlayer.setRotation(getRotation().toVector3f());
+        addPlayer.setHand(ItemUtil.toNetwork(inventory.getItemInHand().orElse(null)));
         addPlayer.getMetadata().putAll(getMetadata());
-        addPlayer.setFlags(data.getAbilities().getFlags());
-        addPlayer.setCommandPermission(data.getCommandPermission());
-        addPlayer.setFlags2(data.getAbilities().getFlags2());
-        addPlayer.setPlayerPermission(data.getPlayerPermission());
+        addPlayer.setPlayerFlags(data.getAbilities().getFlags());
+        addPlayer.setCommandPermission(data.getCommandPermission().ordinal());
+        addPlayer.setWorldFlags(data.getAbilities().getFlags2());
+        addPlayer.setPlayerPermission(data.getPlayerPermission().ordinal());
         addPlayer.setCustomFlags(data.getAbilities().getCustomFlags());
         addPlayer.setDeviceId(session.getClientData().getDeviceId());
         // TODO: Adventure settings
@@ -511,7 +555,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         TransferPacket packet = new TransferPacket();
         packet.setAddress(address);
         packet.setPort(port);
-        session.addToSendQueue(packet);
+        session.sendPacket(packet);
         return true;
     }
 
@@ -525,7 +569,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         Preconditions.checkState(Strings.isNullOrEmpty(xuid), "xuid is null or empty");
         ShowProfilePacket packet = new ShowProfilePacket();
         packet.setXuid(xuid);
-        session.addToSendQueue(packet);
+        session.sendPacket(packet);
     }
 
     @Override
@@ -565,7 +609,11 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
     public void setSkin(Skin skin) {
         PlayerData data = ensureAndGet(PlayerData.class);
         PlayerSkinPacket packet = new PlayerSkinPacket();
-        packet.setSkin(skin);
+        packet.setSkinId(skin.getSkinId());
+        packet.setSkinData(skin.getSkinData());
+        packet.setCapeData(skin.getCapeData());
+        packet.setGeometryName(skin.getGeometryName());
+        packet.setGeometryData(skin.getGeometryData());
         packet.setOldSkinName(data.getSkin().getSkinId());
         packet.setNewSkinName(skin.getSkinId());
         packet.setUuid(getUniqueId());
@@ -576,13 +624,13 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
     }
 
     @Override
-    public void setButtonText(String text) {
-
+    public String getButtonText() {
+        return null;
     }
 
     @Override
-    public String getButtonText() {
-        return null;
+    public void setButtonText(String text) {
+
     }
 
     @Override
@@ -616,13 +664,13 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
     }
 
     @Override
-    public void setViewDistance(int viewDistance) {
-        this.viewDistance = viewDistance;
+    public int getViewDistance() {
+        return viewDistance;
     }
 
     @Override
-    public int getViewDistance() {
-        return viewDistance;
+    public void setViewDistance(int viewDistance) {
+        this.viewDistance = viewDistance;
     }
 
     @Override
@@ -657,12 +705,6 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         return session.getRemoteAddress();
     }
 
-    @Nonnull
-    @Override
-    public Optional<UUID> getOfflineUuid() {
-        return Optional.ofNullable(session.getAuthData().getOfflineIdentity());
-    }
-
     @Override
     public boolean isXboxAuthenticated() {
         return session.getAuthData().getXuid() != null;
@@ -671,12 +713,12 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
     @Nonnull
     @Override
     public DeviceOS getDeviceOS() {
-        return session.getClientData().getDeviceOs();
+        return DeviceOS.values()[session.getClientData().getDeviceOs()];
     }
 
     @Override
     public boolean isEducationEdition() {
-        return session.getClientData().isEducationMode();
+        return session.getClientData().isEduMode();
     }
 
     @Nonnull
@@ -735,7 +777,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         }
 
         try {
-            server.getCommandManager().executeCommand(PlayerSession.this, command);
+            server.getCommandManager().executeCommand(NukkitPlayerSession.this, command);
         } catch (CommandNotFoundException e) {
             sendMessage(new TranslationMessage("commands.generic.unknown", command));
         } catch (CommandException e) {
@@ -794,12 +836,12 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         return inventory.addItem(item);
     }
 
-    public NetworkPacketHandler getNetworkPacketHandler() {
+    public BedrockPacketHandler getNetworkPacketHandler() {
         return new PlayerSessionPacketHandler(this);
     }
 
     @Override
-    public void onInventorySlotChange(int slot, @Nullable ItemInstance oldItem, @Nullable ItemInstance newItem, @Nonnull Inventory inventory, @Nullable PlayerSession session) {
+    public void onInventorySlotChange(int slot, @Nullable ItemInstance oldItem, @Nullable ItemInstance newItem, @Nonnull Inventory inventory, @Nullable NukkitPlayerSession session) {
         log.debug("Adding item to inventory");
         OptionalInt optionalId = testInventoryChange(inventory);
         if (!optionalId.isPresent()) {
@@ -810,10 +852,10 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         // The session that sent the inventory change updates without the need of a packet.
         if (session != this) {
             InventorySlotPacket packet = new InventorySlotPacket();
-            packet.setSlot(newItem);
+            packet.setSlot(ItemUtil.toNetwork(newItem));
             packet.setInventorySlot(slot);
             packet.setWindowId(windowId);
-            this.session.addToSendQueue(packet);
+            this.session.sendPacket(packet);
         }
     }
 
@@ -827,20 +869,30 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
         InventoryContentPacket packet = new InventoryContentPacket();
         packet.setWindowId(windowId);
-        packet.setItems(contents);
+        packet.setContents(ItemUtil.toNetwork(contents));
     }
 
     @Override
-    public void sendMessage(@Nonnull String text) {
-        sendMessage(new RawMessage(text));
+    public void sendMessage(@Nonnull String message) {
+        sendMessage(new RawMessage(message));
     }
 
     @Override
-    public void sendMessage(@Nonnull Message text) {
+    public void sendMessage(@Nonnull Message message) {
         TextPacket packet = new TextPacket();
-        packet.setMessage(text);
+        packet.setMessage(message.getMessage());
+        packet.setNeedsTranslation(message.needsTranslating());
+        packet.setType(TextPacket.Type.valueOf(message.getType().name()));
         packet.setXuid(getXuid().orElse(""));
-        session.addToSendQueue(packet);
+        if (message instanceof SourceMessage) {
+            packet.setSourceName(((SourceMessage) message).getSender());
+        }
+        if (message instanceof ParameterMessage) {
+            for (String parameter : ((ParameterMessage) message).getParameters()) {
+                packet.getParameters().add(parameter);
+            }
+        }
+        session.sendPacket(packet);
     }
 
     @Override
@@ -920,7 +972,7 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         Preconditions.checkNotNull(attribute, "attribute");
         UpdateAttributesPacket packet = new UpdateAttributesPacket();
         packet.getAttributes().add(attribute);
-        session.addToSendQueue(packet);
+        session.sendPacket(packet);
     }
 
     @Override
@@ -941,20 +993,49 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
         super.remove();
     }
 
-    public static final System SYSTEM = System.builder()
-            .expectComponent(PlayerData.class)
-            .runner(new PlayerTickSystem())
-            .build();
+    public NukkitPlayerInventory getInventory() {
+        return this.inventory;
+    }
+
+    public Inventory getOpenInventory() {
+        return this.openInventory;
+    }
+
+    void setOpenInventory(Inventory inventory) {
+        this.openInventory = inventory;
+    }
+
+    @Override
+    public void close() {
+
+    }
+
+    @Override
+    public void onDisconnect(@Nullable String s) {
+
+    }
+
+    @Override
+    public void onTimeout() {
+
+    }
+
+    public String toString() {
+        return "NukkitPlayerSession(" +
+                "name='" + getName() +
+                "', address=" + getRemoteAddress().map(InetSocketAddress::toString).orElse("UNKNOWN") +
+                ')';
+    }
 
     private static class PlayerTickSystem implements SystemRunner {
 
         @Override
         public void run(Entity entity) {
-            Preconditions.checkArgument(entity instanceof PlayerSession, "Entity was not of type PlayerSession");
-            PlayerSession session = (PlayerSession) entity;
+            Preconditions.checkArgument(entity instanceof NukkitPlayerSession, "Entity was not of type NukkitPlayerSession");
+            NukkitPlayerSession session = (NukkitPlayerSession) entity;
 
             DamageableComponent damageable = (DamageableComponent) session.ensureAndGet(Damageable.class);
-            if (!session.spawned || session.getMinecraftSession().isClosed() || damageable.isDead()) {
+            if (!session.spawned || session.getBedrockSession().isClosed() || damageable.isDead()) {
                 return;
             }
 
@@ -975,20 +1056,5 @@ public class PlayerSession extends LivingEntity implements Player, InventoryObse
 
             session.updatePlayerList();
         }
-    }
-
-    private static long getChunkKey(int x, int z) {
-        return ((long) x << 32) + z - Integer.MIN_VALUE;
-    }
-
-    static boolean hasSubstantiallyMoved(Vector3f oldPos, Vector3f newPos) {
-        return (Float.compare(oldPos.getX(), newPos.getX()) != 0 || Float.compare(oldPos.getZ(), newPos.getZ()) != 0);
-    }
-
-    public String toString() {
-        return "PlayerSession(" +
-                "name='" + getName() +
-                "', address=" + getRemoteAddress().map(InetSocketAddress::toString).orElse("UNKNOWN") +
-                ')';
     }
 }

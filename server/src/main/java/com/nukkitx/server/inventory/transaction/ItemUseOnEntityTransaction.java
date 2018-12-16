@@ -1,7 +1,7 @@
 package com.nukkitx.server.inventory.transaction;
 
 import com.flowpowered.math.vector.Vector3f;
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,7 +19,7 @@ public class ItemUseOnEntityTransaction extends ComplexTransaction {
     private Vector3f clickPosition;
 
     @Override
-    public void execute(PlayerSession session) {
+    public void execute(NukkitPlayerSession session) {
 
     }
 

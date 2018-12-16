@@ -13,7 +13,7 @@ import com.nukkitx.api.util.BoundingBox;
 import com.nukkitx.api.util.data.BlockFace;
 import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.item.behavior.ItemBehavior;
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -61,9 +61,9 @@ public interface BlockBehavior extends ItemBehavior {
         return false;
     }
 
-    Result onBreak(PlayerSession session, Block block, ItemInstance withItem);
+    Result onBreak(NukkitPlayerSession session, Block block, ItemInstance withItem);
 
-    boolean onPlace(PlayerSession session, Block against, ItemInstance withItem);
+    boolean onPlace(NukkitPlayerSession session, Block against, ItemInstance withItem);
 
     default Optional<BlockState> overridePlacement(Vector3i against, BlockFace face, ItemInstance withItem) {
         return Optional.empty();

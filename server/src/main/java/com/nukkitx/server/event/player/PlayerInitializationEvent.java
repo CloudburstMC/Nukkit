@@ -2,15 +2,15 @@ package com.nukkitx.server.event.player;
 
 import com.nukkitx.api.event.Event;
 import com.nukkitx.api.level.Level;
-import com.nukkitx.server.network.bedrock.session.BedrockSession;
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.protocol.bedrock.session.BedrockSession;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 
 public class PlayerInitializationEvent implements Event {
-    private final BedrockSession bedrockSession;
+    private final BedrockSession<NukkitPlayerSession> bedrockSession;
     private final Level level;
-    private PlayerSession playerSession;
+    private NukkitPlayerSession playerSession;
 
-    public PlayerInitializationEvent(BedrockSession bedrockSession, Level level) {
+    public PlayerInitializationEvent(BedrockSession<NukkitPlayerSession> bedrockSession, Level level) {
         this.bedrockSession = bedrockSession;
         this.level = level;
     }
@@ -23,11 +23,11 @@ public class PlayerInitializationEvent implements Event {
         return level;
     }
 
-    public PlayerSession getPlayerSession() {
+    public NukkitPlayerSession getPlayerSession() {
         return playerSession;
     }
 
-    public void setPlayerSession(PlayerSession playerSession) {
+    public void setPlayerSession(NukkitPlayerSession playerSession) {
         this.playerSession = playerSession;
     }
 }

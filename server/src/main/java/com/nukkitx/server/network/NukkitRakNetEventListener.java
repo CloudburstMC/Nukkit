@@ -4,7 +4,6 @@ import com.nukkitx.api.event.server.ConnectionRequestEvent;
 import com.nukkitx.network.raknet.RakNetServerEventListener;
 import com.nukkitx.server.NukkitConfiguration;
 import com.nukkitx.server.NukkitServer;
-import com.nukkitx.server.network.bedrock.BedrockPacketCodec;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 

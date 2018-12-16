@@ -8,7 +8,6 @@ import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.entity.EntityType;
 import com.nukkitx.server.entity.component.PhysicsComponent;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.bedrock.data.MetadataConstants;
 
 public class ArrowEntity extends BaseEntity implements Arrow {
 

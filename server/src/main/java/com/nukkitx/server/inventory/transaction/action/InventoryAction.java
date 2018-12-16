@@ -1,7 +1,7 @@
 package com.nukkitx.server.inventory.transaction.action;
 
 import com.nukkitx.api.item.ItemInstance;
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import io.netty.buffer.ByteBuf;
@@ -75,7 +75,7 @@ public abstract class InventoryAction {
         }
     }
 
-    public abstract void execute(PlayerSession session);
+    public abstract void execute(NukkitPlayerSession session);
 
     public boolean invalidHand(ItemInstance serverItem) {
         return !serverItem.equals(oldItem);

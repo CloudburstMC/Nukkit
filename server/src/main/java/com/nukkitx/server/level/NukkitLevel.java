@@ -13,15 +13,15 @@ import com.nukkitx.api.level.LevelData;
 import com.nukkitx.api.level.chunk.Chunk;
 import com.nukkitx.api.level.chunk.generator.ChunkGenerator;
 import com.nukkitx.nbt.tag.CompoundTag;
+import com.nukkitx.protocol.bedrock.packet.BlockEntityDataPacket;
+import com.nukkitx.protocol.bedrock.packet.UpdateBlockPacket;
 import com.nukkitx.server.NukkitServer;
 import com.nukkitx.server.entity.misc.DroppedItemEntity;
 import com.nukkitx.server.entity.system.*;
 import com.nukkitx.server.level.manager.*;
 import com.nukkitx.server.level.provider.ChunkProvider;
 import com.nukkitx.server.metadata.MetadataSerializers;
-import com.nukkitx.server.network.bedrock.packet.BlockEntityDataPacket;
-import com.nukkitx.server.network.bedrock.packet.UpdateBlockPacket;
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
@@ -65,7 +65,7 @@ public class NukkitLevel implements Level {
             levelData.setDefaultSpawn(generator.getDefaultSpawn());
         }
 
-        registerSystem(PlayerSession.SYSTEM);
+        registerSystem(NukkitPlayerSession.SYSTEM);
         registerSystem(FlammableDecrementSystem.SYSTEM);
         registerSystem(PhysicsSystem.SYSTEM);
         registerSystem(PickupDelayDecrementSystem.SYSTEM);
@@ -171,7 +171,7 @@ public class NukkitLevel implements Level {
         UpdateBlockPacket packet = new UpdateBlockPacket();
         packet.setRuntimeId(paletteManager.getOrCreateRuntimeId(state));
         packet.setBlockPosition(position);
-        packet.setDataLayer(UpdateBlockPacket.DataLayer.NORMAL);
+        packet.setDataLayer(0);
         packetManager.queuePacketForViewers(entity, packet);
 
         if (state.getBlockEntity().isPresent()) {

@@ -2,19 +2,19 @@ package com.nukkitx.server.network.bedrock.session;
 
 import com.nukkitx.api.Session;
 import com.nukkitx.api.util.data.DeviceOS;
+import com.nukkitx.protocol.bedrock.session.BedrockSession;
 import com.nukkitx.server.NukkitServer;
+import lombok.RequiredArgsConstructor;
 
 import javax.annotation.Nonnull;
 import java.net.InetSocketAddress;
 import java.util.Optional;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 public class LoginSession implements Session {
-    private final BedrockSession session;
-
-    public LoginSession(BedrockSession session) {
-        this.session = session;
-    }
+    private final BedrockSession<NukkitPlayerSession> session;
+    private final NukkitServer server;
 
     public BedrockSession getSession() {
         return session;
@@ -23,7 +23,7 @@ public class LoginSession implements Session {
     @Nonnull
     @Override
     public NukkitServer getServer() {
-        return session.getServer();
+        return server;
     }
 
     @Nonnull
@@ -63,12 +63,12 @@ public class LoginSession implements Session {
     @Nonnull
     @Override
     public DeviceOS getDeviceOS() {
-        return session.getClientData().getDeviceOs();
+        return null;//TODO: session.getClientData().getDeviceOs();
     }
 
     @Override
     public boolean isEducationEdition() {
-        return session.getClientData().isEducationMode();
+        return session.getClientData().isEduMode();
     }
 
     @Nonnull

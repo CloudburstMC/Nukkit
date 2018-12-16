@@ -2,12 +2,11 @@ package com.nukkitx.server.entity.misc;
 
 import com.flowpowered.math.vector.Vector3f;
 import com.nukkitx.api.entity.misc.Painting;
+import com.nukkitx.protocol.bedrock.packet.AddPaintingPacket;
 import com.nukkitx.server.NukkitServer;
 import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.entity.EntityType;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.packet.AddPaintingPacket;
 
 public class PaintingEntity extends BaseEntity implements Painting {
 
@@ -16,7 +15,7 @@ public class PaintingEntity extends BaseEntity implements Painting {
     }
 
     @Override
-    public BedrockPacket createAddEntityPacket() {
+    public AddPaintingPacket createAddEntityPacket() {
         AddPaintingPacket packet = new AddPaintingPacket();
         packet.setUniqueEntityId(getEntityId());
         packet.setRuntimeEntityId(getEntityId());

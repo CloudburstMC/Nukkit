@@ -6,7 +6,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.nukkitx.api.Player;
 import com.nukkitx.network.SessionManager;
-import com.nukkitx.server.network.bedrock.session.BedrockSession;
+import com.nukkitx.protocol.bedrock.session.BedrockSession;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
@@ -16,7 +17,7 @@ import java.util.UUID;
 import java.util.concurrent.*;
 
 @Log4j2
-public class NukkitSessionManager extends SessionManager<BedrockSession> {
+public class NukkitSessionManager extends SessionManager<BedrockSession<NukkitPlayerSession>> {
     private static final int SESSIONS_PER_THREAD = 50;
 
     private final ConcurrentMap<UUID, Player> playerSessions = new ConcurrentHashMap<>();
@@ -25,14 +26,14 @@ public class NukkitSessionManager extends SessionManager<BedrockSession> {
             new LinkedBlockingQueue<>(), new ThreadFactoryBuilder().setNameFormat("Session Ticker - #%d").setDaemon(true).build());
 
     @Override
-    protected void onAddSession(BedrockSession session) {
+    protected void onAddSession(BedrockSession<NukkitPlayerSession> session) {
         adjustPoolSize();
     }
 
     @Override
-    protected void onRemoveSession(BedrockSession session) {
-        if (session.getPlayerSession() != null) {
-            playerSessions.values().remove(session.getPlayerSession());
+    protected void onRemoveSession(BedrockSession<NukkitPlayerSession> session) {
+        if (session.getPlayer() != null) {
+            playerSessions.values().remove(session.getPlayer());
         }
         adjustPoolSize();
     }
@@ -41,8 +42,8 @@ public class NukkitSessionManager extends SessionManager<BedrockSession> {
         return playerSessions.size();
     }
 
-    public boolean add(BedrockSession session) {
-        return playerSessions.putIfAbsent(session.getAuthData().getIdentity(), session.getPlayerSession()) == null;
+    public boolean add(BedrockSession<NukkitPlayerSession> session) {
+        return playerSessions.putIfAbsent(session.getAuthData().getIdentity(), session.getPlayer()) == null;
     }
 
     @Nullable

@@ -1,7 +1,6 @@
 package com.nukkitx.server.scoreboard;
 
 import com.nukkitx.api.scoreboard.FakeScorer;
-import com.nukkitx.server.network.bedrock.BedrockUtil;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 

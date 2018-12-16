@@ -31,6 +31,8 @@ import com.nukkitx.network.NetworkListener;
 import com.nukkitx.network.raknet.RakNetServer;
 import com.nukkitx.plugin.SimplePluginManager;
 import com.nukkitx.plugin.loader.JavaPluginLoader;
+import com.nukkitx.protocol.bedrock.session.BedrockSession;
+import com.nukkitx.protocol.bedrock.wrapper.WrappedPacket;
 import com.nukkitx.server.block.NukkitBlockStateBuilder;
 import com.nukkitx.server.command.NukkitCommandManager;
 import com.nukkitx.server.console.*;
@@ -46,9 +48,7 @@ import com.nukkitx.server.level.provider.LevelDataProvider;
 import com.nukkitx.server.locale.NukkitLocaleManager;
 import com.nukkitx.server.network.NukkitRakNetEventListener;
 import com.nukkitx.server.network.NukkitSessionManager;
-import com.nukkitx.server.network.bedrock.packet.WrappedPacket;
-import com.nukkitx.server.network.bedrock.session.BedrockSession;
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 import com.nukkitx.server.permission.NukkitAbilities;
 import com.nukkitx.server.permission.NukkitPermissionManager;
 import com.nukkitx.server.resourcepack.ResourcePackManager;
@@ -359,14 +359,14 @@ public class NukkitServer implements Server {
         }
         int configNetThreads = configuration.getAdvanced().getNetworkThreads();
         int maxThreads = configNetThreads < 1 ? Runtime.getRuntime().availableProcessors() : configNetThreads;
-        RakNetServer<BedrockSession> rakNetServer = RakNetServer.<BedrockSession>builder()
+        RakNetServer<BedrockSession<NukkitPlayerSession>> rakNetServer = RakNetServer.<BedrockSession<NukkitPlayerSession>>builder()
                 .address(configuration.getNetwork().getAddress(), configuration.getNetwork().getPort())
                 .eventListener(new NukkitRakNetEventListener(this))
                 .packet(WrappedPacket::new, 0xfe)
                 .executor(sessionManager.getSessionTicker())
                 .scheduler(timerService)
                 .maximumThreads(maxThreads)
-                .sessionFactory((connection) -> new BedrockSession(this, connection))
+                .sessionFactory(BedrockSession::new)
                 .sessionManager(sessionManager)
                 .build();
         if (!rakNetServer.bind()) {
@@ -566,8 +566,8 @@ public class NukkitServer implements Server {
     public void doAutoSave() {
         // Save player data
         for (Player player : getSessionManager().allPlayers()) {
-            if (player instanceof PlayerSession) {
-                ((PlayerSession) player).save();
+            if (player instanceof NukkitPlayerSession) {
+                ((NukkitPlayerSession) player).save();
             }
         }
 

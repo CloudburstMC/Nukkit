@@ -1,6 +1,6 @@
 package com.nukkitx.server.inventory.transaction.action;
 
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,7 +15,7 @@ public class GlobalInventoryAction extends InventoryAction {
     }
 
     @Override
-    public void execute(PlayerSession session) {
+    public void execute(NukkitPlayerSession session) {
 
     }
 }

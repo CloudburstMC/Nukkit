@@ -7,7 +7,7 @@ import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.ECDSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import com.nukkitx.server.network.bedrock.packet.ServerToClientHandshakePacket;
+import com.nukkitx.protocol.bedrock.packet.ServerToClientHandshakePacket;
 import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
 
@@ -23,7 +23,7 @@ public class EncryptionUtil {
     private static final SecureRandom secureRandom = new SecureRandom();
 
     public static byte[] getServerKey(KeyPair serverPair, PublicKey key, byte[] token) throws InvalidKeyException {
-        byte[] sharedSecret = getSharedSecret(serverPair, key);
+        byte[] sharedSecret = getSharedSecret(serverPair.getPrivate(), key);
 
         MessageDigest digest;
         try {
@@ -37,7 +37,7 @@ public class EncryptionUtil {
         return digest.digest();
     }
 
-    private static byte[] getSharedSecret(KeyPair serverPair, PublicKey clientKey) throws InvalidKeyException {
+    private static byte[] getSharedSecret(PrivateKey serverKey, PublicKey clientKey) throws InvalidKeyException {
         KeyAgreement agreement;
         try {
             agreement = KeyAgreement.getInstance("ECDH");
@@ -45,7 +45,7 @@ public class EncryptionUtil {
             throw new AssertionError(e);
         }
 
-        agreement.init(serverPair.getPrivate());
+        agreement.init(serverKey);
         agreement.doPhase(clientKey, true);
         return agreement.generateSecret();
     }
