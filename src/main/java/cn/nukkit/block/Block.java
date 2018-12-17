@@ -291,6 +291,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[STAINED_GLASS] = BlockGlassStained.class; //241
             list[PODZOL] = BlockPodzol.class; //243
             list[BEETROOT_BLOCK] = BlockBeetroot.class; //244
+            list[STONECUTTER] = BlockStonecutter.class; //245
             list[GLOWING_OBSIDIAN] = BlockObsidianGlowing.class; //246
             //list[NETHER_REACTOR] = BlockNetherReactor.class; //247 Should not be removed
 
