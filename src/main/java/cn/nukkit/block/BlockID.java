@@ -184,7 +184,7 @@ public interface BlockID {
     int BIRCH_WOODEN_STAIRS = 135;
     int JUNGLE_WOOD_STAIRS = 136;
     int JUNGLE_WOODEN_STAIRS = 136;
-    int COMMAND_BLOCK = 137;
+
     int BEACON = 138;
     int COBBLE_WALL = 139;
     int STONE_WALL = 139;
@@ -237,8 +237,7 @@ public interface BlockID {
     int COAL_BLOCK = 173;
     int PACKED_ICE = 174;
     int DOUBLE_PLANT = 175;
-    int STANDING_BANNER = 176;
-    int WALL_BANNER = 177;
+
     int DAYLIGHT_DETECTOR_INVERTED = 178;
     int RED_SANDSTONE = 179;
     int RED_SANDSTONE_STAIRS = 180;
@@ -249,8 +248,6 @@ public interface BlockID {
     int FENCE_GATE_JUNGLE = 185;
     int FENCE_GATE_DARK_OAK = 186;
     int FENCE_GATE_ACACIA = 187;
-    int REPEATING_COMMAND_BLOCK = 188;
-    int CHAIN_COMMAND_BLOCK = 189;
 
     int SPRUCE_DOOR_BLOCK = 193;
     int BIRCH_DOOR_BLOCK = 194;
@@ -266,7 +263,6 @@ public interface BlockID {
 
     int UNDYED_SHULKER_BOX = 205;
     int END_BRICKS = 206;
-    int ICE_FROSTED = 207;
     int FROSTED_ICE = 207;
     int END_ROD = 208;
     int END_GATEWAY = 209;
@@ -307,6 +303,4 @@ public interface BlockID {
 
     int PISTON_EXTENSION = 250;
     int OBSERVER = 251;
-    int STRUCTURE_BLOCK = 252;
-
 }
