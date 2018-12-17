@@ -125,6 +125,9 @@ public class Nether extends Generator {
                 chunk.setBiomeId(x, z, biome.getId());
 
                 chunk.setBlockId(x, 0, z, Block.BEDROCK);
+                for (int y = 115; y < 127; ++y) {
+                    chunk.setBlockId(x, y, z, Block.NETHERRACK);
+                }
                 chunk.setBlockId(x, 127, z, Block.BEDROCK);
                 for (int y = 1; y < 127; ++y) {
                     if (getNoise(baseX | x, y, baseZ | z) > 0) {
