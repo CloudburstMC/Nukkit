@@ -3773,13 +3773,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         pk.y = (float) pos.y;
         pk.z = (float) pos.z;
 
-        this.extinguish();
-
         //this is a dirty hack to prevent dying in a different level than the respawn point from breaking everything
         if (this.level != pos.level)   {
             this.teleport(new Location(pos.x, -100, pos.z, pos.level), null);
             this.teleport(new Location(pos.x, pos.y, pos.z, pos.level), null);
         }
+
+        this.extinguish();
 
         this.dataPacket(pk);
     }
