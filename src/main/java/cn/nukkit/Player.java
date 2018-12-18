@@ -2393,6 +2393,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             Position respawnPos = playerRespawnEvent.getRespawnPosition();
 
                             this.teleport(respawnPos, null);
+                            this.extinguish();
 
                             RespawnPacket respawnPacket = new RespawnPacket();
                             respawnPacket.x = (float) respawnPos.x;
@@ -2403,7 +2404,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.setSprinting(false, true);
                             this.setSneaking(false);
 
-                            this.extinguish();
                             this.setDataProperty(new ShortEntityData(Player.DATA_AIR, 400), false);
                             this.deadTicks = 0;
                             this.noDamageTicks = 60;
