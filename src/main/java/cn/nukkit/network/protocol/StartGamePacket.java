@@ -56,6 +56,8 @@ public class StartGamePacket extends DataPacket {
     public boolean hasLockedResourcePack = false;
     public boolean isFromLockedWorldTemplate = false;
     public boolean isUsingMsaGamertagsOnly = false;
+    public boolean isFromWorldTemplate = false;
+    public boolean isWorldTemplateOptionLocked = false;
     public String levelId = ""; //base64 string, usually the same as world folder name in vanilla
     public String worldName;
     public String premiumWorldTemplateId = "";
@@ -98,7 +100,7 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(this.broadcastToXboxLive);
         this.putBoolean(this.commandsEnabled);
         this.putBoolean(this.isTexturePacksRequired);
-        this.putGameRules(gameRules);
+        this.putGameRules(this.gameRules);
         this.putBoolean(this.bonusChest);
         this.putBoolean(this.hasStartWithMapEnabled);
         this.putBoolean(this.trustPlayers);
@@ -112,6 +114,8 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(this.hasLockedResourcePack);
         this.putBoolean(this.isFromLockedWorldTemplate);
         this.putBoolean(this.isUsingMsaGamertagsOnly);
+        this.putBoolean(this.isFromWorldTemplate);
+        this.putBoolean(this.isWorldTemplateOptionLocked);
         this.putString(this.levelId);
         this.putString(this.worldName);
         this.putString(this.premiumWorldTemplateId);
