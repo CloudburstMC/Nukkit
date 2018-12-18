@@ -2393,7 +2393,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             Position respawnPos = playerRespawnEvent.getRespawnPosition();
 
                             this.teleport(respawnPos, null);
-                            this.extinguish();
 
                             RespawnPacket respawnPacket = new RespawnPacket();
                             respawnPacket.x = (float) respawnPos.x;
@@ -3773,6 +3772,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         pk.x = (float) pos.x;
         pk.y = (float) pos.y;
         pk.z = (float) pos.z;
+
+        this.extinguish();
 
         //this is a dirty hack to prevent dying in a different level than the respawn point from breaking everything
         if (this.level != pos.level)   {
