@@ -55,6 +55,11 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
     @Override
     public void close() {
         if (!this.closed) {
+            unpair();
+            for (Item chestItem : inventory.getContents().values()) {
+                level.dropItem(this, chestItem);
+            }
+
             for (Player player : new HashSet<>(this.getInventory().getViewers())) {
                 player.removeWindow(this.getInventory());
             }
