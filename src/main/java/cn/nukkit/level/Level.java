@@ -1890,6 +1890,7 @@ public class Level implements ChunkManager, Metadatable {
         // Close BlockEntity before we check onBreak
         BlockEntity blockEntity = this.getBlockEntity(target);
         if (blockEntity != null) {
+            blockEntity.onBreak();
             blockEntity.close();
 
             this.updateComparatorOutputLevel(target);
