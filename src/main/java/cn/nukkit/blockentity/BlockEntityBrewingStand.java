@@ -102,6 +102,13 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
     }
 
     @Override
+    public void onBreak() {
+        for (Item content : inventory.getContents().values()) {
+            level.dropItem(this, content);
+        }
+    }
+
+    @Override
     public void saveNBT() {
         namedTag.putList(new ListTag<CompoundTag>("Items"));
         for (int index = 0; index < getSize(); index++) {

@@ -196,6 +196,10 @@ public abstract class BlockEntity extends Position {
         }
     }
 
+    public void onBreak() {
+
+    }
+
     public String getName() {
         return name;
     }

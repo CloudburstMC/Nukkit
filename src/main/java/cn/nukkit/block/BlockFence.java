@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.SimpleAxisAlignedBB;
@@ -98,5 +100,10 @@ public class BlockFence extends BlockTransparentMeta {
     @Override
     public BlockColor getColor() {
         return BlockColor.WOOD_BLOCK_COLOR;
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(this, this.getDamage());
     }
 }

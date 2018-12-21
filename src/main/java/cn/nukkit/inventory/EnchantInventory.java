@@ -1,5 +1,6 @@
 package cn.nukkit.inventory;
 
+import cn.nukkit.Player;
 import cn.nukkit.item.enchantment.EnchantmentEntry;
 import cn.nukkit.level.Position;
 
@@ -164,25 +165,23 @@ public class EnchantInventory extends ContainerInventory {
                 this.sendEnchantmentList();
             }
         }
-    }
+    }*/
 
     @Override
     public void onClose(Player who) {
         super.onClose(who);
-
-        for (int i = 0; i < 2; ++i) {
-            this.getHolder().getLevel().dropItem(this.getHolder().add(0.5, 0.5, 0.5), this.getItem(i));
-            this.clear(i);
-        }
-
         if (this.getViewers().size() == 0) {
+            for (int i = 0; i < 2; ++i) {
+                who.getInventory().addItem(this.getItem(i));
+                this.clear(i);
+            }
             this.levels = null;
             this.entries = null;
             this.bookshelfAmount = 0;
         }
     }
 
-    public void onEnchant(Player who, Item before, Item after) {
+    /*public void onEnchant(Player who, Item before, Item after) {
         Item result = (before.getId() == Item.BOOK) ? new ItemBookEnchanted() : before;
         if (!before.hasEnchantments() && after.hasEnchantments() && after.getId() == result.getId() && this.levels != null && this.entries != null) {
             Enchantment[] enchantments = after.getEnchantments();

@@ -90,8 +90,6 @@ public class Nether extends Generator {
         });
         this.populators.add(ores);
 
-        this.populators.add(new PopulatorGlowStone());
-
         PopulatorGroundFire groundFire = new PopulatorGroundFire();
         groundFire.setBaseAmount(1);
         groundFire.setRandomAmount(1);
@@ -107,6 +105,7 @@ public class Nether extends Generator {
                 new OreType(new BlockOreQuartz(), 40, 16, 0, 128, NETHERRACK),
                 new OreType(new BlockSoulSand(), 1, 64, 30, 35, NETHERRACK),
                 new OreType(new BlockLava(), 32, 1, 0, 32, NETHERRACK),
+                new OreType(new BlockMagma(), 32, 16, 26, 37, NETHERRACK),
         });
         this.populators.add(ore);
     }
@@ -125,6 +124,9 @@ public class Nether extends Generator {
                 chunk.setBiomeId(x, z, biome.getId());
 
                 chunk.setBlockId(x, 0, z, Block.BEDROCK);
+                for (int y = 115; y < 127; ++y) {
+                    chunk.setBlockId(x, y, z, Block.NETHERRACK);
+                }
                 chunk.setBlockId(x, 127, z, Block.BEDROCK);
                 for (int y = 1; y < 127; ++y) {
                     if (getNoise(baseX | x, y, baseZ | z) > 0) {

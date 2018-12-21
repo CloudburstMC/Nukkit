@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
@@ -53,7 +54,7 @@ public class BlockTripWireHook extends BlockFlowable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (!this.getSide(face.getOpposite()).isNormalBlock()) {
+        if (!this.getSide(face.getOpposite()).isNormalBlock() || face == BlockFace.DOWN || face == BlockFace.UP) {
             return false;
         }
 
@@ -177,15 +178,15 @@ public class BlockTripWireHook extends BlockFlowable {
 
     private void addSound(Vector3 pos, boolean canConnect, boolean nextPowered, boolean attached, boolean powered) {
         if (nextPowered && !powered) {
-            this.level.addLevelSoundEvent(pos, LevelSoundEventPacket.SOUND_POWER_ON, 1, -1);
+            this.level.addLevelSoundEvent(pos, LevelSoundEventPacket.SOUND_POWER_ON);
             this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
         } else if (!nextPowered && powered) {
-            this.level.addLevelSoundEvent(pos, LevelSoundEventPacket.SOUND_POWER_OFF, 1, -1);
+            this.level.addLevelSoundEvent(pos, LevelSoundEventPacket.SOUND_POWER_OFF);
             this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
         } else if (canConnect && !attached) {
-            this.level.addLevelSoundEvent(pos, LevelSoundEventPacket.SOUND_ATTACH, 1, -1);
+            this.level.addLevelSoundEvent(pos, LevelSoundEventPacket.SOUND_ATTACH);
         } else if (!canConnect && attached) {
-            this.level.addLevelSoundEvent(pos, LevelSoundEventPacket.SOUND_DETACH, 1, -1);
+            this.level.addLevelSoundEvent(pos, LevelSoundEventPacket.SOUND_DETACH);
         }
     }
 
@@ -227,5 +228,10 @@ public class BlockTripWireHook extends BlockFlowable {
     @Override
     public int getStrongPower(BlockFace side) {
         return !isPowered() ? 0 : getFacing() == side ? 15 : 0;
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(this, 0);
     }
 }
