@@ -1639,10 +1639,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.lastUpdate = currentTick;
 
         if (!this.isAlive() && this.spawned) {
-            ++this.deadTicks;
-            if (this.deadTicks >= 10) {
-                this.despawnFromAll();
-            }
+            //++this.deadTicks;
+            //if (this.deadTicks >= 10) {
+                this.despawnFromAll(); //HACK: fix "dead" players
+            //}
             return true;
         }
 
