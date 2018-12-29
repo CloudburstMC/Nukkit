@@ -139,7 +139,7 @@ public class Server {
 
     private int maxPlayers;
 
-    private boolean autoSave;
+    private boolean autoSave = true;
 
     private RCON rcon;
 

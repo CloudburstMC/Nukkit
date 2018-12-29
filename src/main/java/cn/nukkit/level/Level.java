@@ -198,7 +198,7 @@ public class Level implements ChunkManager, Metadatable {
     private int chunkGenerationQueueSize = 8;
     private int chunkPopulationQueueSize = 2;
 
-    private boolean autoSave = true;
+    private boolean autoSave;
 
     private BlockMetadataStore blockMetadata;
 
