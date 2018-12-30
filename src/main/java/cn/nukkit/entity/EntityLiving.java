@@ -100,7 +100,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
             return;
         }
 
-        this.attackTime = 0;
+        this.attackTime = 10;
     }
 
     @Override
