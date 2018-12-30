@@ -216,10 +216,12 @@ public class Effect implements Cloneable {
     }
 
     public void add(Entity entity) {
-        this.add(entity, false);
-    }
-
-    public void add(Entity entity, boolean modify) {
+        Effect oldEffect = entity.getEffect(getId());
+        if (oldEffect != null && (Math.abs(this.getAmplifier()) < Math.abs(oldEffect.getAmplifier()) ||
+                Math.abs(this.getAmplifier()) == Math.abs(oldEffect.getAmplifier())
+                        && this.getDuration() < oldEffect.getDuration())) {
+            return;
+        }
         if (entity instanceof Player) {
             Player player = (Player) entity;
 
@@ -229,7 +231,7 @@ public class Effect implements Cloneable {
             pk.amplifier = this.getAmplifier();
             pk.particles = this.isVisible();
             pk.duration = this.getDuration();
-            if (modify) {
+            if (oldEffect != null) {
                 pk.eventId = MobEffectPacket.EVENT_MODIFY;
             } else {
                 pk.eventId = MobEffectPacket.EVENT_ADD;
@@ -238,11 +240,17 @@ public class Effect implements Cloneable {
             player.dataPacket(pk);
 
             if (this.id == Effect.SPEED) {
-                player.setMovementSpeed(player.getMovementSpeed() * (1 + 0.2f * this.amplifier + 1));
+                if (oldEffect != null) {
+                    player.setMovementSpeed(player.getMovementSpeed() / (1 + 0.2f * (oldEffect.amplifier + 1)), false);
+                }
+                player.setMovementSpeed(player.getMovementSpeed() * (1 + 0.2f * (this.amplifier + 1)));
             }
 
             if (this.id == Effect.SLOWNESS) {
-                player.setMovementSpeed(player.getMovementSpeed() * (1 - 0.15f * this.amplifier + 1));
+                if (oldEffect != null) {
+                    player.setMovementSpeed(player.getMovementSpeed() / (1 - 0.15f * (oldEffect.amplifier + 1)), false);
+                }
+                player.setMovementSpeed(player.getMovementSpeed() * (1 - 0.15f * (this.amplifier + 1)));
             }
         }
 
