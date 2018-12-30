@@ -185,9 +185,6 @@ public class Effect implements Cloneable {
                     return (this.duration % interval) == 0;
                 }
                 return true;
-            case Effect.SPEED:
-            case Effect.SLOWNESS:
-                return (this.duration % 20) == 0;
         }
         return false;
     }
@@ -207,16 +204,6 @@ public class Effect implements Cloneable {
                     entity.heal(new EntityRegainHealthEvent(entity, 1, EntityRegainHealthEvent.CAUSE_MAGIC));
                 }
                 break;
-            case Effect.SPEED:
-                if (entity instanceof Player) {
-                    ((Player) entity).setMovementSpeed((float) (((this.amplifier + 1) * 0.2 + 1) * 0.1));
-                }
-                break;
-            case Effect.SLOWNESS:
-                if (entity instanceof Player) {
-                    ((Player) entity).setMovementSpeed((float) (((this.amplifier + 1) * -0.15 + 1) * 0.1));
-                }
-                break;
         }
     }
 
@@ -234,6 +221,8 @@ public class Effect implements Cloneable {
 
     public void add(Entity entity, boolean modify) {
         if (entity instanceof Player) {
+            Player player = (Player) entity;
+
             MobEffectPacket pk = new MobEffectPacket();
             pk.eid = entity.getId();
             pk.effectId = this.getId();
@@ -246,14 +235,14 @@ public class Effect implements Cloneable {
                 pk.eventId = MobEffectPacket.EVENT_ADD;
             }
 
-            ((Player) entity).dataPacket(pk);
+            player.dataPacket(pk);
 
             if (this.id == Effect.SPEED) {
-                ((Player) entity).setMovementSpeed((float) (((this.amplifier + 1) * 0.2 + 1) * 0.1));
+                player.setMovementSpeed(player.getMovementSpeed() * (1 + 0.2f * this.amplifier + 1));
             }
 
             if (this.id == Effect.SLOWNESS) {
-                ((Player) entity).setMovementSpeed((float) (((this.amplifier + 1) * -0.15 + 1) * 0.1));
+                player.setMovementSpeed(player.getMovementSpeed() * (1 - 0.15f * this.amplifier + 1));
             }
         }
 

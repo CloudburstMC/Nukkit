@@ -2400,7 +2400,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             respawnPacket.z = (float) respawnPos.z;
                             this.dataPacket(respawnPacket);
 
-                            this.setSprinting(false, true);
+                            this.setSprinting(false);
                             this.setSneaking(false);
 
                             this.setDataProperty(new ShortEntityData(Player.DATA_AIR, 400), false);
@@ -4588,16 +4588,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         return this.locale.get();
     }
 
-    public void setSprinting(boolean value, boolean setDefault) {
-        super.setSprinting(value);
-        if (setDefault) {
-            this.movementSpeed = DEFAULT_SPEED;
-        } else {
-            float sprintSpeedChange = DEFAULT_SPEED * 0.3f;
-            if (!value) sprintSpeedChange *= -1;
-            this.movementSpeed += sprintSpeedChange;
+    @Override
+    public void setSprinting(boolean value) {
+        if (isSprinting() != value) {
+            super.setSprinting(value);
+            setMovementSpeed(value ? getMovementSpeed() * 1.3f : getMovementSpeed() / 1.3f);
         }
-        this.setMovementSpeed(this.movementSpeed);
     }
 
     public void transfer(InetSocketAddress address) {
