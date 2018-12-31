@@ -290,43 +290,44 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
                 if (inventory.isFull()) {
                     return false;
                 }
-                for (int i = 0; i < inventory.getSize(); i++) {
+
+                for (int i = 0; i < this.inventory.getSize(); i++){
                     Item item = this.inventory.getItem(i);
-                    if (item.getId() != 0 && item.getCount() > 0) {
+                    if (item.getId() != 0 && item.getCount() > 0){
                         Item itemToAdd = item.clone();
                         itemToAdd.setCount(1);
-                        //If it is a fuel
-                        if (Fuel.duration.containsKey(item.getId())) {
-                            if (inventory.getFuel().getId() == Item.AIR) {
-                                inventory.setFuel(itemToAdd);
-                                item.count--;
-                            } else if (inventory.getFuel().getId() == itemToAdd.getId()) {
-                                Item fuel = inventory.getFuel();
-                                if (fuel.count < fuel.getMaxStackSize())
-                                {
-                                    fuel.count++;
-                                    inventory.setFuel(fuel);
-                                    item.count--;
-                                }
-                            }
-                        } else { //Must be an input, try to cook it
-                            if (inventory.getSmelting().getId() == Item.AIR) {
+                        
+                        //Check direction of hopper
+                        if (this.getBlock().getDamage() == 0){
+                            if (inventory.getSmelting().getId() == Item.AIR){
                                 inventory.setSmelting(itemToAdd);
                                 item.count--;
-                            } else if (inventory.getSmelting().getId() == itemToAdd.getId()) {
+                            } else if (inventory.getSmelting().getId() == itemToAdd.getId()){
                                 Item smelting = inventory.getSmelting();
-                                if (smelting.count < smelting.getMaxStackSize())  {
+                                if (smelting.count < smelting.getMaxStackSize()){
                                     smelting.count++;
                                     inventory.setSmelting(smelting);
                                     item.count--;
                                 }
                             }
+                        } else if (Fuel.duration.containsKey(item.getId())){
+                            if (inventory.getFuel().getId() == Item.AIR){
+                                inventory.setFuel(itemToAdd);
+                                item.count--;
+                            } else if (inventory.getFuel().getId() == itemToAdd.getId()){
+                                Item fuel = inventory.getFuel();
+                                if (fuel.count < fuel.getMaxStackSize()){
+                                    fuel.count++;
+                                    inventory.setFuel(fuel);
+                                    item.count--;
+                                }
+                            }
                         }
-                        inventory.sendContents(inventory.getViewers()); //whats wrong?
+                        inventory.sendContents(inventory.getViewers());
                         this.inventory.setItem(i, item);
-                        return true;
                     }
                 }
+
             } else if (be instanceof InventoryHolder) {
                 Inventory inventory = ((InventoryHolder) be).getInventory();
 
