@@ -21,8 +21,4 @@ public class ItemCake extends Item {
         this.block = new BlockCake();
     }
 
-    @Override
-    public int getMaxStackSize() {
-        return 1;
-    }
 }

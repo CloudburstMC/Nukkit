@@ -13,8 +13,4 @@ public class ItemSaddle extends Item {
         super(SADDLE, meta, count, "Saddle");
     }
 
-    @Override
-    public int getMaxStackSize() {
-        return 1;
-    }
 }

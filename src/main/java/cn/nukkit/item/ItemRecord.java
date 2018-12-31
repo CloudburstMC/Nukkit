@@ -9,10 +9,5 @@ public abstract class ItemRecord extends Item {
         super(id, meta, count, "Music Disc");
     }
 
-    @Override
-    public int getMaxStackSize() {
-        return 1;
-    }
-
     public abstract String getSoundId();
 }

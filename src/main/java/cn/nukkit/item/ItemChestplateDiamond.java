@@ -29,11 +29,6 @@ public class ItemChestplateDiamond extends ItemArmor {
     }
 
     @Override
-    public int getArmorPoints() {
-        return 8;
-    }
-
-    @Override
     public int getMaxDurability() {
         return 529;
     }

@@ -28,6 +28,4 @@ public class ItemEgg extends ProjectileItem {
         return 1.5f;
     }
 
-    @Override
-    public int getMaxStackSize() { return 16; }
 }

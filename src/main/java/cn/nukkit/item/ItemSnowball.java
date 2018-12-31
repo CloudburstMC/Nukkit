@@ -19,11 +19,6 @@ public class ItemSnowball extends ProjectileItem {
     }
 
     @Override
-    public int getMaxStackSize() {
-        return 16;
-    }
-
-    @Override
     public String getProjectileEntityType() {
         return "Snowball";
     }

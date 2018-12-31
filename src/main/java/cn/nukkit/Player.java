@@ -1745,6 +1745,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * Returns the Entity the player is looking at currently
      *
      * @param maxDistance the maximum distance to check for entities
+     *
      * @return Entity|null    either NULL if no entity is found or an instance of the entity
      */
     public EntityInteractable getEntityPlayerLookingAt(int maxDistance) {
@@ -2144,7 +2145,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                         @Override
                         public void onRun() {
-                            e = new PlayerAsyncPreLoginEvent(username, uuid, ip, port);
+                            e = new PlayerAsyncPreLoginEvent(playerInstance, username, uuid, ip, port);
                             server.getPluginManager().callEvent(e);
                         }
 
@@ -4225,8 +4226,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * @return form id to use in {@link PlayerFormRespondedEvent}
      */
     public int addServerSettings(FormWindow window) {
-        int id = this.formWindowCount++;
+        return this.addServerSettings(window, this.formWindowCount++);
+    }
 
+    /**
+     * Shows a new setting page in game settings
+     * You can find out settings result by listening to PlayerFormRespondedEvent
+     *
+     * @param window to show on settings page
+     * @return form id to use in {@link PlayerFormRespondedEvent}
+     */
+    public int addServerSettings(FormWindow window, int id) {
         this.serverSettings.put(id, window);
         return id;
     }
@@ -4236,6 +4246,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      *
      * @param text   The BossBar message
      * @param length The BossBar percentage
+     *
      * @return bossBarId  The BossBar ID, you should store it if you want to remove or update the BossBar later
      */
     @Deprecated
@@ -4248,7 +4259,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * Creates and sends a BossBar to the player
      *
      * @param dummyBossBar DummyBossBar Object (Instantiate it by the Class Builder)
+     *
      * @return bossBarId  The BossBar ID, you should store it if you want to remove or update the BossBar later
+     *
      * @see DummyBossBar.Builder
      */
     public long createBossBar(DummyBossBar dummyBossBar) {
@@ -4261,7 +4274,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * Get a DummyBossBar object
      *
      * @param bossBarId The BossBar ID
+     *
      * @return DummyBossBar object
+     *
      * @see DummyBossBar#setText(String) Set BossBar text
      * @see DummyBossBar#setLength(float) Set BossBar length
      * @see DummyBossBar#setColor(BlockColor) Set BossBar color
@@ -4772,6 +4787,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     /**
      * Show a window of a XBOX account's profile
+     *
      * @param xuid XUID
      */
     public void showXboxProfile(String xuid) {

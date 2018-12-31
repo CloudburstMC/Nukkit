@@ -33,11 +33,6 @@ abstract public class ItemArmor extends Item {
     }
 
     @Override
-    public int getMaxStackSize() {
-        return 1;
-    }
-
-    @Override
     public boolean isArmor() {
         return true;
     }

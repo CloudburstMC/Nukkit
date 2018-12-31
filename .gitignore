@@ -54,5 +54,5 @@ creativeitems.json
 recipes.json
 
 #Nukkit data dir
-data
-data/*
+/data/
+/data/*

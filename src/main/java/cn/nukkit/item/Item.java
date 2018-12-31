@@ -12,10 +12,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.nbt.tag.StringTag;
-import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.nbt.tag.*;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
@@ -855,8 +852,16 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
     }
 
-    public int getMaxStackSize() {
-        return 64;
+    public static int DEFAULT_MAX_STACK_SIZE = 64;
+    public static int DEFAULT_ARMOR_POINTS = 0;
+
+    public void setMaxStackSize(int maxStackSize){
+        if (!this.hasCompoundTag()) {
+            this.setNamedTag(new CompoundTag());
+        }
+
+        CompoundTag tag = this.getNamedTag();
+        tag.putShort("maxStackSize", maxStackSize);
     }
 
     final public Short getFuelTime() {
@@ -941,8 +946,29 @@ public class Item implements Cloneable, BlockID, ItemID {
         return 1;
     }
 
+    public int getMaxStackSize() {
+        if (!this.hasCompoundTag()) {
+            return DEFAULT_MAX_STACK_SIZE;
+        }
+
+        return this.getNamedTag().getShort("maxStackSize");
+    }
+
+    public void setArmorPoints(int armorPoints){
+        if (!this.hasCompoundTag()) {
+            this.setNamedTag(new CompoundTag());
+        }
+
+        CompoundTag tag = this.getNamedTag();
+        tag.putShort("armorPoints", armorPoints);
+    }
+
     public int getArmorPoints() {
-        return 0;
+        if (!this.hasCompoundTag()) {
+            return DEFAULT_ARMOR_POINTS;
+        }
+
+        return this.getNamedTag().getShort("armorPoints");
     }
 
     public int getToughness() {
@@ -970,8 +996,9 @@ public class Item implements Cloneable, BlockID, ItemID {
      * Called when a player uses the item on air, for example throwing a projectile.
      * Returns whether the item was changed, for example count decrease or durability change.
      *
-     * @param player player
+     * @param player          player
      * @param directionVector direction
+     *
      * @return item changed
      */
     public boolean onClickAir(Player player, Vector3 directionVector) {
@@ -983,6 +1010,7 @@ public class Item implements Cloneable, BlockID, ItemID {
      * Returns whether the item was changed, for example count decrease or durability change.
      *
      * @param player player
+     *
      * @return item changed
      */
     public boolean onReleaseUsing(Player player) {
@@ -1018,6 +1046,7 @@ public class Item implements Cloneable, BlockID, ItemID {
      * Returns whether the specified item stack has the same ID, damage, NBT and count as this item stack.
      *
      * @param other item
+     *
      * @return equal
      */
     public final boolean equalsExact(Item other) {

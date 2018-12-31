@@ -1,5 +1,6 @@
 package cn.nukkit.event.player;
 
+import cn.nukkit.Player;
 import cn.nukkit.event.HandlerList;
 
 import java.util.UUID;
@@ -25,7 +26,8 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
     private LoginResult loginResult = LoginResult.SUCCESS;
     private String kickMessage = "Plugin Reason";
 
-    public PlayerAsyncPreLoginEvent(String name, UUID uuid, String address, int port) {
+    public PlayerAsyncPreLoginEvent(Player player, String name, UUID uuid, String address, int port) {
+        this.player = player;
         this.name = name;
         this.uuid = uuid;
         this.address = address;

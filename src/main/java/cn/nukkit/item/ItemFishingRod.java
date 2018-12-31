@@ -23,9 +23,5 @@ public class ItemFishingRod extends ItemTool {
         return 1;
     }
 
-    @Override
-    public int getMaxStackSize() {
-        return 1;
-    }
 }
 

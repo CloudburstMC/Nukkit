@@ -52,9 +52,4 @@ public class ItemPotion extends Item {
         super(POTION, meta, count, "Potion");
     }
 
-    @Override
-    public int getMaxStackSize() {
-        return 1;
-    }
-
 }

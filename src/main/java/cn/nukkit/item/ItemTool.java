@@ -53,22 +53,17 @@ public abstract class ItemTool extends Item {
     }
 
     @Override
-    public int getMaxStackSize() {
-        return 1;
-    }
-
-    @Override
     public boolean useOn(Block block) {
         if (this.isUnbreakable() || isDurable()) {
             return true;
         }
 
         if (block.getToolType() == ItemTool.TYPE_PICKAXE && this.isPickaxe() ||
-                block.getToolType() == ItemTool.TYPE_SHOVEL && this.isShovel() ||
-                block.getToolType() == ItemTool.TYPE_AXE && this.isAxe() ||
-                block.getToolType() == ItemTool.TYPE_SWORD && this.isSword() ||
-                block.getToolType() == ItemTool.SHEARS && this.isShears()
-                ) {
+            block.getToolType() == ItemTool.TYPE_SHOVEL && this.isShovel() ||
+            block.getToolType() == ItemTool.TYPE_AXE && this.isAxe() ||
+            block.getToolType() == ItemTool.TYPE_SWORD && this.isSword() ||
+            block.getToolType() == ItemTool.SHEARS && this.isShears()
+        ) {
             this.meta++;
         } else if (!this.isShears() && block.getBreakTime(this) > 0) {
             this.meta += 2;
@@ -109,7 +104,7 @@ public abstract class ItemTool extends Item {
     @Override
     public boolean isUnbreakable() {
         Tag tag = this.getNamedTagEntry("Unbreakable");
-        return tag instanceof ByteTag && ((ByteTag) tag).data > 0;
+        return !(tag instanceof ByteTag) || ((ByteTag) tag).data > 0;
     }
 
     @Override

@@ -29,11 +29,6 @@ public class ItemChestplateLeather extends ItemColorArmor {
     }
 
     @Override
-    public int getArmorPoints() {
-        return 3;
-    }
-
-    @Override
     public int getMaxDurability() {
         return 81;
     }

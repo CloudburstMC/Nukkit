@@ -29,11 +29,6 @@ public class ItemLeggingsLeather extends ItemColorArmor {
     }
 
     @Override
-    public int getArmorPoints() {
-        return 2;
-    }
-
-    @Override
     public int getMaxDurability() {
         return 76;
     }

@@ -13,8 +13,4 @@ public class ItemHorseArmorDiamond extends Item {
         super(DIAMOND_HORSE_ARMOR, meta, count, "Diamond Horse Armor");
     }
 
-    @Override
-    public int getMaxStackSize() {
-        return 1;
-    }
 }

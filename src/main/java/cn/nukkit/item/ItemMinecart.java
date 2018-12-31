@@ -64,8 +64,4 @@ public class ItemMinecart extends Item {
         return false;
     }
 
-    @Override
-    public int getMaxStackSize() {
-        return 1;
-    }
 }

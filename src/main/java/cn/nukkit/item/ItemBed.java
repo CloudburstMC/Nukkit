@@ -22,8 +22,4 @@ public class ItemBed extends Item {
         this.block = new BlockBed();
     }
 
-    @Override
-    public int getMaxStackSize() {
-        return 1;
-    }
 }

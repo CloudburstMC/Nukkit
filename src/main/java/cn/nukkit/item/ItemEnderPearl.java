@@ -15,11 +15,6 @@ public class ItemEnderPearl extends ProjectileItem {
     }
 
     @Override
-    public int getMaxStackSize() {
-        return 16;
-    }
-
-    @Override
     public String getProjectileEntityType() {
         return "EnderPearl";
     }

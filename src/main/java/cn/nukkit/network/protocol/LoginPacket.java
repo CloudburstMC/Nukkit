@@ -23,6 +23,8 @@ public class LoginPacket extends DataPacket {
     public int protocol;
     public UUID clientUUID;
     public long clientId;
+    public String xuid; //XBox UID. May have spaces
+
     public Skin skin;
 
     @Override
@@ -64,6 +66,7 @@ public class LoginPacket extends DataPacket {
                 JsonObject extra = chainMap.get("extraData").getAsJsonObject();
                 if (extra.has("displayName")) this.username = extra.get("displayName").getAsString();
                 if (extra.has("identity")) this.clientUUID = UUID.fromString(extra.get("identity").getAsString());
+                if (extra.has("XUID")) this.xuid = extra.get("XUID").getAsString();
             }
         }
     }
