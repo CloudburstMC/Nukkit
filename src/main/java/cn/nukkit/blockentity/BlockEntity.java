@@ -10,10 +10,10 @@ import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.MainLogger;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author MagicDroidX
@@ -46,8 +46,7 @@ public abstract class BlockEntity extends Position {
 
     public static long count = 1;
 
-    private static final Map<String, Class<? extends BlockEntity>> knownBlockEntities = new HashMap<>();
-    private static final Map<String, String> shortNames = new HashMap<>();
+    private static final BiMap<String, Class<? extends BlockEntity>> knownBlockEntities = HashBiMap.create(21);
 
     public FullChunk chunk;
     public String name;
@@ -137,14 +136,11 @@ public abstract class BlockEntity extends Position {
         }
 
         knownBlockEntities.put(name, c);
-        shortNames.put(c.getSimpleName(), name);
         return true;
     }
 
     public final String getSaveId() {
-        String simpleName = getClass().getName();
-        simpleName = simpleName.substring(22, simpleName.length());
-        return shortNames.getOrDefault(simpleName, "");
+        return knownBlockEntities.inverse().get(getClass());
     }
 
     public long getId() {
@@ -199,6 +195,10 @@ public abstract class BlockEntity extends Position {
 
     public void onBreak() {
 
+    }
+
+    public void setDirty() {
+        chunk.setChanged();
     }
 
     public String getName() {

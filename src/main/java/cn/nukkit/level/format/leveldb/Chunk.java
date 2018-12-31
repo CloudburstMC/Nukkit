@@ -459,7 +459,7 @@ public class Chunk extends BaseFullChunk {
                 for (BlockEntity blockEntity : this.getBlockEntities().values()) {
                     if (!blockEntity.closed) {
                         blockEntity.saveNBT();
-                        entities.add(blockEntity.namedTag);
+                        tiles.add(blockEntity.namedTag);
                     }
                 }
 
