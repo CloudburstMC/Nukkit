@@ -310,7 +310,7 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
             Item potion = this.inventory.getItem(i);
 
             if (potion.getId() == Item.POTION && potion.getCount() > 0) {
-                meta |= 1 << i;
+                meta |= 1 << (i - 1);
             }
         }
 
