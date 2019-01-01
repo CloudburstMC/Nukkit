@@ -289,35 +289,35 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
                 return false;
             }
 
-            for (int i = 0; i < this.inventory.getSize(); i++){
+            for (int i = 0; i < this.inventory.getSize(); i++) {
                 Item item = this.inventory.getItem(i);
-                if (item.getId() != 0 && item.getCount() > 0){
+                if (item.getId() != 0 && item.getCount() > 0) {
                     Item itemToAdd = item.clone();
                     itemToAdd.setCount(1);
                     
                     //Check direction of hopper
-                    if (this.getBlock().getDamage() == 0){
-                        if (inventory.getSmelting().getId() == Item.AIR){
+                    if (this.getBlock().getDamage() == 0) {
+                        if (inventory.getSmelting().getId() == Item.AIR) {
                             inventory.setSmelting(itemToAdd);
                             item.count--;
                             return true;
                         } else if (inventory.getSmelting().getId() == itemToAdd.getId()){
                             Item smelting = inventory.getSmelting();
-                            if (smelting.count < smelting.getMaxStackSize()){
+                            if (smelting.count < smelting.getMaxStackSize()) {
                                 smelting.count++;
                                 inventory.setSmelting(smelting);
                                 item.count--;
                                 return true;
                             }
                         }
-                    } else if (Fuel.duration.containsKey(item.getId())){
+                    } else if (Fuel.duration.containsKey(item.getId())) {
                         if (inventory.getFuel().getId() == Item.AIR){
                             inventory.setFuel(itemToAdd);
                             item.count--;
                             return true;
                         } else if (inventory.getFuel().getId() == itemToAdd.getId()){
                             Item fuel = inventory.getFuel();
-                            if (fuel.count < fuel.getMaxStackSize()){
+                            if (fuel.count < fuel.getMaxStackSize()) {
                                 fuel.count++;
                                 inventory.setFuel(fuel);
                                 item.count--;
