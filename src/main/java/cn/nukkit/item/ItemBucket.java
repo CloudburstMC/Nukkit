@@ -36,10 +36,13 @@ public class ItemBucket extends Item {
             case 1:
                 return "Milk";
             case 2:
+                return "Bucket of Cod";
             case 3:
+                return "Bucket of Salmon";
             case 4:
+                return "Bucket of Tropical Fish";
             case 5:
-                return "Fish Bucket";
+                return "Bucket of Pufferfish";
             case 8:
                 return "Water Bucket";
             case 10:
