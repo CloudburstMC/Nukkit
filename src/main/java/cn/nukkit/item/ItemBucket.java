@@ -3,11 +3,13 @@ package cn.nukkit.item;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockLava;
 import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.block.BlockWater;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
 
@@ -33,6 +35,11 @@ public class ItemBucket extends Item {
         switch (meta) {
             case 1:
                 return "Milk";
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                return "Fish Bucket";
             case 8:
                 return "Water Bucket";
             case 10:
@@ -44,6 +51,10 @@ public class ItemBucket extends Item {
 
     protected int getDamageByTarget(int target) {
         switch (target) {
+            case 2:
+            case 3:
+            case 4:
+            case 5:
             case 8:
             case 9:
                 return 8;
@@ -67,7 +78,7 @@ public class ItemBucket extends Item {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
-        Block targetBlock = Block.get(this.meta);
+        Block targetBlock = Block.get(getDamageByTarget(this.meta));
 
         if (targetBlock instanceof BlockAir) {
             if (target instanceof BlockLiquid && target.getDamage() == 0) {
@@ -92,6 +103,13 @@ public class ItemBucket extends Item {
                         player.getInventory().setItemInHand(clone);
                         player.getInventory().addItem(ev.getItem());
                     }
+
+                    if (target instanceof BlockLava) {
+                        level.addSound(block, Sound.BUCKET_FILL_LAVA);
+                    } else {
+                        level.addSound(block, Sound.BUCKET_FILL_WATER);
+                    }
+
                     return true;
                 } else {
                     player.getInventory().sendContents(player);
@@ -101,6 +119,11 @@ public class ItemBucket extends Item {
             Item result = Item.get(BUCKET, 0, 1);
             PlayerBucketEmptyEvent ev;
             player.getServer().getPluginManager().callEvent(ev = new PlayerBucketEmptyEvent(player, block, face, this, result));
+
+            if (player.getLevel().getName().equals("nether") && this.getDamage() != 10) {
+                ev.setCancelled(true);
+            }
+
             if (!ev.isCancelled()) {
                 player.getLevel().setBlock(block, targetBlock, true, true);
                 if (player.isSurvival()) {
@@ -109,6 +132,13 @@ public class ItemBucket extends Item {
                     player.getInventory().setItemInHand(clone);
                     player.getInventory().addItem(ev.getItem());
                 }
+
+                if (this.getDamage() == 10) {
+                    level.addSound(block, Sound.BUCKET_EMPTY_LAVA);
+                } else {
+                    level.addSound(block, Sound.BUCKET_EMPTY_WATER);
+                }
+
                 return true;
             } else {
                 player.getInventory().sendContents(player);
