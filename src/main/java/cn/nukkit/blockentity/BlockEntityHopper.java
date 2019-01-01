@@ -157,15 +157,11 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
         this.transferCooldown--;
 
         if (!this.isOnTransferCooldown()) {
-            boolean transfer = this.transferItemsOut();
-            boolean pickup = false;
-
-            if (!transfer){
-                pickup = this.pickupDroppedItems();
-            }
-
-            if (transfer || pickup) {
-                this.setTransferCooldown(8); //TODO: maybe we should update hopper every tick if nothing happens?
+            if (this.transferItemsOut()) {
+                this.setTransferCooldown(8);
+                setDirty();
+            } else if (this.pickupDroppedItems()) {
+                this.setTransferCooldown(8);
                 setDirty();
             }
         }
@@ -304,24 +300,28 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
                         if (inventory.getSmelting().getId() == Item.AIR){
                             inventory.setSmelting(itemToAdd);
                             item.count--;
+                            return true;
                         } else if (inventory.getSmelting().getId() == itemToAdd.getId()){
                             Item smelting = inventory.getSmelting();
                             if (smelting.count < smelting.getMaxStackSize()){
                                 smelting.count++;
                                 inventory.setSmelting(smelting);
                                 item.count--;
+                                return true;
                             }
                         }
                     } else if (Fuel.duration.containsKey(item.getId())){
                         if (inventory.getFuel().getId() == Item.AIR){
                             inventory.setFuel(itemToAdd);
                             item.count--;
+                            return true;
                         } else if (inventory.getFuel().getId() == itemToAdd.getId()){
                             Item fuel = inventory.getFuel();
                             if (fuel.count < fuel.getMaxStackSize()){
                                 fuel.count++;
                                 inventory.setFuel(fuel);
                                 item.count--;
+                                return true;
                             }
                         }
                     }
