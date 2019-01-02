@@ -3947,7 +3947,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 add = true;
             }
-            if (add) source.setDamage((float) (source.getDamage() * 1.5));
+            if (add) source.setDamage(source.getDamage() * 1.5f);
         }
 
         if (super.attack(source)) { //!source.isCancelled()
