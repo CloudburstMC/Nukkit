@@ -16,7 +16,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -419,17 +418,26 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
                 }
             }
         }
-        for (Entity entity : new ArrayList<>(this.getEntities().values())) {
+        for (Entity entity : this.getEntities().values()) {
             if (entity instanceof Player) {
                 continue;
             }
             entity.close();
         }
 
-        for (BlockEntity blockEntity : new ArrayList<>(this.getBlockEntities().values())) {
+        for (BlockEntity blockEntity : this.getBlockEntities().values()) {
             blockEntity.close();
         }
         this.provider = null;
+
+        this.tiles = null;
+        this.entities = null;
+        this.tileList = null;
+        this.NBTtiles = null;
+        this.NBTentities =null;
+        this.extraData=null;
+        this.providerClass=null;
+
         return true;
     }
 

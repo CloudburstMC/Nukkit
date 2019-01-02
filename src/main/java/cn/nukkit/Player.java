@@ -3346,6 +3346,69 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.dataPacket(pk);
     }
 
+    public void sendAnnouncement(String message) {
+        this.sendAnnouncement("", message);
+    }
+
+    /**
+     * 2019-1-1 MCPE 1.18 测试, 效果同 {@link #sendWhisper(String)} (String)}, 会自动加上"悄悄对你说:"并变斜体, 灰色
+     * (不是很懂这个结果.
+     */
+    public void sendAnnouncement(String source, String message) {
+        TextPacket pk = new TextPacket();
+        pk.type = TextPacket.TYPE_ANNOUNCEMENT;
+        pk.source = source;
+        pk.message = this.server.getLanguage().translateString(message);
+        this.dataPacket(pk);
+    }
+
+    public void sendSystem(String message) {
+        this.sendSystem("", message);
+    }
+
+    /**
+     * 2019-1-1 MCPE 1.18 测试, 效果同 {@link #sendTip(String)}
+     */
+    public void sendSystem(String source, String message) {
+        TextPacket pk = new TextPacket();
+        pk.type = TextPacket.TYPE_SYSTEM;
+        pk.source = source;
+        pk.message = this.server.getLanguage().translateString(message);
+        this.dataPacket(pk);
+    }
+
+    public void sendRaw(String message) {
+        this.sendRaw("", message);
+    }
+
+    /**
+     * 2019-1-1 MCPE 1.18 测试, 效果同 {@link #sendChat(String)}, 在聊天框显示
+     */
+    public void sendRaw(String source, String message) {
+        TextPacket pk = new TextPacket();
+        pk.type = TextPacket.TYPE_RAW;
+        pk.source = source;
+        pk.message = this.server.getLanguage().translateString(message);
+        this.dataPacket(pk);
+    }
+
+
+    public void sendWhisper(String message) {
+        this.sendWhisper("", message);
+    }
+
+    /**
+     * 2019-1-1 MCPE 1.18 测试, 会自动加上"悄悄对你说:", 并变斜体, 灰色
+     */
+    public void sendWhisper(String source, String message) {
+        TextPacket pk = new TextPacket();
+        pk.type = TextPacket.TYPE_WHISPER;
+        pk.source = source;
+        pk.message = this.server.getLanguage().translateString(message);
+        this.dataPacket(pk);
+    }
+
+
     public void sendPopup(String message) {
         this.sendPopup(message, "");
     }
@@ -3424,9 +3487,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void sendActionBar(String title) {
-        this.sendActionBar(title, 1, 0, 1);
+        this.sendActionBar(title, 1, 20, 1);
     }
 
+    /**
+     * 2019-1-1 MCPE 1.18 测试, 效果同 {@link #sendTip(String)}, 但是可以设置显示时间
+     */
     public void sendActionBar(String title, int fadein, int duration, int fadeout) {
         SetTitlePacket pk = new SetTitlePacket();
         pk.type = SetTitlePacket.TYPE_ACTION_BAR;
