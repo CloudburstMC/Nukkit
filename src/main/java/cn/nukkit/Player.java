@@ -81,6 +81,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -1516,23 +1517,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.addMovement(this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
 
                         //FrostWalker
-                        if (inventory.getBoots() != null) {
-                            Enchantment[] enchantments = inventory.getBoots().getEnchantments();
-                            for (Enchantment enchantment : enchantments) {
-                                if (enchantment.getId() == Enchantment.ID_FROST_WALKER && this.y >= 1 && this.y <= 255) {
-                                    int lvl = 2 + enchantment.getLevel();
-                                    int floorX = this.getFloorX();
-                                    int coordX1 = floorX - lvl;
-                                    int coordX2 = floorX + lvl;
-                                    int floorZ = this.getFloorZ();
-                                    int coordZ1 = floorZ - lvl;
-                                    int coordZ2 = floorZ + lvl;
-                                    int floorY = this.getFloorY();
-                                    for (int coordX = coordX1; coordX < coordX2 + 1; coordX++) {
-                                        for (int coordZ = coordZ1; coordZ < coordZ2 + 1; coordZ++) {
-                                            if (level.getBlockIdAt(coordX, floorY - 1, coordZ) == Block.STILL_WATER && level.getBlockIdAt(coordX, floorY, coordZ) == Block.AIR) {
-                                                level.setBlockAt(coordX, floorY - 1, coordZ, Block.FROSTED_ICE);
-                                            }
+                        Enchantment frostWalker = inventory.getBoots().getEnchantment(Enchantment.ID_FROST_WALKER);
+                        if (frostWalker != null) {
+                            if (this.y >= 1 && this.y <= 255) {
+                                int lvl = 2 + frostWalker.getLevel();
+                                for (int coordX = this.getFloorX() - lvl; coordX < this.getFloorX() + lvl + 1; coordX++) {
+                                    for (int coordZ = this.getFloorZ() - lvl; coordZ < this.getFloorZ() + lvl + 1; coordZ++) {
+                                        Vector3 vec = new Vector3(coordX, this.getFloorY() - 1, coordZ);
+                                        if (level.getBlock(vec).getId() == Block.STILL_WATER && level.getBlock(vec.up()).getId() == Block.AIR) {
+                                            level.setBlock(vec, new BlockIceFrosted(), true);
+                                            level.scheduleUpdate(level.getBlock(vec), ThreadLocalRandom.current().nextInt(20, 40));
                                         }
                                     }
                                 }
