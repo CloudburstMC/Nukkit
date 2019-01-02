@@ -139,6 +139,8 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_SCORE_TAG = 83; //String
     public static final int DATA_BALLOON_ATTACHED_ENTITY = 84; // long
     public static final int DATA_PUFFERFISH_SIZE = 85;
+    public static final int DATA_FLAGS2 = 91; //long (extended data flags)
+
 
     // Flags
     public static final int DATA_FLAG_ONFIRE = 0;
@@ -2112,6 +2114,14 @@ public abstract class Entity extends Location implements Metadatable {
 
     public boolean getDataFlag(int propertyId, int id) {
         return (((propertyId == EntityHuman.DATA_PLAYER_FLAGS ? this.getDataPropertyByte(propertyId) & 0xff : this.getDataPropertyLong(propertyId))) & (1L << id)) > 0;
+    }
+
+    public void setGenericFlag(int propertyId, boolean value){
+        this.setDataFlag( propertyId >= 64 ? DATA_FLAGS2 : DATA_FLAGS, propertyId % 64, value );
+    }
+
+    public boolean getGenericFlag( int propertyId ) {
+        return this.getDataFlag( propertyId >= 64 ? DATA_FLAGS2 : DATA_FLAGS, propertyId % 64 );
     }
 
     @Override

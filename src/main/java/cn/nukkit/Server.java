@@ -2012,6 +2012,8 @@ public class Server {
         Entity.registerEntity("Snowball", EntitySnowball.class);
         Entity.registerEntity("EnderPearl", EntityEnderPearl.class);
         Entity.registerEntity("Painting", EntityPainting.class);
+        Entity.registerEntity( "ArmorStand", EntityArmorStand.class );
+
         //Monsters
         Entity.registerEntity("Creeper", EntityCreeper.class);
         Entity.registerEntity("Blaze", EntityBlaze.class);
