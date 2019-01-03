@@ -279,6 +279,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
         }
 
         BlockEntity be = this.level.getBlockEntity(this.getSide(BlockFace.fromIndex(this.level.getBlockDataAt(this.getFloorX(), this.getFloorY(), this.getFloorZ()))));
+        boolean toreturn = false;
         
         if (be instanceof BlockEntityHopper && this.getBlock().getDamage() == 0) return false;
         //Fix for furnace inputs
@@ -300,28 +301,28 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
                         if (inventory.getSmelting().getId() == Item.AIR) {
                             inventory.setSmelting(itemToAdd);
                             item.count--;
-                            return true;
+                            toreturn = true;
                         } else if (inventory.getSmelting().getId() == itemToAdd.getId()){
                             Item smelting = inventory.getSmelting();
                             if (smelting.count < smelting.getMaxStackSize()) {
                                 smelting.count++;
                                 inventory.setSmelting(smelting);
                                 item.count--;
-                                return true;
+                                toreturn = true;
                             }
                         }
                     } else if (Fuel.duration.containsKey(item.getId())) {
                         if (inventory.getFuel().getId() == Item.AIR){
                             inventory.setFuel(itemToAdd);
                             item.count--;
-                            return true;
+                            toreturn = true;
                         } else if (inventory.getFuel().getId() == itemToAdd.getId()){
                             Item fuel = inventory.getFuel();
                             if (fuel.count < fuel.getMaxStackSize()) {
                                 fuel.count++;
                                 inventory.setFuel(fuel);
                                 item.count--;
-                                return true;
+                                toreturn = true;
                             }
                         }
                     }
@@ -358,7 +359,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
             }
         }
         //TODO: check for minecart
-        return false;
+        return toreturn;
     }
 
     @Override
