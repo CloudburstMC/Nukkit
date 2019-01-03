@@ -3941,7 +3941,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             if (!damager.onGround) {
                 NukkitRandom random = new NukkitRandom();
                 for (int i = 0; i < 5; i++) {
-                    CriticalParticle par = new CriticalParticle(new Vector3(this.x + random.nextRange(-15, 15) / 10, this.y + random.nextRange(0, 20) / 10, this.z + random.nextRange(-15, 15) / 10));
+                    CriticalParticle par = new CriticalParticle(new Vector3(this.x + random.nextRange(-15, 15) / 10d, this.y + random.nextRange(0, 20) / 10d, this.z + random.nextRange(-15, 15) / 10d));
                     this.getLevel().addParticle(par);
                 }
 

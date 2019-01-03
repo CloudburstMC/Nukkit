@@ -158,7 +158,9 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
                 pair.checkPairing();
             }
 
-            if (this.doubleInventory == null) {
+            if (pair.doubleInventory != null) {
+                this.doubleInventory = pair.doubleInventory;
+            } else if (this.doubleInventory == null) {
                 if ((pair.x + ((int) pair.z << 15)) > (this.x + ((int) this.z << 15))) { //Order them correctly
                     this.doubleInventory = new DoubleChestInventory(pair, this);
                 } else {
