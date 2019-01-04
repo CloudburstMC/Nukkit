@@ -304,7 +304,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
                 return false;
             }
 
-            boolean pulledItem = false;
+            boolean pushedItem = false;
 
             for (int i = 0; i < this.inventory.getSize(); i++) {
                 Item item = this.inventory.getItem(i);
@@ -318,30 +318,30 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
                         if (smelting.getId() == Item.AIR) {
                             inventory.setSmelting(itemToAdd);
                             item.count--;
-                            pulledItem = true;
+                            pushedItem = true;
                         } else if (inventory.getSmelting().getId() == itemToAdd.getId() && smelting.count < smelting.getMaxStackSize()) {
                             smelting.count++;
                             inventory.setSmelting(smelting);
                             item.count--;
-                            pulledItem = true;
+                            pushedItem = true;
                         }
                     } else if (Fuel.duration.containsKey(itemToAdd.getId())) {
                         Item fuel = inventory.getFuel();
                         if (fuel.getId() == Item.AIR) {
                             inventory.setFuel(itemToAdd);
                             item.count--;
-                            pulledItem = true;
+                            pushedItem = true;
                         } else if (fuel.getId() == itemToAdd.getId() && fuel.count < fuel.getMaxStackSize()) {
                             fuel.count++;
                             inventory.setFuel(fuel);
                             item.count--;
-                            pulledItem = true;
+                            pushedItem = true;
                         }
                     }
                     this.inventory.setItem(i, item);
                 }
             }
-            return pulledItem;
+            return pushedItem;
         } else if (be instanceof InventoryHolder) {
             Inventory inventory = ((InventoryHolder) be).getInventory();
 
