@@ -11,6 +11,7 @@ import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+
 import java.util.Random;
 
 /**
@@ -115,11 +116,6 @@ public class BlockCocoa extends BlockTransparentMeta {
         }
 
         return ALL[damage] = bbs[this.getDamage() >> 2];
-    }
-
-    @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
-        return this.place(item, block, target, face, fx, fy, fz, null);
     }
 
     @Override

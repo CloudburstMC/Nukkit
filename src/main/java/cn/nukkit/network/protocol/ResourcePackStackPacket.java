@@ -9,6 +9,7 @@ public class ResourcePackStackPacket extends DataPacket {
     public boolean mustAccept = false;
     public ResourcePack[] behaviourPackStack = new ResourcePack[0];
     public ResourcePack[] resourcePackStack = new ResourcePack[0];
+    public boolean isExperimental = false;
 
     @Override
     public void decode() {
@@ -31,6 +32,8 @@ public class ResourcePackStackPacket extends DataPacket {
             this.putString(entry.getPackId());
             this.putString(entry.getPackVersion());
         }
+
+        this.putBoolean(isExperimental);
     }
 
     @Override

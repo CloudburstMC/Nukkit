@@ -104,6 +104,6 @@ public class BlockFence extends BlockTransparentMeta {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return new ItemBlock(this, this.getDamage());
     }
 }

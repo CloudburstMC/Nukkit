@@ -2,15 +2,15 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.event.entity.EntityShootBowEvent;
-import cn.nukkit.entity.projectile.EntityThrownTrident;
-import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.entity.projectile.EntityProjectile;
+import cn.nukkit.entity.projectile.EntityThrownTrident;
+import cn.nukkit.event.entity.EntityShootBowEvent;
+import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.DoubleTag;
+import cn.nukkit.nbt.tag.FloatTag;
+import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.scheduler.NukkitRunnable;
 
 /**
@@ -81,7 +81,7 @@ public class ItemTrident extends ItemTool {
                     entityShootBowEvent.getProjectile().kill();
                 } else {
                     entityShootBowEvent.getProjectile().spawnToAll();
-                    player.getLevel().addLevelSoundEvent(new Vector3(player.x, player.y, player.z), 183, 1, -1);
+                    player.getLevel().addLevelSoundEvent(new Vector3(player.x, player.y, player.z), 183);
                     if (!player.isCreative()) {
                         // idk why but trident returns to inventory without this
                         new NukkitRunnable() {

@@ -19,7 +19,8 @@ public class BlockDeadBush extends BlockFlowable {
     }
 
     public BlockDeadBush(int meta) {
-        super(meta);
+        // Dead bushes can't have meta. Also stops the server from throwing an exception with the block palette.
+        super(0);
     }
 
     @Override
