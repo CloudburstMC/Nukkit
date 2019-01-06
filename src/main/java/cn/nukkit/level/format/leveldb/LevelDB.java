@@ -155,6 +155,12 @@ public class LevelDB implements LevelProvider {
         }
     }
 
+
+    @Override
+    public Chunk getEmptyChunk(int chunkX, int chunkZ) {
+        return Chunk.getEmptyChunk(chunkX, chunkZ, this);
+    }
+
     @Override
     public AsyncTask requestChunkTask(int x, int z) {
         Chunk chunk = this.getChunk(x, z, false);
