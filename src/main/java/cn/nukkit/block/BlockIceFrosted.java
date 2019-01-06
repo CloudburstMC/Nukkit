@@ -54,8 +54,11 @@ public class BlockIceFrosted extends BlockTransparentMeta {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.getLevel().scheduleUpdate(this, ThreadLocalRandom.current().nextInt(20, 40));
-        return super.place(item, block, target, face, fx, fy, fz, player);
+        boolean t = super.place(item, block, target, face, fx, fy, fz, player);
+        if (t) {
+            this.getLevel().scheduleUpdate(this, ThreadLocalRandom.current().nextInt(20, 40));
+        }
+        return t;
     }
 
     @Override
@@ -63,11 +66,12 @@ public class BlockIceFrosted extends BlockTransparentMeta {
         this.getLevel().setBlock(this, new BlockWaterStill(), true);
         for (BlockFace face : BlockFace.values()) {
             Block nearBlock = this.getSide(face);
-            if (nearBlock instanceof BlockIceFrosted) {
-                int age = nearBlock.getDamage();
+            if (nearBlock instanceof BlockIceFrosted && this.getLevel().getFullLight(nearBlock) > 11) {
+                BlockIceFrosted block = (BlockIceFrosted) nearBlock.clone();
+                int age = block.getDamage();
                 if (age < 3) {
-                    nearBlock.setDamage(age + 1);
-                    this.getLevel().scheduleUpdate(nearBlock, ThreadLocalRandom.current().nextInt(20, 40));
+                    block.setDamage(age + 1);
+                    this.getLevel().setBlock(nearBlock, block);
                 } else {
                     this.getLevel().setBlock(nearBlock, new BlockWaterStill(), true);
                 }
@@ -79,8 +83,8 @@ public class BlockIceFrosted extends BlockTransparentMeta {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_SCHEDULED) {
-            if (this.getLevel().getBlockLightAt(this.getFloorX(), this.getFloorY(), this.getFloorZ()) > 11) {
-                List<Block> nearFrosted = new ArrayList<Block>();
+            if (this.getLevel().getFullLight(this) > 11) {
+                List<Block> nearFrosted = new ArrayList<>();
                 for (BlockFace face : BlockFace.values()) {
                     Block nearBlock = this.getSide(face);
                     if (nearBlock instanceof BlockIceFrosted) {
@@ -88,17 +92,18 @@ public class BlockIceFrosted extends BlockTransparentMeta {
                     }
                 }
                 if (ThreadLocalRandom.current().nextInt(3) == 0 || nearFrosted.size() < 4) {
-                    int age = this.getDamage();
+                    BlockIceFrosted block = (BlockIceFrosted) this.clone();
+                    int age = block.getDamage();
                     if (age < 3) {
-                        this.setDamage(age + 1);
-                        this.getLevel().scheduleUpdate(this, ThreadLocalRandom.current().nextInt(20, 40));
+                        block.setDamage(age + 1);
+                        this.getLevel().setBlock(this, block);
                     } else {
                         this.getLevel().useBreakOn(this);
+                        return Level.BLOCK_UPDATE_NORMAL;
                     }
-                } else {
-                    this.getLevel().scheduleUpdate(this, ThreadLocalRandom.current().nextInt(20, 40));
                 }
             }
+            this.getLevel().scheduleUpdate(this, ThreadLocalRandom.current().nextInt(20, 40));
         }
         return 0;
     }
