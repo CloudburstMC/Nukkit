@@ -75,6 +75,11 @@ public class BlockStemMelon extends BlockCrops {
     }
 
     @Override
+    public Item toItem() {
+        return new ItemSeedsMelon();
+    }
+
+    @Override
     public Item[] getDrops(Item item) {
         NukkitRandom random = new NukkitRandom();
         return new Item[]{

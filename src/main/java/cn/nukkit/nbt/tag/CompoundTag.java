@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 
 public class CompoundTag extends Tag implements Cloneable {
     private final Map<String, Tag> tags = new HashMap<>();
@@ -206,7 +207,9 @@ public class CompoundTag extends Tag implements Cloneable {
     }
 
     public String toString() {
-        return "CompoundTag " + this.getName() + " (" + tags.size() + " entries)";
+        StringJoiner joiner = new StringJoiner(",\n\t");
+        tags.forEach((key, tag) -> joiner.add(key + " : " + tag.toString()));
+        return "CompoundTag '" + this.getName() + "' (" + tags.size() + " entries) {\n\t" + joiner.toString() + "\n}";
     }
 
     public void print(String prefix, PrintStream out) {

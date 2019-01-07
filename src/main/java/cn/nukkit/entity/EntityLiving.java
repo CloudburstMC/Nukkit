@@ -73,7 +73,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         if (this.isAlive() && !wasAlive) {
             EntityEventPacket pk = new EntityEventPacket();
             pk.eid = this.getId();
-            pk.eid = EntityEventPacket.RESPAWN;
+            pk.event = EntityEventPacket.RESPAWN;
             Server.broadcastPacket(this.hasSpawned.values(), pk);
         }
     }

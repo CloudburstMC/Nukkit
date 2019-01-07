@@ -10,6 +10,15 @@ public class BlockMonsterEgg extends BlockSolidMeta {
     public static final int CRACKED_BRICK = 4;
     public static final int CHISELED_BRICK = 5;
 
+    private static final String[] NAMES = new String[]{
+            "Stone",
+            "Cobblestone",
+            "Stone Brick",
+            "Mossy Stone Brick",
+            "Cracked Stone Brick",
+            "Chiseled Stone Brick"
+    };
+
     public BlockMonsterEgg() {
         this(0);
     }
@@ -35,16 +44,7 @@ public class BlockMonsterEgg extends BlockSolidMeta {
 
     @Override
     public String getName() {
-        String[] names = new String[]{
-                "Stone",
-                "Cobblestone",
-                "Stone Brick",
-                "Mossy Stone Brick",
-                "Cracked Stone Brick",
-                "Chiseled Stone Brick"
-        };
-
-        return names[this.getDamage() & 0x07] + " Monster Egg";
+        return NAMES[this.getDamage() > 5 ? 0 : this.getDamage()] + " Monster Egg";
     }
 
     @Override

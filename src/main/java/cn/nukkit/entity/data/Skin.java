@@ -1,6 +1,7 @@
 package cn.nukkit.entity.data;
 
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
+import com.google.common.base.Preconditions;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -21,17 +22,25 @@ public class Skin {
     public static final String GEOMETRY_CUSTOM = "geometry.humanoid.custom";
     public static final String GEOMETRY_CUSTOM_SLIM = "geometry.humanoid.customSlim";
 
+    private static final byte[] EMPTY = new byte[SINGLE_SKIN_SIZE];
+
     private String skinId = "Steve";
-    private byte[] skinData = new byte[SINGLE_SKIN_SIZE];
-    private byte[] capeData = new byte[0];
+    private byte[] skinData = null;
+    private byte[] capeData = null;
     private String geometryName = GEOMETRY_CUSTOM;
-    private String geometryData = "";
+    private String geometryData = null;
 
     public boolean isValid() {
-        return isValidSkin(skinData.length);
+        if (skinData != null) {
+            return isValidSkin(skinData.length);
+        }
+        return false;
     }
 
     public byte[] getSkinData() {
+        if (skinData == null) {
+            return EMPTY;
+        }
         return skinData;
     }
 
@@ -54,22 +63,25 @@ public class Skin {
         setSkinData(parseBufferedImage(image));
     }
 
-    public void setSkinData(byte[] data) {
-        if (data == null || !isValidSkin(data.length)) {
+    public void setSkinData(byte[] skinData) {
+        if (skinData == null || !isValidSkin(skinData.length)) {
             throw new IllegalArgumentException("Invalid skin");
         }
-        this.skinData = data;
+        this.skinData = skinData;
     }
 
-    public void setGeometryName(String model) {
-        if (model == null || model.trim().isEmpty()) {
-            model = GEOMETRY_CUSTOM;
+    public void setGeometryName(String geometryName) {
+        if (geometryName == null || geometryName.trim().isEmpty()) {
+            geometryName = GEOMETRY_CUSTOM;
         }
 
-        this.geometryName = model;
+        this.geometryName = geometryName;
     }
 
     public byte[] getCapeData() {
+        if (capeData == null) {
+            return EMPTY;
+        }
         return capeData;
     }
 
@@ -78,22 +90,22 @@ public class Skin {
     }
 
     public void setCapeData(byte[] capeData) {
-        if (capeData == null) {
-            this.capeData = new byte[0];
-        } else {
-            this.capeData = capeData;
-        }
+        Preconditions.checkNotNull(capeData, "capeData");
+        this.capeData = capeData;
     }
 
     public String getGeometryData() {
+        if (geometryData == null) {
+            return "";
+        }
         return geometryData;
     }
 
     public void setGeometryData(String geometryData) {
-        if (geometryData == null) {
-            this.geometryData = "";
+        Preconditions.checkNotNull(geometryData, "geometryData");
+        if (!geometryData.equals(this.geometryData)) {
+            this.geometryData = geometryData;
         }
-        this.geometryData = geometryData;
     }
 
     public Skin copy() {
