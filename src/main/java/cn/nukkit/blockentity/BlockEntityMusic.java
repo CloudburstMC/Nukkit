@@ -4,9 +4,9 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
-public class BlockEntityNoteBlock extends BlockEntitySpawnable {
+public class BlockEntityMusic extends BlockEntitySpawnable {
 
-    public BlockEntityNoteBlock(FullChunk chunk, CompoundTag nbt) {
+    public BlockEntityMusic(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

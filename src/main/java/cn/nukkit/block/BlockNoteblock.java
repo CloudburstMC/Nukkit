@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityNoteBlock;
+import cn.nukkit.blockentity.BlockEntityMusic;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
@@ -59,15 +59,15 @@ public class BlockNoteblock extends BlockSolid {
 
     public int getStrength() {
         BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
-        if (blockEntity instanceof BlockEntityNoteBlock) return Math.abs(blockEntity.namedTag.getByte("note")) % 25;
+        if (blockEntity instanceof BlockEntityMusic) return Math.abs(blockEntity.namedTag.getByte("note")) % 25;
         this.createBlockEntity();
         return 0;
     }
 
     public void increaseStrength() {
         BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
-        if (blockEntity instanceof BlockEntityNoteBlock) {
-            ((BlockEntityNoteBlock) blockEntity).changePitch();
+        if (blockEntity instanceof BlockEntityMusic) {
+            ((BlockEntityMusic) blockEntity).changePitch();
         } else {
             this.createBlockEntity();
         }
@@ -224,8 +224,8 @@ public class BlockNoteblock extends BlockSolid {
         return 0;
     }
 
-    private BlockEntityNoteBlock createBlockEntity() {
-        return new BlockEntityNoteBlock(this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
+    private BlockEntityMusic createBlockEntity() {
+        return new BlockEntityMusic(this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
                                         BlockEntity.getDefaultCompound(this, BlockEntity.MUSIC)
                                                 .putByte("note", 0));
     }
