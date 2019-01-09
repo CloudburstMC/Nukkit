@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockFromToEvent;
+import cn.nukkit.event.block.LiquidFlowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
@@ -274,8 +275,8 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
             if(block.getId() > 0){
                 this.level.useBreakOn(block);
             }
-            Block to = getBlock(newFlowDecay);
-            BlockFromToEvent event = new BlockFromToEvent(block, to);
+            //Block to = getBlock(newFlowDecay);
+            LiquidFlowEvent event = new LiquidFlowEvent(block, this, newFlowDecay);
             level.getServer().getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
                 this.level.setBlock(block, getBlock(newFlowDecay), true, true);
