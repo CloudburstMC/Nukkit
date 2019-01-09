@@ -270,9 +270,9 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
         return 0;
     }
 
-    protected void flowIntoBlock(Block block, int newFlowDecay){
-        if(this.canFlowInto(block) && !(block instanceof BlockLiquid)){
-            if(block.getId() > 0){
+    protected void flowIntoBlock(Block block, int newFlowDecay) {
+        if (this.canFlowInto(block) && !(block instanceof BlockLiquid)) {
+            if (block.getId() > 0) {
                 this.level.useBreakOn(block);
             }
             //Block to = getBlock(newFlowDecay);
