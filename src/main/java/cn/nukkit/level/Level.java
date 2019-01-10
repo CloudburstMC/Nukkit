@@ -1001,14 +1001,17 @@ public class Level implements ChunkManager, Metadatable {
             updateBlockPacket.y = (int) b.y;
             updateBlockPacket.z = (int) b.z;
             updateBlockPacket.flags = first ? flags : UpdateBlockPacket.FLAG_NONE;
+            int fullId;
+            if (b instanceof Block) {
+                fullId = ((Block) b).getFullId();
+            } else {
+                fullId = getFullBlock((int) b.x, (int) b.y, (int) b.z);
+            }
             try {
-                if (b instanceof Block) {
-                    updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(((Block) b).getFullId());
-                } else {
-                    updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(getFullBlock((int) b.x, (int) b.y, (int) b.z));
-                }
+                updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(fullId);
             } catch (NoSuchElementException e) {
-                throw new IllegalStateException("Unable to create BlockUpdatePacket at (" + b.x + ", " + b.y + ", " + b.z + ") in " + getName());
+                throw new IllegalStateException("Unable to create BlockUpdatePacket at (" +
+                        b.x + ", " + b.y + ", " + b.z + ") in " + getName(), e);
             }
             packets[packetIndex++] = updateBlockPacket;
         }
