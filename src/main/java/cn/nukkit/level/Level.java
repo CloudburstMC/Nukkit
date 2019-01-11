@@ -1083,12 +1083,11 @@ public class Level implements ChunkManager, Metadatable {
                         for (ChunkSection section : ((Chunk) chunk).getSections()) {
                             if (!(section instanceof EmptyChunkSection)) {
                                 int Y = section.getY();
-                                this.updateLCG = this.updateLCG * 3 + 1013904223;
-                                int k = this.updateLCG >> 2;
-                                for (int i = 0; i < tickSpeed; ++i, k >>= 10) {
-                                    int x = k & 0x0f;
-                                    int y = k >> 8 & 0x0f;
-                                    int z = k >> 16 & 0x0f;
+                                for (int i = 0; i < tickSpeed; ++i) {
+                                    this.updateLCG = this.updateLCG * 3 + 1013904223;
+                                    int x = updateLCG & 0x0f;
+                                    int y = updateLCG >> 8 & 0x0f;
+                                    int z = updateLCG >> 16 & 0x0f;
 
                                     int fullId = section.getFullBlock(x, y, z);
                                     int blockId = fullId >> 4;
