@@ -94,16 +94,6 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     }
 
     @Override
-    public void heal(EntityRegainHealthEvent source) {
-        super.heal(source);
-        if (source.isCancelled()) {
-            return;
-        }
-
-        this.attackTime = 10;
-    }
-
-    @Override
     public boolean attack(EntityDamageEvent source) {
         if (this.attackTime > 0 || this.noDamageTicks > 0) {
             EntityDamageEvent lastCause = this.getLastDamageCause();
