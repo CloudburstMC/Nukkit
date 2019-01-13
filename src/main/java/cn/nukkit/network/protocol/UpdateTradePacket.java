@@ -8,6 +8,7 @@ public class UpdateTradePacket extends DataPacket {
     public byte windowType = 15; //trading id
     public int unknownVarInt1;
     public int unknownVarInt2;
+    public int unknownVarInt3;
     public boolean isWilling;
     public long trader;
     public long player;
@@ -31,6 +32,7 @@ public class UpdateTradePacket extends DataPacket {
         this.putByte(windowType);
         this.putVarInt(unknownVarInt1);
         this.putVarInt(unknownVarInt2);
+        this.putVarInt(unknownVarInt3);
         this.putBoolean(isWilling);
         this.putEntityUniqueId(player);
         this.putEntityUniqueId(trader);

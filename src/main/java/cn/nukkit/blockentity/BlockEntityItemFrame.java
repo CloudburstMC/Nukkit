@@ -51,7 +51,7 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
     public void setItemRotation(int itemRotation) {
         this.namedTag.putByte("ItemRotation", itemRotation);
         this.level.updateComparatorOutputLevel(this);
-        this.setChanged();
+        this.setDirty();
     }
 
     public Item getItem() {
@@ -66,7 +66,7 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
     public void setItem(Item item, boolean setChanged) {
         this.namedTag.putCompound("Item", NBTIO.putItemHelper(item));
         if (setChanged) {
-            this.setChanged();
+            this.setDirty();
         }
 
         this.level.updateComparatorOutputLevel(this);
@@ -80,11 +80,9 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
         this.namedTag.putFloat("ItemDropChance", chance);
     }
 
-    private void setChanged() {
+    public void setDirty() {
         this.spawnToAll();
-        if (this.chunk != null) {
-            this.chunk.setChanged();
-        }
+        super.setDirty();
     }
 
     @Override

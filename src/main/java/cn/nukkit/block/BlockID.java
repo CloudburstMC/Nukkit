@@ -237,7 +237,8 @@ public interface BlockID {
     int COAL_BLOCK = 173;
     int PACKED_ICE = 174;
     int DOUBLE_PLANT = 175;
-
+    int STANDING_BANNER = 176;
+    int WALL_BANNER = 177;
     int DAYLIGHT_DETECTOR_INVERTED = 178;
     int RED_SANDSTONE = 179;
     int RED_SANDSTONE_STAIRS = 180;

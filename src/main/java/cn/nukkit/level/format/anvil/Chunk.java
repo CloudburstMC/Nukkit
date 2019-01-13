@@ -11,7 +11,10 @@ import cn.nukkit.level.format.generic.BaseChunk;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.*;
-import cn.nukkit.utils.*;
+import cn.nukkit.utils.BinaryStream;
+import cn.nukkit.utils.BlockUpdateEntry;
+import cn.nukkit.utils.ChunkException;
+import cn.nukkit.utils.Zlib;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -83,7 +86,7 @@ public class Chunk extends BaseChunk {
         Map<Integer, Integer> extraData = new HashMap<>();
 
         Tag extra = nbt.get("ExtraData");
-        if (extra != null && extra instanceof ByteArrayTag) {
+        if (extra instanceof ByteArrayTag) {
             BinaryStream stream = new BinaryStream(((ByteArrayTag) extra).data);
             for (int i = 0; i < stream.getInt(); i++) {
                 int key = stream.getInt();
