@@ -47,6 +47,4 @@ public abstract class Event {
         }
         isCancelled = value;
     }
-
-
 }
