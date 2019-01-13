@@ -225,7 +225,8 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < 16; y++) {
                         int index = getAnvilIndex(x, y, z);
-                        anvil[index] = (byte) storage.getBlockId(x, y, z);
+                        int id = storage.getBlockId(x, y, z);
+                        anvil[index] = (byte) (id > 0xff ? 0xff - id : id);
                     }
                 }
             }

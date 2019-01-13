@@ -30,11 +30,12 @@ public class BlockStorage {
     }
 
     public int getBlockId(int x, int y, int z) {
-        return blockIds[getIndex(x, y, z)] & 0xFF;
+        int id = blockIds[getIndex(x, y, z)];
+        return id < 0 ? 0xff - id : id;
     }
 
     public void setBlockId(int x, int y, int z, int id) {
-        blockIds[getIndex(x, y, z)] = (byte) (id & 0xff);
+        blockIds[getIndex(x, y, z)] = (byte) (id > 0xff ? 0xff - id : id);
     }
 
     public void setBlockData(int x, int y, int z, int data) {
@@ -54,32 +55,34 @@ public class BlockStorage {
     }
 
     private int getAndSetFullBlock(int index, short value) {
-        Preconditions.checkArgument(value < 0xfff, "Invalid full block");
-        byte oldBlock = blockIds[index];
+        Preconditions.checkArgument(value < 0x1fff, "Invalid full block");
+        int oldBlock = blockIds[index];
         byte oldData = blockData.get(index);
-        byte newBlock = (byte) ((value & 0xff0) >> 4);
+        int newBlock = (value & 0x1ff0) >> 4;
+        if (newBlock > 0xff) newBlock = 0xff - newBlock;
         byte newData = (byte) (value & 0xf);
         if (oldBlock != newBlock) {
-            blockIds[index] = newBlock;
+            blockIds[index] = (byte) newBlock;
         }
         if (oldData != newData) {
             blockData.set(index, newData);
         }
-        return ((oldBlock & 0xff) << 4) | oldData;
+        return ((oldBlock < 0 ? 0xff - oldBlock : oldBlock) << 4) | oldData;
     }
 
     private int getFullBlock(int index) {
-        byte block = blockIds[index];
+        int block = blockIds[index];
         byte data = blockData.get(index);
-        return ((block & 0xff) << 4) | data;
+        return ((block < 0 ? 0xff - block : block) << 4) | data;
     }
 
     private void setFullBlock(int index, short value) {
-        Preconditions.checkArgument(value < 0xfff, "Invalid full block");
-        byte block = (byte) ((value & 0xff0) >> 4);
+        Preconditions.checkArgument(value < 0x1fff, "Invalid full block");
+        int block = (value & 0x1ff0) >> 4;
+        if (block > 0xff) block = 0xff - block;
         byte data = (byte) (value & 0xf);
 
-        blockIds[index] = block;
+        blockIds[index] = (byte) block;
         blockData.set(index, data);
     }
 

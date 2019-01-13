@@ -305,4 +305,52 @@ public interface BlockID {
     int PISTON_EXTENSION = 250;
 
     int OBSERVER = 251;
+
+    int PRISMARINE_STAIRS = 257;
+    int DARK_PRISMARINE_STAIRS = 258;
+    int PRISMARINE_BRICKS_STAIRS = 259;
+    int STRIPPED_SPRUCE_LOG = 260;
+    int STRIPPED_BIRCH_LOG = 261;
+    int STRIPPED_JUNGLE_LOG = 262;
+    int STRIPPED_ACACIA_LOG = 263;
+    int STRIPPED_DARK_OAK_LOG = 264;
+    int STRIPPED_OAK_LOG = 265;
+    int BLUE_ICE = 266;
+
+    int SEAGRASS = 385;
+    int CORAL = 386;
+    int CORAL_BLOCK = 387;
+    int CORAL_FAN = 388;
+    int CORAL_FAN_DEAD = 389;
+    int CORAL_FAN_HANG = 390;
+    int CORAL_FAN_HANG2 = 391;
+    int CORAL_FAN_HANG3 = 392;
+    int KELP = 393;
+    int DRIED_KELP_BLOCK = 394;
+    int ACACIA_BUTTON = 395;
+    int BIRCH_BUTTON = 396;
+    int DARK_OAK_BUTTON = 397;
+    int JUNGLE_BUTTON = 398;
+    int SPRUCE_BUTTON = 399;
+    int ACACIA_TRAPDOOR = 400;
+    int BIRCH_TRAPDOOR = 401;
+    int DARK_OAK_TRAPDOOR = 402;
+    int JUNGLE_TRAPDOOR = 403;
+    int SPRUCE_TRAPDOOR = 404;
+    int ACACIA_PRESSURE_PLATE = 405;
+    int BIRCH_PRESSURE_PLATE = 406;
+    int DARK_OAK_PRESSURE_PLATE = 407;
+    int JUNGLE_PRESSURE_PLATE = 408;
+    int SPRUCE_PRESSURE_PLATE = 409;
+    int CARVED_PUMPKIN = 410;
+    int SEA_PICKLE = 411;
+    int CONDUIT = 412;
+
+    int TURTLE_EGG = 414;
+    int BUBBLE_COLUMN = 415;
+    int BARRIER = 416;
+
+    int BAMBOO = 418;
+    int BAMBOO_SAPLING = 419;
+    int SCAFFOLDING = 420;
 }
