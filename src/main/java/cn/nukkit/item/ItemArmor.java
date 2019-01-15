@@ -1,6 +1,7 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 
 /**
@@ -44,18 +45,49 @@ abstract public class ItemArmor extends Item {
 
     @Override
     public boolean onClickAir(Player player, Vector3 directionVector) {
+        boolean equip = false;
         if (this.isHelmet() && player.getInventory().getHelmet().isNull()) {
-            if (player.getInventory().setHelmet(this))
+            if (player.getInventory().setHelmet(this)) {
                 player.getInventory().clear(player.getInventory().getHeldItemIndex());
+                equip = true;
+            }
         } else if (this.isChestplate() && player.getInventory().getChestplate().isNull()) {
-            if (player.getInventory().setChestplate(this))
+            if (player.getInventory().setChestplate(this)) {
                 player.getInventory().clear(player.getInventory().getHeldItemIndex());
+                equip = true;
+            }
         } else if (this.isLeggings() && player.getInventory().getLeggings().isNull()) {
-            if (player.getInventory().setLeggings(this))
+            if (player.getInventory().setLeggings(this)) {
                 player.getInventory().clear(player.getInventory().getHeldItemIndex());
+                equip = true;
+            }
         } else if (this.isBoots() && player.getInventory().getBoots().isNull()) {
-            if (player.getInventory().setBoots(this))
+            if (player.getInventory().setBoots(this)) {
                 player.getInventory().clear(player.getInventory().getHeldItemIndex());
+                equip = true;
+            }
+        }
+        if (equip) {
+            switch (this.getTier()) {
+                case TIER_CHAIN:
+                    player.getLevel().addSound(player, Sound.ARMOR_EQUIP_CHAIN);
+                    break;
+                case TIER_DIAMOND:
+                    player.getLevel().addSound(player, Sound.ARMOR_EQUIP_DIAMOND);
+                    break;
+                case TIER_OTHER:
+                    player.getLevel().addSound(player, Sound.ARMOR_EQUIP_GENERIC);
+                    break;
+                case TIER_GOLD:
+                    player.getLevel().addSound(player, Sound.ARMOR_EQUIP_GOLD);
+                    break;
+                case TIER_IRON:
+                    player.getLevel().addSound(player, Sound.ARMOR_EQUIP_IRON);
+                    break;
+                case TIER_LEATHER:
+                    player.getLevel().addSound(player, Sound.ARMOR_EQUIP_LEATHER);
+                    break;
+            }
         }
 
         return this.getCount() == 0;

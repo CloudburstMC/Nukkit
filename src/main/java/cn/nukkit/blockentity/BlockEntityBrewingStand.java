@@ -12,6 +12,7 @@ import cn.nukkit.inventory.BrewingRecipe;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -241,6 +242,7 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
                             this.inventory.setItem(i, recipe.getResult());
                         }
                     }
+                    this.getLevel().addSound(this, Sound.RANDOM_POTION_BREWED);
 
                     ingredient.count--;
                     this.inventory.setIngredient(ingredient);

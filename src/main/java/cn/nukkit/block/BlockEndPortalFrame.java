@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.level.Sound;
 
 /**
  * Created by Pub4Game on 26.12.2015.
@@ -75,6 +76,7 @@ public class BlockEndPortalFrame extends BlockTransparentMeta {
         if((this.getDamage() & 0x04) == 0 && player instanceof Player && item.getId() == Item.ENDER_EYE) {
             this.setDamage(this.getDamage() + 4);
             this.getLevel().setBlock(this, this, true, true);
+            this.getLevel().addSound(this, Sound.BLOCK_END_PORTAL_FRAME_FILL);
             //TODO: create portal
             return true;
         }
