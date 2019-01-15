@@ -9,6 +9,7 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import it.unimi.dsi.fastutil.longs.Long2ByteMap;
 import it.unimi.dsi.fastutil.longs.Long2ByteOpenHashMap;
 
@@ -431,7 +432,7 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
             return false;
         }
         this.level.setBlock(this, result, true, true);
-        this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_FIZZ);
+        this.getLevel().addLevelSoundEvent(this.add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_FIZZ);
         return true;
     }
 
