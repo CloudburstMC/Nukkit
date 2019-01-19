@@ -139,7 +139,7 @@ public class Chunk extends BaseFullChunk {
         int i = (x << 10) | (z << 6) | (y >> 1);
         int old = this.data[i] & 0xff;
         if ((y & 1) == 0) {
-            this.data[i] = (byte) ((old & 0xf0) | (old & 0x0f));
+            this.data[i] = (byte) ((old & 0xf0) | (data & 0x0f));
         } else {
             this.data[i] = (byte) (((data & 0x0f) << 4) | (old & 0x0f));
         }
