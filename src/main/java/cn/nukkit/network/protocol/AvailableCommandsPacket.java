@@ -71,9 +71,9 @@ public class AvailableCommandsPacket extends DataPacket {
             while (enumLength-- > 0) {
                 int index;
 
-                if (enums.size() < 256) {
+                if (enumValues.size() < 256) {
                     index = getByte();
-                } else if (enums.size() < 65536) {
+                } else if (enumValues.size() < 65536) {
                     index = getShort();
                 } else {
                     index = getLInt();
@@ -217,9 +217,9 @@ public class AvailableCommandsPacket extends DataPacket {
                     throw new IllegalStateException("Enum value '" + val + "' not found");
                 }
 
-                if (enums.size() < 256) {
+                if (enumValues.size() < 256) {
                     putByte((byte) i);
-                } else if (enums.size() < 65536) {
+                } else if (enumValues.size() < 65536) {
                     putShort(i);
                 } else {
                     putLInt(i);
