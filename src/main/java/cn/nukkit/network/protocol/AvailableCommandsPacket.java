@@ -14,24 +14,26 @@ public class AvailableCommandsPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.AVAILABLE_COMMANDS_PACKET;
 
     public static final int ARG_FLAG_VALID = 0x100000;
+    public static final int ARG_FLAG_ENUM = 0x200000;
+    public static final int ARG_FLAG_POSTFIX = 0x1000000;
+    public static final int ARG_FLAG_SOFT_ENUM = 0x4000000;
 
     public static final int ARG_TYPE_INT = 0x01;
     public static final int ARG_TYPE_FLOAT = 0x02;
     public static final int ARG_TYPE_VALUE = 0x03;
     public static final int ARG_TYPE_WILDCARD_INT = 0x04;
-    public static final int ARG_TYPE_TARGET = 0x05;
-    public static final int ARG_TYPE_WILDCARD_TARGET = 0x06;
+    public static final int ARG_TYPE_OPERATOR = 0x05;
+    public static final int ARG_TYPE_TARGET = 0x06;
 
-    public static final int ARG_TYPE_STRING = 0x0f;
-    public static final int ARG_TYPE_POSITION = 0x10;
+    public static final int ARG_TYPE_UNKNOWN = 0x0e;
 
-    public static final int ARG_TYPE_MESSAGE = 0x13;
-    public static final int ARG_TYPE_RAWTEXT = 0x15;
-    public static final int ARG_TYPE_JSON = 0x18;
-    public static final int ARG_TYPE_COMMAND = 0x1f;
+    public static final int ARG_TYPE_STRING = 0x1a;
+    public static final int ARG_TYPE_POSITION = 0x1c;
 
-    public static final int ARG_FLAG_ENUM = 0x200000;
-    public static final int ARG_FLAG_POSTFIX = 0x1000000;
+    public static final int ARG_TYPE_MESSAGE = 0x1f;
+    public static final int ARG_TYPE_RAWTEXT = 0x21;
+    public static final int ARG_TYPE_JSON = 0x24;
+    public static final int ARG_TYPE_COMMAND = 0x2B;
 
     public Map<String, CommandDataVersions> commands;
     public final Map<String, List<String>> softEnums = new HashMap<>();
@@ -119,11 +121,20 @@ public class AvailableCommandsPacket extends DataPacket {
 
                     CommandParameter parameter = new CommandParameter(paramName, optional);
 
-                    if ((type & ARG_FLAG_ENUM) != 0) {
-                        int index = type & 0xffff;
-                        parameter.enumData = enums.get(index);
-                    } else if ((type & ARG_FLAG_VALID) == 0) {
+
+                    if ((type & ARG_FLAG_POSTFIX) != 0) {
                         parameter.postFix = postFixes.get(type & 0xffff);
+                    } else if ((type & ARG_FLAG_VALID) == 0) {
+                        throw new IllegalStateException("Invalid parameter type received");
+                    } else {
+                        int index = type & 0xffff;
+                        if ((type & ARG_FLAG_ENUM) != 0) {
+                            parameter.enumData = enums.get(index);
+                        } else if ((type & ARG_FLAG_SOFT_ENUM) != 0) {
+                            // TODO: 22/01/2019 soft enums
+                        } else {
+                            throw new IllegalStateException("Unknown parameter type!");
+                        }
                     }
 
                     overload.input.parameters[i] = parameter;
@@ -243,8 +254,7 @@ public class AvailableCommandsPacket extends DataPacket {
                         if (i < 0) {
                             throw new IllegalStateException("Postfix '" + parameter.postFix + "' isn't in postfix array");
                         }
-
-                        type = (parameter.type.getId() << 24) | i | ARG_FLAG_VALID;
+                        type = ARG_FLAG_POSTFIX | i;
                     } else {
                         type = parameter.type.getId() | ARG_FLAG_VALID;
                     }

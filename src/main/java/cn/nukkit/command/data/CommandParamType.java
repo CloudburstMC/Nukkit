@@ -18,6 +18,8 @@ public enum CommandParamType {
     JSON(ARG_TYPE_JSON),
     TEXT(ARG_TYPE_RAWTEXT), // backwards compatibility
     COMMAND(ARG_TYPE_COMMAND),
+    UNKNOWN(ARG_TYPE_UNKNOWN),
+    OPERATOR(ARG_TYPE_OPERATOR)
     ;
 
     private final int id;
