@@ -3,7 +3,6 @@ package cn.nukkit.network.protocol;
 import cn.nukkit.command.data.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * author: MagicDroidX
@@ -74,7 +73,7 @@ public class AvailableCommandsPacket extends DataPacket {
                 if (enumValues.size() < 256) {
                     index = getByte();
                 } else if (enumValues.size() < 65536) {
-                    index = getShort();
+                    index = getLShort();
                 } else {
                     index = getLInt();
                 }
@@ -161,37 +160,37 @@ public class AvailableCommandsPacket extends DataPacket {
     public void encode() {
         this.reset();
 
-        LinkedHashSet<String> enumValues = new LinkedHashSet<>();
-        LinkedHashSet<String> postFixes = new LinkedHashSet<>();
-        LinkedHashSet<CommandEnum> enums = new LinkedHashSet<>();
+        LinkedHashSet<String> enumValuesSet = new LinkedHashSet<>();
+        LinkedHashSet<String> postFixesSet = new LinkedHashSet<>();
+        LinkedHashSet<CommandEnum> enumsSet = new LinkedHashSet<>();
 
         commands.forEach((name, data) -> {
             CommandData cmdData = data.versions.get(0);
 
             if (cmdData.aliases != null) {
-                enums.add(new CommandEnum(cmdData.aliases.getName(), cmdData.aliases.getValues()));
+                enumsSet.add(cmdData.aliases);
 
-                enumValues.addAll(cmdData.aliases.getValues());
+                enumValuesSet.addAll(cmdData.aliases.getValues());
             }
 
             for (CommandOverload overload : cmdData.overloads.values()) {
                 for (CommandParameter parameter : overload.input.parameters) {
                     if (parameter.enumData != null) {
-                        enums.add(new CommandEnum(parameter.enumData.getName(), parameter.enumData.getValues()));
+                        enumsSet.add(parameter.enumData);
 
-                        enumValues.addAll(parameter.enumData.getValues());
+                        enumValuesSet.addAll(parameter.enumData.getValues());
                     }
 
                     if (parameter.postFix != null) {
-                        postFixes.add(parameter.postFix);
+                        postFixesSet.add(parameter.postFix);
                     }
                 }
             }
         });
 
-        List<String> enumIndexes = new ArrayList<>(enumValues);
-        List<String> enumDataIndexes = enums.stream().map(CommandEnum::getName).collect(Collectors.toList());
-        List<String> fixesIndexes = new ArrayList<>(postFixes);
+        List<String> enumValues = new ArrayList<>(enumValuesSet);
+        List<CommandEnum> enums = new ArrayList<>(enumsSet);
+        List<String> postFixes = new ArrayList<>(postFixesSet);
 
         this.putUnsignedVarInt(enumValues.size());
         for (String enumValue : enumValues) {
@@ -211,7 +210,7 @@ public class AvailableCommandsPacket extends DataPacket {
             putUnsignedVarInt(values.size());
 
             for (String val : values) {
-                int i = enumIndexes.indexOf(val);
+                int i = enumValues.indexOf(val);
 
                 if (i < 0) {
                     throw new IllegalStateException("Enum value '" + val + "' not found");
@@ -220,7 +219,7 @@ public class AvailableCommandsPacket extends DataPacket {
                 if (enumValues.size() < 256) {
                     putByte((byte) i);
                 } else if (enumValues.size() < 65536) {
-                    putShort(i);
+                    putLShort(i);
                 } else {
                     putLInt(i);
                 }
@@ -237,7 +236,7 @@ public class AvailableCommandsPacket extends DataPacket {
             putByte((byte) data.flags);
             putByte((byte) data.permission);
 
-            putLInt(data.aliases == null ? -1 : enumDataIndexes.indexOf(data.aliases.getName()));
+            putLInt(data.aliases == null ? -1 : enums.indexOf(data.aliases));
 
             putUnsignedVarInt(data.overloads.size());
             for (CommandOverload overload : data.overloads.values()) {
@@ -248,9 +247,9 @@ public class AvailableCommandsPacket extends DataPacket {
 
                     int type;
                     if (parameter.enumData != null) {
-                        type = ARG_FLAG_ENUM | ARG_FLAG_VALID | enumDataIndexes.indexOf(parameter.enumData.getName());
+                        type = ARG_FLAG_ENUM | ARG_FLAG_VALID | enums.indexOf(parameter.enumData);
                     } else if (parameter.postFix != null) {
-                        int i = fixesIndexes.indexOf(parameter.postFix);
+                        int i = postFixes.indexOf(parameter.postFix);
                         if (i < 0) {
                             throw new IllegalStateException("Postfix '" + parameter.postFix + "' isn't in postfix array");
                         }
