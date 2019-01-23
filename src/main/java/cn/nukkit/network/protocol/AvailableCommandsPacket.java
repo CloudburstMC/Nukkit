@@ -1,8 +1,11 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.command.data.*;
+import cn.nukkit.utils.BinaryStream;
 
 import java.util.*;
+import java.util.function.ObjIntConsumer;
+import java.util.function.ToIntFunction;
 
 /**
  * author: MagicDroidX
@@ -11,6 +14,13 @@ import java.util.*;
 public class AvailableCommandsPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.AVAILABLE_COMMANDS_PACKET;
+
+    private static final ObjIntConsumer<BinaryStream> WRITE_BYTE = (s, v) -> s.putByte((byte) v);
+    private static final ObjIntConsumer<BinaryStream> WRITE_SHORT = BinaryStream::putLShort;
+    private static final ObjIntConsumer<BinaryStream> WRITE_INT = BinaryStream::putLInt;
+    private static final ToIntFunction<BinaryStream> READ_BYTE = BinaryStream::getByte;
+    private static final ToIntFunction<BinaryStream> READ_SHORT = BinaryStream::getLShort;
+    private static final ToIntFunction<BinaryStream> READ_INT = BinaryStream::getLInt;
 
     public static final int ARG_FLAG_VALID = 0x100000;
     public static final int ARG_FLAG_ENUM = 0x200000;
@@ -63,6 +73,15 @@ public class AvailableCommandsPacket extends DataPacket {
             postFixes.add(getString());
         }
 
+        ToIntFunction<BinaryStream> indexReader;
+        if (enumValues.size() < 256) {
+            indexReader = READ_BYTE;
+        } else if (enumValues.size() < 65536) {
+            indexReader = READ_SHORT;
+        } else {
+            indexReader = READ_INT;
+        }
+
         len = (int) getUnsignedVarInt();
         while (len-- > 0) {
             String enumName = getString();
@@ -71,15 +90,7 @@ public class AvailableCommandsPacket extends DataPacket {
             List<String> values = new ArrayList<>();
 
             while (enumLength-- > 0) {
-                int index;
-
-                if (enumValues.size() < 256) {
-                    index = getByte();
-                } else if (enumValues.size() < 65536) {
-                    index = getLShort();
-                } else {
-                    index = getLInt();
-                }
+                int index = indexReader.applyAsInt(this);
 
                 String enumValue;
 
@@ -196,13 +207,18 @@ public class AvailableCommandsPacket extends DataPacket {
         List<String> postFixes = new ArrayList<>(postFixesSet);
 
         this.putUnsignedVarInt(enumValues.size());
-        for (String enumValue : enumValues) {
-            putString(enumValue);
-        }
+        enumValues.forEach(this::putString);
 
         this.putUnsignedVarInt(postFixes.size());
-        for (String postFix : postFixes) {
-            putString(postFix);
+        postFixes.forEach(this::putString);
+
+        ObjIntConsumer<BinaryStream> indexWriter;
+        if (enumValues.size() < 256) {
+            indexWriter = WRITE_BYTE;
+        } else if (enumValues.size() < 65536) {
+            indexWriter = WRITE_SHORT;
+        } else {
+            indexWriter = WRITE_INT;
         }
 
         this.putUnsignedVarInt(enums.size());
@@ -219,13 +235,7 @@ public class AvailableCommandsPacket extends DataPacket {
                     throw new IllegalStateException("Enum value '" + val + "' not found");
                 }
 
-                if (enumValues.size() < 256) {
-                    putByte((byte) i);
-                } else if (enumValues.size() < 65536) {
-                    putLShort(i);
-                } else {
-                    putLInt(i);
-                }
+                indexWriter.accept(this, i);
             }
         });
 
@@ -248,17 +258,20 @@ public class AvailableCommandsPacket extends DataPacket {
                 for (CommandParameter parameter : overload.input.parameters) {
                     putString(parameter.name);
 
-                    int type;
-                    if (parameter.enumData != null) {
-                        type = ARG_FLAG_ENUM | ARG_FLAG_VALID | enums.indexOf(parameter.enumData);
-                    } else if (parameter.postFix != null) {
+                    int type = 0;
+                    if (parameter.postFix != null) {
                         int i = postFixes.indexOf(parameter.postFix);
                         if (i < 0) {
                             throw new IllegalStateException("Postfix '" + parameter.postFix + "' isn't in postfix array");
                         }
                         type = ARG_FLAG_POSTFIX | i;
                     } else {
-                        type = parameter.type.getId() | ARG_FLAG_VALID;
+                        type |= ARG_FLAG_VALID;
+                        if (parameter.enumData != null) {
+                            type |= ARG_FLAG_ENUM | enums.indexOf(parameter.enumData);
+                        } else {
+                            type |= parameter.type.getId();
+                        }
                     }
 
                     putLInt(type);
