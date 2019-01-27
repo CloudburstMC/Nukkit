@@ -83,7 +83,7 @@ public class EntityThrownTrident extends EntityProjectile {
         super.initEntity();
 
         this.damage = namedTag.contains("damage") ? namedTag.getDouble("damage") : 8;
-        this.trident = namedTag.contains("trident") ? NBTIO.getItemHelper(namedTag.getCompound("trident")) : Item.get(0);
+        this.trident = namedTag.contains("Trident") ? NBTIO.getItemHelper(namedTag.getCompound("Trident")) : Item.get(0);
 
         closeOnCollide = false;
     }
@@ -92,7 +92,7 @@ public class EntityThrownTrident extends EntityProjectile {
     public void saveNBT() {
         super.saveNBT();
 
-        this.namedTag.put("trident", NBTIO.putItemHelper(this.trident));
+        this.namedTag.put("Trident", NBTIO.putItemHelper(this.trident));
     }
 
     public Item getItem() {
