@@ -5,11 +5,12 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityPistonArm;
 import cn.nukkit.event.block.BlockPistonChangeEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -119,7 +120,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta {
                     return;
                 }
 
-                this.level.addSound(this, Sound.TILE_PISTON_OUT);
+                this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_PISTON_OUT);
             } else {
             }
         } else if (!isPowered && isExtended()) {
@@ -139,7 +140,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta {
                 this.level.setBlock(getLocation().getSide(facing), new BlockAir(), true, false);
             }
 
-            this.level.addSound(this, Sound.TILE_PISTON_IN);
+            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_PISTON_IN);
         }
     }
 
@@ -407,5 +408,10 @@ public abstract class BlockPistonBase extends BlockSolidMeta {
         public List<Block> getBlocksToDestroy() {
             return this.toDestroy;
         }
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(this, 0);
     }
 }

@@ -115,7 +115,7 @@ public class CommandReader extends Thread implements InterruptibleThread {
         }
     }
 
-    public void removePromptLine() {
+    public synchronized void removePromptLine() {
         try {
             reader.resetPromptLine("", "", 0);
         } catch (IOException e) {

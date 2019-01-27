@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
@@ -257,6 +258,11 @@ public class BlockRail extends BlockFlowable {
             setDamage(getDamage() & 0x7);
         }
         level.setBlock(this, this, true, true);
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(this, 0);
     }
 
     @Override

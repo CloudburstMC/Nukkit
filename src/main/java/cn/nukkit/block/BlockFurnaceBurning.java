@@ -128,10 +128,15 @@ public class BlockFurnaceBurning extends BlockSolidMeta {
     }
 
     @Override
+    public Item toItem() {
+        return new ItemBlock(new BlockFurnace());
+    }
+
+    @Override
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
-                    new ItemBlock(new BlockFurnace())
+                    this.toItem()
             };
         } else {
             return new Item[0];

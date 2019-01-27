@@ -115,7 +115,7 @@ public class CraftingTransaction extends InventoryTransaction {
         final int height = yMax - yMin + 1;
         final int width = xMax - xMin + 1;
 
-        if (height == 0 || width == 0) {
+        if (height < 1 || width < 1) {
             return new Item[0][];
         }
 
