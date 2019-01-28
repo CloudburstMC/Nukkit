@@ -2,11 +2,11 @@ package cn.nukkit.item.enchantment;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHumanType;
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: MagicDroidX
@@ -40,27 +40,25 @@ public class EnchantmentThorns extends Enchantment {
 
         EntityHumanType human = (EntityHumanType) entity;
 
-        int thornsDamage = 0;
-        Random rnd = new Random();
+        int thornsLevel = 0;
 
         for (Item armor : human.getInventory().getArmorContents()) {
             Enchantment thorns = armor.getEnchantment(Enchantment.ID_THORNS);
-
-            if (thorns != null && thorns.getLevel() > 0) {
-                int chance = thorns.getLevel() * 15;
-
-                if (chance > 90) {
-                    chance = 90;
-                }
-
-                if (rnd.nextInt(100) + 1 <= chance) {
-                    thornsDamage += rnd.nextInt(4) + 1;
-                }
-            }
+            thornsLevel = Math.max(thorns.getLevel(), thornsLevel);
         }
 
-        if (thornsDamage > 0) {
-            attacker.attack(new EntityDamageEvent(attacker, DamageCause.MAGIC, rnd.nextInt(4) + 1));
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+
+        if (shouldHit(random, thornsLevel)) {
+            attacker.attack(new EntityDamageByEntityEvent(entity, attacker, EntityDamageEvent.DamageCause.MAGIC, getDamage(random, level)));
         }
+    }
+
+    private static boolean shouldHit(ThreadLocalRandom random, int level) {
+        return level > 0 && random.nextFloat() < 0.15 * level;
+    }
+
+    private static int getDamage(ThreadLocalRandom random, int level) {
+        return level > 10 ? level - 10 : random.nextInt(1, 5);
     }
 }

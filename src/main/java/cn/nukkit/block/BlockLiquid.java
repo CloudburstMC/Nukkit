@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockFromToEvent;
+import cn.nukkit.event.block.LiquidFlowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
@@ -9,6 +10,7 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import it.unimi.dsi.fastutil.longs.Long2ByteMap;
 import it.unimi.dsi.fastutil.longs.Long2ByteOpenHashMap;
 
@@ -269,15 +271,14 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
         return 0;
     }
 
-    protected void flowIntoBlock(Block block, int newFlowDecay){
-        if(this.canFlowInto(block) && !(block instanceof BlockLiquid)){
-            if(block.getId() > 0){
-                this.level.useBreakOn(block);
-            }
-            Block to = getBlock(newFlowDecay);
-            BlockFromToEvent event = new BlockFromToEvent(block, to);
+    protected void flowIntoBlock(Block block, int newFlowDecay) {
+        if (this.canFlowInto(block) && !(block instanceof BlockLiquid)) {
+            LiquidFlowEvent event = new LiquidFlowEvent(block, this, newFlowDecay);
             level.getServer().getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
+                if (block.getId() > 0) {
+                    this.level.useBreakOn(block);
+                }
                 this.level.setBlock(block, getBlock(newFlowDecay), true, true);
                 this.level.scheduleUpdate(block, this.tickRate());
             }
@@ -431,7 +432,7 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
             return false;
         }
         this.level.setBlock(this, result, true, true);
-        this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_FIZZ);
+        this.getLevel().addLevelSoundEvent(this.add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_FIZZ);
         return true;
     }
 

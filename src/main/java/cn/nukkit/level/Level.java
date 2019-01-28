@@ -157,7 +157,7 @@ public class Level implements ChunkManager, Metadatable {
 
     private final Long2ObjectOpenHashMap<Map<Integer, Player>> playerLoaders = new Long2ObjectOpenHashMap<>();
 
-    private Long2ObjectOpenHashMap<List<DataPacket>> chunkPackets = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectOpenHashMap<Deque<DataPacket>> chunkPackets = new Long2ObjectOpenHashMap<>();
 
     private final Long2LongMap unloadQueue = Long2LongMaps.synchronize(new Long2LongOpenHashMap());
 
@@ -198,7 +198,7 @@ public class Level implements ChunkManager, Metadatable {
     private int chunkGenerationQueueSize = 8;
     private int chunkPopulationQueueSize = 2;
 
-    private boolean autoSave = true;
+    private boolean autoSave;
 
     private BlockMetadataStore blockMetadata;
 
@@ -214,7 +214,9 @@ public class Level implements ChunkManager, Metadatable {
     private int chunksPerTicks;
     private boolean clearChunksOnTick;
 
-    protected int updateLCG = (new Random()).nextInt();
+    private int updateLCG = ThreadLocalRandom.current().nextInt();
+
+    private static final int LCG_CONSTANT = 1013904223;
 
     public LevelTimings timings;
 
@@ -429,7 +431,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public void close() {
         if (this.getAutoSave()) {
-            this.save();
+            this.save(true);
         }
 
         this.provider.close();
@@ -469,6 +471,10 @@ public class Level implements ChunkManager, Metadatable {
         } else {
             Server.broadcastPacket(players, packet);
         }
+    }
+
+    public void addLevelSoundEvent(Vector3 pos, int type, int data, int entityType) {
+        addLevelSoundEvent(pos, type, data, entityType, false, false);
     }
 
     public void addLevelSoundEvent(Vector3 pos, int type, int data, int entityType, boolean isBaby, boolean isGlobal) {
@@ -602,10 +608,10 @@ public class Level implements ChunkManager, Metadatable {
 
     public void addChunkPacket(int chunkX, int chunkZ, DataPacket packet) {
         long index = Level.chunkHash(chunkX, chunkZ);
-        if (!this.chunkPackets.containsKey(index)) {
-            this.chunkPackets.put(index, new ArrayList<>());
+        synchronized (chunkPackets) {
+            Deque<DataPacket> packets = chunkPackets.computeIfAbsent(index, i -> new ArrayDeque<>());
+            packets.add(packet);
         }
-        this.chunkPackets.get(index).add(packet);
     }
 
     public void registerChunkLoader(ChunkLoader loader, int chunkX, int chunkZ) {
@@ -828,15 +834,18 @@ public class Level implements ChunkManager, Metadatable {
             this.checkSleep();
         }
 
-        for (long index : this.chunkPackets.keySet()) {
-            int chunkX = Level.getHashX(index);
-            int chunkZ = Level.getHashZ(index);
-            Player[] chunkPlayers = this.getChunkPlayers(chunkX, chunkZ).values().toArray(new Player[0]);
-            if (chunkPlayers.length > 0) {
-                for (DataPacket pk : this.chunkPackets.get(index)) {
-                    Server.broadcastPacket(chunkPlayers, pk);
+        synchronized (chunkPackets) {
+            for (long index : this.chunkPackets.keySet()) {
+                int chunkX = Level.getHashX(index);
+                int chunkZ = Level.getHashZ(index);
+                Player[] chunkPlayers = this.getChunkPlayers(chunkX, chunkZ).values().toArray(new Player[0]);
+                if (chunkPlayers.length > 0) {
+                    for (DataPacket pk : this.chunkPackets.get(index)) {
+                        Server.broadcastPacket(chunkPlayers, pk);
+                    }
                 }
             }
+            this.chunkPackets.clear();
         }
 
         if(gameRules.isStale()) {
@@ -846,19 +855,17 @@ public class Level implements ChunkManager, Metadatable {
             gameRules.refresh();
         }
 
-        this.chunkPackets.clear();
         this.timings.doTick.stopTiming();
     }
 
     private void performThunder(long index, FullChunk chunk) {
         if (areNeighboringChunksLoaded(index)) return;
         if (ThreadLocalRandom.current().nextInt(10000) == 0) {
-            this.updateLCG = this.updateLCG * 3 + 1013904223;
-            int LCG = this.updateLCG >> 2;
+            int LCG = this.getUpdateLCG() >> 2;
 
             int chunkX = chunk.getX() * 16;
             int chunkZ = chunk.getZ() * 16;
-            Vector3 vector = this.adjustPosToNearbyEntity(new Vector3(chunkX + (LCG & 15), 0, chunkZ + (LCG >> 8 & 15)));
+            Vector3 vector = this.adjustPosToNearbyEntity(new Vector3(chunkX + (LCG & 0xf), 0, chunkZ + (LCG >> 8 & 0xf)));
 
             int bId = this.getBlockIdAt(vector.getFloorX(), vector.getFloorY(), vector.getFloorZ());
             if (bId != Block.TALL_GRASS && bId != Block.WATER)
@@ -997,14 +1004,17 @@ public class Level implements ChunkManager, Metadatable {
             updateBlockPacket.y = (int) b.y;
             updateBlockPacket.z = (int) b.z;
             updateBlockPacket.flags = first ? flags : UpdateBlockPacket.FLAG_NONE;
+            int fullId;
+            if (b instanceof Block) {
+                fullId = ((Block) b).getFullId();
+            } else {
+                fullId = getFullBlock((int) b.x, (int) b.y, (int) b.z);
+            }
             try {
-                if (b instanceof Block) {
-                    updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(((Block) b).getFullId());
-                } else {
-                    updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(getFullBlock((int) b.x, (int) b.y, (int) b.z));
-                }
+                updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(fullId);
             } catch (NoSuchElementException e) {
-                throw new IllegalStateException("Unable to create BlockUpdatePacket at (" + b.x + ", " + b.y + ", " + b.z + ") in " + getName());
+                throw new IllegalStateException("Unable to create BlockUpdatePacket at (" +
+                        b.x + ", " + b.y + ", " + b.z + ") in " + getName(), e);
             }
             packets[packetIndex++] = updateBlockPacket;
         }
@@ -1076,12 +1086,11 @@ public class Level implements ChunkManager, Metadatable {
                         for (ChunkSection section : ((Chunk) chunk).getSections()) {
                             if (!(section instanceof EmptyChunkSection)) {
                                 int Y = section.getY();
-                                this.updateLCG = this.updateLCG * 3 + 1013904223;
-                                int k = this.updateLCG >> 2;
-                                for (int i = 0; i < tickSpeed; ++i, k >>= 10) {
-                                    int x = k & 0x0f;
-                                    int y = k >> 8 & 0x0f;
-                                    int z = k >> 16 & 0x0f;
+                                for (int i = 0; i < tickSpeed; ++i) {
+                                    int lcg = this.getUpdateLCG();
+                                    int x = lcg & 0x0f;
+                                    int y = lcg >>> 8 & 0x0f;
+                                    int z = lcg >>> 16 & 0x0f;
 
                                     int fullId = section.getFullBlock(x, y, z);
                                     int blockId = fullId >> 4;
@@ -1095,12 +1104,11 @@ public class Level implements ChunkManager, Metadatable {
                     } else {
                         for (int Y = 0; Y < 8 && (Y < 3 || blockTest != 0); ++Y) {
                             blockTest = 0;
-                            this.updateLCG = this.updateLCG * 3 + 1013904223;
-                            int k = this.updateLCG >> 2;
-                            for (int i = 0; i < tickSpeed; ++i, k >>= 10) {
-                                int x = k & 0x0f;
-                                int y = k >> 8 & 0x0f;
-                                int z = k >> 16 & 0x0f;
+                            for (int i = 0; i < tickSpeed; ++i) {
+                                int lcg = this.getUpdateLCG();
+                                int x = lcg & 0x0f;
+                                int y = lcg >>> 8 & 0x0f;
+                                int z = lcg >>> 16 & 0x0f;
 
                                 int fullId = chunk.getFullBlock(x, y + (Y << 4), z);
                                 int blockId = fullId >> 4;
@@ -2965,6 +2973,9 @@ public class Level implements ChunkManager, Metadatable {
 
         this.cancelUnloadChunkRequest(x, z);
 
+        BaseFullChunk chunk = provider.getEmptyChunk(x, z);
+        provider.setChunk(x, z, chunk);
+
         this.generateChunk(x, z);
     }
 
@@ -3400,5 +3411,9 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         return true;
+    }
+
+    public int getUpdateLCG() {
+        return (this.updateLCG = (this.updateLCG * 3) ^ LCG_CONSTANT);
     }
 }

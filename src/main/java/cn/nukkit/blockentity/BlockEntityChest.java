@@ -158,7 +158,9 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
                 pair.checkPairing();
             }
 
-            if (this.doubleInventory == null) {
+            if (pair.doubleInventory != null) {
+                this.doubleInventory = pair.doubleInventory;
+            } else if (this.doubleInventory == null) {
                 if ((pair.x + ((int) pair.z << 15)) > (this.x + ((int) this.z << 15))) { //Order them correctly
                     this.doubleInventory = new DoubleChestInventory(pair, this);
                 } else {
@@ -237,6 +239,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
 
         BlockEntityChest chest = this.getPair();
 
+        this.doubleInventory = null;
         this.namedTag.remove("pairx");
         this.namedTag.remove("pairz");
 
@@ -245,6 +248,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
         if (chest != null) {
             chest.namedTag.remove("pairx");
             chest.namedTag.remove("pairz");
+            chest.doubleInventory = null;
             chest.checkPairing();
             chest.spawnToAll();
         }
