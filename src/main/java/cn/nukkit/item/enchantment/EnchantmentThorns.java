@@ -44,7 +44,9 @@ public class EnchantmentThorns extends Enchantment {
 
         for (Item armor : human.getInventory().getArmorContents()) {
             Enchantment thorns = armor.getEnchantment(Enchantment.ID_THORNS);
-            thornsLevel = Math.max(thorns.getLevel(), thornsLevel);
+            if (thorns != null) {
+                thornsLevel = Math.max(thorns.getLevel(), thornsLevel);
+            }
         }
 
         ThreadLocalRandom random = ThreadLocalRandom.current();
