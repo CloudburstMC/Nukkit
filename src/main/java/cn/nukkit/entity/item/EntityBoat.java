@@ -42,7 +42,7 @@ public class EntityBoat extends EntityVehicle {
 
     @Override
     public float getHeight() {
-        return 0.7f;
+        return 0.5f;
     }
 
     @Override
@@ -63,6 +63,11 @@ public class EntityBoat extends EntityVehicle {
     @Override
     public float getBaseOffset() {
         return 0.35F;
+    }
+
+    @Override
+    public float getMountedYOffset() {
+        return 0.71f;
     }
 
     @Override

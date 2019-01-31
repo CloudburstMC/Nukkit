@@ -40,7 +40,32 @@ public abstract class Fuel {
         duration.put(Item.BOOKSHELF, (short) 300);
         duration.put(Item.CHEST, (short) 300);
         duration.put(Item.BUCKET, (short) 20000);
-        duration.put(Item.SIGN, (short) 200);
         duration.put(Item.LADDER, (short) 300);
+        duration.put(Item.BOW, (short) 200);
+        duration.put(Item.BOWL, (short) 200);
+        duration.put(Item.WOOD2, (short) 300);
+        duration.put(Item.WOODEN_PRESSURE_PLATE, (short) 300);
+        duration.put(Item.ACACIA_WOOD_STAIRS, (short) 300);
+        duration.put(Item.DARK_OAK_WOOD_STAIRS, (short) 300);
+        duration.put(Item.TRAPPED_CHEST, (short) 300);
+        duration.put(Item.DAYLIGHT_DETECTOR, (short) 300);
+        duration.put(Item.DAYLIGHT_DETECTOR_INVERTED, (short) 300);
+        duration.put(Item.JUKEBOX, (short) 300);
+        duration.put(Item.NOTEBLOCK, (short) 300);
+        duration.put(Item.WOOD_SLAB, (short) 300);
+        duration.put(Item.DOUBLE_WOOD_SLAB, (short) 300);
+        duration.put(Item.BOAT, (short) 1200);
+        duration.put(Item.BLAZE_ROD, (short) 2400);
+        duration.put(Item.BROWN_MUSHROOM_BLOCK, (short) 300);
+        duration.put(Item.RED_MUSHROOM_BLOCK, (short) 300);
+        duration.put(Item.FISHING_ROD, (short) 300);
+        duration.put(Item.WOODEN_BUTTON, (short) 100);
+        duration.put(Item.WOODEN_DOOR, (short) 200);
+        duration.put(Item.SPRUCE_DOOR, (short) 200);
+        duration.put(Item.BIRCH_DOOR, (short) 200);
+        duration.put(Item.JUNGLE_DOOR, (short) 200);
+        duration.put(Item.ACACIA_DOOR, (short) 200);
+        duration.put(Item.DARK_OAK_DOOR, (short) 200);
+        duration.put(Item.BANNER, (short) 300);
     }
 }

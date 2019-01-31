@@ -12,6 +12,7 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GlobalBlockPalette {
@@ -51,11 +52,11 @@ public class GlobalBlockPalette {
         return getOrCreateRuntimeId((id << 4) | meta);
     }
 
-    public static int getOrCreateRuntimeId(int legacyId) {
+    public static int getOrCreateRuntimeId(int legacyId) throws NoSuchElementException {
         int runtimeId = legacyToRuntimeId.get(legacyId);
         if (runtimeId == -1) {
             //runtimeId = registerMapping(runtimeIdAllocator.incrementAndGet(), legacyId);
-            throw new RuntimeException("Unmapped block registered");
+            throw new NoSuchElementException("Unmapped block registered id:" + (legacyId >>> 4) + " meta:" + (legacyId & 0xf));
         }
         return runtimeId;
     }
