@@ -632,19 +632,7 @@ public abstract class Entity extends Location implements Metadatable {
             return; //here add null means add nothing
         }
 
-        Effect oldEffect = this.effects.getOrDefault(effect.getId(), null);
-        if (oldEffect != null) {
-            if (Math.abs(effect.getAmplifier()) < Math.abs(oldEffect.getAmplifier())) {
-                return;
-            }
-            if (Math.abs(effect.getAmplifier()) == Math.abs(oldEffect.getAmplifier())
-                    && effect.getDuration() < oldEffect.getDuration()) {
-                return;
-            }
-            effect.add(this, true);
-        } else {
-            effect.add(this, false);
-        }
+        effect.add(this);
 
         this.effects.put(effect.getId(), effect);
 
