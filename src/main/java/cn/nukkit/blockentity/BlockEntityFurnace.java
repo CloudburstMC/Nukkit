@@ -12,6 +12,7 @@ import cn.nukkit.inventory.FurnaceRecipe;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -101,11 +102,18 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
 
     @Override
     public void close() {
-        if (!this.closed) {
+        if (!closed) {
             for (Player player : new HashSet<>(this.getInventory().getViewers())) {
                 player.removeWindow(this.getInventory());
             }
             super.close();
+        }
+    }
+
+    @Override
+    public void onBreak() {
+        for (Item content : inventory.getContents().values()) {
+            level.dropItem(this, content);
         }
     }
 
@@ -190,6 +198,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
         burnDuration = 0;
         if (this.getBlock().getId() == Item.FURNACE) {
             this.getLevel().setBlock(this, new BlockFurnaceBurning(this.getBlock().getDamage()), true);
+            this.getLevel().addSound(this, Sound.FURNACE_LIT);
         }
 
         if (burnTime > 0 && ev.isBurning()) {

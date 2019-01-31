@@ -3,6 +3,7 @@ package cn.nukkit.inventory;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.BlockAir;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityInventoryChangeEvent;
 import cn.nukkit.event.inventory.InventoryOpenEvent;
@@ -157,6 +158,10 @@ public abstract class BaseInventory implements Inventory {
             }
 
             item = ev.getNewItem();
+        }
+
+        if (holder instanceof BlockEntity) {
+            ((BlockEntity) holder).setDirty();
         }
 
         Item old = this.getItem(index);
@@ -373,6 +378,9 @@ public abstract class BaseInventory implements Inventory {
                     return false;
                 }
                 item = ev.getNewItem();
+            }
+            if (holder instanceof BlockEntity) {
+                ((BlockEntity) holder).setDirty();
             }
 
             if (item.getId() != Item.AIR) {
