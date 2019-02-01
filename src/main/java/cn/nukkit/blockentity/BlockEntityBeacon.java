@@ -5,7 +5,6 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.inventory.BeaconInventory;
 import cn.nukkit.inventory.Inventory;
-import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -16,13 +15,10 @@ import java.util.Map;
 /**
  * author: Rover656
  */
-public class BlockEntityBeacon extends BlockEntitySpawnable implements InventoryHolder {
-
-    protected final BeaconInventory inventory;
+public class BlockEntityBeacon extends BlockEntitySpawnable {
 
     public BlockEntityBeacon(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
-        this.inventory = new BeaconInventory(this);
     }
 
     @Override
@@ -227,11 +223,6 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
             setDirty();
             this.spawnToAll();
         }
-    }
-
-    @Override
-    public Inventory getInventory() {
-        return this.inventory;
     }
 
     @Override
