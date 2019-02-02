@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.MessageDigest;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -26,7 +27,7 @@ public class ZippedResourcePack extends AbstractResourcePack {
         this.file = file;
 
         try (ZipFile zip = new ZipFile(file)) {
-            ZipEntry entry = zip.getEntry("manifest.json");
+            ZipEntry entry = Optional.ofNullable(zip.getEntry("manifest.json")).orElse(zip.getEntry("pack_manifest.json"));
             if (entry == null) {
                 throw new IllegalArgumentException(Server.getInstance().getLanguage()
                         .translateString("nukkit.resources.zip.no-manifest"));

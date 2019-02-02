@@ -41,7 +41,7 @@ public class ResourcePackManager {
 
                 if (resourcePack != null) {
                     loadedResourcePacks.add(resourcePack);
-                    this.resourcePacksById.put(resourcePack.getPackId(), resourcePack);
+                    this.resourcePacksById.put(resourcePack.getPackId().toLowerCase(), resourcePack);
                 }
             } catch (IllegalArgumentException e) {
                 Server.getInstance().getLogger().warning(Server.getInstance().getLanguage()
@@ -59,6 +59,6 @@ public class ResourcePackManager {
     }
 
     public ResourcePack getPackById(String id) {
-        return this.resourcePacksById.get(id);
+        return this.resourcePacksById.get(id.toLowerCase());
     }
 }
