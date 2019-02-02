@@ -130,19 +130,12 @@ public class BlockVine extends BlockTransparentMeta {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (target.isSolid()) {
-            int[] faces = new int[]{
-                    0,
-                    0,
-                    1,
-                    4,
-                    8,
-                    2
-            };
-            this.setDamage(faces[face.getIndex()]);
+        if (target.isSolid() && face.getHorizontalIndex() != -1) {
+            this.setDamage(getMetaFromFace(face.getOpposite()));
             this.getLevel().setBlock(block, this, true, true);
             return true;
         }
+
         return false;
     }
 
@@ -165,10 +158,10 @@ public class BlockVine extends BlockTransparentMeta {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (!this.getSide(getFace().getOpposite()).isSolid()) {
+            if (!this.getSide(getFace()).isSolid()) {
                 Block up = this.up();
                 if (up.getId() != this.getId() || up.getDamage() != this.getDamage()) {
-                    this.getLevel().useBreakOn(this);
+                    this.getLevel().useBreakOn(this, null, null, true);
                     return Level.BLOCK_UPDATE_NORMAL;
                 }
             }
@@ -189,6 +182,20 @@ public class BlockVine extends BlockTransparentMeta {
         }
 
         return BlockFace.SOUTH;
+    }
+
+    private int getMetaFromFace(BlockFace face) {
+        switch (face) {
+            case SOUTH:
+            default:
+                return 0x01;
+            case WEST:
+                return 0x02;
+            case NORTH:
+                return 0x04;
+            case EAST:
+                return 0x08;
+        }
     }
 
     @Override
