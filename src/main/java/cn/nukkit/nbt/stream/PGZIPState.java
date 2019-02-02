@@ -12,7 +12,7 @@ public class PGZIPState {
     public PGZIPState(PGZIPOutputStream parent) {
         this.def = parent.newDeflater();
         this.buf = new ByteArrayOutputStream(PGZIPBlock.SIZE);
-        this.str = parent.newDeflaterOutputStream(buf, def);
+        this.str = PGZIPOutputStream.newDeflaterOutputStream(buf, def);
     }
 
 

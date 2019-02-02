@@ -3,6 +3,7 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
@@ -20,8 +21,8 @@ public class WeatherCommand extends VanillaCommand {
         this.setPermission("nukkit.command.weather");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("clear|rain|thunder", CommandParameter.ARG_TYPE_STRING, false),
-                new CommandParameter("duration in seconds", CommandParameter.ARG_TYPE_INT, true)
+                new CommandParameter("clear|rain|thunder", CommandParamType.STRING, false),
+                new CommandParameter("duration in seconds", CommandParamType.INT, true)
         });
     }
 

@@ -27,7 +27,7 @@ public class ResourcePacksInfoPacket extends DataPacket {
     private void encodePacks(ResourcePack[] packs) {
         this.putLShort(packs.length);
         for (ResourcePack entry : packs) {
-            this.putString(entry.getPackId());
+            this.putString(entry.getPackId().toString());
             this.putString(entry.getPackVersion());
             this.putLLong(entry.getPackSize());
             this.putString(""); // encryption key

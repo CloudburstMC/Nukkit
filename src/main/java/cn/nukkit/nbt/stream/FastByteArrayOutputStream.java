@@ -99,7 +99,7 @@ public class FastByteArrayOutputStream extends OutputStream {
     public static byte[] grow( final byte[] array, final int length ) {
         if ( length > array.length ) {
             final int newLength = (int)Math.min( Math.max( ( ONEOVERPHI * array.length ) >>> 16, length ), Integer.MAX_VALUE );
-            final byte t[] =
+            final byte[] t =
                     new byte[ newLength ];
             System.arraycopy( array, 0, t, 0, array.length );
             return t;
@@ -110,7 +110,7 @@ public class FastByteArrayOutputStream extends OutputStream {
     public static byte[] grow( final byte[] array, final int length, final int preserve ) {
         if ( length > array.length ) {
             final int newLength = (int)Math.min( Math.max( ( ONEOVERPHI * array.length ) >>> 16, length ), Integer.MAX_VALUE );
-            final byte t[] =
+            final byte[] t =
                     new byte[ newLength ];
             System.arraycopy( array, 0, t, 0, preserve );
             return t;

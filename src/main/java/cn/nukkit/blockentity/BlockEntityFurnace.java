@@ -236,7 +236,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
 
         if (burnTime > 0) {
             burnTime--;
-            burnDuration = (int) Math.ceil(burnTime / maxTime * 200);
+            burnDuration = (int) Math.ceil((float) burnTime / maxTime * 200);
 
             if (smelt != null && canSmelt) {
                 cookTime++;
@@ -279,7 +279,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
                 ContainerSetDataPacket pk = new ContainerSetDataPacket();
                 pk.windowId = windowId;
                 pk.property = ContainerSetDataPacket.PROPERTY_FURNACE_TICK_COUNT;
-                ;
+
                 pk.value = cookTime;
                 player.dataPacket(pk);
 

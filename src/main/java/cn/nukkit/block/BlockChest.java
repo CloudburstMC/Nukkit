@@ -132,11 +132,11 @@ public class BlockChest extends BlockTransparentMeta {
             }
         }
 
-        BlockEntity blockEntity = new BlockEntityChest(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+        BlockEntityChest blockEntity = new BlockEntityChest(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
 
         if (chest != null) {
-            chest.pairWith(((BlockEntityChest) blockEntity));
-            ((BlockEntityChest) blockEntity).pairWith(chest);
+            chest.pairWith(blockEntity);
+            blockEntity.pairWith(chest);
         }
 
         return true;
