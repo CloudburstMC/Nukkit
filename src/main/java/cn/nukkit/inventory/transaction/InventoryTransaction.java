@@ -78,9 +78,7 @@ public class InventoryTransaction {
      * @param inventory to add
      */
     public void addInventory(Inventory inventory) {
-        if (!this.inventories.contains(inventory)) {
-            this.inventories.add(inventory);
-        }
+        this.inventories.add(inventory);
     }
 
     protected boolean matchItems(List<Item> needItems, List<Item> haveItems) {

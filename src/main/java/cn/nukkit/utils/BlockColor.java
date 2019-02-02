@@ -71,7 +71,7 @@ public class BlockColor  {
     public BlockColor(int rgb) {
         this.red = (rgb >> 16) & 0xff;
         this.green = (rgb >> 8) & 0xff;
-        this.blue = (rgb >> 0) & 0xff;
+        this.blue = rgb & 0xff;
         this.alpha = 0xff;
     }
 

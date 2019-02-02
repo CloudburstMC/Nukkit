@@ -35,7 +35,7 @@ public class ListCommand extends VanillaCommand {
         }
 
         sender.sendMessage(new TranslationContainer("commands.players.list",
-                new String[]{String.valueOf(onlineCount), String.valueOf(sender.getServer().getMaxPlayers())}));
+                String.valueOf(onlineCount), String.valueOf(sender.getServer().getMaxPlayers())));
         sender.sendMessage(online);
         return true;
     }

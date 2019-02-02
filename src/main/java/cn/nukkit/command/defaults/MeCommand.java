@@ -2,6 +2,7 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
@@ -17,7 +18,7 @@ public class MeCommand extends VanillaCommand {
         this.setPermission("nukkit.command.me");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("action ...", CommandParameter.ARG_TYPE_RAW_TEXT, false)
+                new CommandParameter("action ...", CommandParamType.RAWTEXT, false)
         });
     }
 
@@ -49,7 +50,7 @@ public class MeCommand extends VanillaCommand {
             msg = msg.substring(0, msg.length() - 1);
         }
 
-        sender.getServer().broadcastMessage(new TranslationContainer("chat.type.emote", new String[]{name, TextFormat.WHITE + msg}));
+        sender.getServer().broadcastMessage(new TranslationContainer("chat.type.emote", name, TextFormat.WHITE + msg));
 
         return true;
     }
