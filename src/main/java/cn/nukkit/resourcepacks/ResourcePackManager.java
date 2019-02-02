@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class ResourcePackManager {
     private ResourcePack[] resourcePacks;
-    private Map<String, ResourcePack> resourcePacksById = new HashMap<>();
+    private Map<UUID, ResourcePack> resourcePacksById = new HashMap<>();
 
     public ResourcePackManager(File path) {
         if (!path.exists()) {
@@ -41,7 +42,7 @@ public class ResourcePackManager {
 
                 if (resourcePack != null) {
                     loadedResourcePacks.add(resourcePack);
-                    this.resourcePacksById.put(resourcePack.getPackId().toLowerCase(), resourcePack);
+                    this.resourcePacksById.put(UUID.fromString(resourcePack.getPackId()), resourcePack);
                 }
             } catch (IllegalArgumentException e) {
                 Server.getInstance().getLogger().warning(Server.getInstance().getLanguage()
@@ -59,6 +60,10 @@ public class ResourcePackManager {
     }
 
     public ResourcePack getPackById(String id) {
-        return this.resourcePacksById.get(id.toLowerCase());
+        try {
+            return this.resourcePacksById.get(UUID.fromString(id));
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 }
