@@ -22,4 +22,8 @@ public class CommandEnum {
     public List<String> getValues() {
         return values;
     }
+
+    public int hashCode() {
+        return name.hashCode();
+    }
 }

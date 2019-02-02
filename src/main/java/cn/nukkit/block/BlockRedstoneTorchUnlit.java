@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
@@ -30,7 +32,7 @@ public class BlockRedstoneTorchUnlit extends BlockTorch {
 
     @Override
     public int getLightLevel() {
-        return 7;
+        return 0;
     }
 
     @Override
@@ -41,6 +43,11 @@ public class BlockRedstoneTorchUnlit extends BlockTorch {
     @Override
     public int getStrongPower(BlockFace side) {
         return 0;
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(new BlockRedstoneTorch());
     }
 
     @Override

@@ -54,21 +54,21 @@ public class TeleportCommand extends VanillaCommand {
                 return true;
             }
             if (args.length == 1) {
-                target = sender.getServer().getPlayer(args[0]);
+                target = sender.getServer().getPlayer(args[0].replace("@s", sender.getName()));
                 if (target == null) {
                     sender.sendMessage(TextFormat.RED + "Can't find player " + args[0]);
                     return true;
                 }
             }
         } else {
-            target = sender.getServer().getPlayer(args[0]);
+            target = sender.getServer().getPlayer(args[0].replace("@s", sender.getName()));
             if (target == null) {
                 sender.sendMessage(TextFormat.RED + "Can't find player " + args[0]);
                 return true;
             }
             if (args.length == 2) {
                 origin = target;
-                target = sender.getServer().getPlayer(args[1]);
+                target = sender.getServer().getPlayer(args[1].replace("@s", sender.getName()));
                 if (target == null) {
                     sender.sendMessage(TextFormat.RED + "Can't find player " + args[1]);
                     return true;
@@ -92,9 +92,9 @@ public class TeleportCommand extends VanillaCommand {
             double yaw;
             double pitch;
             try {
-                x = Double.parseDouble(args[pos++]);
-                y = Double.parseDouble(args[pos++]);
-                z = Double.parseDouble(args[pos++]);
+                x = Double.parseDouble(args[pos++].replace("~", "" + ((Player) target).x));
+                y = Double.parseDouble(args[pos++].replace("~", "" + ((Player) target).y));
+                z = Double.parseDouble(args[pos++].replace("~", "" + ((Player) target).z));
                 yaw = ((Player) target).getYaw();
                 pitch = ((Player) target).getPitch();
             } catch (NumberFormatException e1) {

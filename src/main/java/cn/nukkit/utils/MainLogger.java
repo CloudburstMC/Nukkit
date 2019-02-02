@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * author: MagicDroidX
@@ -21,8 +22,8 @@ public class MainLogger extends ThreadedLogger {
 
     protected final String logPath;
     protected final ConcurrentLinkedQueue<String> logBuffer = new ConcurrentLinkedQueue<>();
-    protected boolean shutdown = false;
-    private boolean isShutdown = false;
+    protected AtomicBoolean shutdown = new AtomicBoolean(false);
+    protected AtomicBoolean isShutdown = new AtomicBoolean(false);
     protected LogLevel logLevel = LogLevel.DEFAULT_LEVEL;
     private final Map<TextFormat, String> replacements = new EnumMap<>(TextFormat.class);
     private final TextFormat[] colors = TextFormat.values();
@@ -116,15 +117,12 @@ public class MainLogger extends ThreadedLogger {
     }
 
     public void shutdown() {
-        synchronized (this) {
-            this.shutdown = true;
-            this.interrupt();
-            while (!this.isShutdown) {
+        if (shutdown.compareAndSet(false, true)) {
+            while (!isShutdown.get()) {
                 try {
-                    wait(1000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    // Ignore exception and treat it as we're done
-                    return;
+                    // ignore
                 }
             }
         }
@@ -164,12 +162,10 @@ public class MainLogger extends ThreadedLogger {
         do {
             waitForMessage();
             flushBuffer(logFile);
-        } while (!this.shutdown);
+        } while (!shutdown.get());
 
-        flushBuffer(logFile);
-        synchronized (this) {
-            this.isShutdown = true;
-            this.notify();
+        if (!isShutdown.compareAndSet(false, true)) {
+            throw new IllegalStateException("Logger has already shutdown");
         }
     }
 
@@ -234,9 +230,7 @@ public class MainLogger extends ThreadedLogger {
     }
 
     private synchronized void flushBuffer(File logFile) {
-        Writer writer = null;
-        try {
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile, true), StandardCharsets.UTF_8), 1024);
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile, true), StandardCharsets.UTF_8), 1024)) {
             Date now = new Date();
             String consoleDateFormat = new SimpleDateFormat("HH:mm:ss ").format(now);
             String fileDateFormat = new SimpleDateFormat("Y-M-d HH:mm:ss ").format(now);
@@ -253,16 +247,8 @@ public class MainLogger extends ThreadedLogger {
                 }
             }
             writer.flush();
-        } catch (Exception e) {
+        } catch (IOException e) {
             this.logException(e);
-        } finally {
-            try {
-                if (writer != null) {
-                    writer.close();
-                }
-            } catch (IOException e) {
-                this.logException(e);
-            }
         }
     }
 

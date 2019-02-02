@@ -12,6 +12,8 @@ import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
 import cn.nukkit.utils.TextFormat;
 
+import java.util.StringJoiner;
+
 /**
  * Created on 2015/12/08 by Pub4Game.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -53,14 +55,17 @@ public class KillCommand extends VanillaCommand {
                 player.setHealth(0);
                 Command.broadcastCommandMessage(sender, new TranslationContainer("commands.kill.successful", player.getName()));
             } else if (args[0].equals("@e")) {
+                StringJoiner joiner = new StringJoiner(", ");
                 for (Level level : Server.getInstance().getLevels().values()) {
                     for (Entity entity : level.getEntities()) {
                         if (!(entity instanceof Player)) {
+                            joiner.add(entity.getName());
                             entity.close();
                         }
                     }
                 }
-                sender.sendMessage(new TranslationContainer(TextFormat.GOLD + "%commands.kill.entities.successful"));
+                String entities = joiner.toString();
+                sender.sendMessage(new TranslationContainer("commands.kill.successful", entities.isEmpty() ? "0" : entities));
             } else if (args[0].equals("@s")) {
                 if (!sender.hasPermission("nukkit.command.kill.self")) {
                     sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
