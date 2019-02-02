@@ -3,6 +3,7 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.potion.Effect;
@@ -20,14 +21,14 @@ public class EffectCommand extends Command {
         this.setPermission("nukkit.command.effect");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false),
-                new CommandParameter("effect", CommandParameter.ARG_TYPE_STRING, false), //Do not use Enum here because of buggy behavior
-                new CommandParameter("seconds", CommandParameter.ARG_TYPE_INT, true),
+                new CommandParameter("player", CommandParamType.TARGET, false),
+                new CommandParameter("effect", CommandParamType.STRING, false), //Do not use Enum here because of buggy behavior
+                new CommandParameter("seconds", CommandParamType.INT, true),
                 new CommandParameter("amplifier", true),
-                new CommandParameter("hideParticle", CommandParameter.ARG_TYPE_BOOL, true)
+                new CommandParameter("hideParticle", true, new String[]{"true", "false"})
         });
         this.commandParameters.put("clear", new CommandParameter[]{
-                new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false),
+                new CommandParameter("player", CommandParamType.TARGET, false),
                 new CommandParameter("clear", new String[]{"clear"})
         });
     }

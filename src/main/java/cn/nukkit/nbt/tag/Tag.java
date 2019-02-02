@@ -40,7 +40,7 @@ public abstract class Tag {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof Tag)) {
+        if (!(obj instanceof Tag)) {
             return false;
         }
         Tag o = (Tag) obj;

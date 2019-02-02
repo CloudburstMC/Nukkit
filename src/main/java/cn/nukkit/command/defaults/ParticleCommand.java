@@ -3,10 +3,11 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
 import cn.nukkit.lang.TranslationContainer;
-import cn.nukkit.level.Level;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.particle.*;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.TextFormat;
@@ -18,20 +19,18 @@ import java.util.Random;
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
 public class ParticleCommand extends VanillaCommand {
+    private static final String[] ENUM_VALUES = new String[]{"explode", "hugeexplosion", "hugeexplosionseed", "bubble"
+            , "splash", "wake", "water", "crit", "smoke", "spell", "instantspell", "dripwater", "driplava", "townaura"
+            , "spore", "portal", "flame", "lava", "reddust", "snowballpoof", "slime", "itembreak", "terrain", "heart"
+            , "ink", "droplet", "enchantmenttable", "happyvillager", "angryvillager", "forcefield"};
     public ParticleCommand(String name) {
         super(name, "%nukkit.command.particle.description", "%nukkit.command.particle.usage");
         this.setPermission("nukkit.command.particle");
-        //<name> <x> <y> <z> <xd> <yd> <zd> [count] [data]
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, false),
-                new CommandParameter("x", CommandParameter.ARG_TYPE_STRING, false),
-                new CommandParameter("y", CommandParameter.ARG_TYPE_STRING, false),
-                new CommandParameter("z", CommandParameter.ARG_TYPE_STRING, false),
-                new CommandParameter("zd", CommandParameter.ARG_TYPE_STRING, false),
-                new CommandParameter("yd", CommandParameter.ARG_TYPE_STRING, false),
-                new CommandParameter("zd", CommandParameter.ARG_TYPE_STRING, false),
-                new CommandParameter("count", CommandParameter.ARG_TYPE_INT, true),
+                new CommandParameter("name", false, ENUM_VALUES),
+                new CommandParameter("position", CommandParamType.POSITION, false),
+                new CommandParameter("count", CommandParamType.INT, true),
                 new CommandParameter("data", true)
         });
     }
@@ -42,40 +41,38 @@ public class ParticleCommand extends VanillaCommand {
             return true;
         }
 
-        if (args.length < 7) {
+        if (args.length < 4) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
 
             return true;
         }
 
-        Level level;
+        Position defaultPosition;
         if (sender instanceof Player) {
-            level = ((Player) sender).getLevel();
+            defaultPosition = ((Player) sender).getPosition();
         } else {
-            level = sender.getServer().getDefaultLevel();
+            defaultPosition = new Position(0, 0, 0, sender.getServer().getDefaultLevel());
         }
 
         String name = args[0].toLowerCase();
 
-        float[] floats = new float[6];
-        for (int i = 0; i < floats.length; i++) {
-            try {
-                double d = Double.valueOf(args[i + 1]);
-                floats[i] = (float) d;
-            } catch (Exception e) {
-                return false;
-            }
-        }
+        double x;
+        double y;
+        double z;
 
-        Vector3 pos = new Vector3(floats[0], floats[1], floats[2]);
-        float xd = floats[3];
-        float yd = floats[4];
-        float zd = floats[5];
+        try {
+            x = getDouble(args[1], defaultPosition.getX());
+            y = getDouble(args[2], defaultPosition.getY());
+            z = getDouble(args[3], defaultPosition.getZ());
+        } catch (Exception e) {
+            return false;
+        }
+        Position position = new Position(x, y, z, defaultPosition.getLevel());
 
         int count = 1;
-        if (args.length > 7) {
+        if (args.length > 4) {
             try {
-                double c = Double.valueOf(args[7]);
+                double c = Double.valueOf(args[4]);
                 count = (int) c;
             } catch (Exception e) {
                 //ignore
@@ -83,40 +80,40 @@ public class ParticleCommand extends VanillaCommand {
         }
         count = Math.max(1, count);
 
-        Integer data = null;
-        if (args.length > 8) {
+        int data = -1;
+        if (args.length > 5) {
             try {
-                double d = Double.valueOf(args[8]);
+                double d = Double.valueOf(args[5]);
                 data = (int) d;
             } catch (Exception e) {
                 //ignore
             }
         }
 
-        Particle particle = this.getParticle(name, pos, xd, yd, zd, data);
+        Particle particle = this.getParticle(name, position, data);
 
         if (particle == null) {
             sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.particle.notFound", name));
             return true;
         }
 
-        sender.sendMessage(new TranslationContainer("commands.particle.success", new String[]{name, String.valueOf(count)}));
+        sender.sendMessage(new TranslationContainer("commands.particle.success", name, String.valueOf(count)));
 
         Random random = new Random(System.currentTimeMillis());
 
         for (int i = 0; i < count; i++) {
             particle.setComponents(
-                    pos.x + (random.nextFloat() * 2 - 1) * xd,
-                    pos.y + (random.nextFloat() * 2 - 1) * yd,
-                    pos.z + (random.nextFloat() * 2 - 1) * zd
+                    position.x + (random.nextFloat() * 2 - 1),
+                    position.y + (random.nextFloat() * 2 - 1),
+                    position.z + (random.nextFloat() * 2 - 1)
             );
-            level.addParticle(particle);
+            position.getLevel().addParticle(particle);
         }
 
         return true;
     }
 
-    private Particle getParticle(String name, Vector3 pos, float xd, float yd, float zd, Integer data) {
+    private Particle getParticle(String name, Vector3 pos, int data) {
         switch (name) {
             case "explode":
                 return new ExplodeParticle(pos);
@@ -134,7 +131,7 @@ public class ParticleCommand extends VanillaCommand {
             case "crit":
                 return new CriticalParticle(pos);
             case "smoke":
-                return new SmokeParticle(pos, data != null ? data : 0);
+                return new SmokeParticle(pos, data != -1 ? data : 0);
             case "spell":
                 return new EnchantParticle(pos);
             case "instantspell":
@@ -153,25 +150,25 @@ public class ParticleCommand extends VanillaCommand {
             case "lava":
                 return new LavaParticle(pos);
             case "reddust":
-                return new RedstoneParticle(pos, data != null ? data : 1);
+                return new RedstoneParticle(pos, data != -1 ? data : 1);
             case "snowballpoof":
                 return new ItemBreakParticle(pos, Item.get(Item.SNOWBALL));
             case "slime":
                 return new ItemBreakParticle(pos, Item.get(Item.SLIMEBALL));
             case "itembreak":
-                if (data != null && data != 0) {
+                if (data != -1 && data != 0) {
                     return new ItemBreakParticle(pos, Item.get(data));
                 }
                 break;
             case "terrain":
-                if (data != null && data != 0) {
+                if (data != -1 && data != 0) {
                     return new TerrainParticle(pos, Block.get(data));
                 }
                 break;
             case "heart":
-                return new HeartParticle(pos, data != null ? data : 0);
+                return new HeartParticle(pos, data != -1 ? data : 0);
             case "ink":
-                return new InkParticle(pos, data != null ? data : 0);
+                return new InkParticle(pos, data != -1 ? data : 0);
             case "droplet":
                 return new RainSplashParticle(pos);
             case "enchantmenttable":
@@ -202,5 +199,16 @@ public class ParticleCommand extends VanillaCommand {
         }
 
         return null;
+    }
+
+    private static double getDouble(String arg, double defaultValue) throws Exception {
+        if (arg.startsWith("~")) {
+            String relativePos = arg.substring(1);
+            if (relativePos.isEmpty()) {
+                return defaultValue;
+            }
+            return defaultValue + Double.parseDouble(relativePos);
+        }
+        return Double.parseDouble(arg);
     }
 }
