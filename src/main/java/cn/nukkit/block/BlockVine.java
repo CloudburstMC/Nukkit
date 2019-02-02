@@ -165,18 +165,7 @@ public class BlockVine extends BlockTransparentMeta {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            BlockFace[] faces = {
-                    BlockFace.DOWN,
-                    BlockFace.SOUTH,
-                    BlockFace.WEST,
-                    BlockFace.DOWN,
-                    BlockFace.NORTH,
-                    BlockFace.DOWN,
-                    BlockFace.DOWN,
-                    BlockFace.DOWN,
-                    BlockFace.EAST
-            };
-            if (!this.getSide(faces[this.getDamage()]).isSolid()) {
+            if (!this.getSide(getFace().getOpposite()).isSolid()) {
                 Block up = this.up();
                 if (up.getId() != this.getId() || up.getDamage() != this.getDamage()) {
                     this.getLevel().useBreakOn(this);
@@ -185,6 +174,21 @@ public class BlockVine extends BlockTransparentMeta {
             }
         }
         return 0;
+    }
+
+    private BlockFace getFace() {
+        int meta = this.getDamage();
+        if ((meta & 1) > 0) {
+            return BlockFace.SOUTH;
+        } else if ((meta & 2) > 0) {
+            return BlockFace.WEST;
+        } else if ((meta & 4) > 0) {
+            return BlockFace.NORTH;
+        } else if ((meta & 8) > 0) {
+            return BlockFace.EAST;
+        }
+
+        return BlockFace.SOUTH;
     }
 
     @Override
