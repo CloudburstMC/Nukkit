@@ -19,7 +19,7 @@ public class XpCommand extends Command {
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
                 new CommandParameter("amount|level", CommandParamType.INT, false),
-                new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, true)
+                new CommandParameter("player", CommandParamType.TARGET, true)
         });
     }
 
@@ -85,9 +85,9 @@ public class XpCommand extends Command {
                 player.setExperience(player.getExperience(), newLevel);
             }
             if (amount > 0) {
-                sender.sendMessage(new TranslationContainer("commands.xp.success.levels", new String[]{String.valueOf(amount), player.getName()}));
+                sender.sendMessage(new TranslationContainer("commands.xp.success.levels", String.valueOf(amount), player.getName()));
             } else {
-                sender.sendMessage(new TranslationContainer("commands.xp.success.levels.minus", new String[]{String.valueOf(-amount), player.getName()}));
+                sender.sendMessage(new TranslationContainer("commands.xp.success.levels.minus", String.valueOf(-amount), player.getName()));
             }
             return true;
         } else {
@@ -96,7 +96,7 @@ public class XpCommand extends Command {
                 return true;
             }
             player.addExperience(amount);
-            sender.sendMessage(new TranslationContainer("commands.xp.success", new String[]{String.valueOf(amount), player.getName()}));
+            sender.sendMessage(new TranslationContainer("commands.xp.success", String.valueOf(amount), player.getName()));
             return true;
         }
     }

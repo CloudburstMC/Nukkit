@@ -1,10 +1,12 @@
 package cn.nukkit.network.protocol;
 
+import java.util.UUID;
+
 public class ResourcePackDataInfoPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.RESOURCE_PACK_DATA_INFO_PACKET;
 
-    public String packId;
+    public UUID packId;
     public int maxChunkSize;
     public int chunkCount;
     public long compressedPackSize;
@@ -12,7 +14,7 @@ public class ResourcePackDataInfoPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.packId = this.getString();
+        this.packId = UUID.fromString(this.getString());
         this.maxChunkSize = this.getLInt();
         this.chunkCount = this.getLInt();
         this.compressedPackSize = this.getLLong();
@@ -22,7 +24,7 @@ public class ResourcePackDataInfoPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putString(this.packId);
+        this.putString(this.packId.toString());
         this.putLInt(this.maxChunkSize);
         this.putLInt(this.chunkCount);
         this.putLLong(this.compressedPackSize);

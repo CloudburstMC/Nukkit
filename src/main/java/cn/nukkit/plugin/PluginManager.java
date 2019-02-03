@@ -306,7 +306,7 @@ public class PluginManager {
                             aliasList.add(alias);
                         }
 
-                        newCmd.setAliases(aliasList.stream().toArray(String[]::new));
+                        newCmd.setAliases(aliasList.toArray(new String[0]));
                     }
                 }
 
