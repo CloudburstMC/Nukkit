@@ -6,7 +6,8 @@ public class ResourcePacksInfoPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.RESOURCE_PACKS_INFO_PACKET;
 
-    public boolean mustAccept = false;
+    public boolean mustAccept;
+    public boolean unknownBool;
     public ResourcePack[] behaviourPackEntries = new ResourcePack[0];
     public ResourcePack[] resourcePackEntries = new ResourcePack[0];
 
@@ -19,6 +20,7 @@ public class ResourcePacksInfoPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putBoolean(this.mustAccept);
+        this.putBoolean(this.unknownBool);
 
         encodePacks(this.resourcePackEntries);
         encodePacks(this.behaviourPackEntries);
@@ -33,6 +35,7 @@ public class ResourcePacksInfoPacket extends DataPacket {
             this.putString(""); // encryption key
             this.putString(""); // sub-pack name
             this.putString(""); // content identity
+            this.putBoolean(false); // ???
         }
     }
 

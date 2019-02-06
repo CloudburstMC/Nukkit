@@ -2807,6 +2807,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     break;
                 case ProtocolInfo.LEVEL_SOUND_EVENT_PACKET_V1:
+                case ProtocolInfo.LEVEL_SOUND_EVENT_PACKET_V2:
                 case ProtocolInfo.LEVEL_SOUND_EVENT_PACKET:
                     this.level.addChunkPacket(this.getChunkX(), this.getChunkZ(), packet);
                     break;
