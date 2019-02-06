@@ -7,7 +7,6 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.InstantSpellParticle;
 import cn.nukkit.level.particle.Particle;
 import cn.nukkit.level.particle.SpellParticle;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.potion.Effect;
