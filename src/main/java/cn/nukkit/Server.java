@@ -2085,6 +2085,7 @@ public class Server {
         Entity.registerEntity("Boat", EntityBoat.class);
 
         Entity.registerEntity("EndCrystal", EntityEndCrystal.class);
+        Entity.registerEntity("FishingHook", EntityFishingHook.class);
     }
 
     private void registerBlockEntities() {
