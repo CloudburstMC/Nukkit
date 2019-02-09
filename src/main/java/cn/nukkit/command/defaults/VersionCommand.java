@@ -31,14 +31,12 @@ public class VersionCommand extends VanillaCommand {
             return true;
         }
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("nukkit.server.info.extended", new String[]{
-                    sender.getServer().getName(),
+            sender.sendMessage(new TranslationContainer("nukkit.server.info.extended", sender.getServer().getName(),
                     sender.getServer().getNukkitVersion(),
                     sender.getServer().getCodename(),
                     sender.getServer().getApiVersion(),
                     sender.getServer().getVersion(),
-                    String.valueOf(ProtocolInfo.CURRENT_PROTOCOL)
-            }));
+                    String.valueOf(ProtocolInfo.CURRENT_PROTOCOL)));
         } else {
             String pluginName = "";
             for (String arg : args) pluginName += arg + " ";

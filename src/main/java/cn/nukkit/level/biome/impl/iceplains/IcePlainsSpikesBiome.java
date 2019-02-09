@@ -88,7 +88,7 @@ public class IcePlainsSpikesBiome extends IcePlainsBiome {
                         for (int xx = (int) -currWidth; xx < currWidth; xx++) {
                             for (int zz = (int) -currWidth; zz < currWidth; zz++) {
                                 int currDist = (int) Math.sqrt(xx * xx + zz * zz);
-                                if ((int) currWidth != (int) currDist && random.nextBoolean()) {
+                                if ((int) currWidth != currDist && random.nextBoolean()) {
                                     level.setBlockAt(x + xx, y, z + zz, PACKED_ICE);
                                 }
                             }
