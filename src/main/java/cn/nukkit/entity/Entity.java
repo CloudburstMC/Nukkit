@@ -493,6 +493,14 @@ public abstract class Entity extends Location implements Metadatable {
         this.setDataProperty(new ByteEntityData(DATA_ALWAYS_SHOW_NAMETAG, value ? 1 : 0));
     }
 
+    public void setScoreTag(String score) {
+        this.setDataProperty(new StringEntityData(DATA_SCORE_TAG, score));
+    }
+
+    public String getScoreTag() {
+        return this.getDataPropertyString(DATA_SCORE_TAG);
+    }
+
     public boolean isSneaking() {
         return this.getDataFlag(DATA_FLAGS, DATA_FLAG_SNEAKING);
     }

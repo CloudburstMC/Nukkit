@@ -64,20 +64,20 @@ public class BlockTrapdoor extends BlockTransparentMeta {
             if ((damage & 0x08) > 0) {
                 bb = new SimpleAxisAlignedBB(
                         0,
-                        0 + 1 - f,
+                        1 - f,
                         0,
-                        0 + 1,
-                        0 + 1,
-                        0 + 1
+                        1,
+                        1,
+                        1
                 );
             } else {
                 bb = new SimpleAxisAlignedBB(
                         0,
                         0,
                         0,
-                        0 + 1,
+                        1,
                         0 + f,
-                        0 + 1
+                        1
                 );
             }
             if ((damage & 0x04) > 0) {
@@ -85,29 +85,29 @@ public class BlockTrapdoor extends BlockTransparentMeta {
                     bb.setBounds(
                             0,
                             0,
-                            0 + 1 - f,
-                            0 + 1,
-                            0 + 1,
-                            0 + 1
+                            1 - f,
+                            1,
+                            1,
+                            1
                     );
                 } else if ((damage & 0x03) == 1) {
                     bb.setBounds(
                             0,
                             0,
                             0,
-                            0 + 1,
-                            0 + 1,
+                            1,
+                            1,
                             0 + f
                     );
                 }
                 if ((damage & 0x03) == 2) {
                     bb.setBounds(
-                            0 + 1 - f,
+                            1 - f,
                             0,
                             0,
-                            0 + 1,
-                            0 + 1,
-                            0 + 1
+                            1,
+                            1,
+                            1
                     );
                 }
                 if ((damage & 0x03) == 3) {
@@ -116,8 +116,8 @@ public class BlockTrapdoor extends BlockTransparentMeta {
                             0,
                             0,
                             0 + f,
-                            0 + 1,
-                            0 + 1
+                            1,
+                            1
                     );
                 }
             }

@@ -134,7 +134,7 @@ public class GameRules {
     }
 
     public GameRule[] getRules() {
-        return gameRules.keySet().toArray(new GameRule[gameRules.size()]);
+        return gameRules.keySet().toArray(new GameRule[0]);
     }
 
     // TODO: This needs to be moved out since there is not a separate compound tag in the LevelDB format for Game Rules.
