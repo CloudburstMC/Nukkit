@@ -63,17 +63,18 @@ public class PlayerInventory extends BaseInventory {
         }
 
         if (this.getHolder() instanceof Player) {
-            PlayerItemHeldEvent ev = new PlayerItemHeldEvent((Player) this.getHolder(), this.getItem(slot), slot);
+            Player player = (Player) this.getHolder();
+            PlayerItemHeldEvent ev = new PlayerItemHeldEvent(player, this.getItem(slot), slot);
             this.getHolder().getLevel().getServer().getPluginManager().callEvent(ev);
 
             if (ev.isCancelled()) {
                 this.sendContents(this.getViewers());
                 return false;
             }
-        }
 
-        if (player.fishing != null && !(this.getItem(slot) instanceof ItemFishingRod)) {
-            player.stopFishing(false);
+            if (player.fishing != null && !(this.getItem(slot) instanceof ItemFishingRod)) {
+                player.stopFishing(false);
+            }
         }
 
         this.setHeldItemIndex(slot, false);
