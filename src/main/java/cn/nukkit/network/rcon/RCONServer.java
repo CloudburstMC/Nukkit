@@ -132,24 +132,16 @@ public class RCONServer extends Thread {
         } catch (IOException exception) {
             key.cancel();
             channel.close();
-            if (this.rconSessions.contains(channel)) {
-                this.rconSessions.remove(channel);
-            }
-            if (this.sendQueues.containsKey(channel)) {
-                this.sendQueues.remove(channel);
-            }
+            this.rconSessions.remove(channel);
+            this.sendQueues.remove(channel);
             return;
         }
 
         if (bytesRead == -1) {
             key.cancel();
             channel.close();
-            if (this.rconSessions.contains(channel)) {
-                this.rconSessions.remove(channel);
-            }
-            if (this.sendQueues.containsKey(channel)) {
-                this.sendQueues.remove(channel);
-            }
+            this.rconSessions.remove(channel);
+            this.sendQueues.remove(channel);
             return;
         }
 
@@ -161,7 +153,6 @@ public class RCONServer extends Thread {
         switch (packet.getType()) {
             case SERVERDATA_AUTH:
                 byte[] payload = new byte[1];
-                payload[0] = 0;
 
                 if (new String(packet.getPayload(), Charset.forName("UTF-8")).equals(this.password)) {
                     this.rconSessions.add(channel);
@@ -197,12 +188,8 @@ public class RCONServer extends Thread {
             } catch (IOException exception) {
                 key.cancel();
                 channel.close();
-                if (this.rconSessions.contains(channel)) {
-                    this.rconSessions.remove(channel);
-                }
-                if (this.sendQueues.containsKey(channel)) {
-                    this.sendQueues.remove(channel);
-                }
+                this.rconSessions.remove(channel);
+                this.sendQueues.remove(channel);
                 return;
             }
 

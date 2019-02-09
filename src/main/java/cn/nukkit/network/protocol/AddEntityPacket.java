@@ -89,7 +89,7 @@ public class AddEntityPacket extends DataPacket {
             .put(70, "minecraft:eye_of_ender_signal")
             .put(EntityEndCrystal.NETWORK_ID, "minecraft:ender_crystal")
             .put(76, "minecraft:shulker_bullet")
-            .put(77, "minecraft:fishing_hook")
+            .put(EntityFishingHook.NETWORK_ID, "minecraft:fishing_hook")
             .put(79, "minecraft:dragon_fireball")
             .put(EntityArrow.NETWORK_ID, "minecraft:arrow")
             .put(EntitySnowball.NETWORK_ID, "minecraft:snowball")

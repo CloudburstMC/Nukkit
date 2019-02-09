@@ -27,25 +27,25 @@ public class AvailableCommandsPacket extends DataPacket {
     public static final int ARG_FLAG_POSTFIX = 0x1000000;
     public static final int ARG_FLAG_SOFT_ENUM = 0x4000000;
 
-    public static final int ARG_TYPE_INT = 0x01;
-    public static final int ARG_TYPE_FLOAT = 0x02;
-    public static final int ARG_TYPE_VALUE = 0x03;
-    public static final int ARG_TYPE_WILDCARD_INT = 0x04;
-    public static final int ARG_TYPE_OPERATOR = 0x05;
-    public static final int ARG_TYPE_TARGET = 0x06;
-    public static final int ARG_TYPE_WILDCARD_TARGET = 0x07;
+    public static final int ARG_TYPE_INT = 1;
+    public static final int ARG_TYPE_FLOAT = 2;
+    public static final int ARG_TYPE_VALUE = 3;
+    public static final int ARG_TYPE_WILDCARD_INT = 4;
+    public static final int ARG_TYPE_OPERATOR = 5;
+    public static final int ARG_TYPE_TARGET = 6;
+    public static final int ARG_TYPE_WILDCARD_TARGET = 7;
 
-    public static final int ARG_TYPE_FILE_PATH = 0x0e;
+    public static final int ARG_TYPE_FILE_PATH = 15;
 
-    public static final int ARG_TYPE_INT_RANGE = 0x12;
+    public static final int ARG_TYPE_INT_RANGE = 19;
 
-    public static final int ARG_TYPE_STRING = 0x1a;
-    public static final int ARG_TYPE_POSITION = 0x1c;
+    public static final int ARG_TYPE_STRING = 28;
+    public static final int ARG_TYPE_POSITION = 30;
 
-    public static final int ARG_TYPE_MESSAGE = 0x1f;
-    public static final int ARG_TYPE_RAWTEXT = 0x21;
-    public static final int ARG_TYPE_JSON = 0x24;
-    public static final int ARG_TYPE_COMMAND = 0x2b;
+    public static final int ARG_TYPE_MESSAGE = 33;
+    public static final int ARG_TYPE_RAWTEXT = 35;
+    public static final int ARG_TYPE_JSON = 38;
+    public static final int ARG_TYPE_COMMAND = 45;
 
     public Map<String, CommandDataVersions> commands;
     public final Map<String, List<String>> softEnums = new HashMap<>();

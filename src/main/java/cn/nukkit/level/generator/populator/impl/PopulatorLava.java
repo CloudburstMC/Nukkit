@@ -188,11 +188,7 @@ public class PopulatorLava extends Populator {
             } else if (j == 3) {
                 ++z;
             }
-            if (!this.canFlowInto(x, y, z)) {
-                continue;
-            } else if (this.canFlowInto(x, y, z) && this.level.getBlockDataAt(x, y, z) == 0) {
-                continue;
-            } else if (this.canFlowInto(x, y - 1, z)) {
+            if (this.canFlowInto(x, y - 1, z)) {
                 flowCost[j] = 0;
             } else {
                 flowCost[j] = this.calculateFlowCost(x, y, z, 1, j);

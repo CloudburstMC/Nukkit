@@ -123,7 +123,7 @@ public abstract class Enchantment implements Cloneable {
             list.add(enchantment);
         }
 
-        return list.stream().toArray(Enchantment[]::new);
+        return list.toArray(new Enchantment[0]);
     }
 
     public final int id;
@@ -245,7 +245,7 @@ public abstract class Enchantment implements Cloneable {
             set.add(Enchantment.words[ThreadLocalRandom.current().nextInt(0, Enchantment.words.length)]);
         }
 
-        String[] words = set.stream().toArray(String[]::new);
+        String[] words = set.toArray(new String[0]);
         return String.join(" ", words);
     }
 }
