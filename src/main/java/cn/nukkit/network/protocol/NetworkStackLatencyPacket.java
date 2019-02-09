@@ -3,6 +3,7 @@ package cn.nukkit.network.protocol;
 public class NetworkStackLatencyPacket extends DataPacket {
 
     public long timestamp;
+    public boolean unknownBool;
 
     @Override
     public byte pid() {
@@ -18,5 +19,6 @@ public class NetworkStackLatencyPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putLLong(timestamp);
+        this.putBoolean(unknownBool);
     }
 }

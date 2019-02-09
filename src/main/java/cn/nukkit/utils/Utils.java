@@ -224,7 +224,7 @@ public class Utils {
     public static <T,U,V> Map<U,V> getOrCreate(Map<T, Map<U, V>> map, T key) {
         Map<U, V> existing = map.get(key);
         if (existing == null) {
-            ConcurrentHashMap<U, V> toPut = new ConcurrentHashMap<U, V>();
+            ConcurrentHashMap<U, V> toPut = new ConcurrentHashMap<>();
             existing = map.putIfAbsent(key, toPut);
             if (existing == null) {
                 existing = toPut;

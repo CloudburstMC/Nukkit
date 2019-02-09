@@ -392,7 +392,7 @@ public class Binary {
     }
 
     public static String bytesToHexString(byte[] src, boolean blank) {
-        StringBuilder stringBuilder = new StringBuilder("");
+        StringBuilder stringBuilder = new StringBuilder();
         if (src == null || src.length <= 0) {
             return null;
         }

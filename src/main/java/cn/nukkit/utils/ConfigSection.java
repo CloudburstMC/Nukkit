@@ -64,9 +64,7 @@ public class ConfigSection extends LinkedHashMap<String, Object> {
      * @return
      */
     public Map<String, Object> getAllMap() {
-        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-        map.putAll(this);
-        return map;
+        return new LinkedHashMap<>(this);
     }
 
 
@@ -99,7 +97,7 @@ public class ConfigSection extends LinkedHashMap<String, Object> {
         String[] keys = key.split("\\.", 2);
         if (!super.containsKey(keys[0])) return defaultValue;
         Object value = super.get(keys[0]);
-        if (value != null && value instanceof ConfigSection) {
+        if (value instanceof ConfigSection) {
             ConfigSection section = (ConfigSection) value;
             return section.get(keys[1], defaultValue);
         }
@@ -180,9 +178,9 @@ public class ConfigSection extends LinkedHashMap<String, Object> {
         ConfigSection sections = new ConfigSection();
         ConfigSection parent = key == null || key.isEmpty() ? this.getAll() : getSection(key);
         if (parent == null) return sections;
-        parent.entrySet().forEach(e -> {
-            if (e.getValue() instanceof ConfigSection)
-                sections.put(e.getKey(), e.getValue());
+        parent.forEach((key1, value) -> {
+            if (value instanceof ConfigSection)
+                sections.put(key1, value);
         });
         return sections;
     }
@@ -721,11 +719,11 @@ public class ConfigSection extends LinkedHashMap<String, Object> {
      */
     public Set<String> getKeys(boolean child) {
         Set<String> keys = new LinkedHashSet<>();
-        this.entrySet().forEach(entry -> {
-            keys.add(entry.getKey());
-            if (entry.getValue() instanceof ConfigSection) {
+        this.forEach((key, value) -> {
+            keys.add(key);
+            if (value instanceof ConfigSection) {
                 if (child)
-                    ((ConfigSection) entry.getValue()).getKeys(true).forEach(childKey -> keys.add(entry.getKey() + "." + childKey));
+                    ((ConfigSection) value).getKeys(true).forEach(childKey -> keys.add(key + "." + childKey));
             }
         });
         return keys;

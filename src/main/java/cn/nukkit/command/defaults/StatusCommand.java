@@ -7,6 +7,9 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.utils.TextFormat;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -14,6 +17,10 @@ import java.util.Objects;
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
 public class StatusCommand extends VanillaCommand {
+    private static final DateFormat format = new SimpleDateFormat("'" + TextFormat.RED + "'d'" + TextFormat.GOLD + " days " +
+            TextFormat.RED + "'H'" + TextFormat.GOLD + " hours " +
+            TextFormat.RED + "'m'" + TextFormat.GOLD + " minutes " +
+            TextFormat.RED + "'s'" + TextFormat.GOLD + " seconds'");
 
     public StatusCommand(String name) {
         super(name, "%nukkit.command.status.description", "%nukkit.command.status.usage");
@@ -30,16 +37,9 @@ public class StatusCommand extends VanillaCommand {
         Server server = sender.getServer();
         sender.sendMessage(TextFormat.GREEN + "---- " + TextFormat.WHITE + "Server status" + TextFormat.GREEN + " ----");
 
-        long time = (System.currentTimeMillis() - Nukkit.START_TIME) / 1000;
-        int seconds = NukkitMath.floorDouble(time % 60);
-        int minutes = NukkitMath.floorDouble((time % 3600) / 60);
-        int hours = NukkitMath.floorDouble(time % (3600 * 24) / 3600);
-        int days = NukkitMath.floorDouble(time / (3600 * 24));
-        String upTimeString = TextFormat.RED + "" + days + TextFormat.GOLD + " days " +
-                TextFormat.RED + hours + TextFormat.GOLD + " hours " +
-                TextFormat.RED + minutes + TextFormat.GOLD + " minutes " +
-                TextFormat.RED + seconds + TextFormat.GOLD + " seconds";
-        sender.sendMessage(TextFormat.GOLD + "Uptime: " + upTimeString);
+        long time = System.currentTimeMillis() - Nukkit.START_TIME;
+
+        sender.sendMessage(TextFormat.GOLD + "Uptime: " + format.format(new Date(time)));
 
         TextFormat tpsColor = TextFormat.GREEN;
         float tps = server.getTicksPerSecond();
