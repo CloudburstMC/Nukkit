@@ -10,6 +10,7 @@ import cn.nukkit.event.entity.EntityInventoryChangeEvent;
 import cn.nukkit.event.player.PlayerItemHeldEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemFishingRod;
 import cn.nukkit.network.protocol.InventoryContentPacket;
 import cn.nukkit.network.protocol.InventorySlotPacket;
 import cn.nukkit.network.protocol.MobArmorEquipmentPacket;
@@ -62,12 +63,17 @@ public class PlayerInventory extends BaseInventory {
         }
 
         if (this.getHolder() instanceof Player) {
-            PlayerItemHeldEvent ev = new PlayerItemHeldEvent((Player) this.getHolder(), this.getItem(slot), slot);
+            Player player = (Player) this.getHolder();
+            PlayerItemHeldEvent ev = new PlayerItemHeldEvent(player, this.getItem(slot), slot);
             this.getHolder().getLevel().getServer().getPluginManager().callEvent(ev);
 
             if (ev.isCancelled()) {
                 this.sendContents(this.getViewers());
                 return false;
+            }
+
+            if (player.fishing != null && !(this.getItem(slot) instanceof ItemFishingRod)) {
+                player.stopFishing(false);
             }
         }
 
