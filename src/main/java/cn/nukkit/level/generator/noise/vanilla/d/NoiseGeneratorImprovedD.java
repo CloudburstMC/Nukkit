@@ -23,9 +23,10 @@ public class NoiseGeneratorImprovedD {
         this.yCoord = random.nextDouble() * 256.0D;
         this.zCoord = random.nextDouble() * 256.0D;
 
-        /*for (int i = 0; i < 256; this.permutations[i] = i++) {
-
-        }*/
+        int i = 0;
+        while (i < 256) {
+            this.permutations[i] = i++;
+        }
 
         for (int l = 0; l < 256; ++l) {
             int j = random.nextBoundedInt(256 - l) + l;

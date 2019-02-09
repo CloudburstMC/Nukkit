@@ -23,9 +23,10 @@ public class NoiseGeneratorImprovedF {
         this.yCoord = p_i45469_1_.nextFloat() * 256.0f;
         this.zCoord = p_i45469_1_.nextFloat() * 256.0f;
 
-        /*for (int i = 0; i < 256; this.permutations[i] = i++) {
-
-        }*/
+        int i = 0;
+        while (i < 256) {
+            this.permutations[i] = i++;
+        }
 
         for (int l = 0; l < 256; ++l) {
             int j = p_i45469_1_.nextBoundedInt(256 - l) + l;
