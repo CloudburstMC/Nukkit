@@ -22,8 +22,9 @@ public class NoiseGeneratorSimplexD {
         this.yo = p_i45471_1_.nextDouble() * 256.0D;
         this.zo = p_i45471_1_.nextDouble() * 256.0D;
 
-        for (int i = 0; i < 256; this.p[i] = i++) {
-            ;
+        int i = 0;
+        while (i < 256) {
+            this.p[i] = i++;
         }
 
         for (int l = 0; l < 256; ++l) {

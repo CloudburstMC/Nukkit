@@ -206,7 +206,7 @@ public class BlockNoteblock extends BlockSolid {
         pk.case2 = this.getStrength();
         this.getLevel().addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, pk);
 
-        this.getLevel().addSound(this, instrument.getSound(), 1, (float) Math.pow(2d, (double) (this.getStrength() - 12d) / 12d));
+        this.getLevel().addSound(this, instrument.getSound(), 1, (float) Math.pow(2d, (this.getStrength() - 12d) / 12d));
     }
 
     @Override

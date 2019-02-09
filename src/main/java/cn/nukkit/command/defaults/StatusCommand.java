@@ -8,6 +8,7 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.utils.TextFormat;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created on 2015/11/11 by xtypr.
@@ -30,11 +31,11 @@ public class StatusCommand extends VanillaCommand {
         Server server = sender.getServer();
         sender.sendMessage(TextFormat.GREEN + "---- " + TextFormat.WHITE + "Server status" + TextFormat.GREEN + " ----");
 
-        long time = (System.currentTimeMillis() - Nukkit.START_TIME) / 1000;
-        int seconds = NukkitMath.floorDouble(time % 60);
-        int minutes = NukkitMath.floorDouble((time % 3600) / 60);
-        int hours = NukkitMath.floorDouble(time % (3600 * 24) / 3600);
-        int days = NukkitMath.floorDouble(time / (3600 * 24));
+        long time = System.currentTimeMillis() - Nukkit.START_TIME;
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(time);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(time);
+        long hours = TimeUnit.MILLISECONDS.toHours(time);
+        long days = TimeUnit.MILLISECONDS.toDays(time);
         String upTimeString = TextFormat.RED + "" + days + TextFormat.GOLD + " days " +
                 TextFormat.RED + hours + TextFormat.GOLD + " hours " +
                 TextFormat.RED + minutes + TextFormat.GOLD + " minutes " +

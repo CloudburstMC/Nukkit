@@ -1,12 +1,14 @@
 package cn.nukkit.nbt.stream;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
 import java.util.concurrent.*;
 import java.util.zip.CRC32;
 import java.util.zip.Deflater;
@@ -31,7 +33,7 @@ public class PGZIPOutputStream extends FilterOutputStream {
 
     // todo: remove after block guessing is implemented
     // array list that contains the block sizes
-    ArrayList<Integer> blockSizes = new ArrayList<Integer>();
+    private IntList blockSizes = new IntArrayList();
 
     private int level = Deflater.BEST_SPEED;
     private int strategy = Deflater.DEFAULT_STRATEGY;
