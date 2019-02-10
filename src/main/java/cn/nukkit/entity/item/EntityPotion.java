@@ -86,10 +86,10 @@ public class EntityPotion extends EntityProjectile {
 
     @Override
     public void onCollideWithEntity(Entity entity) {
-        this.splash();
+        this.splash(entity);
     }
 
-    private void splash() {
+    private void splash(Entity collidedWith) {
         Potion potion = Potion.getPotion(this.potionId);
         PotionCollideEvent event = new PotionCollideEvent(potion, this);
         this.server.getPluginManager().callEvent(event);
@@ -97,6 +97,7 @@ public class EntityPotion extends EntityProjectile {
         if (event.isCancelled()) {
             return;
         }
+
         this.close();
 
         potion = event.getPotion();
@@ -133,14 +134,18 @@ public class EntityPotion extends EntityProjectile {
         this.getLevel().addParticle(particle);
         this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_GLASS);
 
-        Entity[] entities = this.getLevel().getNearbyEntities(this.getBoundingBox().grow(4.25, 2.24, 4.25));
+        Entity[] entities = this.getLevel().getNearbyEntities(this.getBoundingBox().grow(4.125, 2.125, 4.125));
         for (Entity anEntity : entities) {
             double distance = anEntity.distanceSquared(this);
-
-            if (distance < 16) {
-                double d = 1 - Math.sqrt(distance) / 4;
-
-                potion.applyPotion(anEntity, d);
+            if (anEntity.equals(collidedWith)) {
+                if (distance < 16) {
+                    potion.applyPotion(anEntity, 1);
+                }
+            } else {
+                if (distance < 16) {
+                    double d = 1 - Math.sqrt(distance) / 4;
+                    potion.applyPotion(anEntity, d);
+                }
             }
         }
     }
@@ -159,7 +164,7 @@ public class EntityPotion extends EntityProjectile {
             this.kill();
             hasUpdate = true;
         } else if (this.isCollided) {
-            this.splash();
+            this.splash(null);
             hasUpdate = true;
         }
 
