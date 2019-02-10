@@ -47,6 +47,10 @@ public class NukkitConsoleCompleter implements Completer {
     }
 
     private void addCandidates(Consumer<String> commandConsumer) {
-        server.getCommandMap().getCommands().keySet().forEach(commandConsumer);
+        for (String command : server.getCommandMap().getCommands().keySet()) {
+            if (!command.contains(":")) {
+                commandConsumer.accept(command);
+            }
+        }
     }
 }
