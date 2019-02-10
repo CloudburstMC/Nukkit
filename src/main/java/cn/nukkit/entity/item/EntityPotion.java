@@ -138,7 +138,7 @@ public class EntityPotion extends EntityProjectile {
         for (Entity anEntity : entities) {
             double distance = anEntity.distanceSquared(this);
             if (distance < 16) {
-                double d = anEntity.equals(collidedWith) ? 1 : 1 - Math.sqrt(distance) / 4
+                double d = anEntity.equals(collidedWith) ? 1 : 1 - Math.sqrt(distance) / 4;
                 potion.applyPotion(anEntity, d);
             }
         }
