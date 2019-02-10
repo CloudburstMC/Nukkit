@@ -11,7 +11,6 @@ package cn.nukkit;
  * @author MagicDroidX(code) @ Nukkit Project
  * @author 粉鞋大妈(javadoc) @ Nukkit Project
  * @see cn.nukkit.scheduler.AsyncWorker
- * @see cn.nukkit.command.CommandReader
  * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
 public interface InterruptibleThread {
