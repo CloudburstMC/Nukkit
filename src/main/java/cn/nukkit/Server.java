@@ -524,8 +524,6 @@ public class Server {
             this.watchdog.start();
         }
 
-        log.fatal("test");
-
         this.start();
     }
 
