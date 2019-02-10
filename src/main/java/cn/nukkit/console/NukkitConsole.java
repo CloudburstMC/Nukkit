@@ -53,8 +53,8 @@ public class NukkitConsole extends SimpleTerminalConsole {
 
     @Override
     protected LineReader buildReader(LineReaderBuilder builder) {
-        builder.completer(new CommandConsoleCompleter(server));
-        builder.completer(new PlayerConsoleCompleter(server));
+        builder.completer(new NukkitConsoleCompleter(server));
+        builder.appName("Nukkit");
         builder.option(LineReader.Option.HISTORY_BEEP, false);
         builder.option(LineReader.Option.HISTORY_IGNORE_DUPS, true);
         builder.option(LineReader.Option.HISTORY_IGNORE_SPACE, true);

@@ -524,6 +524,8 @@ public class Server {
             this.watchdog.start();
         }
 
+        log.fatal("test");
+
         this.start();
     }
 
@@ -756,9 +758,7 @@ public class Server {
     }
 
     public void shutdown() {
-        if (!isRunning.compareAndSet(true, false)) {
-            throw new IllegalStateException("Server has already shutdown");
-        }
+        isRunning.compareAndSet(true, false);
     }
 
     public void forceShutdown() {

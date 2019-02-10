@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-/**
+/*
  * `_   _       _    _    _ _
  * | \ | |     | |  | |  (_) |
  * |  \| |_   _| | _| | ___| |_
@@ -50,19 +50,19 @@ public class Nukkit {
     public final static String DATA_PATH = System.getProperty("user.dir") + "/";
     public final static String PLUGIN_PATH = DATA_PATH + "plugins";
     public static final long START_TIME = System.currentTimeMillis();
-    public static boolean ANSI = true;
+    public static boolean ANSI = false;
     public static boolean TITLE = false;
     public static boolean shortTitle = requiresShortTitle();
     public static int DEBUG = 1;
 
     public static void main(String[] args) {
-
         // Force IPv4 since Nukkit is not compatible with IPv6
         System.setProperty("java.net.preferIPv4Stack" , "true");
+        System.setProperty("log4j.skipJansi", "false");
 
         // Define args
         OptionParser parser = new OptionParser();
-        OptionSpecBuilder disableAnsi = parser.accepts("disable-ansi", "Disables interactive console I/O");
+        OptionSpecBuilder disableAnsi = parser.accepts("enable-ansi", "Disables interactive console I/O");
         OptionSpecBuilder enableTitle = parser.accepts("enable-title", "Enables title at the top of the window");
         parser.accepts("v", "Set verbosity of logging").withRequiredArg().ofType(String.class);
         parser.accepts("verbosity", "Set verbosity of logging").withRequiredArg().ofType(String.class);
@@ -70,7 +70,7 @@ public class Nukkit {
         // Parse arguments
         OptionSet options = parser.parse(args);
 
-        ANSI = !options.has(disableAnsi);
+        ANSI = options.has(disableAnsi);
         TITLE = options.has(enableTitle);
 
         Object verbosity = options.valueOf("v");
@@ -88,7 +88,7 @@ public class Nukkit {
         }
 
         try {
-            if (ANSI) {
+            if (TITLE) {
                 System.out.print((char) 0x1b + "]0;Nukkit is starting up..." + (char) 0x07);
             }
             new Server(PATH, DATA_PATH, PLUGIN_PATH);
@@ -96,7 +96,7 @@ public class Nukkit {
             log.fatal(e);
         }
 
-        if (ANSI) {
+        if (TITLE) {
             System.out.print((char) 0x1b + "]0;Stopping Server..." + (char) 0x07);
         }
         log.info("Stopping other threads");
@@ -116,7 +116,7 @@ public class Nukkit {
 
         LogManager.shutdown();
 
-        if (ANSI) {
+        if (TITLE) {
             System.out.print((char) 0x1b + "]0;Server Stopped" + (char) 0x07);
         }
         System.exit(0);

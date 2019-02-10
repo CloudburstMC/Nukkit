@@ -10,16 +10,29 @@ import org.jline.reader.ParsedLine;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Consumer;
 
 @RequiredArgsConstructor
-public class PlayerConsoleCompleter implements Completer {
+public class NukkitConsoleCompleter implements Completer {
     private final Server server;
 
     @Override
     public void complete(LineReader lineReader, ParsedLine parsedLine, List<Candidate> candidates) {
         if (parsedLine.wordIndex() == 0) {
-            server.getOnlinePlayers().values().forEach((player) -> candidates.add(new Candidate(player.getName())));
-        } else {
+            if (parsedLine.word().isEmpty()) {
+                addCandidates(s -> candidates.add(new Candidate(s)));
+                return;
+            }
+            SortedSet<String> names = new TreeSet<>();
+            addCandidates(names::add);
+            for (String match : names) {
+                if (!match.toLowerCase().startsWith(parsedLine.word())) {
+                    continue;
+                }
+
+                candidates.add(new Candidate(match));
+            }
+        } else if (parsedLine.wordIndex() > 0 && !parsedLine.word().isEmpty()) {
             String word = parsedLine.word();
             SortedSet<String> names = new TreeSet<>();
             server.getOnlinePlayers().values().forEach((p) -> names.add(p.getName()));
@@ -28,8 +41,12 @@ public class PlayerConsoleCompleter implements Completer {
                     continue;
                 }
 
-                candidates.add(new Candidate(parsedLine.line() + match.substring(word.length())));
+                candidates.add(new Candidate(match));
             }
         }
+    }
+
+    private void addCandidates(Consumer<String> commandConsumer) {
+        server.getCommandMap().getCommands().keySet().forEach(commandConsumer);
     }
 }
