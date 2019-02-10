@@ -137,15 +137,9 @@ public class EntityPotion extends EntityProjectile {
         Entity[] entities = this.getLevel().getNearbyEntities(this.getBoundingBox().grow(4.125, 2.125, 4.125));
         for (Entity anEntity : entities) {
             double distance = anEntity.distanceSquared(this);
-            if (anEntity.equals(collidedWith)) {
-                if (distance < 16) {
-                    potion.applyPotion(anEntity, 1);
-                }
-            } else {
-                if (distance < 16) {
-                    double d = 1 - Math.sqrt(distance) / 4;
-                    potion.applyPotion(anEntity, d);
-                }
+            if (distance < 16) {
+                double d = anEntity.equals(collidedWith) ? 1 : 1 - Math.sqrt(distance) / 4
+                potion.applyPotion(anEntity, d);
             }
         }
     }
