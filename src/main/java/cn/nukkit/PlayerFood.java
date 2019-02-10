@@ -151,7 +151,7 @@ public class PlayerFood {
             } else if (this.getLevel() == 0) {
                 this.foodTickTimer += tickDiff;
                 if (this.foodTickTimer >= 80) {
-                    EntityDamageEvent ev = new EntityDamageEvent(this.getPlayer(), DamageCause.VOID, 1);
+                    EntityDamageEvent ev = new EntityDamageEvent(this.getPlayer(), DamageCause.HUNGER, 1);
                     float now = this.getPlayer().getHealth();
                     if (diff == 1) {
                         if (now > 10) this.getPlayer().attack(ev);
