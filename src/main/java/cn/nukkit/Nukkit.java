@@ -1,17 +1,21 @@
 package cn.nukkit;
 
-import cn.nukkit.command.CommandReader;
 import cn.nukkit.network.protocol.ProtocolInfo;
-import cn.nukkit.utils.LogLevel;
-import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.ServerKiller;
+import com.google.common.base.Preconditions;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpecBuilder;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Properties;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * `_   _       _    _    _ _
@@ -30,6 +34,7 @@ import java.util.stream.Collectors;
  * @author 粉鞋大妈(javadoc) @ Nukkit Project
  * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
+@Log4j2
 public class Nukkit {
 
     public final static Properties GIT_INFO = getGitInfo();
@@ -47,7 +52,7 @@ public class Nukkit {
     public static final long START_TIME = System.currentTimeMillis();
     public static boolean ANSI = true;
     public static boolean TITLE = false;
-    public static boolean shortTitle = false;
+    public static boolean shortTitle = requiresShortTitle();
     public static int DEBUG = 1;
 
     public static void main(String[] args) {
@@ -55,72 +60,52 @@ public class Nukkit {
         // Force IPv4 since Nukkit is not compatible with IPv6
         System.setProperty("java.net.preferIPv4Stack" , "true");
 
-        //Shorter title for windows 8/2012
-        String osName = System.getProperty("os.name").toLowerCase();
-        if (osName.contains("windows")) {
-            if (osName.contains("windows 8") || osName.contains("2012")) {
-                shortTitle = true;
+        // Define args
+        OptionParser parser = new OptionParser();
+        OptionSpecBuilder disableAnsi = parser.accepts("disable-ansi", "Disables interactive console I/O");
+        OptionSpecBuilder enableTitle = parser.accepts("enable-title", "Enables title at the top of the window");
+        parser.accepts("v", "Set verbosity of logging").withRequiredArg().ofType(String.class);
+        parser.accepts("verbosity", "Set verbosity of logging").withRequiredArg().ofType(String.class);
+
+        // Parse arguments
+        OptionSet options = parser.parse(args);
+
+        ANSI = !options.has(disableAnsi);
+        TITLE = options.has(enableTitle);
+
+        Object verbosity = options.valueOf("v");
+        if (verbosity == null) {
+            verbosity = options.valueOf("-verbosity");
+        }
+        if (verbosity != null) {
+
+            try {
+                Level level = Level.valueOf((String) verbosity);
+                setLogLevel(level);
+            } catch (Exception e) {
+                // ignore
             }
         }
-
-        LogLevel logLevel = LogLevel.DEFAULT_LEVEL;
-        int index = -1;
-        boolean skip = false;
-        //启动参数
-        for (String arg : args) {
-            index++;
-            if (skip) {
-                skip = false;
-                continue;
-            }
-
-            switch (arg) {
-                case "disable-ansi":
-                    ANSI = false;
-                    break;
-                case "enable-title":
-                    TITLE = true;
-                    break;
-                case "--verbosity":
-                case "-v":
-                    skip = true;
-                    try {
-                        String levelName = args[index + 1];
-                        Set<String> levelNames = Arrays.stream(LogLevel.values()).map(level -> level.name().toLowerCase()).collect(Collectors.toSet());
-                        if (!levelNames.contains(levelName.toLowerCase())) {
-                            System.out.printf("'%s' is not a valid log level, using the default\n", levelName);
-                            continue;
-                        }
-                        logLevel = Arrays.stream(LogLevel.values()).filter(level -> level.name().equalsIgnoreCase(levelName)).findAny().orElse(LogLevel.DEFAULT_LEVEL);
-                    } catch (ArrayIndexOutOfBoundsException e) {
-                        System.out.println("You must enter the requested log level, using the default\n");
-                    }
-
-            }
-        }
-
-        MainLogger logger = new MainLogger(DATA_PATH + "server.log", logLevel);
-        System.out.printf("Using log level '%s'\n", logLevel);
 
         try {
             if (ANSI) {
-                System.out.print((char) 0x1b + "]0;Starting Nukkit Server For Minecraft: PE" + (char) 0x07);
+                System.out.print((char) 0x1b + "]0;Nukkit is starting up..." + (char) 0x07);
             }
-            new Server(logger, PATH, DATA_PATH, PLUGIN_PATH);
+            new Server(PATH, DATA_PATH, PLUGIN_PATH);
         } catch (Exception e) {
-            logger.logException(e);
+            log.fatal(e);
         }
 
         if (ANSI) {
             System.out.print((char) 0x1b + "]0;Stopping Server..." + (char) 0x07);
         }
-        logger.info("Stopping other threads");
+        log.info("Stopping other threads");
 
         for (Thread thread : java.lang.Thread.getAllStackTraces().keySet()) {
             if (!(thread instanceof InterruptibleThread)) {
                 continue;
             }
-            logger.debug("Stopping " + thread.getClass().getSimpleName() + " thread");
+            log.debug("Stopping {} thread", thread.getClass().getSimpleName());
             if (thread.isAlive()) {
                 thread.interrupt();
             }
@@ -129,13 +114,18 @@ public class Nukkit {
         ServerKiller killer = new ServerKiller(8);
         killer.start();
 
-        logger.shutdown();
-        CommandReader.getInstance().removePromptLine();
+        LogManager.shutdown();
 
         if (ANSI) {
             System.out.print((char) 0x1b + "]0;Server Stopped" + (char) 0x07);
         }
         System.exit(0);
+    }
+
+    private static boolean requiresShortTitle() {
+        //Shorter title for windows 8/2012
+        String osName = System.getProperty("os.name").toLowerCase();
+        return osName.contains("windows") &&(osName.contains("windows 8") || osName.contains("2012"));
     }
 
     private static Properties getGitInfo() {
@@ -160,5 +150,14 @@ public class Nukkit {
             return version.append("null").toString();
         }
         return version.append(commitId).toString();
+    }
+
+    public static void setLogLevel(Level level) {
+        Preconditions.checkNotNull(level, "level");
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        Configuration log4jConfig = ctx.getConfiguration();
+        LoggerConfig loggerConfig = log4jConfig.getLoggerConfig(org.apache.logging.log4j.LogManager.ROOT_LOGGER_NAME);
+        loggerConfig.setLevel(level);
+        ctx.updateLoggers();
     }
 }
