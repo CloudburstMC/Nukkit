@@ -114,8 +114,6 @@ public class Nukkit {
         ServerKiller killer = new ServerKiller(8);
         killer.start();
 
-        LogManager.shutdown();
-
         if (TITLE) {
             System.out.print((char) 0x1b + "]0;Server Stopped" + (char) 0x07);
         }

@@ -120,6 +120,6 @@ public class MainLogger extends ThreadedLogger {
 
     @Override
     public void log(LogLevel level, String message, Throwable t) {
-        this.log(level, message + "\r\n" + Utils.getExceptionMessage(t));
+        level.log(this, message, t);
     }
 }
