@@ -3065,7 +3065,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                             break;
                                         }
                                     }
-						            float knockback = 4.0f;
+					    
+				    float knockback = 4.0f;
 
                                     if (this.isSprinting()) {
                                         knockback++;
