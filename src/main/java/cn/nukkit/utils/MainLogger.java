@@ -65,8 +65,8 @@ public class MainLogger extends ThreadedLogger {
         throw new UnsupportedOperationException();
     }
 
-    public void logException(Exception e) {
-        log.error(e);
+    public void logException(Throwable t) {
+        log.throwing(t);
     }
 
     @Override
