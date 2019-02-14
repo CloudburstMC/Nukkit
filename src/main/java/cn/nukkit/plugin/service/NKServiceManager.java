@@ -105,4 +105,41 @@ public class NKServiceManager implements ServiceManager {
         return ImmutableList.copyOf(handle.keySet());
     }
 
+    @Override
+    public List<RegisteredServiceProvider<?>> getRegistrations(Plugin plugin) {
+        ImmutableList.Builder<RegisteredServiceProvider<?>> builder = ImmutableList.builder();
+        synchronized (handle) {
+            for (List<RegisteredServiceProvider<?>> registered : handle.values()) {
+                for (RegisteredServiceProvider<?> provider : registered) {
+                    if (provider.getPlugin().equals(plugin)) {
+                        builder.add(provider);
+                    }
+                }
+            }
+        }
+        return builder.build();
+    }
+
+    @Override
+    public <T> List<RegisteredServiceProvider<T>> getRegistrations(Class<T> service) {
+        ImmutableList.Builder<RegisteredServiceProvider<T>> builder = ImmutableList.builder();
+        synchronized (handle) {
+            List<RegisteredServiceProvider<?>> registered = handle.get(service);
+            if (registered == null) {
+                ImmutableList<RegisteredServiceProvider<T>> empty = ImmutableList.of();
+                return empty;
+            }
+            for (RegisteredServiceProvider<?> provider : registered) {
+                builder.add((RegisteredServiceProvider<T>)provider);
+            }
+        }
+        return builder.build();
+    }
+
+    @Override
+    public <T> boolean isProvidedFor(Class<T> service) {
+        synchronized (handle) {
+            return handle.containsKey(service);
+        }
+    }
 }
