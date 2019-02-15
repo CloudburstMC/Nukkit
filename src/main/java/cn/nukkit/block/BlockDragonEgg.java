@@ -1,8 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.level.Level;
-import cn.nukkit.level.particle.PortalParticle;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -58,12 +57,23 @@ public class BlockDragonEgg extends BlockFallable {
         for (int i = 0; i < 1000; ++i) {
             Block t = this.getLevel().getBlock(this.add(ThreadLocalRandom.current().nextInt(-16, 16), ThreadLocalRandom.current().nextInt(-16, 16), ThreadLocalRandom.current().nextInt(-16, 16)));
             if (t.getId() == AIR) {
-                for (int j = 0; j < 128; ++j) {
-                    double f = ThreadLocalRandom.current().nextDouble();
-                    double x = t.getX() + (this.getX() - t.getX()) * f + ThreadLocalRandom.current().nextDouble();
-                    double y = t.getY() + (this.getY() - t.getY()) * f + ThreadLocalRandom.current().nextDouble() - 0.5;
-                    double z = t.getZ() + (this.getZ() - t.getZ()) * f + ThreadLocalRandom.current().nextDouble();
-                    this.getLevel().addParticle(new PortalParticle(new Vector3(x, y, z)));
+                float distance = (float) (this.distance(t) / 1.5);
+                float diffX = (this.getFloorX() - t.getFloorX()) / distance;
+                float diffY = (this.getFloorY() - t.getFloorY()) / distance;
+                float diffZ = (this.getFloorZ() - t.getFloorZ()) / distance;
+                float x = t.getFloorX();
+                float y = t.getFloorY();
+                float z = t.getFloorZ();
+                for (int j = 0; j < Math.ceil(distance); ++j) {
+                    LevelEventPacket pk = new LevelEventPacket();
+                    pk.evid = 2010;
+                    pk.x = x;
+                    pk.y = y;
+                    pk.z = z;
+                    this.getLevel().addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, pk);
+                    x += diffX;
+                    y += diffY;
+                    z += diffZ;
                 }
                 this.getLevel().setBlock(this, get(AIR), true);
                 this.getLevel().setBlock(t, this, true);
