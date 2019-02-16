@@ -64,6 +64,7 @@ public class Nukkit {
         OptionParser parser = new OptionParser();
         OptionSpecBuilder disableAnsi = parser.accepts("enable-ansi", "Disables interactive console I/O");
         OptionSpecBuilder enableTitle = parser.accepts("enable-title", "Enables title at the top of the window");
+        parser.accepts("disable-ansi");
         parser.accepts("v", "Set verbosity of logging").withRequiredArg().ofType(String.class);
         parser.accepts("verbosity", "Set verbosity of logging").withRequiredArg().ofType(String.class);
 
