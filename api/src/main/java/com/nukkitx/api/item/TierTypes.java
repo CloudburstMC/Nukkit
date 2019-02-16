@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 
 public class TierTypes {
     public static final TierType WOOD = new IntTier(100, 2);
-    public static final TierType STONE = new IntTier(200, 4);
-    public static final TierType IRON = new IntTier(300, 6);
-    public static final TierType DIAMOND = new IntTier(400, 8);
-    public static final TierType GOLD = new IntTier(500, 12);
+    public static final TierType GOLD = new IntTier(200, 12);
+    public static final TierType STONE = new IntTier(300, 4);
+    public static final TierType IRON = new IntTier(400, 6);
+    public static final TierType DIAMOND = new IntTier(500, 8);
 
     @RequiredArgsConstructor
     private static class IntTier implements TierType {
