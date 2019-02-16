@@ -34,7 +34,6 @@ public class RedstoneOreBlockBehavior extends SimpleBlockBehavior {
         return item != null && item.getItemType().getToolType().isPresent() &&
                 item.getItemType().getToolType().get() == ToolTypes.PICKAXE &&
                 item.getItemType().getTierType().isPresent() &&
-                (item.getItemType().getTierType().get() != TierTypes.IRON ||
-                        item.getItemType().getTierType().get() != TierTypes.DIAMOND);
+                item.getItemType().getTierType().get().getLevel() >= TierTypes.IRON.getLevel();
     }
 }

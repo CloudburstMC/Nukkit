@@ -34,6 +34,6 @@ public class LapisLazuliOreBlockBehavior extends SimpleBlockBehavior {
         return item != null && item.getItemType().getToolType().isPresent() &&
                 item.getItemType().getToolType().get() == ToolTypes.PICKAXE &&
                 item.getItemType().getTierType().isPresent() &&
-                item.getItemType().getTierType().get() != TierTypes.WOOD;
+                item.getItemType().getTierType().get().getLevel() >= TierTypes.STONE.getLevel();
     }
 }

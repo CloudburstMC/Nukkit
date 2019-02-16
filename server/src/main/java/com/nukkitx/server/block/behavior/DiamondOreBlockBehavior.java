@@ -18,7 +18,7 @@ public class DiamondOreBlockBehavior extends SimpleBlockBehavior {
 
     @Override
     public Collection<ItemInstance> getDrops(Player player, Block block, @Nullable ItemInstance item) {
-        if(isCorrectTool(item)) {
+        if(isCorrectTool(   item)) {
             return ImmutableList.of(DIAMOND);
         }
         return ImmutableList.of();
