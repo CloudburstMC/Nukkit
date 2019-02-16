@@ -16,6 +16,14 @@ public class BlockBehaviors {
         BLOCK_BEHAVIORS = ImmutableMap.<BlockType, BlockBehavior>builder()
                 .put(BlockTypes.DIRT, DirtBlockBehavior.INSTANCE)
                 .put(BlockTypes.GRASS_BLOCK, DirtBlockBehavior.INSTANCE)
+                .put(BlockTypes.COAL_ORE, CoalOreBlockBehavior.INSTANCE)
+                .put(BlockTypes.DIAMOND_BLOCK, DiamondOreBlockBehavior.INSTANCE)
+                .put(BlockTypes.EMERALD_ORE, EmeraldOreBlockBehavior.INSTANCE)
+                .put(BlockTypes.GOLD_ORE, GoldOreBlockBehavior.INSTANCE)
+                .put(BlockTypes.IRON_ORE, IronOreBlockBehavior.INSTANCE)
+                .put(BlockTypes.LAPIS_LAZULI_ORE, LapisLazuliOreBlockBehavior.INSTANCE)
+                .put(BlockTypes.NETHER_QUARTZ_ORE, NetherQuartzOreBlockBehavior.INSTANCE)
+                .put(BlockTypes.REDSTONE_ORE, RedstoneOreBlockBehavior.INSTANCE)
                 .build();
     }
 
