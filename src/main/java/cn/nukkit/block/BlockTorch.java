@@ -6,12 +6,13 @@ import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Faceable;
 
 /**
  * Created on 2015/12/2 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockTorch extends BlockFlowable {
+public class BlockTorch extends BlockFlowable implements Faceable {
 
     public BlockTorch() {
         this(0);
@@ -97,22 +98,8 @@ public class BlockTorch extends BlockFlowable {
         return BlockColor.AIR_BLOCK_COLOR;
     }
 
-    public BlockFace getFacing() {
-        return getFacing(this.getDamage());
-    }
-
-    public BlockFace getFacing(int meta) {
-        switch (meta) {
-            case 1:
-                return BlockFace.EAST;
-            case 2:
-                return BlockFace.WEST;
-            case 3:
-                return BlockFace.SOUTH;
-            case 4:
-                return BlockFace.NORTH;
-            default:
-                return BlockFace.UP;
-        }
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
     }
 }

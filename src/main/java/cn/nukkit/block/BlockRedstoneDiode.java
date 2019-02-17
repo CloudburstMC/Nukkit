@@ -6,11 +6,12 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.Faceable;
 
 /**
  * @author CreeperFace
  */
-public abstract class BlockRedstoneDiode extends BlockFlowable {
+public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceable {
 
     protected boolean isPowered = false;
 
@@ -196,5 +197,10 @@ public abstract class BlockRedstoneDiode extends BlockFlowable {
         BlockFace side = getFacing().getOpposite();
         Block block = this.getSide(side);
         return block instanceof BlockRedstoneDiode && ((BlockRedstoneDiode) block).getFacing() != side;
+    }
+
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
     }
 }

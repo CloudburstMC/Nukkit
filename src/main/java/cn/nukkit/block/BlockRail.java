@@ -8,6 +8,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Rail;
 import cn.nukkit.utils.Rail.Orientation;
 
@@ -22,7 +23,7 @@ import static cn.nukkit.utils.Rail.Orientation.*;
  * Created by Snake1999 on 2016/1/11.
  * Package cn.nukkit.block in project nukkit
  */
-public class BlockRail extends BlockFlowable {
+public class BlockRail extends BlockFlowable implements Faceable {
 
     // 0x8: Set the block active
     // 0x7: Reset the block to normal
@@ -265,5 +266,10 @@ public class BlockRail extends BlockFlowable {
         return new Item[]{
                 Item.get(Item.RAIL, 0, 1)
         };
+    }
+
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
     }
 }

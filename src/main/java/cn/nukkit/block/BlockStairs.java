@@ -138,6 +138,6 @@ public abstract class BlockStairs extends BlockTransparentMeta implements Faceab
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex( this.getDamage() );
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
     }
 }
