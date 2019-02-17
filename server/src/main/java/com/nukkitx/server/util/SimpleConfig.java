@@ -60,7 +60,7 @@ public abstract class SimpleConfig {
         if (!this.configFile.exists()) return false;
         Config cfg = new Config(configFile, Config.YAML);
         for (Field field : this.getClass().getDeclaredFields()) {
-            if (field.getName().equals("configFile")) continue;
+            if (field.getCustomName().equals("configFile")) continue;
             if (skipSave(field)) continue;
             String path = getPath(field);
             if (path == null) continue;
@@ -94,7 +94,7 @@ public abstract class SimpleConfig {
                         else if (fieldArgClass == String.class) field.set(this, cfg.getStringList(path));
                     } else field.set(this, cfg.getList(path)); // Hell knows what's kind of List was found :)
                 } else
-                    throw new IllegalStateException("SimpleConfig did not supports class: " + field.getType().getName() + " for config field " + configFile.getName());
+                    throw new IllegalStateException("SimpleConfig did not supports class: " + field.getType().getCustomName() + " for config field " + configFile.getCustomName());
             } catch (Exception e) {
                 log.logException(e);
                 return false;
@@ -109,7 +109,7 @@ public abstract class SimpleConfig {
             Path pathDefine = field.getAnnotation(Path.class);
             path = pathDefine.value();
         }
-        if (path == null || path.isEmpty()) path = field.getName().replaceAll("_", ".");
+        if (path == null || path.isEmpty()) path = field.getCustomName().replaceAll("_", ".");
         if (Modifier.isFinal(field.getModifiers())) return null;
         if (Modifier.isPrivate(field.getModifiers())) field.setAccessible(true);
         return path;

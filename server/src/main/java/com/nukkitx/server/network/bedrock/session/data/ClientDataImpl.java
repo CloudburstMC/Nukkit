@@ -2,7 +2,6 @@ package com.nukkitx.server.network.bedrock.session.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.nukkitx.api.util.data.DeviceOS;
 import com.nukkitx.protocol.bedrock.session.data.ClientData;
 import lombok.Value;
 
@@ -28,7 +27,7 @@ public class ClientDataImpl implements ClientData {
     @JsonProperty("DeviceModel")
     private final String deviceModel;
     @JsonProperty("DeviceOS")
-    private final DeviceOS deviceOs;
+    private final int deviceOs;
     @JsonProperty("GameVersion")
     private final String gameVersion;
     @JsonProperty("GuiScale")

@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.nukkitx.api.level.GameRules;
 import com.nukkitx.api.level.data.GameRule;
+import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -15,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.nukkitx.api.level.data.GameRule.*;
 
+@Log4j2
 @ParametersAreNonnullByDefault
 public class NukkitGameRules implements GameRules {
     private final Map<String, com.nukkitx.protocol.bedrock.data.GameRule> gameRules = new ConcurrentHashMap<>();
@@ -24,7 +26,7 @@ public class NukkitGameRules implements GameRules {
     }
 
 
-    public static NukkitGameRules getDefault() {
+    public static NukkitGameRules newGameRules() {
         NukkitGameRules gameRules = new NukkitGameRules();
 
         gameRules.setGameRule(COMMAND_BLOCK_OUTPUT, true);
@@ -66,7 +68,7 @@ public class NukkitGameRules implements GameRules {
         Preconditions.checkNotNull(value, "value");
         com.nukkitx.protocol.bedrock.data.GameRule gameRule = gameRules.get(rule);
         checkValue(gameRule, value.getClass());
-        if (!value.equals(gameRule.getValue())) {
+        if (gameRule == null || !value.equals(gameRule.getValue())) {
             gameRules.put(rule, new com.nukkitx.protocol.bedrock.data.GameRule<>(rule, value));
             stale = true;
         }

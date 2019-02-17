@@ -2,7 +2,7 @@ package com.nukkitx.api.event.level;
 
 import com.nukkitx.api.level.Level;
 
-public abstract class WeatherEvent implements LevelEvent {
+public class WeatherEvent implements LevelEvent {
     private final Level level;
 
     public WeatherEvent(Level level) {

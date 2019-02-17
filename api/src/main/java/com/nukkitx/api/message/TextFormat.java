@@ -119,9 +119,10 @@ public enum TextFormat {
         return AMPERSAND_MATCHER.matcher(removedColor).replaceAll("");
     }
 
-    public static String colorize(String string) {
+    public static String colorize(String string, char escape) {
         Preconditions.checkNotNull(string, "string");
-        return AMPERSAND_MATCHER.matcher(string).replaceAll( FORMAT_CHAR + "$1");
+        return Pattern.compile("(?i)" + Character.toString(escape) + "([0-9A-FK-OR])").matcher(string)
+                .replaceAll(FORMAT_CHAR + "$1");
     }
 
     public static String decolorize(String string) {

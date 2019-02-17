@@ -12,11 +12,7 @@ public interface Banlist {
 
     boolean pardon(@Nonnull Player player);
 
-    boolean pardon(@Nonnull String name);
-
     void ban(@Nonnull Player player, Date expireDate, String reason, String source);
 
     void ban(@Nonnull UUID uuid, Date expireDate, String reason, String source);
-
-    void ban(@Nonnull String name, Date expireDate, String reason, String source);
 }

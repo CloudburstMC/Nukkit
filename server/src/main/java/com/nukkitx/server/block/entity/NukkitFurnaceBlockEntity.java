@@ -1,12 +1,12 @@
 package com.nukkitx.server.block.entity;
 
 import com.nukkitx.api.block.BlockTypes;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.inventory.Inventory;
+import com.nukkitx.api.item.ItemStack;
 import com.nukkitx.api.item.ItemType;
 import com.nukkitx.api.item.ItemTypes;
 import com.nukkitx.api.metadata.blockentity.FurnaceBlockEntity;
 import com.nukkitx.api.metadata.item.Bucket;
-import com.nukkitx.server.inventory.NukkitFurnaceInventory;
 import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.Getter;
@@ -117,22 +117,22 @@ public class NukkitFurnaceBlockEntity extends NukkitNameableBlockEntity implemen
 //        RECIPE_MAP.put(BlockTypes.CLAY.getId(), ItemTypes.);
 //        RECIPE_MAP.put(BlockTypes.STONE_BRICK.getId(), ItemTypes.);
 //
-//        RECIPE_MAP.put(ItemUtil.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 0), BlockTypes.WHITE_GLAZED_TERRACOTTA);
-//        RECIPE_MAP.put(ItemUtil.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 1), BlockTypes.ORANGE_GLAZED_TERRACOTTA);
-//        RECIPE_MAP.put(ItemUtil.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 2), BlockTypes.MAGENTA_GLAZED_TERRACOTTA);
-//        RECIPE_MAP.put(ItemUtil.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 3), BlockTypes.LIGHT_BLUE_GLAZED_TERRACOTTA);
-//        RECIPE_MAP.put(ItemUtil.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 4), BlockTypes.YELLOW_GLAZED_TERRACOTTA);
-//        RECIPE_MAP.put(ItemUtil.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 5), BlockTypes.LIME_GLAZED_TERRACOTTA);
-//        RECIPE_MAP.put(ItemUtil.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 6), BlockTypes.PINK_GLAZED_TERRACOTTA);
-//        RECIPE_MAP.put(ItemUtil.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 7), BlockTypes.GRAY_GLAZED_TERRACOTTA);
-//        RECIPE_MAP.put(ItemUtil.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 8), BlockTypes.LIGHT_GRAY_GLAZED_TERRACOTTA);
-//        RECIPE_MAP.put(ItemUtil.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 9), BlockTypes.CYAN_GLAZED_TERRACOTTA);
-//        RECIPE_MAP.put(ItemUtil.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 10), BlockTypes.PURPLE_GLAZED_TERRACOTTA);
-//        RECIPE_MAP.put(ItemUtil.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 11), BlockTypes.BLUE_GLAZED_TERRACOTTA);
-//        RECIPE_MAP.put(ItemUtil.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 12), BlockTypes.BROWN_GLAZED_TERRACOTTA);
-//        RECIPE_MAP.put(ItemUtil.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 13), BlockTypes.GREEN_GLAZED_TERRACOTTA);
-//        RECIPE_MAP.put(ItemUtil.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 14), BlockTypes.RED_GLAZED_TERRACOTTA);
-//        RECIPE_MAP.put(ItemUtil.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 15), BlockTypes.BLACK_GLAZED_TERRACOTTA);
+//        RECIPE_MAP.put(ItemUtils.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 0), BlockTypes.WHITE_GLAZED_TERRACOTTA);
+//        RECIPE_MAP.put(ItemUtils.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 1), BlockTypes.ORANGE_GLAZED_TERRACOTTA);
+//        RECIPE_MAP.put(ItemUtils.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 2), BlockTypes.MAGENTA_GLAZED_TERRACOTTA);
+//        RECIPE_MAP.put(ItemUtils.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 3), BlockTypes.LIGHT_BLUE_GLAZED_TERRACOTTA);
+//        RECIPE_MAP.put(ItemUtils.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 4), BlockTypes.YELLOW_GLAZED_TERRACOTTA);
+//        RECIPE_MAP.put(ItemUtils.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 5), BlockTypes.LIME_GLAZED_TERRACOTTA);
+//        RECIPE_MAP.put(ItemUtils.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 6), BlockTypes.PINK_GLAZED_TERRACOTTA);
+//        RECIPE_MAP.put(ItemUtils.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 7), BlockTypes.GRAY_GLAZED_TERRACOTTA);
+//        RECIPE_MAP.put(ItemUtils.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 8), BlockTypes.LIGHT_GRAY_GLAZED_TERRACOTTA);
+//        RECIPE_MAP.put(ItemUtils.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 9), BlockTypes.CYAN_GLAZED_TERRACOTTA);
+//        RECIPE_MAP.put(ItemUtils.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 10), BlockTypes.PURPLE_GLAZED_TERRACOTTA);
+//        RECIPE_MAP.put(ItemUtils.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 11), BlockTypes.BLUE_GLAZED_TERRACOTTA);
+//        RECIPE_MAP.put(ItemUtils.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 12), BlockTypes.BROWN_GLAZED_TERRACOTTA);
+//        RECIPE_MAP.put(ItemUtils.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 13), BlockTypes.GREEN_GLAZED_TERRACOTTA);
+//        RECIPE_MAP.put(ItemUtils.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 14), BlockTypes.RED_GLAZED_TERRACOTTA);
+//        RECIPE_MAP.put(ItemUtils.hash(BlockTypes.COLORED_TERRACOTTA.getId(), 15), BlockTypes.BLACK_GLAZED_TERRACOTTA);
 //
 //        RECIPE_MAP.put(BlockTypes.DIAMOND_ORE.getId(), ItemTypes.DIAMOND);
 //        RECIPE_MAP.put(BlockTypes.LAPIS_LAZULI_ORE.getId(), ItemTypes.);
@@ -154,8 +154,6 @@ public class NukkitFurnaceBlockEntity extends NukkitNameableBlockEntity implemen
 //        RECIPE_MAP.put(ItemTypes..getId(), ItemTypes.);
     }
 
-    private final NukkitFurnaceInventory inventory;
-
     public int cookTime;
     public int burnTime;
     public int maxBurnTime;
@@ -164,19 +162,17 @@ public class NukkitFurnaceBlockEntity extends NukkitNameableBlockEntity implemen
 
     private boolean keepPacked; //idk what is it?
 
-    public NukkitFurnaceBlockEntity(NukkitFurnaceInventory inventory) {
+    public NukkitFurnaceBlockEntity() {
         super(BlockEntityType.FURNACE);
-
-        this.inventory = inventory;
     }
 
     @Override
-    public boolean isFuel(@Nullable ItemInstance item) {
+    public boolean isFuel(@Nullable ItemStack item) {
         return getBurnDuration(item) > 0;
     }
 
     @Override
-    public int getBurnDuration(@Nullable ItemInstance item) {
+    public int getBurnDuration(@Nullable ItemStack item) {
         if (item == null) {
             return 0;
         }
@@ -195,11 +191,16 @@ public class NukkitFurnaceBlockEntity extends NukkitNameableBlockEntity implemen
     }
 
     @Override
-    public boolean isIngredient(@Nullable ItemInstance item) {
+    public boolean isIngredient(@Nullable ItemStack item) {
         return false;
     }
 
-    public ItemInstance getResult(ItemInstance ingredient) {
+    @Override
+    public Inventory getContainer() {
+        return null;
+    }
+
+    public ItemStack getResult(ItemStack ingredient) {
         return null; //TODO
     }
 }

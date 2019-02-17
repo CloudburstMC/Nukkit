@@ -1,10 +1,10 @@
 package com.nukkitx.api.metadata.blockentity;
 
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 
 public interface ItemFrameBlockEntity extends BlockEntity {
 
-    ItemInstance getItem();
+    ItemStack getItem();
 
-    void setItem(ItemInstance item);
+    void setItem(ItemStack item);
 }

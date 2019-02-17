@@ -1,6 +1,6 @@
 package com.nukkitx.server.inventory;
 
-import com.nukkitx.api.inventory.InventoryType;
+import com.nukkitx.api.container.InventoryType;
 
 public enum NukkitInventoryType {
     CHEST(27, 0, 10),

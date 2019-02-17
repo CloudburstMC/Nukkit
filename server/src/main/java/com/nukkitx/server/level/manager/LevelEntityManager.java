@@ -79,7 +79,7 @@ public class LevelEntityManager {
                 if (entity instanceof NukkitPlayerSession) {
                     NukkitPlayerSession session = (NukkitPlayerSession) entity;
                     BedrockSession bedrockSession = session.getBedrockSession();
-                    if (bedrockSession != null && !bedrockSession.isClosed() && session.isSpawned()) {
+                    if (bedrockSession != null && !bedrockSession.isClosed()) {
                         sessions.add((NukkitPlayerSession) entity);
                     }
                 }

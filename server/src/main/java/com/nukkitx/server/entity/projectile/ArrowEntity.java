@@ -3,6 +3,7 @@ package com.nukkitx.server.entity.projectile;
 import com.flowpowered.math.vector.Vector3f;
 import com.nukkitx.api.entity.component.Physics;
 import com.nukkitx.api.entity.projectile.Arrow;
+import com.nukkitx.protocol.bedrock.data.Metadata;
 import com.nukkitx.server.NukkitServer;
 import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.entity.EntityType;
@@ -21,12 +22,12 @@ public class ArrowEntity extends BaseEntity implements Arrow {
         this.setCritical(true);
     }
 
-    public void setCritical(boolean value) {
-        this.setFlag(MetadataConstants.Flag.CRITICAL, value);
+    public boolean isCritical() {
+        return this.getFlag(Metadata.Flag.CRITICAL);
     }
 
-    public boolean isCritical() {
-        return this.getFlag(MetadataConstants.Flag.CRITICAL);
+    public void setCritical(boolean value) {
+        this.setFlag(Metadata.Flag.CRITICAL, value);
     }
 
     /*@Override

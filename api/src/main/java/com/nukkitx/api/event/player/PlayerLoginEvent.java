@@ -58,15 +58,15 @@ public class PlayerLoginEvent implements PlayerEvent {
     }
 
     /**
-     * The spawn position that the player will spawn at.
-     * @return position
+     * The spawn blockPosition that the player will spawn at.
+     * @return blockPosition
      */
     public Vector3f getSpawnPosition() {
         return spawnPosition;
     }
 
     /**
-     * Set the position at which the player will spawn.
+     * Set the blockPosition at which the player will spawn.
      * @param spawnPosition location
      */
     public void setSpawnLocation(Vector3f spawnPosition) {

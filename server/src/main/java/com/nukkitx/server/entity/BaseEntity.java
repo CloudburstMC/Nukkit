@@ -8,7 +8,7 @@ import com.nukkitx.api.block.BlockTypes;
 import com.nukkitx.api.entity.Entity;
 import com.nukkitx.api.entity.component.Ageable;
 import com.nukkitx.api.entity.component.EntityComponent;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 import com.nukkitx.api.level.Level;
 import com.nukkitx.api.level.chunk.Chunk;
 import com.nukkitx.api.util.BoundingBox;
@@ -17,6 +17,7 @@ import com.nukkitx.protocol.bedrock.BedrockPacket;
 import com.nukkitx.protocol.bedrock.data.Attribute;
 import com.nukkitx.protocol.bedrock.data.Metadata;
 import com.nukkitx.protocol.bedrock.data.MetadataDictionary;
+import com.nukkitx.protocol.bedrock.data.MetadataFlags;
 import com.nukkitx.protocol.bedrock.packet.AddEntityPacket;
 import com.nukkitx.protocol.bedrock.packet.SetEntityDataPacket;
 import com.nukkitx.server.NukkitServer;
@@ -24,9 +25,11 @@ import com.nukkitx.server.level.NukkitLevel;
 import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
-import static com.nukkitx.protocol.bedrock.data.Metadata.*;
 import static com.nukkitx.protocol.bedrock.data.Metadata.Flag.*;
 
 @Log4j2
@@ -45,7 +48,7 @@ public class BaseEntity implements Entity {
     private boolean removed = false;
     private BoundingBox boundingBox;
     private boolean movementStale;
-    protected final BitSet metadataFlags = new BitSet(64);
+    protected final MetadataFlags metadataFlags = new MetadataFlags();
 
     public BaseEntity(EntityType entityType, Vector3f position, NukkitLevel level, NukkitServer server) {
         this.level = level;
@@ -58,8 +61,9 @@ public class BaseEntity implements Entity {
         this.tickCreated = level.getCurrentTick();
 
         setFlag(HAS_COLLISION, true);
-        setFlag(AFFECTED_BY_GRAVITY, true);
-        setFlag(CAN_SHOW_NAMETAG, true);
+        setFlag(HAS_GRAVITY, true);
+        setFlag(CAN_SHOW_NAME, true);
+        setFlag(NO_AI, false);
 
         refreshBoundingBox();
 
@@ -101,11 +105,6 @@ public class BaseEntity implements Entity {
         return motion;
     }
 
-    @Override
-    public UUID getUniqueId() {
-        return null;
-    }
-
     @Nonnull
     @Override
     public Vector3f getPosition() {
@@ -114,7 +113,7 @@ public class BaseEntity implements Entity {
 
     @Override
     public void setPosition(@Nonnull Vector3f position) {
-        Preconditions.checkNotNull(position, "position");
+        Preconditions.checkNotNull(position, "blockPosition");
         checkIfAlive();
 
         if (!this.position.equals(position)) {
@@ -238,6 +237,10 @@ public class BaseEntity implements Entity {
         removed = true;
     }
 
+    public boolean isRemoved() {
+        return removed;
+    }
+
     @Override
     public boolean isAlive() {
         return !removed;
@@ -251,6 +254,11 @@ public class BaseEntity implements Entity {
     @Override
     public NukkitServer getServer() {
         return server;
+    }
+
+    @Override
+    public void push(@Nonnull Vector3f motion) {
+
     }
 
     @Override
@@ -290,22 +298,12 @@ public class BaseEntity implements Entity {
 
     @Override
     public boolean isCustomNameVisible() {
-        return false;
+        return getFlag(CAN_SHOW_NAME);
     }
 
     @Override
     public void setCustomNameVisible(boolean flag) {
-
-    }
-
-    @Override
-    public boolean isGlowing() {
-        return false;
-    }
-
-    @Override
-    public void setGlowing(boolean flag) {
-
+        setFlag(CAN_SHOW_NAME, flag);
     }
 
     @Override
@@ -320,28 +318,25 @@ public class BaseEntity implements Entity {
 
     @Override
     public boolean isSneaking() {
-        return false;
+        return getFlag(SNEAKING);
     }
 
     @Override
     public void setSneaking(boolean sneaking) {
-
-    }
-
-    public boolean isRemoved() {
-        return removed;
+        setFlag(SNEAKING, sneaking);
     }
 
     @Override
     public boolean isAffectedByGravity() {
-        return getFlag(AFFECTED_BY_GRAVITY);
+        return getFlag(HAS_GRAVITY);
     }
 
     @Override
     public void setAffectedByGravity(boolean affectedByGravity) {
-        setFlag(AFFECTED_BY_GRAVITY, affectedByGravity);
+        setFlag(HAS_GRAVITY, affectedByGravity);
     }
 
+    @Nonnull
     @Override
     public Set<Class<? extends EntityComponent>> providedComponents() {
         return ImmutableSet.copyOf(componentMap.keySet());
@@ -364,10 +359,29 @@ public class BaseEntity implements Entity {
     }
 
     protected void setFlag(Metadata.Flag flag, boolean value) {
-        if (value != metadataFlags.get(flag.ordinal())) {
-            metadataFlags.flip(flag.ordinal());
+        boolean oldValue = metadataFlags.getFlag(flag);
+        if (value != oldValue) {
+            metadataFlags.setFlag(flag, value);
             onMetadataUpdate(getMetadataFlags());
         }
+    }
+
+    protected MetadataDictionary getMetadataFlags() {
+        MetadataDictionary dictionary = new MetadataDictionary();
+        dictionary.put(Metadata.FLAGS, metadataFlags);
+        return dictionary;
+    }
+
+    protected MetadataDictionary getMetadata() {
+        MetadataDictionary dictionary = getMetadataFlags();
+        dictionary.put(Metadata.NAMETAG, "");
+        dictionary.put(Metadata.ENTITY_AGE, 0);
+        dictionary.put(Metadata.SCALE, 1f);
+        dictionary.put(Metadata.MAX_AIR, (short) 400);
+        dictionary.put(Metadata.AIR, (short) 0);
+        dictionary.put(Metadata.BOUNDING_BOX_HEIGHT, getHeight());
+        dictionary.put(Metadata.BOUNDING_BOX_WIDTH, getWidth());
+        return dictionary;
     }
 
     protected void onMetadataUpdate(MetadataDictionary metadata) {
@@ -378,7 +392,7 @@ public class BaseEntity implements Entity {
     }
 
     protected boolean getFlag(Metadata.Flag flag) {
-        return metadataFlags.get(flag.ordinal());
+        return metadataFlags.getFlag(flag);
     }
 
     protected void setEntityId(long entityId) {
@@ -387,27 +401,6 @@ public class BaseEntity implements Entity {
 
     protected boolean isTeleported() {
         return teleported;
-    }
-
-    protected MetadataDictionary getMetadataFlags() {
-        MetadataDictionary dictionary = new MetadataDictionary();
-        long[] array = metadataFlags.toLongArray();
-        dictionary.put(FLAGS, array.length > 0 ? array[0] : 0);
-        return dictionary;
-    }
-
-    public MetadataDictionary getMetadata() {
-        MetadataDictionary dictionary = new MetadataDictionary();
-        long[] array = metadataFlags.toLongArray();
-        dictionary.put(FLAGS, array.length > 0 ? array[0] : 0);
-        dictionary.put(NAMETAG, "");
-        dictionary.put(ENTITY_AGE, 0);
-        dictionary.put(SCALE, 1f);
-        dictionary.put(MAX_AIR, (short) 400);
-        dictionary.put(AIR, (short) 0);
-        dictionary.put(BOUNDING_BOX_HEIGHT, entityType.getHeight());
-        dictionary.put(BOUNDING_BOX_WIDTH, entityType.getWidth());
-        return dictionary;
     }
 
     public void onAttributeUpdate(Attribute attribute) {
@@ -425,7 +418,7 @@ public class BaseEntity implements Entity {
         teleported = false;
     }
 
-    public boolean onItemPickup(ItemInstance item) {
+    public boolean onItemPickup(ItemStack item) {
         return false;
     }
 

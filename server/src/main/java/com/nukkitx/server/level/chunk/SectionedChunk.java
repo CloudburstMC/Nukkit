@@ -11,13 +11,12 @@ import com.nukkitx.api.level.chunk.Chunk;
 import com.nukkitx.api.level.chunk.ChunkSnapshot;
 import com.nukkitx.api.level.data.Biome;
 import com.nukkitx.api.metadata.blockentity.BlockEntity;
-import com.nukkitx.nbt.NBTEncodingType;
-import com.nukkitx.nbt.stream.FastByteArrayOutputStream;
-import com.nukkitx.nbt.stream.LittleEndianDataOutputStream;
+import com.nukkitx.nbt.NbtUtils;
 import com.nukkitx.nbt.stream.NBTOutputStream;
 import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.nbt.tag.IntTag;
 import com.nukkitx.nbt.tag.Tag;
+import com.nukkitx.network.VarInts;
 import com.nukkitx.protocol.bedrock.packet.FullChunkDataPacket;
 import com.nukkitx.server.level.NukkitLevel;
 import com.nukkitx.server.metadata.MetadataSerializers;
@@ -30,6 +29,7 @@ import io.netty.buffer.PooledByteBufAllocator;
 import lombok.Synchronized;
 import lombok.extern.log4j.Log4j2;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.*;
@@ -343,7 +343,7 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         CanWriteToBB blockEntitiesStream = null;
         if (!serializedBlockEntities.isEmpty()) {
             blockEntitiesStream = new CanWriteToBB();
-            try (NBTOutputStream writer = new NBTOutputStream(new LittleEndianDataOutputStream(blockEntitiesStream), NBTEncodingType.BEDROCK)) {
+            try (NBTOutputStream writer = NbtUtils.createNetworkWriter(blockEntitiesStream)) {
                 for (CompoundTag blockEntity : serializedBlockEntities.valueCollection()) {
                     writer.write(blockEntity);
                 }
@@ -399,13 +399,13 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         return packet;
     }
 
-    private static class CanWriteToBB extends FastByteArrayOutputStream {
+    private static class CanWriteToBB extends ByteArrayOutputStream {
         CanWriteToBB() {
             super(8192);
         }
 
         void writeTo(ByteBuf buf) {
-            buf.writeBytes(array, 0, position);
+            buf.writeBytes(super.buf, 0, super.count);
         }
     }
 

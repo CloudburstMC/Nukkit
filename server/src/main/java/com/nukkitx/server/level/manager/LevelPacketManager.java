@@ -89,7 +89,7 @@ public class LevelPacketManager {
 
     @Synchronized("specificPositionViewerQueue")
     public void queuePacketForViewers(Vector3f position, BedrockPacket packet) {
-        Preconditions.checkNotNull(position, "position");
+        Preconditions.checkNotNull(position, "blockPosition");
         Preconditions.checkNotNull(packet, "packet");
         Queue<BedrockPacket> packageQueue = specificPositionViewerQueue.get(position);
         if (packageQueue == null) {
@@ -159,7 +159,7 @@ public class LevelPacketManager {
     }
 
     public void sendImmediatePacketForViewers(Vector3f position, BedrockPacket packet) {
-        Preconditions.checkNotNull(position, "position");
+        Preconditions.checkNotNull(position, "blockPosition");
         Preconditions.checkNotNull(packet, "packet");
 
         List<NukkitPlayerSession> playersInWorld = level.getEntityManager().getPlayers();

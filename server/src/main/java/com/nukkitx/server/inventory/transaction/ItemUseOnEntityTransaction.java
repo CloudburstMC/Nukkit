@@ -1,47 +1,22 @@
 package com.nukkitx.server.inventory.transaction;
 
 import com.flowpowered.math.vector.Vector3f;
-import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
-import io.netty.buffer.ByteBuf;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import com.nukkitx.protocol.bedrock.data.InventoryAction;
+import lombok.Getter;
 
-import static com.nukkitx.server.network.bedrock.BedrockUtil.*;
-import static com.nukkitx.server.network.util.VarInts.readUnsignedInt;
-import static com.nukkitx.server.network.util.VarInts.writeUnsignedInt;
+import java.util.Collection;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
-public class ItemUseOnEntityTransaction extends ComplexTransaction {
-    private static final Type type = Type.ITEM_USE_ON_ENTITY;
-    private long runtimeEntityId;
-    private Action action;
-    private Vector3f clickPosition;
+@Getter
+public class ItemUseOnEntityTransaction extends InventoryTransaction {
+    private final long runtimeEntityId;
+    private final Action action;
+    private final Vector3f clickPosition;
 
-    @Override
-    public void execute(NukkitPlayerSession session) {
-
-    }
-
-    @Override
-    public void read(ByteBuf buffer){
-        runtimeEntityId = readRuntimeEntityId(buffer);
-        action = Action.values()[readUnsignedInt(buffer)];
-        super.read(buffer);
-        clickPosition = readVector3f(buffer);
-    }
-
-    @Override
-    public void write(ByteBuf buffer){
-        writeRuntimeEntityId(buffer, runtimeEntityId);
-        writeUnsignedInt(buffer, action.ordinal());
-        super.write(buffer);
-        writeVector3f(buffer, clickPosition);
-    }
-
-    @Override
-    public Type getType() {
-        return type;
+    ItemUseOnEntityTransaction(Collection<InventoryAction> actions, long runtimeEntityId, Action action, Vector3f clickPosition) {
+        super(InventoryTransactionType.ITEM_USE_ON_ENTITY, actions);
+        this.runtimeEntityId = runtimeEntityId;
+        this.action = action;
+        this.clickPosition = clickPosition;
     }
 
     @Override

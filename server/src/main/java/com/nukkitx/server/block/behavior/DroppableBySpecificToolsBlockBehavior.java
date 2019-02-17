@@ -1,7 +1,7 @@
 package com.nukkitx.server.block.behavior;
 
 import com.google.common.base.Preconditions;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 import com.nukkitx.api.item.TierType;
 import com.nukkitx.api.item.ToolType;
 import com.nukkitx.api.item.ToolTypes;
@@ -34,7 +34,7 @@ public class DroppableBySpecificToolsBlockBehavior extends SimpleBlockBehavior {
     }
 
     @Override
-    public boolean isCorrectTool(@Nullable ItemInstance item) {
+    public boolean isCorrectTool(@Nullable ItemStack item) {
         return item != null &&
                 item.getItemType().getToolType().isPresent() &&
                 item.getItemType().getToolType().get() == toolType &&

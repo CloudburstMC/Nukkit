@@ -3,17 +3,17 @@ package com.nukkitx.api.event.block;
 import com.nukkitx.api.Player;
 import com.nukkitx.api.block.Block;
 import com.nukkitx.api.event.Cancellable;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 import com.nukkitx.api.metadata.blockentity.ItemFrameBlockEntity;
 
 public class ItemFrameDropItemEvent implements BlockEvent, Cancellable {
     private final Block block;
     private final Player player;
-    private final ItemInstance item;
+    private final ItemStack item;
     private final ItemFrameBlockEntity itemFrame;
     private boolean cancellable;
 
-    public ItemFrameDropItemEvent(Player player, Block block, ItemFrameBlockEntity itemFrame, ItemInstance item) {
+    public ItemFrameDropItemEvent(Player player, Block block, ItemFrameBlockEntity itemFrame, ItemStack item) {
         this.block = block;
         this.player = player;
         this.item = item;
@@ -28,7 +28,7 @@ public class ItemFrameDropItemEvent implements BlockEvent, Cancellable {
         return itemFrame;
     }
 
-    public ItemInstance getItem() {
+    public ItemStack getItem() {
         return item;
     }
 

@@ -2,22 +2,22 @@ package com.nukkitx.api.event.player;
 
 import com.nukkitx.api.Player;
 import com.nukkitx.api.event.Cancellable;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 
 /**
  * Called when a player eats something
  */
 public class PlayerItemConsumeEvent implements PlayerEvent, Cancellable {
     private final Player player;
-    private final ItemInstance item;
+    private final ItemStack item;
     private boolean cancelled;
 
-    public PlayerItemConsumeEvent(Player player, ItemInstance item) {
+    public PlayerItemConsumeEvent(Player player, ItemStack item) {
         this.player = player;
         this.item = item;
     }
 
-    public ItemInstance getItem() {
+    public ItemStack getItem() {
         return item;
     }
 

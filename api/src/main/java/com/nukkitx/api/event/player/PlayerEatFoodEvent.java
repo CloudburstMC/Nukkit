@@ -2,23 +2,23 @@ package com.nukkitx.api.event.player;
 
 import com.nukkitx.api.Player;
 import com.nukkitx.api.event.Cancellable;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 
 public class PlayerEatFoodEvent implements PlayerEvent, Cancellable {
     private final Player player;
-    private final ItemInstance food;
+    private final ItemStack food;
     private float foodLevelAdded;
     private int saturationAdded;
     private boolean cancelled = false;
 
-    public PlayerEatFoodEvent(final Player player, ItemInstance food, float foodLevelAdded, int saturationAdded) {
+    public PlayerEatFoodEvent(final Player player, ItemStack food, float foodLevelAdded, int saturationAdded) {
         this.player = player;
         this.food = food;
         this.foodLevelAdded = foodLevelAdded;
         this.saturationAdded = saturationAdded;
     }
 
-    public ItemInstance getFood() {
+    public ItemStack getFood() {
         return food;
     }
 

@@ -39,7 +39,7 @@ public class SheepEntity extends LivingEntity implements Sheep {
         this.sheared = true;
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_SHEARED, true);
 
-        this.level.dropItem(this, Item.get(Item.WOOL, getColor(), this.level.rand.nextInt(2) + 1));
+        this.level.drop(this, Item.get(Item.WOOL, getColor(), this.level.rand.nextInt(2) + 1));
         return true;
     }
 

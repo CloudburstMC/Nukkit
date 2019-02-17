@@ -12,7 +12,6 @@ import com.nukkitx.api.util.Rotation;
 import javax.annotation.Nonnull;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 public interface Entity {
 
@@ -26,8 +25,6 @@ public interface Entity {
      */
     @Nonnull
     Vector3f getMotion();
-
-    UUID getUniqueId();
 
     @Nonnull
     Vector3f getPosition();
@@ -82,7 +79,7 @@ public interface Entity {
     Level getLevel();
 
     /**
-     * Teleports this entity to the given position. If this entity is riding a
+     * Teleports this entity to the given blockPosition. If this entity is riding a
      * vehicle, it will be dismounted prior to teleportation.
      *
      * @param position New location to teleport this entity to
@@ -91,7 +88,7 @@ public interface Entity {
     boolean teleport(Vector3f position);
 
     /**
-     * Teleports this entity to the given position in level. If this entity is riding a
+     * Teleports this entity to the given blockPosition in level. If this entity is riding a
      * vehicle, it will be dismounted prior to teleportation.
      *
      * @param location New location to teleport this entity to
@@ -136,20 +133,11 @@ public interface Entity {
     @Nonnull
     Server getServer();
 
-    /*/**
-     * Returns the distance this entity has fallen
-     *
-     * @return The distance.
+    /**
+     * Push entity with a given vector
+     * @param motion motion vector
      */
-    //float getFallDistance();
-
-    /*/**
-     * Sets the fall distance for this entity
-     *
-     * @param distance The new distance.
-     */
-    //void setFallDistance(float distance);
-
+    void push(@Nonnull Vector3f motion);
 
     long getTickCreated();
 
@@ -220,20 +208,6 @@ public interface Entity {
     void setCustomNameVisible(boolean flag);
 
     /**
-     * Gets whether the entity is glowing or not.
-     *
-     * @return whether the entity is glowing
-     */
-    boolean isGlowing();
-
-    /**
-     * Sets whether the entity has a team colored (default: white) glow.
-     *
-     * @param flag if the entity is glowing
-     */
-    void setGlowing(boolean flag);
-
-    /**
      * Gets whether the entity is invulnerable or not.
      *
      * @return whether the entity is
@@ -281,17 +255,16 @@ public interface Entity {
         return GenericMath.normalizeSafe(new Vector3f(x, y, z));
     }
 
+    @Nonnull
     Set<Class<? extends EntityComponent>> providedComponents();
 
     <C extends EntityComponent> boolean provides(Class<C> clazz);
 
+    @Nonnull
     <C extends EntityComponent> Optional<C> get(Class<C> clazz);
 
+    @Nonnull
     default <C extends EntityComponent> C ensureAndGet(Class<C> clazz) {
-        Optional<C> component = get(clazz);
-        if (!component.isPresent()) {
-            throw new VerifyException("Component class " + clazz.getName() + " isn't provided by this entity.");
-        }
-        return component.get();
+        return get(clazz).orElseThrow(() -> new VerifyException("Component class " + clazz.getName() + " isn't provided by this entity."));
     }
 }

@@ -11,7 +11,7 @@ import java.util.Objects;
  * This class represents a rotation. Bedrock Edition uses degrees to measure angles. This class is immutable.
  */
 @Immutable
-public final class Rotation {
+public final class Rotation implements Comparable<Rotation> {
     public static final Rotation ZERO = new Rotation(Vector3f.ZERO);
 
     private final Vector3f rotation;
@@ -102,5 +102,10 @@ public final class Rotation {
                 ", yaw=" + rotation.getY() +
                 ", roll=" + rotation.getZ() +
                 ')';
+    }
+
+    @Override
+    public int compareTo(Rotation o) {
+        return this.rotation.compareTo(o.rotation);
     }
 }

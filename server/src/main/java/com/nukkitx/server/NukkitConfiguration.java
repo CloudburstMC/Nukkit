@@ -18,9 +18,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Getter
@@ -41,7 +40,7 @@ public final class NukkitConfiguration implements Configuration {
 
     private NukkitAdvancedConfiguration advanced;
 
-    private Map<String, NukkitLevelConfiguration> levels;
+    private LinkedHashMap<String, NukkitLevelConfiguration> levels;
 
 
     @Getter
@@ -241,7 +240,7 @@ public final class NukkitConfiguration implements Configuration {
         }
 
         if (levels == null) {
-            levels = new HashMap<>();
+            levels = new LinkedHashMap<>();
         }
 
         return stale;

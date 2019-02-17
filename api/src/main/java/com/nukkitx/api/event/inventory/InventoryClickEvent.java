@@ -2,17 +2,17 @@ package com.nukkitx.api.event.inventory;
 
 import com.nukkitx.api.event.Cancellable;
 import com.nukkitx.api.inventory.Inventory;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 
 public class InventoryClickEvent implements InventoryEvent, Cancellable {
     private final Inventory inventory;
     private final int slot;
-    private final ItemInstance sourceItem;
-    private final ItemInstance heldItem;
-    private final ItemInstance leftItem;
+    private final ItemStack sourceItem;
+    private final ItemStack heldItem;
+    private final ItemStack leftItem;
     private boolean cancelled;
 
-    public InventoryClickEvent(Inventory inventory, int slot, ItemInstance sourceItem, ItemInstance heldItem, ItemInstance leftItem) {
+    public InventoryClickEvent(Inventory inventory, int slot, ItemStack sourceItem, ItemStack heldItem, ItemStack leftItem) {
         this.inventory = inventory;
         this.slot = slot;
         this.sourceItem = sourceItem;
@@ -24,15 +24,15 @@ public class InventoryClickEvent implements InventoryEvent, Cancellable {
         return slot;
     }
 
-    public ItemInstance getSourceItem() {
+    public ItemStack getSourceItem() {
         return sourceItem;
     }
 
-    public ItemInstance getHeldItem() {
+    public ItemStack getHeldItem() {
         return heldItem;
     }
 
-    public ItemInstance getLeftItem() {
+    public ItemStack getLeftItem() {
         return leftItem;
     }
 

@@ -52,23 +52,17 @@ public class NukkitBlock implements Block {
 
     public List<Block> getNeighboringBlocksIfLoaded() {
         List<Block> blocks = new ArrayList<>();
-        level.getBlockIfChunkLoaded(blockPosition.add(1, 0, 0)).ifPresent(blocks::add);
-        level.getBlockIfChunkLoaded(blockPosition.add(-1, 0, 0)).ifPresent(blocks::add);
-        level.getBlockIfChunkLoaded(blockPosition.add(0, 1, 0)).ifPresent(blocks::add);
-        level.getBlockIfChunkLoaded(blockPosition.add(0, -1, 0)).ifPresent(blocks::add);
-        level.getBlockIfChunkLoaded(blockPosition.add(0, 0, 1)).ifPresent(blocks::add);
-        level.getBlockIfChunkLoaded(blockPosition.add(0, 0, -1)).ifPresent(blocks::add);
+        for (Vector3i position : BlockUtils.AROUND_POSITIONS) {
+            level.getBlockIfChunkLoaded(blockPosition.add(position)).ifPresent(blocks::add);
+        }
         return blocks;
     }
 
     public CompletableFuture<List<Block>> getNeighboringBlocks() {
         List<CompletableFuture<Block>> blockFutures = new ArrayList<>();
-        blockFutures.add(level.getBlock(blockPosition.add(1, 0, 0)));
-        blockFutures.add(level.getBlock(blockPosition.add(-1, 0, 0)));
-        blockFutures.add(level.getBlock(blockPosition.add(0, 1, 0)));
-        blockFutures.add(level.getBlock(blockPosition.add(0, -1, 0)));
-        blockFutures.add(level.getBlock(blockPosition.add(0, 0, 1)));
-        blockFutures.add(level.getBlock(blockPosition.add(0, 0, -1)));
+        for (Vector3i position : BlockUtils.AROUND_POSITIONS) {
+            blockFutures.add(level.getBlock(blockPosition.add(position)));
+        }
 
         return CompletableFutures.allAsList(blockFutures);
     }

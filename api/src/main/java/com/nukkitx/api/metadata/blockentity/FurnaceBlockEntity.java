@@ -1,23 +1,23 @@
 package com.nukkitx.api.metadata.blockentity;
 
+import com.nukkitx.api.container.ContainerHolder;
 import com.nukkitx.api.inventory.Inventory;
-import com.nukkitx.api.inventory.InventoryHolder;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 
 import javax.annotation.Nullable;
 
-public interface FurnaceBlockEntity extends NameableBlockEntity, InventoryHolder {
+public interface FurnaceBlockEntity extends NameableBlockEntity, ContainerHolder {
 
-    boolean isFuel(@Nullable ItemInstance item);
+    boolean isFuel(@Nullable ItemStack item);
 
-    int getBurnDuration(@Nullable ItemInstance item);
+    int getBurnDuration(@Nullable ItemStack item);
 
-    boolean isIngredient(@Nullable ItemInstance item);
+    boolean isIngredient(@Nullable ItemStack item);
 
     int getCookTime();
 
     int getBurnTime();
 
     @Override
-    Inventory getInventory();
+    Inventory getContainer();
 }

@@ -4,7 +4,7 @@ import com.nukkitx.api.block.BlockStateBuilder;
 import com.nukkitx.api.command.CommandManager;
 import com.nukkitx.api.command.sender.ConsoleCommandSender;
 import com.nukkitx.api.event.EventManager;
-import com.nukkitx.api.item.ItemInstanceBuilder;
+import com.nukkitx.api.item.ItemStackBuilder;
 import com.nukkitx.api.level.Level;
 import com.nukkitx.api.level.LevelCreator;
 import com.nukkitx.api.level.chunk.generator.ChunkGeneratorRegistry;
@@ -76,7 +76,7 @@ public interface Server {
     Operators getOperators();
 
     @Nonnull
-    ItemInstanceBuilder itemInstanceBuilder();
+    ItemStackBuilder itemInstanceBuilder();
 
     @Nonnull
     BlockStateBuilder blockStateBuilder();

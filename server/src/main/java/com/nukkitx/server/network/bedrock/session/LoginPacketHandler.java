@@ -3,48 +3,33 @@ package com.nukkitx.server.network.bedrock.session;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.google.common.base.Preconditions;
-import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSObject;
-import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
 import com.nukkitx.api.event.player.PlayerPreLoginEvent;
 import com.nukkitx.protocol.bedrock.handler.BedrockPacketHandler;
 import com.nukkitx.protocol.bedrock.packet.ClientToServerHandshakePacket;
 import com.nukkitx.protocol.bedrock.packet.LoginPacket;
 import com.nukkitx.protocol.bedrock.packet.PlayStatusPacket;
+import com.nukkitx.protocol.bedrock.packet.ServerToClientHandshakePacket;
 import com.nukkitx.protocol.bedrock.session.BedrockSession;
+import com.nukkitx.protocol.bedrock.util.EncryptionUtils;
+import com.nukkitx.protocol.bedrock.v332.Bedrock_v332;
 import com.nukkitx.server.NukkitServer;
-import com.nukkitx.server.network.bedrock.packet.ResourcePacksInfoPacket;
 import com.nukkitx.server.network.bedrock.session.data.AuthDataImpl;
 import com.nukkitx.server.network.bedrock.session.data.ClientDataImpl;
-import com.nukkitx.server.network.util.EncryptionUtil;
-import com.nukkitx.server.util.NativeCodeFactory;
-import com.voxelwind.server.jni.CryptoUtil;
 import lombok.extern.log4j.Log4j2;
 
+import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.security.*;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECGenParameterSpec;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Base64;
 import java.util.regex.Pattern;
 
 @Log4j2
 public class LoginPacketHandler implements BedrockPacketHandler {
-    private static final boolean CAN_USE_ENCRYPTION = CryptoUtil.isJCEUnlimitedStrength() || NativeCodeFactory.cipher.isLoaded();
-    private static final String MOJANG_PUBLIC_KEY_BASE64 =
-            "MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAE8ELkixyLcwlZryUQcu1TvPOmI2B7vX83ndnWRUaXm74wFfa5f/lwQNTfrLVHa2PmenpGI6JhIMUJaWZrjmMj90NoKNFSNBuKdm8rYiXsfaz3K36x/1U26HpG0ZxK/V1V";
-    private static final ECPublicKey MOJANG_PUBLIC_KEY;
-    private static final Pattern USERNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9 ]*$");
-
-    static {
-        try {
-            MOJANG_PUBLIC_KEY = generateKey(MOJANG_PUBLIC_KEY_BASE64);
-        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-            throw new AssertionError(e);
-        }
-    }
+    private static final Pattern USERNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9 ]+$");
 
     private final BedrockSession<NukkitPlayerSession> session;
     private final NukkitServer server;
@@ -54,13 +39,9 @@ public class LoginPacketHandler implements BedrockPacketHandler {
         this.server = server;
     }
 
-    private static ECPublicKey generateKey(String b64) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        return (ECPublicKey) KeyFactory.getInstance("EC").generatePublic(new X509EncodedKeySpec(Base64.getDecoder().decode(b64)));
-    }
-
     @Override
     public boolean handle(ClientToServerHandshakePacket packet) {
-        initializePlayerSession();
+        initializeResourcePackHandler();
         return true;
     }
 
@@ -69,14 +50,16 @@ public class LoginPacketHandler implements BedrockPacketHandler {
         int protocolVersion = packet.getProtocolVersion();
         session.setProtocolVersion(protocolVersion);
 
-        if (!session.getPacketCodec().isCompatibleVersion(protocolVersion)) {
+        if (protocolVersion != Bedrock_v332.V332_CODEC.getProtocolVersion()) {
             PlayStatusPacket status = new PlayStatusPacket();
-            if (protocolVersion > BedrockPacketCodec.BROADCAST_PROTOCOL_VERSION) {
+            if (protocolVersion > Bedrock_v332.V332_CODEC.getProtocolVersion()) {
                 status.setStatus(PlayStatusPacket.Status.FAILED_SERVER);
             } else {
                 status.setStatus(PlayStatusPacket.Status.FAILED_CLIENT);
             }
+            return true;
         }
+        session.setPacketCodec(Bedrock_v332.V332_CODEC);
 
         JsonNode certData;
         try {
@@ -122,11 +105,11 @@ public class LoginPacketHandler implements BedrockPacketHandler {
                 }
             }
 
-            ECPublicKey identityPublicKey = generateKey(payload.get("identityPublicKey").textValue());
+            ECPublicKey identityPublicKey = EncryptionUtils.generateKey(payload.get("identityPublicKey").textValue());
 
             JWSObject clientJwt = JWSObject.parse(packet.getSkinData().toString());
 
-            if (!verifyJwt(clientJwt, identityPublicKey) && server.getConfiguration().getGeneral().isXboxAuthenticated()) {
+            if (!EncryptionUtils.verifyJwt(clientJwt, identityPublicKey) && server.getConfiguration().getGeneral().isXboxAuthenticated()) {
                 session.disconnect("disconnectionScreen.invalidSkin");
             }
 
@@ -135,15 +118,16 @@ public class LoginPacketHandler implements BedrockPacketHandler {
             session.setClientData(clientData);
 
 
-            if (CAN_USE_ENCRYPTION) {
+            if (EncryptionUtils.canUseEncryption()) {
                 startEncryptionHandshake(identityPublicKey);
             } else {
-                initializePlayerSession();
+                initializeResourcePackHandler();
             }
         } catch (Exception e) {
             session.disconnect("disconnectionScreen.internalError.cantConnect");
             throw new RuntimeException("Unable to complete login", e);
         }
+        return true;
     }
 
     private void startEncryptionHandshake(PublicKey key) throws Exception {
@@ -153,27 +137,29 @@ public class LoginPacketHandler implements BedrockPacketHandler {
         KeyPair serverKeyPair = generator.generateKeyPair();
 
         // Enable encryption server-side
-        byte[] token = EncryptionUtil.generateRandomToken();
-        byte[] serverKey = EncryptionUtil.getServerKey(serverKeyPair, key, token);
-        session.enableEncryption(serverKey);
+        byte[] token = EncryptionUtils.generateRandomToken();
+        SecretKey encryptionKey = EncryptionUtils.getSecretKey(serverKeyPair.getPrivate(), key, token);
+        session.enableEncryption(encryptionKey);
 
         // Now send the packet to enable encryption on the client
-        session.sendImmediatePackage(EncryptionUtil.createHandshakePacket(serverKeyPair, token));
+        ServerToClientHandshakePacket packet = new ServerToClientHandshakePacket();
+        packet.setJwt(EncryptionUtils.createHandshakeJwt(serverKeyPair, token).serialize());
+        session.sendPacketImmediately(packet);
     }
 
-    private void initializePlayerSession() {
-        LoginSession loginSession = new LoginSession(session);
+    private void initializeResourcePackHandler() {
+        LoginSession loginSession = new LoginSession(session, server);
         PlayerPreLoginEvent.Result result;
         if (loginSession.isBanned()) {
             result = PlayerPreLoginEvent.Result.BANNED;
-        } else if (session.getServer().getConfiguration().getGeneral().isWhitelisted() && !loginSession.isWhitelisted()) {
+        } else if (server.getConfiguration().getGeneral().isWhitelisted() && !loginSession.isWhitelisted()) {
             result = PlayerPreLoginEvent.Result.NOT_WHITELISTED;
         } else {
             result = null;
         }
 
         PlayerPreLoginEvent event = new PlayerPreLoginEvent(loginSession, result);
-        session.getServer().getEventManager().fire(event);
+        server.getEventManager().fire(event);
 
         if (event.willDisconnect()) {
             String message;
@@ -190,11 +176,10 @@ public class LoginPacketHandler implements BedrockPacketHandler {
         status.setStatus(PlayStatusPacket.Status.LOGIN_SUCCESS);
         session.sendPacket(status);
 
-        NukkitPlayerSession playerSession = session.initializePlayerSession(session.getServer().getDefaultLevel());
-        session.setHandler(playerSession.getNetworkPacketHandler());
+        ResourcePackPacketHandler handler = new ResourcePackPacketHandler(session, server);
+        session.setHandler(handler);
 
-        ResourcePacksInfoPacket info = new ResourcePacksInfoPacket();
-        session.sendPacket(info);
+        handler.sendResourcePacksInfo();
     }
 
     private boolean validateChainData(JsonNode data) throws Exception {
@@ -204,20 +189,16 @@ public class LoginPacketHandler implements BedrockPacketHandler {
             JWSObject jwt = JWSObject.parse(node.asText());
 
             if (lastKey == null) {
-                validChain = verifyJwt(jwt, MOJANG_PUBLIC_KEY);
+                validChain = EncryptionUtils.verifyJwt(jwt, EncryptionUtils.getMojangPublicKey());
             } else {
-                validChain = verifyJwt(jwt, lastKey);
+                validChain = EncryptionUtils.verifyJwt(jwt, lastKey);
             }
 
             JsonNode payloadNode = NukkitServer.JSON_MAPPER.readTree(jwt.getPayload().toString());
             JsonNode ipkNode = payloadNode.get("identityPublicKey");
             Preconditions.checkState(ipkNode != null && ipkNode.getNodeType() == JsonNodeType.STRING, "identityPublicKey node is missing in chain");
-            lastKey = generateKey(ipkNode.asText());
+            lastKey = EncryptionUtils.generateKey(ipkNode.asText());
         }
         return validChain;
-    }
-
-    private boolean verifyJwt(JWSObject jwt, ECPublicKey key) throws JOSEException {
-        return jwt.verify(new DefaultJWSVerifierFactory().createJWSVerifier(jwt.getHeader(), key));
     }
 }

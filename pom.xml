@@ -9,12 +9,17 @@
     <artifactId>nukkitx-parent</artifactId>
     <version>1.7.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-
-    <!-- Project information -->
     <name>NukkitX Parent</name>
     <description>Nuclear-Powered Server Software for Minecraft: Bedrock Edition.</description>
     <url>https://github.com/NukkitX/Nukkit</url>
     <inceptionYear>2017</inceptionYear>
+
+    <modules>
+        <module>api</module>
+        <module>server</module>
+        <module>bootstrap</module>
+    </modules>
+
     <licenses>
         <license>
             <name>GNU General Public License v3</name>
@@ -27,14 +32,6 @@
         <url>https://github.com/NukkitX</url>
     </organization>
 
-    <!-- Project modules -->
-    <modules>
-        <module>api</module>
-        <module>server</module>
-        <module>bootstrap</module>
-    </modules>
-
-    <!-- Environment settings -->
     <issueManagement>
         <system>GitHub</system>
         <url>https://github.com/NukkitX/Nukkit/issues</url>
@@ -64,20 +61,16 @@
         </snapshotRepository>
     </distributionManagement>
 
-    <!-- Build properties -->
     <properties>
-        <!-- Common build properties -->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>HHmm-ddMMyyyy</maven.build.timestamp.format>
 
-        <!-- Common library versions -->
         <api.version>2.0.0-SNAPSHOT</api.version>
         <common.version>1.0.1-SNAPSHOT</common.version>
     </properties>
 
-    <!-- Custom repositories -->
     <repositories>
         <repository>
             <id>nukkitx-repo-release</id>
@@ -101,12 +94,11 @@
         </repository>
     </repositories>
 
-    <!-- Common dependencies -->
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.20</version>
+            <version>1.18.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

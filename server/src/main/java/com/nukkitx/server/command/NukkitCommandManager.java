@@ -8,6 +8,7 @@ import com.nukkitx.api.command.sender.CommandSender;
 import com.nukkitx.api.plugin.PluginDescription;
 import com.nukkitx.protocol.bedrock.packet.AvailableCommandsPacket;
 import com.nukkitx.server.NukkitServer;
+import com.nukkitx.server.command.vanilla.GiveCommand;
 import com.nukkitx.server.command.vanilla.StopCommand;
 import com.nukkitx.server.command.vanilla.VersionCommand;
 
@@ -31,6 +32,7 @@ public class NukkitCommandManager implements CommandManager {
         try {
             register("minecraft", new VersionCommand(), true);
             register("minecraft", new StopCommand(), true);
+            register("minecraft", new GiveCommand(), true);
         } catch (CommandException e) {
             throw new RuntimeException("Unable to register default commands", e);
         }

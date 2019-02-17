@@ -2,7 +2,7 @@ package com.nukkitx.server.level.provider.anvil;
 
 import com.nukkitx.api.level.Level;
 import com.nukkitx.api.level.chunk.Chunk;
-import com.nukkitx.nbt.NBTIO;
+import com.nukkitx.nbt.NbtUtils;
 import com.nukkitx.nbt.stream.NBTInputStream;
 import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.nbt.tag.Tag;
@@ -50,7 +50,7 @@ public final class AnvilChunkProvider implements ChunkProvider {
 
                 if (regionFile.hasChunk(irXZ.x, irXZ.z)) {
                     Tag<?> tag;
-                    try (NBTInputStream reader = NBTIO.createReader(regionFile.readChunk(irXZ.x, irXZ.z))) {
+                    try (NBTInputStream reader = NbtUtils.createReader(regionFile.readChunk(irXZ.x, irXZ.z))) {
                         tag = reader.readTag();
                     }
 

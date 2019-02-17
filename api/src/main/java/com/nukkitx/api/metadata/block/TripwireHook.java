@@ -42,7 +42,7 @@ public class TripwireHook extends SimpleDirectional {
     public String toString() {
         return "TripwireHook(" +
                 "direction=" + getDirection() +
-                ", position=" + position +
+                ", blockPosition=" + position +
                 ')';
     }
 

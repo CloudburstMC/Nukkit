@@ -1,14 +1,14 @@
 package com.nukkitx.api.metadata.blockentity;
 
-import com.nukkitx.api.inventory.Inventory;
-import com.nukkitx.api.inventory.InventoryHolder;
+import com.nukkitx.api.container.Container;
+import com.nukkitx.api.container.ContainerHolder;
 
-public interface ChestBlockEntity extends NameableBlockEntity, InventoryHolder {
+public interface ChestBlockEntity extends NameableBlockEntity, ContainerHolder {
 
     boolean isTrapped();
 
     @Override
-    Inventory getInventory();
+    Container getContainer();
 
     boolean isLargeChest();
 }

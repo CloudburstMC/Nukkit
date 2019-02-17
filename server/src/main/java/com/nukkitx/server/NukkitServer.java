@@ -37,7 +37,7 @@ import com.nukkitx.server.block.NukkitBlockStateBuilder;
 import com.nukkitx.server.command.NukkitCommandManager;
 import com.nukkitx.server.console.*;
 import com.nukkitx.server.entity.EntitySpawner;
-import com.nukkitx.server.item.NukkitItemInstanceBuilder;
+import com.nukkitx.server.item.NukkitItemStackBuilder;
 import com.nukkitx.server.level.LevelManager;
 import com.nukkitx.server.level.NukkitLevel;
 import com.nukkitx.server.level.NukkitLevelStorage;
@@ -48,6 +48,7 @@ import com.nukkitx.server.level.provider.LevelDataProvider;
 import com.nukkitx.server.locale.NukkitLocaleManager;
 import com.nukkitx.server.network.NukkitRakNetEventListener;
 import com.nukkitx.server.network.NukkitSessionManager;
+import com.nukkitx.server.network.bedrock.session.LoginPacketHandler;
 import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 import com.nukkitx.server.permission.NukkitAbilities;
 import com.nukkitx.server.permission.NukkitPermissionManager;
@@ -81,8 +82,6 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 @Log4j2
 @Getter
@@ -299,26 +298,15 @@ public class NukkitServer implements Server {
         }
 
         // Load default level
-        NukkitConfiguration.NukkitLevelConfiguration defaultLevelConfig = configuration.getDefaultLevel();
-        if (defaultLevelConfig.getId() == null) {
-            throw new RuntimeException("Unable to load default world");
+        LinkedHashMap<String, NukkitConfiguration.NukkitLevelConfiguration> levelConfigs = configuration.getLevels();
+        if (levelConfigs.isEmpty()) {
+            throw new RuntimeException("No levels to load");
         }
-        List<CompletableFuture<Level>> loadingLevels = new ArrayList<>();
-
-        LevelCreator defaultCreator = LevelCreator.builder()
-                .levelPath(levelsPath.resolve(defaultLevelConfig.getId()))
-                .id(defaultLevelConfig.getId())
-                .loadSpawnChunks(defaultLevelConfig.isLoadingSpawnChunks())
-                .readOnly(defaultLevelConfig.isReadOnly())
-                .generatorSettings(defaultLevelConfig.getGeneratorSettings())
-                .generator(defaultLevelConfig.getGenerator())
-                .name("default")
-                .storage(LevelCreator.LevelStorage.valueOf(defaultLevelConfig.getFormat()))
-                .build();
-
-        loadingLevels.add(loadLevel(defaultCreator));
 
         // Load other levels
+        List<CompletableFuture<Level>> loadingLevels = new ArrayList<>();
+
+        String defaultId = null;
         for (Map.Entry<String, NukkitConfiguration.NukkitLevelConfiguration> entry : configuration.getLevels().entrySet()) {
             NukkitConfiguration.NukkitLevelConfiguration levelConfig = entry.getValue();
             LevelCreator levelCreator = LevelCreator.builder()
@@ -332,6 +320,10 @@ public class NukkitServer implements Server {
                     .storage(LevelCreator.LevelStorage.valueOf(levelConfig.getFormat()))
                     .build();
 
+            if (defaultId == null) {
+                defaultId = levelCreator.getId();
+            }
+
             loadingLevels.add(loadLevel(levelCreator));
         }
 
@@ -343,7 +335,7 @@ public class NukkitServer implements Server {
                 log.fatal("Unable to load level", e);
                 System.exit(1);
             }
-            if (loadedLevel.getId().equals(defaultLevelConfig.getId())) {
+            if (loadedLevel.getId().equals(defaultId)) {
                 defaultLevel = (NukkitLevel) loadedLevel;
             }
         }
@@ -359,16 +351,20 @@ public class NukkitServer implements Server {
         }
         int configNetThreads = configuration.getAdvanced().getNetworkThreads();
         int maxThreads = configNetThreads < 1 ? Runtime.getRuntime().availableProcessors() : configNetThreads;
-        RakNetServer<BedrockSession<NukkitPlayerSession>> rakNetServer = RakNetServer.<BedrockSession<NukkitPlayerSession>>builder()
-                .address(configuration.getNetwork().getAddress(), configuration.getNetwork().getPort())
+        RakNetServer.Builder<BedrockSession<NukkitPlayerSession>> rakNetServerBuilder = RakNetServer.builder();
+        rakNetServerBuilder.address(configuration.getNetwork().getAddress(), configuration.getNetwork().getPort())
                 .eventListener(new NukkitRakNetEventListener(this))
                 .packet(WrappedPacket::new, 0xfe)
                 .executor(sessionManager.getSessionTicker())
                 .scheduler(timerService)
                 .maximumThreads(maxThreads)
-                .sessionFactory(BedrockSession::new)
-                .sessionManager(sessionManager)
-                .build();
+                .sessionFactory(connection -> {
+                    BedrockSession<NukkitPlayerSession> session = new BedrockSession<>(connection);
+                    session.setHandler(new LoginPacketHandler(session, this));
+                    return session;
+                })
+                .sessionManager(sessionManager);
+        RakNetServer<BedrockSession<NukkitPlayerSession>> rakNetServer = rakNetServerBuilder.build();
         if (!rakNetServer.bind()) {
             log.fatal("Unable to bind server to {}:{}!", configuration.getNetwork().getAddress(), configuration.getNetwork().getPort());
         }
@@ -404,27 +400,21 @@ public class NukkitServer implements Server {
     }
 
     private void loop() {
-        Lock lock = new ReentrantLock();
 
         while (running.get()) {
-            lock.lock();
             try {
-                while (!inputLines.isEmpty()) {
-                    String command = inputLines.take();
-                    try {
-                        commandManager.executeCommand(consoleCommandSender, command);
-                    } catch (CommandNotFoundException e) {
-                        consoleCommandSender.sendMessage(new TranslationMessage("commands.generic.unknown", command));
-                    } catch (CommandException e) {
-                        consoleCommandSender.sendMessage(new TranslationMessage("commands.generic.exception"));
-                        log.error("An error occurred whilst running command " + command + " for " + getName(), e);
-                    }
+                String command = inputLines.take();
+                try {
+                    commandManager.executeCommand(consoleCommandSender, command);
+                } catch (CommandNotFoundException e) {
+                    consoleCommandSender.sendMessage(new TranslationMessage("commands.generic.unknown", command));
+                } catch (CommandException e) {
+                    consoleCommandSender.sendMessage(new TranslationMessage("commands.generic.exception"));
+                    log.error("An error occurred whilst running command " + command + " for " + getName(), e);
                 }
-                lock.newCondition().await(50, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException e) {
-                //Ignore
+            } catch (Exception e) {
+                log.error("Exception occurred whilst ticking main thread", e);
             }
-            lock.unlock();
         }
 
         shutdown();
@@ -523,17 +513,14 @@ public class NukkitServer implements Server {
     }
 
     public void shutdown(@Nonnull String reason) {
+        Preconditions.checkNotNull(reason, "reason");
         try {
-            Preconditions.checkNotNull(reason, "reason");
             // Stop reading the console
             reading.compareAndSet(true, false);
             running.compareAndSet(true, false);
 
             // Disconnect all players
             getSessionManager().allPlayers().forEach(p -> p.disconnect(reason));
-
-            // Close com.nukkitx.network listeners so we don't get people rejoining.
-            listeners.forEach(NetworkListener::close);
 
             saveBanlist();
 
@@ -671,8 +658,8 @@ public class NukkitServer implements Server {
 
     @Nonnull
     @Override
-    public NukkitItemInstanceBuilder itemInstanceBuilder() {
-        return new NukkitItemInstanceBuilder();
+    public NukkitItemStackBuilder itemInstanceBuilder() {
+        return new NukkitItemStackBuilder();
     }
 
     @Nonnull
@@ -843,9 +830,9 @@ public class NukkitServer implements Server {
         });
 
         CompletableFuture<Level> stage2 = stage1.thenApplyAsync(levelDataProvider -> {
-            Optional<ChunkGenerator> chunkGenerator = getGeneratorRegistry().getChunkGenerator(creator.getGenerator());
-            Preconditions.checkState(chunkGenerator.isPresent(), "Unknown chunk generator");
-            NukkitLevel level = new NukkitLevel(NukkitServer.this, creator.getId(), provider, levelDataProvider, chunkGenerator.get());
+            Optional<ChunkGenerator> chunkGeneratorFactory = getGeneratorRegistry().getChunkGenerator(creator.getGenerator());
+            Preconditions.checkState(chunkGeneratorFactory.isPresent(), "Unknown chunk generator");
+            NukkitLevel level = new NukkitLevel(NukkitServer.this, creator.getId(), provider, levelDataProvider, chunkGeneratorFactory.get());
             levelManager.register(level);
             levelManager.start(level);
             return level;

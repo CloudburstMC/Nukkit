@@ -7,7 +7,7 @@ import com.nukkitx.api.block.Block;
 import com.nukkitx.api.block.BlockState;
 import com.nukkitx.api.entity.Entity;
 import com.nukkitx.api.entity.system.System;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 import com.nukkitx.api.level.Level;
 import com.nukkitx.api.level.LevelData;
 import com.nukkitx.api.level.chunk.Chunk;
@@ -31,6 +31,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Log4j2
 public class NukkitLevel implements Level {
+    private static final int HEIGHT = 255;
     @Getter
     private static final LevelPaletteManager paletteManager = new LevelPaletteManager();
     private static final int FULL_TIME = 24000;
@@ -115,6 +116,11 @@ public class NukkitLevel implements Level {
     }
 
     @Override
+    public int getHeight() {
+        return HEIGHT;
+    }
+
+    @Override
     public void registerSystem(System system) {
         entityManager.registerSystem(system);
     }
@@ -153,9 +159,9 @@ public class NukkitLevel implements Level {
     }
 
     @Override
-    public DroppedItemEntity dropItem(@Nonnull ItemInstance item, @Nonnull Vector3f position) {
+    public DroppedItemEntity dropItem(@Nonnull ItemStack item, @Nonnull Vector3f position) {
         Preconditions.checkNotNull(item, "item");
-        Preconditions.checkNotNull(position, "position");
+        Preconditions.checkNotNull(position, "blockPosition");
         Preconditions.checkArgument(getBlockIfChunkLoaded(position.toInt()).isPresent(), "dropped item cannot be spawned in unloaded chunk");
         return new DroppedItemEntity(position, this, server, item);
     }
@@ -179,12 +185,14 @@ public class NukkitLevel implements Level {
             if (tag == null) {
                 throw new IllegalStateException("Serialized BlockEntity tag was null");
             }
-            tag.tagInt("x", position.getX());
-            tag.tagInt("y", position.getY());
-            tag.tagInt("z", position.getZ());
+            tag = tag.toBuilder()
+                    .intTag("x", position.getX())
+                    .intTag("y", position.getY())
+                    .intTag("z", position.getZ())
+                    .buildRootTag();
 
             BlockEntityDataPacket packet1 = new BlockEntityDataPacket();
-            packet1.setBlockPostion(position);
+            packet1.setBlockPosition(position);
             packet1.setData(tag);
             packetManager.queuePacketForViewers(entity, packet1);
         }

@@ -1,15 +1,17 @@
 package com.nukkitx.server.metadata.serializer.block.entity;
 
 import com.nukkitx.api.block.BlockState;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 import com.nukkitx.api.item.ItemType;
 import com.nukkitx.api.metadata.blockentity.BlockEntity;
 import com.nukkitx.nbt.CompoundTagBuilder;
 import com.nukkitx.nbt.tag.CompoundTag;
+import com.nukkitx.nbt.tag.ListTag;
 import com.nukkitx.server.block.entity.NukkitChestBlockEntity;
-import com.nukkitx.server.inventory.NukkitInventory;
-import com.nukkitx.server.inventory.NukkitInventoryType;
-import com.nukkitx.server.item.ItemUtil;
+import com.nukkitx.server.container.ContainerType;
+import com.nukkitx.server.container.NukkitContainer;
+import com.nukkitx.server.container.NukkitFillingContainer;
+import com.nukkitx.server.item.ItemUtils;
 import com.nukkitx.server.metadata.serializer.Serializer;
 
 /**
@@ -23,13 +25,13 @@ public class ChestSerializer implements Serializer {
     }
 
     @Override
-    public CompoundTag readNBT(ItemInstance item) {
+    public CompoundTag readNBT(ItemStack item) {
         return read(item.ensureMetadata(NukkitChestBlockEntity.class));
     }
 
     protected CompoundTag read(NukkitChestBlockEntity entity) {
         CompoundTagBuilder builder = CompoundTagBuilder.builder()
-                .listTag("Items", CompoundTag.class, ItemUtil.createNBT(entity.getInventory().getAllContents()));
+                .listTag("Items", CompoundTag.class, ItemUtils.createNBT(entity.getContainer().getContents()));
 
         entity.getLock().ifPresent(lock -> builder.stringTag("Lock", lock));
 
@@ -40,13 +42,19 @@ public class ChestSerializer implements Serializer {
 
     @Override
     public BlockEntity writeNBT(ItemType block, CompoundTag nbtTag) {
-        NukkitInventory inventory = new NukkitInventory(NukkitInventoryType.CHEST);
-        nbtTag.getAsList("Items", CompoundTag.class).ifPresent(items -> inventory.setAllContents(ItemUtil.createItemStacks(items, inventory.getInventorySize())));
+        NukkitContainer container = new NukkitFillingContainer(null, 27, ContainerType.CHEST);
 
-        NukkitChestBlockEntity blockEntity = new NukkitChestBlockEntity(inventory);
+        ListTag<CompoundTag> listTag = nbtTag.getAs("Items", ListTag.class);
 
-        nbtTag.getAsString("Lock").ifPresent(val -> blockEntity.setLock(val.getValue()));
-        nbtTag.getAsString("CustomName").ifPresent(val -> blockEntity.setCustomName(val.getValue()));
+        ItemStack[] items = ItemUtils.createItemStacks(listTag, container.getSize());
+        for (int i = 0, len = container.getSize(); i < len; i++) {
+            container.setItem(i, items[i], null);
+        }
+
+        NukkitChestBlockEntity blockEntity = new NukkitChestBlockEntity(container);
+
+        nbtTag.listen("Lock", String.class, blockEntity::setLock);
+        nbtTag.listen("CustomName", String.class, blockEntity::setCustomName);
 
         return blockEntity;
     }

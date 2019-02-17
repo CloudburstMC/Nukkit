@@ -1,6 +1,7 @@
 package com.nukkitx.server.level.util;
 
 import com.google.common.base.Preconditions;
+import com.nukkitx.network.VarInts;
 import gnu.trove.list.array.TIntArrayList;
 import io.netty.buffer.ByteBuf;
 
@@ -45,7 +46,7 @@ public class BlockStorage {
         }
         short newIndex;
         if ((newIndex = (short) ids.indexOf(newId)) == -1) {
-            // new runtime id doesn't exist so we can just change the runtimeId at the old index position.
+            // new runtime id doesn't exist so we can just change the runtimeId at the old index blockPosition.
             ids.set(oldIndex, newId);
         } else {
             // new runtime id already exists so we need to loop through all the blocks

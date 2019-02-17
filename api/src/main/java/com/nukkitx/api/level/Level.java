@@ -7,7 +7,7 @@ import com.nukkitx.api.block.Block;
 import com.nukkitx.api.entity.Entity;
 import com.nukkitx.api.entity.misc.DroppedItem;
 import com.nukkitx.api.entity.system.System;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 import com.nukkitx.api.level.chunk.Chunk;
 import com.nukkitx.api.scoreboard.Scoreboard;
 
@@ -35,6 +35,8 @@ public interface Level {
 
     void save();
 
+    int getHeight();
+
     default CompletableFuture<Chunk> getChunkForPosition(Vector3i position) {
         return getChunk(position.getX() >> 4, position.getY() >> 4);
     }
@@ -60,7 +62,7 @@ public interface Level {
 
     <T extends Entity> CompletableFuture<T> spawn(Class<? extends Entity> clazz, Vector3f position);
 
-    DroppedItem dropItem(ItemInstance item, Vector3f position);
+    DroppedItem dropItem(ItemStack item, Vector3f position);
 
     void registerSystem(System system);
 

@@ -201,8 +201,8 @@ public class BlockTypes {
     public static final BlockType INVERTED_DAYLIGHT_SENSOR = IntBlock.builder().name("daylight_detector_inverted").id(178).maxStackSize(64).diggable(true).transparent(true).solid(true).metadataClass(DaylightSensor.class).hardness(0.2f).blockEntityClass(DaylightDetectorBlockEntity.class).build();
     public static final BlockType RED_SANDSTONE = IntBlock.builder().name("red_sandstone").id(179).maxStackSize(64).diggable(true).solid(true).filterLight(15).metadataClass(Sandstone.class).hardness(0.8f).build();
     public static final BlockType RED_SANDSTONE_STAIRS = IntBlock.builder().name("red_sandstone_stairs").id(180).maxStackSize(64).diggable(true).transparent(true).metadataClass(Stairs.class).solid(true).filterLight(15).hardness(0.8f).build();
-    public static final BlockType DOUBLE_RED_SANDSTONE_SLAB = IntBlock.builder().name("double_stone_slab2").id(181).maxStackSize(64).diggable(true).transparent(true).metadataClass(StoneSlab2.class).solid(true).hardness(2f).build();
-    public static final BlockType RED_SANDSTONE_SLAB = IntBlock.builder().name("stone_slab2").id(182).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(2f).metadataClass(StoneSlab2.class).build();
+    public static final BlockType DOUBLE_STONE_SLAB_2 = IntBlock.builder().name("double_stone_slab2").id(181).maxStackSize(64).diggable(true).transparent(true).metadataClass(StoneSlab2.class).solid(true).hardness(2f).build();
+    public static final BlockType STONE_SLAB_2 = IntBlock.builder().name("stone_slab2").id(182).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(2f).metadataClass(StoneSlab2.class).build();
     public static final BlockType SPRUCE_FENCE_GATE = IntBlock.builder().name("spruce_fence_gate").id(183).maxStackSize(64).diggable(true).transparent(true).solid(true).metadataClass(FenceGate.class).hardness(2f).build();
     public static final BlockType BIRCH_FENCE_GATE = IntBlock.builder().name("birch_fence_gate").id(184).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(2f).metadataClass(FenceGate.class).build();
     public static final BlockType JUNGLE_FENCE_GATE = IntBlock.builder().name("jungle_fence_gate").id(185).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(2f).metadataClass(FenceGate.class).build();
@@ -323,6 +323,10 @@ public class BlockTypes {
 
     public static final BlockType TURTLE_EGG = IntBlock.builder().name("turtle_egg").id(414).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(0f).build();
     public static final BlockType BUBBLE_COLUMN = IntBlock.builder().name("bubble_column").id(415).maxStackSize(64).diggable(false).transparent(true).solid(false).hardness(0f).build();
+    public static final BlockType BARRIER = IntBlock.builder().name("barrier").id(416).maxStackSize(64).diggable(false).transparent(true).solid(true).hardness(-1f).build();
+    public static final BlockType STONE_SLAB_3 = IntBlock.builder().name("stone_slab_3").id(417).maxStackSize(64).diggable(true).transparent(false).solid(true).hardness(2f).build();
+    public static final BlockType BAMBOO = IntBlock.builder().name("bamboo").id(418).maxStackSize(64).diggable(true).transparent(true).solid(true).hardness(3f).build();
+
 
     public static BlockType byName(@Nonnull String name) {
         Preconditions.checkNotNull(name, "name");

@@ -8,15 +8,15 @@ public class BrewEvent extends InventoryEvent implements Cancellable {
     private final Item[] potions;
     private final int fuel;
     public BrewEvent(BlockEntityBrewingStand blockEntity) {
-        super(blockEntity.getInventory());
+        super(blockEntity.getContainer());
         this.brewingStand = blockEntity;
         this.fuel = blockEntity.fuelAmount;
 
-        this.ingredient = blockEntity.getInventory().getIngredient();
+        this.ingredient = blockEntity.getContainer().getIngredient();
 
         this.potions = new Item[3];
         for (int i = 0; i < 3; i++) {
-            this.potions[i] = blockEntity.getInventory().getItem(i);
+            this.potions[i] = blockEntity.getContainer().getSlot(i);
         }
     }
 

@@ -1,7 +1,7 @@
 package com.nukkitx.server.metadata.serializer.block.entity;
 
 import com.nukkitx.api.block.BlockState;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 import com.nukkitx.api.item.ItemType;
 import com.nukkitx.api.metadata.blockentity.BlockEntity;
 import com.nukkitx.api.metadata.data.PlantType;
@@ -21,7 +21,7 @@ public class FlowerPotSerializer implements Serializer {
     }
 
     @Override
-    public CompoundTag readNBT(ItemInstance item) {
+    public CompoundTag readNBT(ItemStack item) {
         NukkitFlowerPotBlockEntity blockEntity = item.ensureMetadata(NukkitFlowerPotBlockEntity.class);
         return CompoundTagBuilder.builder()
                 .stringTag("contents", blockEntity.getPlantType().name().toLowerCase())

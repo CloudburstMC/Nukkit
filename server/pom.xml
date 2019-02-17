@@ -14,7 +14,7 @@
     <name>NukkitX Server</name>
 
     <properties>
-        <network.version>1.2.3-SNAPSHOT</network.version>
+        <network.version>1.3.0-SNAPSHOT</network.version>
     </properties>
 
     <dependencies>
@@ -38,7 +38,7 @@
         </dependency>
         <dependency>
             <groupId>com.nukkitx.protocol</groupId>
-            <artifactId>bedrock-v313</artifactId>
+            <artifactId>bedrock-v332</artifactId>
             <version>1.1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
