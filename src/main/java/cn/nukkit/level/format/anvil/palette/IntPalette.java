@@ -69,7 +69,7 @@ public class IntPalette {
         if (index >= keys.length || index < 0) {
             return lastIndex = Integer.MIN_VALUE;
         } else {
-            return lastIndex = (int) index;
+            return lastIndex = index;
         }
     }
 

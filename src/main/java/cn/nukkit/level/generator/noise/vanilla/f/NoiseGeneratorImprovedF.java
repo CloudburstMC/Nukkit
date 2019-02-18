@@ -23,8 +23,9 @@ public class NoiseGeneratorImprovedF {
         this.yCoord = p_i45469_1_.nextFloat() * 256.0f;
         this.zCoord = p_i45469_1_.nextFloat() * 256.0f;
 
-        for (int i = 0; i < 256; this.permutations[i] = i++) {
-            ;
+        int i = 0;
+        while (i < 256) {
+            this.permutations[i] = i++;
         }
 
         for (int l = 0; l < 256; ++l) {
@@ -87,9 +88,9 @@ public class NoiseGeneratorImprovedF {
                     int l6 = k6 & 255;
                     d19 = d19 - (float) k6;
                     float d20 = d19 * d19 * d19 * (d19 * (d19 * 6.0f - 15.0f) + 10.0f);
-                    i5 = this.permutations[k2] + 0;
+                    i5 = this.permutations[k2];
                     j5 = this.permutations[i5] + l6;
-                    j = this.permutations[k2 + 1] + 0;
+                    j = this.permutations[k2 + 1];
                     k5 = this.permutations[j] + l6;
                     d14 = this.lerp(d18, this.grad2(this.permutations[j5], d17, d19), this.grad(this.permutations[k5], d17 - 1.0f, 0.0f, d19));
                     d15 = this.lerp(d18, this.grad(this.permutations[j5 + 1], d17, 0.0f, d19 - 1.0f), this.grad(this.permutations[k5 + 1], d17 - 1.0f, 0.0f, d19 - 1.0f));

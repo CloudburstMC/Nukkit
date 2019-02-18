@@ -193,6 +193,10 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
         /**
          * Damage caused by being struck by lightning
          */
-        LIGHTNING
+        LIGHTNING,
+        /**
+         * Damage caused by hunger
+         */
+        HUNGER
     }
 }
