@@ -133,14 +133,12 @@ public class EnchantCommand extends VanillaCommand {
                 return 28;
             case "impaling":
                 return 29;
-            case "riptide":
-                return 30;
             case "loyality":
+                return 30;
+            case "riptide":
                 return 31;
             case "channeling":
                 return 32;
-            case "sweeping":
-                return 33;
             default:
                 return Integer.parseInt(value);
         }
