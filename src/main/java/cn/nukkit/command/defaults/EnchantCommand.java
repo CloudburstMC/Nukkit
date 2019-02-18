@@ -123,6 +123,24 @@ public class EnchantCommand extends VanillaCommand {
                 return 23;
             case "lure":
                 return 24;
+            case "frost_walker":
+                return 25;
+            case "mending":
+                return 26;
+            case "binding_curse":
+                return 27;
+            case "vanishing_curse":
+                return 28;
+            case "impaling":
+                return 29;
+            case "riptide":
+                return 30;
+            case "loyality":
+                return 31;
+            case "channeling":
+                return 32;
+            case "sweeping":
+                return 33;
             default:
                 return Integer.parseInt(value);
         }
