@@ -100,6 +100,22 @@ public class BlockTorch extends BlockFlowable implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return getBlockFace(this.getDamage() & 0x07);
     }
+
+    public BlockFace getBlockFace(int meta) {
+        switch (meta) {
+            case 1:
+                return BlockFace.EAST;
+            case 2:
+                return BlockFace.WEST;
+            case 3:
+                return BlockFace.SOUTH;
+            case 4:
+                return BlockFace.NORTH;
+            default:
+                return BlockFace.UP;
+        }
+    }
+
 }
