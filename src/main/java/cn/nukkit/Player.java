@@ -826,6 +826,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     protected void doFirstSpawn() {
+        this.spawned = true;
+
         this.setEnableClientCommand(true);
 
         this.getAdventureSettings().update();
@@ -922,8 +924,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (food.getLevel() != food.getMaxLevel()) {
             food.sendFoodLevel();
         }
-
-        this.spawned = true;
     }
 
     protected boolean orderChunks() {
