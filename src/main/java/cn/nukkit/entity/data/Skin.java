@@ -139,4 +139,8 @@ public class Skin {
                 length == SKIN_128_64_SIZE ||
                 length == SKIN_128_128_SIZE;
     }
+
+    public boolean isPremiumGeometry() {
+        return !geometryName.equalsIgnoreCase(GEOMETRY_CUSTOM) && !geometryName.equalsIgnoreCase(GEOMETRY_CUSTOM_SLIM);
+    }
 }
