@@ -1265,8 +1265,8 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void addMotion(double motionX, double motionY, double motionZ) {
-        int chunkX = this.getFloorX() >> 16;
-        int chunkZ = this.getFloorZ() >> 16;
+        int chunkX = this.getFloorX() >> 4;
+        int chunkZ = this.getFloorZ() >> 4;
         SetEntityMotionPacket pk = new SetEntityMotionPacket();
         pk.eid = this.getId();
         pk.motionX = (float) motionX;
