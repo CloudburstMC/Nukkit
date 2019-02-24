@@ -1905,7 +1905,7 @@ public class Level implements ChunkManager, Metadatable {
 
         if (this.gameRules.getBoolean(GameRule.DO_TILE_DROPS)) {
             int dropExp = target.getDropExp();
-            if (!isSilkTouch && player != null && drops.length != 0)
+            if (!isSilkTouch && player != null && drops.length != 0) {
                 player.addExperience(dropExp);
                 if (player.isSurvival()) {
                     for (int ii = 1; ii <= dropExp; ii++) {
