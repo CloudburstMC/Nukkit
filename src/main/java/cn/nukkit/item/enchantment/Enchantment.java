@@ -106,7 +106,7 @@ public abstract class Enchantment implements Cloneable {
     }
 
     public static Enchantment get(int id) {
-        return id >= 0 && id < enchantments.length ? enchantments[id] : null;
+        return id >= 0 && id < enchantments.length ? enchantments[id] : new UnknownEnchantment(id);
     }
 
     public static Enchantment getEnchantment(int id) {
@@ -247,5 +247,12 @@ public abstract class Enchantment implements Cloneable {
 
         String[] words = set.toArray(new String[0]);
         return String.join(" ", words);
+    }
+
+    private static class UnknownEnchantment extends Enchantment {
+
+        protected UnknownEnchantment(int id) {
+            super(id, "unknown", 0, EnchantmentType.ALL);
+        }
     }
 }
