@@ -42,7 +42,7 @@ public class BlockShulkerBox extends BlockTransparentMeta {
 
     @Override
     public double getHardness() {
-        return 6;
+        return 2.5;
     }
 
     @Override
