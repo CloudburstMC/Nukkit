@@ -12,11 +12,13 @@ import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class NukkitBanlist implements Banlist {
     private Map<UUID, BanEntry> entries;
@@ -55,35 +57,12 @@ public class NukkitBanlist implements Banlist {
 
     public boolean pardon(@Nonnull Player player) {
         Preconditions.checkNotNull(player, "player");
-        Optional<UUID> offline;
-        if (player.getXuid().isPresent()) {
-            return pardon(player.getUniqueId());
-        } else if ((offline = player.getOfflineUuid()).isPresent()) {
-            return pardon(offline.get());
-        }
-        return false;
-    }
-
-    public boolean pardon(@Nonnull String name) {
-        Preconditions.checkNotNull(name, "name");
-        return pardon(UUID.nameUUIDFromBytes(name.toLowerCase().getBytes(StandardCharsets.UTF_8)));
+        return pardon(player.getUniqueId());
     }
 
     public void ban(@Nonnull Player player, @Nullable Date expireDate, String reason, String source) {
         Preconditions.checkNotNull(player, "player");
-        Optional<UUID> offline;
-        if (player.getXuid().isPresent()) {
-            ban(player.getUniqueId(), expireDate, reason, source);
-        } else if ((offline = player.getOfflineUuid()).isPresent()) {
-            ban(offline.get(), expireDate, reason, source);
-        } else {
-            throw new IllegalStateException("Player does not have online or offline uuid");
-        }
-    }
-
-    public void ban(@Nonnull String name, Date expireDate, String reason, String source) {
-        Preconditions.checkNotNull(name, "name");
-        ban(UUID.nameUUIDFromBytes(name.toLowerCase().getBytes(StandardCharsets.UTF_8)), expireDate, reason, source);
+        ban(player.getUniqueId(), expireDate, reason, source);
     }
 
     public void ban(@Nonnull UUID uuid, Date expireDate, String reason, String source) {

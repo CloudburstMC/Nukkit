@@ -1,31 +1,32 @@
 package com.nukkitx.api.util;
 
 import com.google.common.base.Preconditions;
-import lombok.NonNull;
-import lombok.ToString;
-import lombok.Value;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.concurrent.Immutable;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
+import java.util.Objects;
 
-@Value
-@Nonnull
-@ToString(exclude = {"skinData", "capeData", "geometryData"})
+@Immutable
+@ParametersAreNonnullByDefault
 public class Skin {
-    @NonNull
     private final String skinId;
-    @NonNull
     private final byte[] skinData;
-    @NonNull
     private final byte[] capeData;
-    @NonNull
     private final String geometryName;
-    @NonNull
-    private final byte[] geometryData;
+    private final String geometryData;
+
+    public Skin(String skinId, byte[] skinData, byte[] capeData, String geometryName, String geometryData) {
+        this.skinId = Preconditions.checkNotNull(skinId, "skinId");
+        this.skinData = Preconditions.checkNotNull(skinData, "skinData");
+        this.capeData = Preconditions.checkNotNull(capeData, "capeData");
+        this.geometryName = Preconditions.checkNotNull(geometryName, "geometryName");
+        this.geometryData = Preconditions.checkNotNull(geometryData, "geometryData");
+    }
 
     @Nonnull
-    @ParametersAreNonnullByDefault
     public static Skin create(BufferedImage skin) {
         Preconditions.checkNotNull(skin, "image");
         Preconditions.checkArgument(skin.getHeight() == 32 && skin.getWidth() == 64, "Image is not 32x64");
@@ -43,6 +44,49 @@ public class Skin {
             }
         }
 
-        return new Skin("Standard_Custom", mcpeTexture, null, "geometry.humanoid.custom", null);
+        return new Skin("Standard_Custom", mcpeTexture, new byte[0], "geometry.humanoid.custom", "");
+    }
+
+    public String getSkinId() {
+        return skinId;
+    }
+
+    public byte[] getCapeData() {
+        return capeData;
+    }
+
+    public byte[] getSkinData() {
+        return skinData;
+    }
+
+    public String getGeometryName() {
+        return geometryName;
+    }
+
+    public String getGeometryData() {
+        return geometryData;
+    }
+
+    public boolean equals(final Object o) {
+        if (o == this) return true;
+        if (!(o instanceof Skin)) return false;
+        final Skin that = (Skin) o;
+        return Objects.equals(this.skinId, that.skinId) &&
+                Arrays.equals(this.skinData, that.skinData) &&
+                Arrays.equals(this.capeData, that.capeData) &&
+                Objects.equals(this.geometryName, that.geometryName) &&
+                Objects.equals(this.geometryData, that.geometryData);
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof Skin;
+    }
+
+    public int hashCode() {
+        return Objects.hash(skinId, skinData, capeData, geometryName, geometryData);
+    }
+
+    public String toString() {
+        return "Skin(skinId=" + skinId + ", geometryName=" + geometryName + ')';
     }
 }

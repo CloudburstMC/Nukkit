@@ -1,50 +1,58 @@
 package com.nukkitx.server.inventory.transaction;
 
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
-import io.netty.buffer.ByteBuf;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 
-import static com.nukkitx.server.network.util.VarInts.readUnsignedInt;
-import static com.nukkitx.server.network.util.VarInts.writeUnsignedInt;
+import com.flowpowered.math.vector.Vector3f;
+import com.nukkitx.api.item.ItemStack;
+import com.nukkitx.protocol.bedrock.data.ContainerId;
+import com.nukkitx.protocol.bedrock.data.InventoryAction;
+import com.nukkitx.protocol.bedrock.data.InventorySource;
+import com.nukkitx.protocol.bedrock.data.ItemData;
+import com.nukkitx.server.inventory.NukkitPlayerInventory;
+import com.nukkitx.server.item.ItemUtils;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
+import lombok.Getter;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
-public class ItemReleaseTransaction extends ComplexTransaction {
-    private static final Type type = Type.ITEM_RELEASE;
-    private Action action;
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Collection;
+import java.util.List;
 
-    @Override
-    public void execute(PlayerSession session) {
+@Getter
+@ParametersAreNonnullByDefault
+public class ItemReleaseTransaction extends InventoryTransaction {
+    private final Action action;
+    private final int selectedSlot;
+    private final ItemData selectedItem;
+    private final Vector3f headPosition;
 
+    ItemReleaseTransaction(Collection<InventoryAction> actions, Action action, int selectedSlot, ItemData selectedItem, Vector3f headPosition) {
+        super(InventoryTransactionType.ITEM_RELEASE, actions);
+        this.action = action;
+        this.selectedSlot = selectedSlot;
+        this.selectedItem = selectedItem;
+        this.headPosition = headPosition;
     }
 
     @Override
-    public void read(ByteBuf buffer){
-        action = Action.values()[readUnsignedInt(buffer)];
-        super.read(buffer);
-    }
+    public InventoryTransactionResult handle(NukkitPlayerSession player, boolean ignoreChecks) {
+        InventoryTransactionResult result = InventoryTransactionResult.FAILED_VERIFYING;
+        if (player.isAlive()) {
+            NukkitPlayerInventory inventory = player.getInventory();
+            ItemStack selectedItem = inventory.getSelectedItem();
+            ItemStack transactionSelectedItem = ItemUtils.fromNetwork(this.selectedItem);
 
-    @Override
-    public void write(ByteBuf buffer){
-        writeUnsignedInt(buffer, action.ordinal());
-        super.write(buffer);
-    }
+            if (!selectedItem.equals(transactionSelectedItem, true, true, true) ||
+                    inventory.getSelectedSlot() != selectedSlot || !ignoreChecks) {
+                return result;
+            }
 
-    @Override
-    public Type getType() {
-        return type;
-    }
+            List<InventoryAction> actions = getSources(InventorySource.fromContainerWindowId(ContainerId.INVENTORY));
 
-    @Override
-    public String toString() {
-        return "ItemReleaseTransaction" + super.toString() +
-                ", action=" + action +
-                ')';
+        }
+        return result;
     }
 
     public enum Action {
         RELEASE,
-        USE
+        CONSUME
     }
 }

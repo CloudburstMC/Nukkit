@@ -1,13 +1,13 @@
 package com.nukkitx.api.metadata.blockentity;
 
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
 
 public interface JukeboxBlockEntity extends BlockEntity {
 
-    Optional<ItemInstance> getRecord();
+    Optional<ItemStack> getRecord();
 
     /**
      * Set the current record in the jukebox.
@@ -15,5 +15,5 @@ public interface JukeboxBlockEntity extends BlockEntity {
      * @param item the record
      * @throws IllegalArgumentException {@link com.nukkitx.api.item.ItemType} must be a record
      */
-    void setRecord(@Nullable ItemInstance item);
+    void setRecord(@Nullable ItemStack item);
 }

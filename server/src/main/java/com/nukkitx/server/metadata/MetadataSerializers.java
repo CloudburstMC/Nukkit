@@ -2,7 +2,7 @@ package com.nukkitx.server.metadata;
 
 import com.nukkitx.api.block.BlockState;
 import com.nukkitx.api.block.BlockTypes;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 import com.nukkitx.api.item.ItemType;
 import com.nukkitx.api.item.ItemTypes;
 import com.nukkitx.api.metadata.Metadata;
@@ -96,7 +96,7 @@ public class MetadataSerializers {
         SERIALIZERS.put(BlockTypes.QUARTZ_STAIRS.getId(), StairsSerializer.INSTANCE);
         SERIALIZERS.put(BlockTypes.RED_SANDSTONE_STAIRS.getId(), StairsSerializer.INSTANCE);
         SERIALIZERS.put(BlockTypes.STONE_SLAB.getId(), StoneSlabSerializer.INSTANCE);
-        SERIALIZERS.put(BlockTypes.RED_SANDSTONE_SLAB.getId(), StoneSlab2Serializer.INSTANCE);
+        SERIALIZERS.put(BlockTypes.STONE_SLAB_2.getId(), StoneSlab2Serializer.INSTANCE);
         SERIALIZERS.put(BlockTypes.WOODEN_SLAB.getId(), WoodSlabSerializer.INSTANCE);
         SERIALIZERS.put(BlockTypes.TOP_SNOW.getId(), TopSnowSerializer.INSTANCE);
         SERIALIZERS.put(BlockTypes.TRAPDOOR.getId(), TrapdoorSerializer.INSTANCE);
@@ -177,7 +177,7 @@ public class MetadataSerializers {
         return serializeMetadata(block.getBlockType(), block);
     }
 
-    public static short serializeMetadata(ItemInstance itemStack) {
+    public static short serializeMetadata(ItemStack itemStack) {
         return serializeMetadata(itemStack.getItemType(), itemStack);
     }
 

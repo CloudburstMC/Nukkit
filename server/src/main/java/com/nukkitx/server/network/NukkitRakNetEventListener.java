@@ -2,9 +2,9 @@ package com.nukkitx.server.network;
 
 import com.nukkitx.api.event.server.ConnectionRequestEvent;
 import com.nukkitx.network.raknet.RakNetServerEventListener;
+import com.nukkitx.protocol.bedrock.v332.Bedrock_v332;
 import com.nukkitx.server.NukkitConfiguration;
 import com.nukkitx.server.NukkitServer;
-import com.nukkitx.server.network.bedrock.BedrockPacketCodec;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -54,7 +54,7 @@ public class NukkitRakNetEventListener implements RakNetServerEventListener {
         return new Advertisement(
                 "MCPE",
                 config.getGeneral().getMotd(),
-                BedrockPacketCodec.BROADCAST_PROTOCOL_VERSION,
+                Bedrock_v332.V332_CODEC.getProtocolVersion(),
                 NukkitServer.MINECRAFT_VERSION.toString(),
                 server.getSessionManager().playerSessionCount(),
                 config.getGeneral().getMaximumPlayers(),

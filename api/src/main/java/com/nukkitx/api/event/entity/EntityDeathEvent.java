@@ -1,17 +1,17 @@
 package com.nukkitx.api.event.entity;
 
 import com.nukkitx.api.entity.Entity;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 
 public class EntityDeathEvent implements EntityEvent {
     private final Entity entity;
-    private ItemInstance[] drops = new ItemInstance[0];
+    private ItemStack[] drops = new ItemStack[0];
 
     public EntityDeathEvent(Entity entity) {
-        this(entity, new ItemInstance[0]);
+        this(entity, new ItemStack[0]);
     }
 
-    public EntityDeathEvent(Entity entity, ItemInstance[] drops) {
+    public EntityDeathEvent(Entity entity, ItemStack[] drops) {
         this.entity = entity;
         this.drops = drops;
     }
@@ -21,11 +21,11 @@ public class EntityDeathEvent implements EntityEvent {
         return entity;
     }
 
-    public ItemInstance[] getDrops() {
+    public ItemStack[] getDrops() {
         return drops;
     }
 
-    public void setDrops(ItemInstance[] drops) {
+    public void setDrops(ItemStack[] drops) {
         this.drops = drops;
     }
 }

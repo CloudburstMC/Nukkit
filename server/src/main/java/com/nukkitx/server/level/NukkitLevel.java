@@ -7,21 +7,21 @@ import com.nukkitx.api.block.Block;
 import com.nukkitx.api.block.BlockState;
 import com.nukkitx.api.entity.Entity;
 import com.nukkitx.api.entity.system.System;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 import com.nukkitx.api.level.Level;
 import com.nukkitx.api.level.LevelData;
 import com.nukkitx.api.level.chunk.Chunk;
 import com.nukkitx.api.level.chunk.generator.ChunkGenerator;
 import com.nukkitx.nbt.tag.CompoundTag;
+import com.nukkitx.protocol.bedrock.packet.BlockEntityDataPacket;
+import com.nukkitx.protocol.bedrock.packet.UpdateBlockPacket;
 import com.nukkitx.server.NukkitServer;
 import com.nukkitx.server.entity.misc.DroppedItemEntity;
 import com.nukkitx.server.entity.system.*;
 import com.nukkitx.server.level.manager.*;
 import com.nukkitx.server.level.provider.ChunkProvider;
 import com.nukkitx.server.metadata.MetadataSerializers;
-import com.nukkitx.server.network.bedrock.packet.BlockEntityDataPacket;
-import com.nukkitx.server.network.bedrock.packet.UpdateBlockPacket;
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
@@ -31,6 +31,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Log4j2
 public class NukkitLevel implements Level {
+    private static final int HEIGHT = 255;
     @Getter
     private static final LevelPaletteManager paletteManager = new LevelPaletteManager();
     private static final int FULL_TIME = 24000;
@@ -65,7 +66,7 @@ public class NukkitLevel implements Level {
             levelData.setDefaultSpawn(generator.getDefaultSpawn());
         }
 
-        registerSystem(PlayerSession.SYSTEM);
+        registerSystem(NukkitPlayerSession.SYSTEM);
         registerSystem(FlammableDecrementSystem.SYSTEM);
         registerSystem(PhysicsSystem.SYSTEM);
         registerSystem(PickupDelayDecrementSystem.SYSTEM);
@@ -115,6 +116,11 @@ public class NukkitLevel implements Level {
     }
 
     @Override
+    public int getHeight() {
+        return HEIGHT;
+    }
+
+    @Override
     public void registerSystem(System system) {
         entityManager.registerSystem(system);
     }
@@ -153,9 +159,9 @@ public class NukkitLevel implements Level {
     }
 
     @Override
-    public DroppedItemEntity dropItem(@Nonnull ItemInstance item, @Nonnull Vector3f position) {
+    public DroppedItemEntity dropItem(@Nonnull ItemStack item, @Nonnull Vector3f position) {
         Preconditions.checkNotNull(item, "item");
-        Preconditions.checkNotNull(position, "position");
+        Preconditions.checkNotNull(position, "blockPosition");
         Preconditions.checkArgument(getBlockIfChunkLoaded(position.toInt()).isPresent(), "dropped item cannot be spawned in unloaded chunk");
         return new DroppedItemEntity(position, this, server, item);
     }
@@ -171,7 +177,7 @@ public class NukkitLevel implements Level {
         UpdateBlockPacket packet = new UpdateBlockPacket();
         packet.setRuntimeId(paletteManager.getOrCreateRuntimeId(state));
         packet.setBlockPosition(position);
-        packet.setDataLayer(UpdateBlockPacket.DataLayer.NORMAL);
+        packet.setDataLayer(0);
         packetManager.queuePacketForViewers(entity, packet);
 
         if (state.getBlockEntity().isPresent()) {
@@ -179,12 +185,14 @@ public class NukkitLevel implements Level {
             if (tag == null) {
                 throw new IllegalStateException("Serialized BlockEntity tag was null");
             }
-            tag.tagInt("x", position.getX());
-            tag.tagInt("y", position.getY());
-            tag.tagInt("z", position.getZ());
+            tag = tag.toBuilder()
+                    .intTag("x", position.getX())
+                    .intTag("y", position.getY())
+                    .intTag("z", position.getZ())
+                    .buildRootTag();
 
             BlockEntityDataPacket packet1 = new BlockEntityDataPacket();
-            packet1.setBlockPostion(position);
+            packet1.setBlockPosition(position);
             packet1.setData(tag);
             packetManager.queuePacketForViewers(entity, packet1);
         }

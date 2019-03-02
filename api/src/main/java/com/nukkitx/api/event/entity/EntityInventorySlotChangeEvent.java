@@ -2,16 +2,16 @@ package com.nukkitx.api.event.entity;
 
 import com.nukkitx.api.entity.Entity;
 import com.nukkitx.api.event.Cancellable;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 
 public class EntityInventorySlotChangeEvent implements EntityEvent, Cancellable {
     private final Entity entity;
-    private final ItemInstance oldItem;
+    private final ItemStack oldItem;
     private final int slot;
-    private ItemInstance newItem;
+    private ItemStack newItem;
     private boolean cancelled;
 
-    public EntityInventorySlotChangeEvent(Entity entity, ItemInstance oldItem, ItemInstance newItem, int slot) {
+    public EntityInventorySlotChangeEvent(Entity entity, ItemStack oldItem, ItemStack newItem, int slot) {
         this.entity = entity;
         this.oldItem = oldItem;
         this.newItem = newItem;
@@ -22,15 +22,15 @@ public class EntityInventorySlotChangeEvent implements EntityEvent, Cancellable 
         return slot;
     }
 
-    public ItemInstance getNewItem() {
+    public ItemStack getNewItem() {
         return newItem;
     }
 
-    public void setNewItem(ItemInstance newItem) {
+    public void setNewItem(ItemStack newItem) {
         this.newItem = newItem;
     }
 
-    public ItemInstance getOldItem() {
+    public ItemStack getOldItem() {
         return oldItem;
     }
 

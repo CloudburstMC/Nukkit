@@ -13,6 +13,13 @@ public interface Cancellable extends Event {
     boolean isCancelled();
 
     /**
+     * Cancel the event.
+     */
+    default void cancel() {
+        setCancelled(true);
+    }
+
+    /**
      * Decides whether to cancel the event.
      *
      * @param cancelled true to cancel the event.

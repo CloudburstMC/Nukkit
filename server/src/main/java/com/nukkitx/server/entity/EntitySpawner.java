@@ -50,7 +50,7 @@ public class EntitySpawner {
 
     public <T extends Entity> T spawnEntity(@Nonnull Class<? extends Entity> clazz, @Nonnull Vector3f position, @Nonnull NukkitLevel level) {
         Preconditions.checkNotNull(clazz, "clazz");
-        Preconditions.checkNotNull(position, "position");
+        Preconditions.checkNotNull(position, "blockPosition");
         Preconditions.checkNotNull(level, "level");
 
         EntityFactory<T> factory;

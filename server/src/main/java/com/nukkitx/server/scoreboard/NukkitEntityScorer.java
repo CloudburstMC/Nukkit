@@ -2,7 +2,7 @@ package com.nukkitx.server.scoreboard;
 
 import com.nukkitx.api.entity.Entity;
 import com.nukkitx.api.scoreboard.EntityScorer;
-import com.nukkitx.server.network.bedrock.BedrockUtil;
+import com.nukkitx.network.VarInts;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 
@@ -20,7 +20,7 @@ public class NukkitEntityScorer extends NukkitScorer implements EntityScorer {
 
     @Override
     protected void write(@Nonnull ByteBuf buffer) {
-        BedrockUtil.writeUniqueEntityId(buffer, entity.getEntityId());
+        VarInts.writeLong(buffer, entity.getEntityId());
     }
 
     @Override

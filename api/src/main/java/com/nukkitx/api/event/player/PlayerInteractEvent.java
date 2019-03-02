@@ -4,7 +4,7 @@ import com.flowpowered.math.vector.Vector3f;
 import com.nukkitx.api.Player;
 import com.nukkitx.api.block.Block;
 import com.nukkitx.api.event.Cancellable;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 import com.nukkitx.api.util.data.BlockFace;
 
 public class PlayerInteractEvent implements PlayerEvent, Cancellable {
@@ -12,15 +12,15 @@ public class PlayerInteractEvent implements PlayerEvent, Cancellable {
     private final Block blockTouched;
     private final Vector3f touchVector;
     private final BlockFace blockFace;
-    private final ItemInstance item;
+    private final ItemStack item;
     private final Action action;
     private boolean cancelled;
 
-    public PlayerInteractEvent(Player player, ItemInstance item, Block block, Vector3f touch, BlockFace face) {
+    public PlayerInteractEvent(Player player, ItemStack item, Block block, Vector3f touch, BlockFace face) {
         this(player, item, block, touch, face, Action.RIGHT_CLICK_BLOCK);
     }
 
-    public PlayerInteractEvent(Player player, ItemInstance item, Block block, Vector3f touch, BlockFace face, Action action) {
+    public PlayerInteractEvent(Player player, ItemStack item, Block block, Vector3f touch, BlockFace face, Action action) {
         this.player = player;
         this.blockTouched = block;
         this.touchVector = touch;
@@ -37,7 +37,7 @@ public class PlayerInteractEvent implements PlayerEvent, Cancellable {
         PHYSICAL
     }
 
-    public ItemInstance getItem() {
+    public ItemStack getItem() {
         return item;
     }
 

@@ -4,12 +4,12 @@ import com.flowpowered.math.vector.Vector3f;
 import com.google.common.base.Preconditions;
 import com.nukkitx.api.entity.Entity;
 import com.nukkitx.api.level.SoundEvent;
+import com.nukkitx.protocol.bedrock.BedrockPacket;
+import com.nukkitx.protocol.bedrock.packet.LevelEventPacket;
+import com.nukkitx.protocol.bedrock.packet.LevelSoundEventPacket;
 import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.packet.LevelEventPacket;
-import com.nukkitx.server.network.bedrock.packet.LevelSoundEventPacket;
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import lombok.Synchronized;
@@ -30,12 +30,12 @@ public class LevelPacketManager {
     }
 
     public void onTick() {
-        List<PlayerSession> playersInWorld = level.getEntityManager().getPlayers();
+        List<NukkitPlayerSession> playersInWorld = level.getEntityManager().getPlayers();
         BedrockPacket pk;
         while ((pk = broadcastQueue.poll()) != null) {
-            for (PlayerSession session : playersInWorld) {
+            for (NukkitPlayerSession session : playersInWorld) {
                 if (!session.isRemoved()) {
-                    session.getMinecraftSession().addToSendQueue(pk);
+                    session.getBedrockSession().sendPacket(pk);
                 }
             }
         }
@@ -45,13 +45,13 @@ public class LevelPacketManager {
                 Optional<BaseEntity> entityById = level.getEntityManager().getEntityById(eid);
                 if (entityById.isPresent()) {
                     Entity entity = entityById.get();
-                    for (PlayerSession session : playersInWorld) {
+                    for (NukkitPlayerSession session : playersInWorld) {
                         if (session == entity) continue; // Don't move ourselves
 
                         if (session.getPosition().distanceSquared(entity.getPosition()) <= viewDistanceSquared && !session.isRemoved()) {
                             for (BedrockPacket packet : queue) {
 
-                                session.getMinecraftSession().addToSendQueue(packet);
+                                session.getBedrockSession().sendPacket(packet);
                             }
                         }
                     }
@@ -63,10 +63,10 @@ public class LevelPacketManager {
 
         synchronized (specificPositionViewerQueue) {
             specificPositionViewerQueue.forEach((position, queue) -> {
-                for (PlayerSession session : playersInWorld) {
+                for (NukkitPlayerSession session : playersInWorld) {
                     if (session.getPosition().distanceSquared(position) <= viewDistanceSquared && !session.isRemoved()) {
                         for (BedrockPacket packet : queue) {
-                            session.getMinecraftSession().addToSendQueue(packet);
+                            session.getBedrockSession().sendPacket(packet);
                         }
                     }
                 }
@@ -89,7 +89,7 @@ public class LevelPacketManager {
 
     @Synchronized("specificPositionViewerQueue")
     public void queuePacketForViewers(Vector3f position, BedrockPacket packet) {
-        Preconditions.checkNotNull(position, "position");
+        Preconditions.checkNotNull(position, "blockPosition");
         Preconditions.checkNotNull(packet, "packet");
         Queue<BedrockPacket> packageQueue = specificPositionViewerQueue.get(position);
         if (packageQueue == null) {
@@ -121,10 +121,10 @@ public class LevelPacketManager {
         queuePacketForViewers(entity, packet);
     }
 
-    public void queueSoundForViewers(Vector3f position, SoundEvent soundEvent, int pitch, int extraData, boolean disableRelativeVolume) {
+    public void queueSoundForViewers(Vector3f position, SoundEvent sound, int pitch, int extraData, boolean disableRelativeVolume) {
         LevelSoundEventPacket packet = new LevelSoundEventPacket();
         packet.setPosition(position);
-        packet.setSoundEvent(soundEvent);
+        packet.setSound(com.nukkitx.protocol.bedrock.data.SoundEvent.valueOf(sound.name()));
         packet.setPitch(pitch);
         packet.setExtraData(extraData);
         packet.setRelativeVolumeDisabled(disableRelativeVolume);
@@ -132,10 +132,10 @@ public class LevelPacketManager {
         queuePacketForViewers(position, packet);
     }
 
-    public void queueSoundForViewers(Entity entity, SoundEvent soundEvent, int pitch, int extraData, boolean disableRelativeVolume) {
+    public void queueSoundForViewers(Entity entity, SoundEvent sound, int pitch, int extraData, boolean disableRelativeVolume) {
         LevelSoundEventPacket packet = new LevelSoundEventPacket();
         packet.setPosition(entity.getPosition());
-        packet.setSoundEvent(soundEvent);
+        packet.setSound(com.nukkitx.protocol.bedrock.data.SoundEvent.valueOf(sound.name()));
         packet.setPitch(pitch);
         packet.setExtraData(extraData);
         packet.setRelativeVolumeDisabled(disableRelativeVolume);
@@ -147,26 +147,26 @@ public class LevelPacketManager {
         Preconditions.checkNotNull(entity, "entity");
         Preconditions.checkNotNull(packet, "packet");
 
-        List<PlayerSession> playersInWorld = level.getEntityManager().getPlayers();
+        List<NukkitPlayerSession> playersInWorld = level.getEntityManager().getPlayers();
 
-        for (PlayerSession session : playersInWorld) {
+        for (NukkitPlayerSession session : playersInWorld) {
             if (session == entity) continue; // Don't move ourselves
 
             if (session.getPosition().distanceSquared(entity.getPosition()) <= viewDistanceSquared && !session.isRemoved()) {
-                session.getMinecraftSession().addToSendQueue(packet);
+                session.getBedrockSession().sendPacketImmediately(packet);
             }
         }
     }
 
     public void sendImmediatePacketForViewers(Vector3f position, BedrockPacket packet) {
-        Preconditions.checkNotNull(position, "position");
+        Preconditions.checkNotNull(position, "blockPosition");
         Preconditions.checkNotNull(packet, "packet");
 
-        List<PlayerSession> playersInWorld = level.getEntityManager().getPlayers();
+        List<NukkitPlayerSession> playersInWorld = level.getEntityManager().getPlayers();
 
-        for (PlayerSession session : playersInWorld) {
+        for (NukkitPlayerSession session : playersInWorld) {
             if (session.getPosition().distanceSquared(position) <= viewDistanceSquared && !session.isRemoved()) {
-                session.getMinecraftSession().addToSendQueue(packet);
+                session.getBedrockSession().sendPacketImmediately(packet);
             }
         }
     }

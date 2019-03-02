@@ -1,7 +1,7 @@
 package com.nukkitx.server.metadata.serializer;
 
 import com.nukkitx.api.block.BlockState;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 import com.nukkitx.api.item.ItemType;
 import com.nukkitx.api.metadata.Metadata;
 import com.nukkitx.api.metadata.blockentity.BlockEntity;
@@ -21,7 +21,7 @@ public interface Serializer<T extends Metadata> {
         return null;
     }
 
-    default CompoundTag readNBT(ItemInstance item) {
+    default CompoundTag readNBT(ItemStack item) {
         return null;
     }
 

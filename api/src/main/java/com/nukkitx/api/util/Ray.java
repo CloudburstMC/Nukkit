@@ -39,7 +39,7 @@ public final class Ray {
     @Override
     public String toString() {
         return "Ray{" +
-                "position=" + position +
+                "blockPosition=" + position +
                 ", direction=" + direction +
                 '}';
     }

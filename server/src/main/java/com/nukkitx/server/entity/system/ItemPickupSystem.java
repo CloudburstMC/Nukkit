@@ -5,11 +5,11 @@ import com.nukkitx.api.entity.component.ContainedItem;
 import com.nukkitx.api.entity.component.PickupDelay;
 import com.nukkitx.api.entity.system.System;
 import com.nukkitx.api.entity.system.SystemRunner;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 import com.nukkitx.api.util.BoundingBox;
+import com.nukkitx.protocol.bedrock.packet.TakeItemEntityPacket;
 import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.bedrock.packet.TakeItemEntityPacket;
 
 public class ItemPickupSystem implements SystemRunner {
     public static final System SYSTEM = System.builder()
@@ -26,7 +26,7 @@ public class ItemPickupSystem implements SystemRunner {
         }
 
         BoundingBox enlargedBB = entity.getBoundingBox().grow(1f);
-        ItemInstance item = entity.ensureAndGet(ContainedItem.class).getItem();
+        ItemStack item = entity.ensureAndGet(ContainedItem.class).getItem();
 
         for (BaseEntity entityNear : ((NukkitLevel) entity.getLevel()).getEntityManager().getEntitiesInBounds(enlargedBB)) {
             if (entityNear != entity && entityNear.onItemPickup(item)) {

@@ -3,26 +3,26 @@ package com.nukkitx.api.level;
 import com.nukkitx.api.level.data.GameRule;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
 
+@ParametersAreNonnullByDefault
 public interface GameRules {
 
-    void setGameRule(@Nonnull GameRule gameRule, boolean value);
+    void setGameRule(GameRule rule, boolean value);
 
-    void setGameRule(@Nonnull GameRule gameRule, int value);
+    void setGameRule(GameRule rule, int value);
 
-    void setGameRule(@Nonnull GameRule gameRule, float value);
+    void setGameRule(GameRule rule, float value);
 
-    boolean getBoolean(@Nonnull GameRule gameRule);
+    boolean getBoolean(GameRule rule);
 
-    int getInteger(@Nonnull GameRule gameRule);
+    int getInteger(GameRule rule);
 
-    float getFloat(@Nonnull GameRule gameRule);
+    float getFloat(GameRule rule);
+
+    boolean contains(GameRule rule);
 
     @Nonnull
-    String getString(@Nonnull GameRule gameRule);
-
-    boolean contains(@Nullable GameRule gameRule);
-
-    GameRule[] getRules();
+    List<String> getRules();
 }

@@ -5,19 +5,19 @@ import com.nukkitx.api.entity.component.ContainedItem;
 import com.nukkitx.api.entity.component.Physics;
 import com.nukkitx.api.entity.component.PickupDelay;
 import com.nukkitx.api.entity.misc.DroppedItem;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
+import com.nukkitx.protocol.bedrock.packet.AddItemEntityPacket;
 import com.nukkitx.server.NukkitServer;
 import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.entity.EntityType;
 import com.nukkitx.server.entity.component.ContainedItemComponent;
 import com.nukkitx.server.entity.component.PhysicsComponent;
 import com.nukkitx.server.entity.component.PickupDelayComponent;
+import com.nukkitx.server.item.ItemUtils;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.bedrock.BedrockPacket;
-import com.nukkitx.server.network.bedrock.packet.AddItemEntityPacket;
 
 public class DroppedItemEntity extends BaseEntity implements DroppedItem {
-    public DroppedItemEntity(Vector3f position, NukkitLevel level, NukkitServer server, ItemInstance itemDropped) {
+    public DroppedItemEntity(Vector3f position, NukkitLevel level, NukkitServer server, ItemStack itemDropped) {
         super(EntityType.ITEM, position, level, server);
 
         this.registerComponent(ContainedItem.class, new ContainedItemComponent(itemDropped));
@@ -26,9 +26,9 @@ public class DroppedItemEntity extends BaseEntity implements DroppedItem {
     }
 
     @Override
-    public BedrockPacket createAddEntityPacket() {
+    public AddItemEntityPacket createAddEntityPacket() {
         AddItemEntityPacket packet = new AddItemEntityPacket();
-        packet.setItemInstance(ensureAndGet(ContainedItem.class).getItem());
+        packet.setItemInHand(ItemUtils.toNetwork(ensureAndGet(ContainedItem.class).getItem()));
         packet.setMotion(getMotion());
         packet.setPosition(getGamePosition());
         packet.setRuntimeEntityId(getEntityId());

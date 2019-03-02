@@ -5,12 +5,11 @@ import com.nukkitx.api.entity.component.ContainedItem;
 import com.nukkitx.api.entity.misc.DroppedItem;
 import com.nukkitx.api.entity.system.System;
 import com.nukkitx.api.entity.system.SystemRunner;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 import com.nukkitx.api.util.BoundingBox;
+import com.nukkitx.protocol.bedrock.packet.EntityEventPacket;
 import com.nukkitx.server.entity.BaseEntity;
-import com.nukkitx.server.entity.EntityEvent;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.bedrock.packet.EntityEventPacket;
 
 public class MergeItemsSystem implements SystemRunner {
     public static final System SYSTEM = System.builder()
@@ -24,8 +23,8 @@ public class MergeItemsSystem implements SystemRunner {
             return;
         }
         ContainedItem containedItem = entity.ensureAndGet(ContainedItem.class);
-        ItemInstance itemInstance = containedItem.getItem();
-        if (itemInstance.isFull()) {
+        ItemStack itemStack = containedItem.getItem();
+        if (itemStack.isFull()) {
             return;
         }
 
@@ -37,26 +36,26 @@ public class MergeItemsSystem implements SystemRunner {
             }
             if (bbEntity instanceof DroppedItem) {
                 ContainedItem containedItem1 = bbEntity.ensureAndGet(ContainedItem.class);
-                if (itemInstance.isMergeable(containedItem1.getItem())) {
-                    int newAmount = itemInstance.getAmount() + containedItem1.getItem().getAmount();
+                if (itemStack.isMergeable(containedItem1.getItem())) {
+                    int newAmount = itemStack.getAmount() + containedItem1.getItem().getAmount();
 
                     // Check if a merge is possible
-                    if (newAmount > itemInstance.getItemType().getMaximumStackSize()) {
+                    if (newAmount > itemStack.getItemType().getMaximumStackSize()) {
                         continue;
                     }
 
-                    containedItem.setItem(itemInstance.toBuilder().amount(newAmount).build());
+                    containedItem.setItem(itemStack.toBuilder().amount(newAmount).build());
 
                     // Send merge to client
                     EntityEventPacket entityEvent = new EntityEventPacket();
                     entityEvent.setRuntimeEntityId(entity.getEntityId());
                     entityEvent.setData(newAmount);
-                    entityEvent.setEvent(EntityEvent.ITEM_ENTITY_MERGE);
+                    entityEvent.setEvent(EntityEventPacket.Event.MERGE_ITEMS);
 
                     ((NukkitLevel) entity.getLevel()).getPacketManager().queuePacketForViewers(entity, entityEvent);
                     // Remove entity.
                     bbEntity.remove();
-                    // Set position to midpoint
+                    // Set blockPosition to midpoint
                     entity.setPositionFromSystem(entity.getPosition().add(bbEntity.getPosition()).div(2f).add(0,0.5f, 0));
                     break;
                 }

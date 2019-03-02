@@ -40,7 +40,7 @@ public class Lever extends SimpleDirectional implements Powerable {
         return "Lever(" +
                 "powered=" + powered +
                 ", direction=" + getDirection() +
-                ", position=" + position +
+                ", blockPosition=" + position +
                 ')';
     }
 

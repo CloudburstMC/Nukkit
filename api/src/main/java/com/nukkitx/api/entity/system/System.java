@@ -55,10 +55,7 @@ public final class System {
 
     @Override
     public String toString() {
-        return "System{" +
-                "expectedComponents=" + expectedComponents +
-                ", runner=" + runner +
-                '}';
+        return "System(expectedComponents=" + expectedComponents + ", runner=" + runner + ')';
     }
 
     public static class Builder {

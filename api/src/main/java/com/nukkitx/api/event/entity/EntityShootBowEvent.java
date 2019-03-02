@@ -4,16 +4,16 @@ import com.google.common.base.Preconditions;
 import com.nukkitx.api.entity.Entity;
 import com.nukkitx.api.entity.component.Projectile;
 import com.nukkitx.api.event.Cancellable;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 
 public class EntityShootBowEvent implements EntityEvent, Cancellable {
     private final Entity entity;
-    private final ItemInstance bow;
+    private final ItemStack bow;
     private Entity projectile;
     private float force;
     private boolean cancelled;
 
-    public EntityShootBowEvent(Entity shooter, ItemInstance bow, Entity projectile, float force) {
+    public EntityShootBowEvent(Entity shooter, ItemStack bow, Entity projectile, float force) {
         this.entity = shooter;
         this.bow = bow;
         this.projectile = projectile;
@@ -25,7 +25,7 @@ public class EntityShootBowEvent implements EntityEvent, Cancellable {
         return entity;
     }
 
-    public ItemInstance getBow() {
+    public ItemStack getBow() {
         return bow;
     }
 

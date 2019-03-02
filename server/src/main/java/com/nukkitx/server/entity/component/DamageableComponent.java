@@ -2,7 +2,7 @@ package com.nukkitx.server.entity.component;
 
 import com.google.common.base.Preconditions;
 import com.nukkitx.api.entity.component.Damageable;
-import com.nukkitx.server.entity.Attribute;
+import com.nukkitx.protocol.bedrock.data.Attribute;
 import com.nukkitx.server.entity.BaseEntity;
 
 import javax.annotation.Nonnegative;

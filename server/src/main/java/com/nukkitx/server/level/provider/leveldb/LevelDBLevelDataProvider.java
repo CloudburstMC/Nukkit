@@ -6,12 +6,11 @@ import com.nukkitx.api.level.data.Difficulty;
 import com.nukkitx.api.level.data.GameRule;
 import com.nukkitx.api.level.data.Generator;
 import com.nukkitx.api.util.GameMode;
-import com.nukkitx.nbt.NBTIO;
+import com.nukkitx.nbt.NbtUtils;
 import com.nukkitx.nbt.stream.NBTInputStream;
 import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.nbt.tag.IntTag;
 import com.nukkitx.nbt.tag.LongTag;
-import com.nukkitx.nbt.tag.StringTag;
 import com.nukkitx.server.level.NukkitLevelData;
 import com.nukkitx.server.level.provider.LevelDataProvider;
 
@@ -20,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Optional;
 
 public class LevelDBLevelDataProvider extends NukkitLevelData implements LevelDataProvider {
     private final Path levelDatPath;
@@ -47,7 +45,7 @@ public class LevelDBLevelDataProvider extends NukkitLevelData implements LevelDa
                 return new LevelDBLevelDataProvider(levelDatPath);
             }
             stream.skip(8);
-            NBTInputStream reader = NBTIO.createReaderLE(stream);
+            NBTInputStream reader = NbtUtils.createReaderLE(stream);
             tag = (CompoundTag) reader.readTag();
         }
 
@@ -55,43 +53,40 @@ public class LevelDBLevelDataProvider extends NukkitLevelData implements LevelDa
             return new LevelDBLevelDataProvider(levelDatPath);
         }
 
-        long seed = tag.getAsLong("RandomSeed").map(LongTag::getPrimitiveValue).orElse(-1L);
-        long savedTime = tag.getAsLong("Time").map(LongTag::getPrimitiveValue).orElse(0L);
-        long savedTick = tag.getAsLong("currentTick").map(LongTag::getPrimitiveValue).orElse(0L);
-        int generatorInt = tag.getAsInt("ChunkGenerator").map(IntTag::getPrimitiveValue).orElse(0);
+        long seed = tag.getAs("RandomSeed", LongTag.class).getPrimitiveValue();
+        long savedTime = tag.getAs("Time", LongTag.class).getPrimitiveValue();
+        long savedTick = tag.getAs("currentTick", LongTag.class).getPrimitiveValue();
+        int generatorInt = tag.getAs("ChunkGenerator", IntTag.class).getPrimitiveValue();
         Generator generator = (generatorInt > 5 || generatorInt < 0 ? Generator.OVERWORLD : Generator.values()[generatorInt]);
 
         final LevelDBLevelDataProvider levelData = new LevelDBLevelDataProvider(levelDatPath, seed, savedTime, savedTick, generator);
 
         // Level Data
-        levelData.setName(tag.getAsString("LevelName").map(StringTag::getValue).orElse("New World"));
+        tag.listen("LevelName", String.class, levelData::setName);
 
         // Level Settings
-        levelData.setDifficulty(Difficulty.parse(tag.getAsInt("Difficulty").map(IntTag::getPrimitiveValue).orElse(1)));
-        levelData.setGameMode(GameMode.parse(tag.getAsInt("GameMode").map(IntTag::getPrimitiveValue).orElse(0)));
-        Optional<IntTag> spawnX = tag.getAsInt("SpawnX");
-        Optional<IntTag> spawnY = tag.getAsInt("SpawnY");
-        Optional<IntTag> spawnZ = tag.getAsInt("SpawnZ");
-        if (spawnX.isPresent() && spawnY.isPresent() && spawnZ.isPresent()) {
-            levelData.setDefaultSpawn(new Vector3i(
-                    spawnX.get().getPrimitiveValue(),
-                    spawnY.get().getPrimitiveValue(),
-                    spawnZ.get().getPrimitiveValue()
-            ).toFloat());
-        }
+        tag.listen("Difficulty", Integer.class, integer -> levelData.setDifficulty(Difficulty.parse(integer)));
+        tag.listen("GameMode", Integer.class, integer -> levelData.setGameMode(GameMode.parse(integer)));
+        tag.listen("SpawnX", Integer.class, x -> {
+            tag.listen("SpawnY", Integer.class, y -> {
+                tag.listen("SpawnZ", Integer.class, z -> {
+                    levelData.setDefaultSpawn(Vector3i.from(x, y, z).toFloat());
+                });
+            });
+        });
 
         // Game Rules
         for (GameRule gameRule : GameRule.values()) {
             String key = gameRule.getName().toLowerCase();
             switch (gameRule.getType()) {
                 case BOOLEAN:
-                    tag.getAsByte(key).ifPresent(byteTag -> levelData.getGameRules().setGameRule(gameRule, byteTag.getAsBoolean()));
+                    tag.listen(key, Byte.class, value -> levelData.getGameRules().setGameRule(gameRule, value != 0));
                     break;
                 case INTEGER:
-                    tag.getAsInt(key).ifPresent(intTag -> levelData.getGameRules().setGameRule(gameRule, intTag.getPrimitiveValue()));
+                    tag.listen(key, Integer.class, value -> levelData.getGameRules().setGameRule(gameRule, value));
                     break;
                 case FLOAT:
-                    tag.getAsFloat(key).ifPresent(floatTag -> levelData.getGameRules().setGameRule(gameRule, floatTag.getPrimitiveValue()));
+                    tag.listen(key, Float.class, value -> levelData.getGameRules().setGameRule(gameRule, value));
             }
         }
 

@@ -22,7 +22,7 @@ public abstract class NukkitLevelData implements LevelData {
     private final int savedTime;
     private final Generator generator;
     private final Dimension dimension;
-    private final NukkitGameRules gameRules = NukkitGameRules.getDefault();
+    private final NukkitGameRules gameRules = NukkitGameRules.newGameRules();
     private GameMode gameMode = GameMode.SURVIVAL;
     private Difficulty difficulty = Difficulty.NORMAL;
     private Vector3f defaultSpawn;
@@ -41,7 +41,7 @@ public abstract class NukkitLevelData implements LevelData {
     private boolean startingWithMap = false;
     private boolean trustingPlayers = false;
     private NukkitAbilities defaultAbilities;
-    private PlayerPermission defaultPlayerPermission = PlayerPermission.MEMBER;
+    private PlayerPermission defaultPlayerPermission = PlayerPermission.OPERATOR;
     private int XBLBroadcastMode = 3;
     private int serverChunkTickRange = 8; // Simulated render distance.
     private boolean broadcastingToPlatform = true;
@@ -50,7 +50,7 @@ public abstract class NukkitLevelData implements LevelData {
     private boolean behaviorPackLocked = false;
     private boolean resourcePackLocked = false;
     private boolean fromLockedWorldTemplate = false;
-    private boolean usingMsaGamertagsOnly = false;
+    private boolean usingMsaGamertagsOnly = true;
 
     // Level Data
     private String name;

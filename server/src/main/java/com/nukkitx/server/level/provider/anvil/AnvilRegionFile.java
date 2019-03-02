@@ -1,7 +1,6 @@
 package com.nukkitx.server.level.provider.anvil;
 
 import com.google.common.base.Preconditions;
-import com.nukkitx.nbt.stream.FastByteArrayInputStream;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -72,7 +71,7 @@ public class AnvilRegionFile implements Closeable {
     }
 
     public synchronized InputStream readChunk(int x, int z) throws IOException {
-        Preconditions.checkArgument(inBounds(x, z), "position (%s, %s) is out of bounds (0 through 32)", x, z);
+        Preconditions.checkArgument(inBounds(x, z), "blockPosition (%s, %s) is out of bounds (0 through 32)", x, z);
         Preconditions.checkArgument(hasChunk(x, z), "chunk (%s, %s) does not exist", x, z);
         int offset = getOffset(x, z);
 
@@ -83,7 +82,7 @@ public class AnvilRegionFile implements Closeable {
             throw new IllegalArgumentException("Sector size is invalid for this chunk");
         }
 
-        // Seek to the position in question.
+        // Seek to the blockPosition in question.
         this.channel.position(sectorNumber * SECTOR_BYTES);
 
         // Read the entire sector.
@@ -105,17 +104,17 @@ public class AnvilRegionFile implements Closeable {
         switch (type) {
             case COMPRESSION_GZIP:
                 return new BufferedInputStream(new GZIPInputStream(
-                        new FastByteArrayInputStream(sector.array(), sector.arrayOffset() + sector.position(), sectorLength - 1)));
+                        new ByteArrayInputStream(sector.array(), sector.arrayOffset() + sector.position(), sectorLength - 1)));
             case COMPRESSION_ZLIB:
                 return new BufferedInputStream(new InflaterInputStream(
-                        new FastByteArrayInputStream(sector.array(), sector.arrayOffset() + sector.position(), sectorLength - 1)));
+                        new ByteArrayInputStream(sector.array(), sector.arrayOffset() + sector.position(), sectorLength - 1)));
             default:
                 throw new IllegalArgumentException("Unknown compression type: " + type);
         }
     }
 
     public synchronized void writeChunk(int x, int z, ByteBuffer buffer) throws IOException {
-        Preconditions.checkArgument(inBounds(x, z), "position (%s, %s) is out of bounds (0 through 32)", x, z);
+        Preconditions.checkArgument(inBounds(x, z), "blockPosition (%s, %s) is out of bounds (0 through 32)", x, z);
 
         int offset = getOffset(x, z);
         int sectorNumber = offset >> 8;

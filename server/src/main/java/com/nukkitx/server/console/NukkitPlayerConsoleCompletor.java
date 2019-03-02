@@ -33,7 +33,7 @@ public class NukkitPlayerConsoleCompletor implements Completer {
             String buffer = parsedLine.line();
             String[] split = parsedLine.line().split(" ");
             buffer = split[split.length - 1]; // So we split and get the last value
-            split[split.length - 1] = ""; // And now clear the last value
+            split[split.length - 1] = ""; // And now clearSlot the last value
             String cmd = String.join(" ", split);
             SortedSet<String> names = new TreeSet<String>();
             server.getOnlinePlayers().forEach((p) -> names.add(p.getName()));

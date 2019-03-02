@@ -5,7 +5,7 @@ import com.flowpowered.math.vector.Vector3i;
 import com.nukkitx.api.Player;
 import com.nukkitx.api.block.Block;
 import com.nukkitx.api.block.BlockState;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 import com.nukkitx.api.item.ItemType;
 import com.nukkitx.api.item.TierType;
 import com.nukkitx.api.item.ToolType;
@@ -13,7 +13,7 @@ import com.nukkitx.api.util.BoundingBox;
 import com.nukkitx.api.util.data.BlockFace;
 import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.item.behavior.ItemBehavior;
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -21,9 +21,9 @@ import java.util.Optional;
 
 public interface BlockBehavior extends ItemBehavior {
 
-    Collection<ItemInstance> getDrops(Player player, Block block, @Nullable ItemInstance item);
+    Collection<ItemStack> getDrops(Player player, Block block, @Nullable ItemStack item);
 
-    default float getBreakTime(Player player, Block block, @Nullable ItemInstance item) {
+    default float getBreakTime(Player player, Block block, @Nullable ItemStack item) {
         float breakTime = block.getBlockState().getBlockType().hardness();
 
         if (isCorrectTool(item)) {
@@ -37,7 +37,7 @@ public interface BlockBehavior extends ItemBehavior {
         return breakTime;
     }
 
-    boolean isCorrectTool(@Nullable ItemInstance item);
+    boolean isCorrectTool(@Nullable ItemStack item);
 
     default BoundingBox getBoundingBox(Block block) {
         Vector3f asFloat = block.getBlockPosition().toFloat();
@@ -61,15 +61,17 @@ public interface BlockBehavior extends ItemBehavior {
         return false;
     }
 
-    Result onBreak(PlayerSession session, Block block, ItemInstance withItem);
+    Result onBreak(NukkitPlayerSession session, Block block, ItemStack withItem);
 
-    boolean onPlace(PlayerSession session, Block against, ItemInstance withItem);
+    boolean onPlace(NukkitPlayerSession session, Block against, ItemStack withItem);
 
-    default Optional<BlockState> overridePlacement(Vector3i against, BlockFace face, ItemInstance withItem) {
+    boolean onUse(Block block, NukkitPlayerSession player);
+
+    default Optional<BlockState> overridePlacement(Vector3i against, BlockFace face, ItemStack withItem) {
         return Optional.empty();
     }
 
-    default float getMiningEfficiency(@Nullable ItemInstance item) {
+    default float getMiningEfficiency(@Nullable ItemStack item) {
         if (item == null) {
             return 1f;
         }
@@ -80,6 +82,11 @@ public interface BlockBehavior extends ItemBehavior {
         efficiency *= itemType.getToolType().map(ToolType::getEfficiencyMultiplier).orElse(1f);
 
         return efficiency;
+    }
+
+    default boolean mayPlaceOn(Block block, Block toPlace) {
+        // TODO
+        return false;
     }
 
     enum Result {

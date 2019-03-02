@@ -1,10 +1,10 @@
 package com.nukkitx.api.metadata.blockentity;
 
+import com.nukkitx.api.container.ContainerHolder;
 import com.nukkitx.api.inventory.Inventory;
-import com.nukkitx.api.inventory.InventoryHolder;
 
-public interface HopperBlockEntity extends BlockEntity, InventoryHolder {
+public interface HopperBlockEntity extends BlockEntity, ContainerHolder {
 
     @Override
-    Inventory getInventory();
+    Inventory getContainer();
 }

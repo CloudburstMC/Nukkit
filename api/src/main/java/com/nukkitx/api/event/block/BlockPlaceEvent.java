@@ -4,17 +4,17 @@ import com.nukkitx.api.Player;
 import com.nukkitx.api.block.Block;
 import com.nukkitx.api.block.BlockState;
 import com.nukkitx.api.event.Cancellable;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 
 public class BlockPlaceEvent implements BlockEvent, Cancellable {
     private final Player player;
-    private final ItemInstance item;
+    private final ItemStack item;
     private final Block oldBlock;
     private final Block against;
     private final BlockState newBlockState;
     private boolean cancelled;
 
-    public BlockPlaceEvent(Player player, Block against, Block oldBlock, BlockState newBlockState, ItemInstance item) {
+    public BlockPlaceEvent(Player player, Block against, Block oldBlock, BlockState newBlockState, ItemStack item) {
         this.player = player;
         this.against = against;
         this.oldBlock = oldBlock;
@@ -26,7 +26,7 @@ public class BlockPlaceEvent implements BlockEvent, Cancellable {
         return player;
     }
 
-    public ItemInstance getItem() {
+    public ItemStack getItem() {
         return item;
     }
 

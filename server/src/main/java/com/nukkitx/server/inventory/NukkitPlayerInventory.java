@@ -1,103 +1,74 @@
 package com.nukkitx.server.inventory;
 
-import com.google.common.base.Preconditions;
-import com.nukkitx.api.inventory.PlayerInventory;
-import com.nukkitx.api.item.ItemInstance;
-import com.nukkitx.server.network.bedrock.packet.MobEquipmentPacket;
-import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.api.item.ItemStack;
+import com.nukkitx.network.util.Preconditions;
+import com.nukkitx.protocol.bedrock.data.ContainerId;
+import com.nukkitx.server.item.ItemUtils;
+import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
-public class NukkitPlayerInventory extends NukkitInventory implements PlayerInventory {
-    private final PlayerSession session;
-    private final int[] hotbarLinks = new int[9];
-    private int heldHotbarSlot = -1;
-    private AtomicReference<ItemInstance> cursorItem = new AtomicReference<>(null);
+public class NukkitPlayerInventory extends NukkitInventory {
+    private int selectedSlot = 0;
+    private ContainerId selectedId = ContainerId.INVENTORY;
 
-    public NukkitPlayerInventory(PlayerSession session) {
-        super(NukkitInventoryType.PLAYER);
-        this.session = session;
-        getObservers().add(session);
-        Arrays.fill(hotbarLinks, -1);
+    public NukkitPlayerInventory(NukkitPlayerSession session) {
+        super(session);
     }
 
-    @Override
-    public PlayerSession getPlayer() {
-        return session;
-    }
-
-    @Override
-    public int[] getHotbarLinks() {
-        return Arrays.copyOf(hotbarLinks, hotbarLinks.length);
-    }
-
-    public void setHotbarLink(int slot, int inventorySlot) {
-        checkHotbarSlot(slot);
-        hotbarLinks[slot] = inventorySlot;
-    }
-
-    @Override
-    public int getHeldHotbarSlot() {
-        int slot = heldHotbarSlot;
-        if (slot == -1) {
-            return -1;
+    public void setItem(int slot, ItemStack item, NukkitPlayerSession session, ContainerId id) {
+        if (id == ContainerId.INVENTORY) {
+            setItem(slot, item, session);
         }
-        return hotbarLinks[slot];
     }
 
-    public Optional<ItemInstance> getHotbarItem(int hotbarSlot) {
-        checkHotbarSlot(hotbarSlot);
-        int slot = hotbarLinks[hotbarSlot];
-        if (slot == -1) {
-            return Optional.empty();
+    public ItemStack getItem(int slot, ContainerId id) {
+        if (id == ContainerId.INVENTORY) {
+            return getSlot(slot);
         }
-        return getItem(hotbarLinks[hotbarSlot]);
+        return ItemUtils.AIR;
     }
 
-    @Override
-    public void setHeldHotbarSlot(int slot) {
-        setHeldHotbarSlot(slot, true);
-    }
-
-    @Override
-    public void setHeldHotbarSlot(int slot, boolean sendToPlayer) {
-        checkHotbarSlot(slot);
-        this.heldHotbarSlot = slot;
-
-        MobEquipmentPacket packet = new MobEquipmentPacket();
-        packet.setRuntimeEntityId(session.getEntityId());
-        packet.setHotbarSlot((byte) slot);
-        packet.setInventorySlot((byte) hotbarLinks[slot]);
-        packet.setWindowId(type.getId());
-        packet.setItem(getItemInHand().orElse(null));
-
-        if (sendToPlayer) {
-            session.getMinecraftSession().addToSendQueue(packet);
+    public void clearSlot(int slot, ContainerId id) {
+        if (id == ContainerId.INVENTORY) {
+            clearSlot(slot);
         }
-        session.getLevel().getPacketManager().queuePacketForViewers(session, packet);
     }
 
-    @Override
-    public Optional<ItemInstance> getItemInHand() {
-        int slot = getHeldHotbarSlot();
-        if (slot == -1) {
-            return Optional.empty();
+    public void setContainerSize(int size, ContainerId id) {
+        if (id == ContainerId.INVENTORY) {
+            setContainerSize(size);
         }
-        return getItem(slot);
     }
 
-    public Optional<ItemInstance> getCursorItem() {
-        return Optional.ofNullable(cursorItem.get());
+    public int getSize(ContainerId id) {
+        if (id != ContainerId.INVENTORY) {
+            return 0;
+        } else {
+            return getSize();
+        }
     }
 
-    public void setCursorItem(@Nullable ItemInstance item) {
-        cursorItem.set(item);
+    public void selectSlot(int slot, ContainerId id) {
+        Preconditions.checkNotNull(id, "id");
+        Preconditions.checkArgument(slot >= 0 && getHotbarSize() > slot, "slot not in range");
+        this.selectedId = id;
+        this.selectedSlot = slot;
     }
 
-    private void checkHotbarSlot(int slot) {
-        Preconditions.checkArgument(slot >= 0 && slot < hotbarLinks.length, "Hotbar slot out of range.");
+    public ItemStack getSelectedItem() {
+        return getSlot(selectedSlot);
+    }
+
+    public void setSelectedItem(@Nullable ItemStack item, @Nullable NukkitPlayerSession session) {
+        setItem(selectedSlot, item, session);
+    }
+
+    public ContainerId getSelectedId() {
+        return selectedId;
+    }
+
+    public int getSelectedSlot() {
+        return selectedSlot;
     }
 }

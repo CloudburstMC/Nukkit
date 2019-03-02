@@ -1,6 +1,6 @@
 package com.nukkitx.api.entity.component;
 
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNullableByDefault;
@@ -14,54 +14,54 @@ public interface Equippable extends EntityComponent {
      *
      * @return the helmet worn
      */
-    Optional<ItemInstance> getHelmet();
+    Optional<ItemStack> getHelmet();
 
     /**
      * Sets the helmet the entity is wearing.
      *
      * @param helmet the helmet to wear
      */
-    void setHelmet(ItemInstance helmet);
+    void setHelmet(ItemStack helmet);
 
     /**
      * Gets the chestplate the entity is wearing.
      *
      * @return the chestplate worn
      */
-    Optional<ItemInstance> getChestplate();
+    Optional<ItemStack> getChestplate();
 
     /**
      * Sets the chestplate the entity is wearing.
      *
      * @param chestplate the chestplate to wear
      */
-    void setChestplate(ItemInstance chestplate);
+    void setChestplate(ItemStack chestplate);
 
     /**
      * Gets the leggings the entity is wearing.
      *
      * @return the leggings worn
      */
-    Optional<ItemInstance> getLeggings();
+    Optional<ItemStack> getLeggings();
 
     /**
      * Sets the leggings the entity is wearing.
      *
      * @param leggings the leggings to wear
      */
-    void setLeggings(ItemInstance leggings);
+    void setLeggings(ItemStack leggings);
 
     /**
      * Gets the boots the entity is wearing.
      *
      * @return the boots worn
      */
-    Optional<ItemInstance> getBoots();
+    Optional<ItemStack> getBoots();
 
     /**
      * Sets the boots the entity is wearing.
      *
      * @param boots the boots to wear
      */
-    void setBoots(ItemInstance boots);
+    void setBoots(ItemStack boots);
 }

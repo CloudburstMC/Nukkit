@@ -6,11 +6,11 @@ import com.nukkitx.api.block.BlockState;
 import com.nukkitx.api.block.BlockType;
 import com.nukkitx.api.block.BlockTypes;
 import com.nukkitx.api.metadata.Metadata;
+import com.nukkitx.network.VarInts;
+import com.nukkitx.protocol.bedrock.v332.BedrockUtils;
 import com.nukkitx.server.NukkitServer;
 import com.nukkitx.server.block.NukkitBlockStateBuilder;
 import com.nukkitx.server.metadata.MetadataSerializers;
-import com.nukkitx.server.network.bedrock.BedrockUtil;
-import com.nukkitx.server.network.util.VarInts;
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TIntIntHashMap;
@@ -56,12 +56,16 @@ public class LevelPaletteManager {
         runtimeId2BlockState = new ArrayList<>(entries.size());
 
         for (RuntimeEntry entry : entries) {
-            BlockType blockType = BlockTypes.byId(entry.id > 255 ? 255 - entry.id : entry.id);
-            Metadata metadata = entry.data == 0 ? null : MetadataSerializers.deserializeMetadata(blockType, (short) entry.data);
-            BlockState state = new NukkitBlockStateBuilder().setBlockType(blockType).setMetadata(metadata).build();
-            registerRuntimeId(state, (entry.id << 4) | entry.data);
+            try {
+                BlockType blockType = BlockTypes.byId(entry.id > 255 ? 255 - entry.id : entry.id);
+                Metadata metadata = entry.data == 0 ? null : MetadataSerializers.deserializeMetadata(blockType, (short) entry.data);
+                BlockState state = new NukkitBlockStateBuilder().setBlockType(blockType).setMetadata(metadata).build();
+                registerRuntimeId(state, (entry.id << 4) | entry.data);
+            } catch (IllegalArgumentException e) {
+                // ignore
+            }
 
-            BedrockUtil.writeString(cachedPallete, entry.name);
+            BedrockUtils.writeString(cachedPallete, entry.name);
             cachedPallete.writeShortLE(entry.data);
         }
     }
@@ -121,7 +125,7 @@ public class LevelPaletteManager {
     }
 
     public ByteBuf getCachedPallete() {
-        return cachedPallete;
+        return cachedPallete.retainedSlice();
     }
 
     @AllArgsConstructor

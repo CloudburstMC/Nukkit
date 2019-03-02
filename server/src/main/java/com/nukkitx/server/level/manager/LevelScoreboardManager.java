@@ -6,11 +6,11 @@ import com.google.common.collect.ImmutableList;
 import com.nukkitx.api.Player;
 import com.nukkitx.api.entity.Entity;
 import com.nukkitx.api.scoreboard.*;
+import com.nukkitx.protocol.bedrock.data.ScoreInfo;
+import com.nukkitx.protocol.bedrock.packet.RemoveObjectivePacket;
+import com.nukkitx.protocol.bedrock.packet.SetDisplayObjectivePacket;
+import com.nukkitx.protocol.bedrock.packet.SetScorePacket;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.bedrock.data.ScoreInfo;
-import com.nukkitx.server.network.bedrock.packet.RemoveObjectivePacket;
-import com.nukkitx.server.network.bedrock.packet.SetDisplayObjectivePacket;
-import com.nukkitx.server.network.bedrock.packet.SetScorePacket;
 import com.nukkitx.server.scoreboard.*;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
@@ -47,7 +47,7 @@ public class LevelScoreboardManager implements Scoreboard {
 
         // Remove objective for all players in the level.
         RemoveObjectivePacket removeObjective = new RemoveObjectivePacket();
-        removeObjective.setObjective(objective);
+        removeObjective.setObjectiveId(objective.getName());
         level.getPacketManager().queuePacketForPlayers(removeObjective);
     }
 
@@ -154,10 +154,14 @@ public class LevelScoreboardManager implements Scoreboard {
             displayObjectives.set(index, displayObjective);
         }
 
-        SetDisplayObjectivePacket setDisplayObjectivePacket = new SetDisplayObjectivePacket();
-        setDisplayObjectivePacket.setDisplayObjective(displayObjective);
+        SetDisplayObjectivePacket setDisplayObjective = new SetDisplayObjectivePacket();
+        setDisplayObjective.setObjectiveId(displayObjective.getObjective().getName());
+        setDisplayObjective.setDisplayName(displayObjective.getObjective().getDisplayName());
+        setDisplayObjective.setCriteria(displayObjective.getObjective().getCriteria().getName());
+        setDisplayObjective.setDisplaySlot(displayObjective.getDisplaySlot().name().toLowerCase());
+        setDisplayObjective.setSortOrder(displayObjective.getSortOrder().ordinal());
 
-        level.getPacketManager().queuePacketForPlayers(setDisplayObjectivePacket);
+        level.getPacketManager().queuePacketForPlayers(setDisplayObjective);
     }
 
     @Nonnull
@@ -220,13 +224,20 @@ public class LevelScoreboardManager implements Scoreboard {
     public void setScore(long id, NukkitObjective objective, int score) {
         Preconditions.checkNotNull(objective, "objective");
 
-        getNukkitScorer(id).ifPresent(scorer -> setScoreQueue.add(new ScoreInfo(scorer, objective.getName(), score)));
+        Scorer scorer = scorers.get(id);
+
+        if (scorer instanceof FakeScorer) {
+            setScoreQueue.add(new ScoreInfo(scorer.getId(), objective.getName(), score, ((FakeScorer) scorer).getName()));
+        } else if (scorer instanceof EntityScorer) {
+            ScoreInfo.ScorerType type = ScoreInfo.ScorerType.valueOf(scorer.getType().name());
+            setScoreQueue.add(new ScoreInfo(scorer.getId(), objective.getName(), score, type, ((EntityScorer) scorer).getEntity().getEntityId()));
+        }
     }
 
     public void removeScore(long id, NukkitObjective objective, int score) {
         Preconditions.checkNotNull(objective, "objective");
 
-        getNukkitScorer(id).ifPresent(scorer -> removeScoreQueue.add(new ScoreInfo(scorer, objective.getName(), score)));
+        getNukkitScorer(id).ifPresent(scorer -> removeScoreQueue.add(new ScoreInfo(scorer.getId(), objective.getName(), score)));
     }
 
     private static long stringHash(String string) {
@@ -246,7 +257,7 @@ public class LevelScoreboardManager implements Scoreboard {
                 SetScorePacket setScore = new SetScorePacket();
                 setScore.setAction(SetScorePacket.Action.SET);
 
-                setScore.getInfo().addAll(setScoreQueue);
+                setScore.getInfos().addAll(setScoreQueue);
                 setScoreQueue.clear();
             }
         }
@@ -256,7 +267,7 @@ public class LevelScoreboardManager implements Scoreboard {
                 SetScorePacket setScore = new SetScorePacket();
                 setScore.setAction(SetScorePacket.Action.REMOVE);
 
-                setScore.getInfo().addAll(removeScoreQueue);
+                setScore.getInfos().addAll(removeScoreQueue);
                 removeScoreQueue.clear();
             }
         }

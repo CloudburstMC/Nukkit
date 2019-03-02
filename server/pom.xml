@@ -7,14 +7,14 @@
     <parent>
         <artifactId>nukkitx-parent</artifactId>
         <groupId>com.nukkitx</groupId>
-        <version>1.7.0-SNAPSHOT</version>
+        <version>1.9.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>nukkitx-server</artifactId>
     <name>NukkitX Server</name>
 
     <properties>
-        <network.version>1.2.3-SNAPSHOT</network.version>
+        <network.version>1.3.0-SNAPSHOT</network.version>
     </properties>
 
     <dependencies>
@@ -37,27 +37,15 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.nukkitx.network</groupId>
-            <artifactId>raknet</artifactId>
-            <version>${network.version}</version>
+            <groupId>com.nukkitx.protocol</groupId>
+            <artifactId>bedrock-v332</artifactId>
+            <version>1.1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.nukkitx.network</groupId>
             <artifactId>rcon</artifactId>
             <version>${network.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.nukkitx</groupId>
-            <artifactId>nbt</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>cn.nukkit</groupId>
-            <artifactId>nukkit-natives</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -76,12 +64,6 @@
             <groupId>org.iq80.leveldb</groupId>
             <artifactId>leveldb</artifactId>
             <version>0.10-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.nimbusds</groupId>
-            <artifactId>nimbus-jose-jwt</artifactId>
-            <version>4.41.2</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

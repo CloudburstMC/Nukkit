@@ -1,7 +1,7 @@
 package com.nukkitx.server.scoreboard;
 
 import com.nukkitx.api.scoreboard.FakeScorer;
-import com.nukkitx.server.network.bedrock.BedrockUtil;
+import com.nukkitx.protocol.bedrock.v332.BedrockUtils;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 
@@ -19,7 +19,7 @@ public class NukkitFakeScorer extends NukkitScorer implements FakeScorer {
 
     @Override
     protected void write(@Nonnull ByteBuf buffer) {
-        BedrockUtil.writeString(buffer, name);
+        BedrockUtils.writeString(buffer, name);
     }
 
     @Override

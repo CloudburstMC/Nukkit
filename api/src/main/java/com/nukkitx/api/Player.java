@@ -2,10 +2,12 @@ package com.nukkitx.api;
 
 import com.flowpowered.math.vector.Vector3i;
 import com.nukkitx.api.command.sender.CommandSender;
+import com.nukkitx.api.container.Container;
 import com.nukkitx.api.entity.Entity;
-import com.nukkitx.api.inventory.PlayerInventory;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.inventory.Inventory;
+import com.nukkitx.api.item.ItemStack;
 import com.nukkitx.api.permission.Permissible;
+import com.nukkitx.api.util.GameMode;
 import com.nukkitx.api.util.Skin;
 
 import javax.annotation.Nonnegative;
@@ -14,7 +16,6 @@ import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface Player extends Session, CommandSender, Entity, Permissible {
 
@@ -26,10 +27,9 @@ public interface Player extends Session, CommandSender, Entity, Permissible {
     @Nonnull
     Optional<InetSocketAddress> getRemoteAddress();
 
-    @Nonnull
-    Optional<UUID> getOfflineUuid();
-
     int getExperienceLevel();
+
+    GameMode getGameMode();
 
     void disconnect();
 
@@ -83,12 +83,6 @@ public interface Player extends Session, CommandSender, Entity, Permissible {
 
     void setSkin(Skin skin);
 
-    void setButtonText(String text);
-
-    String getButtonText();
-
-    int getPing();
-
     void sleepOn(Vector3i position);
 
     boolean isSleeping();
@@ -96,8 +90,6 @@ public interface Player extends Session, CommandSender, Entity, Permissible {
     int getSleepTicks();
 
     void stopSleep();
-
-    Entity getEntityPlayerLookingAt();
 
     void setViewDistance(int distance);
 
@@ -107,11 +99,13 @@ public interface Player extends Session, CommandSender, Entity, Permissible {
 
     void sendActionBar(String message, int fadein, int duration, int fadeout);
 
-    boolean dropItem(ItemInstance item);
+    boolean drop(@Nonnull ItemStack item);
 
     boolean isSpawned();
 
-    PlayerInventory getInventory();
+    Inventory getInventory();
+
+    Optional<Container> getOpenContainer();
 
     @Override
     default boolean isOnline() {

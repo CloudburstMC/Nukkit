@@ -3,19 +3,19 @@ package com.nukkitx.api.event.player;
 import com.nukkitx.api.Player;
 import com.nukkitx.api.block.Block;
 import com.nukkitx.api.event.Cancellable;
-import com.nukkitx.api.item.ItemInstance;
+import com.nukkitx.api.item.ItemStack;
 import com.nukkitx.api.util.data.BlockFace;
 
 abstract class PlayerBucketEvent implements PlayerEvent, Cancellable {
     private final Player player;
     private final Block blockClicked;
     private final BlockFace blockFace;
-    private final ItemInstance bucket;
+    private final ItemStack bucket;
     private boolean cancelled;
-    private ItemInstance item;
+    private ItemStack item;
 
 
-    public PlayerBucketEvent(Player who, Block blockClicked, BlockFace blockFace, ItemInstance bucket, ItemInstance itemInHand) {
+    public PlayerBucketEvent(Player who, Block blockClicked, BlockFace blockFace, ItemStack bucket, ItemStack itemInHand) {
         this.player = who;
         this.blockClicked = blockClicked;
         this.blockFace = blockFace;
@@ -36,7 +36,7 @@ abstract class PlayerBucketEvent implements PlayerEvent, Cancellable {
         return blockFace;
     }
 
-    public ItemInstance getBucket() {
+    public ItemStack getBucket() {
         return bucket;
     }
 
@@ -50,11 +50,11 @@ abstract class PlayerBucketEvent implements PlayerEvent, Cancellable {
         this.cancelled = cancelled;
     }
 
-    public ItemInstance getItem() {
+    public ItemStack getItem() {
         return item;
     }
 
-    public void setItem(ItemInstance item) {
+    public void setItem(ItemStack item) {
         this.item = item;
     }
 }

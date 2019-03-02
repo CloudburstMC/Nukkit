@@ -1,12 +1,12 @@
 package com.nukkitx.api.metadata.blockentity;
 
-import com.nukkitx.api.inventory.BrewingInventory;
-import com.nukkitx.api.inventory.InventoryHolder;
+import com.nukkitx.api.container.Container;
+import com.nukkitx.api.container.ContainerHolder;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public interface BrewingStandBlockEntity extends BlockEntity, InventoryHolder {
+public interface BrewingStandBlockEntity extends BlockEntity, ContainerHolder {
 
     Optional<String> getName();
 
@@ -31,5 +31,5 @@ public interface BrewingStandBlockEntity extends BlockEntity, InventoryHolder {
     boolean isFinished();
 
     @Override
-    BrewingInventory getInventory();
+    Container getContainer();
 }
