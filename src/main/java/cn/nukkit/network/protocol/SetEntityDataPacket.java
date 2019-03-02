@@ -20,13 +20,14 @@ public class SetEntityDataPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.eid = this.getEntityRuntimeId();
+        this.metadata = this.getMetadata();
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putEntityRuntimeId(this.eid);
-        this.put(Binary.writeMetadata(this.metadata));
+        this.putMetadata(this.metadata);
     }
 }

@@ -11,7 +11,7 @@ public class SimpleEventPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.unknown = (short) this.getShort();
     }
 
     @Override

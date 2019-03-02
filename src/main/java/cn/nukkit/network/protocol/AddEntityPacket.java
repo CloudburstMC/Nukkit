@@ -1,12 +1,16 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.entity.Attribute;
-import cn.nukkit.entity.data.EntityMetadata;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.data.*;
 import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.mob.*;
 import cn.nukkit.entity.passive.*;
 import cn.nukkit.entity.projectile.*;
 import cn.nukkit.entity.weather.EntityLightning;
+import cn.nukkit.item.Item;
+import cn.nukkit.math.BlockVector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.utils.Binary;
 import com.google.common.collect.ImmutableMap;
 
@@ -138,11 +142,34 @@ public class AddEntityPacket extends DataPacket {
     public float headYaw;
     public EntityMetadata metadata = new EntityMetadata();
     public Attribute[] attributes = new Attribute[0];
-    public final Object[][] links = new Object[0][3];
+    public Object[][] links = new Object[0][3];
 
     @Override
     public void decode() {
-
+        this.entityUniqueId = this.getEntityUniqueId();
+        this.entityRuntimeId = this.getEntityRuntimeId();
+        this.id = this.getString();
+        this.x = this.getLFloat();
+        this.y = this.getLFloat();
+        this.z = this.getLFloat();
+        this.speedX = this.getLFloat();
+        this.speedY = this.getLFloat();
+        this.speedZ = this.getLFloat();
+        this.pitch = this.getLFloat();
+        this.yaw = this.getLFloat();
+        this.headYaw = this.getLFloat();
+        try {
+            this.attributes = this.getAttributeList();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        this.metadata = this.getMetadata();
+        this.links = new Object[(int) this.getUnsignedVarInt()][3];
+        for (Object[] link : this.links) {
+            link[0] = this.getVarLong();
+            link[1] = this.getVarLong();
+            link[2] = this.getByte();
+        }
     }
 
     @Override
@@ -160,7 +187,7 @@ public class AddEntityPacket extends DataPacket {
         this.putLFloat(this.yaw);
         this.putLFloat(this.headYaw);
         this.putAttributeList(this.attributes);
-        this.put(Binary.writeMetadata(this.metadata));
+        this.putMetadata(this.metadata);
         this.putUnsignedVarInt(this.links.length);
         for (Object[] link : this.links) {
             this.putVarLong((long) link[0]);
@@ -168,4 +195,5 @@ public class AddEntityPacket extends DataPacket {
             this.putByte((byte) link[2]);
         }
     }
+
 }

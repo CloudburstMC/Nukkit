@@ -17,7 +17,8 @@ public class ShowCreditsPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.eid = this.getEntityRuntimeId();
+        this.status = this.getVarInt();
     }
 
     @Override

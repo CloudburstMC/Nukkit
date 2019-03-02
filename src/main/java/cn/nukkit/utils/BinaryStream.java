@@ -1,7 +1,8 @@
 package cn.nukkit.utils;
 
 import cn.nukkit.entity.Attribute;
-import cn.nukkit.entity.data.Skin;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.data.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.GameRules;
@@ -242,6 +243,97 @@ public class BinaryStream {
             this.putLFloat(attribute.getValue());
             this.putLFloat(attribute.getMaxValue());
         }
+    }
+
+    public void putMetadata(EntityMetadata metadata) {
+        Map<Integer, EntityData> map = metadata.getMap();
+        this.putUnsignedVarInt(map.size());
+        for (int id : map.keySet()) {
+            EntityData d = map.get(id);
+            this.putUnsignedVarInt(id);
+            this.putUnsignedVarInt(d.getType());
+            switch (d.getType()) {
+                case Entity.DATA_TYPE_BYTE:
+                    this.putByte(((ByteEntityData) d).getData().byteValue());
+                    break;
+                case Entity.DATA_TYPE_SHORT:
+                    this.putLShort(((ShortEntityData) d).getData());
+                    break;
+                case Entity.DATA_TYPE_INT:
+                    this.putVarInt(((IntEntityData) d).getData());
+                    break;
+                case Entity.DATA_TYPE_FLOAT:
+                    this.putLFloat(((FloatEntityData) d).getData());
+                    break;
+                case Entity.DATA_TYPE_STRING:
+                    String s = ((StringEntityData) d).getData();
+                    this.putUnsignedVarInt(s.getBytes(StandardCharsets.UTF_8).length);
+                    this.put(s.getBytes(StandardCharsets.UTF_8));
+                    break;
+                case Entity.DATA_TYPE_SLOT:
+                    SlotEntityData slot = (SlotEntityData) d;
+                    this.putSlot(slot.getData());
+                    break;
+                case Entity.DATA_TYPE_POS:
+                    IntPositionEntityData pos = (IntPositionEntityData) d;
+                    this.putVarInt(pos.x);
+                    this.putVarInt(pos.y);
+                    this.putVarInt(pos.z);
+                    break;
+                case Entity.DATA_TYPE_LONG:
+                    this.putVarLong(((LongEntityData) d).getData());
+                    break;
+                case Entity.DATA_TYPE_VECTOR3F:
+                    Vector3fEntityData v3data = (Vector3fEntityData) d;
+                    this.putLFloat(v3data.x);
+                    this.putLFloat(v3data.y);
+                    this.putLFloat(v3data.z);
+                    break;
+            }
+        }
+    }
+
+    public EntityMetadata getMetadata() {
+        long count = this.getUnsignedVarInt();
+        EntityMetadata m = new EntityMetadata();
+        for (int i = 0; i < count; i++) {
+            int key = (int) this.getUnsignedVarInt();
+            int type = (int) this.getUnsignedVarInt();
+            EntityData value = null;
+            switch (type) {
+                case Entity.DATA_TYPE_BYTE:
+                    value = new ByteEntityData(key, this.getByte());
+                    break;
+                case Entity.DATA_TYPE_SHORT:
+                    value = new ShortEntityData(key, this.getLShort());
+                    break;
+                case Entity.DATA_TYPE_INT:
+                    value = new IntEntityData(key, this.getVarInt());
+                    break;
+                case Entity.DATA_TYPE_FLOAT:
+                    value = new FloatEntityData(key, this.getLFloat());
+                    break;
+                case Entity.DATA_TYPE_STRING:
+                    value = new StringEntityData(key, this.getString());
+                    break;
+                case Entity.DATA_TYPE_SLOT:
+                    Item item = this.getSlot();
+                    value = new SlotEntityData(key, item.getId(), item.getDamage(), item.getCount());
+                    break;
+                case Entity.DATA_TYPE_POS:
+                    BlockVector3 v3 = this.getSignedBlockPosition();
+                    value = new IntPositionEntityData(key, v3.x, v3.y, v3.z);
+                    break;
+                case Entity.DATA_TYPE_LONG:
+                    value = new LongEntityData(key, this.getVarLong());
+                    break;
+                case Entity.DATA_TYPE_VECTOR3F:
+                    value = new Vector3fEntityData(key, this.getVector3f());
+                    break;
+            }
+            if (value != null) m.put(value);
+        }
+        return m;
     }
 
     public void putUUID(UUID uuid) {

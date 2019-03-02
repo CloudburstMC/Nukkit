@@ -23,12 +23,14 @@ public class BlockPickRequestPacket extends DataPacket {
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
-        this.putBoolean(this.addUserData);
+        this.addUserData = this.getBoolean();
         this.selectedSlot = this.getByte();
     }
 
     @Override
     public void encode() {
-
+        this.putSignedBlockPosition(new BlockVector3(this.x, this.y, this.z));
+        this.putBoolean(this.addUserData);
+        this.putByte((byte) this.selectedSlot);
     }
 }

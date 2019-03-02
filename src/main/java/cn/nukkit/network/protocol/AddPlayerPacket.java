@@ -1,7 +1,9 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.entity.data.EntityMetadata;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.data.*;
 import cn.nukkit.item.Item;
+import cn.nukkit.math.BlockVector3;
 import cn.nukkit.utils.Binary;
 
 import java.util.UUID;
@@ -38,7 +40,28 @@ public class AddPlayerPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.uuid = this.getUUID();
+        this.username = this.getString();
+        this.entityUniqueId = this.getEntityUniqueId();
+        this.entityRuntimeId = this.getEntityRuntimeId();
+        this.x = this.getLFloat();
+        this.y = this.getLFloat();
+        this.z = this.getLFloat();
+        this.speedX = this.getLFloat();
+        this.speedY = this.getLFloat();
+        this.speedZ = this.getLFloat();
+        this.pitch = this.getLFloat();
+        this.yaw = this.getLFloat();
+        this.item = this.getSlot();
+        this.metadata = this.getMetadata();
+        this.getUnsignedVarInt();
+        this.getUnsignedVarInt();
+        this.getUnsignedVarInt();
+        this.getUnsignedVarInt();
+        this.getUnsignedVarInt();
+        this.getLLong();
+        this.getUnsignedVarInt();
+        this.deviceId = this.getString();
     }
 
     @Override
@@ -55,7 +78,7 @@ public class AddPlayerPacket extends DataPacket {
         this.putLFloat(this.yaw); //TODO headrot
         this.putLFloat(this.yaw);
         this.putSlot(this.item);
-        this.put(Binary.writeMetadata(this.metadata));
+        this.putMetadata(this.metadata);
         this.putUnsignedVarInt(0); //TODO: Adventure settings
         this.putUnsignedVarInt(0);
         this.putUnsignedVarInt(0);

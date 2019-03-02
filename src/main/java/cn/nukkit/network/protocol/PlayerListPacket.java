@@ -19,7 +19,18 @@ public class PlayerListPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.type = (byte) this.getByte();
+        this.entries = new Entry[(int) this.getUnsignedVarInt()];
+        for(int i = 0; i < this.entries.length; i++) {
+            this.entries[i] = new Entry(this.getUUID());
+            if(this.type == TYPE_ADD) {
+                this.entries[i].entityId = this.getVarLong();
+                this.entries[i].name = this.getString();
+                this.entries[i].skin = this.getSkin();
+                this.entries[i].xboxUserId = this.getString();
+                this.entries[i].platformChatId = this.getString();
+            }
+        }
     }
 
     @Override

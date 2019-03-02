@@ -26,7 +26,12 @@ public class MobEffectPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.eid = this.getEntityRuntimeId();
+        this.eventId = this.getByte();
+        this.effectId = this.getVarInt();
+        this.amplifier = this.getVarInt();
+        this.particles = this.getBoolean();
+        this.duration = this.getVarInt();
     }
 
     @Override

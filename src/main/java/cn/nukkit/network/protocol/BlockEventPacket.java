@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.math.BlockVector3;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -20,7 +22,12 @@ public class BlockEventPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        BlockVector3 v = this.getBlockVector3();
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
+        this.case1 = this.getVarInt();
+        this.case2 = this.getVarInt();
     }
 
     @Override

@@ -22,7 +22,16 @@ public class UpdateTradePacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.windowId = (byte) this.getByte();
+        this.windowType = (byte) this.getByte();
+        this.unknownVarInt1 = this.getVarInt();
+        this.unknownVarInt2 = this.getVarInt();
+        this.unknownVarInt3 = this.getVarInt();
+        this.isWilling = this.getBoolean();
+        this.player = this.getEntityUniqueId();
+        this.trader = this.getEntityUniqueId();
+        this.displayName = this.getString();
+        this.offers = this.get();
     }
 
     @Override

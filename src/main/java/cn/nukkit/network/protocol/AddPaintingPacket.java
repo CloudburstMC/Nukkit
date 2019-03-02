@@ -17,7 +17,13 @@ public class AddPaintingPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.entityUniqueId = this.getEntityUniqueId();
+        this.entityRuntimeId = this.getEntityRuntimeId();
+        this.x = this.getVarInt();
+        this.y = (int) this.getUnsignedVarInt();
+        this.z = this.getVarInt();
+        this.direction = this.getVarInt();
+        this.title = this.getString();
     }
 
     @Override

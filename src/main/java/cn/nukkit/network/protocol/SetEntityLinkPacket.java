@@ -18,7 +18,10 @@ public class SetEntityLinkPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.rider = this.getEntityUniqueId();
+        this.riding = this.getEntityUniqueId();
+        this.type = (byte) this.getByte();
+        this.unknownByte = (byte) this.getByte();
     }
 
     @Override

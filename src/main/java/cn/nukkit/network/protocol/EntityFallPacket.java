@@ -16,7 +16,9 @@ public class EntityFallPacket extends DataPacket {
 
     @Override
     public void encode() {
-
+        this.putEntityRuntimeId(this.eid);
+        this.putLFloat(this.fallDistance);
+        this.putBoolean(this.unknown);
     }
 
     @Override

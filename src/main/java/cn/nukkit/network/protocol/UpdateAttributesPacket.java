@@ -18,26 +18,18 @@ public class UpdateAttributesPacket extends DataPacket {
     }
 
     public void decode() {
-
+        this.entityId = this.getEntityRuntimeId();
+        try {
+            this.entries = this.getAttributeList();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void encode() {
         this.reset();
-
         this.putEntityRuntimeId(this.entityId);
-
-        if (this.entries == null) {
-            this.putUnsignedVarInt(0);
-        } else {
-            this.putUnsignedVarInt(this.entries.length);
-            for (Attribute entry : this.entries) {
-                this.putLFloat(entry.getMinValue());
-                this.putLFloat(entry.getMaxValue());
-                this.putLFloat(entry.getValue());
-                this.putLFloat(entry.getDefaultValue());
-                this.putString(entry.getName());
-            }
-        }
+        this.putAttributeList(this.entries);
     }
 
 }

@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.math.BlockVector3;
+
 /**
  * @author Nukkit Project Team
  */
@@ -18,7 +20,12 @@ public class SetSpawnPositionPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.spawnType = this.getVarInt();
+        BlockVector3 v = this.getBlockVector3();
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
+        this.spawnForced = this.getBoolean();
     }
 
     @Override

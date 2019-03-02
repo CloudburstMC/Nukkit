@@ -23,7 +23,11 @@ public class PlayerInputPacket extends DataPacket {
 
     @Override
     public void encode() {
-
+        this.reset();
+        this.putLFloat(this.motionX);
+        this.putLFloat(this.motionY);
+        this.putBoolean(this.jumping);
+        this.putBoolean(this.sneaking);
     }
 
     @Override

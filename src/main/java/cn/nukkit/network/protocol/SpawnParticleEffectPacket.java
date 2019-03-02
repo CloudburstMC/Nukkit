@@ -17,6 +17,10 @@ public class SpawnParticleEffectPacket extends DataPacket {
 
     @Override
     public void decode() {
+        this.dimensionId = this.getByte();
+        this.uniqueEntityId = this.getEntityUniqueId();
+        this.position = this.getVector3f();
+        this.identifier = this.getString();
     }
 
     @Override

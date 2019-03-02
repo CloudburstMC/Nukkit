@@ -16,7 +16,7 @@ public class RemoveEntityPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.eid = this.getEntityUniqueId();
     }
 
     @Override

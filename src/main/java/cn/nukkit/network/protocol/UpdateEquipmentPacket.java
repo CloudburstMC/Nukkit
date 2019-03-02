@@ -16,7 +16,10 @@ public class UpdateEquipmentPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.windowId = this.getByte();
+        this.windowType = this.getByte();
+        this.eid = this.getEntityUniqueId();
+        this.namedtag = this.get();
     }
 
     @Override

@@ -13,7 +13,7 @@ public class SetHealthPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.health = (int) this.getUnsignedVarInt();
     }
 
     @Override

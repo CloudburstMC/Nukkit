@@ -1,6 +1,7 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 
 /**
  * author: MagicDroidX
@@ -29,7 +30,15 @@ public class ExplodePacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        Vector3f v = this.getVector3f();
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
+        this.radius = this.getVarInt() / 32;
+        this.records = new Vector3[(int) this.getUnsignedVarInt()];
+        for(int i = 0; i < this.records.length; i++) {
+            this.records[i] = this.getSignedBlockPosition().asVector3();
+        }
     }
 
     @Override

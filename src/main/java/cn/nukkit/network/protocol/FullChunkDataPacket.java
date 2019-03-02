@@ -18,7 +18,9 @@ public class FullChunkDataPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.chunkX = this.getVarInt();
+        this.chunkZ = this.getVarInt();
+        this.data = this.getByteArray();
     }
 
     @Override

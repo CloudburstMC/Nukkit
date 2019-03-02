@@ -12,7 +12,8 @@ public class ServerSettingsResponsePacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.formId = this.getVarInt();
+        this.data = this.getString();
     }
 
     @Override

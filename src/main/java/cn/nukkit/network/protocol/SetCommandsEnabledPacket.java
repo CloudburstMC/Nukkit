@@ -13,7 +13,7 @@ public class SetCommandsEnabledPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.enabled = this.getBoolean();
     }
 
     @Override

@@ -1,7 +1,9 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.entity.data.EntityMetadata;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.data.*;
 import cn.nukkit.item.Item;
+import cn.nukkit.math.BlockVector3;
 import cn.nukkit.utils.Binary;
 
 /**
@@ -30,7 +32,17 @@ public class AddItemEntityPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.entityUniqueId = this.getEntityUniqueId();
+        this.entityRuntimeId = this.getEntityRuntimeId();
+        this.item = this.getSlot();
+        this.x = this.getLFloat();
+        this.y = this.getLFloat();
+        this.z = this.getLFloat();
+        this.speedX = this.getLFloat();
+        this.speedY = this.getLFloat();
+        this.speedZ = this.getLFloat();
+        this.metadata = this.getMetadata();
+        this.isFromFishing = this.getBoolean();
     }
 
     @Override
@@ -41,7 +53,7 @@ public class AddItemEntityPacket extends DataPacket {
         this.putSlot(this.item);
         this.putVector3f(this.x, this.y, this.z);
         this.putVector3f(this.speedX, this.speedY, this.speedZ);
-        this.put(Binary.writeMetadata(metadata));
+        this.putMetadata(this.metadata);
         this.putBoolean(this.isFromFishing);
     }
 }

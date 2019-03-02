@@ -13,7 +13,9 @@ public class EventPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.eid = this.getVarLong();
+        this.unknown1 = this.getVarInt();
+        this.unknown2 = (byte) this.getByte();
     }
 
     @Override

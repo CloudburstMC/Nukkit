@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.math.Vector3f;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -19,7 +21,11 @@ public class SetEntityMotionPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.eid = this.getEntityRuntimeId();
+        Vector3f v = this.getVector3f();
+        this.motionX = v.x;
+        this.motionY = v.y;
+        this.motionZ = v.z;
     }
 
     @Override

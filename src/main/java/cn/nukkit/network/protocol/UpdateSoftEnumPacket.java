@@ -2,7 +2,7 @@ package cn.nukkit.network.protocol;
 
 public class UpdateSoftEnumPacket extends DataPacket {
 
-    public final String[] values = new String[0];
+    public String[] values = new String[0];
     public String name = "";
     public Type type = Type.SET;
 
@@ -13,6 +13,13 @@ public class UpdateSoftEnumPacket extends DataPacket {
 
     @Override
     public void decode() {
+        this.name = this.getString();
+        this.values = new String[(int) this.getUnsignedVarInt()];
+
+        for(int i = 0; i < this.values.length; i++) {
+            this.values[i] = this.getString();
+        }
+        this.type = Type.values()[this.getByte()];
     }
 
     @Override

@@ -47,7 +47,19 @@ public class CraftingEventPacket extends DataPacket {
 
     @Override
     public void encode() {
+        this.putByte((byte) this.windowId);
+        this.putVarInt(this.type);
+        this.putUUID(this.id);
 
+        this.putUnsignedVarInt(this.input.length);
+        for(Item input : this.input) {
+            this.putSlot(input);
+        }
+
+        this.putUnsignedVarInt(this.output.length);
+        for(Item output : this.output) {
+            this.putSlot(output);
+        }
     }
 
     @Override

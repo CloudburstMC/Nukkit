@@ -18,6 +18,6 @@ public class MapInfoRequestPacket extends DataPacket {
 
     @Override
     public void encode() {
-
+        this.putEntityUniqueId(this.mapId);
     }
 }

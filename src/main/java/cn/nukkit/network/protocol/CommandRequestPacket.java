@@ -48,6 +48,13 @@ public class CommandRequestPacket extends DataPacket {
 
     @Override
     public void encode() {
+        this.putString(this.command);
+        this.putVarInt(this.data.type.ordinal());
+        this.putUUID(this.data.uuid);
+        this.putString(this.data.requestId);
+        if (this.data.type == CommandOriginData.Origin.DEV_CONSOLE || this.data.type == CommandOriginData.Origin.TEST) {
+            this.putVarLong(this.data.getVarLong().orElse(0L));
+        }
     }
 
 }
