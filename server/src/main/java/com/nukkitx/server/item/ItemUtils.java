@@ -34,7 +34,7 @@ public class ItemUtils {
         Preconditions.checkArgument(item.getAmount() > 0 && item.getItemType() != BlockTypes.AIR, "Invalid item");
     }
 
-    public static ItemStack createItemInstance(Map<String, Tag<?>> map) {
+    public static ItemStack createItemStack(Map<String, Tag<?>> map) {
         ByteTag countTag = (ByteTag) map.get("Count");
         ShortTag damageTag = (ShortTag) map.get("Damage");
         ShortTag idTag = (ShortTag) map.get("id");
@@ -75,7 +75,7 @@ public class ItemUtils {
             if (inSlotTag.getValue() < 0 || inSlotTag.getValue() >= knownSize) {
                 throw new IllegalArgumentException("Found illegal slot " + inSlotTag.getValue());
             }
-            all[inSlotTag.getValue()] = createItemInstance(slotMap);
+            all[inSlotTag.getValue()] = createItemStack(slotMap);
         }
         return all;
     }

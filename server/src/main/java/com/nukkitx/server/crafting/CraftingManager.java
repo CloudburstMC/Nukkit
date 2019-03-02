@@ -12,7 +12,7 @@ public class CraftingManager {
 
     private CraftingDataPacket cached = null;
 
-    public RecipeItemStackBuilder createRecipeItemInstanceBuilder() {
+    public RecipeItemStackBuilder createRecipeItemStackBuilder() {
         return new NukkitRecipeItemStackBuilder();
     }
 
