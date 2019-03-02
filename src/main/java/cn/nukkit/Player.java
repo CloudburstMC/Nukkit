@@ -10,11 +10,7 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandDataVersions;
 import cn.nukkit.entity.*;
 import cn.nukkit.entity.data.*;
-import cn.nukkit.entity.item.EntityBoat;
-import cn.nukkit.entity.item.EntityFishingHook;
-import cn.nukkit.entity.item.EntityItem;
-import cn.nukkit.entity.item.EntityMinecartAbstract;
-import cn.nukkit.entity.item.EntityXPOrb;
+import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntityThrownTrident;
 import cn.nukkit.event.block.ItemFrameDropItemEvent;
@@ -72,6 +68,8 @@ import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.*;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
@@ -132,9 +130,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected int windowCnt = 4;
 
-    protected Map<Inventory, Integer> windows;
+    protected final BiMap<Integer, Inventory> windows = HashBiMap.create();
 
-    protected final Map<Integer, Inventory> windowIndex = new Int2ObjectOpenHashMap<>();
     protected final Set<Integer> permanentWindows = new IntOpenHashSet();
 
     protected int messageCounter = 2;
@@ -597,7 +594,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public Player(SourceInterface interfaz, Long clientID, String ip, int port) {
         super(null, new CompoundTag());
         this.interfaz = interfaz;
-        this.windows = new HashMap<>();
         this.perm = new PermissibleBase(this);
         this.server = Server.getInstance();
         this.lastBreak = -1;
@@ -2701,11 +2697,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.craftingType = CRAFTING_SMALL;
                     this.resetCraftingGridType();
 
-                    if (this.windowIndex.containsKey(containerClosePacket.windowId)) {
-                        this.server.getPluginManager().callEvent(new InventoryCloseEvent(this.windowIndex.get(containerClosePacket.windowId), this));
-                        this.removeWindow(this.windowIndex.get(containerClosePacket.windowId));
+                    if (this.windows.containsKey(containerClosePacket.windowId)) {
+                        this.server.getPluginManager().callEvent(new InventoryCloseEvent(this.windows.get(containerClosePacket.windowId), this));
+                        this.removeWindow(this.windows.get(containerClosePacket.windowId));
                     } else {
-                        this.windowIndex.remove(containerClosePacket.windowId);
+                        this.windows.remove(containerClosePacket.windowId);
                     }
                     break;
                 case ProtocolInfo.CRAFTING_EVENT_PACKET:
@@ -3540,8 +3536,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.ip,
                     String.valueOf(this.port),
                     this.getServer().getLanguage().translateString(reason)));
-            this.windows = new HashMap<>();
-            this.windowIndex.clear();
+            this.windows.clear();
             this.usedChunks.clear();
             this.loadQueue.clear();
             this.hasSpawned.clear();
@@ -4170,7 +4165,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         Location from = this.getLocation();
         if (super.teleport(location, cause)) {
 
-            for (Inventory window : new ArrayList<>(this.windowIndex.values())) {
+            for (Inventory window : new ArrayList<>(this.windows.values())) {
                 if (window == this.inventory) {
                     continue;
                 }
@@ -4323,14 +4318,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public int getWindowId(Inventory inventory) {
         if (this.windows.containsKey(inventory)) {
-            return this.windows.get(inventory);
+            return this.windows.inverse().get(inventory);
         }
 
         return -1;
     }
 
     public Inventory getWindowById(int id) {
-        return this.windowIndex.get(id);
+        return this.windows.get(id);
     }
 
     public int addWindow(Inventory inventory) {
@@ -4342,8 +4337,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public int addWindow(Inventory inventory, Integer forceId, boolean isPermanent) {
-        if (this.windows.containsKey(inventory)) {
-            return this.windows.get(inventory);
+        if (this.windows.containsValue(inventory)) {
+            return this.windows.inverse().get(inventory);
         }
         int cnt;
         if (forceId == null) {
@@ -4351,8 +4346,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         } else {
             cnt = forceId;
         }
-        this.windowIndex.put(cnt, inventory);
-        this.windows.put(inventory, cnt);
+        this.windows.put(cnt, inventory);
 
         if (isPermanent) {
             this.permanentWindows.add(cnt);
@@ -4369,15 +4363,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void removeWindow(Inventory inventory) {
         inventory.close(this);
-        if (this.windows.containsKey(inventory)) {
-            int id = this.windows.get(inventory);
-            this.windows.remove(this.windowIndex.get(id));
-            this.windowIndex.remove(id);
+        if (this.windows.containsValue(inventory)) {
+            int id = this.windows.inverse().get(inventory);
+            this.windows.remove(id);
         }
     }
 
     public void sendAllInventories() {
-        for (Inventory inv : this.windowIndex.values()) {
+        for (Inventory inv : this.windows.values()) {
             inv.sendContents(this);
 
             if (inv instanceof PlayerInventory) {
@@ -4446,13 +4439,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void removeAllWindows(boolean permanent) {
-        for (Entry<Integer, Inventory> entry : new ArrayList<>(this.windowIndex.entrySet())) {
-            if (!permanent && this.permanentWindows.contains(entry.getKey())) {
-                continue;
+        this.windows.forEach((id, inventory) -> {
+            if (!permanent && this.permanentWindows.contains(id)) {
+                return;
             }
-
-            this.removeWindow(entry.getValue());
-        }
+            this.removeWindow(inventory);
+        });
     }
 
     @Override
