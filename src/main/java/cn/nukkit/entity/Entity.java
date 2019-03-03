@@ -1814,7 +1814,11 @@ public abstract class Entity extends Location implements Metadatable {
         }
 
         if (portal) {
-            inPortalTicks++;
+            if (this.inPortalTicks < 80) {
+                this.inPortalTicks = 80;
+            } else {
+                this.inPortalTicks++;
+            }
         } else {
             this.inPortalTicks = 0;
         }
