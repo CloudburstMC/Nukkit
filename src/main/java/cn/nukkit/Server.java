@@ -1652,6 +1652,11 @@ public class Server {
                 tag.putString("NameTag", name);
             }
 
+            if (new File(getDataPath() + "players/" + uuid.toString() + ".dat").exists()) {
+                // We don't want to overwrite existing data.
+                continue;
+            }
+
             saveOfflinePlayerData(uuid, tag);
 
             // Add name to lookup table
