@@ -794,6 +794,10 @@ public class Server {
                 this.rcon.close();
             }
 
+            if (nameLookup != null) {
+                nameLookup.close();
+            }
+
             this.getLogger().debug("Disabling all plugins");
             this.pluginManager.disablePlugins();
 
