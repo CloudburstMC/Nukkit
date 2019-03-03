@@ -4,7 +4,6 @@ import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.plugin.Plugin;
 
-import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,6 +18,7 @@ import java.util.UUID;
  */
 public class OfflinePlayer implements IPlayer {
     private final String name;
+    private final UUID uuid;
     private final Server server;
     private final CompoundTag namedTag;
 
@@ -28,19 +28,35 @@ public class OfflinePlayer implements IPlayer {
      *
      * @param server 这个玩家所在服务器的{@code Server}对象。<br>
      *               The server this player is in, as a {@code Server} object.
-     * @param name   这个玩家所的名字。<br>
-     *               Name of this player.
+     * @param uuid   这个玩家的UUID。<br>
+     *               UUID of this player.
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
-    public OfflinePlayer(Server server, String name) {
-        this.server = server;
-        this.name = name;
+    public OfflinePlayer(Server server, UUID uuid) {
+        this(server, uuid, null);
+    }
 
-        if (new File(this.server.getDataPath() + "players/" + name.toLowerCase() + ".dat").exists()) {
-            this.namedTag = this.server.getOfflinePlayerData(this.name);
+    public OfflinePlayer(Server server, String name) {
+        this(server, null, name);
+    }
+
+    public OfflinePlayer(Server server, UUID uuid, String name) {
+        this.server = server;
+
+
+        if (uuid != null) {
+            this.namedTag = this.server.getOfflinePlayerData(uuid);
+            if (name == null) {
+                name = getName();
+            }
+        } else if (name != null) {
+            this.namedTag = this.server.getOfflinePlayerData(name);
+            uuid = getUniqueId();
         } else {
-            this.namedTag = null;
+            throw new IllegalArgumentException("Name and UUID cannot both be null");
         }
+        this.uuid = uuid;
+        this.name = name;
     }
 
     @Override
@@ -50,11 +66,17 @@ public class OfflinePlayer implements IPlayer {
 
     @Override
     public String getName() {
-        return name;
+        if (namedTag != null && namedTag.contains("NameTag")) {
+            return namedTag.getString("NameTag");
+        }
+        return null;
     }
 
     @Override
     public UUID getUniqueId() {
+        if (uuid != null) {
+            return uuid;
+        }
         if (namedTag != null) {
             long least = namedTag.getLong("UUIDLeast");
             long most = namedTag.getLong("UUIDMost");
