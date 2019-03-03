@@ -28,7 +28,7 @@ public class OfflinePlayer implements IPlayer {
      *
      * @param server 这个玩家所在服务器的{@code Server}对象。<br>
      *               The server this player is in, as a {@code Server} object.
-     * @param uuid   这个玩家所的名字。<br>
+     * @param uuid   这个玩家的UUID。<br>
      *               UUID of this player.
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
