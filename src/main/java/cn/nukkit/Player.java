@@ -1392,7 +1392,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         if (portal) {
-            inPortalTicks++;
+            if (this.isCreative() && this.inPortalTicks < 80) {
+                this.inPortalTicks = 80;
+            } else {
+                this.inPortalTicks++;
+            }
         } else {
             this.inPortalTicks = 0;
         }
