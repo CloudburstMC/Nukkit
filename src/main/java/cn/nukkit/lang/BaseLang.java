@@ -129,8 +129,14 @@ public class BaseLang {
         return this.translateString(str, new String[]{}, null);
     }
 
-    public String translateString(String str, Object... params) {
+    public String translateString(String str, String... params) {
+        if (params != null) {
+            return this.translateString(str, params, null);
+        }
+        return this.translateString(str, new String[0], null);
+    }
 
+    public String translateString(String str, Object... params) {
         if (params != null) {
             String[] paramsToString = new String[params.length];
             for (int i = 0; i < params.length; i++) {
