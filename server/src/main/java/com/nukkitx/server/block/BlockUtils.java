@@ -23,7 +23,6 @@ public class BlockUtils {
 
     public static final Vector3i[] AROUND_POSITIONS = new Vector3i[]{
             Vector3i.from(1, 0, 0),
-            Vector3i.from(1, 0, 0),
             Vector3i.from(-1, 0, 0),
             Vector3i.from(0, 1, 0),
             Vector3i.from(0, -1, 0),
