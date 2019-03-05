@@ -49,6 +49,8 @@ public class OfflinePlayer implements IPlayer {
             if (name == null) {
                 name = getName();
             }
+            this.namedTag.putLong("UUIDMost", uuid.getMostSignificantBits());
+            this.namedTag.putLong("UUIDLeast", uuid.getLeastSignificantBits());
         } else if (name != null) {
             this.namedTag = this.server.getOfflinePlayerData(name);
             uuid = getUniqueId();
@@ -57,6 +59,10 @@ public class OfflinePlayer implements IPlayer {
         }
         this.uuid = uuid;
         this.name = name;
+
+        if (name != null) {
+            namedTag.putString("NameTag", name);
+        }
     }
 
     @Override
@@ -74,9 +80,6 @@ public class OfflinePlayer implements IPlayer {
 
     @Override
     public UUID getUniqueId() {
-        if (uuid != null) {
-            return uuid;
-        }
         if (namedTag != null) {
             long least = namedTag.getLong("UUIDLeast");
             long most = namedTag.getLong("UUIDMost");

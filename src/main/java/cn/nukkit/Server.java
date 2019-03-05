@@ -1524,8 +1524,9 @@ public class Server {
         if (result != null) {
             return result;
         }
-        return lookupName(name).map(uuid -> new OfflinePlayer(this, uuid, name))
-                .orElse(new OfflinePlayer(this, null, name));
+
+        return lookupName(name).map(uuid -> new OfflinePlayer(this, uuid))
+                .orElse(new OfflinePlayer(this, name));
     }
 
     public IPlayer getOfflinePlayer(UUID uuid) {
