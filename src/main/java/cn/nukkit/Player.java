@@ -3429,6 +3429,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.dataPacket(pk);
     }
 
+
+    private void setTitle(String text) {
+        SetTitlePacket packet = new SetTitlePacket();
+        packet.text = text;
+        packet.type = SetTitlePacket.TYPE_TITLE;
+        this.dataPacket(packet);
+    }
+
     public void sendTitle(String title) {
         this.sendTitle(title, "", 20, 20, 5);
     }
@@ -3437,23 +3445,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.sendTitle(title, subtitle, 20, 20, 5);
     }
 
-    public void sendTitle(String title, String subtitle, int fadein, int duration, int fadeout) {
-        if (!subtitle.equals("")) {
-            SetTitlePacket pk = new SetTitlePacket();
-            pk.type = SetTitlePacket.TYPE_SUBTITLE;
-            pk.text = subtitle;
-            pk.fadeInTime = fadein;
-            pk.stayTime = duration;
-            pk.fadeOutTime = fadeout;
-            this.dataPacket(pk);
+    public void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+        this.setTitleAnimationTimes(fadeIn, stay, fadeOut);
+        if (!subtitle.isEmpty()) {
+            this.setSubtitle(subtitle);
         }
-        SetTitlePacket pk2 = new SetTitlePacket();
-        pk2.type = SetTitlePacket.TYPE_TITLE;
-        pk2.text = title;
-        pk2.fadeInTime = fadein;
-        pk2.stayTime = duration;
-        pk2.fadeOutTime = fadeout;
-        this.dataPacket(pk2);
+        this.setTitle(title);
     }
 
     public void sendActionBar(String title) {
