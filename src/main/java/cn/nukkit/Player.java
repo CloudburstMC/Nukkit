@@ -77,6 +77,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
+import joptsimple.internal.Strings;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
@@ -3447,10 +3448,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
         this.setTitleAnimationTimes(fadeIn, stay, fadeOut);
-        if (!subtitle.isEmpty()) {
+        if (!Strings.isNullOrEmpty(subtitle)) {
             this.setSubtitle(subtitle);
         }
-        this.setTitle(title);
+        // title won't send if an empty string is used.
+        this.setTitle(Strings.isNullOrEmpty(title) ? " " : title);
     }
 
     public void sendActionBar(String title) {
