@@ -1799,6 +1799,15 @@ public abstract class Entity extends Location implements Metadatable {
         return this.collisionBlocks;
     }
 
+    /**
+     * Returns whether this entity can be moved by currents in liquids.
+     *
+     * @return boolean
+     */
+    public boolean canBeMovedByCurrents() {
+        return true;
+    }
+
     protected void checkBlockCollision() {
         Vector3 vector = new Vector3(0, 0, 0);
         boolean portal = false;
