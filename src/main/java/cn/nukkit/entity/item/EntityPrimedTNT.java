@@ -175,4 +175,9 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
     public Entity getSource() {
         return source;
     }
+
+    @Override
+    public boolean canBeMovedByCurrents() {
+        return false;
+    }
 }

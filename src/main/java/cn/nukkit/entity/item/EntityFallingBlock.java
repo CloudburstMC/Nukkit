@@ -175,4 +175,9 @@ public class EntityFallingBlock extends Entity {
         namedTag.putInt("TileID", blockId);
         namedTag.putByte("Data", damage);
     }
+
+    @Override
+    public boolean canBeMovedByCurrents() {
+        return false;
+    }
 }
