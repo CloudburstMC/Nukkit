@@ -1546,19 +1546,21 @@ public class Server {
     }
 
     public CompoundTag getOfflinePlayerData(UUID uuid) {
-        return getOfflinePlayerDataInternal(uuid.toString());
+        return getOfflinePlayerDataInternal(uuid.toString(), true);
     }
 
     @Deprecated
     public CompoundTag getOfflinePlayerData(String name) {
-        return getOfflinePlayerDataInternal(name);
+        return getOfflinePlayerDataInternal(name, true);
     }
 
-    private CompoundTag getOfflinePlayerDataInternal(String name) {
+    private CompoundTag getOfflinePlayerDataInternal(String name, boolean runEvent) {
         Preconditions.checkNotNull(name, "name");
 
         PlayerDataSerializeEvent event = new PlayerDataSerializeEvent(name, playerDataSerializer);
-        pluginManager.callEvent(event);
+        if (runEvent) {
+            pluginManager.callEvent(event);
+        }
 
         Optional<InputStream> dataStream = Optional.empty();
         try {
@@ -1623,10 +1625,16 @@ public class Server {
     }
 
     public void saveOfflinePlayerData(String name, CompoundTag tag, boolean async) {
+        saveOfflinePlayerData(name, tag, async, true);
+    }
+
+    private void saveOfflinePlayerData(String name, CompoundTag tag, boolean async, boolean runEvent) {
         String nameLower = name.toLowerCase();
         if (this.shouldSavePlayerData()) {
             PlayerDataSerializeEvent event = new PlayerDataSerializeEvent(nameLower, playerDataSerializer);
-            pluginManager.callEvent(event);
+            if (runEvent) {
+                pluginManager.callEvent(event);
+            }
 
             this.getScheduler().scheduleTask(() -> {
                 saveOfflinePlayerDataInternal(event.getSerializer(), tag, nameLower, event.getUuid().orElse(null));
@@ -1662,7 +1670,7 @@ public class Server {
 
             log.debug("Attempting legacy player data conversion for {}", name);
 
-            CompoundTag tag = getOfflinePlayerDataInternal(name);
+            CompoundTag tag = getOfflinePlayerDataInternal(name, false);
 
             if (tag == null || !tag.contains("UUIDLeast") || !tag.contains("UUIDMost")) {
                 // No UUID so we cannot convert. Wait until player logs in.
@@ -1679,7 +1687,7 @@ public class Server {
                 continue;
             }
 
-            saveOfflinePlayerData(uuid, tag);
+            saveOfflinePlayerData(uuid.toString(), tag, false, false);
 
             // Add name to lookup table
             updateName(uuid, name);
