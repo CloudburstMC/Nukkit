@@ -9,16 +9,18 @@ import java.util.UUID;
 public interface PlayerDataSerializer {
 
     /**
-     * Read player data from
+     * Reads player data from {@link InputStream} if the file exists otherwise it will create the default data.
      *
-     * @param name name of player or UUID as String
+     * @param name name of player or {@link UUID} as {@link String}
      * @param uuid uuid of player. Could be null if name is used.
-     * @return {@link InputStream} if the player data is present
+     * @return {@link InputStream} if the player data exists
      */
     Optional<InputStream> read(String name, UUID uuid) throws IOException;
 
     /**
-     * @param name name of player or UUID as String
+     * Writes player data to given {@link OutputStream}.
+     *
+     * @param name name of player or {@link UUID} as {@link String}
      * @param uuid uuid of player. Could be null if name is used.
      * @return stream to write player data
      */
