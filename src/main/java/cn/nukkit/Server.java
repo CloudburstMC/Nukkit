@@ -2266,6 +2266,14 @@ public class Server {
         return this.allowNether;
     }
 
+    public PlayerDataSerializer getPlayerDataSerializer() {
+        return playerDataSerializer;
+    }
+
+    public void setPlayerDataSerializer(PlayerDataSerializer playerDataSerializer) {
+        this.playerDataSerializer = Preconditions.checkNotNull(playerDataSerializer, "playerDataSerializer");
+    }
+
     public static Server getInstance() {
         return instance;
     }
