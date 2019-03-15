@@ -2241,7 +2241,9 @@ public class Server {
         Entity.registerEntity("Human", EntityHuman.class, true);
 
         Entity.registerEntity("MinecartRideable", EntityMinecartEmpty.class);
-        // TODO: 2016/1/30 all finds of minecart
+        Entity.registerEntity("MinecartChest", EntityMinecartChest.class);
+        Entity.registerEntity("MinecartHopper", EntityMinecartHopper.class);
+        Entity.registerEntity("MinecartTnt", EntityMinecartTNT.class);
         Entity.registerEntity("Boat", EntityBoat.class);
 
         Entity.registerEntity("EndCrystal", EntityEndCrystal.class);
