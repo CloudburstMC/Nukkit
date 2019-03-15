@@ -42,23 +42,35 @@ class VarIntTest {
 		VarInt.writeVarInt(bs, 0xea3eca71);
 		VarInt.writeUnsignedVarLong(bs, 0x1234567812345678L);
 		VarInt.writeVarLong(bs, 0xea3eca710becececL);
+		VarInt.writeUnsignedVarLong(bs, Long.MAX_VALUE);
+		VarInt.writeVarLong(bs, Long.MAX_VALUE);
+		VarInt.writeVarLong(bs, Long.MIN_VALUE);
 		assertAll(
 				() -> assertEquals(237356812, VarInt.readUnsignedVarInt(bs)),
 				() -> assertEquals(0xea3eca71, VarInt.readVarInt(bs)),
 				() -> assertEquals(0x1234567812345678L, VarInt.readUnsignedVarLong(bs)),
-				() -> assertEquals(0xea3eca710becececL, VarInt.readVarLong(bs))
+				() -> assertEquals(0xea3eca710becececL, VarInt.readVarLong(bs)),
+				() -> assertEquals(Long.MAX_VALUE, VarInt.readUnsignedVarLong(bs)),
+				() -> assertEquals(Long.MAX_VALUE, VarInt.readVarLong(bs)),
+				() -> assertEquals(Long.MIN_VALUE, VarInt.readVarLong(bs))
 		);
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		VarInt.writeUnsignedVarInt(os, 237356812);
 		VarInt.writeVarInt(os, 0xea3eca71);
 		VarInt.writeUnsignedVarLong(os, 0x1234567812345678L);
 		VarInt.writeVarLong(os, 0xea3eca710becececL);
+		VarInt.writeUnsignedVarLong(os, Long.MAX_VALUE);
+		VarInt.writeVarLong(os, Long.MAX_VALUE);
+		VarInt.writeVarLong(os, Long.MIN_VALUE);
 		ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
 		assertAll(
 				() -> assertEquals(237356812, VarInt.readUnsignedVarInt(is)),
 				() -> assertEquals(0xea3eca71, VarInt.readVarInt(is)),
 				() -> assertEquals(0x1234567812345678L, VarInt.readUnsignedVarLong(is)),
-				() -> assertEquals(0xea3eca710becececL, VarInt.readVarLong(is))
+				() -> assertEquals(0xea3eca710becececL, VarInt.readVarLong(is)),
+				() -> assertEquals(Long.MAX_VALUE, VarInt.readUnsignedVarLong(is)),
+				() -> assertEquals(Long.MAX_VALUE, VarInt.readVarLong(is)),
+				() -> assertEquals(Long.MIN_VALUE, VarInt.readVarLong(is))
 		);
 	}
 

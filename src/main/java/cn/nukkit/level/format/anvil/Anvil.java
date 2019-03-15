@@ -32,7 +32,6 @@ import java.util.regex.Pattern;
  */
 public class Anvil extends BaseLevelProvider {
     public static final int VERSION = 19133;
-    static private final byte[] PAD_256 = new byte[256];
 
     public Anvil(Level level, String path) throws IOException {
         super(level, path);
@@ -155,13 +154,11 @@ public class Anvil extends BaseLevelProvider {
         }
         stream.putByte((byte) count);
         for (int i = 0; i < count; i++) {
-            stream.putByte((byte) 0);
             stream.put(sections[i].getBytes());
         }
         for (byte height : chunk.getHeightMapArray()) {
             stream.putByte(height);
         }
-        stream.put(PAD_256);
         stream.put(chunk.getBiomeIdArray());
         stream.putByte((byte) 0);
         if (extraData != null) {

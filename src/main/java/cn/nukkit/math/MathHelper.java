@@ -3,14 +3,15 @@ package cn.nukkit.math;
 import java.util.Random;
 
 public class MathHelper {
-    private static float[] a = new float[65536];
+
+    private static final int BIG_ENOUGH_INT = 30_000_000;
+    private static final double BIG_ENOUGH_FLOOR = BIG_ENOUGH_INT;
+
+    private final static float[] a = new float[65536];
 
     static {
         for (int i = 0; i < 65536; i++)
             a[i] = (float) Math.sin(i * 3.141592653589793D * 2.0D / 65536.0D);
-    }
-
-    private MathHelper() {
     }
 
     public static float sqrt(float paramFloat) {
@@ -101,5 +102,13 @@ public class MathHelper {
 
     public static float denormalizeClamp(float lowerBnd, float upperBnd, float slide) {
         return slide < 0.0f ? lowerBnd : (slide > 1.0f ? upperBnd : lowerBnd + (upperBnd - lowerBnd) * slide);
+    }
+
+    public static int fastCeil(float val) {
+        return BIG_ENOUGH_INT - (int) (BIG_ENOUGH_FLOOR - val);
+    }
+
+    public static int fastFloor(float val) {
+        return (int) (val + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;
     }
 }

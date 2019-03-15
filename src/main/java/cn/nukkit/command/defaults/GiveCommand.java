@@ -67,8 +67,12 @@ public class GiveCommand extends VanillaCommand {
             item.setCount(item.getMaxStackSize());
         }
 
+        int id = item.getId();
+        if (id >= 512) {
+            id -= 65536;
+        }
         if (player != null) {
-            if (item.getId() == 0) {
+            if (id == 0) {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.give.item.notFound", args[1]));
                 return true;
             }
@@ -80,7 +84,7 @@ public class GiveCommand extends VanillaCommand {
         }
         Command.broadcastCommandMessage(sender, new TranslationContainer(
                 "%commands.give.success",
-                item.getName() + " (" + item.getId() + ":" + item.getDamage() + ")",
+                item.getName() + " (" + id + ":" + item.getDamage() + ")",
                 String.valueOf(item.getCount()),
                 player.getName()));
         return true;

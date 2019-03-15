@@ -1,22 +1,26 @@
 package cn.nukkit.level.format.anvil.util;
 
 import com.google.common.base.Preconditions;
-
 import java.util.Arrays;
 
 public class BlockStorage {
+
     private static final int SECTION_SIZE = 4096;
+
     private final byte[] blockIds;
     private final NibbleArray blockData;
+    private final NibbleArray matrix; //hack
 
     public BlockStorage() {
-        blockIds = new byte[SECTION_SIZE];
-        blockData = new NibbleArray(SECTION_SIZE);
+        this.blockIds = new byte[SECTION_SIZE];
+        this.blockData = new NibbleArray(SECTION_SIZE);
+        this.matrix = new NibbleArray(SECTION_SIZE);
     }
 
-    private BlockStorage(byte[] blockIds, NibbleArray blockData) {
+    private BlockStorage(byte[] blockIds, NibbleArray blockData, NibbleArray matrix) {
         this.blockIds = blockIds;
         this.blockData = blockData;
+        this.matrix = matrix;
     }
 
     private static int getIndex(int x, int y, int z) {
@@ -26,24 +30,26 @@ public class BlockStorage {
     }
 
     public int getBlockData(int x, int y, int z) {
-        return blockData.get(getIndex(x, y, z)) & 0xf;
+        return this.blockData.get(getIndex(x, y, z)) & 0xf;
     }
 
     public int getBlockId(int x, int y, int z) {
-        int id = blockIds[getIndex(x, y, z)];
-        return id < 0 ? 0xff - id : id;
+        int index = getIndex(x, y, z);
+        return (this.blockIds[index] & 0xff) + 256 * (this.matrix.get(index) & 1);
     }
 
     public void setBlockId(int x, int y, int z, int id) {
-        blockIds[getIndex(x, y, z)] = (byte) (id > 0xff ? 0xff - id : id);
+        int index = getIndex(x, y, z);
+        this.matrix.set(index, (byte) ((id / 256) & 1));
+        this.blockIds[index] = (byte) (id & 0xff);
     }
 
     public void setBlockData(int x, int y, int z, int data) {
-        blockData.set(getIndex(x, y, z), (byte) data);
+        this.blockData.set(getIndex(x, y, z), (byte) data);
     }
 
     public int getFullBlock(int x, int y, int z) {
-        return getFullBlock(getIndex(x, y, z));
+        return this.getFullBlock(getIndex(x, y, z));
     }
 
     public void setFullBlock(int x, int y, int z, int value) {
@@ -51,50 +57,59 @@ public class BlockStorage {
     }
 
     public int getAndSetFullBlock(int x, int y, int z, int value) {
-        return getAndSetFullBlock(getIndex(x, y, z), (short) value);
+        return this.getAndSetFullBlock(getIndex(x, y, z), (short) value);
     }
 
     private int getAndSetFullBlock(int index, short value) {
         Preconditions.checkArgument(value < 0x1fff, "Invalid full block");
-        int oldBlock = blockIds[index];
-        byte oldData = blockData.get(index);
+        int oldBlock = (this.blockIds[index] & 0xff) + 256 * (this.matrix.get(index) & 1);
+        byte oldData = this.blockData.get(index);
         int newBlock = (value & 0x1ff0) >> 4;
-        if (newBlock > 0xff) newBlock = 0xff - newBlock;
         byte newData = (byte) (value & 0xf);
         if (oldBlock != newBlock) {
-            blockIds[index] = (byte) newBlock;
+            this.matrix.set(index, (byte) ((newBlock / 256) & 1));
+            this.blockIds[index] = (byte) (newBlock & 0xff);
         }
         if (oldData != newData) {
-            blockData.set(index, newData);
+            this.blockData.set(index, newData);
         }
-        return ((oldBlock < 0 ? 0xff - oldBlock : oldBlock) << 4) | oldData;
+        return (oldBlock << 4) | oldData;
     }
 
-    private int getFullBlock(int index) {
-        int block = blockIds[index];
-        byte data = blockData.get(index);
-        return ((block < 0 ? 0xff - block : block) << 4) | data;
+    public int getFullBlock(int index) {
+        return (((this.blockIds[index] & 0xff) + 256 * (this.matrix.get(index) & 1)) << 4) | this.blockData.get(index);
     }
 
     private void setFullBlock(int index, short value) {
         Preconditions.checkArgument(value < 0x1fff, "Invalid full block");
         int block = (value & 0x1ff0) >> 4;
-        if (block > 0xff) block = 0xff - block;
         byte data = (byte) (value & 0xf);
+        this.matrix.set(index, (byte) ((block / 256) & 1));
+        this.blockIds[index] = (byte) (block & 0xff);
+        this.blockData.set(index, data);
+    }
 
-        blockIds[index] = (byte) block;
-        blockData.set(index, data);
+    public int getMatrixElement(int x, int y, int z) {
+        return this.matrix.get(getIndex(x, y, z)) & 1;
+    }
+
+    public void setMatrixElement(int x, int y, int z, int element) {
+        this.matrix.set(getIndex(x, y, z), (byte) (element & 1));
     }
 
     public byte[] getBlockIds() {
-        return Arrays.copyOf(blockIds, blockIds.length);
+        return Arrays.copyOf(this.blockIds, this.blockIds.length);
     }
 
     public byte[] getBlockData() {
-        return blockData.getData();
+        return this.blockData.getData();
+    }
+
+    public byte[] getMatrix() {
+        return this.matrix.getData();
     }
 
     public BlockStorage copy() {
-        return new BlockStorage(blockIds.clone(), blockData.copy());
+        return new BlockStorage(Arrays.copyOf(blockIds, blockIds.length), this.blockData.copy(), this.matrix.copy());
     }
 }

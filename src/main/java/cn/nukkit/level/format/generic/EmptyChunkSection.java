@@ -17,8 +17,9 @@ public class EmptyChunkSection implements ChunkSection {
             EMPTY[y] = new EmptyChunkSection(y);
         }
     }
-    public static byte[] EMPTY_LIGHT_ARR = new byte[2048];
     public static byte[] EMPTY_SKY_LIGHT_ARR = new byte[2048];
+    public static byte[] EMPTY_DATA_ARR = new byte[2048];
+    public static byte[] EMPTY_ID_ARR = new byte[4096];
     static {
         Arrays.fill(EMPTY_SKY_LIGHT_ARR, (byte) 255);
     }
@@ -40,12 +41,28 @@ public class EmptyChunkSection implements ChunkSection {
     }
 
     @Override
+    final public int getBlockId(int x, int y, int z, int layer) {
+        return 0;
+    }
+
+    @Override
     public int getFullBlock(int x, int y, int z) throws ChunkException {
         return 0;
     }
 
     @Override
+    public int getFullBlock(int x, int y, int z, int layer) throws ChunkException {
+        return 0;
+    }
+
+    @Override
     public Block getAndSetBlock(int x, int y, int z, Block block) {
+        if (block.getId() != 0) throw new ChunkException("Tried to modify an empty Chunk");
+        return Block.get(0);
+    }
+
+    @Override
+    public Block getAndSetBlock(int x, int y, int z, Block block, int layer) {
         if (block.getId() != 0) throw new ChunkException("Tried to modify an empty Chunk");
         return Block.get(0);
     }
@@ -63,13 +80,29 @@ public class EmptyChunkSection implements ChunkSection {
     }
 
     @Override
+    public boolean setBlock(int x, int y, int z, int blockId, int meta, int layer) throws ChunkException {
+        if (blockId != 0) throw new ChunkException("Tried to modify an empty Chunk");
+        return false;
+    }
+
+    @Override
     public byte[] getIdArray() {
-        return new byte[4096];
+        return EMPTY_ID_ARR;
+    }
+
+    @Override
+    public byte[] getIdArray(int layer) {
+        return EMPTY_ID_ARR;
     }
 
     @Override
     public byte[] getDataArray() {
-        return new byte[2048];
+        return EMPTY_DATA_ARR;
+    }
+
+    @Override
+    public byte[] getDataArray(int layer) {
+        return EMPTY_DATA_ARR;
     }
 
     @Override
@@ -79,11 +112,16 @@ public class EmptyChunkSection implements ChunkSection {
 
     @Override
     public byte[] getLightArray() {
-        return EMPTY_LIGHT_ARR;
+        return EMPTY_DATA_ARR;
     }
 
     @Override
     final public void setBlockId(int x, int y, int z, int id) throws ChunkException {
+        if (id != 0) throw new ChunkException("Tried to modify an empty Chunk");
+    }
+
+    @Override
+    final public void setBlockId(int x, int y, int z, int id, int layer) throws ChunkException {
         if (id != 0) throw new ChunkException("Tried to modify an empty Chunk");
     }
 
@@ -93,12 +131,28 @@ public class EmptyChunkSection implements ChunkSection {
     }
 
     @Override
+    final public int getBlockData(int x, int y, int z, int layer) {
+        return 0;
+    }
+
+    @Override
     public void setBlockData(int x, int y, int z, int data) throws ChunkException {
         if (data != 0) throw new ChunkException("Tried to modify an empty Chunk");
     }
 
     @Override
+    public void setBlockData(int x, int y, int z, int data, int layer) throws ChunkException {
+        if (data != 0) throw new ChunkException("Tried to modify an empty Chunk");
+    }
+
+    @Override
     public boolean setFullBlockId(int x, int y, int z, int fullId) {
+        if (fullId != 0) throw new ChunkException("Tried to modify an empty Chunk");
+        return false;
+    }
+
+    @Override
+    public boolean setFullBlockId(int x, int y, int z, int fullId, int layer) {
         if (fullId != 0) throw new ChunkException("Tried to modify an empty Chunk");
         return false;
     }
@@ -131,6 +185,21 @@ public class EmptyChunkSection implements ChunkSection {
     @Override
     public byte[] getBytes() {
         return new byte[6144];
+    }
+
+    @Override
+    public byte[] getMatrixArray() {
+        return EMPTY_DATA_ARR;
+    }
+
+    @Override
+    public byte[] getMatrixArray(int layer) {
+        return EMPTY_DATA_ARR;
+    }
+
+    @Override
+    public boolean hasLayer2() {
+        return false;
     }
 
     @Override
