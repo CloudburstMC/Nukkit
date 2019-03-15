@@ -3,7 +3,7 @@ package cn.nukkit.math;
 import java.util.Random;
 
 public class MathHelper {
-    private final static float[] a = new float[65536];
+    private static float[] a = new float[65536];
 
     static {
         for (int i = 0; i < 65536; i++)
