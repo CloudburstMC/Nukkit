@@ -435,7 +435,7 @@ public class PlayerInventory extends BaseInventory {
         for (Player player : players) {
             int id = player.getWindowId(this);
             if (id == -1 || !player.spawned) {
-                this.close(player);
+                if (this.getHolder() != player) this.close(player);
                 continue;
             }
             pk.inventoryId = id;
