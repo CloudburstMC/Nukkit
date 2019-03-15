@@ -7,13 +7,14 @@ import cn.nukkit.level.Position;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Faceable;
 
 /**
  * Created on 2016/1/5 by xtypr.
  * Package cn.nukkit.block in project nukkit .
  * The name NetherPortalBlock comes from minecraft wiki.
  */
-public class BlockNetherPortal extends BlockFlowable {
+public class BlockNetherPortal extends BlockFlowable implements Faceable {
 
     public BlockNetherPortal() {
         this(0);
@@ -146,5 +147,10 @@ public class BlockNetherPortal extends BlockFlowable {
         lvl.setBlockAt(x + 1, y, z, OBSIDIAN);
         lvl.setBlockAt(x + 2, y, z, OBSIDIAN);
         lvl.setBlockAt(x + 3, y, z, OBSIDIAN);
+    }
+
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
     }
 }

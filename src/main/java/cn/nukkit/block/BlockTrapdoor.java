@@ -11,11 +11,12 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Faceable;
 
 /**
  * Created by Pub4Game on 26.12.2015.
  */
-public class BlockTrapdoor extends BlockTransparentMeta {
+public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
 
     public BlockTrapdoor() {
         this(0);
@@ -218,16 +219,16 @@ public class BlockTrapdoor extends BlockTransparentMeta {
         return BlockColor.WOOD_BLOCK_COLOR;
     }
 
-    public BlockFace getFacing() {
-        int[] faces = {3, 1, 0, 2};
-        return BlockFace.fromHorizontalIndex(faces[this.getDamage() & 0x03]);
-    }
-
     public boolean isOpen() {
         return (this.getDamage() & 0x08) != 0;
     }
 
     public boolean isTop() {
         return (this.getDamage() & 0x04) != 0;
+    }
+
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
     }
 }

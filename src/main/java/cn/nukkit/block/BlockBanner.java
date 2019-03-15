@@ -11,11 +11,12 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.Faceable;
 
 /**
  * Created by PetteriM1
  */
-public class BlockBanner extends BlockTransparentMeta {
+public class BlockBanner extends BlockTransparentMeta implements Faceable {
 
     public BlockBanner() {
         this(0);
@@ -83,7 +84,7 @@ public class BlockBanner extends BlockTransparentMeta {
         }
         return false;
     }
-    
+
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
@@ -100,5 +101,10 @@ public class BlockBanner extends BlockTransparentMeta {
     @Override
     public Item toItem() {
         return new ItemBanner(this.getDamage() & 0x0f);
+    }
+
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
     }
 }

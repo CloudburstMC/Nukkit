@@ -72,7 +72,7 @@ public class BlockRedstoneTorchUnlit extends BlockTorch {
     }
 
     protected boolean checkState() {
-        BlockFace face = getFacing().getOpposite();
+        BlockFace face = getBlockFace().getOpposite();
         Vector3 pos = getLocation();
 
         if (!this.level.isSidePowered(pos.getSide(face), face)) {
