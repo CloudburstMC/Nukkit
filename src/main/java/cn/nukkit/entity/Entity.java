@@ -1123,18 +1123,11 @@ public abstract class Entity extends Location implements Metadatable {
     public boolean entityBaseTick(int tickDiff) {
         Timings.entityBaseTickTimer.startTiming();
 
-        if (!this.isPlayer) {
-            this.blocksAround = null;
-            this.collisionBlocks = null;
-        }
         this.justCreated = false;
 
         if (!this.isAlive()) {
             this.removeAllEffects();
             this.despawnFromAll();
-            if (!this.isPlayer) {
-                this.close();
-            }
             Timings.entityBaseTickTimer.stopTiming();
             return false;
         }
@@ -1165,8 +1158,8 @@ public abstract class Entity extends Location implements Metadatable {
                 if (player.getGamemode() != 1) this.attack(new EntityDamageEvent(this, DamageCause.VOID, 10));
             } else {
                 this.attack(new EntityDamageEvent(this, DamageCause.VOID, 10));
-                hasUpdate = true;
             }
+            hasUpdate = true;
         }
 
         if (this.fireTicks > 0) {
@@ -1220,13 +1213,13 @@ public abstract class Entity extends Location implements Metadatable {
                             // player
                             teleport(newPos.add(1.5, 1, 0.5));
                             BlockNetherPortal.spawnPortal(newPos);
+                            hasUpdate = true;
                         }
                     }, 20);
                 }
             }
         }
 
-        this.age += tickDiff;
         this.ticksLived += tickDiff;
         TimingsHistory.activatedEntityTicks++;
 
