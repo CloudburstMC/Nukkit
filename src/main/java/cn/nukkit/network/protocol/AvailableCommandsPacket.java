@@ -276,6 +276,7 @@ public class AvailableCommandsPacket extends DataPacket {
 
                     putLInt(type);
                     putBoolean(parameter.optional);
+                    putByte((byte) 0); // TODO: 19/03/2019 Bit flags. Only first bit is used for GameRules.
                 }
             }
         });
