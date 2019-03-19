@@ -137,6 +137,8 @@ public interface ProtocolInfo {
     byte NETWORK_CHUNK_PUBLISHER_UPDATE_PACKET = 0x79;
     byte BIOME_DEFINITION_LIST_PACKET = 0x7a;
     byte LEVEL_SOUND_EVENT_PACKET = 0x7b;
+    byte LECTERN_UPDATE_PACKET = 0x7c;
+    byte VIDEO_STREAM_CONNECT_PACKET = 0x7d;
 
     byte BATCH_PACKET = (byte) 0xff;
 }
