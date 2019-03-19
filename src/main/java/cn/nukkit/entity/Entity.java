@@ -1213,7 +1213,6 @@ public abstract class Entity extends Location implements Metadatable {
                             // player
                             teleport(newPos.add(1.5, 1, 0.5));
                             BlockNetherPortal.spawnPortal(newPos);
-                            hasUpdate = true;
                         }
                     }, 20);
                 }
