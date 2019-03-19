@@ -79,7 +79,7 @@ public class EntityFishingHook extends EntityProjectile {
 
     @Override
     public float getGravity() {
-        return 0.08f;
+        return 0.04f;
     }
 
     @Override
