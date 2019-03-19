@@ -1821,7 +1821,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public boolean canInteract(Vector3 pos, double maxDistance) {
-        return this.canInteract(pos, maxDistance, 0.5);
+        return this.canInteract(pos, maxDistance, 0.6);
     }
 
     public boolean canInteract(Vector3 pos, double maxDistance, double maxDiff) {
