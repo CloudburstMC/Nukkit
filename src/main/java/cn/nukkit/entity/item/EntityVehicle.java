@@ -1,6 +1,5 @@
 package cn.nukkit.entity.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityInteractable;
@@ -14,7 +13,8 @@ import cn.nukkit.network.protocol.SetEntityLinkPacket;
 
 import java.util.Objects;
 
-import static cn.nukkit.network.protocol.SetEntityLinkPacket.*;
+import static cn.nukkit.network.protocol.SetEntityLinkPacket.TYPE_REMOVE;
+import static cn.nukkit.network.protocol.SetEntityLinkPacket.TYPE_RIDE;
 
 /**
  * author: MagicDroidX
@@ -90,14 +90,6 @@ public abstract class EntityVehicle extends Entity implements EntityRideable, En
             pk.type = TYPE_REMOVE;      // Byte for leave
             Server.broadcastPacket(this.hasSpawned.values(), pk);
 
-            // Broadcast to player
-            if (entity instanceof Player) {
-                pk = new SetEntityLinkPacket();
-                pk.rider = 0;               // To the place of?
-                pk.riding = entity.getId(); // From what
-                pk.type = TYPE_REMOVE;      // Another byte for leave
-                ((Player) entity).dataPacket(pk);
-            }
 
             // Refurbish the entity
             entity.riding = null;
@@ -118,17 +110,8 @@ public abstract class EntityVehicle extends Entity implements EntityRideable, En
             pk = new SetEntityLinkPacket();
             pk.rider = getId();         // To the?
             pk.riding = entity.getId(); // From who?
-            pk.type = TYPE_PASSENGER;   // Type
+            pk.type = TYPE_RIDE;   // Type
             Server.broadcastPacket(this.hasSpawned.values(), pk);
-
-            // Broadcast to player
-            if (entity instanceof Player) {
-                pk = new SetEntityLinkPacket();
-                pk.rider = 0;               // To the place of?
-                pk.riding = entity.getId(); // From what
-                pk.type = TYPE_PASSENGER;   // Byte
-                ((Player) entity).dataPacket(pk);
-            }
 
             // Add variables to entity
             entity.riding = this;
