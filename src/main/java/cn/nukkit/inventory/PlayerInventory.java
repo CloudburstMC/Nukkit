@@ -72,8 +72,10 @@ public class PlayerInventory extends BaseInventory {
                 return false;
             }
 
-            if (player.fishing != null && !(this.getItem(slot) instanceof ItemFishingRod)) {
-                player.stopFishing(false);
+            if (player.fishing != null) {
+                if (!(this.getItem(slot).equals(player.fishing.rod))) {
+                    player.stopFishing(false);
+                }
             }
         }
 
