@@ -79,7 +79,7 @@ public class EntityFishingHook extends EntityProjectile {
 
     @Override
     public float getGravity() {
-        return 0.08f;
+        return 0.07f;
     }
 
     @Override
@@ -96,7 +96,7 @@ public class EntityFishingHook extends EntityProjectile {
 
         if (this.isInsideOfWater()) {
             this.motionX = 0;
-            this.motionY -= getGravity() * -0.03;
+            this.motionY -= getGravity() * -0.04;
             this.motionZ = 0;
             hasUpdate = true;
         } else if (this.isCollided && this.keepMovement) {
@@ -104,11 +104,6 @@ public class EntityFishingHook extends EntityProjectile {
             this.motionY = 0;
             this.motionZ = 0;
             this.keepMovement = false;
-            hasUpdate = true;
-        } else if (this.isOnGround() || this.isInsideOfSolid()) {
-            this.motionX = 0;
-            this.motionY = getGravity();
-            this.motionZ = 0;
             hasUpdate = true;
         }
 
