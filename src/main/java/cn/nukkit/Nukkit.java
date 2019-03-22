@@ -60,6 +60,9 @@ public class Nukkit {
         System.setProperty("java.net.preferIPv4Stack" , "true");
         System.setProperty("log4j.skipJansi", "false");
 
+        // Force Mapped ByteBuffers for LevelDB till fixed.
+        System.setProperty("leveldb.mmap", "true");
+
         // Define args
         OptionParser parser = new OptionParser();
         OptionSpecBuilder disableAnsi = parser.accepts("enable-ansi", "Disables interactive console I/O");
