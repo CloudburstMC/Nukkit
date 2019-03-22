@@ -1552,7 +1552,8 @@ public class Server {
 
     @Deprecated
     public CompoundTag getOfflinePlayerData(String name) {
-        return getOfflinePlayerDataInternal(name, true);
+        Optional<UUID> uuid = lookupName(name);
+        return getOfflinePlayerDataInternal(uuid.map(UUID::toString).orElse(name), true);
     }
 
     private CompoundTag getOfflinePlayerDataInternal(String name, boolean runEvent) {
