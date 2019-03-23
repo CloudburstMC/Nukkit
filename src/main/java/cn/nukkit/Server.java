@@ -71,6 +71,7 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.resourcepacks.ResourcePackManager;
 import cn.nukkit.scheduler.ServerScheduler;
+import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.*;
 import cn.nukkit.utils.bugreport.ExceptionHandler;
 import co.aikar.timings.Timings;
@@ -1551,7 +1552,8 @@ public class Server {
 
     @Deprecated
     public CompoundTag getOfflinePlayerData(String name) {
-        return getOfflinePlayerDataInternal(name, true);
+        Optional<UUID> uuid = lookupName(name);
+        return getOfflinePlayerDataInternal(uuid.map(UUID::toString).orElse(name), true);
     }
 
     private CompoundTag getOfflinePlayerDataInternal(String name, boolean runEvent) {
@@ -1636,8 +1638,22 @@ public class Server {
                 pluginManager.callEvent(event);
             }
 
-            this.getScheduler().scheduleTask(() -> {
-                saveOfflinePlayerDataInternal(event.getSerializer(), tag, nameLower, event.getUuid().orElse(null));
+            this.getScheduler().scheduleTask(new Task() {
+                protected boolean hasRun = false;
+
+                @Override
+                public void onRun(int currentTick) {
+                    this.onCancel();
+                }
+
+                //doing it like this ensures that the playerdata will be saved in a server shutdown
+                @Override
+                public void onCancel() {
+                    if (!this.hasRun)    {
+                        this.hasRun = true;
+                        saveOfflinePlayerDataInternal(event.getSerializer(), tag, nameLower, event.getUuid().orElse(null));
+                    }
+                }
             }, async);
         }
     }
