@@ -86,11 +86,11 @@ public class TitleCommand extends VanillaCommand {
                     sender.sendMessage(new TranslationContainer("nukkit.command.title.title",
                             TextFormat.clean(args[2]), player.getName()));
                     break;
-                /*case "subtitle":
+                case "subtitle":
                     player.setSubtitle(args[2]);
-                    sender.sendMessage(new TranslationContainer("nukkit.command.title.subtitle", new String[]{TextFormat.clean(args[2]), player.getName()}));
+                    sender.sendMessage(new TranslationContainer("nukkit.command.title.subtitle", TextFormat.clean(args[2]), player.getName()));
                     break;
-                case "actionbar":
+                /*case "actionbar":
                     player.sendActionBarTitle(args[2]);
                     sender.sendMessage(new TranslationContainer("nukkit.command.title.actionbar", new String[]{TextFormat.clean(args[2]), player.getName()}));
                     break;*/

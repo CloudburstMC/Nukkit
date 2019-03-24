@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * author: MagicDroidX
@@ -129,7 +130,21 @@ public class BaseLang {
     }
 
     public String translateString(String str, String... params) {
-        return this.translateString(str, params, null);
+        if (params != null) {
+            return this.translateString(str, params, null);
+        }
+        return this.translateString(str, new String[0], null);
+    }
+
+    public String translateString(String str, Object... params) {
+        if (params != null) {
+            String[] paramsToString = new String[params.length];
+            for (int i = 0; i < params.length; i++) {
+                paramsToString[i] = Objects.toString(params[i]);
+            }
+            return this.translateString(str, paramsToString, null);
+        }
+        return this.translateString(str, new String[0], null);
     }
 
     public String translateString(String str, String param, String onlyPrefix) {
