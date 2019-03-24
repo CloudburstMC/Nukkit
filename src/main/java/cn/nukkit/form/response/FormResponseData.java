@@ -2,8 +2,8 @@ package cn.nukkit.form.response;
 
 public class FormResponseData {
 
-    private int elementID;
-    private String elementContent;
+    private final int elementID;
+    private final String elementContent;
 
     public FormResponseData(int id, String content) {
         this.elementID = id;
