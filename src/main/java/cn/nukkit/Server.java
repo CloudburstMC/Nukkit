@@ -1610,7 +1610,7 @@ public class Server {
                 .putBoolean("OnGround", true)
                 .putBoolean("Invulnerable", false);
 
-        this.saveOfflinePlayerData(name, nbt);
+        this.saveOfflinePlayerData(name, nbt, true, runEvent);
         return nbt;
     }
 
@@ -1627,7 +1627,8 @@ public class Server {
     }
 
     public void saveOfflinePlayerData(String name, CompoundTag tag, boolean async) {
-        saveOfflinePlayerData(name, tag, async, true);
+        Optional<UUID> uuid = lookupName(name);
+        saveOfflinePlayerData(uuid.map(UUID::toString).orElse(name), tag, async, true);
     }
 
     private void saveOfflinePlayerData(String name, CompoundTag tag, boolean async, boolean runEvent) {
@@ -1639,7 +1640,7 @@ public class Server {
             }
 
             this.getScheduler().scheduleTask(new Task() {
-                protected boolean hasRun = false;
+                boolean hasRun = false;
 
                 @Override
                 public void onRun(int currentTick) {
