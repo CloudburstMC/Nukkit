@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -11,6 +12,8 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
 import cn.nukkit.utils.TextFormat;
+
+import java.util.StringJoiner;
 
 /**
  * Created on 2015/12/08 by Pub4Game.
@@ -24,7 +27,7 @@ public class KillCommand extends VanillaCommand {
                 + "nukkit.command.kill.other");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("player", CommandParameter.ARG_TYPE_TARGET, true)
+                new CommandParameter("player", CommandParamType.TARGET, true)
         });
     }
 
@@ -53,14 +56,17 @@ public class KillCommand extends VanillaCommand {
                 player.setHealth(0);
                 Command.broadcastCommandMessage(sender, new TranslationContainer("commands.kill.successful", player.getName()));
             } else if (args[0].equals("@e")) {
+                StringJoiner joiner = new StringJoiner(", ");
                 for (Level level : Server.getInstance().getLevels().values()) {
                     for (Entity entity : level.getEntities()) {
                         if (!(entity instanceof Player)) {
+                            joiner.add(entity.getName());
                             entity.close();
                         }
                     }
                 }
-                sender.sendMessage(new TranslationContainer(TextFormat.GOLD + "%commands.kill.entities.successful"));
+                String entities = joiner.toString();
+                sender.sendMessage(new TranslationContainer("commands.kill.successful", entities.isEmpty() ? "0" : entities));
             } else if (args[0].equals("@s")) {
                 if (!sender.hasPermission("nukkit.command.kill.self")) {
                     sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));

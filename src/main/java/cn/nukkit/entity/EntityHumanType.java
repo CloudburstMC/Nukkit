@@ -112,7 +112,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
     @Override
     public Item[] getDrops() {
         if (this.inventory != null) {
-            return this.inventory.getContents().values().stream().toArray(Item[]::new);
+            return this.inventory.getContents().values().toArray(new Item[0]);
         }
         return new Item[0];
     }
@@ -136,7 +136,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
 
             float originalDamage = source.getDamage();
 
-            float finalDamage = (float) (originalDamage * (1 - Math.max(points / 5, points - originalDamage / (2 + toughness / 4)) / 25) * (1 - /*0.75 */ epf * 0.04));
+            float finalDamage = (float) (originalDamage * (1 - Math.max(points / 5f, points - originalDamage / (2 + toughness / 4f)) / 25) * (1 - /*0.75 */ epf * 0.04));
 
             source.setDamage(finalDamage - originalDamage, DamageModifier.ARMOR);
             //source.setDamage(source.getDamage(DamageModifier.ARMOR_ENCHANTMENTS) - (originalDamage - originalDamage * (1 - epf / 25)), DamageModifier.ARMOR_ENCHANTMENTS);
@@ -163,6 +163,11 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
                     if (durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= new Random().nextInt(100))
                         continue;
                 }
+
+                if (armor.isUnbreakable()) {
+                    continue;
+                }
+
                 armor.setDamage(armor.getDamage() + 1);
 
                 if (armor.getDamage() >= armor.getMaxDurability()) {

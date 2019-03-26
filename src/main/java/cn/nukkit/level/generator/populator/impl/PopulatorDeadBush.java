@@ -18,6 +18,6 @@ public class PopulatorDeadBush extends PopulatorSurfaceBlock {
 
     @Override
     protected int getBlockId(int x, int z, NukkitRandom random, FullChunk chunk) {
-        return (DEAD_BUSH << 4) | 1;
+        return DEAD_BUSH << 4;
     }
 }

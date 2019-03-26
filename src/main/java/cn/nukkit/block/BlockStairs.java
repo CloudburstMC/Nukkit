@@ -6,12 +6,13 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.utils.Faceable;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class BlockStairs extends BlockTransparentMeta {
+public abstract class BlockStairs extends BlockTransparentMeta implements Faceable {
 
     protected BlockStairs(int meta) {
         super(meta);
@@ -27,11 +28,6 @@ public abstract class BlockStairs extends BlockTransparentMeta {
     public double getMaxY() {
         // TODO: this seems wrong
         return this.y + ((getDamage() & 0x04) > 0 ? 1 : 0.5);
-    }
-
-    @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
-        return this.place(item, block, target, face, fx, fy, fz, null);
     }
 
     @Override
@@ -138,5 +134,10 @@ public abstract class BlockStairs extends BlockTransparentMeta {
         }
 
         return false;
+    }
+
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
     }
 }

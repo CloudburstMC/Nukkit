@@ -6,7 +6,6 @@ import cn.nukkit.inventory.BigCraftingGrid;
 import cn.nukkit.inventory.CraftingRecipe;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.item.Item;
-import cn.nukkit.math.NukkitMath;
 import cn.nukkit.network.protocol.ContainerClosePacket;
 import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.scheduler.Task;
@@ -48,7 +47,7 @@ public class CraftingTransaction extends InventoryTransaction {
     }
 
     public void setInput(int index, Item item) {
-        int y = NukkitMath.floorDouble((double) index / this.gridSize);
+        int y = index / this.gridSize;
         int x = index % this.gridSize;
 
         if (this.inputs[y][x].isNull()) {
@@ -115,7 +114,7 @@ public class CraftingTransaction extends InventoryTransaction {
         final int height = yMax - yMin + 1;
         final int width = xMax - xMin + 1;
 
-        if (height == 0 || width == 0) {
+        if (height < 1 || width < 1) {
             return new Item[0][];
         }
 

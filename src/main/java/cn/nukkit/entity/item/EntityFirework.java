@@ -9,13 +9,11 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemFirework;
-import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
-import cn.nukkit.network.protocol.PlaySoundPacket;
 
 import java.util.Random;
 
@@ -93,15 +91,7 @@ public class EntityFirework extends Entity {
 
 
             if (this.fireworkAge == 0) {
-                PlaySoundPacket pk = new PlaySoundPacket();
-                pk.name = Sound.FIREWORK_LAUNCH.getSound();
-                pk.volume = 1;
-                pk.pitch = 1;
-                pk.x = getFloorX();
-                pk.y = getFloorY();
-                pk.z = getFloorZ();
-
-                this.level.addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, pk);
+                this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_LAUNCH);
             }
 
             this.fireworkAge++;
@@ -113,16 +103,9 @@ public class EntityFirework extends Entity {
                 pk.event = EntityEventPacket.FIREWORK_EXPLOSION;
                 pk.eid = this.getId();
 
-                LevelSoundEventPacket pk2 = new LevelSoundEventPacket();
-                pk2.sound = LevelSoundEventPacket.SOUND_LARGE_BLAST;
-                pk2.extraData = -1;
-                pk2.pitch = -1;
-                pk2.x = (float) getX();
-                pk2.y = (float) getY();
-                pk2.z = (float) getZ();
+                level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_LARGE_BLAST, -1, NETWORK_ID);
 
                 Server.broadcastPacket(getViewers().values(), pk);
-                this.level.addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, pk2);
 
                 this.kill();
                 hasUpdate = true;

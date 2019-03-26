@@ -368,6 +368,10 @@ public abstract class Entity extends Location implements Metadatable {
             }
         }
 
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_HAS_COLLISION, true);
+        this.dataProperties.putFloat(DATA_BOUNDING_BOX_HEIGHT, this.getHeight());
+        this.dataProperties.putFloat(DATA_BOUNDING_BOX_WIDTH, this.getWidth());
+    
         this.scheduleUpdate();
     }
 
@@ -487,6 +491,14 @@ public abstract class Entity extends Location implements Metadatable {
 
     public void setNameTagAlwaysVisible(boolean value) {
         this.setDataProperty(new ByteEntityData(DATA_ALWAYS_SHOW_NAMETAG, value ? 1 : 0));
+    }
+
+    public void setScoreTag(String score) {
+        this.setDataProperty(new StringEntityData(DATA_SCORE_TAG, score));
+    }
+
+    public String getScoreTag() {
+        return this.getDataPropertyString(DATA_SCORE_TAG);
     }
 
     public boolean isSneaking() {
@@ -628,19 +640,7 @@ public abstract class Entity extends Location implements Metadatable {
             return; //here add null means add nothing
         }
 
-        Effect oldEffect = this.effects.getOrDefault(effect.getId(), null);
-        if (oldEffect != null) {
-            if (Math.abs(effect.getAmplifier()) < Math.abs(oldEffect.getAmplifier())) {
-                return;
-            }
-            if (Math.abs(effect.getAmplifier()) == Math.abs(oldEffect.getAmplifier())
-                    && effect.getDuration() < oldEffect.getDuration()) {
-                return;
-            }
-            effect.add(this, true);
-        } else {
-            effect.add(this, false);
-        }
+        effect.add(this);
 
         this.effects.put(effect.getId(), effect);
 
@@ -1265,8 +1265,8 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void addMotion(double motionX, double motionY, double motionZ) {
-        int chunkX = this.getFloorX() >> 16;
-        int chunkZ = this.getFloorZ() >> 16;
+        int chunkX = this.getFloorX() >> 4;
+        int chunkZ = this.getFloorZ() >> 4;
         SetEntityMotionPacket pk = new SetEntityMotionPacket();
         pk.eid = this.getId();
         pk.motionX = (float) motionX;
@@ -1525,10 +1525,10 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void onStruckByLightning(Entity entity) {
-        this.attack(new EntityDamageByEntityEvent(entity, this, DamageCause.LIGHTNING, 5));
-
-        if (this.fireTicks < 8 * 20) {
-            this.setOnFire(8);
+        if (this.attack(new EntityDamageByEntityEvent(entity, this, DamageCause.LIGHTNING, 5))) {
+            if (this.fireTicks < 8 * 20) {
+                this.setOnFire(8);
+            }
         }
     }
 
@@ -1799,6 +1799,15 @@ public abstract class Entity extends Location implements Metadatable {
         return this.collisionBlocks;
     }
 
+    /**
+     * Returns whether this entity can be moved by currents in liquids.
+     *
+     * @return boolean
+     */
+    public boolean canBeMovedByCurrents() {
+        return true;
+    }
+
     protected void checkBlockCollision() {
         Vector3 vector = new Vector3(0, 0, 0);
         boolean portal = false;
@@ -1814,7 +1823,11 @@ public abstract class Entity extends Location implements Metadatable {
         }
 
         if (portal) {
-            inPortalTicks++;
+            if (this.inPortalTicks < 80) {
+                this.inPortalTicks = 80;
+            } else {
+                this.inPortalTicks++;
+            }
         } else {
             this.inPortalTicks = 0;
         }

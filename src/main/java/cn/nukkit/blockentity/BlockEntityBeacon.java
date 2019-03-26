@@ -3,32 +3,23 @@ package cn.nukkit.blockentity;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
-import cn.nukkit.event.block.SignChangeEvent;
 import cn.nukkit.inventory.BeaconInventory;
 import cn.nukkit.inventory.Inventory;
-import cn.nukkit.inventory.InventoryHolder;
-import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.potion.Effect;
-import cn.nukkit.scheduler.NukkitRunnable;
-import cn.nukkit.utils.TextFormat;
 
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * author: Rover656
  */
-public class BlockEntityBeacon extends BlockEntitySpawnable implements InventoryHolder {
-
-    protected final BeaconInventory inventory;
+public class BlockEntityBeacon extends BlockEntitySpawnable {
 
     public BlockEntityBeacon(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
-        this.inventory = new BeaconInventory(this);
     }
 
     @Override
@@ -82,21 +73,30 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
             return true;
         }
 
+        int oldPowerLevel = this.getPowerLevel();
         //Get the power level based on the pyramid
         setPowerLevel(calculatePowerLevel());
-        
+        int newPowerLevel = this.getPowerLevel();
+
         //Skip beacons that do not have a pyramid or sky access
-        if (getPowerLevel() < 1 || !hasSkyAccess()) {
+        if (newPowerLevel < 1 || !hasSkyAccess()) {
+            if (oldPowerLevel > 0) {
+                this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BEACON_DEACTIVATE);
+            }
             return true;
+        } else if (oldPowerLevel < 1) {
+            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BEACON_ACTIVATE);
+        } else {
+            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BEACON_AMBIENT);
         }
 
         //Get all players in game
         Map<Long, Player> players = this.level.getPlayers();
 
         //Calculate vars for beacon power
-        Integer range = 10 + getPowerLevel() * 10;
-        Integer duration = 9 + getPowerLevel() * 2;
-        
+        int range = 10 + getPowerLevel() * 10;
+        int duration = 9 + getPowerLevel() * 2;
+
         for(Map.Entry<Long, Player> entry : players.entrySet()) {
             Player p = entry.getValue();
 
@@ -149,12 +149,12 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
     }
 
     private static final int POWER_LEVEL_MAX = 4;
-    
+
     private boolean hasSkyAccess() {
         int tileX = getFloorX();
         int tileY = getFloorY();
         int tileZ = getFloorZ();
-        
+
         //Check every block from our y coord to the top of the world
         for (int y = tileY + 1; y <= 255; y++) {
             int testBlockId = level.getBlockIdAt(tileX, y, tileZ);
@@ -163,7 +163,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -204,7 +204,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
         int currentLevel = getPowerLevel();
         if (level != currentLevel) {
             namedTag.putInt("Level", level);
-            chunk.setChanged();
+            setDirty();
             this.spawnToAll();
         }
     }
@@ -217,7 +217,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
         int currentPower = getPrimaryPower();
         if (power != currentPower) {
             namedTag.putInt("Primary", power);
-            chunk.setChanged();
+            setDirty();
             this.spawnToAll();
         }
     }
@@ -230,14 +230,9 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
         int currentPower = getSecondaryPower();
         if (power != currentPower) {
             namedTag.putInt("Secondary", power);
-            chunk.setChanged();
+            setDirty();
             this.spawnToAll();
         }
-    }
-
-    @Override
-    public Inventory getInventory() {
-        return this.inventory;
     }
 
     @Override
@@ -248,6 +243,8 @@ public class BlockEntityBeacon extends BlockEntitySpawnable implements Inventory
 
         this.setPrimaryPower(nbt.getInt("primary"));
         this.setSecondaryPower(nbt.getInt("secondary"));
+
+        this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BEACON_POWER);
 
         BeaconInventory inv = (BeaconInventory)player.getWindowById(Player.BEACON_WINDOW_ID);
 

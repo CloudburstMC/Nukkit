@@ -9,12 +9,13 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.utils.Faceable;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class BlockDoor extends BlockTransparentMeta {
+public abstract class BlockDoor extends BlockTransparentMeta implements Faceable {
 
     protected BlockDoor(int meta) {
         super(meta);
@@ -229,12 +230,8 @@ public abstract class BlockDoor extends BlockTransparentMeta {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
-        return this.place(item, block, target, face, fx, fy, fz, null);
-    }
-
-    @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        if (this.y > 254) return false;
         if (face == BlockFace.UP) {
             Block blockUp = this.up();
             Block blockDown = this.down();
@@ -334,5 +331,10 @@ public abstract class BlockDoor extends BlockTransparentMeta {
 
     public boolean isTop(int meta) {
         return (meta & 8) != 0;
+    }
+
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
     }
 }

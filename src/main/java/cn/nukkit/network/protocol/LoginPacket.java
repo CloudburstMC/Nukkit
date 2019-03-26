@@ -88,7 +88,7 @@ public class LoginPacket extends DataPacket {
         }
 
         if (skinToken.has("SkinGeometry")) {
-            skin.setGeometryData(skinToken.get("SkinGeometry").getAsString());
+            skin.setGeometryData(new String(Base64.getDecoder().decode(skinToken.get("SkinGeometry").getAsString()), StandardCharsets.UTF_8));
         }
     }
 

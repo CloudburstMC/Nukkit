@@ -7,10 +7,11 @@ import cn.nukkit.event.block.BlockPistonChangeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.utils.Faceable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  * @author CreeperFace
  */
-public abstract class BlockPistonBase extends BlockSolidMeta {
+public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable {
 
     public boolean sticky;
 
@@ -120,7 +121,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta {
                     return;
                 }
 
-                this.level.addSound(this, Sound.TILE_PISTON_OUT);
+                this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_PISTON_OUT);
             } else {
             }
         } else if (!isPowered && isExtended()) {
@@ -140,7 +141,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta {
                 this.level.setBlock(getLocation().getSide(facing), new BlockAir(), true, false);
             }
 
-            this.level.addSound(this, Sound.TILE_PISTON_IN);
+            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_PISTON_IN);
         }
     }
 
@@ -186,12 +187,8 @@ public abstract class BlockPistonBase extends BlockSolidMeta {
             return false;
         } else {
             List<Block> blocks = calculator.getBlocksToMove();
-            List<Block> newBlocks = new ArrayList<>();
 
-            for (int i = 0; i < blocks.size(); ++i) {
-                Block block = blocks.get(i);
-                newBlocks.add(block);
-            }
+            List<Block> newBlocks = new ArrayList<>(blocks);
 
             List<Block> destroyBlocks = calculator.getBlocksToDestroy();
             BlockFace side = extending ? direction : direction.getOpposite();
@@ -223,26 +220,18 @@ public abstract class BlockPistonBase extends BlockSolidMeta {
     }
 
     public static boolean canPush(Block block, BlockFace face, boolean destroyBlocks) {
-        if (!block.canBePushed()) {
-            return false;
-        } else if (block.getY() >= 0 && (face != BlockFace.DOWN || block.getY() != 0)) {
-            if (block.getY() <= 255 && (face != BlockFace.UP || block.getY() != 255)) {
-                if (!(block instanceof BlockPistonBase)) {
+        if (block.canBePushed() && block.getY() >= 0 && (face != BlockFace.DOWN || block.getY() != 0) &&
+                block.getY() <= 255 && (face != BlockFace.UP || block.getY() != 255)) {
+            if (!(block instanceof BlockPistonBase)) {
 
-                    if (block instanceof BlockFlowable) {
-                        return destroyBlocks;
-                    }
-                } else if (((BlockPistonBase) block).isExtended()) {
-                    return false;
+                if (block instanceof BlockFlowable) {
+                    return destroyBlocks;
                 }
-
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
+            } else return !((BlockPistonBase) block).isExtended();
+            return true;
         }
+        return false;
+
     }
 
     public class BlocksCalculator {
@@ -283,9 +272,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta {
             } else if (!this.addBlockLine(this.blockToMove)) {
                 return false;
             } else {
-                for (int i = 0; i < this.toMove.size(); ++i) {
-                    Block b = this.toMove.get(i);
-
+                for (Block b : this.toMove) {
                     if (b.getId() == SLIME_BLOCK && !this.addBranchingBlocks(b)) {
                         return false;
                     }
@@ -379,12 +366,9 @@ public abstract class BlockPistonBase extends BlockSolidMeta {
         }
 
         private void reorderListAtCollision(int count, int index) {
-            List<Block> list = new ArrayList<>();
-            List<Block> list1 = new ArrayList<>();
-            List<Block> list2 = new ArrayList<>();
-            list.addAll(this.toMove.subList(0, index));
-            list1.addAll(this.toMove.subList(this.toMove.size() - count, this.toMove.size()));
-            list2.addAll(this.toMove.subList(index, this.toMove.size() - count));
+            List<Block> list = new ArrayList<>(this.toMove.subList(0, index));
+            List<Block> list1 = new ArrayList<>(this.toMove.subList(this.toMove.size() - count, this.toMove.size()));
+            List<Block> list2 = new ArrayList<>(this.toMove.subList(index, this.toMove.size() - count));
             this.toMove.clear();
             this.toMove.addAll(list);
             this.toMove.addAll(list1);
@@ -413,5 +397,10 @@ public abstract class BlockPistonBase extends BlockSolidMeta {
     @Override
     public Item toItem() {
         return new ItemBlock(this, 0);
+    }
+
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
     }
 }

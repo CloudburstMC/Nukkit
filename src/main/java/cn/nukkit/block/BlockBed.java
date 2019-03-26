@@ -12,12 +12,13 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
+import cn.nukkit.utils.Faceable;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BlockBed extends BlockTransparentMeta {
+public class BlockBed extends BlockTransparentMeta implements Faceable {
 
     public BlockBed() {
         this(0);
@@ -108,11 +109,6 @@ public class BlockBed extends BlockTransparentMeta {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
-        return this.place(item, block, target, face, fx, fy, fz, null);
-    }
-
-    @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
         if (!down.isTransparent()) {
@@ -194,5 +190,10 @@ public class BlockBed extends BlockTransparentMeta {
         }
 
         return DyeColor.WHITE;
+    }
+
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
     }
 }

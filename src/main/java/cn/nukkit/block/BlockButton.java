@@ -7,11 +7,12 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.Faceable;
 
 /**
  * Created by CreeperFace on 27. 11. 2016.
  */
-public abstract class BlockButton extends BlockFlowable {
+public abstract class BlockButton extends BlockFlowable implements Faceable {
 
     public BlockButton() {
         this(0);
@@ -125,5 +126,10 @@ public abstract class BlockButton extends BlockFlowable {
     @Override
     public Item toItem() {
         return Item.get(this.getId(), 0, 1);
+    }
+
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
     }
 }

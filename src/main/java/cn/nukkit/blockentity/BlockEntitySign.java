@@ -7,6 +7,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.TextFormat;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -76,7 +77,7 @@ public class BlockEntitySign extends BlockEntitySpawnable {
         this.spawnToAll();
 
         if (this.chunk != null) {
-            this.chunk.setChanged();
+            setDirty();
         }
 
         return true;
@@ -91,17 +92,20 @@ public class BlockEntitySign extends BlockEntitySpawnable {
         if (!nbt.getString("id").equals(BlockEntity.SIGN)) {
             return false;
         }
-        String[] text = nbt.getString("Text").split("\n", 4);
+        String[] lines = new String[4];
+        Arrays.fill(lines, "");
+        String[] splitLines = nbt.getString("Text").split("\n", 4);
+        System.arraycopy(splitLines, 0, lines, 0, splitLines.length);
 
-        SignChangeEvent signChangeEvent = new SignChangeEvent(this.getBlock(), player, text);
+        SignChangeEvent signChangeEvent = new SignChangeEvent(this.getBlock(), player, lines);
 
         if (!this.namedTag.contains("Creator") || !Objects.equals(player.getUniqueId().toString(), this.namedTag.getString("Creator"))) {
             signChangeEvent.setCancelled();
         }
 
         if (player.getRemoveFormat()) {
-            for (int i = 0; i < text.length; i++) {
-                text[i] = TextFormat.clean(text[i]);
+            for (int i = 0; i < lines.length; i++) {
+                lines[i] = TextFormat.clean(lines[i]);
             }
         }
 

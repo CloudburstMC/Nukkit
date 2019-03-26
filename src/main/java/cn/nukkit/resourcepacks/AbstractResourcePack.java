@@ -3,8 +3,11 @@ package cn.nukkit.resourcepacks;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import java.util.UUID;
+
 public abstract class AbstractResourcePack implements ResourcePack {
     protected JsonObject manifest;
+    private UUID id = null;
 
     protected boolean verifyManifest() {
         if (this.manifest.has("format_version") && this.manifest.has("header") && this.manifest.has("modules")) {
@@ -26,9 +29,11 @@ public abstract class AbstractResourcePack implements ResourcePack {
     }
 
     @Override
-    public String getPackId() {
-        return this.manifest.getAsJsonObject("header")
-                .get("uuid").getAsString();
+    public UUID getPackId() {
+        if (id == null) {
+            id = UUID.fromString(this.manifest.getAsJsonObject("header").get("uuid").getAsString());
+        }
+        return id;
     }
 
     @Override

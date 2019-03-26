@@ -63,8 +63,8 @@ public abstract class Enchantment implements Cloneable {
     public static final int ID_BINDING_CURSE = 27;
     public static final int ID_VANISHING_CURSE = 28;
     public static final int ID_TRIDENT_IMPALING = 29;
-    public static final int ID_TRIDENT_LOYALTY = 30;
-    public static final int ID_TRIDENT_RIPTIDE = 31;
+    public static final int ID_TRIDENT_RIPTIDE = 30;
+    public static final int ID_TRIDENT_LOYALTY = 31;
     public static final int ID_TRIDENT_CHANNELING = 32;
 
     public static void init() {
@@ -100,13 +100,13 @@ public abstract class Enchantment implements Cloneable {
         enchantments[ID_BINDING_CURSE]  = new EnchantmentBindingCurse();
         enchantments[ID_VANISHING_CURSE]  = new EnchantmentVanishingCurse();
         enchantments[ID_TRIDENT_IMPALING]  = new EnchantmentTridentImpaling();
-        enchantments[ID_TRIDENT_LOYALTY]  = new EnchantmentTridentLoyalty();
         enchantments[ID_TRIDENT_RIPTIDE]  = new EnchantmentTridentRiptide();
+        enchantments[ID_TRIDENT_LOYALTY]  = new EnchantmentTridentLoyalty();
         enchantments[ID_TRIDENT_CHANNELING]  = new EnchantmentTridentChanneling();
     }
 
     public static Enchantment get(int id) {
-        return id >= 0 && id < enchantments.length ? enchantments[id] : null;
+        return id >= 0 && id < enchantments.length ? enchantments[id] : new UnknownEnchantment(id);
     }
 
     public static Enchantment getEnchantment(int id) {
@@ -123,7 +123,7 @@ public abstract class Enchantment implements Cloneable {
             list.add(enchantment);
         }
 
-        return list.stream().toArray(Enchantment[]::new);
+        return list.toArray(new Enchantment[0]);
     }
 
     public final int id;
@@ -245,7 +245,14 @@ public abstract class Enchantment implements Cloneable {
             set.add(Enchantment.words[ThreadLocalRandom.current().nextInt(0, Enchantment.words.length)]);
         }
 
-        String[] words = set.stream().toArray(String[]::new);
+        String[] words = set.toArray(new String[0]);
         return String.join(" ", words);
+    }
+
+    private static class UnknownEnchantment extends Enchantment {
+
+        protected UnknownEnchantment(int id) {
+            super(id, "unknown", 0, EnchantmentType.ALL);
+        }
     }
 }

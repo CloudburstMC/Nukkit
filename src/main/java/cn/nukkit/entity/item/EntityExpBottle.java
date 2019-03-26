@@ -62,7 +62,6 @@ public class EntityExpBottle extends EntityProjectile {
 
         this.timing.startTiming();
 
-        int tickDiff = currentTick - this.lastUpdate;
         boolean hasUpdate = super.onUpdate(currentTick);
 
         if (this.age > 1200) {
@@ -72,22 +71,32 @@ public class EntityExpBottle extends EntityProjectile {
 
         if (this.isCollided) {
             this.kill();
-            Particle particle1 = new EnchantParticle(this);
-            this.getLevel().addParticle(particle1);
-            Particle particle2 = new SpellParticle(this, 0x00385dc6);
-            this.getLevel().addParticle(particle2);
+            this.dropXp();
             hasUpdate = true;
-
-            NukkitRandom random = new NukkitRandom();
-            int add = 1;
-            for (int ii = 1; ii <= random.nextRange(3, 11); ii += add) {
-                getLevel().dropExpOrb(this, add);
-                add = random.nextRange(1, 3);
-            }
         }
 
         this.timing.stopTiming();
 
         return hasUpdate;
+    }
+
+    @Override
+    public void onCollideWithEntity(Entity entity) {
+        this.kill();
+        this.dropXp();
+    }
+
+    public void dropXp() {
+        Particle particle1 = new EnchantParticle(this);
+        this.getLevel().addParticle(particle1);
+        Particle particle2 = new SpellParticle(this, 0x00385dc6);
+        this.getLevel().addParticle(particle2);
+
+        NukkitRandom random = new NukkitRandom();
+        int add = 1;
+        for (int ii = 1; ii <= random.nextRange(3, 11); ii += add) {
+            getLevel().dropExpOrb(this, add);
+            add = random.nextRange(1, 3);
+        }
     }
 }

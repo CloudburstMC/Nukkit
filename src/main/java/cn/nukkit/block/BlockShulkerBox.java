@@ -11,8 +11,6 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.nbt.tag.Tag;
-import java.util.Map;
 
 /**
  * Created by PetteriM1
@@ -44,7 +42,7 @@ public class BlockShulkerBox extends BlockTransparentMeta {
 
     @Override
     public double getHardness() {
-        return 6;
+        return 2;
     }
 
     @Override
@@ -145,11 +143,11 @@ public class BlockShulkerBox extends BlockTransparentMeta {
             }
         }
 
-        BlockEntity blockEntity = new BlockEntityShulkerBox(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+        BlockEntityShulkerBox blockEntity = new BlockEntityShulkerBox(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
 
         if (box != null) {
-            box.pairWith(((BlockEntityShulkerBox) blockEntity));
-            ((BlockEntityShulkerBox) blockEntity).pairWith(box);
+            box.pairWith(blockEntity);
+            blockEntity.pairWith(box);
         }
 
         return true;

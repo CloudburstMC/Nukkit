@@ -22,8 +22,9 @@ public class NoiseGeneratorSimplexF {
         this.yo = p_i45471_1_.nextFloat() * 256.0f;
         this.zo = p_i45471_1_.nextFloat() * 256.0f;
 
-        for (int i = 0; i < 256; this.p[i] = i++) {
-            ;
+        int i = 0;
+        while (i < 256) {
+            this.p[i] = i++;
         }
 
         for (int l = 0; l < 256; ++l) {

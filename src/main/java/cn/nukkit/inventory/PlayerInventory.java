@@ -10,6 +10,7 @@ import cn.nukkit.event.entity.EntityInventoryChangeEvent;
 import cn.nukkit.event.player.PlayerItemHeldEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemFishingRod;
 import cn.nukkit.network.protocol.InventoryContentPacket;
 import cn.nukkit.network.protocol.InventorySlotPacket;
 import cn.nukkit.network.protocol.MobArmorEquipmentPacket;
@@ -62,12 +63,19 @@ public class PlayerInventory extends BaseInventory {
         }
 
         if (this.getHolder() instanceof Player) {
-            PlayerItemHeldEvent ev = new PlayerItemHeldEvent((Player) this.getHolder(), this.getItem(slot), slot);
+            Player player = (Player) this.getHolder();
+            PlayerItemHeldEvent ev = new PlayerItemHeldEvent(player, this.getItem(slot), slot);
             this.getHolder().getLevel().getServer().getPluginManager().callEvent(ev);
 
             if (ev.isCancelled()) {
                 this.sendContents(this.getViewers());
                 return false;
+            }
+
+            if (player.fishing != null) {
+                if (!(this.getItem(slot).equals(player.fishing.rod))) {
+                    player.stopFishing(false);
+                }
             }
         }
 
@@ -160,7 +168,7 @@ public class PlayerInventory extends BaseInventory {
     }
 
     public void sendHeldItem(Collection<Player> players) {
-        this.sendHeldItem(players.stream().toArray(Player[]::new));
+        this.sendHeldItem(players.toArray(new Player[0]));
     }
 
     @Override
@@ -368,7 +376,7 @@ public class PlayerInventory extends BaseInventory {
     }
 
     public void sendArmorContents(Collection<Player> players) {
-        this.sendArmorContents(players.stream().toArray(Player[]::new));
+        this.sendArmorContents(players.toArray(new Player[0]));
     }
 
     public void sendArmorSlot(int index, Player player) {
@@ -398,7 +406,7 @@ public class PlayerInventory extends BaseInventory {
     }
 
     public void sendArmorSlot(int index, Collection<Player> players) {
-        this.sendArmorSlot(index, players.stream().toArray(Player[]::new));
+        this.sendArmorSlot(index, players.toArray(new Player[0]));
     }
 
     @Override
@@ -408,7 +416,7 @@ public class PlayerInventory extends BaseInventory {
 
     @Override
     public void sendContents(Collection<Player> players) {
-        this.sendContents(players.stream().toArray(Player[]::new));
+        this.sendContents(players.toArray(new Player[0]));
     }
 
     @Override
@@ -429,7 +437,7 @@ public class PlayerInventory extends BaseInventory {
         for (Player player : players) {
             int id = player.getWindowId(this);
             if (id == -1 || !player.spawned) {
-                this.close(player);
+                if (this.getHolder() != player) this.close(player);
                 continue;
             }
             pk.inventoryId = id;
@@ -445,7 +453,7 @@ public class PlayerInventory extends BaseInventory {
 
     @Override
     public void sendSlot(int index, Collection<Player> players) {
-        this.sendSlot(index, players.stream().toArray(Player[]::new));
+        this.sendSlot(index, players.toArray(new Player[0]));
     }
 
     @Override
@@ -480,7 +488,7 @@ public class PlayerInventory extends BaseInventory {
         pk.inventoryId = ContainerIds.CREATIVE;
 
         if (!p.isSpectator()) { //fill it for all gamemodes except spectator
-            pk.slots = Item.getCreativeItems().stream().toArray(Item[]::new);
+            pk.slots = Item.getCreativeItems().toArray(new Item[0]);
         }
 
         p.dataPacket(pk);

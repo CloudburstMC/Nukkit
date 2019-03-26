@@ -3,11 +3,13 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.math.BlockFace;
+import cn.nukkit.utils.Faceable;
 
 /**
  * @author CreeperFace
  */
-public class BlockBone extends BlockSolidMeta {
+public class BlockBone extends BlockSolidMeta implements Faceable {
 
     public BlockBone() {
         this(0);
@@ -49,5 +51,10 @@ public class BlockBone extends BlockSolidMeta {
         }
 
         return new Item[0];
+    }
+
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
     }
 }
