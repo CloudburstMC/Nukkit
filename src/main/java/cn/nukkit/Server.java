@@ -800,10 +800,6 @@ public class Server {
                 this.rcon.close();
             }
 
-            if (nameLookup != null) {
-                nameLookup.close();
-            }
-
             this.getLogger().debug("Disabling all plugins");
             this.pluginManager.disablePlugins();
 
@@ -830,6 +826,10 @@ public class Server {
             for (SourceInterface interfaz : this.network.getInterfaces()) {
                 interfaz.shutdown();
                 this.network.unregisterInterface(interfaz);
+            }
+
+            if (nameLookup != null) {
+                nameLookup.close();
             }
 
             this.getLogger().debug("Disabling timings");
