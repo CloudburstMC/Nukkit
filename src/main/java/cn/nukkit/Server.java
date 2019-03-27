@@ -656,7 +656,6 @@ public class Server {
         BatchPacketsEvent ev = new BatchPacketsEvent(players, packets, forceSync);
         getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
-            Timings.playerNetworkSendTimer.stopTiming();
             return;
         }
 
