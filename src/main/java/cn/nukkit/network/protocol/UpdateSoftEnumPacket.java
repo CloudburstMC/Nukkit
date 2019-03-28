@@ -1,5 +1,8 @@
 package cn.nukkit.network.protocol;
 
+import lombok.ToString;
+
+@ToString
 public class UpdateSoftEnumPacket extends DataPacket {
 
     public final String[] values = new String[0];

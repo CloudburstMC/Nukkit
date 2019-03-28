@@ -2,9 +2,11 @@ package cn.nukkit.network.protocol;
 
 import cn.nukkit.Nukkit;
 import com.google.common.io.ByteStreams;
+import lombok.ToString;
 
 import java.io.IOException;
 
+@ToString(exclude = {"tag"})
 public class AvailableEntityIdentifiersPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.AVAILABLE_ENTITY_IDENTIFIERS_PACKET;
 

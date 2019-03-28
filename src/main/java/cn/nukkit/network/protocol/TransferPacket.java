@@ -1,6 +1,8 @@
 package cn.nukkit.network.protocol;
 
-// A wild TransferPacket appeared!
+import lombok.ToString;
+
+@ToString
 public class TransferPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.TRANSFER_PACKET;
 

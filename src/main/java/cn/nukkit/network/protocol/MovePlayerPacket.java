@@ -1,10 +1,12 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.math.Vector3f;
+import lombok.ToString;
 
 /**
  * Created on 15-10-14.
  */
+@ToString
 public class MovePlayerPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.MOVE_PLAYER_PACKET;

@@ -9,11 +9,13 @@ import cn.nukkit.entity.projectile.*;
 import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.utils.Binary;
 import com.google.common.collect.ImmutableMap;
+import lombok.ToString;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
+@ToString
 public class AddEntityPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.ADD_ENTITY_PACKET;
 

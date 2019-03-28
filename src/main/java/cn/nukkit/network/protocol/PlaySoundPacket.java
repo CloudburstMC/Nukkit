@@ -1,5 +1,8 @@
 package cn.nukkit.network.protocol;
 
+import lombok.ToString;
+
+@ToString
 public class PlaySoundPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.PLAY_SOUND_PACKET;

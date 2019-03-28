@@ -1,7 +1,9 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.math.Vector3f;
+import lombok.ToString;
 
+@ToString
 public class SpawnParticleEffectPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.SPAWN_PARTICLE_EFFECT_PACKET;
 

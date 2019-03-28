@@ -1,8 +1,11 @@
 package cn.nukkit.network.protocol;
 
+import lombok.ToString;
+
 /**
  * Created on 15-10-22.
  */
+@ToString
 public class SetEntityLinkPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.SET_ENTITY_LINK_PACKET;
