@@ -47,6 +47,7 @@ public class PlayerListPacket extends DataPacket {
         return NETWORK_ID;
     }
 
+    @ToString
     public static class Entry {
 
         public final UUID uuid;

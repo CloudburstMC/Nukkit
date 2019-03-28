@@ -8,10 +8,12 @@ import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.transaction.action.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.InventoryTransactionPacket;
+import lombok.ToString;
 
 /**
  * @author CreeperFace
  */
+@ToString
 public class NetworkInventoryAction {
 
     public static final int SOURCE_CONTAINER = 0;

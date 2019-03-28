@@ -42,6 +42,7 @@ public class ResourcePackClientResponsePacket extends DataPacket {
         return NETWORK_ID;
     }
 
+    @ToString
     public static class Entry {
         public final UUID uuid;
         public final String version;

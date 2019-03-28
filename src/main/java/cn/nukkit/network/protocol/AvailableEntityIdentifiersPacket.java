@@ -6,7 +6,7 @@ import lombok.ToString;
 
 import java.io.IOException;
 
-@ToString
+@ToString(exclude = {"tag"})
 public class AvailableEntityIdentifiersPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.AVAILABLE_ENTITY_IDENTIFIERS_PACKET;
 

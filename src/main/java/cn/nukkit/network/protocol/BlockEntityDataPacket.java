@@ -7,7 +7,7 @@ import lombok.ToString;
  * author: MagicDroidX
  * Nukkit Project
  */
-@ToString
+@ToString(exclude = "namedTag")
 public class BlockEntityDataPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.BLOCK_ENTITY_DATA_PACKET;
 

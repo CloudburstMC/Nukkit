@@ -2,7 +2,7 @@ package cn.nukkit.network.protocol;
 
 import lombok.ToString;
 
-@ToString
+@ToString(exclude = "namedtag")
 public class UpdateEquipmentPacket extends DataPacket {
 
     public int windowId;
