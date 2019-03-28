@@ -4,6 +4,7 @@ import cn.nukkit.entity.data.Skin;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import lombok.ToString;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -15,6 +16,7 @@ import java.util.UUID;
 /**
  * Created by on 15-10-13.
  */
+@ToString
 public class LoginPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.LOGIN_PACKET;

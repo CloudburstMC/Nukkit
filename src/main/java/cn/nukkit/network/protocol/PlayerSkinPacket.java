@@ -1,9 +1,11 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.entity.data.Skin;
+import lombok.ToString;
 
 import java.util.UUID;
 
+@ToString
 public class PlayerSkinPacket extends DataPacket {
 
     public UUID uuid;
