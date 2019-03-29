@@ -248,6 +248,9 @@ public enum Sound {
     MOB_PIG_BOOST("mob.pig.boost"),
     MOB_PIG_SAY("mob.pig.say"),
     MOB_PIG_STEP("mob.pig.step"),
+    MOB_PILLAGER_DEATH("mob.pillager.death"),
+    MOB_PILLAGER_HURT("mob.pillager.hurt"),
+    MOB_PILLAGER_IDLE("mob.pillager.idle"),
     MOB_RABBIT_HURT("mob.rabbit.hurt"),
     MOB_RABBIT_IDLE("mob.rabbit.idle"),
     MOB_RABBIT_HOP("mob.rabbit.hop"),
@@ -317,6 +320,8 @@ public enum Sound {
     MOB_VEX_DEATH("mob.vex.death"),
     MOB_VEX_HURT("mob.vex.hurt"),
     MOB_VEX_CHARGE("mob.vex.charge"),
+    ITEM_BOOK_PAGE_TURN("item.book.page_turn"),
+    ITEM_BOOK_PUT("item.book.put"),
     ITEM_TRIDENT_HIT_GROUND("item.trident.hit_ground"),
     ITEM_TRIDENT_HIT("item.trident.hit"),
     ITEM_TRIDENT_RETURN("item.trident.return"),
@@ -325,6 +330,7 @@ public enum Sound {
     ITEM_TRIDENT_RIPTIDE_3("item.trident.riptide_3"),
     ITEM_TRIDENT_THROW("item.trident.throw"),
     ITEM_TRIDENT_THUNDER("item.trident.thunder"),
+    ITEM_SHIELD_BLOCK("item.shield.block"),
     MOB_WITCH_AMBIENT("mob.witch.ambient"),
     MOB_WITCH_DEATH("mob.witch.death"),
     MOB_WITCH_HURT("mob.witch.hurt"),
@@ -503,7 +509,9 @@ public enum Sound {
     MUSIC_GAME_END("music.game.end"),
     MUSIC_GAME_ENDBOSS("music.game.endboss"),
     MUSIC_GAME_NETHER("music.game.nether"),
-    MUSIC_GAME_CREDITS("music.game.credits");
+    MUSIC_GAME_CREDITS("music.game.credits"),
+    UI_LOOM_SELECT_PATTERN("ui.loom.select_pattern"),
+    UI_LOOM_TAKE_RESULT("ui.loom.take_result");
 
     private final String sound;
 
