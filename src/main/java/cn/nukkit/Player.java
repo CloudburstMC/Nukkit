@@ -3982,16 +3982,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
         }
 
-        if (source instanceof EntityDamageByEntityEvent) {
-            Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
-            if (damager instanceof Player) {
-                ((Player) damager).getFoodData().updateFoodExpLevel(0.3);
-            }
-        }
-
         if (super.attack(source)) { //!source.isCancelled()
             if (this.getLastDamageCause() == source && this.spawned) {
-                this.getFoodData().updateFoodExpLevel(0.3);
+                if (source instanceof EntityDamageByEntityEvent) {
+                    Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
+                    if (damager instanceof Player) {
+                        ((Player) damager).getFoodData().updateFoodExpLevel(0.3);
+                    }
+                }
                 EntityEventPacket pk = new EntityEventPacket();
                 pk.eid = this.id;
                 pk.event = EntityEventPacket.HURT_ANIMATION;
