@@ -58,19 +58,11 @@ public class BlockNoteblock extends BlockSolid {
     }
 
     public int getStrength() {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
-        if (blockEntity instanceof BlockEntityMusic) return Math.abs(blockEntity.namedTag.getByte("note")) % 25;
-        this.createBlockEntity();
-        return 0;
+        return this.getBlockEntity().getPitch();
     }
 
     public void increaseStrength() {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
-        if (blockEntity instanceof BlockEntityMusic) {
-            ((BlockEntityMusic) blockEntity).changePitch();
-        } else {
-            this.createBlockEntity();
-        }
+        this.getBlockEntity().changePitch();
     }
 
     public Instrument getInstrument() {
@@ -219,15 +211,30 @@ public class BlockNoteblock extends BlockSolid {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_REDSTONE) {
-            if (this.getLevel().isBlockPowered(this)) this.emitSound();
+            BlockEntityMusic blockEntity = this.getBlockEntity();
+            if (this.getLevel().isBlockPowered(this)) {
+                if (!blockEntity.isPowered()) {
+                    this.emitSound();
+                }
+                blockEntity.setPowered(true);
+            } else {
+                blockEntity.setPowered(false);
+            }
         }
-        return 0;
+        return super.onUpdate(type);
+    }
+
+    private BlockEntityMusic getBlockEntity() {
+        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
+        if (blockEntity instanceof BlockEntityMusic) {
+            return (BlockEntityMusic) blockEntity;
+        }
+        return this.createBlockEntity();
     }
 
     private BlockEntityMusic createBlockEntity() {
         return new BlockEntityMusic(this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
-                                        BlockEntity.getDefaultCompound(this, BlockEntity.MUSIC)
-                                                .putByte("note", 0));
+                                        BlockEntity.getDefaultCompound(this, BlockEntity.MUSIC));
     }
 
     public enum Instrument {
