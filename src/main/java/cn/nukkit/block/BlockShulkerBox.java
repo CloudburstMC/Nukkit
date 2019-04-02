@@ -11,6 +11,8 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.DyeColor;
 
 /**
  * Created by PetteriM1
@@ -37,7 +39,7 @@ public class BlockShulkerBox extends BlockTransparentMeta {
 
     @Override
     public String getName() {
-        return "Shulker Box";
+        return this.getDyeColor().getName() + " Shulker Box";
     }
 
     @Override
@@ -105,31 +107,14 @@ public class BlockShulkerBox extends BlockTransparentMeta {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        BlockEntityShulkerBox box = null;
-
-        for (int side = 2; side <= 5; ++side) {
-            if ((this.getDamage() == 4 || this.getDamage() == 5) && (side == 4 || side == 5)) {
-                continue;
-            } else if ((this.getDamage() == 3 || this.getDamage() == 2) && (side == 2 || side == 3)) {
-                continue;
-            }
-            Block c = this.getSide(BlockFace.fromIndex(side));
-            if (c instanceof BlockShulkerBox && c.getDamage() == this.getDamage()) {
-                BlockEntity blockEntity = this.getLevel().getBlockEntity(c);
-                if (blockEntity instanceof BlockEntityShulkerBox && !((BlockEntityShulkerBox) blockEntity).isPaired()) {
-                    box = (BlockEntityShulkerBox) blockEntity;
-                    break;
-                }
-            }
-        }
-
         this.getLevel().setBlock(block, this, true, true);
         CompoundTag nbt = new CompoundTag("")
                 .putList(new ListTag<>("Items"))
                 .putString("id", BlockEntity.SHULKER_BOX)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z);
+                .putInt("z", (int) this.z)
+                .putByte("facing", face.getIndex());
 
         if (item.hasCustomName()) {
             nbt.putString("CustomName", item.getCustomName());
@@ -143,12 +128,7 @@ public class BlockShulkerBox extends BlockTransparentMeta {
             }
         }
 
-        BlockEntityShulkerBox blockEntity = new BlockEntityShulkerBox(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
-
-        if (box != null) {
-            box.pairWith(blockEntity);
-            blockEntity.pairWith(box);
-        }
+        new BlockEntityShulkerBox(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
 
         return true;
     }
@@ -172,11 +152,6 @@ public class BlockShulkerBox extends BlockTransparentMeta {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            Block top = up();
-            if (!top.isTransparent()) {
-                return true;
-            }
-
             BlockEntity t = this.getLevel().getBlockEntity(this);
             BlockEntityShulkerBox box;
             if (t instanceof BlockEntityShulkerBox) {
@@ -187,13 +162,27 @@ public class BlockShulkerBox extends BlockTransparentMeta {
                         .putString("id", BlockEntity.SHULKER_BOX)
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
-                        .putInt("z", (int) this.z);
+                        .putInt("z", (int) this.z)
+                        .putByte("facing", 0);
                 box = new BlockEntityShulkerBox(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+            }
+
+            if (this.getSide(BlockFace.fromIndex(box.namedTag.getByte("facing"))).getId() != AIR) {
+                return true;
             }
 
             player.addWindow(box.getInventory());
         }
 
         return true;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return this.getDyeColor().getColor();
+    }
+
+    public DyeColor getDyeColor() {
+        return DyeColor.getByWoolData(this.getDamage());
     }
 }
