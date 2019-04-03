@@ -58,18 +58,14 @@ public class BlockNoteblock extends BlockSolid {
     }
 
     public int getStrength() {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
-        if (blockEntity instanceof BlockEntityMusic) return Math.abs(blockEntity.namedTag.getByte("note")) % 25;
-        this.createBlockEntity();
-        return 0;
+        BlockEntityMusic blockEntity = this.getBlockEntity();
+        return blockEntity != null ? blockEntity.getPitch() : 0;
     }
 
     public void increaseStrength() {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
-        if (blockEntity instanceof BlockEntityMusic) {
-            ((BlockEntityMusic) blockEntity).changePitch();
-        } else {
-            this.createBlockEntity();
+        BlockEntityMusic blockEntity = this.getBlockEntity();
+        if (blockEntity != null) {
+            blockEntity.changePitch();
         }
     }
 
@@ -219,15 +215,32 @@ public class BlockNoteblock extends BlockSolid {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_REDSTONE) {
-            if (this.getLevel().isBlockPowered(this)) this.emitSound();
+            BlockEntityMusic blockEntity = this.getBlockEntity();
+            if (blockEntity != null) {
+                if (this.getLevel().isBlockPowered(this)) {
+                    if (!blockEntity.isPowered()) {
+                        this.emitSound();
+                    }
+                    blockEntity.setPowered(true);
+                } else {
+                    blockEntity.setPowered(false);
+                }
+            }
         }
-        return 0;
+        return super.onUpdate(type);
+    }
+
+    private BlockEntityMusic getBlockEntity() {
+        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
+        if (blockEntity instanceof BlockEntityMusic) {
+            return (BlockEntityMusic) blockEntity;
+        }
+        return null;
     }
 
     private BlockEntityMusic createBlockEntity() {
         return new BlockEntityMusic(this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
-                                        BlockEntity.getDefaultCompound(this, BlockEntity.MUSIC)
-                                                .putByte("note", 0));
+                                        BlockEntity.getDefaultCompound(this, BlockEntity.MUSIC));
     }
 
     public enum Instrument {
