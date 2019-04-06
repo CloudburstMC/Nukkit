@@ -4,6 +4,7 @@ import cn.nukkit.block.BlockAir;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -74,6 +75,10 @@ public class EntityMetadata {
 
     public Vector3 getPosition(int id) {
         return (Vector3) this.getOrDefault(id, new IntPositionEntityData(id, new Vector3())).getData();
+    }
+
+    public Vector3f getFloatPosition(int id) {
+        return (Vector3f) this.getOrDefault(id, new Vector3fEntityData(id, new Vector3f())).getData();
     }
 
     public EntityMetadata putByte(int id, int value) {

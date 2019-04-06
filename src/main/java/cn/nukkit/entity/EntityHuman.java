@@ -183,7 +183,7 @@ public class EntityHuman extends EntityHumanType {
                 pkk.rider = this.riding.getId();
                 pkk.riding = this.getId();
                 pkk.type = 1;
-                pkk.unknownByte = 1;
+                pkk.immediate = 1;
 
                 player.dataPacket(pkk);
             }
