@@ -14,4 +14,5 @@ public interface EntityRideable {
      */
     boolean mountEntity(Entity entity);
 
+    boolean dismountEntity(Entity entity);
 }
