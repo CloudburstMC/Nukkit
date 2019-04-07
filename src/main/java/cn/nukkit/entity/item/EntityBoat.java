@@ -45,7 +45,7 @@ public class EntityBoat extends EntityVehicle {
     public static final Vector3f RIDER_PASSENGER_OFFSET = new Vector3f(0.2f);
 
     public static final int RIDER_INDEX = 0;
-    public static final int PASSENGER_INDEX = 0;
+    public static final int PASSENGER_INDEX = 1;
 
     public static final double SINKING_DEPTH = 0.07;
     public static final double SINKING_SPEED = 0.0005;
@@ -177,15 +177,20 @@ public class EntityBoat extends EntityVehicle {
             super.onUpdate(currentTick);
 
             double waterDiff = getWaterLevel();
+            if (!hasControllingPassenger()) {
 
-            if (waterDiff > SINKING_DEPTH && !sinking) {
-                sinking = true;
-            } else if (waterDiff < -SINKING_DEPTH && sinking) {
-                sinking = false;
-            }
+                if (waterDiff > SINKING_DEPTH && !sinking) {
+                    sinking = true;
+                } else if (waterDiff < -SINKING_DEPTH && sinking) {
+                    sinking = false;
+                }
 
-            if (waterDiff < -SINKING_DEPTH || !sinking) {
-                this.motionY = this.motionY + SINKING_SPEED > SINKING_MAX_SPEED ? this.motionY : this.motionY + SINKING_SPEED;
+                if (waterDiff < -SINKING_DEPTH) {
+                    this.motionY = Math.min(0.05, this.motionY + 0.005);
+                } else if (waterDiff < 0 || !sinking) {
+                    this.motionY = this.motionY > SINKING_MAX_SPEED ? Math.max(this.motionY - 0.02, SINKING_MAX_SPEED) : this.motionY + SINKING_SPEED;
+//                    this.motionY = this.motionY + SINKING_SPEED > SINKING_MAX_SPEED ? this.motionY - SINKING_SPEED : this.motionY + SINKING_SPEED;
+                }
             }
 
             if (this.checkObstruction(this.x, this.y, this.z)) {
@@ -202,8 +207,10 @@ public class EntityBoat extends EntityVehicle {
 
             this.motionX *= friction;
 
-            if (waterDiff > SINKING_DEPTH || sinking) {
-                this.motionY = waterDiff > 0.5 ? this.motionY - this.getGravity() : (this.motionY - SINKING_SPEED < -SINKING_MAX_SPEED ? this.motionY : this.motionY - SINKING_SPEED);
+            if (!hasControllingPassenger()) {
+                if (waterDiff > SINKING_DEPTH || sinking) {
+                    this.motionY = waterDiff > 0.5 ? this.motionY - this.getGravity() : (this.motionY - SINKING_SPEED < -SINKING_MAX_SPEED ? this.motionY : this.motionY - SINKING_SPEED);
+                }
             }
 
             this.motionZ *= friction;
@@ -217,6 +224,7 @@ public class EntityBoat extends EntityVehicle {
                 this.getServer().getPluginManager().callEvent(new VehicleMoveEvent(this, from, to));
             }
 
+            //TODO: lily pad collision
             this.updateMovement();
 
             if (this.passengers.size() < 2) {
@@ -273,13 +281,13 @@ public class EntityBoat extends EntityVehicle {
                 }
             }
 
-            ent.setSeatPosition(getMountedOffset(ent).add(0.2f));
+            ent.setSeatPosition(getMountedOffset(ent).add(RIDER_PASSENGER_OFFSET));
             super.updatePassengerPosition(ent);
             if (sendLinks) {
                 broadcastLinkPacket(ent, SetEntityLinkPacket.TYPE_RIDE);
             }
 
-            (ent = this.passengers.get(1)).setSeatPosition(getMountedOffset(ent).add(-0.6f));
+            (ent = this.passengers.get(1)).setSeatPosition(getMountedOffset(ent).add(PASSENGER_OFFSET));
 
             super.updatePassengerPosition(ent);
 
@@ -327,7 +335,14 @@ public class EntityBoat extends EntityVehicle {
 
     @Override
     public boolean mountEntity(Entity entity) {
-        boolean r = super.mountEntity(entity);
+        boolean player = this.passengers.size() >= 1 && this.passengers.get(0) instanceof Player;
+        byte mode = SetEntityLinkPacket.TYPE_PASSENGER;
+
+        if (!player && (entity instanceof Player || this.passengers.size() == 0)) {
+            mode = SetEntityLinkPacket.TYPE_RIDE;
+        }
+
+        boolean r = super.mountEntity(entity, mode);
 
         if (entity.riding != null) {
             updatePassengers(true);
@@ -335,6 +350,10 @@ public class EntityBoat extends EntityVehicle {
             entity.setDataProperty(new FloatEntityData(DATA_RIDER_MAX_ROTATION, 90));
             entity.setDataProperty(new FloatEntityData(DATA_RIDER_MIN_ROTATION, -90));
             entity.setDataProperty(new ByteEntityData(DATA_RIDER_ROTATION_LOCKED, 1));
+
+//            if(entity instanceof Player && mode == SetEntityLinkPacket.TYPE_RIDE){ //TODO: controlling
+//                entity.setDataProperty(new ByteEntityData(DATA_FLAG_WASD_CONTROLLED))
+//            }
         }
 
         return r;
@@ -414,5 +433,10 @@ public class EntityBoat extends EntityVehicle {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean canPassThrough() {
+        return false;
     }
 }

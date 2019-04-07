@@ -180,8 +180,8 @@ public class EntityHuman extends EntityHumanType {
 
             if (this.riding != null) {
                 SetEntityLinkPacket pkk = new SetEntityLinkPacket();
-                pkk.rider = this.riding.getId();
-                pkk.riding = this.getId();
+                pkk.vehicleUniqueId = this.riding.getId();
+                pkk.riderUniqueId = this.getId();
                 pkk.type = 1;
                 pkk.immediate = 1;
 

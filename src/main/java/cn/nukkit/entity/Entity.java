@@ -619,6 +619,10 @@ public abstract class Entity extends Location implements Metadatable {
         return this.passengers.indexOf(entity) == 0;
     }
 
+    public boolean hasControllingPassenger() {
+        return !this.passengers.isEmpty() && isControlling(this.passengers.get(0));
+    }
+
     public Entity getRiding() {
         return riding;
     }
@@ -867,8 +871,8 @@ public abstract class Entity extends Location implements Metadatable {
             this.riding.spawnTo(player);
 
             SetEntityLinkPacket pkk = new SetEntityLinkPacket();
-            pkk.rider = this.riding.getId();
-            pkk.riding = this.getId();
+            pkk.vehicleUniqueId = this.riding.getId();
+            pkk.riderUniqueId = this.getId();
             pkk.type = 1;
             pkk.immediate = 1;
 
@@ -1408,8 +1412,8 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected void broadcastLinkPacket(Entity rider, byte type) {
         SetEntityLinkPacket pk = new SetEntityLinkPacket();
-        pk.rider = getId();         // To the?
-        pk.riding = rider.getId(); // From who?
+        pk.vehicleUniqueId = getId();         // To the?
+        pk.riderUniqueId = rider.getId(); // From who?
         pk.type = type;
 
         Server.broadcastPacket(this.hasSpawned.values(), pk);
@@ -1747,7 +1751,7 @@ public abstract class Entity extends Location implements Metadatable {
 
             AxisAlignedBB axisalignedbb = this.boundingBox.clone();
 
-            AxisAlignedBB[] list = this.level.getCollisionCubes(this, this.level.getTickRate() > 1 ? this.boundingBox.getOffsetBoundingBox(dx, dy, dz) : this.boundingBox.addCoord(dx, dy, dz), false);
+            AxisAlignedBB[] list = this.level.getCollisionCubes(this, this.level.getTickRate() > 1 ? this.boundingBox.getOffsetBoundingBox(dx, dy, dz) : this.boundingBox.addCoord(dx, dy, dz), false, true);
 
             for (AxisAlignedBB bb : list) {
                 dy = bb.calculateYOffset(this.boundingBox, dy);
@@ -1950,6 +1954,10 @@ public abstract class Entity extends Location implements Metadatable {
      * @return triggers pressure plate
      */
     public boolean doesTriggerPressurePlate() {
+        return true;
+    }
+
+    public boolean canPassThrough() {
         return true;
     }
 
