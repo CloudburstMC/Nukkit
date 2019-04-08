@@ -8,10 +8,7 @@ import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.entity.data.FloatEntityData;
 import cn.nukkit.entity.passive.EntityWaterAnimal;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.vehicle.VehicleDamageEvent;
-import cn.nukkit.event.vehicle.VehicleDestroyEvent;
 import cn.nukkit.event.vehicle.VehicleMoveEvent;
 import cn.nukkit.event.vehicle.VehicleUpdateEvent;
 import cn.nukkit.item.Item;
@@ -55,6 +52,9 @@ public class EntityBoat extends EntityVehicle {
 
     public EntityBoat(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+
+        this.setMaxHealth(40);
+        this.setHealth(40);
     }
 
     @Override
@@ -62,9 +62,6 @@ public class EntityBoat extends EntityVehicle {
         super.initEntity();
 
         this.dataProperties.putByte(DATA_WOOD_ID, this.namedTag.getByte("woodID"));
-
-        this.setHealth(4);
-        this.setMaxHealth(4);
     }
 
     @Override
@@ -102,47 +99,16 @@ public class EntityBoat extends EntityVehicle {
         if (invulnerable) {
             return false;
         } else {
-            // Event start
-            VehicleDamageEvent event = new VehicleDamageEvent(this, source.getEntity(), source.getFinalDamage());
-            getServer().getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
-                return false;
-            }
-            // Event stop
-            performHurtAnimation((int) event.getDamage());
+            source.setDamage(source.getDamage() * 2);
 
-            boolean instantKill = false;
+            boolean attack = super.attack(source);
 
-            if (source instanceof EntityDamageByEntityEvent) {
-                cn.nukkit.entity.Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
-                instantKill = damager instanceof Player && ((Player) damager).isCreative();
+            if (isAlive()) {
+                performHurtAnimation();
             }
 
-            if (instantKill || getDamage() > 40) {
-                // Event start
-                VehicleDestroyEvent event2 = new VehicleDestroyEvent(this, source.getEntity());
-                getServer().getPluginManager().callEvent(event2);
-                if (event2.isCancelled()) {
-                    return false;
-                }
-
-                // Event stop
-                for (Entity linkedEntity : new ArrayList<>(passengers)) {
-                    dismountEntity(linkedEntity);
-                }
-
-                if (instantKill && (!hasCustomName())) {
-                    kill();
-                } else {
-                    if (level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
-                        this.level.dropItem(this, new ItemBoat());
-                    }
-                    close();
-                }
-            }
+            return attack;
         }
-
-        return true;
     }
 
     @Override
@@ -438,5 +404,14 @@ public class EntityBoat extends EntityVehicle {
     @Override
     public boolean canPassThrough() {
         return false;
+    }
+
+    @Override
+    public void kill() {
+        super.kill();
+
+        if (level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
+            this.level.dropItem(this, new ItemBoat());
+        }
     }
 }

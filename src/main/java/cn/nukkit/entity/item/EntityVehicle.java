@@ -1,9 +1,14 @@
 package cn.nukkit.entity.item;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityInteractable;
 import cn.nukkit.entity.EntityRideable;
 import cn.nukkit.entity.data.IntEntityData;
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.vehicle.VehicleDamageEvent;
+import cn.nukkit.event.vehicle.VehicleDestroyEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -57,10 +62,7 @@ public abstract class EntityVehicle extends Entity implements EntityRideable, En
         if (getRollingAmplitude() > 0) {
             setRollingAmplitude(getRollingAmplitude() - 1);
         }
-        // The damage token
-        if (getDamage() > 0) {
-            setDamage(getDamage() - 1);
-        }
+
         // A killer task
         if (y < -16) {
             kill();
@@ -72,17 +74,41 @@ public abstract class EntityVehicle extends Entity implements EntityRideable, En
 
     protected boolean rollingDirection = true;
 
-    protected boolean performHurtAnimation(int damage) {
-        if (damage >= this.getHealth()) {
+    protected boolean performHurtAnimation() {
+        setRollingAmplitude(9);
+        setRollingDirection(rollingDirection ? 1 : -1);
+        rollingDirection = !rollingDirection;
+        return true;
+    }
+
+    @Override
+    public boolean attack(EntityDamageEvent source) {
+        VehicleDamageEvent event = new VehicleDamageEvent(this, source.getEntity(), source.getFinalDamage());
+        getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
             return false;
         }
 
-        // Vehicle does not respond hurt animation on packets
-        // It only respond on vehicle data flags. Such as these
-        setRollingAmplitude(10);
-        setRollingDirection(rollingDirection ? 1 : -1);
-        rollingDirection = !rollingDirection;
-        setDamage(getDamage() + damage);
-        return true;
+        boolean instantKill = false;
+
+        if (source instanceof EntityDamageByEntityEvent) {
+            Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
+            instantKill = damager instanceof Player && ((Player) damager).isCreative();
+        }
+
+        if (instantKill || getHealth() - source.getFinalDamage() < 1) {
+            VehicleDestroyEvent event2 = new VehicleDestroyEvent(this, source.getEntity());
+            getServer().getPluginManager().callEvent(event2);
+
+            if (event2.isCancelled()) {
+                return false;
+            }
+        }
+
+        if (instantKill) {
+            source.setDamage(1000);
+        }
+
+        return super.attack(source);
     }
 }
