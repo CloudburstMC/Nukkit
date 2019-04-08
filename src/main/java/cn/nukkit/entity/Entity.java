@@ -375,6 +375,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_HAS_COLLISION, true);
         this.dataProperties.putFloat(DATA_BOUNDING_BOX_HEIGHT, this.getHeight());
         this.dataProperties.putFloat(DATA_BOUNDING_BOX_WIDTH, this.getWidth());
+        this.dataProperties.putInt(DATA_HEALTH, (int) this.getHealth());
 
         this.scheduleUpdate();
     }
@@ -1018,7 +1019,7 @@ public abstract class Entity extends Location implements Metadatable {
             return;
         }
 
-        if (health <= 0) {
+        if (health < 1) {
             if (this.isAlive()) {
                 this.kill();
             }
@@ -1027,6 +1028,8 @@ public abstract class Entity extends Location implements Metadatable {
         } else {
             this.health = this.getMaxHealth();
         }
+
+        setDataProperty(new IntEntityData(DATA_HEALTH, (int) this.health));
     }
 
     public void setLastDamageCause(EntityDamageEvent type) {
@@ -2047,6 +2050,10 @@ public abstract class Entity extends Location implements Metadatable {
     public void kill() {
         this.health = 0;
         this.scheduleUpdate();
+
+        for (Entity passenger : this.passengers) {
+            dismountEntity(passenger);
+        }
     }
 
     public boolean teleport(Vector3 pos) {

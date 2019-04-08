@@ -12,7 +12,6 @@ import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.entity.data.IntEntityData;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.vehicle.VehicleMoveEvent;
 import cn.nukkit.event.vehicle.VehicleUpdateEvent;
@@ -30,7 +29,6 @@ import cn.nukkit.utils.MinecartType;
 import cn.nukkit.utils.Rail;
 import cn.nukkit.utils.Rail.Orientation;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
 
@@ -75,6 +73,9 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
 
     public EntityMinecartAbstract(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+
+        setMaxHealth(40);
+        setHealth(40);
     }
 
     @Override
@@ -148,6 +149,11 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
 
         if (isAlive()) {
             super.onUpdate(currentTick);
+
+            // The damage token
+            if (getHealth() < 20) {
+                setHealth(getHealth() + 1);
+            }
 
             // Entity variables
             lastX = x;
@@ -227,6 +233,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
             // No need to onGround or Motion diff! This always have an update
             return true;
         }
+
         return false;
     }
 
@@ -235,31 +242,29 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         if (invulnerable) {
             return false;
         } else {
-            cn.nukkit.entity.Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
-            boolean instantKill = damager instanceof Player && ((Player) damager).isCreative();
-            if (!instantKill) performHurtAnimation((int) source.getFinalDamage());
+            source.setDamage(source.getDamage() * 15);
 
-            if (instantKill || getDamage() > 40) {
-                for (cn.nukkit.entity.Entity entity : new ArrayList<>(passengers)) {
-                    dismountEntity(entity);
-                }
+            boolean attack = super.attack(source);
 
-                if (instantKill && (!hasCustomName())) {
-                    kill();
-                } else {
-                    if (level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
-                        dropItem();
-                    }
-                    close();
-                }
+            if (isAlive()) {
+                performHurtAnimation();
             }
-        }
 
-        return true;
+            return attack;
+        }
     }
 
     public void dropItem() {
         level.dropItem(this, new ItemMinecart());
+    }
+
+    @Override
+    public void kill() {
+        super.kill();
+
+        if (level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
+            dropItem();
+        }
     }
 
     @Override
@@ -670,7 +675,6 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
     private void prepareDataProperty() {
         setRollingAmplitude(0);
         setRollingDirection(1);
-        setDamage(0);
         if (namedTag.contains("CustomDisplayTile")) {
             if (namedTag.getBoolean("CustomDisplayTile")) {
                 int display = namedTag.getInt("DisplayTile");
