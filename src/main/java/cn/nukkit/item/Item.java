@@ -287,8 +287,14 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[COOKED_SALMON] = ItemSalmonCooked.class; //463
             list[DRIED_KELP] = ItemDriedKelp.class; //464
 
+            list[NAUTILUS_SHELL] = ItemNautilusShell.class; //465
+
             list[GOLDEN_APPLE_ENCHANTED] = ItemAppleGoldEnchanted.class; //466
-            
+
+            list[HEART_OF_THE_SEA] = ItemHeartOfTheSea.class; //467
+
+            list[SCUTE] = ItemScute.class; //468
+
             list[TURTLE_SHELL] = ItemTurtleShell.class; //469
 
             list[RECORD_11] = ItemRecord11.class;
