@@ -50,6 +50,9 @@ public class BlockEntitySign extends BlockEntitySpawnable {
             }
         }
 
+        // Check old text to sanitize
+        sanitizeText(text);
+
         super.initBlockEntity();
     }
 
@@ -66,7 +69,7 @@ public class BlockEntitySign extends BlockEntitySpawnable {
     }
 
     public boolean setText(String... lines) {
-        for (int i = 0; i < text.length; i++) {
+        for (int i = 0; i < 4; i++) {
             if (i < lines.length)
                 text[i] = lines[i];
             else
@@ -96,6 +99,8 @@ public class BlockEntitySign extends BlockEntitySpawnable {
         Arrays.fill(lines, "");
         String[] splitLines = nbt.getString("Text").split("\n", 4);
         System.arraycopy(splitLines, 0, lines, 0, splitLines.length);
+
+        sanitizeText(lines);
 
         SignChangeEvent signChangeEvent = new SignChangeEvent(this.getBlock(), player, lines);
 
@@ -128,5 +133,12 @@ public class BlockEntitySign extends BlockEntitySpawnable {
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
 
+    }
+
+    private static void sanitizeText(String[] lines) {
+        for (int i = 0; i < lines.length; i++) {
+            // Don't allow excessive text per line.
+            lines[i] = lines[i].substring(0, Math.min(255, lines[i].length()));
+        }
     }
 }
