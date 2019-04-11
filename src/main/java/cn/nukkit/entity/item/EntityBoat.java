@@ -313,11 +313,12 @@ public class EntityBoat extends EntityVehicle {
         if (entity.riding != null) {
             updatePassengers(true);
 
-            entity.setDataProperty(new FloatEntityData(DATA_RIDER_MAX_ROTATION, 90));
-            entity.setDataProperty(new FloatEntityData(DATA_RIDER_MIN_ROTATION, -90));
             entity.setDataProperty(new ByteEntityData(DATA_RIDER_ROTATION_LOCKED, 1));
+            entity.setDataProperty(new FloatEntityData(DATA_RIDER_MAX_ROTATION, 90));
 
-//            if(entity instanceof Player && mode == SetEntityLinkPacket.TYPE_RIDE){ //TODO: controlling
+            entity.setDataProperty(new FloatEntityData(DATA_RIDER_MIN_ROTATION, this.passengers.indexOf(entity) == 0 ? -90 : 0));
+
+            //            if(entity instanceof Player && mode == SetEntityLinkPacket.TYPE_RIDE){ //TODO: controlling?
 //                entity.setDataProperty(new ByteEntityData(DATA_FLAG_WASD_CONTROLLED))
 //            }
         }
