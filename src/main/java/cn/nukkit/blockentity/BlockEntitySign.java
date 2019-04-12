@@ -51,7 +51,9 @@ public class BlockEntitySign extends BlockEntitySpawnable {
         }
 
         // Check old text to sanitize
-        sanitizeText(text);
+        if (text != null) {
+            sanitizeText(text);
+        }
 
         super.initBlockEntity();
     }
