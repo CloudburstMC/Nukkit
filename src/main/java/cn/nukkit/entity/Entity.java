@@ -1296,7 +1296,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void addMovement(double x, double y, double z, double yaw, double pitch, double headYaw) {
-        this.level.addEntityMovement(this.chunk.getX(), this.chunk.getZ(), this.id, x, y, z, yaw, pitch, headYaw);
+        this.level.addEntityMovement(this, x, y, z, yaw, pitch, headYaw);
     }
 
     public void addMotion(double motionX, double motionY, double motionZ) {

@@ -3169,6 +3169,19 @@ public class Level implements ChunkManager, Metadatable {
         this.addChunkPacket(chunkX, chunkZ, pk);
     }
 
+    public void addEntityMovement(Entity entity, double x, double y, double z, double yaw, double pitch, double headYaw) {
+        MoveEntityAbsolutePacket pk = new MoveEntityAbsolutePacket();
+        pk.eid = entity.getId();
+        pk.x = (float) x;
+        pk.y = (float) y;
+        pk.z = (float) z;
+        pk.yaw = (float) yaw;
+        pk.headYaw = (float) yaw;
+        pk.pitch = (float) pitch;
+
+        Server.broadcastPacket(entity.getViewers().values(), pk);
+    }
+
     public boolean isRaining() {
         return this.raining;
     }
