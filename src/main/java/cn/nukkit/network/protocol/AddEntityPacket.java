@@ -119,6 +119,8 @@ public class AddEntityPacket extends DataPacket {
             .put(106, "minecraft:ice_bomb")
             .put(EntityPhantom.NETWORK_ID, "minecraft:phantom")
             .put(62, "minecraft:tripod_camera")
+            .put(114, "minecraft:pillager")
+            .put(118, "minecraft:wandering_trader")
             .build();
 
     @Override
