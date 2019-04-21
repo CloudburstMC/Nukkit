@@ -294,14 +294,15 @@ public class Server {
                 } else {
                     lang = this.console.readLine();
                 }
-                
+
                 InputStream conf = this.getClass().getClassLoader().getResourceAsStream("lang/" + lang + "/lang.ini");
                 if (conf != null) {
                     language = lang;
-                } else if(predefinedLanguage != null) {
-                    log.warn("No language found for predefined language: " + predefinedLanguage + ", please choose a valid language");
                 }
                 if(predefinedLanguage != null) {
+                    if(conf == null) {
+                        log.warn("No language found for predefined language: " + predefinedLanguage + ", please choose a valid language");
+                    }
                     predefinedLanguage = null;
                 }
             }
