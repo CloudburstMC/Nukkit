@@ -70,6 +70,7 @@ public class Nukkit {
         parser.accepts("disable-ansi");
         parser.accepts("v", "Set verbosity of logging").withRequiredArg().ofType(String.class);
         parser.accepts("verbosity", "Set verbosity of logging").withRequiredArg().ofType(String.class);
+        parser.accepts("language", "Set a predefined language").withOptionalArg().ofType(String.class);
 
         // Parse arguments
         OptionSet options = parser.parse(args);
@@ -91,11 +92,13 @@ public class Nukkit {
             }
         }
 
+        String language = (String) options.valueOf("language");
+
         try {
             if (TITLE) {
                 System.out.print((char) 0x1b + "]0;Nukkit is starting up..." + (char) 0x07);
             }
-            new Server(PATH, DATA_PATH, PLUGIN_PATH);
+            new Server(PATH, DATA_PATH, PLUGIN_PATH, language);
         } catch (Throwable t) {
             log.throwing(t);
         }
