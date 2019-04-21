@@ -134,7 +134,7 @@ public class Network {
     public void processBatch(BatchPacket packet, Player player) {
         byte[] data;
         try {
-            data = Zlib.inflate(packet.payload, 64 * 1024 * 1024);
+            data = Zlib.inflate(packet.payload, 2 * 1024 * 1024); // Max 2MB
         } catch (Exception e) {
             return;
         }
@@ -143,7 +143,13 @@ public class Network {
         BinaryStream stream = new BinaryStream(data);
         try {
             List<DataPacket> packets = new ArrayList<>();
+            int count = 0;
             while (stream.offset < len) {
+                count++;
+                if(count >= 500){
+                    player.close();
+                    throw new IllegalArgumentException("Too many packets in a single batch");
+                }
                 byte[] buf = stream.getByteArray();
 
                 DataPacket pk;
