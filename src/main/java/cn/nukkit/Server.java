@@ -287,12 +287,14 @@ public class Server {
             String fallback = BaseLang.FALLBACK_LANGUAGE;
             String language = null;
             while (language == null) {
-                if(predefinedLanguage != null)  {
+                String lang;
+                if (predefinedLanguage != null) {
                     log.info("Trying to load language from predefined language: " + predefinedLanguage);
-                    language = predefinedLanguage;
+                    lang = predefinedLanguage;
+                } else {
+                    lang = this.console.readLine();
                 }
-
-                String lang = this.console.readLine();
+                
                 InputStream conf = this.getClass().getClassLoader().getResourceAsStream("lang/" + lang + "/lang.ini");
                 if (conf != null) {
                     language = lang;
