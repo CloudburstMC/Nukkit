@@ -147,8 +147,13 @@ public class Network {
             while (stream.offset < len) {
                 count++;
                 if(count >= 500){
+                    
+                    if(player.loggedIn)
+                        this.server.getLogger().warning("\"" + player.getName() + "\" sent an Illegal Batch Packet (Dos Attempt?)");
+                    else
+                        this.server.getLogger().warning("A Player sent an Illegal Batch Packet (Dos Attempt?)");
                     player.close();
-                    throw new IllegalArgumentException("Too many packets in a single batch");
+                    return;
                 }
                 byte[] buf = stream.getByteArray();
 
