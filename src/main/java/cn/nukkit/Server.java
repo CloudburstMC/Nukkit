@@ -289,22 +289,18 @@ public class Server {
             while (language == null) {
                 if(predefinedLanguage != null)  {
                     log.info("Trying to load language from predefined language: " + predefinedLanguage);
-
-                    InputStream conf = this.getClass().getClassLoader().getResourceAsStream("lang/" + predefinedLanguage + "/lang.ini");
-                    if (conf != null) {
-                        language = predefinedLanguage;
-                        log.info("Found language for predefined language: " + predefinedLanguage);
-                        break;
-                    } else {
-                        log.warn("No language found for predefined language: " + predefinedLanguage + ", please choose a valid language");
-                    }
-                    predefinedLanguage = null;
+                    language = predefinedLanguage;
                 }
 
                 String lang = this.console.readLine();
                 InputStream conf = this.getClass().getClassLoader().getResourceAsStream("lang/" + lang + "/lang.ini");
                 if (conf != null) {
                     language = lang;
+                } else if(predefinedLanguage != null) {
+                    log.warn("No language found for predefined language: " + predefinedLanguage + ", please choose a valid language");
+                }
+                if(predefinedLanguage != null) {
+                    predefinedLanguage = null;
                 }
             }
 
