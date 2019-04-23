@@ -9,8 +9,9 @@ public class LecternUpdatePacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.LECTERN_UPDATE_PACKET;
 
     public int page;
+    public int totalPages;
     public BlockVector3 blockPosition;
-    public boolean unknownBool;
+    public boolean dropBook;
 
     @Override
     public byte pid() {
@@ -19,9 +20,10 @@ public class LecternUpdatePacket extends DataPacket {
 
     @Override
     public void decode() {
-        page = this.getByte();
-        blockPosition = this.getBlockVector3();
-        unknownBool = this.getBoolean();
+        this.page = this.getByte();
+        this.totalPages = this.getByte();
+        this.blockPosition = this.getBlockVector3();
+        this.dropBook = this.getBoolean();
     }
 
     @Override

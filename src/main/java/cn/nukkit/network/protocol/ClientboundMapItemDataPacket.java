@@ -17,6 +17,7 @@ public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to
     public long mapId;
     public int update;
     public byte scale;
+    public boolean isLocked;
     public int width;
     public int height;
     public int offsetX;
@@ -62,6 +63,7 @@ public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to
 
         this.putUnsignedVarInt(update);
         this.putByte(this.dimensionId);
+        this.putBoolean(this.isLocked);
 
         if ((update & 0x08) != 0) { //TODO: find out what these are for
             this.putUnsignedVarInt(eids.length);

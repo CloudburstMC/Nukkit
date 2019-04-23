@@ -15050,6 +15050,26 @@
     "data": 3
   },
   {
+    "name": "minecraft:lectern",
+    "id": 449,
+    "data": 4
+  },
+  {
+    "name": "minecraft:lectern",
+    "id": 449,
+    "data": 5
+  },
+  {
+    "name": "minecraft:lectern",
+    "id": 449,
+    "data": 6
+  },
+  {
+    "name": "minecraft:lectern",
+    "id": 449,
+    "data": 7
+  },
+  {
     "name": "minecraft:grindstone",
     "id": 450,
     "data": 0
@@ -15150,6 +15170,26 @@
     "data": 3
   },
   {
+    "name": "minecraft:blast_furnace",
+    "id": 451,
+    "data": 4
+  },
+  {
+    "name": "minecraft:blast_furnace",
+    "id": 451,
+    "data": 5
+  },
+  {
+    "name": "minecraft:blast_furnace",
+    "id": 451,
+    "data": 6
+  },
+  {
+    "name": "minecraft:blast_furnace",
+    "id": 451,
+    "data": 7
+  },
+  {
     "name": "minecraft:stonecutter_block",
     "id": 452,
     "data": 0
@@ -15208,6 +15248,66 @@
     "name": "minecraft:smoker",
     "id": 453,
     "data": 3
+  },
+  {
+    "name": "minecraft:smoker",
+    "id": 453,
+    "data": 4
+  },
+  {
+    "name": "minecraft:smoker",
+    "id": 453,
+    "data": 5
+  },
+  {
+    "name": "minecraft:smoker",
+    "id": 453,
+    "data": 6
+  },
+  {
+    "name": "minecraft:smoker",
+    "id": 453,
+    "data": 7
+  },
+  {
+    "name": "minecraft:lit_smoker",
+    "id": 454,
+    "data": 0
+  },
+  {
+    "name": "minecraft:lit_smoker",
+    "id": 454,
+    "data": 1
+  },
+  {
+    "name": "minecraft:lit_smoker",
+    "id": 454,
+    "data": 2
+  },
+  {
+    "name": "minecraft:lit_smoker",
+    "id": 454,
+    "data": 3
+  },
+  {
+    "name": "minecraft:lit_smoker",
+    "id": 454,
+    "data": 4
+  },
+  {
+    "name": "minecraft:lit_smoker",
+    "id": 454,
+    "data": 5
+  },
+  {
+    "name": "minecraft:lit_smoker",
+    "id": 454,
+    "data": 6
+  },
+  {
+    "name": "minecraft:lit_smoker",
+    "id": 454,
+    "data": 7
   },
   {
     "name": "minecraft:cartography_table",
@@ -15263,6 +15363,46 @@
     "name": "minecraft:barrel",
     "id": 458,
     "data": 7
+  },
+  {
+    "name": "minecraft:barrel",
+    "id": 458,
+    "data": 8
+  },
+  {
+    "name": "minecraft:barrel",
+    "id": 458,
+    "data": 9
+  },
+  {
+    "name": "minecraft:barrel",
+    "id": 458,
+    "data": 10
+  },
+  {
+    "name": "minecraft:barrel",
+    "id": 458,
+    "data": 11
+  },
+  {
+    "name": "minecraft:barrel",
+    "id": 458,
+    "data": 12
+  },
+  {
+    "name": "minecraft:barrel",
+    "id": 458,
+    "data": 13
+  },
+  {
+    "name": "minecraft:barrel",
+    "id": 458,
+    "data": 14
+  },
+  {
+    "name": "minecraft:barrel",
+    "id": 458,
+    "data": 15
   },
   {
     "name": "minecraft:loom",
@@ -15420,6 +15560,41 @@
     "data": 0
   },
   {
+    "name": "minecraft:campfire",
+    "id": 464,
+    "data": 1
+  },
+  {
+    "name": "minecraft:campfire",
+    "id": 464,
+    "data": 2
+  },
+  {
+    "name": "minecraft:campfire",
+    "id": 464,
+    "data": 3
+  },
+  {
+    "name": "minecraft:campfire",
+    "id": 464,
+    "data": 4
+  },
+  {
+    "name": "minecraft:campfire",
+    "id": 464,
+    "data": 5
+  },
+  {
+    "name": "minecraft:campfire",
+    "id": 464,
+    "data": 6
+  },
+  {
+    "name": "minecraft:campfire",
+    "id": 464,
+    "data": 7
+  },
+  {
     "name": "minecraft:lava_cauldron",
     "id": 465,
     "data": 0
@@ -15657,6 +15832,86 @@
   {
     "name": "minecraft:composter",
     "id": 468,
+    "data": 7
+  },
+  {
+    "name": "minecraft:composter",
+    "id": 468,
+    "data": 8
+  },
+  {
+    "name": "minecraft:composter",
+    "id": 468,
+    "data": 9
+  },
+  {
+    "name": "minecraft:composter",
+    "id": 468,
+    "data": 10
+  },
+  {
+    "name": "minecraft:composter",
+    "id": 468,
+    "data": 11
+  },
+  {
+    "name": "minecraft:composter",
+    "id": 468,
+    "data": 12
+  },
+  {
+    "name": "minecraft:composter",
+    "id": 468,
+    "data": 13
+  },
+  {
+    "name": "minecraft:composter",
+    "id": 468,
+    "data": 14
+  },
+  {
+    "name": "minecraft:composter",
+    "id": 468,
+    "data": 15
+  },
+  {
+    "name": "minecraft:lit_blast_furnace",
+    "id": 469,
+    "data": 0
+  },
+  {
+    "name": "minecraft:lit_blast_furnace",
+    "id": 469,
+    "data": 1
+  },
+  {
+    "name": "minecraft:lit_blast_furnace",
+    "id": 469,
+    "data": 2
+  },
+  {
+    "name": "minecraft:lit_blast_furnace",
+    "id": 469,
+    "data": 3
+  },
+  {
+    "name": "minecraft:lit_blast_furnace",
+    "id": 469,
+    "data": 4
+  },
+  {
+    "name": "minecraft:lit_blast_furnace",
+    "id": 469,
+    "data": 5
+  },
+  {
+    "name": "minecraft:lit_blast_furnace",
+    "id": 469,
+    "data": 6
+  },
+  {
+    "name": "minecraft:lit_blast_furnace",
+    "id": 469,
     "data": 7
   }
 ]
