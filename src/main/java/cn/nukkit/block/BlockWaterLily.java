@@ -107,11 +107,6 @@ public class BlockWaterLily extends BlockFlowable {
     }
 
     @Override
-    public final int getDamage() {
-        return 0;
-    }
-
-    @Override
     public void setDamage(int meta) {
 
     }
