@@ -29,6 +29,14 @@ public class CraftingDataPacket extends DataPacket {
     public static final int ENTRY_ENCHANT_LIST = 4;
     public static final int ENTRY_SHULKER_BOX = 5;
 
+    public static final String CRAFTING_TAG_CRAFTING_TABLE = "crafting_table";
+    public static final String CRAFTING_TAG_CARTOGRAPHY_TABLE = "cartography_table";
+    public static final String CRAFTING_TAG_STONECUTTER = "stonecutter";
+    public static final String CRAFTING_TAG_FURNACE = "furnace";
+    public static final String CRAFTING_TAG_CAMPFIRE = "campfire";
+    public static final String CRAFTING_TAG_BLAST_FURNACE = "blast_furnace";
+    public static final String CRAFTING_TAG_SMOKER = "smoker";
+
     public List<Object> entries = new ArrayList<>();
     public boolean cleanRecipes;
 
@@ -55,6 +63,7 @@ public class CraftingDataPacket extends DataPacket {
         stream.putUnsignedVarInt(1);
         stream.putSlot(recipe.getResult());
         stream.putUUID(recipe.getId());
+        stream.putString(CRAFTING_TAG_CRAFTING_TABLE);
 
         return CraftingDataPacket.ENTRY_SHAPELESS;
     }
@@ -73,6 +82,7 @@ public class CraftingDataPacket extends DataPacket {
         stream.putSlot(recipe.getResult());
 
         stream.putUUID(recipe.getId());
+        stream.putString(CRAFTING_TAG_CRAFTING_TABLE);
 
         return CraftingDataPacket.ENTRY_SHAPED;
     }
@@ -82,11 +92,13 @@ public class CraftingDataPacket extends DataPacket {
             stream.putVarInt(recipe.getInput().getId());
             stream.putVarInt(recipe.getInput().getDamage());
             stream.putSlot(recipe.getResult());
+            stream.putString(CRAFTING_TAG_FURNACE);
 
             return CraftingDataPacket.ENTRY_FURNACE_DATA;
         } else {
             stream.putVarInt(recipe.getInput().getId());
             stream.putSlot(recipe.getResult());
+            stream.putString(CRAFTING_TAG_FURNACE);
 
             return CraftingDataPacket.ENTRY_FURNACE;
         }
