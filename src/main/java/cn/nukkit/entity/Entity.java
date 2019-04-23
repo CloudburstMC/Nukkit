@@ -95,7 +95,7 @@ public abstract class Entity extends Location implements Metadatable {
      * 35 (float) fishing bobber */
     public static final int DATA_POTION_AUX_VALUE = 36; //short
     public static final int DATA_LEAD_HOLDER_EID = 37; //long
-    public static final int DATA_SCALE = 38; //float TODO: correct
+    public static final int DATA_SCALE = 38; //float
     public static final int DATA_INTERACTIVE_TAG = 39; //string (button text)
     public static final int DATA_SKIN_ID = 40; // int ???
     public static final int DATA_NPC_SKIN_ID = 41; //string
