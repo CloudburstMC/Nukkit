@@ -19,7 +19,8 @@ public class BlockWaterLily extends BlockFlowable {
     }
 
     public BlockWaterLily(int meta) {
-        super(meta);
+        // Lily pad can't have meta. Also stops the server from throwing an exception with the block palette.
+        super(0);
     }
 
     @Override
@@ -98,5 +99,20 @@ public class BlockWaterLily extends BlockFlowable {
     @Override
     public boolean canPassThrough() {
         return false;
+    }
+
+    @Override
+    public int getFullId() {
+        return this.getId() << 4;
+    }
+
+    @Override
+    public final int getDamage() {
+        return 0;
+    }
+
+    @Override
+    public void setDamage(int meta) {
+
     }
 }
