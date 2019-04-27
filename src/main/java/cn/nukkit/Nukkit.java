@@ -5,7 +5,7 @@ import cn.nukkit.utils.ServerKiller;
 import com.google.common.base.Preconditions;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import joptsimple.OptionSpecBuilder;
+import joptsimple.OptionSpec;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -50,7 +50,7 @@ public class Nukkit {
     public final static String DATA_PATH = System.getProperty("user.dir") + "/";
     public final static String PLUGIN_PATH = DATA_PATH + "plugins";
     public static final long START_TIME = System.currentTimeMillis();
-    public static boolean ANSI = false;
+    public static boolean ANSI = true;
     public static boolean TITLE = false;
     public static boolean shortTitle = requiresShortTitle();
     public static int DEBUG = 1;
@@ -65,34 +65,45 @@ public class Nukkit {
 
         // Define args
         OptionParser parser = new OptionParser();
-        OptionSpecBuilder disableAnsi = parser.accepts("enable-ansi", "Disables interactive console I/O");
-        OptionSpecBuilder enableTitle = parser.accepts("enable-title", "Enables title at the top of the window");
-        parser.accepts("disable-ansi");
-        parser.accepts("v", "Set verbosity of logging").withRequiredArg().ofType(String.class);
-        parser.accepts("verbosity", "Set verbosity of logging").withRequiredArg().ofType(String.class);
-        parser.accepts("language", "Set a predefined language").withOptionalArg().ofType(String.class);
+        parser.allowsUnrecognizedOptions();
+        OptionSpec<Void> helpSpec = parser.accepts("help", "Shows this page").forHelp();
+        OptionSpec<Void> ansiSpec = parser.accepts("disable-ansi", "Disables console coloring");
+        OptionSpec<Void> titleSpec = parser.accepts("enable-title", "Enables title at the top of the window");
+        OptionSpec<String> vSpec = parser.accepts("v", "Set verbosity of logging").withRequiredArg().ofType(String.class);
+        OptionSpec<String> verbositySpec = parser.accepts("verbosity", "Set verbosity of logging").withRequiredArg().ofType(String.class);
+        OptionSpec<String> languageSpec = parser.accepts("language", "Set a predefined language").withOptionalArg().ofType(String.class);
 
         // Parse arguments
         OptionSet options = parser.parse(args);
 
-        ANSI = options.has(disableAnsi);
-        TITLE = options.has(enableTitle);
+        if (options.has(helpSpec)) {
+            try {
+                // Display help page
+                parser.printHelpOn(System.out);
+            } catch (IOException e) {
+                // ignore
+            }
+            return;
+        }
 
-        Object verbosity = options.valueOf("v");
+        ANSI = !options.has(ansiSpec);
+        TITLE = options.has(titleSpec);
+
+        String verbosity = options.valueOf(vSpec);
         if (verbosity == null) {
-            verbosity = options.valueOf("-verbosity");
+            verbosity = options.valueOf(verbositySpec);
         }
         if (verbosity != null) {
 
             try {
-                Level level = Level.valueOf((String) verbosity);
+                Level level = Level.valueOf(verbosity);
                 setLogLevel(level);
             } catch (Exception e) {
                 // ignore
             }
         }
 
-        String language = (String) options.valueOf("language");
+        String language = options.valueOf(languageSpec);
 
         try {
             if (TITLE) {
