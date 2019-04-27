@@ -4,7 +4,6 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.potion.PotionCollideEvent;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.particle.InstantSpellParticle;
 import cn.nukkit.level.particle.Particle;
 import cn.nukkit.level.particle.SpellParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -125,11 +124,7 @@ public class EntityPotion extends EntityProjectile {
             b = colors[2];
         }
 
-        if (Potion.isInstant(potion.getId())) {
-            particle = new InstantSpellParticle(this, r, g, b);
-        } else {
-            particle = new SpellParticle(this, r, g, b);
-        }
+        particle = new SpellParticle(this, r, g, b);
 
         this.getLevel().addParticle(particle);
         this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_GLASS);
