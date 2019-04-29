@@ -121,6 +121,9 @@ public class AddEntityPacket extends DataPacket {
             .put(62, "minecraft:tripod_camera")
             .put(114, "minecraft:pillager")
             .put(118, "minecraft:wandering_trader")
+            .put(59, "minecraft:ravager")
+            .put(115, "minecraft:villager_v2")
+            .put(116, "minecraft:zombie_villager_v2")
             .build();
 
     @Override
