@@ -3,11 +3,11 @@ package cn.nukkit.entity.mob;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
-public class EntityZombieVillager extends EntityMob {
+public class EntityPillager extends EntityMob {
 
-    public static final int NETWORK_ID = 116;
+    public static final int NETWORK_ID = 114;
 
-    public EntityZombieVillager(FullChunk chunk, CompoundTag nbt) {
+    public EntityPillager(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -19,7 +19,7 @@ public class EntityZombieVillager extends EntityMob {
     @Override
     protected void initEntity() {
         super.initEntity();
-        this.setMaxHealth(20);
+        this.setMaxHealth(24);
     }
 
     @Override
@@ -34,6 +34,6 @@ public class EntityZombieVillager extends EntityMob {
 
     @Override
     public String getName() {
-        return "Zombie Villager";
+        return "Pillager";
     }
 }
