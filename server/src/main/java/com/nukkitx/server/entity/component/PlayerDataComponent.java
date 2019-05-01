@@ -8,8 +8,8 @@ import com.nukkitx.api.permission.PlayerPermission;
 import com.nukkitx.api.util.GameMode;
 import com.nukkitx.api.util.Skin;
 import com.nukkitx.protocol.bedrock.data.Attribute;
-import com.nukkitx.protocol.bedrock.session.data.ClientData;
-import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
+import com.nukkitx.server.network.bedrock.session.data.ClientData;
 import com.nukkitx.server.permission.NukkitAbilities;
 
 import javax.annotation.Nonnegative;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerDataComponent implements PlayerData {
-    private final NukkitPlayerSession session;
+    private final PlayerSession session;
 
     private volatile boolean gamemodeTouched = false;
 
@@ -36,10 +36,10 @@ public class PlayerDataComponent implements PlayerData {
     private volatile float exhaustion = 0f;
     private volatile int experience = 0;
 
-    public PlayerDataComponent(NukkitPlayerSession session) {
+    public PlayerDataComponent(PlayerSession session) {
         this.session = session;
         abilities = new NukkitAbilities(session.getServer().getDefaultAbilities());
-        ClientData data = session.getBedrockSession().getClientData();
+        ClientData data = session.getClientData();
         skin = new Skin(data.getSkinId(), data.getSkinData(), data.getCapeData(), data.getSkinGeometryName(), new String(data.getSkinGeometry(), StandardCharsets.UTF_8));
     }
 

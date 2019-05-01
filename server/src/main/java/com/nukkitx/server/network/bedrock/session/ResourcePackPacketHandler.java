@@ -2,26 +2,24 @@ package com.nukkitx.server.network.bedrock.session;
 
 import com.nukkitx.api.resourcepack.BehaviorPack;
 import com.nukkitx.api.resourcepack.ResourcePack;
+import com.nukkitx.protocol.bedrock.BedrockServerSession;
 import com.nukkitx.protocol.bedrock.handler.BedrockPacketHandler;
 import com.nukkitx.protocol.bedrock.packet.*;
-import com.nukkitx.protocol.bedrock.session.BedrockSession;
 import com.nukkitx.server.NukkitServer;
 import com.nukkitx.server.event.player.PlayerInitializationEvent;
 import com.nukkitx.server.resourcepack.loader.file.PackFile;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.Optional;
 import java.util.UUID;
 
 @Log4j2
+@RequiredArgsConstructor
 public class ResourcePackPacketHandler implements BedrockPacketHandler {
-    private final BedrockSession<NukkitPlayerSession> session;
+    private final BedrockServerSession session;
     private final NukkitServer server;
-
-    public ResourcePackPacketHandler(BedrockSession<NukkitPlayerSession> session, NukkitServer server) {
-        this.session = session;
-        this.server = server;
-    }
+    private final LoginSession loginSession;
 
     public void sendResourcePacksInfo() {
         ResourcePacksInfoPacket resourcePacksInfo = new ResourcePacksInfoPacket();
@@ -112,20 +110,21 @@ public class ResourcePackPacketHandler implements BedrockPacketHandler {
     }
 
     private void initializePlayerSession() {
-        PlayerInitializationEvent event = new PlayerInitializationEvent(session, server.getDefaultLevel());
+        PlayerInitializationEvent event = new PlayerInitializationEvent(PlayerSession::new);
+        this.server.getEventManager().fire(event);
 
-        NukkitPlayerSession player = event.getPlayerSession();
-        if (player == null) {
-            player = new NukkitPlayerSession(session, event.getLevel());
-        }
-        session.setPlayer(player);
+        PlayerSession playerSession = event.getPlayerCreator().apply(this.loginSession, this.server.getDefaultLevel());
 
-        session.setHandler(player.getNetworkPacketHandler());
-
-        if (!server.getSessionManager().add(session)) {
-            throw new IllegalArgumentException("Player could not be added to SessionManager");
+        if (playerSession == null) {
+            log.warn("PlayerSession was null. Disconnecting player");
+            this.session.disconnect("disconnect.loginFailed");
+            return;
         }
 
-        player.startGame();
+        this.session.setPacketHandler(playerSession.getNetworkPacketHandler());
+
+        server.getSessionManager().add(playerSession);
+
+        playerSession.startGame();
     }
 }

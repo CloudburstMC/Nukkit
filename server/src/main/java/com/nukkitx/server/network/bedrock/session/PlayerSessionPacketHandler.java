@@ -36,10 +36,10 @@ import java.util.Optional;
 
 @Log4j2
 public class PlayerSessionPacketHandler implements BedrockPacketHandler {
-    private final NukkitPlayerSession player;
+    private final PlayerSession player;
     private final NukkitServer server;
 
-    PlayerSessionPacketHandler(NukkitPlayerSession session) {
+    PlayerSessionPacketHandler(PlayerSession session) {
         this.player = session;
         this.server = session.getServer();
     }
@@ -209,7 +209,7 @@ public class PlayerSessionPacketHandler implements BedrockPacketHandler {
         player.setPosition(newPosition);
         player.setRotation(Rotation.from(packet.getRotation()));
         // If we haven't moved in the X or Z axis, don't update viewable entities or try updating chunks - they haven't changed.
-        if (NukkitPlayerSession.hasSubstantiallyMoved(oldPosition, newPosition)) {
+        if (PlayerSession.hasSubstantiallyMoved(oldPosition, newPosition)) {
             player.updateViewableEntities();
             player.sendNewChunks().exceptionally(throwable -> {
                 log.error("Unable to send chunks", throwable);

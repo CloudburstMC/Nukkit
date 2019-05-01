@@ -5,7 +5,7 @@ import com.nukkitx.api.Player;
 import com.nukkitx.api.block.Block;
 import com.nukkitx.api.item.ItemStack;
 import com.nukkitx.api.item.ItemStackBuilder;
-import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nullable;
@@ -36,17 +36,17 @@ public class SimpleBlockBehavior implements BlockBehavior {
     }
 
     @Override
-    public Result onBreak(NukkitPlayerSession session, Block block, ItemStack withItem) {
+    public Result onBreak(PlayerSession session, Block block, ItemStack withItem) {
         return Result.BREAK_BLOCK;
     }
 
     @Override
-    public boolean onPlace(NukkitPlayerSession session, Block against, ItemStack withItem) {
+    public boolean onPlace(PlayerSession session, Block against, ItemStack withItem) {
         return true;
     }
 
     @Override
-    public boolean onUse(Block block, NukkitPlayerSession player) {
+    public boolean onUse(Block block, PlayerSession player) {
         return false;
     }
 }

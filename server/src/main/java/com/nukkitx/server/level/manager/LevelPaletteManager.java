@@ -7,7 +7,7 @@ import com.nukkitx.api.block.BlockType;
 import com.nukkitx.api.block.BlockTypes;
 import com.nukkitx.api.metadata.Metadata;
 import com.nukkitx.network.VarInts;
-import com.nukkitx.protocol.bedrock.v332.BedrockUtils;
+import com.nukkitx.protocol.bedrock.v354.BedrockUtils;
 import com.nukkitx.server.NukkitServer;
 import com.nukkitx.server.block.NukkitBlockStateBuilder;
 import com.nukkitx.server.metadata.MetadataSerializers;

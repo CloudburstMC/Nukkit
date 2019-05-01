@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class PlayerSessionPacketDispatcher {
-    private final NukkitPlayerSession player;
+    private final PlayerSession player;
 
     public void sendStartGame() {
         Level level = player.getLevel();
@@ -71,7 +71,7 @@ public class PlayerSessionPacketDispatcher {
 
         startGame.setCachedPalette(NukkitLevel.getPaletteManager().getCachedPallete());
 
-        player.sendNetworkPacket(startGame);
+        player.getBedrockSession().sendPacketImmediately(startGame);
     }
 
     public void sendCommandsEnabled() {

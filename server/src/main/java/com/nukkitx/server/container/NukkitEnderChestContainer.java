@@ -1,7 +1,7 @@
 package com.nukkitx.server.container;
 
 import com.nukkitx.api.metadata.blockentity.EnderChestBlockEntity;
-import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
@@ -9,7 +9,7 @@ import java.util.Optional;
 public class NukkitEnderChestContainer extends NukkitFillingContainer {
     private EnderChestBlockEntity enderChest;
 
-    public NukkitEnderChestContainer(NukkitPlayerSession session) {
+    public NukkitEnderChestContainer(PlayerSession session) {
         super(session, 27, ContainerType.CONTAINER);
     }
 
@@ -22,7 +22,7 @@ public class NukkitEnderChestContainer extends NukkitFillingContainer {
     }
 
     @Override
-    public void onOpen(@Nonnull NukkitPlayerSession session) {
+    public void onOpen(@Nonnull PlayerSession session) {
         if (enderChest != null) {
             // TODO: 18/12/2018 enderchest open code
         }
@@ -30,7 +30,7 @@ public class NukkitEnderChestContainer extends NukkitFillingContainer {
     }
 
     @Override
-    public void onClose(@Nonnull NukkitPlayerSession session) {
+    public void onClose(@Nonnull PlayerSession session) {
         if (enderChest != null) {
             // TODO: 18/12/2018 enderchest close code
         }

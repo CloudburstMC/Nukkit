@@ -4,7 +4,7 @@ import com.nukkitx.api.item.ItemStack;
 import com.nukkitx.network.util.Preconditions;
 import com.nukkitx.protocol.bedrock.data.ContainerId;
 import com.nukkitx.server.item.ItemUtils;
-import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 
 import javax.annotation.Nullable;
 
@@ -12,11 +12,11 @@ public class NukkitPlayerInventory extends NukkitInventory {
     private int selectedSlot = 0;
     private ContainerId selectedId = ContainerId.INVENTORY;
 
-    public NukkitPlayerInventory(NukkitPlayerSession session) {
+    public NukkitPlayerInventory(PlayerSession session) {
         super(session);
     }
 
-    public void setItem(int slot, ItemStack item, NukkitPlayerSession session, ContainerId id) {
+    public void setItem(int slot, ItemStack item, PlayerSession session, ContainerId id) {
         if (id == ContainerId.INVENTORY) {
             setItem(slot, item, session);
         }
@@ -60,7 +60,7 @@ public class NukkitPlayerInventory extends NukkitInventory {
         return getSlot(selectedSlot);
     }
 
-    public void setSelectedItem(@Nullable ItemStack item, @Nullable NukkitPlayerSession session) {
+    public void setSelectedItem(@Nullable ItemStack item, @Nullable PlayerSession session) {
         setItem(selectedSlot, item, session);
     }
 

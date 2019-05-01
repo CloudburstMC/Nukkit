@@ -8,7 +8,7 @@ import com.nukkitx.api.item.ItemStack;
 import com.nukkitx.api.item.ItemType;
 import com.nukkitx.api.metadata.Metadata;
 import com.nukkitx.api.util.GameMode;
-import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -18,9 +18,9 @@ import java.util.OptionalInt;
 
 @ParametersAreNullableByDefault
 public class NukkitFillingContainer extends NukkitContainer implements FillingContainer {
-    private final NukkitPlayerSession session;
+    private final PlayerSession session;
 
-    public NukkitFillingContainer(@Nullable NukkitPlayerSession session, int size, ContainerType type) {
+    public NukkitFillingContainer(@Nullable PlayerSession session, int size, ContainerType type) {
         super(type);
         this.session = session;
         setContainerSize(size);
@@ -41,7 +41,7 @@ public class NukkitFillingContainer extends NukkitContainer implements FillingCo
         return Optional.ofNullable(session);
     }
 
-    public NukkitPlayerSession getPlayerSession() {
+    public PlayerSession getPlayerSession() {
         return session;
     }
 
@@ -139,12 +139,12 @@ public class NukkitFillingContainer extends NukkitContainer implements FillingCo
     }
 
     @Override
-    public void onOpen(@Nonnull NukkitPlayerSession session) {
+    public void onOpen(@Nonnull PlayerSession session) {
 
     }
 
     @Override
-    public void onClose(@Nonnull NukkitPlayerSession session) {
+    public void onClose(@Nonnull PlayerSession session) {
 
     }
 

@@ -2,7 +2,7 @@ package com.nukkitx.server.container;
 
 import com.nukkitx.api.container.CraftingContainer;
 import com.nukkitx.api.item.ItemStack;
-import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 
 import static com.nukkitx.server.container.ContainerType.INVENTORY;
 import static com.nukkitx.server.container.ContainerType.WORKBENCH;
@@ -32,12 +32,12 @@ public class NukkitCraftingContainer extends NukkitContainer implements Crafting
     }
 
     @Override
-    public void onOpen(NukkitPlayerSession session) {
+    public void onOpen(PlayerSession session) {
 
     }
 
     @Override
-    public void onClose(NukkitPlayerSession session) {
+    public void onClose(PlayerSession session) {
 
     }
 

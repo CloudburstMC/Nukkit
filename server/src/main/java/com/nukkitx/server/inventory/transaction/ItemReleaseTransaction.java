@@ -9,7 +9,7 @@ import com.nukkitx.protocol.bedrock.data.InventorySource;
 import com.nukkitx.protocol.bedrock.data.ItemData;
 import com.nukkitx.server.inventory.NukkitPlayerInventory;
 import com.nukkitx.server.item.ItemUtils;
-import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import lombok.Getter;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -33,7 +33,7 @@ public class ItemReleaseTransaction extends InventoryTransaction {
     }
 
     @Override
-    public InventoryTransactionResult handle(NukkitPlayerSession player, boolean ignoreChecks) {
+    public InventoryTransactionResult handle(PlayerSession player, boolean ignoreChecks) {
         InventoryTransactionResult result = InventoryTransactionResult.FAILED_VERIFYING;
         if (player.isAlive()) {
             NukkitPlayerInventory inventory = player.getInventory();

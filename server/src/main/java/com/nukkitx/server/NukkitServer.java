@@ -28,11 +28,11 @@ import com.nukkitx.api.util.ConfigBuilder;
 import com.nukkitx.api.util.SemVer;
 import com.nukkitx.event.SimpleEventManager;
 import com.nukkitx.network.NetworkListener;
-import com.nukkitx.network.raknet.RakNetServer;
 import com.nukkitx.plugin.SimplePluginManager;
 import com.nukkitx.plugin.loader.JavaPluginLoader;
-import com.nukkitx.protocol.bedrock.session.BedrockSession;
-import com.nukkitx.protocol.bedrock.wrapper.WrappedPacket;
+import com.nukkitx.protocol.bedrock.BedrockPacketCodec;
+import com.nukkitx.protocol.bedrock.BedrockServer;
+import com.nukkitx.protocol.bedrock.v354.Bedrock_v354;
 import com.nukkitx.server.block.NukkitBlockStateBuilder;
 import com.nukkitx.server.command.NukkitCommandManager;
 import com.nukkitx.server.console.*;
@@ -46,10 +46,9 @@ import com.nukkitx.server.level.provider.ChunkProvider;
 import com.nukkitx.server.level.provider.DefaultsLevelDataProvider;
 import com.nukkitx.server.level.provider.LevelDataProvider;
 import com.nukkitx.server.locale.NukkitLocaleManager;
-import com.nukkitx.server.network.NukkitRakNetEventListener;
-import com.nukkitx.server.network.NukkitSessionManager;
-import com.nukkitx.server.network.bedrock.session.LoginPacketHandler;
-import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
+import com.nukkitx.server.network.NukkitBedrockEventHandler;
+import com.nukkitx.server.network.SessionManager;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import com.nukkitx.server.permission.NukkitAbilities;
 import com.nukkitx.server.permission.NukkitPermissionManager;
 import com.nukkitx.server.resourcepack.ResourcePackManager;
@@ -76,6 +75,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
+import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -89,6 +89,7 @@ public class NukkitServer implements Server {
     public static final ObjectMapper JSON_MAPPER = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     public static final YAMLMapper YAML_MAPPER = (YAMLMapper) new YAMLMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     public static final JavaPropsMapper PROPERTIES_MAPPER = (JavaPropsMapper) new JavaPropsMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    public static final BedrockPacketCodec MINECRAFT_CODEC = Bedrock_v354.V354_CODEC;
     public static final String NAME;
     public static final SemVer API_VERSION;
     public static final String NUKKIT_VERSION;
@@ -113,7 +114,7 @@ public class NukkitServer implements Server {
     private final SimpleEventManager eventManager = new SimpleEventManager();
     private final SimplePluginManager pluginManager = new SimplePluginManager(eventManager);
     private final SimpleServiceManager serviceManager = new SimpleServiceManager();
-    private final NukkitSessionManager sessionManager = new NukkitSessionManager();
+    private final SessionManager sessionManager = new SessionManager();
     private final ServerScheduler scheduler = new ServerScheduler(this);
     @Getter(AccessLevel.NONE)
     private final List<NetworkListener> listeners = new ArrayList<>();
@@ -124,6 +125,7 @@ public class NukkitServer implements Server {
     private final Path dataPath;
     private final Path playersPath;
     private final Path levelsPath;
+    private BedrockServer bedrockServer;
     private NukkitConfiguration configuration;
     private NukkitWhitelist whitelist;
     private NukkitOperators operators;
@@ -351,24 +353,11 @@ public class NukkitServer implements Server {
         }
         int configNetThreads = configuration.getAdvanced().getNetworkThreads();
         int maxThreads = configNetThreads < 1 ? Runtime.getRuntime().availableProcessors() : configNetThreads;
-        RakNetServer.Builder<BedrockSession<NukkitPlayerSession>> rakNetServerBuilder = RakNetServer.builder();
-        rakNetServerBuilder.address(configuration.getNetwork().getAddress(), configuration.getNetwork().getPort())
-                .eventListener(new NukkitRakNetEventListener(this))
-                .packet(WrappedPacket::new, 0xfe)
-                .executor(sessionManager.getSessionTicker())
-                .scheduler(timerService)
-                .maximumThreads(maxThreads)
-                .sessionFactory(connection -> {
-                    BedrockSession<NukkitPlayerSession> session = new BedrockSession<>(connection);
-                    session.setHandler(new LoginPacketHandler(session, this));
-                    return session;
-                })
-                .sessionManager(sessionManager);
-        RakNetServer<BedrockSession<NukkitPlayerSession>> rakNetServer = rakNetServerBuilder.build();
-        if (!rakNetServer.bind()) {
-            log.fatal("Unable to bind server to {}:{}!", configuration.getNetwork().getAddress(), configuration.getNetwork().getPort());
-        }
-        listeners.add(rakNetServer);
+
+        InetSocketAddress bindAddress = new InetSocketAddress(configuration.getNetwork().getAddress(), configuration.getNetwork().getPort());
+        this.bedrockServer = new BedrockServer(bindAddress, maxThreads, timerService, sessionManager.getSessionTicker());
+        bedrockServer.setHandler(new NukkitBedrockEventHandler(this));
+        bedrockServer.bind().join();
 
         /*if (configuration.getRcon().isEnabled()) {
             RconNetworkListener rconListener = new RconNetworkListener(
@@ -381,8 +370,6 @@ public class NukkitServer implements Server {
             rconListener.bind();
             listeners.add(rconListener);
         }*/
-
-        timerService.scheduleAtFixedRate(sessionManager::onTick, 50, 50, TimeUnit.MILLISECONDS);
 
         if (configuration.getGeneral().isAutoSaving()) {
             int autoSaveInterval = configuration.getGeneral().getAutoSaveInterval();
@@ -553,8 +540,8 @@ public class NukkitServer implements Server {
     public void doAutoSave() {
         // Save player data
         for (Player player : getSessionManager().allPlayers()) {
-            if (player instanceof NukkitPlayerSession) {
-                ((NukkitPlayerSession) player).save();
+            if (player instanceof PlayerSession) {
+                ((PlayerSession) player).save();
             }
         }
 

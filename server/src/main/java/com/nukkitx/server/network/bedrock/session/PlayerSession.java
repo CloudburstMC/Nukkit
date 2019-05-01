@@ -28,13 +28,11 @@ import com.nukkitx.api.util.Rotation;
 import com.nukkitx.api.util.Skin;
 import com.nukkitx.api.util.data.DeviceOS;
 import com.nukkitx.network.util.DisconnectReason;
-import com.nukkitx.protocol.PlayerSession;
 import com.nukkitx.protocol.bedrock.BedrockPacket;
+import com.nukkitx.protocol.bedrock.BedrockServerSession;
 import com.nukkitx.protocol.bedrock.data.*;
 import com.nukkitx.protocol.bedrock.handler.BedrockPacketHandler;
 import com.nukkitx.protocol.bedrock.packet.*;
-import com.nukkitx.protocol.bedrock.session.BedrockSession;
-import com.nukkitx.protocol.bedrock.v332.Bedrock_v332;
 import com.nukkitx.server.NukkitServer;
 import com.nukkitx.server.container.ContainerContentListener;
 import com.nukkitx.server.container.ContainerType;
@@ -52,12 +50,13 @@ import com.nukkitx.server.item.ItemUtils;
 import com.nukkitx.server.level.NukkitLevel;
 import com.nukkitx.server.level.chunk.FullChunkDataPacketCreator;
 import com.nukkitx.server.level.util.AroundPointChunkComparator;
+import com.nukkitx.server.network.bedrock.session.data.AuthData;
+import com.nukkitx.server.network.bedrock.session.data.ClientData;
 import com.nukkitx.server.permission.NukkitAbilities;
 import com.spotify.futures.CompletableFutures;
 import gnu.trove.TCollections;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
-import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import org.apache.logging.log4j.Logger;
 
@@ -72,16 +71,20 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
-public class NukkitPlayerSession extends LivingEntity implements PlayerSession, Player, ContainerContentListener {
+public class PlayerSession extends LivingEntity implements Player, ContainerContentListener {
     public static final System SYSTEM = System.builder()
             .expectComponent(PlayerData.class)
             .runner(new PlayerTickSystem())
             .build();
-    private static final Logger log = org.apache.logging.log4j.LogManager.getLogger(NukkitPlayerSession.class);
-    private final BedrockSession<NukkitPlayerSession> session;
+    private static final Logger log = org.apache.logging.log4j.LogManager.getLogger(PlayerSession.class);
+    private final BedrockServerSession session;
     private final NukkitServer server;
-    private final NukkitLevel level;
+    @Getter
+    private final AuthData authData;
+    @Getter
+    private final ClientData clientData;
     private final TLongSet viewableEntities = new TLongHashSet();
     private final TLongSet hiddenEntities = TCollections.synchronizedSet(new TLongHashSet());
     private final TLongSet sentChunks = TCollections.synchronizedSet(new TLongHashSet());
@@ -107,11 +110,13 @@ public class NukkitPlayerSession extends LivingEntity implements PlayerSession, 
     private int viewDistance;
     private boolean spawned = false;
 
-    public NukkitPlayerSession(BedrockSession<NukkitPlayerSession> session, NukkitLevel level) {
+    public PlayerSession(LoginSession session, NukkitLevel level) {
         super(EntityType.PLAYER, level.getData().getDefaultSpawn(), level, level.getServer(), 20);
-        this.level = level;
-        this.session = session;
+        this.session = session.getBedrockSession();
         this.server = level.getServer();
+        this.authData = session.getAuthData();
+        this.clientData = session.getClientData();
+        this.session.addDisconnectHandler(new PlayerDisconnectHandler());
         Path playerDatPath = server.getPlayersPath().resolve(getXuid().isPresent() ? getUniqueId().toString() : getName());
         locale.set(server.getLocaleManager().getLocaleByString(session.getClientData().getLanguageCode()));
 
@@ -130,7 +135,7 @@ public class NukkitPlayerSession extends LivingEntity implements PlayerSession, 
         return (Float.compare(oldPos.getX(), newPos.getX()) != 0 || Float.compare(oldPos.getZ(), newPos.getZ()) != 0);
     }
 
-    public BedrockSession<NukkitPlayerSession> getBedrockSession() {
+    public BedrockServerSession getBedrockSession() {
         return session;
     }
 
@@ -159,7 +164,7 @@ public class NukkitPlayerSession extends LivingEntity implements PlayerSession, 
     public CompletableFuture<List<Chunk>> sendNewChunks() {
         return getChunksForRadius(viewDistance).whenComplete(((chunks, throwable) -> {
             if (throwable != null) {
-                log.error("Cannot load chunks for" + session.getAuthData().getDisplayName());
+                log.error("Cannot load chunks for" + this.authData.getDisplayName());
                 return;
             }
 
@@ -173,23 +178,25 @@ public class NukkitPlayerSession extends LivingEntity implements PlayerSession, 
             NetworkChunkPublisherUpdatePacket packet = new NetworkChunkPublisherUpdatePacket();
             packet.setRadius(viewDistance << 4);
             packet.setPosition(getPosition().toInt());
-            sendNetworkPacket(packet);
+            if (chunks.size() > 0) {
+                this.sendNetworkPacket(packet);
+            }
 
             for (Chunk chunk : chunks) {
-                sendNetworkPacket(((FullChunkDataPacketCreator) chunk).createFullChunkDataPacket());
+                this.sendNetworkPacket(((FullChunkDataPacketCreator) chunk).createFullChunkDataPacket());
             }
         }));
     }
 
     public void updateViewableEntities() {
         synchronized (viewableEntities) {
-            Collection<BaseEntity> inView = level.getEntityManager().getEntitiesInDistance(getPosition(), server.getConfiguration().getMechanics().getViewDistance() << 4);
+            Collection<BaseEntity> inView = this.getLevel().getEntityManager().getEntitiesInDistance(getPosition(), server.getConfiguration().getMechanics().getViewDistance() << 4);
             TLongSet toRemove = new TLongHashSet();
             Collection<BaseEntity> toAdd = new ArrayList<>();
 
             // Remove entities out of range
             viewableEntities.forEach(id -> {
-                Optional<BaseEntity> optionalEntity = level.getEntityManager().getEntityById(id);
+                Optional<BaseEntity> optionalEntity = this.getLevel().getEntityManager().getEntityById(id);
                 if (optionalEntity.isPresent()) {
                     if (!inView.contains(optionalEntity.get())) {
                         toRemove.add(id);
@@ -204,8 +211,8 @@ public class NukkitPlayerSession extends LivingEntity implements PlayerSession, 
             });
 
             for (BaseEntity entity : inView) {
-                if (entity == this || (entity instanceof NukkitPlayerSession &&
-                        (!playersListed.contains(((NukkitPlayerSession) entity).getUniqueId())))) {
+                if (entity == this || (entity instanceof PlayerSession &&
+                        (!playersListed.contains(((PlayerSession) entity).getUniqueId())))) {
                     continue; // Can't add our self.
                 }
 
@@ -261,11 +268,11 @@ public class NukkitPlayerSession extends LivingEntity implements PlayerSession, 
     }
 
     void startGame() {
-        PlayerLoginEvent event = new PlayerLoginEvent(this, level.getData().getDefaultSpawn(), level, getRotation(), level.getData().getGameMode());
+        PlayerLoginEvent event = new PlayerLoginEvent(this, this.getLevel().getData().getDefaultSpawn(), this.getLevel(), getRotation(), this.getLevel().getData().getGameMode());
         server.getEventManager().fire(event);
 
-        if (level != event.getSpawnLevel()) {
-            level.getEntityManager().deregisterEntity(this);
+        if (this.getLevel() != event.getSpawnLevel()) {
+            this.getLevel().getEntityManager().deregisterEntity(this);
             NukkitLevel newLevel = (NukkitLevel) event.getSpawnLevel();
             newLevel.getEntityManager().registerEntity(this);
             setEntityId(newLevel.getEntityManager().allocateEntityId());
@@ -352,13 +359,13 @@ public class NukkitPlayerSession extends LivingEntity implements PlayerSession, 
     public void updatePlayerList() {
         Set<Player> toAdd = new HashSet<>();
         Set<UUID> toRemove = new HashSet<>();
-        Map<UUID, NukkitPlayerSession> availableSessions = new HashMap<>();
+        Map<UUID, PlayerSession> availableSessions = new HashMap<>();
 
-        for (NukkitPlayerSession session : getLevel().getEntityManager().getPlayers()) {
+        for (PlayerSession session : getLevel().getEntityManager().getPlayers()) {
             availableSessions.put(session.getUniqueId(), session);
         }
 
-        for (NukkitPlayerSession session : availableSessions.values()) {
+        for (PlayerSession session : availableSessions.values()) {
             if (playersListed.add(session.getUniqueId())) {
                 toAdd.add(session);
             }
@@ -426,10 +433,6 @@ public class NukkitPlayerSession extends LivingEntity implements PlayerSession, 
         packet.setRuntimeEntityId(getEntityId());
         packet.getMetadata().putAll(getMetadata());
         sendNetworkPacket(packet);
-        ByteBuf buf = Bedrock_v332.V332_CODEC.tryEncode(packet);
-        SetEntityDataPacket dataPacket = (SetEntityDataPacket) Bedrock_v332.V332_CODEC.tryDecode(buf);
-        log.debug("PACKET {}", dataPacket);
-        buf.release();
     }
 
     void sendHealth() {
@@ -456,19 +459,19 @@ public class NukkitPlayerSession extends LivingEntity implements PlayerSession, 
     @Nonnull
     @Override
     public String getName() {
-        return session.getAuthData().getDisplayName();
+        return this.authData.getDisplayName();
     }
 
     @Nonnull
     @Override
     public UUID getUniqueId() {
-        return session.getAuthData().getIdentity();
+        return this.authData.getIdentity();
     }
 
     @Nonnull
     @Override
     public Optional<String> getXuid() {
-        return Optional.ofNullable(session.getAuthData().getXuid());
+        return Optional.ofNullable(this.authData.getXuid());
     }
 
     @Override
@@ -494,8 +497,8 @@ public class NukkitPlayerSession extends LivingEntity implements PlayerSession, 
     public BedrockPacket createAddEntityPacket() {
         PlayerDataComponent data = (PlayerDataComponent) ensureAndGet(PlayerData.class);
         AddPlayerPacket addPlayer = new AddPlayerPacket();
-        addPlayer.setUuid(session.getAuthData().getIdentity());
-        addPlayer.setUsername(session.getAuthData().getDisplayName());
+        addPlayer.setUuid(this.authData.getIdentity());
+        addPlayer.setUsername(this.authData.getDisplayName());
         addPlayer.setUniqueEntityId(getEntityId());
         addPlayer.setRuntimeEntityId(getEntityId());
         addPlayer.setPlatformChatId("");
@@ -509,7 +512,7 @@ public class NukkitPlayerSession extends LivingEntity implements PlayerSession, 
         addPlayer.setWorldFlags(data.getAbilities().getFlags2());
         addPlayer.setPlayerPermission(data.getPlayerPermission().ordinal());
         addPlayer.setCustomFlags(data.getAbilities().getCustomFlags());
-        addPlayer.setDeviceId(session.getClientData().getDeviceId());
+        addPlayer.setDeviceId(this.clientData.getDeviceId());
         // TODO: Adventure settings
         return addPlayer;
     }
@@ -599,7 +602,7 @@ public class NukkitPlayerSession extends LivingEntity implements PlayerSession, 
         playerSkin.setUuid(getUniqueId());
 
         // TODO: 20/12/2018 Add cancellable event.
-        level.getPacketManager().queuePacketForViewers(this, playerSkin);
+        this.getLevel().getPacketManager().queuePacketForViewers(this, playerSkin);
     }
 
     @Override
@@ -665,47 +668,47 @@ public class NukkitPlayerSession extends LivingEntity implements PlayerSession, 
     @Nonnull
     @Override
     public Optional<InetSocketAddress> getRemoteAddress() {
-        return session.getRemoteAddress();
+        return Optional.of(session.getAddress());
     }
 
     @Override
     public boolean isXboxAuthenticated() {
-        return session.getAuthData().getXuid() != null;
+        return this.authData.getXuid() != null;
     }
 
     @Nonnull
     @Override
     public DeviceOS getDeviceOS() {
-        return DeviceOS.values()[session.getClientData().getDeviceOs()];
+        return this.clientData.getDeviceOs();
     }
 
     @Override
     public boolean isEducationEdition() {
-        return session.getClientData().isEduMode();
+        return this.clientData.isEduMode();
     }
 
     @Nonnull
     @Override
     public String getDeviceModel() {
-        return session.getClientData().getDeviceModel();
+        return this.clientData.getDeviceModel();
     }
 
     @Nonnull
     @Override
     public String getGameVersion() {
-        return session.getClientData().getGameVersion();
+        return this.clientData.getGameVersion();
     }
 
     @Nonnull
     @Override
     public String getServerAddress() {
-        return session.getClientData().getServerAddress();
+        return this.clientData.getServerAddress();
     }
 
     @Nonnull
     @Override
     public Optional<String> getActiveDirectoryRole() {
-        return Optional.ofNullable(session.getClientData().getActiveDirectoryRole());
+        return Optional.ofNullable(this.clientData.getActiveDirectoryRole());
     }
 
     @Override
@@ -745,7 +748,7 @@ public class NukkitPlayerSession extends LivingEntity implements PlayerSession, 
         }
 
         try {
-            server.getCommandManager().executeCommand(NukkitPlayerSession.this, command);
+            server.getCommandManager().executeCommand(PlayerSession.this, command);
         } catch (CommandNotFoundException e) {
             sendMessage(new TranslationMessage("commands.generic.unknown", command));
         } catch (CommandException e) {
@@ -804,12 +807,12 @@ public class NukkitPlayerSession extends LivingEntity implements PlayerSession, 
         return inventory.addItem(item);
     }
 
-    public BedrockPacketHandler getNetworkPacketHandler() {
+    BedrockPacketHandler getNetworkPacketHandler() {
         return new PlayerSessionPacketHandler(this);
     }
 
     @Override
-    public void onSlotChange(int slot, @Nullable ItemStack oldItem, @Nullable ItemStack newItem, @Nonnull Container container, @Nullable NukkitPlayerSession session) {
+    public void onSlotChange(int slot, @Nullable ItemStack oldItem, @Nullable ItemStack newItem, @Nonnull Container container, @Nullable PlayerSession session) {
         log.debug("Adding item to inventory");
 
         // The session that sent the inventory change updates without the need of a packet.
@@ -958,37 +961,12 @@ public class NukkitPlayerSession extends LivingEntity implements PlayerSession, 
         return this.inventory;
     }
 
-    @Override
     public void close() {
-        removeInternal();
+        this.session.disconnect();
     }
 
-    @Override
     public boolean isClosed() {
         return isRemoved();
-    }
-
-    @Override
-    public void onDisconnect(@Nonnull DisconnectReason reason) {
-        String reasonString;
-        switch (reason) {
-            case TIMEOUT:
-                reasonString = "disconnect.timeout";
-                break;
-            default:
-                reasonString = "disconnect.disconnected";
-                break;
-        }
-        onDisconnect(reasonString);
-    }
-
-    @Override
-    public void onDisconnect(@Nonnull String reason) {
-        if (!isRemoved()) {
-            log.info("{} ({}) has been disconnected from the server: {}", session.getAuthData().getDisplayName(),
-                    getRemoteAddress().map(Object::toString).orElse("UNKNOWN"), server.getLocaleManager().replaceI18n(reason));
-            removeInternal();
-        }
     }
 
     public String toString() {
@@ -1002,8 +980,8 @@ public class NukkitPlayerSession extends LivingEntity implements PlayerSession, 
 
         @Override
         public void run(Entity entity) {
-            Preconditions.checkArgument(entity instanceof NukkitPlayerSession, "Entity was not of type NukkitPlayerSession");
-            NukkitPlayerSession player = (NukkitPlayerSession) entity;
+            Preconditions.checkArgument(entity instanceof PlayerSession, "Entity was not of type NukkitPlayerSession");
+            PlayerSession player = (PlayerSession) entity;
 
             DamageableComponent damageable = (DamageableComponent) player.ensureAndGet(Damageable.class);
             if (!player.spawned || player.session.isClosed() || damageable.isDead()) {
@@ -1026,6 +1004,34 @@ public class NukkitPlayerSession extends LivingEntity implements PlayerSession, 
             }
 
             player.updatePlayerList();
+        }
+    }
+
+    private class PlayerDisconnectHandler implements Consumer<DisconnectReason> {
+
+        @Override
+        public void accept(DisconnectReason reason) {
+            String reasonI18n = null;
+            switch (reason) {
+                case TIMED_OUT:
+                    reasonI18n = "disconnect.timeout";
+                    break;
+                case DISCONNECTED:
+                    break;
+                case CLOSED_BY_REMOTE_PEER:
+                    reasonI18n = "disconnect.closed";
+                    break;
+                default:
+                    reasonI18n = "disconnect.disconnected";
+                    break;
+            }
+
+            if (reasonI18n != null) {
+                log.info("{} ({}) has been disconnected from the server: {}", PlayerSession.this.authData.getDisplayName(),
+                        getRemoteAddress().map(Object::toString).orElse("UNKNOWN"), server.getLocaleManager().replaceI18n(reasonI18n));
+                removeInternal();
+            }
+            PlayerSession.this.server.getSessionManager().remove(PlayerSession.this);
         }
     }
 }

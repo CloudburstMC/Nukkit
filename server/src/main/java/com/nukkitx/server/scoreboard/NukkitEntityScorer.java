@@ -2,11 +2,8 @@ package com.nukkitx.server.scoreboard;
 
 import com.nukkitx.api.entity.Entity;
 import com.nukkitx.api.scoreboard.EntityScorer;
-import com.nukkitx.network.VarInts;
-import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
 
 @Getter
@@ -16,11 +13,6 @@ public class NukkitEntityScorer extends NukkitScorer implements EntityScorer {
     public NukkitEntityScorer(Type type, long id, Entity entity) {
         super(type, id);
         this.entity = entity;
-    }
-
-    @Override
-    protected void write(@Nonnull ByteBuf buffer) {
-        VarInts.writeLong(buffer, entity.getEntityId());
     }
 
     @Override

@@ -9,7 +9,7 @@ import com.nukkitx.protocol.bedrock.packet.LevelEventPacket;
 import com.nukkitx.protocol.bedrock.packet.LevelSoundEventPacket;
 import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import lombok.Synchronized;
@@ -30,10 +30,10 @@ public class LevelPacketManager {
     }
 
     public void onTick() {
-        List<NukkitPlayerSession> playersInWorld = level.getEntityManager().getPlayers();
+        List<PlayerSession> playersInWorld = level.getEntityManager().getPlayers();
         BedrockPacket pk;
         while ((pk = broadcastQueue.poll()) != null) {
-            for (NukkitPlayerSession session : playersInWorld) {
+            for (PlayerSession session : playersInWorld) {
                 if (!session.isRemoved()) {
                     session.getBedrockSession().sendPacket(pk);
                 }
@@ -45,7 +45,7 @@ public class LevelPacketManager {
                 Optional<BaseEntity> entityById = level.getEntityManager().getEntityById(eid);
                 if (entityById.isPresent()) {
                     Entity entity = entityById.get();
-                    for (NukkitPlayerSession session : playersInWorld) {
+                    for (PlayerSession session : playersInWorld) {
                         if (session == entity) continue; // Don't move ourselves
 
                         if (session.getPosition().distanceSquared(entity.getPosition()) <= viewDistanceSquared && !session.isRemoved()) {
@@ -63,7 +63,7 @@ public class LevelPacketManager {
 
         synchronized (specificPositionViewerQueue) {
             specificPositionViewerQueue.forEach((position, queue) -> {
-                for (NukkitPlayerSession session : playersInWorld) {
+                for (PlayerSession session : playersInWorld) {
                     if (session.getPosition().distanceSquared(position) <= viewDistanceSquared && !session.isRemoved()) {
                         for (BedrockPacket packet : queue) {
                             session.getBedrockSession().sendPacket(packet);
@@ -147,9 +147,9 @@ public class LevelPacketManager {
         Preconditions.checkNotNull(entity, "entity");
         Preconditions.checkNotNull(packet, "packet");
 
-        List<NukkitPlayerSession> playersInWorld = level.getEntityManager().getPlayers();
+        List<PlayerSession> playersInWorld = level.getEntityManager().getPlayers();
 
-        for (NukkitPlayerSession session : playersInWorld) {
+        for (PlayerSession session : playersInWorld) {
             if (session == entity) continue; // Don't move ourselves
 
             if (session.getPosition().distanceSquared(entity.getPosition()) <= viewDistanceSquared && !session.isRemoved()) {
@@ -162,9 +162,9 @@ public class LevelPacketManager {
         Preconditions.checkNotNull(position, "blockPosition");
         Preconditions.checkNotNull(packet, "packet");
 
-        List<NukkitPlayerSession> playersInWorld = level.getEntityManager().getPlayers();
+        List<PlayerSession> playersInWorld = level.getEntityManager().getPlayers();
 
-        for (NukkitPlayerSession session : playersInWorld) {
+        for (PlayerSession session : playersInWorld) {
             if (session.getPosition().distanceSquared(position) <= viewDistanceSquared && !session.isRemoved()) {
                 session.getBedrockSession().sendPacketImmediately(packet);
             }
