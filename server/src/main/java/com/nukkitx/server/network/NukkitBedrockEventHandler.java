@@ -59,7 +59,6 @@ public class NukkitBedrockEventHandler implements BedrockServerEventHandler {
         pong.setGameType(gameType);
         pong.setNintendoLimited(false);
         pong.setProtocolVersion(NukkitServer.MINECRAFT_CODEC.getProtocolVersion());
-        pong.setServerId(1);
         return pong;
     }
 
