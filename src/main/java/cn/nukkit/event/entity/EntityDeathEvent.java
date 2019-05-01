@@ -15,7 +15,7 @@ public class EntityDeathEvent extends EntityEvent {
         return handlers;
     }
 
-    private Item[] drops = new Item[0];
+    private Item[] drops;
 
     public EntityDeathEvent(EntityLiving entity) {
         this(entity, new Item[0]);
@@ -31,6 +31,10 @@ public class EntityDeathEvent extends EntityEvent {
     }
 
     public void setDrops(Item[] drops) {
+        if (drops == null) {
+            drops = new Item[0];
+        }
+
         this.drops = drops;
     }
 }
