@@ -2,7 +2,7 @@ package com.nukkitx.server.inventory.transaction.action.function;
 
 import com.nukkitx.protocol.bedrock.data.InventoryAction;
 import com.nukkitx.server.inventory.transaction.InventoryTransactionResult;
-import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -11,12 +11,12 @@ public class NonImplementedTodoInventoryActionFunction implements InventoryActio
     public static final NonImplementedTodoInventoryActionFunction INSTANCE = new NonImplementedTodoInventoryActionFunction();
 
     @Override
-    public InventoryTransactionResult verify(InventoryAction action, NukkitPlayerSession player, boolean ignoreChecks) {
+    public InventoryTransactionResult verify(InventoryAction action, PlayerSession player, boolean ignoreChecks) {
         return InventoryTransactionResult.SUCCESS;
     }
 
     @Override
-    public InventoryTransactionResult execute(InventoryAction action, NukkitPlayerSession player) {
+    public InventoryTransactionResult execute(InventoryAction action, PlayerSession player) {
         return InventoryTransactionResult.SUCCESS;
     }
 }

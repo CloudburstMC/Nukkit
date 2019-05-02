@@ -1,11 +1,8 @@
 package com.nukkitx.server.scoreboard;
 
 import com.nukkitx.api.scoreboard.FakeScorer;
-import com.nukkitx.protocol.bedrock.v332.BedrockUtils;
-import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
 
 @Getter
@@ -15,11 +12,6 @@ public class NukkitFakeScorer extends NukkitScorer implements FakeScorer {
     public NukkitFakeScorer(Type type, long id, String name) {
         super(type, id);
         this.name = name;
-    }
-
-    @Override
-    protected void write(@Nonnull ByteBuf buffer) {
-        BedrockUtils.writeString(buffer, name);
     }
 
     @Override

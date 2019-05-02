@@ -21,7 +21,7 @@ import com.nukkitx.server.entity.system.*;
 import com.nukkitx.server.level.manager.*;
 import com.nukkitx.server.level.provider.ChunkProvider;
 import com.nukkitx.server.metadata.MetadataSerializers;
-import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
@@ -66,7 +66,7 @@ public class NukkitLevel implements Level {
             levelData.setDefaultSpawn(generator.getDefaultSpawn());
         }
 
-        registerSystem(NukkitPlayerSession.SYSTEM);
+        registerSystem(PlayerSession.SYSTEM);
         registerSystem(FlammableDecrementSystem.SYSTEM);
         registerSystem(PhysicsSystem.SYSTEM);
         registerSystem(PickupDelayDecrementSystem.SYSTEM);

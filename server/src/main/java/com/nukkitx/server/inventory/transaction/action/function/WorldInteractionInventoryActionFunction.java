@@ -4,7 +4,7 @@ import com.nukkitx.protocol.bedrock.data.InventoryAction;
 import com.nukkitx.protocol.bedrock.data.InventorySource;
 import com.nukkitx.server.inventory.transaction.InventoryTransactionResult;
 import com.nukkitx.server.item.ItemUtils;
-import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -14,7 +14,7 @@ public class WorldInteractionInventoryActionFunction implements InventoryActionF
     public static final WorldInteractionInventoryActionFunction INSTANCE = new WorldInteractionInventoryActionFunction();
 
     @Override
-    public InventoryTransactionResult verify(InventoryAction action, NukkitPlayerSession player, boolean ignoreChecks) {
+    public InventoryTransactionResult verify(InventoryAction action, PlayerSession player, boolean ignoreChecks) {
         InventoryTransactionResult result;
         if (action.getSlot() > 0 || action.getFromItem().isValid() || !action.getToItem().isValid()) {
             if (action.getSlot() != 1 || !action.getFromItem().isValid() || action.getToItem().isValid()) {
@@ -31,7 +31,7 @@ public class WorldInteractionInventoryActionFunction implements InventoryActionF
     }
 
     @Override
-    public InventoryTransactionResult execute(InventoryAction action, NukkitPlayerSession player) {
+    public InventoryTransactionResult execute(InventoryAction action, PlayerSession player) {
         if (action.getSlot() > 0 || action.getFromItem().isValid() || !action.getToItem().isValid()) {
             if (action.getSlot() == 1 || !action.getFromItem().isValid() || action.getToItem().isValid()) {
                 return InventoryTransactionResult.SUCCESS;

@@ -14,10 +14,7 @@ import com.nukkitx.api.level.chunk.Chunk;
 import com.nukkitx.api.util.BoundingBox;
 import com.nukkitx.api.util.Rotation;
 import com.nukkitx.protocol.bedrock.BedrockPacket;
-import com.nukkitx.protocol.bedrock.data.Attribute;
-import com.nukkitx.protocol.bedrock.data.Metadata;
-import com.nukkitx.protocol.bedrock.data.MetadataDictionary;
-import com.nukkitx.protocol.bedrock.data.MetadataFlags;
+import com.nukkitx.protocol.bedrock.data.*;
 import com.nukkitx.protocol.bedrock.packet.AddEntityPacket;
 import com.nukkitx.protocol.bedrock.packet.SetEntityDataPacket;
 import com.nukkitx.server.NukkitServer;
@@ -30,7 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.nukkitx.protocol.bedrock.data.Metadata.Flag.*;
+import static com.nukkitx.protocol.bedrock.data.EntityFlag.*;
 
 @Log4j2
 public class BaseEntity implements Entity {
@@ -48,7 +45,7 @@ public class BaseEntity implements Entity {
     private boolean removed = false;
     private BoundingBox boundingBox;
     private boolean movementStale;
-    protected final MetadataFlags metadataFlags = new MetadataFlags();
+    protected final EntityFlags metadataFlags = new EntityFlags();
 
     public BaseEntity(EntityType entityType, Vector3f position, NukkitLevel level, NukkitServer server) {
         this.level = level;
@@ -358,7 +355,7 @@ public class BaseEntity implements Entity {
         return Optional.ofNullable((C) componentMap.get(clazz));
     }
 
-    protected void setFlag(Metadata.Flag flag, boolean value) {
+    protected void setFlag(EntityFlag flag, boolean value) {
         boolean oldValue = metadataFlags.getFlag(flag);
         if (value != oldValue) {
             metadataFlags.setFlag(flag, value);
@@ -368,19 +365,19 @@ public class BaseEntity implements Entity {
 
     protected MetadataDictionary getMetadataFlags() {
         MetadataDictionary dictionary = new MetadataDictionary();
-        dictionary.put(Metadata.FLAGS, metadataFlags);
+        dictionary.put(EntityData.FLAGS, metadataFlags);
         return dictionary;
     }
 
     protected MetadataDictionary getMetadata() {
         MetadataDictionary dictionary = getMetadataFlags();
-        dictionary.put(Metadata.NAMETAG, "");
-        dictionary.put(Metadata.ENTITY_AGE, 0);
-        dictionary.put(Metadata.SCALE, 1f);
-        dictionary.put(Metadata.MAX_AIR, (short) 400);
-        dictionary.put(Metadata.AIR, (short) 0);
-        dictionary.put(Metadata.BOUNDING_BOX_HEIGHT, getHeight());
-        dictionary.put(Metadata.BOUNDING_BOX_WIDTH, getWidth());
+        dictionary.put(EntityData.NAMETAG, "");
+        dictionary.put(EntityData.ENTITY_AGE, 0);
+        dictionary.put(EntityData.SCALE, 1f);
+        dictionary.put(EntityData.MAX_AIR, (short) 400);
+        dictionary.put(EntityData.AIR, (short) 0);
+        dictionary.put(EntityData.BOUNDING_BOX_HEIGHT, getHeight());
+        dictionary.put(EntityData.BOUNDING_BOX_WIDTH, getWidth());
         return dictionary;
     }
 
@@ -391,7 +388,7 @@ public class BaseEntity implements Entity {
         level.getPacketManager().queuePacketForViewers(this, packet);
     }
 
-    protected boolean getFlag(Metadata.Flag flag) {
+    protected boolean getFlag(EntityFlag flag) {
         return metadataFlags.getFlag(flag);
     }
 

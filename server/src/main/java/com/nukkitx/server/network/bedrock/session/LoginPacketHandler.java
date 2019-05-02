@@ -5,17 +5,16 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.google.common.base.Preconditions;
 import com.nimbusds.jose.JWSObject;
 import com.nukkitx.api.event.player.PlayerPreLoginEvent;
+import com.nukkitx.protocol.bedrock.BedrockServerSession;
 import com.nukkitx.protocol.bedrock.handler.BedrockPacketHandler;
 import com.nukkitx.protocol.bedrock.packet.ClientToServerHandshakePacket;
 import com.nukkitx.protocol.bedrock.packet.LoginPacket;
 import com.nukkitx.protocol.bedrock.packet.PlayStatusPacket;
 import com.nukkitx.protocol.bedrock.packet.ServerToClientHandshakePacket;
-import com.nukkitx.protocol.bedrock.session.BedrockSession;
 import com.nukkitx.protocol.bedrock.util.EncryptionUtils;
-import com.nukkitx.protocol.bedrock.v332.Bedrock_v332;
 import com.nukkitx.server.NukkitServer;
-import com.nukkitx.server.network.bedrock.session.data.AuthDataImpl;
-import com.nukkitx.server.network.bedrock.session.data.ClientDataImpl;
+import com.nukkitx.server.network.bedrock.session.data.AuthData;
+import com.nukkitx.server.network.bedrock.session.data.ClientData;
 import lombok.extern.log4j.Log4j2;
 
 import javax.crypto.SecretKey;
@@ -31,10 +30,11 @@ import java.util.regex.Pattern;
 public class LoginPacketHandler implements BedrockPacketHandler {
     private static final Pattern USERNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9 ]+$");
 
-    private final BedrockSession<NukkitPlayerSession> session;
+    private final BedrockServerSession session;
     private final NukkitServer server;
+    private LoginSession loginSession;
 
-    public LoginPacketHandler(BedrockSession<NukkitPlayerSession> session, NukkitServer server) {
+    public LoginPacketHandler(BedrockServerSession session, NukkitServer server) {
         this.session = session;
         this.server = server;
     }
@@ -48,18 +48,20 @@ public class LoginPacketHandler implements BedrockPacketHandler {
     @Override
     public boolean handle(LoginPacket packet) {
         int protocolVersion = packet.getProtocolVersion();
-        session.setProtocolVersion(protocolVersion);
 
-        if (protocolVersion != Bedrock_v332.V332_CODEC.getProtocolVersion()) {
+        if (protocolVersion != NukkitServer.MINECRAFT_CODEC.getProtocolVersion()) {
             PlayStatusPacket status = new PlayStatusPacket();
-            if (protocolVersion > Bedrock_v332.V332_CODEC.getProtocolVersion()) {
+            if (protocolVersion > NukkitServer.MINECRAFT_CODEC.getProtocolVersion()) {
                 status.setStatus(PlayStatusPacket.Status.FAILED_SERVER);
             } else {
                 status.setStatus(PlayStatusPacket.Status.FAILED_CLIENT);
             }
             return true;
         }
-        session.setPacketCodec(Bedrock_v332.V332_CODEC);
+        this.session.setPacketCodec(NukkitServer.MINECRAFT_CODEC);
+
+        this.loginSession = new LoginSession(this.session, this.server);
+        this.loginSession.setProtocolVersion(protocolVersion);
 
         JsonNode certData;
         try {
@@ -83,8 +85,8 @@ public class LoginPacketHandler implements BedrockPacketHandler {
             if (payload.get("extraData").getNodeType() != JsonNodeType.OBJECT) {
                 throw new RuntimeException("AuthDataImpl was not found!");
             }
-            AuthDataImpl authData = NukkitServer.JSON_MAPPER.convertValue(payload.get("extraData"), AuthDataImpl.class);
-            session.setAuthData(authData);
+            AuthData authData = NukkitServer.JSON_MAPPER.convertValue(payload.get("extraData"), AuthData.class);
+            loginSession.setAuthData(authData);
 
             if (payload.get("identityPublicKey").getNodeType() != JsonNodeType.STRING) {
                 throw new RuntimeException("Identity Public Key was not found!");
@@ -114,8 +116,8 @@ public class LoginPacketHandler implements BedrockPacketHandler {
             }
 
             JsonNode clientPayload = NukkitServer.JSON_MAPPER.readTree(clientJwt.getPayload().toBytes());
-            ClientDataImpl clientData = NukkitServer.JSON_MAPPER.convertValue(clientPayload, ClientDataImpl.class);
-            session.setClientData(clientData);
+            ClientData clientData = NukkitServer.JSON_MAPPER.convertValue(clientPayload, ClientData.class);
+            loginSession.setClientData(clientData);
 
 
             if (EncryptionUtils.canUseEncryption()) {
@@ -176,8 +178,8 @@ public class LoginPacketHandler implements BedrockPacketHandler {
         status.setStatus(PlayStatusPacket.Status.LOGIN_SUCCESS);
         session.sendPacket(status);
 
-        ResourcePackPacketHandler handler = new ResourcePackPacketHandler(session, server);
-        session.setHandler(handler);
+        ResourcePackPacketHandler handler = new ResourcePackPacketHandler(this.session, this.server, this.loginSession);
+        session.setPacketHandler(handler);
 
         handler.sendResourcePacksInfo();
     }

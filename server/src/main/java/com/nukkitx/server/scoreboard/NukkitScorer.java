@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.nukkitx.api.scoreboard.ModifyScoreFunction;
 import com.nukkitx.api.scoreboard.Objective;
 import com.nukkitx.api.scoreboard.Scorer;
-import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 
 import javax.annotation.Nonnull;
@@ -47,13 +46,6 @@ public abstract class NukkitScorer implements Scorer {
         Preconditions.checkNotNull(objective, "objective");
         objective.modifyScore(id, function);
     }
-
-    public final void writeTo(ByteBuf buffer) {
-        buffer.writeByte(type.ordinal());
-        write(buffer);
-    }
-
-    protected abstract void write(ByteBuf buffer);
 
     @Override
     public boolean equals(Object o) {

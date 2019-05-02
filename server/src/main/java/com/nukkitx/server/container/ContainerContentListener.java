@@ -2,7 +2,7 @@ package com.nukkitx.server.container;
 
 import com.nukkitx.api.container.Container;
 import com.nukkitx.api.item.ItemStack;
-import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -22,7 +22,7 @@ public interface ContainerContentListener {
      * @param container inventory being observed
      * @param session   session which caused the change
      */
-    void onSlotChange(int slot, @Nullable ItemStack oldItem, @Nullable ItemStack newItem, Container container, @Nullable NukkitPlayerSession session);
+    void onSlotChange(int slot, @Nullable ItemStack oldItem, @Nullable ItemStack newItem, Container container, @Nullable PlayerSession session);
 
     /**
      * Called when the entire contents of the inventory is changed within the observed inventory.

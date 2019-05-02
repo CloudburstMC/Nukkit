@@ -1,33 +1,26 @@
 package com.nukkitx.server.event.player;
 
+import com.google.common.base.Preconditions;
 import com.nukkitx.api.event.Event;
-import com.nukkitx.protocol.bedrock.session.BedrockSession;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
+import com.nukkitx.server.network.bedrock.session.LoginSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
+
+import java.util.function.BiFunction;
 
 public class PlayerInitializationEvent implements Event {
-    private final BedrockSession<NukkitPlayerSession> bedrockSession;
-    private final NukkitLevel level;
-    private NukkitPlayerSession playerSession;
+    private BiFunction<LoginSession, NukkitLevel, PlayerSession> playerCreator;
 
-    public PlayerInitializationEvent(BedrockSession<NukkitPlayerSession> bedrockSession, NukkitLevel level) {
-        this.bedrockSession = bedrockSession;
-        this.level = level;
+    public PlayerInitializationEvent(BiFunction<LoginSession, NukkitLevel, PlayerSession> playerCreator) {
+        this.playerCreator = playerCreator;
     }
 
-    public BedrockSession getBedrockSession() {
-        return bedrockSession;
+    public BiFunction<LoginSession, NukkitLevel, PlayerSession> getPlayerCreator() {
+        return playerCreator;
     }
 
-    public NukkitLevel getLevel() {
-        return level;
-    }
-
-    public NukkitPlayerSession getPlayerSession() {
-        return playerSession;
-    }
-
-    public void setPlayerSession(NukkitPlayerSession playerSession) {
-        this.playerSession = playerSession;
+    public void setPlayerCreator(BiFunction<LoginSession, NukkitLevel, PlayerSession> playerCreator) {
+        Preconditions.checkNotNull(playerCreator, "playerCreator");
+        this.playerCreator = playerCreator;
     }
 }

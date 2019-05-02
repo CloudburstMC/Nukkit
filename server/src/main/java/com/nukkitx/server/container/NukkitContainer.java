@@ -6,7 +6,7 @@ import com.nukkitx.api.container.Container;
 import com.nukkitx.api.item.ItemStack;
 import com.nukkitx.api.level.Level;
 import com.nukkitx.server.item.ItemUtils;
-import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -68,7 +68,7 @@ public class NukkitContainer implements Container {
         return addItem(item, null);
     }
 
-    public boolean addItem(ItemStack item, @Nullable NukkitPlayerSession session) {
+    public boolean addItem(ItemStack item, @Nullable PlayerSession session) {
 
         ItemUtils.checkValidItem(item);
 
@@ -139,7 +139,7 @@ public class NukkitContainer implements Container {
         return addItemToFirstEmptySlot(item, null);
     }
 
-    public boolean addItemToFirstEmptySlot(ItemStack item, @Nullable NukkitPlayerSession session) {
+    public boolean addItemToFirstEmptySlot(ItemStack item, @Nullable PlayerSession session) {
         OptionalInt slot = getFirstEmptySlot();
         if (!slot.isPresent() || ItemStack.isInvalid(item)) {
             return false;
@@ -154,7 +154,7 @@ public class NukkitContainer implements Container {
         setItem(slot, item, null);
     }
 
-    public synchronized void setItem(int slot, @Nullable ItemStack item, @Nullable NukkitPlayerSession session) {
+    public synchronized void setItem(int slot, @Nullable ItemStack item, @Nullable PlayerSession session) {
         checkSlot(slot);
 
         if (ItemStack.isInvalid(item)) {
@@ -219,7 +219,7 @@ public class NukkitContainer implements Container {
         clearItem(slot, null);
     }
 
-    public synchronized void clearItem(int slot, @Nullable NukkitPlayerSession session) {
+    public synchronized void clearItem(int slot, @Nullable PlayerSession session) {
         checkSlot(slot);
         ItemStack item = contents[slot];
         if (item != null) {
@@ -272,10 +272,10 @@ public class NukkitContainer implements Container {
         // TODO: 18/12/2018 drop content method
     }
 
-    public void open(@Nonnull NukkitPlayerSession session) {
+    public void open(@Nonnull PlayerSession session) {
     }
 
-    public void close(@Nonnull NukkitPlayerSession session) {
+    public void close(@Nonnull PlayerSession session) {
     }
 
     protected synchronized void setContainerSize(int size) {
@@ -316,10 +316,10 @@ public class NukkitContainer implements Container {
         return 254;
     }
 
-    public void onOpen(NukkitPlayerSession session) {
+    public void onOpen(PlayerSession session) {
     }
 
-    public void onClose(NukkitPlayerSession session) {
+    public void onClose(PlayerSession session) {
     }
 
     private synchronized TIntObjectMap<ItemStack> findMergable(@Nonnull ItemStack item) {

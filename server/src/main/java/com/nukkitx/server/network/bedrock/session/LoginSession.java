@@ -2,21 +2,26 @@ package com.nukkitx.server.network.bedrock.session;
 
 import com.nukkitx.api.Session;
 import com.nukkitx.api.util.data.DeviceOS;
-import com.nukkitx.protocol.bedrock.session.BedrockSession;
+import com.nukkitx.protocol.bedrock.BedrockServerSession;
 import com.nukkitx.server.NukkitServer;
-import lombok.RequiredArgsConstructor;
+import com.nukkitx.server.network.bedrock.session.data.AuthData;
+import com.nukkitx.server.network.bedrock.session.data.ClientData;
+import lombok.Data;
 
 import javax.annotation.Nonnull;
 import java.net.InetSocketAddress;
 import java.util.Optional;
 import java.util.UUID;
 
-@RequiredArgsConstructor
+@Data
 public class LoginSession implements Session {
-    private final BedrockSession<NukkitPlayerSession> session;
+    private final BedrockServerSession session;
     private final NukkitServer server;
+    private AuthData authData;
+    private ClientData clientData;
+    private int protocolVersion;
 
-    public BedrockSession getSession() {
+    public BedrockServerSession getBedrockSession() {
         return session;
     }
 
@@ -29,18 +34,18 @@ public class LoginSession implements Session {
     @Nonnull
     @Override
     public Optional<InetSocketAddress> getRemoteAddress() {
-        return session.getRemoteAddress();
+        return Optional.of(session.getAddress());
     }
 
     @Override
     public boolean isXboxAuthenticated() {
-        return session.getAuthData().getXuid() != null;
+        return authData.getXuid() != null;
     }
 
     @Nonnull
     @Override
     public Optional<String> getXuid() {
-        return Optional.ofNullable(session.getAuthData().getXuid());
+        return Optional.ofNullable(authData.getXuid());
     }
 
     @Override
@@ -51,48 +56,48 @@ public class LoginSession implements Session {
     @Nonnull
     @Override
     public String getName() {
-        return session.getAuthData().getDisplayName();
+        return authData.getDisplayName();
     }
 
     @Nonnull
     @Override
     public UUID getUniqueId() {
-        return session.getAuthData().getIdentity();
+        return authData.getIdentity();
     }
 
     @Nonnull
     @Override
     public DeviceOS getDeviceOS() {
-        return null;//TODO: session.getClientData().getDeviceOs();
+        return clientData.getDeviceOs();
     }
 
     @Override
     public boolean isEducationEdition() {
-        return session.getClientData().isEduMode();
+        return this.clientData.isEduMode();
     }
 
     @Nonnull
     @Override
     public String getDeviceModel() {
-        return session.getClientData().getDeviceModel();
+        return this.clientData.getDeviceModel();
     }
 
     @Nonnull
     @Override
     public String getGameVersion() {
-        return session.getClientData().getGameVersion();
+        return this.clientData.getGameVersion();
     }
 
     @Nonnull
     @Override
     public String getServerAddress() {
-        return session.getClientData().getServerAddress();
+        return this.clientData.getServerAddress();
     }
 
     @Nonnull
     @Override
     public Optional<String> getActiveDirectoryRole() {
-        return Optional.ofNullable(session.getClientData().getActiveDirectoryRole());
+        return Optional.ofNullable(this.clientData.getActiveDirectoryRole());
     }
 
     @Override

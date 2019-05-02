@@ -6,12 +6,12 @@ import com.google.common.collect.ImmutableList;
 import com.nukkitx.api.entity.Entity;
 import com.nukkitx.api.entity.system.System;
 import com.nukkitx.api.util.BoundingBox;
+import com.nukkitx.protocol.bedrock.BedrockServerSession;
 import com.nukkitx.protocol.bedrock.packet.MoveEntityAbsolutePacket;
 import com.nukkitx.protocol.bedrock.packet.SetEntityMotionPacket;
-import com.nukkitx.protocol.bedrock.session.BedrockSession;
 import com.nukkitx.server.entity.BaseEntity;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import gnu.trove.iterator.TLongObjectIterator;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
@@ -72,15 +72,15 @@ public class LevelEntityManager {
         }
     }
 
-    public List<NukkitPlayerSession> getPlayers() {
+    public List<PlayerSession> getPlayers() {
         synchronized (entities) {
-            List<NukkitPlayerSession> sessions = new ArrayList<>();
+            List<PlayerSession> sessions = new ArrayList<>();
             entities.forEachValue(entity -> {
-                if (entity instanceof NukkitPlayerSession) {
-                    NukkitPlayerSession session = (NukkitPlayerSession) entity;
-                    BedrockSession bedrockSession = session.getBedrockSession();
+                if (entity instanceof PlayerSession) {
+                    PlayerSession session = (PlayerSession) entity;
+                    BedrockServerSession bedrockSession = session.getBedrockSession();
                     if (bedrockSession != null && !bedrockSession.isClosed()) {
-                        sessions.add((NukkitPlayerSession) entity);
+                        sessions.add((PlayerSession) entity);
                     }
                 }
                 return true;
@@ -212,8 +212,8 @@ public class LevelEntityManager {
 
         // Update viewable entities if something changed
         if (entitiesChanged.compareAndSet(true, false)) {
-            List<NukkitPlayerSession> players = getPlayers();
-            players.forEach(NukkitPlayerSession::updateViewableEntities);
+            List<PlayerSession> players = getPlayers();
+            players.forEach(PlayerSession::updateViewableEntities);
         }
     }
 

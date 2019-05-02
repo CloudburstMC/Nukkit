@@ -12,7 +12,7 @@ import com.nukkitx.server.block.behavior.BlockBehavior;
 import com.nukkitx.server.block.behavior.BlockBehaviors;
 import com.nukkitx.server.item.ItemUtils;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -46,7 +46,7 @@ public class ItemUseTransaction extends InventoryTransaction {
     }
 
     @Override
-    public void onTransactionError(NukkitPlayerSession player, InventoryTransactionResult result) {
+    public void onTransactionError(PlayerSession player, InventoryTransactionResult result) {
         Optional<Block> block = player.getLevel().getBlockIfChunkLoaded(blockPosition.add(face.getOffset()));
         //noinspection OptionalIsPresent
         if (block.isPresent()) {
@@ -55,7 +55,7 @@ public class ItemUseTransaction extends InventoryTransaction {
         super.onTransactionError(player, result);
     }
 
-    private void resendBlockAroundArea(NukkitPlayerSession player, Block block) {
+    private void resendBlockAroundArea(PlayerSession player, Block block) {
         List<Block> blocks = block.getNeighboringBlocksIfLoaded();
         blocks.add(block);
 
@@ -71,7 +71,7 @@ public class ItemUseTransaction extends InventoryTransaction {
     }
 
     @Override
-    public InventoryTransactionResult handle(NukkitPlayerSession player, boolean ignoreChecks) {
+    public InventoryTransactionResult handle(PlayerSession player, boolean ignoreChecks) {
         if (!player.isAlive()) {
             return InventoryTransactionResult.NOT_ALIVE;
         }
@@ -102,7 +102,7 @@ public class ItemUseTransaction extends InventoryTransaction {
         return InventoryTransactionResult.SUCCESS;
     }
 
-    private void handleAction(NukkitPlayerSession player) {
+    private void handleAction(PlayerSession player) {
         ItemStack selectedItem = player.getInventory().getSelectedItem();
         switch (action) {
             case PLACE:

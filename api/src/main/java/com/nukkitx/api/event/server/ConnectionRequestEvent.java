@@ -1,5 +1,6 @@
 package com.nukkitx.api.event.server;
 
+import com.nukkitx.api.event.Cancellable;
 import com.nukkitx.api.event.Event;
 
 import java.net.InetSocketAddress;
@@ -8,13 +9,12 @@ import java.net.InetSocketAddress;
  * Called when RakNet receives a connection request packet.
  * This is the earliest you can deny someone from entering the server
  */
-public class ConnectionRequestEvent implements Event {
+public class ConnectionRequestEvent implements Event, Cancellable {
     private final InetSocketAddress address;
-    private Result result;
+    private volatile boolean cancelled;
 
-    public ConnectionRequestEvent(InetSocketAddress address, Result result) {
+    public ConnectionRequestEvent(InetSocketAddress address) {
         this.address = address;
-        this.result = result;
     }
 
     /**
@@ -25,38 +25,13 @@ public class ConnectionRequestEvent implements Event {
         return address;
     }
 
-    /**
-     * Get current result of the user connecting.
-     * @return result
-     */
-    public Result getResult() {
-        return result;
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
     }
 
-    /**
-     * Set current result of the user connecting.
-     * @param result result of user connecting
-     */
-    public void setResult(Result result) {
-        this.result = result;
-    }
-
-    public enum Result {
-        /**
-         * Connecting user will continue to login.
-         */
-        CONTINUE,
-        /**
-         * Invalid RakNet protocol version
-         */
-        INVALID_PROTOCOL_VERSION,
-        /**
-         * Connecting user will be sent banned packet.
-         */
-        BANNED,
-        /**
-         * Connecting user will be sent no free connections packet.
-         */
-        SERVER_FULL,
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 }

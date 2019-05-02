@@ -6,7 +6,7 @@ import com.nukkitx.protocol.bedrock.data.InventoryAction;
 import com.nukkitx.protocol.bedrock.data.InventorySource;
 import com.nukkitx.protocol.bedrock.data.ItemData;
 import com.nukkitx.server.inventory.transaction.action.function.InventoryActionFunction;
-import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import lombok.Getter;
 
 import javax.annotation.Nonnull;
@@ -108,7 +108,7 @@ public abstract class InventoryTransaction {
         return true;
     }
 
-    public InventoryTransactionResult verify(NukkitPlayerSession player, boolean ignoreChecks) {
+    public InventoryTransactionResult verify(PlayerSession player, boolean ignoreChecks) {
         if (fullyVerified) {
             return InventoryTransactionResult.SUCCESS;
         }
@@ -130,7 +130,7 @@ public abstract class InventoryTransaction {
         return InventoryTransactionResult.SUCCESS;
     }
 
-    public InventoryTransactionResult execute(NukkitPlayerSession player, boolean ignoreChecks) {
+    public InventoryTransactionResult execute(PlayerSession player, boolean ignoreChecks) {
 
         for (Map.Entry<InventorySource, List<InventoryAction>> entry : sources.entrySet()) {
             InventoryActionFunction function = InventoryTransactions.getFunction(entry.getKey());
@@ -149,11 +149,11 @@ public abstract class InventoryTransaction {
         return InventoryTransactionResult.SUCCESS;
     }
 
-    public void onTransactionError(NukkitPlayerSession player, InventoryTransactionResult result) {
+    public void onTransactionError(PlayerSession player, InventoryTransactionResult result) {
         player.getDispatcher().sendInventory(true);
     }
 
-    public InventoryTransactionResult handle(NukkitPlayerSession player, boolean ignoreChecks) {
+    public InventoryTransactionResult handle(PlayerSession player, boolean ignoreChecks) {
         InventoryTransactionResult result = verify(player, ignoreChecks);
         if (result == InventoryTransactionResult.SUCCESS) {
             InventoryTransactionManager manager = player.getTransactionManager();

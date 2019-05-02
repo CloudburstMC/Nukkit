@@ -5,7 +5,7 @@ import com.nukkitx.protocol.bedrock.data.InventoryAction;
 import com.nukkitx.protocol.bedrock.data.InventorySource;
 import com.nukkitx.protocol.bedrock.data.ItemData;
 import com.nukkitx.server.item.ItemUtils;
-import com.nukkitx.server.network.bedrock.session.NukkitPlayerSession;
+import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -15,7 +15,7 @@ import java.util.Deque;
 
 @RequiredArgsConstructor
 public class InventoryTransactionManager {
-    private final NukkitPlayerSession player;
+    private final PlayerSession player;
     private final Deque<InventoryAction> expectedActions = new ArrayDeque<>();
     @Getter
     private InventoryTransaction currentTransaction = null;
