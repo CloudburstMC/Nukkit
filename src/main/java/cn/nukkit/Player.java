@@ -162,10 +162,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected Vector3 teleportPosition = null;
 
     protected boolean connected = true;
-    protected final String ip;
+    protected final InetSocketAddress socketAddress;
     protected boolean removeFormat = true;
 
-    protected final int port;
     protected String username;
     protected String iusername;
     protected String displayName;
@@ -596,14 +595,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         return this.perm.getEffectivePermissions();
     }
 
-    public Player(SourceInterface interfaz, Long clientID, String ip, int port) {
+    public Player(SourceInterface interfaz, Long clientID, InetSocketAddress socketAddress) {
         super(null, new CompoundTag());
         this.interfaz = interfaz;
         this.perm = new PermissibleBase(this);
         this.server = Server.getInstance();
         this.lastBreak = -1;
-        this.ip = ip;
-        this.port = port;
+        this.socketAddress = socketAddress;
         this.clientID = clientID;
         this.loaderId = Level.generateChunkLoaderId(this);
         this.chunksPerTick = this.server.getConfig("chunk-sending.per-tick", 4);
@@ -665,11 +663,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public String getAddress() {
-        return this.ip;
+        return this.socketAddress.getAddress().getHostAddress();
     }
 
     public int getPort() {
-        return port;
+        return this.socketAddress.getPort();
+    }
+
+    public InetSocketAddress getSocketAddress() {
+        return this.socketAddress;
     }
 
     public Position getNextPosition() {
@@ -2040,8 +2042,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.server.getLogger().info(this.getServer().getLanguage().translateString("nukkit.player.logIn",
                 TextFormat.AQUA + this.username + TextFormat.WHITE,
-                this.ip,
-                String.valueOf(this.port),
+                this.getAddress(),
+                String.valueOf(this.getPort()),
                 String.valueOf(this.id),
                 this.level.getName(),
                 String.valueOf(NukkitMath.round(this.x, 4)),
@@ -2174,7 +2176,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                         @Override
                         public void onRun() {
-                            e = new PlayerAsyncPreLoginEvent(username, uuid, ip, port);
+                            e = new PlayerAsyncPreLoginEvent(username, uuid, Player.this.getAddress(), Player.this.getPort());
                             server.getPluginManager().callEvent(e);
                         }
 
@@ -3574,8 +3576,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.spawned = false;
             this.server.getLogger().info(this.getServer().getLanguage().translateString("nukkit.player.logOut",
                     TextFormat.AQUA + (this.getName() == null ? "" : this.getName()) + TextFormat.WHITE,
-                    this.ip,
-                    String.valueOf(this.port),
+                    this.getAddress(),
+                    String.valueOf(this.getPort()),
                     this.getServer().getLanguage().translateString(reason)));
             this.windows.clear();
             this.usedChunks.clear();

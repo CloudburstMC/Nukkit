@@ -20,7 +20,7 @@
     <repositories>
         <repository>
             <id>nukkitx-repo-release</id>
-            <url>https://repo.nukkitx.com/release/</url>
+            <url>https://repo.nukkitx.com/maven-releases/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -30,7 +30,7 @@
         </repository>
         <repository>
             <id>nukkitx-repo-snapshot</id>
-            <url>https://repo.nukkitx.com/snapshot/</url>
+            <url>https://repo.nukkitx.com/maven-snapshots/</url>
             <releases>
                 <enabled>false</enabled>
             </releases>
@@ -54,6 +54,12 @@
     </distributionManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>com.nukkitx.network</groupId>
+            <artifactId>raknet</artifactId>
+            <version>1.3.4</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>com.nukkitx</groupId>
             <artifactId>fastutil-lite</artifactId>
@@ -89,19 +95,6 @@
                     <artifactId>guava</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-handler</artifactId>
-            <version>4.1.6.Final</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-transport-native-epoll</artifactId>
-            <version>4.1.6.Final</version>
-            <scope>compile</scope>
-            <classifier>linux-x86_64</classifier>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

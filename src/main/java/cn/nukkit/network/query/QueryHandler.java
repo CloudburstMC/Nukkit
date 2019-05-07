@@ -3,7 +3,12 @@ package cn.nukkit.network.query;
 import cn.nukkit.Server;
 import cn.nukkit.event.server.QueryRegenerateEvent;
 import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.PooledByteBufAllocator;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
@@ -54,12 +59,12 @@ public class QueryHandler {
         this.token = token;
     }
 
-    public static String getTokenString(byte[] token, String salt) {
-        return getTokenString(new String(token), salt);
+    public static String getTokenString(byte[] token, InetAddress address) {
+        return getTokenString(new String(token), address);
     }
 
-
-    public static String getTokenString(String token, String salt) {
+    public static String getTokenString(String token, InetAddress address) {
+        String salt = address.toString();
         try {
             return String.valueOf(Binary.readInt(Binary.subBytes(MessageDigest.getInstance("SHA-512").digest((salt + ":" + token).getBytes()), 7, 4)));
         } catch (NoSuchAlgorithmException e) {
@@ -67,40 +72,39 @@ public class QueryHandler {
         }
     }
 
-    public void handle(String address, int port, byte[] packet) {
-        int offset = 2; //skip MAGIC
-        byte packetType = packet[offset++];
-        int sessionID = Binary.readInt(Binary.subBytes(packet, offset, 4));
-        offset += 4;
-        byte[] payload = Binary.subBytes(packet, offset);
+    public void handle(InetSocketAddress address, ByteBuf packet) {
+        short packetId = packet.readUnsignedByte();
+        int sessionId = packet.readInt();
 
-        switch (packetType) {
+        switch (packetId) {
             case HANDSHAKE:
-                byte[] reply = Binary.appendBytes(
-                        HANDSHAKE,
-                        Binary.writeInt(sessionID),
-                        getTokenString(this.token, address).getBytes(),
-                        new byte[]{0x00}
-                );
+                ByteBuf reply = PooledByteBufAllocator.DEFAULT.directBuffer();
+                reply.writeByte(HANDSHAKE);
+                reply.writeInt(sessionId);
+                reply.writeBytes(getTokenString(this.token, address.getAddress()).getBytes(StandardCharsets.UTF_8));
+                reply.writeByte(0);
 
-                this.server.getNetwork().sendPacket(address, port, reply);
+                this.server.getNetwork().sendPacket(address, reply);
                 break;
             case STATISTICS:
-                String token = String.valueOf(Binary.readInt(Binary.subBytes(payload, 0, 4)));
-                if (!token.equals(getTokenString(this.token, address)) && !token.equals(getTokenString(this.lastToken, address))) {
+                String token = String.valueOf(packet.readInt());
+                if (!token.equals(getTokenString(this.token, address.getAddress())) && !token.equals(getTokenString(this.lastToken, address.getAddress()))) {
                     break;
                 }
 
                 if (this.timeout < System.currentTimeMillis()) {
                     this.regenerateInfo();
                 }
-                reply = Binary.appendBytes(
-                        STATISTICS,
-                        Binary.writeInt(sessionID),
-                        payload.length == 8 ? this.longData : this.shortData
-                );
+                reply = PooledByteBufAllocator.DEFAULT.directBuffer();
+                reply.writeByte(STATISTICS);
+                reply.writeInt(sessionId);
+                if (packet.readableBytes() == 8) {
+                    reply.writeBytes(this.longData);
+                } else {
+                    reply.writeBytes(this.shortData);
+                }
 
-                this.server.getNetwork().sendPacket(address, port, reply);
+                this.server.getNetwork().sendPacket(address, reply);
                 break;
         }
     }

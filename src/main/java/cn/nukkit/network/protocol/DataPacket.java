@@ -1,10 +1,10 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.Server;
-import cn.nukkit.raknet.protocol.EncapsulatedPacket;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.Zlib;
+import com.nukkitx.network.raknet.RakNetReliability;
 
 /**
  * author: MagicDroidX
@@ -15,10 +15,7 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
     public boolean isEncoded = false;
     private int channel = 0;
 
-    public EncapsulatedPacket encapsulatedPacket;
-    public byte reliability;
-    public Integer orderIndex = null;
-    public Integer orderChannel = null;
+    public RakNetReliability reliability = RakNetReliability.RELIABLE_ORDERED;
 
     public abstract byte pid();
 
