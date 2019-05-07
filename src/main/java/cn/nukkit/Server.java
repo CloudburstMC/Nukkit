@@ -420,13 +420,13 @@ public class Server {
 
         Nukkit.DEBUG = Math.max(this.getConfig("debug.level", 1), 1);
 
-//        int logLevel = (Nukkit.DEBUG + 3) * 100;
-//        for (org.apache.logging.log4j.Level level : org.apache.logging.log4j.Level.values()) {
-//            if (level.intLevel() == logLevel) {
-//                Nukkit.setLogLevel(level);
-//                break;
-//            }
-//        }
+        int logLevel = (Nukkit.DEBUG + 3) * 100;
+        for (org.apache.logging.log4j.Level level : org.apache.logging.log4j.Level.values()) {
+            if (level.intLevel() == logLevel) {
+                Nukkit.setLogLevel(level);
+                break;
+            }
+        }
 
         if (this.getConfig().getBoolean("bug-report", true)) {
             ExceptionHandler.registerExceptionHandler();
