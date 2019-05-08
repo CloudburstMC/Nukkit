@@ -7,9 +7,7 @@ import cn.nukkit.event.server.QueryRegenerateEvent;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.ProtocolInfo;
-import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Utils;
-import cn.nukkit.utils.Zlib;
 import com.google.common.base.Strings;
 import com.nukkitx.network.raknet.*;
 import com.nukkitx.network.util.DisconnectReason;
@@ -166,22 +164,12 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
         byte[] buffer;
         if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
             buffer = ((BatchPacket) packet).payload;
-        } else if (!needACK) {
+            if (buffer == null) {
+                return null;
+            }
+        } else {
             this.server.batchPackets(new Player[]{player}, new DataPacket[]{packet}, true);
             return null;
-        } else {
-            if (!packet.isEncoded) {
-                packet.encode();
-                packet.isEncoded = true;
-            }
-            buffer = packet.getBuffer();
-            try {
-                buffer = Zlib.deflate(
-                        Binary.appendBytes(Binary.writeUnsignedVarInt(buffer.length), buffer),
-                        Server.getInstance().networkCompressionLevel);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
         }
         ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.directBuffer();
         try {
