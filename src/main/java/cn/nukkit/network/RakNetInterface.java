@@ -184,12 +184,16 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
             }
         }
         ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.directBuffer();
-        byteBuf.writeByte(0xfe);
-        byteBuf.writeBytes(buffer);
+        try {
+            byteBuf.writeByte(0xfe);
+            byteBuf.writeBytes(buffer);
 
-        session.send(byteBuf, packet.reliability, packet.getChannel());
+            session.send(byteBuf, packet.reliability, packet.getChannel());
 
-        return null;
+            return null;
+        } finally {
+            byteBuf.release();
+        }
     }
 
     @Override
