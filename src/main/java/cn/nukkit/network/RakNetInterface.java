@@ -171,17 +171,16 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
             this.server.batchPackets(new Player[]{player}, new DataPacket[]{packet}, true);
             return null;
         }
-        ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.directBuffer();
-        try {
-            byteBuf.writeByte(0xfe);
-            byteBuf.writeBytes(buffer);
 
-            session.send(byteBuf, packet.reliability, packet.getChannel());
+        ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.directBuffer(1 + buffer.length);
+        byteBuf.writeByte(0xfe);
+        byteBuf.writeBytes(buffer);
+        byteBuf.readerIndex(0);
 
-            return null;
-        } finally {
-            byteBuf.release();
-        }
+        session.send(byteBuf, immediate ? RakNetPriority.IMMEDIATE : RakNetPriority.MEDIUM, packet.reliability,
+                packet.getChannel());
+
+        return null;
     }
 
     @Override
@@ -234,7 +233,8 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
         }
 
         @Override
-        public void onUserPacket(ByteBuf buffer) {
+        public void onEncapsulated(EncapsulatedPacket packet) {
+            ByteBuf buffer = packet.getBuffer();
             short packetId = buffer.readUnsignedByte();
             if (packetId == 0xfe) {
                 DataPacket batchPacket = RakNetInterface.this.network.getPacket(ProtocolInfo.BATCH_PACKET);
@@ -249,6 +249,11 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
                 packets.offer(batchPacket);
             }
+        }
+
+        @Override
+        public void onDirect(ByteBuf byteBuf) {
+            // We don't allow any direct packets so ignore.
         }
     }
 }

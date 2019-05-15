@@ -57,7 +57,7 @@
         <dependency>
             <groupId>com.nukkitx.network</groupId>
             <artifactId>raknet</artifactId>
-            <version>1.3.4</version>
+            <version>1.4.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -185,6 +185,20 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>LATEST</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <Main-Class>cn.nukkit.Nukkit</Main-Class>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
@@ -250,14 +264,10 @@
                         </filter>
                     </filters>
                     <transformers>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>cn.nukkit.Nukkit</mainClass>
-                        </transformer>
                         <transformer
                                 implementation="com.github.edwgiz.mavenShadePlugin.log4j2CacheTransformer.PluginsCacheFileTransformer">
                         </transformer>
                     </transformers>
-                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
                 </configuration>
             </plugin>
             <plugin>
