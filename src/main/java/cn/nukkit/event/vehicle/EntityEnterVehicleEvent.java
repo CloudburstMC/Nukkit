@@ -2,7 +2,6 @@ package cn.nukkit.event.vehicle;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.item.EntityVehicle;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
@@ -14,14 +13,14 @@ public class EntityEnterVehicleEvent extends VehicleEvent implements Cancellable
         return handlers;
     }
 
-    private final Entity riding;
+    private final cn.nukkit.entity.Entity riding;
 
-    public EntityEnterVehicleEvent(Entity riding, EntityVehicle vehicle) {
+    public EntityEnterVehicleEvent(cn.nukkit.entity.Entity riding, Entity vehicle) {
         super(vehicle);
         this.riding = riding;
     }
 
-    public Entity getEntity() {
+    public cn.nukkit.entity.Entity getEntity() {
         return riding;
     }
 

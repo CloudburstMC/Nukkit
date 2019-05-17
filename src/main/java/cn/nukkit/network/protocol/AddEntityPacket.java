@@ -7,13 +7,16 @@ import cn.nukkit.entity.mob.*;
 import cn.nukkit.entity.passive.*;
 import cn.nukkit.entity.projectile.*;
 import cn.nukkit.entity.weather.EntityLightning;
+import cn.nukkit.network.protocol.types.EntityLink;
 import cn.nukkit.utils.Binary;
 import com.google.common.collect.ImmutableMap;
+import lombok.ToString;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
+@ToString
 public class AddEntityPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.ADD_ENTITY_PACKET;
 
@@ -24,7 +27,7 @@ public class AddEntityPacket extends DataPacket {
             .put(EntityHusk.NETWORK_ID, "minecraft:husk")
             .put(EntityStray.NETWORK_ID, "minecraft:stray")
             .put(EntityWitch.NETWORK_ID, "minecraft:witch")
-            .put(EntityZombieVillager.NETWORK_ID, "minecraft:zombie_villager")
+            .put(EntityZombieVillagerV1.NETWORK_ID, "minecraft:zombie_villager")
             .put(EntityBlaze.NETWORK_ID, "minecraft:blaze")
             .put(EntityMagmaCube.NETWORK_ID, "minecraft:magma_cube")
             .put(EntityGhast.NETWORK_ID, "minecraft:ghast")
@@ -50,7 +53,7 @@ public class AddEntityPacket extends DataPacket {
             .put(EntityPanda.NETWORK_ID, "minecraft:panda")
             .put(EntitySalmon.NETWORK_ID, "minecraft:salmon")
             .put(EntityPig.NETWORK_ID, "minecraft:pig")
-            .put(EntityVillager.NETWORK_ID, "minecraft:villager")
+            .put(EntityVillagerV1.NETWORK_ID, "minecraft:villager")
             .put(EntityCod.NETWORK_ID, "minecraft:cod")
             .put(EntityPufferfish.NETWORK_ID, "minecraft:pufferfish")
             .put(EntityCow.NETWORK_ID, "minecraft:cow")
@@ -116,6 +119,11 @@ public class AddEntityPacket extends DataPacket {
             .put(106, "minecraft:ice_bomb")
             .put(EntityPhantom.NETWORK_ID, "minecraft:phantom")
             .put(62, "minecraft:tripod_camera")
+            .put(EntityPillager.NETWORK_ID, "minecraft:pillager")
+            .put(EntityWanderingTrader.NETWORK_ID, "minecraft:wandering_trader")
+            .put(EntityRavager.NETWORK_ID, "minecraft:ravager")
+            .put(EntityVillager.NETWORK_ID, "minecraft:villager_v2")
+            .put(EntityZombieVillager.NETWORK_ID, "minecraft:zombie_villager_v2")
             .build();
 
     @Override
@@ -138,7 +146,7 @@ public class AddEntityPacket extends DataPacket {
     public float headYaw;
     public EntityMetadata metadata = new EntityMetadata();
     public Attribute[] attributes = new Attribute[0];
-    public final Object[][] links = new Object[0][3];
+    public EntityLink[] links = new EntityLink[0];
 
     @Override
     public void decode() {
@@ -162,10 +170,8 @@ public class AddEntityPacket extends DataPacket {
         this.putAttributeList(this.attributes);
         this.put(Binary.writeMetadata(this.metadata));
         this.putUnsignedVarInt(this.links.length);
-        for (Object[] link : this.links) {
-            this.putVarLong((long) link[0]);
-            this.putVarLong((long) link[1]);
-            this.putByte((byte) link[2]);
+        for (EntityLink link : links) {
+            putEntityLink(link);
         }
     }
 }

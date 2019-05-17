@@ -1,8 +1,11 @@
 package cn.nukkit.network.protocol;
 
+import lombok.ToString;
+
 /**
  * Created by CreeperFace on 30. 10. 2016.
  */
+@ToString
 public class BossEventPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.BOSS_EVENT_PACKET;

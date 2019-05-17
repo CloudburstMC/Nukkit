@@ -1,8 +1,11 @@
 package cn.nukkit.network.protocol;
 
+import lombok.ToString;
+
 /**
  * @author Nukkit Project Team
  */
+@ToString
 public class PlayerInputPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.PLAYER_INPUT_PACKET;

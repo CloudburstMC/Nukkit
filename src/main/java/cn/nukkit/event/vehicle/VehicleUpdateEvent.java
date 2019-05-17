@@ -1,6 +1,6 @@
 package cn.nukkit.event.vehicle;
 
-import cn.nukkit.entity.item.EntityVehicle;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.event.HandlerList;
 
 public class VehicleUpdateEvent extends VehicleEvent {
@@ -11,7 +11,7 @@ public class VehicleUpdateEvent extends VehicleEvent {
         return handlers;
     }
 
-    public VehicleUpdateEvent(EntityVehicle vehicle) {
+    public VehicleUpdateEvent(Entity vehicle) {
         super(vehicle);
     }
 

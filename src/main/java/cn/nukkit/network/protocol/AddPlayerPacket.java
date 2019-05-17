@@ -3,6 +3,7 @@ package cn.nukkit.network.protocol;
 import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Binary;
+import lombok.ToString;
 
 import java.util.UUID;
 
@@ -10,6 +11,7 @@ import java.util.UUID;
  * author: MagicDroidX
  * Nukkit Project
  */
+@ToString
 public class AddPlayerPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.ADD_PLAYER_PACKET;
 

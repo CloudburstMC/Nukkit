@@ -10,6 +10,7 @@ import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.types.EntityLink;
 import it.unimi.dsi.fastutil.io.FastByteArrayInputStream;
 
 import java.io.IOException;
@@ -475,6 +476,22 @@ public class BinaryStream {
 
     public void putBlockFace(BlockFace face) {
         this.putVarInt(face.getIndex());
+    }
+
+    public void putEntityLink(EntityLink link) {
+        putEntityUniqueId(link.fromEntityUniquieId);
+        putEntityUniqueId(link.toEntityUniquieId);
+        putByte(link.type);
+        putBoolean(link.immediate);
+    }
+
+    public EntityLink getEntityLink() {
+        return new EntityLink(
+                getEntityUniqueId(),
+                getEntityUniqueId(),
+                (byte) getByte(),
+                getBoolean()
+        );
     }
 
     public boolean feof() {

@@ -1,7 +1,6 @@
 package cn.nukkit.event.vehicle;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.item.EntityVehicle;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
@@ -13,14 +12,14 @@ public class VehicleDestroyEvent extends VehicleEvent implements Cancellable {
         return handlers;
     }
 
-    private final Entity attacker;
+    private final cn.nukkit.entity.Entity attacker;
 
-    public VehicleDestroyEvent(EntityVehicle vehicle, Entity attacker) {
+    public VehicleDestroyEvent(Entity vehicle, cn.nukkit.entity.Entity attacker) {
         super(vehicle);
         this.attacker = attacker;
     }
 
-    public Entity getAttacker() {
+    public cn.nukkit.entity.Entity getAttacker() {
         return attacker;
     }
 

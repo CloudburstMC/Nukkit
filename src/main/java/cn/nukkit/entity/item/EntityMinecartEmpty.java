@@ -1,5 +1,9 @@
 package cn.nukkit.entity.item;
 
+import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityLiving;
+import cn.nukkit.entity.passive.EntityWaterAnimal;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.MinecartType;
@@ -27,7 +31,7 @@ public class EntityMinecartEmpty extends EntityMinecartAbstract {
     }
 
     @Override
-    public boolean isRideable(){
+    public boolean isRideable() {
         return true;
     }
 
@@ -40,5 +44,24 @@ public class EntityMinecartEmpty extends EntityMinecartAbstract {
             // looks like MCPE and MCPC not same XD
             // removed rolling feature from here because of MCPE logic?
         }
+    }
+
+    @Override
+    public boolean onUpdate(int currentTick) {
+        boolean update = super.onUpdate(currentTick);
+
+        if (this.passengers.isEmpty()) {
+            for (Entity entity : this.level.getCollidingEntities(this.boundingBox.grow(0.20000000298023224, 0.0D, 0.20000000298023224), this)) {
+                if (entity.riding != null || !(entity instanceof EntityLiving) || entity instanceof Player || entity instanceof EntityWaterAnimal) {
+                    continue;
+                }
+
+                this.mountEntity(entity);
+                update = true;
+                break;
+            }
+        }
+
+        return update;
     }
 }

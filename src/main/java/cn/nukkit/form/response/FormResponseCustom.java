@@ -4,23 +4,26 @@ import java.util.HashMap;
 
 public class FormResponseCustom extends FormResponse {
 
-    private HashMap<Integer, Object> responses = new HashMap<>();
-    private HashMap<Integer, FormResponseData> dropdownResponses = new HashMap<>();
-    private HashMap<Integer, String> inputResponses = new HashMap<>();
-    private HashMap<Integer, Float> sliderResponses = new HashMap<>();
-    private HashMap<Integer, FormResponseData> stepSliderResponses = new HashMap<>();
-    private HashMap<Integer, Boolean> toggleResponses = new HashMap<>();
+    private final HashMap<Integer, Object> responses;
+    private final HashMap<Integer, FormResponseData> dropdownResponses;
+    private final HashMap<Integer, String> inputResponses;
+    private final HashMap<Integer, Float> sliderResponses;
+    private final HashMap<Integer, FormResponseData> stepSliderResponses;
+    private final HashMap<Integer, Boolean> toggleResponses;
+    private final HashMap<Integer, String> labelResponses;
 
     public FormResponseCustom(HashMap<Integer, Object> responses, HashMap<Integer, FormResponseData> dropdownResponses,
                               HashMap<Integer, String> inputResponses, HashMap<Integer, Float> sliderResponses,
                               HashMap<Integer, FormResponseData> stepSliderResponses,
-                              HashMap<Integer, Boolean> toggleResponses) {
+                              HashMap<Integer, Boolean> toggleResponses,
+                              HashMap<Integer, String> labelResponses) {
         this.responses = responses;
         this.dropdownResponses = dropdownResponses;
         this.inputResponses = inputResponses;
         this.sliderResponses = sliderResponses;
         this.stepSliderResponses = stepSliderResponses;
         this.toggleResponses = toggleResponses;
+        this.labelResponses = labelResponses;
     }
 
     public HashMap<Integer, Object> getResponses() {
@@ -51,4 +54,7 @@ public class FormResponseCustom extends FormResponse {
         return toggleResponses.get(id);
     }
 
+    public String getLabelResponse(int id) {
+        return labelResponses.get(id);
+    }
 }

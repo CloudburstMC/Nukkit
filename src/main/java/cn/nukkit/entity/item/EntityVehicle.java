@@ -1,20 +1,16 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityInteractable;
 import cn.nukkit.entity.EntityRideable;
 import cn.nukkit.entity.data.IntEntityData;
-import cn.nukkit.event.entity.EntityVehicleEnterEvent;
-import cn.nukkit.event.entity.EntityVehicleExitEvent;
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.vehicle.VehicleDamageEvent;
+import cn.nukkit.event.vehicle.VehicleDestroyEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.SetEntityLinkPacket;
-
-import java.util.Objects;
-
-import static cn.nukkit.network.protocol.SetEntityLinkPacket.*;
 
 /**
  * author: MagicDroidX
@@ -57,86 +53,7 @@ public abstract class EntityVehicle extends Entity implements EntityRideable, En
 
     @Override
     public boolean canDoInteraction() {
-        return linkedEntity == null;
-    }
-
-    /**
-     * Mount or Dismounts an Entity from a/into vehicle
-     *
-     * @param entity The target Entity
-     * @return {@code true} if the mounting successful
-     */
-    @Override
-    public boolean mountEntity(Entity entity) {
-        Objects.requireNonNull(entity, "The target of the mounting entity can't be null");
-        this.PitchDelta = 0.0D;
-        this.YawDelta = 0.0D;
-        // TODO: Check if its necessary to check if player is dead (So the vehicle wont think that there is entity riding).
-        // Check if the entity is riding some sort of vehicle
-        // and check if the entity is not dead yet
-        if (entity.riding != null) {
-            // Run the events
-            EntityVehicleExitEvent ev = new EntityVehicleExitEvent(entity, this);
-            server.getPluginManager().callEvent(ev);
-            if (ev.isCancelled()) {
-                return false;
-            }
-            // New Packet
-            SetEntityLinkPacket pk;
-
-            pk = new SetEntityLinkPacket();
-            pk.rider = getId();         // To the?
-            pk.riding = entity.getId(); // From who?
-            pk.type = TYPE_REMOVE;      // Byte for leave
-            Server.broadcastPacket(this.hasSpawned.values(), pk);
-
-            // Broadcast to player
-            if (entity instanceof Player) {
-                pk = new SetEntityLinkPacket();
-                pk.rider = 0;               // To the place of?
-                pk.riding = entity.getId(); // From what
-                pk.type = TYPE_REMOVE;      // Another byte for leave
-                ((Player) entity).dataPacket(pk);
-            }
-
-            // Refurbish the entity
-            entity.riding = null;
-            entity.setDataFlag(DATA_FLAGS, DATA_FLAG_RIDING, false);
-            linkedEntity = null;
-            updateRiderPosition(0);
-        } else {
-            // Entity entering a vehicle
-            EntityVehicleEnterEvent ev = new EntityVehicleEnterEvent(entity, this);
-            server.getPluginManager().callEvent(ev);
-            if (ev.isCancelled()) {
-                return false;
-            }
-
-            // New Packet
-            SetEntityLinkPacket pk;
-
-            pk = new SetEntityLinkPacket();
-            pk.rider = getId();         // To the?
-            pk.riding = entity.getId(); // From who?
-            pk.type = TYPE_PASSENGER;   // Type
-            Server.broadcastPacket(this.hasSpawned.values(), pk);
-
-            // Broadcast to player
-            if (entity instanceof Player) {
-                pk = new SetEntityLinkPacket();
-                pk.rider = 0;               // To the place of?
-                pk.riding = entity.getId(); // From what
-                pk.type = TYPE_PASSENGER;   // Byte
-                ((Player) entity).dataPacket(pk);
-            }
-
-            // Add variables to entity
-            entity.riding = this;
-            entity.setDataFlag(DATA_FLAGS, DATA_FLAG_RIDING, true);
-            linkedEntity = entity;
-            updateRiderPosition(getMountedYOffset());
-        }
-        return true;
+        return passengers.isEmpty();
     }
 
     @Override
@@ -145,10 +62,7 @@ public abstract class EntityVehicle extends Entity implements EntityRideable, En
         if (getRollingAmplitude() > 0) {
             setRollingAmplitude(getRollingAmplitude() - 1);
         }
-        // The damage token
-        if (getDamage() > 0) {
-            setDamage(getDamage() - 1);
-        }
+
         // A killer task
         if (y < -16) {
             kill();
@@ -160,17 +74,41 @@ public abstract class EntityVehicle extends Entity implements EntityRideable, En
 
     protected boolean rollingDirection = true;
 
-    protected boolean performHurtAnimation(int damage) {
-        if (damage >= this.getHealth()) {
+    protected boolean performHurtAnimation() {
+        setRollingAmplitude(9);
+        setRollingDirection(rollingDirection ? 1 : -1);
+        rollingDirection = !rollingDirection;
+        return true;
+    }
+
+    @Override
+    public boolean attack(EntityDamageEvent source) {
+        VehicleDamageEvent event = new VehicleDamageEvent(this, source.getEntity(), source.getFinalDamage());
+        getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
             return false;
         }
 
-        // Vehicle does not respond hurt animation on packets
-        // It only respond on vehicle data flags. Such as these
-        setRollingAmplitude(10);
-        setRollingDirection(rollingDirection ? 1 : -1);
-        rollingDirection = !rollingDirection;
-        setDamage(getDamage() + damage);
-        return true;
+        boolean instantKill = false;
+
+        if (source instanceof EntityDamageByEntityEvent) {
+            Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
+            instantKill = damager instanceof Player && ((Player) damager).isCreative();
+        }
+
+        if (instantKill || getHealth() - source.getFinalDamage() < 1) {
+            VehicleDestroyEvent event2 = new VehicleDestroyEvent(this, source.getEntity());
+            getServer().getPluginManager().callEvent(event2);
+
+            if (event2.isCancelled()) {
+                return false;
+            }
+        }
+
+        if (instantKill) {
+            source.setDamage(1000);
+        }
+
+        return super.attack(source);
     }
 }
