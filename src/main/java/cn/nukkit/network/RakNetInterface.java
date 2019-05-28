@@ -29,7 +29,10 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import static cn.nukkit.scheduler.ServerScheduler.WORKERS;
 
 /**
  * author: MagicDroidX
@@ -53,7 +56,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
         InetSocketAddress bindAddress = new InetSocketAddress(Strings.isNullOrEmpty(this.server.getIp()) ? "0.0.0.0" : this.server.getIp(), this.server.getPort());
 
-        this.raknet = new RakNetServer(bindAddress);
+        this.raknet = new RakNetServer(bindAddress, Runtime.getRuntime().availableProcessors(), Executors.newScheduledThreadPool(WORKERS));
         this.raknet.bind().join();
         this.raknet.setListener(this);
     }
