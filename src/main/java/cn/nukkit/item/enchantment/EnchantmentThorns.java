@@ -52,7 +52,7 @@ public class EnchantmentThorns extends Enchantment {
         ThreadLocalRandom random = ThreadLocalRandom.current();
 
         if (shouldHit(random, thornsLevel)) {
-            attacker.attack(new EntityDamageByEntityEvent(entity, attacker, EntityDamageEvent.DamageCause.MAGIC, getDamage(random, level)));
+            attacker.attack(new EntityDamageByEntityEvent(entity, attacker, EntityDamageEvent.DamageCause.ENTITY_ATTACK, getDamage(random, level), 0f));
         }
     }
 

@@ -1,8 +1,11 @@
 package cn.nukkit.network.protocol;
 
+import lombok.ToString;
+
 /**
  * @author Tee7even
  */
+@ToString
 public class SetTitlePacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.SET_TITLE_PACKET;
 

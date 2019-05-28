@@ -72,8 +72,10 @@ public class PlayerInventory extends BaseInventory {
                 return false;
             }
 
-            if (player.fishing != null && !(this.getItem(slot) instanceof ItemFishingRod)) {
-                player.stopFishing(false);
+            if (player.fishing != null) {
+                if (!(this.getItem(slot).equals(player.fishing.rod))) {
+                    player.stopFishing(false);
+                }
             }
         }
 
@@ -435,7 +437,7 @@ public class PlayerInventory extends BaseInventory {
         for (Player player : players) {
             int id = player.getWindowId(this);
             if (id == -1 || !player.spawned) {
-                this.close(player);
+                if (this.getHolder() != player) this.close(player);
                 continue;
             }
             pk.inventoryId = id;

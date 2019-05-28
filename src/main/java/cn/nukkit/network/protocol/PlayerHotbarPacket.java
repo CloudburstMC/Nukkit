@@ -1,7 +1,9 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.network.protocol.types.ContainerIds;
+import lombok.ToString;
 
+@ToString
 public class PlayerHotbarPacket extends DataPacket {
 
     public int selectedHotbarSlot;

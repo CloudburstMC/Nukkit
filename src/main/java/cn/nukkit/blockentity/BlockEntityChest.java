@@ -85,8 +85,8 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
 
     @Override
     public boolean isBlockEntityValid() {
-        // TODO: 2016/2/4 TRAPPED_CHEST?
-        return getBlock().getId() == Block.CHEST;
+        int blockID = this.getBlock().getId();
+        return blockID == Block.CHEST || blockID == Block.TRAPPED_CHEST;
     }
 
     @Override
@@ -212,7 +212,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
     }
 
     public boolean pairWith(BlockEntityChest chest) {
-        if (this.isPaired() || chest.isPaired()) {
+        if (this.isPaired() || chest.isPaired() || this.getBlock().getId() != chest.getBlock().getId()) {
             return false;
         }
 

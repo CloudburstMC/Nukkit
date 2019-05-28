@@ -1,5 +1,8 @@
 package cn.nukkit.network.protocol;
 
+import lombok.ToString;
+
+@ToString(exclude = "namedtag")
 public class UpdateEquipmentPacket extends DataPacket {
 
     public int windowId;

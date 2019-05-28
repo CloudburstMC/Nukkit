@@ -81,7 +81,7 @@ public class TimeCommand extends VanillaCommand {
             } else {
                 level = sender.getServer().getDefaultLevel();
             }
-            sender.sendMessage(new TranslationContainer("commands.time.query", String.valueOf(level.getTime())));
+            sender.sendMessage(new TranslationContainer("commands.time.query.gametime", String.valueOf(level.getTime())));
             return true;
         }
 

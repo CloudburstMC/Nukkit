@@ -1,6 +1,6 @@
 package cn.nukkit.event.vehicle;
 
-import cn.nukkit.entity.item.EntityVehicle;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Event;
 
 /**
@@ -10,13 +10,13 @@ import cn.nukkit.event.Event;
  */
 public abstract class VehicleEvent extends Event {
 
-    private final EntityVehicle vehicle;
+    private final Entity vehicle;
 
-    public VehicleEvent(EntityVehicle vehicle) {
+    public VehicleEvent(Entity vehicle) {
         this.vehicle = vehicle;
     }
 
-    public EntityVehicle getVehicle() {
+    public Entity getVehicle() {
         return vehicle;
     }
 }

@@ -306,4 +306,32 @@ public interface AxisAlignedBB extends Cloneable {
     double getMaxZ();
 
     AxisAlignedBB clone();
+
+    default void forEach(BBConsumer action) {
+        int minX = NukkitMath.floorDouble(this.getMinX());
+        int minY = NukkitMath.floorDouble(this.getMinY());
+        int minZ = NukkitMath.floorDouble(this.getMinZ());
+
+        int maxX = NukkitMath.floorDouble(this.getMaxX());
+        int maxY = NukkitMath.floorDouble(this.getMaxY());
+        int maxZ = NukkitMath.floorDouble(this.getMaxZ());
+
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                for (int z = minZ; z <= maxZ; z++) {
+                    action.accept(x, y, z);
+                }
+            }
+        }
+    }
+
+
+    interface BBConsumer<T> {
+
+        void accept(int x, int y, int z);
+
+        default T get() {
+            return null;
+        }
+    }
 }

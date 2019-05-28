@@ -1,9 +1,12 @@
 package cn.nukkit.network.protocol;
 
+import lombok.ToString;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
+@ToString
 public class ShowProfilePacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.SHOW_PROFILE_PACKET;
 

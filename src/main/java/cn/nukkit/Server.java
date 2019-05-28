@@ -15,6 +15,7 @@ import cn.nukkit.entity.projectile.*;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
+import cn.nukkit.event.server.BatchPacketsEvent;
 import cn.nukkit.event.server.PlayerDataSerializeEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
 import cn.nukkit.inventory.CraftingManager;
@@ -71,6 +72,7 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.resourcepacks.ResourcePackManager;
 import cn.nukkit.scheduler.ServerScheduler;
+import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.*;
 import cn.nukkit.utils.bugreport.ExceptionHandler;
 import co.aikar.timings.Timings;
@@ -240,7 +242,7 @@ public class Server {
 
     private PlayerDataSerializer playerDataSerializer = new DefaultPlayerDataSerializer(this);
 
-    Server(final String filePath, String dataPath, String pluginPath) {
+    Server(final String filePath, String dataPath, String pluginPath, String predefinedLanguage) {
         Preconditions.checkState(instance == null, "Already initialized!");
         currentThread = Thread.currentThread(); // Saves the current thread instance as a reference, used in Server#isPrimaryThread()
         instance = this;
@@ -285,10 +287,20 @@ public class Server {
             String fallback = BaseLang.FALLBACK_LANGUAGE;
             String language = null;
             while (language == null) {
-                String lang = this.console.readLine();
+                String lang;
+                if (predefinedLanguage != null) {
+                    log.info("Trying to load language from predefined language: " + predefinedLanguage);
+                    lang = predefinedLanguage;
+                } else {
+                    lang = this.console.readLine();
+                }
+
                 InputStream conf = this.getClass().getClassLoader().getResourceAsStream("lang/" + lang + "/lang.ini");
                 if (conf != null) {
                     language = lang;
+                } else if(predefinedLanguage != null) {
+                    log.warn("No language found for predefined language: " + predefinedLanguage + ", please choose a valid language");
+                    predefinedLanguage = null;
                 }
             }
 
@@ -569,7 +581,7 @@ public class Server {
         return recipients.length;
     }
 
-    public int broadcastMessage(String message, Collection<CommandSender> recipients) {
+    public int broadcastMessage(String message, Collection<? extends CommandSender> recipients) {
         for (CommandSender recipient : recipients) {
             recipient.sendMessage(message);
         }
@@ -577,7 +589,7 @@ public class Server {
         return recipients.size();
     }
 
-    public int broadcastMessage(TextContainer message, Collection<CommandSender> recipients) {
+    public int broadcastMessage(TextContainer message, Collection<? extends CommandSender> recipients) {
         for (CommandSender recipient : recipients) {
             recipient.sendMessage(message);
         }
@@ -648,6 +660,12 @@ public class Server {
 
     public void batchPackets(Player[] players, DataPacket[] packets, boolean forceSync) {
         if (players == null || packets == null || players.length == 0 || packets.length == 0) {
+            return;
+        }
+
+        BatchPacketsEvent ev = new BatchPacketsEvent(players, packets, forceSync);
+        getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
             return;
         }
 
@@ -799,10 +817,6 @@ public class Server {
                 this.rcon.close();
             }
 
-            if (nameLookup != null) {
-                nameLookup.close();
-            }
-
             this.getLogger().debug("Disabling all plugins");
             this.pluginManager.disablePlugins();
 
@@ -829,6 +843,10 @@ public class Server {
             for (SourceInterface interfaz : this.network.getInterfaces()) {
                 interfaz.shutdown();
                 this.network.unregisterInterface(interfaz);
+            }
+
+            if (nameLookup != null) {
+                nameLookup.close();
             }
 
             this.getLogger().debug("Disabling timings");
@@ -1551,7 +1569,8 @@ public class Server {
 
     @Deprecated
     public CompoundTag getOfflinePlayerData(String name) {
-        return getOfflinePlayerDataInternal(name, true);
+        Optional<UUID> uuid = lookupName(name);
+        return getOfflinePlayerDataInternal(uuid.map(UUID::toString).orElse(name), true);
     }
 
     private CompoundTag getOfflinePlayerDataInternal(String name, boolean runEvent) {
@@ -1608,7 +1627,7 @@ public class Server {
                 .putBoolean("OnGround", true)
                 .putBoolean("Invulnerable", false);
 
-        this.saveOfflinePlayerData(name, nbt);
+        this.saveOfflinePlayerData(name, nbt, true, runEvent);
         return nbt;
     }
 
@@ -1625,7 +1644,8 @@ public class Server {
     }
 
     public void saveOfflinePlayerData(String name, CompoundTag tag, boolean async) {
-        saveOfflinePlayerData(name, tag, async, true);
+        Optional<UUID> uuid = lookupName(name);
+        saveOfflinePlayerData(uuid.map(UUID::toString).orElse(name), tag, async, true);
     }
 
     private void saveOfflinePlayerData(String name, CompoundTag tag, boolean async, boolean runEvent) {
@@ -1636,8 +1656,22 @@ public class Server {
                 pluginManager.callEvent(event);
             }
 
-            this.getScheduler().scheduleTask(() -> {
-                saveOfflinePlayerDataInternal(event.getSerializer(), tag, nameLower, event.getUuid().orElse(null));
+            this.getScheduler().scheduleTask(new Task() {
+                boolean hasRun = false;
+
+                @Override
+                public void onRun(int currentTick) {
+                    this.onCancel();
+                }
+
+                //doing it like this ensures that the playerdata will be saved in a server shutdown
+                @Override
+                public void onCancel() {
+                    if (!this.hasRun)    {
+                        this.hasRun = true;
+                        saveOfflinePlayerDataInternal(event.getSerializer(), tag, nameLower, event.getUuid().orElse(null));
+                    }
+                }
             }, async);
         }
     }
@@ -2168,49 +2202,50 @@ public class Server {
 
     private void registerEntities() {
         Entity.registerEntity("Arrow", EntityArrow.class);
-        Entity.registerEntity("Item", EntityItem.class);
+        Entity.registerEntity("EnderPearl", EntityEnderPearl.class);
         Entity.registerEntity("FallingSand", EntityFallingBlock.class);
+        Entity.registerEntity("Firework", EntityFirework.class);
+        Entity.registerEntity("Item", EntityItem.class);
+        Entity.registerEntity("Painting", EntityPainting.class);
         Entity.registerEntity("PrimedTnt", EntityPrimedTNT.class);
         Entity.registerEntity("Snowball", EntitySnowball.class);
-        Entity.registerEntity("EnderPearl", EntityEnderPearl.class);
-        Entity.registerEntity("Painting", EntityPainting.class);
         //Monsters
-        Entity.registerEntity("Creeper", EntityCreeper.class);
         Entity.registerEntity("Blaze", EntityBlaze.class);
         Entity.registerEntity("CaveSpider", EntityCaveSpider.class);
-        Entity.registerEntity("Cod", EntityCod.class);
+        Entity.registerEntity("Creeper", EntityCreeper.class);
         Entity.registerEntity("Drowned", EntityDrowned.class);
         Entity.registerEntity("ElderGuardian", EntityElderGuardian.class);
         Entity.registerEntity("EnderDragon", EntityEnderDragon.class);
         Entity.registerEntity("Enderman", EntityEnderman.class);
         Entity.registerEntity("Endermite", EntityEndermite.class);
         Entity.registerEntity("Evoker", EntityEvoker.class);
-        Entity.registerEntity("Firework", EntityFirework.class);
         Entity.registerEntity("Ghast", EntityGhast.class);
         Entity.registerEntity("Guardian", EntityGuardian.class);
         Entity.registerEntity("Husk", EntityHusk.class);
         Entity.registerEntity("MagmaCube", EntityMagmaCube.class);
         Entity.registerEntity("Phantom", EntityPhantom.class);
+        Entity.registerEntity("Pillager", EntityPillager.class);
+        Entity.registerEntity("Ravager", EntityRavager.class);
         Entity.registerEntity("Shulker", EntityShulker.class);
         Entity.registerEntity("Silverfish", EntitySilverfish.class);
         Entity.registerEntity("Skeleton", EntitySkeleton.class);
-        Entity.registerEntity("SkeletonHorse", EntitySkeletonHorse.class);
         Entity.registerEntity("Slime", EntitySlime.class);
         Entity.registerEntity("Spider", EntitySpider.class);
         Entity.registerEntity("Stray", EntityStray.class);
-        Entity.registerEntity("Vindicator", EntityVindicator.class);
         Entity.registerEntity("Vex", EntityVex.class);
-        Entity.registerEntity("WitherSkeleton", EntityWitherSkeleton.class);
-        Entity.registerEntity("Wither", EntityWither.class);
+        Entity.registerEntity("Vindicator", EntityVindicator.class);
         Entity.registerEntity("Witch", EntityWitch.class);
+        Entity.registerEntity("Wither", EntityWither.class);
+        Entity.registerEntity("WitherSkeleton", EntityWitherSkeleton.class);
+        Entity.registerEntity("Zombie", EntityZombie.class);
         Entity.registerEntity("ZombiePigman", EntityZombiePigman.class);
         Entity.registerEntity("ZombieVillager", EntityZombieVillager.class);
-        Entity.registerEntity("Zombie", EntityZombie.class);
-
+        Entity.registerEntity("ZombieVillagerV1", EntityZombieVillagerV1.class);
         //Passive
         Entity.registerEntity("Bat", EntityBat.class);
         Entity.registerEntity("Cat", EntityCat.class);
         Entity.registerEntity("Chicken", EntityChicken.class);
+        Entity.registerEntity("Cod", EntityCod.class);
         Entity.registerEntity("Cow", EntityCow.class);
         Entity.registerEntity("Dolphin", EntityDolphin.class);
         Entity.registerEntity("Donkey", EntityDonkey.class);
@@ -2218,31 +2253,38 @@ public class Server {
         Entity.registerEntity("Llama", EntityLlama.class);
         Entity.registerEntity("Mooshroom", EntityMooshroom.class);
         Entity.registerEntity("Mule", EntityMule.class);
-        Entity.registerEntity("Panda", EntityPanda.class);
-        Entity.registerEntity("PolarBear", EntityPolarBear.class);
-        Entity.registerEntity("Pig", EntityPig.class);
-        Entity.registerEntity("Rabbit", EntityRabbit.class);
-        Entity.registerEntity("Sheep", EntitySheep.class);
-        Entity.registerEntity("Squid", EntitySquid.class);
-        Entity.registerEntity("Wolf", EntityWolf.class);
         Entity.registerEntity("Ocelot", EntityOcelot.class);
+        Entity.registerEntity("Panda", EntityPanda.class);
+        Entity.registerEntity("Parrot", EntityParrot.class);
+        Entity.registerEntity("Pig", EntityPig.class);
+        Entity.registerEntity("PolarBear", EntityPolarBear.class);
         Entity.registerEntity("Pufferfish", EntityPufferfish.class);
+        Entity.registerEntity("Rabbit", EntityRabbit.class);
         Entity.registerEntity("Salmon", EntitySalmon.class);
+        Entity.registerEntity("Sheep", EntitySheep.class);
+        Entity.registerEntity("SkeletonHorse", EntitySkeletonHorse.class);
+        Entity.registerEntity("Squid", EntitySquid.class);
         Entity.registerEntity("TropicalFish", EntityTropicalFish.class);
         Entity.registerEntity("Turtle", EntityTurtle.class);
         Entity.registerEntity("Villager", EntityVillager.class);
-
-        Entity.registerEntity("ThrownExpBottle", EntityExpBottle.class);
-        Entity.registerEntity("XpOrb", EntityXPOrb.class);
-        Entity.registerEntity("ThrownPotion", EntityPotion.class);
+        Entity.registerEntity("VillagerV1", EntityVillagerV1.class);
+        Entity.registerEntity("WanderingTrader", EntityWanderingTrader.class);
+        Entity.registerEntity("Wolf", EntityWolf.class);
+        Entity.registerEntity("ZombieHorse", EntityZombieHorse.class);
+        //Projectile
         Entity.registerEntity("Egg", EntityEgg.class);
+        Entity.registerEntity("ThrownExpBottle", EntityExpBottle.class);
+        Entity.registerEntity("ThrownPotion", EntityPotion.class);
         Entity.registerEntity("ThrownTrident", EntityThrownTrident.class);
+        Entity.registerEntity("XpOrb", EntityXPOrb.class);
 
         Entity.registerEntity("Human", EntityHuman.class, true);
-
-        Entity.registerEntity("MinecartRideable", EntityMinecartEmpty.class);
-        // TODO: 2016/1/30 all finds of minecart
+        //Vehicle
         Entity.registerEntity("Boat", EntityBoat.class);
+        Entity.registerEntity("MinecartChest", EntityMinecartChest.class);
+        Entity.registerEntity("MinecartHopper", EntityMinecartHopper.class);
+        Entity.registerEntity("MinecartRideable", EntityMinecartEmpty.class);
+        Entity.registerEntity("MinecartTnt", EntityMinecartTNT.class);
 
         Entity.registerEntity("EndCrystal", EntityEndCrystal.class);
         Entity.registerEntity("FishingHook", EntityFishingHook.class);

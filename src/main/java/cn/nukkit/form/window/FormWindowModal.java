@@ -13,10 +13,10 @@ public class FormWindowModal extends FormWindow {
 
     private FormResponseModal response = null;
 
-    public FormWindowModal(String title, String content, String trueButonText, String falseButtonText) {
+    public FormWindowModal(String title, String content, String trueButtonText, String falseButtonText) {
         this.title = title;
         this.content = content;
-        this.button1 = trueButonText;
+        this.button1 = trueButtonText;
         this.button2 = falseButtonText;
     }
 

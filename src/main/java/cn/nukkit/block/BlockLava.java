@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockIgniteEvent;
+import cn.nukkit.entity.item.EntityPrimedTNT;
 import cn.nukkit.event.entity.EntityCombustByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -187,6 +188,13 @@ public class BlockLava extends BlockLiquid {
             ((BlockLiquid) block).liquidCollide(this, new BlockStone());
         }else{
             super.flowIntoBlock(block, newFlowDecay);
+        }
+    }
+
+    @Override
+    public void addVelocityToEntity(Entity entity, Vector3 vector) {
+        if (!(entity instanceof EntityPrimedTNT)) {
+            super.addVelocityToEntity(entity, vector);
         }
     }
 }
