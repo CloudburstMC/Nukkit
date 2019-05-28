@@ -2,6 +2,8 @@ package cn.nukkit.level.format.generic;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.format.ChunkSection;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.ChunkException;
 
 import java.util.Arrays;
@@ -20,9 +22,14 @@ public class EmptyChunkSection implements ChunkSection {
     public static byte[] EMPTY_ID_ARR = new byte[4096];
     public static byte[] EMPTY_DATA_ARR = new byte[2048];
     public static byte[] EMPTY_SKY_LIGHT_ARR = new byte[2048];
+    public static long[] EMPTY_BLOCK_STATES_ARR = new long[256];
     static {
         Arrays.fill(EMPTY_SKY_LIGHT_ARR, (byte) 255);
+        Arrays.fill(EMPTY_BLOCK_STATES_ARR, 0);
     }
+    public static final CompoundTag EMPTY_PALETTE = new CompoundTag()
+                .putList(new ListTag<>("Palette").add(new CompoundTag().putString("Name", "minecraft:air")))
+                .putLongArray("BlockStates", EMPTY_BLOCK_STATES_ARR);
 
     private final int y;
 
@@ -83,16 +90,6 @@ public class EmptyChunkSection implements ChunkSection {
     public boolean setBlock(int x, int y, int z, int blockId, int meta, int layer) throws ChunkException {
         if (blockId != 0) throw new ChunkException("Tried to modify an empty Chunk");
         return false;
-    }
-
-    @Override
-    public byte[] getIdArray() {
-        return EMPTY_ID_ARR;
-    }
-
-    @Override
-    public byte[] getIdArray(int layer) {
-        return EMPTY_ID_ARR;
     }
 
     @Override
@@ -188,13 +185,8 @@ public class EmptyChunkSection implements ChunkSection {
     }
 
     @Override
-    public byte[] getMatrixArray() {
-        return EMPTY_DATA_ARR;
-    }
-
-    @Override
-    public byte[] getMatrixArray(int layer) {
-        return EMPTY_DATA_ARR;
+    public CompoundTag getPalettedTag() {
+        return EMPTY_PALETTE;
     }
 
     @Override

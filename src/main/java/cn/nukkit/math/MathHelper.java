@@ -13,6 +13,8 @@ public class MathHelper {
     private static final int BIG_ENOUGH_INT = 30_000_000;
     private static final double BIG_ENOUGH_FLOOR = BIG_ENOUGH_INT;
 
+    private static final int[] MULTIPLY_DE_BRUJIN_BIT_POSITION = new int[]{0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9};
+
     private MathHelper() {
     }
 
@@ -112,5 +114,41 @@ public class MathHelper {
 
     public static int fastFloor(float val) {
         return (int) (val + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;
+    }
+
+    public static int roundUp(final int int_1, int int_2) {
+        if (int_2 == 0) {
+            return 0;
+        }
+        if (int_1 == 0) {
+            return int_2;
+        }
+        if (int_1 < 0) {
+            int_2 *= -1;
+        }
+        final int int_3 = int_1 % int_2;
+        if (int_3 == 0) {
+            return int_1;
+        }
+        return int_1 + int_2 - int_3;
+    }
+
+    public static int smallestEncompassingPowerOfTwo(final int int_1) {
+        int int_2 = int_1 - 1;
+        int_2 |= int_2 >> 1;
+        int_2 |= int_2 >> 2;
+        int_2 |= int_2 >> 4;
+        int_2 |= int_2 >> 8;
+        int_2 |= int_2 >> 16;
+        return int_2 + 1;
+    }
+
+    private static boolean isPowerOfTwo(final int int_1) {
+        return int_1 != 0 && (int_1 & int_1 - 1) == 0x0;
+    }
+
+    public static int log2DeBrujin(int int_1) {
+        int_1 = (isPowerOfTwo(int_1) ? int_1 : smallestEncompassingPowerOfTwo(int_1));
+        return MathHelper.MULTIPLY_DE_BRUJIN_BIT_POSITION[(int) (int_1 * 125613361L >> 27) & 0x1F];
     }
 }

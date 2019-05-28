@@ -2,6 +2,7 @@ package cn.nukkit.level;
 
 import cn.nukkit.Server;
 import cn.nukkit.utils.BinaryStream;
+import com.google.common.collect.HashBiMap;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
@@ -18,6 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class GlobalBlockPalette {
     private static final Int2IntArrayMap legacyToRuntimeId = new Int2IntArrayMap();
     private static final Int2IntArrayMap runtimeIdToLegacy = new Int2IntArrayMap();
+    private static final HashBiMap<Integer, String> idToName = HashBiMap.create();
     private static final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
     private static final byte[] compiledTable;
 
@@ -40,7 +42,7 @@ public class GlobalBlockPalette {
         table.putUnsignedVarInt(entries.size());
 
         for (TableEntry entry : entries) {
-            registerMapping((entry.id << 4) | entry.data);
+            registerMapping((entry.id << 4) | entry.data, entry.name);
             table.putString(entry.name);
             table.putLShort(entry.data);
         }
@@ -61,10 +63,27 @@ public class GlobalBlockPalette {
         return runtimeId;
     }
 
-    private static int registerMapping(int legacyId) {
+    public static String getName(int id) throws NoSuchElementException {
+        String name = idToName.get(id);
+        if (name == null) {
+            throw new NoSuchElementException("Unmapped block registered id: " + id);
+        }
+        return name;
+    }
+
+    public static int getId(String name) throws NoSuchElementException {
+        Integer id = idToName.inverse().get(name);
+        if (id == null) {
+            throw new NoSuchElementException("Unmapped block registered name: " + name);
+        }
+        return id;
+    }
+
+    private static int registerMapping(int legacyId, String name) {
         int runtimeId = runtimeIdAllocator.getAndIncrement();
         runtimeIdToLegacy.put(runtimeId, legacyId);
         legacyToRuntimeId.put(legacyId, runtimeId);
+        idToName.putIfAbsent(legacyId >>> 4, name);
         return runtimeId;
     }
 

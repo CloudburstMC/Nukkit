@@ -1,6 +1,7 @@
 package cn.nukkit.level.format;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
  * author: MagicDroidX
@@ -51,10 +52,6 @@ public interface ChunkSection {
 
     void setBlockLight(int x, int y, int z, int level);
 
-    byte[] getIdArray();
-
-    byte[] getIdArray(int layer);
-
     byte[] getDataArray();
 
     byte[] getDataArray(int layer);
@@ -69,9 +66,7 @@ public interface ChunkSection {
 
     ChunkSection copy();
 
-    byte[] getMatrixArray();
-
-    byte[] getMatrixArray(int layer);
+    CompoundTag getPalettedTag();
 
     boolean hasLayer2();
 }

@@ -277,15 +277,11 @@ public class Chunk extends BaseChunk {
             }
             CompoundTag s = new CompoundTag(null);
             s.putByte("Y", section.getY());
-            s.putByteArray("Blocks", section.getIdArray());
+            CompoundTag paletted = section.getPalettedTag();
+            s.putList(paletted.getList("Palette"));
             s.putByteArray("Data", section.getDataArray());
-            s.putByteArray("NukkitMatrix", section.getMatrixArray());
-            if (section.hasLayer2()) {
-                s.putByteArray("Blocks2", section.getIdArray(1));
-                s.putByteArray("Data2", section.getDataArray(1));
-                s.putByteArray("NukkitMatrix2", section.getMatrixArray(1));
-            }
             s.putByteArray("BlockLight", section.getLightArray());
+            s.putLongArray("BlockStates", paletted.getLongArray("BlockStates"));
             s.putByteArray("SkyLight", section.getSkyLightArray());
             nbt.getList("Sections", CompoundTag.class).add(s);
         }
@@ -366,15 +362,11 @@ public class Chunk extends BaseChunk {
             }
             CompoundTag s = new CompoundTag(null);
             s.putByte("Y", (section.getY()));
-            s.putByteArray("Blocks", section.getIdArray());
+            CompoundTag paletted = section.getPalettedTag();
+            s.putList(paletted.getList("Palette"));
             s.putByteArray("Data", section.getDataArray());
-            s.putByteArray("NukkitMatrix", section.getMatrixArray());
-            if (section.hasLayer2()) {
-                s.putByteArray("Blocks2", section.getIdArray(1));
-                s.putByteArray("Data2", section.getDataArray(1));
-                s.putByteArray("NukkitMatrix2", section.getMatrixArray(1));
-            }
             s.putByteArray("BlockLight", section.getLightArray());
+            s.putLongArray("BlockStates", paletted.getLongArray("BlockStates"));
             s.putByteArray("SkyLight", section.getSkyLightArray());
             sectionList.add(s);
         }

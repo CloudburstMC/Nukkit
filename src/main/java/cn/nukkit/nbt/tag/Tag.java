@@ -19,6 +19,7 @@ public abstract class Tag {
     public static final byte TAG_List = 9;
     public static final byte TAG_Compound = 10;
     public static final byte TAG_Int_Array = 11;
+    public static final byte TAG_Long_Array = 12;
 
     private String name;
 
@@ -117,6 +118,8 @@ public abstract class Tag {
                 return new ByteArrayTag(name);
             case TAG_Int_Array:
                 return new IntArrayTag(name);
+            case TAG_Long_Array:
+                return new LongArrayTag(name);
             case TAG_String:
                 return new StringTag(name);
             case TAG_List:
@@ -147,6 +150,8 @@ public abstract class Tag {
                 return "TAG_Byte_Array";
             case TAG_Int_Array:
                 return "TAG_Int_Array";
+            case TAG_Long_Array:
+                return "TAG_Long_Array";
             case TAG_String:
                 return "TAG_String";
             case TAG_List:

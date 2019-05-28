@@ -207,9 +207,8 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
 
     @Override
     public boolean setSection(float fY, ChunkSection section) {
-        byte[] emptyIdArray = new byte[4096];
         byte[] emptyDataArray = new byte[2048];
-        if (Arrays.equals(emptyIdArray, section.getIdArray()) && Arrays.equals(emptyDataArray, section.getDataArray())) {
+        if (section.getPalettedTag().equals(EmptyChunkSection.EMPTY_PALETTE) && Arrays.equals(emptyDataArray, section.getDataArray())) {
             this.sections[(int) fY] = EmptyChunkSection.EMPTY[(int) fY];
         } else {
             this.sections[(int) fY] = section;
@@ -235,11 +234,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
 
     @Override
     public byte[] getBlockIdArray() {
-        ByteBuffer buffer = ByteBuffer.allocate(4096 * SECTION_COUNT);
-        for (int y = 0; y < SECTION_COUNT; y++) {
-            buffer.put(this.sections[y].getIdArray());
-        }
-        return buffer.array();
+        throw new UnsupportedOperationException();
     }
 
     @Override

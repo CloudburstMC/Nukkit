@@ -4,10 +4,12 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.format.anvil.palette.Palette;
 import cn.nukkit.level.format.anvil.util.BlockStorage;
+import cn.nukkit.level.format.anvil.util.DataBits;
 import cn.nukkit.level.format.anvil.util.NibbleArray;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ThreadCache;
@@ -20,7 +22,9 @@ import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.IntConsumer;
 
 /**
@@ -31,14 +35,12 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     private static final byte VERSION = 8;
 
-    private static final byte[] EMPTY_MATRIX = EmptyChunkSection.EMPTY_DATA_ARR;
-    static {
-        Arrays.fill(EMPTY_MATRIX, (byte) 0);
-    }
-
     private final int y;
 
     private final BlockStorage[] storage;
+
+    private List<String> palette = new ArrayList<>();
+    private long[] blockStates;
 
     protected byte[] blockLight;
     protected byte[] skyLight;
@@ -69,38 +71,33 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         this.y = nbt.getByte("Y");
         storage = new BlockStorage[2];
 
-        byte[] blocks = nbt.getByteArray("Blocks");
-        NibbleArray data = new NibbleArray(nbt.getByteArray("Data"));
-        NibbleArray matrix = new NibbleArray(nbt.getByteArray("NukkitMatrix"));
-        if (matrix.getData().length <= 0) {
-            matrix = new NibbleArray(EMPTY_MATRIX);
-        }
-        storage[0] = new BlockStorage();
-
-        byte[] blocks2 = nbt.getByteArray("Blocks2");
-        NibbleArray data2 = null;
-        NibbleArray matrix2 = null;
-        boolean hasLayer2 = blocks2.length > 0;
-        if (hasLayer2) {
-            data2 = new NibbleArray(nbt.getByteArray("Data2"));
-            matrix2 = new NibbleArray(nbt.getByteArray("NukkitMatrix2"));
-            if (matrix2.getData().length <= 0) {
-                matrix2 = new NibbleArray(EMPTY_MATRIX);
+        int[] indexes = new int[4096];
+        if (nbt.contains("Blocks")) {
+            byte[] blocks = nbt.getByteArray("Blocks");
+            for (int i = 0; i < indexes.length; i++) {
+                indexes[i] = blocks[i] & 0xff;
+            }   
+        } else {
+            List<Integer> palette = new ArrayList<>();
+            for (CompoundTag entry : nbt.getList("Palette", CompoundTag.class).getAll()) {
+                palette.add(GlobalBlockPalette.getId(entry.getString("Name")));
             }
-            storage[1] = new BlockStorage();
+            DataBits dataBits = new DataBits(Math.max(4, MathHelper.log2DeBrujin(palette.size())), 4096, nbt.getLongArray("BlockStates"));
+            for (int i = 0; i  < indexes.length; i++) {
+                indexes[i] = palette.get(dataBits.get(i));
+            }
         }
+        NibbleArray data = new NibbleArray(nbt.getByteArray("Data"));
+
+        storage[0] = new BlockStorage();
 
         // Convert YZX to XZY
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 for (int y = 0; y < 16; y++) {
                     int index = getAnvilIndex(x, y, z);
-                    storage[0].setBlockId(x, y, z, (blocks[index] & 0xff) + 256 * (matrix.get(index) & 1));
+                    storage[0].setBlockId(x, y, z, indexes[index]);
                     storage[0].setBlockData(x, y, z, data.get(index));
-                    if (hasLayer2) {
-                        storage[1].setBlockId(x, y, z, (blocks2[index] & 0xff) + 256 * (matrix2.get(index) & 1));
-                        storage[1].setBlockData(x, y, z, data2.get(index));
-                    }
                 }
             }
         }
@@ -303,28 +300,6 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     }
 
     @Override
-    public byte[] getIdArray() {
-        return getIdArray(0);
-    }
-
-    @Override
-    public byte[] getIdArray(int layer) {
-        checkLayer(layer);
-        synchronized (storage[layer]) {
-            byte[] anvil = new byte[4096];
-            for (int x = 0; x < 16; x++) {
-                for (int z = 0; z < 16; z++) {
-                    for (int y = 0; y < 16; y++) {
-                        int index = getAnvilIndex(x, y, z);
-                        anvil[index] = (byte) storage[layer].getBlockId(x, y, z);
-                    }
-                }
-            }
-            return anvil;
-        }
-    }
-
-    @Override
     public byte[] getDataArray() {
         return getDataArray(0);
     }
@@ -394,6 +369,20 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
             return this.blockLight;
         } else {
             return EmptyChunkSection.EMPTY_DATA_ARR;
+        }
+    }
+
+    @Override
+    public CompoundTag getPalettedTag() {
+        synchronized (storage[0]) {
+            recalculatePalette();
+            ListTag<CompoundTag> palette = new ListTag<>("Palette");
+            for (String name : this.palette) {
+                palette.add(new CompoundTag().putString("Name", name));
+            }
+            return new CompoundTag()
+                    .putList(palette)
+                    .putLongArray("BlockStates", blockStates);
         }
     }
 
@@ -487,25 +476,33 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         return false;
     }
 
-    @Override
-    public byte[] getMatrixArray() {
-        return getMatrixArray(0);
-    }
-
-    @Override
-    public byte[] getMatrixArray(int layer) {
-        checkLayer(layer);
-        synchronized (storage[layer]) {
-            NibbleArray anvil = new NibbleArray(4096);
+    private void recalculatePalette() {
+        if (storage[0].isDirty()) {
+            int[] anvil = new int[4096];
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < 16; y++) {
                         int index = getAnvilIndex(x, y, z);
-                        anvil.set(index, (byte) storage[layer].getMatrixElement(x, y, z));
+                        anvil[index] = storage[0].getBlockId(x, y, z);
                     }
                 }
             }
-            return anvil.getData();
+
+            int[] paletted = new int[anvil.length];
+            palette.clear();
+            for (int i = 0; i < anvil.length; i++) {
+                String name = GlobalBlockPalette.getName(anvil[i]);
+                if (!palette.contains(name)) {
+                    palette.add(name);
+                }
+                paletted[i] = palette.indexOf(name);
+            }
+            DataBits dataBits = new DataBits(Math.max(4, MathHelper.log2DeBrujin(palette.size())), paletted.length);
+            for (int i = 0; i < paletted.length; i++) {
+                dataBits.set(i, paletted[i]);
+            }
+            blockStates = dataBits.getStorage();
+            storage[0].setDirty(false);
         }
     }
 
@@ -528,7 +525,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     }
 
     private void checkLayer(int layer) {
-        Preconditions.checkArgument(layer >= 0 && layer <= 1, "Unknown block layer: " + layer);
+        Preconditions.checkArgument(layer >= 0 && layer <= 1, "Invalid block layer: " + layer);
         if (storage[layer] == null) {
             storage[layer] = new BlockStorage();
             synchronized (storage[layer]) {
