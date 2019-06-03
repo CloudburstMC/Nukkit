@@ -64,6 +64,11 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (face != BlockFace.DOWN) {
+            CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.BANNER)
+                    .putInt("Base", item.getDamage() & 0xf);
+
+            new BlockEntityBanner(this.getChunk(), nbt);
+
             if (face == BlockFace.UP) {
                 this.setDamage(NukkitMath.floorDouble(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f);
                 this.getLevel().setBlock(block, this, true);
@@ -71,14 +76,6 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
                 this.setDamage(face.getIndex());
                 this.getLevel().setBlock(block, new BlockWallBanner(this.getDamage()), true);
             }
-
-            CompoundTag nbt = new CompoundTag("")
-                    .putString("id", BlockEntity.BANNER)
-                    .putInt("x", (int) this.x)
-                    .putInt("y", (int) this.y)
-                    .putInt("z", (int) this.z)
-                    .putInt("Base", item.getDamage() & 0x0f);
-            new BlockEntityBanner(this.level.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
 
             return true;
         }
