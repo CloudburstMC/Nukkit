@@ -30,12 +30,14 @@ public class BlockEntityBanner extends BlockEntitySpawnable {
 
     @Override
     public CompoundTag getSpawnCompound() {
-        return new CompoundTag()
-                .putString("id", BlockEntity.BANNER)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z)
+        CompoundTag c = getDefaultCompound(this, BANNER)
                 .putInt("Base", getBaseColor())
                 .putList(namedTag.getList("Patterns"));
+
+        if (this.namedTag.contains("Type")) {
+            c.put("Type", this.namedTag.get("Type"));
+        }
+
+        return c;
     }
 }

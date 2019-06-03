@@ -4,13 +4,14 @@ import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBanner;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBanner;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.IntTag;
+import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.Faceable;
 
 /**
@@ -67,6 +68,11 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
             CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.BANNER)
                     .putInt("Base", item.getDamage() & 0xf);
 
+            Tag type = item.getNamedTagEntry("Type");
+            if (type instanceof IntTag) {
+                nbt.put("Type", type);
+            }
+
             new BlockEntityBanner(this.getChunk(), nbt);
 
             if (face == BlockFace.UP) {
@@ -98,10 +104,15 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
     @Override
     public Item toItem() {
         BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
+        Item item = Item.get(Item.BANNER);
         if (blockEntity instanceof BlockEntityBanner) {
-            return Item.get(Item.BANNER, ((BlockEntityBanner) blockEntity).getBaseColor() & 0xf);
+            BlockEntityBanner banner = (BlockEntityBanner) blockEntity;
+            item.setDamage(banner.getBaseColor() & 0xf);
+            if (banner.namedTag.contains("Type")) {
+                item.setNamedTag(new CompoundTag().put("Type", banner.namedTag.get("Type")));
+            }
         }
-        return Item.get(Item.BANNER);
+        return item;
     }
 
     @Override
