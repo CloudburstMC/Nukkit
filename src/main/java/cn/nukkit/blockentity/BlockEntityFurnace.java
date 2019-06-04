@@ -186,9 +186,8 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
     }
 
     protected void checkFuel(Item fuel) {
-
         FurnaceBurnEvent ev = new FurnaceBurnEvent(this, fuel, fuel.getFuelTime() == null ? 0 : fuel.getFuelTime());
-
+        this.server.getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
             return;
         }
