@@ -104,7 +104,14 @@ public class CraftingManager {
                     case 3:
                         Map<String, Object> resultMap = (Map) recipe.get("output");
                         Item resultItem = Item.fromJson(resultMap);
-                        this.registerRecipe(new FurnaceRecipe(resultItem, Item.get(Utils.toInt(recipe.get("inputId")), recipe.containsKey("inputDamage") ? Utils.toInt(recipe.get("inputDamage")) : -1, 1)));
+                        Item inputItem;
+                        try {
+                            Map<String, Object> inputMap = (Map) recipe.get("input");
+                            inputItem = Item.fromJson(inputMap);
+                        } catch (Exception old) {
+                            inputItem = Item.get(Utils.toInt(recipe.get("inputId")), recipe.containsKey("inputDamage") ? Utils.toInt(recipe.get("inputDamage")) : -1, 1);
+                        }
+                        this.registerRecipe(new FurnaceRecipe(resultItem, inputItem));
                         break;
                     default:
                         break;
