@@ -715,11 +715,11 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public static Entity createEntity(String name, Position pos, Object... args) {
-        return createEntity(name, pos.getLevel().getChunk(pos.getFloorX(), pos.getFloorZ()), getDefaultNBT(pos), args);
+        return createEntity(name, pos.getChunk(), getDefaultNBT(pos), args);
     }
 
     public static Entity createEntity(int type, Position pos, Object... args) {
-        return createEntity(String.valueOf(type), pos.getLevel().getChunk(pos.getFloorX(), pos.getFloorZ()), getDefaultNBT(pos), args);
+        return createEntity(String.valueOf(type), pos.getChunk(), getDefaultNBT(pos), args);
     }
 
     public static Entity createEntity(String name, FullChunk chunk, CompoundTag nbt, Object... args) {
