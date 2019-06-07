@@ -830,19 +830,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return;
         }
         this.spawned = true;
+        this.setImmobile(false);
 
-        this.setEnableClientCommand(true);
-
-        this.getAdventureSettings().update();
-
-        this.sendPotionEffects(this);
-        this.sendData(this);
-        this.inventory.sendContents(this);
-        this.inventory.sendArmorContents(this);
-
-        SetTimePacket setTimePacket = new SetTimePacket();
-        setTimePacket.time = this.level.getTime();
-        this.dataPacket(setTimePacket);
+        if (this.hasPermission(Server.BROADCAST_CHANNEL_USERS)) {
+            this.server.getPluginManager().subscribeToPermission(Server.BROADCAST_CHANNEL_USERS, this);
+        }
+        if (this.hasPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE)) {
+            this.server.getPluginManager().subscribeToPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE, this);
+        }
 
         Position pos = this.level.getSafeSpawn(this);
 
@@ -876,16 +871,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.noDamageTicks = 60;
 
-        this.getServer().sendRecipeList(this);
-
-        if (this.gamemode == Player.SPECTATOR) {
-            InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
-            inventoryContentPacket.inventoryId = ContainerIds.CREATIVE;
-            this.dataPacket(inventoryContentPacket);
-        } else {
-            inventory.sendCreativeContents();
-        }
-
         for (long index : this.usedChunks.keySet()) {
             int chunkX = Level.getHashX(index);
             int chunkZ = Level.getHashZ(index);
@@ -896,34 +881,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
         }
 
-        int experience = this.getExperience();
-        if (experience != 0) {
-            this.sendExperience(experience);
-        }
-
-        int level = this.getExperienceLevel();
-        if (level != 0) {
-            this.sendExperienceLevel(this.getExperienceLevel());
-        }
-
         this.teleport(pos, null); // Prevent PlayerTeleportEvent during player spawn
 
         if (!this.isSpectator()) {
             this.spawnToAll();
-        }
-
-        //todo Updater
-
-        //Weather
-        if (this.level.isRaining() || this.level.isThundering()) {
-            this.getLevel().sendWeather(this);
-        }
-        this.getLevel().sendWeather(this);
-
-        //FoodLevel
-        PlayerFood food = this.getFoodData();
-        if (food.getLevel() != food.getMaxLevel()) {
-            food.sendFoodLevel();
         }
     }
 
@@ -1861,13 +1822,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return;
         }
 
-        if (this.hasPermission(Server.BROADCAST_CHANNEL_USERS)) {
-            this.server.getPluginManager().subscribeToPermission(Server.BROADCAST_CHANNEL_USERS, this);
-        }
-        if (this.hasPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE)) {
-            this.server.getPluginManager().subscribeToPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE, this);
-        }
-
         for (Player p : new ArrayList<>(this.server.getOnlinePlayers().values())) {
             if (p != this && p.getName() != null && p.getName().equalsIgnoreCase(this.getName())) {
                 if (!p.kick(PlayerKickEvent.Reason.NEW_CONNECTION, "logged in from another location")) {
@@ -2031,12 +1985,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.loggedIn = true;
 
         this.level.sendTime(this);
+        if (this.level.isRaining() || this.level.isThundering()) {
+            this.level.sendWeather(this);
+        }
 
         this.setMovementSpeed(DEFAULT_SPEED);
         this.sendAttributes();
         this.setNameTagVisible(true);
         this.setNameTagAlwaysVisible(true);
         this.setCanClimb(true);
+        this.setImmobile(true); //disable pre-spawn movement
 
         this.server.getLogger().info(this.getServer().getLanguage().translateString("nukkit.player.logIn",
                 TextFormat.AQUA + this.username + TextFormat.WHITE,
@@ -2051,6 +2009,22 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (this.isOp() || this.hasPermission("nukkit.textcolor")) {
             this.setRemoveFormat(false);
         }
+
+        this.setEnableClientCommand(true);
+        this.getAdventureSettings().update();
+        this.sendPotionEffects(this);
+        this.sendData(this);
+
+        this.sendAllInventories();
+        if (this.gamemode == Player.SPECTATOR) {
+            InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
+            inventoryContentPacket.inventoryId = ContainerIds.CREATIVE;
+            this.dataPacket(inventoryContentPacket);
+        } else {
+            this.inventory.sendCreativeContents();
+        }
+        this.inventory.sendHeldItem(this);
+        this.server.sendRecipeList(this);
 
         this.server.addOnlinePlayer(this);
         this.server.onPlayerCompleteLoginSequence(this);
