@@ -181,7 +181,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public final Map<Long, Boolean> usedChunks = new Long2ObjectOpenHashMap<>();
 
-    protected int chunkLoadCount = 0;
+    protected int spawnChunkLoadCount = 0;
     protected final Long2ObjectLinkedOpenHashMap<Boolean> loadQueue = new Long2ObjectLinkedOpenHashMap<>();
     protected int nextChunkOrderRun = 1;
 
@@ -741,7 +741,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.usedChunks.put(Level.chunkHash(x, z), Boolean.TRUE);
-        this.chunkLoadCount++;
 
         this.dataPacket(packet);
 
@@ -760,7 +759,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.usedChunks.put(Level.chunkHash(x, z), true);
-        this.chunkLoadCount++;
 
         FullChunkDataPacket pk = new FullChunkDataPacket();
         pk.chunkX = x;
@@ -820,13 +818,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
             }
         }
-        if (this.chunkLoadCount >= this.spawnThreshold && !this.spawned && this.teleportPosition == null) {
-            this.doFirstSpawn();
+        if (this.spawnChunkLoadCount != -1 && ++this.spawnChunkLoadCount >= this.spawnThreshold) {
+            this.sendPlayStatus(PlayStatusPacket.PLAYER_SPAWN);
+            this.spawnChunkLoadCount = -1;
         }
         Timings.playerChunkSendTimer.stopTiming();
     }
 
     protected void doFirstSpawn() {
+        if (this.spawned) {
+            return;
+        }
         this.spawned = true;
 
         this.setEnableClientCommand(true);
@@ -859,8 +861,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             respawnPacket.z = (float) pos.z;
             this.dataPacket(respawnPacket);
         }
-
-        this.sendPlayStatus(PlayStatusPacket.PLAYER_SPAWN);
 
         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(this,
                 new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.joined", new String[]{
@@ -3247,6 +3247,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.dataPacket(re);
                         });
                     }
+                    break;
+                case ProtocolInfo.SET_LOCAL_PLAYER_AS_INITIALIZED_PACKET:
+                    this.doFirstSpawn();
                     break;
                 default:
                     break;
