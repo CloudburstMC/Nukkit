@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.StringJoiner;
 
 public class CompoundTag extends Tag implements Cloneable {
@@ -200,6 +201,17 @@ public class CompoundTag extends Tag implements Cloneable {
 
     public Map<String, Tag> getTags() {
         return new HashMap<>(this.tags);
+    }
+
+    @Override
+    public Map<String, Object> parseValue() {
+        Map<String, Object> value = new HashMap<>(this.tags.size());
+
+        for (Entry<String, Tag> entry : this.tags.entrySet()) {
+            value.put(entry.getKey(), entry.getValue().parseValue());
+        }
+
+        return value;
     }
 
     public boolean getBoolean(String name) {

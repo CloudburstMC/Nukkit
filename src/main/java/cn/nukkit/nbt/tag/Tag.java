@@ -159,4 +159,5 @@ public abstract class Tag {
 
     public abstract Tag copy();
 
+    public abstract Object parseValue();
 }
