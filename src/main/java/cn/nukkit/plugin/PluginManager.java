@@ -623,6 +623,8 @@ public class PluginManager {
             Method method = getRegistrationClass(type).getDeclaredMethod("getHandlers");
             method.setAccessible(true);
             return (HandlerList) method.invoke(null);
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException("getHandlers method in " + type.getName() + " was not static!");
         } catch (Exception e) {
             throw new IllegalAccessException(Utils.getExceptionMessage(e));
         }

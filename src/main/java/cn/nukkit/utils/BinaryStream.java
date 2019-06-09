@@ -10,6 +10,8 @@ import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.network.protocol.types.EntityLink;
 import it.unimi.dsi.fastutil.io.FastByteArrayInputStream;
 
@@ -304,25 +306,45 @@ public class BinaryStream {
             setOffset(offset + (int) stream.position());
         }
 
-        //TODO
-        int canPlaceOn = this.getVarInt();
-        if (canPlaceOn > 0) {
-            for (int i = 0; i < canPlaceOn; ++i) {
-                this.getString();
-            }
+        String[] canPlaceOn = new String[this.getVarInt()];
+        for (int i = 0; i < canPlaceOn.length; ++i) {
+            canPlaceOn[i] = this.getString();
         }
 
-        //TODO
-        int canDestroy = this.getVarInt();
-        if (canDestroy > 0) {
-            for (int i = 0; i < canDestroy; ++i) {
-                this.getString();
-            }
+        String[] canDestroy = new String[this.getVarInt()];
+        for (int i = 0; i < canDestroy.length; ++i) {
+            canDestroy[i] = this.getString();
         }
 
-        return Item.get(
+        Item item = Item.get(
                 id, data, cnt, nbt
         );
+
+        if (canDestroy.length > 0 || canPlaceOn.length > 0) {
+            CompoundTag namedTag = item.getNamedTag();
+            if (namedTag == null) {
+                namedTag = new CompoundTag();
+            }
+
+            if (canDestroy.length > 0) {
+                ListTag<StringTag> listTag = new ListTag<>("CanDestroy");
+                for (String blockName : canDestroy) {
+                    listTag.add(new StringTag("", blockName));
+                }
+                namedTag.put("CanDestroy", listTag);
+            }
+
+            if (canPlaceOn.length > 0) {
+                ListTag<StringTag> listTag = new ListTag<>("CanPlaceOn");
+                for (String blockName : canPlaceOn) {
+                    listTag.add(new StringTag("", blockName));
+                }
+                namedTag.put("CanPlaceOn", listTag);
+            }
+            item.setNamedTag(namedTag);
+        }
+
+        return item;
     }
 
     public void putSlot(Item item) {
@@ -337,8 +359,39 @@ public class BinaryStream {
         byte[] nbt = item.getCompoundTag();
         this.putLShort(nbt.length);
         this.put(nbt);
-        this.putVarInt(0); //TODO CanPlaceOn entry count
-        this.putVarInt(0); //TODO CanDestroy entry count
+        List<String> canPlaceOn = extractStringList(item, "CanPlaceOn");
+        List<String> canDestroy = extractStringList(item, "CanDestroy");
+        this.putVarInt(canPlaceOn.size());
+        for (String block : canPlaceOn) {
+            this.putString(block);
+        }
+        this.putVarInt(canDestroy.size());
+        for (String block : canDestroy) {
+            this.putString(block);
+        }
+    }
+
+    private List<String> extractStringList(Item item, String tagName) {
+        CompoundTag namedTag = item.getNamedTag();
+        if (namedTag == null) {
+            return Collections.emptyList();
+        }
+
+        ListTag<StringTag> listTag = namedTag.getList(tagName, StringTag.class);
+        if (listTag == null) {
+            return Collections.emptyList();
+        }
+
+        int size = listTag.size();
+        List<String> values = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            StringTag stringTag = listTag.get(i);
+            if (stringTag != null) {
+                values.add(stringTag.data);
+            }
+        }
+
+        return values;
     }
 
     public byte[] getByteArray() {

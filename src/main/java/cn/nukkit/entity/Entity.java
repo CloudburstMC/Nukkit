@@ -309,6 +309,8 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected boolean isPlayer = false;
 
+    private volatile boolean initialized;
+
     public float getHeight() {
         return 0;
     }
@@ -387,6 +389,12 @@ public abstract class Entity extends Location implements Metadatable {
         if ((chunk == null || chunk.getProvider() == null)) {
             throw new ChunkException("Invalid garbage Chunk given to Entity");
         }
+
+        if (this.initialized) {
+            // We've already initialized this entity
+            return;
+        }
+        this.initialized = true;
 
         this.timing = Timings.getEntityTiming(this);
 
@@ -707,11 +715,11 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public static Entity createEntity(String name, Position pos, Object... args) {
-        return createEntity(name, pos.getLevel().getChunk(pos.getFloorX(), pos.getFloorZ()), getDefaultNBT(pos), args);
+        return createEntity(name, pos.getChunk(), getDefaultNBT(pos), args);
     }
 
     public static Entity createEntity(int type, Position pos, Object... args) {
-        return createEntity(String.valueOf(type), pos.getLevel().getChunk(pos.getFloorX(), pos.getFloorZ()), getDefaultNBT(pos), args);
+        return createEntity(String.valueOf(type), pos.getChunk(), getDefaultNBT(pos), args);
     }
 
     public static Entity createEntity(String name, FullChunk chunk, CompoundTag nbt, Object... args) {
@@ -1219,7 +1227,7 @@ public abstract class Entity extends Location implements Metadatable {
             }
             if (this.fireTicks <= 0) {
                 this.extinguish();
-            } else {
+            } else if (!this.fireProof) {
                 this.setDataFlag(DATA_FLAGS, DATA_FLAG_ONFIRE, true);
                 hasUpdate = true;
             }

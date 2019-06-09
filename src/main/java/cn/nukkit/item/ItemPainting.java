@@ -47,7 +47,7 @@ public class ItemPainting extends Item {
         }
 
         if (!target.isTransparent() && face.getIndex() > 1 && !block.isSolid()) {
-            int[] direction = {2, 0, 1, 3};
+            int[] direction = {2, 3, 4, 5};
             int[] right = {4, 5, 3, 2};
 
             List<EntityPainting.Motive> validMotives = new ArrayList<>();

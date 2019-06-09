@@ -27,7 +27,7 @@ public class AddEntityPacket extends DataPacket {
             .put(EntityHusk.NETWORK_ID, "minecraft:husk")
             .put(EntityStray.NETWORK_ID, "minecraft:stray")
             .put(EntityWitch.NETWORK_ID, "minecraft:witch")
-            .put(EntityZombieVillager.NETWORK_ID, "minecraft:zombie_villager")
+            .put(EntityZombieVillagerV1.NETWORK_ID, "minecraft:zombie_villager")
             .put(EntityBlaze.NETWORK_ID, "minecraft:blaze")
             .put(EntityMagmaCube.NETWORK_ID, "minecraft:magma_cube")
             .put(EntityGhast.NETWORK_ID, "minecraft:ghast")
@@ -53,7 +53,7 @@ public class AddEntityPacket extends DataPacket {
             .put(EntityPanda.NETWORK_ID, "minecraft:panda")
             .put(EntitySalmon.NETWORK_ID, "minecraft:salmon")
             .put(EntityPig.NETWORK_ID, "minecraft:pig")
-            .put(EntityVillager.NETWORK_ID, "minecraft:villager")
+            .put(EntityVillagerV1.NETWORK_ID, "minecraft:villager")
             .put(EntityCod.NETWORK_ID, "minecraft:cod")
             .put(EntityPufferfish.NETWORK_ID, "minecraft:pufferfish")
             .put(EntityCow.NETWORK_ID, "minecraft:cow")
@@ -119,8 +119,11 @@ public class AddEntityPacket extends DataPacket {
             .put(106, "minecraft:ice_bomb")
             .put(EntityPhantom.NETWORK_ID, "minecraft:phantom")
             .put(62, "minecraft:tripod_camera")
-            .put(114, "minecraft:pillager")
-            .put(118, "minecraft:wandering_trader")
+            .put(EntityPillager.NETWORK_ID, "minecraft:pillager")
+            .put(EntityWanderingTrader.NETWORK_ID, "minecraft:wandering_trader")
+            .put(EntityRavager.NETWORK_ID, "minecraft:ravager")
+            .put(EntityVillager.NETWORK_ID, "minecraft:villager_v2")
+            .put(EntityZombieVillager.NETWORK_ID, "minecraft:zombie_villager_v2")
             .build();
 
     @Override
