@@ -57,7 +57,7 @@
         <dependency>
             <groupId>com.nukkitx.network</groupId>
             <artifactId>raknet</artifactId>
-            <version>1.5.1</version>
+            <version>1.5.4</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
