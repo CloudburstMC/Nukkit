@@ -1074,7 +1074,7 @@ public class Server {
                     }
                 }
             } catch (Exception e) {
-                log.error(this.getLanguage().translateString("nukkit.level.tickError"), e);
+                log.error(this.getLanguage().translateString("nukkit.level.tickError", level.getFolderName(), Utils.getExceptionMessage(e)));
             }
         }
     }
