@@ -4,5 +4,4 @@ jdk:
   - openjdk8
 
 install:
-  - mvn clean
-  - mvn package
+  - mvn clean package
