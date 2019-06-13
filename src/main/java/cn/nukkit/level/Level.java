@@ -506,6 +506,7 @@ public class Level implements ChunkManager, Metadatable {
         pk.y = (float) pos.y;
         pk.z = (float) pos.z;
         pk.isGlobal = isGlobal;
+        pk.isBabyMob = isBaby;
 
         this.addChunkPacket(pos.getFloorX() >> 4, pos.getFloorZ() >> 4, pk);
     }
