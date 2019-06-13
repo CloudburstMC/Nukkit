@@ -1277,6 +1277,10 @@ public class Server {
         return maxPlayers;
     }
 
+    public void setMaxPlayers(int maxPlayers) {
+        this.maxPlayers = maxPlayers;
+    }
+
     public int getPort() {
         return this.getPropertyInt("server-port", 19132);
     }
