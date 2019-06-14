@@ -1309,14 +1309,13 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void addMotion(double motionX, double motionY, double motionZ) {
-        int chunkX = this.getFloorX() >> 4;
-        int chunkZ = this.getFloorZ() >> 4;
         SetEntityMotionPacket pk = new SetEntityMotionPacket();
-        pk.eid = this.getId();
+        pk.eid = this.id;
         pk.motionX = (float) motionX;
         pk.motionY = (float) motionY;
         pk.motionZ = (float) motionZ;
-        this.level.addChunkPacket(chunkX, chunkZ, pk);
+
+        Server.broadcastPacket(this.hasSpawned.values(), pk);
     }
 
     public Vector3 getDirectionVector() {
