@@ -306,8 +306,8 @@ public class Item implements Cloneable, BlockID, ItemID {
         initCreativeItems();
     }
 
-    private static void registerCustomItemBlock(ItemBlock i) {
-        customlist[i.getId()] = i.getClass();
+    public static void registerCustomItemBlock(int key, Class i) {
+        customlist[key] = i;
     }
 
     @SuppressWarnings("unchecked")
@@ -400,7 +400,15 @@ public class Item implements Cloneable, BlockID, ItemID {
                         item = new ItemBlock(Block.get(id), meta, count);
                     }
                 } else {
-                    item = ((ItemBlock) customlist[id].getConstructor(Integer.class, int.class).newInstance(meta, count));
+                   try{
+                    item = ((ItemBlock) customlist[id].getConstructor(Block.class, Integer.class, int.class).newInstance(Block.get(id, meta), meta, count));
+                }catch (Exception e){
+                       if (meta >= 0) {
+                           item = new ItemBlock(Block.get(id, meta), meta, count);
+                       } else {
+                           item = new ItemBlock(Block.get(id), meta, count);
+                       }
+                   }
                 }
             } else {
                 item = ((Item) c.getConstructor(Integer.class, int.class).newInstance(meta, count));
