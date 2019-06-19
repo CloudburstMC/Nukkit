@@ -5,7 +5,7 @@ jobs:
     working_directory: ~/nukkit
 
     docker:
-      - image: circleci/openjdk:8-jdk-browsers
+      - image: circleci/openjdk:8u212-stretch
 
     steps:
 
