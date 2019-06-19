@@ -31,7 +31,7 @@ public abstract class Food {
             .addRelative(Item.GOLDEN_APPLE_ENCHANTED));
     public static final Food beef_raw = registerDefaultFood(new FoodNormal(3, 1.8F).addRelative(Item.RAW_BEEF));
     public static final Food beetroot = registerDefaultFood(new FoodNormal(1, 1.2F).addRelative(Item.BEETROOT));
-    public static final Food beetroot_soup = registerDefaultFood(new FoodNormal(6, 7.2F).addRelative(Item.BEETROOT_SOUP));
+    public static final Food beetroot_soup = registerDefaultFood(new FoodInBowl(6, 7.2F).addRelative(Item.BEETROOT_SOUP));
     public static final Food bread = registerDefaultFood(new FoodNormal(5, 6F).addRelative(Item.BREAD));
     public static final Food cake_slice = registerDefaultFood(new FoodNormal(2, 0.4F)
             .addRelative(Block.CAKE_BLOCK, 0).addRelative(Block.CAKE_BLOCK, 1).addRelative(Block.CAKE_BLOCK, 2)
