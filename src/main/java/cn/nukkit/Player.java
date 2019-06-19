@@ -1314,7 +1314,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public boolean isAdventure() {
-        return (this.gamemode & 0x02) > 0;
+        return (this.gamemode & 0x02) > 0 && !this.isSpectator();
     }
 
     @Override
