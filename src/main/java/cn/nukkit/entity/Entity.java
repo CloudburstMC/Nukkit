@@ -489,7 +489,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean isNameTagAlwaysVisible() {
-        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_ALWAYS_SHOW_NAMETAG);
+        return this.getDataPropertyByte(DATA_ALWAYS_SHOW_NAMETAG) == 1;
     }
 
     public void setNameTag(String name) {
