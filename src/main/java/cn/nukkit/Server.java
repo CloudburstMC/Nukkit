@@ -76,6 +76,9 @@ import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.*;
 import cn.nukkit.utils.bugreport.ExceptionHandler;
 import co.aikar.timings.Timings;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.log4j.Log4j2;
@@ -107,6 +110,8 @@ public class Server {
 
     private static Server instance = null;
 
+    private int port;
+    
     private BanList banByName;
 
     private BanList banByIP;
@@ -242,7 +247,7 @@ public class Server {
 
     private PlayerDataSerializer playerDataSerializer = new DefaultPlayerDataSerializer(this);
 
-    Server(final String filePath, String dataPath, String pluginPath, String predefinedLanguage) {
+    Server(final String filePath, String dataPath, String pluginPath, String predefinedLanguage, OptionSet cliOptions) {
         Preconditions.checkState(instance == null, "Already initialized!");
         currentThread = Thread.currentThread(); // Saves the current thread instance as a reference, used in Server#isPrimaryThread()
         instance = this;
@@ -358,6 +363,14 @@ public class Server {
             }
         });
 
+        // Get port from options or config
+        if (cliOptions.has("port")) {
+            int port = (Integer) cliOptions.valueOf("port");
+            this.port = port;
+        } else {
+        	this.port = this.getPropertyInt("server-port", 19132);
+        }
+        
         // Allow Nether? (determines if we create a nether world if one doesn't exist on startup)
         this.allowNether = this.properties.getBoolean("allow-nether", true);
 
@@ -1282,7 +1295,7 @@ public class Server {
     }
 
     public int getPort() {
-        return this.getPropertyInt("server-port", 19132);
+        return port;
     }
 
     public int getViewDistance() {

@@ -1,21 +1,25 @@
 package cn.nukkit;
 
-import cn.nukkit.network.protocol.ProtocolInfo;
-import cn.nukkit.utils.ServerKiller;
-import com.google.common.base.Preconditions;
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
-import lombok.extern.log4j.Log4j2;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import com.google.common.base.Preconditions;
+
+import cn.nukkit.network.protocol.ProtocolInfo;
+import cn.nukkit.utils.ServerKiller;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
+import lombok.extern.log4j.Log4j2;
 
 /*
  * `_   _       _    _    _ _
@@ -72,7 +76,8 @@ public class Nukkit {
         OptionSpec<String> vSpec = parser.accepts("v", "Set verbosity of logging").withRequiredArg().ofType(String.class);
         OptionSpec<String> verbositySpec = parser.accepts("verbosity", "Set verbosity of logging").withRequiredArg().ofType(String.class);
         OptionSpec<String> languageSpec = parser.accepts("language", "Set a predefined language").withOptionalArg().ofType(String.class);
-
+        parser.acceptsAll(asList("p", "port", "server-port"), "Port to listen on").withRequiredArg().ofType(Integer.class).describedAs("Port");
+        
         // Parse arguments
         OptionSet options = parser.parse(args);
 
@@ -109,7 +114,7 @@ public class Nukkit {
             if (TITLE) {
                 System.out.print((char) 0x1b + "]0;Nukkit is starting up..." + (char) 0x07);
             }
-            new Server(PATH, DATA_PATH, PLUGIN_PATH, language);
+            new Server(PATH, DATA_PATH, PLUGIN_PATH, language, options);
         } catch (Throwable t) {
             log.throwing(t);
         }
@@ -176,4 +181,9 @@ public class Nukkit {
         loggerConfig.setLevel(level);
         ctx.updateLoggers();
     }
+    
+    private static List<String> asList(String... params) {
+        return Arrays.asList(params);
+    }
+    
 }
