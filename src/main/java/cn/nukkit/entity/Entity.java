@@ -375,6 +375,9 @@ public abstract class Entity extends Location implements Metadatable {
             if (this.namedTag.contains("CustomNameVisible")) {
                 this.setNameTagVisible(this.namedTag.getBoolean("CustomNameVisible"));
             }
+            if(this.namedTag.contains("CustomNameAlwaysVisible")){
+                this.setNameTagAlwaysVisible(this.namedTag.getBoolean("CustomNameAlwaysVisible"));
+            }
         }
 
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_HAS_COLLISION, true);
@@ -812,9 +815,11 @@ public abstract class Entity extends Location implements Metadatable {
             if (!this.getNameTag().equals("")) {
                 this.namedTag.putString("CustomName", this.getNameTag());
                 this.namedTag.putBoolean("CustomNameVisible", this.isNameTagVisible());
+                this.namedTag.putBoolean("CustomNameAlwaysVisible", this.isNameTagAlwaysVisible());
             } else {
                 this.namedTag.remove("CustomName");
                 this.namedTag.remove("CustomNameVisible");
+                this.namedTag.remove("CustomNameAlwaysVisible");
             }
         }
 
