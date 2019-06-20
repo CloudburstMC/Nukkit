@@ -102,12 +102,12 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
     }
     
     public int getAttackCooldown() {
-		return this.attackCooldown;
-	}
+        return this.attackCooldown;
+    }
     
-	public void setAttackCooldown(int attackCooldown) {
-		this.attackCooldown = attackCooldown;
-	}
+    public void setAttackCooldown(int attackCooldown) {
+        this.attackCooldown = attackCooldown;
+    }
 
     public enum DamageModifier {
         /**
