@@ -228,7 +228,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
         @Override
         public void onDisconnect(DisconnectReason disconnectReason) {
-            this.player.close(player.getLeaveMessage(), "Disconnected from Server");
+            this.player.close(player.getLeaveMessage(), "Disconnected from Server", false);
             RakNetInterface.this.sessionListeners.remove(this);
         }
 
