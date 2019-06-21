@@ -5,12 +5,17 @@ package cn.nukkit.utils;
  * Nukkit Project
  */
 public class ChunkException extends RuntimeException {
+
     public ChunkException(String message) {
         super(message);
     }
 
-    @Override
-    public Throwable fillInStackTrace() {
-        return this;
+    public ChunkException(String message, Throwable cause) {
+        super(message, cause);
     }
+
+    public ChunkException(Throwable cause) {
+        super(cause);
+    }
+
 }
