@@ -53,7 +53,7 @@ public class CreatureSpawnEvent extends Event implements Cancellable {
         /**
          * When a creature spawns from a Spawner Egg
          */
-        SPAWNER_EGG,
+        SPAWN_EGG,
         /**
          * When a creature spawns because of a lightning strike
          */
