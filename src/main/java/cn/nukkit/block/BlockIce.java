@@ -75,4 +75,9 @@ public class BlockIce extends BlockTransparent {
     public boolean canSilkTouch() {
         return true;
     }
+
+    @Override
+    public int getLightFilter() {
+        return 2;
+    }
 }

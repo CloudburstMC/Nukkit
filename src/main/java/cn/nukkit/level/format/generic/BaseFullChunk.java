@@ -236,9 +236,25 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     public void recalculateHeightMap() {
         for (int z = 0; z < 16; ++z) {
             for (int x = 0; x < 16; ++x) {
-                this.setHeightMap(x, z, this.getHighestBlockAt(x, z, false));
+                recalculateHeightMapColumn(x, z);
             }
         }
+    }
+
+    public int recalculateHeightMapColumn(int x, int z) {
+        int max = this.getHighestBlockAt(x, z);
+
+        int y;
+        for (y = max; y >= 0; --y) {
+            int id;
+
+            if (Block.lightFilter[id = this.getBlockId(x, y, z)] > 1 || Block.diffusesSkyLight[id]) {
+                break;
+            }
+        }
+
+        this.setHeightMap(x, z, y + 1);
+        return y + 1;
     }
 
     @Override
@@ -267,19 +283,30 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public void populateSkyLight() {
+        //basic light calculation
         for (int z = 0; z < 16; ++z) {
             for (int x = 0; x < 16; ++x) {
                 int top = this.getHeightMap(x, z);
                 for (int y = 255; y > top; --y) {
                     this.setBlockSkyLight(x, y, z, 15);
                 }
+
+                int light = 15;
                 for (int y = top; y >= 0; --y) {
-                    if (Block.solid[this.getBlockId(x, y, z)]) {
+                    int id = this.getBlockId(x, y, z);
+
+                    if (Block.solid[id]) {
                         break;
                     }
-                    this.setBlockSkyLight(x, y, z, 15);
+
+                    light -= Block.lightFilter[id];
+
+                    if (light <= 0) {
+                        break;
+                    }
+
+                    this.setBlockSkyLight(x, y, z, light);
                 }
-                this.setHeightMap(x, z, this.getHighestBlockAt(x, z, false));
             }
         }
     }

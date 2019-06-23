@@ -33,6 +33,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public static Block[] fullList = null;
     public static int[] light = null;
     public static int[] lightFilter = null;
+    public static boolean[] diffusesSkyLight = null;
     public static boolean[] solid = null;
     public static double[] hardness = null;
     public static boolean[] transparent = null;
@@ -50,6 +51,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             fullList = new Block[4096];
             light = new int[256];
             lightFilter = new int[256];
+            diffusesSkyLight = new boolean[256];
             solid = new boolean[256];
             hardness = new double[256];
             transparent = new boolean[256];
@@ -330,20 +332,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                     transparent[id] = block.isTransparent();
                     hardness[id] = block.getHardness();
                     light[id] = block.getLightLevel();
-
-                    if (block.isSolid()) {
-                        if (block.isTransparent()) {
-                            if (block instanceof BlockLiquid || block instanceof BlockIce) {
-                                lightFilter[id] = 2;
-                            } else {
-                                lightFilter[id] = 1;
-                            }
-                        } else {
-                            lightFilter[id] = 15;
-                        }
-                    } else {
-                        lightFilter[id] = 1;
-                    }
+                    lightFilter[id] = block.getLightFilter() + 1;
+                    diffusesSkyLight[id] = block.diffusesSkyLight();
                 } else {
                     lightFilter[id] = 1;
                     for (int data = 0; data < 16; ++data) {
@@ -450,6 +440,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     public int getLightLevel() {
         return 0;
+    }
+
+    public int getLightFilter() {
+        return 15;
+    }
+
+    public boolean diffusesSkyLight() {
+        return false;
     }
 
     public boolean canBePlaced() {

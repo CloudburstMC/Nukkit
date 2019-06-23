@@ -14,6 +14,9 @@ public class LevelTimings {
     public final Timing doChunkGC;
     public final Timing doTick;
 
+    public final Timing doBlockSkyLightUpdates;
+    public final Timing doBlockLightUpdates;
+
     public final Timing tickChunks;
     public final Timing entityTick;
     public final Timing blockEntityTick;
@@ -32,6 +35,9 @@ public class LevelTimings {
         this.doTickPending = TimingsManager.getTiming(name + "doTickPending");
         this.doChunkGC = TimingsManager.getTiming(name + "doChunkGC");
         this.doTick = TimingsManager.getTiming(name + "doTick");
+
+        this.doBlockLightUpdates = TimingsManager.getTiming(name + "doBlockLightUpdates");
+        this.doBlockSkyLightUpdates = TimingsManager.getTiming(name + "doBlockSkyLightUpdates");
 
         this.tickChunks = TimingsManager.getTiming(name + "tickChunks");
         this.entityTick = TimingsManager.getTiming(name + "entityTick");
