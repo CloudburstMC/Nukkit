@@ -21,7 +21,6 @@ import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -316,20 +315,13 @@ public class Item implements Cloneable, BlockID, ItemID {
 
     private static final ArrayList<Item> creative = new ArrayList<>();
 
+    @SuppressWarnings("unchecked")
     private static void initCreativeItems() {
         clearCreativeItems();
-        Server server = Server.getInstance();
 
-        String path = server.getDataPath() + "creativeitems.json";
-        if (!new File(path).exists()) {
-            try {
-                Utils.writeFile(path, Server.class.getClassLoader().getResourceAsStream("creativeitems.json"));
-            } catch (IOException e) {
-                MainLogger.getLogger().logException(e);
-                return;
-            }
-        }
-        List<Map> list = new Config(path, Config.YAML).getMapList("items");
+        Config config = new Config(Config.YAML);
+        config.load(Server.class.getClassLoader().getResourceAsStream("creativeitems.json"));
+        List<Map> list = config.getMapList("items");
 
         for (Map map : list) {
             try {

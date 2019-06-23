@@ -1302,19 +1302,19 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public boolean isSurvival() {
-        return (this.gamemode & 0x01) == 0;
+        return this.gamemode == SURVIVAL;
     }
 
     public boolean isCreative() {
-        return (this.gamemode & 0x01) > 0;
+        return this.gamemode == CREATIVE;
     }
 
     public boolean isSpectator() {
-        return this.gamemode == 3;
+        return this.gamemode == SPECTATOR;
     }
 
     public boolean isAdventure() {
-        return (this.gamemode & 0x02) > 0;
+        return this.gamemode == ADVENTURE;
     }
 
     @Override
@@ -1599,7 +1599,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public boolean setMotion(Vector3 motion) {
         if (super.setMotion(motion)) {
             if (this.chunk != null) {
-                this.getLevel().addEntityMotion(this, this.motionX, this.motionY, this.motionZ);  //Send to others
+                this.addMotion(this.motionX, this.motionY, this.motionZ);  //Send to others
                 SetEntityMotionPacket pk = new SetEntityMotionPacket();
                 pk.eid = this.id;
                 pk.motionX = (float) motion.x;
@@ -1925,8 +1925,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.adventureSettings = new AdventureSettings(this)
-                .set(Type.WORLD_IMMUTABLE, isAdventure())
-                .set(Type.WORLD_BUILDER, !isAdventure())
+                .set(Type.WORLD_IMMUTABLE, isAdventure() || isSpectator())
+                .set(Type.WORLD_BUILDER, !isAdventure() && !isSpectator())
                 .set(Type.AUTO_JUMP, true)
                 .set(Type.ALLOW_FLIGHT, isCreative())
                 .set(Type.NO_CLIP, isSpectator());
@@ -2272,6 +2272,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
+                    if (newPos.distanceSquared(this) > 100) {
+                        this.sendPosition(this, movePlayerPacket.yaw, movePlayerPacket.pitch, MovePlayerPacket.MODE_RESET);
+                        break;
+                    }
+
                     boolean revert = false;
                     if (!this.isAlive() || !this.spawned) {
                         revert = true;
@@ -2373,6 +2378,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             Block block = target.getSide(face);
                             if (block.getId() == Block.FIRE) {
                                 this.level.setBlock(block, new BlockAir(), true);
+                                this.level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_EXTINGUISH_FIRE);
                                 break;
                             }
                             if (!this.isCreative()) {
@@ -3974,10 +3980,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return false;
         }
 
-        if (this.isCreative()
-                && source.getCause() != DamageCause.SUICIDE
-                && source.getCause() != DamageCause.VOID
-                ) {
+        if (this.isSpectator() || (this.isCreative() && source.getCause() != DamageCause.SUICIDE)) {
             //source.setCancelled();
             return false;
         } else if (this.getAdventureSettings().get(Type.ALLOW_FLIGHT) && source.getCause() == DamageCause.FALL) {
@@ -4685,7 +4688,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 Server.broadcastPacket(entity.getViewers().values(), pk);
                 this.dataPacket(pk);
 
-                this.inventory.addItem(item.clone());
+                if (!this.isCreative()) {
+                    this.inventory.addItem(item.clone());
+                }
                 entity.close();
                 return true;
             } else if (entity instanceof EntityThrownTrident && ((EntityThrownTrident) entity).hadCollision) {

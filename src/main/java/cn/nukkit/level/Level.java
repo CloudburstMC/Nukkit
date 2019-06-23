@@ -506,6 +506,7 @@ public class Level implements ChunkManager, Metadatable {
         pk.y = (float) pos.y;
         pk.z = (float) pos.z;
         pk.isGlobal = isGlobal;
+        pk.isBabyMob = isBaby;
 
         this.addChunkPacket(pos.getFloorX() >> 4, pos.getFloorZ() >> 4, pk);
     }
@@ -3147,16 +3148,6 @@ public class Level implements ChunkManager, Metadatable {
         this.server.getLevelMetadata().removeMetadata(this, metadataKey, owningPlugin);
     }
 
-    public void addEntityMotion(Entity entity, double x, double y, double z) {
-        SetEntityMotionPacket pk = new SetEntityMotionPacket();
-        pk.eid = entity.getId();
-        pk.motionX = (float) x;
-        pk.motionY = (float) y;
-        pk.motionZ = (float) z;
-
-        Server.broadcastPacket(entity.getViewers().values(), pk);
-    }
-
     public void addEntityMovement(Entity entity, double x, double y, double z, double yaw, double pitch, double headYaw) {
         MoveEntityAbsolutePacket pk = new MoveEntityAbsolutePacket();
         pk.eid = entity.getId();
@@ -3164,7 +3155,7 @@ public class Level implements ChunkManager, Metadatable {
         pk.y = (float) y;
         pk.z = (float) z;
         pk.yaw = (float) yaw;
-        pk.headYaw = (float) yaw;
+        pk.headYaw = (float) headYaw;
         pk.pitch = (float) pitch;
 
         Server.broadcastPacket(entity.getViewers().values(), pk);
