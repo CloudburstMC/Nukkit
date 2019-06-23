@@ -36,7 +36,7 @@ public class EntityPotion extends EntityProjectile {
 
         potionId = this.namedTag.getShort("PotionId");
 
-        this.dataProperties.putShort(DATA_POTION_ID, this.potionId);
+        this.dataProperties.putShort(DATA_POTION_AUX_VALUE, this.potionId);
 
         /*Effect effect = Potion.getEffect(potionId, true); TODO: potion color
 
