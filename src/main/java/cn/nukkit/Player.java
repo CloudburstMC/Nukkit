@@ -2272,6 +2272,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
+                    if (newPos.distanceSquared(this) > 100) {
+                        this.sendPosition(this, movePlayerPacket.yaw, movePlayerPacket.pitch, MovePlayerPacket.MODE_RESET);
+                        break;
+                    }
+
                     boolean revert = false;
                     if (!this.isAlive() || !this.spawned) {
                         revert = true;
