@@ -46,7 +46,7 @@ public class ItemSpawnEgg extends Item {
             return false;
         }
 
-        CreatureSpawnEvent ev = new CreatureSpawnEvent(this.meta, SpawnReason.SPAWNER_EGG);
+        CreatureSpawnEvent ev = new CreatureSpawnEvent(this.meta, SpawnReason.SPAWN_EGG);
         level.getServer().getPluginManager().callEvent(ev);
 
         if (ev.isCancelled()) {
