@@ -168,6 +168,7 @@ public class ItemFlintSteel extends ItemTool {
                         }
                     }
 
+                    level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_IGNITE);
                     return true;
                 } else if (sizeZ >= 2 && sizeZ <= MAX_PORTAL_SIZE) {
                     //start scan from 1 block above base
@@ -250,6 +251,7 @@ public class ItemFlintSteel extends ItemTool {
                         }
                     }
 
+                    level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_IGNITE);
                     return true;
                 }
             }
