@@ -390,7 +390,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected final void init(FullChunk chunk, CompoundTag nbt) {
         if ((chunk == null || chunk.getProvider() == null)) {
-            throw new ChunkException("Invalid garbage Chunk given to Entity");
+            throw new ChunkException("Invalid garbage Chunk given to Entity: " + this.toString());
         }
 
         if (this.initialized) {
@@ -2280,6 +2280,11 @@ public abstract class Entity extends Location implements Metadatable {
         return server;
     }
 
+    @Override
+    public String toString() {
+    	return "[" + getName() + ", " + getId() + ", " + super.toString() + ", "+ "]";
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
