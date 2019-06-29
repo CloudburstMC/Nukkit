@@ -4147,7 +4147,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
     }
     
-	public void playSound(Sound sound, float volume, float pitch) {
+    public void playSound(Sound sound, float volume, float pitch) {
 		PlaySoundPacket packet = new PlaySoundPacket();
 		
 		packet.name = sound.getSound();
@@ -4158,7 +4158,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 		packet.pitch = pitch;
 		
 		this.dataPacket(packet);
-	}
+    }
 
     @Override
     public boolean teleport(Location location, TeleportCause cause) {
