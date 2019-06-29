@@ -23,9 +23,11 @@ public class CompoundTag extends Tag implements Cloneable {
 
     @Override
     public void write(NBTOutputStream dos) throws IOException {
-        for (Tag tag : tags.values()) {
-            Tag.writeNamedTag(tag, dos);
+
+        for (Map.Entry<String, Tag> entry : this.tags.entrySet()) {
+            Tag.writeNamedTag(entry.getValue(), entry.getKey(), dos);
         }
+
         dos.writeByte(Tag.TAG_End);
     }
 
@@ -208,7 +210,7 @@ public class CompoundTag extends Tag implements Cloneable {
 
     public String toString() {
         StringJoiner joiner = new StringJoiner(",\n\t");
-        tags.forEach((key, tag) -> joiner.add(key + " : " + tag.toString()));
+        tags.forEach((key, tag) -> joiner.add('\'' + key + "' : " + tag.toString().replace("\n", "\n\t")));
         return "CompoundTag '" + this.getName() + "' (" + tags.size() + " entries) {\n\t" + joiner.toString() + "\n}";
     }
 
