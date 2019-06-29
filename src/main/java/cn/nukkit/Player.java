@@ -4148,16 +4148,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
     
 	public void playSound(Sound sound, float volume, float pitch) {
-        PlaySoundPacket packet = new PlaySoundPacket();
-        
-        packet.name = sound.getSound();
-        packet.x = new Double(this.getLocation().getX()).intValue();
-        packet.y = new Double(this.getLocation().getY()).intValue();
-        packet.z = new Double(this.getLocation().getZ()).intValue();
-        packet.volume = volume;
-        packet.pitch = pitch;
-        
-        this.dataPacket(packet);
+		PlaySoundPacket packet = new PlaySoundPacket();
+		
+		packet.name = sound.getSound();
+		packet.x = new Double(this.getLocation().getX()).intValue();
+		packet.y = new Double(this.getLocation().getY()).intValue();
+		packet.z = new Double(this.getLocation().getZ()).intValue();
+		packet.volume = volume;
+		packet.pitch = pitch;
+		
+		this.dataPacket(packet);
 	}
 
     @Override
