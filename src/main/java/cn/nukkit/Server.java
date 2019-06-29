@@ -1,17 +1,147 @@
 package cn.nukkit;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
+
+import org.iq80.leveldb.CompressionType;
+import org.iq80.leveldb.DB;
+import org.iq80.leveldb.Options;
+import org.iq80.leveldb.impl.Iq80DBFactory;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
+
 import cn.nukkit.block.Block;
-import cn.nukkit.blockentity.*;
-import cn.nukkit.command.*;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityBanner;
+import cn.nukkit.blockentity.BlockEntityBeacon;
+import cn.nukkit.blockentity.BlockEntityBed;
+import cn.nukkit.blockentity.BlockEntityBrewingStand;
+import cn.nukkit.blockentity.BlockEntityCauldron;
+import cn.nukkit.blockentity.BlockEntityChest;
+import cn.nukkit.blockentity.BlockEntityComparator;
+import cn.nukkit.blockentity.BlockEntityEnchantTable;
+import cn.nukkit.blockentity.BlockEntityEnderChest;
+import cn.nukkit.blockentity.BlockEntityFlowerPot;
+import cn.nukkit.blockentity.BlockEntityFurnace;
+import cn.nukkit.blockentity.BlockEntityHopper;
+import cn.nukkit.blockentity.BlockEntityItemFrame;
+import cn.nukkit.blockentity.BlockEntityJukebox;
+import cn.nukkit.blockentity.BlockEntityMusic;
+import cn.nukkit.blockentity.BlockEntityPistonArm;
+import cn.nukkit.blockentity.BlockEntityShulkerBox;
+import cn.nukkit.blockentity.BlockEntitySign;
+import cn.nukkit.blockentity.BlockEntitySkull;
+import cn.nukkit.command.Command;
+import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.ConsoleCommandSender;
+import cn.nukkit.command.PluginIdentifiableCommand;
+import cn.nukkit.command.SimpleCommandMap;
 import cn.nukkit.console.NukkitConsole;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.data.Skin;
-import cn.nukkit.entity.item.*;
-import cn.nukkit.entity.mob.*;
-import cn.nukkit.entity.passive.*;
-import cn.nukkit.entity.projectile.*;
+import cn.nukkit.entity.item.EntityBoat;
+import cn.nukkit.entity.item.EntityEndCrystal;
+import cn.nukkit.entity.item.EntityExpBottle;
+import cn.nukkit.entity.item.EntityFallingBlock;
+import cn.nukkit.entity.item.EntityFirework;
+import cn.nukkit.entity.item.EntityFishingHook;
+import cn.nukkit.entity.item.EntityItem;
+import cn.nukkit.entity.item.EntityMinecartChest;
+import cn.nukkit.entity.item.EntityMinecartEmpty;
+import cn.nukkit.entity.item.EntityMinecartHopper;
+import cn.nukkit.entity.item.EntityMinecartTNT;
+import cn.nukkit.entity.item.EntityPainting;
+import cn.nukkit.entity.item.EntityPotion;
+import cn.nukkit.entity.item.EntityPrimedTNT;
+import cn.nukkit.entity.item.EntityXPOrb;
+import cn.nukkit.entity.mob.EntityBlaze;
+import cn.nukkit.entity.mob.EntityCaveSpider;
+import cn.nukkit.entity.mob.EntityCreeper;
+import cn.nukkit.entity.mob.EntityDrowned;
+import cn.nukkit.entity.mob.EntityElderGuardian;
+import cn.nukkit.entity.mob.EntityEnderDragon;
+import cn.nukkit.entity.mob.EntityEnderman;
+import cn.nukkit.entity.mob.EntityEndermite;
+import cn.nukkit.entity.mob.EntityEvoker;
+import cn.nukkit.entity.mob.EntityGhast;
+import cn.nukkit.entity.mob.EntityGuardian;
+import cn.nukkit.entity.mob.EntityHusk;
+import cn.nukkit.entity.mob.EntityMagmaCube;
+import cn.nukkit.entity.mob.EntityPhantom;
+import cn.nukkit.entity.mob.EntityPillager;
+import cn.nukkit.entity.mob.EntityRavager;
+import cn.nukkit.entity.mob.EntityShulker;
+import cn.nukkit.entity.mob.EntitySilverfish;
+import cn.nukkit.entity.mob.EntitySkeleton;
+import cn.nukkit.entity.mob.EntitySlime;
+import cn.nukkit.entity.mob.EntitySpider;
+import cn.nukkit.entity.mob.EntityStray;
+import cn.nukkit.entity.mob.EntityVex;
+import cn.nukkit.entity.mob.EntityVindicator;
+import cn.nukkit.entity.mob.EntityWitch;
+import cn.nukkit.entity.mob.EntityWither;
+import cn.nukkit.entity.mob.EntityWitherSkeleton;
+import cn.nukkit.entity.mob.EntityZombie;
+import cn.nukkit.entity.mob.EntityZombiePigman;
+import cn.nukkit.entity.mob.EntityZombieVillager;
+import cn.nukkit.entity.mob.EntityZombieVillagerV1;
+import cn.nukkit.entity.passive.EntityBat;
+import cn.nukkit.entity.passive.EntityCat;
+import cn.nukkit.entity.passive.EntityChicken;
+import cn.nukkit.entity.passive.EntityCod;
+import cn.nukkit.entity.passive.EntityCow;
+import cn.nukkit.entity.passive.EntityDolphin;
+import cn.nukkit.entity.passive.EntityDonkey;
+import cn.nukkit.entity.passive.EntityHorse;
+import cn.nukkit.entity.passive.EntityLlama;
+import cn.nukkit.entity.passive.EntityMooshroom;
+import cn.nukkit.entity.passive.EntityMule;
+import cn.nukkit.entity.passive.EntityOcelot;
+import cn.nukkit.entity.passive.EntityPanda;
+import cn.nukkit.entity.passive.EntityParrot;
+import cn.nukkit.entity.passive.EntityPig;
+import cn.nukkit.entity.passive.EntityPolarBear;
+import cn.nukkit.entity.passive.EntityPufferfish;
+import cn.nukkit.entity.passive.EntityRabbit;
+import cn.nukkit.entity.passive.EntitySalmon;
+import cn.nukkit.entity.passive.EntitySheep;
+import cn.nukkit.entity.passive.EntitySkeletonHorse;
+import cn.nukkit.entity.passive.EntitySquid;
+import cn.nukkit.entity.passive.EntityTropicalFish;
+import cn.nukkit.entity.passive.EntityTurtle;
+import cn.nukkit.entity.passive.EntityVillager;
+import cn.nukkit.entity.passive.EntityVillagerV1;
+import cn.nukkit.entity.passive.EntityWanderingTrader;
+import cn.nukkit.entity.passive.EntityWolf;
+import cn.nukkit.entity.passive.EntityZombieHorse;
+import cn.nukkit.entity.projectile.EntityArrow;
+import cn.nukkit.entity.projectile.EntityEgg;
+import cn.nukkit.entity.projectile.EntityEnderPearl;
+import cn.nukkit.entity.projectile.EntitySnowball;
+import cn.nukkit.entity.projectile.EntityThrownTrident;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
@@ -73,27 +203,22 @@ import cn.nukkit.potion.Potion;
 import cn.nukkit.resourcepacks.ResourcePackManager;
 import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.scheduler.Task;
-import cn.nukkit.utils.*;
+import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.Config;
+import cn.nukkit.utils.ConfigSection;
+import cn.nukkit.utils.DefaultPlayerDataSerializer;
+import cn.nukkit.utils.LevelException;
+import cn.nukkit.utils.MainLogger;
+import cn.nukkit.utils.PlayerDataSerializer;
+import cn.nukkit.utils.ServerException;
+import cn.nukkit.utils.TextFormat;
+import cn.nukkit.utils.Utils;
+import cn.nukkit.utils.Watchdog;
+import cn.nukkit.utils.Zlib;
 import cn.nukkit.utils.bugreport.ExceptionHandler;
 import co.aikar.timings.Timings;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
+import joptsimple.OptionSet;
 import lombok.extern.log4j.Log4j2;
-import org.iq80.leveldb.CompressionType;
-import org.iq80.leveldb.DB;
-import org.iq80.leveldb.Options;
-import org.iq80.leveldb.impl.Iq80DBFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Pattern;
 
 /**
  * @author MagicDroidX
@@ -107,6 +232,8 @@ public class Server {
 
     private static Server instance = null;
 
+    private int port;
+    
     private BanList banByName;
 
     private BanList banByIP;
@@ -242,7 +369,7 @@ public class Server {
 
     private PlayerDataSerializer playerDataSerializer = new DefaultPlayerDataSerializer(this);
 
-    Server(final String filePath, String dataPath, String pluginPath, String predefinedLanguage) {
+    Server(final String filePath, String dataPath, String pluginPath, String predefinedLanguage, OptionSet cliOptions) {
         Preconditions.checkState(instance == null, "Already initialized!");
         currentThread = Thread.currentThread(); // Saves the current thread instance as a reference, used in Server#isPrimaryThread()
         instance = this;
@@ -358,6 +485,14 @@ public class Server {
             }
         });
 
+        // Get port from options or config
+        if (cliOptions.has("port")) {
+            int port = (Integer) cliOptions.valueOf("port");
+            this.port = port;
+        } else {
+        	this.port = this.getPropertyInt("server-port", 19132);
+        }
+        
         // Allow Nether? (determines if we create a nether world if one doesn't exist on startup)
         this.allowNether = this.properties.getBoolean("allow-nether", true);
 
@@ -1282,7 +1417,7 @@ public class Server {
     }
 
     public int getPort() {
-        return this.getPropertyInt("server-port", 19132);
+    	return port;
     }
 
     public int getViewDistance() {
