@@ -215,7 +215,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
                 this.attack(new EntityDamageEvent(this, DamageCause.SUFFOCATION, 1));
             }
 
-            if (this.isOnLadder()) {
+            if (this.isOnLadder() || this.hasEffect(Effect.LEVITATION)) {
                 this.resetFallDistance();
             }
 
