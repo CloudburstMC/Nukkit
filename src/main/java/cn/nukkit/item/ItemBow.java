@@ -52,7 +52,7 @@ public class ItemBow extends ItemTool {
         }
 
         double damage = 2;
-        boolean flame = false;
+        boolean flame;
 
         if (this.hasEnchantments()) {
             Enchantment bowDamage = this.getEnchantment(Enchantment.ID_BOW_POWER);
@@ -77,7 +77,7 @@ public class ItemBow extends ItemTool {
                 .putList(new ListTag<FloatTag>("Rotation")
                         .add(new FloatTag("", (player.yaw > 180 ? 360 : 0) - (float) player.yaw))
                         .add(new FloatTag("", (float) -player.pitch)))
-                .putShort("Fire", player.isOnFire() || flame ? 45 * 60 : 0)
+                .putShort("Fire", flame ? 45 * 60 : 0)
                 .putDouble("damage", damage);
 
         int diff = (Server.getInstance().getTick() - player.getStartActionTick());
