@@ -35,6 +35,7 @@ public class BlockEntityBanner extends BlockEntitySpawnable {
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z)
-                .putInt("Base", getBaseColor());
+                .putInt("Base", getBaseColor())
+                .putList(namedTag.getList("Patterns"));
     }
 }

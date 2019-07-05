@@ -375,6 +375,9 @@ public abstract class Entity extends Location implements Metadatable {
             if (this.namedTag.contains("CustomNameVisible")) {
                 this.setNameTagVisible(this.namedTag.getBoolean("CustomNameVisible"));
             }
+            if(this.namedTag.contains("CustomNameAlwaysVisible")){
+                this.setNameTagAlwaysVisible(this.namedTag.getBoolean("CustomNameAlwaysVisible"));
+            }
         }
 
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_HAS_COLLISION, true);
@@ -486,7 +489,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean isNameTagAlwaysVisible() {
-        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_ALWAYS_SHOW_NAMETAG);
+        return this.getDataPropertyByte(DATA_ALWAYS_SHOW_NAMETAG) == 1;
     }
 
     public void setNameTag(String name) {
@@ -715,11 +718,11 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public static Entity createEntity(String name, Position pos, Object... args) {
-        return createEntity(name, pos.getLevel().getChunk(pos.getFloorX(), pos.getFloorZ()), getDefaultNBT(pos), args);
+        return createEntity(name, pos.getChunk(), getDefaultNBT(pos), args);
     }
 
     public static Entity createEntity(int type, Position pos, Object... args) {
-        return createEntity(String.valueOf(type), pos.getLevel().getChunk(pos.getFloorX(), pos.getFloorZ()), getDefaultNBT(pos), args);
+        return createEntity(String.valueOf(type), pos.getChunk(), getDefaultNBT(pos), args);
     }
 
     public static Entity createEntity(String name, FullChunk chunk, CompoundTag nbt, Object... args) {
@@ -812,9 +815,11 @@ public abstract class Entity extends Location implements Metadatable {
             if (!this.getNameTag().equals("")) {
                 this.namedTag.putString("CustomName", this.getNameTag());
                 this.namedTag.putBoolean("CustomNameVisible", this.isNameTagVisible());
+                this.namedTag.putBoolean("CustomNameAlwaysVisible", this.isNameTagAlwaysVisible());
             } else {
                 this.namedTag.remove("CustomName");
                 this.namedTag.remove("CustomNameVisible");
+                this.namedTag.remove("CustomNameAlwaysVisible");
             }
         }
 
@@ -1309,14 +1314,13 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void addMotion(double motionX, double motionY, double motionZ) {
-        int chunkX = this.getFloorX() >> 4;
-        int chunkZ = this.getFloorZ() >> 4;
         SetEntityMotionPacket pk = new SetEntityMotionPacket();
-        pk.eid = this.getId();
+        pk.eid = this.id;
         pk.motionX = (float) motionX;
         pk.motionY = (float) motionY;
         pk.motionZ = (float) motionZ;
-        this.level.addChunkPacket(chunkX, chunkZ, pk);
+
+        Server.broadcastPacket(this.hasSpawned.values(), pk);
     }
 
     public Vector3 getDirectionVector() {

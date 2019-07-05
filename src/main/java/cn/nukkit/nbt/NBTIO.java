@@ -57,8 +57,9 @@ public class NBTIO {
             item.setCount(tag.getByte("Count"));
         }
 
-        if (tag.contains("tag") && tag.get("tag") instanceof CompoundTag) {
-            item.setNamedTag(tag.getCompound("tag"));
+        Tag tagTag = tag.get("tag");
+        if (tagTag instanceof CompoundTag) {
+            item.setNamedTag((CompoundTag) tagTag);
         }
 
         return item;
