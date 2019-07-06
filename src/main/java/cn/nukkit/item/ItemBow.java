@@ -52,7 +52,7 @@ public class ItemBow extends ItemTool {
         }
 
         double damage = 2;
-        boolean flame;
+        boolean flame = false;
 
         if (this.hasEnchantments()) {
             Enchantment bowDamage = this.getEnchantment(Enchantment.ID_BOW_POWER);
