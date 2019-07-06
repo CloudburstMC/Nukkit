@@ -1005,10 +1005,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.unloadChunk(Level.getHashX(index), Level.getHashZ(index));
         }
 
-        if (!loadQueue.isEmpty()) {
+        if (!loadQueue.isEmpty() && !lastChunk.isEmpty()) {
             NetworkChunkPublisherUpdatePacket packet = new NetworkChunkPublisherUpdatePacket();
             packet.position = this.asBlockVector3();
-            packet.radius = viewDistance << 4;
+            packet.radius = viewDistance * 16; //blocks, not chunks >.>
             this.dataPacket(packet);
         }
 
