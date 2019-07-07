@@ -2,26 +2,22 @@ package cn.nukkit.level.light;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.Level;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.generic.BaseChunk;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockVector3;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 import java.util.*;
 
 /**
  * author: dktapps
  */
-
-//TODO: make light updates asynchronous
 public abstract class LightUpdate {
 
     protected ChunkManager level;
 
-    protected Object2IntOpenHashMap<BlockVector3> updateNodes = new Object2IntOpenHashMap<BlockVector3>();
+    protected Map<BlockVector3, Integer> updateNodes = new HashMap<>();
 
     protected Queue<BlockVector3> spreadQueue;
 
@@ -50,25 +46,7 @@ public abstract class LightUpdate {
     abstract protected void setLight(int x, int y, int z, int level);
 
     public void setAndUpdateLight(int x, int y, int z, int newLevel) {
-        this.updateNodes.put(Level.blockHash(x, y, z), newLevel);
-//        BlockVector3 index;
-//
-//        if (spreadVisited.contains(index = Level.blockHash(x, y, z)) || removalVisited.contains(index)) {
-//            return;
-//        }
-//
-//        int oldLevel = this.getLight(x, y, z);
-//
-//        if (oldLevel != newLevel) {
-//            this.setLight(x, y, z, newLevel);
-//            if (oldLevel < newLevel) { //light increased
-//                this.spreadVisited.add(index);
-//                this.spreadQueue.add(new Entry(new BlockVector3(x, y, z)));
-//            } else { //light removed
-//                this.removalVisited.add(index);
-//                this.removalQueue.add(new Entry(new BlockVector3(x, y, z), oldLevel));
-//            }
-//        }
+        this.updateNodes.put(new BlockVector3(x, y, z), newLevel);
     }
 
     private void prepareNodes() {
