@@ -335,7 +335,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                     lightFilter[id] = block.getLightFilter() + 1;
                     diffusesSkyLight[id] = block.diffusesSkyLight();
                 } else {
-                    lightFilter[id] = 1;
+                    lightFilter[id] = 16;
                     for (int data = 0; data < 16; ++data) {
                         fullList[(id << 4) | data] = new BlockUnknown(id, data);
                     }

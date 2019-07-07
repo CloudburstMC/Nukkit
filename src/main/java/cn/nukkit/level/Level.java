@@ -354,9 +354,16 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public static char localBlockHash(double x, double y, double z) {
-        byte hi = (byte) (((int) x & 15) + (((int) z & 15) << 4));
+        byte hi = (byte) (((int) x & 0x0f) + (((int) z & 0x0f) << 4));
         byte lo = (byte) y;
         return (char) (((hi & 0xFF) << 8) | (lo & 0xFF));
+    }
+
+    public static BlockVector3 getLocalBlockXYZ(char blockHash) {
+        int hi = blockHash >> 8;
+        int y = blockHash & 0xFF;
+
+        return new BlockVector3(hi & 0x0f, y, hi >> 4);
     }
 
     public static Vector3 getBlockXYZ(long chunkHash, char blockHash) {
@@ -798,6 +805,8 @@ public class Level implements ChunkManager, Metadatable {
         this.timings.tickChunks.startTiming();
         this.tickChunks();
         this.timings.tickChunks.stopTiming();
+
+        this.executeQueuedLightUpdates();
 
         synchronized (changedBlocks) {
             if (!this.changedBlocks.isEmpty()) {
@@ -1446,6 +1455,22 @@ public class Level implements ChunkManager, Metadatable {
         return (int) (worldTime / 24000 % 8 + 8) % 8;
     }
 
+    public void executeQueuedLightUpdates() {
+        if (this.blockLightUpdate != null) {
+            timings.doBlockLightUpdates.startTiming();
+            this.blockLightUpdate.execute();
+            this.blockLightUpdate = null;
+            timings.doBlockLightUpdates.stopTiming();
+        }
+
+        if (this.skyLightUpdate != null) {
+            timings.doBlockSkyLightUpdates.startTiming();
+            this.skyLightUpdate.execute();
+            this.skyLightUpdate = null;
+            timings.doBlockSkyLightUpdates.stopTiming();
+        }
+    }
+
     public int getFullBlock(int x, int y, int z) {
         return this.getChunk(x >> 4, z >> 4, false).getFullBlock(x & 0x0f, y & 0xff, z & 0x0f);
     }
@@ -1946,6 +1971,8 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (player != null) {
+            player.sendMessage("blockLight: " + getBlockLightAt(block.getFloorX(), block.getFloorY(), block.getFloorZ()) + ", skylight: " + getBlockSkyLightAt(block.getFloorX(), block.getFloorY(), block.getFloorZ()));
+
             PlayerInteractEvent ev = new PlayerInteractEvent(player, item, target, face,
                     target.getId() == 0 ? Action.RIGHT_CLICK_AIR : Action.RIGHT_CLICK_BLOCK);
 
