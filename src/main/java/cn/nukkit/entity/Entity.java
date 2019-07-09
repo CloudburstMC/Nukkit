@@ -97,55 +97,56 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_LEAD_HOLDER_EID = 37; //long
     public static final int DATA_SCALE = 38; //float
     public static final int DATA_INTERACTIVE_TAG = 39; //string (button text)
-    public static final int DATA_SKIN_ID = 40; // int ???
-    public static final int DATA_NPC_SKIN_ID = 41; //string
-    public static final int DATA_URL_TAG = 42; //string
-    public static final int DATA_MAX_AIR = 43; //short
-    public static final int DATA_MARK_VARIANT = 44; //int
-    public static final int DATA_CONTAINER_TYPE = 45; //byte
-    public static final int DATA_CONTAINER_BASE_SIZE = 46; //int
-    public static final int DATA_CONTAINER_EXTRA_SLOTS_PER_STRENGTH = 47; //int
-    public static final int DATA_BLOCK_TARGET = 48; //block coords (ender crystal)
-    public static final int DATA_WITHER_INVULNERABLE_TICKS = 49; //int
-    public static final int DATA_WITHER_TARGET_1 = 50; //long
-    public static final int DATA_WITHER_TARGET_2 = 51; //long
-    public static final int DATA_WITHER_TARGET_3 = 52; //long
-    /* 53 (short) */
-    public static final int DATA_BOUNDING_BOX_WIDTH = 54; //float
-    public static final int DATA_BOUNDING_BOX_HEIGHT = 55; //float
-    public static final int DATA_FUSE_LENGTH = 56; //int
-    public static final int DATA_RIDER_SEAT_POSITION = 57; //vector3f
-    public static final int DATA_RIDER_ROTATION_LOCKED = 58; //byte
-    public static final int DATA_RIDER_MAX_ROTATION = 59; //float
-    public static final int DATA_RIDER_MIN_ROTATION = 60; //float
-    public static final int DATA_AREA_EFFECT_CLOUD_RADIUS = 61; //float
-    public static final int DATA_AREA_EFFECT_CLOUD_WAITING = 62; //int
-    public static final int DATA_AREA_EFFECT_CLOUD_PARTICLE_ID = 63; //int
-    /* 64 (int) shulker-related */
-    public static final int DATA_SHULKER_ATTACH_FACE = 65; //byte
-    /* 66 (short) shulker-related */
-    public static final int DATA_SHULKER_ATTACH_POS = 67; //block coords
-    public static final int DATA_TRADING_PLAYER_EID = 68; //long
+    public static final int DATA_NPC_SKIN_ID = 40; //string
+    public static final int DATA_URL_TAG = 41; //string
+    public static final int DATA_MAX_AIR = 42; //short
+    public static final int DATA_MARK_VARIANT = 43; //int
+    public static final int DATA_CONTAINER_TYPE = 44; //byte
+    public static final int DATA_CONTAINER_BASE_SIZE = 45; //int
+    public static final int DATA_CONTAINER_EXTRA_SLOTS_PER_STRENGTH = 46; //int
+    public static final int DATA_BLOCK_TARGET = 47; //block coords (ender crystal)
+    public static final int DATA_WITHER_INVULNERABLE_TICKS = 48; //int
+    public static final int DATA_WITHER_TARGET_1 = 49; //long
+    public static final int DATA_WITHER_TARGET_2 = 50; //long
+    public static final int DATA_WITHER_TARGET_3 = 51; //long
+    /* 52 (short) */
+    public static final int DATA_BOUNDING_BOX_WIDTH = 53; //float
+    public static final int DATA_BOUNDING_BOX_HEIGHT = 54; //float
+    public static final int DATA_FUSE_LENGTH = 55; //int
+    public static final int DATA_RIDER_SEAT_POSITION = 56; //vector3f
+    public static final int DATA_RIDER_ROTATION_LOCKED = 57; //byte
+    public static final int DATA_RIDER_MAX_ROTATION = 58; //float
+    public static final int DATA_RIDER_MIN_ROTATION = 59; //float
+    public static final int DATA_AREA_EFFECT_CLOUD_RADIUS = 60; //float
+    public static final int DATA_AREA_EFFECT_CLOUD_WAITING = 61; //int
+    public static final int DATA_AREA_EFFECT_CLOUD_PARTICLE_ID = 62; //int
+    /* 63 (int) shulker-related */
+    public static final int DATA_SHULKER_ATTACH_FACE = 64; //byte
+    /* 65 (short) shulker-related */
+    public static final int DATA_SHULKER_ATTACH_POS = 66; //block coords
+    public static final int DATA_TRADING_PLAYER_EID = 67; //long
 
-    /* 70 (byte) command-block */
-    public static final int DATA_COMMAND_BLOCK_COMMAND = 71; //string
-    public static final int DATA_COMMAND_BLOCK_LAST_OUTPUT = 72; //string
-    public static final int DATA_COMMAND_BLOCK_TRACK_OUTPUT = 73; //byte
-    public static final int DATA_CONTROLLING_RIDER_SEAT_NUMBER = 74; //byte
-    public static final int DATA_STRENGTH = 75; //int
-    public static final int DATA_MAX_STRENGTH = 76; //int
-    // 77 (int)
-    public static final int DATA_LIMITED_LIFE = 78;
-    public static final int DATA_ARMOR_STAND_POSE_INDEX = 79; // int
-    public static final int DATA_ENDER_CRYSTAL_TIME_OFFSET = 80; // int
-    public static final int DATA_ALWAYS_SHOW_NAMETAG = 81; // byte
-    public static final int DATA_COLOR_2 = 82; // byte
-    // 83 unknown
-    public static final int DATA_SCORE_TAG = 84; //String
-    public static final int DATA_BALLOON_ATTACHED_ENTITY = 85; // long
-    public static final int DATA_PUFFERFISH_SIZE = 86;
+    /* 69 (byte) command-block */
+    public static final int DATA_COMMAND_BLOCK_COMMAND = 70; //string
+    public static final int DATA_COMMAND_BLOCK_LAST_OUTPUT = 71; //string
+    public static final int DATA_COMMAND_BLOCK_TRACK_OUTPUT = 72; //byte
+    public static final int DATA_CONTROLLING_RIDER_SEAT_NUMBER = 73; //byte
+    public static final int DATA_STRENGTH = 74; //int
+    public static final int DATA_MAX_STRENGTH = 75; //int
+    // 76 (int)
+    public static final int DATA_LIMITED_LIFE = 77;
+    public static final int DATA_ARMOR_STAND_POSE_INDEX = 78; // int
+    public static final int DATA_ENDER_CRYSTAL_TIME_OFFSET = 79; // int
+    public static final int DATA_ALWAYS_SHOW_NAMETAG = 80; // byte
+    public static final int DATA_COLOR_2 = 81; // byte
+    // 82 unknown
+    public static final int DATA_SCORE_TAG = 83; //String
+    public static final int DATA_BALLOON_ATTACHED_ENTITY = 84; // long
+    public static final int DATA_PUFFERFISH_SIZE = 85;
 
-    public static final int DATA_FLAGS_EXTENDED = 92;
+    public static final int DATA_FLAGS_EXTENDED = 91;
+
+    public static final int DATA_SKIN_ID = 103; // int ???
 
     // Flags
     public static final int DATA_FLAG_ONFIRE = 0;
