@@ -1054,10 +1054,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return -1;
         }
 
-        if (!(packet instanceof BatchPacket)) {
-            log.debug("Outbound: {}", packet);
-        }
-
         try (Timing timing = Timings.getSendDataPacketTiming(packet)) {
             DataPacketSendEvent ev = new DataPacketSendEvent(this, packet);
             this.server.getPluginManager().callEvent(ev);
