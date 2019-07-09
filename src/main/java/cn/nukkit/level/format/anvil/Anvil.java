@@ -153,14 +153,14 @@ public class Anvil extends BaseLevelProvider {
                 break;
             }
         }
-        stream.putByte((byte) count);
+//        stream.putByte((byte) count);  count is now sent in packet
         for (int i = 0; i < count; i++) {
             stream.putByte((byte) 0);
             stream.put(sections[i].getBytes());
         }
-        for (byte height : chunk.getHeightMapArray()) {
-            stream.putByte(height);
-        }
+//        for (byte height : chunk.getHeightMapArray()) {
+//            stream.putByte(height);
+//        } computed client side?
         stream.put(PAD_256);
         stream.put(chunk.getBiomeIdArray());
         stream.putByte((byte) 0);
@@ -171,7 +171,7 @@ public class Anvil extends BaseLevelProvider {
         }
         stream.put(blockEntities);
 
-        this.getLevel().chunkRequestCallback(timestamp, x, z, stream.getBuffer());
+        this.getLevel().chunkRequestCallback(timestamp, x, z, count, stream.getBuffer());
 
         return null;
     }

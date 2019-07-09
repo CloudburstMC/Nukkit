@@ -56,7 +56,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_TYPE_INT = 2;
     public static final int DATA_TYPE_FLOAT = 3;
     public static final int DATA_TYPE_STRING = 4;
-    public static final int DATA_TYPE_SLOT = 5;
+    public static final int DATA_TYPE_NBT = 5;
     public static final int DATA_TYPE_POS = 6;
     public static final int DATA_TYPE_LONG = 7;
     public static final int DATA_TYPE_VECTOR3F = 8;
@@ -2217,8 +2217,8 @@ public abstract class Entity extends Location implements Metadatable {
         return this.getDataProperties().getFloat(id);
     }
 
-    public Item getDataPropertySlot(int id) {
-        return this.getDataProperties().getSlot(id);
+    public CompoundTag getDataPropertyNBT(int id) {
+        return this.getDataProperties().getNBT(id);
     }
 
     public Vector3 getDataPropertyPos(int id) {

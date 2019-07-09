@@ -754,7 +754,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
     }
 
-    public void sendChunk(int x, int z, byte[] payload) {
+    public void sendChunk(int x, int z, int count, byte[] payload) {
         if (!this.connected) {
             return;
         }
@@ -762,9 +762,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.usedChunks.put(Level.chunkHash(x, z), true);
         this.chunkLoadCount++;
 
-        FullChunkDataPacket pk = new FullChunkDataPacket();
+        LevelChunkPacket pk = new LevelChunkPacket();
         pk.chunkX = x;
         pk.chunkZ = z;
+        pk.subChunkCount = count;
         pk.data = payload;
 
         this.batchDataPacket(pk);
@@ -1051,6 +1052,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public int dataPacket(DataPacket packet, boolean needACK) {
         if (!this.connected) {
             return -1;
+        }
+
+        if (!(packet instanceof BatchPacket)) {
+            log.debug("Outbound: {}", packet);
         }
 
         try (Timing timing = Timings.getSendDataPacketTiming(packet)) {
@@ -4194,7 +4199,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         int chunkPositionZ = this.getFloorZ() >> 4;
         for (int x = -chunkRadius; x < chunkRadius; x++) {
             for (int z = -chunkRadius; z < chunkRadius; z++) {
-                FullChunkDataPacket chunk = new FullChunkDataPacket();
+                LevelChunkPacket chunk = new LevelChunkPacket();
                 chunk.chunkX = chunkPositionX + x;
                 chunk.chunkZ = chunkPositionZ + z;
                 chunk.data = new byte[0];
@@ -4551,7 +4556,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
 
     public static BatchPacket getChunkCacheFromData(int chunkX, int chunkZ, byte[] payload) {
-        FullChunkDataPacket pk = new FullChunkDataPacket();
+        LevelChunkPacket pk = new LevelChunkPacket();
         pk.chunkX = chunkX;
         pk.chunkZ = chunkZ;
         pk.data = payload;

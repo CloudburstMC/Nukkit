@@ -54,27 +54,30 @@ public class CraftingDataPacket extends DataPacket {
     }
 
     private static int writeShapelessRecipe(ShapelessRecipe recipe, BinaryStream stream) {
+        stream.putString(recipe.getId().toString());
         stream.putUnsignedVarInt(recipe.getIngredientCount());
 
         for (Item item : recipe.getIngredientList()) {
-            stream.putSlot(item);
+            stream.putRecipeIngredient(item);
         }
 
         stream.putUnsignedVarInt(1);
         stream.putSlot(recipe.getResult());
         stream.putUUID(recipe.getId());
         stream.putString(CRAFTING_TAG_CRAFTING_TABLE);
+        stream.putVarInt(0); // priority
 
         return CraftingDataPacket.ENTRY_SHAPELESS;
     }
 
     private static int writeShapedRecipe(ShapedRecipe recipe, BinaryStream stream) {
+        stream.putString(recipe.getId().toString());
         stream.putVarInt(recipe.getWidth());
         stream.putVarInt(recipe.getHeight());
 
         for (int z = 0; z < recipe.getHeight(); ++z) {
             for (int x = 0; x < recipe.getWidth(); ++x) {
-                stream.putSlot(recipe.getIngredient(x, z));
+                stream.putRecipeIngredient(recipe.getIngredient(x, z));
             }
         }
 
@@ -83,6 +86,7 @@ public class CraftingDataPacket extends DataPacket {
 
         stream.putUUID(recipe.getId());
         stream.putString(CRAFTING_TAG_CRAFTING_TABLE);
+        stream.putVarInt(0); // priority
 
         return CraftingDataPacket.ENTRY_SHAPED;
     }

@@ -249,7 +249,7 @@ public class Network {
         this.registerPacket(ProtocolInfo.ENTITY_EVENT_PACKET, EntityEventPacket.class);
         this.registerPacket(ProtocolInfo.ENTITY_FALL_PACKET, EntityFallPacket.class);
         this.registerPacket(ProtocolInfo.EXPLODE_PACKET, ExplodePacket.class);
-        this.registerPacket(ProtocolInfo.FULL_CHUNK_DATA_PACKET, FullChunkDataPacket.class);
+        this.registerPacket(ProtocolInfo.FULL_CHUNK_DATA_PACKET, LevelChunkPacket.class);
         this.registerPacket(ProtocolInfo.GAME_RULES_CHANGED_PACKET, GameRulesChangedPacket.class);
         this.registerPacket(ProtocolInfo.HURT_ARMOR_PACKET, HurtArmorPacket.class);
         this.registerPacket(ProtocolInfo.INTERACT_PACKET, InteractPacket.class);

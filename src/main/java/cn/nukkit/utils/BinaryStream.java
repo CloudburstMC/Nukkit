@@ -371,6 +371,28 @@ public class BinaryStream {
         }
     }
 
+    public Item getRecipeIngredient() {
+        int id = this.getVarInt();
+
+        if (id <= 0) {
+            return Item.get(0, 0, 0);
+        }
+
+        int damage = this.getVarInt();
+        int count = this.getVarInt();
+
+        return Item.get(id, damage, count);
+    }
+
+    public void putRecipeIngredient(Item ingredient) {
+        if (ingredient == null || ingredient.getId() == 0) {
+            this.putVarInt(0);
+            return;
+        }
+        this.putVarInt(ingredient.getDamage());
+        this.putVarInt(ingredient.getCount());
+    }
+
     private List<String> extractStringList(Item item, String tagName) {
         CompoundTag namedTag = item.getNamedTag();
         if (namedTag == null) {
