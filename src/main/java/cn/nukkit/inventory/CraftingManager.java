@@ -59,14 +59,23 @@ public class CraftingManager {
             }
         }
 
-        List<Map> recipes = new Config(path, Config.JSON).getMapList("recipes");
+        List<Map> recipes = new Config(path, Config.JSON).getRootSection().getMapList("recipes");
         MainLogger.getLogger().info("Loading recipes...");
         for (Map<String, Object> recipe : recipes) {
             try {
                 switch (Utils.toInt(recipe.get("type"))) {
                     case 0:
+                        String craftingBlock = (String) recipe.get("block");
+                        if (!"crafting_table".equals(craftingBlock)) {
+                            // Ignore other recipes than crafting table ones
+                            continue;
+                        }
                         // TODO: handle multiple result items
-                        Map<String, Object> first = ((List<Map>) recipe.get("output")).get(0);
+                        List<Map> outputs = ((List<Map>) recipe.get("output"));
+                        if (outputs.size() > 1) {
+                            continue;
+                        }
+                        Map<String, Object> first = outputs.get(0);
                         List<Item> sorted = new ArrayList<>();
                         for (Map<String, Object> ingredient : ((List<Map>) recipe.get("input"))) {
                             sorted.add(Item.fromJson(ingredient));
@@ -74,14 +83,22 @@ public class CraftingManager {
                         // Bake sorted list
                         sorted.sort(recipeComparator);
 
-                        ShapelessRecipe result = new ShapelessRecipe(Item.fromJson(first), sorted);
+                        String recipeId = (String) recipe.get("id");
+                        int priority = Utils.toInt(recipe.get("priority"));
+
+                        ShapelessRecipe result = new ShapelessRecipe(recipeId, priority, Item.fromJson(first), sorted);
 
                         this.registerRecipe(result);
                         break;
                     case 1:
-                        List<Map> output = (List<Map>) recipe.get("output");
+                        craftingBlock = (String) recipe.get("block");
+                        if (!"crafting_table".equals(craftingBlock)) {
+                            // Ignore other recipes than crafting table ones
+                            continue;
+                        }
+                        outputs = (List<Map>) recipe.get("output");
 
-                        first = output.remove(0);
+                        first = outputs.remove(0);
                         String[] shape = ((List<String>) recipe.get("shape")).toArray(new String[0]);
                         Map<Character, Item> ingredients = new CharObjectHashMap<>();
                         List<Item> extraResults = new ArrayList<>();
@@ -94,14 +111,22 @@ public class CraftingManager {
                             ingredients.put(ingredientChar, ingredient);
                         }
 
-                        for (Map<String, Object> data : output) {
+                        for (Map<String, Object> data : outputs) {
                             extraResults.add(Item.fromJson(data));
                         }
 
-                        this.registerRecipe(new ShapedRecipe(Item.fromJson(first), shape, ingredients, extraResults));
+                        recipeId = (String) recipe.get("id");
+                        priority = Utils.toInt(recipe.get("priority"));
+
+                        this.registerRecipe(new ShapedRecipe(recipeId, priority, Item.fromJson(first), shape, ingredients, extraResults));
                         break;
                     case 2:
                     case 3:
+                        craftingBlock = (String) recipe.get("block");
+                        if (!"furnace".equals(craftingBlock)) {
+                            // Ignore other recipes than furnaces
+                            continue;
+                        }
                         Map<String, Object> resultMap = (Map) recipe.get("output");
                         Item resultItem = Item.fromJson(resultMap);
                         Item inputItem;
@@ -171,7 +196,7 @@ public class CraftingManager {
 
     public void rebuildPacket() {
         CraftingDataPacket pk = new CraftingDataPacket();
-        pk.cleanRecipes = true;
+        pk.cleanRecipes = false;
 
         for (Recipe recipe : this.getRecipes()) {
             if (recipe instanceof ShapedRecipe) {

@@ -1,13 +1,7 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.inventory.FurnaceRecipe;
-import cn.nukkit.inventory.ShapedRecipe;
-import cn.nukkit.inventory.ShapelessRecipe;
+import cn.nukkit.inventory.*;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.item.enchantment.EnchantmentEntry;
-import cn.nukkit.item.enchantment.EnchantmentList;
-import cn.nukkit.utils.BinaryStream;
 import lombok.ToString;
 
 import java.util.ArrayList;
@@ -22,13 +16,6 @@ public class CraftingDataPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.CRAFTING_DATA_PACKET;
 
-    public static final int ENTRY_SHAPELESS = 0;
-    public static final int ENTRY_SHAPED = 1;
-    public static final int ENTRY_FURNACE = 2;
-    public static final int ENTRY_FURNACE_DATA = 3;
-    public static final int ENTRY_ENCHANT_LIST = 4;
-    public static final int ENTRY_SHULKER_BOX = 5;
-
     public static final String CRAFTING_TAG_CRAFTING_TABLE = "crafting_table";
     public static final String CRAFTING_TAG_CARTOGRAPHY_TABLE = "cartography_table";
     public static final String CRAFTING_TAG_STONECUTTER = "stonecutter";
@@ -37,91 +24,8 @@ public class CraftingDataPacket extends DataPacket {
     public static final String CRAFTING_TAG_BLAST_FURNACE = "blast_furnace";
     public static final String CRAFTING_TAG_SMOKER = "smoker";
 
-    public List<Object> entries = new ArrayList<>();
+    public List<Recipe> entries = new ArrayList<>();
     public boolean cleanRecipes;
-
-    private static int writeEntry(Object entry, BinaryStream stream) {
-        if (entry instanceof ShapelessRecipe) {
-            return writeShapelessRecipe(((ShapelessRecipe) entry), stream);
-        } else if (entry instanceof ShapedRecipe) {
-            return writeShapedRecipe(((ShapedRecipe) entry), stream);
-        } else if (entry instanceof FurnaceRecipe) {
-            return writeFurnaceRecipe(((FurnaceRecipe) entry), stream);
-        } else if (entry instanceof EnchantmentList) {
-            return writeEnchantList(((EnchantmentList) entry), stream);
-        }
-        return -1;
-    }
-
-    private static int writeShapelessRecipe(ShapelessRecipe recipe, BinaryStream stream) {
-        stream.putString(recipe.getId().toString());
-        stream.putUnsignedVarInt(recipe.getIngredientCount());
-
-        for (Item item : recipe.getIngredientList()) {
-            stream.putRecipeIngredient(item);
-        }
-
-        stream.putUnsignedVarInt(1);
-        stream.putSlot(recipe.getResult());
-        stream.putUUID(recipe.getId());
-        stream.putString(CRAFTING_TAG_CRAFTING_TABLE);
-        stream.putVarInt(0); // priority
-
-        return CraftingDataPacket.ENTRY_SHAPELESS;
-    }
-
-    private static int writeShapedRecipe(ShapedRecipe recipe, BinaryStream stream) {
-        stream.putString(recipe.getId().toString());
-        stream.putVarInt(recipe.getWidth());
-        stream.putVarInt(recipe.getHeight());
-
-        for (int z = 0; z < recipe.getHeight(); ++z) {
-            for (int x = 0; x < recipe.getWidth(); ++x) {
-                stream.putRecipeIngredient(recipe.getIngredient(x, z));
-            }
-        }
-
-        stream.putUnsignedVarInt(1);
-        stream.putSlot(recipe.getResult());
-
-        stream.putUUID(recipe.getId());
-        stream.putString(CRAFTING_TAG_CRAFTING_TABLE);
-        stream.putVarInt(0); // priority
-
-        return CraftingDataPacket.ENTRY_SHAPED;
-    }
-
-    private static int writeFurnaceRecipe(FurnaceRecipe recipe, BinaryStream stream) {
-        if (recipe.getInput().hasMeta()) { //Data recipe
-            stream.putVarInt(recipe.getInput().getId());
-            stream.putVarInt(recipe.getInput().getDamage());
-            stream.putSlot(recipe.getResult());
-            stream.putString(CRAFTING_TAG_FURNACE);
-
-            return CraftingDataPacket.ENTRY_FURNACE_DATA;
-        } else {
-            stream.putVarInt(recipe.getInput().getId());
-            stream.putSlot(recipe.getResult());
-            stream.putString(CRAFTING_TAG_FURNACE);
-
-            return CraftingDataPacket.ENTRY_FURNACE;
-        }
-    }
-
-    private static int writeEnchantList(EnchantmentList list, BinaryStream stream) {
-        stream.putByte((byte) list.getSize());
-        for (int i = 0; i < list.getSize(); ++i) {
-            EnchantmentEntry entry = list.getSlot(i);
-            stream.putUnsignedVarInt(entry.getCost());
-            stream.putUnsignedVarInt(entry.getEnchantments().length);
-            for (Enchantment enchantment : entry.getEnchantments()) {
-                stream.putUnsignedVarInt(enchantment.getId());
-                stream.putUnsignedVarInt(enchantment.getLevel());
-            }
-            stream.putString(entry.getRandomName());
-        }
-        return CraftingDataPacket.ENTRY_ENCHANT_LIST;
-    }
 
     public void addShapelessRecipe(ShapelessRecipe... recipe) {
         Collections.addAll(entries, (ShapelessRecipe[]) recipe);
@@ -133,10 +37,6 @@ public class CraftingDataPacket extends DataPacket {
 
     public void addFurnaceRecipe(FurnaceRecipe... recipe) {
         Collections.addAll(entries, (FurnaceRecipe[]) recipe);
-    }
-
-    public void addEnchantList(EnchantmentList... list) {
-        Collections.addAll(entries, (EnchantmentList[]) list);
     }
 
     @Override
@@ -155,18 +55,57 @@ public class CraftingDataPacket extends DataPacket {
         this.reset();
         this.putUnsignedVarInt(entries.size());
 
-        BinaryStream writer = new BinaryStream();
+        for (Recipe recipe : entries) {
+            this.putVarInt(recipe.getType().ordinal());
+            switch (recipe.getType()) {
+                case SHAPELESS:
+                    ShapelessRecipe shapeless = (ShapelessRecipe) recipe;
+                    this.putString(shapeless.getRecipeId());
+                    List<Item> ingredients = shapeless.getIngredientList();
+                    this.putUnsignedVarInt(ingredients.size());
+                    for (Item ingredient : ingredients) {
+                        this.putRecipeIngredient(ingredient);
+                    }
+                    this.putUnsignedVarInt(1);
+                    this.putSlot(shapeless.getResult());
+                    this.putUUID(shapeless.getId());
+                    this.putString(CRAFTING_TAG_CRAFTING_TABLE);
+                    this.putVarInt(shapeless.getPriority());
+                    break;
+                case SHAPED:
+                    ShapedRecipe shaped = (ShapedRecipe) recipe;
+                    this.putString(shaped.getRecipeId());
+                    this.putVarInt(shaped.getWidth());
+                    this.putVarInt(shaped.getHeight());
 
-        for (Object entry : entries) {
-            int entryType = writeEntry(entry, writer);
-            if (entryType >= 0) {
-                this.putVarInt(entryType);
-                this.put(writer.getBuffer());
-            } else {
-                this.putVarInt(-1);
+                    for (int z = 0; z < shaped.getHeight(); ++z) {
+                        for (int x = 0; x < shaped.getWidth(); ++x) {
+                            this.putRecipeIngredient(shaped.getIngredient(x, z));
+                        }
+                    }
+                    List<Item> outputs = new ArrayList<>();
+                    outputs.add(shaped.getResult());
+                    outputs.addAll(shaped.getExtraResults());
+                    this.putUnsignedVarInt(outputs.size());
+                    for (Item output : outputs) {
+                        this.putSlot(output);
+                    }
+                    this.putUUID(shaped.getId());
+                    this.putString(CRAFTING_TAG_CRAFTING_TABLE);
+                    this.putVarInt(shaped.getPriority());
+                    break;
+                case FURNACE:
+                case FURNACE_DATA:
+                    FurnaceRecipe furnace = (FurnaceRecipe) recipe;
+                    Item input = furnace.getInput();
+                    this.putVarInt(input.getId());
+                    if (recipe.getType() == RecipeType.FURNACE_DATA) {
+                        this.putVarInt(input.getDamage());
+                    }
+                    this.putSlot(furnace.getResult());
+                    this.putString(CRAFTING_TAG_FURNACE);
+                    break;
             }
-
-            writer.reset();
         }
 
         this.putBoolean(cleanRecipes);
