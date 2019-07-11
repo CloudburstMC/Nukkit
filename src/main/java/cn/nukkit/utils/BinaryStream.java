@@ -3,6 +3,7 @@ package cn.nukkit.utils;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.GameRules;
 import cn.nukkit.math.BlockFace;
@@ -298,7 +299,14 @@ public class BinaryStream {
                 try {
                     // TODO: 05/02/2019 This hack is necessary because we keep the raw NBT tag. Try to remove it.
                     CompoundTag tag = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN, true);
-                    nbt = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, false);
+                    // tool damage hack
+                    if (tag.contains("Damage")) {
+                        data = tag.getInt("Damage");
+                        tag.remove("Damage");
+                    }
+                    if (tag.getAllTags().size() > 0) {
+                        nbt = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, false);
+                    }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -357,13 +365,36 @@ public class BinaryStream {
             return;
         }
 
+        boolean isTool = item instanceof ItemTool;
+
         this.putVarInt(item.getId());
-        int auxValue = (((item.hasMeta() ? item.getDamage() : -1) & 0x7fff) << 8) | item.getCount();
+
+        int auxValue = item.getCount();
+        if (!isTool) {
+            auxValue |= (((item.hasMeta() ? item.getDamage() : -1) & 0x7fff) << 8);
+        }
         this.putVarInt(auxValue);
-        if (item.hasCompoundTag()) {
-            byte[] nbt = item.getCompoundTag();
-            this.putLShort(nbt.length);
-            this.put(nbt);
+
+        if (item.hasCompoundTag() || isTool) {
+            try {
+                // hack for tool damage
+                byte[] nbt = item.getCompoundTag();
+                CompoundTag tag;
+                if (nbt == null || nbt.length == 0) {
+                    tag = new CompoundTag();
+                } else {
+                    tag = NBTIO.read(nbt, ByteOrder.LITTLE_ENDIAN, false);
+                }
+                if (isTool) {
+                    tag.putInt("Damage", item.getDamage());
+                }
+
+                this.putLShort(0xffff);
+                this.putByte((byte) 1);
+                this.put(NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, true));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         } else {
             this.putLShort(0);
         }

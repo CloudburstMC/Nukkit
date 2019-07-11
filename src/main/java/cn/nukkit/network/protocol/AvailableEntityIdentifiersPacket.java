@@ -4,7 +4,7 @@ import cn.nukkit.Nukkit;
 import com.google.common.io.ByteStreams;
 import lombok.ToString;
 
-import java.io.IOException;
+import java.io.InputStream;
 
 @ToString(exclude = {"tag"})
 public class AvailableEntityIdentifiersPacket extends DataPacket {
@@ -14,10 +14,14 @@ public class AvailableEntityIdentifiersPacket extends DataPacket {
 
     static {
         try {
+            InputStream inputStream = Nukkit.class.getClassLoader().getResourceAsStream("entity_identifiers.dat");
+            if (inputStream == null) {
+                throw new AssertionError("Could not find entity_identifiers.dar");
+            }
             //noinspection UnstableApiUsage
-            TAG = ByteStreams.toByteArray(Nukkit.class.getClassLoader().getResourceAsStream("entity_identifiers.dat"));
-        } catch (NullPointerException | IOException e) {
-            throw new AssertionError("Unable to load entity_identifiers_net.dat");
+            TAG = ByteStreams.toByteArray(inputStream);
+        } catch (Exception e) {
+            throw new AssertionError("Error whilist loading entity_identifiers_net.dat", e);
         }
     }
 
