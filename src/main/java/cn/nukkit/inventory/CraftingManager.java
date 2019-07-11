@@ -13,7 +13,7 @@ import io.netty.util.collection.CharObjectHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.zip.Deflater;
 
@@ -47,19 +47,33 @@ public class CraftingManager {
         } else return Integer.compare(i1.getCount(), i2.getCount());
     };
 
-    @SuppressWarnings("unchecked")
     public CraftingManager() {
-        String path = Server.getInstance().getDataPath() + "recipes.json";
-
-        if (!new File(path).exists()) {
-            try {
-                Utils.writeFile(path, Server.class.getClassLoader().getResourceAsStream("recipes.json"));
-            } catch (IOException e) {
-                MainLogger.getLogger().logException(e);
-            }
+        InputStream recipesStream = Server.class.getClassLoader().getResourceAsStream("recipes.json");
+        if (recipesStream == null) {
+            throw new AssertionError("Unable to find recipes.json");
         }
 
-        List<Map> recipes = new Config(path, Config.JSON).getRootSection().getMapList("recipes");
+        Config recipesConfig = new Config(Config.JSON);
+        recipesConfig.load(recipesStream);
+        this.loadRecipes(recipesConfig);
+
+        String path = Server.getInstance().getDataPath() + "custom_recipes.json";
+        File filePath = new File(path);
+
+        if (filePath.exists()) {
+            Config customRecipes = new Config(filePath, Config.JSON);
+            this.loadRecipes(customRecipes);
+        }
+
+        this.registerBrewing();
+        this.rebuildPacket();
+
+        MainLogger.getLogger().info("Loaded " + this.recipes.size() + " recipes.");
+    }
+
+    @SuppressWarnings("unchecked")
+    private void loadRecipes(Config config) {
+        List<Map> recipes = config.getMapList("recipes");
         MainLogger.getLogger().info("Loading recipes...");
         for (Map<String, Object> recipe : recipes) {
             try {
@@ -145,11 +159,6 @@ public class CraftingManager {
                 MainLogger.getLogger().error("Exception during registering recipe", e);
             }
         }
-
-        this.registerBrewing();
-        this.rebuildPacket();
-
-        MainLogger.getLogger().info("Loaded " + this.recipes.size() + " recipes.");
     }
 
     protected void registerBrewing() {
