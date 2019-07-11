@@ -16,12 +16,12 @@ public class AvailableEntityIdentifiersPacket extends DataPacket {
         try {
             InputStream inputStream = Nukkit.class.getClassLoader().getResourceAsStream("entity_identifiers.dat");
             if (inputStream == null) {
-                throw new AssertionError("Could not find entity_identifiers.dar");
+                throw new AssertionError("Could not find entity_identifiers.dat");
             }
             //noinspection UnstableApiUsage
             TAG = ByteStreams.toByteArray(inputStream);
         } catch (Exception e) {
-            throw new AssertionError("Error whilist loading entity_identifiers_net.dat", e);
+            throw new AssertionError("Error whilst loading entity_identifiers_net.dat", e);
         }
     }
 
