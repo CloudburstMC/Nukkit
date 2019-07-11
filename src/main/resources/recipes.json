@@ -1,12 +1,16 @@
 {
-  "version": 361,
   "recipes": [
     {
       "id": "Bookshelf_woodplanks_recipeId",
       "type": 1,
       "input": {
         "A": {
-          "id": 5
+          "id": 5,
+          "damage": -1
+        },
+        "B": {
+          "id": 340,
+          "damage": -1
         }
       },
       "output": [
@@ -16,7 +20,7 @@
       ],
       "shape": [
         "AAA",
-        "AAA",
+        "BBB",
         "AAA"
       ],
       "block": "crafting_table",
@@ -27,7 +31,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 5
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -153,7 +158,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 5
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -177,7 +183,12 @@
           "id": 20
         },
         "B": {
-          "id": 406
+          "id": 406,
+          "damage": -1
+        },
+        "C": {
+          "id": 158,
+          "damage": -1
         }
       },
       "output": [
@@ -188,7 +199,7 @@
       "shape": [
         "AAA",
         "BBB",
-        "BBB"
+        "CCC"
       ],
       "block": "crafting_table",
       "priority": 50
@@ -250,7 +261,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 5
+          "id": 5,
+          "damage": -1
+        },
+        "B": {
+          "id": 264,
+          "damage": -1
         }
       },
       "output": [
@@ -260,7 +276,7 @@
       ],
       "shape": [
         "AAA",
-        "AAA",
+        "ABA",
         "AAA"
       ],
       "block": "crafting_table",
@@ -271,7 +287,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 5
+          "id": 5,
+          "damage": -1
+        },
+        "B": {
+          "id": 331,
+          "damage": -1
         }
       },
       "output": [
@@ -281,7 +302,7 @@
       ],
       "shape": [
         "AAA",
-        "AAA",
+        "ABA",
         "AAA"
       ],
       "block": "crafting_table",
@@ -355,7 +376,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
+        },
+        "B": {
+          "id": 35,
+          "damage": -1
         }
       },
       "output": [
@@ -365,7 +391,7 @@
       ],
       "shape": [
         "AAA",
-        "AAA",
+        "ABA",
         "AAA"
       ],
       "block": "crafting_table",
@@ -376,10 +402,19 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 5
+          "id": 5,
+          "damage": -1
         },
         "B": {
           "id": 4
+        },
+        "C": {
+          "id": 265,
+          "damage": -1
+        },
+        "D": {
+          "id": 331,
+          "damage": -1
         }
       },
       "output": [
@@ -390,8 +425,8 @@
       ],
       "shape": [
         "AAA",
-        "BAB",
-        "BAB"
+        "BCB",
+        "BDB"
       ],
       "block": "crafting_table",
       "priority": 50
@@ -625,7 +660,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 289
+          "id": 289,
+          "damage": -1
         },
         "B": {
           "id": 12
@@ -649,7 +685,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 263
+          "id": 263,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -660,7 +701,7 @@
       ],
       "shape": [
         "A",
-        "A"
+        "B"
       ],
       "block": "crafting_table",
       "priority": 50
@@ -801,7 +842,16 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
+        },
+        "C": {
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -812,8 +862,8 @@
       ],
       "shape": [
         "A",
-        "A",
-        "A"
+        "B",
+        "C"
       ],
       "block": "crafting_table",
       "priority": 50
@@ -862,7 +912,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 5
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -920,7 +971,8 @@
           "id": 35
         },
         "B": {
-          "id": 5
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -944,7 +996,8 @@
           "damage": 1
         },
         "B": {
-          "id": 5
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -969,7 +1022,8 @@
           "damage": 10
         },
         "B": {
-          "id": 5
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -994,7 +1048,8 @@
           "damage": 11
         },
         "B": {
-          "id": 5
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -1019,7 +1074,8 @@
           "damage": 12
         },
         "B": {
-          "id": 5
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -1044,7 +1100,8 @@
           "damage": 13
         },
         "B": {
-          "id": 5
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -1069,7 +1126,8 @@
           "damage": 14
         },
         "B": {
-          "id": 5
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -1094,7 +1152,8 @@
           "damage": 15
         },
         "B": {
-          "id": 5
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -1119,7 +1178,8 @@
           "damage": 2
         },
         "B": {
-          "id": 5
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -1144,7 +1204,8 @@
           "damage": 3
         },
         "B": {
-          "id": 5
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -1169,7 +1230,8 @@
           "damage": 4
         },
         "B": {
-          "id": 5
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -1194,7 +1256,8 @@
           "damage": 5
         },
         "B": {
-          "id": 5
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -1219,7 +1282,8 @@
           "damage": 6
         },
         "B": {
-          "id": 5
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -1244,7 +1308,8 @@
           "damage": 7
         },
         "B": {
-          "id": 5
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -1269,7 +1334,8 @@
           "damage": 8
         },
         "B": {
-          "id": 5
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -1294,7 +1360,8 @@
           "damage": 9
         },
         "B": {
-          "id": 5
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -8042,7 +8109,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 287
+          "id": 287,
+          "damage": -1
+        },
+        "B": {
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -8052,7 +8124,7 @@
       ],
       "shape": [
         "AA",
-        "AA"
+        "BB"
       ],
       "block": "crafting_table",
       "priority": 50
@@ -8066,7 +8138,8 @@
           "damage": 4
         },
         "B": {
-          "id": 269
+          "id": 269,
+          "damage": -1
         }
       },
       "output": [
@@ -8114,7 +8187,8 @@
           "damage": 4
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -8136,7 +8210,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         },
         "B": {
           "id": 5,
@@ -8181,7 +8256,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": -8
+          "id": -8,
+          "damage": -1
         }
       },
       "output": [
@@ -8291,7 +8367,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": -8
+          "id": -8,
+          "damage": -1
         }
       },
       "output": [
@@ -8335,7 +8412,16 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
+        },
+        "C": {
+          "id": 76,
+          "damage": -1
         }
       },
       "output": [
@@ -8345,9 +8431,9 @@
         }
       ],
       "shape": [
-        "AAA",
-        "AAA",
-        "AAA"
+        "ABA",
+        "ACA",
+        "ABA"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -8426,7 +8512,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 42
+          "id": 42,
+          "damage": -1
+        },
+        "B": {
+          "id": 265,
+          "damage": -1
         }
       },
       "output": [
@@ -8436,8 +8527,8 @@
       ],
       "shape": [
         "AAA",
-        " A ",
-        "AAA"
+        " B ",
+        "BBB"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -8447,7 +8538,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         },
         "B": {
           "id": 44
@@ -8471,7 +8563,16 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 318
+          "id": 318,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
+        },
+        "C": {
+          "id": 288,
+          "damage": -1
         }
       },
       "output": [
@@ -8482,8 +8583,8 @@
       ],
       "shape": [
         "A",
-        "A",
-        "A"
+        "B",
+        "C"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -8624,7 +8725,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
+        },
+        "B": {
+          "id": 158,
+          "damage": -1
         }
       },
       "output": [
@@ -8633,9 +8739,9 @@
         }
       ],
       "shape": [
-        "AAA",
+        "ABA",
         "A A",
-        "AAA"
+        "ABA"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -8667,7 +8773,16 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
+        },
+        "B": {
+          "id": 399,
+          "damage": -1
+        },
+        "C": {
+          "id": 49,
+          "damage": -1
         }
       },
       "output": [
@@ -8677,8 +8792,8 @@
       ],
       "shape": [
         "AAA",
-        "AAA",
-        "AAA"
+        "ABA",
+        "CCC"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -8739,7 +8854,8 @@
           "damage": 2
         },
         "B": {
-          "id": 269
+          "id": 269,
+          "damage": -1
         }
       },
       "output": [
@@ -8787,7 +8903,8 @@
           "damage": 2
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -8809,7 +8926,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         },
         "B": {
           "id": 5,
@@ -8855,7 +8973,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": -6
+          "id": -6,
+          "damage": -1
         }
       },
       "output": [
@@ -8966,7 +9085,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": -6
+          "id": -6,
+          "damage": -1
         }
       },
       "output": [
@@ -9014,7 +9134,8 @@
           "damage": 15
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -9194,7 +9315,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -9221,7 +9343,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         },
         "B": {
           "id": 351
@@ -9270,7 +9393,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 102
+          "id": 102,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -9297,7 +9421,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 172
+          "id": 172,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -9324,7 +9449,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 172
+          "id": 172,
+          "damage": -1
         },
         "B": {
           "id": 351
@@ -9350,7 +9476,16 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
+        },
+        "B": {
+          "id": 61,
+          "damage": -1
+        },
+        "C": {
+          "id": -183,
+          "damage": -1
         }
       },
       "output": [
@@ -9360,8 +9495,8 @@
       ],
       "shape": [
         "AAA",
-        "AAA",
-        "AAA"
+        "ABA",
+        "CCC"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -9393,7 +9528,8 @@
           "damage": 11
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -9594,7 +9730,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 174
+          "id": 174,
+          "damage": -1
         }
       },
       "output": [
@@ -9615,7 +9752,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -9642,7 +9780,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -9692,7 +9831,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 102
+          "id": 102,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -9719,7 +9859,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 172
+          "id": 172,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -9746,7 +9887,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 172
+          "id": 172,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -9776,7 +9918,8 @@
           "id": 5
         },
         "B": {
-          "id": 269
+          "id": 269,
+          "damage": -1
         }
       },
       "output": [
@@ -9881,7 +10024,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
+        },
+        "B": {
+          "id": 287,
+          "damage": -1
         }
       },
       "output": [
@@ -9890,9 +10038,9 @@
         }
       ],
       "shape": [
-        " AA",
-        "A A",
-        " AA"
+        " AB",
+        "A B",
+        " AB"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -9902,7 +10050,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 296
+          "id": 296,
+          "damage": -1
         }
       },
       "output": [
@@ -9921,7 +10070,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 369
+          "id": 369,
+          "damage": -1
+        },
+        "B": {
+          "id": 4,
+          "damage": -1
         }
       },
       "output": [
@@ -9931,7 +10085,7 @@
       ],
       "shape": [
         " A ",
-        "AAA"
+        "BBB"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -9941,7 +10095,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 336
+          "id": 336,
+          "damage": -1
         }
       },
       "output": [
@@ -9961,7 +10116,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 45
+          "id": 45,
+          "damage": -1
         }
       },
       "output": [
@@ -9983,7 +10139,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 45
+          "id": 45,
+          "damage": -1
         }
       },
       "output": [
@@ -10009,7 +10166,8 @@
           "damage": 12
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -10192,7 +10350,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -10219,7 +10378,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -10269,7 +10429,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 102
+          "id": 102,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -10296,7 +10457,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 172
+          "id": 172,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -10323,7 +10485,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 172
+          "id": 172,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -10350,7 +10513,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
         }
       },
       "output": [
@@ -10374,7 +10538,16 @@
           "damage": 1
         },
         "B": {
-          "id": 353
+          "id": 353,
+          "damage": -1
+        },
+        "C": {
+          "id": 344,
+          "damage": -1
+        },
+        "D": {
+          "id": 296,
+          "damage": -1
         }
       },
       "output": [
@@ -10388,8 +10561,8 @@
       ],
       "shape": [
         "AAA",
-        "BBB",
-        "BBB"
+        "BCB",
+        "DDD"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -10399,7 +10572,16 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
+        },
+        "B": {
+          "id": 263,
+          "damage": -1
+        },
+        "C": {
+          "id": 17,
+          "damage": -1
         }
       },
       "output": [
@@ -10409,8 +10591,8 @@
       ],
       "shape": [
         " A ",
-        "AAA",
-        "AAA"
+        "ABA",
+        "CCC"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -10420,7 +10602,16 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
+        },
+        "B": {
+          "id": 263,
+          "damage": -1
+        },
+        "C": {
+          "id": 162,
+          "damage": -1
         }
       },
       "output": [
@@ -10430,8 +10621,8 @@
       ],
       "shape": [
         " A ",
-        "AAA",
-        "AAA"
+        "ABA",
+        "CCC"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -10441,7 +10632,16 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
+        },
+        "B": {
+          "id": 263,
+          "damage": -1
+        },
+        "C": {
+          "id": -8,
+          "damage": -1
         }
       },
       "output": [
@@ -10451,8 +10651,8 @@
       ],
       "shape": [
         " A ",
-        "AAA",
-        "AAA"
+        "ABA",
+        "CCC"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -10462,7 +10662,16 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
+        },
+        "B": {
+          "id": 263,
+          "damage": -1
+        },
+        "C": {
+          "id": -6,
+          "damage": -1
         }
       },
       "output": [
@@ -10472,8 +10681,8 @@
       ],
       "shape": [
         " A ",
-        "AAA",
-        "AAA"
+        "ABA",
+        "CCC"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -10483,7 +10692,16 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
+        },
+        "B": {
+          "id": 263,
+          "damage": -1
+        },
+        "C": {
+          "id": -9,
+          "damage": -1
         }
       },
       "output": [
@@ -10493,8 +10711,8 @@
       ],
       "shape": [
         " A ",
-        "AAA",
-        "AAA"
+        "ABA",
+        "CCC"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -10504,7 +10722,16 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
+        },
+        "B": {
+          "id": 263,
+          "damage": -1
+        },
+        "C": {
+          "id": -7,
+          "damage": -1
         }
       },
       "output": [
@@ -10514,8 +10741,8 @@
       ],
       "shape": [
         " A ",
-        "AAA",
-        "AAA"
+        "ABA",
+        "CCC"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -10525,7 +10752,16 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
+        },
+        "B": {
+          "id": 263,
+          "damage": -1
+        },
+        "C": {
+          "id": -10,
+          "damage": -1
         }
       },
       "output": [
@@ -10535,8 +10771,8 @@
       ],
       "shape": [
         " A ",
-        "AAA",
-        "AAA"
+        "ABA",
+        "CCC"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -10546,7 +10782,16 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
+        },
+        "B": {
+          "id": 263,
+          "damage": -1
+        },
+        "C": {
+          "id": -5,
+          "damage": -1
         }
       },
       "output": [
@@ -10556,8 +10801,8 @@
       ],
       "shape": [
         " A ",
-        "AAA",
-        "AAA"
+        "ABA",
+        "CCC"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -10567,7 +10812,16 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
+        },
+        "B": {
+          "id": 263,
+          "damage": -1
+        },
+        "C": {
+          "id": -212,
+          "damage": -1
         }
       },
       "output": [
@@ -10577,8 +10831,8 @@
       ],
       "shape": [
         " A ",
-        "AAA",
-        "AAA"
+        "ABA",
+        "CCC"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -10588,7 +10842,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 346
+          "id": 346,
+          "damage": -1
+        },
+        "B": {
+          "id": 391,
+          "damage": -1
         }
       },
       "output": [
@@ -10598,7 +10857,7 @@
       ],
       "shape": [
         "A ",
-        " A"
+        " B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -10608,7 +10867,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 339
+          "id": 339,
+          "damage": -1
+        },
+        "B": {
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -10618,8 +10882,8 @@
       ],
       "shape": [
         "AA",
-        "AA",
-        "AA"
+        "BB",
+        "BB"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -10629,7 +10893,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
         }
       },
       "output": [
@@ -10650,7 +10915,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 54
+          "id": 54,
+          "damage": -1
+        },
+        "B": {
+          "id": 328,
+          "damage": -1
         }
       },
       "output": [
@@ -10660,7 +10930,7 @@
       ],
       "shape": [
         "A",
-        "A"
+        "B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -10670,7 +10940,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 337
+          "id": 337,
+          "damage": -1
         }
       },
       "output": [
@@ -10690,7 +10961,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 266
+          "id": 266,
+          "damage": -1
+        },
+        "B": {
+          "id": 331,
+          "damage": -1
         }
       },
       "output": [
@@ -10700,7 +10976,7 @@
       ],
       "shape": [
         " A ",
-        "AAA",
+        "ABA",
         " A "
       ],
       "block": "crafting_table",
@@ -10711,7 +10987,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 173
+          "id": 173,
+          "damage": -1
         }
       },
       "output": [
@@ -10755,7 +11032,8 @@
           "id": 3
         },
         "B": {
-          "id": 13
+          "id": 13,
+          "damage": -1
         }
       },
       "output": [
@@ -10777,7 +11055,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 4
+          "id": 4,
+          "damage": -1
         }
       },
       "output": [
@@ -10799,7 +11078,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 4
+          "id": 4,
+          "damage": -1
         }
       },
       "output": [
@@ -10838,9 +11118,14 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 76
+          "id": 76,
+          "damage": -1
         },
         "B": {
+          "id": 406,
+          "damage": -1
+        },
+        "C": {
           "id": 1
         }
       },
@@ -10851,8 +11136,8 @@
       ],
       "shape": [
         " A ",
-        "AAA",
-        "BBB"
+        "ABA",
+        "CCC"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -10862,7 +11147,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
+        },
+        "B": {
+          "id": 331,
+          "damage": -1
         }
       },
       "output": [
@@ -10872,7 +11162,7 @@
       ],
       "shape": [
         " A ",
-        "AAA",
+        "ABA",
         " A "
       ],
       "block": "crafting_table",
@@ -10883,7 +11173,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 158
+          "id": 158,
+          "damage": -1
         }
       },
       "output": [
@@ -10904,7 +11195,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 465
+          "id": 465,
+          "damage": -1
+        },
+        "B": {
+          "id": 467,
+          "damage": -1
         }
       },
       "output": [
@@ -10914,7 +11210,7 @@
       ],
       "shape": [
         "AAA",
-        "AAA",
+        "ABA",
         "AAA"
       ],
       "block": "crafting_table",
@@ -10925,7 +11221,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 296
+          "id": 296,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -10949,7 +11246,20 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
+        },
+        "B": {
+          "id": 265,
+          "damage": -1
+        },
+        "C": {
+          "id": 287,
+          "damage": -1
+        },
+        "D": {
+          "id": 131,
+          "damage": -1
         }
       },
       "output": [
@@ -10958,8 +11268,8 @@
         }
       ],
       "shape": [
-        "AAA",
-        "AAA",
+        "ABA",
+        "CDC",
         " A "
       ],
       "block": "crafting_table",
@@ -10974,7 +11284,8 @@
           "damage": 9
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -11138,7 +11449,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -11188,7 +11500,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 102
+          "id": 102,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -11215,7 +11528,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 172
+          "id": 172,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -11246,7 +11560,8 @@
           "damage": 5
         },
         "B": {
-          "id": 269
+          "id": 269,
+          "damage": -1
         }
       },
       "output": [
@@ -11294,7 +11609,8 @@
           "damage": 5
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -11316,7 +11632,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         },
         "B": {
           "id": 5,
@@ -11362,7 +11679,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": -9
+          "id": -9,
+          "damage": -1
         }
       },
       "output": [
@@ -11473,7 +11791,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": -9
+          "id": -9,
+          "damage": -1
         }
       },
       "output": [
@@ -11517,7 +11836,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 409
+          "id": 409,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -11543,7 +11863,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 409
+          "id": 409,
+          "damage": -1
         },
         "B": {
           "id": 351
@@ -11568,7 +11889,16 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
+        },
+        "B": {
+          "id": 70,
+          "damage": -1
+        },
+        "C": {
+          "id": 331,
+          "damage": -1
         }
       },
       "output": [
@@ -11579,8 +11909,8 @@
       ],
       "shape": [
         "A A",
-        "AAA",
-        "AAA"
+        "ABA",
+        "ACA"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -11590,7 +11920,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 57
+          "id": 57,
+          "damage": -1
         }
       },
       "output": [
@@ -11610,7 +11941,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 264
+          "id": 264,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -11620,8 +11956,8 @@
       ],
       "shape": [
         "AA",
-        "AA",
-        " A"
+        "AB",
+        " B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -11631,7 +11967,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 264
+          "id": 264,
+          "damage": -1
         }
       },
       "output": [
@@ -11652,7 +11989,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 264
+          "id": 264,
+          "damage": -1
         }
       },
       "output": [
@@ -11672,7 +12010,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 264
+          "id": 264,
+          "damage": -1
         }
       },
       "output": [
@@ -11693,7 +12032,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 264
+          "id": 264,
+          "damage": -1
         }
       },
       "output": [
@@ -11713,7 +12053,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 264
+          "id": 264,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -11723,8 +12068,8 @@
       ],
       "shape": [
         "AA",
-        " A",
-        " A"
+        " B",
+        " B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -11734,7 +12079,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 264
+          "id": 264,
+          "damage": -1
         }
       },
       "output": [
@@ -11755,7 +12101,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 264
+          "id": 264,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -11765,8 +12116,8 @@
       ],
       "shape": [
         "AAA",
-        " A ",
-        " A "
+        " B ",
+        " B "
       ],
       "block": "crafting_table",
       "priority": 0
@@ -11776,7 +12127,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 264
+          "id": 264,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -11786,8 +12142,8 @@
       ],
       "shape": [
         "A",
-        "A",
-        "A"
+        "B",
+        "B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -11797,7 +12153,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 264
+          "id": 264,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -11808,7 +12169,7 @@
       "shape": [
         "A",
         "A",
-        "A"
+        "B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -11818,7 +12179,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 4
+          "id": 4,
+          "damage": -1
+        },
+        "B": {
+          "id": 406,
+          "damage": -1
         }
       },
       "output": [
@@ -11829,8 +12195,8 @@
         }
       ],
       "shape": [
-        "AA",
-        "AA"
+        "AB",
+        "BA"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -11886,7 +12252,16 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 4
+          "id": 4,
+          "damage": -1
+        },
+        "B": {
+          "id": 261,
+          "damage": -1
+        },
+        "C": {
+          "id": 331,
+          "damage": -1
         }
       },
       "output": [
@@ -11897,8 +12272,8 @@
       ],
       "shape": [
         "AAA",
-        "AAA",
-        "AAA"
+        "ABA",
+        "ACA"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -11908,7 +12283,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": -139
+          "id": -139,
+          "damage": -1
         }
       },
       "output": [
@@ -11928,7 +12304,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 464
+          "id": 464,
+          "damage": -1
         }
       },
       "output": [
@@ -11949,7 +12326,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 4
+          "id": 4,
+          "damage": -1
+        },
+        "B": {
+          "id": 331,
+          "damage": -1
         }
       },
       "output": [
@@ -11961,7 +12343,7 @@
       "shape": [
         "AAA",
         "A A",
-        "AAA"
+        "ABA"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -11971,7 +12353,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 133
+          "id": 133,
+          "damage": -1
         }
       },
       "output": [
@@ -11991,7 +12374,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 388
+          "id": 388,
+          "damage": -1
         }
       },
       "output": [
@@ -12033,7 +12417,16 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 340
+          "id": 340,
+          "damage": -1
+        },
+        "B": {
+          "id": 264,
+          "damage": -1
+        },
+        "C": {
+          "id": 49,
+          "damage": -1
         }
       },
       "output": [
@@ -12043,8 +12436,8 @@
       ],
       "shape": [
         " A ",
-        "AAA",
-        "AAA"
+        "BCB",
+        "CCC"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -12054,7 +12447,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 206
+          "id": 206,
+          "damage": -1
         }
       },
       "output": [
@@ -12076,7 +12470,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 206
+          "id": 206,
+          "damage": -1
         }
       },
       "output": [
@@ -12098,7 +12493,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 121
+          "id": 121,
+          "damage": -1
         }
       },
       "output": [
@@ -12119,7 +12515,16 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
+        },
+        "B": {
+          "id": 381,
+          "damage": -1
+        },
+        "C": {
+          "id": 370,
+          "damage": -1
         }
       },
       "output": [
@@ -12129,8 +12534,8 @@
       ],
       "shape": [
         "AAA",
-        "AAA",
-        "AAA"
+        "ABA",
+        "ACA"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -12140,7 +12545,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 369
+          "id": 369,
+          "damage": -1
+        },
+        "B": {
+          "id": 433,
+          "damage": -1
         }
       },
       "output": [
@@ -12151,7 +12561,7 @@
       ],
       "shape": [
         "A",
-        "A"
+        "B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -12161,7 +12571,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 49
+          "id": 49,
+          "damage": -1
+        },
+        "B": {
+          "id": 381,
+          "damage": -1
         }
       },
       "output": [
@@ -12171,7 +12586,7 @@
       ],
       "shape": [
         "AAA",
-        "AAA",
+        "ABA",
         "AAA"
       ],
       "block": "crafting_table",
@@ -12206,7 +12621,8 @@
           "id": 5
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -12227,7 +12643,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         },
         "B": {
           "id": 5
@@ -12275,7 +12692,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
+        },
+        "B": {
+          "id": 287,
+          "damage": -1
         }
       },
       "output": [
@@ -12285,8 +12707,8 @@
       ],
       "shape": [
         "  A",
-        " AA",
-        "A A"
+        " AB",
+        "A B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -12296,7 +12718,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 318
+          "id": 318,
+          "damage": -1
+        },
+        "B": {
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -12306,8 +12733,8 @@
       ],
       "shape": [
         "AA",
-        "AA",
-        "AA"
+        "BB",
+        "BB"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -12338,7 +12765,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 336
+          "id": 336,
+          "damage": -1
         }
       },
       "output": [
@@ -12358,7 +12786,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 4
+          "id": 4,
+          "damage": -1
         }
       },
       "output": [
@@ -12379,7 +12808,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         }
       },
       "output": [
@@ -12400,7 +12830,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         }
       },
       "output": [
@@ -12421,7 +12852,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 348
+          "id": 348,
+          "damage": -1
         }
       },
       "output": [
@@ -12441,7 +12873,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 266
+          "id": 266,
+          "damage": -1
         }
       },
       "output": [
@@ -12462,7 +12895,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 41
+          "id": 41,
+          "damage": -1
         }
       },
       "output": [
@@ -12482,7 +12916,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 371
+          "id": 371,
+          "damage": -1
         }
       },
       "output": [
@@ -12503,7 +12938,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 266
+          "id": 266,
+          "damage": -1
         }
       },
       "output": [
@@ -12523,7 +12959,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 266
+          "id": 266,
+          "damage": -1
+        },
+        "B": {
+          "id": 260,
+          "damage": -1
         }
       },
       "output": [
@@ -12533,7 +12974,7 @@
       ],
       "shape": [
         "AAA",
-        "AAA",
+        "ABA",
         "AAA"
       ],
       "block": "crafting_table",
@@ -12544,7 +12985,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 266
+          "id": 266,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -12554,8 +13000,8 @@
       ],
       "shape": [
         "AA",
-        "AA",
-        " A"
+        "AB",
+        " B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -12565,7 +13011,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 266
+          "id": 266,
+          "damage": -1
         }
       },
       "output": [
@@ -12585,7 +13032,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 371
+          "id": 371,
+          "damage": -1
+        },
+        "B": {
+          "id": 391,
+          "damage": -1
         }
       },
       "output": [
@@ -12595,7 +13047,7 @@
       ],
       "shape": [
         "AAA",
-        "AAA",
+        "ABA",
         "AAA"
       ],
       "block": "crafting_table",
@@ -12606,7 +13058,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 266
+          "id": 266,
+          "damage": -1
         }
       },
       "output": [
@@ -12627,7 +13080,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 266
+          "id": 266,
+          "damage": -1
         }
       },
       "output": [
@@ -12647,7 +13101,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 266
+          "id": 266,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -12657,8 +13116,8 @@
       ],
       "shape": [
         "AA",
-        " A",
-        " A"
+        " B",
+        " B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -12668,7 +13127,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 266
+          "id": 266,
+          "damage": -1
         }
       },
       "output": [
@@ -12689,7 +13149,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 266
+          "id": 266,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -12699,8 +13164,8 @@
       ],
       "shape": [
         "AAA",
-        " A ",
-        " A "
+        " B ",
+        " B "
       ],
       "block": "crafting_table",
       "priority": 0
@@ -12710,7 +13175,16 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 266
+          "id": 266,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
+        },
+        "C": {
+          "id": 331,
+          "damage": -1
         }
       },
       "output": [
@@ -12721,8 +13195,8 @@
       ],
       "shape": [
         "A A",
-        "AAA",
-        "AAA"
+        "ABA",
+        "ACA"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -12732,7 +13206,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 266
+          "id": 266,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -12742,8 +13221,8 @@
       ],
       "shape": [
         "A",
-        "A",
-        "A"
+        "B",
+        "B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -12753,7 +13232,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 266
+          "id": 266,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -12764,7 +13248,7 @@
       "shape": [
         "A",
         "A",
-        "A"
+        "B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -12846,7 +13330,8 @@
           "damage": 7
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -13054,7 +13539,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -13104,7 +13590,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 102
+          "id": 102,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -13131,7 +13618,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 172
+          "id": 172,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -13162,7 +13650,8 @@
           "damage": 13
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -13280,7 +13769,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -13330,7 +13820,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 102
+          "id": 102,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -13357,7 +13848,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 172
+          "id": 172,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -13384,11 +13876,16 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         },
         "B": {
           "id": -166,
           "damage": 2
+        },
+        "C": {
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -13398,7 +13895,7 @@
       ],
       "shape": [
         "ABA",
-        "A A"
+        "C C"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -13408,7 +13905,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 296
+          "id": 296,
+          "damage": -1
         }
       },
       "output": [
@@ -13429,7 +13927,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
         }
       },
       "output": [
@@ -13448,7 +13947,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
+        },
+        "B": {
+          "id": 54,
+          "damage": -1
         }
       },
       "output": [
@@ -13458,7 +13962,7 @@
       ],
       "shape": [
         "A A",
-        "AAA",
+        "ABA",
         " A "
       ],
       "block": "crafting_table",
@@ -13469,7 +13973,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 410
+          "id": 410,
+          "damage": -1
+        },
+        "B": {
+          "id": 328,
+          "damage": -1
         }
       },
       "output": [
@@ -13479,7 +13988,7 @@
       ],
       "shape": [
         "A",
-        "A"
+        "B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -13489,7 +13998,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -13499,8 +14013,8 @@
       ],
       "shape": [
         "AA",
-        "AA",
-        " A"
+        "AB",
+        " B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -13510,7 +14024,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
         }
       },
       "output": [
@@ -13531,7 +14046,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
         }
       },
       "output": [
@@ -13552,7 +14068,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
         }
       },
       "output": [
@@ -13572,7 +14089,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
         }
       },
       "output": [
@@ -13593,7 +14111,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
         }
       },
       "output": [
@@ -13615,7 +14134,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
         }
       },
       "output": [
@@ -13635,7 +14155,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -13645,8 +14170,8 @@
       ],
       "shape": [
         "AA",
-        " A",
-        " A"
+        " B",
+        " B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -13656,7 +14181,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 42
+          "id": 42,
+          "damage": -1
         }
       },
       "output": [
@@ -13676,7 +14202,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 452
+          "id": 452,
+          "damage": -1
         }
       },
       "output": [
@@ -13697,7 +14224,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
         }
       },
       "output": [
@@ -13718,7 +14246,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
         }
       },
       "output": [
@@ -13738,7 +14267,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -13748,8 +14282,8 @@
       ],
       "shape": [
         "AAA",
-        " A ",
-        " A "
+        " B ",
+        " B "
       ],
       "block": "crafting_table",
       "priority": 0
@@ -13759,7 +14293,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -13769,8 +14308,8 @@
       ],
       "shape": [
         "A",
-        "A",
-        "A"
+        "B",
+        "B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -13780,7 +14319,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -13791,7 +14335,7 @@
       "shape": [
         "A",
         "A",
-        "A"
+        "B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -13801,7 +14345,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
         }
       },
       "output": [
@@ -13821,7 +14366,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
+        },
+        "B": {
+          "id": 334,
+          "damage": -1
         }
       },
       "output": [
@@ -13831,7 +14381,7 @@
       ],
       "shape": [
         "AAA",
-        "AAA",
+        "ABA",
         "AAA"
       ],
       "block": "crafting_table",
@@ -13846,7 +14396,8 @@
           "damage": 3
         },
         "B": {
-          "id": 269
+          "id": 269,
+          "damage": -1
         }
       },
       "output": [
@@ -13894,7 +14445,8 @@
           "damage": 3
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -13916,7 +14468,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         },
         "B": {
           "id": 5,
@@ -13962,7 +14515,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": -7
+          "id": -7,
+          "damage": -1
         }
       },
       "output": [
@@ -14073,7 +14627,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": -7
+          "id": -7,
+          "damage": -1
         }
       },
       "output": [
@@ -14117,7 +14672,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -14139,7 +14695,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 452
+          "id": 452,
+          "damage": -1
+        },
+        "B": {
+          "id": 50,
+          "damage": -1
         }
       },
       "output": [
@@ -14149,7 +14710,7 @@
       ],
       "shape": [
         "AAA",
-        "AAA",
+        "ABA",
         "AAA"
       ],
       "block": "crafting_table",
@@ -14182,7 +14743,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 22
+          "id": 22,
+          "damage": -1
         }
       },
       "output": [
@@ -14203,7 +14765,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 287
+          "id": 287,
+          "damage": -1
+        },
+        "B": {
+          "id": 341,
+          "damage": -1
         }
       },
       "output": [
@@ -14214,7 +14781,7 @@
       ],
       "shape": [
         "AA ",
-        "AA ",
+        "AB ",
         "  A"
       ],
       "block": "crafting_table",
@@ -14225,7 +14792,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 415
+          "id": 415,
+          "damage": -1
         }
       },
       "output": [
@@ -14245,7 +14813,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 334
+          "id": 334,
+          "damage": -1
         }
       },
       "output": [
@@ -14265,7 +14834,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 334
+          "id": 334,
+          "damage": -1
         }
       },
       "output": [
@@ -14286,7 +14856,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 334
+          "id": 334,
+          "damage": -1
         }
       },
       "output": [
@@ -14306,7 +14877,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 334
+          "id": 334,
+          "damage": -1
         }
       },
       "output": [
@@ -14327,7 +14899,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 334
+          "id": 334,
+          "damage": -1
         }
       },
       "output": [
@@ -14348,7 +14921,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 158
+          "id": 158,
+          "damage": -1
+        },
+        "B": {
+          "id": 47,
+          "damage": -1
         }
       },
       "output": [
@@ -14358,7 +14936,7 @@
       ],
       "shape": [
         "AAA",
-        " A ",
+        " B ",
         " A "
       ],
       "block": "crafting_table",
@@ -14369,7 +14947,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
+        },
+        "B": {
+          "id": 4,
+          "damage": -1
         }
       },
       "output": [
@@ -14379,7 +14962,7 @@
       ],
       "shape": [
         "A",
-        "A"
+        "B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -14393,7 +14976,8 @@
           "damage": 3
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -14621,7 +15205,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -14671,7 +15256,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 102
+          "id": 102,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -14698,7 +15284,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 172
+          "id": 172,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -14756,7 +15343,8 @@
           "damage": 8
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -15053,7 +15641,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -15103,7 +15692,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 102
+          "id": 102,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -15130,7 +15720,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 172
+          "id": 172,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -15157,7 +15748,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 266
+          "id": 266,
+          "damage": -1
         }
       },
       "output": [
@@ -15207,7 +15799,8 @@
           "damage": 5
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -15344,7 +15937,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -15394,7 +15988,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 102
+          "id": 102,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -15421,7 +16016,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 172
+          "id": 172,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -15448,7 +16044,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": -155
+          "id": -155,
+          "damage": -1
+        },
+        "B": {
+          "id": 50,
+          "damage": -1
         }
       },
       "output": [
@@ -15458,7 +16059,7 @@
       ],
       "shape": [
         "A",
-        "A"
+        "B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -15468,7 +16069,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 339
+          "id": 339,
+          "damage": -1
+        },
+        "B": {
+          "id": 345,
+          "damage": -1
         }
       },
       "output": [
@@ -15479,7 +16085,7 @@
       ],
       "shape": [
         "AAA",
-        "AAA",
+        "ABA",
         "AAA"
       ],
       "block": "crafting_table",
@@ -15494,7 +16100,8 @@
           "damage": 2
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -15850,7 +16457,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -15900,7 +16508,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 102
+          "id": 102,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -15927,7 +16536,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 172
+          "id": 172,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -15954,7 +16564,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 378
+          "id": 378,
+          "damage": -1
         }
       },
       "output": [
@@ -15995,7 +16606,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 339
+          "id": 339,
+          "damage": -1
         }
       },
       "output": [
@@ -16016,7 +16628,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 360
+          "id": 360,
+          "damage": -1
         }
       },
       "output": [
@@ -16037,7 +16650,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 360
+          "id": 360,
+          "damage": -1
         }
       },
       "output": [
@@ -16056,7 +16670,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
         }
       },
       "output": [
@@ -16097,7 +16712,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 48
+          "id": 48,
+          "damage": -1
         }
       },
       "output": [
@@ -16119,7 +16735,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 48
+          "id": 48,
+          "damage": -1
         }
       },
       "output": [
@@ -16233,7 +16850,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 405
+          "id": 405,
+          "damage": -1
         }
       },
       "output": [
@@ -16253,7 +16871,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 112
+          "id": 112,
+          "damage": -1
+        },
+        "B": {
+          "id": 405,
+          "damage": -1
         }
       },
       "output": [
@@ -16263,8 +16886,8 @@
         }
       ],
       "shape": [
-        "AAA",
-        "AAA"
+        "ABA",
+        "ABA"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -16274,7 +16897,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 112
+          "id": 112,
+          "damage": -1
         }
       },
       "output": [
@@ -16296,7 +16920,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 112
+          "id": 112,
+          "damage": -1
         }
       },
       "output": [
@@ -16318,7 +16943,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 372
+          "id": 372,
+          "damage": -1
         }
       },
       "output": [
@@ -16359,7 +16985,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": -10
+          "id": -10,
+          "damage": -1
         }
       },
       "output": [
@@ -16463,7 +17090,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": -10
+          "id": -10,
+          "damage": -1
         }
       },
       "output": [
@@ -16505,7 +17133,16 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 4
+          "id": 4,
+          "damage": -1
+        },
+        "B": {
+          "id": 331,
+          "damage": -1
+        },
+        "C": {
+          "id": 406,
+          "damage": -1
         }
       },
       "output": [
@@ -16515,7 +17152,7 @@
       ],
       "shape": [
         "AAA",
-        "AAA",
+        "BBC",
         "AAA"
       ],
       "block": "crafting_table",
@@ -16530,7 +17167,8 @@
           "damage": 1
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -16689,7 +17327,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -16739,7 +17378,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 102
+          "id": 102,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -16766,7 +17406,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 172
+          "id": 172,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -16793,7 +17434,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 79
+          "id": 79,
+          "damage": -1
         }
       },
       "output": [
@@ -16814,7 +17456,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 338
+          "id": 338,
+          "damage": -1
         }
       },
       "output": [
@@ -16860,7 +17503,8 @@
           "damage": 6
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -17061,7 +17705,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -17111,7 +17756,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 102
+          "id": 102,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -17138,7 +17784,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 172
+          "id": 172,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -17303,7 +17950,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 409
+          "id": 409,
+          "damage": -1
         }
       },
       "output": [
@@ -17323,7 +17971,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 409
+          "id": 409,
+          "damage": -1
         }
       },
       "output": [
@@ -17460,7 +18109,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 86
+          "id": 86,
+          "damage": -1
         }
       },
       "output": [
@@ -17484,7 +18134,8 @@
           "damage": 10
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -17648,7 +18299,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -17698,7 +18350,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 102
+          "id": 102,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -17725,7 +18378,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 172
+          "id": 172,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -17752,7 +18406,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 433
+          "id": 433,
+          "damage": -1
         }
       },
       "output": [
@@ -17773,7 +18428,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 201
+          "id": 201,
+          "damage": -1
         }
       },
       "output": [
@@ -17795,7 +18451,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 406
+          "id": 406,
+          "damage": -1
         }
       },
       "output": [
@@ -17903,7 +18560,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -17914,7 +18576,7 @@
       ],
       "shape": [
         "A A",
-        "AAA",
+        "ABA",
         "A A"
       ],
       "block": "crafting_table",
@@ -17929,7 +18591,8 @@
           "damage": 14
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -18119,7 +18782,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 405
+          "id": 405,
+          "damage": -1
+        },
+        "B": {
+          "id": 372,
+          "damage": -1
         }
       },
       "output": [
@@ -18128,8 +18796,8 @@
         }
       ],
       "shape": [
-        "AA",
-        "AA"
+        "AB",
+        "BA"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -18139,7 +18807,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 215
+          "id": 215,
+          "damage": -1
         }
       },
       "output": [
@@ -18161,7 +18830,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 215
+          "id": 215,
+          "damage": -1
         }
       },
       "output": [
@@ -18248,7 +18918,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -18298,7 +18969,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 102
+          "id": 102,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -18325,7 +18997,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 172
+          "id": 172,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -18352,7 +19025,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 152
+          "id": 152,
+          "damage": -1
         }
       },
       "output": [
@@ -18372,7 +19046,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 331
+          "id": 331,
+          "damage": -1
         }
       },
       "output": [
@@ -18393,7 +19068,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 331
+          "id": 331,
+          "damage": -1
+        },
+        "B": {
+          "id": 89,
+          "damage": -1
         }
       },
       "output": [
@@ -18403,7 +19083,7 @@
       ],
       "shape": [
         " A ",
-        "AAA",
+        "ABA",
         " A "
       ],
       "block": "crafting_table",
@@ -18414,7 +19094,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 331
+          "id": 331,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -18424,7 +19109,7 @@
       ],
       "shape": [
         "A",
-        "A"
+        "B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -18434,9 +19119,14 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 76
+          "id": 76,
+          "damage": -1
         },
         "B": {
+          "id": 331,
+          "damage": -1
+        },
+        "C": {
           "id": 1
         }
       },
@@ -18446,8 +19136,8 @@
         }
       ],
       "shape": [
-        "AAA",
-        "BBB"
+        "ABA",
+        "CCC"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -18521,7 +19211,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": -163
+          "id": -163,
+          "damage": -1
+        },
+        "B": {
+          "id": 287,
+          "damage": -1
         }
       },
       "output": [
@@ -18531,7 +19226,7 @@
         }
       ],
       "shape": [
-        "AAA",
+        "ABA",
         "A A",
         "A A"
       ],
@@ -18543,7 +19238,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 409
+          "id": 409,
+          "damage": -1
+        },
+        "B": {
+          "id": 422,
+          "damage": -1
         }
       },
       "output": [
@@ -18552,9 +19252,9 @@
         }
       ],
       "shape": [
-        "AAA",
-        "AAA",
-        "AAA"
+        "ABA",
+        "BBB",
+        "ABA"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -18564,7 +19264,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
         }
       },
       "output": [
@@ -18584,7 +19285,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 5
+          "id": 5,
+          "damage": -1
+        },
+        "B": {
+          "id": 265,
+          "damage": -1
         }
       },
       "output": [
@@ -18593,7 +19299,7 @@
         }
       ],
       "shape": [
-        "AAA",
+        "ABA",
         "AAA",
         " A "
       ],
@@ -18605,7 +19311,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 445
+          "id": 445,
+          "damage": -1
+        },
+        "B": {
+          "id": 54,
+          "damage": -1
         }
       },
       "output": [
@@ -18615,7 +19326,7 @@
       ],
       "shape": [
         "A",
-        "A",
+        "B",
         "A"
       ],
       "block": "crafting_table",
@@ -18630,7 +19341,8 @@
           "damage": 4
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -18656,7 +19368,8 @@
           "damage": 2
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -18682,7 +19395,8 @@
           "damage": 5
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -18708,7 +19422,8 @@
           "damage": 3
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -18733,7 +19448,8 @@
           "id": 5
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -18759,7 +19475,8 @@
           "damage": 1
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -18781,7 +19498,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 341
+          "id": 341,
+          "damage": -1
         }
       },
       "output": [
@@ -18802,7 +19520,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 165
+          "id": 165,
+          "damage": -1
         }
       },
       "output": [
@@ -18822,7 +19541,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
+        },
+        "B": {
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -18832,8 +19556,8 @@
       ],
       "shape": [
         "AA",
-        "AA",
-        "AA"
+        "BB",
+        "BB"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -18843,7 +19567,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 17
+          "id": 17,
+          "damage": -1
+        },
+        "B": {
+          "id": 61,
+          "damage": -1
         }
       },
       "output": [
@@ -18853,7 +19582,7 @@
       ],
       "shape": [
         " A ",
-        "AAA",
+        "ABA",
         " A "
       ],
       "block": "crafting_table",
@@ -18864,7 +19593,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 162
+          "id": 162,
+          "damage": -1
+        },
+        "B": {
+          "id": 61,
+          "damage": -1
         }
       },
       "output": [
@@ -18874,7 +19608,7 @@
       ],
       "shape": [
         " A ",
-        "AAA",
+        "ABA",
         " A "
       ],
       "block": "crafting_table",
@@ -18885,7 +19619,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": -8
+          "id": -8,
+          "damage": -1
+        },
+        "B": {
+          "id": 61,
+          "damage": -1
         }
       },
       "output": [
@@ -18895,7 +19634,7 @@
       ],
       "shape": [
         " A ",
-        "AAA",
+        "ABA",
         " A "
       ],
       "block": "crafting_table",
@@ -18906,7 +19645,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": -6
+          "id": -6,
+          "damage": -1
+        },
+        "B": {
+          "id": 61,
+          "damage": -1
         }
       },
       "output": [
@@ -18916,7 +19660,7 @@
       ],
       "shape": [
         " A ",
-        "AAA",
+        "ABA",
         " A "
       ],
       "block": "crafting_table",
@@ -18927,7 +19671,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": -9
+          "id": -9,
+          "damage": -1
+        },
+        "B": {
+          "id": 61,
+          "damage": -1
         }
       },
       "output": [
@@ -18937,7 +19686,7 @@
       ],
       "shape": [
         " A ",
-        "AAA",
+        "ABA",
         " A "
       ],
       "block": "crafting_table",
@@ -18948,7 +19697,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": -7
+          "id": -7,
+          "damage": -1
+        },
+        "B": {
+          "id": 61,
+          "damage": -1
         }
       },
       "output": [
@@ -18958,7 +19712,7 @@
       ],
       "shape": [
         " A ",
-        "AAA",
+        "ABA",
         " A "
       ],
       "block": "crafting_table",
@@ -18969,7 +19723,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": -10
+          "id": -10,
+          "damage": -1
+        },
+        "B": {
+          "id": 61,
+          "damage": -1
         }
       },
       "output": [
@@ -18979,7 +19738,7 @@
       ],
       "shape": [
         " A ",
-        "AAA",
+        "ABA",
         " A "
       ],
       "block": "crafting_table",
@@ -18990,7 +19749,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": -5
+          "id": -5,
+          "damage": -1
+        },
+        "B": {
+          "id": 61,
+          "damage": -1
         }
       },
       "output": [
@@ -19000,7 +19764,7 @@
       ],
       "shape": [
         " A ",
-        "AAA",
+        "ABA",
         " A "
       ],
       "block": "crafting_table",
@@ -19124,7 +19888,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 332
+          "id": 332,
+          "damage": -1
         }
       },
       "output": [
@@ -19144,7 +19909,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 80
+          "id": 80,
+          "damage": -1
         }
       },
       "output": [
@@ -19164,7 +19930,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 371
+          "id": 371,
+          "damage": -1
+        },
+        "B": {
+          "id": 360,
+          "damage": -1
         }
       },
       "output": [
@@ -19174,7 +19945,7 @@
       ],
       "shape": [
         "AAA",
-        "AAA",
+        "ABA",
         "AAA"
       ],
       "block": "crafting_table",
@@ -19189,7 +19960,8 @@
           "damage": 1
         },
         "B": {
-          "id": 269
+          "id": 269,
+          "damage": -1
         }
       },
       "output": [
@@ -19237,7 +20009,8 @@
           "damage": 1
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -19259,7 +20032,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         },
         "B": {
           "id": 5,
@@ -19305,7 +20079,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": -5
+          "id": -5,
+          "damage": -1
         }
       },
       "output": [
@@ -19416,7 +20191,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": -5
+          "id": -5,
+          "damage": -1
         }
       },
       "output": [
@@ -19460,7 +20236,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 341
+          "id": 341,
+          "damage": -1
+        },
+        "B": {
+          "id": 33,
+          "damage": -1
         }
       },
       "output": [
@@ -19471,7 +20252,7 @@
       ],
       "shape": [
         "A",
-        "A"
+        "B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -19481,7 +20262,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 4
+          "id": 4,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -19491,8 +20277,8 @@
       ],
       "shape": [
         "AA",
-        "AA",
-        " A"
+        "AB",
+        " B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -19566,7 +20352,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 4
+          "id": 4,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -19576,8 +20367,8 @@
       ],
       "shape": [
         "AA",
-        " A",
-        " A"
+        " B",
+        " B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -19587,7 +20378,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 4
+          "id": 4,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -19597,8 +20393,8 @@
       ],
       "shape": [
         "AAA",
-        " A ",
-        " A "
+        " B ",
+        " B "
       ],
       "block": "crafting_table",
       "priority": 0
@@ -19627,7 +20423,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 4
+          "id": 4,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -19637,8 +20438,8 @@
       ],
       "shape": [
         "A",
-        "A",
-        "A"
+        "B",
+        "B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -19670,7 +20471,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 4
+          "id": 4,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -19681,7 +20487,7 @@
       "shape": [
         "A",
         "A",
-        "A"
+        "B"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -19712,7 +20518,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 265
+          "id": 265,
+          "damage": -1
+        },
+        "B": {
+          "id": 1,
+          "damage": -1
         }
       },
       "output": [
@@ -19722,7 +20533,7 @@
       ],
       "shape": [
         " A ",
-        "AAA"
+        "BBB"
       ],
       "block": "crafting_table",
       "priority": 0
@@ -19732,7 +20543,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 287
+          "id": 287,
+          "damage": -1
         }
       },
       "output": [
@@ -19752,7 +20564,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 338
+          "id": 338,
+          "damage": -1
         }
       },
       "output": [
@@ -19774,7 +20587,8 @@
           "id": 46
         },
         "B": {
-          "id": 328
+          "id": 328,
+          "damage": -1
         }
       },
       "output": [
@@ -19815,7 +20629,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 468
+          "id": 468,
+          "damage": -1
         }
       },
       "output": [
@@ -19835,7 +20650,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 170
+          "id": 170,
+          "damage": -1
         }
       },
       "output": [
@@ -19858,7 +20674,8 @@
           "id": 35
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -20028,7 +20845,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -20054,7 +20872,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -20101,7 +20920,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 102
+          "id": 102,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -20127,7 +20947,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 172
+          "id": 172,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -20153,7 +20974,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 172
+          "id": 172,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -20229,7 +21051,8 @@
           "damage": 4
         },
         "B": {
-          "id": 280
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -20382,7 +21205,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 20
+          "id": 20,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -20432,7 +21256,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 102
+          "id": 102,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -20459,7 +21284,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 172
+          "id": 172,
+          "damage": -1
         },
         "B": {
           "id": 351,
@@ -28529,7 +29355,8 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 5
+          "id": 5,
+          "damage": -1
         }
       },
       "output": [
@@ -29004,7 +29831,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 5
+          "id": 5,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -29014,8 +29846,8 @@
       ],
       "shape": [
         "AAA",
-        " A ",
-        " A "
+        " B ",
+        " B "
       ],
       "block": "crafting_table",
       "priority": 50
@@ -29025,7 +29857,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 5
+          "id": 5,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -29035,8 +29872,8 @@
       ],
       "shape": [
         "A",
-        "A",
-        "A"
+        "B",
+        "B"
       ],
       "block": "crafting_table",
       "priority": 50
@@ -29046,7 +29883,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 5
+          "id": 5,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -29056,8 +29898,8 @@
       ],
       "shape": [
         "AA",
-        "AA",
-        " A"
+        "AB",
+        " B"
       ],
       "block": "crafting_table",
       "priority": 50
@@ -29067,7 +29909,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 5
+          "id": 5,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -29077,8 +29924,8 @@
       ],
       "shape": [
         "AA",
-        " A",
-        " A"
+        " B",
+        " B"
       ],
       "block": "crafting_table",
       "priority": 50
@@ -30091,7 +30938,12 @@
       "type": 1,
       "input": {
         "A": {
-          "id": 5
+          "id": 5,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
         }
       },
       "output": [
@@ -30102,7 +30954,7 @@
       "shape": [
         "A",
         "A",
-        "A"
+        "B"
       ],
       "block": "crafting_table",
       "priority": 50
