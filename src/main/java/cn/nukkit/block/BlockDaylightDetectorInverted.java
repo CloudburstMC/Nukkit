@@ -13,6 +13,7 @@ import cn.nukkit.math.Vector3;
 public class BlockDaylightDetectorInverted extends BlockDaylightDetector {
 
     public BlockDaylightDetectorInverted() {
+        super();
     }
 
     @Override
@@ -32,20 +33,17 @@ public class BlockDaylightDetectorInverted extends BlockDaylightDetector {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        this.getLevel().setBlock(getFloorX(), getFloorY(), getFloorZ(), new BlockDaylightDetector(), false, true);
-        getLevel().updateAroundRedstone(new Vector3(x, y, z), null);
+        BlockDaylightDetector block = new BlockDaylightDetector();
+        getLevel().setBlock(this, block, true, true);
+        block.updatePower();
+        /*this.getLevel().setBlock(getFloorX(), getFloorY(), getFloorZ(), new BlockDaylightDetector(), false, true);
+        getLevel().updateAroundRedstone(new Vector3(x, y, z), null);*/
         return true;
     }
 
     @Override
-    public int getStrongPower(BlockFace side) {
-        // https://minecraft.gamepedia.com/Daylight_Detector#Inverted_Daylight_Detector
-        return 15 - super.getStrongPower(side); // Might be wrong
-    }
-
-    @Override
-    public int getWeakPower(BlockFace face) {
-        return getStrongPower(face);
+    public boolean isInverted() {
+        return true;
     }
 
 }
