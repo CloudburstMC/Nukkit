@@ -21,7 +21,7 @@ public class AvailableEntityIdentifiersPacket extends DataPacket {
             //noinspection UnstableApiUsage
             TAG = ByteStreams.toByteArray(inputStream);
         } catch (Exception e) {
-            throw new AssertionError("Error whilst loading entity_identifiers_net.dat", e);
+            throw new AssertionError("Error whilst loading entity_identifiers.dat", e);
         }
     }
 

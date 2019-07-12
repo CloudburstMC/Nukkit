@@ -2027,6 +2027,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         startGamePacket.generator = 1; //0 old, 1 infinite, 2 flat
         this.dataPacket(startGamePacket);
 
+        this.dataPacket(new BiomeDefinitionListPacket());
         this.dataPacket(new AvailableEntityIdentifiersPacket());
 
         this.loggedIn = true;
