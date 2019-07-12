@@ -11,7 +11,6 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
-import cn.nukkit.scheduler.NukkitRunnable;
 
 /**
  * Created by PetteriM1
@@ -88,12 +87,7 @@ public class ItemTrident extends ItemTool {
                     entityShootBowEvent.getProjectile().spawnToAll();
                     player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_ITEM_TRIDENT_THROW);
                     if (!player.isCreative()) {
-                        // idk why but trident returns to inventory without this
-                        new NukkitRunnable() {
-                            public void run() {
-                                player.getInventory().decreaseCount(player.getInventory().getHeldItemIndex());
-                            }
-                        }.runTaskLater(null, 1);
+                        this.count--;
                     }
                 }
             }

@@ -817,12 +817,12 @@ public class Server {
                 this.rcon.close();
             }
 
-            this.getLogger().debug("Disabling all plugins");
-            this.pluginManager.disablePlugins();
-
             for (Player player : new ArrayList<>(this.players.values())) {
                 player.close(player.getLeaveMessage(), this.getConfig("settings.shutdown-message", "Server closed"));
             }
+
+            this.getLogger().debug("Disabling all plugins");
+            this.pluginManager.disablePlugins();
 
             this.getLogger().debug("Removing event handlers");
             HandlerList.unregisterAll();

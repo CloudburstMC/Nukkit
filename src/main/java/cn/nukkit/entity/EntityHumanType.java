@@ -72,10 +72,12 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
     public void saveNBT() {
         super.saveNBT();
 
-        this.namedTag.putList(new ListTag<CompoundTag>("Inventory"));
         if (this.inventory != null) {
+            ListTag<CompoundTag> inventoryTag = new ListTag<>("Inventory");
+            this.namedTag.putList(inventoryTag);
+
             for (int slot = 0; slot < 9; ++slot) {
-                this.namedTag.getList("Inventory", CompoundTag.class).add(new CompoundTag()
+                inventoryTag.add(new CompoundTag()
                         .putByte("Count", 0)
                         .putShort("Damage", 0)
                         .putByte("Slot", slot)
@@ -87,13 +89,13 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
             int slotCount = Player.SURVIVAL_SLOTS + 9;
             for (int slot = 9; slot < slotCount; ++slot) {
                 Item item = this.inventory.getItem(slot - 9);
-                this.namedTag.getList("Inventory", CompoundTag.class).add(NBTIO.putItemHelper(item, slot));
+                inventoryTag.add(NBTIO.putItemHelper(item, slot));
             }
 
             for (int slot = 100; slot < 104; ++slot) {
                 Item item = this.inventory.getItem(this.inventory.getSize() + slot - 100);
                 if (item != null && item.getId() != Item.AIR) {
-                    this.namedTag.getList("Inventory", CompoundTag.class).add(NBTIO.putItemHelper(item, slot));
+                    inventoryTag.add(NBTIO.putItemHelper(item, slot));
                 }
             }
         }
