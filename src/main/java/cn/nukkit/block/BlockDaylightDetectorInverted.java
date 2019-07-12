@@ -3,8 +3,6 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
 
 /**
  * Created on 2015/11/22 by CreeperFace.
@@ -36,8 +34,6 @@ public class BlockDaylightDetectorInverted extends BlockDaylightDetector {
         BlockDaylightDetector block = new BlockDaylightDetector();
         getLevel().setBlock(this, block, true, true);
         block.updatePower();
-        /*this.getLevel().setBlock(getFloorX(), getFloorY(), getFloorZ(), new BlockDaylightDetector(), false, true);
-        getLevel().updateAroundRedstone(new Vector3(x, y, z), null);*/
         return true;
     }
 

@@ -128,7 +128,6 @@ public class BlockDaylightDetector extends BlockTransparentMeta {
 
         getLevel().setBlockDataAt(getFloorX(), getFloorY(), getFloorZ(), i);
         getLevel().updateAroundRedstone(this, null);
-        MainLogger.getLogger().info("POWER UPDATE PERFORMED, OUTPUT " + getLevel().getBlockDataAt(getFloorX(), getFloorY(), getFloorZ()));
     }
 
 }
