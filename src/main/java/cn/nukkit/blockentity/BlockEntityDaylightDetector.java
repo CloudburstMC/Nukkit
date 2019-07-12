@@ -11,6 +11,11 @@ public class BlockEntityDaylightDetector extends BlockEntity {
     }
 
     @Override
+    protected void initBlockEntity() {
+        scheduleUpdate();
+    }
+
+    @Override
     public boolean isBlockEntityValid() {
         return true;
     }
