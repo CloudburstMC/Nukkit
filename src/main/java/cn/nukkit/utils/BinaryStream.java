@@ -304,6 +304,9 @@ public class BinaryStream {
                         data = tag.getInt("Damage");
                         tag.remove("Damage");
                     }
+                    if (tag.contains("__DamageConflict__")) {
+                        tag.put("Damage", tag.removeAndGet("__DamageConflict__"));
+                    }
                     if (tag.getAllTags().size() > 0) {
                         nbt = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, false);
                     }
@@ -384,6 +387,9 @@ public class BinaryStream {
                     tag = new CompoundTag();
                 } else {
                     tag = NBTIO.read(nbt, ByteOrder.LITTLE_ENDIAN, false);
+                }
+                if (tag.contains("Damage")) {
+                    tag.put("__DamageConflict__", tag.removeAndGet("Damage"));
                 }
                 if (isTool) {
                     tag.putInt("Damage", item.getDamage());
