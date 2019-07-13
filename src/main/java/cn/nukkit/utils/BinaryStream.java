@@ -3,7 +3,7 @@ package cn.nukkit.utils;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.ItemDurable;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.GameRules;
 import cn.nukkit.math.BlockFace;
@@ -368,17 +368,17 @@ public class BinaryStream {
             return;
         }
 
-        boolean isTool = item instanceof ItemTool;
+        boolean isDurable = item instanceof ItemDurable;
 
         this.putVarInt(item.getId());
 
         int auxValue = item.getCount();
-        if (!isTool) {
+        if (!isDurable) {
             auxValue |= (((item.hasMeta() ? item.getDamage() : -1) & 0x7fff) << 8);
         }
         this.putVarInt(auxValue);
 
-        if (item.hasCompoundTag() || isTool) {
+        if (item.hasCompoundTag() || isDurable) {
             try {
                 // hack for tool damage
                 byte[] nbt = item.getCompoundTag();
@@ -391,7 +391,7 @@ public class BinaryStream {
                 if (tag.contains("Damage")) {
                     tag.put("__DamageConflict__", tag.removeAndGet("Damage"));
                 }
-                if (isTool) {
+                if (isDurable) {
                     tag.putInt("Damage", item.getDamage());
                 }
 
