@@ -1185,7 +1185,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void updateAround(Vector3 pos) {
-        updateAround((int) pos.x, (int) pos.y, (int) pos.z);
+        updateAround(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
     }
 
     public void updateAround(int x, int y, int z) {
@@ -1487,8 +1487,8 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void updateAllLight(Vector3 pos) {
-        this.updateBlockSkyLight((int) pos.x, (int) pos.y, (int) pos.z);
-        this.addLightUpdate((int) pos.x, (int) pos.y, (int) pos.z);
+        this.updateBlockSkyLight(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
+        this.addLightUpdate(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
     }
 
     public void updateBlockSkyLight(int x, int y, int z) {
