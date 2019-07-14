@@ -6,12 +6,12 @@ import cn.nukkit.blockentity.BlockEntityDaylightDetector;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.MainLogger;
 
 /**
  * Created on 2015/11/22 by CreeperFace.
@@ -19,9 +19,7 @@ import cn.nukkit.utils.MainLogger;
  */
 public class BlockDaylightDetector extends BlockTransparentMeta {
 
-    public BlockDaylightDetector() {
-        super(); // Temporary
-    }
+    public BlockDaylightDetector() {}
 
     @Override
     public int getId() {
@@ -61,9 +59,11 @@ public class BlockDaylightDetector extends BlockTransparentMeta {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if(super.place(item, block, target, face, fx, fy, fz, player)) {
-            updatePower();
-            CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.DAYLIGHT_DETECTOR);
-            new BlockEntityDaylightDetector(getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+            if (getLevel().getDimension() == Level.DIMENSION_OVERWORLD) {
+                updatePower();
+                CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.DAYLIGHT_DETECTOR);
+                new BlockEntityDaylightDetector(getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+            }
             return true;
         } else return false;
     }
@@ -79,25 +79,16 @@ public class BlockDaylightDetector extends BlockTransparentMeta {
     @Override
     public boolean onBreak(Item item) {
         if (super.onBreak(item)) {
-            getLevel().updateAroundRedstone(new Vector3(x, y, z), null);
-            //getLevel().getBlockEntity(this).close();
+            if (getLevel().getDimension() == Level.DIMENSION_OVERWORLD) {
+                getLevel().updateAroundRedstone(new Vector3(x, y, z), null);
+            }
             return true;
         }
         return false;
     }
 
     @Override
-    public int getStrongPower(BlockFace side) {
-        MainLogger.getLogger().info("getStrongPower() was called, outputting " + getLevel().getBlockDataAt(getFloorX(), getFloorY(), getFloorZ()) + ", state: " + isInverted()
-                + ", "
-                + "current thread is " + Thread.currentThread().getId() + " " + Thread.currentThread().getName());
-        return getLevel().getBlockDataAt(getFloorX(), getFloorY(), getFloorZ());
-    }
-
-    @Override
     public int getWeakPower(BlockFace face) {
-        MainLogger.getLogger().info("getWeakPower() was called, outputting " + getLevel().getBlockDataAt(getFloorX(), getFloorY(), getFloorZ()) + ", state: "
-                + isInverted());
         return getLevel().getBlockDataAt(getFloorX(), getFloorY(), getFloorZ());
     }
 
@@ -111,23 +102,28 @@ public class BlockDaylightDetector extends BlockTransparentMeta {
     }
 
     public void updatePower() {
-        int i = getLevel().getBlockSkyLightAt((int)x, (int)y, (int)z) - getLevel().calculateSkylightSubtracted(1.0F);
-        float f = getLevel().calculateCelestialAngle(getLevel().getTime(), 1.0F);
+        int i;
+        if (getLevel().getDimension() == Level.DIMENSION_OVERWORLD) {
+            i = getLevel().getBlockSkyLightAt((int) x, (int) y, (int) z) - getLevel().calculateSkylightSubtracted(1.0F);
+            float f = getLevel().calculateCelestialAngle(getLevel().getTime(), 1.0F);
 
-        if (this.isInverted()) {
-            i = 15 - i;
+            if (this.isInverted()) {
+                i = 15 - i;
+            }
+
+            if (i > 0 && !this.isInverted()) {
+                float f1 = f < (float) Math.PI ? 0.0F : ((float) Math.PI * 2F);
+                f = f + (f1 - f) * 0.2F;
+                i = Math.round((float) i * MathHelper.cos(f));
+            }
+
+            i = MathHelper.clamp(i, 0, 15);
+        } else i = 0;
+
+        if (i != getLevel().getBlockDataAt(getFloorX(), getFloorY(), getFloorZ())) {
+            getLevel().setBlockDataAt(getFloorX(), getFloorY(), getFloorZ(), i);
+            getLevel().updateAroundRedstone(this, null);
         }
-
-        if (i > 0 && !this.isInverted()) {
-            float f1 = f < (float)Math.PI ? 0.0F : ((float)Math.PI * 2F);
-            f = f + (f1 - f) * 0.2F;
-            i = Math.round((float)i * MathHelper.cos(f));
-        }
-
-        i = MathHelper.clamp(i, 0, 15); // i == power
-
-        getLevel().setBlockDataAt(getFloorX(), getFloorY(), getFloorZ(), i);
-        getLevel().updateAroundRedstone(this, null);
     }
 
 }
