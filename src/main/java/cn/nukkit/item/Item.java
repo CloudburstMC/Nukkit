@@ -35,7 +35,7 @@ public class Item implements Cloneable, BlockID, ItemID {
 
     private static final ArrayList<Item> creative = new ArrayList<>();
     public static Class[] list = null;
-    public static Class[] customlist = new Class[65535];
+    public static Class[] customblocklist = new Class[65535];
     protected static String UNKNOWN_STR = "Unknown";
     protected final int id;
     public int count;
@@ -305,7 +305,7 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     public static void registerCustomItemBlock(int key, Class i) {
-        customlist[key] = i;
+        customblocklist[key] = i;
     }
 
     @SuppressWarnings("unchecked")
@@ -391,7 +391,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             if (c == null) {
                 item = new Item(id, meta, count);
             } else if (id < 256) {
-                if (customlist[id] == null) {
+                if (customblocklist[id] == null) {
                     if (meta >= 0) {
                         item = new ItemBlock(Block.get(id, meta), meta, count);
                     } else {
@@ -399,7 +399,7 @@ public class Item implements Cloneable, BlockID, ItemID {
                     }
                 } else {
                    try{
-                    item = ((ItemBlock) customlist[id].getConstructor(Block.class, Integer.class, int.class).newInstance(Block.get(id, meta), meta, count));
+                    item = ((ItemBlock) customblocklist[id].getConstructor(Block.class, Integer.class, int.class).newInstance(Block.get(id, meta), meta, count));
                 }catch (Exception e){
                        if (meta >= 0) {
                            item = new ItemBlock(Block.get(id, meta), meta, count);
