@@ -1738,23 +1738,7 @@ public class Server {
     }
 
     public Player getPlayer(String name) {
-        Player found = null;
-        name = name.toLowerCase();
-        int delta = Integer.MAX_VALUE;
-        for (Player player : this.getOnlinePlayers().values()) {
-            if (player.getName().toLowerCase().startsWith(name)) {
-                int curDelta = player.getName().length() - name.length();
-                if (curDelta < delta) {
-                    found = player;
-                    delta = curDelta;
-                }
-                if (curDelta == 0) {
-                    break;
-                }
-            }
-        }
-
-        return found;
+        return this.getOnlinePlayers().values().stream().filter(player -> player.getName().equalsIgnoreCase(name) || player.getDisplayName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
     public Player getPlayerExact(String name) {
