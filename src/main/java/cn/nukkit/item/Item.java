@@ -50,6 +50,10 @@ public class Item implements Cloneable, BlockID, ItemID {
         this(id, 0, 1, UNKNOWN_STR);
     }
 
+    public Item(int id, int count){
+        this(id, 0, count, UNKNOWN_STR);
+    }
+
     public Item(int id, Integer meta) {
         this(id, meta, 1, UNKNOWN_STR);
     }
