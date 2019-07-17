@@ -10,7 +10,7 @@ import cn.nukkit.network.protocol.LevelSoundEventPacket;
  * author: MagicDroidX
  * Nukkit Project
  */
-abstract public class ItemArmor extends Item {
+abstract public class ItemArmor extends Item implements ItemDurable {
 
     public static final int TIER_LEATHER = 1;
     public static final int TIER_IRON = 2;

@@ -34,4 +34,9 @@ public class FurnaceRecipe implements Recipe {
     public void registerToCraftingManager(CraftingManager manager) {
         manager.registerFurnaceRecipe(this);
     }
+
+    @Override
+    public RecipeType getType() {
+        return this.ingredient.hasMeta() ? RecipeType.FURNACE_DATA : RecipeType.FURNACE;
+    }
 }

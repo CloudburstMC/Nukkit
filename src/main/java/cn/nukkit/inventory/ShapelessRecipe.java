@@ -10,13 +10,23 @@ import java.util.*;
  */
 public class ShapelessRecipe implements CraftingRecipe {
 
+    private String recipeId;
+
     private final Item output;
 
     private long least,most;
 
     private final List<Item> ingredients;
 
+    private final int priority;
+
     public ShapelessRecipe(Item result, Collection<Item> ingredients) {
+        this(null, 10, result, ingredients);
+    }
+
+    public ShapelessRecipe(String recipeId, int priority, Item result, Collection<Item> ingredients) {
+        this.recipeId = recipeId;
+        this.priority = priority;
         this.output = result.clone();
         if (ingredients.size() > 9) {
             throw new IllegalArgumentException("Shapeless recipes cannot have more than 9 ingredients");
@@ -25,8 +35,8 @@ public class ShapelessRecipe implements CraftingRecipe {
         this.ingredients = new ArrayList<>();
 
         for (Item item : ingredients) {
-            if (item.getCount() > 1) {
-                throw new IllegalArgumentException("Ingredient amount was not 1");
+            if (item.getCount() < 1) {
+                throw new IllegalArgumentException("Recipe '" + recipeId + "' Ingredient amount was not 1 (value: " + item.getCount() + ")");
             }
             this.ingredients.add(item.clone());
         }
@@ -38,6 +48,11 @@ public class ShapelessRecipe implements CraftingRecipe {
     }
 
     @Override
+    public String getRecipeId() {
+        return this.recipeId;
+    }
+
+    @Override
     public UUID getId() {
         return new UUID(least, most);
     }
@@ -46,6 +61,10 @@ public class ShapelessRecipe implements CraftingRecipe {
     public void setId(UUID uuid) {
         this.least = uuid.getLeastSignificantBits();
         this.most = uuid.getMostSignificantBits();
+
+        if (this.recipeId == null) {
+            this.recipeId = this.getId().toString();
+        }
     }
 
     public List<Item> getIngredientList() {
@@ -67,6 +86,11 @@ public class ShapelessRecipe implements CraftingRecipe {
     }
 
     @Override
+    public RecipeType getType() {
+        return RecipeType.SHAPELESS;
+    }
+
+    @Override
     public boolean requiresCraftingTable() {
         return this.ingredients.size() > 4;
     }
@@ -79,6 +103,11 @@ public class ShapelessRecipe implements CraftingRecipe {
     @Override
     public List<Item> getAllResults() {
         return null;
+    }
+
+    @Override
+    public int getPriority() {
+        return this.priority;
     }
 
     @Override

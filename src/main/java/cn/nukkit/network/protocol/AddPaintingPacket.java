@@ -12,9 +12,9 @@ public class AddPaintingPacket extends DataPacket {
 
     public long entityUniqueId;
     public long entityRuntimeId;
-    public int x;
-    public int y;
-    public int z;
+    public float x;
+    public float y;
+    public float z;
     public int direction;
     public String title;
 
@@ -28,7 +28,8 @@ public class AddPaintingPacket extends DataPacket {
         this.reset();
         this.putEntityUniqueId(this.entityUniqueId);
         this.putEntityRuntimeId(this.entityRuntimeId);
-        this.putBlockVector3(this.x, this.y, this.z);
+
+        this.putVector3f(this.x, this.y, this.z);
         this.putVarInt(this.direction);
         this.putString(this.title);
     }

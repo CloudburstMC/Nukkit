@@ -50,9 +50,9 @@ public class EntityPainting extends EntityHanging {
         AddPaintingPacket addPainting = new AddPaintingPacket();
         addPainting.entityUniqueId = this.getId();
         addPainting.entityRuntimeId = this.getId();
-        addPainting.x = (int) this.x;
-        addPainting.y = (int) this.y;
-        addPainting.z = (int) this.z;
+        addPainting.x = (float) this.x;
+        addPainting.y = (float) this.y;
+        addPainting.z = (float) this.z;
         addPainting.direction = this.getDirection().getHorizontalIndex();
         addPainting.title = this.namedTag.getString("Motive");
         return addPainting;

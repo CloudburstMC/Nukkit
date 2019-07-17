@@ -10,6 +10,8 @@ import java.util.UUID;
  */
 public interface CraftingRecipe extends Recipe {
 
+    String getRecipeId();
+
     UUID getId();
 
     void setId(UUID id);
@@ -19,6 +21,8 @@ public interface CraftingRecipe extends Recipe {
     List<Item> getExtraResults();
 
     List<Item> getAllResults();
+
+    int getPriority();
 
     /**
      * Returns whether the specified list of crafting grid inputs and outputs matches this recipe. Outputs DO NOT
