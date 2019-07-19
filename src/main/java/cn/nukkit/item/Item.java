@@ -409,7 +409,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             if (c == null) {
                 item = new Item(id, meta, count);
             } else if (id < 256) {
-                if (customblocklist[id] == null) {
+                if (!customblocklist.contains(id)) {
                     if (meta >= 0) {
                         item = new ItemBlock(Block.get(id, meta), meta, count);
                     } else {
@@ -417,7 +417,7 @@ public class Item implements Cloneable, BlockID, ItemID {
                     }
                 } else {
                     try {
-                        item = ((ItemBlock) customblocklist[id].getConstructor(Block.class, Integer.class, int.class).newInstance(Block.get(id, meta), meta, count));
+                        item = ((ItemBlock) customblocklist.get(id).newInstance(Block.get(id, meta), meta, count));
                     } catch (Exception e) {
                         if (meta >= 0) {
                             item = new ItemBlock(Block.get(id, meta), meta, count);
