@@ -1540,9 +1540,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
             }
 
-            if (!this.isSpectator()) {
-                this.checkNearEntities();
-            }
             if (this.speed == null) speed = new Vector3(from.x - to.x, from.y - to.y, from.z - to.z);
             else this.speed.setComponents(from.x - to.x, from.y - to.y, from.z - to.z);
         } else {
@@ -1665,6 +1662,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         if (this.spawned) {
             this.processMovement(tickDiff);
+
+            if (!this.isSpectator()) {
+                this.checkNearEntities();
+            }
 
             this.entityBaseTick(tickDiff);
 
