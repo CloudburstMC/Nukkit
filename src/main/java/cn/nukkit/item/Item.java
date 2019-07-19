@@ -16,12 +16,14 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -35,7 +37,7 @@ public class Item implements Cloneable, BlockID, ItemID {
 
     private static final ArrayList<Item> creative = new ArrayList<>();
     public static Class[] list = null;
-    public static Class[] customblocklist = new Class[65535];
+    public static ArrayList<Constructor> customblocklist = new ArrayList<>();
     protected static String UNKNOWN_STR = "Unknown";
     protected final int id;
     public int count;
@@ -77,7 +79,7 @@ public class Item implements Cloneable, BlockID, ItemID {
     public static void init() {
         if (list == null) {
             list = new Class[65535];
-            customblocklist = new Class[65535];
+//            customblocklist = new Class[765];
             list[IRON_SHOVEL] = ItemShovelIron.class; //256
             list[IRON_PICKAXE] = ItemPickaxeIron.class; //257
             list[IRON_AXE] = ItemAxeIron.class; //258
@@ -304,8 +306,24 @@ public class Item implements Cloneable, BlockID, ItemID {
         initCreativeItems();
     }
 
-    public static void registerCustomItemBlock(int key, Class i) {
-        customblocklist[key] = i;
+    public static void registerCustomItemBlock(Integer key, Class i, PluginBase p) {
+        if (key == null || i == null || !i.isInstance(ItemBlock.class)) {
+            MainLogger.getLogger().error("Error registering CustomItemBlock from Plugin " + p.getName() + " with ID: " + key);
+            return;
+        }
+        if (p.getDescription().getCustomitemblock().contains(key)) {
+            if (!customblocklist.contains(key)) {
+                try {
+                    customblocklist.set(key,  i.getConstructor(Block.class, Integer.class, int.class));
+//                    list[key] = i; // 2nd Option Or Method that DaMatrix Suggested.
+                }catch (Exception e){
+                    MainLogger.getLogger().logException(e);
+                }
+            } else
+                MainLogger.getLogger().error("Error! Plugin " + p.getName() + " is trying to write over an existing CustomItemBlock: " + key);
+        } else {
+            MainLogger.getLogger().error("Error! Plugin " + p.getName() + " has not registered their use of CustomItemBlock: " + key);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -398,15 +416,15 @@ public class Item implements Cloneable, BlockID, ItemID {
                         item = new ItemBlock(Block.get(id), meta, count);
                     }
                 } else {
-                   try{
-                    item = ((ItemBlock) customblocklist[id].getConstructor(Block.class, Integer.class, int.class).newInstance(Block.get(id, meta), meta, count));
-                }catch (Exception e){
-                       if (meta >= 0) {
-                           item = new ItemBlock(Block.get(id, meta), meta, count);
-                       } else {
-                           item = new ItemBlock(Block.get(id), meta, count);
-                       }
-                   }
+                    try {
+                        item = ((ItemBlock) customblocklist[id].getConstructor(Block.class, Integer.class, int.class).newInstance(Block.get(id, meta), meta, count));
+                    } catch (Exception e) {
+                        if (meta >= 0) {
+                            item = new ItemBlock(Block.get(id, meta), meta, count);
+                        } else {
+                            item = new ItemBlock(Block.get(id), meta, count);
+                        }
+                    }
                 }
             } else {
                 item = ((Item) c.getConstructor(Integer.class, int.class).newInstance(meta, count));
