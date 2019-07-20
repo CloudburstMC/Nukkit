@@ -40,6 +40,13 @@ public enum Sound {
     BLOCK_COMPOSTER_FILL_SUCCESS("block.composter.fill_success"),
     BLOCK_COMPOSTER_EMPTY("block.composter.empty"),
     BLOCK_COMPOSTER_READY("block.composter.ready"),
+    BLOCK_LOOM_USE("block.loom.use"),
+    UI_LOOM_TAKE_RESULT("ui.loom.take_result"),
+    UI_CARTOGRAPHY_TABLE_TAKE_RESULT("ui.cartography_table.take_result"),
+    UI_LOOM_SELECT_PATTERN("ui.loom.select_pattern"),
+    BLOCK_STONECUTTER_USE("block.stonecutter.use"),
+    UI_STONECUTTER_TAKE_RESULT("ui.stonecutter.take_result"),
+    BLOCK_CARTOGRAPHY_TABLE_USE("block.cartography_table.use"),
     BLOCK_GRINDSTONE_USE("block.grindstone.use"),
     BLOCK_TURTLE_EGG_DROP("block.turtle_egg.drop"),
     BLOCK_TURTLE_EGG_BREAK("block.turtle_egg.break"),
@@ -358,6 +365,16 @@ public enum Sound {
     ITEM_TRIDENT_THROW("item.trident.throw"),
     ITEM_TRIDENT_THUNDER("item.trident.thunder"),
     ITEM_SHIELD_BLOCK("item.shield.block"),
+    MOB_WANDERINGTRADER_IDLE("mob.wanderingtrader.idle"),
+    MOB_WANDERINGTRADER_DEATH("mob.wanderingtrader.death"),
+    MOB_WANDERINGTRADER_DISAPPEARED("mob.wanderingtrader.disappeared"),
+    MOB_WANDERINGTRADER_DRINK_MILK("mob.wanderingtrader.drink_milk"),
+    MOB_WANDERINGTRADER_DRINK_POTION("mob.wanderingtrader.drink_potion"),
+    MOB_WANDERINGTRADER_HAGGLE("mob.wanderingtrader.haggle"),
+    MOB_WANDERINGTRADER_YES("mob.wanderingtrader.yes"),
+    MOB_WANDERINGTRADER_NO("mob.wanderingtrader.no"),
+    MOB_WANDERINGTRADER_HURT("mob.wanderingtrader.hurt"),
+    MOB_WANDERINGTRADER_REAPPEARED("mob.wanderingtrader.reappeared"),
     MOB_WITCH_AMBIENT("mob.witch.ambient"),
     MOB_WITCH_DEATH("mob.witch.death"),
     MOB_WITCH_HURT("mob.witch.hurt"),
@@ -537,11 +554,7 @@ public enum Sound {
     MUSIC_GAME_END("music.game.end"),
     MUSIC_GAME_ENDBOSS("music.game.endboss"),
     MUSIC_GAME_NETHER("music.game.nether"),
-    MUSIC_GAME_CREDITS("music.game.credits"),
-    UI_CARTOGRAPHY_TABLE_TAKE_RESULT("ui.cartography_table.take_result"),
-    UI_LOOM_SELECT_PATTERN("ui.loom.select_pattern"),
-    UI_LOOM_TAKE_RESULT("ui.loom.take_result"),
-    UI_STONECUTTER_TAKE_RESULT("ui.stonecutter.take_result");
+    MUSIC_GAME_CREDITS("music.game.credits");
 
     private final String sound;
 
