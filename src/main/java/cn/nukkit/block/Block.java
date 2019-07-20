@@ -332,10 +332,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                     transparent[id] = block.isTransparent();
                     hardness[id] = block.getHardness();
                     light[id] = block.getLightLevel();
-                    lightFilter[id] = block.getLightFilter() + 1;
+                    lightFilter[id] = Math.min(15, block.getLightFilter() + 1);
                     diffusesSkyLight[id] = block.diffusesSkyLight();
                 } else {
-                    lightFilter[id] = 16;
+                    lightFilter[id] = 1;
                     for (int data = 0; data < 16; ++data) {
                         fullList[(id << 4) | data] = new BlockUnknown(id, data);
                     }
@@ -443,7 +443,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public int getLightFilter() {
-        return 15;
+        return isTransparent() ? 0 : 15;
     }
 
     public boolean diffusesSkyLight() {

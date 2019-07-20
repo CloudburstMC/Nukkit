@@ -11,10 +11,7 @@ import cn.nukkit.level.format.generic.BaseChunk;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.*;
-import cn.nukkit.utils.BinaryStream;
-import cn.nukkit.utils.BlockUpdateEntry;
-import cn.nukkit.utils.ChunkException;
-import cn.nukkit.utils.Zlib;
+import cn.nukkit.utils.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -42,17 +39,18 @@ public class Chunk extends BaseChunk {
         this(level, null);
     }
 
-    public Chunk(Class<? extends LevelProvider> providerClass) {
-        this((LevelProvider) null, null);
-        this.providerClass = providerClass;
-    }
+//    public Chunk(Class<? extends LevelProvider> providerClass) {
+//        this((LevelProvider) null, null);
+//        this.providerClass = providerClass;
+//    }
 
-    public Chunk(Class<? extends LevelProvider> providerClass, CompoundTag nbt) {
-        this((LevelProvider) null, nbt);
-        this.providerClass = providerClass;
-    }
+//    public Chunk(Class<? extends LevelProvider> providerClass, CompoundTag nbt) {
+//        this((LevelProvider) null, nbt);
+//        this.providerClass = providerClass;
+//    }
 
     public Chunk(LevelProvider level, CompoundTag nbt) {
+        super((Anvil) level);
         this.provider = level;
         if (level != null) {
             this.providerClass = level.getClass();
@@ -61,7 +59,7 @@ public class Chunk extends BaseChunk {
         if (nbt == null) {
             this.biomes = new byte[16 * 16];
             this.sections = new cn.nukkit.level.format.ChunkSection[16];
-            if (16 >= 0) System.arraycopy(EmptyChunkSection.EMPTY, 0, this.sections, 0, 16);
+            System.arraycopy(EmptyChunkSection.EMPTY, 0, this.sections, 0, 16);
             return;
         }
 
@@ -102,8 +100,8 @@ public class Chunk extends BaseChunk {
             int[] biomeColors = nbt.getIntArray("BiomeColors");
             if (biomeColors != null && biomeColors.length == 256) {
                 BiomePalette palette = new BiomePalette(biomeColors);
-                for (int x = 0; x < 16; x++)    {
-                    for (int z = 0; z < 16; z++)    {
+                for (int x = 0; x < 16; x++) {
+                    for (int z = 0; z < 16; z++) {
                         this.biomes[(x << 4) | z] = (byte) (palette.get(x, z) >> 24);
                     }
                 }
@@ -442,10 +440,12 @@ public class Chunk extends BaseChunk {
         if (section instanceof cn.nukkit.level.format.anvil.ChunkSection) {
             cn.nukkit.level.format.anvil.ChunkSection anvilSection = (cn.nukkit.level.format.anvil.ChunkSection) section;
             if (anvilSection.skyLight != null) {
+                MainLogger.getLogger().info("returned real light");
                 return section.getBlockSkyLight(x, y & 0x0f, z);
             } else if (!anvilSection.hasSkyLight) {
                 return 0;
             } else {
+                MainLogger.getLogger().info("returned else");
                 int height = getHighestBlockAt(x, z);
                 if (height < y) {
                     return 15;
@@ -477,18 +477,10 @@ public class Chunk extends BaseChunk {
         }
     }
 
-    public static Chunk getEmptyChunk(int chunkX, int chunkZ) {
-        return getEmptyChunk(chunkX, chunkZ, null);
-    }
-
     public static Chunk getEmptyChunk(int chunkX, int chunkZ, LevelProvider provider) {
         try {
             Chunk chunk;
-            if (provider != null) {
-                chunk = new Chunk(provider, null);
-            } else {
-                chunk = new Chunk(Anvil.class, null);
-            }
+            chunk = new Chunk(provider, null);
 
             chunk.setPosition(chunkX, chunkZ);
 
@@ -516,5 +508,67 @@ public class Chunk extends BaseChunk {
             }
         }
         return result;
+    }
+
+    protected void setAllBlockSkyLight(int level) {
+        byte[] data = new byte[2048];
+        Arrays.fill(data, (byte) ((level & 0x0f) | (level << 4)));
+
+        for (cn.nukkit.level.format.ChunkSection section : this.sections) {
+            if (section.isEmpty()) {
+                continue;
+            }
+            byte[] copy = new byte[2048];
+            System.arraycopy(data, 0, copy, 0, 2048);
+
+            section.setSkyLightArray(copy);
+        }
+    }
+
+    @Override
+    public void populateSkyLight() {
+        int maxY = getMaxY();
+
+        this.setAllBlockSkyLight(0);
+        MainLogger.getLogger().info("populating skylight");
+
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                int heightMap = getHeightMap(x, z);
+
+                int y;
+                for (y = maxY; y >= heightMap; --y) {
+                    this.setBlockSkyLight(x, y, z, 15);
+                }
+
+                int light = 15;
+                for (; y >= 0; --y) {
+                    light -= Block.lightFilter[this.getBlockId(x, y, z)];
+                    if (light <= 0) {
+                        break;
+                    }
+
+//                    this.setBlockSkyLight(x, y, z, light);
+                }
+            }
+        }
+    }
+
+    public int getMaxY() {
+        return (this.getHighestSubChunkIndex() << 4) | 0x0f;
+    }
+
+    public int getHighestSubChunkIndex() {
+        int y;
+
+        for (y = this.sections.length - 1; y >= 0; --y) {
+            if (this.sections[y] == null || sections[y] instanceof EmptyChunkSection) {
+                //No need to thoroughly prune empties at runtime, this will just reduce performance.
+                continue;
+            }
+            break;
+        }
+
+        return y;
     }
 }

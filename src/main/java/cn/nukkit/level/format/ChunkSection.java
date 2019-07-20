@@ -41,7 +41,11 @@ public interface ChunkSection {
 
     byte[] getSkyLightArray();
 
+    void setSkyLightArray(byte[] data);
+
     byte[] getLightArray();
+
+    void setLightArray(byte[] data);
 
     boolean isEmpty();
 

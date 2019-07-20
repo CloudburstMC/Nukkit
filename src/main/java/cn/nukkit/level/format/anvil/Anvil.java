@@ -258,10 +258,8 @@ public class Anvil extends BaseLevelProvider {
         }
     }
 
-    public static ChunkSection createChunkSection(int y) {
-        ChunkSection cs = new ChunkSection(y);
-        cs.hasSkyLight = true;
-        return cs;
+    public ChunkSection createChunkSection(int y) {
+        return new ChunkSection(y, true, true);
     }
 
     protected synchronized BaseRegionLoader loadRegion(int x, int z) {
