@@ -236,9 +236,23 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     public void recalculateHeightMap() {
         for (int z = 0; z < 16; ++z) {
             for (int x = 0; x < 16; ++x) {
-                this.setHeightMap(x, z, this.getHighestBlockAt(x, z, false));
+                recalculateHeightMapColumn(x, z);
             }
         }
+    }
+
+    @Override
+    public int recalculateHeightMapColumn(int chunkX, int chunkZ) {
+        int max = getHighestBlockAt(chunkX, chunkZ, false);
+        int y;
+        for (y = max; y >= 0; --y) {
+            if (Block.lightFilter[getBlockIdAt(x, y, z)] > 1 || Block.diffusesSkyLight[getBlockIdAt(x, y, z)]) {
+                break;
+            }
+        }
+
+        setHeightMap(x, z, y + 1);
+        return y + 1;
     }
 
     @Override

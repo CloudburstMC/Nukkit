@@ -74,6 +74,8 @@ public interface FullChunk extends Cloneable {
 
     void recalculateHeightMap();
 
+    int recalculateHeightMapColumn(int chunkX, int chunkZ);
+
     void populateSkyLight();
 
     int getBiomeId(int x, int z);

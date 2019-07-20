@@ -204,4 +204,10 @@ public class BlockLeaves extends BlockTransparentMeta {
     public boolean canSilkTouch() {
         return true;
     }
+
+    @Override
+    public boolean diffusesSkyLight() {
+        return true;
+    }
+
 }
