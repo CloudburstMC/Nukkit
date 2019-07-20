@@ -54,6 +54,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             solid = new boolean[256];
             hardness = new double[256];
             transparent = new boolean[256];
+            diffusesSkyLight = new boolean[256];
             hasMeta = new boolean[256];
 
             list[AIR] = BlockAir.class; //0
