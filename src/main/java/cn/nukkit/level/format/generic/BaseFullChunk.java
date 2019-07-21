@@ -242,8 +242,8 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     }
 
     @Override
-    public int recalculateHeightMapColumn(int chunkX, int chunkZ) {
-        int max = getHighestBlockAt(chunkX, chunkZ, false);
+    public int recalculateHeightMapColumn(int x, int z) {
+        int max = getHighestBlockAt(x, z, false);
         int y;
         for (y = max; y >= 0; --y) {
             if (Block.lightFilter[getBlockIdAt(x, y, z)] > 1 || Block.diffusesSkyLight[getBlockIdAt(x, y, z)]) {

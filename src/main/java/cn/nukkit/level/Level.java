@@ -1492,17 +1492,21 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void updateBlockSkyLight(int x, int y, int z) {
-        int oldHeightMap = getHeightMap(x, z);
+        BaseFullChunk chunk = getChunkIfLoaded(x >> 4, z >> 4);
+
+        if (chunk == null) return;
+
+        int oldHeightMap = chunk.getHeightMap(x & 0xf, z & 0xf);
         int sourceId = getBlockIdAt(x, y, z);
 
         int yPlusOne = y + 1;
 
         int newHeightMap;
         if (yPlusOne == oldHeightMap) { // Block changed directly beneath the heightmap. Check if a block was removed or changed to a different light-filter
-            newHeightMap = getChunk(x >> 4, z >> 4).recalculateHeightMapColumn(x & 0x0f, z & 0x0f);
+            newHeightMap = chunk.recalculateHeightMapColumn(x & 0x0f, z & 0x0f);
         } else if (yPlusOne > oldHeightMap) { // Block changed above the heightmap
             if (Block.lightFilter[sourceId] > 1 || Block.diffusesSkyLight[sourceId]) {
-                setHeightMap(x, y, yPlusOne);
+                chunk.setHeightMap(x & 0xf, y & 0xf, yPlusOne);
                 newHeightMap = yPlusOne;
             } else { // Block changed which has no effect on direct sky light, for example placing or removing glass.
                 return;
