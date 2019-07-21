@@ -283,24 +283,47 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     public void populateSkyLight() {
         // basic light calculation
         for (int z = 0; z < 16; ++z) {
-            for (int x = 0; x < 16; ++x) {
+            for (int x = 0; x < 16; ++x) { // iterating over all columns in chunk
                 int top = this.getHeightMap(x, z);
-                for (int y = 255; y > top; --y) {
+
+                int y;
+
+                for (y = 255; y >= top; --y) {
+                    // all the blocks above & including the top-most block in a column are exposed to sun and
+                    // thus have a skylight value of 15
                     this.setBlockSkyLight(x, y, z, 15);
                 }
 
-                int light = 15;
-                for (int y = top; y >= 0; --y) {
-                    int id = this.getBlockId(x, y, z);
+                int nextLight = 15; // light value that will be applied starting with the next block
+                int nextDecrease = 0; // decrease that that will be applied starting with the next block
+                for (; y >= 0; --y) { // going under the top-most block
+                    nextLight -= nextDecrease;
+                    int light = nextLight; // this light value will be applied for this block. The following checks are all about the next blocks
 
-                    if (Block.solid[id]) {
-                        break;
+                    if (light == 0) { // skipping block checks, because everything under a block that has a skylight value
+                                      // of 0 also has a skylight value of 0
+                        setBlockSkyLight(x, y, z, 0);
+                        continue;
                     }
 
-                    light -= Block.lightFilter[id];
+                    // START of checks for the next block
+                    int id = this.getBlockId(x, y, z);
 
-                    if (light <= 0) {
-                        break;
+                    if (Block.solid[id]) { // if we encounter a solid block, all the blocks under it will
+                                           // have a skylight value of 0 (the block itself has a value of 15, if it's a top-most block)
+                        nextLight = 0;
+                    } else if (Block.diffusesSkyLight[id]) {
+                        nextDecrease += 1; // skylight value decreases by one for each block under a block
+                                           // that diffuses skylight. The block itself has a value of 15 (if it's a top-most block)
+                    } else {
+                        nextLight -= Block.lightFilter[id]; // blocks under a light filtering block will have a skylight value
+                                                            // decreased by the lightFilter value of that block. The block itself
+                                                            // has a value of 15 (if it's a top-most block)
+                    }
+                    // END of checks for the next block
+
+                    if (light < 0) {
+                        light = 0;
                     }
 
                     this.setBlockSkyLight(x, y, z, light);
