@@ -316,7 +316,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
                         nextDecrease += 1; // skylight value decreases by one for each block under a block
                                            // that diffuses skylight. The block itself has a value of 15 (if it's a top-most block)
                     } else {
-                        nextLight -= Block.lightFilter[id]; // blocks under a light filtering block will have a skylight value
+                        nextDecrease -= Block.lightFilter[id]; // blocks under a light filtering block will have a skylight value
                                                             // decreased by the lightFilter value of that block. The block itself
                                                             // has a value of 15 (if it's a top-most block)
                     }
