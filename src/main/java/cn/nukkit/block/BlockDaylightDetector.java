@@ -105,7 +105,7 @@ public class BlockDaylightDetector extends BlockTransparentMeta {
         int i;
         if (getLevel().getDimension() == Level.DIMENSION_OVERWORLD) {
             i = getLevel().getBlockSkyLightAt((int) x, (int) y, (int) z) - getLevel().calculateSkylightSubtracted(1.0F);
-            float f = getLevel().calculateCelestialAngle(getLevel().getTime(), 1.0F);
+            float f = getLevel().getCelestialAngle(1.0F);
 
             if (this.isInverted()) {
                 i = 15 - i;
