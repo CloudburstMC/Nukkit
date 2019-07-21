@@ -281,19 +281,30 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public void populateSkyLight() {
+        // basic light calculation
         for (int z = 0; z < 16; ++z) {
             for (int x = 0; x < 16; ++x) {
                 int top = this.getHeightMap(x, z);
                 for (int y = 255; y > top; --y) {
                     this.setBlockSkyLight(x, y, z, 15);
                 }
+
+                int light = 15;
                 for (int y = top; y >= 0; --y) {
-                    if (Block.solid[this.getBlockId(x, y, z)]) {
+                    int id = this.getBlockId(x, y, z);
+
+                    if (Block.solid[id]) {
                         break;
                     }
-                    this.setBlockSkyLight(x, y, z, 15);
+
+                    light -= Block.lightFilter[id];
+
+                    if (light <= 0) {
+                        break;
+                    }
+
+                    this.setBlockSkyLight(x, y, z, light);
                 }
-                this.setHeightMap(x, z, this.getHighestBlockAt(x, z, false));
             }
         }
     }
