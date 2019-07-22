@@ -19,7 +19,7 @@ public class GlobalBlockPalette {
     private static final Int2IntArrayMap legacyToRuntimeId = new Int2IntArrayMap();
     private static final Int2IntArrayMap runtimeIdToLegacy = new Int2IntArrayMap();
     private static final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
-    private static final byte[] compiledTable;
+    private static final byte[] compiledPalette;
 
     static {
         legacyToRuntimeId.defaultReturnValue(-1);
@@ -43,9 +43,10 @@ public class GlobalBlockPalette {
             registerMapping((entry.id << 4) | entry.data);
             table.putString(entry.name);
             table.putLShort(entry.data);
+            table.putLShort(entry.id);
         }
 
-        compiledTable = table.getBuffer();
+        compiledPalette = table.getBuffer();
     }
 
     public static int getOrCreateRuntimeId(int id, int meta) {
@@ -68,8 +69,8 @@ public class GlobalBlockPalette {
         return runtimeId;
     }
 
-    public static byte[] getCompiledTable() {
-        return compiledTable;
+    public static byte[] getCompiledPalette() {
+        return compiledPalette;
     }
 
     private static class TableEntry {

@@ -56,7 +56,7 @@ public class ListTag<T extends Tag> extends Tag {
     @Override
     public String toString() {
         StringJoiner joiner = new StringJoiner(",\n\t");
-        list.forEach(tag -> joiner.add(tag.toString()));
+        list.forEach(tag -> joiner.add(tag.toString().replace("\n", "\n\t")));
         return "ListTag '" + this.getName() + "' (" + list.size() + " entries of type " + Tag.getTagName(type) + ") {\n\t" + joiner.toString() + "\n}";
     }
 
