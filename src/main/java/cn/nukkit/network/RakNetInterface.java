@@ -23,10 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.Queue;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
@@ -65,7 +62,15 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
     @Override
     public boolean process() {
-        for (NukkitSessionListener listener : sessionListeners) {
+        Iterator<NukkitSessionListener> iterator = this.sessionListeners.iterator();
+        while (iterator.hasNext()) {
+            NukkitSessionListener listener = iterator.next();
+            Player player = listener.player;
+            if (listener.disconnectReason != null) {
+                player.close(player.getLeaveMessage(), listener.disconnectReason, false);
+                iterator.remove();
+                continue;
+            }
             DataPacket packet;
             while ((packet = listener.packets.poll()) != null) {
                 listener.player.handleDataPacket(packet);
@@ -220,6 +225,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
     private class NukkitSessionListener implements RakNetSessionListener {
         private final Player player;
         private final Queue<DataPacket> packets = new ConcurrentLinkedQueue<>();
+        private String disconnectReason = null;
 
         @Override
         public void onSessionChangeState(RakNetState rakNetState) {
@@ -228,8 +234,11 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
         @Override
         public void onDisconnect(DisconnectReason disconnectReason) {
-            this.player.close(player.getLeaveMessage(), "Disconnected from Server", false);
-            RakNetInterface.this.sessionListeners.remove(this);
+            if (disconnectReason == DisconnectReason.TIMED_OUT) {
+                this.disconnectReason = "Timed out";
+            } else {
+                this.disconnectReason = "Disconnected from Server";
+            }
         }
 
         @Override
