@@ -29,6 +29,7 @@ public class Chunk extends BaseChunk {
     protected long inhabitedTime;
     protected boolean terrainPopulated;
     protected boolean terrainGenerated;
+    protected boolean lightPopulated;
 
     @Override
     public Chunk clone() {
@@ -164,6 +165,7 @@ public class Chunk extends BaseChunk {
         this.inhabitedTime = nbt.getLong("InhabitedTime");
         this.terrainPopulated = nbt.getBoolean("TerrainPopulated");
         this.terrainGenerated = nbt.getBoolean("TerrainGenerated");
+        this.lightPopulated = nbt.getBoolean("LightPopulated");
     }
 
     @Override
@@ -422,6 +424,10 @@ public class Chunk extends BaseChunk {
             extraData.putShort(extraDataArray.get(key));
         }
 
+        nbt.putBoolean("LightPopulated", lightPopulated);
+        nbt.putBoolean("TerrainGenerated", terrainGenerated);
+        nbt.putBoolean("TerrainPopulated", terrainPopulated);
+
         nbt.putByteArray("ExtraData", extraData.getBuffer());
 
         CompoundTag chunk = new CompoundTag("");
@@ -440,12 +446,10 @@ public class Chunk extends BaseChunk {
         if (section instanceof cn.nukkit.level.format.anvil.ChunkSection) {
             cn.nukkit.level.format.anvil.ChunkSection anvilSection = (cn.nukkit.level.format.anvil.ChunkSection) section;
             if (anvilSection.skyLight != null) {
-                MainLogger.getLogger().info("returned real light");
                 return section.getBlockSkyLight(x, y & 0x0f, z);
             } else if (!anvilSection.hasSkyLight) {
                 return 0;
             } else {
-                MainLogger.getLogger().info("returned else");
                 int height = getHighestBlockAt(x, z);
                 if (height < y) {
                     return 15;
@@ -488,7 +492,7 @@ public class Chunk extends BaseChunk {
             chunk.inhabitedTime = 0;
             chunk.terrainGenerated = false;
             chunk.terrainPopulated = false;
-//            chunk.lightPopulated = false;
+            chunk.lightPopulated = false;
             return chunk;
         } catch (Exception e) {
             return null;
@@ -570,5 +574,10 @@ public class Chunk extends BaseChunk {
         }
 
         return y;
+    }
+
+    @Override
+    public boolean isLightPopulated() {
+        return lightPopulated;
     }
 }
