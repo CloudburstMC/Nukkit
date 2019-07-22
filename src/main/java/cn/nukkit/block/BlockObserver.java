@@ -31,8 +31,22 @@ public class BlockObserver extends BlockSolidMeta implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        int[] faces = {2, 5, 3, 4};
-        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+        if (player != null) {
+            if (Math.abs(player.getFloorX() - this.x) <= 1 && Math.abs(player.getFloorZ() - this.z) <= 1) {
+                double y = player.y + player.getEyeHeight();
+                if (y - this.y > 2) {
+                    this.setDamage(BlockFace.DOWN.getIndex());
+                } else if (this.y - y > 0) {
+                    this.setDamage(BlockFace.UP.getIndex());
+                } else {
+                    this.setDamage(player.getHorizontalFacing().getIndex());
+                }
+            } else {
+                this.setDamage(player.getHorizontalFacing().getIndex());
+            }
+        } else {
+            this.setDamage(0);
+        }
         this.getLevel().setBlock(block, this, true, true);
         return true;
     }
