@@ -29,7 +29,7 @@ pipeline {
             }
             step([$class: 'JavadocArchiver',
                 javadocDir: 'target/site/apidocs',
-                keepAll: true])
+                keepAll: false])
         }
     }
 
