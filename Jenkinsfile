@@ -26,10 +26,10 @@ pipeline {
             }
             steps {
                 sh 'mvn javadoc:jar source:jar deploy -DskipTests'
+                step([$class: 'JavadocArchiver',
+                        javadocDir: 'target/site/apidocs',
+                        keepAll: false])
             }
-            step([$class: 'JavadocArchiver',
-                javadocDir: 'target/site/apidocs',
-                keepAll: false])
         }
     }
 
