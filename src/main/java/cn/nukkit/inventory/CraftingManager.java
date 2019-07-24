@@ -205,7 +205,7 @@ public class CraftingManager {
 
     public void rebuildPacket() {
         CraftingDataPacket pk = new CraftingDataPacket();
-        pk.cleanRecipes = false;
+        pk.cleanRecipes = true;
 
         for (Recipe recipe : this.getRecipes()) {
             if (recipe instanceof ShapedRecipe) {
