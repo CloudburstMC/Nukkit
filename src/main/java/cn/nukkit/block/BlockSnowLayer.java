@@ -85,7 +85,7 @@ public class BlockSnowLayer extends BlockFallable {
                 BlockFadeEvent event = new BlockFadeEvent(this, get(AIR));
                 level.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    level.setBlock(this, event.getNewBlock(), true);
+                    level.setBlock(this, event.getNewState(), true);
                 }
                 return Level.BLOCK_UPDATE_NORMAL;
             }

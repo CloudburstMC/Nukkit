@@ -58,7 +58,7 @@ public class BlockIce extends BlockTransparent {
                 BlockFadeEvent event = new BlockFadeEvent(this, get(WATER));
                 level.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    level.setBlock(this, event.getNewBlock(), true);
+                    level.setBlock(this, event.getNewState(), true);
                 }
                 return Level.BLOCK_UPDATE_NORMAL;
             }

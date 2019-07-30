@@ -12,14 +12,14 @@ public class BlockFadeEvent extends BlockEvent implements Cancellable {
         return handlers;
     }
 
-    private final Block newBlock;
+    private final Block newState;
 
-    public BlockFadeEvent(Block block, Block newBlock) {
+    public BlockFadeEvent(Block block, Block newState) {
         super(block);
-        this.newBlock = newBlock;
+        this.newState = newState;
     }
 
-    public Block getNewBlock() {
-        return newBlock;
+    public Block getNewState() {
+        return newState;
     }
 }

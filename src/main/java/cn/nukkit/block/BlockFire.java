@@ -95,7 +95,7 @@ public class BlockFire extends BlockFlowable {
                 BlockFadeEvent event = new BlockFadeEvent(this, get(AIR));
                 level.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    level.setBlock(this, event.getNewBlock(), true);
+                    level.setBlock(this, event.getNewState(), true);
                 }
             }
 
@@ -111,7 +111,7 @@ public class BlockFire extends BlockFlowable {
                 BlockFadeEvent event = new BlockFadeEvent(this, get(AIR));
                 level.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    level.setBlock(this, event.getNewBlock(), true);
+                    level.setBlock(this, event.getNewState(), true);
                 }
             }
 
@@ -125,7 +125,7 @@ public class BlockFire extends BlockFlowable {
                 BlockFadeEvent event = new BlockFadeEvent(this, get(AIR));
                 level.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    level.setBlock(this, event.getNewBlock(), true);
+                    level.setBlock(this, event.getNewState(), true);
                 }
             } else {
                 int meta = this.getDamage();
@@ -143,14 +143,14 @@ public class BlockFire extends BlockFlowable {
                         BlockFadeEvent event = new BlockFadeEvent(this, get(AIR));
                         level.getServer().getPluginManager().callEvent(event);
                         if (!event.isCancelled()) {
-                            level.setBlock(this, event.getNewBlock(), true);
+                            level.setBlock(this, event.getNewState(), true);
                         }
                     }
                 } else if (!forever && !(this.down().getBurnAbility() > 0) && meta == 15 && random.nextInt(4) == 0) {
                     BlockFadeEvent event = new BlockFadeEvent(this, get(AIR));
                     level.getServer().getPluginManager().callEvent(event);
                     if (!event.isCancelled()) {
-                        level.setBlock(this, event.getNewBlock(), true);
+                        level.setBlock(this, event.getNewState(), true);
                     }
                 } else {
                     int o = 0;
