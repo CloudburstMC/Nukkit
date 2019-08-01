@@ -1,7 +1,6 @@
 package cn.nukkit.form.window;
 
 import cn.nukkit.form.response.FormResponseModal;
-import com.google.gson.Gson;
 
 public class FormWindowModal extends FormWindow {
 

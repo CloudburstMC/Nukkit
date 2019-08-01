@@ -2,7 +2,6 @@ package cn.nukkit.form.window;
 
 import cn.nukkit.form.element.ElementButton;
 import cn.nukkit.form.response.FormResponseSimple;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
