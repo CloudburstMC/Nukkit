@@ -6,15 +6,17 @@ import java.lang.management.MonitorInfo;
 import java.lang.management.ThreadInfo;
 
 public class Watchdog extends Thread {
+
     private final Server server;
     private final long time;
-    public boolean running = true;
+    public boolean running;
     private boolean responding = true;
 
     public Watchdog(Server server, long time) {
         this.server = server;
         this.time = time;
         this.running = true;
+        this.setName("Watchdog");
     }
 
     public void kill() {
@@ -26,15 +28,18 @@ public class Watchdog extends Thread {
 
     @Override
     public void run() {
-        while (this.running && server.isRunning()) {
+        while (this.running) {
             long current = server.getNextTick();
             if (current != 0) {
                 long diff = System.currentTimeMillis() - current;
-                if (diff > time) {
+                if (!responding && diff > time * 2) {
+                    System.exit(1); // Kill the server if it gets stuck on shutdown
+                }
+                if (server.isRunning() && diff > time) {
                     if (responding) {
                         MainLogger logger = this.server.getLogger();
-                        logger.emergency("--------- Server stopped responding --------- (" + (diff / 1000d) + "s)");
-                        logger.emergency("Please report this to nukkit:");
+                        logger.emergency("--------- Server stopped responding --------- (" + Math.round(diff / 1000d) + "s)");
+                        logger.emergency("Please report this to Nukkit:");
                         logger.emergency(" - https://github.com/NukkitX/Nukkit/issues/new");
                         logger.emergency("---------------- Main thread ----------------");
 
@@ -48,6 +53,7 @@ public class Watchdog extends Thread {
                         }
                         logger.emergency("---------------------------------------------");
                         responding = false;
+                        this.server.forceShutdown();
                     }
                 } else {
                     responding = true;
