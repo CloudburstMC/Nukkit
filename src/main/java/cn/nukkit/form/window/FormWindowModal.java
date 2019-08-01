@@ -52,10 +52,6 @@ public class FormWindowModal extends FormWindow {
         this.button2 = button2;
     }
 
-    public String getJSONData() {
-        return new Gson().toJson(this);
-    }
-
     public FormResponseModal getResponse() {
         return response;
     }

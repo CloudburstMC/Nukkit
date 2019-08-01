@@ -50,10 +50,6 @@ public class FormWindowSimple extends FormWindow {
         this.buttons.add(button);
     }
 
-    public String getJSONData() {
-        return new Gson().toJson(this);
-    }
-
     public FormResponseSimple getResponse() {
         return response;
     }
