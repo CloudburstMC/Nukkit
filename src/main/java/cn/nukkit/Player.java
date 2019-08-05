@@ -4711,7 +4711,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 Server.broadcastPacket(entity.getViewers().values(), pk);
                 this.dataPacket(pk);
 
-                this.inventory.addItem(item.clone());
+                if (!this.isCreative()) {
+                    this.inventory.addItem(item.clone());
+                }
                 entity.close();
                 return true;
             } else if (entity instanceof EntityItem) {
