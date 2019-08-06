@@ -1,12 +1,15 @@
 package cn.nukkit.form.window;
 
 import cn.nukkit.form.response.FormResponse;
+import com.google.gson.Gson;
 
 public abstract class FormWindow {
 
     protected boolean closed = false;
 
-    public abstract String getJSONData();
+    public String getJSONData(){
+        return new Gson().toJson(this);
+    }
 
     public abstract void setResponse(String data);
 
