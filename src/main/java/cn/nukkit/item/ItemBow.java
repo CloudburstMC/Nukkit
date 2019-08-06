@@ -52,18 +52,14 @@ public class ItemBow extends ItemTool {
         }
 
         double damage = 2;
-        boolean flame = false;
 
-        if (this.hasEnchantments()) {
-            Enchantment bowDamage = this.getEnchantment(Enchantment.ID_BOW_POWER);
-
-            if (bowDamage != null && bowDamage.getLevel() > 0) {
-                damage += 0.25 * (bowDamage.getLevel() + 1);
-            }
-
-            Enchantment flameEnchant = this.getEnchantment(Enchantment.ID_BOW_FLAME);
-            flame = flameEnchant != null && flameEnchant.getLevel() > 0;
+        Enchantment bowDamage = this.getEnchantment(Enchantment.ID_BOW_POWER);
+        if (bowDamage != null && bowDamage.getLevel() > 0) {
+            damage += 0.25 * (bowDamage.getLevel() + 1);
         }
+
+        Enchantment flameEnchant = this.getEnchantment(Enchantment.ID_BOW_FLAME);
+        boolean flame = flameEnchant != null && flameEnchant.getLevel() > 0;
 
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
@@ -96,11 +92,16 @@ public class ItemBow extends ItemTool {
             player.getInventory().sendContents(player);
         } else {
             entityShootBowEvent.getProjectile().setMotion(entityShootBowEvent.getProjectile().getMotion().multiply(entityShootBowEvent.getForce()));
+            Enchantment infinityEnchant = this.getEnchantment(Enchantment.ID_BOW_INFINITY);
+            boolean infinity = infinityEnchant != null && infinityEnchant.getLevel() > 0;
+            EntityProjectile projectile;
+            if (infinity && (projectile = entityShootBowEvent.getProjectile()) instanceof EntityArrow) {
+                ((EntityArrow) projectile).setPickupMode(EntityArrow.PICKUP_CREATIVE);
+            }
             if (player.isSurvival()) {
-                Enchantment infinity;
-
-                if (!this.hasEnchantments() || (infinity = this.getEnchantment(Enchantment.ID_BOW_INFINITY)) == null || infinity.getLevel() <= 0)
+                if (!infinity) {
                     player.getInventory().removeItem(itemArrow);
+                }
                 if (!this.isUnbreakable()) {
                     Enchantment durability = this.getEnchantment(Enchantment.ID_DURABILITY);
                     if (!(durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= new Random().nextInt(100))) {
