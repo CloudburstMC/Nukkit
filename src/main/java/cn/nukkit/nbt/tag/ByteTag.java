@@ -43,6 +43,11 @@ public class ByteTag extends NumberTag<Integer> {
     }
 
     @Override
+    public Integer parseValue() {
+        return this.data;
+    }
+
+    @Override
     public String toString() {
         String hex = Integer.toHexString(this.data);
         if (hex.length() < 2) {

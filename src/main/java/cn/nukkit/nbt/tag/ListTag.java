@@ -87,6 +87,17 @@ public class ListTag<T extends Tag> extends Tag {
         return this;
     }
 
+    @Override
+    public List<Object> parseValue() {
+        List<Object> value = new ArrayList<>(this.list.size());
+
+        for (T t : this.list) {
+            value.add(t.parseValue());
+        }
+
+        return value;
+    }
+
     public T get(int index) {
         return list.get(index);
     }
