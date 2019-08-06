@@ -38,6 +38,11 @@ public class FloatTag extends NumberTag<Float> {
     }
 
     @Override
+    public Float parseValue() {
+        return this.data;
+    }
+
+    @Override
     public byte getId() {
         return TAG_Float;
     }
