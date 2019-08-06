@@ -30,7 +30,7 @@ public class EnchantmentProtectionAll extends EnchantmentProtection {
     }
 
     @Override
-    public float getDamageProtection(EntityDamageEvent e) {
+    public float getProtectionFactor(EntityDamageEvent e) {
         DamageCause cause = e.getCause();
 
         if (level <= 0 || cause == DamageCause.VOID || cause == DamageCause.CUSTOM || cause == DamageCause.MAGIC) {

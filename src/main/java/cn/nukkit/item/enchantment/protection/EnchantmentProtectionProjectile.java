@@ -29,7 +29,7 @@ public class EnchantmentProtectionProjectile extends EnchantmentProtection {
     }
 
     @Override
-    public float getDamageProtection(EntityDamageEvent e) {
+    public float getProtectionFactor(EntityDamageEvent e) {
         DamageCause cause = e.getCause();
 
         if (level <= 0 || (cause != DamageCause.PROJECTILE)) {
