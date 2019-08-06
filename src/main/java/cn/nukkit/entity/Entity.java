@@ -1637,11 +1637,11 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
-        return false;
+        return onInteract( player, item );
     }
 
     public boolean onInteract(Player player, Item item) {
-        return onInteract( player, item, null );
+        return false;
     }
 
     protected boolean switchLevel(Level targetLevel) {
