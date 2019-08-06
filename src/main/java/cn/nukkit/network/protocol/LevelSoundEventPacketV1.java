@@ -2,8 +2,10 @@ package cn.nukkit.network.protocol;
 
 
 import cn.nukkit.math.Vector3f;
+import lombok.ToString;
 
-public class LevelSoundEventPacketV1 extends DataPacket {
+@ToString
+public class LevelSoundEventPacketV1 extends LevelSoundEventPacket {
     public static final byte NETWORK_ID = ProtocolInfo.LEVEL_SOUND_EVENT_PACKET_V1;
 
     public int sound;

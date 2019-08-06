@@ -155,6 +155,12 @@ public class LevelDB implements LevelProvider {
         }
     }
 
+
+    @Override
+    public Chunk getEmptyChunk(int chunkX, int chunkZ) {
+        return Chunk.getEmptyChunk(chunkX, chunkZ, this);
+    }
+
     @Override
     public AsyncTask requestChunkTask(int x, int z) {
         Chunk chunk = this.getChunk(x, z, false);
@@ -209,7 +215,7 @@ public class LevelDB implements LevelProvider {
         }
         stream.put(tiles);
 
-        this.getLevel().chunkRequestCallback(timestamp, x, z, stream.getBuffer());
+        this.getLevel().chunkRequestCallback(timestamp, x, z, 16, stream.getBuffer());
 
         return null;
     }
@@ -329,7 +335,7 @@ public class LevelDB implements LevelProvider {
     @Override
     public boolean unloadChunk(int x, int z, boolean safe) {
         long index = Level.chunkHash(x, z);
-        Chunk chunk = this.chunks.containsKey(index) ? this.chunks.get(index) : null;
+        Chunk chunk = this.chunks.getOrDefault(index, null);
         if (chunk != null && chunk.unload(false, safe)) {
             this.chunks.remove(index);
             return true;
@@ -365,7 +371,7 @@ public class LevelDB implements LevelProvider {
             return this.chunks.get(index);
         } else {
             this.loadChunk(x, z, create);
-            return this.chunks.containsKey(index) ? this.chunks.get(index) : null;
+            return this.chunks.getOrDefault(index, null);
         }
     }
 
@@ -559,6 +565,6 @@ public class LevelDB implements LevelProvider {
                 result.add(key);
             }
         });
-        return result.stream().toArray(byte[][]::new);
+        return result.toArray(new byte[0][]);
     }
 }

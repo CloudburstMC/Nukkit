@@ -2,12 +2,15 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.nbt.tag.ByteTag;
+import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-abstract public class ItemArmor extends Item {
+abstract public class ItemArmor extends Item implements ItemDurable {
 
     public static final int TIER_LEATHER = 1;
     public static final int TIER_IRON = 2;
@@ -44,18 +47,46 @@ abstract public class ItemArmor extends Item {
 
     @Override
     public boolean onClickAir(Player player, Vector3 directionVector) {
+        boolean equip = false;
         if (this.isHelmet() && player.getInventory().getHelmet().isNull()) {
-            if (player.getInventory().setHelmet(this))
-                player.getInventory().clear(player.getInventory().getHeldItemIndex());
+            if (player.getInventory().setHelmet(this)) {
+                equip = true;
+            }
         } else if (this.isChestplate() && player.getInventory().getChestplate().isNull()) {
-            if (player.getInventory().setChestplate(this))
-                player.getInventory().clear(player.getInventory().getHeldItemIndex());
+            if (player.getInventory().setChestplate(this)) {
+                equip = true;
+            }
         } else if (this.isLeggings() && player.getInventory().getLeggings().isNull()) {
-            if (player.getInventory().setLeggings(this))
-                player.getInventory().clear(player.getInventory().getHeldItemIndex());
+            if (player.getInventory().setLeggings(this)) {
+                equip = true;
+            }
         } else if (this.isBoots() && player.getInventory().getBoots().isNull()) {
-            if (player.getInventory().setBoots(this))
-                player.getInventory().clear(player.getInventory().getHeldItemIndex());
+            if (player.getInventory().setBoots(this)) {
+                equip = true;
+            }
+        }
+        if (equip) {
+            player.getInventory().clear(player.getInventory().getHeldItemIndex());
+            switch (this.getTier()) {
+                case TIER_CHAIN:
+                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_ARMOR_EQUIP_CHAIN);
+                    break;
+                case TIER_DIAMOND:
+                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_ARMOR_EQUIP_DIAMOND);
+                    break;
+                case TIER_GOLD:
+                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_ARMOR_EQUIP_GOLD);
+                    break;
+                case TIER_IRON:
+                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_ARMOR_EQUIP_IRON);
+                    break;
+                case TIER_LEATHER:
+                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_ARMOR_EQUIP_LEATHER);
+                    break;
+                case TIER_OTHER:
+                default:
+                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_ARMOR_EQUIP_GENERIC);
+            }
         }
 
         return this.getCount() == 0;
@@ -77,5 +108,11 @@ abstract public class ItemArmor extends Item {
         }
 
         return 0;
+    }
+
+    @Override
+    public boolean isUnbreakable() {
+        Tag tag = this.getNamedTagEntry("Unbreakable");
+        return tag instanceof ByteTag && ((ByteTag) tag).data > 0;
     }
 }

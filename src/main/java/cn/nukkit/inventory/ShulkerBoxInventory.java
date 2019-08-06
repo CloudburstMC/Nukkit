@@ -1,10 +1,12 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.blockentity.BlockEntityShulkerBox;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.Sound;
 import cn.nukkit.network.protocol.BlockEventPacket;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 /**
  * Created by PetteriM1
@@ -34,7 +36,7 @@ public class ShulkerBoxInventory extends ContainerInventory {
 
             Level level = this.getHolder().getLevel();
             if (level != null) {
-                level.addSound(this.getHolder().add(0.5, 0.5, 0.5), Sound.RANDOM_SHULKERBOXOPEN);
+                level.addLevelSoundEvent(this.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_SHULKERBOX_OPEN);
                 level.addChunkPacket((int) this.getHolder().getX() >> 4, (int) this.getHolder().getZ() >> 4, pk);
             }
         }
@@ -52,12 +54,21 @@ public class ShulkerBoxInventory extends ContainerInventory {
 
             Level level = this.getHolder().getLevel();
             if (level != null) {
-                level.addSound(this.getHolder().add(0.5, 0.5, 0.5), Sound.RANDOM_SHULKERBOXCLOSED);
+                level.addLevelSoundEvent(this.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_SHULKERBOX_CLOSED);
                 level.addChunkPacket((int) this.getHolder().getX() >> 4, (int) this.getHolder().getZ() >> 4, pk);
             }
         }
 
         super.onClose(who);
+    }
+
+    @Override
+    public boolean canAddItem(Item item) {
+        if (item.getId() == BlockID.SHULKER_BOX) {
+            // Do not allow nested shulker boxes.
+            return false;
+        }
+        return super.canAddItem(item);
     }
 
     @Override

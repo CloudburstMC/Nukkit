@@ -1,18 +1,21 @@
 package cn.nukkit.network.protocol;
 
+import lombok.ToString;
+
+@ToString
 public class UpdateTradePacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.UPDATE_TRADE_PACKET;
 
     public byte windowId;
     public byte windowType = 15; //trading id
-    public int unknownVarInt1;
-    public int unknownVarInt2;
-    public int unknownVarInt3;
-    public boolean isWilling;
+    public int unknownVarInt1; // hardcoded to 0
+    public int tradeTier;
     public long trader;
     public long player;
     public String displayName;
+    public boolean screen2;
+    public boolean isWilling;
     public byte[] offers;
 
     @Override
@@ -31,12 +34,12 @@ public class UpdateTradePacket extends DataPacket {
         this.putByte(windowId);
         this.putByte(windowType);
         this.putVarInt(unknownVarInt1);
-        this.putVarInt(unknownVarInt2);
-        this.putVarInt(unknownVarInt3);
-        this.putBoolean(isWilling);
+        this.putVarInt(tradeTier);
         this.putEntityUniqueId(player);
         this.putEntityUniqueId(trader);
         this.putString(displayName);
+        this.putBoolean(screen2);
+        this.putBoolean(isWilling);
         this.put(this.offers);
     }
 

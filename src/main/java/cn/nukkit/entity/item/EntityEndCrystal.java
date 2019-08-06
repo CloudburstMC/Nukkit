@@ -39,7 +39,11 @@ public class EntityEndCrystal extends Entity {
         return 0.98f;
     }
 
-    public boolean attack(EntityDamageEvent source){
+    public boolean attack(EntityDamageEvent source) {
+	if (source.getCause() == EntityDamageEvent.DamageCause.FIRE || source.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || source.getCause() == EntityDamageEvent.DamageCause.LAVA) {
+            return false;
+        }
+		
         if (!super.attack(source)) {
             return false;
         }

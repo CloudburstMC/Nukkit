@@ -2,11 +2,15 @@ package cn.nukkit.utils;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.*;
-import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.NukkitMath;
+import cn.nukkit.nbt.NBTIO;
+import cn.nukkit.nbt.tag.CompoundTag;
+import it.unimi.dsi.fastutil.io.FastByteArrayInputStream;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
@@ -121,9 +125,13 @@ public class Binary {
                     stream.putUnsignedVarInt(s.getBytes(StandardCharsets.UTF_8).length);
                     stream.put(s.getBytes(StandardCharsets.UTF_8));
                     break;
-                case Entity.DATA_TYPE_SLOT:
-                    SlotEntityData slot = (SlotEntityData) d;
-                    stream.putSlot(slot.getData());
+                case Entity.DATA_TYPE_NBT:
+                    NBTEntityData slot = (NBTEntityData) d;
+                    try {
+                        stream.put(NBTIO.write(slot.getData(), ByteOrder.LITTLE_ENDIAN, true));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                     break;
                 case Entity.DATA_TYPE_POS:
                     IntPositionEntityData pos = (IntPositionEntityData) d;
@@ -170,9 +178,16 @@ public class Binary {
                 case Entity.DATA_TYPE_STRING:
                     value = new StringEntityData(key, stream.getString());
                     break;
-                case Entity.DATA_TYPE_SLOT:
-                    Item item = stream.getSlot();
-                    value = new SlotEntityData(key, item.getId(), item.getDamage(), item.getCount());
+                case Entity.DATA_TYPE_NBT:
+                    int offset = stream.getOffset();
+                    FastByteArrayInputStream fbais = new FastByteArrayInputStream(stream.get());
+                    try {
+                        CompoundTag tag = NBTIO.read(fbais, ByteOrder.LITTLE_ENDIAN, true);
+                        value = new NBTEntityData(key, tag);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    stream.setOffset(offset + (int) fbais.position());
                     break;
                 case Entity.DATA_TYPE_POS:
                     BlockVector3 v3 = stream.getSignedBlockPosition();
@@ -392,7 +407,7 @@ public class Binary {
     }
 
     public static String bytesToHexString(byte[] src, boolean blank) {
-        StringBuilder stringBuilder = new StringBuilder("");
+        StringBuilder stringBuilder = new StringBuilder();
         if (src == null || src.length <= 0) {
             return null;
         }

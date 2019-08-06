@@ -38,6 +38,11 @@ public class DoubleTag extends NumberTag<Double> {
     }
 
     @Override
+    public Double parseValue() {
+        return this.data;
+    }
+
+    @Override
     public byte getId() {
         return TAG_Double;
     }

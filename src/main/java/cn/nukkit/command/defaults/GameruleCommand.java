@@ -2,6 +2,7 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.GameRule;
@@ -11,18 +12,15 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.StringJoiner;
 
-/*
-TODO: Add i18n
- */
 public class GameruleCommand extends VanillaCommand {
 
     public GameruleCommand(String name) {
-        super(name, "Sets or queries a game rule value.", "/gamerule <rule> [value]");
+        super(name, "%nukkit.command.gamerule.description", "%nukkit.command.gamerule.usage");
         this.setPermission("nukkit.command.gamerule");
         this.commandParameters.clear();
         this.commandParameters.put("byString", new CommandParameter[]{
                 new CommandParameter("gamerule", true , GameRule.getNames()),
-                new CommandParameter("value", CommandParameter.ARG_TYPE_STRING, true)
+                new CommandParameter("value", CommandParamType.STRING, true)
         });
     }
 
@@ -33,7 +31,7 @@ public class GameruleCommand extends VanillaCommand {
         }
 
         if (!sender.isPlayer()) {
-            sender.sendMessage("This command can only be executed by players");
+            sender.sendMessage(new TranslationContainer("%commands.generic.ingame"));
             return true;
         }
         GameRules rules = ((Player) sender).getLevel().getGameRules();

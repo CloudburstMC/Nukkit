@@ -114,7 +114,7 @@ public class HandlerList {
         for (Map.Entry<EventPriority, ArrayList<RegisteredListener>> entry : handlerslots.entrySet()) {
             entries.addAll(entry.getValue());
         }
-        handlers = entries.toArray(new RegisteredListener[entries.size()]);
+        handlers = entries.toArray(new RegisteredListener[0]);
     }
 
     public RegisteredListener[] getRegisteredListeners() {

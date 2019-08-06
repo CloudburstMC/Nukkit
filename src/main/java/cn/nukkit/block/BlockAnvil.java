@@ -8,11 +8,12 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Faceable;
 
 /**
  * Created by Pub4Game on 27.12.2015.
  */
-public class BlockAnvil extends BlockFallable {
+public class BlockAnvil extends BlockFallable implements Faceable {
 
     private static final String[] NAMES = new String[]{
             "Anvil",
@@ -145,5 +146,10 @@ public class BlockAnvil extends BlockFallable {
     @Override
     public boolean canHarvestWithHand() {
         return false;
+    }
+
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
     }
 }

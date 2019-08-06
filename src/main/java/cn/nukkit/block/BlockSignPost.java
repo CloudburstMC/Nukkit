@@ -12,11 +12,12 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Faceable;
 
 /**
  * @author Nukkit Project Team
  */
-public class BlockSignPost extends BlockTransparentMeta {
+public class BlockSignPost extends BlockTransparentMeta implements Faceable {
 
     public BlockSignPost() {
         this(0);
@@ -121,5 +122,10 @@ public class BlockSignPost extends BlockTransparentMeta {
     @Override
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
+    }
+
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
     }
 }

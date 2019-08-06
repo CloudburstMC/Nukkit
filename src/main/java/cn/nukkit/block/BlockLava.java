@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.item.EntityPrimedTNT;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.event.entity.EntityCombustByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
@@ -50,18 +51,19 @@ public class BlockLava extends BlockLiquid {
     @Override
     public void onEntityCollide(Entity entity) {
         entity.highestPosition -= (entity.highestPosition - entity.y) * 0.5;
-        if (!entity.hasEffect(Effect.FIRE_RESISTANCE)) {
-            entity.attack(new EntityDamageByBlockEvent(this, entity, DamageCause.LAVA, 4));
-        }
 
         // Always setting the duration to 15 seconds? TODO
         EntityCombustByBlockEvent ev = new EntityCombustByBlockEvent(this, entity, 15);
         Server.getInstance().getPluginManager().callEvent(ev);
         if (!ev.isCancelled()
-                // Making sure the entity is acutally alive and not invulnerable.
+                // Making sure the entity is actually alive and not invulnerable.
                 && entity.isAlive()
                 && entity.noDamageTicks == 0) {
             entity.setOnFire(ev.getDuration());
+        }
+
+        if (!entity.hasEffect(Effect.FIRE_RESISTANCE)) {
+            entity.attack(new EntityDamageByBlockEvent(this, entity, DamageCause.LAVA, 4));
         }
 
         super.onEntityCollide(entity);
@@ -187,6 +189,13 @@ public class BlockLava extends BlockLiquid {
             ((BlockLiquid) block).liquidCollide(this, new BlockStone());
         }else{
             super.flowIntoBlock(block, newFlowDecay);
+        }
+    }
+
+    @Override
+    public void addVelocityToEntity(Entity entity, Vector3 vector) {
+        if (!(entity instanceof EntityPrimedTNT)) {
+            super.addVelocityToEntity(entity, vector);
         }
     }
 }

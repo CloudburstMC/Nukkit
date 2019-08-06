@@ -8,24 +8,22 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Rail;
 import cn.nukkit.utils.Rail.Orientation;
+
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
-import static cn.nukkit.math.BlockFace.EAST;
-import static cn.nukkit.math.BlockFace.NORTH;
-import static cn.nukkit.math.BlockFace.SOUTH;
-import static cn.nukkit.math.BlockFace.WEST;
+import static cn.nukkit.math.BlockFace.*;
 import static cn.nukkit.utils.Rail.Orientation.*;
 
 /**
  * Created by Snake1999 on 2016/1/11.
  * Package cn.nukkit.block in project nukkit
  */
-public class BlockRail extends BlockFlowable {
+public class BlockRail extends BlockFlowable implements Faceable {
 
     // 0x8: Set the block active
     // 0x7: Reset the block to normal
@@ -124,16 +122,14 @@ public class BlockRail extends BlockFlowable {
                     this.setDamage(this.connect(rail1, railsAround.get(rail1), rail2, railsAround.get(rail2)).metadata());
                 } else {
                     List<BlockFace> cd = Stream.of(CURVED_SOUTH_EAST, CURVED_NORTH_EAST, CURVED_SOUTH_WEST)
-                            .filter(o -> o.connectingDirections().stream().allMatch(faces::contains))
+                            .filter(o -> faces.containsAll(o.connectingDirections()))
                             .findFirst().get().connectingDirections();
                     BlockFace f1 = cd.get(0);
                     BlockFace f2 = cd.get(1);
                     this.setDamage(this.connect(rails.get(faces.indexOf(f1)), f1, rails.get(faces.indexOf(f2)), f2).metadata());
                 }
             } else {
-                BlockFace f = faces.stream()
-                        .sorted((f1, f2) -> (f1.getIndex() < f2.getIndex()) ? 1 : ((x == y) ? 0 : -1))
-                        .findFirst().get();
+                BlockFace f = faces.stream().min((f1, f2) -> (f1.getIndex() < f2.getIndex()) ? 1 : ((x == y) ? 0 : -1)).get();
                 BlockFace fo = f.getOpposite();
                 if (faces.contains(fo)) { //Opposite connectable
                     this.setDamage(this.connect(rails.get(faces.indexOf(f)), f, rails.get(faces.indexOf(fo)), fo).metadata());
@@ -270,5 +266,10 @@ public class BlockRail extends BlockFlowable {
         return new Item[]{
                 Item.get(Item.RAIL, 0, 1)
         };
+    }
+
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
     }
 }

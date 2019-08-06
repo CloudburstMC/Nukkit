@@ -1,5 +1,10 @@
 package cn.nukkit.network.protocol;
 
+import lombok.ToString;
+
+import java.util.UUID;
+
+@ToString
 public class ResourcePackClientResponsePacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.RESOURCE_PACK_CLIENT_RESPONSE_PACKET;
@@ -18,7 +23,7 @@ public class ResourcePackClientResponsePacket extends DataPacket {
         this.packEntries = new Entry[this.getLShort()];
         for (int i = 0; i < this.packEntries.length; i++) {
             String[] entry = this.getString().split("_");
-            this.packEntries[i] = new Entry(entry[0], entry[1]);
+            this.packEntries[i] = new Entry(UUID.fromString(entry[0]), entry[1]);
         }
     }
 
@@ -37,11 +42,12 @@ public class ResourcePackClientResponsePacket extends DataPacket {
         return NETWORK_ID;
     }
 
+    @ToString
     public static class Entry {
-        public final String uuid;
+        public final UUID uuid;
         public final String version;
 
-        public Entry(String uuid, String version) {
+        public Entry(UUID uuid, String version) {
             this.uuid = uuid;
             this.version = version;
         }

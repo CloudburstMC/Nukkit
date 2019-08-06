@@ -62,7 +62,7 @@ public class BlockRedstoneTorch extends BlockTorch {
 
     @Override
     public int getWeakPower(BlockFace side) {
-        return getFacing() != side ? 15 : 0;
+        return getBlockFace() != side ? 15 : 0;
     }
 
     @Override
@@ -76,7 +76,7 @@ public class BlockRedstoneTorch extends BlockTorch {
 
         Vector3 pos = getLocation();
 
-        BlockFace face = getFacing().getOpposite();
+        BlockFace face = getBlockFace().getOpposite();
 
         for (BlockFace side : BlockFace.values()) {
             if (side == face) {
@@ -112,7 +112,7 @@ public class BlockRedstoneTorch extends BlockTorch {
 
     protected boolean checkState() {
         if (isPoweredFromSide()) {
-            BlockFace face = getFacing().getOpposite();
+            BlockFace face = getBlockFace().getOpposite();
             Vector3 pos = getLocation();
 
             this.level.setBlock(pos, new BlockRedstoneTorchUnlit(getDamage()), false, true);
@@ -132,7 +132,7 @@ public class BlockRedstoneTorch extends BlockTorch {
     }
 
     protected boolean isPoweredFromSide() {
-        BlockFace face = getFacing().getOpposite();
+        BlockFace face = getBlockFace().getOpposite();
         return this.level.isSidePowered(this.getLocation().getSide(face), face);
     }
 

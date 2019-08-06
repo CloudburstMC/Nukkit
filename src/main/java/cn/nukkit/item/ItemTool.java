@@ -12,7 +12,7 @@ import java.util.Random;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class ItemTool extends Item {
+public abstract class ItemTool extends Item implements ItemDurable {
     public static final int TIER_WOODEN = 1;
     public static final int TIER_GOLD = 2;
     public static final int TIER_STONE = 3;
@@ -35,6 +35,7 @@ public abstract class ItemTool extends Item {
     public static final int DURABILITY_SHEARS = 239;
     public static final int DURABILITY_BOW = 385;
     public static final int DURABILITY_TRIDENT = 251;
+    public static final int DURABILITY_FISHING_ROD = 65;
 
     public ItemTool(int id) {
         this(id, 0, 1, UNKNOWN_STR);

@@ -2,6 +2,7 @@ package cn.nukkit.entity.data;
 
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import com.google.common.base.Preconditions;
+import lombok.ToString;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -11,6 +12,7 @@ import java.util.Arrays;
  * author: MagicDroidX
  * Nukkit Project
  */
+@ToString(exclude = {"skinData", "capeData", "geometryData"})
 public class Skin {
     private static final int PIXEL_SIZE = 4;
 
@@ -138,5 +140,9 @@ public class Skin {
                 length == DOUBLE_SKIN_SIZE ||
                 length == SKIN_128_64_SIZE ||
                 length == SKIN_128_128_SIZE;
+    }
+
+    public boolean isPremiumGeometry() {
+        return !geometryName.equalsIgnoreCase(GEOMETRY_CUSTOM) && !geometryName.equalsIgnoreCase(GEOMETRY_CUSTOM_SLIM);
     }
 }

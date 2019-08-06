@@ -325,7 +325,7 @@ public abstract class BaseInventory implements Inventory {
             }
         }
 
-        return itemSlots.stream().toArray(Item[]::new);
+        return itemSlots.toArray(new Item[0]);
     }
 
     @Override
@@ -361,7 +361,7 @@ public abstract class BaseInventory implements Inventory {
             }
         }
 
-        return itemSlots.stream().toArray(Item[]::new);
+        return itemSlots.toArray(new Item[0]);
     }
 
     @Override
@@ -525,7 +525,7 @@ public abstract class BaseInventory implements Inventory {
 
     @Override
     public void sendContents(Collection<Player> players) {
-        this.sendContents(players.stream().toArray(Player[]::new));
+        this.sendContents(players.toArray(new Player[0]));
     }
 
     @Override
@@ -552,7 +552,7 @@ public abstract class BaseInventory implements Inventory {
 
     @Override
     public void sendSlot(int index, Collection<Player> players) {
-        this.sendSlot(index, players.stream().toArray(Player[]::new));
+        this.sendSlot(index, players.toArray(new Player[0]));
     }
 
     @Override

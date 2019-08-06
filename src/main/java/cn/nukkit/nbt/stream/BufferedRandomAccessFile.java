@@ -386,7 +386,7 @@ public class BufferedRandomAccessFile extends RandomAccessFile
                 }
             }
         }
-        this.buff_[(int) (this.curr_ - this.lo_)] = (byte) b;
+        this.buff_[(int) (this.curr_ - this.lo_)] = b;
         this.dirty_ = true;
     }
 

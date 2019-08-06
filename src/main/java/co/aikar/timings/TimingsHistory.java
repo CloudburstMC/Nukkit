@@ -33,12 +33,12 @@ import cn.nukkit.timings.JsonUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
 import java.lang.management.ManagementFactory;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
 
 import static co.aikar.timings.Timings.fullServerTickTimer;
 import static co.aikar.timings.TimingsManager.MINUTE_REPORTS;
@@ -74,7 +74,7 @@ public class TimingsHistory {
             this.minuteReports = MINUTE_REPORTS.toArray(new MinuteReport[MINUTE_REPORTS.size() + 1]);
             this.minuteReports[this.minuteReports.length - 1] = new MinuteReport();
         } else {
-            this.minuteReports = MINUTE_REPORTS.toArray(new MinuteReport[MINUTE_REPORTS.size()]);
+            this.minuteReports = MINUTE_REPORTS.toArray(new MinuteReport[0]);
         }
 
         long ticks = 0;
@@ -215,7 +215,7 @@ public class TimingsHistory {
                 totalPing += player.getPing();
             }
 
-            this.avg = onlinePlayers.isEmpty() ? 0 : totalPing / onlinePlayers.size();
+            this.avg = onlinePlayers.isEmpty() ? 0 : (float) totalPing / onlinePlayers.size();
         }
     }
 }

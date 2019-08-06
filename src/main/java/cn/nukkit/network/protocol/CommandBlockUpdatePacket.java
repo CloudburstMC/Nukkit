@@ -1,7 +1,9 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.math.BlockVector3;
+import lombok.ToString;
 
+@ToString
 public class CommandBlockUpdatePacket extends DataPacket {
 
     public boolean isBlock;

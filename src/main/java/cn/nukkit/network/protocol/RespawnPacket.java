@@ -1,10 +1,12 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.math.Vector3f;
+import lombok.ToString;
 
 /**
  * @author Nukkit Project Team
  */
+@ToString
 public class RespawnPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.RESPAWN_PACKET;

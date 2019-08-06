@@ -13,12 +13,12 @@ public interface ProtocolInfo {
     /**
      * Actual Minecraft: PE protocol version
      */
-    int CURRENT_PROTOCOL = Integer.valueOf("313"); //plugins can change it
+    int CURRENT_PROTOCOL = Integer.valueOf("361"); //plugins can change it
 
     List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(CURRENT_PROTOCOL);
 
-    String MINECRAFT_VERSION = "v1.8.0";
-    String MINECRAFT_VERSION_NETWORK = "1.8.0";
+    String MINECRAFT_VERSION = "v1.12.0";
+    String MINECRAFT_VERSION_NETWORK = "1.12.0";
 
     byte LOGIN_PACKET = 0x01;
     byte PLAY_STATUS_PACKET = 0x02;
@@ -35,7 +35,6 @@ public interface ProtocolInfo {
     byte ADD_ENTITY_PACKET = 0x0d;
     byte REMOVE_ENTITY_PACKET = 0x0e;
     byte ADD_ITEM_ENTITY_PACKET = 0x0f;
-    byte ADD_HANGING_ENTITY_PACKET = 0x10;
     byte TAKE_ITEM_ENTITY_PACKET = 0x11;
     byte MOVE_ENTITY_ABSOLUTE_PACKET = 0x12;
     byte MOVE_PLAYER_PACKET = 0x13;
@@ -134,9 +133,23 @@ public interface ProtocolInfo {
     byte SCRIPT_CUSTOM_EVENT_PACKET = 0x75;
     byte SPAWN_PARTICLE_EFFECT_PACKET = 0x76;
     byte AVAILABLE_ENTITY_IDENTIFIERS_PACKET = 0x77;
-    byte LEVEL_SOUND_EVENT_PACKET = 0x78;
+    byte LEVEL_SOUND_EVENT_PACKET_V2 = 0x78;
     byte NETWORK_CHUNK_PUBLISHER_UPDATE_PACKET = 0x79;
     byte BIOME_DEFINITION_LIST_PACKET = 0x7a;
+    byte LEVEL_SOUND_EVENT_PACKET = 0x7b;
+    byte LEVEL_EVENT_GENERIC_PACKET = 0x7c;
+    byte LECTERN_UPDATE_PACKET = 0x7d;
+    byte VIDEO_STREAM_CONNECT_PACKET = 0x7e;
+    //byte ADD_ENTITY_PACKET = 0x7f;
+    //byte REMOVE_ENTITY_PACKET = 0x80;
+    byte CLIENT_CACHE_STATUS_PACKET = (byte) 0x81;
+    byte ON_SCREEN_TEXTURE_ANIMATION_PACKET = (byte) 0x82;
+    byte MAP_CREATE_LOCKED_COPY_PACKET = (byte) 0x83;
+    byte STRUCTURE_TEMPLATE_DATA_EXPORT_REQUEST = (byte) 0x84;
+    byte STRUCTURE_TEMPLATE_DATA_EXPORT_RESPONSE = (byte) 0x85;
+    byte UPDATE_BLOCK_PROPERTIES = (byte) 0x86;
+    byte CLIENT_CACHE_BLOB_STATUS_PACKET = (byte) 0x87;
+    byte CLIENT_CACHE_MISS_RESPONSE_PACKET = (byte) 0x88;
 
     byte BATCH_PACKET = (byte) 0xff;
 }

@@ -12,12 +12,13 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
+import cn.nukkit.utils.Faceable;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BlockBed extends BlockTransparentMeta {
+public class BlockBed extends BlockTransparentMeta implements Faceable {
 
     public BlockBed() {
         this(0);
@@ -189,5 +190,10 @@ public class BlockBed extends BlockTransparentMeta {
         }
 
         return DyeColor.WHITE;
+    }
+
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
     }
 }

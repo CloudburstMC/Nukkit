@@ -4,7 +4,7 @@ package cn.nukkit.item;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class ItemElytra extends ItemTool {
+public class ItemElytra extends ItemArmor {
 
     public ItemElytra() {
         this(0, 1);

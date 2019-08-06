@@ -1,11 +1,13 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.math.Vector3f;
+import lombok.ToString;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
+@ToString
 public class LevelEventPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.LEVEL_EVENT_PACKET;
 
@@ -51,7 +53,10 @@ public class LevelEventPacket extends DataPacket {
     public static final int EVENT_GUARDIAN_CURSE = 2006;
 
     public static final int EVENT_PARTICLE_BLOCK_FORCE_FIELD = 2008;
+    public static final int EVENT_PARTICLE_PROJECTILE_HIT = 2009;
+    public static final int EVENT_PARTICLE_DRAGON_EGG_TELEPORT = 2010;
 
+    public static final int EVENT_PARTICLE_ENDERMAN_TELEPORT = 2013;
     public static final int EVENT_PARTICLE_PUNCH_BLOCK = 2014;
 
     public static final int EVENT_SOUND_BUTTON_CLICK = 3500;

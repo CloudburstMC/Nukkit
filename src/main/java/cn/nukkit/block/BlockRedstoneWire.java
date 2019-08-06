@@ -104,17 +104,19 @@ public class BlockRedstoneWire extends BlockFlowable {
 
         for (BlockFace face : Plane.HORIZONTAL) {
             Vector3 v = pos.getSide(face);
-            boolean flag = v.getX() != this.getX() || v.getZ() != this.getZ();
 
-            if (flag) {
-                strength = this.getMaxCurrentStrength(v, strength);
+            if (v.getX() == this.getX() && v.getZ() == this.getZ()) {
+                continue;
             }
 
-            if (this.level.getBlock(v).isNormalBlock() && !this.level.getBlock(pos.up()).isNormalBlock()) {
-                if (flag) {
-                    strength = this.getMaxCurrentStrength(v.up(), strength);
-                }
-            } else if (flag && !this.level.getBlock(v).isNormalBlock()) {
+
+            strength = this.getMaxCurrentStrength(v, strength);
+
+            boolean vNormal = this.level.getBlock(v).isNormalBlock();
+
+            if (vNormal && !this.level.getBlock(pos.up()).isNormalBlock()) {
+                strength = this.getMaxCurrentStrength(v.up(), strength);
+            } else if (!vNormal) {
                 strength = this.getMaxCurrentStrength(v.down(), strength);
             }
         }
@@ -129,6 +131,8 @@ public class BlockRedstoneWire extends BlockFlowable {
 
         if (power > maxStrength - 1) {
             maxStrength = power;
+        } else if (power < maxStrength && strength <= maxStrength) {
+            maxStrength = Math.max(power, strength - 1);
         }
 
         if (meta != maxStrength) {

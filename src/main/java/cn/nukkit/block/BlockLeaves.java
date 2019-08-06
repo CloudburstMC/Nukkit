@@ -138,13 +138,13 @@ public class BlockLeaves extends BlockTransparentMeta {
         if (pos.getId() == Block.WOOD) return true;
         if (pos.getId() == Block.LEAVES && distance < 4) {
             visited.add(index);
-            Integer down = pos.down().getId();
+            int down = pos.down().getId();
             if (down == Item.WOOD) {
                 return true;
             }
             if (fromSide == null) {
                 //North, East, South, West
-                for (Integer side = 2; side <= 5; ++side) {
+                for (int side = 2; side <= 5; ++side) {
                     if (this.findLog(pos.getSide(BlockFace.fromIndex(side)), visited, distance + 1, check, BlockFace.fromIndex(side)))
                         return true;
                 }

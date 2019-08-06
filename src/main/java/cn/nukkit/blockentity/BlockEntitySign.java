@@ -7,6 +7,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.TextFormat;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -49,6 +50,11 @@ public class BlockEntitySign extends BlockEntitySpawnable {
             }
         }
 
+        // Check old text to sanitize
+        if (text != null) {
+            sanitizeText(text);
+        }
+
         super.initBlockEntity();
     }
 
@@ -65,7 +71,7 @@ public class BlockEntitySign extends BlockEntitySpawnable {
     }
 
     public boolean setText(String... lines) {
-        for (int i = 0; i < text.length; i++) {
+        for (int i = 0; i < 4; i++) {
             if (i < lines.length)
                 text[i] = lines[i];
             else
@@ -91,17 +97,22 @@ public class BlockEntitySign extends BlockEntitySpawnable {
         if (!nbt.getString("id").equals(BlockEntity.SIGN)) {
             return false;
         }
-        String[] text = nbt.getString("Text").split("\n", 4);
+        String[] lines = new String[4];
+        Arrays.fill(lines, "");
+        String[] splitLines = nbt.getString("Text").split("\n", 4);
+        System.arraycopy(splitLines, 0, lines, 0, splitLines.length);
 
-        SignChangeEvent signChangeEvent = new SignChangeEvent(this.getBlock(), player, text);
+        sanitizeText(lines);
+
+        SignChangeEvent signChangeEvent = new SignChangeEvent(this.getBlock(), player, lines);
 
         if (!this.namedTag.contains("Creator") || !Objects.equals(player.getUniqueId().toString(), this.namedTag.getString("Creator"))) {
             signChangeEvent.setCancelled();
         }
 
         if (player.getRemoveFormat()) {
-            for (int i = 0; i < text.length; i++) {
-                text[i] = TextFormat.clean(text[i]);
+            for (int i = 0; i < lines.length; i++) {
+                lines[i] = TextFormat.clean(lines[i]);
             }
         }
 
@@ -124,5 +135,14 @@ public class BlockEntitySign extends BlockEntitySpawnable {
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
 
+    }
+
+    private static void sanitizeText(String[] lines) {
+        for (int i = 0; i < lines.length; i++) {
+            // Don't allow excessive text per line.
+            if (lines[i] != null) {
+                lines[i] = lines[i].substring(0, Math.min(255, lines[i].length()));
+            }
+        }
     }
 }

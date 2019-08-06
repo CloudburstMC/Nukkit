@@ -5,7 +5,9 @@ import cn.nukkit.inventory.transaction.data.TransactionData;
 import cn.nukkit.inventory.transaction.data.UseItemData;
 import cn.nukkit.inventory.transaction.data.UseItemOnEntityData;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
+import lombok.ToString;
 
+@ToString
 public class InventoryTransactionPacket extends DataPacket {
 
     public static final int TYPE_NORMAL = 0;
@@ -70,6 +72,7 @@ public class InventoryTransactionPacket extends DataPacket {
                 this.putSlot(useItemData.itemInHand);
                 this.putVector3f(useItemData.playerPos.asVector3f());
                 this.putVector3f(useItemData.clickPos);
+                this.putUnsignedVarInt(useItemData.blockRuntimeId);
                 break;
             case TYPE_USE_ITEM_ON_ENTITY:
                 UseItemOnEntityData useItemOnEntityData = (UseItemOnEntityData) this.transactionData;
@@ -118,6 +121,7 @@ public class InventoryTransactionPacket extends DataPacket {
                 itemData.itemInHand = this.getSlot();
                 itemData.playerPos = this.getVector3f().asVector3();
                 itemData.clickPos = this.getVector3f();
+                itemData.blockRuntimeId = (int) this.getUnsignedVarInt();
 
                 this.transactionData = itemData;
                 break;

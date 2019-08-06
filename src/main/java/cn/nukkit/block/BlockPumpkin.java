@@ -6,12 +6,13 @@ import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Faceable;
 
 /**
  * Created on 2015/12/8 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockPumpkin extends BlockSolidMeta {
+public class BlockPumpkin extends BlockSolidMeta implements Faceable {
     public BlockPumpkin() {
         this(0);
     }
@@ -65,5 +66,10 @@ public class BlockPumpkin extends BlockSolidMeta {
     @Override
     public boolean canBePushed() {
         return false;
+    }
+
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
     }
 }

@@ -1,7 +1,9 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.math.Vector3f;
+import lombok.ToString;
 
+@ToString
 public class LevelSoundEventPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.LEVEL_SOUND_EVENT_PACKET;
 
@@ -268,7 +270,7 @@ public class LevelSoundEventPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.sound = this.getByte();
+        this.sound = (int) this.getUnsignedVarInt();
         Vector3f v = this.getVector3f();
         this.x = v.x;
         this.y = v.y;
@@ -282,7 +284,7 @@ public class LevelSoundEventPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putByte((byte) this.sound);
+        this.putUnsignedVarInt(this.sound);
         this.putVector3f(this.x, this.y, this.z);
         this.putVarInt(this.extraData);
         this.putString(this.entityIdentifier);

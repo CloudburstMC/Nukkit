@@ -2,14 +2,15 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.projectile.EntityEnderPearl;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
-import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 /**
  * @author CreeperFace
@@ -28,7 +29,7 @@ public abstract class ProjectileItem extends Item {
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", player.x))
-                        .add(new DoubleTag("", player.y + player.getEyeHeight() - 0.10000000149011612))
+                        .add(new DoubleTag("", player.y + player.getEyeHeight() - 0.30000000149011612))
                         .add(new DoubleTag("", player.z)))
                 .putList(new ListTag<DoubleTag>("Motion")
                         .add(new DoubleTag("", directionVector.x))
@@ -42,8 +43,14 @@ public abstract class ProjectileItem extends Item {
 
         Entity projectile = Entity.createEntity(this.getProjectileEntityType(), player.getLevel().getChunk(player.getFloorX() >> 4, player.getFloorZ() >> 4), nbt, player);
         if (projectile != null) {
+            if (projectile instanceof EntityEnderPearl) {
+                if (player.getServer().getTick() - player.getLastEnderPearlThrowingTick() < 20) {
+                    projectile.kill();
+                    return false;
+                }
+            }
+
             projectile.setMotion(projectile.getMotion().multiply(this.getThrowForce()));
-            this.count--;
 
             if (projectile instanceof EntityProjectile) {
                 ProjectileLaunchEvent ev = new ProjectileLaunchEvent((EntityProjectile) projectile);
@@ -52,11 +59,15 @@ public abstract class ProjectileItem extends Item {
                 if (ev.isCancelled()) {
                     projectile.kill();
                 } else {
+                    if (!player.isCreative()) {
+                        this.count--;
+                    }
+                    if (projectile instanceof EntityEnderPearl) {
+                        player.onThrowEnderPearl();
+                    }
                     projectile.spawnToAll();
-                    player.getLevel().addSound(player, Sound.RANDOM_BOW, 1, 1, player.getViewers().values());
+                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BOW);
                 }
-            } else {
-                projectile.spawnToAll();
             }
         } else {
             return false;

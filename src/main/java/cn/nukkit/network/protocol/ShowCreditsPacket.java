@@ -1,5 +1,8 @@
 package cn.nukkit.network.protocol;
 
+import lombok.ToString;
+
+@ToString
 public class ShowCreditsPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.SHOW_CREDITS_PACKET;
@@ -17,7 +20,8 @@ public class ShowCreditsPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.eid = this.getEntityRuntimeId();
+        this.status = this.getVarInt();
     }
 
     @Override

@@ -7,11 +7,11 @@ import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.level.Sound;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 import java.util.Random;
 
@@ -52,18 +52,14 @@ public class ItemBow extends ItemTool {
         }
 
         double damage = 2;
-        boolean flame = false;
 
-        if (this.hasEnchantments()) {
-            Enchantment bowDamage = this.getEnchantment(Enchantment.ID_BOW_POWER);
-
-            if (bowDamage != null && bowDamage.getLevel() > 0) {
-                damage += 0.25 * (bowDamage.getLevel() + 1);
-            }
-
-            Enchantment flameEnchant = this.getEnchantment(Enchantment.ID_BOW_FLAME);
-            flame = flameEnchant != null && flameEnchant.getLevel() > 0;
+        Enchantment bowDamage = this.getEnchantment(Enchantment.ID_BOW_POWER);
+        if (bowDamage != null && bowDamage.getLevel() > 0) {
+            damage += 0.25 * (bowDamage.getLevel() + 1);
         }
+
+        Enchantment flameEnchant = this.getEnchantment(Enchantment.ID_BOW_FLAME);
+        boolean flame = flameEnchant != null && flameEnchant.getLevel() > 0;
 
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
@@ -77,7 +73,7 @@ public class ItemBow extends ItemTool {
                 .putList(new ListTag<FloatTag>("Rotation")
                         .add(new FloatTag("", (player.yaw > 180 ? 360 : 0) - (float) player.yaw))
                         .add(new FloatTag("", (float) -player.pitch)))
-                .putShort("Fire", player.isOnFire() || flame ? 45 * 60 : 0)
+                .putShort("Fire", flame ? 45 * 60 : 0)
                 .putDouble("damage", damage);
 
         int diff = (Server.getInstance().getTick() - player.getStartActionTick());
@@ -96,11 +92,16 @@ public class ItemBow extends ItemTool {
             player.getInventory().sendContents(player);
         } else {
             entityShootBowEvent.getProjectile().setMotion(entityShootBowEvent.getProjectile().getMotion().multiply(entityShootBowEvent.getForce()));
+            Enchantment infinityEnchant = this.getEnchantment(Enchantment.ID_BOW_INFINITY);
+            boolean infinity = infinityEnchant != null && infinityEnchant.getLevel() > 0;
+            EntityProjectile projectile;
+            if (infinity && (projectile = entityShootBowEvent.getProjectile()) instanceof EntityArrow) {
+                ((EntityArrow) projectile).setPickupMode(EntityArrow.PICKUP_CREATIVE);
+            }
             if (player.isSurvival()) {
-                Enchantment infinity;
-
-                if (!this.hasEnchantments() || (infinity = this.getEnchantment(Enchantment.ID_BOW_INFINITY)) == null || infinity.getLevel() <= 0)
+                if (!infinity) {
                     player.getInventory().removeItem(itemArrow);
+                }
                 if (!this.isUnbreakable()) {
                     Enchantment durability = this.getEnchantment(Enchantment.ID_DURABILITY);
                     if (!(durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= new Random().nextInt(100))) {
@@ -118,7 +119,7 @@ public class ItemBow extends ItemTool {
                     entityShootBowEvent.getProjectile().kill();
                 } else {
                     entityShootBowEvent.getProjectile().spawnToAll();
-                    player.level.addSound(player, Sound.RANDOM_BOW, 1, 1, player.getViewers().values());
+                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BOW);
                 }
             } else {
                 entityShootBowEvent.getProjectile().spawnToAll();

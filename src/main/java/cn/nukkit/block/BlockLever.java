@@ -7,11 +7,12 @@ import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.utils.Faceable;
 
 /**
  * @author Nukkit Project Team
  */
-public class BlockLever extends BlockFlowable {
+public class BlockLever extends BlockFlowable implements Faceable {
 
     public BlockLever() {
         this(0);
@@ -66,7 +67,7 @@ public class BlockLever extends BlockFlowable {
         this.setDamage(this.getDamage() ^ 0x08);
 
         this.getLevel().setBlock(this, this, false, true);
-        this.getLevel().addSound(this, Sound.RANDOM_CLICK); //TODO: coorect pitcj
+        this.getLevel().addSound(this, Sound.RANDOM_CLICK); //TODO: correct pitch
 
         LeverOrientation orientation = LeverOrientation.byMetadata(this.isPowerOn() ? this.getDamage() ^ 0x08 : this.getDamage());
         BlockFace face = orientation.getFacing();
@@ -215,5 +216,10 @@ public class BlockLever extends BlockFlowable {
                 META_LOOKUP[face.getMetadata()] = face;
             }
         }
+    }
+
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
     }
 }

@@ -5,6 +5,7 @@ import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.EventException;
+import com.google.common.collect.ImmutableMap;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -20,6 +21,7 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
         return handlers;
     }
 
+    private int attackCooldown = 10;
     private final DamageCause cause;
 
     private final Map<DamageModifier, Float> modifiers;
@@ -36,9 +38,9 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
     public EntityDamageEvent(Entity entity, DamageCause cause, Map<DamageModifier, Float> modifiers) {
         this.entity = entity;
         this.cause = cause;
-        this.modifiers = modifiers;
+        this.modifiers = new EnumMap<>(modifiers);
 
-        this.originals = this.modifiers;
+        this.originals = ImmutableMap.copyOf(this.modifiers);
 
         if (!this.modifiers.containsKey(DamageModifier.BASE)) {
             throw new EventException("BASE Damage modifier missing");
@@ -99,6 +101,29 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
 
         return damage;
     }
+    
+    public int getAttackCooldown() {
+        return this.attackCooldown;
+    }
+    
+    public void setAttackCooldown(int attackCooldown) {
+        this.attackCooldown = attackCooldown;
+    }
+
+    public boolean canBeReducedByArmor() {
+        switch (this.cause) {
+            case FIRE_TICK:
+            case SUFFOCATION:
+            case DROWNING:
+            case HUNGER:
+            case FALL:
+            case VOID:
+            case MAGIC:
+            case SUICIDE:
+                return false;
+        }
+        return true;
+    }
 
     public enum DamageModifier {
         /**
@@ -124,9 +149,11 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
         /**
          * Damage reduction caused by the Damage absorption effect
          */
-        ABSORPTION
-
-        //ARMOR_ENCHANTMENTS
+        ABSORPTION,
+        /**
+         * Damage reduction caused by the armor enchantments worn.
+         */
+        ARMOR_ENCHANTMENTS
     }
 
     public enum DamageCause {
@@ -193,6 +220,10 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
         /**
          * Damage caused by being struck by lightning
          */
-        LIGHTNING
+        LIGHTNING,
+        /**
+         * Damage caused by hunger
+         */
+        HUNGER
     }
 }

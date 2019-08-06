@@ -46,7 +46,7 @@ public class NBTOutputStream implements DataOutput, AutoCloseable {
     }
 
     @Override
-    public void write(byte b[], int off, int len) throws IOException {
+    public void write(byte[] b, int off, int len) throws IOException {
         this.stream.write(b, off, len);
     }
 

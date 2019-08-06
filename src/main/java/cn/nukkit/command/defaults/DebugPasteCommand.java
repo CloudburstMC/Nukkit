@@ -16,7 +16,7 @@ import java.lang.management.ManagementFactory;
 public class DebugPasteCommand extends VanillaCommand {
 
     public DebugPasteCommand(String name) {
-        super(name, "%nukkit.command.debug.description", "%commands.debug.usage");
+        super(name, "%nukkit.command.debug.description", "%nukkit.command.debug.usage");
         this.setPermission("nukkit.command.debug.perform");
     }
 
@@ -34,7 +34,7 @@ public class DebugPasteCommand extends VanillaCommand {
                     String dataPath = server.getDataPath();
                     String nukkitYML = HastebinUtility.upload(new File(dataPath, "nukkit.yml"));
                     String serverProperties = HastebinUtility.upload(new File(dataPath, "server.properties"));
-                    String latestLog = HastebinUtility.upload(new File(dataPath, "server.log"));
+                    String latestLog = HastebinUtility.upload(new File(dataPath, "/logs/server.log"));
                     String threadDump = HastebinUtility.upload(Utils.getAllThreadDumps());
 
                     StringBuilder b = new StringBuilder();

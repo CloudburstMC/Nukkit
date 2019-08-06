@@ -1,5 +1,8 @@
 package cn.nukkit.network.protocol;
 
+import lombok.ToString;
+
+@ToString
 public class MoveEntityDeltaPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.MOVE_ENTITY_DELTA_PACKET;
 

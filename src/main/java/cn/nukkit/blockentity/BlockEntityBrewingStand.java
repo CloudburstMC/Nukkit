@@ -17,6 +17,7 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.ContainerSetDataPacket;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -127,7 +128,7 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
 
     @Override
     public int getSize() {
-        return 4;
+        return 5;
     }
 
     protected int getSlotIndex(int index) {
@@ -241,6 +242,7 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
                             this.inventory.setItem(i, recipe.getResult());
                         }
                     }
+                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_POTION_BREWED);
 
                     ingredient.count--;
                     this.inventory.setIngredient(ingredient);
