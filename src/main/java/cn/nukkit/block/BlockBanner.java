@@ -65,6 +65,14 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (face != BlockFace.DOWN) {
+            if (face == BlockFace.UP) {
+                this.setDamage(NukkitMath.floorDouble(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f);
+                this.getLevel().setBlock(block, this, true);
+            } else {
+                this.setDamage(face.getIndex());
+                this.getLevel().setBlock(block, new BlockWallBanner(this.getDamage()), true);
+            }
+
             CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.BANNER)
                     .putInt("Base", item.getDamage() & 0xf);
 
@@ -74,14 +82,6 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
             }
 
             new BlockEntityBanner(this.getChunk(), nbt);
-
-            if (face == BlockFace.UP) {
-                this.setDamage(NukkitMath.floorDouble(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f);
-                this.getLevel().setBlock(block, this, true);
-            } else {
-                this.setDamage(face.getIndex());
-                this.getLevel().setBlock(block, new BlockWallBanner(this.getDamage()), true);
-            }
 
             return true;
         }
@@ -108,8 +108,10 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
         if (blockEntity instanceof BlockEntityBanner) {
             BlockEntityBanner banner = (BlockEntityBanner) blockEntity;
             item.setDamage(banner.getBaseColor() & 0xf);
-            if (banner.namedTag.contains("Type")) {
-                item.setNamedTag(new CompoundTag().put("Type", banner.namedTag.get("Type")));
+            int type = banner.namedTag.getInt("Type");
+            if (type > 0) {
+                item.setNamedTag(new CompoundTag()
+                        .putInt("Type", banner.namedTag.getInt("Type")));
             }
         }
         return item;
