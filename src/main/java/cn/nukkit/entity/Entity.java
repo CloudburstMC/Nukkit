@@ -2071,7 +2071,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.health = 0;
         this.scheduleUpdate();
 
-        for (Entity passenger : this.passengers) {
+        for (Entity passenger : new ArrayList<>(this.passengers)) {
             dismountEntity(passenger);
         }
     }
