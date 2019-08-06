@@ -1522,24 +1522,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.teleport(ev.getTo(), null);
                     } else {
                         this.addMovement(this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
-
-                        //FrostWalker
-                        Enchantment frostWalker = inventory.getBoots().getEnchantment(Enchantment.ID_FROST_WALKER);
-                        if (frostWalker != null) {
-                            if (this.y >= 1 && this.y <= 255) {
-                                int lvl = 2 + frostWalker.getLevel();
-                                for (int coordX = this.getFloorX() - lvl; coordX < this.getFloorX() + lvl + 1; coordX++) {
-                                    for (int coordZ = this.getFloorZ() - lvl; coordZ < this.getFloorZ() + lvl + 1; coordZ++) {
-                                        Vector3 vec = new Vector3(coordX, this.getFloorY() - 1, coordZ);
-                                        if (level.getBlock(vec).getId() == Block.STILL_WATER && level.getBlock(vec.up()).getId() == Block.AIR) {
-                                            level.setBlock(vec, new BlockIceFrosted(), true);
-                                            level.scheduleUpdate(level.getBlock(vec), ThreadLocalRandom.current().nextInt(20, 40));
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
                     }
                     //Biome biome = Biome.biomes[level.getBiomeId(this.getFloorX(), this.getFloorZ())];
                     //sendTip(biome.getName() + " (" + biome.doesOverhang() + " " + biome.getBaseHeight() + "-" + biome.getHeightVariation() + ")");
@@ -1577,6 +1559,22 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             jump = 0.2;
                         }
                         this.getFoodData().updateFoodExpLevel(0.01 * distance + jump + swimming);
+                    }
+                }
+            }
+        }
+
+        if (!revert && delta > 0.0001d) {
+            Enchantment frostWalker = inventory.getBoots().getEnchantment(Enchantment.ID_FROST_WALKER);
+            if (frostWalker != null && frostWalker.getLevel() > 0 && !this.isSpectator() && this.y >= 1 && this.y <= 255) {
+                int radius = 2 + frostWalker.getLevel();
+                for (int coordX = this.getFloorX() - radius; coordX < this.getFloorX() + radius + 1; coordX++) {
+                    for (int coordZ = this.getFloorZ() - radius; coordZ < this.getFloorZ() + radius + 1; coordZ++) {
+                        Block block = level.getBlock(coordX, this.getFloorY() - 1, coordZ);
+                        if (block.getId() == Block.STILL_WATER && block.up().getId() == Block.AIR) {
+                            level.setBlock(block, Block.get(Block.ICE_FROSTED), true);
+                            level.scheduleUpdate(level.getBlock(block), ThreadLocalRandom.current().nextInt(20, 40));
+                        }
                     }
                 }
             }

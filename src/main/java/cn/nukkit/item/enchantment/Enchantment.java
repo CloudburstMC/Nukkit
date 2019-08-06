@@ -227,10 +227,6 @@ public abstract class Enchantment implements Cloneable {
         return false;
     }
 
-    public boolean isTreasure() {
-        return false;
-    }
-
     @Override
     protected Enchantment clone() {
         try {

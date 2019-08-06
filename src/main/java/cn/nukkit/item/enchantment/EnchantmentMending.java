@@ -11,7 +11,7 @@ public class EnchantmentMending extends Enchantment {
 
     @Override
     public int getMinEnchantAbility(int level) {
-        return level * 25;
+        return 25 + (level - 1) * 9;
     }
 
     @Override
@@ -20,14 +20,7 @@ public class EnchantmentMending extends Enchantment {
     }
 
     @Override
-    public int getMaxLevel() {
-        return 1;
-    }
-
-    @Override
-    public boolean isTreasure() {
-        return true;
-    }
+    public int getMaxLevel() { return 1; }
 
     @Override
     public boolean isCompatibleWith(Enchantment enchantment) {

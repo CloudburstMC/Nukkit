@@ -13,7 +13,7 @@ public class EnchantmentBowPower extends EnchantmentBow {
 
     @Override
     public int getMinEnchantAbility(int level) {
-        return 1 + (level - 1) * 10;
+        return 1 + (level - 1) * 20;
     }
 
     @Override

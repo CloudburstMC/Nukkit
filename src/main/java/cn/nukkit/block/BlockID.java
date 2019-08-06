@@ -46,7 +46,6 @@ public interface BlockID {
     int PISTON = 33;
     int PISTON_HEAD = 34;
     int WOOL = 35;
-
     int DANDELION = 37;
     int POPPY = 38;
     int ROSE = 38;
@@ -100,6 +99,7 @@ public interface BlockID {
     int STONE_PRESSURE_PLATE = 70;
     int IRON_DOOR_BLOCK = 71;
     int WOODEN_PRESSURE_PLATE = 72;
+
     int REDSTONE_ORE = 73;
     int GLOWING_REDSTONE_ORE = 74;
     int LIT_REDSTONE_ORE = 74;
@@ -261,10 +261,11 @@ public interface BlockID {
     int PURPUR_BLOCK = 201;
 
     int PURPUR_STAIRS = 203;
-
+    //int DOUBLE_PURPUR_SLAB = 204;
     int UNDYED_SHULKER_BOX = 205;
     int END_BRICKS = 206;
-    int FROSTED_ICE = 207;
+    //Note: frosted ice CAN NOT BE HARVESTED WITH HAND -- canHarvestWithHand method should be overridden FALSE.
+    int ICE_FROSTED = 207;
     int END_ROD = 208;
     int END_GATEWAY = 209;
 
@@ -295,7 +296,6 @@ public interface BlockID {
 
     int CHORUS_PLANT = 240;
     int STAINED_GLASS = 241;
-
     int PODZOL = 243;
     int BEETROOT_BLOCK = 244;
     int STONECUTTER = 245;
@@ -303,5 +303,6 @@ public interface BlockID {
     int NETHER_REACTOR = 247; //Should not be removed
 
     int PISTON_EXTENSION = 250;
+
     int OBSERVER = 251;
 }

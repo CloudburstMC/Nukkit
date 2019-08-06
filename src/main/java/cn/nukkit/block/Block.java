@@ -91,7 +91,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[PISTON] = BlockPiston.class; //33
             list[PISTON_HEAD] = BlockPistonHead.class; //34
             list[WOOL] = BlockWool.class; //35
-
             list[DANDELION] = BlockDandelion.class; //37
             list[FLOWER] = BlockFlower.class; //38
             list[BROWN_MUSHROOM] = BlockMushroomBrown.class; //39
@@ -130,7 +129,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[WOODEN_PRESSURE_PLATE] = BlockPressurePlateWood.class; //72
             list[REDSTONE_ORE] = BlockOreRedstone.class; //73
             list[GLOWING_REDSTONE_ORE] = BlockOreRedstoneGlowing.class; //74
-            list[UNLIT_REDSTONE_TORCH] = BlockRedstoneTorchUnlit.class; //75
+            list[UNLIT_REDSTONE_TORCH] = BlockRedstoneTorchUnlit.class;
             list[REDSTONE_TORCH] = BlockRedstoneTorch.class; //76
             list[STONE_BUTTON] = BlockButtonStone.class; //77
             list[SNOW_LAYER] = BlockSnowLayer.class; //78
@@ -186,7 +185,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[SANDSTONE_STAIRS] = BlockStairsSandstone.class; //128
             list[EMERALD_ORE] = BlockOreEmerald.class; //129
             list[ENDER_CHEST] = BlockEnderChest.class; //130
-            list[TRIPWIRE_HOOK] = BlockTripWireHook.class; //131
+            list[TRIPWIRE_HOOK] = BlockTripWireHook.class;
             list[TRIPWIRE] = BlockTripWire.class; //132
             list[EMERALD_BLOCK] = BlockEmerald.class; //133
             list[SPRUCE_WOOD_STAIRS] = BlockStairsSpruce.class; //134
@@ -205,7 +204,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[LIGHT_WEIGHTED_PRESSURE_PLATE] = BlockWeightedPressurePlateLight.class; //147
             list[HEAVY_WEIGHTED_PRESSURE_PLATE] = BlockWeightedPressurePlateHeavy.class; //148
             list[UNPOWERED_COMPARATOR] = BlockRedstoneComparatorUnpowered.class; //149
-            list[POWERED_COMPARATOR] = BlockRedstoneComparatorPowered.class; //150
+            list[POWERED_COMPARATOR] = BlockRedstoneComparatorPowered.class; //149
             list[DAYLIGHT_DETECTOR] = BlockDaylightDetector.class; //151
             list[REDSTONE_BLOCK] = BlockRedstone.class; //152
             list[QUARTZ_ORE] = BlockOreQuartz.class; //153
@@ -216,6 +215,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[WOOD_SLAB] = BlockSlabWood.class; //158
             list[STAINED_TERRACOTTA] = BlockTerracottaStained.class; //159
             list[STAINED_GLASS_PANE] = BlockGlassPaneStained.class; //160
+
             list[LEAVES2] = BlockLeaves2.class; //161
             list[WOOD2] = BlockWood2.class; //162
             list[ACACIA_WOOD_STAIRS] = BlockStairsAcacia.class; //163
@@ -258,7 +258,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             
             list[UNDYED_SHULKER_BOX] = BlockUndyedShulkerBox.class; //205
             list[END_BRICKS] = BlockBricksEndStone.class; //206
-            list[FROSTED_ICE] = BlockIceFrosted.class; //207
+            list[ICE_FROSTED] = BlockIceFrosted.class; //207
             list[END_ROD] = BlockEndRod.class; //208
             list[END_GATEWAY] = BlockEndGateway.class; //209
 
@@ -290,7 +290,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
             list[CHORUS_PLANT] = BlockChorusPlant.class; //240
             list[STAINED_GLASS] = BlockGlassStained.class; //241
-
             list[PODZOL] = BlockPodzol.class; //243
             list[BEETROOT_BLOCK] = BlockBeetroot.class; //244
             list[STONECUTTER] = BlockStonecutter.class; //245
@@ -298,6 +297,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             //list[NETHER_REACTOR] = BlockNetherReactor.class; //247 Should not be removed
 
             //TODO: list[PISTON_EXTENSION] = BlockPistonExtension.class; //250
+
             list[OBSERVER] = BlockObserver.class; //251
 
             for (int id = 0; id < 256; id++) {
