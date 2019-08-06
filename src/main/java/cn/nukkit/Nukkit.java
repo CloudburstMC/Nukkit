@@ -3,6 +3,7 @@ package cn.nukkit;
 import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.utils.ServerKiller;
 import com.google.common.base.Preconditions;
+import io.netty.util.ResourceLeakDetector;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Log4J2LoggerFactory;
 import joptsimple.OptionParser;
@@ -67,6 +68,7 @@ public class Nukkit {
 
         // Netty logger for debug info
         InternalLoggerFactory.setDefaultFactory(Log4J2LoggerFactory.INSTANCE);
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.ADVANCED);
 
         // Define args
         OptionParser parser = new OptionParser();
