@@ -3077,15 +3077,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                             switch (type) {
                                 case InventoryTransactionPacket.USE_ITEM_ON_ENTITY_ACTION_INTERACT:
-                                    PlayerInteractEntityEvent playerInteractEntityEvent = new PlayerInteractEntityEvent(this, target, item);
+                                    PlayerInteractEntityEvent playerInteractEntityEvent = new PlayerInteractEntityEvent(this, target, item, useItemOnEntityData.clickPos);
                                     if (this.isSpectator()) playerInteractEntityEvent.setCancelled();
                                     getServer().getPluginManager().callEvent(playerInteractEntityEvent);
 
                                     if (playerInteractEntityEvent.isCancelled()) {
                                         break;
                                     }
-
-                                    if (target.onInteract(this, item) && this.isSurvival()) {
+                                    if (target.onInteract(this, item, useItemOnEntityData.clickPos) && this.isSurvival()) {
                                         if (item.isTool()) {
                                             if (item.useOn(target) && item.getDamage() >= item.getMaxDurability()) {
                                                 item = new ItemBlock(new BlockAir());
