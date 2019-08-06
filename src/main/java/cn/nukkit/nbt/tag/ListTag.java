@@ -56,7 +56,7 @@ public class ListTag<T extends Tag> extends Tag {
     @Override
     public String toString() {
         StringJoiner joiner = new StringJoiner(",\n\t");
-        list.forEach(tag -> joiner.add(tag.toString()));
+        list.forEach(tag -> joiner.add(tag.toString().replace("\n", "\n\t")));
         return "ListTag '" + this.getName() + "' (" + list.size() + " entries of type " + Tag.getTagName(type) + ") {\n\t" + joiner.toString() + "\n}";
     }
 
@@ -85,6 +85,17 @@ public class ListTag<T extends Tag> extends Tag {
             list.set(index, tag);
         }
         return this;
+    }
+
+    @Override
+    public List<Object> parseValue() {
+        List<Object> value = new ArrayList<>(this.list.size());
+
+        for (T t : this.list) {
+            value.add(t.parseValue());
+        }
+
+        return value;
     }
 
     public T get(int index) {

@@ -282,7 +282,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
     }
 
     @Override
-    public boolean onInteract(Player p, Item item) {
+    public boolean onInteract(Player p, Item item, Vector3 clickedPos) {
         if (!passengers.isEmpty() && isRideable()) {
             return false;
         }

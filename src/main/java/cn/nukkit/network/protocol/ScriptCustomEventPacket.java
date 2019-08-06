@@ -15,13 +15,14 @@ public class ScriptCustomEventPacket extends DataPacket {
 
     @Override
     public void decode() {
-        eventName = getString();
-        eventData = getByteArray();
+        this.eventName = this.getString();
+        this.eventData = this.getByteArray();
     }
 
     @Override
     public void encode() {
-        putString(eventName);
-        putByteArray(eventData);
+        this.reset();
+        this.putString(this.eventName);
+        this.putByteArray(this.eventData);
     }
 }
