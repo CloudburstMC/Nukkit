@@ -1578,8 +1578,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 for (int coordX = this.getFloorX() - radius; coordX < this.getFloorX() + radius + 1; coordX++) {
                     for (int coordZ = this.getFloorZ() - radius; coordZ < this.getFloorZ() + radius + 1; coordZ++) {
                         Block block = level.getBlock(coordX, this.getFloorY() - 1, coordZ);
-                        if (block.getId() == Block.STILL_WATER && block.up().getId() == Block.AIR) {
-                            level.setBlock(block, Block.get(Block.ICE_FROSTED), true);
+                        if ((block.getId() == Block.STILL_WATER || block.getId() == Block.WATER && block.getDamage() == 0) && block.up().getId() == Block.AIR) {
+                            level.setBlock(block, Block.get(Block.ICE_FROSTED), true, false);
                             level.scheduleUpdate(level.getBlock(block), ThreadLocalRandom.current().nextInt(20, 40));
                         }
                     }
