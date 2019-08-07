@@ -45,11 +45,6 @@ public class BlockIceFrosted extends BlockTransparentMeta {
     }
 
     @Override
-    public int getToolType() {
-        return ItemTool.TYPE_PICKAXE;
-    }
-
-    @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         boolean success = super.place(item, block, target, face, fx, fy, fz, player);
         if (success) {
