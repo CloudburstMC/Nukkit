@@ -7,8 +7,11 @@ import cn.nukkit.inventory.EnchantInventory;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.transaction.action.*;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.network.protocol.InventoryTransactionPacket;
 import lombok.ToString;
+
+import java.util.Optional;
 
 /**
  * @author CreeperFace
@@ -168,7 +171,12 @@ public class NetworkInventoryAction {
                     case SOURCE_TYPE_CRAFTING_REMOVE_INGREDIENT:
                         return new SlotChangeAction(player.getCraftingGrid(), this.inventorySlot, this.oldItem, this.newItem);
                     case SOURCE_TYPE_CONTAINER_DROP_CONTENTS:
-                        return new SlotChangeAction(player.getCraftingGrid(), this.inventorySlot, this.oldItem, this.newItem);
+                        Optional<Inventory> inventory = player.getTopWindow();
+                        if (!inventory.isPresent()) {
+                            // No window open?
+                            return null;
+                        }
+                        return new SlotChangeAction(inventory.get(), this.inventorySlot, this.oldItem, this.newItem);
                     case SOURCE_TYPE_CRAFTING_RESULT:
                         return new CraftingTakeResultAction(this.oldItem, this.newItem);
                     case SOURCE_TYPE_CRAFTING_USE_INGREDIENT:
@@ -219,22 +227,52 @@ public class NetworkInventoryAction {
                     }
                     EnchantInventory enchant = (EnchantInventory) inv;
 
+                    // TODO: This is all a temporary hack. Enchanting needs it's own transaction class.
                     switch (this.windowId) {
                         case SOURCE_TYPE_ENCHANT_INPUT:
-                            this.inventorySlot = 0;
-                            Item local = enchant.getItem(0);
-                            if (local.equals(this.newItem, true, false)) {
-                                enchant.setItem(0, this.newItem);
+                            if (this.inventorySlot != 0) {
+                                // Input should only be in slot 0.
+                                return null;
                             }
                             break;
                         case SOURCE_TYPE_ENCHANT_MATERIAL:
-                            this.inventorySlot = 1;
+                            if (this.inventorySlot != 1) {
+                                // Material should only be in slot 1.
+                                return null;
+                            }
                             break;
                         case SOURCE_TYPE_ENCHANT_OUTPUT:
-                            //enchant.sendSlot(0, player);
-                            //ignore?
-                            //return null;
-                            break;
+                            if (this.inventorySlot != 0) {
+                                // Outputs should only be in slot 0.
+                                return null;
+                            }
+                            if (Item.get(ItemID.DYE, 4).equals(this.newItem, true, false)) {
+                                this.inventorySlot = 2; // Fake slot to store used material
+                                if (this.newItem.getCount() < 1 || this.newItem.getCount() > 3) {
+                                    // Invalid material
+                                    return null;
+                                }
+                                Item material = enchant.getItem(1);
+                                // Material to take away.
+                                int toRemove = this.newItem.getCount();
+                                if (material.getId() != ItemID.DYE && material.getDamage() != 4 &&
+                                        material.getCount() < toRemove) {
+                                    // Invalid material or not enough
+                                    return null;
+                                }
+                            } else {
+                                Item toEnchant = enchant.getItem(0);
+                                Item material = enchant.getItem(1);
+                                if (toEnchant.equals(this.newItem, true, true) &&
+                                        (material.getId() == ItemID.DYE && material.getDamage() == 4 || player.isCreative())) {
+                                    this.inventorySlot = 3; // Fake slot to store the resultant item.
+
+                                    //TODO: Check (old) item has valid enchantments
+                                    enchant.setItem(3, this.oldItem, false);
+                                } else {
+                                    return null;
+                                }
+                            }
                     }
 
                     return new SlotChangeAction(enchant, this.inventorySlot, this.oldItem, this.newItem);
