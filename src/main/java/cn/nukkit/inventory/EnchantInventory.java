@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.enchantment.EnchantmentEntry;
 import cn.nukkit.level.Position;
 
+import java.util.Collections;
 import java.util.Random;
 
 /**
@@ -20,7 +21,7 @@ public class EnchantInventory extends ContainerInventory {
     private EnchantmentEntry[] entries = null;
 
     public EnchantInventory(Position position) {
-        super(null, InventoryType.ENCHANT_TABLE);
+        super(null, InventoryType.ENCHANT_TABLE, Collections.emptyMap(), 4);
         this.holder = new FakeBlockMenu(this, position);
     }
 
