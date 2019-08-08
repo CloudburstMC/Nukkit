@@ -78,7 +78,7 @@ public class QueryHandler {
 
         switch (packetId) {
             case HANDSHAKE:
-                ByteBuf reply = PooledByteBufAllocator.DEFAULT.directBuffer();
+                ByteBuf reply = PooledByteBufAllocator.DEFAULT.ioBuffer();
                 reply.writeByte(HANDSHAKE);
                 reply.writeInt(sessionId);
                 reply.writeBytes(getTokenString(this.token, address.getAddress()).getBytes(StandardCharsets.UTF_8));
@@ -95,7 +95,7 @@ public class QueryHandler {
                 if (this.timeout < System.currentTimeMillis()) {
                     this.regenerateInfo();
                 }
-                reply = PooledByteBufAllocator.DEFAULT.directBuffer();
+                reply = PooledByteBufAllocator.DEFAULT.ioBuffer();
                 reply.writeByte(STATISTICS);
                 reply.writeInt(sessionId);
                 if (packet.readableBytes() == 8) {
