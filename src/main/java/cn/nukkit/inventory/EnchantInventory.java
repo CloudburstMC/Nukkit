@@ -29,6 +29,12 @@ public class EnchantInventory extends ContainerInventory {
         return (FakeBlockMenu) this.holder;
     }
 
+    @Override
+    public void onOpen(Player who) {
+        super.onOpen(who);
+        who.craftingType = Player.CRAFTING_ENCHANT;
+    }
+
     /*@Override //TODO: server side enchant
     public void onOpen(Player who) {
         super.onOpen(who);
