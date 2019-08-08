@@ -14,6 +14,7 @@ import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntityThrownTrident;
 import cn.nukkit.event.block.ItemFrameDropItemEvent;
+import cn.nukkit.event.block.WaterFrostEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -1579,8 +1580,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     for (int coordZ = this.getFloorZ() - radius; coordZ < this.getFloorZ() + radius + 1; coordZ++) {
                         Block block = level.getBlock(coordX, this.getFloorY() - 1, coordZ);
                         if ((block.getId() == Block.STILL_WATER || block.getId() == Block.WATER && block.getDamage() == 0) && block.up().getId() == Block.AIR) {
-                            level.setBlock(block, Block.get(Block.ICE_FROSTED), true, false);
-                            level.scheduleUpdate(level.getBlock(block), ThreadLocalRandom.current().nextInt(20, 40));
+                            WaterFrostEvent ev = new WaterFrostEvent(block);
+                            server.getPluginManager().callEvent(ev);
+                            if (!ev.isCancelled()) {
+                                level.setBlock(block, Block.get(Block.ICE_FROSTED), true, false);
+                                level.scheduleUpdate(level.getBlock(block), ThreadLocalRandom.current().nextInt(20, 40));
+                            }
                         }
                     }
                 }
