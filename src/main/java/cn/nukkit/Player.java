@@ -2741,9 +2741,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.chat(textPacket.message);
                     }
                     break;
-                case ProtocolInfo.CONTAINER_OPEN_PACKET:
-                    MainLogger.getLogger().info("Received container open packet" + ((ContainerOpenPacket) packet).windowId);
-                    break;
                 case ProtocolInfo.CONTAINER_CLOSE_PACKET:
                     ContainerClosePacket containerClosePacket = (ContainerClosePacket) packet;
                     if (!this.spawned) {
