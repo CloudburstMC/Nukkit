@@ -153,15 +153,14 @@ public class Anvil extends BaseLevelProvider {
                 break;
             }
         }
-        stream.putByte((byte) count);
+//        stream.putByte((byte) count);  count is now sent in packet
         for (int i = 0; i < count; i++) {
             stream.putByte((byte) 0);
             stream.put(sections[i].getBytes());
         }
-        for (byte height : chunk.getHeightMapArray()) {
-            stream.putByte(height);
-        }
-        stream.put(PAD_256);
+//        for (byte height : chunk.getHeightMapArray()) {
+//            stream.putByte(height);
+//        } computed client side?
         stream.put(chunk.getBiomeIdArray());
         stream.putByte((byte) 0);
         if (extraData != null) {
@@ -171,7 +170,7 @@ public class Anvil extends BaseLevelProvider {
         }
         stream.put(blockEntities);
 
-        this.getLevel().chunkRequestCallback(timestamp, x, z, stream.getBuffer());
+        this.getLevel().chunkRequestCallback(timestamp, x, z, count, stream.getBuffer());
 
         return null;
     }
@@ -235,7 +234,7 @@ public class Anvil extends BaseLevelProvider {
             try {
                 this.loadRegion(X >> 5, Z >> 5).writeChunk(chunk);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new ChunkException("Error saving chunk (" + X + ", " + Z + ")", e);
             }
         }
     }

@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.StringJoiner;
 
 public class CompoundTag extends Tag implements Cloneable {
@@ -23,9 +24,11 @@ public class CompoundTag extends Tag implements Cloneable {
 
     @Override
     public void write(NBTOutputStream dos) throws IOException {
-        for (Tag tag : tags.values()) {
-            Tag.writeNamedTag(tag, dos);
+
+        for (Map.Entry<String, Tag> entry : this.tags.entrySet()) {
+            Tag.writeNamedTag(entry.getValue(), entry.getKey(), dos);
         }
+
         dos.writeByte(Tag.TAG_End);
     }
 
@@ -202,13 +205,24 @@ public class CompoundTag extends Tag implements Cloneable {
         return new HashMap<>(this.tags);
     }
 
+    @Override
+    public Map<String, Object> parseValue() {
+        Map<String, Object> value = new HashMap<>(this.tags.size());
+
+        for (Entry<String, Tag> entry : this.tags.entrySet()) {
+            value.put(entry.getKey(), entry.getValue().parseValue());
+        }
+
+        return value;
+    }
+
     public boolean getBoolean(String name) {
         return getByte(name) != 0;
     }
 
     public String toString() {
         StringJoiner joiner = new StringJoiner(",\n\t");
-        tags.forEach((key, tag) -> joiner.add(key + " : " + tag.toString()));
+        tags.forEach((key, tag) -> joiner.add('\'' + key + "' : " + tag.toString().replace("\n", "\n\t")));
         return "CompoundTag '" + this.getName() + "' (" + tags.size() + " entries) {\n\t" + joiner.toString() + "\n}";
     }
 

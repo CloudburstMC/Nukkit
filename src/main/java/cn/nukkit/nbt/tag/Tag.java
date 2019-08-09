@@ -90,9 +90,13 @@ public abstract class Tag {
     }
 
     public static void writeNamedTag(Tag tag, NBTOutputStream dos) throws IOException {
+        writeNamedTag(tag, tag.getName(), dos);
+    }
+
+    public static void writeNamedTag(Tag tag, String name, NBTOutputStream dos) throws IOException {
         dos.writeByte(tag.getId());
         if (tag.getId() == Tag.TAG_End) return;
-        dos.writeUTF(tag.getName());
+        dos.writeUTF(name);
 
         tag.write(dos);
     }
@@ -159,4 +163,5 @@ public abstract class Tag {
 
     public abstract Tag copy();
 
+    public abstract Object parseValue();
 }

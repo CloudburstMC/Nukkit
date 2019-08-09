@@ -3,6 +3,8 @@ package cn.nukkit.item;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.event.entity.CreatureSpawnEvent;
+import cn.nukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.BlockFace;
@@ -41,6 +43,13 @@ public class ItemSpawnEgg extends Item {
         FullChunk chunk = level.getChunk((int) block.getX() >> 4, (int) block.getZ() >> 4);
 
         if (chunk == null) {
+            return false;
+        }
+
+        CreatureSpawnEvent ev = new CreatureSpawnEvent(this.meta, SpawnReason.SPAWN_EGG);
+        level.getServer().getPluginManager().callEvent(ev);
+
+        if (ev.isCancelled()) {
             return false;
         }
 

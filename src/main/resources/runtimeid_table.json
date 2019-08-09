@@ -2235,6 +2235,86 @@
     "data": 15
   },
   {
+    "name": "minecraft:wooden_door",
+    "id": 64,
+    "data": 16
+  },
+  {
+    "name": "minecraft:wooden_door",
+    "id": 64,
+    "data": 17
+  },
+  {
+    "name": "minecraft:wooden_door",
+    "id": 64,
+    "data": 18
+  },
+  {
+    "name": "minecraft:wooden_door",
+    "id": 64,
+    "data": 19
+  },
+  {
+    "name": "minecraft:wooden_door",
+    "id": 64,
+    "data": 20
+  },
+  {
+    "name": "minecraft:wooden_door",
+    "id": 64,
+    "data": 21
+  },
+  {
+    "name": "minecraft:wooden_door",
+    "id": 64,
+    "data": 22
+  },
+  {
+    "name": "minecraft:wooden_door",
+    "id": 64,
+    "data": 23
+  },
+  {
+    "name": "minecraft:wooden_door",
+    "id": 64,
+    "data": 24
+  },
+  {
+    "name": "minecraft:wooden_door",
+    "id": 64,
+    "data": 25
+  },
+  {
+    "name": "minecraft:wooden_door",
+    "id": 64,
+    "data": 26
+  },
+  {
+    "name": "minecraft:wooden_door",
+    "id": 64,
+    "data": 27
+  },
+  {
+    "name": "minecraft:wooden_door",
+    "id": 64,
+    "data": 28
+  },
+  {
+    "name": "minecraft:wooden_door",
+    "id": 64,
+    "data": 29
+  },
+  {
+    "name": "minecraft:wooden_door",
+    "id": 64,
+    "data": 30
+  },
+  {
+    "name": "minecraft:wooden_door",
+    "id": 64,
+    "data": 31
+  },
+  {
     "name": "minecraft:ladder",
     "id": 65,
     "data": 0
@@ -2673,6 +2753,86 @@
     "name": "minecraft:iron_door",
     "id": 71,
     "data": 15
+  },
+  {
+    "name": "minecraft:iron_door",
+    "id": 71,
+    "data": 16
+  },
+  {
+    "name": "minecraft:iron_door",
+    "id": 71,
+    "data": 17
+  },
+  {
+    "name": "minecraft:iron_door",
+    "id": 71,
+    "data": 18
+  },
+  {
+    "name": "minecraft:iron_door",
+    "id": 71,
+    "data": 19
+  },
+  {
+    "name": "minecraft:iron_door",
+    "id": 71,
+    "data": 20
+  },
+  {
+    "name": "minecraft:iron_door",
+    "id": 71,
+    "data": 21
+  },
+  {
+    "name": "minecraft:iron_door",
+    "id": 71,
+    "data": 22
+  },
+  {
+    "name": "minecraft:iron_door",
+    "id": 71,
+    "data": 23
+  },
+  {
+    "name": "minecraft:iron_door",
+    "id": 71,
+    "data": 24
+  },
+  {
+    "name": "minecraft:iron_door",
+    "id": 71,
+    "data": 25
+  },
+  {
+    "name": "minecraft:iron_door",
+    "id": 71,
+    "data": 26
+  },
+  {
+    "name": "minecraft:iron_door",
+    "id": 71,
+    "data": 27
+  },
+  {
+    "name": "minecraft:iron_door",
+    "id": 71,
+    "data": 28
+  },
+  {
+    "name": "minecraft:iron_door",
+    "id": 71,
+    "data": 29
+  },
+  {
+    "name": "minecraft:iron_door",
+    "id": 71,
+    "data": 30
+  },
+  {
+    "name": "minecraft:iron_door",
+    "id": 71,
+    "data": 31
   },
   {
     "name": "minecraft:wooden_pressure_plate",
@@ -8260,6 +8420,86 @@
     "data": 15
   },
   {
+    "name": "minecraft:spruce_door",
+    "id": 193,
+    "data": 16
+  },
+  {
+    "name": "minecraft:spruce_door",
+    "id": 193,
+    "data": 17
+  },
+  {
+    "name": "minecraft:spruce_door",
+    "id": 193,
+    "data": 18
+  },
+  {
+    "name": "minecraft:spruce_door",
+    "id": 193,
+    "data": 19
+  },
+  {
+    "name": "minecraft:spruce_door",
+    "id": 193,
+    "data": 20
+  },
+  {
+    "name": "minecraft:spruce_door",
+    "id": 193,
+    "data": 21
+  },
+  {
+    "name": "minecraft:spruce_door",
+    "id": 193,
+    "data": 22
+  },
+  {
+    "name": "minecraft:spruce_door",
+    "id": 193,
+    "data": 23
+  },
+  {
+    "name": "minecraft:spruce_door",
+    "id": 193,
+    "data": 24
+  },
+  {
+    "name": "minecraft:spruce_door",
+    "id": 193,
+    "data": 25
+  },
+  {
+    "name": "minecraft:spruce_door",
+    "id": 193,
+    "data": 26
+  },
+  {
+    "name": "minecraft:spruce_door",
+    "id": 193,
+    "data": 27
+  },
+  {
+    "name": "minecraft:spruce_door",
+    "id": 193,
+    "data": 28
+  },
+  {
+    "name": "minecraft:spruce_door",
+    "id": 193,
+    "data": 29
+  },
+  {
+    "name": "minecraft:spruce_door",
+    "id": 193,
+    "data": 30
+  },
+  {
+    "name": "minecraft:spruce_door",
+    "id": 193,
+    "data": 31
+  },
+  {
     "name": "minecraft:birch_door",
     "id": 194,
     "data": 0
@@ -8340,6 +8580,86 @@
     "data": 15
   },
   {
+    "name": "minecraft:birch_door",
+    "id": 194,
+    "data": 16
+  },
+  {
+    "name": "minecraft:birch_door",
+    "id": 194,
+    "data": 17
+  },
+  {
+    "name": "minecraft:birch_door",
+    "id": 194,
+    "data": 18
+  },
+  {
+    "name": "minecraft:birch_door",
+    "id": 194,
+    "data": 19
+  },
+  {
+    "name": "minecraft:birch_door",
+    "id": 194,
+    "data": 20
+  },
+  {
+    "name": "minecraft:birch_door",
+    "id": 194,
+    "data": 21
+  },
+  {
+    "name": "minecraft:birch_door",
+    "id": 194,
+    "data": 22
+  },
+  {
+    "name": "minecraft:birch_door",
+    "id": 194,
+    "data": 23
+  },
+  {
+    "name": "minecraft:birch_door",
+    "id": 194,
+    "data": 24
+  },
+  {
+    "name": "minecraft:birch_door",
+    "id": 194,
+    "data": 25
+  },
+  {
+    "name": "minecraft:birch_door",
+    "id": 194,
+    "data": 26
+  },
+  {
+    "name": "minecraft:birch_door",
+    "id": 194,
+    "data": 27
+  },
+  {
+    "name": "minecraft:birch_door",
+    "id": 194,
+    "data": 28
+  },
+  {
+    "name": "minecraft:birch_door",
+    "id": 194,
+    "data": 29
+  },
+  {
+    "name": "minecraft:birch_door",
+    "id": 194,
+    "data": 30
+  },
+  {
+    "name": "minecraft:birch_door",
+    "id": 194,
+    "data": 31
+  },
+  {
     "name": "minecraft:jungle_door",
     "id": 195,
     "data": 0
@@ -8420,6 +8740,86 @@
     "data": 15
   },
   {
+    "name": "minecraft:jungle_door",
+    "id": 195,
+    "data": 16
+  },
+  {
+    "name": "minecraft:jungle_door",
+    "id": 195,
+    "data": 17
+  },
+  {
+    "name": "minecraft:jungle_door",
+    "id": 195,
+    "data": 18
+  },
+  {
+    "name": "minecraft:jungle_door",
+    "id": 195,
+    "data": 19
+  },
+  {
+    "name": "minecraft:jungle_door",
+    "id": 195,
+    "data": 20
+  },
+  {
+    "name": "minecraft:jungle_door",
+    "id": 195,
+    "data": 21
+  },
+  {
+    "name": "minecraft:jungle_door",
+    "id": 195,
+    "data": 22
+  },
+  {
+    "name": "minecraft:jungle_door",
+    "id": 195,
+    "data": 23
+  },
+  {
+    "name": "minecraft:jungle_door",
+    "id": 195,
+    "data": 24
+  },
+  {
+    "name": "minecraft:jungle_door",
+    "id": 195,
+    "data": 25
+  },
+  {
+    "name": "minecraft:jungle_door",
+    "id": 195,
+    "data": 26
+  },
+  {
+    "name": "minecraft:jungle_door",
+    "id": 195,
+    "data": 27
+  },
+  {
+    "name": "minecraft:jungle_door",
+    "id": 195,
+    "data": 28
+  },
+  {
+    "name": "minecraft:jungle_door",
+    "id": 195,
+    "data": 29
+  },
+  {
+    "name": "minecraft:jungle_door",
+    "id": 195,
+    "data": 30
+  },
+  {
+    "name": "minecraft:jungle_door",
+    "id": 195,
+    "data": 31
+  },
+  {
     "name": "minecraft:acacia_door",
     "id": 196,
     "data": 0
@@ -8500,6 +8900,86 @@
     "data": 15
   },
   {
+    "name": "minecraft:acacia_door",
+    "id": 196,
+    "data": 16
+  },
+  {
+    "name": "minecraft:acacia_door",
+    "id": 196,
+    "data": 17
+  },
+  {
+    "name": "minecraft:acacia_door",
+    "id": 196,
+    "data": 18
+  },
+  {
+    "name": "minecraft:acacia_door",
+    "id": 196,
+    "data": 19
+  },
+  {
+    "name": "minecraft:acacia_door",
+    "id": 196,
+    "data": 20
+  },
+  {
+    "name": "minecraft:acacia_door",
+    "id": 196,
+    "data": 21
+  },
+  {
+    "name": "minecraft:acacia_door",
+    "id": 196,
+    "data": 22
+  },
+  {
+    "name": "minecraft:acacia_door",
+    "id": 196,
+    "data": 23
+  },
+  {
+    "name": "minecraft:acacia_door",
+    "id": 196,
+    "data": 24
+  },
+  {
+    "name": "minecraft:acacia_door",
+    "id": 196,
+    "data": 25
+  },
+  {
+    "name": "minecraft:acacia_door",
+    "id": 196,
+    "data": 26
+  },
+  {
+    "name": "minecraft:acacia_door",
+    "id": 196,
+    "data": 27
+  },
+  {
+    "name": "minecraft:acacia_door",
+    "id": 196,
+    "data": 28
+  },
+  {
+    "name": "minecraft:acacia_door",
+    "id": 196,
+    "data": 29
+  },
+  {
+    "name": "minecraft:acacia_door",
+    "id": 196,
+    "data": 30
+  },
+  {
+    "name": "minecraft:acacia_door",
+    "id": 196,
+    "data": 31
+  },
+  {
     "name": "minecraft:dark_oak_door",
     "id": 197,
     "data": 0
@@ -8578,6 +9058,86 @@
     "name": "minecraft:dark_oak_door",
     "id": 197,
     "data": 15
+  },
+  {
+    "name": "minecraft:dark_oak_door",
+    "id": 197,
+    "data": 16
+  },
+  {
+    "name": "minecraft:dark_oak_door",
+    "id": 197,
+    "data": 17
+  },
+  {
+    "name": "minecraft:dark_oak_door",
+    "id": 197,
+    "data": 18
+  },
+  {
+    "name": "minecraft:dark_oak_door",
+    "id": 197,
+    "data": 19
+  },
+  {
+    "name": "minecraft:dark_oak_door",
+    "id": 197,
+    "data": 20
+  },
+  {
+    "name": "minecraft:dark_oak_door",
+    "id": 197,
+    "data": 21
+  },
+  {
+    "name": "minecraft:dark_oak_door",
+    "id": 197,
+    "data": 22
+  },
+  {
+    "name": "minecraft:dark_oak_door",
+    "id": 197,
+    "data": 23
+  },
+  {
+    "name": "minecraft:dark_oak_door",
+    "id": 197,
+    "data": 24
+  },
+  {
+    "name": "minecraft:dark_oak_door",
+    "id": 197,
+    "data": 25
+  },
+  {
+    "name": "minecraft:dark_oak_door",
+    "id": 197,
+    "data": 26
+  },
+  {
+    "name": "minecraft:dark_oak_door",
+    "id": 197,
+    "data": 27
+  },
+  {
+    "name": "minecraft:dark_oak_door",
+    "id": 197,
+    "data": 28
+  },
+  {
+    "name": "minecraft:dark_oak_door",
+    "id": 197,
+    "data": 29
+  },
+  {
+    "name": "minecraft:dark_oak_door",
+    "id": 197,
+    "data": 30
+  },
+  {
+    "name": "minecraft:dark_oak_door",
+    "id": 197,
+    "data": 31
   },
   {
     "name": "minecraft:grass_path",
@@ -15503,6 +16063,86 @@
     "name": "minecraft:bell",
     "id": 461,
     "data": 15
+  },
+  {
+    "name": "minecraft:bell",
+    "id": 461,
+    "data": 16
+  },
+  {
+    "name": "minecraft:bell",
+    "id": 461,
+    "data": 17
+  },
+  {
+    "name": "minecraft:bell",
+    "id": 461,
+    "data": 18
+  },
+  {
+    "name": "minecraft:bell",
+    "id": 461,
+    "data": 19
+  },
+  {
+    "name": "minecraft:bell",
+    "id": 461,
+    "data": 20
+  },
+  {
+    "name": "minecraft:bell",
+    "id": 461,
+    "data": 21
+  },
+  {
+    "name": "minecraft:bell",
+    "id": 461,
+    "data": 22
+  },
+  {
+    "name": "minecraft:bell",
+    "id": 461,
+    "data": 23
+  },
+  {
+    "name": "minecraft:bell",
+    "id": 461,
+    "data": 24
+  },
+  {
+    "name": "minecraft:bell",
+    "id": 461,
+    "data": 25
+  },
+  {
+    "name": "minecraft:bell",
+    "id": 461,
+    "data": 26
+  },
+  {
+    "name": "minecraft:bell",
+    "id": 461,
+    "data": 27
+  },
+  {
+    "name": "minecraft:bell",
+    "id": 461,
+    "data": 28
+  },
+  {
+    "name": "minecraft:bell",
+    "id": 461,
+    "data": 29
+  },
+  {
+    "name": "minecraft:bell",
+    "id": 461,
+    "data": 30
+  },
+  {
+    "name": "minecraft:bell",
+    "id": 461,
+    "data": 31
   },
   {
     "name": "minecraft:sweet_berry_bush",

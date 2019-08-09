@@ -13,11 +13,13 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class EntityHumanType extends EntityCreature implements InventoryHolder {
 
@@ -72,10 +74,12 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
     public void saveNBT() {
         super.saveNBT();
 
-        this.namedTag.putList(new ListTag<CompoundTag>("Inventory"));
         if (this.inventory != null) {
+            ListTag<CompoundTag> inventoryTag = new ListTag<>("Inventory");
+            this.namedTag.putList(inventoryTag);
+
             for (int slot = 0; slot < 9; ++slot) {
-                this.namedTag.getList("Inventory", CompoundTag.class).add(new CompoundTag()
+                inventoryTag.add(new CompoundTag()
                         .putByte("Count", 0)
                         .putShort("Damage", 0)
                         .putByte("Slot", slot)
@@ -87,13 +91,13 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
             int slotCount = Player.SURVIVAL_SLOTS + 9;
             for (int slot = 9; slot < slotCount; ++slot) {
                 Item item = this.inventory.getItem(slot - 9);
-                this.namedTag.getList("Inventory", CompoundTag.class).add(NBTIO.putItemHelper(item, slot));
+                inventoryTag.add(NBTIO.putItemHelper(item, slot));
             }
 
             for (int slot = 100; slot < 104; ++slot) {
                 Item item = this.inventory.getItem(this.inventory.getSize() + slot - 100);
                 if (item != null && item.getId() != Item.AIR) {
-                    this.namedTag.getList("Inventory", CompoundTag.class).add(NBTIO.putItemHelper(item, slot));
+                    inventoryTag.add(NBTIO.putItemHelper(item, slot));
                 }
             }
         }
@@ -124,22 +128,24 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
         }
 
         if (source.getCause() != DamageCause.VOID && source.getCause() != DamageCause.CUSTOM && source.getCause() != DamageCause.MAGIC) {
-            int points = 0;
+            int armorPoints = 0;
             int epf = 0;
             int toughness = 0;
 
             for (Item armor : inventory.getArmorContents()) {
-                points += armor.getArmorPoints();
-                epf += calculateEnchantmentReduction(armor, source);
-                toughness += armor.getToughness();
+                armorPoints += armor.getArmorPoints();
+                epf += calculateEnchantmentProtectionFactor(armor, source);
+                //toughness += armor.getToughness();
             }
 
-            float originalDamage = source.getDamage();
+            if (source.canBeReducedByArmor()) {
+                source.setDamage(-source.getFinalDamage() * armorPoints * 0.04f, DamageModifier.ARMOR);
+            }
 
-            float finalDamage = (float) (originalDamage * (1 - Math.max(points / 5f, points - originalDamage / (2 + toughness / 4f)) / 25) * (1 - /*0.75 */ epf * 0.04));
+            source.setDamage(-source.getFinalDamage() * Math.min(NukkitMath.ceilFloat(Math.min(epf, 25) * ((float) ThreadLocalRandom.current().nextInt(50, 100) / 100)), 20) * 0.04f,
+                    DamageModifier.ARMOR_ENCHANTMENTS);
 
-            source.setDamage(finalDamage - originalDamage, DamageModifier.ARMOR);
-            //source.setDamage(source.getDamage(DamageModifier.ARMOR_ENCHANTMENTS) - (originalDamage - originalDamage * (1 - epf / 25)), DamageModifier.ARMOR_ENCHANTMENTS);
+            source.setDamage(-Math.min(this.getAbsorption(), source.getFinalDamage()), DamageModifier.ABSORPTION);
         }
 
         if (super.attack(source)) {
@@ -183,18 +189,18 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
         }
     }
 
-    protected double calculateEnchantmentReduction(Item item, EntityDamageEvent source) {
+    protected double calculateEnchantmentProtectionFactor(Item item, EntityDamageEvent source) {
         if (!item.hasEnchantments()) {
             return 0;
         }
 
-        double reduction = 0;
+        double epf = 0;
 
         for (Enchantment ench : item.getEnchantments()) {
-            reduction += ench.getDamageProtection(source);
+            epf += ench.getProtectionFactor(source);
         }
 
-        return reduction;
+        return epf;
     }
 
     @Override
