@@ -18,6 +18,7 @@ import cn.nukkit.event.level.LevelLoadEvent;
 import cn.nukkit.event.server.BatchPacketsEvent;
 import cn.nukkit.event.server.PlayerDataSerializeEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
+import cn.nukkit.event.server.ServerStopEvent;
 import cn.nukkit.inventory.CraftingManager;
 import cn.nukkit.inventory.Recipe;
 import cn.nukkit.item.Item;
@@ -813,48 +814,53 @@ public class Server {
 
             this.hasStopped = true;
 
-            if (this.rcon != null) {
-                this.rcon.close();
+            ServerStopEvent serverStopEvent = new ServerStopEvent();
+            getPluginManager().callEvent(serverStopEvent);
+            if (!serverStopEvent.isCancelled()) {
+
+                if (this.rcon != null) {
+                    this.rcon.close();
+                }
+
+                for (Player player : new ArrayList<>(this.players.values())) {
+                    player.close(player.getLeaveMessage(), this.getConfig("settings.shutdown-message", "Server closed"));
+                }
+
+                this.getLogger().debug("Disabling all plugins");
+                this.pluginManager.disablePlugins();
+
+                this.getLogger().debug("Removing event handlers");
+                HandlerList.unregisterAll();
+
+                this.getLogger().debug("Stopping all tasks");
+                this.scheduler.cancelAllTasks();
+                this.scheduler.mainThreadHeartbeat(Integer.MAX_VALUE);
+
+                this.getLogger().debug("Unloading all levels");
+                for (Level level : this.levelArray) {
+                    this.unloadLevel(level, true);
+                }
+
+                this.getLogger().debug("Closing console");
+                this.consoleThread.interrupt();
+
+                this.getLogger().debug("Stopping network interfaces");
+                for (SourceInterface interfaz : this.network.getInterfaces()) {
+                    interfaz.shutdown();
+                    this.network.unregisterInterface(interfaz);
+                }
+
+                if (nameLookup != null) {
+                    nameLookup.close();
+                }
+
+                this.getLogger().debug("Disabling timings");
+                Timings.stopServer();
+                if (this.watchdog != null) {
+                    this.watchdog.kill();
+                }
+                //todo other things
             }
-
-            for (Player player : new ArrayList<>(this.players.values())) {
-                player.close(player.getLeaveMessage(), this.getConfig("settings.shutdown-message", "Server closed"));
-            }
-
-            this.getLogger().debug("Disabling all plugins");
-            this.pluginManager.disablePlugins();
-
-            this.getLogger().debug("Removing event handlers");
-            HandlerList.unregisterAll();
-
-            this.getLogger().debug("Stopping all tasks");
-            this.scheduler.cancelAllTasks();
-            this.scheduler.mainThreadHeartbeat(Integer.MAX_VALUE);
-
-            this.getLogger().debug("Unloading all levels");
-            for (Level level : this.levelArray) {
-                this.unloadLevel(level, true);
-            }
-
-            this.getLogger().debug("Closing console");
-            this.consoleThread.interrupt();
-
-            this.getLogger().debug("Stopping network interfaces");
-            for (SourceInterface interfaz : this.network.getInterfaces()) {
-                interfaz.shutdown();
-                this.network.unregisterInterface(interfaz);
-            }
-
-            if (nameLookup != null) {
-                nameLookup.close();
-            }
-
-            this.getLogger().debug("Disabling timings");
-            Timings.stopServer();
-            if (this.watchdog != null) {
-                this.watchdog.kill();
-            }
-            //todo other things
         } catch (Exception e) {
             log.fatal("Exception happened while shutting down, exiting the process", e);
             System.exit(1);
