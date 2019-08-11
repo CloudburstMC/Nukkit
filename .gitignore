@@ -32,7 +32,11 @@ hs_err_pid*
 .settings
 .settings/*
 
-# Generated files
+# Jrebel
+rebel.xml
+rebel-remote.xml
+
+# Nukkit generated files
 banned-ips.json
 banned-players.json
 nukkit.yml
@@ -52,7 +56,5 @@ resource_packs
 resource_packs/*
 creativeitems.json
 recipes.json
-
-#Nukkit data dir
 data/
 data/*
