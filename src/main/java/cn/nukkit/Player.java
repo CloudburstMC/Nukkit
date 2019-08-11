@@ -1887,13 +1887,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             File legacyDataFile = new File(server.getDataPath() + "players/" + this.username.toLowerCase() + ".dat");
             File dataFile = new File(server.getDataPath() + "players/" + this.uuid.toString() + ".dat");
             if (legacyDataFile.exists() && !dataFile.exists()) {
-                nbt = this.server.getOfflinePlayerData(this.username);
+                nbt = this.server.getOfflinePlayerData(this.username, false);
 
                 if (!legacyDataFile.delete()) {
                     log.warn("Could not delete legacy player data for {}", this.username);
                 }
             } else {
-                nbt = this.server.getOfflinePlayerData(this.uuid);
+                nbt = this.server.getOfflinePlayerData(this.uuid, true);
             }
         }
 

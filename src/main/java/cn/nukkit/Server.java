@@ -1569,16 +1569,25 @@ public class Server {
     }
 
     public CompoundTag getOfflinePlayerData(UUID uuid) {
-        return getOfflinePlayerDataInternal(uuid.toString(), true);
+        return getOfflinePlayerData(uuid, false);
+    }
+
+    public CompoundTag getOfflinePlayerData(UUID uuid, boolean create) {
+        return getOfflinePlayerDataInternal(uuid.toString(), true, create);
     }
 
     @Deprecated
     public CompoundTag getOfflinePlayerData(String name) {
-        Optional<UUID> uuid = lookupName(name);
-        return getOfflinePlayerDataInternal(uuid.map(UUID::toString).orElse(name), true);
+        return getOfflinePlayerData(name, false);
     }
 
-    private CompoundTag getOfflinePlayerDataInternal(String name, boolean runEvent) {
+    @Deprecated
+    public CompoundTag getOfflinePlayerData(String name, boolean create) {
+        Optional<UUID> uuid = lookupName(name);
+        return getOfflinePlayerDataInternal(uuid.map(UUID::toString).orElse(name), true, create);
+    }
+
+    private CompoundTag getOfflinePlayerDataInternal(String name, boolean runEvent, boolean create) {
         Preconditions.checkNotNull(name, "name");
 
         PlayerDataSerializeEvent event = new PlayerDataSerializeEvent(name, playerDataSerializer);
@@ -1606,33 +1615,35 @@ public class Server {
                 }
             }
         }
+        CompoundTag nbt = null;
+        if (create) {
+            Position spawn = this.getDefaultLevel().getSafeSpawn();
+            nbt = new CompoundTag()
+                    .putLong("firstPlayed", System.currentTimeMillis() / 1000)
+                    .putLong("lastPlayed", System.currentTimeMillis() / 1000)
+                    .putList(new ListTag<DoubleTag>("Pos")
+                            .add(new DoubleTag("0", spawn.x))
+                            .add(new DoubleTag("1", spawn.y))
+                            .add(new DoubleTag("2", spawn.z)))
+                    .putString("Level", this.getDefaultLevel().getName())
+                    .putList(new ListTag<>("Inventory"))
+                    .putCompound("Achievements", new CompoundTag())
+                    .putInt("playerGameType", this.getGamemode())
+                    .putList(new ListTag<DoubleTag>("Motion")
+                            .add(new DoubleTag("0", 0))
+                            .add(new DoubleTag("1", 0))
+                            .add(new DoubleTag("2", 0)))
+                    .putList(new ListTag<FloatTag>("Rotation")
+                            .add(new FloatTag("0", 0))
+                            .add(new FloatTag("1", 0)))
+                    .putFloat("FallDistance", 0)
+                    .putShort("Fire", 0)
+                    .putShort("Air", 300)
+                    .putBoolean("OnGround", true)
+                    .putBoolean("Invulnerable", false);
 
-        Position spawn = this.getDefaultLevel().getSafeSpawn();
-        CompoundTag nbt = new CompoundTag()
-                .putLong("firstPlayed", System.currentTimeMillis() / 1000)
-                .putLong("lastPlayed", System.currentTimeMillis() / 1000)
-                .putList(new ListTag<DoubleTag>("Pos")
-                        .add(new DoubleTag("0", spawn.x))
-                        .add(new DoubleTag("1", spawn.y))
-                        .add(new DoubleTag("2", spawn.z)))
-                .putString("Level", this.getDefaultLevel().getName())
-                .putList(new ListTag<>("Inventory"))
-                .putCompound("Achievements", new CompoundTag())
-                .putInt("playerGameType", this.getGamemode())
-                .putList(new ListTag<DoubleTag>("Motion")
-                        .add(new DoubleTag("0", 0))
-                        .add(new DoubleTag("1", 0))
-                        .add(new DoubleTag("2", 0)))
-                .putList(new ListTag<FloatTag>("Rotation")
-                        .add(new FloatTag("0", 0))
-                        .add(new FloatTag("1", 0)))
-                .putFloat("FallDistance", 0)
-                .putShort("Fire", 0)
-                .putShort("Air", 300)
-                .putBoolean("OnGround", true)
-                .putBoolean("Invulnerable", false);
-
-        this.saveOfflinePlayerData(name, nbt, true, runEvent);
+            this.saveOfflinePlayerData(name, nbt, true, runEvent);
+        }
         return nbt;
     }
 
@@ -1709,7 +1720,7 @@ public class Server {
 
             log.debug("Attempting legacy player data conversion for {}", name);
 
-            CompoundTag tag = getOfflinePlayerDataInternal(name, false);
+            CompoundTag tag = getOfflinePlayerDataInternal(name, false, false);
 
             if (tag == null || !tag.contains("UUIDLeast") || !tag.contains("UUIDMost")) {
                 // No UUID so we cannot convert. Wait until player logs in.
