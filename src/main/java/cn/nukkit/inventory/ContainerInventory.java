@@ -1,6 +1,7 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
@@ -43,6 +44,9 @@ public abstract class ContainerInventory extends BaseInventory {
             pk.z = (int) ((Vector3) holder).getZ();
         } else {
             pk.x = pk.y = pk.z = 0;
+        }
+        if (holder instanceof Entity) {
+            pk.entityId = ((Entity) holder).getId();
         }
 
         who.dataPacket(pk);
