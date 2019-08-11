@@ -123,12 +123,20 @@ public class NBTInputStream implements DataInput, AutoCloseable {
 
     @Override
     public float readFloat() throws IOException {
-        return Float.intBitsToFloat(this.readInt());
+        int i = this.stream.readInt();
+        if (endianness == ByteOrder.LITTLE_ENDIAN) {
+            i = Integer.reverseBytes(i);
+        }
+        return Float.intBitsToFloat(i);
     }
 
     @Override
     public double readDouble() throws IOException {
-        return Double.longBitsToDouble(this.readLong());
+        long l = this.stream.readLong();
+        if (endianness == ByteOrder.LITTLE_ENDIAN) {
+            l = Long.reverseBytes(l);
+        }
+        return Double.longBitsToDouble(l);
     }
 
     @Override
