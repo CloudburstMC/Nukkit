@@ -43,7 +43,7 @@ public class OfflinePlayer implements IPlayer {
 
 
         if (uuid != null) {
-            this.namedTag = this.server.getOfflinePlayerData(uuid);
+            this.namedTag = this.server.getOfflinePlayerData(uuid, false);
             if (name == null) {
                 name = getName();
             }
