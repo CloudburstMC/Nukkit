@@ -56,3 +56,4 @@ recipes.json
 #Nukkit data dir
 data/
 data/*
+/src/main/resources/rebel.xml

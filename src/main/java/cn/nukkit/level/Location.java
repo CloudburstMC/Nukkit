@@ -73,6 +73,16 @@ public class Location extends Position {
         return this.pitch;
     }
 
+    public Location setYaw(double yaw) {
+        this.yaw = yaw;
+        return this;
+    }
+
+    public Location setPitch(double pitch) {
+        this.pitch = pitch;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "Location (level=" + (this.isValid() ? this.getLevel().getName() : "null") + ", x=" + this.x + ", y=" + this.y + ", z=" + this.z + ", yaw=" + this.yaw + ", pitch=" + this.pitch + ")";

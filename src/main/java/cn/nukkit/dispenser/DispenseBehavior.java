@@ -2,12 +2,13 @@ package cn.nukkit.dispenser;
 
 import cn.nukkit.block.BlockDispenser;
 import cn.nukkit.item.Item;
+import cn.nukkit.math.BlockFace;
 
 /**
  * @author CreeperFace
  */
 public interface DispenseBehavior {
 
-    void dispense(BlockDispenser block, Item item);
+    Item dispense(BlockDispenser block, BlockFace face, Item item);
 
 }

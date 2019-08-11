@@ -51,9 +51,6 @@ public class EntityArrow extends EntityProjectile {
         return 0.01f;
     }
 
-    protected float gravity = 0.05f;
-    protected float drag = 0.01f;
-
     public EntityArrow(FullChunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }

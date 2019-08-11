@@ -42,6 +42,7 @@ public abstract class BlockEntity extends Position {
     public static final String JUKEBOX = "Jukebox";
     public static final String SHULKER_BOX = "ShulkerBox";
     public static final String BANNER = "Banner";
+    public static final String DISPENSER = "Dispenser";
 
 
     public static long count = 1;
@@ -210,7 +211,7 @@ public abstract class BlockEntity extends Position {
     }
 
     public static CompoundTag getDefaultCompound(Vector3 pos, String id) {
-        return new CompoundTag("")
+        return new CompoundTag()
                 .putString("id", id)
                 .putInt("x", pos.getFloorX())
                 .putInt("y", pos.getFloorY())

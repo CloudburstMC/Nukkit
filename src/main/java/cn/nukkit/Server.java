@@ -4,6 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.*;
 import cn.nukkit.command.*;
 import cn.nukkit.console.NukkitConsole;
+import cn.nukkit.dispenser.DispenseBehaviorRegister;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
@@ -453,6 +454,7 @@ public class Server {
         Effect.init();
         Potion.init();
         Attribute.init();
+        DispenseBehaviorRegister.init();
         GlobalBlockPalette.getOrCreateRuntimeId(0, 0); //Force it to load
 
         // Convert legacy data before plugins get the chance to mess with it.
@@ -2315,6 +2317,7 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.SHULKER_BOX, BlockEntityShulkerBox.class);
         BlockEntity.registerBlockEntity(BlockEntity.BANNER, BlockEntityBanner.class);
         BlockEntity.registerBlockEntity(BlockEntity.MUSIC, BlockEntityMusic.class);
+        BlockEntity.registerBlockEntity(BlockEntity.DISPENSER, BlockEntityDispenser.class);
     }
 
     public boolean isNetherAllowed() {

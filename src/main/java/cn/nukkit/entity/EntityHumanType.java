@@ -123,7 +123,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
 
     @Override
     public boolean attack(EntityDamageEvent source) {
-        if (!this.isAlive()) {
+        if (!this.isAlive() || closed) {
             return false;
         }
 

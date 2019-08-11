@@ -15,7 +15,7 @@ public enum InventoryType {
     BREWING_STAND(5, "Brewing", 4), //1 INPUT, 3 POTION, 1 fuel
     ANVIL(3, "Anvil", 5), //2 INPUT, 1 OUTPUT
     ENCHANT_TABLE(2, "Enchant", 3), //1 INPUT/OUTPUT, 1 LAPIS
-    DISPENSER(0, "Dispenser", 6), //9 CONTAINER
+    DISPENSER(9, "Dispenser", 6), //9 CONTAINER
     DROPPER(9, "Dropper", 7), //9 CONTAINER
     HOPPER(5, "Hopper", 8), //5 CONTAINER
     CURSOR(1, "Cursor", -1),

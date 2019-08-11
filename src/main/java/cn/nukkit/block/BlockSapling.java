@@ -10,6 +10,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
+
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -74,7 +75,7 @@ public class BlockSapling extends BlockFlowable {
 
     public boolean onActivate(Item item, Player player) {
         if (item.getId() == Item.DYE && item.getDamage() == 0x0F) { //BoneMeal
-            if ((player.gamemode & 0x01) == 0) {
+            if (player != null && (player.gamemode & 0x01) == 0) {
                 item.count--;
             }
 
