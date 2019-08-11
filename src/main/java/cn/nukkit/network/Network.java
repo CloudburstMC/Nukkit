@@ -9,6 +9,9 @@ import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.Utils;
 import cn.nukkit.utils.Zlib;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.buffer.Unpooled;
+import lombok.extern.log4j.Log4j2;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -21,6 +24,7 @@ import java.util.Set;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public class Network {
 
     public static final byte CHANNEL_NONE = 0;
@@ -85,7 +89,7 @@ public class Network {
 
                 interfaz.emergencyShutdown();
                 this.unregisterInterface(interfaz);
-                this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.server.networkError", new String[]{interfaz.getClass().getName(), Utils.getExceptionMessage(e)}));
+                log.fatal(this.server.getLanguage().translateString("nukkit.server.networkError", new String[]{interfaz.getClass().getName(), Utils.getExceptionMessage(e)}));
             }
         }
     }
@@ -164,7 +168,15 @@ public class Network {
                 if ((pk = this.getPacket(buf[0])) != null) {
                     pk.setBuffer(buf, 1);
 
-                    pk.decode();
+                    try {
+                        pk.decode();
+                    } catch (Exception e) {
+                        log.warn("Unable to decode {} from {}", pk.getClass().getSimpleName(), player.getName());
+                        if (log.isTraceEnabled()) {
+                            log.trace("Dumping Packet\n{}", ByteBufUtil.prettyHexDump(Unpooled.wrappedBuffer(packet.payload)));
+                        }
+                        throw e;
+                    }
 
                     packets.add(pk);
                 }
@@ -173,9 +185,8 @@ public class Network {
             processPackets(player, packets);
 
         } catch (Exception e) {
-            if (Nukkit.DEBUG > 0) {
-                this.server.getLogger().debug("BatchPacket 0x" + Binary.bytesToHexString(packet.payload));
-                this.server.getLogger().logException(e);
+            if (log.isDebugEnabled()) {
+                log.debug("Error whilst decoding batch packet", e);
             }
         }
     }
