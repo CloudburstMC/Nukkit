@@ -3,7 +3,7 @@ package cn.nukkit.network.query;
 import cn.nukkit.Server;
 import cn.nukkit.event.server.QueryRegenerateEvent;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.buffer.ByteBufAllocator;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -83,7 +83,7 @@ public class QueryHandler {
 
         switch (packetId) {
             case HANDSHAKE:
-                ByteBuf reply = PooledByteBufAllocator.DEFAULT.ioBuffer(10); // 1 + 4 + 4 + 1
+                ByteBuf reply = ByteBufAllocator.DEFAULT.ioBuffer(10); // 1 + 4 + 4 + 1
                 reply.writeByte(HANDSHAKE);
                 reply.writeInt(sessionId);
                 reply.writeBytes(getTokenString(this.token, address.getAddress()));
@@ -103,7 +103,7 @@ public class QueryHandler {
                 if (this.timeout < System.currentTimeMillis()) {
                     this.regenerateInfo();
                 }
-                reply = PooledByteBufAllocator.DEFAULT.ioBuffer(64);
+                reply = ByteBufAllocator.DEFAULT.ioBuffer(64);
                 reply.writeByte(STATISTICS);
                 reply.writeInt(sessionId);
                 if (packet.readableBytes() == 8) {

@@ -12,7 +12,7 @@ import com.google.common.base.Strings;
 import com.nukkitx.network.raknet.*;
 import com.nukkitx.network.util.DisconnectReason;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import lombok.RequiredArgsConstructor;
@@ -177,7 +177,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
             return null;
         }
 
-        ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.ioBuffer(1 + buffer.length);
+        ByteBuf byteBuf = ByteBufAllocator.DEFAULT.ioBuffer(1 + buffer.length);
         byteBuf.writeByte(0xfe);
         byteBuf.writeBytes(buffer);
         byteBuf.readerIndex(0);
