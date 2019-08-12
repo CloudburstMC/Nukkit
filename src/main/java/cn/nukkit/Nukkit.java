@@ -68,7 +68,7 @@ public class Nukkit {
 
         // Netty logger for debug info
         InternalLoggerFactory.setDefaultFactory(Log4J2LoggerFactory.INSTANCE);
-        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.ADVANCED);
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
 
         // Define args
         OptionParser parser = new OptionParser();
