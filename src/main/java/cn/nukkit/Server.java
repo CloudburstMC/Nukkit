@@ -1614,8 +1614,6 @@ public class Server {
             dataStream = event.getSerializer().read(name, event.getUuid().orElse(null));
             if (dataStream.isPresent()) {
                 return NBTIO.readCompressed(dataStream.get());
-            } else {
-                log.warn(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
             }
         } catch (IOException e) {
             log.warn(this.getLanguage().translateString("nukkit.data.playerCorrupted", name));
@@ -1631,6 +1629,7 @@ public class Server {
         }
         CompoundTag nbt = null;
         if (create) {
+            log.info(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
             Position spawn = this.getDefaultLevel().getSafeSpawn();
             nbt = new CompoundTag()
                     .putLong("firstPlayed", System.currentTimeMillis() / 1000)
