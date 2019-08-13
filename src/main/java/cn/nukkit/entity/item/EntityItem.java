@@ -151,8 +151,7 @@ public class EntityItem extends Entity {
                         if (newAmount > this.getItem().getMaxStackSize()) {
                             continue;
                         }
-                        closeItem.setCount(0);
-                        entity.kill();
+                        entity.close();
                         this.getItem().setCount(newAmount);
                         EntityEventPacket packet = new EntityEventPacket();
                         packet.eid = getId();
