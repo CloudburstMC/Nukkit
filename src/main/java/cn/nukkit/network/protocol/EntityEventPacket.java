@@ -36,6 +36,8 @@ public class EntityEventPacket extends DataPacket {
 
     public static final byte UNKNOWN1 = 66;
 
+    public static final byte MERGE_ITEMS = 69;
+
     @Override
     public byte pid() {
         return NETWORK_ID;
