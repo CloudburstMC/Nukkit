@@ -79,14 +79,14 @@ public class ItemFirework extends Item {
         if (player.getInventory().getChestplate() instanceof ItemElytra && player.isGliding()) {
             this.spawnFirework(player.getLevel(), player);
 
+            if (!player.isCreative()) {
+                this.count--;
+            }
+
             player.setMotion(new Vector3(
                     -Math.sin(Math.toRadians(player.yaw)) * Math.cos(Math.toRadians(player.pitch)) * 2,
                     -Math.sin(Math.toRadians(player.pitch)) * 2,
                     Math.cos(Math.toRadians(player.yaw)) * Math.cos(Math.toRadians(player.pitch)) * 2));
-
-            if (!player.isCreative()) {
-                player.getInventory().decreaseCount(player.getInventory().getHeldItemIndex());
-            }
 
             return true;
         }
