@@ -94,7 +94,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
     public void close(Player player, String reason) {
         RakNetServerSession session = this.raknet.getSession(player.getSocketAddress());
         if (session != null) {
-            session.disconnect();
+            session.close();
         }
     }
 
