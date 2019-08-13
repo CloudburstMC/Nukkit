@@ -66,12 +66,11 @@ public class QueryHandler {
     }
 
     public static byte[] getTokenString(byte[] token, InetAddress address) {
-
         try {
             MessageDigest digest = MessageDigest.getInstance("MD5");
             digest.update(address.toString().getBytes(StandardCharsets.UTF_8));
             digest.update(token);
-            return Arrays.copyOfRange(digest.digest(), 7, 4);
+            return Arrays.copyOf(digest.digest(), 4);
         } catch (NoSuchAlgorithmException e) {
             return ByteBuffer.allocate(4).putInt(ThreadLocalRandom.current().nextInt()).array();
         }
