@@ -175,8 +175,10 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
             if (Rail.isRailBlock(block)) {
                 processMovement(dx, dy, dz, (BlockRail) block);
                 if (block instanceof BlockRailActivator) {
-                    // Activate the minecart/TNT
-                    activate(dx, dy, dz, (block.getDamage() & 0x8) != 0);
+                    if (((BlockRailActivator) block).isActive()){
+                        // Activate the minecart/TNT
+                        activate(dx, dy, dz, (block.getDamage() & 0x8) != 0);
+                    }
                 }
             } else {
                 setFalling();
