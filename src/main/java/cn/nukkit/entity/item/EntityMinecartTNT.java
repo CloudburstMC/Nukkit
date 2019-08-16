@@ -71,8 +71,6 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
                 }
                 kill();
             }
-
-            Server.getInstance().getLogger().info("Debug:" + fuse);
         }
 
         this.timing.stopTiming();
