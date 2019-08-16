@@ -3,11 +3,12 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.utils.Faceable;
 
 /**
  * @author CreeperFace
  */
-public class BlockPistonHead extends BlockTransparentMeta {
+public class BlockPistonHead extends BlockTransparentMeta implements Faceable {
 
     public BlockPistonHead() {
         this(0);
@@ -45,16 +46,19 @@ public class BlockPistonHead extends BlockTransparentMeta {
     @Override
     public boolean onBreak(Item item) {
         this.level.setBlock(this, new BlockAir(), true, true);
-        Block piston = getSide(getFacing().getOpposite());
+        Block piston = getSide(getBlockFace().getOpposite());
 
-        if (piston instanceof BlockPistonBase && ((BlockPistonBase) piston).getFacing() == this.getFacing()) {
+        if (piston instanceof BlockPistonBase && ((BlockPistonBase) piston).getBlockFace() == this.getBlockFace()) {
             piston.onBreak(item);
         }
         return true;
     }
 
-    public BlockFace getFacing() {
-        return BlockFace.fromIndex(this.getDamage()).getOpposite();
+    @Override
+    public BlockFace getBlockFace() {
+        BlockFace face = BlockFace.fromIndex(this.getDamage());
+
+        return face.getHorizontalIndex() >= 0 ? face.getOpposite() : face;
     }
 
     @Override

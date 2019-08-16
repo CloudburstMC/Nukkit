@@ -77,7 +77,12 @@ public abstract class BlockEntity extends Position {
         this.x = this.namedTag.getInt("x");
         this.y = this.namedTag.getInt("y");
         this.z = this.namedTag.getInt("z");
-        this.movable = this.namedTag.getBoolean("isMovable");
+
+        if (namedTag.contains("isMovable")) {
+            this.movable = this.namedTag.getBoolean("isMovable");
+        } else {
+            this.movable = true;
+        }
 
         this.initBlockEntity();
 

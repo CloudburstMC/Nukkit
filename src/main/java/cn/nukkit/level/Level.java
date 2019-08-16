@@ -2105,6 +2105,7 @@ public class Level implements ChunkManager, Metadatable {
             return null;
         }
 
+        MainLogger.getLogger().info("place: " + block + "  loc: " + block.getLocationHash());
         if (player != null) {
             if (!player.isCreative()) {
                 item.setCount(item.getCount() - 1);

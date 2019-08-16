@@ -5,6 +5,8 @@ import cn.nukkit.utils.BinaryStream;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,12 +14,16 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GlobalBlockPalette {
     private static final Int2IntArrayMap legacyToRuntimeId = new Int2IntArrayMap();
     private static final Int2IntArrayMap runtimeIdToLegacy = new Int2IntArrayMap();
+    private static final Int2ObjectMap<String> legacyIdToString = new Int2ObjectOpenHashMap<>();
+    private static final Map<String, Integer> stringToLegacyId = new HashMap<>();
     private static final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
     private static final byte[] compiledPalette;
 
@@ -40,7 +46,7 @@ public class GlobalBlockPalette {
         table.putUnsignedVarInt(entries.size());
 
         for (TableEntry entry : entries) {
-            registerMapping((entry.id << 4) | entry.data);
+            registerMapping((entry.id << 4) | entry.data, entry.name);
             table.putString(entry.name);
             table.putLShort(entry.data);
             table.putLShort(entry.id);
@@ -62,9 +68,15 @@ public class GlobalBlockPalette {
         return runtimeId;
     }
 
-    private static int registerMapping(int legacyId) {
+    public static String getName(int id, int meta) {
+        return legacyIdToString.get((id << 4) | meta);
+    }
+
+    private static int registerMapping(int legacyId, String name) {
         int runtimeId = runtimeIdAllocator.getAndIncrement();
         runtimeIdToLegacy.put(runtimeId, legacyId);
+        legacyIdToString.put(legacyId, name);
+        stringToLegacyId.put(name, legacyId);
         legacyToRuntimeId.put(legacyId, runtimeId);
         return runtimeId;
     }

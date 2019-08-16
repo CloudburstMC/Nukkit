@@ -12,14 +12,23 @@ import java.util.Map.Entry;
 import java.util.StringJoiner;
 
 public class CompoundTag extends Tag implements Cloneable {
-    private final Map<String, Tag> tags = new HashMap<>();
+    private final Map<String, Tag> tags;
 
     public CompoundTag() {
-        super("");
+        this("");
     }
 
     public CompoundTag(String name) {
+        this(name, new HashMap<>());
+    }
+
+    public CompoundTag(Map<String, Tag> tags) {
+        this("", tags);
+    }
+
+    public CompoundTag(String name, Map<String, Tag> tags) {
         super(name);
+        this.tags = tags;
     }
 
     @Override

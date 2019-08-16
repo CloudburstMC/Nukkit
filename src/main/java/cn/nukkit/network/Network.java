@@ -5,6 +5,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.utils.BinaryStream;
+import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
 import cn.nukkit.utils.Zlib;
 import io.netty.buffer.ByteBufUtil;
@@ -179,9 +180,7 @@ public class Network {
             processPackets(player, packets);
 
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Error whilst decoding batch packet", e);
-            }
+            MainLogger.getLogger().error("Error whilst decoding batch packet", e);
         }
     }
 
