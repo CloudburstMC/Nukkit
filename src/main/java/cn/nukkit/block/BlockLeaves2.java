@@ -1,8 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemApple;
 import cn.nukkit.item.ItemBlock;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created on 2015/12/1 by xtypr.
@@ -20,10 +21,10 @@ public class BlockLeaves2 extends BlockLeaves {
 
     public String getName() {
         String[] names = new String[]{
-                "Oak Leaves",
-                "Spruce Leaves",
-                "Birch Leaves",
-                "Jungle Leaves"
+                "Acacia Leaves",
+                "Dark Oak Leaves",
+                "",
+                ""
         };
         return names[this.getDamage() & 0x01];
     }
@@ -40,15 +41,21 @@ public class BlockLeaves2 extends BlockLeaves {
                     toItem()
             };
         } else {
-            if ((int) ((Math.random()) * 200) == 0 && this.getDamage() == DARK_OAK) {
+            if (ThreadLocalRandom.current().nextInt(200) == 0 && (this.getDamage() & 0x03) == DARK_OAK) {
                 return new Item[]{
-                        new ItemApple()
+                        Item.get(Item.APPLE)
                 };
             }
-            if ((int) ((Math.random()) * 20) == 0) {
-                return new Item[]{
-                        new ItemBlock(new BlockSapling(), this.getDamage() & 0x03, 1)
-                };
+            if (ThreadLocalRandom.current().nextInt(20) == 0) {
+                if (ThreadLocalRandom.current().nextBoolean()) {
+                    return new Item[]{
+                            Item.get(Item.STICK, 0, ThreadLocalRandom.current().nextInt(1, 2))
+                    };
+                } else {
+                    return new Item[]{
+                            new ItemBlock(get(SAPLING), (this.getDamage() & 0x03) + 4)
+                    };
+                }
             }
         }
         return new Item[0];
