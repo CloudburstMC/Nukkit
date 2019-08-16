@@ -136,7 +136,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
     @Override
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
         boolean interact = super.onInteract(player, item, clickedPos);
-        if (item.getId() == Item.FLINT_AND_STEEL) {
+        if (item.getId() == Item.FLINT_AND_STEEL || item.getId() == Item.FIRE_CHARGE) {
             level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_IGNITE);
             this.fuse = 79;
             return true;
