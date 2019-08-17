@@ -90,7 +90,7 @@ public class BlockLeaves extends BlockTransparentMeta {
                     toItem()
             };
         } else {
-            if (ThreadLocalRandom.current().nextInt(200) == 0 && (this.getDamage() & 0x03) == OAK) {
+            if (this.canDropApple() && ThreadLocalRandom.current().nextInt(200) == 0) {
                 return new Item[]{
                         Item.get(Item.APPLE)
                 };
@@ -102,7 +102,7 @@ public class BlockLeaves extends BlockTransparentMeta {
                     };
                 } else if ((this.getDamage() & 0x03) != JUNGLE || ThreadLocalRandom.current().nextInt(20) == 0) {
                     return new Item[]{
-                            new ItemBlock(get(SAPLING), this.getDamage() & 0x03)
+                            this.getSapling()
                     };
                 }
             }
@@ -210,5 +210,13 @@ public class BlockLeaves extends BlockTransparentMeta {
     @Override
     public boolean canSilkTouch() {
         return true;
+    }
+
+    protected boolean canDropApple() {
+        return (this.getDamage() & 0x03) == OAK;
+    }
+
+    protected Item getSapling() {
+        return new ItemBlock(get(SAPLING), this.getDamage() & 0x03);
     }
 }
