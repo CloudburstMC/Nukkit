@@ -10,6 +10,7 @@ import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
@@ -129,7 +130,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         }
 
         if (isPowered && !isExtended()) {
-            if ((new BlocksCalculator(true)).canMove()) {
+            if (new BlocksCalculator(true).canMove()) {
                 if (!this.doMove(true)) {
                     return false;
                 }
@@ -164,7 +165,17 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         BlockFace face = getBlockFace();
 
         for (BlockFace side : BlockFace.values()) {
-            if (side != face && this.level.isSidePowered(this.getLocation().getSide(side), side)) {
+            if (side == face) {
+                continue;
+            }
+
+            Block b = this.getSide(side);
+
+            if (b.getId() == Block.REDSTONE_WIRE && b.getDamage() > 0) {
+                return true;
+            }
+
+            if (this.level.isSidePowered(b, side)) {
                 return true;
             }
         }
@@ -191,7 +202,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         if (!calculator.canMove()) {
             return false;
         } else {
-            List<Vector3> attached = Collections.emptyList();
+            List<BlockVector3> attached = Collections.emptyList();
 
             if (this.sticky || extending) {
                 List<Block> destroyBlocks = calculator.getBlocksToDestroy();
@@ -201,7 +212,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                 }
 
                 List<Block> newBlocks = calculator.getBlocksToMove();
-                attached = newBlocks.stream().map(b -> b.add(0)).collect(Collectors.toList());
+                attached = newBlocks.stream().map(Vector3::asBlockVector3).collect(Collectors.toList());
 
                 BlockFace side = extending ? direction : direction.getOpposite();
 
@@ -228,7 +239,6 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                         blockEntity.saveNBT();
 
                         CompoundTag t = new CompoundTag(blockEntity.namedTag.getTags());
-                        t.print(System.out);
 
                         nbt.putCompound("movingEntity", t);
                         blockEntity.close();

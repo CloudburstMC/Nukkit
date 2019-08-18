@@ -1,6 +1,5 @@
 package cn.nukkit.entity.item;
 
-import cn.nukkit.Server;
 import cn.nukkit.block.BlockTNT;
 import cn.nukkit.entity.EntityExplosive;
 import cn.nukkit.entity.data.IntEntityData;
@@ -53,7 +52,6 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
     public boolean onUpdate(int currentTick) {
         this.timing.startTiming();
 
-        // Todo: Check why the TNT doesn't want to tick
         if (activated || fuse < 80) {
             int tickDiff = currentTick - lastUpdate;
 
@@ -71,8 +69,6 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
                 }
                 kill();
             }
-
-            Server.getInstance().getLogger().info("Debug:" + fuse);
         }
 
         this.timing.stopTiming();

@@ -241,17 +241,17 @@ public class BlockRedstoneWire extends BlockFlowable {
             } else if (side == BlockFace.UP) {
                 return power;
             } else {
-                EnumSet<BlockFace> enumset = EnumSet.noneOf(BlockFace.class);
+                EnumSet<BlockFace> faces = EnumSet.noneOf(BlockFace.class);
 
                 for (BlockFace face : Plane.HORIZONTAL) {
                     if (this.isPowerSourceAt(face)) {
-                        enumset.add(face);
+                        faces.add(face);
                     }
                 }
 
-                if (side.getAxis().isHorizontal() && enumset.isEmpty()) {
+                if (side.getAxis().isHorizontal() && faces.isEmpty()) {
                     return power;
-                } else if (enumset.contains(side) && !enumset.contains(side.rotateYCCW()) && !enumset.contains(side.rotateY())) {
+                } else if (faces.contains(side) && !faces.contains(side.rotateYCCW()) && !faces.contains(side.rotateY())) {
                     return power;
                 } else {
                     return 0;
@@ -283,6 +283,9 @@ public class BlockRedstoneWire extends BlockFlowable {
         } else if (BlockRedstoneDiode.isDiode(block)) {
             BlockFace face = ((BlockRedstoneDiode) block).getFacing();
             return face == side || face.getOpposite() == side;
+        } else if (block instanceof BlockPistonBase) {
+//            return ((BlockPistonBase) block).getBlockFace() != side.getOpposite();
+            return true;
         } else {
             return block.isPowerSource() && side != null;
         }

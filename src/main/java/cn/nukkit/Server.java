@@ -744,8 +744,11 @@ public class Server {
         if (!this.isPrimaryThread()) {
             getLogger().warning("Command Dispatched Async: " + commandLine);
             getLogger().warning("Please notify author of plugin causing this execution to fix this bug!", new Throwable());
-            // TODO: We should sync the command to the main thread too!
+
+            this.scheduler.scheduleTask(null, () -> dispatchCommand(sender, commandLine));
+            return true;
         }
+
         if (sender == null) {
             throw new ServerException("CommandSender is not valid");
         }

@@ -2105,7 +2105,6 @@ public class Level implements ChunkManager, Metadatable {
             return null;
         }
 
-        MainLogger.getLogger().info("place: " + block + "  loc: " + block.getLocationHash());
         if (player != null) {
             if (!player.isCreative()) {
                 item.setCount(item.getCount() - 1);
@@ -2227,10 +2226,14 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public BlockEntity getBlockEntity(Vector3 pos) {
-        FullChunk chunk = this.getChunk((int) pos.x >> 4, (int) pos.z >> 4, false);
+        return getBlockEntity(pos.asBlockVector3());
+    }
+
+    public BlockEntity getBlockEntity(BlockVector3 pos) {
+        FullChunk chunk = this.getChunk(pos.x >> 4, pos.z >> 4, false);
 
         if (chunk != null) {
-            return chunk.getTile((int) pos.x & 0x0f, (int) pos.y & 0xff, (int) pos.z & 0x0f);
+            return chunk.getTile(pos.x & 0x0f, pos.y & 0xff, pos.z & 0x0f);
         }
 
         return null;
@@ -3345,7 +3348,15 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public int getRedstonePower(Vector3 pos, BlockFace face) {
-        Block block = this.getBlock(pos);
+        Block block;
+
+        if (pos instanceof Block) {
+            block = (Block) pos;
+            pos = pos.add(0);
+        } else {
+            block = this.getBlock(pos);
+        }
+
         return block.isNormalBlock() ? this.getStrongPower(pos) : block.getWeakPower(face);
     }
 

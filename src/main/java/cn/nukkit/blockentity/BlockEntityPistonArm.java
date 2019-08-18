@@ -3,9 +3,10 @@ package cn.nukkit.blockentity;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.BlockVector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.IntTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -28,7 +29,7 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
     public boolean sticky;
     public int state;
     public int newState = 1;
-    public List<Vector3> attachedBlocks;
+    public List<BlockVector3> attachedBlocks;
     public boolean powered;
 
     public BlockEntityPistonArm(FullChunk chunk, CompoundTag nbt) {
@@ -66,7 +67,7 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
             ListTag blocks = namedTag.getList("AttachedBlocks", IntTag.class);
             if (blocks != null && blocks.size() > 0) {
                 for (int i = 0; i < blocks.size(); i += 3) {
-                    this.attachedBlocks.add(new Vector3(
+                    this.attachedBlocks.add(new BlockVector3(
                             ((IntTag) blocks.get(i)).data,
                             ((IntTag) blocks.get(i + 1)).data,
                             ((IntTag) blocks.get(i + 1)).data
@@ -92,7 +93,7 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
 //        }
 
         BlockFace pushDir = this.extending ? facing : facing.getOpposite();
-        for (Vector3 pos : this.attachedBlocks) {
+        for (BlockVector3 pos : this.attachedBlocks) {
             BlockEntity blockEntity = this.level.getBlockEntity(pos.getSide(pushDir));
 
             if (blockEntity instanceof BlockEntityMovingBlock) {
@@ -101,7 +102,7 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
         }
     }
 
-    public void move(boolean extending, List<Vector3> attachedBlocks) {
+    public void move(boolean extending, List<BlockVector3> attachedBlocks) {
         this.extending = extending;
         this.lastProgress = this.progress = extending ? 0 : 1;
         this.state = this.newState = extending ? 1 : 3;
@@ -133,7 +134,7 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
 
             BlockFace pushDir = this.extending ? facing : facing.getOpposite();
 
-            for (Vector3 pos : this.attachedBlocks) {
+            for (BlockVector3 pos : this.attachedBlocks) {
                 BlockEntity movingBlock = this.level.getBlockEntity(pos.getSide(pushDir));
 
                 if (movingBlock instanceof BlockEntityMovingBlock) {
@@ -150,6 +151,8 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
                         blockEntity.putInt("z", movingBlock.getFloorZ());
                         BlockEntity.createBlockEntity(blockEntity.getString("id"), this.level.getChunk(movingBlock.getChunkX(), movingBlock.getChunkZ()), blockEntity);
                     }
+
+                    moved.onUpdate(Level.BLOCK_UPDATE_NORMAL);
                 }
             }
 
@@ -202,10 +205,10 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
 
     private ListTag<IntTag> getAttachedBlocks() {
         ListTag<IntTag> attachedBlocks = new ListTag<>("AttachedBlocks");
-        for (Vector3 block : this.attachedBlocks) {
-            attachedBlocks.add(new IntTag("", block.getFloorX()));
-            attachedBlocks.add(new IntTag("", block.getFloorY()));
-            attachedBlocks.add(new IntTag("", block.getFloorZ()));
+        for (BlockVector3 block : this.attachedBlocks) {
+            attachedBlocks.add(new IntTag("", block.x));
+            attachedBlocks.add(new IntTag("", block.y));
+            attachedBlocks.add(new IntTag("", block.z));
         }
 
         return attachedBlocks;

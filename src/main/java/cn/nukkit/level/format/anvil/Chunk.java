@@ -275,7 +275,7 @@ public class Chunk extends BaseChunk {
             if (section instanceof EmptyChunkSection) {
                 continue;
             }
-            CompoundTag s = new CompoundTag(null);
+            CompoundTag s = new CompoundTag();
             s.putByte("Y", section.getY());
             s.putByteArray("Blocks", section.getIdArray());
             s.putByteArray("Data", section.getDataArray());
@@ -358,7 +358,7 @@ public class Chunk extends BaseChunk {
             if (section instanceof EmptyChunkSection) {
                 continue;
             }
-            CompoundTag s = new CompoundTag(null);
+            CompoundTag s = new CompoundTag();
             s.putByte("Y", (section.getY()));
             s.putByteArray("Blocks", section.getIdArray());
             s.putByteArray("Data", section.getDataArray());
