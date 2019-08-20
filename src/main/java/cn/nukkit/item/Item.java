@@ -431,7 +431,7 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
 
         id = id & 0xFFFF;
-        if (b.length != 1) meta = Integer.valueOf(b[1]) & 0xFFFF;
+        if (b.length != 1) meta = Integer.valueOf(b[1].substring(0, b[1].indexOf(")"))) & 0xFFFF; //hacky but well
 
         return get(id, meta);
     }
