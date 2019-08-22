@@ -17,7 +17,7 @@ public class ItemSeedsWheat extends Item {
     }
 
     public ItemSeedsWheat(Integer meta, int count) {
-        super(WHEAT_SEEDS, 0, count, "Wheat Seeds");
+        super(WHEAT_SEEDS, 0, count, "Seeds");
         this.block = new BlockWheat();
     }
 }

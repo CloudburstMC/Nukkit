@@ -15,7 +15,7 @@ public class ItemAxeGold extends ItemTool {
     }
 
     public ItemAxeGold(Integer meta, int count) {
-        super(GOLD_AXE, meta, count, "Gold Axe");
+        super(GOLD_AXE, meta, count, "Golden Axe");
     }
 
     @Override

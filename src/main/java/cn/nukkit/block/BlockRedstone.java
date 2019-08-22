@@ -41,7 +41,7 @@ public class BlockRedstone extends BlockSolidMeta {
 
     @Override
     public String getName() {
-        return "Redstone Block";
+        return "Block of Redstone";
     }
 
     //TODO: redstone

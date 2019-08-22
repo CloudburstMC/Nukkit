@@ -17,7 +17,7 @@ public class ItemSugarcane extends Item {
     }
 
     public ItemSugarcane(Integer meta, int count) {
-        super(SUGARCANE, 0, count, "Sugar Cane");
+        super(SUGARCANE, 0, count, "Sugar Canes");
         this.block = new BlockSugarcane();
     }
 }
