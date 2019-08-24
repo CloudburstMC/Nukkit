@@ -15,6 +15,7 @@ import cn.nukkit.level.generator.populator.impl.PopulatorOre;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
+
 import java.util.*;
 
 public class Nether extends Generator {
@@ -81,8 +82,7 @@ public class Nether extends Generator {
         this.localSeed1 = this.random.nextLong();
         this.localSeed2 = this.random.nextLong();
 
-        PopulatorOre ores = new PopulatorOre(Block.NETHERRACK);
-        ores.setOreTypes(new OreType[]{
+        PopulatorOre ores = new PopulatorOre(Block.NETHERRACK, new OreType[]{
                 new OreType(new BlockOreQuartz(), 20, 16, 0, 128),
                 new OreType(new BlockSoulSand(), 5, 64, 0, 128),
                 new OreType(new BlockGravel(), 5, 64, 0, 128),
@@ -100,8 +100,7 @@ public class Nether extends Generator {
         lava.setRandomAmount(2);
         this.populators.add(lava);
         this.populators.add(new PopulatorGlowStone());
-        PopulatorOre ore = new PopulatorOre(Block.NETHERRACK);
-        ore.setOreTypes(new OreType[]{
+        PopulatorOre ore = new PopulatorOre(Block.NETHERRACK, new OreType[]{
                 new OreType(new BlockOreQuartz(), 40, 16, 0, 128, NETHERRACK),
                 new OreType(new BlockSoulSand(), 1, 64, 30, 35, NETHERRACK),
                 new OreType(new BlockLava(), 32, 1, 0, 32, NETHERRACK),
