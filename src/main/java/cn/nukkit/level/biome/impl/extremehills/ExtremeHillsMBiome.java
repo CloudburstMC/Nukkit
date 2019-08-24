@@ -33,23 +33,32 @@ public class ExtremeHillsMBiome extends ExtremeHillsPlusBiome {
 
     @Override
     public int getSurfaceBlock(int y) {
-        return isGravel ? GRAVEL : super.getSurfaceBlock(y);
+        return this.getSurfaceBlock(0, y, 0);
+    }
+
+    @Override
+    public int getSurfaceBlock(int x, int y, int z) {
+        return gravelNoise.noise2D(x, z, true) < -0.75f ? GRAVEL : super.getSurfaceBlock(x, y, z);
     }
 
     @Override
     public int getSurfaceDepth(int y) {
-        return isGravel ? 4 : super.getSurfaceDepth(y);
+        return this.getSurfaceDepth(0, y, 0);
+    }
+
+    @Override
+    public int getSurfaceDepth(int x, int y, int z) {
+        return gravelNoise.noise2D(x, z, true) < -0.75f ? 4 : super.getSurfaceDepth(x, y, z);
     }
 
     @Override
     public int getGroundDepth(int y) {
-        return isGravel ? 0 : super.getGroundDepth(y);
+        return this.getGroundDepth(0, y, 0);
     }
 
     @Override
-    public void preCover(int x, int z) {
-        //-0.75 is farily rare, so there'll be much more gravel than grass
-        isGravel = gravelNoise.noise2D(x, z, true) < -0.75f;
+    public int getGroundDepth(int x, int y, int z) {
+        return gravelNoise.noise2D(x, z, true) < -0.75f ? 0 : super.getGroundDepth(x, y, z);
     }
 
     @Override
