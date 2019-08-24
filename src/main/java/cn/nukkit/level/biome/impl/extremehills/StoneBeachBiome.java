@@ -16,22 +16,22 @@ public class StoneBeachBiome extends CoveredBiome {
     }
 
     @Override
-    public int getSurfaceDepth(int y) {
+    public int getSurfaceDepth(int x, int y, int z) {
         return 0;
     }
 
     @Override
-    public int getSurfaceBlock(int y) {
+    public int getSurfaceId(int x, int y, int z) {
         return 0;
     }
 
     @Override
-    public int getGroundDepth(int y) {
+    public int getGroundDepth(int x, int y, int z) {
         return 0;
     }
 
     @Override
-    public int getGroundBlock(int y) {
+    public int getGroundId(int x, int y, int z) {
         return 0;
     }
 
