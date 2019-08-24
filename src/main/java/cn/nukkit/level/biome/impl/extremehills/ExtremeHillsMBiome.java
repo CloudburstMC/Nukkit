@@ -32,28 +32,13 @@ public class ExtremeHillsMBiome extends ExtremeHillsPlusBiome {
     }
 
     @Override
-    public int getSurfaceBlock(int y) {
-        return this.getSurfaceBlock(0, y, 0);
-    }
-
-    @Override
-    public int getSurfaceBlock(int x, int y, int z) {
-        return gravelNoise.noise2D(x, z, true) < -0.75f ? GRAVEL : super.getSurfaceBlock(x, y, z);
-    }
-
-    @Override
-    public int getSurfaceDepth(int y) {
-        return this.getSurfaceDepth(0, y, 0);
+    public int getSurfaceId(int x, int y, int z) {
+        return gravelNoise.noise2D(x, z, true) < -0.75f ? GRAVEL << 4 : super.getSurfaceId(x, y, z);
     }
 
     @Override
     public int getSurfaceDepth(int x, int y, int z) {
         return gravelNoise.noise2D(x, z, true) < -0.75f ? 4 : super.getSurfaceDepth(x, y, z);
-    }
-
-    @Override
-    public int getGroundDepth(int y) {
-        return this.getGroundDepth(0, y, 0);
     }
 
     @Override

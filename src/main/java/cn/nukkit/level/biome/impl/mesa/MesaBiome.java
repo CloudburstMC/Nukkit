@@ -74,47 +74,18 @@ public class MesaBiome extends CoveredBiome {
     }
 
     @Override
-    public int getSurfaceDepth(int y) {
-        return this.getSurfaceDepth(0, y, 0);
-    }
-
-    @Override
     public int getSurfaceDepth(int x, int y, int z) {
         return y < (71 + Math.round((redSandNoise.noise2D(x, z, true) + 1) * 1.5f)) ? 3 : y - 66;
     }
 
     @Override
-    public int getSurfaceBlock(int y) {
-        return this.getSurfaceBlock(0, y, 0);
-    }
-
-    @Override
-    public int getSurfaceBlock(int x, int y, int z) {
+    public int getSurfaceId(int x, int y, int z) {
         if (y < (71 + Math.round((redSandNoise.noise2D(x, z, true) + 1) * 1.5f))) {
-            return SAND;
+            return (SAND << 4) | BlockSand.RED;
         } else {
             int meta = colorLayer[(y + Math.round((colorNoise.noise2D(x, z, true) + 1) * 1.5f)) & 0x3F];
-            return meta == -1 ? TERRACOTTA : STAINED_TERRACOTTA;
+            return (meta == -1 ? TERRACOTTA << 4 : STAINED_TERRACOTTA << 4) | Math.max(0, meta);
         }
-    }
-
-    @Override
-    public int getSurfaceMeta(int y) {
-        return this.getSurfaceMeta(0, y, 0);
-    }
-
-    @Override
-    public int getSurfaceMeta(int x, int y, int z) {
-        if (y < (71 + Math.round((redSandNoise.noise2D(x, z, true) + 1) * 1.5f))) {
-            return BlockSand.RED;
-        } else {
-            return Math.max(0, colorLayer[(y + Math.round((colorNoise.noise2D(x, z, true) + 1) * 1.5f)) & 0x3F]);
-        }
-    }
-
-    @Override
-    public int getGroundDepth(int y) {
-        return this.getGroundDepth(0, y, 0);
     }
 
     @Override
@@ -123,8 +94,8 @@ public class MesaBiome extends CoveredBiome {
     }
 
     @Override
-    public int getGroundBlock(int y) {
-        return RED_SANDSTONE;
+    public int getGroundId(int x, int y, int z) {
+        return RED_SANDSTONE << 4;
     }
 
     @Override
