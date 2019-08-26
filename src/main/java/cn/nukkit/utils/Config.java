@@ -476,7 +476,7 @@ public class Config {
             if (Pattern.compile("[a-zA-Z0-9\\-_.]*+=+[^\\r\\n]*").matcher(line).matches()) {
                 String[] b = line.split("=", -1);
                 String k = b[0];
-                String v = b[1].trim();
+                String v = String.join("=", Arrays.copyOfRange(b, 1, b.length)).trim();
                 String v_lower = v.toLowerCase();
                 if (this.config.containsKey(k)) {
                     MainLogger.getLogger().debug("[Config] Repeated property " + k + " on file " + this.file.toString());
