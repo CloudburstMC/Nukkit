@@ -133,7 +133,7 @@ public class EntityItem extends Entity {
 
         this.timing.startTiming();
         
-        if (this.onGround && this.getItem() != null && this.isAlive()) {
+        if (this.age % 60 == 0 && this.onGround && this.getItem() != null && this.isAlive()) {
             if (this.getItem().getCount() < this.getItem().getMaxStackSize()) {
                 for (Entity entity : this.getLevel().getNearbyEntities(getBoundingBox().grow(1, 1, 1), this, false)) {
                     if (entity instanceof EntityItem) {
@@ -160,7 +160,6 @@ public class EntityItem extends Entity {
                         Server.broadcastPacket(this.getLevel().getPlayers().values(), packet);
                        }
                 }
-
             }
         }
 
