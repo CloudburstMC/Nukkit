@@ -1371,7 +1371,7 @@ public class Server {
             case "v":
                 return Player.SPECTATOR;
         }
-        return Player.SURVIVAL;
+        return -1;
     }
 
     public static int getDifficultyFromString(String str) {
