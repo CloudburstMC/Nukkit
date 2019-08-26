@@ -1318,7 +1318,11 @@ public class Server {
     }
 
     public int getGamemode() {
-        return this.getPropertyInt("gamemode", 0) & 0b11;
+        try {
+            return this.getPropertyInt("gamemode", 0) & 0b11;
+        } catch (NumberFormatException exception) {
+            return getGamemodeFromString(this.getPropertyString("gamemode")) & 0b11;
+        }
     }
 
     public boolean getForceGamemode() {
@@ -1367,7 +1371,7 @@ public class Server {
             case "v":
                 return Player.SPECTATOR;
         }
-        return -1;
+        return Player.SURVIVAL;
     }
 
     public static int getDifficultyFromString(String str) {
@@ -1423,7 +1427,7 @@ public class Server {
 
     public int getDefaultGamemode() {
         if (this.defaultGamemode == Integer.MAX_VALUE) {
-            this.defaultGamemode = this.getPropertyInt("gamemode", 0);
+            this.defaultGamemode = this.getGamemode();
         }
         return this.defaultGamemode;
     }
