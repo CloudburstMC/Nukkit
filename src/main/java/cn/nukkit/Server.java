@@ -1961,7 +1961,7 @@ public class Server {
             level.initLevel();
             level.setTickRate(this.baseTickRate);
         } catch (Exception e) {
-            log.error(this.getLanguage().translateString("nukkit.level.generationError", new String[]{name, e.getMessage()}));
+            log.error(this.getLanguage().translateString("nukkit.level.generationError", new String[]{name, Utils.getExceptionMessage(e)}));
             return false;
         }
 
