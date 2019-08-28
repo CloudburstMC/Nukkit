@@ -474,7 +474,7 @@ public class Config {
     private void parseProperties(String content) {
         for (final String line : content.split("\n")) {
             if (Pattern.compile("[a-zA-Z0-9\\-_.]*+=+[^\\r\\n]*").matcher(line).matches()) {
-               final int splitIndex = line.indexOf('=');
+                final int splitIndex = line.indexOf('=');
                 if (splitIndex == -1) {
                     continue;
                 }
