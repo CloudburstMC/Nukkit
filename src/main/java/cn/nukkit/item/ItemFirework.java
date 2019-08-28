@@ -85,7 +85,7 @@ public class ItemFirework extends Item {
                     Math.cos(Math.toRadians(player.yaw)) * Math.cos(Math.toRadians(player.pitch)) * 2));
 
             if (!player.isCreative()) {
-                player.getInventory().decreaseCount(player.getInventory().getHeldItemIndex());
+                this.count--;
             }
 
             return true;

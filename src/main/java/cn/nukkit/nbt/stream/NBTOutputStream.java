@@ -107,12 +107,20 @@ public class NBTOutputStream implements DataOutput, AutoCloseable {
 
     @Override
     public void writeFloat(float v) throws IOException {
-        this.writeInt(Float.floatToIntBits(v));
+        int i = Float.floatToIntBits(v);
+        if (endianness == ByteOrder.LITTLE_ENDIAN) {
+            i = Integer.reverseBytes(i);
+        }
+        this.stream.writeInt(i);
     }
 
     @Override
     public void writeDouble(double v) throws IOException {
-        this.writeLong(Double.doubleToLongBits(v));
+        long l = Double.doubleToLongBits(v);
+        if (endianness == ByteOrder.LITTLE_ENDIAN) {
+            l = Long.reverseBytes(l);
+        }
+        this.stream.writeLong(l);
     }
 
     @Override

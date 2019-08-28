@@ -4,7 +4,8 @@ import cn.nukkit.Server;
 import cn.nukkit.utils.BinaryStream;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,8 +17,8 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GlobalBlockPalette {
-    private static final Int2IntArrayMap legacyToRuntimeId = new Int2IntArrayMap();
-    private static final Int2IntArrayMap runtimeIdToLegacy = new Int2IntArrayMap();
+    private static final Int2IntMap legacyToRuntimeId = new Int2IntOpenHashMap();
+    private static final Int2IntMap runtimeIdToLegacy = new Int2IntOpenHashMap();
     private static final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
     private static final byte[] compiledPalette;
 

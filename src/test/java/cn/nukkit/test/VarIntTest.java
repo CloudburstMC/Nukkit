@@ -53,13 +53,26 @@ class VarIntTest {
 		VarInt.writeVarInt(os, 0xea3eca71);
 		VarInt.writeUnsignedVarLong(os, 0x1234567812345678L);
 		VarInt.writeVarLong(os, 0xea3eca710becececL);
+		VarInt.writeVarInt(os, 0x7FFFFFFF);
+		VarInt.writeVarInt(os, -1);
 		ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
 		assertAll(
 				() -> assertEquals(237356812, VarInt.readUnsignedVarInt(is)),
 				() -> assertEquals(0xea3eca71, VarInt.readVarInt(is)),
 				() -> assertEquals(0x1234567812345678L, VarInt.readUnsignedVarLong(is)),
-				() -> assertEquals(0xea3eca710becececL, VarInt.readVarLong(is))
+				() -> assertEquals(0xea3eca710becececL, VarInt.readVarLong(is)),
+				() -> assertEquals(0x7FFFFFFF, VarInt.readVarInt(is)),
+				() -> assertEquals(-1, VarInt.readVarInt(is))
 		);
+	}
+
+	@DisplayName("Write Sizes")
+	@Test
+	void testSizes() throws IOException {
+		sizeTest(w -> VarInt.writeVarLong(w, 0x7FFFFFFF /* -1 >>> 1 */), 5);
+		sizeTest(w -> VarInt.writeVarInt(w, 0x7FFFFFFF /* -1 >>> 1 */), 5);
+		sizeTest(w -> VarInt.writeVarLong(w, -1), 1);
+		sizeTest(w -> VarInt.writeVarInt(w, -1), 1);
 	}
 
 	@DisplayName("Reading")
@@ -95,4 +108,15 @@ class VarIntTest {
 	private static byte toByte(char c) {
 		return (byte) "0123456789ABCDEF".indexOf(c);
 	}
+
+	private interface TestConsumer<T> {
+		void accept(T t) throws IOException;
+	}
+
+	private void sizeTest(TestConsumer<ByteArrayOutputStream> write, int size) throws IOException {
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		write.accept(os);
+		ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+		assertEquals(size, is.available());
+	};
 }
