@@ -66,13 +66,13 @@ public class BlockSponge extends BlockSolidMeta {
 
         if (blockSet) {
             if (this.getDamage() == WET && level.getDimension() == Level.DIMENSION_NETHER) {
-                //The way it should be in Bedrock Edition
                 level.setBlock(block, Block.get(BlockID.SPONGE, DRY));
                 this.getLevel().addSound(block.getLocation(), Sound.RANDOM_FIZZ);
 
                 for (int i = 0; i < 8; ++i) {
                     this.getLevel().addParticle(
-                        new SmokeParticle(block.getLocation().add(Math.random(), 1, Math.random()))); //I wish I could get white smoke
+                        //TODO: Use correct smoke particle
+                        new SmokeParticle(block.getLocation().add(Math.random(), 1, Math.random())));
                 }
             } else if (this.getDamage() == DRY && performWaterAbsorb(block)) {
                 level.setBlock(block, Block.get(BlockID.SPONGE, WET));
