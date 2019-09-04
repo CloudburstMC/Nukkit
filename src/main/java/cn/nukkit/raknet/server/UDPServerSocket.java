@@ -47,7 +47,7 @@ public class UDPServerSocket extends ChannelInboundHandlerAdapter {
                         .channel(EPOLL ? EpollDatagramChannel.class : NioDatagramChannel.class)
                         .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                         .handler(this)
-                        .group(EPOLL ? new EpollEventLoopGroup() : new NioeventLoopGroup());
+                        .group(EPOLL ? new EpollEventLoopGroup() : new NioEventLoopGroup());
                 this.logger.info("Epoll Status is " + EPOLL);
             channel = bootstrap.bind(interfaz, port).sync().channel();
         } catch (Exception e) {
