@@ -1,11 +1,11 @@
-    package cn.nukkit.level.generator.task;
+package cn.nukkit.level.generator.task;
 
-    import cn.nukkit.Server;
-    import cn.nukkit.level.Level;
-    import cn.nukkit.level.format.generic.BaseFullChunk;
-    import cn.nukkit.level.generator.Generator;
-    import cn.nukkit.level.generator.SimpleChunkManager;
-    import cn.nukkit.scheduler.AsyncTask;
+import cn.nukkit.Server;
+import cn.nukkit.level.Level;
+import cn.nukkit.level.format.generic.BaseFullChunk;
+import cn.nukkit.level.generator.Generator;
+import cn.nukkit.level.generator.SimpleChunkManager;
+import cn.nukkit.scheduler.AsyncTask;
 
 /**
  * author: MagicDroidX
@@ -16,6 +16,7 @@ public class PopulationTask extends AsyncTask {
     private final Level level;
     private boolean state;
     private BaseFullChunk centerChunk;
+    private boolean isPopulated;
 
     public final BaseFullChunk[] chunks = new BaseFullChunk[9];
 
@@ -107,7 +108,8 @@ public class PopulationTask extends AsyncTask {
                    }
                 }
 
-                if (!centerChunk.isPopulated()) {
+                isPopulated = centerChunk.isPopulated();
+                if (!isPopulated) {
                     generator.populateChunk(centerChunk.getX(), centerChunk.getZ());
                     centerChunk = manager.getChunk(centerChunk.getX(), centerChunk.getZ());
                     centerChunk.setPopulated();
@@ -158,7 +160,7 @@ public class PopulationTask extends AsyncTask {
                 }
             }
 
-            level.generateChunkCallback(centerChunk.getX(), centerChunk.getZ(), centerChunk);
+            level.generateChunkCallback(centerChunk.getX(), centerChunk.getZ(), centerChunk, isPopulated);
         }
     }
 }
