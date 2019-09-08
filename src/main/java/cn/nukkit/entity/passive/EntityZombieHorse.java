@@ -3,11 +3,11 @@ package cn.nukkit.entity.passive;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-
+import cn.nukkit.entity.EntitySmite;
 /**
  * @author PikyCZ
  */
-public class EntityZombieHorse extends EntityAnimal {
+public class EntityZombieHorse extends EntityAnimal implements EntitySmite{
 
     public static final int NETWORK_ID = 27;
 
