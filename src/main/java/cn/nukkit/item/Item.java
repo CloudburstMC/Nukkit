@@ -629,7 +629,7 @@ public class Item implements Cloneable, BlockID, ItemID {
         for (CompoundTag entry : ench.getAll()) {
             Enchantment e = Enchantment.getEnchantment(entry.getShort("id"));
             if (e != null) {
-                e.setLevel(entry.getShort("lvl"));
+                e.setLevel(entry.getShort("lvl"), false);
                 enchantments.add(e);
             }
         }
