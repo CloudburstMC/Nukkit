@@ -2,11 +2,11 @@ package cn.nukkit.entity.mob;
 
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-
+import cn.nukkit.entity.EntityArthropod;
 /**
  * @author Box.
  */
-public class EntityEndermite extends EntityMob {
+public class EntityEndermite extends EntityMob implements EntityArthropod{
 
     public static final int NETWORK_ID = 55;
 
