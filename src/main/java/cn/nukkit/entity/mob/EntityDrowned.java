@@ -3,11 +3,11 @@ package cn.nukkit.entity.mob;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-
+import cn.nukkit.entity.EntitySmite;
 /**
  * Created by PetteriM1
  */
-public class EntityDrowned extends EntityMob {
+public class EntityDrowned extends EntityMob implements EntitySmite{
 
     public static final int NETWORK_ID = 110;
 
