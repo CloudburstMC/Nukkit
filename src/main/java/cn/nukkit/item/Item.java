@@ -884,6 +884,10 @@ public class Item implements Cloneable, BlockID, ItemID {
     public int getTier() {
         return 0;
     }
+    
+    public int getMeta() {
+        return meta;
+    }
 
     public boolean isPickaxe() {
         return false;
