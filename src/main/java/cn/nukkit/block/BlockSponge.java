@@ -4,6 +4,8 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
+import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
@@ -61,17 +63,29 @@ public class BlockSponge extends BlockSolidMeta {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Level level = block.getLevel();
         boolean blockSet = level.setBlock(block, this);
-        if (blockSet && this.getDamage() == 0 && performWaterAbsorb(block)) {
-            level.setBlock(block, Block.get(BlockID.SPONGE, 1));
 
-            for (int i = 0; i < 4; i++) {
-                LevelEventPacket packet = new LevelEventPacket();
-                packet.evid = 2001;
-                packet.x = (float) block.getX();
-                packet.y = (float) block.getY();
-                packet.z = (float) block.getZ();
-                packet.data = GlobalBlockPalette.getOrCreateRuntimeId(BlockID.WATER, 0);
-                level.addChunkPacket(getChunkX(), getChunkZ(), packet);
+        if (blockSet) {
+            if (this.getDamage() == WET && level.getDimension() == Level.DIMENSION_NETHER) {
+                level.setBlock(block, Block.get(BlockID.SPONGE, DRY));
+                this.getLevel().addSound(block.getLocation(), Sound.RANDOM_FIZZ);
+
+                for (int i = 0; i < 8; ++i) {
+                    this.getLevel().addParticle(
+                        //TODO: Use correct smoke particle
+                        new SmokeParticle(block.getLocation().add(Math.random(), 1, Math.random())));
+                }
+            } else if (this.getDamage() == DRY && performWaterAbsorb(block)) {
+                level.setBlock(block, Block.get(BlockID.SPONGE, WET));
+
+                for (int i = 0; i < 4; i++) {
+                    LevelEventPacket packet = new LevelEventPacket();
+                    packet.evid = 2001;
+                    packet.x = (float) block.getX();
+                    packet.y = (float) block.getY();
+                    packet.z = (float) block.getZ();
+                    packet.data = GlobalBlockPalette.getOrCreateRuntimeId(BlockID.WATER, 0);
+                    level.addChunkPacket(getChunkX(), getChunkZ(), packet);
+                }
             }
         }
         return blockSet;
