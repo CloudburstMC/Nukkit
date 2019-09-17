@@ -17,4 +17,9 @@ public class ItemBookEnchanted extends Item {
     public ItemBookEnchanted(Integer meta, int count) {
         super(ENCHANTED_BOOK, meta, count, "Enchanted Book");
     }
+
+    @Override
+    public int getMaxStackSize() {
+        return 1;
+    }
 }

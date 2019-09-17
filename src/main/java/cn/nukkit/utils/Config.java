@@ -472,28 +472,31 @@ public class Config {
     }
 
     private void parseProperties(String content) {
-        for (String line : content.split("\n")) {
+        for (final String line : content.split("\n")) {
             if (Pattern.compile("[a-zA-Z0-9\\-_.]*+=+[^\\r\\n]*").matcher(line).matches()) {
-                String[] b = line.split("=", -1);
-                String k = b[0];
-                String v = b[1].trim();
-                String v_lower = v.toLowerCase();
-                if (this.config.containsKey(k)) {
-                    MainLogger.getLogger().debug("[Config] Repeated property " + k + " on file " + this.file.toString());
+                final int splitIndex = line.indexOf('=');
+                if (splitIndex == -1) {
+                    continue;
                 }
-                switch (v_lower) {
+                final String key = line.substring(0, splitIndex);
+                final String value = line.substring(splitIndex + 1);
+                final String valueLower = value.toLowerCase();
+                if (this.config.containsKey(key)) {
+                    MainLogger.getLogger().debug("[Config] Repeated property " + key + " on file " + this.file.toString());
+                }
+                switch (valueLower) {
                     case "on":
                     case "true":
                     case "yes":
-                        this.config.put(k, true);
+                        this.config.put(key, true);
                         break;
                     case "off":
                     case "false":
                     case "no":
-                        this.config.put(k, false);
+                        this.config.put(key, false);
                         break;
                     default:
-                        this.config.put(k, v);
+                        this.config.put(key, value);
                         break;
                 }
             }

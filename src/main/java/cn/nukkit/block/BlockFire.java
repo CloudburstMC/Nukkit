@@ -1,6 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityArrow;
@@ -78,7 +77,7 @@ public class BlockFire extends BlockFlowable {
             ev.setCancelled();
         }
         Server.getInstance().getPluginManager().callEvent(ev);
-        if (!ev.isCancelled() && entity instanceof Player && !((Player) entity).isCreative()) {
+        if (!ev.isCancelled() && entity.isAlive() && entity.noDamageTicks == 0) {
             entity.setOnFire(ev.getDuration());
         }
     }
@@ -132,7 +131,7 @@ public class BlockFire extends BlockFlowable {
 
                 if (meta < 15) {
                     int newMeta = meta + random.nextInt(3);
-                    this.setDamage(newMeta > 15 ? 15 : newMeta);
+                    this.setDamage(Math.min(newMeta, 15));
                     this.getLevel().setBlock(this, this, true);
                 }
 

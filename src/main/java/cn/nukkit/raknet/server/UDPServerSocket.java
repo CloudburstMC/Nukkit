@@ -28,6 +28,7 @@ public class UDPServerSocket extends ChannelInboundHandlerAdapter {
     protected final ThreadedLogger logger;
     protected Bootstrap bootstrap;
     protected Channel channel;
+    public static final boolean EPOLL = Epoll.isAvailable();
 
     protected ConcurrentLinkedQueue<DatagramPacket> packets = new ConcurrentLinkedQueue<>();
 
@@ -42,21 +43,12 @@ public class UDPServerSocket extends ChannelInboundHandlerAdapter {
     public UDPServerSocket(ThreadedLogger logger, int port, String interfaz) {
         this.logger = logger;
         try {
-            if (Epoll.isAvailable()) {
                 bootstrap = new Bootstrap()
-                        .channel(EpollDatagramChannel.class)
+                        .channel(EPOLL ? EpollDatagramChannel.class : NioDatagramChannel.class)
                         .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                         .handler(this)
-                        .group(new EpollEventLoopGroup());
-                this.logger.info("Epoll is available. EpollEventLoop will be used.");
-            } else {
-                bootstrap = new Bootstrap()
-                        .group(new NioEventLoopGroup())
-                        .channel(NioDatagramChannel.class)
-                        .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
-                        .handler(this);
-                this.logger.info("Epoll is unavailable. Reverting to NioEventLoop.");
-            }
+                        .group(EPOLL ? new EpollEventLoopGroup() : new NioEventLoopGroup());
+            this.logger.info("Epoll Status is " + EPOLL);
             channel = bootstrap.bind(interfaz, port).sync().channel();
         } catch (Exception e) {
             this.logger.critical("**** FAILED TO BIND TO " + interfaz + ":" + port + "!");

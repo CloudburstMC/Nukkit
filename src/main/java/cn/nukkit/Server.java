@@ -323,7 +323,7 @@ public class Server {
         log.info("Loading {} ...", TextFormat.GREEN + "nukkit.yml" + TextFormat.WHITE);
         this.config = new Config(this.dataPath + "nukkit.yml", Config.YAML);
 
-        log.info("Loading {} ...", TextFormat.GREEN + "server properties" + TextFormat.WHITE);
+        log.info("Loading {} ...", TextFormat.GREEN + "server.properties" + TextFormat.WHITE);
         this.properties = new Config(this.dataPath + "server.properties", Config.PROPERTIES, new ConfigSection() {
             {
                 put("motd", "A Nukkit Powered Server");
@@ -1323,7 +1323,11 @@ public class Server {
     }
 
     public int getGamemode() {
-        return this.getPropertyInt("gamemode", 0) & 0b11;
+        try {
+            return this.getPropertyInt("gamemode", 0) & 0b11;
+        } catch (NumberFormatException exception) {
+            return getGamemodeFromString(this.getPropertyString("gamemode")) & 0b11;
+        }
     }
 
     public boolean getForceGamemode() {
@@ -1428,7 +1432,7 @@ public class Server {
 
     public int getDefaultGamemode() {
         if (this.defaultGamemode == Integer.MAX_VALUE) {
-            this.defaultGamemode = this.getPropertyInt("gamemode", 0);
+            this.defaultGamemode = this.getGamemode();
         }
         return this.defaultGamemode;
     }
@@ -1605,8 +1609,6 @@ public class Server {
             dataStream = event.getSerializer().read(name, event.getUuid().orElse(null));
             if (dataStream.isPresent()) {
                 return NBTIO.readCompressed(dataStream.get());
-            } else {
-                log.warn(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
             }
         } catch (IOException e) {
             log.warn(this.getLanguage().translateString("nukkit.data.playerCorrupted", name));
@@ -1622,6 +1624,7 @@ public class Server {
         }
         CompoundTag nbt = null;
         if (create) {
+            log.info(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
             Position spawn = this.getDefaultLevel().getSafeSpawn();
             nbt = new CompoundTag()
                     .putLong("firstPlayed", System.currentTimeMillis() / 1000)
@@ -1963,7 +1966,7 @@ public class Server {
             level.initLevel();
             level.setTickRate(this.baseTickRate);
         } catch (Exception e) {
-            log.error(this.getLanguage().translateString("nukkit.level.generationError", new String[]{name, e.getMessage()}));
+            log.error(this.getLanguage().translateString("nukkit.level.generationError", new String[]{name, Utils.getExceptionMessage(e)}));
             return false;
         }
 
