@@ -41,24 +41,24 @@ public class OfflinePlayer implements IPlayer {
     public OfflinePlayer(Server server, UUID uuid, String name) {
         this.server = server;
 
-
+        CompoundTag nbt;
         if (uuid != null) {
-            this.namedTag = this.server.getOfflinePlayerData(uuid, false);
-            if (name == null) {
-                name = getName();
-            }
-            if (this.namedTag != null) {
-                this.namedTag.putLong("UUIDMost", uuid.getMostSignificantBits());
-                this.namedTag.putLong("UUIDLeast", uuid.getLeastSignificantBits());
-            }
+            nbt = this.server.getOfflinePlayerData(uuid, false);
         } else if (name != null) {
-            this.namedTag = this.server.getOfflinePlayerData(name, false);
+            nbt = this.server.getOfflinePlayerData(name, false);
         } else {
             throw new IllegalArgumentException("Name and UUID cannot both be null");
         }
+        if (nbt == null) {
+            nbt = new CompoundTag();
+        }
+        this.namedTag = nbt;
 
-        if (name != null && this.namedTag != null) {
-            namedTag.putString("NameTag", name);
+        if (uuid != null) {
+            this.namedTag.putLong("UUIDMost", uuid.getMostSignificantBits());
+            this.namedTag.putLong("UUIDLeast", uuid.getLeastSignificantBits());
+        } else {
+            this.namedTag.putString("NameTag", name);
         }
     }
 
