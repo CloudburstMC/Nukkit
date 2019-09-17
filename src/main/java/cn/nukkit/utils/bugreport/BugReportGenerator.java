@@ -5,6 +5,7 @@ import cn.nukkit.Server;
 import cn.nukkit.lang.BaseLang;
 import cn.nukkit.utils.Utils;
 import com.sun.management.OperatingSystemMXBean;
+import io.sentry.Sentry;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +36,13 @@ public class BugReportGenerator extends Thread {
         try {
             Server.getInstance().getLogger().info("[BugReport] " + baseLang.translateString("nukkit.bugreport.create"));
             String path = generate();
+
+            // Sentry
+            if (Sentry.getStoredClient() != null) {
+                Server.getInstance().getLogger().info("[BugReport] Sentry ...");
+                captureSentry();
+            }
+
             Server.getInstance().getLogger().info("[BugReport] " + baseLang.translateString("nukkit.bugreport.archive", path));
         } catch (Exception e) {
             StringWriter stringWriter = new StringWriter();
@@ -97,6 +105,29 @@ public class BugReportGenerator extends Thread {
         Utils.writeFile(mdReport, content);
 
         return mdReport.getAbsolutePath();
+    }
+
+    private void captureSentry() {
+
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
+        boolean pluginError = false;
+        if (stackTrace.length > 0) {
+            pluginError = !throwable.getStackTrace()[0].getClassName().startsWith("cn.nukkit");
+        }
+
+        String cpuType = System.getenv("PROCESSOR_IDENTIFIER");
+        OperatingSystemMXBean osMXBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+
+        Sentry.getContext().clear();
+        Sentry.getContext().addExtra("NUKKIT_VERSION", Nukkit.VERSION);
+        Sentry.getContext().addExtra("JAVA_VERSION", System.getProperty("java.vm.name") + " (" + System.getProperty("java.runtime.version") + ")");
+        Sentry.getContext().addExtra("HOSTOS", osMXBean.getName() + "-" + osMXBean.getArch() + " [" + osMXBean.getVersion() + "]");
+        Sentry.getContext().addExtra("MEMORY", getCount(osMXBean.getTotalPhysicalMemorySize(), true));
+        Sentry.getContext().addExtra("CPU_TYPE", cpuType == null ? "UNKNOWN" : cpuType);
+        Sentry.getContext().addExtra("AVAILABLE_CORE", String.valueOf(osMXBean.getAvailableProcessors()));
+        Sentry.getContext().addExtra("PLUGIN_ERROR", Boolean.toString(pluginError).toUpperCase());
+
+        Sentry.capture(throwable);
     }
 
     //Code section from SOF
