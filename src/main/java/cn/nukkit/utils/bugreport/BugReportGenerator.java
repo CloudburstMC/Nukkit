@@ -118,6 +118,8 @@ public class BugReportGenerator extends Thread {
         OperatingSystemMXBean osMXBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
 
         Sentry.getContext().clear();
+
+        // Extra
         Sentry.getContext().addExtra("NUKKIT_VERSION", Nukkit.VERSION);
         Sentry.getContext().addExtra("JAVA_VERSION", System.getProperty("java.vm.name") + " (" + System.getProperty("java.runtime.version") + ")");
         Sentry.getContext().addExtra("HOSTOS", osMXBean.getName() + "-" + osMXBean.getArch() + " [" + osMXBean.getVersion() + "]");
@@ -125,6 +127,10 @@ public class BugReportGenerator extends Thread {
         Sentry.getContext().addExtra("CPU_TYPE", cpuType == null ? "UNKNOWN" : cpuType);
         Sentry.getContext().addExtra("AVAILABLE_CORE", String.valueOf(osMXBean.getAvailableProcessors()));
         Sentry.getContext().addExtra("PLUGIN_ERROR", Boolean.toString(pluginError).toUpperCase());
+
+        // Tags
+        Sentry.getContext().addTag("plugin_error", String.valueOf(pluginError));
+        Sentry.getContext().addTag("nukkit_version", Nukkit.VERSION);
 
         Sentry.capture(throwable);
     }
