@@ -364,6 +364,10 @@ public class Server {
             String dsn = this.config.get("sentry.dsn", null);
             if (dsn != null && dsn.length() > 0) {
                 Sentry.init(dsn);
+            } else {
+                if (dsn == null && System.getProperty("sentry.dsn") != null) {
+                    Sentry.init(System.getProperty("sentry.dsn"));
+                }
             }
         }
 
