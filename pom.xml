@@ -193,6 +193,7 @@
             <groupId>io.sentry</groupId>
             <artifactId>sentry</artifactId>
             <version>1.7.27</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
