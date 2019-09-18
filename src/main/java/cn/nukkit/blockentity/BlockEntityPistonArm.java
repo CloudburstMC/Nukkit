@@ -107,6 +107,7 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
         this.lastProgress = this.progress = extending ? 0 : 1;
         this.state = this.newState = extending ? 1 : 3;
         this.attachedBlocks = attachedBlocks;
+        this.movable = false;
 
         this.level.addChunkPacket(getChunkX(), getChunkZ(), getSpawnPacket());
         this.lastProgress = extending ? -MOVE_STEP : 1 + MOVE_STEP;
@@ -126,7 +127,6 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
             this.lastProgress = Math.max(0, this.lastProgress - MOVE_STEP);
         }
 
-        this.level.addChunkPacket(getChunkX(), getChunkZ(), getSpawnPacket());
         this.moveCollidedEntities();
 
         if (this.progress == this.lastProgress) {
@@ -162,8 +162,11 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
 
             this.level.scheduleUpdate(this.getLevelBlock(), 1);
             this.attachedBlocks.clear();
+            this.movable = true;
             hasUpdate = false;
         }
+
+        this.level.addChunkPacket(getChunkX(), getChunkZ(), getSpawnPacket());
 
         return super.onUpdate() || hasUpdate;
     }

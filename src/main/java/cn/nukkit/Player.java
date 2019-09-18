@@ -1064,7 +1064,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             Integer identifier = this.interfaz.putPacket(this, packet, needACK, false);
 
             if (needACK && identifier != null) {
-                this.needACK.put(identifier, Boolean.FALSE);
+                this.needACK.put(identifier.intValue(), Boolean.FALSE);
                 return identifier;
             }
         }

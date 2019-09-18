@@ -69,6 +69,10 @@ public class GlobalBlockPalette {
         return runtimeId;
     }
 
+    public static int getLegacyId(int runtimeId) {
+        return runtimeIdToLegacy.get(runtimeId);
+    }
+
     public static String getName(int id, int meta) {
         return legacyIdToString.get((id << 4) | meta);
     }

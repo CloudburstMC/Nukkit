@@ -222,7 +222,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
                     BlockEntity blockEntity = this.level.getBlockEntity(oldPos);
 
-                    this.level.setBlock(newBlock, Block.get(BlockID.MOVING_BLOCK));
+                    this.level.setBlock(newBlock, Block.get(BlockID.MOVING_BLOCK), true);
 
                     CompoundTag nbt = BlockEntity.getDefaultCompound(newBlock, BlockEntity.MOVING_BLOCK)
                             .putInt("pistonPosX", this.getFloorX())
@@ -235,7 +235,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                                     .putString("name", GlobalBlockPalette.getName(newBlock.getId(), newBlock.getDamage()))
                             );
 
-                    if (blockEntity != null) {
+                    if (blockEntity != null && !(blockEntity instanceof BlockEntityMovingBlock)) {
                         blockEntity.saveNBT();
 
                         CompoundTag t = new CompoundTag(blockEntity.namedTag.getTags());

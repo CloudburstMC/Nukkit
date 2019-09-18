@@ -82,6 +82,7 @@ public abstract class BlockEntity extends Position {
             this.movable = this.namedTag.getBoolean("isMovable");
         } else {
             this.movable = true;
+            namedTag.putBoolean("isMovable", true);
         }
 
         this.initBlockEntity();
