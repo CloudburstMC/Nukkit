@@ -79,6 +79,8 @@ import co.aikar.timings.Timings;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import io.sentry.Sentry;
+import io.sentry.SentryClient;
+import io.sentry.SentryClientFactory;
 import lombok.extern.log4j.Log4j2;
 import org.iq80.leveldb.CompressionType;
 import org.iq80.leveldb.DB;
@@ -243,6 +245,8 @@ public class Server {
 
     private PlayerDataSerializer playerDataSerializer = new DefaultPlayerDataSerializer(this);
 
+    private SentryClient sentryClient = null;
+
     Server(final String filePath, String dataPath, String pluginPath, String predefinedLanguage) {
         Preconditions.checkState(instance == null, "Already initialized!");
         currentThread = Thread.currentThread(); // Saves the current thread instance as a reference, used in Server#isPrimaryThread()
@@ -363,10 +367,10 @@ public class Server {
         if (this.config.get("sentry.enable", false)) {
             String dsn = this.config.get("sentry.dsn", null);
             if (dsn != null && dsn.length() > 0) {
-                Sentry.init(dsn);
+                this.sentryClient = SentryClientFactory.sentryClient(dsn);
             } else {
                 if (dsn == null && System.getProperty("sentry.dsn") != null) {
-                    Sentry.init(System.getProperty("sentry.dsn"));
+                    this.sentryClient = SentryClientFactory.sentryClient(System.getProperty("sentry.dsn"));
                 }
             }
         }
@@ -2366,5 +2370,9 @@ public class Server {
         public void run() {
             console.start();
         }
+    }
+
+    public SentryClient getSentryClient() {
+        return sentryClient;
     }
 }

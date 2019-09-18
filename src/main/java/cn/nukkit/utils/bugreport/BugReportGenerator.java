@@ -5,7 +5,7 @@ import cn.nukkit.Server;
 import cn.nukkit.lang.BaseLang;
 import cn.nukkit.utils.Utils;
 import com.sun.management.OperatingSystemMXBean;
-import io.sentry.Sentry;
+import io.sentry.SentryClient;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +38,7 @@ public class BugReportGenerator extends Thread {
             String path = generate();
 
             // Sentry
-            if (Sentry.getStoredClient() != null) {
+            if (getSentryClient() != null) {
                 captureSentry();
             }
 
@@ -107,6 +107,7 @@ public class BugReportGenerator extends Thread {
     }
 
     private void captureSentry() {
+        Server.getInstance().getLogger().info("[BugReport] Sending to Sentry ...");
 
         StackTraceElement[] stackTrace = throwable.getStackTrace();
         boolean pluginError = false;
@@ -117,22 +118,22 @@ public class BugReportGenerator extends Thread {
         String cpuType = System.getenv("PROCESSOR_IDENTIFIER");
         OperatingSystemMXBean osMXBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
 
-        Sentry.getContext().clear();
+        getSentryClient().getContext().clear();
 
         // Extra
-        Sentry.getContext().addExtra("NUKKIT_VERSION", Nukkit.VERSION);
-        Sentry.getContext().addExtra("JAVA_VERSION", System.getProperty("java.vm.name") + " (" + System.getProperty("java.runtime.version") + ")");
-        Sentry.getContext().addExtra("HOSTOS", osMXBean.getName() + "-" + osMXBean.getArch() + " [" + osMXBean.getVersion() + "]");
-        Sentry.getContext().addExtra("MEMORY", getCount(osMXBean.getTotalPhysicalMemorySize(), true));
-        Sentry.getContext().addExtra("CPU_TYPE", cpuType == null ? "UNKNOWN" : cpuType);
-        Sentry.getContext().addExtra("AVAILABLE_CORE", String.valueOf(osMXBean.getAvailableProcessors()));
-        Sentry.getContext().addExtra("PLUGIN_ERROR", Boolean.toString(pluginError).toUpperCase());
+        getSentryClient().getContext().addExtra("NUKKIT_VERSION", Nukkit.VERSION);
+        getSentryClient().getContext().addExtra("JAVA_VERSION", System.getProperty("java.vm.name") + " (" + System.getProperty("java.runtime.version") + ")");
+        getSentryClient().getContext().addExtra("HOSTOS", osMXBean.getName() + "-" + osMXBean.getArch() + " [" + osMXBean.getVersion() + "]");
+        getSentryClient().getContext().addExtra("MEMORY", getCount(osMXBean.getTotalPhysicalMemorySize(), true));
+        getSentryClient().getContext().addExtra("CPU_TYPE", cpuType == null ? "UNKNOWN" : cpuType);
+        getSentryClient().getContext().addExtra("AVAILABLE_CORE", String.valueOf(osMXBean.getAvailableProcessors()));
+        getSentryClient().getContext().addExtra("PLUGIN_ERROR", Boolean.toString(pluginError).toUpperCase());
 
         // Tags
-        Sentry.getContext().addTag("plugin_error", String.valueOf(pluginError));
-        Sentry.getContext().addTag("nukkit_version", Nukkit.VERSION);
+        getSentryClient().getContext().addTag("plugin_error", String.valueOf(pluginError));
+        getSentryClient().getContext().addTag("nukkit_version", Nukkit.VERSION);
 
-        Sentry.capture(throwable);
+        getSentryClient().sendException(throwable);
     }
 
     //Code section from SOF
@@ -142,6 +143,10 @@ public class BugReportGenerator extends Thread {
         int exp = (int) (Math.log(bytes) / Math.log(unit));
         String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+    }
+
+    private SentryClient getSentryClient() {
+        return Server.getInstance().getSentryClient();
     }
 
 }
