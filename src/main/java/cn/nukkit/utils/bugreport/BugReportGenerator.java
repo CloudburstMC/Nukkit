@@ -39,7 +39,6 @@ public class BugReportGenerator extends Thread {
 
             // Sentry
             if (Sentry.getStoredClient() != null) {
-                Server.getInstance().getLogger().info("[BugReport] Sentry ...");
                 captureSentry();
             }
 
