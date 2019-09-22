@@ -1,13 +1,20 @@
 package cn.nukkit.event;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.RegisteredListener;
-
-import java.util.*;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * Created by Nukkit Team.
  */
+@Log4j2
 public class HandlerList {
 
     private volatile RegisteredListener[] handlers = null;
@@ -85,8 +92,16 @@ public class HandlerList {
     public synchronized void unregister(Plugin plugin) {
         boolean changed = false;
         for (List<RegisteredListener> list : handlerslots.values()) {
+
             for (ListIterator<RegisteredListener> i = list.listIterator(); i.hasNext(); ) {
-                if (i.next().getPlugin().equals(plugin)) {
+
+                RegisteredListener next = i.next();
+
+                if (next.getPlugin() == null){
+                    i.remove();
+                    changed = true;
+                }
+                else if (next.getPlugin().equals(plugin)) {
                     i.remove();
                     changed = true;
                 }
