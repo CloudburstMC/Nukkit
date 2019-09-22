@@ -13,8 +13,7 @@ import co.aikar.timings.Timings;
 import java.util.*;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * author: MagicDroidX Nukkit Project
  */
 public abstract class Command {
 
@@ -68,7 +67,7 @@ public abstract class Command {
         this.aliases = aliases;
         this.activeAliases = aliases;
         this.timing = Timings.getCommandTiming(this);
-        this.commandParameters.put("default", new CommandParameter[]{new CommandParameter("args", CommandParamType.RAWTEXT, true)});
+        this.commandParameters.put("default", new CommandParameter[] { new CommandParameter("args", CommandParamType.RAWTEXT, true) });
     }
 
     /**
@@ -97,10 +96,10 @@ public abstract class Command {
     }
 
     /**
-     * Generates modified command data for the specified player
-     * for AvailableCommandsPacket.
+     * Generates modified command data for the specified player for AvailableCommandsPacket.
      *
-     * @param player player
+     * @param player
+     *            player
      * @return CommandData|null
      */
     public CommandDataVersions generateCustomCommandData(Player player) {
@@ -125,7 +124,8 @@ public abstract class Command {
             overload.input.parameters = par;
             customData.overloads.put(key, overload);
         });
-        if (customData.overloads.size() == 0) customData.overloads.put("default", new CommandOverload());
+        if (customData.overloads.size() == 0)
+            customData.overloads.put("default", new CommandOverload());
         CommandDataVersions versions = new CommandDataVersions();
         versions.versions.add(customData);
         return versions;
@@ -136,6 +136,14 @@ public abstract class Command {
     }
 
     public abstract boolean execute(CommandSender sender, String commandLabel, String[] args);
+
+    public int executeWithOutputSignal(CommandSender sender, String commandLabel, String[] args) {
+        if (execute(sender, commandLabel, args)) {
+            return 15;
+        } else {
+            return -1;
+        }
+    }
 
     public String getName() {
         return name;
@@ -255,7 +263,8 @@ public abstract class Command {
 
     public static CommandData generateDefaultData() {
         if (defaultDataTemplate == null) {
-            //defaultDataTemplate = new Gson().fromJson(new InputStreamReader(Server.class.getClassLoader().getResourceAsStream("command_default.json")));
+            // defaultDataTemplate = new Gson().fromJson(new
+            // InputStreamReader(Server.class.getClassLoader().getResourceAsStream("command_default.json")));
         }
         return defaultDataTemplate.clone();
     }

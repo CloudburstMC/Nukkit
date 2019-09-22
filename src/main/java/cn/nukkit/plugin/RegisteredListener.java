@@ -8,8 +8,7 @@ import cn.nukkit.utils.EventException;
 import co.aikar.timings.Timing;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * author: MagicDroidX Nukkit Project
  */
 public class RegisteredListener {
 
@@ -29,6 +28,15 @@ public class RegisteredListener {
         this.listener = listener;
         this.priority = priority;
         this.plugin = plugin;
+        this.executor = executor;
+        this.ignoreCancelled = ignoreCancelled;
+        this.timing = timing;
+    }
+
+    public RegisteredListener(Listener listener, EventExecutor executor, EventPriority priority, boolean ignoreCancelled, Timing timing) {
+        this.listener = listener;
+        this.priority = priority;
+        this.plugin = null;
         this.executor = executor;
         this.ignoreCancelled = ignoreCancelled;
         this.timing = timing;

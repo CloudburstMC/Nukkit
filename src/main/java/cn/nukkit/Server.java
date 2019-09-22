@@ -13,6 +13,7 @@ import cn.nukkit.entity.mob.*;
 import cn.nukkit.entity.passive.*;
 import cn.nukkit.entity.projectile.*;
 import cn.nukkit.event.HandlerList;
+import cn.nukkit.event.builtin.PlayerFormRespondedEventListener;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
 import cn.nukkit.event.server.BatchPacketsEvent;
@@ -129,9 +130,9 @@ public class Server {
 
     private long nextTick;
 
-    private final float[] tickAverage = {20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20};
+    private final float[] tickAverage = { 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20 };
 
-    private final float[] useAverage = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    private final float[] useAverage = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
     private float maxTick = 20;
 
@@ -179,7 +180,7 @@ public class Server {
     private int defaultGamemode = Integer.MAX_VALUE;
 
     private int autoSaveTicker = 0;
-    private int autoSaveTicks = 6000;
+    private int autoSaveTicks = 1000;
 
     private BaseLang baseLang;
 
@@ -207,18 +208,21 @@ public class Server {
     private final Map<Integer, String> identifier = new HashMap<>();
 
     private final Map<Integer, Level> levels = new HashMap<Integer, Level>() {
+        @Override
         public Level put(Integer key, Level value) {
             Level result = super.put(key, value);
             levelArray = levels.values().toArray(new Level[0]);
             return result;
         }
 
+        @Override
         public boolean remove(Object key, Object value) {
             boolean result = super.remove(key, value);
             levelArray = levels.values().toArray(new Level[0]);
             return result;
         }
 
+        @Override
         public Level remove(Object key) {
             Level result = super.remove(key);
             levelArray = levels.values().toArray(new Level[0]);
@@ -244,7 +248,10 @@ public class Server {
 
     Server(final String filePath, String dataPath, String pluginPath, String predefinedLanguage) {
         Preconditions.checkState(instance == null, "Already initialized!");
-        currentThread = Thread.currentThread(); // Saves the current thread instance as a reference, used in Server#isPrimaryThread()
+        currentThread = Thread.currentThread(); // Saves the current thread
+        // instance
+        // as a reference, used in
+        // Server#isPrimaryThread()
         instance = this;
 
         this.filePath = filePath;
@@ -267,7 +274,7 @@ public class Server {
         this.consoleThread = new ConsoleThread();
         this.consoleThread.start();
 
-        //todo: VersionString 现在不必要
+        // todo: VersionString 现在不必要
 
         if (!new File(this.dataPath + "nukkit.yml").exists()) {
             this.getLogger().info(TextFormat.GREEN + "Welcome! Please choose a language first!");
@@ -298,7 +305,7 @@ public class Server {
                 InputStream conf = this.getClass().getClassLoader().getResourceAsStream("lang/" + lang + "/lang.ini");
                 if (conf != null) {
                     language = lang;
-                } else if(predefinedLanguage != null) {
+                } else if (predefinedLanguage != null) {
                     log.warn("No language found for predefined language: " + predefinedLanguage + ", please choose a valid language");
                     predefinedLanguage = null;
                 }
@@ -322,7 +329,7 @@ public class Server {
         log.info("Loading {} ...", TextFormat.GREEN + "nukkit.yml" + TextFormat.WHITE);
         this.config = new Config(this.dataPath + "nukkit.yml", Config.YAML);
 
-        log.info("Loading {} ...", TextFormat.GREEN + "server.properties" + TextFormat.WHITE);
+        log.info("Loading {} ...", TextFormat.GREEN + "server properties" + TextFormat.WHITE);
         this.properties = new Config(this.dataPath + "server.properties", Config.PROPERTIES, new ConfigSection() {
             {
                 put("motd", "A Nukkit Powered Server");
@@ -358,12 +365,13 @@ public class Server {
             }
         });
 
-        // Allow Nether? (determines if we create a nether world if one doesn't exist on startup)
+        // Allow Nether? (determines if we create a nether world if one doesn't
+        // exist on startup)
         this.allowNether = this.properties.getBoolean("allow-nether", true);
 
         this.forceLanguage = this.getConfig("settings.force-language", false);
         this.baseLang = new BaseLang(this.getConfig("settings.language", BaseLang.FALLBACK_LANGUAGE));
-        log.info(this.getLanguage().translateString("language.selected", new String[]{getLanguage().getName(), getLanguage().getLang()}));
+        log.info(this.getLanguage().translateString("language.selected", new String[] { getLanguage().getName(), getLanguage().getLang() }));
         log.info(getLanguage().translateString("nukkit.server.start", TextFormat.AQUA + this.getVersion() + TextFormat.WHITE));
 
         Object poolSize = this.getConfig("settings.async-workers", (Object) "auto");
@@ -430,7 +438,7 @@ public class Server {
             ExceptionHandler.registerExceptionHandler();
         }
 
-        log.info(this.getLanguage().translateString("nukkit.server.networkStart", new String[]{this.getIp().equals("") ? "*" : this.getIp(), String.valueOf(this.getPort())}));
+        log.info(this.getLanguage().translateString("nukkit.server.networkStart", new String[] { this.getIp().equals("") ? "*" : this.getIp(), String.valueOf(this.getPort()) }));
         this.serverID = UUID.randomUUID();
 
         this.network = new Network(this);
@@ -445,21 +453,18 @@ public class Server {
 
         this.registerEntities();
         this.registerBlockEntities();
-
         Block.init();
         Enchantment.init();
         Item.init();
-        EnumBiome.values(); //load class, this also registers biomes
+        EnumBiome.values(); // load class, this also registers biomes
         Effect.init();
         Potion.init();
         Attribute.init();
-        GlobalBlockPalette.getOrCreateRuntimeId(0, 0); //Force it to load
+        GlobalBlockPalette.getOrCreateRuntimeId(0, 0); // Force it to load
 
         // Convert legacy data before plugins get the chance to mess with it.
         try {
-            nameLookup = Iq80DBFactory.factory.open(new File(dataPath, "players"), new Options()
-                    .createIfMissing(true)
-                    .compressionType(CompressionType.ZLIB_RAW));
+            nameLookup = Iq80DBFactory.factory.open(new File(dataPath, "players"), new Options().createIfMissing(true).compressionType(CompressionType.ZLIB_RAW));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -473,6 +478,8 @@ public class Server {
         this.pluginManager.subscribeToPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE, this.consoleSender);
 
         this.pluginManager.registerInterface(JavaPluginLoader.class);
+
+        this.registerBuiltinEvents();
 
         this.queryRegenerateEvent = new QueryRegenerateEvent(this, 5);
 
@@ -490,7 +497,7 @@ public class Server {
         Generator.addGenerator(Normal.class, "normal", Generator.TYPE_INFINITE);
         Generator.addGenerator(Normal.class, "default", Generator.TYPE_INFINITE);
         Generator.addGenerator(Nether.class, "nether", Generator.TYPE_NETHER);
-        //todo: add old generator and hell generator
+        // todo: add old generator and hell generator
 
         for (String name : this.getConfig("worlds", new HashMap<String, Object>()).keySet()) {
             if (!this.loadLevel(name)) {
@@ -646,7 +653,7 @@ public class Server {
                 player.dataPacket(packet);
             }
         } else {
-            getInstance().batchPackets(players, new DataPacket[]{packet}, true);
+            getInstance().batchPackets(players, new DataPacket[] { packet }, true);
         }
 
         if (packet.encapsulatedPacket != null) {
@@ -737,8 +744,33 @@ public class Server {
         this.pluginManager.disablePlugins();
     }
 
+    public int dispatchCommandWithOutputSignal(ConsoleCommandSender sender, String commandLine) {
+        // First we need to check if this command is on the main thread or not,
+        // if
+        // not, warn the user
+        if (!this.isPrimaryThread()) {
+            getLogger().warning("Command Dispatched Async: " + commandLine);
+            getLogger().warning("Please notify author of plugin causing this execution to fix this bug!", new Throwable());
+            // TODO: We should sync the command to the main thread too!
+        }
+        if (sender == null) {
+            throw new ServerException("CommandSender is not valid");
+        }
+
+        int outputSignal = this.commandMap.dispatchWithOutputSignal(sender, commandLine);
+
+        if (outputSignal == -1) {
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.unknown", commandLine));
+            return -1;
+        } else {
+            return outputSignal;
+        }
+    }
+
     public boolean dispatchCommand(CommandSender sender, String commandLine) throws ServerException {
-        // First we need to check if this command is on the main thread or not, if not, warn the user
+        // First we need to check if this command is on the main thread or not,
+        // if
+        // not, warn the user
         if (!this.isPrimaryThread()) {
             getLogger().warning("Command Dispatched Async: " + commandLine);
             getLogger().warning("Please notify author of plugin causing this execution to fix this bug!", new Throwable());
@@ -757,7 +789,7 @@ public class Server {
         return false;
     }
 
-    //todo: use ticker to check console
+    // todo: use ticker to check console
     public ConsoleCommandSender getConsoleSender() {
         return consoleSender;
     }
@@ -854,7 +886,7 @@ public class Server {
             if (this.watchdog != null) {
                 this.watchdog.kill();
             }
-            //todo other things
+            // todo other things
         } catch (Exception e) {
             log.fatal("Exception happened while shutting down, exiting the process", e);
             System.exit(1);
@@ -870,7 +902,7 @@ public class Server {
             this.network.blockAddress(entry.getName(), -1);
         }
 
-        //todo send usage setting
+        // todo send usage setting
         this.tickCounter = 0;
 
         log.info(this.getLanguage().translateString("nukkit.server.defaultGameMode", getGamemodeString(this.getGamemode())));
@@ -883,7 +915,7 @@ public class Server {
 
     public void handlePacket(String address, int port, byte[] payload) {
         try {
-            if (payload.length > 2 && Arrays.equals(Binary.subBytes(payload, 0, 2), new byte[]{(byte) 0xfe, (byte) 0xfd}) && this.queryHandler != null) {
+            if (payload.length > 2 && Arrays.equals(Binary.subBytes(payload, 0, 2), new byte[] { (byte) 0xfe, (byte) 0xfd }) && this.queryHandler != null) {
                 this.queryHandler.handle(address, port, payload);
             }
         } catch (Exception e) {
@@ -908,7 +940,8 @@ public class Server {
                     if (next - 0.1 > current) {
                         long allocated = next - current - 1;
 
-                        { // Instead of wasting time, do something potentially useful
+                        { // Instead of wasting time, do something potentially
+                            // useful
                             int offset = 0;
                             for (int i = 0; i < levelArray.length; i++) {
                                 offset = (i + lastLevelGC) % levelArray.length;
@@ -962,7 +995,7 @@ public class Server {
 
             PlayerListPacket pk = new PlayerListPacket();
             pk.type = PlayerListPacket.TYPE_REMOVE;
-            pk.entries = new PlayerListPacket.Entry[]{new PlayerListPacket.Entry(player.getUniqueId())};
+            pk.entries = new PlayerListPacket.Entry[] { new PlayerListPacket.Entry(player.getUniqueId()) };
 
             Server.broadcastPacket(this.playerList.values(), pk);
         }
@@ -983,15 +1016,12 @@ public class Server {
     public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin, String xboxUserId, Player[] players) {
         PlayerListPacket pk = new PlayerListPacket();
         pk.type = PlayerListPacket.TYPE_ADD;
-        pk.entries = new PlayerListPacket.Entry[]{new PlayerListPacket.Entry(uuid, entityId, name, skin, xboxUserId)};
+        pk.entries = new PlayerListPacket.Entry[] { new PlayerListPacket.Entry(uuid, entityId, name, skin, xboxUserId) };
         Server.broadcastPacket(players, pk);
     }
 
     public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin, String xboxUserId, Collection<Player> players) {
-        this.updatePlayerListData(uuid, entityId, name, skin, xboxUserId,
-                players.stream()
-                        .filter(p -> !p.getUniqueId().equals(uuid))
-                        .toArray(Player[]::new));
+        this.updatePlayerListData(uuid, entityId, name, skin, xboxUserId, players.stream().filter(p -> !p.getUniqueId().equals(uuid)).toArray(Player[]::new));
     }
 
     public void removePlayerListData(UUID uuid) {
@@ -1001,7 +1031,7 @@ public class Server {
     public void removePlayerListData(UUID uuid, Player[] players) {
         PlayerListPacket pk = new PlayerListPacket();
         pk.type = PlayerListPacket.TYPE_REMOVE;
-        pk.entries = new PlayerListPacket.Entry[]{new PlayerListPacket.Entry(uuid)};
+        pk.entries = new PlayerListPacket.Entry[] { new PlayerListPacket.Entry(uuid) };
         Server.broadcastPacket(players, pk);
     }
 
@@ -1012,14 +1042,7 @@ public class Server {
     public void sendFullPlayerListData(Player player) {
         PlayerListPacket pk = new PlayerListPacket();
         pk.type = PlayerListPacket.TYPE_ADD;
-        pk.entries = this.playerList.values().stream()
-                .map(p -> new PlayerListPacket.Entry(
-                p.getUniqueId(),
-                p.getId(),
-                p.getDisplayName(),
-                p.getSkin(),
-                p.getLoginChainData().getXUID()))
-                .toArray(PlayerListPacket.Entry[]::new);
+        pk.entries = this.playerList.values().stream().map(p -> new PlayerListPacket.Entry(p.getUniqueId(), p.getId(), p.getDisplayName(), p.getSkin(), p.getLoginChainData().getXUID())).toArray(PlayerListPacket.Entry[]::new);
 
         player.dataPacket(pk);
     }
@@ -1030,19 +1053,18 @@ public class Server {
 
     private void checkTickUpdates(int currentTick, long tickTime) {
         for (Player p : new ArrayList<>(this.players.values())) {
-            /*if (!p.loggedIn && (tickTime - p.creationTime) >= 10000 && p.kick(PlayerKickEvent.Reason.LOGIN_TIMEOUT, "Login timeout")) {
-                continue;
-            }
-
-            client freezes when applying resource packs
-            todo: fix*/
+            /*
+             * if (!p.loggedIn && (tickTime - p.creationTime) >= 10000 && p.kick(PlayerKickEvent.Reason.LOGIN_TIMEOUT, "Login timeout")) { continue; }
+             *
+             * client freezes when applying resource packs todo: fix
+             */
 
             if (this.alwaysTickPlayers) {
                 p.onUpdate(currentTick);
             }
         }
 
-        //Do level ticks
+        // Do level ticks
         for (Level level : this.levelArray) {
             if (level.getTickRate() > this.baseTickRate && --level.tickRateCounter > 0) {
                 continue;
@@ -1074,8 +1096,7 @@ public class Server {
                     }
                 }
             } catch (Exception e) {
-                log.error(this.getLanguage().translateString("nukkit.level.tickError",
-                        new String[]{level.getFolderName(), Utils.getExceptionMessage(e)}));
+                log.error(this.getLanguage().translateString("nukkit.level.tickError", new String[] { level.getFolderName(), Utils.getExceptionMessage(e) }));
             }
         }
     }
@@ -1165,7 +1186,7 @@ public class Server {
 
         if (this.sendUsageTicker > 0 && --this.sendUsageTicker == 0) {
             this.sendUsageTicker = 6000;
-            //todo sendUsage
+            // todo sendUsage
         }
 
         if (this.tickCounter % 100 == 0) {
@@ -1175,10 +1196,10 @@ public class Server {
         }
 
         Timings.fullServerTickTimer.stopTiming();
-        //long now = System.currentTimeMillis();
+        // long now = System.currentTimeMillis();
         long nowNano = System.nanoTime();
-        //float tick = Math.min(20, 1000 / Math.max(1, now - tickTime));
-        //float use = Math.min(1, (now - tickTime) / 50);
+        // float tick = Math.min(20, 1000 / Math.max(1, now - tickTime));
+        // float use = Math.min(1, (now - tickTime) / 50);
 
         float tick = (float) Math.min(20, 1000000000 / Math.max(1000000, ((double) nowNano - tickTimeNano)));
         float use = (float) Math.min(1, ((double) (nowNano - tickTimeNano)) / 50000000);
@@ -1220,16 +1241,11 @@ public class Server {
         double used = NukkitMath.round((double) (runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024, 2);
         double max = NukkitMath.round(((double) runtime.maxMemory()) / 1024 / 1024, 2);
         String usage = Math.round(used / max * 100) + "%";
-        String title = (char) 0x1b + "]0;" + this.getName() + " "
-                + this.getNukkitVersion()
-                + " | Online " + this.players.size() + "/" + this.getMaxPlayers()
-                + " | Memory " + usage;
+        String title = (char) 0x1b + "]0;" + this.getName() + " " + this.getNukkitVersion() + " | Online " + this.players.size() + "/" + this.getMaxPlayers() + " | Memory " + usage;
         if (!Nukkit.shortTitle) {
-            title += " | U " + NukkitMath.round((this.network.getUpload() / 1024 * 1000), 2)
-                    + " D " + NukkitMath.round((this.network.getDownload() / 1024 * 1000), 2) + " kB/s";
+            title += " | U " + NukkitMath.round((this.network.getUpload() / 1024 * 1000), 2) + " D " + NukkitMath.round((this.network.getDownload() / 1024 * 1000), 2) + " kB/s";
         }
-        title += " | TPS " + this.getTicksPerSecond()
-                + " | Load " + this.getTickUsage() + "%" + (char) 0x07;
+        title += " | TPS " + this.getTicksPerSecond() + " | Load " + this.getTickUsage() + "%" + (char) 0x07;
 
         System.out.print(title);
     }
@@ -1318,11 +1334,7 @@ public class Server {
     }
 
     public int getGamemode() {
-        try {
-            return this.getPropertyInt("gamemode", 0) & 0b11;
-        } catch (NumberFormatException exception) {
-            return getGamemodeFromString(this.getPropertyString("gamemode")) & 0b11;
-        }
+        return this.getPropertyInt("gamemode", 0) & 0b11;
     }
 
     public boolean getForceGamemode() {
@@ -1335,66 +1347,66 @@ public class Server {
 
     public static String getGamemodeString(int mode, boolean direct) {
         switch (mode) {
-            case Player.SURVIVAL:
-                return direct ? "Survival" : "%gameMode.survival";
-            case Player.CREATIVE:
-                return direct ? "Creative" : "%gameMode.creative";
-            case Player.ADVENTURE:
-                return direct ? "Adventure" : "%gameMode.adventure";
-            case Player.SPECTATOR:
-                return direct ? "Spectator" : "%gameMode.spectator";
+        case Player.SURVIVAL:
+            return direct ? "Survival" : "%gameMode.survival";
+        case Player.CREATIVE:
+            return direct ? "Creative" : "%gameMode.creative";
+        case Player.ADVENTURE:
+            return direct ? "Adventure" : "%gameMode.adventure";
+        case Player.SPECTATOR:
+            return direct ? "Spectator" : "%gameMode.spectator";
         }
         return "UNKNOWN";
     }
 
     public static int getGamemodeFromString(String str) {
         switch (str.trim().toLowerCase()) {
-            case "0":
-            case "survival":
-            case "s":
-                return Player.SURVIVAL;
+        case "0":
+        case "survival":
+        case "s":
+            return Player.SURVIVAL;
 
-            case "1":
-            case "creative":
-            case "c":
-                return Player.CREATIVE;
+        case "1":
+        case "creative":
+        case "c":
+            return Player.CREATIVE;
 
-            case "2":
-            case "adventure":
-            case "a":
-                return Player.ADVENTURE;
+        case "2":
+        case "adventure":
+        case "a":
+            return Player.ADVENTURE;
 
-            case "3":
-            case "spectator":
-            case "spc":
-            case "view":
-            case "v":
-                return Player.SPECTATOR;
+        case "3":
+        case "spectator":
+        case "spc":
+        case "view":
+        case "v":
+            return Player.SPECTATOR;
         }
         return -1;
     }
 
     public static int getDifficultyFromString(String str) {
         switch (str.trim().toLowerCase()) {
-            case "0":
-            case "peaceful":
-            case "p":
-                return 0;
+        case "0":
+        case "peaceful":
+        case "p":
+            return 0;
 
-            case "1":
-            case "easy":
-            case "e":
-                return 1;
+        case "1":
+        case "easy":
+        case "e":
+            return 1;
 
-            case "2":
-            case "normal":
-            case "n":
-                return 2;
+        case "2":
+        case "normal":
+        case "n":
+            return 2;
 
-            case "3":
-            case "hard":
-            case "h":
-                return 3;
+        case "3":
+        case "hard":
+        case "h":
+            return 3;
         }
         return -1;
     }
@@ -1427,7 +1439,7 @@ public class Server {
 
     public int getDefaultGamemode() {
         if (this.defaultGamemode == Integer.MAX_VALUE) {
-            this.defaultGamemode = this.getGamemode();
+            this.defaultGamemode = this.getPropertyInt("gamemode", 1);
         }
         return this.defaultGamemode;
     }
@@ -1557,14 +1569,13 @@ public class Server {
             return result;
         }
 
-        return lookupName(name).map(uuid -> new OfflinePlayer(this, uuid))
-                .orElse(new OfflinePlayer(this, name));
+        return lookupName(name).map(uuid -> new OfflinePlayer(this, uuid)).orElse(new OfflinePlayer(this, name));
     }
 
     public IPlayer getOfflinePlayer(UUID uuid) {
         Preconditions.checkNotNull(uuid, "uuid");
         Optional<Player> onlinePlayer = getPlayer(uuid);
-        //noinspection OptionalIsPresent
+        // noinspection OptionalIsPresent
         if (onlinePlayer.isPresent()) {
             return onlinePlayer.get();
         }
@@ -1621,29 +1632,8 @@ public class Server {
         if (create) {
             log.info(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
             Position spawn = this.getDefaultLevel().getSafeSpawn();
-            nbt = new CompoundTag()
-                    .putLong("firstPlayed", System.currentTimeMillis() / 1000)
-                    .putLong("lastPlayed", System.currentTimeMillis() / 1000)
-                    .putList(new ListTag<DoubleTag>("Pos")
-                            .add(new DoubleTag("0", spawn.x))
-                            .add(new DoubleTag("1", spawn.y))
-                            .add(new DoubleTag("2", spawn.z)))
-                    .putString("Level", this.getDefaultLevel().getName())
-                    .putList(new ListTag<>("Inventory"))
-                    .putCompound("Achievements", new CompoundTag())
-                    .putInt("playerGameType", this.getGamemode())
-                    .putList(new ListTag<DoubleTag>("Motion")
-                            .add(new DoubleTag("0", 0))
-                            .add(new DoubleTag("1", 0))
-                            .add(new DoubleTag("2", 0)))
-                    .putList(new ListTag<FloatTag>("Rotation")
-                            .add(new FloatTag("0", 0))
-                            .add(new FloatTag("1", 0)))
-                    .putFloat("FallDistance", 0)
-                    .putShort("Fire", 0)
-                    .putShort("Air", 300)
-                    .putBoolean("OnGround", true)
-                    .putBoolean("Invulnerable", false);
+            nbt = new CompoundTag().putLong("firstPlayed", System.currentTimeMillis() / 1000).putLong("lastPlayed", System.currentTimeMillis() / 1000).putList(new ListTag<DoubleTag>("Pos").add(new DoubleTag("0", spawn.x)).add(new DoubleTag("1", spawn.y)).add(new DoubleTag("2", spawn.z))).putString("Level", this.getDefaultLevel().getName()).putList(new ListTag<>("Inventory")).putCompound("Achievements", new CompoundTag()).putInt("playerGameType", this.getGamemode())
+                            .putList(new ListTag<DoubleTag>("Motion").add(new DoubleTag("0", 0)).add(new DoubleTag("1", 0)).add(new DoubleTag("2", 0))).putList(new ListTag<FloatTag>("Rotation").add(new FloatTag("0", 0)).add(new FloatTag("1", 0))).putFloat("FallDistance", 0).putShort("Fire", 0).putShort("Air", 300).putBoolean("OnGround", true).putBoolean("Invulnerable", false);
 
             this.saveOfflinePlayerData(name, nbt, true, runEvent);
         }
@@ -1683,10 +1673,12 @@ public class Server {
                     this.onCancel();
                 }
 
-                //doing it like this ensures that the playerdata will be saved in a server shutdown
+                // doing it like this ensures that the playerdata will be saved
+                // in a
+                // server shutdown
                 @Override
                 public void onCancel() {
-                    if (!this.hasRun)    {
+                    if (!this.hasRun) {
                         this.hasRun = true;
                         saveOfflinePlayerDataInternal(event.getSerializer(), tag, nameLower, event.getUuid().orElse(null));
                     }
@@ -1788,7 +1780,7 @@ public class Server {
         List<Player> matchedPlayer = new ArrayList<>();
         for (Player player : this.getOnlinePlayers().values()) {
             if (player.getName().toLowerCase().equals(partialName)) {
-                return new Player[]{player};
+                return new Player[] { player };
             } else if (player.getName().toLowerCase().contains(partialName)) {
                 matchedPlayer.add(player);
             }
@@ -1886,7 +1878,7 @@ public class Server {
         Class<? extends LevelProvider> provider = LevelProviderManager.getProvider(path);
 
         if (provider == null) {
-            log.error(this.getLanguage().translateString("nukkit.level.loadError", new String[]{name, "Unknown provider"}));
+            log.error(this.getLanguage().translateString("nukkit.level.loadError", new String[] { name, "Unknown provider" }));
 
             return false;
         }
@@ -1895,7 +1887,7 @@ public class Server {
         try {
             level = new Level(this, name, path, provider);
         } catch (Exception e) {
-            log.error(this.getLanguage().translateString("nukkit.level.loadError", new String[]{name, e.getMessage()}));
+            log.error(this.getLanguage().translateString("nukkit.level.loadError", new String[] { name, e.getMessage() }));
             return false;
         }
 
@@ -1961,7 +1953,7 @@ public class Server {
             level.initLevel();
             level.setTickRate(this.baseTickRate);
         } catch (Exception e) {
-            log.error(this.getLanguage().translateString("nukkit.level.generationError", new String[]{name, Utils.getExceptionMessage(e)}));
+            log.error(this.getLanguage().translateString("nukkit.level.generationError", new String[] { name, e.getMessage() }));
             return false;
         }
 
@@ -1969,35 +1961,23 @@ public class Server {
 
         this.getPluginManager().callEvent(new LevelLoadEvent(level));
 
-        /*this.getLogger().notice(this.getLanguage().translateString("nukkit.level.backgroundGeneration", name));
-
-        int centerX = (int) level.getSpawnLocation().getX() >> 4;
-        int centerZ = (int) level.getSpawnLocation().getZ() >> 4;
-
-        TreeMap<String, Integer> order = new TreeMap<>();
-
-        for (int X = -3; X <= 3; ++X) {
-            for (int Z = -3; Z <= 3; ++Z) {
-                int distance = X * X + Z * Z;
-                int chunkX = X + centerX;
-                int chunkZ = Z + centerZ;
-                order.put(Level.chunkHash(chunkX, chunkZ), distance);
-            }
-        }
-
-        List<Map.Entry<String, Integer>> sortList = new ArrayList<>(order.entrySet());
-
-        Collections.sort(sortList, new Comparator<Map.Entry<String, Integer>>() {
-            @Override
-            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-                return o2.getValue() - o1.getValue();
-            }
-        });
-
-        for (String index : order.keySet()) {
-            Chunk.Entry entry = Level.getChunkXZ(index);
-            level.populateChunk(entry.chunkX, entry.chunkZ, true);
-        }*/
+        /*
+         * this.getLogger().notice(this.getLanguage().translateString( "nukkit.level.backgroundGeneration", name));
+         *
+         * int centerX = (int) level.getSpawnLocation().getX() >> 4; int centerZ = (int) level.getSpawnLocation().getZ() >> 4;
+         *
+         * TreeMap<String, Integer> order = new TreeMap<>();
+         *
+         * for (int X = -3; X <= 3; ++X) { for (int Z = -3; Z <= 3; ++Z) { int distance = X * X + Z * Z; int chunkX = X + centerX; int chunkZ = Z + centerZ; order.put(Level.chunkHash(chunkX, chunkZ), distance); } }
+         *
+         * List<Map.Entry<String, Integer>> sortList = new ArrayList<>(order.entrySet());
+         *
+         * Collections.sort(sortList, new Comparator<Map.Entry<String, Integer>>() {
+         *
+         * @Override public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) { return o2.getValue() - o1.getValue(); } });
+         *
+         * for (String index : order.keySet()) { Chunk.Entry entry = Level.getChunkXZ(index); level.populateChunk(entry.chunkX, entry.chunkZ, true); }
+         */
         return true;
     }
 
@@ -2027,7 +2007,7 @@ public class Server {
         return network;
     }
 
-    //Revising later...
+    // Revising later...
     public Config getConfig() {
         return this.config;
     }
@@ -2090,11 +2070,11 @@ public class Server {
             return (Boolean) value;
         }
         switch (String.valueOf(value)) {
-            case "on":
-            case "true":
-            case "1":
-            case "yes":
-                return true;
+        case "on":
+        case "true":
+        case "1":
+        case "yes":
+            return true;
         }
         return false;
     }
@@ -2200,16 +2180,11 @@ public class Server {
     }
 
     /**
-     * Checks the current thread against the expected primary thread for the
-     * server.
+     * Checks the current thread against the expected primary thread for the server.
      * <p>
-     * <b>Note:</b> this method should not be used to indicate the current
-     * synchronized state of the runtime. A current thread matching the main
-     * thread indicates that it is synchronized, but a mismatch does not
-     * preclude the same assumption.
+     * <b>Note:</b> this method should not be used to indicate the current synchronized state of the runtime. A current thread matching the main thread indicates that it is synchronized, but a mismatch does not preclude the same assumption.
      *
-     * @return true if the current thread matches the expected primary thread,
-     * false otherwise
+     * @return true if the current thread matches the expected primary thread, false otherwise
      */
     public final boolean isPrimaryThread() {
         return (Thread.currentThread() == currentThread);
@@ -2228,7 +2203,7 @@ public class Server {
         Entity.registerEntity("Painting", EntityPainting.class);
         Entity.registerEntity("PrimedTnt", EntityPrimedTNT.class);
         Entity.registerEntity("Snowball", EntitySnowball.class);
-        //Monsters
+        // Monsters
         Entity.registerEntity("Blaze", EntityBlaze.class);
         Entity.registerEntity("CaveSpider", EntityCaveSpider.class);
         Entity.registerEntity("Creeper", EntityCreeper.class);
@@ -2260,7 +2235,7 @@ public class Server {
         Entity.registerEntity("ZombiePigman", EntityZombiePigman.class);
         Entity.registerEntity("ZombieVillager", EntityZombieVillager.class);
         Entity.registerEntity("ZombieVillagerV1", EntityZombieVillagerV1.class);
-        //Passive
+        // Passive
         Entity.registerEntity("Bat", EntityBat.class);
         Entity.registerEntity("Cat", EntityCat.class);
         Entity.registerEntity("Chicken", EntityChicken.class);
@@ -2290,7 +2265,7 @@ public class Server {
         Entity.registerEntity("WanderingTrader", EntityWanderingTrader.class);
         Entity.registerEntity("Wolf", EntityWolf.class);
         Entity.registerEntity("ZombieHorse", EntityZombieHorse.class);
-        //Projectile
+        // Projectile
         Entity.registerEntity("Egg", EntityEgg.class);
         Entity.registerEntity("ThrownExpBottle", EntityExpBottle.class);
         Entity.registerEntity("ThrownPotion", EntityPotion.class);
@@ -2298,7 +2273,7 @@ public class Server {
         Entity.registerEntity("XpOrb", EntityXPOrb.class);
 
         Entity.registerEntity("Human", EntityHuman.class, true);
-        //Vehicle
+        // Vehicle
         Entity.registerEntity("Boat", EntityBoat.class);
         Entity.registerEntity("MinecartChest", EntityMinecartChest.class);
         Entity.registerEntity("MinecartHopper", EntityMinecartHopper.class);
@@ -2329,6 +2304,12 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.SHULKER_BOX, BlockEntityShulkerBox.class);
         BlockEntity.registerBlockEntity(BlockEntity.BANNER, BlockEntityBanner.class);
         BlockEntity.registerBlockEntity(BlockEntity.MUSIC, BlockEntityMusic.class);
+        BlockEntity.registerBlockEntity(BlockEntity.COMMAND_BLOCK, BlockEntityCommand.class);
+    }
+
+    private void registerBuiltinEvents() {
+        PlayerFormRespondedEventListener listener = new PlayerFormRespondedEventListener();
+        this.pluginManager.registerBuiltinEvents(listener);
     }
 
     public boolean isNetherAllowed() {
@@ -2354,4 +2335,5 @@ public class Server {
             console.start();
         }
     }
+
 }

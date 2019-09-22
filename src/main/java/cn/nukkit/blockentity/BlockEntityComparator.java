@@ -9,8 +9,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
  */
 public class BlockEntityComparator extends BlockEntity {
 
-    private int outputSignal;
-
     public BlockEntityComparator(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
 
@@ -18,7 +16,6 @@ public class BlockEntityComparator extends BlockEntity {
             nbt.putInt("OutputSignal", 0);
         }
 
-        this.outputSignal = nbt.getInt("OutputSignal");
     }
 
     @Override
@@ -27,16 +24,11 @@ public class BlockEntityComparator extends BlockEntity {
     }
 
     public int getOutputSignal() {
-        return outputSignal;
+        return this.namedTag.getInt("OutputSignal");
     }
 
     public void setOutputSignal(int outputSignal) {
-        this.outputSignal = outputSignal;
+        this.namedTag.putInt("OutputSignal", outputSignal);
     }
 
-    @Override
-    public void saveNBT() {
-        super.saveNBT();
-        this.namedTag.putInt("OutputSignal", this.outputSignal);
-    }
 }

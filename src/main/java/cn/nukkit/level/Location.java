@@ -1,11 +1,11 @@
 package cn.nukkit.level;
 
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.LevelException;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * author: MagicDroidX Nukkit Project
  */
 public class Location extends Position {
 
@@ -80,8 +80,10 @@ public class Location extends Position {
 
     @Override
     public Location getLocation() {
-        if (this.isValid()) return new Location(this.x, this.y, this.z, this.yaw, this.pitch, this.level);
-        else throw new LevelException("Undefined Level reference");
+        if (this.isValid())
+            return new Location(this.x, this.y, this.z, this.yaw, this.pitch, this.level);
+        else
+            throw new LevelException("Undefined Level reference");
     }
 
     @Override
@@ -166,6 +168,35 @@ public class Location extends Position {
         double z = Math.sin(pitch) * Math.sin(yaw);
         double y = Math.cos(pitch);
         return new Vector3(x, y, z).normalize();
+    }
+
+    public BlockFace getDirection() {
+        double rotation = this.yaw % 360;
+        double pitch = this.pitch % 180;
+
+        // log.info("rotation: {}, pitch:{}", rotation, pitch);
+
+        if (pitch < -60.0) {
+            return BlockFace.UP;
+        } else if (pitch > 60.0) {
+            return BlockFace.DOWN;
+        } else {
+
+            if (rotation < 0) {
+                rotation += 360.0;
+            }
+            if ((0 <= rotation && rotation < 45) || (315 <= rotation && rotation < 360)) {
+                return BlockFace.SOUTH;
+            } else if (45 <= rotation && rotation < 135) {
+                return BlockFace.WEST;
+            } else if (135 <= rotation && rotation < 225) {
+                return BlockFace.NORTH;
+            } else if (225 <= rotation && rotation < 315) {
+                return BlockFace.EAST;
+            } else {
+                return null;
+            }
+        }
     }
 
     @Override

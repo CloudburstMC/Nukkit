@@ -55,6 +55,7 @@ public final class Timings {
     public static final FullServerTickTiming fullServerTickTimer;
     public static final Timing timingsTickTimer;
     public static final Timing pluginEventTimer;
+    public static final Timing builtinEventTimer;
 
     public static final Timing connectionTimer;
     public static final Timing schedulerTimer;
@@ -92,15 +93,12 @@ public final class Timings {
         privacy = Server.getInstance().getConfig("timings.privacy", false);
         ignoredConfigSections.addAll(Server.getInstance().getConfig().getStringList("timings.ignore"));
 
-        Server.getInstance().getLogger().debug("Timings: \n" +
-                "Enabled - " + isTimingsEnabled() + "\n" +
-                "Verbose - " + isVerboseEnabled() + "\n" +
-                "History Interval - " + getHistoryInterval() + "\n" +
-                "History Length - " + getHistoryLength());
+        Server.getInstance().getLogger().debug("Timings: \n" + "Enabled - " + isTimingsEnabled() + "\n" + "Verbose - " + isVerboseEnabled() + "\n" + "History Interval - " + getHistoryInterval() + "\n" + "History Length - " + getHistoryLength());
 
         fullServerTickTimer = new FullServerTickTiming();
         timingsTickTimer = TimingsManager.getTiming(DEFAULT_GROUP.name, "Timings Tick", fullServerTickTimer);
         pluginEventTimer = TimingsManager.getTiming("Plugin Events");
+        builtinEventTimer = TimingsManager.getTiming("Builtin Events");
 
         connectionTimer = TimingsManager.getTiming("Connection Handler");
         schedulerTimer = TimingsManager.getTiming("Scheduler");
@@ -162,7 +160,7 @@ public final class Timings {
 
     public static void setHistoryInterval(int interval) {
         historyInterval = Math.max(20 * 60, interval);
-        //Recheck the history length with the new Interval
+        // Recheck the history length with the new Interval
         if (historyLength != -1) {
             setHistoryLength(historyLength);
         }
@@ -173,11 +171,16 @@ public final class Timings {
     }
 
     public static void setHistoryLength(int length) {
-        //Cap at 12 History Frames, 1 hour at 5 minute frames.
+        // Cap at 12 History Frames, 1 hour at 5 minute frames.
         int maxLength = historyInterval * MAX_HISTORY_FRAMES;
-        //For special cases of servers with special permission to bypass the max.
-        //This max helps keep data file sizes reasonable for processing on Aikar's Timing parser side.
-        //Setting this will not help you bypass the max unless Aikar has added an exception on the API side.
+        // For special cases of servers with special permission to bypass the
+        // max.
+        // This max helps keep data file sizes reasonable for processing on
+        // Aikar's
+        // Timing parser side.
+        // Setting this will not help you bypass the max unless Aikar has added
+        // an
+        // exception on the API side.
         if (Server.getInstance().getConfig().getBoolean("timings.bypass-max", false)) {
             maxLength = Integer.MAX_VALUE;
         }
@@ -187,11 +190,7 @@ public final class Timings {
         Queue<TimingsHistory> oldQueue = TimingsManager.HISTORY;
         int frames = (getHistoryLength() / getHistoryInterval());
         if (length > maxLength) {
-            Server.getInstance().getLogger().warning(
-                    "Timings Length too high. Requested " + length + ", max is " + maxLength
-                            + ". To get longer history, you must increase your interval. Set Interval to "
-                            + Math.ceil((float) length / MAX_HISTORY_FRAMES)
-                            + " to achieve this length.");
+            Server.getInstance().getLogger().warning("Timings Length too high. Requested " + length + ", max is " + maxLength + ". To get longer history, you must increase your interval. Set Interval to " + Math.ceil((float) length / MAX_HISTORY_FRAMES) + " to achieve this length.");
         }
 
         TimingsManager.HISTORY = new TimingsManager.BoundedQueue<>(frames);
@@ -201,7 +200,6 @@ public final class Timings {
     public static void reset() {
         TimingsManager.reset();
     }
-
 
     public static Timing getCommandTiming(Command command) {
         return TimingsManager.getTiming(DEFAULT_GROUP.name, "Command: " + command.getLabel(), commandTimer);
@@ -228,9 +226,13 @@ public final class Timings {
     public static Timing getPluginEventTiming(Class<? extends Event> event, Listener listener, EventExecutor executor, Plugin plugin) {
         Timing group = TimingsManager.getTiming(plugin.getName(), "Combined Total", pluginEventTimer);
 
-        return TimingsManager.getTiming(plugin.getName(), "Event: " + listener.getClass().getName() + "."
-                + (executor instanceof MethodEventExecutor ? ((MethodEventExecutor) executor).getMethod().getName() : "???")
-                + " (" + event.getSimpleName() + ")", group);
+        return TimingsManager.getTiming(plugin.getName(), "Event: " + listener.getClass().getName() + "." + (executor instanceof MethodEventExecutor ? ((MethodEventExecutor) executor).getMethod().getName() : "???") + " (" + event.getSimpleName() + ")", group);
+    }
+
+    public static Timing getBuiltinEventTiming(Class<? extends Event> event, Listener listener, EventExecutor executor) {
+        Timing group = TimingsManager.getBuiltinTiming("Combined Total", pluginEventTimer);
+
+        return TimingsManager.getBuiltinTiming("Event: " + listener.getClass().getName() + "." + (executor instanceof MethodEventExecutor ? ((MethodEventExecutor) executor).getMethod().getName() : "???") + " (" + event.getSimpleName() + ")", group);
     }
 
     public static Timing getEntityTiming(Entity entity) {
