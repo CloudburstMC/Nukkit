@@ -115,10 +115,6 @@ public class TimingsManager {
         return TIMING_MAP.computeIfAbsent(id, k -> new Timing(id));
     }
 
-    static Timing getBuiltinTiming(String name, Timing groupTiming) {
-        return getTiming("builtin", name, groupTiming);
-    }
-
     static final class BoundedQueue<E> extends LinkedList<E> {
         final int maxSize;
 

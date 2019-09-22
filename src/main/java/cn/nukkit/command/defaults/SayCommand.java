@@ -6,19 +6,20 @@ import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
-import lombok.extern.log4j.Log4j2;
 
 /**
- * Created on 2015/11/12 by xtypr. Package cn.nukkit.command.defaults in project Nukkit .
+ * Created on 2015/11/12 by xtypr.
+ * Package cn.nukkit.command.defaults in project Nukkit .
  */
-@Log4j2
 public class SayCommand extends VanillaCommand {
 
     public SayCommand(String name) {
         super(name, "%nukkit.command.say.description", "%commands.say.usage");
         this.setPermission("nukkit.command.say");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[] { new CommandParameter("message") });
+        this.commandParameters.put("default", new CommandParameter[]{
+                new CommandParameter("message")
+        });
     }
 
     @Override
@@ -49,47 +50,10 @@ public class SayCommand extends VanillaCommand {
             msg = msg.substring(0, msg.length() - 1);
         }
 
-        log.info("Message to say: {}", msg);
 
-        sender.getServer().broadcastMessage(new TranslationContainer(TextFormat.LIGHT_PURPLE + "%chat.type.announcement", senderString, TextFormat.LIGHT_PURPLE + msg));
+        sender.getServer().broadcastMessage(new TranslationContainer(
+                TextFormat.LIGHT_PURPLE + "%chat.type.announcement",
+                senderString, TextFormat.LIGHT_PURPLE + msg));
         return true;
-    }
-
-    @Override
-    public int executeWithOutputSignal(CommandSender sender, String commandLabel, String[] args) {
-        if (!this.testPermission(sender)) {
-            return 0;
-        }
-
-        if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-            return -1;
-        }
-
-        String senderString;
-        if (sender instanceof Player) {
-            senderString = ((Player) sender).getDisplayName();
-        } else if (sender instanceof ConsoleCommandSender) {
-            senderString = "Server";
-        } else {
-            senderString = sender.getName();
-        }
-
-        String msg = "";
-        for (String arg : args) {
-            msg += arg + " ";
-        }
-        if (msg.length() > 0) {
-            msg = msg.substring(0, msg.length() - 1);
-        }
-
-        log.debug("Message to say: {} (length: {})", msg, msg.length());
-
-        sender.getServer().broadcastMessage(new TranslationContainer(TextFormat.LIGHT_PURPLE + "%chat.type.announcement", senderString, TextFormat.LIGHT_PURPLE + msg));
-        if (msg.length() > 15) {
-            return 15;
-        } else {
-            return msg.length();
-        }
     }
 }

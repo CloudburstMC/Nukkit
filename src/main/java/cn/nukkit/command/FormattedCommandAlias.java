@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * author: MagicDroidX Nukkit Project
+ * author: MagicDroidX
+ * Nukkit Project
  */
 public class FormattedCommandAlias extends Command {
 
@@ -23,11 +24,6 @@ public class FormattedCommandAlias extends Command {
     public FormattedCommandAlias(String alias, List<String> formatStrings) {
         super(alias);
         this.formatStrings = formatStrings.toArray(new String[0]);
-    }
-
-    @Override
-    public int executeWithOutputSignal(CommandSender sender, String commandLabel, String[] args) {
-        return 0;
     }
 
     @Override
@@ -138,4 +134,5 @@ public class FormattedCommandAlias extends Command {
     private static boolean inRange(int i, int j, int k) {
         return i >= j && i <= k;
     }
+
 }

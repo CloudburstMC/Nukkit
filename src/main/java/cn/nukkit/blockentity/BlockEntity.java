@@ -1,10 +1,5 @@
 package cn.nukkit.blockentity;
 
-import java.lang.reflect.Constructor;
-
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.Position;
@@ -15,13 +10,16 @@ import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.MainLogger;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
-import lombok.extern.log4j.Log4j2;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
+import java.lang.reflect.Constructor;
 
 /**
  * @author MagicDroidX
  */
 public abstract class BlockEntity extends Position {
-    // WARNING: DO NOT CHANGE ANY NAME HERE, OR THE CLIENT WILL CRASH
+    //WARNING: DO NOT CHANGE ANY NAME HERE, OR THE CLIENT WILL CRASH
     public static final String CHEST = "Chest";
     public static final String ENDER_CHEST = "EnderChest";
     public static final String FURNACE = "Furnace";
@@ -44,11 +42,11 @@ public abstract class BlockEntity extends Position {
     public static final String JUKEBOX = "Jukebox";
     public static final String SHULKER_BOX = "ShulkerBox";
     public static final String BANNER = "Banner";
-    public static final String COMMAND_BLOCK = "CommandBlock";
+
 
     public static long count = 1;
 
-    private static final BiMap<String, Class<? extends BlockEntity>> knownBlockEntities = HashBiMap.create(22);
+    private static final BiMap<String, Class<? extends BlockEntity>> knownBlockEntities = HashBiMap.create(21);
 
     public FullChunk chunk;
     public String name;
@@ -91,7 +89,7 @@ public abstract class BlockEntity extends Position {
     }
 
     public static BlockEntity createBlockEntity(String type, FullChunk chunk, CompoundTag nbt, Object... args) {
-        type = type.replaceFirst("BlockEntity", ""); // TODO: Remove this after the first release
+        type = type.replaceFirst("BlockEntity", ""); //TODO: Remove this after the first release
         BlockEntity blockEntity = null;
 
         if (knownBlockEntities.containsKey(type)) {
@@ -212,6 +210,10 @@ public abstract class BlockEntity extends Position {
     }
 
     public static CompoundTag getDefaultCompound(Vector3 pos, String id) {
-        return new CompoundTag("").putString("id", id).putInt("x", pos.getFloorX()).putInt("y", pos.getFloorY()).putInt("z", pos.getFloorZ());
+        return new CompoundTag("")
+                .putString("id", id)
+                .putInt("x", pos.getFloorX())
+                .putInt("y", pos.getFloorY())
+                .putInt("z", pos.getFloorZ());
     }
 }

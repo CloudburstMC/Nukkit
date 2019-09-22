@@ -15,7 +15,8 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 /**
- * author: MagicDroidX Nukkit Project
+ * author: MagicDroidX
+ * Nukkit Project
  */
 public class SimpleCommandMap implements CommandMap {
     protected final Map<String, Command> knownCommands = new HashMap<>();
@@ -41,7 +42,6 @@ public class SimpleCommandMap implements CommandMap {
         this.register("nukkit", new PardonCommand("pardon"));
         this.register("nukkit", new PardonIpCommand("pardon-ip"));
         this.register("nukkit", new SayCommand("say"));
-        this.register("nukkit", new SayCommand("yell"));
         this.register("nukkit", new MeCommand("me"));
         this.register("nukkit", new ListCommand("list"));
         this.register("nukkit", new DifficultyCommand("difficulty"));
@@ -68,13 +68,13 @@ public class SimpleCommandMap implements CommandMap {
         this.register("nukkit", new WeatherCommand("weather"));
         this.register("nukkit", new XpCommand("xp"));
 
-        // if ((boolean) this.server.getConfig("debug.commands", false)) {
+//        if ((boolean) this.server.getConfig("debug.commands", false)) {
         this.register("nukkit", new StatusCommand("status"));
         this.register("nukkit", new GarbageCollectorCommand("gc"));
         this.register("nukkit", new TimingsCommand("timings"));
         this.register("nukkit", new DebugPasteCommand("debugpaste"));
-        // this.register("nukkit", new DumpMemoryCommand("dumpmemory"));
-        // }
+        //this.register("nukkit", new DumpMemoryCommand("dumpmemory"));
+//        }
     }
 
     @Override
@@ -101,7 +101,7 @@ public class SimpleCommandMap implements CommandMap {
 
         List<String> aliases = new ArrayList<>(Arrays.asList(command.getAliases()));
 
-        for (Iterator<String> iterator = aliases.iterator(); iterator.hasNext();) {
+        for (Iterator<String> iterator = aliases.iterator(); iterator.hasNext(); ) {
             String alias = iterator.next();
             if (!this.registerAlias(command, true, fallbackPrefix, alias)) {
                 iterator.remove();
@@ -142,7 +142,11 @@ public class SimpleCommandMap implements CommandMap {
 
                 CommandParameters commandParameters = method.getAnnotation(CommandParameters.class);
                 if (commandParameters != null) {
-                    Map<String, CommandParameter[]> map = Arrays.stream(commandParameters.parameters()).collect(Collectors.toMap(Parameters::name, parameters -> Arrays.stream(parameters.parameters()).map(parameter -> new CommandParameter(parameter.name(), parameter.type(), parameter.optional())).distinct().toArray(CommandParameter[]::new)));
+                    Map<String, CommandParameter[]> map = Arrays.stream(commandParameters.parameters())
+                            .collect(Collectors.toMap(Parameters::name, parameters -> Arrays.stream(parameters.parameters())
+                                    .map(parameter -> new CommandParameter(parameter.name(), parameter.type(), parameter.optional()))
+                                    .distinct()
+                                    .toArray(CommandParameter[]::new)));
 
                     sc.commandParameters.putAll(map);
                 }
@@ -155,68 +159,43 @@ public class SimpleCommandMap implements CommandMap {
     private boolean registerAlias(Command command, boolean isAlias, String fallbackPrefix, String label) {
         this.knownCommands.put(fallbackPrefix + ":" + label, command);
 
-        // if you're registering a command alias that is already registered,
-        // then
-        // return false
+        //if you're registering a command alias that is already registered, then return false
         boolean alreadyRegistered = this.knownCommands.containsKey(label);
         Command existingCommand = this.knownCommands.get(label);
         boolean existingCommandIsNotVanilla = alreadyRegistered && !(existingCommand instanceof VanillaCommand);
-        // basically, if we're an alias and it's already registered, or we're a
-        // vanilla command, then we can't override it
+        //basically, if we're an alias and it's already registered, or we're a vanilla command, then we can't override it
         if ((command instanceof VanillaCommand || isAlias) && alreadyRegistered && existingCommandIsNotVanilla) {
             return false;
         }
 
-        // if you're registering a name (alias or label) which is identical to
-        // another command who's primary name is the same
-        // so basically we can't override the main name of a command, but we can
-        // override aliases if we're not an alias
+        //if you're registering a name (alias or label) which is identical to another command who's primary name is the same
+        //so basically we can't override the main name of a command, but we can override aliases if we're not an alias
 
-        // added the last statement which will allow us to override a
-        // VanillaCommand
-        // unconditionally
+        //added the last statement which will allow us to override a VanillaCommand unconditionally
         if (alreadyRegistered && existingCommand.getLabel() != null && existingCommand.getLabel().equals(label) && existingCommandIsNotVanilla) {
             return false;
         }
 
-        // you can now assume that the command is either uniquely named, or
-        // overriding another command's alias (and is not itself, an alias)
+        //you can now assume that the command is either uniquely named, or overriding another command's alias (and is not itself, an alias)
 
         if (!isAlias) {
             command.setLabel(label);
         }
 
-        // Then we need to check if there isn't any command conflicts with
-        // vanilla
-        // commands
+        // Then we need to check if there isn't any command conflicts with vanilla commands
         ArrayList<String> toRemove = new ArrayList<>();
 
         for (Entry<String, Command> entry : knownCommands.entrySet()) {
             Command cmd = entry.getValue();
-            if (cmd.getLabel().equalsIgnoreCase(command.getLabel()) && !cmd.equals(command)) { // If
-                                                                                               // the
-                                                                                               // new
-                                                                                               // command
-                                                                                               // conflicts...
-                                                                                               // (But
-                                                                                               // if
-                                                                                               // it
-                                                                                               // isn't
-                                                                                               // the
-                                                                                               // same
-                                                                                               // command)
-                if (cmd instanceof VanillaCommand) { // And if the old command
-                                                     // is a
-                                                     // vanilla command...
+            if (cmd.getLabel().equalsIgnoreCase(command.getLabel()) && !cmd.equals(command)) { // If the new command conflicts... (But if it isn't the same command)
+                if (cmd instanceof VanillaCommand) { // And if the old command is a vanilla command...
                     // Remove it!
                     toRemove.add(entry.getKey());
                 }
             }
         }
 
-        // Now we loop the toRemove list to remove the command conflicts from
-        // the
-        // knownCommands map
+        // Now we loop the toRemove list to remove the command conflicts from the knownCommands map
         for (String cmd : toRemove) {
             knownCommands.remove(cmd);
         }
@@ -290,38 +269,6 @@ public class SimpleCommandMap implements CommandMap {
     }
 
     @Override
-    public int dispatchWithOutputSignal(CommandSender sender, String cmdLine) {
-        ArrayList<String> parsed = parseArguments(cmdLine);
-        if (parsed.size() == 0) {
-            return -1;
-        }
-
-        String sentCommandLabel = parsed.remove(0).toLowerCase();
-        String[] args = parsed.toArray(new String[0]);
-        Command target = this.getCommand(sentCommandLabel);
-
-        if (target == null) {
-            return -1;
-        }
-
-        target.timing.startTiming();
-        int outputSignal = 0;
-        try {
-            outputSignal = target.executeWithOutputSignal(sender, sentCommandLabel, args);
-        } catch (Exception e) {
-            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.exception"));
-            this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.command.exception", cmdLine, target.toString(), Utils.getExceptionMessage(e)));
-            MainLogger logger = sender.getServer().getLogger();
-            if (logger != null) {
-                logger.logException(e);
-            }
-        }
-        target.timing.stopTiming();
-
-        return outputSignal;
-    }
-
-    @Override
     public void clearCommands() {
         for (Command command : this.knownCommands.values()) {
             command.unregister(this);
@@ -370,7 +317,7 @@ public class SimpleCommandMap implements CommandMap {
             }
 
             if (bad.length() > 0) {
-                this.server.getLogger().warning(this.server.getLanguage().translateString("nukkit.command.alias.notFound", new String[] { alias, bad }));
+                this.server.getLogger().warning(this.server.getLanguage().translateString("nukkit.command.alias.notFound", new String[]{alias, bad}));
                 continue;
             }
 

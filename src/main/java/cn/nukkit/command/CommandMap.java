@@ -3,7 +3,8 @@ package cn.nukkit.command;
 import java.util.List;
 
 /**
- * author: MagicDroidX Nukkit Project
+ * author: MagicDroidX
+ * Nukkit Project
  */
 public interface CommandMap {
 
@@ -16,8 +17,6 @@ public interface CommandMap {
     void registerSimpleCommands(Object object);
 
     boolean dispatch(CommandSender sender, String cmdLine);
-
-    int dispatchWithOutputSignal(CommandSender sender, String cmdLine);
 
     void clearCommands();
 
