@@ -34,6 +34,15 @@ public class RegisteredListener {
         this.timing = timing;
     }
 
+    public RegisteredListener(Listener listener, EventExecutor executor, EventPriority priority, boolean ignoreCancelled, Timing timing) {
+        this.listener = listener;
+        this.priority = priority;
+        this.plugin = null;
+        this.executor = executor;
+        this.ignoreCancelled = ignoreCancelled;
+        this.timing = timing;
+    }
+
     public Listener getListener() {
         return listener;
     }

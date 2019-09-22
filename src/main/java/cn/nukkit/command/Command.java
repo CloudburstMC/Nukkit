@@ -13,7 +13,8 @@ import co.aikar.timings.Timings;
 import java.util.*;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
+ * @author nmaster
  * Nukkit Project
  */
 public abstract class Command {
@@ -136,6 +137,14 @@ public abstract class Command {
     }
 
     public abstract boolean execute(CommandSender sender, String commandLabel, String[] args);
+
+    public int executeWithOutputSignal(CommandSender sender, String commandLabel, String[] args) {
+        if (execute(sender, commandLabel, args)) {
+            return 15;
+        } else {
+            return -1;
+        }
+    }
 
     public String getName() {
         return name;

@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockCommand;
 import cn.nukkit.block.BlockRedstoneDiode;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
@@ -1479,6 +1480,11 @@ public class Level implements ChunkManager, Metadatable {
             fullState = 0;
         }
         Block block = Block.fullList[fullState & 0xFFF].clone();
+
+        if (block instanceof BlockCommand) {
+            block.setDamage((fullState & 0xf));
+        }
+
         block.x = x;
         block.y = y;
         block.z = z;

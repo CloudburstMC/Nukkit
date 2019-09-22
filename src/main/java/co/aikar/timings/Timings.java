@@ -55,6 +55,7 @@ public final class Timings {
     public static final FullServerTickTiming fullServerTickTimer;
     public static final Timing timingsTickTimer;
     public static final Timing pluginEventTimer;
+    public static final Timing builtinEventTimer;
 
     public static final Timing connectionTimer;
     public static final Timing schedulerTimer;
@@ -101,6 +102,7 @@ public final class Timings {
         fullServerTickTimer = new FullServerTickTiming();
         timingsTickTimer = TimingsManager.getTiming(DEFAULT_GROUP.name, "Timings Tick", fullServerTickTimer);
         pluginEventTimer = TimingsManager.getTiming("Plugin Events");
+        builtinEventTimer = TimingsManager.getTiming("Builtin Events");
 
         connectionTimer = TimingsManager.getTiming("Connection Handler");
         schedulerTimer = TimingsManager.getTiming("Scheduler");
@@ -231,6 +233,12 @@ public final class Timings {
         return TimingsManager.getTiming(plugin.getName(), "Event: " + listener.getClass().getName() + "."
                 + (executor instanceof MethodEventExecutor ? ((MethodEventExecutor) executor).getMethod().getName() : "???")
                 + " (" + event.getSimpleName() + ")", group);
+    }
+
+    public static Timing getBuiltinEventTiming(Class<? extends Event> event, Listener listener, EventExecutor executor) {
+        Timing group = TimingsManager.getBuiltinTiming("Combined Total", pluginEventTimer);
+
+        return TimingsManager.getBuiltinTiming("Event: " + listener.getClass().getName() + "." + (executor instanceof MethodEventExecutor ? ((MethodEventExecutor) executor).getMethod().getName() : "???") + " (" + event.getSimpleName() + ")", group);
     }
 
     public static Timing getEntityTiming(Entity entity) {

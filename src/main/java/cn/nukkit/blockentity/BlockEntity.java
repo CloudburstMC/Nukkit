@@ -17,6 +17,7 @@ import java.lang.reflect.Constructor;
 
 /**
  * @author MagicDroidX
+ * @author nmaster
  */
 public abstract class BlockEntity extends Position {
     //WARNING: DO NOT CHANGE ANY NAME HERE, OR THE CLIENT WILL CRASH
@@ -42,11 +43,11 @@ public abstract class BlockEntity extends Position {
     public static final String JUKEBOX = "Jukebox";
     public static final String SHULKER_BOX = "ShulkerBox";
     public static final String BANNER = "Banner";
-
+    public static final String COMMAND_BLOCK = "CommandBlock";
 
     public static long count = 1;
 
-    private static final BiMap<String, Class<? extends BlockEntity>> knownBlockEntities = HashBiMap.create(21);
+    private static final BiMap<String, Class<? extends BlockEntity>> knownBlockEntities = HashBiMap.create(22);
 
     public FullChunk chunk;
     public String name;
