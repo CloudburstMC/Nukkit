@@ -203,8 +203,8 @@ public class Normal extends Generator {
                         new OreType(new BlockStone(BlockStone.DIORITE), 10, 33, 0, 80),
                         new OreType(new BlockStone(BlockStone.ANDESITE), 10, 33, 0, 80)
                 }),
-                new PopulatorCaves(),
-                new PopulatorRavines()
+                new PopulatorCaves()//,
+                //new PopulatorRavines()
         );
     }
 

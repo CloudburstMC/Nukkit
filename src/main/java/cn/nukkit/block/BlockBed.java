@@ -158,7 +158,7 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
                 this.getLevel().setBlock(blockWest, new BlockAir(), true, true);
             }
         }
-        this.getLevel().setBlock(this, new BlockAir(), true, true);
+        this.getLevel().setBlock(this, new BlockAir(), true, false); // Do not update both parts to prevent duplication bug if there is two fallable blocks top of the bed
 
         return true;
     }
