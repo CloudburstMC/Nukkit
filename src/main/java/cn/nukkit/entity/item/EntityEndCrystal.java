@@ -11,7 +11,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 /**
  * Created by PetteriM1
  */
-public class EntityEndCrystal extends Entity {
+public class EntityEndCrystal extends Entity implements EntityExplosive {
 
     public static final int NETWORK_ID = 71;
 
@@ -40,10 +40,10 @@ public class EntityEndCrystal extends Entity {
     }
 
     public boolean attack(EntityDamageEvent source) {
-	if (source.getCause() == EntityDamageEvent.DamageCause.FIRE || source.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || source.getCause() == EntityDamageEvent.DamageCause.LAVA) {
+    if (source.getCause() == EntityDamageEvent.DamageCause.FIRE || source.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || source.getCause() == EntityDamageEvent.DamageCause.LAVA) {
             return false;
         }
-		
+
         if (!super.attack(source)) {
             return false;
         }
@@ -53,18 +53,18 @@ public class EntityEndCrystal extends Entity {
 
         close();
 
-        if (this.level.getGameRules().getBoolean(GameRule.TNT_EXPLODES)) {
+        if (this.level.getGameRules().getBoolean(GameRule.MOB_GRIEFING)) {
             explode.explodeA();
             explode.explodeB();
         }
 
         return true;
-	}
+    }
 
     @Override
-	public boolean canCollideWith(Entity entity) {
-		return false;
-	}
+    public boolean canCollideWith(Entity entity) {
+        return false;
+    }
 
     public boolean showBase() {
         return this.getDataFlag(DATA_FLAGS, DATA_FLAG_SHOWBASE);
