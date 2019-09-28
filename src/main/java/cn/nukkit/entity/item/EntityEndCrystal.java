@@ -40,6 +40,7 @@ public class EntityEndCrystal extends Entity implements EntityExplosive {
         return 0.98f;
     }
 
+    @Override
     public boolean attack(EntityDamageEvent source) {
     if (source.getCause() == EntityDamageEvent.DamageCause.FIRE || source.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || source.getCause() == EntityDamageEvent.DamageCause.LAVA) {
             return false;
@@ -49,6 +50,13 @@ public class EntityEndCrystal extends Entity implements EntityExplosive {
             return false;
         }
 
+        explode();
+
+        return true;
+    }
+
+    @Override
+    public void explode() {
         Position pos = this.getPosition();
         Explosion explode = new Explosion(pos, 6, this);
 
@@ -58,8 +66,6 @@ public class EntityEndCrystal extends Entity implements EntityExplosive {
             explode.explodeA();
             explode.explodeB();
         }
-
-        return true;
     }
 
     @Override
