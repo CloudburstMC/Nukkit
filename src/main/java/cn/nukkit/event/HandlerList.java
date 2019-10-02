@@ -86,7 +86,13 @@ public class HandlerList {
         boolean changed = false;
         for (List<RegisteredListener> list : handlerslots.values()) {
             for (ListIterator<RegisteredListener> i = list.listIterator(); i.hasNext(); ) {
-                if (i.next().getPlugin().equals(plugin)) {
+                RegisteredListener next = i.next();
+
+                if (next.getPlugin() == null){
+                    i.remove();
+                    changed = true;
+                }
+                else if (next.getPlugin().equals(plugin)) {
                     i.remove();
                     changed = true;
                 }

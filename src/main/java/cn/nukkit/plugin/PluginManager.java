@@ -538,7 +538,7 @@ public class PluginManager {
     public void callEvent(Event event) {
         try {
             for (RegisteredListener registration : getEventListeners(event.getClass()).getRegisteredListeners()) {
-                if (!registration.getPlugin().isEnabled()) {
+                if (registration.getPlugin() != null && !registration.getPlugin().isEnabled()) {
                     continue;
                 }
 
@@ -551,6 +551,64 @@ public class PluginManager {
             }
         } catch (IllegalAccessException e) {
             this.server.getLogger().logException(e);
+        }
+    }
+
+    public void registerBuiltinEvents(Listener listener) {
+
+        Map<Class<? extends Event>, Set<RegisteredListener>> ret = new HashMap<>();
+        Set<Method> methods;
+        try {
+            Method[] publicMethods = listener.getClass().getMethods();
+            Method[] privateMethods = listener.getClass().getDeclaredMethods();
+            methods = new HashSet<>(publicMethods.length + privateMethods.length, 1.0f);
+            Collections.addAll(methods, publicMethods);
+            Collections.addAll(methods, privateMethods);
+        } catch (NoClassDefFoundError e) {
+            return;
+        }
+
+        for (final Method method : methods) {
+            final EventHandler eh = method.getAnnotation(EventHandler.class);
+            if (eh == null)
+                continue;
+            if (method.isBridge() || method.isSynthetic()) {
+                continue;
+            }
+            final Class<?> checkClass;
+
+            if (method.getParameterTypes().length != 1 || !Event.class.isAssignableFrom(checkClass = method.getParameterTypes()[0])) {
+                continue;
+            }
+
+            final Class<? extends Event> eventClass = checkClass.asSubclass(Event.class);
+            method.setAccessible(true);
+
+            for (Class<?> clazz = eventClass; Event.class.isAssignableFrom(clazz); clazz = clazz.getSuperclass()) {
+                // This loop checks for extending deprecated events
+                if (clazz.getAnnotation(Deprecated.class) != null) {
+                    // if
+                    // (Boolean.valueOf(String.valueOf(this.server.getConfig("settings.deprecated-verbpse",
+                    // true)))) {
+                    // this.server.getLogger().warning(this.server.getLanguage().translateString("nukkit.plugin.deprecatedEvent",
+                    // plugin.getName(), clazz.getName(),
+                    // listener.getClass().getName() +
+                    // "." + method.getName() + "()"));
+                    // }
+                    break;
+                }
+            }
+            this.registerBuiltinEvent(eventClass, listener, eh.priority(), new MethodEventExecutor(method), eh.ignoreCancelled());
+        }
+    }
+
+    public void registerBuiltinEvent(Class<? extends Event> event, Listener listener, EventPriority priority, EventExecutor executor, boolean ignoreCancelled) throws PluginException {
+
+        try {
+            Timing timing = Timings.getBuiltinEventTiming(event, listener, executor);
+            this.getEventListeners(event).register(new RegisteredListener(listener, executor, priority, ignoreCancelled, timing));
+        } catch (IllegalAccessException e) {
+            Server.getInstance().getLogger().logException(e);
         }
     }
 

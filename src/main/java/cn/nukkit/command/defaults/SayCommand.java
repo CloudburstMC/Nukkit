@@ -23,6 +23,42 @@ public class SayCommand extends VanillaCommand {
     }
 
     @Override
+    public int executeWithOutputSignal(CommandSender sender, String commandLabel, String[] args) {
+        if (!this.testPermission(sender)) {
+            return 0;
+        }
+
+        if (args.length == 0) {
+            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            return -1;
+        }
+
+        String senderString;
+        if (sender instanceof Player) {
+            senderString = ((Player) sender).getDisplayName();
+        } else if (sender instanceof ConsoleCommandSender) {
+            senderString = "Server";
+        } else {
+            senderString = sender.getName();
+        }
+
+        String msg = "";
+        for (String arg : args) {
+            msg += arg + " ";
+        }
+        if (msg.length() > 0) {
+            msg = msg.substring(0, msg.length() - 1);
+        }
+
+        sender.getServer().broadcastMessage(new TranslationContainer(TextFormat.LIGHT_PURPLE + "%chat.type.announcement", senderString, TextFormat.LIGHT_PURPLE + msg));
+        if (msg.length() > 15) {
+            return 15;
+        } else {
+            return msg.length();
+        }
+    }
+
+    @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         if (!this.testPermission(sender)) {
             return true;

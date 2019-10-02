@@ -184,7 +184,7 @@ public interface BlockID {
     int BIRCH_WOODEN_STAIRS = 135;
     int JUNGLE_WOOD_STAIRS = 136;
     int JUNGLE_WOODEN_STAIRS = 136;
-
+    int IMPULSE_COMMAND_BLOCK = 137;
     int BEACON = 138;
     int COBBLE_WALL = 139;
     int STONE_WALL = 139;
@@ -249,7 +249,8 @@ public interface BlockID {
     int FENCE_GATE_JUNGLE = 185;
     int FENCE_GATE_DARK_OAK = 186;
     int FENCE_GATE_ACACIA = 187;
-
+    int REPEATING_COMMAND_BLOCK = 188;
+    int CHAIN_COMMAND_BLOCK = 189;
     int SPRUCE_DOOR_BLOCK = 193;
     int BIRCH_DOOR_BLOCK = 194;
     int JUNGLE_DOOR_BLOCK = 195;

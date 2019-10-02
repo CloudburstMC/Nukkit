@@ -3118,7 +3118,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     } else if (target instanceof Player) {
                                         if ((((Player) target).getGamemode() & 0x01) > 0) {
                                             break;
-                                        } else if (!this.server.getPropertyBoolean("pvp") || this.server.getDifficulty() == 0) {
+                                        } else if (!this.level.gameRules.getBoolean(GameRule.PVP) || this.server.getDifficulty() == 0) {
                                             break;
                                         }
                                     }
@@ -4891,5 +4891,33 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.fishing = null;
+    }
+
+    @Override
+    public BlockFace getDirection() {
+        double rotation = this.yaw % 360;
+        double pitch = this.pitch % 180;
+
+        if (pitch < -60.0) {
+            return BlockFace.UP;
+        } else if (pitch > 60.0) {
+            return BlockFace.DOWN;
+        } else {
+
+            if (rotation < 0) {
+                rotation += 360.0;
+            }
+            if ((0 <= rotation && rotation < 45) || (315 <= rotation && rotation < 360)) {
+                return BlockFace.SOUTH;
+            } else if (45 <= rotation && rotation < 135) {
+                return BlockFace.WEST;
+            } else if (135 <= rotation && rotation < 225) {
+                return BlockFace.NORTH;
+            } else if (225 <= rotation && rotation < 315) {
+                return BlockFace.EAST;
+            } else {
+                return null;
+            }
+        }
     }
 }

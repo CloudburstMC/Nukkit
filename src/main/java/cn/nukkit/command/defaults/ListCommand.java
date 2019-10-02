@@ -17,6 +17,32 @@ public class ListCommand extends VanillaCommand {
     }
 
     @Override
+    public int executeWithOutputSignal(CommandSender sender, String commandLabel, String[] args) {
+        if (!this.testPermission(sender)) {
+            return 1;
+        }
+
+        String online = "";
+        int onlineCount = 0;
+        for (Player player : sender.getServer().getOnlinePlayers().values()) {
+            if (player.isOnline() && (!(sender instanceof Player) || ((Player) sender).canSee(player))) {
+                online += player.getDisplayName() + ", ";
+                ++onlineCount;
+            }
+        }
+
+        if (online.length() > 0) {
+            online = online.substring(0, online.length() - 2);
+        }
+
+        sender.sendMessage(new TranslationContainer("commands.players.list", String.valueOf(onlineCount), String.valueOf(sender.getServer().getMaxPlayers())));
+        sender.sendMessage(online);
+
+        return sender.getServer().getOnlinePlayers().size();
+
+    }
+
+    @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         if (!this.testPermission(sender)) {
             return true;

@@ -27,6 +27,11 @@ public class FormattedCommandAlias extends Command {
     }
 
     @Override
+    public int executeWithOutputSignal(CommandSender sender, String commandLabel, String[] args) {
+        return 0;
+    }
+
+    @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         boolean result = false;
         ArrayList<String> commands = new ArrayList<>();

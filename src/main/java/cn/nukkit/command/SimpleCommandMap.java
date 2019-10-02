@@ -238,6 +238,38 @@ public class SimpleCommandMap implements CommandMap {
     }
 
     @Override
+    public int dispatchWithOutputSignal(CommandSender sender, String cmdLine) {
+        ArrayList<String> parsed = parseArguments(cmdLine);
+        if (parsed.size() == 0) {
+            return -1;
+        }
+
+        String sentCommandLabel = parsed.remove(0).toLowerCase();
+        String[] args = parsed.toArray(new String[0]);
+        Command target = this.getCommand(sentCommandLabel);
+
+        if (target == null) {
+            return -1;
+        }
+
+        target.timing.startTiming();
+        int outputSignal = 0;
+        try {
+            outputSignal = target.executeWithOutputSignal(sender, sentCommandLabel, args);
+        } catch (Exception e) {
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.exception"));
+            this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.command.exception", cmdLine, target.toString(), Utils.getExceptionMessage(e)));
+            MainLogger logger = sender.getServer().getLogger();
+            if (logger != null) {
+                logger.logException(e);
+            }
+        }
+        target.timing.stopTiming();
+
+        return outputSignal;
+    }
+
+    @Override
     public boolean dispatch(CommandSender sender, String cmdLine) {
         ArrayList<String> parsed = parseArguments(cmdLine);
         if (parsed.size() == 0) {

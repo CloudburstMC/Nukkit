@@ -13,6 +13,7 @@ import cn.nukkit.entity.mob.*;
 import cn.nukkit.entity.passive.*;
 import cn.nukkit.entity.projectile.*;
 import cn.nukkit.event.HandlerList;
+import cn.nukkit.event.builtin.PlayerFormRespondedEventListener;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
 import cn.nukkit.event.server.BatchPacketsEvent;
@@ -474,6 +475,8 @@ public class Server {
 
         this.pluginManager.registerInterface(JavaPluginLoader.class);
 
+        this.registerBuiltinEvents();
+
         this.queryRegenerateEvent = new QueryRegenerateEvent(this, 5);
 
         this.network.registerInterface(new RakNetInterface(this));
@@ -755,6 +758,27 @@ public class Server {
         sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.unknown", commandLine));
 
         return false;
+    }
+
+    public int dispatchCommandWithOutputSignal(ConsoleCommandSender sender, String commandLine) {
+        // First we need to check if this command is on the main thread or not, if not, warn the user
+        if (!this.isPrimaryThread()) {
+            getLogger().warning("Command Dispatched Async: " + commandLine);
+            getLogger().warning("Please notify author of plugin causing this execution to fix this bug!", new Throwable());
+            // TODO: We should sync the command to the main thread too!
+        }
+        if (sender == null) {
+            throw new ServerException("CommandSender is not valid");
+        }
+
+        int outputSignal = this.commandMap.dispatchWithOutputSignal(sender, commandLine);
+
+        if (outputSignal == -1) {
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.unknown", commandLine));
+            return -1;
+        } else {
+            return outputSignal;
+        }
     }
 
     //todo: use ticker to check console
@@ -2329,6 +2353,7 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.SHULKER_BOX, BlockEntityShulkerBox.class);
         BlockEntity.registerBlockEntity(BlockEntity.BANNER, BlockEntityBanner.class);
         BlockEntity.registerBlockEntity(BlockEntity.MUSIC, BlockEntityMusic.class);
+        BlockEntity.registerBlockEntity(BlockEntity.COMMAND_BLOCK, BlockEntityCommand.class);
     }
 
     public boolean isNetherAllowed() {
@@ -2353,5 +2378,10 @@ public class Server {
         public void run() {
             console.start();
         }
+    }
+
+    private void registerBuiltinEvents() {
+        PlayerFormRespondedEventListener listener = new PlayerFormRespondedEventListener();
+        this.pluginManager.registerBuiltinEvents(listener);
     }
 }

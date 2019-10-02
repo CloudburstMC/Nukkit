@@ -191,7 +191,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[SPRUCE_WOOD_STAIRS] = BlockStairsSpruce.class; //134
             list[BIRCH_WOOD_STAIRS] = BlockStairsBirch.class; //135
             list[JUNGLE_WOOD_STAIRS] = BlockStairsJungle.class; //136
-
+            list[IMPULSE_COMMAND_BLOCK] = BlockCommandImpulse.class; // 137
             list[BEACON] = BlockBeacon.class; //138
             list[STONE_WALL] = BlockWall.class; //139
             list[FLOWER_POT_BLOCK] = BlockFlowerPot.class; //140
@@ -243,7 +243,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[FENCE_GATE_JUNGLE] = BlockFenceGateJungle.class; //185
             list[FENCE_GATE_DARK_OAK] = BlockFenceGateDarkOak.class; //186
             list[FENCE_GATE_ACACIA] = BlockFenceGateAcacia.class; //187
-
+            list[REPEATING_COMMAND_BLOCK] = BlockCommandRepeating.class; // 188
+            list[CHAIN_COMMAND_BLOCK] = BlockCommandChain.class; // 189
             list[SPRUCE_DOOR_BLOCK] = BlockDoorSpruce.class; //193
             list[BIRCH_DOOR_BLOCK] = BlockDoorBirch.class; //194
             list[JUNGLE_DOOR_BLOCK] = BlockDoorJungle.class; //195
@@ -392,6 +393,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        block.setDamage(item.getDamage());
         return this.getLevel().setBlock(this, this, true, true);
     }
 
