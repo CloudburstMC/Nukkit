@@ -39,7 +39,7 @@ public class ChunkSerializerV3 extends ChunkSerializerV1 {
                 byte[] payload = new byte[buffer.writerIndex()];
                 buffer.readBytes(payload);
 
-                db.put(LevelDBKey.getKey(chunk.getX(), chunk.getZ(), LevelDBKey.Type.SUBCHUNK_PREFIX), payload);
+                db.put(LevelDBKey.SUBCHUNK_PREFIX.getKey(chunk.getX(), chunk.getZ(), ySection), payload);
             } finally {
                 buffer.release();
             }
@@ -53,7 +53,7 @@ public class ChunkSerializerV3 extends ChunkSerializerV1 {
 
         TIntShortMap extraDataMap = null;
 
-        byte[] extraData = db.get(LevelDBKey.getKey(chunkX, chunkZ, LevelDBKey.Type.BLOCK_EXTRA_DATA));
+        byte[] extraData = db.get(LevelDBKey.BLOCK_EXTRA_DATA.getKey(chunkX, chunkZ));
         if (extraData != null) {
             extraDataMap = new TIntShortHashMap(16, 0.5f, 0, (short) 0);
             ByteBuf extraDataBuf = Unpooled.wrappedBuffer(extraData);
@@ -70,7 +70,7 @@ public class ChunkSerializerV3 extends ChunkSerializerV1 {
         ChunkSection[] sections = new ChunkSection[Chunk.SECTION_COUNT];
 
         for (int ySection = 0; ySection < Chunk.SECTION_COUNT; ySection++) {
-            byte[] sectionData = db.get(LevelDBKey.getKey(chunkX, chunkZ, LevelDBKey.Type.SUBCHUNK_PREFIX, ySection));
+            byte[] sectionData = db.get(LevelDBKey.SUBCHUNK_PREFIX.getKey(chunkX, chunkZ, ySection));
             if (sectionData == null) {
                 continue;
             }
@@ -110,7 +110,7 @@ public class ChunkSerializerV3 extends ChunkSerializerV1 {
 
         // Height map & Biomes
 
-        byte[] data2d = db.get(LevelDBKey.getKey(chunkX, chunkZ, LevelDBKey.Type.DATA_2D));
+        byte[] data2d = db.get(LevelDBKey.DATA_2D.getKey(chunkX, chunkZ));
         int[] heightMap = new int[512];
         byte[] biomes = new byte[256];
 

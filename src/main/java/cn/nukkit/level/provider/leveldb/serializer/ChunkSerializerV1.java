@@ -28,16 +28,14 @@ public class ChunkSerializerV1 implements ChunkSerializer {
     }
 
     protected void deserializeTerrain(DB db, ChunkBuilder chunkBuilder) {
-        byte[] terrain = db.get(LevelDBKey.getKey(chunkBuilder.getX(), chunkBuilder.getZ(),
-                LevelDBKey.Type.LEGACY_TERRAIN));
+        byte[] terrain = db.get(LevelDBKey.LEGACY_TERRAIN.getKey(chunkBuilder.getX(), chunkBuilder.getZ()));
         if (terrain == null) {
             throw new ChunkException("No terrain found in chunk");
         }
     }
 
     protected void deserializeExtraData(DB db, ChunkBuilder chunkBuilder) {
-        byte[] extraData = db.get(LevelDBKey.getKey(chunkBuilder.getX(), chunkBuilder.getZ(),
-                LevelDBKey.Type.BLOCK_EXTRA_DATA));
+        byte[] extraData = db.get(LevelDBKey.BLOCK_EXTRA_DATA.getKey(chunkBuilder.getX(), chunkBuilder.getZ()));
         if (extraData == null) {
             return;
         }

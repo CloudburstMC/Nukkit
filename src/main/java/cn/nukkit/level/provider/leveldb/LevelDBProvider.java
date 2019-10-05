@@ -63,9 +63,8 @@ public class LevelDBProvider implements LevelProvider {
         final int z = chunkBuilder.getZ();
 
         return CompletableFuture.supplyAsync(() -> {
-            byte[] versionValue = this.db.get(LevelDBKey.getKey(x, z, LevelDBKey.Type.VERSION));
+            byte[] versionValue = this.db.get(LevelDBKey.VERSION.getKey(x, z));
             if (versionValue == null || versionValue.length != 1) {
-                log.debug("Chunk no found");
                 return null;
             }
 
@@ -75,15 +74,24 @@ public class LevelDBProvider implements LevelProvider {
                 chunkBuilder.dirty();
             }
 
-            ChunkSerializers.deserializeChunk(db, chunkBuilder, chunkVersion);
+            ChunkSerializers.deserializeChunk(this.db, chunkBuilder, chunkVersion);
 
             return chunkBuilder.build();
-        }, executor);
+        }, this.executor);
     }
 
     @Override
     public CompletableFuture<Void> saveChunk(Chunk chunk) {
-        return null;
+        final int x = chunk.getX();
+        final int z = chunk.getZ();
+
+        return CompletableFuture.supplyAsync(() -> {
+            this.db.put(LevelDBKey.VERSION.getKey(x, z), new byte[]{8});
+
+            ChunkSerializers.serializeChunk(this.db, chunk, 8);
+
+            return null;
+        }, this.executor);
     }
 
     @Override
