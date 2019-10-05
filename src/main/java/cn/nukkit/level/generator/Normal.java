@@ -9,11 +9,15 @@ import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.generator.noise.vanilla.f.NoiseGeneratorOctavesF;
 import cn.nukkit.level.generator.noise.vanilla.f.NoiseGeneratorPerlinF;
 import cn.nukkit.level.generator.object.ore.OreType;
-import cn.nukkit.level.generator.populator.impl.*;
+import cn.nukkit.level.generator.populator.impl.PopulatorBedrock;
+import cn.nukkit.level.generator.populator.impl.PopulatorCaves;
+import cn.nukkit.level.generator.populator.impl.PopulatorGroundCover;
+import cn.nukkit.level.generator.populator.impl.PopulatorOre;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
+
 import java.util.*;
 
 /**
@@ -207,8 +211,9 @@ public class Normal extends Generator {
         PopulatorCaves caves = new PopulatorCaves();
         this.populators.add(caves);
 
-        PopulatorRavines ravines = new PopulatorRavines();
-        this.populators.add(ravines);
+        //TODO: fix ravines
+        //PopulatorRavines ravines = new PopulatorRavines();
+        //this.populators.add(ravines);
     }
 
     @Override
