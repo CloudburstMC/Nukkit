@@ -26,7 +26,7 @@ public class LevelTimings {
     public final Timing syncChunkLoadBlockEntitiesTimer;
 
     public LevelTimings(Level level) {
-        String name = level.getFolderName() + " - ";
+        String name = level.getId() + " - ";
 
         this.doChunkUnload = TimingsManager.getTiming(name + "doChunkUnload");
         this.doTickPending = TimingsManager.getTiming(name + "doTickPending");

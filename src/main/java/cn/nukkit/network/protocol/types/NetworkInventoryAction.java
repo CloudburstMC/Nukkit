@@ -1,6 +1,5 @@
 package cn.nukkit.network.protocol.types;
 
-import cn.nukkit.Player;
 import cn.nukkit.inventory.AnvilInventory;
 import cn.nukkit.inventory.BeaconInventory;
 import cn.nukkit.inventory.EnchantInventory;
@@ -9,6 +8,9 @@ import cn.nukkit.inventory.transaction.action.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.network.protocol.InventoryTransactionPacket;
+import cn.nukkit.player.Player;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 import java.util.Optional;
@@ -69,21 +71,21 @@ public class NetworkInventoryAction {
     public Item oldItem;
     public Item newItem;
 
-    public NetworkInventoryAction read(InventoryTransactionPacket packet) {
-        this.sourceType = (int) packet.getUnsignedVarInt();
+    public NetworkInventoryAction read(ByteBuf buffer, InventoryTransactionPacket packet) {
+        this.sourceType = (int) Binary.readUnsignedVarInt(buffer);
 
         switch (this.sourceType) {
             case SOURCE_CONTAINER:
-                this.windowId = packet.getVarInt();
+                this.windowId = Binary.readVarInt(buffer);
                 break;
             case SOURCE_WORLD:
-                this.unknown = packet.getUnsignedVarInt();
+                this.unknown = Binary.readUnsignedVarInt(buffer);
                 break;
             case SOURCE_CREATIVE:
                 break;
             case SOURCE_CRAFT_SLOT:
             case SOURCE_TODO:
-                this.windowId = packet.getVarInt();
+                this.windowId = Binary.readVarInt(buffer);
 
                 switch (this.windowId) {
                     case SOURCE_TYPE_CRAFTING_RESULT:
@@ -94,34 +96,34 @@ public class NetworkInventoryAction {
                 break;
         }
 
-        this.inventorySlot = (int) packet.getUnsignedVarInt();
-        this.oldItem = packet.getSlot();
-        this.newItem = packet.getSlot();
+        this.inventorySlot = (int) Binary.readUnsignedVarInt(buffer);
+        this.oldItem = Binary.readItem(buffer);
+        this.newItem = Binary.readItem(buffer);
 
         return this;
     }
 
-    public void write(InventoryTransactionPacket packet) {
-        packet.putUnsignedVarInt(this.sourceType);
+    public void write(ByteBuf buffer, InventoryTransactionPacket packet) {
+        Binary.writeUnsignedVarInt(buffer, this.sourceType);
 
         switch (this.sourceType) {
             case SOURCE_CONTAINER:
-                packet.putVarInt(this.windowId);
+                Binary.writeVarInt(buffer, this.windowId);
                 break;
             case SOURCE_WORLD:
-                packet.putUnsignedVarInt(this.unknown);
+                Binary.writeUnsignedVarInt(buffer, this.unknown);
                 break;
             case SOURCE_CREATIVE:
                 break;
             case SOURCE_CRAFT_SLOT:
             case SOURCE_TODO:
-                packet.putVarInt(this.windowId);
+                Binary.writeVarInt(buffer, this.windowId);
                 break;
         }
 
-        packet.putUnsignedVarInt(this.inventorySlot);
-        packet.putSlot(this.oldItem);
-        packet.putSlot(this.newItem);
+        Binary.writeUnsignedVarInt(buffer, this.inventorySlot);
+        Binary.writeItem(buffer, this.oldItem);
+        Binary.writeItem(buffer, this.newItem);
     }
 
     public InventoryAction createInventoryAction(Player player) {

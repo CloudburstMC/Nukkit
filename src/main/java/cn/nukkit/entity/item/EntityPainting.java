@@ -1,16 +1,16 @@
 package cn.nukkit.entity.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHanging;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.ItemPainting;
-import cn.nukkit.level.GameRule;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddPaintingPacket;
 import cn.nukkit.network.protocol.DataPacket;
+import cn.nukkit.player.Player;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +26,7 @@ public class EntityPainting extends EntityHanging {
     public final static Motive[] motives = Motive.values();
     private Motive motive;
 
-    public EntityPainting(FullChunk chunk, CompoundTag nbt) {
+    public EntityPainting(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -63,7 +63,7 @@ public class EntityPainting extends EntityHanging {
         if (super.attack(source)) {
             if (source instanceof EntityDamageByEntityEvent) {
                 Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
-                if (damager instanceof Player && ((Player) damager).isSurvival() && this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
+                if (damager instanceof Player && ((Player) damager).isSurvival() && this.level.getGameRules().get(GameRules.DO_ENTITY_DROPS)) {
                     this.level.dropItem(this, new ItemPainting());
                 }
             }

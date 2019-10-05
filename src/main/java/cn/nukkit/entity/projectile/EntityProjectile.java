@@ -7,11 +7,13 @@ import cn.nukkit.entity.item.EntityEndCrystal;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.level.MovingObjectPosition;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+
+import java.util.Set;
 
 /**
  * author: MagicDroidX
@@ -37,11 +39,11 @@ public abstract class EntityProjectile extends Entity {
 
     protected double damage = 0;
 
-    public EntityProjectile(FullChunk chunk, CompoundTag nbt) {
+    public EntityProjectile(Chunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }
 
-    public EntityProjectile(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+    public EntityProjectile(Chunk chunk, CompoundTag nbt, Entity shootingEntity) {
         super(chunk, nbt);
         this.shootingEntity = shootingEntity;
         if (shootingEntity != null) {
@@ -128,12 +130,14 @@ public abstract class EntityProjectile extends Entity {
 
             Vector3 moveVector = new Vector3(this.x + this.motionX, this.y + this.motionY, this.z + this.motionZ);
 
-            Entity[] list = this.getLevel().getCollidingEntities(this.boundingBox.addCoord(this.motionX, this.motionY, this.motionZ).expand(1, 1, 1), this);
+            Set<Entity> collidingEntities = this.getLevel().getCollidingEntities(
+                    this.boundingBox.addCoord(this.motionX, this.motionY, this.motionZ).expand(1, 1, 1),
+                    this);
 
             double nearDistance = Integer.MAX_VALUE;
             Entity nearEntity = null;
 
-            for (Entity entity : list) {
+            for (Entity entity : collidingEntities) {
                 if (/*!entity.canCollideWith(this) or */
                         (entity == this.shootingEntity && this.ticksLived < 5)
                         ) {

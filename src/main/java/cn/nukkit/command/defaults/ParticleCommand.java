@@ -1,6 +1,5 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
@@ -10,6 +9,7 @@ import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.particle.*;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
 import java.util.Random;

@@ -1,8 +1,8 @@
 package cn.nukkit.event.inventory;
 
-import cn.nukkit.Player;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.inventory.Inventory;
+import cn.nukkit.player.Player;
 
 /**
  * author: Box

@@ -1,7 +1,7 @@
 package cn.nukkit.entity.projectile;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -54,15 +54,15 @@ public class EntityArrow extends EntityProjectile {
     protected float gravity = 0.05f;
     protected float drag = 0.01f;
 
-    public EntityArrow(FullChunk chunk, CompoundTag nbt) {
+    public EntityArrow(Chunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }
 
-    public EntityArrow(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+    public EntityArrow(Chunk chunk, CompoundTag nbt, Entity shootingEntity) {
         this(chunk, nbt, shootingEntity, false);
     }
 
-    public EntityArrow(FullChunk chunk, CompoundTag nbt, Entity shootingEntity, boolean critical) {
+    public EntityArrow(Chunk chunk, CompoundTag nbt, Entity shootingEntity, boolean critical) {
         super(chunk, nbt, shootingEntity);
         this.setCritical(critical);
     }

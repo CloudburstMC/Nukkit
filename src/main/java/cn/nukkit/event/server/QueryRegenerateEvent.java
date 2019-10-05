@@ -1,16 +1,19 @@
 package cn.nukkit.event.server;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
+import cn.nukkit.player.Player;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginDescription;
-import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * author: MagicDroidX
@@ -194,27 +197,27 @@ public class QueryRegenerateEvent extends ServerEvent {
         return query.toByteArray();
     }
 
-    public byte[] getShortQuery(byte[] buffer) {
-        if (buffer == null) buffer = new byte[Character.MAX_VALUE];
-        FastByteArrayOutputStream query = new FastByteArrayOutputStream(buffer);
-        try {
-            query.write(this.serverName.getBytes(StandardCharsets.UTF_8));
-            query.write((byte) 0x00);
-            query.write(this.gameType.getBytes(StandardCharsets.UTF_8));
-            query.write((byte) 0x00);
-            query.write(this.map.getBytes(StandardCharsets.UTF_8));
-            query.write((byte) 0x00);
-            query.write(String.valueOf(this.numPlayers).getBytes(StandardCharsets.UTF_8));
-            query.write((byte) 0x00);
-            query.write(String.valueOf(this.maxPlayers).getBytes(StandardCharsets.UTF_8));
-            query.write((byte) 0x00);
-            query.write(Binary.writeLShort(this.port));
-            query.write(this.ip.getBytes(StandardCharsets.UTF_8));
-            query.write((byte) 0x00);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return query.toByteArray();
+    private static void writeNullTerminatedString(ByteBuf buffer, String string) {
+        buffer.writeBytes(string.getBytes(StandardCharsets.UTF_8));
+        buffer.writeByte(0);
     }
 
+    public byte[] getShortQuery() {
+        ByteBuf buffer = ByteBufAllocator.DEFAULT.heapBuffer();
+        try {
+            writeNullTerminatedString(buffer, this.serverName);
+            writeNullTerminatedString(buffer, this.gameType);
+            writeNullTerminatedString(buffer, this.map);
+            writeNullTerminatedString(buffer, Integer.toString(this.numPlayers));
+            writeNullTerminatedString(buffer, Integer.toString(this.maxPlayers));
+            buffer.writeShortLE(this.port);
+            writeNullTerminatedString(buffer, this.ip);
+
+            byte[] bytes = new byte[buffer.readableBytes()];
+            buffer.readBytes(bytes);
+            return bytes;
+        } finally {
+            buffer.release();
+        }
+    }
 }

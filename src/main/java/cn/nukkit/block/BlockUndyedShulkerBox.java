@@ -5,7 +5,6 @@
  */
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityShulkerBox;
 import cn.nukkit.inventory.ShulkerBoxInventory;
@@ -16,8 +15,8 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.DyeColor;
 
 /**
  *
@@ -61,7 +60,7 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
 
     @Override
     public Item toItem() {
-        ItemBlock item = new ItemBlock(this, this.getDamage(), 1);
+        ItemBlock item = new ItemBlock(this);
 
         BlockEntityShulkerBox t = (BlockEntityShulkerBox) this.getLevel().getBlockEntity(this);
 

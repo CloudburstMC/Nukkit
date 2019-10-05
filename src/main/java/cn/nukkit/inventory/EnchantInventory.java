@@ -1,8 +1,8 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.enchantment.EnchantmentEntry;
 import cn.nukkit.level.Position;
+import cn.nukkit.player.Player;
 
 import java.util.Collections;
 import java.util.Random;

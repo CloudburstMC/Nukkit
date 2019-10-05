@@ -1,6 +1,5 @@
 package cn.nukkit.entity.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.api.API;
 import cn.nukkit.api.API.Definition;
 import cn.nukkit.api.API.Usage;
@@ -17,14 +16,15 @@ import cn.nukkit.event.vehicle.VehicleMoveEvent;
 import cn.nukkit.event.vehicle.VehicleUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemMinecart;
-import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Location;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.MinecartType;
 import cn.nukkit.utils.Rail;
 import cn.nukkit.utils.Rail.Orientation;
@@ -71,7 +71,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
 
     public abstract boolean isRideable();
 
-    public EntityMinecartAbstract(FullChunk chunk, CompoundTag nbt) {
+    public EntityMinecartAbstract(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
 
         setMaxHealth(40);
@@ -262,7 +262,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
     public void kill() {
         super.kill();
 
-        if (level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
+        if (level.getGameRules().get(GameRules.DO_ENTITY_DROPS)) {
             dropItem();
         }
     }

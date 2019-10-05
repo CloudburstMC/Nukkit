@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -7,28 +9,27 @@ import lombok.ToString;
  */
 @ToString
 public class DisconnectPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.DISCONNECT_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.DISCONNECT_PACKET;
 
     public boolean hideDisconnectionScreen = false;
     public String message;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
     @Override
-    public void decode() {
-        this.hideDisconnectionScreen = this.getBoolean();
-        this.message = this.getString();
+    protected void decode(ByteBuf buffer) {
+        this.hideDisconnectionScreen = buffer.readBoolean();
+        this.message = Binary.readString(buffer);
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putBoolean(this.hideDisconnectionScreen);
+    protected void encode(ByteBuf buffer) {
+        buffer.writeBoolean(this.hideDisconnectionScreen);
         if (!this.hideDisconnectionScreen) {
-            this.putString(this.message);
+            Binary.writeString(buffer, this.message);
         }
     }
 

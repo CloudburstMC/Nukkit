@@ -1,6 +1,8 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -9,10 +11,10 @@ import lombok.ToString;
  */
 @ToString
 public class MobArmorEquipmentPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.MOB_ARMOR_EQUIPMENT_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.MOB_ARMOR_EQUIPMENT_PACKET;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
@@ -20,22 +22,21 @@ public class MobArmorEquipmentPacket extends DataPacket {
     public Item[] slots = new Item[4];
 
     @Override
-    public void decode() {
-        this.eid = this.getEntityRuntimeId();
+    protected void decode(ByteBuf buffer) {
+        this.eid = Binary.readEntityRuntimeId(buffer);
         this.slots = new Item[4];
-        this.slots[0] = this.getSlot();
-        this.slots[1] = this.getSlot();
-        this.slots[2] = this.getSlot();
-        this.slots[3] = this.getSlot();
+        this.slots[0] = Binary.readItem(buffer);
+        this.slots[1] = Binary.readItem(buffer);
+        this.slots[2] = Binary.readItem(buffer);
+        this.slots[3] = Binary.readItem(buffer);
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putEntityRuntimeId(this.eid);
-        this.putSlot(this.slots[0]);
-        this.putSlot(this.slots[1]);
-        this.putSlot(this.slots[2]);
-        this.putSlot(this.slots[3]);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeEntityRuntimeId(buffer, this.eid);
+        Binary.writeItem(buffer, this.slots[0]);
+        Binary.writeItem(buffer, this.slots[1]);
+        Binary.writeItem(buffer, this.slots[2]);
+        Binary.writeItem(buffer, this.slots[3]);
     }
 }

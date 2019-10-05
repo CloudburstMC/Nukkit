@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -9,7 +11,7 @@ import lombok.ToString;
 @ToString
 public class ChangeDimensionPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.CHANGE_DIMENSION_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.CHANGE_DIMENSION_PACKET;
 
     public int dimension;
 
@@ -20,20 +22,19 @@ public class ChangeDimensionPacket extends DataPacket {
     public boolean respawn;
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putVarInt(this.dimension);
-        this.putVector3f(this.x, this.y, this.z);
-        this.putBoolean(this.respawn);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeVarInt(buffer, this.dimension);
+        Binary.writeVector3f(buffer, this.x, this.y, this.z);
+        buffer.writeBoolean(this.respawn);
     }
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 }

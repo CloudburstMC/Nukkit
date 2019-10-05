@@ -1,17 +1,16 @@
 package cn.nukkit.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.item.EntityPainting;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.utils.MainLogger;
+import cn.nukkit.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +44,7 @@ public class ItemPainting extends Item {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
-        FullChunk chunk = level.getChunk((int) block.getX() >> 4, (int) block.getZ() >> 4);
+        Chunk chunk = level.getChunk((int) block.getX() >> 4, (int) block.getZ() >> 4);
 
         if (chunk == null || target.isTransparent() || face.getHorizontalIndex() == -1 || block.isSolid()) {
             return false;

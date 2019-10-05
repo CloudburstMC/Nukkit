@@ -2,7 +2,7 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityProjectile;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.particle.EnchantParticle;
 import cn.nukkit.level.particle.Particle;
 import cn.nukkit.level.particle.SpellParticle;
@@ -46,11 +46,11 @@ public class EntityExpBottle extends EntityProjectile {
         return 0.01f;
     }
 
-    public EntityExpBottle(FullChunk chunk, CompoundTag nbt) {
+    public EntityExpBottle(Chunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }
 
-    public EntityExpBottle(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+    public EntityExpBottle(Chunk chunk, CompoundTag nbt, Entity shootingEntity) {
         super(chunk, nbt, shootingEntity);
     }
 

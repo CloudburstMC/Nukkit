@@ -1,12 +1,12 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 public class BlockEntityEnderChest extends BlockEntitySpawnable {
 
-    public BlockEntityEnderChest(FullChunk chunk, CompoundTag nbt) {
+    public BlockEntityEnderChest(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

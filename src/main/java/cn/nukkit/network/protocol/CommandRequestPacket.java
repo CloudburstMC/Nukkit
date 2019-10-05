@@ -1,6 +1,8 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.network.protocol.types.CommandOriginData;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 import java.util.UUID;
@@ -12,7 +14,7 @@ import java.util.UUID;
 @ToString
 public class CommandRequestPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.COMMAND_REQUEST_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.COMMAND_REQUEST_PACKET;
 
     public static final int TYPE_PLAYER = 0;
     public static final int TYPE_COMMAND_BLOCK = 1;
@@ -30,26 +32,26 @@ public class CommandRequestPacket extends DataPacket {
     public CommandOriginData data;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
     @Override
-    public void decode() {
-        this.command = this.getString();
+    protected void decode(ByteBuf buffer) {
+        this.command = Binary.readString(buffer);
 
-        CommandOriginData.Origin type = CommandOriginData.Origin.values()[this.getVarInt()];
-        UUID uuid = this.getUUID();
-        String requestId = this.getString();
+        CommandOriginData.Origin type = CommandOriginData.Origin.values()[Binary.readVarInt(buffer)];
+        UUID uuid = Binary.readUuid(buffer);
+        String requestId = Binary.readString(buffer);
         Long varLong = null;
         if (type == CommandOriginData.Origin.DEV_CONSOLE || type == CommandOriginData.Origin.TEST) {
-            varLong = this.getVarLong();
+            varLong = Binary.readVarLong(buffer);
         }
         this.data = new CommandOriginData(type, uuid, requestId, varLong);
     }
 
     @Override
-    public void encode() {
+    protected void encode(ByteBuf buffer) {
     }
 
 }

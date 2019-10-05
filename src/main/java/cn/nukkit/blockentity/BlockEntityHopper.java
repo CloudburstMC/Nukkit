@@ -1,21 +1,20 @@
 package cn.nukkit.blockentity;
 
-import cn.nukkit.Player;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.event.inventory.InventoryMoveItemEvent;
 import cn.nukkit.inventory.*;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.player.Player;
 
 import java.util.HashSet;
 
@@ -30,7 +29,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
 
     private AxisAlignedBB pickupArea;
 
-    public BlockEntityHopper(FullChunk chunk, CompoundTag nbt) {
+    public BlockEntityHopper(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -110,7 +109,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
     public Item getItem(int index) {
         int i = this.getSlotIndex(index);
         if (i < 0) {
-            return new ItemBlock(new BlockAir(), 0, 0);
+            return Item.get(BlockID.AIR, 0, 0);
         } else {
             CompoundTag data = (CompoundTag) this.namedTag.getList("Items").get(i);
             return NBTIO.getItemHelper(data);

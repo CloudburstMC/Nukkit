@@ -1,7 +1,7 @@
 package cn.nukkit.entity.passive;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
@@ -11,7 +11,7 @@ public class EntityDolphin extends EntityAnimal {
 
     public static final int NETWORK_ID = 31;
 
-    public EntityDolphin(FullChunk chunk, CompoundTag nbt) {
+    public EntityDolphin(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

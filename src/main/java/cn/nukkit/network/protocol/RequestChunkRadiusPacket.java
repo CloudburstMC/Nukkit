@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -9,22 +11,22 @@ import lombok.ToString;
 @ToString
 public class RequestChunkRadiusPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET;
 
     public int radius;
 
     @Override
-    public void decode() {
-        this.radius = this.getVarInt();
+    protected void decode(ByteBuf buffer) {
+        this.radius = Binary.readVarInt(buffer);
     }
 
     @Override
-    public void encode() {
+    protected void encode(ByteBuf buffer) {
 
     }
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 

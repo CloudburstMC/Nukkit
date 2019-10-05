@@ -1,6 +1,8 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.entity.Attribute;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -9,35 +11,34 @@ import lombok.ToString;
 @ToString
 public class UpdateAttributesPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.UPDATE_ATTRIBUTES_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.UPDATE_ATTRIBUTES_PACKET;
 
     public Attribute[] entries;
     public long entityId;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
 
     }
 
-    public void encode() {
-        this.reset();
+    protected void encode(ByteBuf buffer) {
 
-        this.putEntityRuntimeId(this.entityId);
+        Binary.writeEntityRuntimeId(buffer, this.entityId);
 
         if (this.entries == null) {
-            this.putUnsignedVarInt(0);
+            Binary.writeUnsignedVarInt(buffer, 0);
         } else {
-            this.putUnsignedVarInt(this.entries.length);
+            Binary.writeUnsignedVarInt(buffer, this.entries.length);
             for (Attribute entry : this.entries) {
-                this.putLFloat(entry.getMinValue());
-                this.putLFloat(entry.getMaxValue());
-                this.putLFloat(entry.getValue());
-                this.putLFloat(entry.getDefaultValue());
-                this.putString(entry.getName());
+                buffer.writeFloatLE(entry.getMinValue());
+                buffer.writeFloatLE(entry.getMaxValue());
+                buffer.writeFloatLE(entry.getValue());
+                buffer.writeFloatLE(entry.getDefaultValue());
+                Binary.writeString(buffer, entry.getName());
             }
         }
     }

@@ -1,7 +1,7 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.MainLogger;
 
 import java.util.HashMap;

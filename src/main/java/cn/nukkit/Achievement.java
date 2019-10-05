@@ -1,5 +1,6 @@
 package cn.nukkit;
 
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
 import java.util.HashMap;

@@ -1,11 +1,11 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.player.Player;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
 

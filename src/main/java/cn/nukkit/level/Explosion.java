@@ -1,7 +1,6 @@
 package cn.nukkit.level;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockTNT;
 import cn.nukkit.entity.Entity;
@@ -12,7 +11,6 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.particle.HugeExplodeSeedParticle;
 import cn.nukkit.math.*;
 import cn.nukkit.network.protocol.ExplodePacket;
@@ -22,6 +20,7 @@ import it.unimi.dsi.fastutil.longs.LongArraySet;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -142,8 +141,8 @@ public class Explosion {
 
         AxisAlignedBB explosionBB = new SimpleAxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
 
-        Entity[] list = this.level.getNearbyEntities(explosionBB, this.what instanceof Entity ? (Entity) this.what : null);
-        for (Entity entity : list) {
+        Set<Entity> entities = this.level.getNearbyEntities(explosionBB, this.what instanceof Entity ? (Entity) this.what : null);
+        for (Entity entity : entities) {
             double distance = entity.distance(this.source) / explosionSize;
 
             if (distance <= 1) {
@@ -164,7 +163,7 @@ public class Explosion {
             }
         }
 
-        ItemBlock air = new ItemBlock(new BlockAir());
+        Item air = Item.get(BlockID.AIR, 0, 0);
 
         //Iterator iter = this.affectedBlocks.entrySet().iterator();
         for (Block block : this.affectedBlocks) {
@@ -182,7 +181,7 @@ public class Explosion {
             Vector3 pos = new Vector3(block.x, block.y, block.z);
 
             for (BlockFace side : BlockFace.values()) {
-                Vector3 sideBlock = pos.getSide(side);
+                Block sideBlock = block.getSide(side);
                 long index = Hash.hashBlock((int) sideBlock.x, (int) sideBlock.y, (int) sideBlock.z);
                 if (!this.affectedBlocks.contains(sideBlock) && !updateBlocks.contains(index)) {
                     BlockUpdateEvent ev = new BlockUpdateEvent(this.level.getBlock(sideBlock));

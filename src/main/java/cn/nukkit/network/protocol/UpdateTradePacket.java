@@ -1,11 +1,13 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 @ToString
 public class UpdateTradePacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.UPDATE_TRADE_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.UPDATE_TRADE_PACKET;
 
     public byte windowId;
     public byte windowType = 15; //trading id
@@ -19,28 +21,27 @@ public class UpdateTradePacket extends DataPacket {
     public byte[] offers;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putByte(windowId);
-        this.putByte(windowType);
-        this.putVarInt(unknownVarInt1);
-        this.putVarInt(tradeTier);
-        this.putEntityUniqueId(player);
-        this.putEntityUniqueId(trader);
-        this.putString(displayName);
-        this.putBoolean(screen2);
-        this.putBoolean(isWilling);
-        this.put(this.offers);
+    protected void encode(ByteBuf buffer) {
+        buffer.writeByte(windowId);
+        buffer.writeByte(windowType);
+        Binary.writeVarInt(buffer, unknownVarInt1);
+        Binary.writeVarInt(buffer, tradeTier);
+        Binary.writeEntityUniqueId(buffer, player);
+        Binary.writeEntityUniqueId(buffer, trader);
+        Binary.writeString(buffer, displayName);
+        buffer.writeBoolean(screen2);
+        buffer.writeBoolean(isWilling);
+        buffer.writeBytes(this.offers);
     }
 
 }

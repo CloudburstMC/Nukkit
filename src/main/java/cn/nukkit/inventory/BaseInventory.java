@@ -1,16 +1,15 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityInventoryChangeEvent;
 import cn.nukkit.event.inventory.InventoryOpenEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.network.protocol.InventoryContentPacket;
 import cn.nukkit.network.protocol.InventorySlotPacket;
+import cn.nukkit.player.Player;
 
 import java.util.*;
 
@@ -98,7 +97,7 @@ public abstract class BaseInventory implements Inventory {
 
     @Override
     public Item getItem(int index) {
-        return this.slots.containsKey(index) ? this.slots.get(index).clone() : new ItemBlock(new BlockAir(), null, 0);
+        return this.slots.containsKey(index) ? this.slots.get(index).clone() : Item.get(BlockID.AIR, 0, 0);
     }
 
     @Override
@@ -367,7 +366,7 @@ public abstract class BaseInventory implements Inventory {
     @Override
     public boolean clear(int index, boolean send) {
         if (this.slots.containsKey(index)) {
-            Item item = new ItemBlock(new BlockAir(), null, 0);
+            Item item = Item.get(BlockID.AIR, 0, 0);
             Item old = this.slots.get(index);
             InventoryHolder holder = this.getHolder();
             if (holder instanceof Entity) {

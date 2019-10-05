@@ -1,6 +1,6 @@
 package cn.nukkit.entity;
 
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
@@ -8,7 +8,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
  * Nukkit Project
  */
 public abstract class EntityCreature extends EntityLiving {
-    public EntityCreature(FullChunk chunk, CompoundTag nbt) {
+    public EntityCreature(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 }

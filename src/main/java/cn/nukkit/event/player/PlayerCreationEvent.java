@@ -1,9 +1,9 @@
 package cn.nukkit.event.player;
 
-import cn.nukkit.Player;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.network.SourceInterface;
+import cn.nukkit.player.Player;
 
 import java.net.InetSocketAddress;
 

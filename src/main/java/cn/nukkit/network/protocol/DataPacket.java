@@ -2,48 +2,35 @@ package cn.nukkit.network.protocol;
 
 import cn.nukkit.Server;
 import cn.nukkit.utils.Binary;
-import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.Zlib;
-import com.nukkitx.network.raknet.RakNetReliability;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.UnpooledByteBufAllocator;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class DataPacket extends BinaryStream implements Cloneable {
+public abstract class DataPacket implements Cloneable {
 
-    public boolean isEncoded = false;
-    private int channel = 0;
+    public int senderId;
+    public int clientId;
 
-    public RakNetReliability reliability = RakNetReliability.RELIABLE_ORDERED;
+    public abstract short pid();
 
-    public abstract byte pid();
-
-    public abstract void decode();
-
-    public abstract void encode();
-
-    @Override
-    public DataPacket reset() {
-        super.reset();
-        this.putUnsignedVarInt(this.pid());
-        return this;
+    public final void tryDecode(ByteBuf buffer) {
+        // Already read the packet ID
+        this.decode(buffer);
     }
 
-    public void setChannel(int channel) {
-        this.channel = channel;
+    protected abstract void decode(ByteBuf buffer);
+
+    public final void tryEncode(ByteBuf buffer) {
+        Binary.writeUnsignedVarInt(buffer, this.pid());
+        this.encode(buffer);
     }
 
-    public int getChannel() {
-        return channel;
-    }
-
-    public DataPacket clean() {
-        this.setBuffer(null);
-        this.setOffset(0);
-        this.isEncoded = false;
-        return this;
-    }
+    protected abstract void encode(ByteBuf buffer);
 
     @Override
     public DataPacket clone() {
@@ -55,21 +42,32 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
     }
 
     public BatchPacket compress() {
-        return compress(Server.getInstance().networkCompressionLevel);
+        return compress(UnpooledByteBufAllocator.DEFAULT);
     }
 
     public BatchPacket compress(int level) {
-        BatchPacket batch = new BatchPacket();
-        byte[][] batchPayload = new byte[2][];
-        byte[] buf = getBuffer();
-        batchPayload[0] = Binary.writeUnsignedVarInt(buf.length);
-        batchPayload[1] = buf;
-        byte[] data = Binary.appendBytes(batchPayload);
+        return compress(UnpooledByteBufAllocator.DEFAULT, level);
+    }
+
+    public BatchPacket compress(ByteBufAllocator allocator) {
+        return compress(allocator, Server.getInstance().networkCompressionLevel);
+    }
+
+    public BatchPacket compress(ByteBufAllocator allocator, int level) {
+        ByteBuf buffer = ByteBufAllocator.DEFAULT.ioBuffer();
+        ByteBuf uncompressed = ByteBufAllocator.DEFAULT.ioBuffer();
         try {
-            batch.payload = Zlib.deflate(data, level);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            this.tryEncode(buffer);
+            Binary.writeVarIntBuffer(uncompressed, buffer);
+
+            ByteBuf compressed = allocator.ioBuffer();
+            Zlib.DEFAULT.deflate(uncompressed, compressed, level);
+            BatchPacket packet = new BatchPacket();
+            packet.payload = compressed;
+            return packet;
+        } finally {
+            buffer.release();
+            uncompressed.release();
         }
-        return batch;
     }
 }

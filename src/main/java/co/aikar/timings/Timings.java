@@ -69,6 +69,8 @@ public final class Timings {
     public static final Timing playerChunkOrderTimer;
     public static final Timing playerChunkSendTimer;
     public static final Timing playerCommandTimer;
+    public static final Timing playerEntityLookingAtTimer;
+    public static final Timing playerEntityAtPositionTimer;
 
     public static final Timing tickEntityTimer;
     public static final Timing tickBlockEntityTimer;
@@ -115,6 +117,8 @@ public final class Timings {
         playerChunkOrderTimer = TimingsManager.getTiming("Player Order Chunks");
         playerChunkSendTimer = TimingsManager.getTiming("Player Send Chunks");
         playerCommandTimer = TimingsManager.getTiming("Player Command");
+        playerEntityLookingAtTimer = TimingsManager.getTiming("## Player: Entity Looking At");
+        playerEntityAtPositionTimer = TimingsManager.getTiming(DEFAULT_GROUP.name, "## Player: Entity At Position", playerEntityLookingAtTimer);
 
         tickEntityTimer = TimingsManager.getTiming("## Entity Tick");
         tickBlockEntityTimer = TimingsManager.getTiming("## BlockEntity Tick");

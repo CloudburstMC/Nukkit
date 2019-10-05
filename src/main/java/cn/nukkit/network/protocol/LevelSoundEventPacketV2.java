@@ -1,11 +1,13 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.math.Vector3f;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 @ToString
 public class LevelSoundEventPacketV2 extends LevelSoundEventPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.LEVEL_SOUND_EVENT_PACKET_V2;
+    public static final short NETWORK_ID = ProtocolInfo.LEVEL_SOUND_EVENT_PACKET_V2;
 
     public int sound;
     public float x;
@@ -17,31 +19,30 @@ public class LevelSoundEventPacketV2 extends LevelSoundEventPacket {
     public boolean isGlobal;
 
     @Override
-    public void decode() {
-        this.sound = this.getByte();
-        Vector3f v = this.getVector3f();
+    protected void decode(ByteBuf buffer) {
+        this.sound = buffer.readByte();
+        Vector3f v = Binary.readVector3f(buffer);
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
-        this.extraData = this.getVarInt();
-        this.entityIdentifier = this.getString();
-        this.isBabyMob = this.getBoolean();
-        this.isGlobal = this.getBoolean();
+        this.extraData = Binary.readVarInt(buffer);
+        this.entityIdentifier = Binary.readString(buffer);
+        this.isBabyMob = buffer.readBoolean();
+        this.isGlobal = buffer.readBoolean();
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putByte((byte) this.sound);
-        this.putVector3f(this.x, this.y, this.z);
-        this.putVarInt(this.extraData);
-        this.putString(this.entityIdentifier);
-        this.putBoolean(this.isBabyMob);
-        this.putBoolean(this.isGlobal);
+    protected void encode(ByteBuf buffer) {
+        buffer.writeByte((byte) this.sound);
+        Binary.writeVector3f(buffer, this.x, this.y, this.z);
+        Binary.writeVarInt(buffer, this.extraData);
+        Binary.writeString(buffer, this.entityIdentifier);
+        buffer.writeBoolean(this.isBabyMob);
+        buffer.writeBoolean(this.isGlobal);
     }
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 }

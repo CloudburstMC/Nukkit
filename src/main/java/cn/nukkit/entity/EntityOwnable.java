@@ -1,6 +1,6 @@
 package cn.nukkit.entity;
 
-import cn.nukkit.Player;
+import cn.nukkit.player.Player;
 
 /**
  * Author: BeYkeRYkt

@@ -1,6 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -9,6 +8,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.player.Player;
 
 /**
  * Created by Pub4Game on 15.01.2016.

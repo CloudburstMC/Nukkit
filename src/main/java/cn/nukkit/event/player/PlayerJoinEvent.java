@@ -1,8 +1,8 @@
 package cn.nukkit.event.player;
 
-import cn.nukkit.Player;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.lang.TextContainer;
+import cn.nukkit.player.Player;
 
 public class PlayerJoinEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();

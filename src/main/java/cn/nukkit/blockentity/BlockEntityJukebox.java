@@ -3,7 +3,7 @@ package cn.nukkit.blockentity;
 import cn.nukkit.block.Block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemRecord;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
@@ -17,7 +17,7 @@ public class BlockEntityJukebox extends BlockEntitySpawnable {
 
     private Item recordItem;
 
-    public BlockEntityJukebox(FullChunk chunk, CompoundTag nbt) {
+    public BlockEntityJukebox(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 @ToString(exclude = "namedtag")
@@ -13,21 +15,20 @@ public class UpdateEquipmentPacket extends DataPacket {
 
 
     @Override
-    public byte pid() {
+    public short pid() {
         return ProtocolInfo.UPDATE_EQUIPMENT_PACKET;
     }
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putByte((byte) this.windowId);
-        this.putByte((byte) this.windowType);
-        this.putEntityUniqueId(this.eid);
-        this.put(this.namedtag);
+    protected void encode(ByteBuf buffer) {
+        buffer.writeByte((byte) this.windowId);
+        buffer.writeByte((byte) this.windowType);
+        Binary.writeEntityUniqueId(buffer, this.eid);
+        buffer.writeBytes(this.namedtag);
     }
 }

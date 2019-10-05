@@ -1,6 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityJukebox;
 import cn.nukkit.item.Item;
@@ -9,6 +8,7 @@ import cn.nukkit.item.ItemRecord;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
 
 /**

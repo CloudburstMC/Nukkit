@@ -1,22 +1,23 @@
 package cn.nukkit.network.protocol;
 
+import io.netty.buffer.ByteBuf;
+
 public class OnScreenTextureAnimationPacket extends DataPacket {
 
     public int effectId;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return ProtocolInfo.ON_SCREEN_TEXTURE_ANIMATION_PACKET;
     }
 
     @Override
-    public void decode() {
-        this.effectId = this.getLInt();
+    protected void decode(ByteBuf buffer) {
+        this.effectId = buffer.readIntLE();
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putLInt(this.effectId);
+    protected void encode(ByteBuf buffer) {
+        buffer.writeIntLE(this.effectId);
     }
 }

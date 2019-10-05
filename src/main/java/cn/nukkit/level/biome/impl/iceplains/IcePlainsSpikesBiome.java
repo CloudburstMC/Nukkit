@@ -1,7 +1,7 @@
 package cn.nukkit.level.biome.impl.iceplains;
 
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 
@@ -40,7 +40,7 @@ public class IcePlainsSpikesBiome extends IcePlainsBiome {
     private static class PopulatorIceSpikes extends Populator {
 
         @Override
-        public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {
+        public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, Chunk chunk) {
             for (int i = 0; i < 8; i++) {
                 int x = (chunkX << 4) + random.nextBoundedInt(16);
                 int z = (chunkZ << 4) + random.nextBoundedInt(16);
@@ -99,8 +99,8 @@ public class IcePlainsSpikesBiome extends IcePlainsBiome {
             }
         }
 
-        public int getHighestWorkableBlock(int x, int z, FullChunk chunk) {
-            return chunk.getHighestBlockAt(x & 0xF, z & 0xF) - 5;
+        public int getHighestWorkableBlock(int x, int z, Chunk chunk) {
+            return chunk.getHighestBlock(x & 0xF, z & 0xF) - 5;
         }
     }
 }

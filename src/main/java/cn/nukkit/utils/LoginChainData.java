@@ -1,5 +1,7 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.entity.data.Skin;
+
 import java.util.UUID;
 
 /**
@@ -37,7 +39,7 @@ public interface LoginChainData {
 
     int getDefaultInputMode();
 
-    String getCapeData();
+    Skin getSkin();
 
     int getUIProfile();
 }

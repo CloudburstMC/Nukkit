@@ -1,7 +1,7 @@
 package cn.nukkit.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.player.Player;
 
 /**
  * Created by Snake1999 on 2016/1/14.

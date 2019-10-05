@@ -1,6 +1,6 @@
 package cn.nukkit.entity.mob;
 
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
@@ -10,7 +10,7 @@ public class EntityEvoker extends EntityMob {
 
     public static final int NETWORK_ID = 104;
 
-    public EntityEvoker(FullChunk chunk, CompoundTag nbt) {
+    public EntityEvoker(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

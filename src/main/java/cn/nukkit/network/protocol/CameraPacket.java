@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 @ToString
@@ -9,20 +11,19 @@ public class CameraPacket extends DataPacket {
     public long playerUniqueId;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return ProtocolInfo.CAMERA_PACKET;
     }
 
     @Override
-    public void decode() {
-        this.cameraUniqueId = this.getVarLong();
-        this.playerUniqueId = this.getVarLong();
+    protected void decode(ByteBuf buffer) {
+        this.cameraUniqueId = Binary.readVarLong(buffer);
+        this.playerUniqueId = Binary.readVarLong(buffer);
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putEntityUniqueId(this.cameraUniqueId);
-        this.putEntityUniqueId(this.playerUniqueId);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeEntityUniqueId(buffer, this.cameraUniqueId);
+        Binary.writeEntityUniqueId(buffer, this.playerUniqueId);
     }
 }

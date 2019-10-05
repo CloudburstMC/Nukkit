@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -8,24 +10,23 @@ import lombok.ToString;
  */
 @ToString
 public class ShowProfilePacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.SHOW_PROFILE_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.SHOW_PROFILE_PACKET;
 
     public String xuid;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
     @Override
-    public void decode() {
-        this.xuid = this.getString();
+    protected void decode(ByteBuf buffer) {
+        this.xuid = Binary.readString(buffer);
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putString(this.xuid);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeString(buffer, this.xuid);
     }
 
 }

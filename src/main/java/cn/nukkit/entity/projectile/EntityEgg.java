@@ -1,7 +1,7 @@
 package cn.nukkit.entity.projectile;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
@@ -41,11 +41,11 @@ public class EntityEgg extends EntityProjectile {
         return 0.01f;
     }
 
-    public EntityEgg(FullChunk chunk, CompoundTag nbt) {
+    public EntityEgg(Chunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }
 
-    public EntityEgg(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+    public EntityEgg(Chunk chunk, CompoundTag nbt, Entity shootingEntity) {
         super(chunk, nbt, shootingEntity);
     }
 

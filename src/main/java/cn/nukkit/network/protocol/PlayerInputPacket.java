@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -8,7 +9,7 @@ import lombok.ToString;
 @ToString
 public class PlayerInputPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.PLAYER_INPUT_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.PLAYER_INPUT_PACKET;
 
     public float motionX;
     public float motionY;
@@ -17,20 +18,20 @@ public class PlayerInputPacket extends DataPacket {
     public boolean sneaking;
 
     @Override
-    public void decode() {
-        this.motionX = this.getLFloat();
-        this.motionY = this.getLFloat();
-        this.jumping = this.getBoolean();
-        this.sneaking = this.getBoolean();
+    protected void decode(ByteBuf buffer) {
+        this.motionX = buffer.readFloatLE();
+        this.motionY = buffer.readFloatLE();
+        this.jumping = buffer.readBoolean();
+        this.sneaking = buffer.readBoolean();
     }
 
     @Override
-    public void encode() {
+    protected void encode(ByteBuf buffer) {
 
     }
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 

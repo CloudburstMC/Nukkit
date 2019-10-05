@@ -1,6 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
@@ -15,6 +14,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
+import cn.nukkit.player.Player;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
@@ -46,14 +46,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @SuppressWarnings("unchecked")
     public static void init() {
         if (list == null) {
-            list = new Class[256];
-            fullList = new Block[4096];
-            light = new int[256];
-            lightFilter = new int[256];
-            solid = new boolean[256];
-            hardness = new double[256];
-            transparent = new boolean[256];
-            hasMeta = new boolean[256];
+            list = new Class[512];
+            fullList = new Block[8192];
+            light = new int[512];
+            lightFilter = new int[512];
+            solid = new boolean[512];
+            hardness = new double[512];
+            transparent = new boolean[512];
+            hasMeta = new boolean[512];
 
             list[AIR] = BlockAir.class; //0
             list[STONE] = BlockStone.class; //1
@@ -300,7 +300,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
             list[OBSERVER] = BlockObserver.class; //251
 
-            for (int id = 0; id < 256; id++) {
+            for (int id = 0; id < 512; id++) {
                 Class c = list[id];
                 if (c != null) {
                     Block block;
@@ -346,29 +346,25 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                     }
                 } else {
                     lightFilter[id] = 1;
-                    for (int data = 0; data < 16; ++data) {
-                        fullList[(id << 4) | data] = new BlockUnknown(id, data);
-                    }
                 }
             }
         }
     }
 
     public static Block get(int id) {
-        return fullList[id << 4].clone();
+        return get(id, 0);
     }
 
-    public static Block get(int id, Integer meta) {
-        if (meta != null) {
-            return fullList[(id << 4) + meta].clone();
-        } else {
-            return fullList[id << 4].clone();
+    public static Block get(int id, int meta) {
+        Block block = fullList[(id << 4) | meta];
+        if (block == null) {
+            return new BlockUnknown(id, meta);
         }
+        return block.clone();
     }
 
-    @SuppressWarnings("unchecked")
-    public static Block get(int id, Integer meta, Position pos) {
-        Block block = fullList[(id << 4) | (meta == null ? 0 : meta)].clone();
+    public static Block get(int id, int meta, Position pos) {
+        Block block = get(id, meta);
         if (pos != null) {
             block.x = pos.x;
             block.y = pos.y;
@@ -378,12 +374,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return block;
     }
 
-    public static Block get(int id, int data) {
-        return fullList[(id << 4) + data].clone();
-    }
-
-    public static Block get(int fullId, Level level, int x, int y, int z) {
-        Block block = fullList[fullId].clone();
+    public static Block get(int id, int meta, Level level, int x, int y, int z) {
+        Block block = get(id, meta);
         block.x = x;
         block.y = y;
         block.z = z;
@@ -507,6 +499,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public abstract String getName();
 
     public abstract int getId();
+
+    public int getItemId() {
+        int blockId = getId();
+        if (blockId > 255) {
+            blockId = 255 - blockId;
+        }
+        return blockId;
+    }
 
     /**
      * The full id is a combination of the id and data.
@@ -684,18 +684,38 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public Block getSide(BlockFace face) {
+        return this.getSide(face, true);
+    }
+
+    public Block getSide(BlockFace face, boolean load) {
         if (this.isValid()) {
             return this.getLevel().getBlock((int) x + face.getXOffset(), (int) y + face.getYOffset(), (int) z + face.getZOffset());
         }
-        return this.getSide(face, 1);
+        return this.getSide(face, 1, load);
     }
 
     public Block getSide(BlockFace face, int step) {
+        return this.getSide(face, step, true);
+    }
+
+    public Block getSide(BlockFace face, int step, boolean load) {
         if (this.isValid()) {
             if (step == 1) {
-                return this.getLevel().getBlock((int) x + face.getXOffset(), (int) y + face.getYOffset(), (int) z + face.getZOffset());
+                if (load) {
+                    return this.getLevel().getBlock((int) x + face.getXOffset(), (int) y + face.getYOffset(),
+                            (int) z + face.getZOffset());
+                } else {
+                    return this.getLevel().getLoadedBlock((int) x + face.getXOffset(), (int) y + face.getYOffset(),
+                            (int) z + face.getZOffset());
+                }
             } else {
-                return this.getLevel().getBlock((int) x + face.getXOffset() * step, (int) y + face.getYOffset() * step, (int) z + face.getZOffset() * step);
+                if (load) {
+                    return this.getLevel().getBlock((int) x + face.getXOffset() * step,
+                            (int) y + face.getYOffset() * step, (int) z + face.getZOffset() * step);
+                } else {
+                    return this.getLevel().getLoadedBlock((int) x + face.getXOffset() * step,
+                            (int) y + face.getYOffset() * step, (int) z + face.getZOffset() * step);
+                }
             }
         }
         Block block = Block.get(Item.AIR, 0);
@@ -969,7 +989,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public Item toItem() {
-        return new ItemBlock(this, this.getDamage(), 1);
+        return new ItemBlock(this, 1);
     }
 
     public boolean canSilkTouch() {

@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.AxisAlignedBB;
@@ -56,7 +55,7 @@ public class BlockNetherPortal extends BlockFlowable implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(new BlockAir());
+        return Item.get(BlockID.AIR, 0, 0);
     }
 
     @Override

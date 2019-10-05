@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -8,23 +9,22 @@ import lombok.ToString;
  */
 @ToString
 public class ContainerClosePacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.CONTAINER_CLOSE_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.CONTAINER_CLOSE_PACKET;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
     public int windowId;
 
     @Override
-    public void decode() {
-        this.windowId = (byte) this.getByte();
+    protected void decode(ByteBuf buffer) {
+        this.windowId = buffer.readUnsignedByte();
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putByte((byte) this.windowId);
+    protected void encode(ByteBuf buffer) {
+        buffer.writeByte(this.windowId);
     }
 }

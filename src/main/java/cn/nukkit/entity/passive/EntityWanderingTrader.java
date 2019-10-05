@@ -1,14 +1,14 @@
 package cn.nukkit.entity.passive;
 
 import cn.nukkit.entity.EntityCreature;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 public class EntityWanderingTrader extends EntityCreature implements EntityNPC {
 
     public static final int NETWORK_ID = 118;
 
-    public EntityWanderingTrader(FullChunk chunk, CompoundTag nbt) {
+    public EntityWanderingTrader(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

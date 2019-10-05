@@ -1,6 +1,5 @@
 package cn.nukkit.entity;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockMagma;
@@ -13,16 +12,19 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityDeathEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTurtleShell;
-import cn.nukkit.level.GameRule;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.Position;
+import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.gamerule.GameRules;
+import cn.nukkit.math.BlockRayTrace;
+import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.network.protocol.AnimatePacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.player.Player;
 import cn.nukkit.potion.Effect;
-import cn.nukkit.utils.BlockIterator;
 import co.aikar.timings.Timings;
 
 import java.util.ArrayList;
@@ -36,7 +38,7 @@ import java.util.Map;
  */
 public abstract class EntityLiving extends Entity implements EntityDamageable {
 
-    public EntityLiving(FullChunk chunk, CompoundTag nbt) {
+    public EntityLiving(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -82,7 +84,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
             EntityEventPacket pk = new EntityEventPacket();
             pk.eid = this.getId();
             pk.event = EntityEventPacket.RESPAWN;
-            Server.broadcastPacket(this.hasSpawned.values(), pk);
+            Server.broadcastPacket(this.hasSpawned, pk);
         }
     }
 
@@ -141,7 +143,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
             EntityEventPacket pk = new EntityEventPacket();
             pk.eid = this.getId();
             pk.event = this.getHealth() <= 0 ? EntityEventPacket.DEATH_ANIMATION : EntityEventPacket.HURT_ANIMATION;
-            Server.broadcastPacket(this.hasSpawned.values(), pk);
+            Server.broadcastPacket(this.hasSpawned, pk);
 
             this.attackTime = source.getAttackCooldown();
 
@@ -188,7 +190,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         EntityDeathEvent ev = new EntityDeathEvent(this, this.getDrops());
         this.server.getPluginManager().callEvent(ev);
 
-        if (this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
+        if (this.level.getGameRules().get(GameRules.DO_ENTITY_DROPS)) {
             for (cn.nukkit.item.Item item : ev.getDrops()) {
                 this.getLevel().dropItem(this, item);
             }
@@ -284,7 +286,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         }
 
         // Used to check collisions with magma blocks
-        Block block = this.level.getBlock((int) x, (int) y - 1, (int) z);
+        Block block = this.level.getLoadedBlock((int) x, (int) y - 1, (int) z);
         if (block instanceof BlockMagma) block.onEntityCollide(this);
 
         Timings.livingEntityBaseTickTimer.stopTiming();
@@ -320,10 +322,13 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
         List<Block> blocks = new ArrayList<>();
 
-        BlockIterator itr = new BlockIterator(this.level, this.getPosition(), this.getDirectionVector(), this.getEyeHeight(), maxDistance);
-
-        while (itr.hasNext()) {
-            Block block = itr.next();
+        Position position = getPosition();
+        position.y += getEyeHeight();
+        for (BlockVector3 pos : BlockRayTrace.of(position, getDirectionVector(), maxDistance)) {
+            Block block = this.level.getLoadedBlock(pos.x, pos.y, pos.z);
+            if (block == null) {
+                break;
+            }
             blocks.add(block);
 
             if (maxLength != 0 && blocks.size() > maxLength) {

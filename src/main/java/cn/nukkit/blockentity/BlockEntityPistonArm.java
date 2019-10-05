@@ -1,7 +1,7 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
@@ -9,6 +9,8 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.IntTag;
 import cn.nukkit.nbt.tag.ListTag;
+
+import java.util.Set;
 
 /**
  * @author CreeperFace
@@ -26,7 +28,7 @@ public class BlockEntityPistonArm extends BlockEntity {
     public boolean isMovable = true;
     public boolean powered = false;
 
-    public BlockEntityPistonArm(FullChunk chunk, CompoundTag nbt) {
+    public BlockEntityPistonArm(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -70,8 +72,8 @@ public class BlockEntityPistonArm extends BlockEntity {
         double y = (double) (lastProgress * (float) this.facing.getYOffset());
         double z = (double) (lastProgress * (float) this.facing.getZOffset());
         AxisAlignedBB bb = new SimpleAxisAlignedBB(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D);
-        Entity[] entities = this.level.getCollidingEntities(bb);
-        if (entities.length != 0) {
+        Set<Entity> entities = this.level.getCollidingEntities(bb);
+        if (!entities.isEmpty()) {
 
         }
 

@@ -1,15 +1,15 @@
 package cn.nukkit.entity.projectile;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import cn.nukkit.level.Sound;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.player.Player;
 
 public class EntityEnderPearl extends EntityProjectile {
     public static final int NETWORK_ID = 87;
@@ -44,11 +44,11 @@ public class EntityEnderPearl extends EntityProjectile {
         return 0.01f;
     }
 
-    public EntityEnderPearl(FullChunk chunk, CompoundTag nbt) {
+    public EntityEnderPearl(Chunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }
 
-    public EntityEnderPearl(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+    public EntityEnderPearl(Chunk chunk, CompoundTag nbt, Entity shootingEntity) {
         super(chunk, nbt, shootingEntity);
     }
 

@@ -1,13 +1,12 @@
 package cn.nukkit.entity.passive;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDye;
-import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.DyeColor;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -22,7 +21,7 @@ public class EntitySheep extends EntityAnimal {
     public boolean sheared = false;
     public int color = 0;
 
-    public EntitySheep(FullChunk chunk, CompoundTag nbt) {
+    public EntitySheep(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -80,7 +79,7 @@ public class EntitySheep extends EntityAnimal {
     }
 
     @Override
-    public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
+    public boolean onInteract(Player player, Item item) {
         if (item.getId() == Item.DYE) {
             this.setColor(((ItemDye) item).getDyeColor().getWoolData());
             return true;

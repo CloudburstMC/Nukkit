@@ -1,6 +1,5 @@
 package cn.nukkit.inventory.transaction;
 
-import cn.nukkit.Player;
 import cn.nukkit.event.inventory.CraftItemEvent;
 import cn.nukkit.inventory.BigCraftingGrid;
 import cn.nukkit.inventory.CraftingRecipe;
@@ -8,6 +7,7 @@ import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.ContainerClosePacket;
 import cn.nukkit.network.protocol.types.ContainerIds;
+import cn.nukkit.player.Player;
 import cn.nukkit.scheduler.Task;
 
 import java.util.Arrays;

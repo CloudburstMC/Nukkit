@@ -1,6 +1,5 @@
 package cn.nukkit.item.food;
 
-import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.item.Item;
@@ -8,6 +7,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.player.Player;
 
 /**
  * Created by Leonidius20 on 20.08.18.

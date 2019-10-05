@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
@@ -114,7 +113,7 @@ public class BlockFarmland extends BlockTransparentMeta {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(new BlockDirt());
+        return Item.get(BlockID.DIRT);
     }
 
     @Override

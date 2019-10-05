@@ -1,11 +1,11 @@
 package cn.nukkit.command;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.data.*;
 import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.permission.Permissible;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;

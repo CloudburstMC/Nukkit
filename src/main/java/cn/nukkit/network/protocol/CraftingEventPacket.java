@@ -2,6 +2,8 @@ package cn.nukkit.network.protocol;
 
 
 import cn.nukkit.item.Item;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 import java.util.UUID;
@@ -12,7 +14,7 @@ import java.util.UUID;
 @ToString
 public class CraftingEventPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.CRAFTING_EVENT_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.CRAFTING_EVENT_PACKET;
 
     public static final int TYPE_SHAPELESS = 0;
     public static final int TYPE_SHAPED = 1;
@@ -29,31 +31,31 @@ public class CraftingEventPacket extends DataPacket {
     public Item[] output;
 
     @Override
-    public void decode() {
-        this.windowId = this.getByte();
-        this.type = this.getVarInt();
-        this.id = this.getUUID();
+    protected void decode(ByteBuf buffer) {
+        this.windowId = buffer.readByte();
+        this.type = Binary.readVarInt(buffer);
+        this.id = Binary.readUuid(buffer);
 
-        int inputSize = (int) this.getUnsignedVarInt();
+        int inputSize = (int) Binary.readUnsignedVarInt(buffer);
         this.input = new Item[inputSize];
         for (int i = 0; i < inputSize && i < 128; ++i) {
-            this.input[i] = this.getSlot();
+            this.input[i] = Binary.readItem(buffer);
         }
 
-        int outputSize = (int) this.getUnsignedVarInt();
+        int outputSize = (int) Binary.readUnsignedVarInt(buffer);
         this.output = new Item[outputSize];
         for (int i = 0; i < outputSize && i < 128; ++i) {
-            this.output[i] = getSlot();
+            this.output[i] = Binary.readItem(buffer);
         }
     }
 
     @Override
-    public void encode() {
+    protected void encode(ByteBuf buffer) {
 
     }
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 

@@ -7,16 +7,17 @@ import cn.nukkit.block.Block;
  * Nukkit Project
  */
 public class ItemBlock extends Item {
+
     public ItemBlock(Block block) {
-        this(block, 0, 1);
+        this(block, 1);
     }
 
-    public ItemBlock(Block block, Integer meta) {
-        this(block, meta, 1);
+    public ItemBlock(Block block, int count) {
+        this(block, block.getDamage(), count);
     }
 
-    public ItemBlock(Block block, Integer meta, int count) {
-        super(block.getId(), meta, count, block.getName());
+    public ItemBlock(Block block, int damage, int count) {
+        super(block.getItemId(), damage, count, block.getName());
         this.block = block;
     }
 

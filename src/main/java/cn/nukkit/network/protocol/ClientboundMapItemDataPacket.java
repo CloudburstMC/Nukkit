@@ -1,6 +1,8 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Utils;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 import java.awt.*;
@@ -35,19 +37,18 @@ public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to
     public static final int ENTITIES_UPDATE = 8;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return ProtocolInfo.CLIENTBOUND_MAP_ITEM_DATA_PACKET;
     }
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putEntityUniqueId(mapId);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeEntityUniqueId(buffer, mapId);
 
         int update = 0;
         if (eids.length > 0) {
@@ -61,40 +62,40 @@ public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to
             update |= TEXTURE_UPDATE;
         }
 
-        this.putUnsignedVarInt(update);
-        this.putByte(this.dimensionId);
-        this.putBoolean(this.isLocked);
+        Binary.writeUnsignedVarInt(buffer, update);
+        buffer.writeByte(this.dimensionId);
+        buffer.writeBoolean(this.isLocked);
 
         if ((update & 0x08) != 0) { //TODO: find out what these are for
-            this.putUnsignedVarInt(eids.length);
+            Binary.writeUnsignedVarInt(buffer, eids.length);
             for (int eid : eids) {
-                this.putEntityUniqueId(eid);
+                Binary.writeEntityUniqueId(buffer, eid);
             }
         }
         if ((update & (TEXTURE_UPDATE | DECORATIONS_UPDATE)) != 0) {
-            this.putByte(this.scale);
+            buffer.writeByte(this.scale);
         }
 
         if ((update & DECORATIONS_UPDATE) != 0) {
-            this.putUnsignedVarInt(decorators.length);
+            Binary.writeUnsignedVarInt(buffer, decorators.length);
 
             for (MapDecorator decorator : decorators) {
-                this.putByte(decorator.rotation);
-                this.putByte(decorator.icon);
-                this.putByte(decorator.offsetX);
-                this.putByte(decorator.offsetZ);
-                this.putString(decorator.label);
-                this.putVarInt(decorator.color.getRGB());
+                buffer.writeByte(decorator.rotation);
+                buffer.writeByte(decorator.icon);
+                buffer.writeByte(decorator.offsetX);
+                buffer.writeByte(decorator.offsetZ);
+                Binary.writeString(buffer, decorator.label);
+                Binary.writeVarInt(buffer, decorator.color.getRGB());
             }
         }
 
         if ((update & TEXTURE_UPDATE) != 0) {
-            this.putVarInt(width);
-            this.putVarInt(height);
-            this.putVarInt(offsetX);
-            this.putVarInt(offsetZ);
+            Binary.writeVarInt(buffer, width);
+            Binary.writeVarInt(buffer, height);
+            Binary.writeVarInt(buffer, offsetX);
+            Binary.writeVarInt(buffer, offsetZ);
 
-            this.putUnsignedVarInt(width * height);
+            Binary.writeUnsignedVarInt(buffer, width * height);
 
             if (image != null) {
                 for (int y = 0; y < width; y++) {
@@ -104,14 +105,14 @@ public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to
                         byte green = (byte) color.getGreen();
                         byte blue = (byte) color.getBlue();
 
-                        putUnsignedVarInt(Utils.toRGB(red, green, blue, (byte) 0xff));
+                        Binary.writeUnsignedVarInt(buffer, Utils.toRGB(red, green, blue, (byte) 0xff));
                     }
                 }
 
                 image.flush();
             } else if (colors.length > 0) {
                 for (int color : colors) {
-                    putUnsignedVarInt(color);
+                    Binary.writeUnsignedVarInt(buffer, color);
                 }
             }
         }

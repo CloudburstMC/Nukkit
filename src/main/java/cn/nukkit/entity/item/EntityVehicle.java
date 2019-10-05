@@ -1,6 +1,5 @@
 package cn.nukkit.entity.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityInteractable;
 import cn.nukkit.entity.EntityRideable;
@@ -9,8 +8,9 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.vehicle.VehicleDamageEvent;
 import cn.nukkit.event.vehicle.VehicleDestroyEvent;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.player.Player;
 
 /**
  * author: MagicDroidX
@@ -18,7 +18,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
  */
 public abstract class EntityVehicle extends Entity implements EntityRideable, EntityInteractable {
 
-    public EntityVehicle(FullChunk chunk, CompoundTag nbt) {
+    public EntityVehicle(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

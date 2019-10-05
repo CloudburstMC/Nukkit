@@ -1,11 +1,13 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 @ToString
 public class VideoStreamConnectPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.VIDEO_STREAM_CONNECT_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.VIDEO_STREAM_CONNECT_PACKET;
 
     public static final byte ACTION_OPEN = 0;
     public static final byte ACTION_CLOSE = 1;
@@ -15,18 +17,18 @@ public class VideoStreamConnectPacket extends DataPacket {
     public byte action;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
     }
 
     @Override
-    public void encode() {
-        this.putString(address);
-        this.putLFloat(screenshotFrequency);
-        this.putByte(action);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeString(buffer, address);
+        buffer.writeFloatLE(screenshotFrequency);
+        buffer.writeByte(action);
     }
 }

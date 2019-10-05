@@ -5,7 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemPotion;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.CraftingDataPacket;
-import cn.nukkit.utils.BinaryStream;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
@@ -14,6 +14,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.zip.Deflater;
 
@@ -25,14 +26,14 @@ public class CraftingManager {
 
     public final Collection<Recipe> recipes = new ArrayDeque<>();
 
-    public static BatchPacket packet = null;
+    private BatchPacket packet = null;
     protected final Map<Integer, Map<UUID, ShapedRecipe>> shapedRecipes = new Int2ObjectOpenHashMap<>();
 
     public final Map<Integer, FurnaceRecipe> furnaceRecipes = new Int2ObjectOpenHashMap<>();
 
     public final Map<Integer, BrewingRecipe> brewingRecipes = new Int2ObjectOpenHashMap<>();
 
-    private static int RECIPE_COUNT = 0;
+    private int RECIPE_COUNT = 0;
     protected final Map<Integer, Map<UUID, ShapelessRecipe>> shapelessRecipes = new Int2ObjectOpenHashMap<>();
 
     public static final Comparator<Item> recipeComparator = (i1, i2) -> {
@@ -203,22 +204,29 @@ public class CraftingManager {
         registerBrewingRecipe(new BrewingRecipe(Item.get(Item.POTION, ItemPotion.HARMING_II, 1), Item.get(Item.FERMENTED_SPIDER_EYE, 0, 1), Item.get(Item.POTION, ItemPotion.POISON_LONG, 1)));
     }
 
+    private static UUID getMultiItemHash(Collection<Item> items) {
+        ByteBuffer buffer = ByteBuffer.allocate(items.size() * 8);
+        for (Item item : items) {
+            buffer.putInt(getFullItemHash(item));
+        }
+        return UUID.nameUUIDFromBytes(buffer.array());
+    }
+
     public void rebuildPacket() {
+        rebuildPacket(true);
+    }
+
+    public void rebuildPacket(boolean cleanRecipes) {
+        if (packet != null) {
+            packet.release();
+            packet = null;
+        }
         CraftingDataPacket pk = new CraftingDataPacket();
         pk.cleanRecipes = true;
 
-        for (Recipe recipe : this.getRecipes()) {
-            if (recipe instanceof ShapedRecipe) {
-                pk.addShapedRecipe((ShapedRecipe) recipe);
-            } else if (recipe instanceof ShapelessRecipe) {
-                pk.addShapelessRecipe((ShapelessRecipe) recipe);
-            }
-        }
+        pk.addRecipes(this.getRecipes());
 
-        for (FurnaceRecipe recipe : this.getFurnaceRecipes().values()) {
-            pk.addFurnaceRecipe(recipe);
-        }
-        pk.encode();
+        pk.addRecipes(this.getFurnaceRecipes().values());
 
         packet = pk.compress(Deflater.BEST_COMPRESSION);
     }
@@ -237,12 +245,11 @@ public class CraftingManager {
         return recipe;
     }
 
-    private static UUID getMultiItemHash(Collection<Item> items) {
-        BinaryStream stream = new BinaryStream();
-        for (Item item : items) {
-            stream.putVarInt(getFullItemHash(item));
+    public void sendRecipesTo(Player player) {
+        if (packet == null) {
+            rebuildPacket();
         }
-        return UUID.nameUUIDFromBytes(stream.getBuffer());
+        player.dataPacket(packet.copy());
     }
 
     private static int getFullItemHash(Item item) {

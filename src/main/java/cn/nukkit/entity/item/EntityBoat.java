@@ -1,6 +1,5 @@
 package cn.nukkit.entity.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockWater;
 import cn.nukkit.entity.Entity;
@@ -13,9 +12,9 @@ import cn.nukkit.event.vehicle.VehicleMoveEvent;
 import cn.nukkit.event.vehicle.VehicleUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBoat;
-import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Location;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
@@ -24,6 +23,7 @@ import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AnimatePacket;
 import cn.nukkit.network.protocol.SetEntityLinkPacket;
+import cn.nukkit.player.Player;
 
 import java.util.ArrayList;
 
@@ -51,7 +51,7 @@ public class EntityBoat extends EntityVehicle {
 
     protected boolean sinking = true;
 
-    public EntityBoat(FullChunk chunk, CompoundTag nbt) {
+    public EntityBoat(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
 
         this.setMaxHealth(40);
@@ -169,7 +169,7 @@ public class EntityBoat extends EntityVehicle {
             double friction = 1 - this.getDrag();
 
             if (this.onGround && (Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionZ) > 0.00001)) {
-                friction *= this.getLevel().getBlock(this.temporalVector.setComponents((int) Math.floor(this.x), (int) Math.floor(this.y - 1), (int) Math.floor(this.z) - 1)).getFrictionFactor();
+                friction *= this.getLevel().getBlock(temporalVector.get().setComponents((int) Math.floor(this.x), (int) Math.floor(this.y - 1), (int) Math.floor(this.z) - 1)).getFrictionFactor();
             }
 
             this.motionX *= friction;
@@ -280,7 +280,7 @@ public class EntityBoat extends EntityVehicle {
 
             @Override
             public void accept(int x, int y, int z) {
-                Block block = EntityBoat.this.level.getBlock(EntityBoat.this.temporalVector.setComponents(x, y, z));
+                Block block = EntityBoat.this.level.getBlock(temporalVector.get().setComponents(x, y, z));
 
                 if (block instanceof BlockWater) {
                     double level = block.getMaxY();
@@ -412,7 +412,7 @@ public class EntityBoat extends EntityVehicle {
     public void kill() {
         super.kill();
 
-        if (level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
+        if (level.getGameRules().get(GameRules.DO_ENTITY_DROPS)) {
             this.level.dropItem(this, new ItemBoat());
         }
     }

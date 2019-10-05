@@ -1,9 +1,8 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -65,7 +64,7 @@ public class BlockDirt extends BlockSolidMeta {
 
     @Override
     public Item[] getDrops(Item item) {
-        return new Item[]{new ItemBlock(new BlockDirt())};
+        return new Item[]{Item.get(BlockID.DIRT)};
     }
 
     @Override

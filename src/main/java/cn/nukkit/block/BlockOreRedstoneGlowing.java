@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 
 //和pm源码有点出入，这里参考了wiki
@@ -33,7 +32,7 @@ public class BlockOreRedstoneGlowing extends BlockOreRedstone {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(new BlockOreRedstone());
+        return Item.get(BlockID.REDSTONE_ORE);
     }
 
     @Override

@@ -3,7 +3,7 @@ package cn.nukkit.entity.passive;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityAgeable;
 import cn.nukkit.entity.EntityCreature;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
@@ -11,7 +11,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
  * Nukkit Project
  */
 public abstract class EntityWaterAnimal extends EntityCreature implements EntityAgeable {
-    public EntityWaterAnimal(FullChunk chunk, CompoundTag nbt) {
+    public EntityWaterAnimal(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

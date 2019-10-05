@@ -2,31 +2,33 @@ package cn.nukkit.network.protocol;
 
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufOutputStream;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
 
 public class LevelEventGenericPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.LEVEL_EVENT_GENERIC_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.LEVEL_EVENT_GENERIC_PACKET;
 
     public int eventId;
     public CompoundTag tag;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putVarInt(eventId);
-        try {
-            this.put(NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, true));
+    protected void encode(ByteBuf buffer) {
+        Binary.writeVarInt(buffer, eventId);
+        try (ByteBufOutputStream stream = new ByteBufOutputStream(buffer)) {
+            NBTIO.write(tag, stream, ByteOrder.LITTLE_ENDIAN, true);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

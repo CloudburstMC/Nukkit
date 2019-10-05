@@ -2,7 +2,7 @@ package cn.nukkit.entity.mob;
 
 import cn.nukkit.entity.EntitySmite;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
@@ -17,7 +17,7 @@ public class EntityStray extends EntityMob implements EntitySmite {
         return NETWORK_ID;
     }
 
-    public EntityStray(FullChunk chunk, CompoundTag nbt) {
+    public EntityStray(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

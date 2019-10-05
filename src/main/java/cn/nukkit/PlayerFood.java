@@ -6,6 +6,7 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.event.player.PlayerFoodLevelChangeEvent;
 import cn.nukkit.item.food.Food;
+import cn.nukkit.player.Player;
 import cn.nukkit.potion.Effect;
 
 /**

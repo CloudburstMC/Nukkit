@@ -2,7 +2,7 @@ package cn.nukkit.level.generator.populator.impl;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 
@@ -21,7 +21,7 @@ public class PopulatorLava extends Populator {
     }
 
     @Override
-    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {
+    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, Chunk chunk) {
         this.random = random;
         if (random.nextRange(0, 100) < 5) {
             this.level = level;
@@ -35,7 +35,7 @@ public class PopulatorLava extends Populator {
                 int z = random.nextRange(0, 15);
                 int y = this.getHighestWorkableBlock(chunk, x, z);
                 if (y != -1 && chunk.getBlockId(x, y, z) == Block.AIR) {
-                    chunk.setBlock(x, y, z, Block.LAVA);
+                    chunk.setBlockId(x, y, z, 0, Block.LAVA);
                     chunk.setBlockLight(x, y, z, Block.light[Block.LAVA]);
                     this.lavaSpread(bx + x, y, bz + z);
                 }
@@ -217,7 +217,7 @@ public class PopulatorLava extends Populator {
     }
 
 
-    private int getHighestWorkableBlock(FullChunk chunk, int x, int z) {
+    private int getHighestWorkableBlock(Chunk chunk, int x, int z) {
         int y;
         for (y = 127; y >= 0; y--) {
             int b = chunk.getBlockId(x, y, z);

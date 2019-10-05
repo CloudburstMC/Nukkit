@@ -1,10 +1,10 @@
 package cn.nukkit.item;
 
 
-import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.player.Player;
 
 public class ItemGlassBottle extends Item {
 

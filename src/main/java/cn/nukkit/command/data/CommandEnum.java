@@ -1,10 +1,13 @@
 package cn.nukkit.command.data;
 
+import lombok.ToString;
+
 import java.util.List;
 
 /**
  * @author CreeperFace
  */
+@ToString
 public class CommandEnum {
 
     private String name;

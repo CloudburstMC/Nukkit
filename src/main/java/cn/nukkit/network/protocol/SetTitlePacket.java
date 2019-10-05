@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -7,7 +9,7 @@ import lombok.ToString;
  */
 @ToString
 public class SetTitlePacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.SET_TITLE_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.SET_TITLE_PACKET;
 
     public static final int TYPE_CLEAR = 0;
     public static final int TYPE_RESET = 1;
@@ -23,26 +25,25 @@ public class SetTitlePacket extends DataPacket {
     public int fadeOutTime = 0;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
     @Override
-    public void decode() {
-        this.type = this.getVarInt();
-        this.text = this.getString();
-        this.fadeInTime = this.getVarInt();
-        this.stayTime = this.getVarInt();
-        this.fadeOutTime = this.getVarInt();
+    protected void decode(ByteBuf buffer) {
+        this.type = Binary.readVarInt(buffer);
+        this.text = Binary.readString(buffer);
+        this.fadeInTime = Binary.readVarInt(buffer);
+        this.stayTime = Binary.readVarInt(buffer);
+        this.fadeOutTime = Binary.readVarInt(buffer);
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putVarInt(type);
-        this.putString(text);
-        this.putVarInt(fadeInTime);
-        this.putVarInt(stayTime);
-        this.putVarInt(fadeOutTime);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeVarInt(buffer, type);
+        Binary.writeString(buffer, text);
+        Binary.writeVarInt(buffer, fadeInTime);
+        Binary.writeVarInt(buffer, stayTime);
+        Binary.writeVarInt(buffer, fadeOutTime);
     }
 }

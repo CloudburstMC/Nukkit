@@ -2,7 +2,7 @@ package cn.nukkit.level.biome;
 
 import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 
@@ -58,7 +58,7 @@ public abstract class Biome implements BlockID {
     }
 
     public void populateChunk(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random) {
-        FullChunk chunk = level.getChunk(chunkX, chunkZ);
+        Chunk chunk = level.getChunk(chunkX, chunkZ);
         for (Populator populator : populators) {
             populator.populate(level, chunkX, chunkZ, random, chunk);
         }

@@ -1,12 +1,11 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.player.Player;
 
 /**
  * @author Nukkit Project Team
@@ -72,7 +71,7 @@ public class BlockRedstoneLamp extends BlockSolid {
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-                new ItemBlock(new BlockRedstoneLamp())
+                Item.get(BlockID.REDSTONE_LAMP)
         };
     }
 

@@ -1,6 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.block.BlockRedstoneEvent;
@@ -8,12 +7,12 @@ import cn.nukkit.event.entity.EntityInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.player.Player;
 
 /**
  * Created by Snake1999 on 2016/1/11.
@@ -202,6 +201,6 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0, 1);
+        return Item.get(BlockID.AIR, 0, 0);
     }
 }

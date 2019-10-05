@@ -1,12 +1,12 @@
 package cn.nukkit.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.ClientboundMapItemDataPacket;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.MainLogger;
 
 import javax.imageio.ImageIO;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

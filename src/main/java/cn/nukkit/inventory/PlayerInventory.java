@@ -1,21 +1,19 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.EntityHumanType;
 import cn.nukkit.event.entity.EntityArmorChangeEvent;
 import cn.nukkit.event.entity.EntityInventoryChangeEvent;
 import cn.nukkit.event.player.PlayerItemHeldEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
-import cn.nukkit.item.ItemFishingRod;
 import cn.nukkit.network.protocol.InventoryContentPacket;
 import cn.nukkit.network.protocol.InventorySlotPacket;
 import cn.nukkit.network.protocol.MobArmorEquipmentPacket;
 import cn.nukkit.network.protocol.MobEquipmentPacket;
 import cn.nukkit.network.protocol.types.ContainerIds;
+import cn.nukkit.player.Player;
 
 import java.util.Collection;
 
@@ -113,7 +111,7 @@ public class PlayerInventory extends BaseInventory {
                 this.sendHeldItem((Player) this.getHolder());
             }
 
-            this.sendHeldItem(this.getHolder().getViewers().values());
+            this.sendHeldItem(this.getHolder().getViewers());
         }
     }
 
@@ -122,7 +120,7 @@ public class PlayerInventory extends BaseInventory {
         if (item != null) {
             return item;
         } else {
-            return new ItemBlock(new BlockAir(), 0, 0);
+            return Item.get(BlockID.AIR, 0, 0);
         }
     }
 
@@ -180,7 +178,7 @@ public class PlayerInventory extends BaseInventory {
 
         if (index >= this.getSize()) {
             this.sendArmorSlot(index, this.getViewers());
-            this.sendArmorSlot(index, this.getHolder().getViewers().values());
+            this.sendArmorSlot(index, this.getHolder().getViewers());
         } else {
             super.onSlotChange(index, before, send);
         }
@@ -273,7 +271,7 @@ public class PlayerInventory extends BaseInventory {
     @Override
     public boolean clear(int index, boolean send) {
         if (this.slots.containsKey(index)) {
-            Item item = new ItemBlock(new BlockAir(), null, 0);
+            Item item = Item.get(BlockID.AIR, 0, 0);
             Item old = this.slots.get(index);
             if (index >= this.getSize() && index < this.size) {
                 EntityArmorChangeEvent ev = new EntityArmorChangeEvent(this.getHolder(), old, item, index);
@@ -337,11 +335,9 @@ public class PlayerInventory extends BaseInventory {
     public void sendArmorContents(Player[] players) {
         Item[] armor = this.getArmorContents();
 
-        MobArmorEquipmentPacket pk = new MobArmorEquipmentPacket();
-        pk.eid = this.getHolder().getId();
-        pk.slots = armor;
-        pk.encode();
-        pk.isEncoded = true;
+        MobArmorEquipmentPacket packet = new MobArmorEquipmentPacket();
+        packet.eid = this.getHolder().getId();
+        packet.slots = armor;
 
         for (Player player : players) {
             if (player.equals(this.getHolder())) {
@@ -350,7 +346,7 @@ public class PlayerInventory extends BaseInventory {
                 pk2.slots = armor;
                 player.dataPacket(pk2);
             } else {
-                player.dataPacket(pk);
+                player.dataPacket(packet);
             }
         }
     }
@@ -364,7 +360,7 @@ public class PlayerInventory extends BaseInventory {
 
         for (int i = 0; i < 4; ++i) {
             if (items[i] == null) {
-                items[i] = new ItemBlock(new BlockAir(), null, 0);
+                items[i] = Item.get(BlockID.AIR, 0, 0);
             }
 
             if (items[i].getId() == Item.AIR) {
@@ -386,11 +382,9 @@ public class PlayerInventory extends BaseInventory {
     public void sendArmorSlot(int index, Player[] players) {
         Item[] armor = this.getArmorContents();
 
-        MobArmorEquipmentPacket pk = new MobArmorEquipmentPacket();
-        pk.eid = this.getHolder().getId();
-        pk.slots = armor;
-        pk.encode();
-        pk.isEncoded = true;
+        MobArmorEquipmentPacket armorEquipmentPacket = new MobArmorEquipmentPacket();
+        armorEquipmentPacket.eid = this.getHolder().getId();
+        armorEquipmentPacket.slots = armor;
 
         for (Player player : players) {
             if (player.equals(this.getHolder())) {
@@ -400,7 +394,7 @@ public class PlayerInventory extends BaseInventory {
                 pk2.item = this.getItem(index);
                 player.dataPacket(pk2);
             } else {
-                player.dataPacket(pk);
+                player.dataPacket(armorEquipmentPacket);
             }
         }
     }

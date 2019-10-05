@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -8,24 +10,23 @@ import lombok.ToString;
  */
 @ToString
 public class SetTimePacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.SET_TIME_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.SET_TIME_PACKET;
 
     public int time;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putVarInt(this.time);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeVarInt(buffer, this.time);
     }
 
 }

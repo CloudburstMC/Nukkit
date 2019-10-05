@@ -1,12 +1,12 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 public class BlockEntityMusic extends BlockEntity {
 
-    public BlockEntityMusic(FullChunk chunk, CompoundTag nbt) {
+    public BlockEntityMusic(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

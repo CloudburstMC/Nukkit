@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -8,7 +10,7 @@ import lombok.ToString;
 @ToString
 public class SetEntityLinkPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.SET_ENTITY_LINK_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.SET_ENTITY_LINK_PACKET;
 
     public static final byte TYPE_REMOVE = 0;
     public static final byte TYPE_RIDE = 1;
@@ -20,21 +22,20 @@ public class SetEntityLinkPacket extends DataPacket {
     public byte immediate;
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putEntityUniqueId(this.vehicleUniqueId);
-        this.putEntityUniqueId(this.riderUniqueId);
-        this.putByte(this.type);
-        this.putByte(this.immediate);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeEntityUniqueId(buffer, this.vehicleUniqueId);
+        Binary.writeEntityUniqueId(buffer, this.riderUniqueId);
+        buffer.writeByte(this.type);
+        buffer.writeByte(this.immediate);
     }
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 }

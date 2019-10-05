@@ -2,14 +2,14 @@ package cn.nukkit.entity.passive;
 
 import cn.nukkit.entity.EntityAgeable;
 import cn.nukkit.entity.EntityCreature;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 public class EntityVillager extends EntityCreature implements EntityNPC, EntityAgeable {
 
     public static final int NETWORK_ID = 115;
 
-    public EntityVillager(FullChunk chunk, CompoundTag nbt) {
+    public EntityVillager(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

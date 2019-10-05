@@ -1,6 +1,8 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.Player;
+import cn.nukkit.player.Player;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -9,7 +11,7 @@ import lombok.ToString;
 @ToString
 public class AdventureSettingsPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.ADVENTURE_SETTINGS_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.ADVENTURE_SETTINGS_PACKET;
 
     public static final int PERMISSION_NORMAL = 0;
     public static final int PERMISSION_OPERATOR = 1;
@@ -52,23 +54,22 @@ public class AdventureSettingsPacket extends DataPacket {
 
     public long entityUniqueId; //This is a little-endian long, NOT a var-long. (WTF Mojang)
 
-    public void decode() {
-        this.flags = getUnsignedVarInt();
-        this.commandPermission = getUnsignedVarInt();
-        this.flags2 = getUnsignedVarInt();
-        this.playerPermission = getUnsignedVarInt();
-        this.customFlags = getUnsignedVarInt();
-        this.entityUniqueId = getLLong();
+    protected void decode(ByteBuf buffer) {
+        this.flags = Binary.readUnsignedVarInt(buffer);
+        this.commandPermission = Binary.readUnsignedVarInt(buffer);
+        this.flags2 = Binary.readUnsignedVarInt(buffer);
+        this.playerPermission = Binary.readUnsignedVarInt(buffer);
+        this.customFlags = Binary.readUnsignedVarInt(buffer);
+        this.entityUniqueId = buffer.readLongLE();
     }
 
-    public void encode() {
-        this.reset();
-        this.putUnsignedVarInt(this.flags);
-        this.putUnsignedVarInt(this.commandPermission);
-        this.putUnsignedVarInt(this.flags2);
-        this.putUnsignedVarInt(this.playerPermission);
-        this.putUnsignedVarInt(this.customFlags);
-        this.putLLong(this.entityUniqueId);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeUnsignedVarInt(buffer, this.flags);
+        Binary.writeUnsignedVarInt(buffer, this.commandPermission);
+        Binary.writeUnsignedVarInt(buffer, this.flags2);
+        Binary.writeUnsignedVarInt(buffer, this.playerPermission);
+        Binary.writeUnsignedVarInt(buffer, this.customFlags);
+        buffer.writeLongLE(this.entityUniqueId);
     }
 
     public boolean getFlag(int flag) {
@@ -97,7 +98,7 @@ public class AdventureSettingsPacket extends DataPacket {
     }
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 }

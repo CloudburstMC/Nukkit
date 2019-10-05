@@ -1,6 +1,5 @@
 package cn.nukkit.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
@@ -16,12 +15,14 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
-import cn.nukkit.utils.Binary;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
+import io.netty.buffer.ByteBufUtil;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -59,7 +60,7 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     public Item(int id, Integer meta, int count, String name) {
-        this.id = id & 0xffff;
+        this.id = id;
         if (meta != null && meta >= 0) {
             this.meta = meta & 0xffff;
         } else {
@@ -300,11 +301,11 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[RECORD_STRAD] = ItemRecordStrad.class;
             list[RECORD_WAIT] = ItemRecordWait.class;
 
-            for (int i = 0; i < 256; ++i) {
-                if (Block.list[i] != null) {
-                    list[i] = Block.list[i];
-                }
-            }
+//            for (int i = 0; i < 256; ++i) {
+//                if (Block.list[i] != null) {
+//                    list[i] = Block.list[i];
+//                }
+//            }
         }
 
         initCreativeItems();
@@ -379,39 +380,52 @@ public class Item implements Cloneable, BlockID, ItemID {
         return get(id, 0);
     }
 
-    public static Item get(int id, Integer meta) {
+    public static Item get(int id, int meta) {
         return get(id, meta, 1);
     }
 
-    public static Item get(int id, Integer meta, int count) {
+    public static Item get(int id, int meta, int count) {
         return get(id, meta, count, new byte[0]);
     }
 
-    public static Item get(int id, Integer meta, int count, byte[] tags) {
-        try {
-            Class c = list[id];
-            Item item;
+    public static Item get(int id, int meta, int count, byte[] tags) {
+        Item item;
+        Class clazz;
 
-            if (c == null) {
-                item = new Item(id, meta, count);
-            } else if (id < 256) {
-                if (meta >= 0) {
-                    item = new ItemBlock(Block.get(id, meta), meta, count);
-                } else {
-                    item = new ItemBlock(Block.get(id), meta, count);
-                }
-            } else {
-                item = ((Item) c.getConstructor(Integer.class, int.class).newInstance(meta, count));
-            }
-
-            if (tags.length != 0) {
-                item.setCompoundTag(tags);
-            }
-
-            return item;
-        } catch (Exception e) {
-            return new Item(id, meta, count).setCompoundTag(tags);
+        if (id > 0 && (id & 0x8000) != 0) {
+            throw new IllegalArgumentException("Invalid item ID " + id);
         }
+
+        if (id < 256) {
+            // Blocks
+            int blockId;
+            if (id < 0) {
+                blockId = 255 - id;
+            } else {
+                blockId = id;
+            }
+
+            if (meta < 0) {
+                item = new ItemBlock(Block.get(blockId), -1, count);
+            } else {
+                item = new ItemBlock(Block.get(blockId, meta), count);
+            }
+        } else if ((clazz = list[id]) == null) {
+            item = new Item(id, meta, count);
+        } else {
+            try {
+                item = ((Item) clazz.getConstructor(Integer.class, int.class).newInstance(meta, count));
+            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
+                    InvocationTargetException e) {
+                item = new Item(id, meta, count).setCompoundTag(tags);
+            }
+        }
+
+        if (tags.length != 0) {
+            item.setCompoundTag(tags);
+        }
+
+        return item;
     }
 
     public static Item fromString(String str) {
@@ -422,7 +436,7 @@ public class Item implements Cloneable, BlockID, ItemID {
 
         Pattern integerPattern = Pattern.compile("^[1-9]\\d*$");
         if (integerPattern.matcher(b[0]).matches()) {
-            id = Integer.valueOf(b[0]);
+            id = Integer.parseInt(b[0]);
         } else {
             try {
                 id = Item.class.getField(b[0].toUpperCase()).getInt(null);
@@ -431,7 +445,7 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
 
         id = id & 0xFFFF;
-        if (b.length != 1) meta = Integer.valueOf(b[1]) & 0xFFFF;
+        if (b.length != 1) meta = Integer.parseInt(b[1]) & 0xFFFF;
 
         return get(id, meta);
     }
@@ -951,7 +965,7 @@ public class Item implements Cloneable, BlockID, ItemID {
 
     @Override
     final public String toString() {
-        return "Item " + this.name + " (" + this.id + ":" + (!this.hasMeta ? "?" : this.meta) + ")x" + this.count + (this.hasCompoundTag() ? " tags:0x" + Binary.bytesToHexString(this.getCompoundTag()) : "");
+        return "Item " + this.name + " (" + this.id + ":" + (!this.hasMeta ? "?" : this.meta) + ")x" + this.count + (this.hasCompoundTag() ? " tags:0x" + ByteBufUtil.hexDump(this.getCompoundTag()) : "");
     }
 
     public int getDestroySpeed(Block block, Player player) {

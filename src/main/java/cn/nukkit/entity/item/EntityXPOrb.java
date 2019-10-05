@@ -1,11 +1,11 @@
 package cn.nukkit.entity.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.player.Player;
 
 /**
  * Created on 2015/12/26 by xtypr.
@@ -50,7 +50,7 @@ public class EntityXPOrb extends Entity {
         return false;
     }
 
-    public EntityXPOrb(FullChunk chunk, CompoundTag nbt) {
+    public EntityXPOrb(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -155,7 +155,7 @@ public class EntityXPOrb extends Entity {
             double friction = 1d - this.getDrag();
 
             if (this.onGround && (Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionZ) > 0.00001)) {
-                friction = this.getLevel().getBlock(this.temporalVector.setComponents((int) Math.floor(this.x), (int) Math.floor(this.y - 1), (int) Math.floor(this.z) - 1)).getFrictionFactor() * friction;
+                friction = this.getLevel().getBlock(temporalVector.get().setComponents((int) Math.floor(this.x), (int) Math.floor(this.y - 1), (int) Math.floor(this.z) - 1)).getFrictionFactor() * friction;
             }
 
             this.motionX *= friction;

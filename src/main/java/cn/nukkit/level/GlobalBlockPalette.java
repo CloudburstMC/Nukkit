@@ -1,9 +1,13 @@
 package cn.nukkit.level;
 
 import cn.nukkit.Server;
-import cn.nukkit.utils.BinaryStream;
+import cn.nukkit.utils.Binary;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import gnu.trove.map.TObjectIntMap;
+import gnu.trove.map.hash.TObjectIntHashMap;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 
@@ -17,10 +21,12 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GlobalBlockPalette {
-    private static final Int2IntMap legacyToRuntimeId = new Int2IntOpenHashMap();
-    private static final Int2IntMap runtimeIdToLegacy = new Int2IntOpenHashMap();
+    private static final Int2IntMap legacyToRuntimeId = new Int2IntOpenHashMap(4096);
+    private static final Int2IntMap runtimeIdToLegacy = new Int2IntOpenHashMap(4096);
+    private static final TObjectIntMap<String> nameToLegacyId = new TObjectIntHashMap<>(256, 0.5f,
+            248); // info_update block
     private static final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
-    private static final byte[] compiledPalette;
+    private static final ByteBuf compiledPalette;
 
     static {
         legacyToRuntimeId.defaultReturnValue(-1);
@@ -36,18 +42,20 @@ public class GlobalBlockPalette {
         Type collectionType = new TypeToken<Collection<TableEntry>>() {
         }.getType();
         Collection<TableEntry> entries = gson.fromJson(reader, collectionType);
-        BinaryStream table = new BinaryStream();
 
-        table.putUnsignedVarInt(entries.size());
+        ByteBuf buffer = Unpooled.directBuffer();
+        Binary.writeUnsignedVarInt(buffer, entries.size());
 
         for (TableEntry entry : entries) {
             registerMapping((entry.id << 4) | entry.data);
-            table.putString(entry.name);
-            table.putLShort(entry.data);
-            table.putLShort(entry.id);
+            Binary.writeString(buffer, entry.name);
+            buffer.writeShortLE(entry.data);
+            buffer.writeShortLE(entry.id);
+
+            nameToLegacyId.putIfAbsent(entry.name, entry.id);
         }
 
-        compiledPalette = table.getBuffer();
+        compiledPalette = buffer;
     }
 
     public static int getOrCreateRuntimeId(int id, int meta) {
@@ -63,15 +71,26 @@ public class GlobalBlockPalette {
         return runtimeId;
     }
 
-    private static int registerMapping(int legacyId) {
+    private static void registerMapping(int legacyId) {
         int runtimeId = runtimeIdAllocator.getAndIncrement();
         runtimeIdToLegacy.put(runtimeId, legacyId);
         legacyToRuntimeId.put(legacyId, runtimeId);
-        return runtimeId;
     }
 
-    public static byte[] getCompiledPalette() {
-        return compiledPalette;
+    public static int getLegacyId(int runtime) {
+        int legacyId = runtimeIdToLegacy.get(runtime);
+        if (legacyId == -1) {
+            throw new IllegalArgumentException("Runtime ID: " + runtime + " is not registered");
+        }
+        return legacyId;
+    }
+
+    public static ByteBuf getCompiledPalette() {
+        return compiledPalette.duplicate();
+    }
+
+    public static int getLegacyIdFromName(String name) {
+        return nameToLegacyId.get(name);
     }
 
     private static class TableEntry {

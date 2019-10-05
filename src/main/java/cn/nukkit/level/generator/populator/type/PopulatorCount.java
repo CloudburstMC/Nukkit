@@ -1,7 +1,7 @@
 package cn.nukkit.level.generator.populator.type;
 
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.NukkitRandom;
 
 /**
@@ -23,12 +23,12 @@ public abstract class PopulatorCount extends Populator {
     }
 
     @Override
-    public final void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {
+    public final void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, Chunk chunk) {
         int count = baseAmount + random.nextBoundedInt(randomAmount);
         for (int i = 0; i < count; i++) {
             populateCount(level, chunkX, chunkZ, random, chunk);
         }
     }
 
-    protected abstract void populateCount(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk);
+    protected abstract void populateCount(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, Chunk chunk);
 }

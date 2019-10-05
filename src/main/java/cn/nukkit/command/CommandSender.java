@@ -3,6 +3,7 @@ package cn.nukkit.command;
 import cn.nukkit.Server;
 import cn.nukkit.lang.TextContainer;
 import cn.nukkit.permission.Permissible;
+import cn.nukkit.player.Player;
 
 /**
  * 能发送命令的人。<br>
@@ -59,7 +60,7 @@ public interface CommandSender extends Permissible {
      * {@code if(sender instanceof ConsoleCommandSender) .....;}</p>
      *
      * @return 命令发送者的名称。<br>the name of the command sender.
-     * @see cn.nukkit.Player#getName()
+     * @see Player#getName()
      * @see cn.nukkit.command.ConsoleCommandSender#getName()
      * @see cn.nukkit.plugin.PluginDescription
      * @since Nukkit 1.0 | Nukkit API 1.0.0

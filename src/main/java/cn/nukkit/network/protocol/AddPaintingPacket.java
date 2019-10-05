@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -8,7 +10,7 @@ import lombok.ToString;
 @ToString
 public class AddPaintingPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.ADD_PAINTING_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.ADD_PAINTING_PACKET;
 
     public long entityUniqueId;
     public long entityRuntimeId;
@@ -19,23 +21,22 @@ public class AddPaintingPacket extends DataPacket {
     public String title;
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putEntityUniqueId(this.entityUniqueId);
-        this.putEntityRuntimeId(this.entityRuntimeId);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeEntityUniqueId(buffer, this.entityUniqueId);
+        Binary.writeEntityRuntimeId(buffer, this.entityRuntimeId);
 
-        this.putVector3f(this.x, this.y, this.z);
-        this.putVarInt(this.direction);
-        this.putString(this.title);
+        Binary.writeVector3f(buffer, this.x, this.y, this.z);
+        Binary.writeVarInt(buffer, this.direction);
+        Binary.writeString(buffer, this.title);
     }
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 

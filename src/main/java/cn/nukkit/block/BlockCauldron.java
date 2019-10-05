@@ -1,6 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityCauldron;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
@@ -11,6 +10,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.player.Player;
 
 import java.util.Map;
 
@@ -144,7 +144,7 @@ public class BlockCauldron extends BlockSolidMeta {
                     this.setDamage(0x06);
 
                 if (item.getCount() == 1) {
-                    player.getInventory().setItemInHand(new ItemBlock(new BlockAir()));
+                    player.getInventory().setItemInHand(Item.get(BlockID.AIR, 0, 0));
                 } else if (item.getCount() > 1) {
                     item.setCount(item.getCount() - 1);
                     player.getInventory().setItemInHand(item);

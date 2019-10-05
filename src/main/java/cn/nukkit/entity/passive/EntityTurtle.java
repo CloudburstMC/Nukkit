@@ -1,6 +1,6 @@
 package cn.nukkit.entity.passive;
 
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
@@ -10,7 +10,7 @@ public class EntityTurtle extends EntityAnimal {
 
     public static final int NETWORK_ID = 74;
 
-    public EntityTurtle(FullChunk chunk, CompoundTag nbt) {
+    public EntityTurtle(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

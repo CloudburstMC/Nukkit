@@ -1,11 +1,11 @@
 package cn.nukkit.entity.passive;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.EntityOwnable;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.entity.data.StringEntityData;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.player.Player;
 
 /**
  * Author: BeYkeRYkt
@@ -16,7 +16,7 @@ public abstract class EntityTameable extends EntityAnimal implements EntityOwnab
     public static final int DATA_TAMED_FLAG = 16;
     public static final int DATA_OWNER_NAME = 17;
 
-    public EntityTameable(FullChunk chunk, CompoundTag nbt) {
+    public EntityTameable(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

@@ -5,18 +5,24 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.biome.BiomeSelector;
 import cn.nukkit.level.biome.EnumBiome;
-import cn.nukkit.level.format.generic.BaseFullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.noise.vanilla.f.NoiseGeneratorOctavesF;
 import cn.nukkit.level.generator.noise.vanilla.f.NoiseGeneratorPerlinF;
 import cn.nukkit.level.generator.object.ore.OreType;
-import cn.nukkit.level.generator.populator.impl.*;
+import cn.nukkit.level.generator.populator.impl.PopulatorBedrock;
+import cn.nukkit.level.generator.populator.impl.PopulatorCaves;
+import cn.nukkit.level.generator.populator.impl.PopulatorGroundCover;
+import cn.nukkit.level.generator.populator.impl.PopulatorOre;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 import com.google.common.collect.ImmutableList;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * Nukkit's terrain generator
@@ -214,7 +220,7 @@ public class Normal extends Generator {
         int baseZ = chunkZ << 4;
         this.nukkitRandom.setSeed(chunkX * this.localSeed1 ^ chunkZ * this.localSeed2 ^ this.level.getSeed());
 
-        BaseFullChunk chunk = this.level.getChunk(chunkX, chunkZ);
+        Chunk chunk = this.level.getChunk(chunkX, chunkZ);
 
         //generate base noise values
         float[] depthRegion = this.depthNoise.generateNoiseOctaves(this.depthRegion.get(), chunkX * 4, chunkZ * 4, 5, 5, 200f, 200f, 0.5f);
@@ -370,7 +376,7 @@ public class Normal extends Generator {
             for (int z = 0; z < 16; z++) {
                 Biome biome = this.selector.pickBiome(baseX | x, baseZ | z);
 
-                chunk.setBiome(x, z, biome);
+                chunk.setBiome(x, z, biome.getId());
             }
         }
 
@@ -382,14 +388,14 @@ public class Normal extends Generator {
 
     @Override
     public void populateChunk(int chunkX, int chunkZ) {
-        BaseFullChunk chunk = this.level.getChunk(chunkX, chunkZ);
+        Chunk chunk = this.level.getChunk(chunkX, chunkZ);
         this.nukkitRandom.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
         for (Populator populator : this.populators) {
             populator.populate(this.level, chunkX, chunkZ, this.nukkitRandom, chunk);
         }
 
         @SuppressWarnings("deprecation")
-        Biome biome = EnumBiome.getBiome(chunk.getBiomeId(7, 7));
+        Biome biome = EnumBiome.getBiome(chunk.getBiome(7, 7));
         biome.populateChunk(this.level, chunkX, chunkZ, this.nukkitRandom);
     }
 

@@ -1,12 +1,12 @@
 package cn.nukkit.network;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.player.PlayerCreationEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.ProtocolInfo;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.Utils;
 import com.google.common.base.Strings;
 import com.nukkitx.network.raknet.*;
@@ -23,8 +23,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Queue;
+import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -41,7 +41,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
     private final RakNetServer raknet;
 
-    private Set<NukkitSessionListener> sessionListeners = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private Queue<NukkitSessionListener> disconnectQueue = new ConcurrentLinkedQueue<>();
 
     private byte[] advertisement;
 
@@ -62,19 +62,9 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
     @Override
     public boolean process() {
-        Iterator<NukkitSessionListener> iterator = this.sessionListeners.iterator();
-        while (iterator.hasNext()) {
-            NukkitSessionListener listener = iterator.next();
-            Player player = listener.player;
-            if (listener.disconnectReason != null) {
-                player.close(player.getLeaveMessage(), listener.disconnectReason, false);
-                iterator.remove();
-                continue;
-            }
-            DataPacket packet;
-            while ((packet = listener.packets.poll()) != null) {
-                listener.player.handleDataPacket(packet);
-            }
+        NukkitSessionListener listener;
+        while ((listener = disconnectQueue.poll()) != null) {
+            listener.player.close(listener.player.getLeaveMessage(), listener.disconnectReason, false);
         }
         return true;
     }
@@ -166,24 +156,27 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
             return null;
         }
 
-        byte[] buffer;
+        ByteBuf buffer;
         if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
             buffer = ((BatchPacket) packet).payload;
             if (buffer == null) {
                 return null;
             }
         } else {
-            this.server.batchPackets(new Player[]{player}, new DataPacket[]{packet}, true);
+            BatchPacket batched = packet.compress(ByteBufAllocator.DEFAULT);
+            try {
+                this.putPacket(player, batched, needACK, immediate);
+            } finally {
+                batched.release();
+            }
             return null;
         }
-
-        ByteBuf byteBuf = ByteBufAllocator.DEFAULT.ioBuffer(1 + buffer.length);
+        ByteBuf byteBuf = ByteBufAllocator.DEFAULT.ioBuffer(1 + buffer.readableBytes());
         byteBuf.writeByte(0xfe);
         byteBuf.writeBytes(buffer);
-        byteBuf.readerIndex(0);
 
-        session.send(byteBuf, immediate ? RakNetPriority.IMMEDIATE : RakNetPriority.MEDIUM, packet.reliability,
-                packet.getChannel());
+        session.send(byteBuf, immediate ? RakNetPriority.IMMEDIATE : RakNetPriority.MEDIUM,
+                RakNetReliability.RELIABLE_ORDERED, 0);
 
         return null;
     }
@@ -209,7 +202,6 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
             Player player = (Player) constructor.newInstance(this, ev.getClientId(), ev.getSocketAddress());
             this.server.addPlayer(session.getAddress(), player);
             NukkitSessionListener listener = new NukkitSessionListener(player);
-            this.sessionListeners.add(listener);
             session.setListener(listener);
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             Server.getInstance().getLogger().logException(e);
@@ -239,6 +231,8 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
             } else {
                 this.disconnectReason = "Disconnected from Server";
             }
+            // Queue for disconnect on main thread.
+            RakNetInterface.this.disconnectQueue.add(this);
         }
 
         @Override
@@ -250,13 +244,9 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
                 if (batchPacket == null) {
                     return;
                 }
+                batchPacket.tryDecode(buffer);
 
-                byte[] packetBuffer = new byte[buffer.readableBytes()];
-                buffer.readBytes(packetBuffer);
-                batchPacket.setBuffer(packetBuffer);
-                batchPacket.decode();
-
-                packets.offer(batchPacket);
+                this.player.handleDataPacket(batchPacket);
             }
         }
 

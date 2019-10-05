@@ -1,48 +1,49 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.resourcepacks.ResourcePack;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 @ToString
 public class ResourcePacksInfoPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.RESOURCE_PACKS_INFO_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.RESOURCE_PACKS_INFO_PACKET;
 
     public boolean mustAccept;
     public boolean scripting;
     public ResourcePack[] behaviourPackEntries = new ResourcePack[0];
     public ResourcePack[] resourcePackEntries = new ResourcePack[0];
 
-    @Override
-    public void decode() {
-
-    }
-
-    @Override
-    public void encode() {
-        this.reset();
-        this.putBoolean(this.mustAccept);
-        this.putBoolean(this.scripting);
-
-        encodePacks(this.resourcePackEntries);
-        encodePacks(this.behaviourPackEntries);
-    }
-
-    private void encodePacks(ResourcePack[] packs) {
-        this.putLShort(packs.length);
+    private static void encodePacks(ByteBuf buffer, ResourcePack[] packs) {
+        buffer.writeShortLE(packs.length);
         for (ResourcePack entry : packs) {
-            this.putString(entry.getPackId().toString());
-            this.putString(entry.getPackVersion());
-            this.putLLong(entry.getPackSize());
-            this.putString(""); // encryption key
-            this.putString(""); // sub-pack name
-            this.putString(""); // content identity
-            this.putBoolean(false); // scripting
+            Binary.writeString(buffer, entry.getPackId().toString());
+            Binary.writeString(buffer, entry.getPackVersion());
+            buffer.writeLongLE(entry.getPackSize());
+            Binary.writeString(buffer, ""); // encryption key
+            Binary.writeString(buffer, ""); // sub-pack name
+            Binary.writeString(buffer, ""); // content identity
+            buffer.writeBoolean(false); // scripting
         }
     }
 
     @Override
-    public byte pid() {
+    protected void decode(ByteBuf buffer) {
+
+    }
+
+    @Override
+    protected void encode(ByteBuf buffer) {
+        buffer.writeBoolean(this.mustAccept);
+        buffer.writeBoolean(this.scripting);
+
+        encodePacks(buffer, this.resourcePackEntries);
+        encodePacks(buffer, this.behaviourPackEntries);
+    }
+
+    @Override
+    public short pid() {
         return NETWORK_ID;
     }
 }

@@ -1,9 +1,8 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -12,7 +11,7 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockEntityCauldron extends BlockEntitySpawnable {
 
-    public BlockEntityCauldron(FullChunk chunk, CompoundTag nbt) {
+    public BlockEntityCauldron(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

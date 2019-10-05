@@ -3,6 +3,7 @@ package cn.nukkit.network.protocol;
 import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 import java.util.UUID;
@@ -13,10 +14,10 @@ import java.util.UUID;
  */
 @ToString
 public class AddPlayerPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.ADD_PLAYER_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.ADD_PLAYER_PACKET;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
@@ -39,32 +40,31 @@ public class AddPlayerPacket extends DataPacket {
     public String deviceId = "";
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putUUID(this.uuid);
-        this.putString(this.username);
-        this.putEntityUniqueId(this.entityUniqueId);
-        this.putEntityRuntimeId(this.entityRuntimeId);
-        this.putString(this.platformChatId);
-        this.putVector3f(this.x, this.y, this.z);
-        this.putVector3f(this.speedX, this.speedY, this.speedZ);
-        this.putLFloat(this.pitch);
-        this.putLFloat(this.yaw); //TODO headrot
-        this.putLFloat(this.yaw);
-        this.putSlot(this.item);
-        this.put(Binary.writeMetadata(this.metadata));
-        this.putUnsignedVarInt(0); //TODO: Adventure settings
-        this.putUnsignedVarInt(0);
-        this.putUnsignedVarInt(0);
-        this.putUnsignedVarInt(0);
-        this.putUnsignedVarInt(0);
-        this.putLLong(entityUniqueId);
-        this.putUnsignedVarInt(0); //TODO: Entity links
-        this.putString(deviceId);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeUuid(buffer, this.uuid);
+        Binary.writeString(buffer, this.username);
+        Binary.writeEntityUniqueId(buffer, this.entityUniqueId);
+        Binary.writeEntityRuntimeId(buffer, this.entityRuntimeId);
+        Binary.writeString(buffer, this.platformChatId);
+        Binary.writeVector3f(buffer, this.x, this.y, this.z);
+        Binary.writeVector3f(buffer, this.speedX, this.speedY, this.speedZ);
+        buffer.writeFloatLE(this.pitch);
+        buffer.writeFloatLE(this.yaw); //TODO headrot
+        buffer.writeFloatLE(this.yaw);
+        Binary.writeItem(buffer, this.item);
+        Binary.writeMetadata(buffer, this.metadata);
+        Binary.writeUnsignedVarInt(buffer, 0); //TODO: Adventure settings
+        Binary.writeUnsignedVarInt(buffer, 0);
+        Binary.writeUnsignedVarInt(buffer, 0);
+        Binary.writeUnsignedVarInt(buffer, 0);
+        Binary.writeUnsignedVarInt(buffer, 0);
+        buffer.writeLongLE(entityUniqueId);
+        Binary.writeUnsignedVarInt(buffer, 0); //TODO: Entity links
+        Binary.writeString(buffer, deviceId);
     }
 }

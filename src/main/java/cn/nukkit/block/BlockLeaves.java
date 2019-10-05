@@ -1,6 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.LeavesDecayEvent;
 import cn.nukkit.item.Item;
@@ -8,6 +7,7 @@ import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Hash;
 import it.unimi.dsi.fastutil.longs.LongArraySet;
@@ -80,7 +80,7 @@ public class BlockLeaves extends BlockTransparentMeta {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0, 1);
+        return Item.get(BlockID.LEAVES);
     }
 
     @Override

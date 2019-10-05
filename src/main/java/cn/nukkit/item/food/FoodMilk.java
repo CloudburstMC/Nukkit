@@ -1,7 +1,7 @@
 package cn.nukkit.item.food;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.ItemBucket;
+import cn.nukkit.player.Player;
 
 /**
  * Created by Snake1999 on 2016/1/21.

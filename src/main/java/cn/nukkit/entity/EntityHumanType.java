@@ -1,7 +1,6 @@
 package cn.nukkit.entity;
 
-import cn.nukkit.Player;
-import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -10,13 +9,13 @@ import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.PlayerEnderChestInventory;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.player.Player;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -26,7 +25,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
     protected PlayerInventory inventory;
     protected PlayerEnderChestInventory enderChestInventory;
 
-    public EntityHumanType(FullChunk chunk, CompoundTag nbt) {
+    public EntityHumanType(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -177,7 +176,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
                 armor.setDamage(armor.getDamage() + 1);
 
                 if (armor.getDamage() >= armor.getMaxDurability()) {
-                    inventory.setArmorItem(slot, new ItemBlock(new BlockAir()));
+                    inventory.setArmorItem(slot, Item.get(BlockID.AIR, 0, 0));
                 } else {
                     inventory.setArmorItem(slot, armor, true);
                 }

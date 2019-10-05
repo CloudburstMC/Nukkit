@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -8,7 +10,7 @@ import lombok.ToString;
 @ToString
 public class InteractPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.INTERACT_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.INTERACT_PACKET;
 
     public static final int ACTION_VEHICLE_EXIT = 3;
     public static final int ACTION_MOUSEOVER = 4;
@@ -19,20 +21,19 @@ public class InteractPacket extends DataPacket {
     public long target;
 
     @Override
-    public void decode() {
-        this.action = this.getByte();
-        this.target = this.getEntityRuntimeId();
+    protected void decode(ByteBuf buffer) {
+        this.action = buffer.readByte();
+        this.target = Binary.readEntityRuntimeId(buffer);
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putByte((byte) this.action);
-        this.putEntityRuntimeId(this.target);
+    protected void encode(ByteBuf buffer) {
+        buffer.writeByte((byte) this.action);
+        Binary.writeEntityRuntimeId(buffer, this.target);
     }
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 

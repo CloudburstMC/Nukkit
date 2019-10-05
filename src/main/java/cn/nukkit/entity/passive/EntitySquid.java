@@ -2,7 +2,7 @@ package cn.nukkit.entity.passive;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDye;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.DyeColor;
 
@@ -13,7 +13,7 @@ public class EntitySquid extends EntityWaterAnimal {
 
     public static final int NETWORK_ID = 17;
 
-    public EntitySquid(FullChunk chunk, CompoundTag nbt) {
+    public EntitySquid(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

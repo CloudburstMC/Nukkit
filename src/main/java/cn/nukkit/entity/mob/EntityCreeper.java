@@ -6,7 +6,7 @@ import cn.nukkit.entity.weather.EntityLightningStrike;
 import cn.nukkit.event.entity.CreeperPowerEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -38,7 +38,7 @@ public class EntityCreeper extends EntityMob {
         return 1.7f;
     }
 
-    public EntityCreeper(FullChunk chunk, CompoundTag nbt) {
+    public EntityCreeper(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

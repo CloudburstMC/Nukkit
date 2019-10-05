@@ -7,10 +7,10 @@ import cn.nukkit.event.entity.EntityBlockChangeEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.GameRule;
 import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Sound;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -59,7 +59,7 @@ public class EntityFallingBlock extends Entity {
     protected int blockId;
     protected int damage;
 
-    public EntityFallingBlock(FullChunk chunk, CompoundTag nbt) {
+    public EntityFallingBlock(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -132,7 +132,7 @@ public class EntityFallingBlock extends Entity {
                 close();
                 Block block = level.getBlock(pos);
                 if (block.getId() > 0 && block.isTransparent() && !block.canBeReplaced()) {
-                    if (this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
+                    if (this.level.getGameRules().get(GameRules.DO_ENTITY_DROPS)) {
                         getLevel().dropItem(this, Item.get(this.getBlock(), this.getDamage(), 1));
                     }
                 } else {

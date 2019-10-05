@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 import java.util.UUID;
@@ -7,7 +9,7 @@ import java.util.UUID;
 @ToString(exclude = "sha256")
 public class ResourcePackDataInfoPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.RESOURCE_PACK_DATA_INFO_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.RESOURCE_PACK_DATA_INFO_PACKET;
 
     public static final int TYPE_INVALID = 0;
     public static final int TYPE_RESOURCE = 1;
@@ -27,30 +29,29 @@ public class ResourcePackDataInfoPacket extends DataPacket {
     public int type = TYPE_RESOURCE;
 
     @Override
-    public void decode() {
-        this.packId = UUID.fromString(this.getString());
-        this.maxChunkSize = this.getLInt();
-        this.chunkCount = this.getLInt();
-        this.compressedPackSize = this.getLLong();
-        this.sha256 = this.getByteArray();
-        this.premium = this.getBoolean();
-        this.type = this.getByte();
+    protected void decode(ByteBuf buffer) {
+        this.packId = UUID.fromString(Binary.readString(buffer));
+        this.maxChunkSize = buffer.readIntLE();
+        this.chunkCount = buffer.readIntLE();
+        this.compressedPackSize = buffer.readLongLE();
+        this.sha256 = Binary.readByteArray(buffer);
+        this.premium = buffer.readBoolean();
+        this.type = buffer.readByte();
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putString(this.packId.toString());
-        this.putLInt(this.maxChunkSize);
-        this.putLInt(this.chunkCount);
-        this.putLLong(this.compressedPackSize);
-        this.putByteArray(this.sha256);
-        this.putBoolean(this.premium);
-        this.putByte((byte) this.type);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeString(buffer, this.packId.toString());
+        buffer.writeIntLE(this.maxChunkSize);
+        buffer.writeIntLE(this.chunkCount);
+        buffer.writeLongLE(this.compressedPackSize);
+        Binary.writeByteArray(buffer, this.sha256);
+        buffer.writeBoolean(this.premium);
+        buffer.writeByte((byte) this.type);
     }
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 }

@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 @ToString
@@ -8,18 +9,17 @@ public class GUIDataPickItemPacket extends DataPacket {
     public int hotbarSlot;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return ProtocolInfo.GUI_DATA_PICK_ITEM_PACKET;
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putLInt(this.hotbarSlot);
+    protected void encode(ByteBuf buffer) {
+        buffer.writeIntLE(this.hotbarSlot);
     }
 
     @Override
-    public void decode() {
-        this.hotbarSlot = this.getLInt();
+    protected void decode(ByteBuf buffer) {
+        this.hotbarSlot = buffer.readIntLE();
     }
 }

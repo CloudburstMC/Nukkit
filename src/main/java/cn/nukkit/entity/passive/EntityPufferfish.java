@@ -1,6 +1,6 @@
 package cn.nukkit.entity.passive;
 
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
@@ -10,7 +10,7 @@ public class EntityPufferfish extends EntityAnimal {
 
     public static final int NETWORK_ID = 108;
 
-    public EntityPufferfish(FullChunk chunk, CompoundTag nbt) {
+    public EntityPufferfish(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

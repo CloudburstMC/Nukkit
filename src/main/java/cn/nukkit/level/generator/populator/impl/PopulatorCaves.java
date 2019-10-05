@@ -2,10 +2,10 @@ package cn.nukkit.level.generator.populator.impl;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.biome.EnumBiome;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.biome.Biome;
+import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.biome.type.CoveredBiome;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.NukkitRandom;
@@ -36,7 +36,7 @@ public class PopulatorCaves extends Populator {
     public int worldHeightCap = 128;
 
     @Override
-    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {
+    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, Chunk chunk) {
         this.random = new Random();
         this.random.setSeed(level.getSeed());
         long worldLong1 = this.random.nextLong();
@@ -44,20 +44,21 @@ public class PopulatorCaves extends Populator {
 
         int size = this.checkAreaSize;
 
-        for (int x = chunkX - size; x <= chunkX + size; x++)
+        for (int x = chunkX - size; x <= chunkX + size; x++) {
             for (int z = chunkZ - size; z <= chunkZ + size; z++) {
                 long randomX = x * worldLong1;
                 long randomZ = z * worldLong2;
                 this.random.setSeed(randomX ^ randomZ ^ level.getSeed());
                 generateChunk(x, z, chunk);
             }
+        }
     }
 
-    protected void generateLargeCaveNode(long seed, FullChunk chunk, double x, double y, double z) {
+    protected void generateLargeCaveNode(long seed, Chunk chunk, double x, double y, double z) {
         generateCaveNode(seed, chunk, x, y, z, 1.0F + this.random.nextFloat() * 6.0F, 0.0F, 0.0F, -1, -1, 0.5D);
     }
 
-    protected void generateCaveNode(long seed, FullChunk chunk, double x, double y, double z, float radius, float angelOffset, float angel, int angle, int maxAngle, double scale) {
+    protected void generateCaveNode(long seed, Chunk chunk, double x, double y, double z, float radius, float angelOffset, float angel, int angle, int maxAngle, double scale) {
         int chunkX = chunk.getX();
         int chunkZ = chunk.getZ();
 
@@ -185,7 +186,7 @@ public class PopulatorCaves extends Populator {
                         for (int yy = yTo; yy > yFrom; yy--) {
                             double modY = ((yy - 1) + 0.5D - y) / offsetY;
                             if ((modY > -0.7D) && (modX * modX + modY * modY + modZ * modZ < 1.0D)) {
-                                Biome biome = EnumBiome.getBiome(chunk.getBiomeId(xx, zz));
+                                Biome biome = EnumBiome.getBiome(chunk.getBiome(xx, zz));
                                 if (!(biome instanceof CoveredBiome)) {
                                     continue;
                                 }
@@ -199,14 +200,14 @@ public class PopulatorCaves extends Populator {
 //								if (this.isSuitableBlock(material, materialAbove, biome))
                                 {
                                     if (yy - 1 < 10) {
-                                        chunk.setBlock(xx, yy, zz, Block.LAVA);
+                                        chunk.setBlockId(xx, yy, zz, Block.LAVA);
                                     } else {
-                                        chunk.setBlock(xx, yy, zz, Block.AIR);
+                                        chunk.setBlockId(xx, yy, zz, Block.AIR);
 
                                         // If grass was just deleted, try to
                                         // move it down
                                         if (grassFound && (chunk.getBlockId(xx, yy - 1, zz) == Block.DIRT)) {
-                                            chunk.setFullBlockId(xx, yy - 1, zz, ((CoveredBiome) biome).getSurfaceId(xx, yy - 1, zz));
+                                            chunk.setFullBlock(xx, yy - 1, zz, ((CoveredBiome) biome).getSurfaceId(xx, yy - 1, zz));
                                         }
                                     }
                                 }
@@ -222,7 +223,7 @@ public class PopulatorCaves extends Populator {
         }
     }
 
-    protected void generateChunk(int chunkX, int chunkZ, FullChunk generatingChunkBuffer) {
+    protected void generateChunk(int chunkX, int chunkZ, Chunk generatingChunkBuffer) {
         int i = this.random.nextInt(this.random.nextInt(this.random.nextInt(caveFrequency) + 1) + 1);
         if (evenCaveDistribution)
             i = caveFrequency;

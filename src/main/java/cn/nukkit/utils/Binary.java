@@ -1,203 +1,555 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.*;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemDurable;
+import cn.nukkit.level.gamerule.GameRuleMap;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockVector3;
-import cn.nukkit.math.NukkitMath;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import it.unimi.dsi.fastutil.io.FastByteArrayInputStream;
+import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.nbt.tag.StringTag;
+import cn.nukkit.network.protocol.types.EntityLink;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufUtil;
+import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
+@UtilityClass
 public class Binary {
 
-    public static int signByte(int value) {
-        return value << 56 >> 56;
+    /**
+     * Reads a list of Attributes from the stream.
+     *
+     * @return Attribute[]
+     */
+    public static Attribute[] readAttributes(ByteBuf buffer) throws Exception {
+        List<Attribute> list = new ArrayList<>();
+        long count = readUnsignedVarInt(buffer);
+
+        for (int i = 0; i < count; ++i) {
+            String name = readString(buffer);
+            Attribute attr = Attribute.getAttributeByName(name);
+            if (attr != null) {
+                attr.setMinValue(buffer.readFloatLE());
+                attr.setValue(buffer.readFloatLE());
+                attr.setMaxValue(buffer.readFloatLE());
+                list.add(attr);
+            } else {
+                throw new Exception("Unknown attribute type \"" + name + "\"");
+            }
+        }
+
+        return list.toArray(new Attribute[0]);
     }
 
-    public static int unsignByte(int value) {
-        return value & 0xff;
+    /**
+     * Writes a list of Attributes to the packet buffer using the standard format.
+     */
+    public static void writeAttributes(ByteBuf buffer, Attribute[] attributes) {
+        writeUnsignedVarInt(buffer, attributes.length);
+        for (Attribute attribute : attributes) {
+            writeString(buffer, attribute.getName());
+            buffer.writeFloatLE(attribute.getMinValue());
+            buffer.writeFloatLE(attribute.getValue());
+            buffer.writeFloatLE(attribute.getMaxValue());
+        }
     }
 
-    public static int signShort(int value) {
-        return value << 48 >> 48;
+    public static UUID readUuid(ByteBuf buffer) {
+        return new UUID(buffer.readLongLE(), buffer.readLongLE());
     }
 
-    public int unsignShort(int value) {
-        return value & 0xffff;
+    public static void writeUuid(ByteBuf buffer, UUID uuid) {
+        buffer.writeLongLE(uuid.getMostSignificantBits());
+        buffer.writeLongLE(uuid.getLeastSignificantBits());
     }
 
-    public static int signInt(int value) {
-        return value << 32 >> 32;
+    public static void writeSkin(ByteBuf buffer, Skin skin) {
+        writeString(buffer, skin.getSkinId());
+        writeByteArray(buffer, skin.getSkinData());
+        writeByteArray(buffer, skin.getCapeData());
+        writeString(buffer, skin.getGeometryName());
+        writeString(buffer, skin.getGeometryData());
     }
 
-    public static int unsignInt(int value) {
-        return value;
+    public static Skin readSkin(ByteBuf buffer) {
+        Skin skin = new Skin();
+        skin.setSkinId(readString(buffer));
+        skin.setSkinData(readByteArray(buffer));
+        skin.setCapeData(readByteArray(buffer));
+        skin.setGeometryName(readString(buffer));
+        skin.setGeometryData(readString(buffer));
+        return skin;
     }
 
-    //Triad: {0x00,0x00,0x01}<=>1
-    public static int readTriad(byte[] bytes) {
-        return readInt(new byte[]{
-                (byte) 0x00,
-                bytes[0],
-                bytes[1],
-                bytes[2]
+    public static Item readItem(ByteBuf buffer) {
+        int id = readVarInt(buffer);
+
+        if (id == 0) {
+            return Item.get(0, 0, 0);
+        }
+        int auxValue = readVarInt(buffer);
+        int data = auxValue >> 8;
+        if (data == Short.MAX_VALUE) {
+            data = -1;
+        }
+        int cnt = auxValue & 0xff;
+
+        int nbtLen = buffer.readShortLE();
+        byte[] nbt = new byte[0];
+        if (nbtLen > 0) {
+            nbt = new byte[nbtLen];
+            buffer.readBytes(nbt);
+        } else if (nbtLen == -1) {
+            int nbtTagCount = (int) readUnsignedVarInt(buffer);
+            ByteBufInputStream stream = new ByteBufInputStream(buffer);
+            for (int i = 0; i < nbtTagCount; i++) {
+                try {
+                    // TODO: 05/02/2019 This hack is necessary because we keep the raw NBT tag. Try to remove it.
+                    CompoundTag tag = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN, true);
+                    // tool damage hack
+                    if (tag.contains("Damage")) {
+                        data = tag.getInt("Damage");
+                        tag.remove("Damage");
+                    }
+                    if (tag.contains("__DamageConflict__")) {
+                        tag.put("Damage", tag.removeAndGet("__DamageConflict__"));
+                    }
+                    if (tag.getAllTags().size() > 0) {
+                        nbt = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, false);
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        String[] canPlaceOn = new String[readVarInt(buffer)];
+        for (int i = 0; i < canPlaceOn.length; ++i) {
+            canPlaceOn[i] = readString(buffer);
+        }
+
+        String[] canDestroy = new String[readVarInt(buffer)];
+        for (int i = 0; i < canDestroy.length; ++i) {
+            canDestroy[i] = readString(buffer);
+        }
+
+        Item item = Item.get(
+                id, data, cnt, nbt
+        );
+
+        if (canDestroy.length > 0 || canPlaceOn.length > 0) {
+            CompoundTag namedTag = item.getNamedTag();
+            if (namedTag == null) {
+                namedTag = new CompoundTag();
+            }
+
+            if (canDestroy.length > 0) {
+                ListTag<StringTag> listTag = new ListTag<>("CanDestroy");
+                for (String blockName : canDestroy) {
+                    listTag.add(new StringTag("", blockName));
+                }
+                namedTag.put("CanDestroy", listTag);
+            }
+
+            if (canPlaceOn.length > 0) {
+                ListTag<StringTag> listTag = new ListTag<>("CanPlaceOn");
+                for (String blockName : canPlaceOn) {
+                    listTag.add(new StringTag("", blockName));
+                }
+                namedTag.put("CanPlaceOn", listTag);
+            }
+            item.setNamedTag(namedTag);
+        }
+
+        if (item.getId() == 513) { // TODO: Shields
+            readVarLong(buffer);
+        }
+
+        return item;
+    }
+
+    public static void writeItem(ByteBuf buffer, Item item) {
+        if (item == null || item.getId() == 0) {
+            writeVarInt(buffer, 0);
+            return;
+        }
+
+        boolean isDurable = item instanceof ItemDurable;
+
+        writeVarInt(buffer, item.getId());
+
+        int auxValue = item.getCount();
+        if (!isDurable) {
+            auxValue |= (((item.hasMeta() ? item.getDamage() : -1) & 0x7fff) << 8);
+        }
+        writeVarInt(buffer, auxValue);
+
+        if (item.hasCompoundTag() || isDurable) {
+            try {
+                // hack for tool damage
+                byte[] nbt = item.getCompoundTag();
+                CompoundTag tag;
+                if (nbt == null || nbt.length == 0) {
+                    tag = new CompoundTag();
+                } else {
+                    tag = NBTIO.read(nbt, ByteOrder.LITTLE_ENDIAN, false);
+                }
+                if (tag.contains("Damage")) {
+                    tag.put("__DamageConflict__", tag.removeAndGet("Damage"));
+                }
+                if (isDurable) {
+                    tag.putInt("Damage", item.getDamage());
+                }
+
+                buffer.writeShortLE(-1);
+                buffer.writeByte(1);
+                buffer.writeBytes(NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, true));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            buffer.writeShortLE(0);
+        }
+        List<String> canPlaceOn = extractStringList(item, "CanPlaceOn");
+        List<String> canDestroy = extractStringList(item, "CanDestroy");
+        writeVarInt(buffer, canPlaceOn.size());
+        for (String block : canPlaceOn) {
+            writeString(buffer, block);
+        }
+        writeVarInt(buffer, canDestroy.size());
+        for (String block : canDestroy) {
+            writeString(buffer, block);
+        }
+
+        if (item.getId() == 513) { // TODO: Shields
+            writeVarLong(buffer, 0);
+        }
+    }
+
+    public static Item readRecipeIngredient(ByteBuf buffer) {
+        int id = readVarInt(buffer);
+
+        if (id == 0) {
+            return Item.get(0, 0, 0);
+        }
+
+        int damage = readVarInt(buffer);
+        if (damage == 0x7fff) damage = -1;
+        int count = readVarInt(buffer);
+
+        return Item.get(id, damage, count);
+    }
+
+    public static void writeRecipeIngredient(ByteBuf buffer, Item ingredient) {
+        if (ingredient.isNull()) {
+            writeVarInt(buffer, 0);
+        } else {
+            writeVarInt(buffer, ingredient.getId());
+            writeVarInt(buffer, ingredient.getDamage() & 0x7fff);
+            writeVarInt(buffer, ingredient.getCount());
+        }
+    }
+
+    private List<String> extractStringList(Item item, String tagName) {
+        CompoundTag namedTag = item.getNamedTag();
+        if (namedTag == null) {
+            return Collections.emptyList();
+        }
+
+        ListTag<StringTag> listTag = namedTag.getList(tagName, StringTag.class);
+        if (listTag == null) {
+            return Collections.emptyList();
+        }
+
+        int size = listTag.size();
+        List<String> values = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            StringTag stringTag = listTag.get(i);
+            if (stringTag != null) {
+                values.add(stringTag.data);
+            }
+        }
+
+        return values;
+    }
+
+    public static byte[] readByteArray(ByteBuf buffer) {
+        byte[] bytes = new byte[(int) readUnsignedVarInt(buffer)];
+        buffer.readBytes(bytes);
+        return bytes;
+    }
+
+    public static void writeByteArray(ByteBuf buffer, byte[] bytes) {
+        writeUnsignedVarInt(buffer, bytes.length);
+        buffer.writeBytes(bytes);
+    }
+
+    public static ByteBuf readVarIntBuffer(ByteBuf buffer) {
+        return buffer.readSlice((int) readUnsignedVarInt(buffer));
+    }
+
+    public static void writeVarIntBuffer(ByteBuf buffer, ByteBuf toWrite) {
+        writeUnsignedVarInt(buffer, toWrite.readableBytes());
+        buffer.writeBytes(toWrite);
+    }
+
+    public static String readString(ByteBuf buffer) {
+        return new String(readByteArray(buffer), StandardCharsets.UTF_8);
+    }
+
+    public static void writeString(ByteBuf buffer, String string) {
+        byte[] bytes = string.getBytes(StandardCharsets.UTF_8);
+        writeByteArray(buffer, bytes);
+    }
+
+    public static long readUnsignedVarInt(ByteBuf buffer) {
+        return VarInt.readUnsignedVarInt(buffer);
+    }
+
+    public static void writeUnsignedVarInt(ByteBuf buffer, long v) {
+        VarInt.writeUnsignedVarInt(buffer, v);
+    }
+
+    public static int readVarInt(ByteBuf buffer) {
+        return VarInt.readVarInt(buffer);
+    }
+
+    public static void writeVarInt(ByteBuf buffer, int v) {
+        VarInt.writeVarInt(buffer, v);
+    }
+
+    public static long readVarLong(ByteBuf buffer) {
+        return VarInt.readVarLong(buffer);
+    }
+
+    public static void writeVarLong(ByteBuf buffer, long v) {
+        VarInt.writeVarLong(buffer, v);
+    }
+
+    public static long readUnsignedVarLong(ByteBuf buffer) {
+        return VarInt.readUnsignedVarLong(buffer);
+    }
+
+    public static void writeUnsignedVarLong(ByteBuf buffer, long v) {
+        VarInt.writeUnsignedVarLong(buffer, v);
+    }
+
+    public static BlockVector3 readBlockVector3(ByteBuf buffer) {
+        return new BlockVector3(readVarInt(buffer), (int) readUnsignedVarInt(buffer), readVarInt(buffer));
+    }
+
+    public static BlockVector3 readSignedBlockPosition(ByteBuf buffer) {
+        return new BlockVector3(readVarInt(buffer), readVarInt(buffer), readVarInt(buffer));
+    }
+
+    public static void writeSignedBlockPosition(ByteBuf buffer, BlockVector3 v) {
+        writeVarInt(buffer, v.x);
+        writeVarInt(buffer, v.y);
+        writeVarInt(buffer, v.z);
+    }
+
+    public static void writeBlockVector3(ByteBuf buffer, BlockVector3 v) {
+        writeBlockVector3(buffer, v.x, v.y, v.z);
+    }
+
+    public static void writeBlockVector3(ByteBuf buffer, int x, int y, int z) {
+        writeVarInt(buffer, x);
+        writeUnsignedVarInt(buffer, y);
+        writeVarInt(buffer, z);
+    }
+
+    public static Vector3f readVector3f(ByteBuf buffer) {
+        return new Vector3f(buffer.readFloatLE(), buffer.readFloatLE(), buffer.readFloatLE());
+    }
+
+    public static void writeVector3f(ByteBuf buffer, Vector3f v) {
+        writeVector3f(buffer, v.x, v.y, v.z);
+    }
+
+    public static void writeVector3f(ByteBuf buffer, float x, float y, float z) {
+        buffer.writeFloatLE(x);
+        buffer.writeFloatLE(y);
+        buffer.writeFloatLE(z);
+    }
+
+    public static void writeGameRules(ByteBuf buffer, GameRuleMap gameRules) {
+        writeUnsignedVarInt(buffer, gameRules.size());
+        gameRules.forEach((gameRule, value) -> {
+            writeString(buffer, gameRule.getName());
+
+            Class<?> valueClass = gameRule.getValueClass();
+            if (valueClass == Boolean.class) {
+                Binary.writeUnsignedVarInt(buffer, 1);
+                buffer.writeBoolean((boolean) value);
+            } else if (valueClass == Integer.class) {
+                Binary.writeUnsignedVarInt(buffer, 2);
+                Binary.writeUnsignedVarInt(buffer, (int) value);
+            } else if (valueClass == Float.class) {
+                Binary.writeUnsignedVarInt(buffer, 3);
+                buffer.writeFloatLE((float) value);
+            } else {
+                throw new IllegalArgumentException("Unknown GameRule type");
+            }
         });
     }
 
-    public static byte[] writeTriad(int value) {
-        return new byte[]{
-                (byte) ((value >>> 16) & 0xFF),
-                (byte) ((value >>> 8) & 0xFF),
-                (byte) (value & 0xFF)
-        };
+    /**
+     * Reads and returns an EntityUniqueID
+     *
+     * @return int
+     */
+    public static long readEntityUniqueId(ByteBuf buffer) {
+        return readVarLong(buffer);
     }
 
-    //LTriad: {0x01,0x00,0x00}<=>1
-    public static int readLTriad(byte[] bytes) {
-        return readLInt(new byte[]{
-                bytes[0],
-                bytes[1],
-                bytes[2],
-                (byte) 0x00
-        });
+    /**
+     * Writes an EntityUniqueID
+     */
+    public static void writeEntityUniqueId(ByteBuf buffer, long eid) {
+        writeVarLong(buffer, eid);
     }
 
-    public static byte[] writeLTriad(int value) {
-        return new byte[]{
-                (byte) (value & 0xFF),
-                (byte) ((value >>> 8) & 0xFF),
-                (byte) ((value >>> 16) & 0xFF)
-        };
+    /**
+     * Reads and returns an EntityRuntimeID
+     */
+    public static long readEntityRuntimeId(ByteBuf buffer) {
+        return readUnsignedVarLong(buffer);
     }
 
-    public static UUID readUUID(byte[] bytes) {
-        return new UUID(readLLong(bytes), readLLong(new byte[]{
-                bytes[8],
-                bytes[9],
-                bytes[10],
-                bytes[11],
-                bytes[12],
-                bytes[13],
-                bytes[14],
-                bytes[15]
-        }));
+    /**
+     * Writes an EntityUniqueID
+     */
+    public static void writeEntityRuntimeId(ByteBuf buffer, long eid) {
+        writeUnsignedVarLong(buffer, eid);
     }
 
-    public static byte[] writeUUID(UUID uuid) {
-        return appendBytes(writeLLong(uuid.getMostSignificantBits()), writeLLong(uuid.getLeastSignificantBits()));
+    public static BlockFace readBlockFace(ByteBuf buffer) {
+        return BlockFace.fromIndex(readVarInt(buffer));
     }
 
-    public static byte[] writeMetadata(EntityMetadata metadata) {
-        BinaryStream stream = new BinaryStream();
+    public static void writeBlockFace(ByteBuf buffer, BlockFace face) {
+        writeVarInt(buffer, face.getIndex());
+    }
+
+    public static void writeEntityLink(ByteBuf buffer, EntityLink link) {
+        writeEntityUniqueId(buffer, link.fromEntityUniquieId);
+        writeEntityUniqueId(buffer, link.toEntityUniquieId);
+        buffer.writeByte(link.type);
+        buffer.writeBoolean(link.immediate);
+    }
+
+    public static EntityLink readEntityLink(ByteBuf buffer) {
+        return new EntityLink(
+                readEntityUniqueId(buffer),
+                readEntityUniqueId(buffer),
+                buffer.readByte(),
+                buffer.readBoolean()
+        );
+    }
+
+    public static void writeMetadata(ByteBuf buffer, EntityMetadata metadata) {
         Map<Integer, EntityData> map = metadata.getMap();
-        stream.putUnsignedVarInt(map.size());
+        writeUnsignedVarInt(buffer, map.size());
         for (int id : map.keySet()) {
             EntityData d = map.get(id);
-            stream.putUnsignedVarInt(id);
-            stream.putUnsignedVarInt(d.getType());
+            writeUnsignedVarInt(buffer, id);
+            writeUnsignedVarInt(buffer, d.getType());
             switch (d.getType()) {
                 case Entity.DATA_TYPE_BYTE:
-                    stream.putByte(((ByteEntityData) d).getData().byteValue());
+                    buffer.writeByte(((ByteEntityData) d).getData().byteValue());
                     break;
                 case Entity.DATA_TYPE_SHORT:
-                    stream.putLShort(((ShortEntityData) d).getData());
+                    buffer.writeShortLE(((ShortEntityData) d).getData());
                     break;
                 case Entity.DATA_TYPE_INT:
-                    stream.putVarInt(((IntEntityData) d).getData());
+                    writeVarInt(buffer, ((IntEntityData) d).getData());
                     break;
                 case Entity.DATA_TYPE_FLOAT:
-                    stream.putLFloat(((FloatEntityData) d).getData());
+                    buffer.writeFloatLE(((FloatEntityData) d).getData());
                     break;
                 case Entity.DATA_TYPE_STRING:
-                    String s = ((StringEntityData) d).getData();
-                    stream.putUnsignedVarInt(s.getBytes(StandardCharsets.UTF_8).length);
-                    stream.put(s.getBytes(StandardCharsets.UTF_8));
+                    writeString(buffer, ((StringEntityData) d).getData());
                     break;
                 case Entity.DATA_TYPE_NBT:
                     NBTEntityData slot = (NBTEntityData) d;
                     try {
-                        stream.put(NBTIO.write(slot.getData(), ByteOrder.LITTLE_ENDIAN, true));
+                        buffer.writeBytes(NBTIO.write(slot.getData(), ByteOrder.LITTLE_ENDIAN, true));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                     break;
                 case Entity.DATA_TYPE_POS:
                     IntPositionEntityData pos = (IntPositionEntityData) d;
-                    stream.putVarInt(pos.x);
-                    stream.putVarInt(pos.y);
-                    stream.putVarInt(pos.z);
+                    writeSignedBlockPosition(buffer, pos.getData());
                     break;
                 case Entity.DATA_TYPE_LONG:
-                    stream.putVarLong(((LongEntityData) d).getData());
+                    writeVarLong(buffer, ((LongEntityData) d).getData());
                     break;
                 case Entity.DATA_TYPE_VECTOR3F:
                     Vector3fEntityData v3data = (Vector3fEntityData) d;
-                    stream.putLFloat(v3data.x);
-                    stream.putLFloat(v3data.y);
-                    stream.putLFloat(v3data.z);
+                    writeVector3f(buffer, v3data.getData());
                     break;
             }
         }
-        return stream.getBuffer();
     }
 
-    public static EntityMetadata readMetadata(byte[] payload) {
-        BinaryStream stream = new BinaryStream();
-        stream.setBuffer(payload);
-        long count = stream.getUnsignedVarInt();
+    public static EntityMetadata readMetadata(ByteBuf buffer) {
+        long count = readUnsignedVarInt(buffer);
         EntityMetadata m = new EntityMetadata();
         for (int i = 0; i < count; i++) {
-            int key = (int) stream.getUnsignedVarInt();
-            int type = (int) stream.getUnsignedVarInt();
+            int key = (int) readUnsignedVarInt(buffer);
+            int type = (int) readUnsignedVarInt(buffer);
             EntityData value = null;
             switch (type) {
                 case Entity.DATA_TYPE_BYTE:
-                    value = new ByteEntityData(key, stream.getByte());
+                    value = new ByteEntityData(key, buffer.readByte());
                     break;
                 case Entity.DATA_TYPE_SHORT:
-                    value = new ShortEntityData(key, stream.getLShort());
+                    value = new ShortEntityData(key, buffer.readShortLE());
                     break;
                 case Entity.DATA_TYPE_INT:
-                    value = new IntEntityData(key, stream.getVarInt());
+                    value = new IntEntityData(key, readVarInt(buffer));
                     break;
                 case Entity.DATA_TYPE_FLOAT:
-                    value = new FloatEntityData(key, stream.getLFloat());
+                    value = new FloatEntityData(key, buffer.readFloatLE());
                     break;
                 case Entity.DATA_TYPE_STRING:
-                    value = new StringEntityData(key, stream.getString());
+                    value = new StringEntityData(key, readString(buffer));
                     break;
                 case Entity.DATA_TYPE_NBT:
-                    int offset = stream.getOffset();
-                    FastByteArrayInputStream fbais = new FastByteArrayInputStream(stream.get());
+                    ByteBufInputStream stream = new ByteBufInputStream(buffer);
                     try {
-                        CompoundTag tag = NBTIO.read(fbais, ByteOrder.LITTLE_ENDIAN, true);
+                        CompoundTag tag = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN, true);
                         value = new NBTEntityData(key, tag);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-                    stream.setOffset(offset + (int) fbais.position());
                     break;
                 case Entity.DATA_TYPE_POS:
-                    BlockVector3 v3 = stream.getSignedBlockPosition();
+                    BlockVector3 v3 = readSignedBlockPosition(buffer);
                     value = new IntPositionEntityData(key, v3.x, v3.y, v3.z);
                     break;
                 case Entity.DATA_TYPE_LONG:
-                    value = new LongEntityData(key, stream.getVarLong());
+                    value = new LongEntityData(key, readVarLong(buffer));
                     break;
                 case Entity.DATA_TYPE_VECTOR3F:
-                    value = new Vector3fEntityData(key, stream.getVector3f());
+                    value = new Vector3fEntityData(key, readVector3f(buffer));
                     break;
             }
             if (value != null) m.put(value);
@@ -205,205 +557,8 @@ public class Binary {
         return m;
     }
 
-    public static boolean readBool(byte b) {
-        return b == 0;
-    }
-
-    public static byte writeBool(boolean b) {
-        return (byte) (b ? 0x01 : 0x00);
-    }
-
-    public static int readSignedByte(byte b) {
-        return b & 0xFF;
-    }
-
-    public static byte writeByte(byte b) {
-        return b;
-    }
-
-    public static int readShort(byte[] bytes) {
-        return ((bytes[0] & 0xFF) << 8) + (bytes[1] & 0xFF);
-    }
-
-    public static short readSignedShort(byte[] bytes) {
-        return (short) readShort(bytes);
-    }
-
-    public static byte[] writeShort(int s) {
-        return new byte[]{
-                (byte) ((s >>> 8) & 0xFF),
-                (byte) (s & 0xFF)
-        };
-    }
-
-    public static int readLShort(byte[] bytes) {
-        return ((bytes[1] & 0xFF) << 8) + (bytes[0] & 0xFF);
-    }
-
-    public static short readSignedLShort(byte[] bytes) {
-        return (short) readLShort(bytes);
-    }
-
-    public static byte[] writeLShort(int s) {
-        s &= 0xffff;
-        return new byte[]{
-                (byte) (s & 0xFF),
-                (byte) ((s >>> 8) & 0xFF)
-        };
-    }
-
-    public static int readInt(byte[] bytes) {
-        return ((bytes[0] & 0xff) << 24) +
-                ((bytes[1] & 0xff) << 16) +
-                ((bytes[2] & 0xff) << 8) +
-                (bytes[3] & 0xff);
-    }
-
-    public static byte[] writeInt(int i) {
-        return new byte[]{
-                (byte) ((i >>> 24) & 0xFF),
-                (byte) ((i >>> 16) & 0xFF),
-                (byte) ((i >>> 8) & 0xFF),
-                (byte) (i & 0xFF)
-        };
-    }
-
-    public static int readLInt(byte[] bytes) {
-        return ((bytes[3] & 0xff) << 24) +
-                ((bytes[2] & 0xff) << 16) +
-                ((bytes[1] & 0xff) << 8) +
-                (bytes[0] & 0xff);
-    }
-
-    public static byte[] writeLInt(int i) {
-        return new byte[]{
-                (byte) (i & 0xFF),
-                (byte) ((i >>> 8) & 0xFF),
-                (byte) ((i >>> 16) & 0xFF),
-                (byte) ((i >>> 24) & 0xFF)
-        };
-    }
-
-    public static float readFloat(byte[] bytes) {
-        return readFloat(bytes, -1);
-    }
-
-    public static float readFloat(byte[] bytes, int accuracy) {
-        float val = Float.intBitsToFloat(readInt(bytes));
-        if (accuracy > -1) {
-            return (float) NukkitMath.round(val, accuracy);
-        } else {
-            return val;
-        }
-    }
-
-    public static byte[] writeFloat(float f) {
-        return writeInt(Float.floatToIntBits(f));
-    }
-
-    public static float readLFloat(byte[] bytes) {
-        return readLFloat(bytes, -1);
-    }
-
-    public static float readLFloat(byte[] bytes, int accuracy) {
-        float val = Float.intBitsToFloat(readLInt(bytes));
-        if (accuracy > -1) {
-            return (float) NukkitMath.round(val, accuracy);
-        } else {
-            return val;
-        }
-    }
-
-    public static byte[] writeLFloat(float f) {
-        return writeLInt(Float.floatToIntBits(f));
-    }
-
-    public static double readDouble(byte[] bytes) {
-        return Double.longBitsToDouble(readLong(bytes));
-    }
-
-    public static byte[] writeDouble(double d) {
-        return writeLong(Double.doubleToLongBits(d));
-    }
-
-    public static double readLDouble(byte[] bytes) {
-        return Double.longBitsToDouble(readLLong(bytes));
-    }
-
-    public static byte[] writeLDouble(double d) {
-        return writeLLong(Double.doubleToLongBits(d));
-    }
-
-    public static long readLong(byte[] bytes) {
-        return (((long) bytes[0] << 56) +
-                ((long) (bytes[1] & 0xFF) << 48) +
-                ((long) (bytes[2] & 0xFF) << 40) +
-                ((long) (bytes[3] & 0xFF) << 32) +
-                ((long) (bytes[4] & 0xFF) << 24) +
-                ((bytes[5] & 0xFF) << 16) +
-                ((bytes[6] & 0xFF) << 8) +
-                ((bytes[7] & 0xFF)));
-    }
-
-    public static byte[] writeLong(long l) {
-        return new byte[]{
-                (byte) (l >>> 56),
-                (byte) (l >>> 48),
-                (byte) (l >>> 40),
-                (byte) (l >>> 32),
-                (byte) (l >>> 24),
-                (byte) (l >>> 16),
-                (byte) (l >>> 8),
-                (byte) (l)
-        };
-    }
-
-    public static long readLLong(byte[] bytes) {
-        return (((long) bytes[7] << 56) +
-                ((long) (bytes[6] & 0xFF) << 48) +
-                ((long) (bytes[5] & 0xFF) << 40) +
-                ((long) (bytes[4] & 0xFF) << 32) +
-                ((long) (bytes[3] & 0xFF) << 24) +
-                ((bytes[2] & 0xFF) << 16) +
-                ((bytes[1] & 0xFF) << 8) +
-                ((bytes[0] & 0xFF)));
-    }
-
-    public static byte[] writeLLong(long l) {
-        return new byte[]{
-                (byte) (l),
-                (byte) (l >>> 8),
-                (byte) (l >>> 16),
-                (byte) (l >>> 24),
-                (byte) (l >>> 32),
-                (byte) (l >>> 40),
-                (byte) (l >>> 48),
-                (byte) (l >>> 56),
-        };
-    }
-
-    public static byte[] writeVarInt(int v) {
-        BinaryStream stream = new BinaryStream();
-        stream.putVarInt(v);
-        return stream.getBuffer();
-    }
-
-    public static byte[] writeUnsignedVarInt(long v) {
-        BinaryStream stream = new BinaryStream();
-        stream.putUnsignedVarInt(v);
-        return stream.getBuffer();
-    }
-
-    public static byte[] reserveBytes(byte[] bytes) {
-        byte[] newBytes = new byte[bytes.length];
-        for (int i = 0; i < bytes.length; i++) {
-            newBytes[bytes.length - 1 - i] = bytes[i];
-        }
-        return newBytes;
-    }
-
-    public static String bytesToHexString(byte[] src) {
-        return bytesToHexString(src, false);
+    public static String bytesToHexString(ByteBuf src) {
+        return ByteBufUtil.hexDump(src);
     }
 
     public static String bytesToHexString(byte[] src, boolean blank) {
@@ -430,16 +585,7 @@ public class Binary {
         if (hexString == null || hexString.equals("")) {
             return null;
         }
-        String str = "0123456789ABCDEF";
-        hexString = hexString.toUpperCase().replace(" ", "");
-        int length = hexString.length() / 2;
-        char[] hexChars = hexString.toCharArray();
-        byte[] d = new byte[length];
-        for (int i = 0; i < length; i++) {
-            int pos = i * 2;
-            d[i] = (byte) (((byte) str.indexOf(hexChars[pos]) << 4) | ((byte) str.indexOf(hexChars[pos + 1])));
-        }
-        return d;
+        return ByteBufUtil.decodeHexDump(hexString);
     }
 
     public static byte[] subBytes(byte[] bytes, int start, int length) {

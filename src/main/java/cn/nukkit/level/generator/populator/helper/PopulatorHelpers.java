@@ -1,7 +1,7 @@
 package cn.nukkit.level.generator.populator.helper;
 
 import cn.nukkit.block.BlockID;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 
@@ -21,7 +21,7 @@ public final class PopulatorHelpers implements BlockID {
     private PopulatorHelpers() {
     }
 
-    public static boolean canGrassStay(int x, int y, int z, FullChunk chunk) {
+    public static boolean canGrassStay(int x, int y, int z, Chunk chunk) {
         return EnsureCover.ensureCover(x, y, z, chunk) && EnsureGrassBelow.ensureGrassBelow(x, y, z, chunk);
     }
 

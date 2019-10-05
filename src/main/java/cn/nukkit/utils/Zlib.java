@@ -1,66 +1,103 @@
 package cn.nukkit.utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.zip.Deflater;
+import com.nukkitx.natives.util.Natives;
+import com.nukkitx.natives.zlib.Deflater;
+import com.nukkitx.natives.zlib.Inflater;
+import com.nukkitx.network.util.Preconditions;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.Unpooled;
+
+import java.nio.ByteBuffer;
+import java.util.zip.DataFormatException;
 
 
-public abstract class Zlib {
-    private static ZlibProvider[] providers;
-    private static ZlibProvider provider;
+public final class Zlib {
+    public static final Zlib DEFAULT = new Zlib(-1, false);
+    public static final Zlib GZIP = new Zlib(-1, true);
+    private static final com.nukkitx.natives.zlib.Zlib ZLIB = Natives.ZLIB.get();
+    private final ThreadLocal<Inflater> inflaterThreadLocal;
+    private final ThreadLocal<Deflater> deflaterThreadLocal;
 
-    static {
-        providers = new ZlibProvider[3];
-        providers[2] = new ZlibThreadLocal();
-        provider = providers[2];
+    public Zlib(int level, boolean nowrap) {
+        this.inflaterThreadLocal = ThreadLocal.withInitial(() -> ZLIB.create(nowrap));
+        this.deflaterThreadLocal = ThreadLocal.withInitial(() -> ZLIB.create(level, nowrap));
     }
 
-    public static void setProvider(int providerIndex) {
-        MainLogger.getLogger().info("Selected Zlib Provider: " + providerIndex + " (" + provider.getClass().getCanonicalName() + ")");
-        switch (providerIndex) {
-            case 0:
-                if (providers[providerIndex] == null)
-                    providers[providerIndex] = new ZlibOriginal();
-                break;
-            case 1:
-                if (providers[providerIndex] == null)
-                    providers[providerIndex] = new ZlibSingleThreadLowMem();
-                break;
-            case 2:
-                if (providers[providerIndex] == null)
-                    providers[providerIndex] = new ZlibThreadLocal();
-                break;
-            default:
-                throw new UnsupportedOperationException("Invalid provider: " + providerIndex);
+    public void inflate(ByteBuf input, ByteBuf output, int maxSize) throws DataFormatException {
+        Preconditions.checkArgument(input.readableBytes() < maxSize,
+                "input is larger than maxSize: %s", maxSize);
+        Inflater inflater = inflaterThreadLocal.get();
+        inflater.reset();
+
+        inflater.setInput(input.internalNioBuffer(input.readerIndex(), input.readableBytes()));
+
+        int startIndex = output.writerIndex();
+        while (!inflater.finished()) {
+            Preconditions.checkArgument(output.writerIndex() - startIndex < maxSize,
+                    "inflated buffer is larger than maxSize: %s", maxSize);
+            output.ensureWritable(8192);
+            ByteBuffer internalBuffer = output.internalNioBuffer(output.writerIndex(), output.writableBytes());
+            int result = inflater.inflate(internalBuffer);
+            output.writerIndex(output.writerIndex() + result);
         }
-        if (providerIndex != 2) {
-            MainLogger.getLogger().warning(" - This Zlib will negatively affect performance");
+    }
+
+    public void inflate(ByteBuf input, ByteBuf output) throws DataFormatException {
+        Inflater inflater = inflaterThreadLocal.get();
+        inflater.reset();
+
+        inflater.setInput(input.internalNioBuffer(input.readerIndex(), input.readableBytes()));
+
+        while (!inflater.finished()) {
+            output.ensureWritable(8192);
+            ByteBuffer internalBuffer = output.internalNioBuffer(output.writerIndex(), output.writableBytes());
+            int result = inflater.inflate(internalBuffer);
+            output.writerIndex(output.writerIndex() + result);
         }
-        provider = providers[providerIndex];
     }
 
-    public static byte[] deflate(byte[] data) throws Exception {
-        return deflate(data, Deflater.DEFAULT_COMPRESSION);
+    public byte[] inflate(byte[] input) throws DataFormatException {
+        ByteBuf inputBuffer = Unpooled.wrappedBuffer(input);
+        ByteBuf outputBuffer = ByteBufAllocator.DEFAULT.directBuffer();
+        try {
+            this.inflate(inputBuffer, outputBuffer);
+
+            byte[] output = new byte[outputBuffer.readableBytes()];
+            outputBuffer.readBytes(output);
+            return output;
+        } finally {
+            outputBuffer.release();
+        }
     }
 
-    public static byte[] deflate(byte[] data, int level) throws Exception {
-        return provider.deflate(data, level);
+    public void deflate(ByteBuf input, ByteBuf output, int level) {
+        Deflater deflater = this.deflaterThreadLocal.get();
+        deflater.reset();
+        deflater.setLevel(level);
+
+        deflater.setInput(input.internalNioBuffer(input.readerIndex(), input.readableBytes()));
+
+        while (!deflater.finished()) {
+            output.ensureWritable(8192);
+            ByteBuffer internalBuffer = output.internalNioBuffer(output.writerIndex(), output.writableBytes());
+            int result = deflater.deflate(internalBuffer);
+            output.writerIndex(output.writerIndex() + result);
+        }
     }
 
-    public static byte[] deflate(byte[][] data, int level) throws Exception {
-        return provider.deflate(data, level);
+    public byte[] deflate(byte[] input, int level) {
+        ByteBuf inputBuffer = Unpooled.wrappedBuffer(input);
+        ByteBuf outputBuffer = ByteBufAllocator.DEFAULT.directBuffer();
+        try {
+            this.deflate(inputBuffer, outputBuffer, level);
+
+            byte[] output = new byte[outputBuffer.readableBytes()];
+            outputBuffer.readBytes(output);
+            return output;
+        } finally {
+            outputBuffer.release();
+        }
     }
 
-    public static byte[] inflate(InputStream stream) throws IOException {
-        return provider.inflate(stream);
-    }
-
-    public static byte[] inflate(byte[] data) throws IOException {
-        return inflate(new ByteArrayInputStream(data));
-    }
-
-    public static byte[] inflate(byte[] data, int maxSize) throws IOException {
-        return inflate(new ByteArrayInputStream(data, 0, maxSize));
-    }
 }

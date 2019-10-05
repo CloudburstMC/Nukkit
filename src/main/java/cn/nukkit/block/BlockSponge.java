@@ -1,6 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
@@ -8,6 +7,7 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.network.protocol.LevelEventPacket;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 
 import java.util.ArrayDeque;
@@ -103,7 +103,7 @@ public class BlockSponge extends BlockSolidMeta {
 
                 Block faceBlock = entry.block.getSide(face);
                 if (faceBlock.getId() == BlockID.WATER || faceBlock.getId() == BlockID.STILL_WATER) {
-                    this.level.setBlock(faceBlock, Block.get(BlockID.AIR));
+                    this.level.setBlock(faceBlock, Block.get(BlockID.AIR, 0));
                     ++waterRemoved;
                     if (entry.distance < 6) {
                         entries.add(new Entry(faceBlock, entry.distance + 1));

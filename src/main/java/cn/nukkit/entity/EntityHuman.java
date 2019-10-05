@@ -1,13 +1,13 @@
 package cn.nukkit.entity;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.data.IntPositionEntityData;
 import cn.nukkit.entity.data.Skin;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddPlayerPacket;
 import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.network.protocol.SetEntityLinkPacket;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.Utils;
 
 import java.nio.charset.StandardCharsets;
@@ -28,7 +28,6 @@ public class EntityHuman extends EntityHumanType {
     public static final int DATA_PLAYER_BUTTON_TEXT = 40;
 
     protected UUID uuid;
-    protected byte[] rawUUID;
 
     @Override
     public float getWidth() {
@@ -62,7 +61,7 @@ public class EntityHuman extends EntityHumanType {
         return -1;
     }
 
-    public EntityHuman(FullChunk chunk, CompoundTag nbt) {
+    public EntityHuman(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -72,10 +71,6 @@ public class EntityHuman extends EntityHumanType {
 
     public UUID getUniqueId() {
         return uuid;
-    }
-
-    public byte[] getRawUniqueId() {
-        return rawUUID;
     }
 
     public void setSkin(Skin skin) {
@@ -147,8 +142,8 @@ public class EntityHuman extends EntityHumanType {
 
     @Override
     public void spawnTo(Player player) {
-        if (this != player && !this.hasSpawned.containsKey(player.getLoaderId())) {
-            this.hasSpawned.put(player.getLoaderId(), player);
+        if (this != player && !this.hasSpawned.contains(player)) {
+            this.hasSpawned.add(player);
 
             if (!this.skin.isValid()) {
                 throw new IllegalStateException(this.getClass().getSimpleName() + " must have a valid skin set");
@@ -196,12 +191,12 @@ public class EntityHuman extends EntityHumanType {
 
     @Override
     public void despawnFrom(Player player) {
-        if (this.hasSpawned.containsKey(player.getLoaderId())) {
+        if (this.hasSpawned.contains(player)) {
 
             RemoveEntityPacket pk = new RemoveEntityPacket();
             pk.eid = this.getId();
             player.dataPacket(pk);
-            this.hasSpawned.remove(player.getLoaderId());
+            this.hasSpawned.remove(player);
         }
     }
 

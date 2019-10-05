@@ -1,10 +1,12 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 @ToString
 public class MoveEntityDeltaPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.MOVE_ENTITY_DELTA_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.MOVE_ENTITY_DELTA_PACKET;
 
     public static final int FLAG_HAS_X = 0b1;
     public static final int FLAG_HAS_Y = 0b10;
@@ -22,55 +24,55 @@ public class MoveEntityDeltaPacket extends DataPacket {
     public double pitchDelta = 0;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
     @Override
-    public void decode() {
-        this.flags = this.getByte();
-        this.xDelta = getCoordinate(FLAG_HAS_X);
-        this.yDelta = getCoordinate(FLAG_HAS_Y);
-        this.zDelta = getCoordinate(FLAG_HAS_Z);
-        this.yawDelta = getRotation(FLAG_HAS_YAW);
-        this.headYawDelta = getRotation(FLAG_HAS_HEAD_YAW);
-        this.pitchDelta = getRotation(FLAG_HAS_PITCH);
+    protected void decode(ByteBuf buffer) {
+        this.flags = buffer.readByte();
+        this.xDelta = getCoordinate(buffer, FLAG_HAS_X);
+        this.yDelta = getCoordinate(buffer, FLAG_HAS_Y);
+        this.zDelta = getCoordinate(buffer, FLAG_HAS_Z);
+        this.yawDelta = getRotation(buffer, FLAG_HAS_YAW);
+        this.headYawDelta = getRotation(buffer, FLAG_HAS_HEAD_YAW);
+        this.pitchDelta = getRotation(buffer, FLAG_HAS_PITCH);
     }
 
     @Override
-    public void encode() {
-        this.putByte((byte) flags);
-        putCoordinate(FLAG_HAS_X, this.xDelta);
-        putCoordinate(FLAG_HAS_Y, this.yDelta);
-        putCoordinate(FLAG_HAS_Z, this.zDelta);
-        putRotation(FLAG_HAS_YAW, this.yawDelta);
-        putRotation(FLAG_HAS_HEAD_YAW, this.headYawDelta);
-        putRotation(FLAG_HAS_PITCH, this.pitchDelta);
+    protected void encode(ByteBuf buffer) {
+        buffer.writeByte(flags);
+        putCoordinate(buffer, FLAG_HAS_X, this.xDelta);
+        putCoordinate(buffer, FLAG_HAS_Y, this.yDelta);
+        putCoordinate(buffer, FLAG_HAS_Z, this.zDelta);
+        putRotation(buffer, FLAG_HAS_YAW, this.yawDelta);
+        putRotation(buffer, FLAG_HAS_HEAD_YAW, this.headYawDelta);
+        putRotation(buffer, FLAG_HAS_PITCH, this.pitchDelta);
     }
 
-    private int getCoordinate(int flag) {
+    private int getCoordinate(ByteBuf buffer, int flag) {
         if ((flags & flag) != 0) {
-            return this.getVarInt();
+            return Binary.readVarInt(buffer);
         }
         return 0;
     }
 
-    private double getRotation(int flag) {
+    private double getRotation(ByteBuf buffer, int flag) {
         if ((flags & flag) != 0) {
-            return this.getByte() * (360d / 256d);
+            return buffer.readByte() * (360d / 256d);
         }
         return 0d;
     }
 
-    private void putCoordinate(int flag, int value) {
+    private void putCoordinate(ByteBuf buffer, int flag, int value) {
         if ((flags & flag) != 0) {
-            this.putVarInt(value);
+            Binary.writeVarInt(buffer, value);
         }
     }
 
-    private void putRotation(int flag, double value) {
+    private void putRotation(ByteBuf buffer, int flag, double value) {
         if ((flags & flag) != 0) {
-            this.putByte((byte) (value / (360d / 256d)));
+            buffer.writeByte((byte) (value / (360d / 256d)));
         }
     }
 }

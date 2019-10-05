@@ -1,6 +1,5 @@
 package cn.nukkit.entity.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
@@ -13,7 +12,7 @@ import cn.nukkit.event.entity.ProjectileHitEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.randomitem.Fishing;
 import cn.nukkit.level.MovingObjectPosition;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.particle.BubbleParticle;
 import cn.nukkit.level.particle.WaterParticle;
 import cn.nukkit.math.Vector3;
@@ -24,6 +23,7 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
+import cn.nukkit.player.Player;
 
 import java.util.Random;
 
@@ -49,11 +49,11 @@ public class EntityFishingHook extends EntityProjectile {
 
     public Item rod = null;
 
-    public EntityFishingHook(FullChunk chunk, CompoundTag nbt) {
+    public EntityFishingHook(Chunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }
 
-    public EntityFishingHook(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+    public EntityFishingHook(Chunk chunk, CompoundTag nbt, Entity shootingEntity) {
         super(chunk, nbt, shootingEntity);
     }
 
@@ -224,7 +224,7 @@ public class EntityFishingHook extends EntityProjectile {
             itemTag.setName("Item");
 
             EntityItem itemEntity = new EntityItem(
-                    this.level.getChunk((int) this.x >> 4, (int) this.z >> 4, true),
+                    this.level.getChunk((int) this.x >> 4, (int) this.z >> 4),
                     new CompoundTag()
                             .putList(new ListTag<DoubleTag>("Pos")
                                     .add(new DoubleTag("", this.getX()))

@@ -1,5 +1,7 @@
 package cn.nukkit.utils;
 
+import com.google.common.base.FinalizableReferenceQueue;
+
 import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
@@ -15,6 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * Nukkit Project
  */
 public class Utils {
+
+    public static final FinalizableReferenceQueue REFERENCE_QUEUE = new FinalizableReferenceQueue();
 
     public static void writeFile(String fileName, String content) throws IOException {
         writeFile(fileName, new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
@@ -231,23 +235,6 @@ public class Utils {
             }
         }
         return existing;
-    }
-
-    public static <T, U, V extends U> U getOrCreate(Map<T, U> map, Class<V> clazz, T key) {
-        U existing = map.get(key);
-        if (existing != null) {
-            return existing;
-        }
-        try {
-            U toPut = clazz.newInstance();
-            existing = map.putIfAbsent(key, toPut);
-            if (existing == null) {
-                return toPut;
-            }
-            return existing;
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public static int toInt(Object number) {

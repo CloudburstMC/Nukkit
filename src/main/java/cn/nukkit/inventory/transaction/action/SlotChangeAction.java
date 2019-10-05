@@ -1,9 +1,11 @@
 package cn.nukkit.inventory.transaction.action;
 
-import cn.nukkit.Player;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.transaction.InventoryTransaction;
 import cn.nukkit.item.Item;
+import cn.nukkit.player.Player;
+import cn.nukkit.utils.MainLogger;
+import lombok.ToString;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,6 +13,7 @@ import java.util.Set;
 /**
  * @author CreeperFace
  */
+@ToString(callSuper = true)
 public class SlotChangeAction extends InventoryAction {
 
     protected Inventory inventory;
@@ -49,7 +52,11 @@ public class SlotChangeAction extends InventoryAction {
     public boolean isValid(Player source) {
         Item check = inventory.getItem(this.inventorySlot);
 
-        return check.equalsExact(this.sourceItem);
+        boolean result = check.equalsExact(this.sourceItem);
+        if (!result) {
+            MainLogger.getLogger().debug("INVALID | Client: " + sourceItem + ", Server: " + check);
+        }
+        return result;
     }
 
     /**

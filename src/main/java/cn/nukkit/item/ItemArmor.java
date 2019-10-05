@@ -1,10 +1,10 @@
 package cn.nukkit.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.ByteTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.player.Player;
 
 /**
  * author: MagicDroidX

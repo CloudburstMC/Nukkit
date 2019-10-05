@@ -4,6 +4,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
+import lombok.ToString;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.Map;
  * author: MagicDroidX
  * Nukkit Project
  */
+@ToString
 public class EntityMetadata {
 
     private final Map<Integer, EntityData> map = new HashMap<>();

@@ -1,18 +1,20 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-@ToString
+@ToString(exclude = {"slots"})
 public class InventoryContentPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.INVENTORY_CONTENT_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.INVENTORY_CONTENT_PACKET;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
@@ -27,29 +29,22 @@ public class InventoryContentPacket extends DataPacket {
     public Item[] slots = new Item[0];
 
     @Override
-    public DataPacket clean() {
-        this.slots = new Item[0];
-        return super.clean();
-    }
-
-    @Override
-    public void decode() {
-        this.inventoryId = (int) this.getUnsignedVarInt();
-        int count = (int) this.getUnsignedVarInt();
+    protected void decode(ByteBuf buffer) {
+        this.inventoryId = (int) Binary.readUnsignedVarInt(buffer);
+        int count = (int) Binary.readUnsignedVarInt(buffer);
         this.slots = new Item[count];
 
-        for (int s = 0; s < count && !this.feof(); ++s) {
-            this.slots[s] = this.getSlot();
+        for (int s = 0; s < count; ++s) {
+            this.slots[s] = Binary.readItem(buffer);
         }
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putUnsignedVarInt(this.inventoryId);
-        this.putUnsignedVarInt(this.slots.length);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeUnsignedVarInt(buffer, this.inventoryId);
+        Binary.writeUnsignedVarInt(buffer, this.slots.length);
         for (Item slot : this.slots) {
-            this.putSlot(slot);
+            Binary.writeItem(buffer, slot);
         }
     }
 

@@ -1,8 +1,11 @@
 package cn.nukkit.command.data;
 
+import lombok.ToString;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@ToString
 public class CommandData implements Cloneable {
 
     public CommandEnum aliases = null;

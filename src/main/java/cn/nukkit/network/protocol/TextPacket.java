@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -8,10 +10,10 @@ import lombok.ToString;
 @ToString
 public class TextPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.TEXT_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.TEXT_PACKET;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
@@ -35,62 +37,61 @@ public class TextPacket extends DataPacket {
     public String platformChatId = "";
 
     @Override
-    public void decode() {
-        this.type = (byte) getByte();
-        this.isLocalized = this.getBoolean() || type == TYPE_TRANSLATION;
+    protected void decode(ByteBuf buffer) {
+        this.type = buffer.readByte();
+        this.isLocalized = buffer.readBoolean() || type == TYPE_TRANSLATION;
         switch (type) {
             case TYPE_CHAT:
             case TYPE_WHISPER:
             case TYPE_ANNOUNCEMENT:
-                this.source = this.getString();
+                this.source = Binary.readString(buffer);
             case TYPE_RAW:
             case TYPE_TIP:
             case TYPE_SYSTEM:
             case TYPE_JSON:
-                this.message = this.getString();
+                this.message = Binary.readString(buffer);
                 break;
 
             case TYPE_TRANSLATION:
             case TYPE_POPUP:
             case TYPE_JUKEBOX_POPUP:
-                this.message = this.getString();
-                int count = (int) this.getUnsignedVarInt();
+                this.message = Binary.readString(buffer);
+                int count = (int) Binary.readUnsignedVarInt(buffer);
                 this.parameters = new String[count];
                 for (int i = 0; i < count; i++) {
-                    this.parameters[i] = this.getString();
+                    this.parameters[i] = Binary.readString(buffer);
                 }
         }
-        this.xboxUserId = this.getString();
-        this.platformChatId = this.getString();
+        this.xboxUserId = Binary.readString(buffer);
+        this.platformChatId = Binary.readString(buffer);
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putByte(this.type);
-        this.putBoolean(this.isLocalized || type == TYPE_TRANSLATION);
+    protected void encode(ByteBuf buffer) {
+        buffer.writeByte(this.type);
+        buffer.writeBoolean(this.isLocalized || type == TYPE_TRANSLATION);
         switch (this.type) {
             case TYPE_CHAT:
             case TYPE_WHISPER:
             case TYPE_ANNOUNCEMENT:
-                this.putString(this.source);
+                Binary.writeString(buffer, this.source);
             case TYPE_RAW:
             case TYPE_TIP:
             case TYPE_SYSTEM:
             case TYPE_JSON:
-                this.putString(this.message);
+                Binary.writeString(buffer, this.message);
                 break;
 
             case TYPE_TRANSLATION:
             case TYPE_POPUP:
             case TYPE_JUKEBOX_POPUP:
-                this.putString(this.message);
-                this.putUnsignedVarInt(this.parameters.length);
+                Binary.writeString(buffer, this.message);
+                Binary.writeUnsignedVarInt(buffer, this.parameters.length);
                 for (String parameter : this.parameters) {
-                    this.putString(parameter);
+                    Binary.writeString(buffer, parameter);
                 }
         }
-        this.putString(this.xboxUserId);
-        this.putString(this.platformChatId);
+        Binary.writeString(buffer, this.xboxUserId);
+        Binary.writeString(buffer, this.platformChatId);
     }
 }

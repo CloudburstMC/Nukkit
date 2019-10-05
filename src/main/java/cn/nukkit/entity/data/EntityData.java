@@ -32,4 +32,9 @@ public abstract class EntityData<T> {
     public boolean equals(Object obj) {
         return obj instanceof EntityData && ((EntityData) obj).getId() == this.getId() && Objects.equals(((EntityData) obj).getData(), this.getData());
     }
+
+    @Override
+    public String toString() {
+        return getData().toString();
+    }
 }

@@ -1,6 +1,8 @@
 package cn.nukkit.network.protocol;
 
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -9,7 +11,7 @@ import lombok.ToString;
  */
 @ToString
 public class UpdateBlockPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.UPDATE_BLOCK_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.UPDATE_BLOCK_PACKET;
 
     public static final int FLAG_NONE = 0b0000;
     public static final int FLAG_NEIGHBORS = 0b0001;
@@ -28,22 +30,21 @@ public class UpdateBlockPacket extends DataPacket {
     public int dataLayer = 0;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putBlockVector3(x, y, z);
-        this.putUnsignedVarInt(blockRuntimeId);
-        this.putUnsignedVarInt(flags);
-        this.putUnsignedVarInt(dataLayer);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeBlockVector3(buffer, x, y, z);
+        Binary.writeUnsignedVarInt(buffer, blockRuntimeId);
+        Binary.writeUnsignedVarInt(buffer, flags);
+        Binary.writeUnsignedVarInt(buffer, dataLayer);
     }
 
     public static class Entry {

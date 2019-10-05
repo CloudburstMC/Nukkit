@@ -1,10 +1,10 @@
 package cn.nukkit.blockentity;
 
-import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.event.block.SignChangeEvent;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
 import java.util.Arrays;
@@ -18,7 +18,7 @@ public class BlockEntitySign extends BlockEntitySpawnable {
 
     private String[] text;
 
-    public BlockEntitySign(FullChunk chunk, CompoundTag nbt) {
+    public BlockEntitySign(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

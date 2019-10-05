@@ -1,13 +1,13 @@
 package cn.nukkit.entity.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.block.BlockChest;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemMinecartChest;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.MinecartType;
 
 /**
@@ -18,7 +18,7 @@ public class EntityMinecartChest extends EntityMinecartAbstract {
 
     public static final int NETWORK_ID = 98;
 
-    public EntityMinecartChest(FullChunk chunk, CompoundTag nbt) {
+    public EntityMinecartChest(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
         super.setDisplayBlock(new BlockChest(), false);
     }

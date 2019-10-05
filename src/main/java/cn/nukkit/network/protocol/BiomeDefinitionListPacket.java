@@ -2,13 +2,14 @@ package cn.nukkit.network.protocol;
 
 import cn.nukkit.Nukkit;
 import com.google.common.io.ByteStreams;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 import java.io.InputStream;
 
 @ToString(exclude = "tag")
 public class BiomeDefinitionListPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.BIOME_DEFINITION_LIST_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.BIOME_DEFINITION_LIST_PACKET;
 
     private static final byte[] TAG;
 
@@ -28,17 +29,16 @@ public class BiomeDefinitionListPacket extends DataPacket {
     public byte[] tag = TAG;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.put(tag);
+    protected void encode(ByteBuf buffer) {
+        buffer.writeBytes(tag);
     }
 }

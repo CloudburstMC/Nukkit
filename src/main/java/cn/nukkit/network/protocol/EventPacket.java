@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 @ToString
@@ -10,20 +12,19 @@ public class EventPacket extends DataPacket {
     public byte unknown2;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return ProtocolInfo.EVENT_PACKET;
     }
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putVarLong(this.eid);
-        this.putVarInt(this.unknown1);
-        this.putByte(this.unknown2);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeVarLong(buffer, this.eid);
+        Binary.writeVarInt(buffer, this.unknown1);
+        buffer.writeByte(this.unknown2);
     }
 }

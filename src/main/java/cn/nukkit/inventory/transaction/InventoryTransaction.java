@@ -1,6 +1,5 @@
 package cn.nukkit.inventory.transaction;
 
-import cn.nukkit.Player;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.inventory.InventoryTransactionEvent;
 import cn.nukkit.inventory.Inventory;
@@ -8,6 +7,7 @@ import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.MainLogger;
 
 import java.util.*;

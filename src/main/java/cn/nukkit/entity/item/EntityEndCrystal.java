@@ -3,9 +3,9 @@ package cn.nukkit.entity.item;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.Explosion;
-import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Position;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
@@ -20,7 +20,7 @@ public class EntityEndCrystal extends Entity {
         return NETWORK_ID;
     }
 
-    public EntityEndCrystal(FullChunk chunk, CompoundTag nbt) {
+    public EntityEndCrystal(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -53,7 +53,7 @@ public class EntityEndCrystal extends Entity {
 
         close();
 
-        if (this.level.getGameRules().getBoolean(GameRule.TNT_EXPLODES)) {
+        if (this.level.getGameRules().get(GameRules.TNT_EXPLODES)) {
             explode.explodeA();
             explode.explodeB();
         }

@@ -7,25 +7,35 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.utils.TextFormat;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Objects;
+import java.util.StringJoiner;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created on 2015/11/11 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
 public class StatusCommand extends VanillaCommand {
-    private static final DateFormat format = new SimpleDateFormat("'" + TextFormat.RED + "'d'" + TextFormat.GOLD + " days " +
-            TextFormat.RED + "'H'" + TextFormat.GOLD + " hours " +
-            TextFormat.RED + "'m'" + TextFormat.GOLD + " minutes " +
-            TextFormat.RED + "'s'" + TextFormat.GOLD + " seconds'");
+    private static final String FORMAT = TextFormat.RED + "%s" + TextFormat.GOLD + " days " +
+            TextFormat.RED + "%s" + TextFormat.GOLD + " hours " +
+            TextFormat.RED + "%s" + TextFormat.GOLD + " minutes " +
+            TextFormat.RED + "%s" + TextFormat.GOLD + " seconds";
 
     public StatusCommand(String name) {
         super(name, "%nukkit.command.status.description", "%nukkit.command.status.usage");
         this.setPermission("nukkit.command.status");
         this.commandParameters.clear();
+    }
+
+    private static String formatUptime(long millis) {
+        long days = TimeUnit.MILLISECONDS.toDays(millis);
+        millis -= TimeUnit.DAYS.toMillis(days);
+        long hours = TimeUnit.MILLISECONDS.toHours(millis);
+        millis -= TimeUnit.HOURS.toMillis(hours);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+        millis -= TimeUnit.MINUTES.toMillis(minutes);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+        return String.format(FORMAT, days, hours, minutes, seconds);
     }
 
     @Override
@@ -35,11 +45,12 @@ public class StatusCommand extends VanillaCommand {
         }
 
         Server server = sender.getServer();
-        sender.sendMessage(TextFormat.GREEN + "---- " + TextFormat.WHITE + "Server status" + TextFormat.GREEN + " ----");
+        StringJoiner message = new StringJoiner("\n\u00A7r");
+        message.add(TextFormat.GREEN + "---- " + TextFormat.WHITE + "Server status" + TextFormat.GREEN + " ----");
 
         long time = System.currentTimeMillis() - Nukkit.START_TIME;
 
-        sender.sendMessage(TextFormat.GOLD + "Uptime: " + format.format(new Date(time)));
+        message.add(TextFormat.GOLD + "Uptime: " + formatUptime(time));
 
         TextFormat tpsColor = TextFormat.GREEN;
         float tps = server.getTicksPerSecond();
@@ -49,15 +60,15 @@ public class StatusCommand extends VanillaCommand {
             tpsColor = TextFormat.RED;
         }
 
-        sender.sendMessage(TextFormat.GOLD + "Current TPS: " + tpsColor + NukkitMath.round(tps, 2));
+        message.add(TextFormat.GOLD + "Current TPS: " + tpsColor + NukkitMath.round(tps, 2));
 
-        sender.sendMessage(TextFormat.GOLD + "Load: " + tpsColor + server.getTickUsage() + "%");
+        message.add(TextFormat.GOLD + "Load: " + tpsColor + server.getTickUsage() + "%");
 
-        sender.sendMessage(TextFormat.GOLD + "Network upload: " + TextFormat.GREEN + NukkitMath.round((server.getNetwork().getUpload() / 1024 * 1000), 2) + " kB/s");
+        message.add(TextFormat.GOLD + "Network upload: " + TextFormat.GREEN + NukkitMath.round((server.getNetwork().getUpload() / 1024 * 1000), 2) + " kB/s");
 
-        sender.sendMessage(TextFormat.GOLD + "Network download: " + TextFormat.GREEN + NukkitMath.round((server.getNetwork().getDownload() / 1024 * 1000), 2) + " kB/s");
+        message.add(TextFormat.GOLD + "Network download: " + TextFormat.GREEN + NukkitMath.round((server.getNetwork().getDownload() / 1024 * 1000), 2) + " kB/s");
 
-        sender.sendMessage(TextFormat.GOLD + "Thread count: " + TextFormat.GREEN + Thread.getAllStackTraces().size());
+        message.add(TextFormat.GOLD + "Thread count: " + TextFormat.GREEN + Thread.getAllStackTraces().size());
 
 
         Runtime runtime = Runtime.getRuntime();
@@ -71,13 +82,13 @@ public class StatusCommand extends VanillaCommand {
             usageColor = TextFormat.GOLD;
         }
 
-        sender.sendMessage(TextFormat.GOLD + "Used memory: " + usageColor + usedMB + " MB. (" + NukkitMath.round(usage, 2) + "%)");
+        message.add(TextFormat.GOLD + "Used memory: " + usageColor + usedMB + " MB. (" + NukkitMath.round(usage, 2) + "%)");
 
-        sender.sendMessage(TextFormat.GOLD + "Total memory: " + TextFormat.RED + totalMB + " MB.");
+        message.add(TextFormat.GOLD + "Total memory: " + TextFormat.RED + totalMB + " MB.");
 
-        sender.sendMessage(TextFormat.GOLD + "Maximum VM memory: " + TextFormat.RED + maxMB + " MB.");
+        message.add(TextFormat.GOLD + "Maximum VM memory: " + TextFormat.RED + maxMB + " MB.");
 
-        sender.sendMessage(TextFormat.GOLD + "Available processors: " + TextFormat.GREEN + runtime.availableProcessors());
+        message.add(TextFormat.GOLD + "Available processors: " + TextFormat.GREEN + runtime.availableProcessors());
 
 
         TextFormat playerColor = TextFormat.GREEN;
@@ -85,12 +96,12 @@ public class StatusCommand extends VanillaCommand {
             playerColor = TextFormat.GOLD;
         }
 
-        sender.sendMessage(TextFormat.GOLD + "Players: " + playerColor + server.getOnlinePlayers().size() + TextFormat.GREEN + " online, " +
+        message.add(TextFormat.GOLD + "Players: " + playerColor + server.getOnlinePlayers().size() + TextFormat.GREEN + " online, " +
                 TextFormat.RED + server.getMaxPlayers() + TextFormat.GREEN + " max. ");
 
-        for (Level level : server.getLevels().values()) {
-            sender.sendMessage(
-                    TextFormat.GOLD + "World \"" + level.getFolderName() + "\"" + (!Objects.equals(level.getFolderName(), level.getName()) ? " (" + level.getName() + ")" : "") + ": " +
+        for (Level level : server.getLevels()) {
+            message.add(
+                    TextFormat.GOLD + "World \"" + level.getId() + "\"" + (!Objects.equals(level.getId(), level.getName()) ? " (" + level.getName() + ")" : "") + ": " +
                             TextFormat.RED + level.getChunks().size() + TextFormat.GREEN + " chunks, " +
                             TextFormat.RED + level.getEntities().length + TextFormat.GREEN + " entities, " +
                             TextFormat.RED + level.getBlockEntities().size() + TextFormat.GREEN + " blockEntities." +
@@ -98,6 +109,8 @@ public class StatusCommand extends VanillaCommand {
                             (level.getTickRate() > 1 ? " (tick rate " + level.getTickRate() + ")" : "")
             );
         }
+
+        sender.sendMessage(message.toString());
 
         return true;
     }

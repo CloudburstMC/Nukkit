@@ -1,8 +1,8 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.player.Player;
 
 /**
  * author: MagicDroidX

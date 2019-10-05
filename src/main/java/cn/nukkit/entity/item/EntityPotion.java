@@ -3,13 +3,15 @@ package cn.nukkit.entity.item;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.potion.PotionCollideEvent;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.particle.Particle;
 import cn.nukkit.level.particle.SpellParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
+
+import java.util.Set;
 
 /**
  * @author xtypr
@@ -22,11 +24,11 @@ public class EntityPotion extends EntityProjectile {
 
     public int potionId;
 
-    public EntityPotion(FullChunk chunk, CompoundTag nbt) {
+    public EntityPotion(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
-    public EntityPotion(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+    public EntityPotion(Chunk chunk, CompoundTag nbt, Entity shootingEntity) {
         super(chunk, nbt, shootingEntity);
     }
 
@@ -129,7 +131,7 @@ public class EntityPotion extends EntityProjectile {
         this.getLevel().addParticle(particle);
         this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_GLASS);
 
-        Entity[] entities = this.getLevel().getNearbyEntities(this.getBoundingBox().grow(4.125, 2.125, 4.125));
+        Set<Entity> entities = this.getLevel().getNearbyEntities(this.getBoundingBox().grow(4.125, 2.125, 4.125));
         for (Entity anEntity : entities) {
             double distance = anEntity.distanceSquared(this);
             if (distance < 16) {

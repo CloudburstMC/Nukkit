@@ -1,6 +1,8 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.math.Vector3f;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -9,7 +11,7 @@ import lombok.ToString;
 @ToString
 public class MovePlayerPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.MOVE_PLAYER_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.MOVE_PLAYER_PACKET;
 
     public static final int MODE_NORMAL = 0;
     public static final int MODE_RESET = 1;
@@ -30,43 +32,42 @@ public class MovePlayerPacket extends DataPacket {
     public int int2 = 0;
 
     @Override
-    public void decode() {
-        this.eid = this.getEntityRuntimeId();
-        Vector3f v = this.getVector3f();
+    protected void decode(ByteBuf buffer) {
+        this.eid = Binary.readEntityRuntimeId(buffer);
+        Vector3f v = Binary.readVector3f(buffer);
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
-        this.pitch = this.getLFloat();
-        this.yaw = this.getLFloat();
-        this.headYaw = this.getLFloat();
-        this.mode = this.getByte();
-        this.onGround = this.getBoolean();
-        this.ridingEid = this.getEntityRuntimeId();
+        this.pitch = buffer.readFloatLE();
+        this.yaw = buffer.readFloatLE();
+        this.headYaw = buffer.readFloatLE();
+        this.mode = buffer.readByte();
+        this.onGround = buffer.readBoolean();
+        this.ridingEid = Binary.readEntityRuntimeId(buffer);
         if (this.mode == MODE_TELEPORT) {
-            this.int1 = this.getLInt();
-            this.int2 = this.getLInt();
+            this.int1 = buffer.readIntLE();
+            this.int2 = buffer.readIntLE();
         }
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putEntityRuntimeId(this.eid);
-        this.putVector3f(this.x, this.y, this.z);
-        this.putLFloat(this.pitch);
-        this.putLFloat(this.yaw);
-        this.putLFloat(this.headYaw);
-        this.putByte((byte) this.mode);
-        this.putBoolean(this.onGround);
-        this.putEntityRuntimeId(this.ridingEid);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeEntityRuntimeId(buffer, this.eid);
+        Binary.writeVector3f(buffer, this.x, this.y, this.z);
+        buffer.writeFloatLE(this.pitch);
+        buffer.writeFloatLE(this.yaw);
+        buffer.writeFloatLE(this.headYaw);
+        buffer.writeByte((byte) this.mode);
+        buffer.writeBoolean(this.onGround);
+        Binary.writeEntityRuntimeId(buffer, this.ridingEid);
         if (this.mode == MODE_TELEPORT) {
-            this.putLInt(this.int1);
-            this.putLInt(this.int2);
+            buffer.writeIntLE(this.int1);
+            buffer.writeIntLE(this.int2);
         }
     }
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 

@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.player.Player;
 
 /**
  * Created on 2015/11/22 by xtypr.

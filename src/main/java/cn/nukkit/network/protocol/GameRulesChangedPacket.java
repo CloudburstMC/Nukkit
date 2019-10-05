@@ -1,6 +1,8 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.level.GameRules;
+import cn.nukkit.level.gamerule.GameRuleMap;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -9,22 +11,20 @@ import lombok.ToString;
  */
 @ToString
 public class GameRulesChangedPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.GAME_RULES_CHANGED_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.GAME_RULES_CHANGED_PACKET;
+    public GameRuleMap gameRules;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
-    public GameRules gameRules;
-
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        putGameRules(gameRules);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeGameRules(buffer, gameRules);
     }
 }

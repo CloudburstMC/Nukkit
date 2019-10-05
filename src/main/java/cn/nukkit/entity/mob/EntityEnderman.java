@@ -1,6 +1,6 @@
 package cn.nukkit.entity.mob;
 
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
@@ -15,7 +15,7 @@ public class EntityEnderman extends EntityMob {
         return NETWORK_ID;
     }
 
-    public EntityEnderman(FullChunk chunk, CompoundTag nbt) {
+    public EntityEnderman(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

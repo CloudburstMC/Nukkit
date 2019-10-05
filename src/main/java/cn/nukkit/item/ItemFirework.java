@@ -1,6 +1,5 @@
 package cn.nukkit.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.level.Level;
@@ -11,6 +10,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.DyeColor;
 
 import java.util.ArrayList;

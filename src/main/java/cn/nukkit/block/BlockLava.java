@@ -1,6 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityPrimedTNT;
@@ -9,10 +8,11 @@ import cn.nukkit.event.entity.EntityCombustByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.player.Player;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
 
@@ -81,7 +81,7 @@ public class BlockLava extends BlockLiquid {
     public int onUpdate(int type) {
         int result = super.onUpdate(type);
 
-        if (type == Level.BLOCK_UPDATE_RANDOM && this.level.gameRules.getBoolean(GameRule.DO_FIRE_TICK)) {
+        if (type == Level.BLOCK_UPDATE_RANDOM && this.level.getGameRules().get(GameRules.DO_FIRE_TICK)) {
             Random random = ThreadLocalRandom.current();
 
             int i = random.nextInt(3);

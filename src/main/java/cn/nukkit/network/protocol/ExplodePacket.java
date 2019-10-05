@@ -1,6 +1,8 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -10,7 +12,7 @@ import lombok.ToString;
 @ToString
 public class ExplodePacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.EXPLODE_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.EXPLODE_PACKET;
 
     public float x;
     public float y;
@@ -19,30 +21,23 @@ public class ExplodePacket extends DataPacket {
     public Vector3[] records = new Vector3[0];
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
     @Override
-    public DataPacket clean() {
-        this.records = new Vector3[0];
-        return super.clean();
-    }
-
-    @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putVector3f(this.x, this.y, this.z);
-        this.putVarInt((int) (this.radius * 32));
-        this.putUnsignedVarInt(this.records.length);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeVector3f(buffer, this.x, this.y, this.z);
+        Binary.writeVarInt(buffer, (int) (this.radius * 32));
+        Binary.writeUnsignedVarInt(buffer, this.records.length);
         if (this.records.length > 0) {
             for (Vector3 record : records) {
-                this.putSignedBlockPosition(record.asBlockVector3());
+                Binary.writeSignedBlockPosition(buffer, record.asBlockVector3());
             }
         }
     }

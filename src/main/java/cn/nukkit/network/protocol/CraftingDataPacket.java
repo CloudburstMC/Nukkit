@@ -2,9 +2,12 @@ package cn.nukkit.network.protocol;
 
 import cn.nukkit.inventory.*;
 import cn.nukkit.item.Item;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,7 +17,7 @@ import java.util.List;
 @ToString
 public class CraftingDataPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.CRAFTING_DATA_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.CRAFTING_DATA_PACKET;
 
     public static final String CRAFTING_TAG_CRAFTING_TABLE = "crafting_table";
     public static final String CRAFTING_TAG_CARTOGRAPHY_TABLE = "cartography_table";
@@ -27,92 +30,86 @@ public class CraftingDataPacket extends DataPacket {
     public List<Recipe> entries = new ArrayList<>();
     public boolean cleanRecipes;
 
-    public void addShapelessRecipe(ShapelessRecipe... recipe) {
-        Collections.addAll(entries, (ShapelessRecipe[]) recipe);
+    public void addRecipes(Recipe... recipe) {
+        Collections.addAll(entries, recipe);
     }
 
-    public void addShapedRecipe(ShapedRecipe... recipe) {
-        Collections.addAll(entries, (ShapedRecipe[]) recipe);
-    }
-
-    public void addFurnaceRecipe(FurnaceRecipe... recipe) {
-        Collections.addAll(entries, (FurnaceRecipe[]) recipe);
+    public void addRecipes(Collection<? extends Recipe> recipes) {
+        entries.addAll(recipes);
     }
 
     @Override
-    public DataPacket clean() {
-        entries = new ArrayList<>();
-        return super.clean();
-    }
-
-    @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putUnsignedVarInt(entries.size());
+    protected void encode(ByteBuf buffer) {
+        Binary.writeUnsignedVarInt(buffer, entries.size());
 
         for (Recipe recipe : entries) {
-            this.putVarInt(recipe.getType().ordinal());
+            Binary.writeVarInt(buffer, recipe.getType().ordinal());
             switch (recipe.getType()) {
                 case SHAPELESS:
+                case SHULKER_BOX:
+                case SHAPED_CHEMISTRY:
                     ShapelessRecipe shapeless = (ShapelessRecipe) recipe;
-                    this.putString(shapeless.getRecipeId());
+                    Binary.writeString(buffer, shapeless.getRecipeId());
                     List<Item> ingredients = shapeless.getIngredientList();
-                    this.putUnsignedVarInt(ingredients.size());
+                    Binary.writeUnsignedVarInt(buffer, ingredients.size());
                     for (Item ingredient : ingredients) {
-                        this.putRecipeIngredient(ingredient);
+                        Binary.writeRecipeIngredient(buffer, ingredient);
                     }
-                    this.putUnsignedVarInt(1);
-                    this.putSlot(shapeless.getResult());
-                    this.putUUID(shapeless.getId());
-                    this.putString(CRAFTING_TAG_CRAFTING_TABLE);
-                    this.putVarInt(shapeless.getPriority());
+                    Binary.writeUnsignedVarInt(buffer, 1);
+                    Binary.writeItem(buffer, shapeless.getResult());
+                    Binary.writeUuid(buffer, shapeless.getId());
+                    Binary.writeString(buffer, CRAFTING_TAG_CRAFTING_TABLE);
+                    Binary.writeVarInt(buffer, shapeless.getPriority());
                     break;
                 case SHAPED:
+                case SHAPELESS_CHEMISTRY:
                     ShapedRecipe shaped = (ShapedRecipe) recipe;
-                    this.putString(shaped.getRecipeId());
-                    this.putVarInt(shaped.getWidth());
-                    this.putVarInt(shaped.getHeight());
+                    Binary.writeString(buffer, shaped.getRecipeId());
+                    Binary.writeVarInt(buffer, shaped.getWidth());
+                    Binary.writeVarInt(buffer, shaped.getHeight());
 
                     for (int z = 0; z < shaped.getHeight(); ++z) {
                         for (int x = 0; x < shaped.getWidth(); ++x) {
-                            this.putRecipeIngredient(shaped.getIngredient(x, z));
+                            Binary.writeRecipeIngredient(buffer, shaped.getIngredient(x, z));
                         }
                     }
                     List<Item> outputs = new ArrayList<>();
                     outputs.add(shaped.getResult());
                     outputs.addAll(shaped.getExtraResults());
-                    this.putUnsignedVarInt(outputs.size());
+                    Binary.writeUnsignedVarInt(buffer, outputs.size());
                     for (Item output : outputs) {
-                        this.putSlot(output);
+                        Binary.writeItem(buffer, output);
                     }
-                    this.putUUID(shaped.getId());
-                    this.putString(CRAFTING_TAG_CRAFTING_TABLE);
-                    this.putVarInt(shaped.getPriority());
+                    Binary.writeUuid(buffer, shaped.getId());
+                    Binary.writeString(buffer, CRAFTING_TAG_CRAFTING_TABLE);
+                    Binary.writeVarInt(buffer, shaped.getPriority());
                     break;
                 case FURNACE:
                 case FURNACE_DATA:
                     FurnaceRecipe furnace = (FurnaceRecipe) recipe;
                     Item input = furnace.getInput();
-                    this.putVarInt(input.getId());
+                    Binary.writeVarInt(buffer, input.getId());
                     if (recipe.getType() == RecipeType.FURNACE_DATA) {
-                        this.putVarInt(input.getDamage());
+                        Binary.writeVarInt(buffer, input.getDamage());
                     }
-                    this.putSlot(furnace.getResult());
-                    this.putString(CRAFTING_TAG_FURNACE);
+                    Binary.writeItem(buffer, furnace.getResult());
+                    Binary.writeString(buffer, CRAFTING_TAG_FURNACE);
                     break;
+                case MULTI:
+                    throw new UnsupportedOperationException();
             }
         }
 
-        this.putBoolean(cleanRecipes);
+        buffer.writeBoolean(cleanRecipes);
     }
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 

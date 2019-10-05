@@ -1,7 +1,8 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.command.data.*;
-import cn.nukkit.utils.BinaryStream;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 import java.util.*;
@@ -15,14 +16,14 @@ import java.util.function.ToIntFunction;
 @ToString
 public class AvailableCommandsPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.AVAILABLE_COMMANDS_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.AVAILABLE_COMMANDS_PACKET;
 
-    private static final ObjIntConsumer<BinaryStream> WRITE_BYTE = (s, v) -> s.putByte((byte) v);
-    private static final ObjIntConsumer<BinaryStream> WRITE_SHORT = BinaryStream::putLShort;
-    private static final ObjIntConsumer<BinaryStream> WRITE_INT = BinaryStream::putLInt;
-    private static final ToIntFunction<BinaryStream> READ_BYTE = BinaryStream::getByte;
-    private static final ToIntFunction<BinaryStream> READ_SHORT = BinaryStream::getLShort;
-    private static final ToIntFunction<BinaryStream> READ_INT = BinaryStream::getLInt;
+    private static final ObjIntConsumer<ByteBuf> WRITE_BYTE = ByteBuf::writeByte;
+    private static final ObjIntConsumer<ByteBuf> WRITE_SHORT = ByteBuf::writeShortLE;
+    private static final ObjIntConsumer<ByteBuf> WRITE_INT = ByteBuf::writeIntLE;
+    private static final ToIntFunction<ByteBuf> READ_BYTE = ByteBuf::readUnsignedByte;
+    private static final ToIntFunction<ByteBuf> READ_SHORT = ByteBuf::readUnsignedShortLE;
+    private static final ToIntFunction<ByteBuf> READ_INT = ByteBuf::readIntLE;
 
     public static final int ARG_FLAG_VALID = 0x100000;
     public static final int ARG_FLAG_ENUM = 0x200000;
@@ -53,29 +54,29 @@ public class AvailableCommandsPacket extends DataPacket {
     public final Map<String, List<String>> softEnums = new HashMap<>();
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
         commands = new HashMap<>();
 
         List<String> enumValues = new ArrayList<>();
         List<String> postFixes = new ArrayList<>();
         List<CommandEnum> enums = new ArrayList<>();
 
-        int len = (int) getUnsignedVarInt();
+        int len = (int) Binary.readUnsignedVarInt(buffer);
         while (len-- > 0) {
-            enumValues.add(getString());
+            enumValues.add(Binary.readString(buffer));
         }
 
-        len = (int) getUnsignedVarInt();
+        len = (int) Binary.readUnsignedVarInt(buffer);
         while (len-- > 0) {
-            postFixes.add(getString());
+            postFixes.add(Binary.readString(buffer));
         }
 
-        ToIntFunction<BinaryStream> indexReader;
+        ToIntFunction<ByteBuf> indexReader;
         if (enumValues.size() < 256) {
             indexReader = READ_BYTE;
         } else if (enumValues.size() < 65536) {
@@ -84,15 +85,15 @@ public class AvailableCommandsPacket extends DataPacket {
             indexReader = READ_INT;
         }
 
-        len = (int) getUnsignedVarInt();
+        len = (int) Binary.readUnsignedVarInt(buffer);
         while (len-- > 0) {
-            String enumName = getString();
-            int enumLength = (int) getUnsignedVarInt();
+            String enumName = Binary.readString(buffer);
+            int enumLength = (int) Binary.readUnsignedVarInt(buffer);
 
             List<String> values = new ArrayList<>();
 
             while (enumLength-- > 0) {
-                int index = indexReader.applyAsInt(this);
+                int index = indexReader.applyAsInt(buffer);
 
                 String enumValue;
 
@@ -106,33 +107,33 @@ public class AvailableCommandsPacket extends DataPacket {
             enums.add(new CommandEnum(enumName, values));
         }
 
-        len = (int) getUnsignedVarInt();
+        len = (int) Binary.readUnsignedVarInt(buffer);
 
         while (len-- > 0) {
-            String name = getString();
-            String description = getString();
-            int flags = getByte();
-            int permission = getByte();
+            String name = Binary.readString(buffer);
+            String description = Binary.readString(buffer);
+            int flags = buffer.readByte();
+            int permission = buffer.readByte();
             CommandEnum alias = null;
 
-            int aliasIndex = getLInt();
+            int aliasIndex = buffer.readIntLE();
             if (aliasIndex >= 0) {
                 alias = enums.get(aliasIndex);
             }
 
             Map<String, CommandOverload> overloads = new HashMap<>();
 
-            int length = (int) getUnsignedVarInt();
+            int length = (int) Binary.readUnsignedVarInt(buffer);
             while (length-- > 0) {
                 CommandOverload overload = new CommandOverload();
 
-                int paramLen = (int) getUnsignedVarInt();
+                int paramLen = (int) Binary.readUnsignedVarInt(buffer);
 
                 overload.input.parameters = new CommandParameter[paramLen];
                 for (int i = 0; i < paramLen; i++) {
-                    String paramName = getString();
-                    int type = getLInt();
-                    boolean optional = getBoolean();
+                    String paramName = Binary.readString(buffer);
+                    int type = buffer.readIntLE();
+                    boolean optional = buffer.readBoolean();
 
                     CommandParameter parameter = new CommandParameter(paramName, optional);
 
@@ -173,8 +174,7 @@ public class AvailableCommandsPacket extends DataPacket {
     }
 
     @Override
-    public void encode() {
-        this.reset();
+    protected void encode(ByteBuf buffer) {
 
         LinkedHashSet<String> enumValuesSet = new LinkedHashSet<>();
         LinkedHashSet<String> postFixesSet = new LinkedHashSet<>();
@@ -208,13 +208,13 @@ public class AvailableCommandsPacket extends DataPacket {
         List<CommandEnum> enums = new ArrayList<>(enumsSet);
         List<String> postFixes = new ArrayList<>(postFixesSet);
 
-        this.putUnsignedVarInt(enumValues.size());
-        enumValues.forEach(this::putString);
+        Binary.writeUnsignedVarInt(buffer, enumValues.size());
+        enumValues.forEach(s -> Binary.writeString(buffer, s));
 
-        this.putUnsignedVarInt(postFixes.size());
-        postFixes.forEach(this::putString);
+        Binary.writeUnsignedVarInt(buffer, postFixes.size());
+        postFixes.forEach(s -> Binary.writeString(buffer, s));
 
-        ObjIntConsumer<BinaryStream> indexWriter;
+        ObjIntConsumer<ByteBuf> indexWriter;
         if (enumValues.size() < 256) {
             indexWriter = WRITE_BYTE;
         } else if (enumValues.size() < 65536) {
@@ -223,12 +223,12 @@ public class AvailableCommandsPacket extends DataPacket {
             indexWriter = WRITE_INT;
         }
 
-        this.putUnsignedVarInt(enums.size());
+        Binary.writeUnsignedVarInt(buffer, enums.size());
         enums.forEach((cmdEnum) -> {
-            putString(cmdEnum.getName());
+            Binary.writeString(buffer, cmdEnum.getName());
 
             List<String> values = cmdEnum.getValues();
-            putUnsignedVarInt(values.size());
+            Binary.writeUnsignedVarInt(buffer, values.size());
 
             for (String val : values) {
                 int i = enumValues.indexOf(val);
@@ -237,28 +237,28 @@ public class AvailableCommandsPacket extends DataPacket {
                     throw new IllegalStateException("Enum value '" + val + "' not found");
                 }
 
-                indexWriter.accept(this, i);
+                indexWriter.accept(buffer, i);
             }
         });
 
-        putUnsignedVarInt(commands.size());
+        Binary.writeUnsignedVarInt(buffer, commands.size());
 
         commands.forEach((name, cmdData) -> {
             CommandData data = cmdData.versions.get(0);
 
-            putString(name);
-            putString(data.description);
-            putByte((byte) data.flags);
-            putByte((byte) data.permission);
+            Binary.writeString(buffer, name);
+            Binary.writeString(buffer, data.description);
+            buffer.writeByte(data.flags);
+            buffer.writeByte(data.permission);
 
-            putLInt(data.aliases == null ? -1 : enums.indexOf(data.aliases));
+            buffer.writeIntLE(data.aliases == null ? -1 : enums.indexOf(data.aliases));
 
-            putUnsignedVarInt(data.overloads.size());
+            Binary.writeUnsignedVarInt(buffer, data.overloads.size());
             for (CommandOverload overload : data.overloads.values()) {
-                putUnsignedVarInt(overload.input.parameters.length);
+                Binary.writeUnsignedVarInt(buffer, overload.input.parameters.length);
 
                 for (CommandParameter parameter : overload.input.parameters) {
-                    putString(parameter.name);
+                    Binary.writeString(buffer, parameter.name);
 
                     int type = 0;
                     if (parameter.postFix != null) {
@@ -276,19 +276,19 @@ public class AvailableCommandsPacket extends DataPacket {
                         }
                     }
 
-                    putLInt(type);
-                    putBoolean(parameter.optional);
-                    putByte(parameter.options); // TODO: 19/03/2019 Bit flags. Only first bit is used for GameRules.
+                    buffer.writeIntLE(type);
+                    buffer.writeBoolean(parameter.optional);
+                    buffer.writeByte(parameter.options); // TODO: 19/03/2019 Bit flags. Only first bit is used for GameRules.
                 }
             }
         });
 
-        this.putUnsignedVarInt(softEnums.size());
+        Binary.writeUnsignedVarInt(buffer, softEnums.size());
 
         softEnums.forEach((name, values) -> {
-            this.putString(name);
-            this.putUnsignedVarInt(values.size());
-            values.forEach(this::putString);
+            Binary.writeString(buffer, name);
+            Binary.writeUnsignedVarInt(buffer, values.size());
+            values.forEach(s -> Binary.writeString(buffer, s));
         });
     }
 }

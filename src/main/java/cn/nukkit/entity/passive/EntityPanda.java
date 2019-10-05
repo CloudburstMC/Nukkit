@@ -1,13 +1,13 @@
 package cn.nukkit.entity.passive;
 
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 public class EntityPanda extends EntityAnimal {
 
     public static final int NETWORK_ID = 113;
 
-    public EntityPanda(FullChunk chunk, CompoundTag nbt) {
+    public EntityPanda(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

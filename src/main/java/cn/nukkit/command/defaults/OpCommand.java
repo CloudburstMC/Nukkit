@@ -1,12 +1,12 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.IPlayer;
-import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.player.IPlayer;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
 /**
@@ -38,11 +38,14 @@ public class OpCommand extends VanillaCommand {
         IPlayer player = sender.getServer().getOfflinePlayer(name);
 
         Command.broadcastCommandMessage(sender, new TranslationContainer("commands.op.success", player.getName()));
-        if (player instanceof Player) {
-            ((Player) player).sendMessage(new TranslationContainer(TextFormat.GRAY + "%commands.op.message"));
+        if (player != null) {
+            if (player instanceof Player) {
+                ((Player) player).sendMessage(new TranslationContainer(TextFormat.GRAY + "%commands.op.message"));
+            }
+            player.setOp(true);
+        } else {
+            sender.getServer().addOp(name);
         }
-
-        player.setOp(true);
 
         return true;
     }

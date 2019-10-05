@@ -1,6 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityPistonArm;
 import cn.nukkit.event.block.BlockPistonChangeEvent;
@@ -11,6 +10,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
 
 import java.util.ArrayList;
@@ -102,7 +102,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                     this.level.getServer().getPluginManager().callEvent(new BlockPistonChangeEvent(this, powered ? 0 : 15, powered ? 15 : 0));
                     arm.powered = !arm.powered;
                     if (arm.chunk != null) {
-                        arm.chunk.setChanged();
+                        arm.chunk.setDirty();
                     }
                 }
             }

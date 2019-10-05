@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -8,7 +10,7 @@ import lombok.ToString;
  */
 @ToString
 public class ContainerSetDataPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.CONTAINER_SET_DATA_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.CONTAINER_SET_DATA_PACKET;
 
     public static final int PROPERTY_FURNACE_TICK_COUNT = 0;
     public static final int PROPERTY_FURNACE_LIT_TIME = 1;
@@ -21,7 +23,7 @@ public class ContainerSetDataPacket extends DataPacket {
     public static final int PROPERTY_BREWING_STAND_FUEL_TOTAL = 2;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
@@ -30,15 +32,14 @@ public class ContainerSetDataPacket extends DataPacket {
     public int value;
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putByte((byte) this.windowId);
-        this.putVarInt(this.property);
-        this.putVarInt(this.value);
+    protected void encode(ByteBuf buffer) {
+        buffer.writeByte(this.windowId);
+        Binary.writeVarInt(buffer, this.property);
+        Binary.writeVarInt(buffer, this.value);
     }
 }

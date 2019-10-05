@@ -1,11 +1,11 @@
 package cn.nukkit.entity.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.passive.EntityWaterAnimal;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.MinecartType;
 
 /**
@@ -21,7 +21,7 @@ public class EntityMinecartEmpty extends EntityMinecartAbstract {
         return NETWORK_ID;
     }
 
-    public EntityMinecartEmpty(FullChunk chunk, CompoundTag nbt) {
+    public EntityMinecartEmpty(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

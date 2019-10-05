@@ -1,6 +1,8 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.math.Vector3f;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -9,7 +11,7 @@ import lombok.ToString;
  */
 @ToString
 public class LevelEventPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.LEVEL_EVENT_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.LEVEL_EVENT_PACKET;
 
     public static final int EVENT_SOUND_CLICK = 1000;
     public static final int EVENT_SOUND_CLICK_FAIL = 1001;
@@ -103,25 +105,24 @@ public class LevelEventPacket extends DataPacket {
     public int data = 0;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
     @Override
-    public void decode() {
-        this.evid = this.getVarInt();
-        Vector3f v = this.getVector3f();
+    protected void decode(ByteBuf buffer) {
+        this.evid = Binary.readVarInt(buffer);
+        Vector3f v = Binary.readVector3f(buffer);
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
-        this.data = this.getVarInt();
+        this.data = Binary.readVarInt(buffer);
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putVarInt(this.evid);
-        this.putVector3f(this.x, this.y, this.z);
-        this.putVarInt(this.data);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeVarInt(buffer, this.evid);
+        Binary.writeVector3f(buffer, this.x, this.y, this.z);
+        Binary.writeVarInt(buffer, this.data);
     }
 }

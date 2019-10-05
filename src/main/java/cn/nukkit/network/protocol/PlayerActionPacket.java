@@ -1,6 +1,8 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.math.BlockVector3;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -9,7 +11,7 @@ import lombok.ToString;
 @ToString
 public class PlayerActionPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.PLAYER_ACTION_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.PLAYER_ACTION_PACKET;
 
     public static final int ACTION_START_BREAK = 0;
     public static final int ACTION_ABORT_BREAK = 1;
@@ -45,27 +47,26 @@ public class PlayerActionPacket extends DataPacket {
 
 
     @Override
-    public void decode() {
-        this.entityId = this.getEntityRuntimeId();
-        this.action = this.getVarInt();
-        BlockVector3 v = this.getBlockVector3();
+    protected void decode(ByteBuf buffer) {
+        this.entityId = Binary.readEntityRuntimeId(buffer);
+        this.action = Binary.readVarInt(buffer);
+        BlockVector3 v = Binary.readBlockVector3(buffer);
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
-        this.face = this.getVarInt();
+        this.face = Binary.readVarInt(buffer);
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putEntityRuntimeId(this.entityId);
-        this.putVarInt(this.action);
-        this.putBlockVector3(this.x, this.y, this.z);
-        this.putVarInt(this.face);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeEntityRuntimeId(buffer, this.entityId);
+        Binary.writeVarInt(buffer, this.action);
+        Binary.writeBlockVector3(buffer, this.x, this.y, this.z);
+        Binary.writeVarInt(buffer, this.face);
     }
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 

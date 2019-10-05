@@ -1,6 +1,8 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.network.protocol.types.ContainerIds;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 @ToString
@@ -12,22 +14,21 @@ public class PlayerHotbarPacket extends DataPacket {
     public boolean selectHotbarSlot = true;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return ProtocolInfo.PLAYER_HOTBAR_PACKET;
     }
 
     @Override
-    public void decode() {
-        this.selectedHotbarSlot = (int) this.getUnsignedVarInt();
-        this.windowId = this.getByte();
-        this.selectHotbarSlot = this.getBoolean();
+    protected void decode(ByteBuf buffer) {
+        this.selectedHotbarSlot = (int) Binary.readUnsignedVarInt(buffer);
+        this.windowId = buffer.readByte();
+        this.selectHotbarSlot = buffer.readBoolean();
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putUnsignedVarInt(this.selectedHotbarSlot);
-        this.putByte((byte) this.windowId);
-        this.putBoolean(this.selectHotbarSlot);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeUnsignedVarInt(buffer, this.selectedHotbarSlot);
+        buffer.writeByte((byte) this.windowId);
+        buffer.writeBoolean(this.selectHotbarSlot);
     }
 }

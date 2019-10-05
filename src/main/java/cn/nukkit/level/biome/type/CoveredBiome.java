@@ -1,7 +1,7 @@
 package cn.nukkit.level.biome.type;
 
 import cn.nukkit.level.biome.Biome;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.Normal;
 
 /**
@@ -28,7 +28,7 @@ public abstract class CoveredBiome extends Biome {
 
     public abstract int getGroundId(int x, int y, int z);
 
-    public void doCover(int x, int z, FullChunk chunk) {
+    public void doCover(int x, int z, Chunk chunk) {
         final int fullX = (chunk.getX() << 4) | x;
         final int fullZ = (chunk.getZ() << 4) | z;
 
@@ -42,12 +42,12 @@ public abstract class CoveredBiome extends Biome {
                 COVER:
                 if (!hasCovered) {
                     if (y >= Normal.seaHeight) {
-                        chunk.setFullBlockId(x, y + 1, z, coverBlock);
+                        chunk.setFullBlock(x, y + 1, z, coverBlock);
                         int surfaceDepth = this.getSurfaceDepth(fullX, y, fullZ);
                         for (int i = 0; i < surfaceDepth; i++) {
                             realY = y - i;
                             if (chunk.getFullBlock(x, realY, z) == STONE << 4) {
-                                chunk.setFullBlockId(x, realY, z, this.getSurfaceId(fullX, realY, fullZ));
+                                chunk.setFullBlock(x, realY, z, this.getSurfaceId(fullX, realY, fullZ));
                             } else break COVER;
                         }
                         y -= surfaceDepth;
@@ -56,7 +56,7 @@ public abstract class CoveredBiome extends Biome {
                     for (int i = 0; i < groundDepth; i++) {
                         realY = y - i;
                         if (chunk.getFullBlock(x, realY, z) == STONE << 4) {
-                            chunk.setFullBlockId(x, realY, z, this.getGroundId(fullX, realY, fullZ));
+                            chunk.setFullBlock(x, realY, z, this.getGroundId(fullX, realY, fullZ));
                         } else break COVER;
                     }
                     //don't take all of groundDepth away because we do y-- in the loop

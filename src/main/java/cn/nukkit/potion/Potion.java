@@ -1,12 +1,12 @@
 package cn.nukkit.potion;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.event.potion.PotionApplyEvent;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.ServerException;
 
 /**

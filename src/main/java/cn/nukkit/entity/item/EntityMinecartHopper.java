@@ -1,20 +1,20 @@
 package cn.nukkit.entity.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.block.BlockHopper;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemMinecartHopper;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.MinecartType;
 
 public class EntityMinecartHopper extends EntityMinecartAbstract {
 
     public static final int NETWORK_ID = 96;
 
-    public EntityMinecartHopper(FullChunk chunk, CompoundTag nbt) {
+    public EntityMinecartHopper(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
         super.setDisplayBlock(new BlockHopper(), false);
     }

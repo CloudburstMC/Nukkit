@@ -1,27 +1,27 @@
 package cn.nukkit.network.protocol;
 
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 @ToString
 public class SetCommandsEnabledPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.SET_COMMANDS_ENABLED_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.SET_COMMANDS_ENABLED_PACKET;
 
     public boolean enabled;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putBoolean(this.enabled);
+    protected void encode(ByteBuf buffer) {
+        buffer.writeBoolean(this.enabled);
     }
 }

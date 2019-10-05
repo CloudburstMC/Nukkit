@@ -1,7 +1,7 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -15,7 +15,7 @@ public class BlockEntityMovingBlock extends BlockEntitySpawnable {
     public BlockVector3 piston;
     public int progress;
 
-    public BlockEntityMovingBlock(FullChunk chunk, CompoundTag nbt) {
+    public BlockEntityMovingBlock(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

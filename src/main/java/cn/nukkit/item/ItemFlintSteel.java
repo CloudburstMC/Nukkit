@@ -1,12 +1,12 @@
 package cn.nukkit.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.block.*;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.player.Player;
 
 import java.util.concurrent.ThreadLocalRandom;
 

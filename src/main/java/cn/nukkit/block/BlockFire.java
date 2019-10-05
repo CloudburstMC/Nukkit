@@ -10,9 +10,8 @@ import cn.nukkit.event.entity.EntityCombustByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
-import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
@@ -99,7 +98,7 @@ public class BlockFire extends BlockFlowable {
             }
 
             return Level.BLOCK_UPDATE_NORMAL;
-        } else if (type == Level.BLOCK_UPDATE_SCHEDULED && this.level.gameRules.getBoolean(GameRule.DO_FIRE_TICK)) {
+        } else if (type == Level.BLOCK_UPDATE_SCHEDULED && this.level.getGameRules().get(GameRules.DO_FIRE_TICK)) {
             boolean forever = this.down().getId() == Block.NETHERRACK || this.down().getId() == Block.MAGMA;
 
             ThreadLocalRandom random = ThreadLocalRandom.current();
@@ -310,6 +309,6 @@ public class BlockFire extends BlockFlowable {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(new BlockAir());
+        return Item.get(BlockID.AIR, 0, 0);
     }
 }

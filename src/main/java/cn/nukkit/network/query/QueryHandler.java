@@ -48,7 +48,7 @@ public class QueryHandler {
     public void regenerateInfo() {
         QueryRegenerateEvent ev = this.server.getQueryInformation();
         this.longData = ev.getLongQuery(this.longData);
-        this.shortData = ev.getShortQuery(this.shortData);
+        this.shortData = ev.getShortQuery();
         this.timeout = System.currentTimeMillis() + ev.getTimeout();
     }
 

@@ -1,7 +1,7 @@
 package cn.nukkit.entity.mob;
 
 import cn.nukkit.entity.EntityArthropod;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
@@ -16,7 +16,7 @@ public class EntityCaveSpider extends EntityMob implements EntityArthropod {
         return NETWORK_ID;
     }
 
-    public EntityCaveSpider(FullChunk chunk, CompoundTag nbt) {
+    public EntityCaveSpider(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

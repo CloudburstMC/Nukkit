@@ -1,5 +1,6 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.entity.data.Skin;
 import cn.nukkit.network.protocol.LoginPacket;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -8,6 +9,8 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import net.minidev.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
@@ -44,13 +47,9 @@ public final class ClientChainData implements LoginChainData {
         }
     }
 
-    public static ClientChainData of(byte[] buffer) {
-        return new ClientChainData(buffer);
-    }
-
-    public static ClientChainData read(LoginPacket pk) {
-        return of(pk.getBuffer());
-    }
+    private final String chainData;
+    private final String skinData;
+    private Skin skin;
 
     @Override
     public String getUsername() {
@@ -124,9 +123,11 @@ public final class ClientChainData implements LoginChainData {
         return defaultInputMode;
     }
 
-    @Override
-    public String getCapeData() {
-        return capeData;
+    private ClientChainData(String chainData, String skinData) {
+        this.chainData = chainData;
+        this.skinData = skinData;
+        decodeChainData(chainData);
+        decodeSkinData(skinData);
     }
 
     public final static int UI_PROFILE_CLASSIC = 0;
@@ -141,14 +142,13 @@ public final class ClientChainData implements LoginChainData {
     // Override
     ///////////////////////////////////////////////////////////////////////////
 
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof ClientChainData && Objects.equals(bs, ((ClientChainData) obj).bs);
+    public static ClientChainData of(byte[] buffer) {
+        ByteBuf byteBuf = Unpooled.wrappedBuffer(buffer);
+        return new ClientChainData(readString(byteBuf), readString(byteBuf));
     }
 
-    @Override
-    public int hashCode() {
-        return bs.hashCode();
+    public static ClientChainData read(LoginPacket pk) {
+        return new ClientChainData(pk.chainData, pk.skinData);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -177,14 +177,29 @@ public final class ClientChainData implements LoginChainData {
 
     private int UIProfile;
 
-    private String capeData;
+    private static String readString(ByteBuf buffer) {
+        int length = buffer.readIntLE();
+        byte[] bytes = new byte[length];
+        buffer.readBytes(bytes);
+        return new String(bytes, StandardCharsets.US_ASCII); // base 64 encoded.
+    }
 
-    private BinaryStream bs = new BinaryStream();
+    @Override
+    public Skin getSkin() {
+        return skin;
+    }
 
-    private ClientChainData(byte[] buffer) {
-        bs.setBuffer(buffer, 0);
-        decodeChainData();
-        decodeSkinData();
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        ClientChainData that = (ClientChainData) obj;
+        return Objects.equals(this.skinData, that.skinData) && Objects.equals(this.chainData, that.chainData);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(skinData, chainData);
     }
 
     @Override
@@ -192,8 +207,8 @@ public final class ClientChainData implements LoginChainData {
         return xboxAuthed;
     }
 
-    private void decodeSkinData() {
-        JsonObject skinToken = decodeToken(new String(bs.get(bs.getLInt())));
+    private void decodeSkinData(String skinData) {
+        JsonObject skinToken = decodeToken(skinData);
         if (skinToken == null) return;
         if (skinToken.has("ClientRandomId")) this.clientId = skinToken.get("ClientRandomId").getAsLong();
         if (skinToken.has("ServerAddress")) this.serverAddress = skinToken.get("ServerAddress").getAsString();
@@ -206,7 +221,25 @@ public final class ClientChainData implements LoginChainData {
         if (skinToken.has("CurrentInputMode")) this.currentInputMode = skinToken.get("CurrentInputMode").getAsInt();
         if (skinToken.has("DefaultInputMode")) this.defaultInputMode = skinToken.get("DefaultInputMode").getAsInt();
         if (skinToken.has("UIProfile")) this.UIProfile = skinToken.get("UIProfile").getAsInt();
-        if (skinToken.has("CapeData")) this.capeData = skinToken.get("CapeData").getAsString();
+        skin = new Skin();
+        if (skinToken.has("SkinId")) {
+            skin.setSkinId(skinToken.get("SkinId").getAsString());
+        }
+        if (skinToken.has("SkinData")) {
+            skin.setSkinData(Base64.getDecoder().decode(skinToken.get("SkinData").getAsString()));
+        }
+
+        if (skinToken.has("CapeData")) {
+            skin.setCapeData(Base64.getDecoder().decode(skinToken.get("CapeData").getAsString()));
+        }
+
+        if (skinToken.has("SkinGeometryName")) {
+            skin.setGeometryName(skinToken.get("SkinGeometryName").getAsString());
+        }
+
+        if (skinToken.has("SkinGeometry")) {
+            skin.setGeometryData(new String(Base64.getDecoder().decode(skinToken.get("SkinGeometry").getAsString()), StandardCharsets.UTF_8));
+        }
     }
 
     private JsonObject decodeToken(String token) {
@@ -217,10 +250,9 @@ public final class ClientChainData implements LoginChainData {
         return new Gson().fromJson(json, JsonObject.class);
     }
 
-    private void decodeChainData() {
-        Map<String, List<String>> map = new Gson().fromJson(new String(bs.get(bs.getLInt()), StandardCharsets.UTF_8),
-                new TypeToken<Map<String, List<String>>>() {
-                }.getType());
+    private void decodeChainData(String chainData) {
+        Map<String, List<String>> map = new Gson().fromJson(chainData, new TypeToken<Map<String, List<String>>>() {
+        }.getType());
         if (map.isEmpty() || !map.containsKey("chain") || map.get("chain").isEmpty()) return;
         List<String> chains = map.get("chain");
 

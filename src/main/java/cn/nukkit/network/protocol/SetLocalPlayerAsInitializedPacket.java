@@ -1,25 +1,27 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 @ToString
 public class SetLocalPlayerAsInitializedPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.SET_LOCAL_PLAYER_AS_INITIALIZED_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.SET_LOCAL_PLAYER_AS_INITIALIZED_PACKET;
 
     public long eid;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
     @Override
-    public void decode() {
-        eid = this.getUnsignedVarLong();
+    protected void decode(ByteBuf buffer) {
+        eid = Binary.readUnsignedVarLong(buffer);
     }
 
     @Override
-    public void encode() {
-        this.putUnsignedVarLong(eid);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeUnsignedVarLong(buffer, eid);
     }
 }

@@ -1,21 +1,15 @@
 package cn.nukkit.network;
 
 import cn.nukkit.Nukkit;
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.network.protocol.*;
-import cn.nukkit.utils.Binary;
-import cn.nukkit.utils.BinaryStream;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.Utils;
-import cn.nukkit.utils.Zlib;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
-import io.netty.buffer.Unpooled;
 import lombok.extern.log4j.Log4j2;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +20,8 @@ import java.util.Set;
  */
 @Log4j2
 public class Network {
+
+    public static final int MAX_BATCH_SIZE = 2 * 1024 * 1024; // 2MB
 
     public static final byte CHANNEL_NONE = 0;
     public static final byte CHANNEL_PRIORITY = 1; //Priority channel, only to be used when it matters
@@ -133,8 +129,8 @@ public class Network {
         }
     }
 
-    public void registerPacket(byte id, Class<? extends DataPacket> clazz) {
-        this.packetPool[id & 0xff] = clazz;
+    public void registerPacket(short id, Class<? extends DataPacket> clazz) {
+        this.packetPool[id & 0x3ff] = clazz;
     }
 
     public Server getServer() {
@@ -142,53 +138,7 @@ public class Network {
     }
 
     public void processBatch(BatchPacket packet, Player player) {
-        byte[] data;
-        try {
-            data = Zlib.inflate(packet.payload, 2 * 1024 * 1024); // Max 2MB
-        } catch (Exception e) {
-            return;
-        }
-
-        int len = data.length;
-        BinaryStream stream = new BinaryStream(data);
-        try {
-            List<DataPacket> packets = new ArrayList<>();
-            int count = 0;
-            while (stream.offset < len) {
-                count++;
-                if (count >= 1000) {
-                    player.close("", "Illegal Batch Packet");
-                    return;
-                }
-                byte[] buf = stream.getByteArray();
-
-                DataPacket pk;
-
-                //TODO: This needs to be an unsigned VarInt
-                if ((pk = this.getPacket(buf[0])) != null) {
-                    pk.setBuffer(buf, 1);
-
-                    try {
-                        pk.decode();
-                    } catch (Exception e) {
-                        log.warn("Unable to decode {} from {}", pk.getClass().getSimpleName(), player.getName());
-                        if (log.isTraceEnabled()) {
-                            log.trace("Dumping Packet\n{}", ByteBufUtil.prettyHexDump(Unpooled.wrappedBuffer(packet.payload)));
-                        }
-                        throw e;
-                    }
-
-                    packets.add(pk);
-                }
-            }
-
-            processPackets(player, packets);
-
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Error whilst decoding batch packet", e);
-            }
-        }
+        new DecompressBatchTask(this, player, packet.payload).run();
     }
 
     /**
@@ -203,13 +153,17 @@ public class Network {
     }
 
 
-    public DataPacket getPacket(byte id) {
-        Class<? extends DataPacket> clazz = this.packetPool[id & 0xff];
-        if (clazz != null) {
-            try {
+    public DataPacket getPacket(short id) {
+        try {
+            Class<? extends DataPacket> clazz = this.packetPool[id & 0x3ff];
+            if (clazz != null) {
                 return clazz.newInstance();
-            } catch (Exception e) {
-                Server.getInstance().getLogger().logException(e);
+            }
+        } catch (IllegalAccessException | InstantiationException e) {
+            log.error("An error occurred whilst instantiating a packet class", e);
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Error finding packet", e);
             }
         }
         return null;

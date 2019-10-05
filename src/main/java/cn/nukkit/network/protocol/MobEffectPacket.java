@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -9,10 +11,10 @@ import lombok.ToString;
 @ToString
 public class MobEffectPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.MOB_EFFECT_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.MOB_EFFECT_PACKET;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
@@ -28,18 +30,17 @@ public class MobEffectPacket extends DataPacket {
     public int duration = 0;
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putEntityRuntimeId(this.eid);
-        this.putByte((byte) this.eventId);
-        this.putVarInt(this.effectId);
-        this.putVarInt(this.amplifier);
-        this.putBoolean(this.particles);
-        this.putVarInt(this.duration);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeEntityRuntimeId(buffer, this.eid);
+        buffer.writeByte((byte) this.eventId);
+        Binary.writeVarInt(buffer, this.effectId);
+        Binary.writeVarInt(buffer, this.amplifier);
+        buffer.writeBoolean(this.particles);
+        Binary.writeVarInt(buffer, this.duration);
     }
 }

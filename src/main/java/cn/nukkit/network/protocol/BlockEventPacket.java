@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -8,10 +10,10 @@ import lombok.ToString;
  */
 @ToString
 public class BlockEventPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.BLOCK_EVENT_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.BLOCK_EVENT_PACKET;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
@@ -22,15 +24,14 @@ public class BlockEventPacket extends DataPacket {
     public int case2;
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putBlockVector3(this.x, this.y, this.z);
-        this.putVarInt(this.case1);
-        this.putVarInt(this.case2);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeBlockVector3(buffer, this.x, this.y, this.z);
+        Binary.writeVarInt(buffer, this.case1);
+        Binary.writeVarInt(buffer, this.case2);
     }
 }

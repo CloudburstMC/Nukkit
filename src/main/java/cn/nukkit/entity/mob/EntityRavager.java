@@ -1,13 +1,13 @@
 package cn.nukkit.entity.mob;
 
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 public class EntityRavager extends EntityMob {
 
     public static final int NETWORK_ID = 59;
 
-    public EntityRavager(FullChunk chunk, CompoundTag nbt) {
+    public EntityRavager(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

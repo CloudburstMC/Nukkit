@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -39,7 +41,7 @@ public class EntityEventPacket extends DataPacket {
     public static final byte MERGE_ITEMS = 69;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
@@ -48,17 +50,16 @@ public class EntityEventPacket extends DataPacket {
     public int data;
 
     @Override
-    public void decode() {
-        this.eid = this.getEntityRuntimeId();
-        this.event = this.getByte();
-        this.data = this.getVarInt();
+    protected void decode(ByteBuf buffer) {
+        this.eid = Binary.readEntityRuntimeId(buffer);
+        this.event = buffer.readUnsignedByte();
+        this.data = Binary.readVarInt(buffer);
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putEntityRuntimeId(this.eid);
-        this.putByte((byte) this.event);
-        this.putVarInt((byte) this.data);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeEntityRuntimeId(buffer, this.eid);
+        buffer.writeByte(this.event);
+        Binary.writeVarInt(buffer, this.data);
     }
 }

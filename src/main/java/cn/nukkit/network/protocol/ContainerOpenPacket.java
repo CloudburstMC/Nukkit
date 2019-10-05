@@ -1,6 +1,8 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.math.BlockVector3;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -9,10 +11,10 @@ import lombok.ToString;
  */
 @ToString
 public class ContainerOpenPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.CONTAINER_OPEN_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.CONTAINER_OPEN_PACKET;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
@@ -24,22 +26,21 @@ public class ContainerOpenPacket extends DataPacket {
     public long entityId = -1;
 
     @Override
-    public void decode() {
-        this.windowId = this.getByte();
-        this.type = this.getByte();
-        BlockVector3 v = this.getBlockVector3();
+    protected void decode(ByteBuf buffer) {
+        this.windowId = buffer.readUnsignedByte();
+        this.type = buffer.readUnsignedByte();
+        BlockVector3 v = Binary.readBlockVector3(buffer);
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
-        this.entityId = this.getEntityUniqueId();
+        this.entityId = Binary.readEntityUniqueId(buffer);
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putByte((byte) this.windowId);
-        this.putByte((byte) this.type);
-        this.putBlockVector3(this.x, this.y, this.z);
-        this.putEntityUniqueId(this.entityId);
+    protected void encode(ByteBuf buffer) {
+        buffer.writeByte(this.windowId);
+        buffer.writeByte(this.type);
+        Binary.writeBlockVector3(buffer, this.x, this.y, this.z);
+        Binary.writeEntityUniqueId(buffer, this.entityId);
     }
 }

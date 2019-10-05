@@ -5,7 +5,7 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.biome.EnumBiome;
-import cn.nukkit.level.format.generic.BaseFullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.noise.nukkit.f.SimplexF;
 import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.level.generator.populator.impl.PopulatorGlowStone;
@@ -115,12 +115,12 @@ public class Nether extends Generator {
         int baseZ = chunkZ << 4;
         this.nukkitRandom.setSeed(chunkX * localSeed1 ^ chunkZ * localSeed2 ^ this.level.getSeed());
 
-        BaseFullChunk chunk = level.getChunk(chunkX, chunkZ);
+        Chunk chunk = level.getChunk(chunkX, chunkZ);
 
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
                 Biome biome = EnumBiome.HELL.biome;
-                chunk.setBiomeId(x, z, biome.getId());
+                chunk.setBiome(x, z, biome.getId());
 
                 chunk.setBlockId(x, 0, z, Block.BEDROCK);
                 for (int y = 115; y < 127; ++y) {
@@ -132,7 +132,7 @@ public class Nether extends Generator {
                         chunk.setBlockId(x, y, z, Block.NETHERRACK);
                     } else if (y <= this.lavaHeight) {
                         chunk.setBlockId(x, y, z, Block.STILL_LAVA);
-                        chunk.setBlockLight(x, y + 1, z, 15);
+                        chunk.setBlockLight(x, y + 1, z, (byte) 15);
                     }
                 }
             }
@@ -144,13 +144,13 @@ public class Nether extends Generator {
 
     @Override
     public void populateChunk(int chunkX, int chunkZ) {
-        BaseFullChunk chunk = level.getChunk(chunkX, chunkZ);
+        Chunk chunk = level.getChunk(chunkX, chunkZ);
         this.nukkitRandom.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
         for (Populator populator : this.populators) {
             populator.populate(this.level, chunkX, chunkZ, this.nukkitRandom, chunk);
         }
 
-        Biome biome = EnumBiome.getBiome(chunk.getBiomeId(7, 7));
+        Biome biome = EnumBiome.getBiome(chunk.getBiome(7, 7));
         biome.populateChunk(this.level, chunkX, chunkZ, this.nukkitRandom);
     }
 

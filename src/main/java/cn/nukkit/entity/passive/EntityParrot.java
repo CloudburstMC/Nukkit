@@ -1,7 +1,7 @@
 package cn.nukkit.entity.passive;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
@@ -11,7 +11,7 @@ public class EntityParrot extends EntityAnimal {
 
     public static final int NETWORK_ID = 30;
 
-    public EntityParrot(FullChunk chunk, CompoundTag nbt) {
+    public EntityParrot(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

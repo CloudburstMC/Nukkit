@@ -1,29 +1,30 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 @ToString
 public class TransferPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.TRANSFER_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.TRANSFER_PACKET;
 
     public String address; // Server address
     public int port = 19132; // Server port
 
     @Override
-    public void decode() {
-        this.address = this.getString();
-        this.port = (short) this.getLShort();
+    protected void decode(ByteBuf buffer) {
+        this.address = Binary.readString(buffer);
+        this.port = buffer.readUnsignedShortLE();
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putString(address);
-        this.putLShort(port);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeString(buffer, address);
+        buffer.writeShortLE(port);
     }
 
     @Override
-    public byte pid() {
+    public short pid() {
         return ProtocolInfo.TRANSFER_PACKET;
     }
 }

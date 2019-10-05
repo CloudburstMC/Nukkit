@@ -1,11 +1,11 @@
 package cn.nukkit.utils;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.entity.mob.EntityCreeper;
 import cn.nukkit.network.protocol.*;
+import cn.nukkit.player.Player;
 
 import java.util.concurrent.ThreadLocalRandom;
 

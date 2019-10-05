@@ -3,7 +3,7 @@ package cn.nukkit.entity.passive;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityAgeable;
 import cn.nukkit.entity.EntityCreature;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
@@ -19,7 +19,7 @@ public class EntityVillagerV1 extends EntityCreature implements EntityNPC, Entit
     public static final int PROFESSION_GENERIC = 5;
     public static final int NETWORK_ID = 15;
 
-    public EntityVillagerV1(FullChunk chunk, CompoundTag nbt) {
+    public EntityVillagerV1(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

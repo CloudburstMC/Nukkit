@@ -1,19 +1,18 @@
 package cn.nukkit.blockentity;
 
-import cn.nukkit.Player;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.inventory.BaseInventory;
 import cn.nukkit.inventory.ChestInventory;
 import cn.nukkit.inventory.DoubleChestInventory;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.player.Player;
 
 import java.util.HashSet;
 
@@ -27,7 +26,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
 
     protected DoubleChestInventory doubleInventory = null;
 
-    public BlockEntityChest(FullChunk chunk, CompoundTag nbt) {
+    public BlockEntityChest(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -109,7 +108,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
     public Item getItem(int index) {
         int i = this.getSlotIndex(index);
         if (i < 0) {
-            return new ItemBlock(new BlockAir(), 0, 0);
+            return Item.get(BlockID.AIR, 0, 0);
         } else {
             CompoundTag data = (CompoundTag) this.namedTag.getList("Items").get(i);
             return NBTIO.getItemHelper(data);
@@ -202,7 +201,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
 
     public BlockEntityChest getPair() {
         if (this.isPaired()) {
-            BlockEntity blockEntity = this.getLevel().getBlockEntityIfLoaded(new Vector3(this.namedTag.getInt("pairx"), this.y, this.namedTag.getInt("pairz")));
+            BlockEntity blockEntity = this.getLevel().getLoadedBlockEntity(new Vector3(this.namedTag.getInt("pairx"), this.y, this.namedTag.getInt("pairz")));
             if (blockEntity instanceof BlockEntityChest) {
                 return (BlockEntityChest) blockEntity;
             }

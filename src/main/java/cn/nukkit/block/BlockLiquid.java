@@ -4,7 +4,6 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockFromToEvent;
 import cn.nukkit.event.block.LiquidFlowEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.SmokeParticle;
@@ -443,6 +442,6 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(new BlockAir());
+        return Item.get(BlockID.AIR, 0, 0);
     }
 }

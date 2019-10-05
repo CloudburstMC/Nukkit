@@ -10,6 +10,7 @@ import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.network.protocol.types.EntityLink;
 import cn.nukkit.utils.Binary;
 import com.google.common.collect.ImmutableMap;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -18,7 +19,7 @@ import lombok.ToString;
  */
 @ToString
 public class AddEntityPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.ADD_ENTITY_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.ADD_ENTITY_PACKET;
 
     public static ImmutableMap<Integer, String> LEGACY_IDS = ImmutableMap.<Integer, String>builder()
             .put(51, "minecraft:npc")
@@ -127,7 +128,7 @@ public class AddEntityPacket extends DataPacket {
             .build();
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
@@ -149,29 +150,28 @@ public class AddEntityPacket extends DataPacket {
     public EntityLink[] links = new EntityLink[0];
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putEntityUniqueId(this.entityUniqueId);
-        this.putEntityRuntimeId(this.entityRuntimeId);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeEntityUniqueId(buffer, this.entityUniqueId);
+        Binary.writeEntityRuntimeId(buffer, this.entityRuntimeId);
         if (id == null) {
             id = LEGACY_IDS.get(type);
         }
-        this.putString(this.id);
-        this.putVector3f(this.x, this.y, this.z);
-        this.putVector3f(this.speedX, this.speedY, this.speedZ);
-        this.putLFloat(this.pitch);
-        this.putLFloat(this.yaw);
-        this.putLFloat(this.headYaw);
-        this.putAttributeList(this.attributes);
-        this.put(Binary.writeMetadata(this.metadata));
-        this.putUnsignedVarInt(this.links.length);
+        Binary.writeString(buffer, this.id);
+        Binary.writeVector3f(buffer, this.x, this.y, this.z);
+        Binary.writeVector3f(buffer, this.speedX, this.speedY, this.speedZ);
+        buffer.writeFloatLE(this.pitch);
+        buffer.writeFloatLE(this.yaw);
+        buffer.writeFloatLE(this.headYaw);
+        Binary.writeAttributes(buffer, this.attributes);
+        Binary.writeMetadata(buffer, this.metadata);
+        Binary.writeUnsignedVarInt(buffer, this.links.length);
         for (EntityLink link : links) {
-            putEntityLink(link);
+            Binary.writeEntityLink(buffer, link);
         }
     }
 }

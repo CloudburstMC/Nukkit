@@ -1,17 +1,16 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityFurnace;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
 
 import java.util.Map;
@@ -130,7 +129,7 @@ public class BlockFurnaceBurning extends BlockSolidMeta implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(new BlockFurnace());
+        return Item.get(BlockID.FURNACE);
     }
 
     @Override

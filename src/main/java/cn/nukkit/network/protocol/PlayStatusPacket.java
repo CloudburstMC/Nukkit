@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -8,10 +9,10 @@ import lombok.ToString;
 @ToString
 public class PlayStatusPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.PLAY_STATUS_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.PLAY_STATUS_PACKET;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
@@ -27,14 +28,13 @@ public class PlayStatusPacket extends DataPacket {
     public int status;
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putInt(this.status);
+    protected void encode(ByteBuf buffer) {
+        buffer.writeInt(this.status);
     }
 
 }

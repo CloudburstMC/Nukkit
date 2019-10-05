@@ -1,6 +1,8 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -9,10 +11,10 @@ import lombok.ToString;
  */
 @ToString
 public class InventorySlotPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.INVENTORY_SLOT_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.INVENTORY_SLOT_PACKET;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
@@ -21,17 +23,16 @@ public class InventorySlotPacket extends DataPacket {
     public Item item;
 
     @Override
-    public void decode() {
-        this.inventoryId = (int) this.getUnsignedVarInt();
-        this.slot = (int) this.getUnsignedVarInt();
-        this.item = this.getSlot();
+    protected void decode(ByteBuf buffer) {
+        this.inventoryId = (int) Binary.readUnsignedVarInt(buffer);
+        this.slot = (int) Binary.readUnsignedVarInt(buffer);
+        this.item = Binary.readItem(buffer);
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putUnsignedVarInt((byte) this.inventoryId);
-        this.putUnsignedVarInt(this.slot);
-        this.putSlot(this.item);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeUnsignedVarInt(buffer, (byte) this.inventoryId);
+        Binary.writeUnsignedVarInt(buffer, this.slot);
+        Binary.writeItem(buffer, this.item);
     }
 }

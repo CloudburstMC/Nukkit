@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 @ToString
@@ -9,19 +11,18 @@ public class ModalFormRequestPacket extends DataPacket {
     public String data;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return ProtocolInfo.MODAL_FORM_REQUEST_PACKET;
     }
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putVarInt(this.formId);
-        this.putString(this.data);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeVarInt(buffer, this.formId);
+        Binary.writeString(buffer, this.data);
     }
 }

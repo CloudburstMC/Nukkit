@@ -1,6 +1,8 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.math.Vector3f;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -9,28 +11,27 @@ import lombok.ToString;
 @ToString
 public class RespawnPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.RESPAWN_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.RESPAWN_PACKET;
 
     public float x;
     public float y;
     public float z;
 
     @Override
-    public void decode() {
-        Vector3f v = this.getVector3f();
+    protected void decode(ByteBuf buffer) {
+        Vector3f v = Binary.readVector3f(buffer);
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putVector3f(this.x, this.y, this.z);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeVector3f(buffer, this.x, this.y, this.z);
     }
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 

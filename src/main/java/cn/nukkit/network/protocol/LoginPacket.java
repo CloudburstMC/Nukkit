@@ -1,102 +1,54 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.entity.data.Skin;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 
 /**
  * Created by on 15-10-13.
  */
-@ToString
+@ToString(exclude = {"skinData", "chainData"})
 public class LoginPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.LOGIN_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.LOGIN_PACKET;
 
-    public String username;
     public int protocol;
-    public UUID clientUUID;
-    public long clientId;
-    public Skin skin;
+
+    public String chainData;
+    public String skinData;
+
+    private static String readString(ByteBuf buffer) {
+        int length = buffer.readIntLE();
+        byte[] bytes = new byte[length];
+        buffer.readBytes(bytes);
+        return new String(bytes, StandardCharsets.US_ASCII); // base 64 encoded.
+    }
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
     @Override
-    public void decode() {
-        this.protocol = this.getInt();
+    protected void decode(ByteBuf buffer) {
+        this.protocol = buffer.readInt();
         if (protocol == 0) {
-            setOffset(getOffset() + 2);
-            this.protocol = getInt();
+            buffer.skipBytes(2);
+            this.protocol = buffer.readInt();
         }
-        this.setBuffer(this.getByteArray(), 0);
-        decodeChainData();
-        decodeSkinData();
-    }
-
-    @Override
-    public void encode() {
-
+        ByteBuf jwt = Binary.readVarIntBuffer(buffer);
+        this.chainData = readString(jwt);
+        this.skinData = readString(jwt);
     }
 
     public int getProtocol() {
         return protocol;
     }
 
-    private void decodeChainData() {
-        Map<String, List<String>> map = new Gson().fromJson(new String(this.get(getLInt()), StandardCharsets.UTF_8),
-                new TypeToken<Map<String, List<String>>>() {
-                }.getType());
-        if (map.isEmpty() || !map.containsKey("chain") || map.get("chain").isEmpty()) return;
-        List<String> chains = map.get("chain");
-        for (String c : chains) {
-            JsonObject chainMap = decodeToken(c);
-            if (chainMap == null) continue;
-            if (chainMap.has("extraData")) {
-                JsonObject extra = chainMap.get("extraData").getAsJsonObject();
-                if (extra.has("displayName")) this.username = extra.get("displayName").getAsString();
-                if (extra.has("identity")) this.clientUUID = UUID.fromString(extra.get("identity").getAsString());
-            }
-        }
-    }
-
-    private void decodeSkinData() {
-        JsonObject skinToken = decodeToken(new String(this.get(this.getLInt())));
-        if (skinToken.has("ClientRandomId")) this.clientId = skinToken.get("ClientRandomId").getAsLong();
-        skin = new Skin();
-        if (skinToken.has("SkinId")) {
-            skin.setSkinId(skinToken.get("SkinId").getAsString());
-        }
-        if (skinToken.has("SkinData")) {
-            skin.setSkinData(Base64.getDecoder().decode(skinToken.get("SkinData").getAsString()));
-        }
-
-        if (skinToken.has("CapeData")) {
-            this.skin.setCapeData(Base64.getDecoder().decode(skinToken.get("CapeData").getAsString()));
-        }
-
-        if (skinToken.has("SkinGeometryName")) {
-            skin.setGeometryName(skinToken.get("SkinGeometryName").getAsString());
-        }
-
-        if (skinToken.has("SkinGeometry")) {
-            skin.setGeometryData(new String(Base64.getDecoder().decode(skinToken.get("SkinGeometry").getAsString()), StandardCharsets.UTF_8));
-        }
-    }
-
-    private JsonObject decodeToken(String token) {
-        String[] base = token.split("\\.");
-        if (base.length < 2) return null;
-        return new Gson().fromJson(new String(Base64.getDecoder().decode(base[1]), StandardCharsets.UTF_8), JsonObject.class);
+    @Override
+    protected void encode(ByteBuf buffer) {
     }
 }

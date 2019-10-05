@@ -1,6 +1,6 @@
 package cn.nukkit.event.level;
 
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 
 /**
  * author: MagicDroidX
@@ -8,14 +8,14 @@ import cn.nukkit.level.format.FullChunk;
  */
 public abstract class ChunkEvent extends LevelEvent {
 
-    private final FullChunk chunk;
+    private final Chunk chunk;
 
-    public ChunkEvent(FullChunk chunk) {
-        super(chunk.getProvider().getLevel());
+    public ChunkEvent(Chunk chunk) {
+        super(chunk.getLevel());
         this.chunk = chunk;
     }
 
-    public FullChunk getChunk() {
+    public Chunk getChunk() {
         return chunk;
     }
 }

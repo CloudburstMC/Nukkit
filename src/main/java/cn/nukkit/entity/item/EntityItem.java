@@ -1,6 +1,5 @@
 package cn.nukkit.entity.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -8,12 +7,13 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.ItemDespawnEvent;
 import cn.nukkit.event.entity.ItemSpawnEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddItemEntityPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
+import cn.nukkit.player.Player;
 
 /**
  * @author MagicDroidX
@@ -23,7 +23,7 @@ public class EntityItem extends Entity {
 
     public static final int DATA_SOURCE_ID = 17;
 
-    public EntityItem(FullChunk chunk, CompoundTag nbt) {
+    public EntityItem(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -202,7 +202,7 @@ public class EntityItem extends Entity {
             double friction = 1 - this.getDrag();
 
             if (this.onGround && (Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionZ) > 0.00001)) {
-                friction *= this.getLevel().getBlock(this.temporalVector.setComponents((int) Math.floor(this.x), (int) Math.floor(this.y - 1), (int) Math.floor(this.z) - 1)).getFrictionFactor();
+                friction *= this.getLevel().getBlock(temporalVector.get().setComponents((int) Math.floor(this.x), (int) Math.floor(this.y - 1), (int) Math.floor(this.z) - 1)).getFrictionFactor();
             }
 
             this.motionX *= friction;

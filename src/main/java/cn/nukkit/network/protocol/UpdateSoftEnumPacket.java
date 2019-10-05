@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 @ToString
@@ -10,24 +12,23 @@ public class UpdateSoftEnumPacket extends DataPacket {
     public Type type = Type.SET;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return ProtocolInfo.UPDATE_SOFT_ENUM_PACKET;
     }
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putString(name);
-        this.putUnsignedVarInt(values.length);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeString(buffer, name);
+        Binary.writeUnsignedVarInt(buffer, values.length);
 
         for (String value : values) {
-            this.putString(value);
+            Binary.writeString(buffer, value);
         }
-        this.putByte((byte) type.ordinal());
+        buffer.writeByte(type.ordinal());
     }
 
     public enum Type {

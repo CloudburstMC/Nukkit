@@ -9,7 +9,7 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemFirework;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.EntityEventPacket;
@@ -28,7 +28,7 @@ public class EntityFirework extends Entity {
     private int lifetime;
     private Item firework;
 
-    public EntityFirework(FullChunk chunk, CompoundTag nbt) {
+    public EntityFirework(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
 
         this.fireworkAge = 0;
@@ -105,7 +105,7 @@ public class EntityFirework extends Entity {
 
                 level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_LARGE_BLAST, -1, NETWORK_ID);
 
-                Server.broadcastPacket(getViewers().values(), pk);
+                Server.broadcastPacket(getViewers(), pk);
 
                 this.kill();
                 hasUpdate = true;

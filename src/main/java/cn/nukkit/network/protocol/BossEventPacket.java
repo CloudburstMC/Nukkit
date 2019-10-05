@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -8,7 +10,7 @@ import lombok.ToString;
 @ToString
 public class BossEventPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.BOSS_EVENT_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.BOSS_EVENT_PACKET;
 
     /* S2C: Shows the bossbar to the player. */
     public static final int TYPE_SHOW = 0;
@@ -38,61 +40,60 @@ public class BossEventPacket extends DataPacket {
     public int overlay;
     
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
     @Override
-    public void decode() {
-        this.bossEid = this.getEntityUniqueId();
-        this.type = (int) this.getUnsignedVarInt();
+    protected void decode(ByteBuf buffer) {
+        this.bossEid = Binary.readEntityUniqueId(buffer);
+        this.type = (int) Binary.readUnsignedVarInt(buffer);
         switch (this.type) {
             case TYPE_REGISTER_PLAYER:
             case TYPE_UNREGISTER_PLAYER:
-                this.playerEid = this.getEntityUniqueId();
+                this.playerEid = Binary.readEntityUniqueId(buffer);
                 break;
             case TYPE_SHOW:
-                this.title = this.getString();
-                this.healthPercent = this.getLFloat();
+                this.title = Binary.readString(buffer);
+                this.healthPercent = buffer.readFloatLE();
             case TYPE_UNKNOWN_6:
-                this.unknown = (short) this.getShort();
+                this.unknown = buffer.readShortLE();
             case TYPE_TEXTURE:
-                this.color = (int) this.getUnsignedVarInt();
-                this.overlay = (int) this.getUnsignedVarInt();
+                this.color = (int) Binary.readUnsignedVarInt(buffer);
+                this.overlay = (int) Binary.readUnsignedVarInt(buffer);
                 break;
             case TYPE_HEALTH_PERCENT:
-                this.healthPercent = this.getLFloat();
+                this.healthPercent = buffer.readFloatLE();
                 break;
             case TYPE_TITLE:
-                this.title = this.getString();
+                this.title = Binary.readString(buffer);
                 break;
         }
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putEntityUniqueId(this.bossEid);
-        this.putUnsignedVarInt(this.type);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeEntityUniqueId(buffer, this.bossEid);
+        Binary.writeUnsignedVarInt(buffer, this.type);
         switch (this.type) {
             case TYPE_REGISTER_PLAYER:
             case TYPE_UNREGISTER_PLAYER:
-                this.putEntityUniqueId(this.playerEid);
+                Binary.writeEntityUniqueId(buffer, this.playerEid);
                 break;
             case TYPE_SHOW:
-                this.putString(this.title);
-                this.putLFloat(this.healthPercent);
+                Binary.writeString(buffer, this.title);
+                buffer.writeFloatLE(this.healthPercent);
             case TYPE_UNKNOWN_6:
-                this.putShort(this.unknown);
+                buffer.writeShortLE(this.unknown);
             case TYPE_TEXTURE:
-                this.putUnsignedVarInt(this.color);
-                this.putUnsignedVarInt(this.overlay);
+                Binary.writeUnsignedVarInt(buffer, this.color);
+                Binary.writeUnsignedVarInt(buffer, this.overlay);
                 break;
             case TYPE_HEALTH_PERCENT:
-                this.putLFloat(this.healthPercent);
+                buffer.writeFloatLE(this.healthPercent);
                 break;
             case TYPE_TITLE:
-                this.putString(this.title);
+                Binary.writeString(buffer, this.title);
                 break;
         }
     }

@@ -1,6 +1,7 @@
 package cn.nukkit.level.generator.populator.impl;
 
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.ChunkManager;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.populator.helper.EnsureCover;
 import cn.nukkit.level.generator.populator.helper.EnsureGrassBelow;
 import cn.nukkit.level.generator.populator.type.PopulatorSurfaceBlock;
@@ -31,23 +32,23 @@ public class PopulatorFlower extends PopulatorSurfaceBlock {
     }
 
     @Override
-    protected void placeBlock(int x, int y, int z, int id, FullChunk chunk, NukkitRandom random) {
+    protected void placeBlock(int x, int y, int z, int id, Chunk chunk, NukkitRandom random) {
         if (flowerTypes.size() != 0) {
             int[] type = flowerTypes.get(ThreadLocalRandom.current().nextInt(flowerTypes.size()));
-            chunk.setFullBlockId(x, y, z, (type[0] << 4) | type[1]);
+            chunk.setFullBlock(x, y, z, (type[0] << 4) | type[1]);
             if (type[0] == DOUBLE_PLANT) {
-                chunk.setFullBlockId(x, y + 1, z, (type[0] << 4) | (8 | type[1]));
+                chunk.setFullBlock(x, y + 1, z, (type[0] << 4) | (8 | type[1]));
             }
         }
     }
 
     @Override
-    protected boolean canStay(int x, int y, int z, FullChunk chunk) {
+    protected boolean canStay(int x, int y, int z, Chunk chunk, ChunkManager level) {
         return EnsureCover.ensureCover(x, y, z, chunk) && EnsureGrassBelow.ensureGrassBelow(x, y, z, chunk);
     }
 
     @Override
-    protected int getBlockId(int x, int z, NukkitRandom random, FullChunk chunk) {
+    protected int getBlockId(int x, int z, NukkitRandom random, Chunk chunk) {
         return 0;
     }
 }

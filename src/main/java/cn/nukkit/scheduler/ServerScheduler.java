@@ -3,7 +3,6 @@ package cn.nukkit.scheduler;
 import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.PluginException;
-import cn.nukkit.utils.Utils;
 
 import java.util.ArrayDeque;
 import java.util.Map;
@@ -17,8 +16,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ServerScheduler {
 
-    public static int WORKERS = 4;
-
     private final AsyncPool asyncPool;
 
     private final Queue<TaskHandler> pending;
@@ -28,12 +25,12 @@ public class ServerScheduler {
 
     private volatile int currentTick = -1;
 
-    public ServerScheduler() {
+    public ServerScheduler(int workers) {
         this.pending = new ConcurrentLinkedQueue<>();
         this.currentTaskId = new AtomicInteger();
         this.queueMap = new ConcurrentHashMap<>();
         this.taskMap = new ConcurrentHashMap<>();
-        this.asyncPool = new AsyncPool(Server.getInstance(), WORKERS);
+        this.asyncPool = AsyncPool.makePool(workers);
     }
 
     public TaskHandler scheduleTask(Task task) {
@@ -82,11 +79,11 @@ public class ServerScheduler {
     }
 
     public int getAsyncTaskPoolSize() {
-        return asyncPool.getCorePoolSize();
+        return asyncPool.getPoolSize();
     }
 
-    public void increaseAsyncTaskPoolSize(int newSize) {
-        throw new UnsupportedOperationException("Cannot increase a working pool size."); //wtf?
+    public AsyncPool getAsyncPool() {
+        return asyncPool;
     }
 
     public TaskHandler scheduleDelayedTask(Task task, int delay) {
@@ -262,8 +259,7 @@ public class ServerScheduler {
         TaskHandler task;
         while ((task = pending.poll()) != null) {
             int tick = Math.max(currentTick, task.getNextRunTick()); // Do not schedule in the past
-            ArrayDeque<TaskHandler> queue = Utils.getOrCreate(queueMap, ArrayDeque.class, tick);
-            queue.add(task);
+            this.queueMap.computeIfAbsent(tick, integer -> new ArrayDeque<>()).add(task);
         }
         if (currentTick - this.currentTick > queueMap.size()) { // A large number of ticks have passed since the last execution
             for (Map.Entry<Integer, ArrayDeque<TaskHandler>> entry : queueMap.entrySet()) {

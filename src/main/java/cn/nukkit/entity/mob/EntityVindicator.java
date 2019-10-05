@@ -1,7 +1,7 @@
 package cn.nukkit.entity.mob;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
@@ -11,7 +11,7 @@ public class EntityVindicator extends EntityMob {
 
     public static final int NETWORK_ID = 57;
 
-    public EntityVindicator(FullChunk chunk, CompoundTag nbt) {
+    public EntityVindicator(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

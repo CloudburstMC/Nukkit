@@ -1,16 +1,15 @@
 package cn.nukkit.entity.projectile;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.ProjectileHitEvent;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.Position;
-import cn.nukkit.item.Item;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
@@ -18,6 +17,7 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.player.Player;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -66,15 +66,15 @@ public class EntityThrownTrident extends EntityProjectile {
     protected float gravity = 0.04f;
     protected float drag = 0.01f;
 
-    public EntityThrownTrident(FullChunk chunk, CompoundTag nbt) {
+    public EntityThrownTrident(Chunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }
 
-    public EntityThrownTrident(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+    public EntityThrownTrident(Chunk chunk, CompoundTag nbt, Entity shootingEntity) {
         this(chunk, nbt, shootingEntity, false);
     }
 
-    public EntityThrownTrident(FullChunk chunk, CompoundTag nbt, Entity shootingEntity, boolean critical) {
+    public EntityThrownTrident(Chunk chunk, CompoundTag nbt, Entity shootingEntity, boolean critical) {
         super(chunk, nbt, shootingEntity);
     }
 
@@ -200,7 +200,7 @@ public class EntityThrownTrident extends EntityProjectile {
     }
 
     public Entity create(Object type, Position source, Object... args) {
-        FullChunk chunk = source.getLevel().getChunk((int) source.x >> 4, (int) source.z >> 4);
+        Chunk chunk = source.getLevel().getChunk((int) source.x >> 4, (int) source.z >> 4);
         if (chunk == null) return null;
 
         CompoundTag nbt = new CompoundTag()

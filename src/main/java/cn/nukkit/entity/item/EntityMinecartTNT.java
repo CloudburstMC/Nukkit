@@ -1,6 +1,5 @@
 package cn.nukkit.entity.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.block.BlockTNT;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityExplosive;
@@ -9,11 +8,12 @@ import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemMinecartTNT;
 import cn.nukkit.level.Explosion;
-import cn.nukkit.level.GameRule;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.MinecartType;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -29,7 +29,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
     private int fuse;
     private boolean activated = false;
 
-    public EntityMinecartTNT(FullChunk chunk, CompoundTag nbt) {
+    public EntityMinecartTNT(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
         super.setDisplayBlock(new BlockTNT(), false);
     }
@@ -67,7 +67,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
             fuse -= tickDiff;
 
             if (isAlive() && fuse <= 0) {
-                if (this.level.getGameRules().getBoolean(GameRule.TNT_EXPLODES)) {
+                if (this.level.getGameRules().get(GameRules.TNT_EXPLODES)) {
                     this.explode(ThreadLocalRandom.current().nextInt(5));
                 }
                 this.close();
@@ -132,7 +132,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
 
         super.namedTag.putInt("TNTFuse", this.fuse);
     }
-    
+
     @Override
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
         boolean interact = super.onInteract(player, item, clickedPos);

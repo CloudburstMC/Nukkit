@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 /**
@@ -8,7 +10,7 @@ import lombok.ToString;
 @ToString
 public class SetSpawnPositionPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.SET_SPAWN_POSITION_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.SET_SPAWN_POSITION_PACKET;
 
     public static final int TYPE_PLAYER_SPAWN = 0;
     public static final int TYPE_WORLD_SPAWN = 1;
@@ -20,20 +22,19 @@ public class SetSpawnPositionPacket extends DataPacket {
     public boolean spawnForced = false;
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
 
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putVarInt(this.spawnType);
-        this.putBlockVector3(this.x, this.y, this.z);
-        this.putBoolean(this.spawnForced);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeVarInt(buffer, this.spawnType);
+        Binary.writeBlockVector3(buffer, this.x, this.y, this.z);
+        buffer.writeBoolean(this.spawnForced);
     }
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 

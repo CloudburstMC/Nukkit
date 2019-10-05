@@ -2,7 +2,7 @@ package cn.nukkit.entity.passive;
 
 import cn.nukkit.entity.EntitySmite;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
@@ -12,7 +12,7 @@ public class EntitySkeletonHorse extends EntityAnimal implements EntitySmite {
 
     public static final int NETWORK_ID = 26;
 
-    public EntitySkeletonHorse(FullChunk chunk, CompoundTag nbt) {
+    public EntitySkeletonHorse(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

@@ -1,6 +1,5 @@
 package cn.nukkit.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockWater;
 import cn.nukkit.entity.item.EntityBoat;
@@ -10,6 +9,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.player.Player;
 
 /**
  * Created by yescallop on 2016/2/13.

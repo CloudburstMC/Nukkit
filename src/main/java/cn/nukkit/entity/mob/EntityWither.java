@@ -1,7 +1,7 @@
 package cn.nukkit.entity.mob;
 
 import cn.nukkit.entity.EntitySmite;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
@@ -16,7 +16,7 @@ public class EntityWither extends EntityMob implements EntitySmite {
         return NETWORK_ID;
     }
 
-    public EntityWither(FullChunk chunk, CompoundTag nbt) {
+    public EntityWither(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 

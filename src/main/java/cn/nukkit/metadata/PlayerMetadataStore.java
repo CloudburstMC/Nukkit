@@ -1,6 +1,6 @@
 package cn.nukkit.metadata;
 
-import cn.nukkit.IPlayer;
+import cn.nukkit.player.IPlayer;
 
 /**
  * author: MagicDroidX

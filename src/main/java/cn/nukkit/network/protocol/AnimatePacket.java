@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.ToString;
@@ -10,7 +12,7 @@ import lombok.ToString;
 @ToString
 public class AnimatePacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.ANIMATE_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.ANIMATE_PACKET;
 
 
     public long eid;
@@ -18,26 +20,25 @@ public class AnimatePacket extends DataPacket {
     public float rowingTime;
 
     @Override
-    public void decode() {
-        this.action = Action.fromId(this.getVarInt());
-        this.eid = getEntityRuntimeId();
+    protected void decode(ByteBuf buffer) {
+        this.action = Action.fromId(Binary.readVarInt(buffer));
+        this.eid = Binary.readEntityRuntimeId(buffer);
         if (this.action == Action.ROW_RIGHT || this.action == Action.ROW_LEFT) {
-            this.rowingTime = this.getLFloat();
+            this.rowingTime = buffer.readFloatLE();
         }
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putVarInt(this.action.getId());
-        this.putEntityRuntimeId(this.eid);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeVarInt(buffer, this.action.getId());
+        Binary.writeEntityRuntimeId(buffer, this.eid);
         if (this.action == Action.ROW_RIGHT || this.action == Action.ROW_LEFT) {
-            this.putLFloat(this.rowingTime);
+            buffer.writeFloatLE(this.rowingTime);
         }
     }
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 

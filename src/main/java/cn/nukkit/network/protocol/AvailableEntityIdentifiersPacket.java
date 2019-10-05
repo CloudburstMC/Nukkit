@@ -2,13 +2,14 @@ package cn.nukkit.network.protocol;
 
 import cn.nukkit.Nukkit;
 import com.google.common.io.ByteStreams;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 import java.io.InputStream;
 
 @ToString(exclude = {"tag"})
 public class AvailableEntityIdentifiersPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.AVAILABLE_ENTITY_IDENTIFIERS_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.AVAILABLE_ENTITY_IDENTIFIERS_PACKET;
 
     private static final byte[] TAG;
 
@@ -28,18 +29,18 @@ public class AvailableEntityIdentifiersPacket extends DataPacket {
     public byte[] tag = TAG;
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
     @Override
-    public void decode() {
-        this.tag = this.get();
+    protected void decode(ByteBuf buffer) {
+        this.tag = new byte[buffer.readableBytes()];
+        buffer.readBytes(tag);
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.put(this.tag);
+    protected void encode(ByteBuf buffer) {
+        buffer.writeBytes(this.tag);
     }
 }
