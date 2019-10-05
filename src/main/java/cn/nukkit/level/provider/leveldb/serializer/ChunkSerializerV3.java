@@ -25,6 +25,7 @@ public class ChunkSerializerV3 extends ChunkSerializerV1 {
 
     @Override
     public void serialize(DB db, Chunk chunk) {
+        // Write chunk sections
         for (int ySection = 0; ySection < Chunk.SECTION_COUNT; ySection++) {
             ChunkSection section = chunk.getSection(ySection);
             if (section == null) {
@@ -44,6 +45,19 @@ public class ChunkSerializerV3 extends ChunkSerializerV1 {
                 buffer.release();
             }
         }
+
+        // Write height map and biomes.
+        byte[] data2d = new byte[768];
+        ByteBuf buffer = Unpooled.wrappedBuffer(data2d);
+
+        int[] heightMap = chunk.getHeightMapArray();
+        byte[] biomes = chunk.getBiomeArray();
+        for (int height : heightMap) {
+            buffer.writeShortLE(height);
+        }
+        buffer.writeBytes(biomes);
+
+        db.put(LevelDBKey.DATA_2D.getKey(chunk.getX(), chunk.getZ()), data2d);
     }
 
     @Override
