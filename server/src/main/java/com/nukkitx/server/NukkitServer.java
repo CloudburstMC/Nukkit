@@ -56,6 +56,7 @@ import com.nukkitx.server.scheduler.ServerScheduler;
 import com.nukkitx.server.util.ServerKiller;
 import com.nukkitx.service.SimpleServiceManager;
 import com.spotify.futures.CompletableFutures;
+import io.netty.channel.EventLoopGroup;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
@@ -355,7 +356,7 @@ public class NukkitServer implements Server {
         int maxThreads = configNetThreads < 1 ? Runtime.getRuntime().availableProcessors() : configNetThreads;
 
         InetSocketAddress bindAddress = new InetSocketAddress(configuration.getNetwork().getAddress(), configuration.getNetwork().getPort());
-        this.bedrockServer = new BedrockServer(bindAddress, maxThreads, sessionManager.getSessionTicker());
+        this.bedrockServer = new BedrockServer(bindAddress, maxThreads, (EventLoopGroup) sessionManager.getSessionTicker());
         bedrockServer.setHandler(new NukkitBedrockEventHandler(this));
         bedrockServer.bind().join();
 
