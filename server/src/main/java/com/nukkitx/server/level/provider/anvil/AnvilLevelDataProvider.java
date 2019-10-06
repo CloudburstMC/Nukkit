@@ -25,7 +25,7 @@ public class AnvilLevelDataProvider extends NukkitLevelData implements LevelData
             tag = (CompoundTag) reader.readTag();
         }
 
-        CompoundTag dataTag = tag.getAs("Data", CompoundTag.class);
+        CompoundTag dataTag = tag.getAsCompound("Data");
         if (dataTag == null) {
             return new AnvilLevelDataProvider(levelDatPath);
         }

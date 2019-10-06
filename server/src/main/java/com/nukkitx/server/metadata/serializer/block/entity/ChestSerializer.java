@@ -14,6 +14,8 @@ import com.nukkitx.server.container.NukkitFillingContainer;
 import com.nukkitx.server.item.ItemUtils;
 import com.nukkitx.server.metadata.serializer.Serializer;
 
+import java.util.List;
+
 /**
  * @author CreeperFace
  */
@@ -44,7 +46,7 @@ public class ChestSerializer implements Serializer {
     public BlockEntity writeNBT(ItemType block, CompoundTag nbtTag) {
         NukkitContainer container = new NukkitFillingContainer(null, 27, ContainerType.CHEST);
 
-        ListTag<CompoundTag> listTag = nbtTag.getAs("Items", ListTag.class);
+        ListTag<CompoundTag> listTag = nbtTag.getAsList("Items", CompoundTag.class); // need help?
 
         ItemStack[] items = ItemUtils.createItemStacks(listTag, container.getSize());
         for (int i = 0, len = container.getSize(); i < len; i++) {
@@ -53,8 +55,8 @@ public class ChestSerializer implements Serializer {
 
         NukkitChestBlockEntity blockEntity = new NukkitChestBlockEntity(container);
 
-        nbtTag.listen("Lock", String.class, blockEntity::setLock);
-        nbtTag.listen("CustomName", String.class, blockEntity::setCustomName);
+        nbtTag.listenForString("Lock", blockEntity::setLock);
+        nbtTag.listenForString("CustomName", blockEntity::setCustomName);
 
         return blockEntity;
     }

@@ -9,8 +9,6 @@ import com.nukkitx.api.util.GameMode;
 import com.nukkitx.nbt.NbtUtils;
 import com.nukkitx.nbt.stream.NBTInputStream;
 import com.nukkitx.nbt.tag.CompoundTag;
-import com.nukkitx.nbt.tag.IntTag;
-import com.nukkitx.nbt.tag.LongTag;
 import com.nukkitx.server.level.NukkitLevelData;
 import com.nukkitx.server.level.provider.LevelDataProvider;
 
@@ -53,23 +51,23 @@ public class LevelDBLevelDataProvider extends NukkitLevelData implements LevelDa
             return new LevelDBLevelDataProvider(levelDatPath);
         }
 
-        long seed = tag.getAs("RandomSeed", LongTag.class).getPrimitiveValue();
-        long savedTime = tag.getAs("Time", LongTag.class).getPrimitiveValue();
-        long savedTick = tag.getAs("currentTick", LongTag.class).getPrimitiveValue();
-        int generatorInt = tag.getAs("ChunkGenerator", IntTag.class).getPrimitiveValue();
+        long seed = tag.getAsLong("RandomSeed");
+        long savedTime = tag.getAsLong("Time");
+        long savedTick = tag.getAsLong("currentTick");
+        int generatorInt = tag.getAsInt("ChunkGenerator");
         Generator generator = (generatorInt > 5 || generatorInt < 0 ? Generator.OVERWORLD : Generator.values()[generatorInt]);
 
         final LevelDBLevelDataProvider levelData = new LevelDBLevelDataProvider(levelDatPath, seed, savedTime, savedTick, generator);
 
         // Level Data
-        tag.listen("LevelName", String.class, levelData::setName);
+        tag.listenForString("LevelName", levelData::setName);
 
         // Level Settings
-        tag.listen("Difficulty", Integer.class, integer -> levelData.setDifficulty(Difficulty.parse(integer)));
-        tag.listen("GameMode", Integer.class, integer -> levelData.setGameMode(GameMode.parse(integer)));
-        tag.listen("SpawnX", Integer.class, x -> {
-            tag.listen("SpawnY", Integer.class, y -> {
-                tag.listen("SpawnZ", Integer.class, z -> {
+        tag.listenForInt("Difficulty", integer -> levelData.setDifficulty(Difficulty.parse(integer)));
+        tag.listenForInt("GameMode", integer -> levelData.setGameMode(GameMode.parse(integer)));
+        tag.listenForInt("SpawnX", x -> {
+            tag.listenForInt("SpawnY", y -> {
+                tag.listenForInt("SpawnZ", z -> {
                     levelData.setDefaultSpawn(Vector3i.from(x, y, z).toFloat());
                 });
             });
@@ -80,13 +78,13 @@ public class LevelDBLevelDataProvider extends NukkitLevelData implements LevelDa
             String key = gameRule.getName().toLowerCase();
             switch (gameRule.getType()) {
                 case BOOLEAN:
-                    tag.listen(key, Byte.class, value -> levelData.getGameRules().setGameRule(gameRule, value != 0));
+                    tag.listenForByte(key, value -> levelData.getGameRules().setGameRule(gameRule, value != 0));
                     break;
                 case INTEGER:
-                    tag.listen(key, Integer.class, value -> levelData.getGameRules().setGameRule(gameRule, value));
+                    tag.listenForInt(key, value -> levelData.getGameRules().setGameRule(gameRule, value));
                     break;
                 case FLOAT:
-                    tag.listen(key, Float.class, value -> levelData.getGameRules().setGameRule(gameRule, value));
+                    tag.listenForFloat(key, value -> levelData.getGameRules().setGameRule(gameRule, value));
             }
         }
 

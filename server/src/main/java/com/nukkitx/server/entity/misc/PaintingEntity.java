@@ -19,8 +19,8 @@ public class PaintingEntity extends BaseEntity implements Painting {
         AddPaintingPacket packet = new AddPaintingPacket();
         packet.setUniqueEntityId(getEntityId());
         packet.setRuntimeEntityId(getEntityId());
-        packet.setBlockPosition(getPosition().toInt());
-        packet.setTitle(Type.ALBAN.getName());
+        packet.setPosition(getPosition());
+        packet.setName(Type.ALBAN.getName());
         return packet;
     }
 }
