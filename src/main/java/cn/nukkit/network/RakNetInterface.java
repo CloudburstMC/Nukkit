@@ -17,6 +17,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -204,7 +205,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
             NukkitSessionListener listener = new NukkitSessionListener(player);
             session.setListener(listener);
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            Server.getInstance().getLogger().logException(e);
+            log.throwing(Level.ERROR, e);
         }
     }
 

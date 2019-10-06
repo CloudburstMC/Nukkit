@@ -4,6 +4,7 @@ import cn.nukkit.Server;
 import cn.nukkit.command.RemoteConsoleCommandSender;
 import cn.nukkit.event.server.RemoteServerCommandEvent;
 import cn.nukkit.utils.TextFormat;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 
@@ -15,6 +16,7 @@ import java.io.IOException;
  *
  * @author Tee7even
  */
+@Log4j2
 public class RCON {
     private final Server server;
     private final RCONServer serverThread;
@@ -33,7 +35,7 @@ public class RCON {
             throw new IllegalArgumentException("nukkit.server.rcon.startupError", e);
         }
 
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.server.rcon.running", new String[]{address, String.valueOf(port)}));
+        log.info(this.server.getLanguage().translateString("nukkit.server.rcon.running", new String[]{address, String.valueOf(port)}));
     }
 
     public void check() {

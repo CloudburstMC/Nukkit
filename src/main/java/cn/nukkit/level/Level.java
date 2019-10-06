@@ -269,7 +269,7 @@ public class Level implements ChunkManager, Metadatable {
 //            }
 //        }
 
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.level.preparing",
+        log.info(this.server.getLanguage().translateString("nukkit.level.preparing",
                 TextFormat.GREEN + getId() + TextFormat.WHITE));
 
         this.generatorClass = Generator.getGenerator(this.levelData.getGenerator());
@@ -516,7 +516,7 @@ public class Level implements ChunkManager, Metadatable {
             return false;
         }
 
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.level.unloading",
+        log.info(this.server.getLanguage().translateString("nukkit.level.unloading",
                 TextFormat.GREEN + this.getName() + TextFormat.WHITE));
         Level defaultLevel = this.server.getDefaultLevel();
 

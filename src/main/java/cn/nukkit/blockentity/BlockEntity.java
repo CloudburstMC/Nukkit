@@ -7,17 +7,18 @@ import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.ChunkException;
-import cn.nukkit.utils.MainLogger;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import lombok.extern.log4j.Log4j2;
 
 import java.lang.reflect.Constructor;
 
 /**
  * @author MagicDroidX
  */
+@Log4j2
 public abstract class BlockEntity extends Position {
     //WARNING: DO NOT CHANGE ANY NAME HERE, OR THE CLIENT WILL CRASH
     public static final String CHEST = "Chest";
@@ -121,7 +122,7 @@ public abstract class BlockEntity extends Position {
 
                     }
                 } catch (Exception e) {
-                    MainLogger.getLogger().logException(e);
+                    log.error("Error whilst constructing block entity", e);
                 }
 
             }

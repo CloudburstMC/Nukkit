@@ -348,7 +348,7 @@ public class Server {
             }
             String[] lines = Utils.readFile(languageList).split("\n");
             for (String line : lines) {
-                this.getLogger().info(line);
+                log.info(line);
             }
 
             String fallback = BaseLang.FALLBACK_LANGUAGE;
@@ -623,7 +623,7 @@ public class Server {
         this.saveProperties();
 
         if (this.getDefaultLevel() == null) {
-            this.getLogger().emergency(this.getLanguage().translateString("nukkit.level.defaultError"));
+            log.fatal(this.getLanguage().translateString("nukkit.level.defaultError"));
             this.forceShutdown();
 
             return;
@@ -716,8 +716,8 @@ public class Server {
     public boolean dispatchCommand(CommandSender sender, String commandLine) throws ServerException {
         // First we need to check if this command is on the main thread or not, if not, warn the user
         if (!this.isPrimaryThread()) {
-            getLogger().warning("Command Dispatched Async: " + commandLine);
-            getLogger().warning("Please notify author of plugin causing this execution to fix this bug!", new Throwable());
+            log.warn("Command Dispatched Async: " + commandLine);
+            log.warn("Please notify author of plugin causing this execution to fix this bug!", new Throwable());
             // TODO: We should sync the command to the main thread too!
         }
         if (sender == null) {
@@ -760,23 +760,23 @@ public class Server {
                 player.close(player.getLeaveMessage(), this.getConfig("settings.shutdown-message", "Server closed"));
             }
 
-            this.getLogger().debug("Disabling all plugins");
+            log.debug("Disabling all plugins");
             this.pluginManager.disablePlugins();
 
-            this.getLogger().debug("Removing event handlers");
+            log.debug("Removing event handlers");
             HandlerList.unregisterAll();
 
-            this.getLogger().debug("Stopping all tasks");
+            log.debug("Stopping all tasks");
             this.scheduler.cancelAllTasks();
             this.scheduler.mainThreadHeartbeat(Integer.MAX_VALUE);
 
-            this.getLogger().debug("Unloading all levels");
+            log.debug("Unloading all levels");
             this.levelManager.close();
 
-            this.getLogger().debug("Closing console");
+            log.debug("Closing console");
             this.consoleThread.interrupt();
 
-            this.getLogger().debug("Stopping network interfaces");
+            log.debug("Stopping network interfaces");
             for (SourceInterface interfaz : this.network.getInterfaces()) {
                 interfaz.shutdown();
                 this.network.unregisterInterface(interfaz);
@@ -786,7 +786,7 @@ public class Server {
                 nameLookup.close();
             }
 
-            this.getLogger().debug("Disabling timings");
+            log.debug("Disabling timings");
             Timings.stopServer();
             if (this.watchdog != null) {
                 this.watchdog.kill();
@@ -863,7 +863,7 @@ public class Server {
                         }
                     }
                 } catch (RuntimeException e) {
-                    this.getLogger().logException(e);
+                    log.error("Error whilst ticking server", e);
                 }
             }
         } catch (Throwable e) {
@@ -1000,7 +1000,7 @@ public class Server {
             try {
                 Thread.sleep(Math.max(5, -time - 25));
             } catch (InterruptedException e) {
-                Server.getInstance().getLogger().logException(e);
+                log.error("Server interrupted whilst sleeping", e);
             }
         }
 
@@ -1330,10 +1330,6 @@ public class Server {
 
     public boolean getForceResources() {
         return this.getPropertyBoolean("force-resources", false);
-    }
-
-    public MainLogger getLogger() {
-        return MainLogger.getLogger();
     }
 
     public EntityMetadataStore getEntityMetadata() {

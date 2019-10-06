@@ -8,7 +8,7 @@ import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.player.Player;
-import cn.nukkit.utils.MainLogger;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 /**
  * @author CreeperFace
  */
+@Log4j2
 public class InventoryTransaction {
 
     private long creationTime;
@@ -207,7 +208,7 @@ public class InventoryTransaction {
             } while (sortedThisLoop > 0);
 
             if (list.size() > 0) { //couldn't chain all the actions together
-                MainLogger.getLogger().debug("Failed to compact " + originalList.size() + " actions for " + this.source.getName());
+                log.debug("Failed to compact " + originalList.size() + " actions for " + this.source.getName());
                 return false;
             }
 
@@ -217,7 +218,7 @@ public class InventoryTransaction {
 
             this.addAction(new SlotChangeAction(originalAction.getInventory(), originalAction.getSlot(), originalAction.getSourceItem(), lastTargetItem));
 
-            MainLogger.getLogger().debug("Successfully compacted " + originalList.size() + " actions for " + this.source.getName());
+            log.debug("Successfully compacted " + originalList.size() + " actions for " + this.source.getName());
         }
 
         return true;

@@ -4,7 +4,6 @@ import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.transaction.InventoryTransaction;
 import cn.nukkit.item.Item;
 import cn.nukkit.player.Player;
-import cn.nukkit.utils.MainLogger;
 import lombok.ToString;
 
 import java.util.HashSet;
@@ -52,11 +51,7 @@ public class SlotChangeAction extends InventoryAction {
     public boolean isValid(Player source) {
         Item check = inventory.getItem(this.inventorySlot);
 
-        boolean result = check.equalsExact(this.sourceItem);
-        if (!result) {
-            MainLogger.getLogger().debug("INVALID | Client: " + sourceItem + ", Server: " + check);
-        }
-        return result;
+        return check.equalsExact(this.sourceItem);
     }
 
     /**

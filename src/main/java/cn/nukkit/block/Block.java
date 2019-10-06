@@ -1,6 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -18,6 +17,7 @@ import cn.nukkit.player.Player;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
+import lombok.extern.log4j.Log4j2;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
@@ -28,6 +28,7 @@ import java.util.Optional;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public abstract class Block extends Position implements Metadatable, Cloneable, AxisAlignedBB, BlockID {
     public static Class[] list = null;
     public static Block[] fullList = null;
@@ -319,7 +320,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                             }
                         }
                     } catch (Exception e) {
-                        Server.getInstance().getLogger().error("Error while registering " + c.getName(), e);
+                        log.error("Error while registering " + c.getName(), e);
                         for (int data = 0; data < 16; ++data) {
                             fullList[(id << 4) | data] = new BlockUnknown(id, data);
                         }

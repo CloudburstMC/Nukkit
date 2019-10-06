@@ -5,6 +5,8 @@ import cn.nukkit.scheduler.FileWriteTask;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -19,6 +21,7 @@ import java.util.regex.Pattern;
  * author: MagicDroidX
  * Nukkit
  */
+@Log4j2
 public class Config {
 
     public static final int DETECT = -1; //Detect by file extension
@@ -134,7 +137,7 @@ public class Config {
                 this.file.getParentFile().mkdirs();
                 this.file.createNewFile();
             } catch (IOException e) {
-                MainLogger.getLogger().error("Could not create Config " + this.file.toString(), e);
+                log.error("Could not create Config " + this.file.toString(), e);
             }
             this.config = defaultMap;
             this.save();
@@ -155,7 +158,7 @@ public class Config {
                 try {
                     content = Utils.readFile(this.file);
                 } catch (IOException e) {
-                    Server.getInstance().getLogger().logException(e);
+                    log.throwing(Level.ERROR, e);
                 }
                 this.parseContent(content);
                 if (!this.correct) return false;
@@ -176,7 +179,7 @@ public class Config {
             try {
                 content = Utils.readFile(inputStream);
             } catch (IOException e) {
-                Server.getInstance().getLogger().logException(e);
+                log.throwing(Level.ERROR, e);
                 return false;
             }
             this.parseContent(content);
@@ -244,7 +247,7 @@ public class Config {
                 try {
                     Utils.writeFile(this.file, content);
                 } catch (IOException e) {
-                    Server.getInstance().getLogger().logException(e);
+                    log.throwing(Level.ERROR, e);
                 }
             }
             return true;
@@ -481,8 +484,8 @@ public class Config {
                 final String key = line.substring(0, splitIndex);
                 final String value = line.substring(splitIndex + 1);
                 final String valueLower = value.toLowerCase();
-                if (this.config.containsKey(key)) {
-                    MainLogger.getLogger().debug("[Config] Repeated property " + key + " on file " + this.file.toString());
+                if (this.config.containsKey(key) && log.isDebugEnabled()) {
+                    log.debug("[Config] Repeated property " + key + " on file " + this.file.toString());
                 }
                 switch (valueLower) {
                     case "on":

@@ -1,8 +1,9 @@
 package cn.nukkit.permission;
 
-import cn.nukkit.Server;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,6 +16,7 @@ import java.util.TreeMap;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public class BanEntry {
     public static final String format = "yyyy-MM-dd hh:mm:ss Z";
 
@@ -86,7 +88,7 @@ public class BanEntry {
             banEntry.setCreationDate(new SimpleDateFormat(format).parse(map.get("creationDate")));
             banEntry.setExpirationDate(!map.get("expireDate").equals("Forever") ? new SimpleDateFormat(format).parse(map.get("expireDate")) : null);
         } catch (ParseException e) {
-            Server.getInstance().getLogger().logException(e);
+            log.throwing(Level.ERROR, e);
         }
         banEntry.setSource(map.get("source"));
         banEntry.setReason(map.get("reason"));
@@ -105,7 +107,7 @@ public class BanEntry {
             banEntry.setCreationDate(new SimpleDateFormat(format).parse(map.get("creationDate")));
             banEntry.setExpirationDate(!map.get("expireDate").equals("Forever") ? new SimpleDateFormat(format).parse(map.get("expireDate")) : null);
         } catch (ParseException e) {
-            Server.getInstance().getLogger().logException(e);
+            log.throwing(Level.ERROR, e);
         }
         banEntry.setSource(map.get("source"));
         banEntry.setReason(map.get("reason"));

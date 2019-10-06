@@ -1,7 +1,7 @@
 package cn.nukkit.lang;
 
-import cn.nukkit.Server;
 import cn.nukkit.utils.Utils;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +13,7 @@ import java.util.Objects;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public class BaseLang {
     public static final String FALLBACK_LANGUAGE = "eng";
 
@@ -89,7 +90,7 @@ public class BaseLang {
             }
             return d;
         } catch (IOException e) {
-            Server.getInstance().getLogger().logException(e);
+            log.error("Error loading language", e);
             return null;
         }
     }
@@ -120,7 +121,7 @@ public class BaseLang {
             }
             return d;
         } catch (IOException e) {
-            Server.getInstance().getLogger().logException(e);
+            log.error("Error loading language", e);
             return null;
         }
     }

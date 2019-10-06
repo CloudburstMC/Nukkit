@@ -2,8 +2,9 @@ package cn.nukkit.command;
 
 import cn.nukkit.Server;
 import cn.nukkit.lang.TranslationContainer;
-import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.TextFormat;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public class FormattedCommandAlias extends Command {
 
     private final String[] formatStrings;
@@ -38,10 +40,7 @@ public class FormattedCommandAlias extends Command {
                     sender.sendMessage(TextFormat.RED + e.getMessage());
                 } else {
                     sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.exception"));
-                    MainLogger logger = sender.getServer().getLogger();
-                    if (logger != null) {
-                        logger.logException(e);
-                    }
+                    log.throwing(Level.ERROR, e);
                 }
                 return false;
             }

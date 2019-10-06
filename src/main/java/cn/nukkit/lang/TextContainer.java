@@ -1,11 +1,13 @@
 package cn.nukkit.lang;
 
-import cn.nukkit.Server;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public class TextContainer implements Cloneable {
     protected String text;
 
@@ -31,7 +33,7 @@ public class TextContainer implements Cloneable {
         try {
             return (TextContainer) super.clone();
         } catch (CloneNotSupportedException e) {
-            Server.getInstance().getLogger().logException(e);
+            log.throwing(Level.ERROR, e);
         }
         return null;
     }

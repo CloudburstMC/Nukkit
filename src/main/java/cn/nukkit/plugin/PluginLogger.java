@@ -1,8 +1,8 @@
 package cn.nukkit.plugin;
 
-import cn.nukkit.Server;
-import cn.nukkit.utils.LogLevel;
 import cn.nukkit.utils.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * author: MagicDroidX
@@ -10,101 +10,102 @@ import cn.nukkit.utils.Logger;
  */
 public class PluginLogger implements Logger {
 
+    private final org.apache.logging.log4j.Logger log;
     private final String pluginName;
 
     public PluginLogger(Plugin context) {
         String prefix = context.getDescription().getPrefix();
         this.pluginName = prefix != null ? "[" + prefix + "] " : "[" + context.getDescription().getName() + "] ";
+        this.log = LogManager.getLogger(context.getDescription().getFullName());
     }
 
     @Override
     public void emergency(String message) {
-        this.log(LogLevel.EMERGENCY, message);
+        this.log(Level.FATAL, message);
     }
 
     @Override
     public void alert(String message) {
-        this.log(LogLevel.ALERT, message);
+        this.log(Level.INFO, message);
     }
 
     @Override
     public void critical(String message) {
-        this.log(LogLevel.CRITICAL, message);
+        this.log(Level.FATAL, message);
     }
 
     @Override
     public void error(String message) {
-        this.log(LogLevel.ERROR, message);
+        this.log(Level.ERROR, message);
     }
 
     @Override
     public void warning(String message) {
-        this.log(LogLevel.WARNING, message);
+        this.log(Level.WARN, message);
     }
 
     @Override
     public void notice(String message) {
-        this.log(LogLevel.NOTICE, message);
+        this.log(Level.INFO, message);
     }
 
     @Override
     public void info(String message) {
-        this.log(LogLevel.INFO, message);
+        this.log(Level.INFO, message);
     }
 
     @Override
     public void debug(String message) {
-        this.log(LogLevel.DEBUG, message);
+        this.log(Level.DEBUG, message);
     }
 
     @Override
-    public void log(LogLevel level, String message) {
-        Server.getInstance().getLogger().log(level, this.pluginName + message);
+    public void log(Level level, String message) {
+        log.log(level, this.pluginName + message);
     }
 
     @Override
     public void emergency(String message, Throwable t) {
-        this.log(LogLevel.EMERGENCY, message, t);
+        this.log(Level.FATAL, message, t);
     }
 
     @Override
     public void alert(String message, Throwable t) {
-        this.log(LogLevel.ALERT, message, t);
+        this.log(Level.INFO, message, t);
     }
 
     @Override
     public void critical(String message, Throwable t) {
-        this.log(LogLevel.CRITICAL, message, t);
+        this.log(Level.FATAL, message, t);
     }
 
     @Override
     public void error(String message, Throwable t) {
-        this.log(LogLevel.ERROR, message, t);
+        this.log(Level.ERROR, message, t);
     }
 
     @Override
     public void warning(String message, Throwable t) {
-        this.log(LogLevel.WARNING, message, t);
+        this.log(Level.WARN, message, t);
     }
 
     @Override
     public void notice(String message, Throwable t) {
-        this.log(LogLevel.NOTICE, message, t);
+        this.log(Level.INFO, message, t);
     }
 
     @Override
     public void info(String message, Throwable t) {
-        this.log(LogLevel.INFO, message, t);
+        this.log(Level.INFO, message, t);
     }
 
     @Override
     public void debug(String message, Throwable t) {
-        this.log(LogLevel.DEBUG, message, t);
+        this.log(Level.DEBUG, message, t);
     }
 
     @Override
-    public void log(LogLevel level, String message, Throwable t) {
-        Server.getInstance().getLogger().log(level, this.pluginName + message, t);
+    public void log(Level level, String message, Throwable t) {
+        log.log(level, this.pluginName + message, t);
     }
-
 }

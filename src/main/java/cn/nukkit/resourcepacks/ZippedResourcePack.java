@@ -2,6 +2,8 @@ package cn.nukkit.resourcepacks;
 
 import cn.nukkit.Server;
 import com.google.gson.JsonParser;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +15,7 @@ import java.security.MessageDigest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+@Log4j2
 public class ZippedResourcePack extends AbstractResourcePack {
     private File file;
     private byte[] sha256 = null;
@@ -36,7 +39,7 @@ public class ZippedResourcePack extends AbstractResourcePack {
                         .getAsJsonObject();
             }
         } catch (IOException e) {
-            Server.getInstance().getLogger().logException(e);
+            log.throwing(Level.ERROR, e);
         }
 
         if (!this.verifyManifest()) {
@@ -56,7 +59,7 @@ public class ZippedResourcePack extends AbstractResourcePack {
             try {
                 this.sha256 = MessageDigest.getInstance("SHA-256").digest(Files.readAllBytes(this.file.toPath()));
             } catch (Exception e) {
-                Server.getInstance().getLogger().logException(e);
+                log.throwing(Level.ERROR, e);
             }
         }
 
@@ -76,7 +79,7 @@ public class ZippedResourcePack extends AbstractResourcePack {
             fis.skip(off);
             fis.read(chunk);
         } catch (Exception e) {
-            Server.getInstance().getLogger().logException(e);
+            log.throwing(Level.ERROR, e);
         }
 
         return chunk;

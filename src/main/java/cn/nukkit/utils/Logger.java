@@ -1,5 +1,7 @@
 package cn.nukkit.utils;
 
+import org.apache.logging.log4j.Level;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -22,7 +24,7 @@ public interface Logger {
 
     void debug(String message);
 
-    void log(LogLevel level, String message);
+    void log(Level level, String message);
 
     void emergency(String message, Throwable t);
 
@@ -40,5 +42,5 @@ public interface Logger {
 
     void debug(String message, Throwable t);
 
-    void log(LogLevel level, String message, Throwable t);
+    void log(Level level, String message, Throwable t);
 }

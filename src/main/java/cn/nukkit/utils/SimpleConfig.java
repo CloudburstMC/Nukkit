@@ -1,7 +1,8 @@
 package cn.nukkit.utils;
 
-import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
 
 import java.io.File;
 import java.lang.annotation.ElementType;
@@ -18,6 +19,7 @@ import java.util.List;
  * SimpleConfig for Nukkit
  * added 11/02/2016 by fromgate
  */
+@Log4j2
 public abstract class SimpleConfig {
 
     private final File configFile;
@@ -99,7 +101,7 @@ public abstract class SimpleConfig {
                 } else
                     throw new IllegalStateException("SimpleConfig did not supports class: " + field.getType().getName() + " for config field " + configFile.getName());
             } catch (Exception e) {
-                Server.getInstance().getLogger().logException(e);
+                log.throwing(Level.ERROR, e);
                 return false;
             }
         }

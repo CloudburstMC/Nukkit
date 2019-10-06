@@ -5,6 +5,7 @@ import cn.nukkit.Server;
 import cn.nukkit.lang.BaseLang;
 import cn.nukkit.utils.Utils;
 import com.sun.management.OperatingSystemMXBean;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +22,7 @@ import java.util.Date;
 /**
  * Project nukkit
  */
+@Log4j2
 public class BugReportGenerator extends Thread {
 
     private Throwable throwable;
@@ -33,13 +35,13 @@ public class BugReportGenerator extends Thread {
     public void run() {
         BaseLang baseLang = Server.getInstance().getLanguage();
         try {
-            Server.getInstance().getLogger().info("[BugReport] " + baseLang.translateString("nukkit.bugreport.create"));
+            log.info("[BugReport] " + baseLang.translateString("nukkit.bugreport.create"));
             String path = generate();
-            Server.getInstance().getLogger().info("[BugReport] " + baseLang.translateString("nukkit.bugreport.archive", path));
+            log.info("[BugReport] " + baseLang.translateString("nukkit.bugreport.archive", path));
         } catch (Exception e) {
             StringWriter stringWriter = new StringWriter();
             e.printStackTrace(new PrintWriter(stringWriter));
-            Server.getInstance().getLogger().info("[BugReport] " + baseLang.translateString("nukkit.bugreport.error", stringWriter.toString()));
+            log.info("[BugReport] " + baseLang.translateString("nukkit.bugreport.error", stringWriter.toString()));
         }
     }
 

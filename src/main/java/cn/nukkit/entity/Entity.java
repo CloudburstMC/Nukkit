@@ -29,12 +29,12 @@ import cn.nukkit.player.Player;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.ChunkException;
-import cn.nukkit.utils.MainLogger;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsHistory;
 import com.google.common.collect.Iterables;
 import com.spotify.futures.CompletableFutures;
+import lombok.extern.log4j.Log4j2;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
@@ -46,6 +46,7 @@ import static cn.nukkit.network.protocol.SetEntityLinkPacket.*;
 /**
  * @author MagicDroidX
  */
+@Log4j2
 public abstract class Entity extends Location implements Metadatable {
 
     public static final int NETWORK_ID = -1;
@@ -423,9 +424,8 @@ public abstract class Entity extends Location implements Metadatable {
 
                     }
                 } catch (Exception e) {
-                    MainLogger.getLogger().logException(e);
+                    log.error("Error whilst creating new entity", e);
                 }
-
             }
         }
 

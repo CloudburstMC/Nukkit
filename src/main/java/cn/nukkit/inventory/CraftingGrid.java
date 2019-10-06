@@ -2,7 +2,7 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.player.Player;
-import cn.nukkit.utils.MainLogger;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.HashMap;
 
@@ -10,6 +10,7 @@ import java.util.HashMap;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public class CraftingGrid extends BaseInventory {
 
     public CraftingGrid(InventoryHolder holder) {
@@ -47,8 +48,8 @@ public class CraftingGrid extends BaseInventory {
             }
         }
 
-        if (count != 0) {
-            MainLogger.getLogger().debug("Unexpected ingredient count (" + count + ") in crafting grid");
+        if (count != 0 && log.isDebugEnabled()) {
+            log.debug("Unexpected ingredient count (" + count + ") in crafting grid");
         }
     }
 

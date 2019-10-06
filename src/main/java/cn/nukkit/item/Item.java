@@ -17,9 +17,9 @@ import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Config;
-import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
 import io.netty.buffer.ByteBufUtil;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public class Item implements Cloneable, BlockID, ItemID {
     //Normal Item IDs
 
@@ -330,7 +331,7 @@ public class Item implements Cloneable, BlockID, ItemID {
 
                 addCreativeItem(Item.get(id, damage, 1, nbt));
             } catch (Exception e) {
-                MainLogger.getLogger().logException(e);
+                log.error("Error whilst adding creative item", e);
             }
         }
     }

@@ -7,10 +7,10 @@ import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.CraftingDataPacket;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Config;
-import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
 import io.netty.util.collection.CharObjectHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
 import java.io.InputStream;
@@ -22,6 +22,7 @@ import java.util.zip.Deflater;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public class CraftingManager {
 
     public final Collection<Recipe> recipes = new ArrayDeque<>();
@@ -69,13 +70,13 @@ public class CraftingManager {
         this.registerBrewing();
         this.rebuildPacket();
 
-        MainLogger.getLogger().info("Loaded " + this.recipes.size() + " recipes.");
+        log.info("Loaded " + this.recipes.size() + " recipes.");
     }
 
     @SuppressWarnings("unchecked")
     private void loadRecipes(Config config) {
         List<Map> recipes = config.getMapList("recipes");
-        MainLogger.getLogger().info("Loading recipes...");
+        log.info("Loading recipes...");
         for (Map<String, Object> recipe : recipes) {
             try {
                 switch (Utils.toInt(recipe.get("type"))) {
@@ -157,7 +158,7 @@ public class CraftingManager {
                         break;
                 }
             } catch (Exception e) {
-                MainLogger.getLogger().error("Exception during registering recipe", e);
+                log.error("Exception during registering recipe", e);
             }
         }
     }

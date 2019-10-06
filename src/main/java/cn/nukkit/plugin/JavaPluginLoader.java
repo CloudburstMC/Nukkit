@@ -5,6 +5,8 @@ import cn.nukkit.event.plugin.PluginDisableEvent;
 import cn.nukkit.event.plugin.PluginEnableEvent;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +20,7 @@ import java.util.regex.Pattern;
 /**
  * Created by Nukkit Team.
  */
+@Log4j2
 public class JavaPluginLoader implements PluginLoader {
 
     private final Server server;
@@ -33,7 +36,7 @@ public class JavaPluginLoader implements PluginLoader {
     public Plugin loadPlugin(File file) throws Exception {
         PluginDescription description = this.getPluginDescription(file);
         if (description != null) {
-            this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.plugin.load", description.getFullName()));
+            log.info(this.server.getLanguage().translateString("nukkit.plugin.load", description.getFullName()));
             File dataFolder = new File(file.getParentFile(), description.getName());
             if (dataFolder.exists() && !dataFolder.isDirectory()) {
                 throw new IllegalStateException("Projected dataFolder '" + dataFolder.toString() + "' for " + description.getName() + " exists and is not a directory");
@@ -60,7 +63,7 @@ public class JavaPluginLoader implements PluginLoader {
                 } catch (ClassCastException e) {
                     throw new PluginException("Error whilst initializing main class `" + description.getMain() + "'", e);
                 } catch (InstantiationException | IllegalAccessException e) {
-                    Server.getInstance().getLogger().logException(e);
+                    log.throwing(Level.ERROR, e);
                 }
 
             } catch (ClassNotFoundException e) {
@@ -112,7 +115,7 @@ public class JavaPluginLoader implements PluginLoader {
     @Override
     public void enablePlugin(Plugin plugin) {
         if (plugin instanceof PluginBase && !plugin.isEnabled()) {
-            this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.plugin.enable", plugin.getDescription().getFullName()));
+            log.info(this.server.getLanguage().translateString("nukkit.plugin.enable", plugin.getDescription().getFullName()));
 
             ((PluginBase) plugin).setEnabled(true);
 
@@ -123,7 +126,7 @@ public class JavaPluginLoader implements PluginLoader {
     @Override
     public void disablePlugin(Plugin plugin) {
         if (plugin instanceof PluginBase && plugin.isEnabled()) {
-            this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.plugin.disable", plugin.getDescription().getFullName()));
+            log.info(this.server.getLanguage().translateString("nukkit.plugin.disable", plugin.getDescription().getFullName()));
 
             this.server.getServiceManager().cancel(plugin);
 

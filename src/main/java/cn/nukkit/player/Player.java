@@ -1636,7 +1636,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.setNameTagAlwaysVisible(true);
         this.setCanClimb(true);
 
-        this.server.getLogger().info(this.getServer().getLanguage().translateString("nukkit.player.logIn",
+        log.info(this.getServer().getLanguage().translateString("nukkit.player.logIn",
                 TextFormat.AQUA + this.username + TextFormat.WHITE,
                 this.getAddress(),
                 String.valueOf(this.getPort()),
@@ -1931,7 +1931,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         try (Timing ignored = Timings.getReceiveDataPacketTiming(packet).startTiming()) {
-            log.debug("Inbound packet: {}", packet);
+            if (log.isTraceEnabled()) {
+                log.trace("Inbound packet: {}", packet);
+            }
 
             packetswitch:
             switch (packet.pid()) {
@@ -2195,7 +2197,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     Item item = this.inventory.getItem(mobEquipmentPacket.hotbarSlot);
 
                     if (!item.equals(mobEquipmentPacket.item)) {
-                        this.server.getLogger().debug("Tried to equip " + mobEquipmentPacket.item + " but have " + item + " in target slot");
+                        log.debug("Tried to equip " + mobEquipmentPacket.item + " but have " + item + " in target slot");
                         this.inventory.sendContents(this);
                         return;
                     }
@@ -2469,7 +2471,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     if (targetEntity instanceof EntityItem || targetEntity instanceof EntityArrow || targetEntity instanceof EntityXPOrb) {
                         this.kick(PlayerKickEvent.Reason.INVALID_PVE, "Attempting to interact with an invalid entity");
-                        this.server.getLogger().warning(this.getServer().getLanguage().translateString("nukkit.player.invalidEntity", this.getName()));
+                        log.warn(this.getServer().getLanguage().translateString("nukkit.player.invalidEntity", this.getName()));
                         break;
                     }
 
@@ -2511,7 +2513,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     PlayerBlockPickEvent pickEvent = new PlayerBlockPickEvent(this, block, item);
                     if (!this.isCreative()) {
-                        this.server.getLogger().debug("Got block-pick request from " + this.getName() + " when not in creative mode (gamemode " + this.getGamemode() + ")");
+                        log.debug("Got block-pick request from " + this.getName() + " when not in creative mode (gamemode " + this.getGamemode() + ")");
                         pickEvent.setCancelled();
                     }
 
@@ -2745,7 +2747,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         InventoryAction a = networkInventoryAction.createInventoryAction(this);
 
                         if (a == null) {
-                            this.getServer().getLogger().debug("Unmatched inventory action from " + this.getName() + ": " + networkInventoryAction);
+                            log.debug("Unmatched inventory action from " + this.getName() + ": " + networkInventoryAction);
                             this.sendAllInventories();
                             break packetswitch;
                         }
@@ -2771,7 +2773,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                         return;
                     } else if (this.craftingTransaction != null) {
-                        this.server.getLogger().debug("Got unexpected normal inventory action with incomplete crafting transaction from " + this.getName() + ", refusing to execute crafting");
+                        log.debug("Got unexpected normal inventory action with incomplete crafting transaction from " + this.getName() + ", refusing to execute crafting");
                         this.craftingTransaction = null;
                     }
 
@@ -2780,7 +2782,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             InventoryTransaction transaction = new InventoryTransaction(this, actions);
 
                             if (!transaction.execute()) {
-                                this.server.getLogger().debug("Failed to execute inventory transaction from " + this.getName() + " with actions: " + Arrays.toString(transactionPacket.actions));
+                                log.debug("Failed to execute inventory transaction from " + this.getName() + " with actions: " + Arrays.toString(transactionPacket.actions));
                                 break packetswitch; //oops!
                             }
 
@@ -2789,7 +2791,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             break packetswitch;
                         case InventoryTransactionPacket.TYPE_MISMATCH:
                             if (transactionPacket.actions.length > 0) {
-                                this.server.getLogger().debug("Expected 0 actions for mismatch, got " + transactionPacket.actions.length + ", " + Arrays.toString(transactionPacket.actions));
+                                log.debug("Expected 0 actions for mismatch, got " + transactionPacket.actions.length + ", " + Arrays.toString(transactionPacket.actions));
                             }
                             this.sendAllInventories();
 
@@ -3366,7 +3368,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             this.server.getPluginManager().unsubscribeFromPermission(Server.BROADCAST_CHANNEL_USERS, this);
             this.spawned = false;
-            this.server.getLogger().info(this.getServer().getLanguage().translateString("nukkit.player.logOut",
+            log.info(this.getServer().getLanguage().translateString("nukkit.player.logOut",
                     TextFormat.AQUA + (this.getName() == null ? "" : this.getName()) + TextFormat.WHITE,
                     this.getAddress(),
                     String.valueOf(this.getPort()),
@@ -3573,7 +3575,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         if (item.isNull()) {
-            this.server.getLogger().debug(this.getName() + " attempted to drop a null item (" + item + ")");
+            log.debug(this.getName() + " attempted to drop a null item (" + item + ")");
             return true;
         }
 

@@ -1,6 +1,5 @@
 package cn.nukkit.network;
 
-import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.player.Player;
@@ -79,10 +78,6 @@ public class Network {
             try {
                 interfaz.process();
             } catch (Exception e) {
-                if (Nukkit.DEBUG > 1) {
-                    this.server.getLogger().logException(e);
-                }
-
                 interfaz.emergencyShutdown();
                 this.unregisterInterface(interfaz);
                 log.fatal(this.server.getLanguage().translateString("nukkit.server.networkError", new String[]{interfaz.getClass().getName(), Utils.getExceptionMessage(e)}));
