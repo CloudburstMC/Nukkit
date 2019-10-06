@@ -131,7 +131,7 @@ public class PlayerSessionPacketDispatcher {
         if (player.isTeleported()) {
             packet.setMode(MovePlayerPacket.Mode.TELEPORT);
             packet.setTeleportationCause(MovePlayerPacket.TeleportationCause.UNKNOWN);
-            packet.setUnknown0(1); // need help
+            packet.setEntityType(1);
         } else {
             packet.setMode(MovePlayerPacket.Mode.NORMAL);
         }
