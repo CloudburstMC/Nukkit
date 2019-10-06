@@ -32,7 +32,7 @@ import com.nukkitx.plugin.SimplePluginManager;
 import com.nukkitx.plugin.loader.JavaPluginLoader;
 import com.nukkitx.protocol.bedrock.BedrockPacketCodec;
 import com.nukkitx.protocol.bedrock.BedrockServer;
-import com.nukkitx.protocol.bedrock.v354.Bedrock_v354;
+import com.nukkitx.protocol.bedrock.v361.Bedrock_v361;
 import com.nukkitx.server.block.NukkitBlockStateBuilder;
 import com.nukkitx.server.command.NukkitCommandManager;
 import com.nukkitx.server.console.*;
@@ -89,7 +89,7 @@ public class NukkitServer implements Server {
     public static final ObjectMapper JSON_MAPPER = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     public static final YAMLMapper YAML_MAPPER = (YAMLMapper) new YAMLMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     public static final JavaPropsMapper PROPERTIES_MAPPER = (JavaPropsMapper) new JavaPropsMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-    public static final BedrockPacketCodec MINECRAFT_CODEC = Bedrock_v354.V354_CODEC;
+    public static final BedrockPacketCodec MINECRAFT_CODEC = Bedrock_v361.V361_CODEC;
     public static final String NAME;
     public static final SemVer API_VERSION;
     public static final String NUKKIT_VERSION;

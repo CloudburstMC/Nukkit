@@ -363,14 +363,14 @@ public class BaseEntity implements Entity {
         }
     }
 
-    protected MetadataDictionary getMetadataFlags() {
-        MetadataDictionary dictionary = new MetadataDictionary();
+    protected EntityDataDictionary getMetadataFlags() {
+        EntityDataDictionary dictionary = new EntityDataDictionary();
         dictionary.put(EntityData.FLAGS, metadataFlags);
         return dictionary;
     }
 
-    protected MetadataDictionary getMetadata() {
-        MetadataDictionary dictionary = getMetadataFlags();
+    protected EntityDataDictionary getMetadata() {
+        EntityDataDictionary dictionary = getMetadataFlags();
         dictionary.put(EntityData.NAMETAG, "");
         dictionary.put(EntityData.ENTITY_AGE, 0);
         dictionary.put(EntityData.SCALE, 1f);
@@ -381,7 +381,7 @@ public class BaseEntity implements Entity {
         return dictionary;
     }
 
-    protected void onMetadataUpdate(MetadataDictionary metadata) {
+    protected void onMetadataUpdate(EntityDataDictionary metadata) {
         SetEntityDataPacket packet = new SetEntityDataPacket();
         packet.setRuntimeEntityId(getEntityId());
         packet.getMetadata().putAll(metadata);

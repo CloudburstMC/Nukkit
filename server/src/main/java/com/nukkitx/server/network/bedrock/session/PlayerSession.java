@@ -48,7 +48,7 @@ import com.nukkitx.server.inventory.NukkitPlayerInventory;
 import com.nukkitx.server.inventory.transaction.InventoryTransactionManager;
 import com.nukkitx.server.item.ItemUtils;
 import com.nukkitx.server.level.NukkitLevel;
-import com.nukkitx.server.level.chunk.FullChunkDataPacketCreator;
+import com.nukkitx.server.level.chunk.LevelChunkPacketCreator;
 import com.nukkitx.server.level.util.AroundPointChunkComparator;
 import com.nukkitx.server.network.bedrock.session.data.AuthData;
 import com.nukkitx.server.network.bedrock.session.data.ClientData;
@@ -183,7 +183,7 @@ public class PlayerSession extends LivingEntity implements Player, ContainerCont
             }
 
             for (Chunk chunk : chunks) {
-                this.sendNetworkPacket(((FullChunkDataPacketCreator) chunk).createFullChunkDataPacket());
+                this.sendNetworkPacket(((LevelChunkPacketCreator) chunk).createLevelChunkPacket());
             }
         }));
     }
@@ -940,7 +940,7 @@ public class PlayerSession extends LivingEntity implements Player, ContainerCont
     }
 
     @Override
-    protected void onMetadataUpdate(MetadataDictionary metadata) {
+    protected void onMetadataUpdate(EntityDataDictionary metadata) {
         if (!spawned) {
             return;
         }

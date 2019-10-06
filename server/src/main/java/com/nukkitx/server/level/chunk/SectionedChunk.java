@@ -17,7 +17,7 @@ import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.nbt.tag.IntTag;
 import com.nukkitx.nbt.tag.Tag;
 import com.nukkitx.network.VarInts;
-import com.nukkitx.protocol.bedrock.packet.FullChunkDataPacket;
+import com.nukkitx.protocol.bedrock.packet.LevelChunkPacket;
 import com.nukkitx.server.level.NukkitLevel;
 import com.nukkitx.server.metadata.MetadataSerializers;
 import gnu.trove.map.TIntObjectMap;
@@ -35,7 +35,7 @@ import java.lang.ref.SoftReference;
 import java.util.*;
 
 @Log4j2
-public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, FullChunkDataPacketCreator {
+public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, LevelChunkPacketCreator {
     private final Level level;
     private final TIntObjectMap<CompoundTag> serializedBlockEntities = new TIntObjectHashMap<>();
     private SoftReference<byte[]> cached = null;
@@ -327,8 +327,8 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
 
     @Override
     @Synchronized
-    public FullChunkDataPacket createFullChunkDataPacket() {
-        FullChunkDataPacket packet = new FullChunkDataPacket();
+    public LevelChunkPacket createLevelChunkPacket() {
+        LevelChunkPacket packet = new LevelChunkPacket();
         packet.setChunkX(x);
         packet.setChunkZ(z);
 
@@ -369,14 +369,15 @@ public class SectionedChunk extends SectionedChunkSnapshot implements Chunk, Ful
         ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.buffer(bufferSize);
         try {
             byteBuf.markReaderIndex();
-            byteBuf.writeByte((byte) topBlank);
+            //byteBuf.writeByte((byte) topBlank);
+            packet.setSubChunksLength(topBlank);
 
             for (int i = 0; i < topBlank; i++) {
                 getOrCreateSection(i).writeTo(byteBuf);
             }
 
             // Heightmap
-            byteBuf.writeBytes(height);
+            //byteBuf.writeBytes(height);
             // Biomes
             byteBuf.writeBytes(biomeId);
 
