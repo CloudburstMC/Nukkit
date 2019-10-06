@@ -2,10 +2,9 @@ package cn.nukkit.level;
 
 import cn.nukkit.Server;
 import cn.nukkit.utils.Binary;
+import com.google.common.collect.HashBiMap;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import gnu.trove.map.TObjectIntMap;
-import gnu.trove.map.hash.TObjectIntHashMap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
@@ -23,8 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class GlobalBlockPalette {
     private static final Int2IntMap legacyToRuntimeId = new Int2IntOpenHashMap(4096);
     private static final Int2IntMap runtimeIdToLegacy = new Int2IntOpenHashMap(4096);
-    private static final TObjectIntMap<String> nameToLegacyId = new TObjectIntHashMap<>(256, 0.5f,
-            248); // info_update block
+    private static final HashBiMap<String, Integer> nameToLegacyId = HashBiMap.create();
     private static final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
     private static final ByteBuf compiledPalette;
 
@@ -90,7 +88,12 @@ public class GlobalBlockPalette {
     }
 
     public static int getLegacyIdFromName(String name) {
+        //noinspection ConstantConditions
         return nameToLegacyId.get(name);
+    }
+
+    public static String getNameFromLegacyId(int id) {
+        return nameToLegacyId.inverse().get(id);
     }
 
     private static class TableEntry {

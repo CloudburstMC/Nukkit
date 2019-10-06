@@ -3,13 +3,13 @@ package cn.nukkit.level.chunk;
 import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.chunk.bitarray.BitArray;
 import cn.nukkit.level.chunk.bitarray.BitArrayVersion;
-import cn.nukkit.nbt.stream.NBTInputStream;
+import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.Binary;
 import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 
@@ -78,7 +78,22 @@ public class BlockStorage {
             buffer.writeIntLE(word);
         }
 
-        //TODO: Write persistent NBT tags
+        buffer.writeIntLE(this.palette.size());
+
+        try (ByteBufOutputStream stream = new ByteBufOutputStream(buffer)) {
+            for (int runtimeId : palette.toIntArray()) {
+                int legacyId = GlobalBlockPalette.getLegacyId(runtimeId);
+                String name = GlobalBlockPalette.getNameFromLegacyId(legacyId >> 4);
+                int data = legacyId & 0xf;
+                CompoundTag tag = new CompoundTag();
+                tag.putString("name", name);
+                tag.putShort("val", data);
+
+                NBTIO.write(tag, stream, ByteOrder.LITTLE_ENDIAN);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public synchronized void readFromStorage(ByteBuf buffer) {
@@ -98,10 +113,9 @@ public class BlockStorage {
                 "Palette is too large. Max size %s. Actual size %s", version.getMaxEntryValue(),
                 paletteSize);
 
-        try (ByteBufInputStream stream = new ByteBufInputStream(buffer); NBTInputStream nbtStream =
-                new NBTInputStream(stream, ByteOrder.LITTLE_ENDIAN, false)) {
+        try (ByteBufInputStream stream = new ByteBufInputStream(buffer)) {
             for (int i = 0; i < paletteSize; i++) {
-                CompoundTag tag = (CompoundTag) Tag.readNamedTag(nbtStream);
+                CompoundTag tag = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN);
                 int id = GlobalBlockPalette.getLegacyIdFromName(tag.getString("name"));
                 int data = tag.getShort("val");
 
@@ -114,12 +128,6 @@ public class BlockStorage {
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
-
-        for (int i = 0; i < SIZE; i++) {
-            if (this.bitArray.get(i) >= this.palette.size()) {
-                throw new IllegalArgumentException("Invalid value in bitArray");
-            }
         }
     }
 
