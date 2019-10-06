@@ -66,9 +66,9 @@ public class ResourcePackPacketHandler implements BedrockPacketHandler {
                     }
                     ResourcePack pack = optionalPack.get();
                     if (pack instanceof BehaviorPack) {
-                        stackPacket.getBehaviorPacks().add(new ResourcePackStackPacket.Entry(pack.getId(), pack.getVersion().toString(), ""));
+                        stackPacket.getBehaviorPacks().add(new ResourcePackStackPacket.Entry(pack.getId().toString(), pack.getVersion().toString(), ""));
                     } else {
-                        stackPacket.getResourcePacks().add(new ResourcePackStackPacket.Entry(pack.getId(), pack.getVersion().toString(), ""));
+                        stackPacket.getResourcePacks().add(new ResourcePackStackPacket.Entry(pack.getId().toString(), pack.getVersion().toString(), ""));
                     }
                 }
                 session.sendPacket(stackPacket);
