@@ -7,21 +7,22 @@ import com.nukkitx.server.item.ItemUtils;
 import com.nukkitx.server.network.bedrock.session.PlayerSession;
 import lombok.experimental.UtilityClass;
 
+
 @UtilityClass
 public class Inventories {
     public static final int UNTRACKED_INTERACTION_SLOT_COUNT = 9;
 
-    public static InventoryContentPacket newInventoryContentPacket(PlayerSession player, ContainerId id) {
+    public static InventoryContentPacket newInventoryContentPacket(PlayerSession player, int id) {
         InventoryContentPacket packet = new InventoryContentPacket();
         packet.setContainerId(id);
 
         ItemStack[] contents;
         switch (id) {
             // TODO: 20/12/2018 Other inventory types
-            case INVENTORY:
+            case ContainerId.INVENTORY:
                 contents = player.getInventory().getContents();
                 break;
-            case CURSOR:
+            case ContainerId.CURSOR:
                 contents = new ItemStack[]{player.getCursorSelectedItem().orElse(ItemUtils.AIR)};
                 break;
             default:

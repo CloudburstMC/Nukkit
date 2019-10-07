@@ -829,7 +829,7 @@ public class PlayerSession extends LivingEntity implements Player, ContainerCont
 
     @Override
     public void onContainerContentChange(@Nonnull ItemStack[] contents, @Nonnull Container container) {
-        ContainerId id = containerManager.get().getContainerId();
+        int id = containerManager.get().getContainerId();
 
         InventoryContentPacket packet = new InventoryContentPacket();
         packet.setContainerId(id);

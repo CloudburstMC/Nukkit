@@ -12,6 +12,7 @@
 
     <artifactId>nukkitx-server</artifactId>
     <name>NukkitX Server</name>
+    <version>1.12.0-SNAPSHOT</version>
 
     <properties>
         <network.version>1.6.14</network.version>

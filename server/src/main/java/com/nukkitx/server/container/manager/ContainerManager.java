@@ -1,7 +1,7 @@
 package com.nukkitx.server.container.manager;
 
 import com.nukkitx.api.item.ItemStack;
-import com.nukkitx.protocol.bedrock.data.ContainerId;
+//import com.nukkitx.protocol.bedrock.data.ContainerId;
 import com.nukkitx.server.network.bedrock.session.PlayerSession;
 
 public interface ContainerManager {
@@ -12,7 +12,7 @@ public interface ContainerManager {
 
     void setData(int type, int data);
 
-    ContainerId getContainerId();
+    int getContainerId();
 
     PlayerSession getPlayer();
 }

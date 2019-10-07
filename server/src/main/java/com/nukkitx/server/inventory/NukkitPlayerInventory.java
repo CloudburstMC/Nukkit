@@ -10,38 +10,38 @@ import javax.annotation.Nullable;
 
 public class NukkitPlayerInventory extends NukkitInventory {
     private int selectedSlot = 0;
-    private ContainerId selectedId = ContainerId.INVENTORY;
+    private int selectedId = ContainerId.INVENTORY;
 
     public NukkitPlayerInventory(PlayerSession session) {
         super(session);
     }
 
-    public void setItem(int slot, ItemStack item, PlayerSession session, ContainerId id) {
+    public void setItem(int slot, ItemStack item, PlayerSession session, int id) {
         if (id == ContainerId.INVENTORY) {
             setItem(slot, item, session);
         }
     }
 
-    public ItemStack getItem(int slot, ContainerId id) {
+    public ItemStack getItem(int slot, int id) {
         if (id == ContainerId.INVENTORY) {
             return getSlot(slot);
         }
         return ItemUtils.AIR;
     }
 
-    public void clearSlot(int slot, ContainerId id) {
+    public void clearSlot(int slot, int id) {
         if (id == ContainerId.INVENTORY) {
             clearSlot(slot);
         }
     }
 
-    public void setContainerSize(int size, ContainerId id) {
+    public void setContainerSize(int size, int id) {
         if (id == ContainerId.INVENTORY) {
             setContainerSize(size);
         }
     }
 
-    public int getSize(ContainerId id) {
+    public int getSize(int id) {
         if (id != ContainerId.INVENTORY) {
             return 0;
         } else {
@@ -49,7 +49,7 @@ public class NukkitPlayerInventory extends NukkitInventory {
         }
     }
 
-    public void selectSlot(int slot, ContainerId id) {
+    public void selectSlot(int slot, int id) {
         Preconditions.checkNotNull(id, "id");
         Preconditions.checkArgument(slot >= 0 && getHotbarSize() > slot, "slot not in range");
         this.selectedId = id;
@@ -64,7 +64,7 @@ public class NukkitPlayerInventory extends NukkitInventory {
         setItem(selectedSlot, item, session);
     }
 
-    public ContainerId getSelectedId() {
+    public int getSelectedId() {
         return selectedId;
     }
 

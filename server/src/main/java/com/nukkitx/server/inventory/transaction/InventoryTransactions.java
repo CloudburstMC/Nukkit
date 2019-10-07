@@ -7,6 +7,8 @@ import com.nukkitx.protocol.bedrock.packet.InventoryTransactionPacket;
 import com.nukkitx.server.inventory.transaction.action.function.*;
 import lombok.experimental.UtilityClass;
 
+import static com.nukkitx.protocol.bedrock.data.ContainerId.*;
+
 @UtilityClass
 public class InventoryTransactions {
 
