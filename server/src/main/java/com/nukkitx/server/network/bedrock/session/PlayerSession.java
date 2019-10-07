@@ -284,6 +284,8 @@ public class PlayerSession extends LivingEntity implements Player, ContainerCont
 
         dispatcher.sendEmptyInventory();
         dispatcher.sendStartGame();
+        dispatcher.sendBiomeDefinitionList();
+        dispatcher.sendAvailableEntityIdentifiers();
         updatePlayerList();
         sendEntityData();
         sendAdventureSettings();

@@ -356,7 +356,7 @@ public class NukkitServer implements Server {
         int maxThreads = configNetThreads < 1 ? Runtime.getRuntime().availableProcessors() : configNetThreads;
 
         InetSocketAddress bindAddress = new InetSocketAddress(configuration.getNetwork().getAddress(), configuration.getNetwork().getPort());
-        this.bedrockServer = new BedrockServer(bindAddress, maxThreads, (EventLoopGroup) sessionManager.getSessionTicker());
+        this.bedrockServer = new BedrockServer(bindAddress, maxThreads);
         bedrockServer.setHandler(new NukkitBedrockEventHandler(this));
         bedrockServer.bind().join();
 

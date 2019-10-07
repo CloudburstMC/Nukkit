@@ -20,6 +20,16 @@ import lombok.RequiredArgsConstructor;
 public class PlayerSessionPacketDispatcher {
     private final PlayerSession player;
 
+    public void sendBiomeDefinitionList() {
+        BiomeDefinitionListPacket biomeDefinitionList = new BiomeDefinitionListPacket();
+        player.getBedrockSession().sendPacket(biomeDefinitionList);
+    }
+
+    public void sendAvailableEntityIdentifiers() {
+        AvailableEntityIdentifiersPacket availableEntityIdentifiers = new AvailableEntityIdentifiersPacket();
+        player.getBedrockSession().sendPacket(availableEntityIdentifiers);
+    }
+
     public void sendStartGame() {
         Level level = player.getLevel();
         StartGamePacket startGame = new StartGamePacket();
