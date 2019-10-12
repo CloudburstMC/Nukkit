@@ -15,6 +15,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.Faceable;
+import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -212,6 +213,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                 }
 
                 List<Block> newBlocks = calculator.getBlocksToMove();
+
                 attached = newBlocks.stream().map(Vector3::asBlockVector3).collect(Collectors.toList());
 
                 BlockFace side = extending ? direction : direction.getOpposite();
@@ -313,20 +315,24 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                 if (block instanceof BlockFlowable) {
                     this.toDestroy.add(this.blockToMove);
                     return true;
-                } else {
-                    return false;
-                }
-            } else if (!this.addBlockLine(this.blockToMove)) {
-                return false;
-            } else {
-                for (Block b : new ArrayList<>(this.toMove)) {
-                    if (b.getId() == SLIME_BLOCK && !this.addBranchingBlocks(b)) {
-                        return false;
-                    }
                 }
 
-                return true;
+                return false;
             }
+
+            if (!this.addBlockLine(this.blockToMove)) {
+                return false;
+            }
+
+            for (int i = 0; i < this.toMove.size(); ++i) {
+                Block b = this.toMove.get(i);
+
+                if (b.getId() == SLIME_BLOCK && !this.addBranchingBlocks(b)) {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private boolean addBlockLine(Block origin) {
@@ -334,81 +340,89 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
             if (block.getId() == AIR) {
                 return true;
-            } else if (!canPush(origin, this.moveDirection, false)) {
+            }
+
+            if (!canPush(origin, this.moveDirection, false)) {
                 return true;
-            } else if (origin.equals(this.pistonPos)) {
+            }
+
+            if (origin.equals(this.pistonPos)) {
                 return true;
-            } else if (this.toMove.contains(origin)) {
+            }
+
+            if (this.toMove.contains(origin)) {
                 return true;
-            } else {
-                int count = 1;
+            }
 
-                if (count + this.toMove.size() > 12) {
-                    return false;
-                } else {
-                    while (block.getId() == SLIME_BLOCK) {
-                        block = origin.getSide(this.moveDirection.getOpposite(), count);
+            if (this.toMove.size() >= 12) {
+                return false;
+            }
 
-                        if (block.getId() == AIR || !canPush(block, this.moveDirection, false) || block.equals(this.pistonPos)) {
-                            break;
-                        }
+            this.toMove.add(block);
 
-                        ++count;
+            int count = 1;
+            List<Block> sticked = new ArrayList<>();
 
-                        if (count + this.toMove.size() > 12) {
-                            return false;
-                        }
-                    }
+            while (block.getId() == SLIME_BLOCK) {
+                block = origin.getSide(this.moveDirection.getOpposite(), count);
 
-                    int blockCount = 0;
-
-                    for (int step = count - 1; step >= 0; step--) {
-                        this.toMove.add(origin.getSide(this.moveDirection.getOpposite(), step));
-                        ++blockCount;
-                    }
-
-                    int steps = 1;
-
-                    while (true) {
-                        Block nextBlock = origin.getSide(this.moveDirection, steps);
-                        int index = this.toMove.indexOf(nextBlock);
-
-                        if (index > -1) {
-                            this.reorderListAtCollision(blockCount, index);
-
-                            for (int l = 0; l <= index + blockCount; ++l) {
-                                Block b = this.toMove.get(l);
-
-                                if (b.getId() == SLIME_BLOCK && !this.addBranchingBlocks(b)) {
-                                    return false;
-                                }
-                            }
-
-                            return true;
-                        }
-
-                        if (nextBlock.getId() == AIR || nextBlock.equals(armPos)) {
-                            return true;
-                        }
-
-                        if (!canPush(nextBlock, this.moveDirection, true) || nextBlock.equals(this.pistonPos)) {
-                            return false;
-                        }
-
-                        if (nextBlock instanceof BlockFlowable) {
-                            this.toDestroy.add(nextBlock);
-                            return true;
-                        }
-
-                        if (this.toMove.size() >= 12) {
-                            return false;
-                        }
-
-                        this.toMove.add(nextBlock);
-                        ++blockCount;
-                        ++steps;
-                    }
+                if (block.getId() == AIR || !canPush(block, this.moveDirection, false) || block.equals(this.pistonPos)) {
+                    break;
                 }
+
+                if (++count + this.toMove.size() > 12) {
+                    return false;
+                }
+
+                sticked.add(block);
+            }
+
+            int stickedCount = sticked.size();
+
+            if (stickedCount > 0) {
+                this.toMove.addAll(Lists.reverse(sticked));
+            }
+
+            int step = 1;
+
+            while (true) {
+                Block nextBlock = origin.getSide(this.moveDirection, step);
+                int index = this.toMove.indexOf(nextBlock);
+
+                if (index > -1) {
+                    this.reorderListAtCollision(stickedCount, index);
+
+                    for (int i = 0; i <= index + stickedCount; ++i) {
+                        Block b = this.toMove.get(i);
+
+                        if (b.getId() == SLIME_BLOCK && !this.addBranchingBlocks(b)) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+
+                if (nextBlock.getId() == AIR || nextBlock.equals(armPos)) {
+                    return true;
+                }
+
+                if (!canPush(nextBlock, this.moveDirection, true) || nextBlock.equals(this.pistonPos)) {
+                    return false;
+                }
+
+                if (nextBlock instanceof BlockFlowable) {
+                    this.toDestroy.add(nextBlock);
+                    return true;
+                }
+
+                if (this.toMove.size() >= 12) {
+                    return false;
+                }
+
+                this.toMove.add(nextBlock);
+                ++stickedCount;
+                ++step;
             }
         }
 
