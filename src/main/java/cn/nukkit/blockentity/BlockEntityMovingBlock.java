@@ -2,7 +2,10 @@ package cn.nukkit.blockentity;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -56,8 +59,18 @@ public class BlockEntityMovingBlock extends BlockEntitySpawnable {
         return this.blockString;
     }
 
-    public void moveCollidedEntities(BlockEntityPistonArm piston) {
+    public void moveCollidedEntities(BlockEntityPistonArm piston, BlockFace moveDirection) {
+        AxisAlignedBB bb = block.getBoundingBox().getOffsetBoundingBox(
+                this.x + (piston.progress * moveDirection.getXOffset()) - moveDirection.getXOffset(),
+                this.y + (piston.progress * moveDirection.getYOffset()) - moveDirection.getYOffset(),
+                this.z + (piston.progress * moveDirection.getZOffset()) - moveDirection.getZOffset()
+        );
 
+        Entity[] entities = this.level.getCollidingEntities(bb);
+
+        for (Entity entity : entities) {
+            piston.moveEntity(entity, moveDirection);
+        }
     }
 
     @Override

@@ -87,6 +87,10 @@ public interface AxisAlignedBB extends Cloneable {
         return this;
     }
 
+    default AxisAlignedBB getOffsetBoundingBox(BlockFace face, double x, double y, double z) {
+        return getOffsetBoundingBox(face.getXOffset() * x, face.getYOffset() * y, face.getZOffset() * z);
+    }
+
     default AxisAlignedBB getOffsetBoundingBox(double x, double y, double z) {
         return new SimpleAxisAlignedBB(this.getMinX() + x, this.getMinY() + y, this.getMinZ() + z, this.getMaxX() + x, this.getMaxY() + y, this.getMaxZ() + z);
     }

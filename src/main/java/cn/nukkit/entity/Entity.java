@@ -1494,6 +1494,10 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
+    public boolean canBePushed() {
+        return true;
+    }
+
     public BlockFace getDirection() {
         double rotation = this.yaw % 360;
         if (rotation < 0) {

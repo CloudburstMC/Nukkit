@@ -1,12 +1,16 @@
 package cn.nukkit.blockentity;
 
+import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockVector3;
+import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.IntTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -82,24 +86,45 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
     }
 
     private void moveCollidedEntities() {
-//        float lastProgress = this.getExtendedProgress(this.lastProgress);
-//        double x = (double) (lastProgress * (float) this.facing.getXOffset());
-//        double y = (double) (lastProgress * (float) this.facing.getYOffset());
-//        double z = (double) (lastProgress * (float) this.facing.getZOffset());
-//        AxisAlignedBB bb = new SimpleAxisAlignedBB(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D);
-//        Entity[] entities = this.level.getCollidingEntities(bb);
-//        if (entities.length != 0) {
-//
-//        }
-
         BlockFace pushDir = this.extending ? facing : facing.getOpposite();
         for (BlockVector3 pos : this.attachedBlocks) {
             BlockEntity blockEntity = this.level.getBlockEntity(pos.getSide(pushDir));
 
             if (blockEntity instanceof BlockEntityMovingBlock) {
-                ((BlockEntityMovingBlock) blockEntity).moveCollidedEntities(this);
+                ((BlockEntityMovingBlock) blockEntity).moveCollidedEntities(this, pushDir);
             }
         }
+
+        AxisAlignedBB bb = new SimpleAxisAlignedBB(0, 0, 0, 1, 1, 1).getOffsetBoundingBox(
+                this.x + (pushDir.getXOffset() * progress),
+                this.y + (pushDir.getYOffset() * progress),
+                this.z + (pushDir.getZOffset() * progress)
+        );
+
+        Entity[] entities = this.level.getCollidingEntities(bb);
+
+        for (Entity entity : entities) {
+            moveEntity(entity, pushDir);
+        }
+    }
+
+    void moveEntity(Entity entity, BlockFace moveDirection) {
+        if (!entity.canBePushed()) {
+            return;
+        }
+
+        //TODO: event
+
+        if (entity instanceof Player) {
+            return;
+        }
+
+        float diff = this.progress - this.lastProgress;
+        entity.move(
+                diff * moveDirection.getXOffset(),
+                diff * moveDirection.getYOffset(),
+                diff * moveDirection.getZOffset()
+        );
     }
 
     public void move(boolean extending, List<BlockVector3> attachedBlocks) {

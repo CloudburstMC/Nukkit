@@ -31,4 +31,9 @@ public class BlockMoving extends Block {
     public boolean isBreakable(Item item) {
         return false;
     }
+
+    @Override
+    public boolean canPassThrough() {
+        return true;
+    }
 }
