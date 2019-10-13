@@ -179,7 +179,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[DRAGON_EGG] = BlockDragonEgg.class; //122
             list[REDSTONE_LAMP] = BlockRedstoneLamp.class; //123
             list[LIT_REDSTONE_LAMP] = BlockRedstoneLampLit.class; //124
-            //TODO: list[DROPPER] = BlockDropper.class; //125
+            list[DROPPER] = BlockDropper.class; //125
             list[ACTIVATOR_RAIL] = BlockRailActivator.class; //126
             list[COCOA] = BlockCocoa.class; //127
             list[SANDSTONE_STAIRS] = BlockStairsSandstone.class; //128

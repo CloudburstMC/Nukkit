@@ -411,7 +411,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                     return false;
                 }
 
-                if (nextBlock instanceof BlockFlowable) {
+                if (nextBlock instanceof BlockFlowable && !nextBlock.canBePushed()) {
                     this.toDestroy.add(nextBlock);
                     return true;
                 }

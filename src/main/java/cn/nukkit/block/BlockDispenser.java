@@ -7,6 +7,7 @@ import cn.nukkit.dispenser.DispenseBehavior;
 import cn.nukkit.dispenser.DispenseBehaviorRegister;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.inventory.Inventory;
+import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
@@ -88,13 +89,13 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
             return false;
         }
 
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        InventoryHolder blockEntity = getBlockEntity();
 
-        if (!(blockEntity instanceof BlockEntityDispenser)) {
+        if (blockEntity == null) {
             return false;
         }
 
-        player.addWindow(((BlockEntityDispenser) blockEntity).getInventory());
+        player.addWindow(blockEntity.getInventory());
         return true;
     }
 
@@ -118,9 +119,23 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
 
         this.getLevel().setBlock(block, this, true);
 
+        createBlockEntity();
+        return true;
+    }
+
+    protected void createBlockEntity() {
         new BlockEntityDispenser(this.level.getChunk(getChunkX(), getChunkZ()),
                 BlockEntity.getDefaultCompound(this, BlockEntity.DISPENSER));
-        return true;
+    }
+
+    protected InventoryHolder getBlockEntity() {
+        BlockEntity blockEntity = this.level.getBlockEntity(this);
+
+        if (!(blockEntity instanceof BlockEntityDispenser)) {
+            return null;
+        }
+
+        return (InventoryHolder) blockEntity;
     }
 
     @Override
@@ -150,9 +165,9 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
     }
 
     public void dispense() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        InventoryHolder blockEntity = getBlockEntity();
 
-        if (!(blockEntity instanceof BlockEntityDispenser)) {
+        if (blockEntity == null) {
             return;
         }
 
@@ -161,7 +176,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
         int slot = -1;
         Item target = null;
 
-        Inventory inv = ((BlockEntityDispenser) blockEntity).getInventory();
+        Inventory inv = blockEntity.getInventory();
         for (Entry<Integer, Item> entry : inv.getContents().entrySet()) {
             Item item = entry.getValue();
 
@@ -178,7 +193,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
         Item origin = target;
         target = target.clone();
 
-        DispenseBehavior behavior = DispenseBehaviorRegister.getBehavior(target.getId());
+        DispenseBehavior behavior = getDispenseBehavior(target);
         Item result = behavior.dispense(this, getBlockFace(), target);
 
         if (result == null) {
@@ -197,6 +212,10 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
                 inv.setItem(slot, result);
             }
         }
+    }
+
+    protected DispenseBehavior getDispenseBehavior(Item item) {
+        return DispenseBehaviorRegister.getBehavior(item.getId());
     }
 
     @Override
