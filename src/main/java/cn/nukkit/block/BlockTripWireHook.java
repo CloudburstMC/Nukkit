@@ -89,6 +89,10 @@ public class BlockTripWireHook extends BlockFlowable {
     }
 
     public void calculateState(boolean onBreak, boolean updateAround, int pos, Block block) {
+        if (!this.level.getServer().isRedstoneEnabled()) {
+            return;
+        }
+
         BlockFace facing = getFacing();
         Vector3 v = this.getLocation();
         boolean attached = isAttached();

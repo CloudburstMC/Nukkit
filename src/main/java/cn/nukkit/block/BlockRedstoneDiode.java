@@ -30,8 +30,10 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
         Vector3 pos = getLocation();
         this.level.setBlock(this, new BlockAir(), true, true);
 
-        for (BlockFace face : BlockFace.values()) {
-            this.level.updateAroundRedstone(pos.getSide(face), null);
+        if (this.level.getServer().isRedstoneEnabled()) {
+            for (BlockFace face : BlockFace.values()) {
+                this.level.updateAroundRedstone(pos.getSide(face), null);
+            }
         }
         return true;
     }
@@ -45,8 +47,10 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
         this.setDamage(player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0);
         this.level.setBlock(block, this, true, true);
 
-        if (shouldBePowered()) {
-            this.level.scheduleUpdate(this, 1);
+        if (this.level.getServer().isRedstoneEnabled()) {
+            if (shouldBePowered()) {
+                this.level.scheduleUpdate(this, 1);
+            }
         }
         return true;
     }
@@ -54,6 +58,10 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+            if (!this.level.getServer().isRedstoneEnabled()) {
+                return 0;
+            }
+
             if (!this.isLocked()) {
                 Vector3 pos = getLocation();
                 boolean shouldBePowered = this.shouldBePowered();
@@ -82,7 +90,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
             if (type == Level.BLOCK_UPDATE_NORMAL && this.getSide(BlockFace.DOWN).isTransparent()) {
                 this.level.useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
-            } else {
+            } else if (this.level.getServer().isRedstoneEnabled()) {
                 this.updateState();
                 return Level.BLOCK_UPDATE_NORMAL;
             }

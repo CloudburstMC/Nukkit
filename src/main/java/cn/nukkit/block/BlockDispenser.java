@@ -140,6 +140,10 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
 
     @Override
     public int onUpdate(int type) {
+        if (!this.level.getServer().isRedstoneEnabled()) {
+            return 0;
+        }
+
         if (type == Level.BLOCK_UPDATE_SCHEDULED) {
             this.setTriggered(false);
             this.level.setBlock(this, this, false, false);

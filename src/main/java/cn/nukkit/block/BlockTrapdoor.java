@@ -162,7 +162,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_REDSTONE) {
+        if (type == Level.BLOCK_UPDATE_REDSTONE && this.level.getServer().isRedstoneEnabled()) {
             if ((!isOpen() && this.level.isBlockPowered(this.getLocation())) || (isOpen() && !this.level.isBlockPowered(this.getLocation()))) {
                 this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isOpen() ? 15 : 0, isOpen() ? 0 : 15));
                 this.setDamage(this.getDamage() ^ 0x08);

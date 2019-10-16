@@ -53,26 +53,31 @@ public class BlockRedstoneWire extends BlockFlowable {
             return false;
         }
 
-        this.getLevel().setBlock(block, this, true, false);
-        this.updateSurroundingRedstone(true);
-        Vector3 pos = getLocation();
+        if (this.level.getServer().isRedstoneEnabled()) {
+            this.getLevel().setBlock(block, this, true, false);
 
-        for (BlockFace blockFace : Plane.VERTICAL) {
-            this.level.updateAroundRedstone(pos.getSide(blockFace), blockFace.getOpposite());
-        }
+            this.updateSurroundingRedstone(true);
+            Vector3 pos = getLocation();
 
-        for (BlockFace blockFace : Plane.VERTICAL) {
-            this.updateAround(pos.getSide(blockFace), blockFace.getOpposite());
-        }
-
-        for (BlockFace blockFace : Plane.HORIZONTAL) {
-            Vector3 v = pos.getSide(blockFace);
-
-            if (this.level.getBlock(v).isNormalBlock()) {
-                this.updateAround(v.up(), BlockFace.DOWN);
-            } else {
-                this.updateAround(v.down(), BlockFace.UP);
+            for (BlockFace blockFace : Plane.VERTICAL) {
+                this.level.updateAroundRedstone(pos.getSide(blockFace), blockFace.getOpposite());
             }
+
+            for (BlockFace blockFace : Plane.VERTICAL) {
+                this.updateAround(pos.getSide(blockFace), blockFace.getOpposite());
+            }
+
+            for (BlockFace blockFace : Plane.HORIZONTAL) {
+                Vector3 v = pos.getSide(blockFace);
+
+                if (this.level.getBlock(v).isNormalBlock()) {
+                    this.updateAround(v.up(), BlockFace.DOWN);
+                } else {
+                    this.updateAround(v.down(), BlockFace.UP);
+                }
+            }
+        } else {
+            this.getLevel().setBlock(block, this, true, true);
         }
         return true;
     }
@@ -172,19 +177,21 @@ public class BlockRedstoneWire extends BlockFlowable {
 
         Vector3 pos = getLocation();
 
-        this.updateSurroundingRedstone(false);
+        if (this.level.getServer().isRedstoneEnabled()) {
+            this.updateSurroundingRedstone(false);
 
-        for (BlockFace blockFace : BlockFace.values()) {
-            this.level.updateAroundRedstone(pos.getSide(blockFace), null);
-        }
+            for (BlockFace blockFace : BlockFace.values()) {
+                this.level.updateAroundRedstone(pos.getSide(blockFace), null);
+            }
 
-        for (BlockFace blockFace : Plane.HORIZONTAL) {
-            Vector3 v = pos.getSide(blockFace);
+            for (BlockFace blockFace : Plane.HORIZONTAL) {
+                Vector3 v = pos.getSide(blockFace);
 
-            if (this.level.getBlock(v).isNormalBlock()) {
-                this.updateAround(v.up(), BlockFace.DOWN);
-            } else {
-                this.updateAround(v.down(), BlockFace.UP);
+                if (this.level.getBlock(v).isNormalBlock()) {
+                    this.updateAround(v.up(), BlockFace.DOWN);
+                } else {
+                    this.updateAround(v.down(), BlockFace.UP);
+                }
             }
         }
         return true;
@@ -205,6 +212,11 @@ public class BlockRedstoneWire extends BlockFlowable {
         if (type != Level.BLOCK_UPDATE_NORMAL && type != Level.BLOCK_UPDATE_REDSTONE) {
             return 0;
         }
+
+        if (!this.level.getServer().isRedstoneEnabled()) {
+            return 0;
+        }
+
         // Redstone event
         RedstoneUpdateEvent ev = new RedstoneUpdateEvent(this);
         getLevel().getServer().getPluginManager().callEvent(ev);

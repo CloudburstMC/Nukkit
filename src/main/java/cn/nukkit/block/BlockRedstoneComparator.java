@@ -137,6 +137,10 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
     }
 
     private void onChange() {
+        if (!this.level.getServer().isRedstoneEnabled()) {
+            return;
+        }
+
         int output = this.calculateOutput();
         BlockEntity blockEntity = this.level.getBlockEntity(this);
         int currentOutput = 0;

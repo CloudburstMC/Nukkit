@@ -157,6 +157,8 @@ public class Server {
 
     private boolean autoSave = true;
 
+    private boolean redstoneEnabled = true;
+
     private RCON rcon;
 
     private EntityMetadataStore entityMetadata;
@@ -388,6 +390,7 @@ public class Server {
         this.autoTickRateLimit = this.getConfig("level-settings.auto-tick-rate-limit", 20);
         this.alwaysTickPlayers = this.getConfig("level-settings.always-tick-players", false);
         this.baseTickRate = this.getConfig("level-settings.base-tick-rate", 1);
+        this.redstoneEnabled = this.getConfig("level-settings.tick-redstone", true);
 
         this.scheduler = new ServerScheduler();
 
@@ -2026,6 +2029,14 @@ public class Server {
 
     public boolean isLanguageForced() {
         return forceLanguage;
+    }
+
+    public boolean isRedstoneEnabled() {
+        return redstoneEnabled;
+    }
+
+    public void setRedstoneEnabled(boolean redstoneEnabled) {
+        this.redstoneEnabled = redstoneEnabled;
     }
 
     public Network getNetwork() {
