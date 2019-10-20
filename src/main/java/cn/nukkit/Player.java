@@ -2638,7 +2638,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.server.getPluginManager().callEvent(pickEvent);
 
                     if (!pickEvent.isCancelled()) {
-                        this.inventory.setItemInHand(pickEvent.getItem());
+                        boolean itemExists = false;
+                        for (int slot = 0; slot != this.inventory.getHotbarSize(); slot++) {
+                            if (this.inventory.getItem(slot).equals(pickEvent.getItem())) {
+                                this.inventory.setHeldItemSlot(slot);
+                                itemExists = true;
+                                break;
+                            }
+                        }
+                        if (!itemExists) {
+                            this.inventory.setItemInHand(pickEvent.getItem());
+                        }
                     }
                     break;
                 case ProtocolInfo.ANIMATE_PACKET:
@@ -3099,7 +3109,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     } else if (target instanceof Player) {
                                         if ((((Player) target).getGamemode() & 0x01) > 0) {
                                             break;
-                                        } else if (!this.server.getPropertyBoolean("pvp") || this.server.getDifficulty() == 0) {
+                                        } else if (!this.server.getPropertyBoolean("pvp")) {
                                             break;
                                         }
                                     }
