@@ -140,7 +140,7 @@ public abstract class Packet implements Cloneable {
         this.putByte(version);
         if (version == 4) {
             for (String b : addr.split("\\.")) {
-                this.putByte((byte) ((~Integer.valueOf(b)) & 0xff));
+                this.putByte((byte) ((~Integer.parseInt(b)) & 0xff));
             }
             this.putShort(port);
         } else {

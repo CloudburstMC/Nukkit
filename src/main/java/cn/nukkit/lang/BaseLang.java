@@ -77,15 +77,15 @@ public class BaseLang {
                     continue;
                 }
                 String key = t[0];
-                String value = "";
+                StringBuilder value = new StringBuilder();
                 for (int i = 1; i < t.length - 1; i++) {
-                    value += t[i] + "=";
+                    value.append(t[i]).append("=");
                 }
-                value += t[t.length - 1];
-                if (value.equals("")) {
+                value.append(t[t.length - 1]);
+                if (value.toString().equals("")) {
                     continue;
                 }
-                d.put(key, value);
+                d.put(key, value.toString());
             }
             return d;
         } catch (IOException e) {
@@ -108,15 +108,15 @@ public class BaseLang {
                     continue;
                 }
                 String key = t[0];
-                String value = "";
+                StringBuilder value = new StringBuilder();
                 for (int i = 1; i < t.length - 1; i++) {
-                    value += t[i] + "=";
+                    value.append(t[i]).append("=");
                 }
-                value += t[t.length - 1];
-                if (value.equals("")) {
+                value.append(t[t.length - 1]);
+                if (value.toString().equals("")) {
                     continue;
                 }
-                d.put(key, value);
+                d.put(key, value.toString());
             }
             return d;
         } catch (IOException e) {
@@ -196,10 +196,10 @@ public class BaseLang {
     }
 
     protected String parseTranslation(String text, String onlyPrefix) {
-        String newString = "";
+        StringBuilder newString = new StringBuilder();
         text = String.valueOf(text);
 
-        String replaceString = null;
+        StringBuilder replaceString = null;
 
         int len = text.length();
 
@@ -211,36 +211,36 @@ public class BaseLang {
                         || (ord >= 0x41 && ord <= 0x5a) // A-Z
                         || (ord >= 0x61 && ord <= 0x7a) || // a-z
                         c == '.' || c == '-') {
-                    replaceString += String.valueOf(c);
+                    replaceString.append(String.valueOf(c));
                 } else {
                     String t = this.internalGet(replaceString.substring(1));
                     if (t != null && (onlyPrefix == null || replaceString.indexOf(onlyPrefix) == 1)) {
-                        newString += t;
+                        newString.append(t);
                     } else {
-                        newString += replaceString;
+                        newString.append(replaceString);
                     }
                     replaceString = null;
                     if (c == '%') {
-                        replaceString = String.valueOf(c);
+                        replaceString = new StringBuilder(String.valueOf(c));
                     } else {
-                        newString += String.valueOf(c);
+                        newString.append(String.valueOf(c));
                     }
                 }
             } else if (c == '%') {
-                replaceString = String.valueOf(c);
+                replaceString = new StringBuilder(String.valueOf(c));
             } else {
-                newString += String.valueOf(c);
+                newString.append(String.valueOf(c));
             }
         }
 
         if (replaceString != null) {
             String t = this.internalGet(replaceString.substring(1));
             if (t != null && (onlyPrefix == null || replaceString.indexOf(onlyPrefix) == 1)) {
-                newString += t;
+                newString.append(t);
             } else {
-                newString += replaceString;
+                newString.append(replaceString);
             }
         }
-        return newString;
+        return newString.toString();
     }
 }

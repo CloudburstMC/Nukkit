@@ -35,12 +35,12 @@ public class OreType {
 
     public boolean spawn(ChunkManager level, NukkitRandom rand, int replaceId, int x, int y, int z) {
         float piScaled = rand.nextFloat() * (float) Math.PI;
-        double scaleMaxX = (double) ((float) (x + 8) + MathHelper.sin(piScaled) * (float) clusterSize / 8.0F);
-        double scaleMinX = (double) ((float) (x + 8) - MathHelper.sin(piScaled) * (float) clusterSize / 8.0F);
-        double scaleMaxZ = (double) ((float) (z + 8) + MathHelper.cos(piScaled) * (float) clusterSize / 8.0F);
-        double scaleMinZ = (double) ((float) (z + 8) - MathHelper.cos(piScaled) * (float) clusterSize / 8.0F);
-        double scaleMaxY = (double) (y + rand.nextBoundedInt(3) - 2);
-        double scaleMinY = (double) (y + rand.nextBoundedInt(3) - 2);
+        double scaleMaxX = (float) (x + 8) + MathHelper.sin(piScaled) * (float) clusterSize / 8.0F;
+        double scaleMinX = (float) (x + 8) - MathHelper.sin(piScaled) * (float) clusterSize / 8.0F;
+        double scaleMaxZ = (float) (z + 8) + MathHelper.cos(piScaled) * (float) clusterSize / 8.0F;
+        double scaleMinZ = (float) (z + 8) - MathHelper.cos(piScaled) * (float) clusterSize / 8.0F;
+        double scaleMaxY = y + rand.nextBoundedInt(3) - 2;
+        double scaleMinY = y + rand.nextBoundedInt(3) - 2;
 
         for (int i = 0; i < clusterSize; ++i) {
             float sizeIncr = (float) i / (float) clusterSize;

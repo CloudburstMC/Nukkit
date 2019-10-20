@@ -230,7 +230,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
     public void handleOption(String name, String value) {
         if ("bandwidth".equals(name)) {
             String[] v = value.split(";");
-            this.network.addStatistics(Double.valueOf(v[0]), Double.valueOf(v[1]));
+            this.network.addStatistics(Double.parseDouble(v[0]), Double.parseDouble(v[1]));
         }
     }
 

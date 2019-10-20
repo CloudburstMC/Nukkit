@@ -222,7 +222,7 @@ public enum TextFormat {
      * @return Any remaining chat color to pass onto the next line.
      */
     public static String getLastColors(String input) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         int length = input.length();
 
         // Search backwards from the end as it is faster
@@ -233,7 +233,7 @@ public enum TextFormat {
                 TextFormat color = getByChar(c);
 
                 if (color != null) {
-                    result = color.toString() + result;
+                    result.insert(0, color.toString());
 
                     // Once we find a color or reset we can stop searching
                     if (color.isColor() || color.equals(RESET)) {
@@ -243,7 +243,7 @@ public enum TextFormat {
             }
         }
 
-        return result;
+        return result.toString();
     }
 
     /**

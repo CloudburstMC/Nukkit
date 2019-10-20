@@ -78,6 +78,7 @@ public class BlockRailDetector extends BlockRail {
                 getFloorZ() + 0.875D))) {
             if (entity instanceof EntityMinecartAbstract) {
                 isPowered = true;
+                break;
             }
         }
 
