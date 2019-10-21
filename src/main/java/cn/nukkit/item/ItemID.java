@@ -230,6 +230,8 @@ public interface ItemID {
     int TURTLE_SHELL = 469;
     int PHANTOM_MEMBRANE = 470;
 
+    int SWEET_BERRIES = 477;
+
     int RECORD_13 = 500;
     int RECORD_CAT = 501;
     int RECORD_BLOCKS = 502;
@@ -242,4 +244,6 @@ public interface ItemID {
     int RECORD_WARD = 509;
     int RECORD_11 = 510;
     int RECORD_WAIT = 511;
+
+    int SHIELD = 513;
 }
