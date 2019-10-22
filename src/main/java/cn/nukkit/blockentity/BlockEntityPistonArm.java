@@ -5,7 +5,6 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
@@ -27,7 +26,7 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
     public static final float MOVE_STEP = Float.valueOf(0.5f);
 
     public float progress;
-    public float lastProgress = 1.0F;
+    public float lastProgress = 1;
     public BlockFace facing;
     public boolean extending;
     public boolean sticky;
@@ -166,8 +165,6 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
                     movingBlock.close();
                     Block moved = ((BlockEntityMovingBlock) movingBlock).getMovingBlock();
 
-                    this.level.setBlock(movingBlock, moved);
-
                     CompoundTag blockEntity = ((BlockEntityMovingBlock) movingBlock).getBlockEntity();
 
                     if (blockEntity != null) {
@@ -177,7 +174,7 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
                         BlockEntity.createBlockEntity(blockEntity.getString("id"), this.level.getChunk(movingBlock.getChunkX(), movingBlock.getChunkZ()), blockEntity);
                     }
 
-                    moved.onUpdate(Level.BLOCK_UPDATE_NORMAL);
+                    this.level.setBlock(movingBlock, moved);
                 }
             }
 
