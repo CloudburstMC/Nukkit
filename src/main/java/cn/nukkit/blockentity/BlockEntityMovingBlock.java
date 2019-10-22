@@ -60,7 +60,13 @@ public class BlockEntityMovingBlock extends BlockEntitySpawnable {
     }
 
     public void moveCollidedEntities(BlockEntityPistonArm piston, BlockFace moveDirection) {
-        AxisAlignedBB bb = block.getBoundingBox().getOffsetBoundingBox(
+        AxisAlignedBB bb = block.getBoundingBox();
+
+        if (bb == null) {
+            return;
+        }
+
+        bb = bb.getOffsetBoundingBox(
                 this.x + (piston.progress * moveDirection.getXOffset()) - moveDirection.getXOffset(),
                 this.y + (piston.progress * moveDirection.getYOffset()) - moveDirection.getYOffset(),
                 this.z + (piston.progress * moveDirection.getZOffset()) - moveDirection.getZOffset()
