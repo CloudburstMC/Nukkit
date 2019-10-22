@@ -811,9 +811,8 @@ public class Item implements Cloneable, BlockID, ItemID {
         return count;
     }
 
-    public Item setCount(int count) {
+    public void setCount(int count) {
         this.count = count;
-        return this;
     }
 
     public boolean isNull() {

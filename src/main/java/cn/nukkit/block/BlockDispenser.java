@@ -194,6 +194,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
 //            this.level.addLevelSoundEvent(this); //TODO: sound
             return;
         }
+
         Item origin = target;
         target = target.clone();
 
