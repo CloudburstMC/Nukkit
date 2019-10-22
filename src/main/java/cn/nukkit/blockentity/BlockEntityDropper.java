@@ -132,4 +132,11 @@ public class BlockEntityDropper extends BlockEntitySpawnable implements BlockEnt
 
         this.namedTag.putString("CustomName", name);
     }
+
+    @Override
+    public void onBreak() {
+        for (Item content : inventory.getContents().values()) {
+            level.dropItem(this, content);
+        }
+    }
 }

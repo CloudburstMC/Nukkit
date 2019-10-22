@@ -132,4 +132,11 @@ public class BlockEntityDispenser extends BlockEntitySpawnable implements BlockE
 
         this.namedTag.putString("CustomName", name);
     }
+
+    @Override
+    public void onBreak() {
+        for (Item content : inventory.getContents().values()) {
+            level.dropItem(this, content);
+        }
+    }
 }

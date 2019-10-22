@@ -200,10 +200,10 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
         DispenseBehavior behavior = getDispenseBehavior(target);
         Item result = behavior.dispense(this, getBlockFace(), target);
 
-        if (result == null) {
-            target.count--;
-            inv.setItem(slot, target);
-        } else {
+        target.count--;
+        inv.setItem(slot, target);
+
+        if (result != null) {
             if (result.getId() != origin.getId() || result.getDamage() != origin.getDamage()) {
                 Item[] fit = inv.addItem(result);
 
