@@ -5,6 +5,7 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityMovingBlock;
 import cn.nukkit.blockentity.BlockEntityPistonArm;
 import cn.nukkit.event.block.BlockPistonChangeEvent;
+import cn.nukkit.event.block.BlockPistonEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.GlobalBlockPalette;
@@ -139,7 +140,8 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         }
 
         if (isPowered && !isExtended()) {
-            if (new BlocksCalculator(true).canMove()) {
+            BlocksCalculator calculator = new BlocksCalculator(true);
+            if (calculator.canMove()) {
                 if (!this.doMove(true)) {
                     return false;
                 }
@@ -212,6 +214,13 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             return false;
         } else {
             List<BlockVector3> attached = Collections.emptyList();
+
+            BlockPistonEvent event = new BlockPistonEvent(this, direction, calculator.getBlocksToMove(), calculator.getBlocksToDestroy(), extending);
+            this.level.getServer().getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) {
+                return false;
+            }
 
             if (this.sticky || extending) {
                 List<Block> destroyBlocks = calculator.getBlocksToDestroy();

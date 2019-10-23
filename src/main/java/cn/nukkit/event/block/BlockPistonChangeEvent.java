@@ -5,7 +5,10 @@ import cn.nukkit.event.HandlerList;
 
 /**
  * Created by CreeperFace on 2.8.2017.
+ *
+ * @deprecated Use BlockPistonEvent
  */
+@Deprecated
 public class BlockPistonChangeEvent extends BlockEvent {
 
     private static final HandlerList handlers = new HandlerList();
