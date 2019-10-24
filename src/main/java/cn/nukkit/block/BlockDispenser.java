@@ -54,10 +54,10 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
 
     @Override
     public int getComparatorInputOverride() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        InventoryHolder blockEntity = this.getBlockEntity();
 
-        if (blockEntity instanceof BlockEntityDispenser) {
-            return ContainerInventory.calculateRedstone(((BlockEntityDispenser) blockEntity).getInventory());
+        if (blockEntity != null) {
+            return ContainerInventory.calculateRedstone(blockEntity.getInventory());
         }
 
         return 0;

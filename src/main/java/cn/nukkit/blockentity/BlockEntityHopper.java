@@ -158,6 +158,10 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
         this.transferCooldown--;
 
         if (!this.isOnTransferCooldown()) {
+            if ((this.level.getBlockDataAt(getFloorX(), getFloorY(), getFloorZ()) & 0x08) == 8) { //is hopper disabled?
+                return false;
+            }
+
             BlockEntity blockEntity = this.level.getBlockEntity(this.up());
 
             boolean changed = pushItems();
