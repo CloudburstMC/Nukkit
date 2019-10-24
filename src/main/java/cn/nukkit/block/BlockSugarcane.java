@@ -58,6 +58,7 @@ public class BlockSugarcane extends BlockFlowable {
             }
 
             if (count < 3) {
+                boolean success = false;
                 int toGrow = 3 - count;
 
                 for (int i = 1; i <= toGrow; i++) {
@@ -68,17 +69,22 @@ public class BlockSugarcane extends BlockFlowable {
 
                         if (!ev.isCancelled()) {
                             this.getLevel().setBlock(block, ev.getNewState(), true);
+                            success = true;
                         }
                     } else if (block.getId() != SUGARCANE_BLOCK) {
                         break;
                     }
                 }
+
+                if (success) {
+                    if (player != null && (player.gamemode & 0x01) == 0) {
+                        item.count--;
+                    }
+
+                    this.level.addParticle(new BoneMealParticle(this));
+                }
             }
 
-            if ((player.gamemode & 0x01) == 0) {
-                item.count--;
-            }
-            this.level.addParticle(new BoneMealParticle(this.add(0.5, 0.5, 0.5)));
             return true;
         }
         return false;

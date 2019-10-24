@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
+import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -46,5 +48,21 @@ public class BlockGrassPath extends BlockGrass {
     @Override
     public boolean canSilkTouch() {
         return true;
+    }
+
+    @Override
+    public int onUpdate(int type) {
+        return 0;
+    }
+
+    @Override
+    public boolean onActivate(Item item, Player player) {
+        if (item.isHoe()) {
+            item.useOn(this);
+            this.getLevel().setBlock(this, get(FARMLAND), true);
+            return true;
+        }
+
+        return false;
     }
 }
