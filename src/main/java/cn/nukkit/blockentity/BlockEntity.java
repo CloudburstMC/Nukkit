@@ -2,6 +2,7 @@ package cn.nukkit.blockentity;
 
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
@@ -207,6 +208,10 @@ public abstract class BlockEntity extends Position {
 
     public void setDirty() {
         chunk.setChanged();
+
+        if (this.getLevelBlock().getId() != BlockID.AIR) {
+            this.level.updateComparatorOutputLevel(this);
+        }
     }
 
     public String getName() {
