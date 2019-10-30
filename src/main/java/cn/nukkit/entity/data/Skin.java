@@ -63,23 +63,7 @@ public class Skin {
     }
 
     public void setSkinData(byte[] skinData) {
-        Objects.requireNonNull(skinData, "skinData");
-        switch (skinData.length) {
-            case SINGLE_SKIN_SIZE:
-                setSkinData(new SerializedImage(64, 32, skinData));
-                break;
-            case DOUBLE_SKIN_SIZE:
-                setSkinData(new SerializedImage(64, 64, skinData));
-                break;
-            case SKIN_128_64_SIZE:
-                setSkinData(new SerializedImage(128, 64, skinData));
-                break;
-            case SKIN_128_128_SIZE:
-                setSkinData(new SerializedImage(128, 128, skinData));
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown legacy skin size");
-        }
+        setSkinData(SerializedImage.fromLegacy(skinData));
     }
 
     public void setSkinData(BufferedImage image) {

@@ -133,12 +133,16 @@ public class LoginPacket extends DataPacket {
     }
 
     private static SerializedImage getImage(JsonObject token, String name) {
-        if (token.has(name + "Data") && token.has(name + "ImageHeight") && token.has(name + "ImageWidth")) {
+        if (token.has(name + "Data")) {
             byte[] skinImage = Base64.getDecoder().decode(token.get(name + "Data").getAsString());
-            int width = token.get(name + "ImageWidth").getAsInt();
-            int height = token.get(name + "ImageHeight").getAsInt();
-            return new SerializedImage(width, height, skinImage);
+            if (token.has(name + "ImageHeight") && token.has(name + "ImageWidth")) {
+                int width = token.get(name + "ImageWidth").getAsInt();
+                int height = token.get(name + "ImageHeight").getAsInt();
+                return new SerializedImage(width, height, skinImage);
+            } else {
+                return SerializedImage.fromLegacy(skinImage);
+            }
         }
-        return null;
+        return SerializedImage.EMPTY;
     }
 }
