@@ -2442,12 +2442,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                             this.teleport(respawnPos, null);
 
-                            RespawnPacket respawnPacket = new RespawnPacket();
-                            respawnPacket.x = (float) respawnPos.x;
-                            respawnPacket.y = (float) respawnPos.y;
-                            respawnPacket.z = (float) respawnPos.z;
-                            this.dataPacket(respawnPacket);
-
                             this.setSprinting(false);
                             this.setSneaking(false);
 
@@ -3265,7 +3259,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (this.isAlive()) {
                         break;
                     }
-                    log.info("Received {}", packet);
                     RespawnPacket respawnPacket = (RespawnPacket) packet;
                     if (respawnPacket.respawnState == RespawnPacket.STATE_CLIENT_READY_TO_SPAWN) {
                         RespawnPacket respawn1 = new RespawnPacket();
