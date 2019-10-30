@@ -29,7 +29,7 @@ public class GlobalBlockPalette {
         }
         CompoundTag tag;
         try {
-            tag = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN, true);
+            tag = NBTIO.read(stream);
         } catch (IOException e) {
             throw new AssertionError(e);
         }
@@ -42,7 +42,7 @@ public class GlobalBlockPalette {
             state.remove("meta"); // No point in sending this since the client doesn't use it.
         }
         try {
-            BLOCK_PALETTE = NBTIO.writeNetwork(states);
+            BLOCK_PALETTE = NBTIO.write(tag.getList("Palette"), ByteOrder.LITTLE_ENDIAN, true);
         } catch (IOException e) {
             throw new AssertionError(e);
         }
