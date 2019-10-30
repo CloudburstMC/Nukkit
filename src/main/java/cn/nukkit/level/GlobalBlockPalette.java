@@ -31,7 +31,7 @@ public class GlobalBlockPalette {
         }
         CompoundTag tag;
         try {
-            tag = NBTIO.read(stream);
+            tag = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN, true);
         } catch (IOException e) {
             throw new AssertionError(e);
         }
