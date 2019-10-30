@@ -10,8 +10,6 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
-import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -36,15 +34,15 @@ public class GlobalBlockPalette {
             throw new AssertionError(e);
         }
 
-        List<CompoundTag> states = tag.getList("Palette", CompoundTag.class).getAll();
-        for (CompoundTag state : states) {
+        ListTag<CompoundTag> states = tag.getList("Palette", CompoundTag.class);
+        for (CompoundTag state : states.getAll()) {
             int id = state.getShort("id");
             int meta = state.getShort("meta");
             registerMapping(id << 4 | meta);
             state.remove("meta"); // No point in sending this since the client doesn't use it.
         }
         try {
-            BLOCK_PALETTE = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, true);
+            BLOCK_PALETTE = NBTIO.writeNetwork(states);
         } catch (IOException e) {
             throw new AssertionError(e);
         }

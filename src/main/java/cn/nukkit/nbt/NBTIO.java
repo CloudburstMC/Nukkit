@@ -198,10 +198,12 @@ public class NBTIO {
         }
     }
 
-    public static void writeNetwork(Tag tag, OutputStream outputStream) throws IOException {
-        try (NBTOutputStream stream = new NBTOutputStream(outputStream, ByteOrder.LITTLE_ENDIAN, true)) {
+    public static byte[] writeNetwork(Tag tag) throws IOException {
+        FastByteArrayOutputStream baos = ThreadCache.fbaos.get().reset();
+        try (NBTOutputStream stream = new NBTOutputStream(baos, ByteOrder.LITTLE_ENDIAN, true)) {
             Tag.writeNamedTag(tag, stream);
         }
+        return baos.toByteArray();
     }
 
     public static byte[] writeGZIPCompressed(CompoundTag tag) throws IOException {
