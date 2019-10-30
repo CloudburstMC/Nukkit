@@ -3291,6 +3291,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.resetCraftingGridType();
         this.craftingType = CRAFTING_SMALL;
 
+        if(message.startsWith("/")) {
+            this.server.dispatchCommand(this, message.replaceFirst("/", ""));
+            return true;
+        }
+
         if (this.removeFormat) {
             message = TextFormat.clean(message, true);
         }
