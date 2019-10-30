@@ -258,20 +258,63 @@ public class BinaryStream {
 
     public void putSkin(Skin skin) {
         this.putString(skin.getSkinId());
-        this.putByteArray(skin.getSkinData());
-        this.putByteArray(skin.getCapeData());
-        this.putString(skin.getGeometryName());
+        this.putString(skin.getSkinResourcePatch());
+        this.putImage(skin.getSkinData());
+
+        List<SkinAnimation> animations = skin.getAnimations();
+        this.putLInt(animations.size());
+        for (SkinAnimation animation : animations) {
+            this.putImage(animation.image);
+            this.putLInt(animation.type);
+            this.putLFloat(animation.frames);
+        }
+
+        this.putImage(skin.getCapeData());
         this.putString(skin.getGeometryData());
+        this.putString(skin.getAnimationData());
+        this.putBoolean(skin.isPremium());
+        this.putBoolean(skin.isPersona());
+        this.putBoolean(skin.isCapeOnClassic());
+        this.putString(skin.getCapeId());
+        this.putString(skin.getFullSkinId());
     }
 
     public Skin getSkin() {
         Skin skin = new Skin();
         skin.setSkinId(this.getString());
-        skin.setSkinData(this.getByteArray());
-        skin.setCapeData(this.getByteArray());
-        skin.setGeometryName(this.getString());
+        skin.setSkinResourcePatch(this.getString());
+        skin.setSkinData(this.getImage());
+
+        int animationCount = this.getLInt();
+        for (int i = 0; i < animationCount; i++) {
+            SerializedImage image = this.getImage();
+            int type = this.getLInt();
+            float frames = this.getLFloat();
+            skin.getAnimations().add(new SkinAnimation(image, type, frames));
+        }
+
+        skin.setCapeData(this.getImage());
         skin.setGeometryData(this.getString());
+        skin.setAnimationData(this.getString());
+        skin.setPremium(this.getBoolean());
+        skin.setPersona(this.getBoolean());
+        skin.setCapeOnClassic(this.getBoolean());
+        skin.setCapeId(this.getString());
+        this.getString(); // TODO: Full skin id
         return skin;
+    }
+
+    public void putImage(SerializedImage image) {
+        this.putLInt(image.width);
+        this.putLInt(image.height);
+        this.putByteArray(image.data);
+    }
+
+    public SerializedImage getImage() {
+        int width = this.getLInt();
+        int height = this.getLInt();
+        byte[] data = this.getByteArray();
+        return new SerializedImage(width, height, data);
     }
 
     public Item getSlot() {

@@ -11,7 +11,7 @@ public class ResourcePackStackPacket extends DataPacket {
     public boolean mustAccept = false;
     public ResourcePack[] behaviourPackStack = new ResourcePack[0];
     public ResourcePack[] resourcePackStack = new ResourcePack[0];
-    public boolean isExperimental = false;
+    public String gameVersion = ProtocolInfo.MINECRAFT_VERSION_NETWORK;
 
     @Override
     public void decode() {
@@ -37,7 +37,7 @@ public class ResourcePackStackPacket extends DataPacket {
             this.putString(""); //TODO: subpack name
         }
 
-        this.putBoolean(isExperimental);
+        this.putString(this.gameVersion);
     }
 
     @Override

@@ -14,6 +14,8 @@ public class RespawnPacket extends DataPacket {
     public float x;
     public float y;
     public float z;
+    public int respawnState;
+    public long unknownEntityId; //???
 
     @Override
     public void decode() {
@@ -21,12 +23,16 @@ public class RespawnPacket extends DataPacket {
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
+        this.respawnState = this.getByte();
+        this.unknownEntityId = this.getEntityRuntimeId();
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putVector3f(this.x, this.y, this.z);
+        this.putByte((byte) respawnState);
+        this.putEntityRuntimeId(unknownEntityId);
     }
 
     @Override

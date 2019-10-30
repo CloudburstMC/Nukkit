@@ -100,13 +100,17 @@ public class StartGamePacket extends DataPacket {
     public boolean isFromWorldTemplate = false;
     public boolean isWorldTemplateOptionLocked = false;
     public boolean isOnlySpawningV1Villagers = false;
+    public String vanillaVersion = ProtocolInfo.MINECRAFT_VERSION_NETWORK;
     public String levelId = ""; //base64 string, usually the same as world folder name in vanilla
     public String worldName;
     public String premiumWorldTemplateId = "";
     public boolean isTrial = false;
+    public boolean isMovementServerAuthoritative;
     public long currentTick;
 
     public int enchantmentSeed;
+
+    public byte[] blockPalette = GlobalBlockPalette.BLOCK_PALETTE;
 
     public String multiplayerCorrelationId = "";
 
@@ -156,14 +160,16 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(this.isFromWorldTemplate);
         this.putBoolean(this.isWorldTemplateOptionLocked);
         this.putBoolean(this.isOnlySpawningV1Villagers);
+        this.putString(this.vanillaVersion);
 
         this.putString(this.levelId);
         this.putString(this.worldName);
         this.putString(this.premiumWorldTemplateId);
         this.putBoolean(this.isTrial);
+        this.putBoolean(this.isMovementServerAuthoritative);
         this.putLLong(this.currentTick);
         this.putVarInt(this.enchantmentSeed);
-        this.put(GlobalBlockPalette.getCompiledPalette());
+        this.put(this.blockPalette);
         this.put(ITEM_DATA_PALETTE);
         this.putString(this.multiplayerCorrelationId);
     }
