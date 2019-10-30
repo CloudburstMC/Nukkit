@@ -59,7 +59,7 @@ public class PermissibleBase implements Permissible {
     @Override
     public boolean hasPermission(String name) {
 		if(this.isPermissionSet("*") && ((PermissionAttachmentInfo)this.permissions.get("*")).getValue()){
-		   if(this.isPermissionSet("-" + name) && ((PermissionAttachmentInfo)this.permissions.get("-" + name)).getValue()){
+		   if(this.isPermissionSet(name) && !((PermissionAttachmentInfo)this.permissions.get(name)).getValue()){
 			   return false;
 		   }else{
 			   return true;
