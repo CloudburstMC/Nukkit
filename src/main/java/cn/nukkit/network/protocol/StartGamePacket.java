@@ -110,7 +110,7 @@ public class StartGamePacket extends DataPacket {
 
     public int enchantmentSeed;
 
-    public byte[] blockPalette = GlobalBlockPalette.BLOCK_PALETTE;
+    public byte[] blockPalette;//= GlobalBlockPalette.BLOCK_PALETTE;
 
     public String multiplayerCorrelationId = "";
 

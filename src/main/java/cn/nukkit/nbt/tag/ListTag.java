@@ -40,7 +40,7 @@ public class ListTag<T extends Tag> extends Tag {
         type = dis.readByte();
         int size = dis.readInt();
 
-        list = new ArrayList<>();
+        list = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             Tag tag = Tag.newTag(type, null);
             tag.load(dis);

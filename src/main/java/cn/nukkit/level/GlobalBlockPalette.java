@@ -27,17 +27,16 @@ public class GlobalBlockPalette {
 
         InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_block_states.dat");
         if (stream == null) {
-            throw new AssertionError("Unable to locate RuntimeID table");
+            throw new AssertionError("Unable to locate block state nbt");
         }
-        ListTag<CompoundTag> tag;
+        CompoundTag tag;
         try {
-            //noinspection unchecked
-            tag = (ListTag<CompoundTag>) NBTIO.readNetwork(stream);
+            tag = NBTIO.read(stream);
         } catch (IOException e) {
             throw new AssertionError(e);
         }
 
-        List<CompoundTag> states = tag.getAll();
+        List<CompoundTag> states = tag.getList("Palette", CompoundTag.class).getAll();
         for (CompoundTag state : states) {
             int id = state.getShort("id");
             int meta = state.getShort("meta");
@@ -69,17 +68,5 @@ public class GlobalBlockPalette {
         runtimeIdToLegacy.put(runtimeId, legacyId);
         legacyToRuntimeId.put(legacyId, runtimeId);
         return runtimeId;
-    }
-
-    private static class TableEntry {
-        private int id;
-        private int data;
-        private String name;
-        private Map<String, StateEntry> states;
-    }
-
-    private static class StateEntry {
-        private Object val;
-        private int type;
     }
 }
