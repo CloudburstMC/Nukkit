@@ -2,6 +2,7 @@ package cn.nukkit.network.protocol;
 
 import cn.nukkit.Server;
 import cn.nukkit.level.GameRules;
+import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.utils.BinaryStream;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -109,7 +110,7 @@ public class StartGamePacket extends DataPacket {
 
     public int enchantmentSeed;
 
-    public byte[] blockPalette; //= GlobalBlockPalette.BLOCK_PALETTE;
+    public byte[] blockPalette = GlobalBlockPalette.BLOCK_PALETTE;
 
     public String multiplayerCorrelationId = "";
 
