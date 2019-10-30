@@ -166,6 +166,7 @@ public class Network {
                         pk.decode();
                     } catch (Exception e) {
                         log.warn("Unable to decode {} from {}", pk.getClass().getSimpleName(), player.getName());
+                        log.throwing(e);
                         if (log.isTraceEnabled()) {
                             log.trace("Dumping Packet\n{}", ByteBufUtil.prettyHexDump(Unpooled.wrappedBuffer(packet.payload)));
                         }
