@@ -3043,12 +3043,25 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         break packetswitch;
                                     }
 
-                                    if (item.onClickAir(this, directionVector) && this.isSurvival()) {
-                                        this.inventory.setItemInHand(item);
-                                    }
+                                    if (item.onClickAir(this, directionVector)) {
+                                        if (this.isSurvival()) {
+                                            this.inventory.setItemInHand(item);
+                                        }
 
-                                    this.setDataFlag(DATA_FLAGS, DATA_FLAG_ACTION, true);
-                                    this.startAction = this.server.getTick();
+                                        if (this.startAction == -1) {
+                                            this.setDataFlag(DATA_FLAGS, DATA_FLAG_ACTION, true);
+                                            this.startAction = this.server.getTick();
+                                            break packetswitch;
+                                        }
+
+                                        // Used item
+                                        int ticksUsed = this.server.getTick() - this.startAction;
+                                        this.stopAction();
+                                        CompletedUsingItemPacket completedUsingItem = new CompletedUsingItemPacket();
+                                        completedUsingItem.itemId = item.getId();
+                                        completedUsingItem.action = item.completeAction(this, ticksUsed);
+                                        this.dataPacket(completedUsingItem);
+                                    }
 
                                     break packetswitch;
                                 default:
@@ -3209,16 +3222,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                             }
 
                                             this.removeAllEffects();
-                                        } else {
-                                            this.server.getPluginManager().callEvent(consumeEvent);
-                                            if (consumeEvent.isCancelled()) {
-                                                this.inventory.sendContents(this);
-                                                break;
-                                            }
-
-                                            Food food = Food.getByRelative(itemInHand);
-                                            if (food != null && food.eatenBy(this)) --itemInHand.count;
-                                            this.inventory.setItemInHand(itemInHand);
                                         }
                                         return;
                                     default:

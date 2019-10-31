@@ -16,6 +16,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.network.protocol.CompletedUsingItemPacket;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
@@ -947,6 +948,10 @@ public class Item implements Cloneable, BlockID, ItemID {
 
     public boolean isUnbreakable() {
         return false;
+    }
+
+    public int completeAction(Player player, int ticksUsed) {
+        return CompletedUsingItemPacket.ACTION_UNKNOWN;
     }
 
     @Override
