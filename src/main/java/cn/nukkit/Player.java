@@ -40,7 +40,6 @@ import cn.nukkit.inventory.transaction.data.UseItemData;
 import cn.nukkit.inventory.transaction.data.UseItemOnEntityData;
 import cn.nukkit.item.*;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.item.food.Food;
 import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.*;
@@ -3201,27 +3200,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                             if (potion != null) {
                                                 potion.applyPotion(this);
                                             }
-
-                                        } else if (itemInHand.getId() == Item.BUCKET && itemInHand.getDamage() == 1) { //milk
-                                            this.server.getPluginManager().callEvent(consumeEvent);
-                                            if (consumeEvent.isCancelled()) {
-                                                this.inventory.sendContents(this);
-                                                break;
-                                            }
-
-                                            EntityEventPacket eventPacket = new EntityEventPacket();
-                                            eventPacket.eid = this.getId();
-                                            eventPacket.event = EntityEventPacket.USE_ITEM;
-                                            this.dataPacket(eventPacket);
-                                            Server.broadcastPacket(this.getViewers().values(), eventPacket);
-
-                                            if (this.isSurvival()) {
-                                                itemInHand.count--;
-                                                this.inventory.setItemInHand(itemInHand);
-                                                this.inventory.addItem(new ItemBucket());
-                                            }
-
-                                            this.removeAllEffects();
                                         }
                                         return;
                                     default:

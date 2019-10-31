@@ -59,6 +59,6 @@ public class EntityEventPacket extends DataPacket {
         this.reset();
         this.putEntityRuntimeId(this.eid);
         this.putByte((byte) this.event);
-        this.putVarInt((byte) this.data);
+        this.putVarInt(this.data);
     }
 }
