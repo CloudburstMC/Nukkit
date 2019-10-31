@@ -14,7 +14,7 @@ public class BlockLeaves2 extends BlockLeaves {
     }
 
     public BlockLeaves2(int meta) {
-        super(meta);
+        super(meta & 0x7); // Anything above this range is invalid
     }
 
     public String getName() {
