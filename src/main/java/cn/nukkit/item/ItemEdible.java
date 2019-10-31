@@ -29,7 +29,11 @@ public abstract class ItemEdible extends Item {
 
     @Override
     public boolean onClickAir(Player player, Vector3 directionVector) {
-        return player.getFoodData().getLevel() != player.getFoodData().getMaxLevel();
+        if (player.getFoodData().getLevel() < player.getFoodData().getMaxLevel() || player.isCreative()) {
+            return true;
+        }
+        player.getFoodData().sendFoodLevel();
+        return false;
     }
 
     @Override
@@ -50,8 +54,10 @@ public abstract class ItemEdible extends Item {
         }
 
         Food food = Food.getByRelative(this);
-        if (food != null && food.eatenBy(player)) --this.count;
-        player.getInventory().setItemInHand(this);
+        if (player.isSurvival() && food != null && food.eatenBy(player)) {
+            --this.count;
+            player.getInventory().setItemInHand(this);
+        }
         return true;
     }
 }
