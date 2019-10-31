@@ -61,6 +61,8 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
 
             if (b instanceof Faceable) {
                 this.facing = ((Faceable) b).getBlockFace();
+            } else {
+                this.facing = BlockFace.NORTH;
             }
         }
 
