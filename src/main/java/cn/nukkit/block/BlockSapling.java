@@ -10,6 +10,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
+
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -74,7 +75,7 @@ public class BlockSapling extends BlockFlowable {
 
     public boolean onActivate(Item item, Player player) {
         if (item.getId() == Item.DYE && item.getDamage() == 0x0F) { //BoneMeal
-            if ((player.gamemode & 0x01) == 0) {
+            if (player != null && (player.gamemode & 0x01) == 0) {
                 item.count--;
             }
 
@@ -83,76 +84,8 @@ public class BlockSapling extends BlockFlowable {
                 return true;
             }
 
-            BasicGenerator generator = null;
-            boolean bigTree = false;
+            this.grow();
 
-            int x = 0;
-            int z = 0;
-
-            switch (this.getDamage()) {
-                case JUNGLE:
-                    loop:
-                    for (x = 0; x >= -1; --x) {
-                        for (z = 0; z >= -1; --z) {
-                            if (this.findSaplings(x, z, JUNGLE)) {
-                                generator = new ObjectJungleBigTree(10, 20, new BlockWood(BlockWood.JUNGLE), new BlockLeaves(BlockLeaves.JUNGLE));
-                                bigTree = true;
-                                break loop;
-                            }
-                        }
-                    }
-
-                    if (!bigTree) {
-                        generator = new NewJungleTree(4, 7);
-                    }
-                    break;
-                case ACACIA:
-                    generator = new ObjectSavannaTree();
-                    break;
-                case DARK_OAK:
-                    bigTree = false;
-
-                    loop:
-                    for (x = 0; x >= -1; --x) {
-                        for (z = 0; z >= -1; --z) {
-                            if (this.findSaplings(x, z, DARK_OAK)) {
-                                generator = new ObjectDarkOakTree();
-                                bigTree = true;
-                                break loop;
-                            }
-                        }
-                    }
-
-                    if (!bigTree) {
-                        return false;
-                    }
-                    break;
-                //TODO: big spruce
-                default:
-                    ObjectTree.growTree(this.getLevel(), (int) this.x, (int) this.y, (int) this.z, new NukkitRandom(), this.getDamage() & 0x07);
-                    return true;
-            }
-            BlockAir air = new BlockAir();
-
-            if (bigTree) {
-                this.level.setBlock(this.add(x, 0, z), air, true, false);
-                this.level.setBlock(this.add(x + 1, 0, z), air, true, false);
-                this.level.setBlock(this.add(x, 0, z + 1), air, true, false);
-                this.level.setBlock(this.add(x + 1, 0, z + 1), air, true, false);
-            } else {
-                this.level.setBlock(this, air, true, false);
-            }
-
-            if (!generator.generate(this.level, new NukkitRandom(), this.add(x, 0, z))) {
-                if (bigTree) {
-                    this.level.setBlock(this.add(x, 0, z), this, true, false);
-                    this.level.setBlock(this.add(x + 1, 0, z), this, true, false);
-                    this.level.setBlock(this.add(x, 0, z + 1), this, true, false);
-                    this.level.setBlock(this.add(x + 1, 0, z + 1), this, true, false);
-                } else {
-                    this.level.setBlock(this, this, true, false);
-                }
-            }
             return true;
         }
         return false;
@@ -165,14 +98,9 @@ public class BlockSapling extends BlockFlowable {
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) { //Growth
-            if (new NukkitRandom().nextRange(1, 7) == 1) {
+            if (ThreadLocalRandom.current().nextInt(1, 8) == 1) {
                 if ((this.getDamage() & 0x08) == 0x08) {
-                    if ((this.getDamage() & 0x07) == ACACIA) {
-                        this.level.setBlock(this, new BlockAir(), true, false);
-                        new ObjectSavannaTree().generate(level, new NukkitRandom(), this);
-                    } else {
-                        ObjectTree.growTree(this.getLevel(), (int) this.x, (int) this.y, (int) this.z, new NukkitRandom(), this.getDamage() & 0x07);
-                    }
+                    this.grow();
                 } else {
                     this.setDamage(this.getDamage() | 0x08);
                     this.getLevel().setBlock(this, this, true);
@@ -182,7 +110,79 @@ public class BlockSapling extends BlockFlowable {
                 return Level.BLOCK_UPDATE_RANDOM;
             }
         }
-        return 1;
+        return Level.BLOCK_UPDATE_NORMAL;
+    }
+
+    private void grow() {
+        BasicGenerator generator = null;
+        boolean bigTree = false;
+
+        int x = 0;
+        int z = 0;
+
+        switch (this.getDamage() & 0x07) {
+            case JUNGLE:
+                loop:
+                for (; x >= -1; --x) {
+                    for (; z >= -1; --z) {
+                        if (this.findSaplings(x, z, JUNGLE)) {
+                            generator = new ObjectJungleBigTree(10, 20, new BlockWood(BlockWood.JUNGLE), new BlockLeaves(BlockLeaves.JUNGLE));
+                            bigTree = true;
+                            break loop;
+                        }
+                    }
+                }
+
+                if (!bigTree) {
+                    x = 0;
+                    z = 0;
+                    generator = new NewJungleTree(4, 7);
+                }
+                break;
+            case ACACIA:
+                generator = new ObjectSavannaTree();
+                break;
+            case DARK_OAK:
+                loop:
+                for (; x >= -1; --x) {
+                    for (; z >= -1; --z) {
+                        if (this.findSaplings(x, z, DARK_OAK)) {
+                            generator = new ObjectDarkOakTree();
+                            bigTree = true;
+                            break loop;
+                        }
+                    }
+                }
+
+                if (!bigTree) {
+                    return;
+                }
+                break;
+            //TODO: big spruce
+            default:
+                ObjectTree.growTree(this.level, this.getFloorX(), this.getFloorY(), this.getFloorZ(), new NukkitRandom(), this.getDamage() & 0x07);
+                return;
+        }
+
+        if (bigTree) {
+            this.level.setBlock(this.add(x, 0, z), get(AIR), true, false);
+            this.level.setBlock(this.add(x + 1, 0, z), get(AIR), true, false);
+            this.level.setBlock(this.add(x, 0, z + 1), get(AIR), true, false);
+            this.level.setBlock(this.add(x + 1, 0, z + 1), get(AIR), true, false);
+        } else {
+            this.level.setBlock(this, get(AIR), true, false);
+        }
+
+        if (!generator.generate(this.level, new NukkitRandom(), this.add(x, 0, z))) {
+            if (bigTree) {
+                this.level.setBlock(this.add(x, 0, z), this, true, false);
+                this.level.setBlock(this.add(x + 1, 0, z), this, true, false);
+                this.level.setBlock(this.add(x, 0, z + 1), this, true, false);
+                this.level.setBlock(this.add(x + 1, 0, z + 1), this, true, false);
+            } else {
+                this.level.setBlock(this, this, true, false);
+            }
+        }
     }
 
     private boolean findSaplings(int x, int z, int type) {
@@ -191,7 +191,7 @@ public class BlockSapling extends BlockFlowable {
 
     public boolean isSameType(Vector3 pos, int type) {
         Block block = this.level.getBlock(pos);
-        return block.getId() == this.getId() && block.getDamage() == type;
+        return block.getId() == this.getId() && (block.getDamage() & 0x07) == (type & 0x07);
     }
 
     @Override
