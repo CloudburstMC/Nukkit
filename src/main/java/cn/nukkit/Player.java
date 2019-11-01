@@ -3178,11 +3178,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 type = releaseItemData.actionType;
                                 switch (type) {
                                     case InventoryTransactionPacket.RELEASE_ITEM_ACTION_RELEASE:
-                                        if (this.isUsingItem()) {
+                                        if (this.startAction != -1) {
                                             item = this.inventory.getItemInHand();
-                                            if (item.onReleaseUsing(this)) {
-                                                this.inventory.setItemInHand(item);
-                                            }
+                                            CompletedUsingItemPacket completedUsingItem = new CompletedUsingItemPacket();
+                                            int ticksUsed = this.server.getTick() - this.startAction;
+                                            completedUsingItem.action = item.completeAction(this, ticksUsed);
+                                            completedUsingItem.itemId = item.getId();
+                                            this.dataPacket(completedUsingItem);
+                                            this.stopAction();
                                         } else {
                                             this.inventory.sendContents(this);
                                         }

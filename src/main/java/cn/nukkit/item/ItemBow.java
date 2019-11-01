@@ -7,11 +7,14 @@ import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.network.protocol.CompletedUsingItemPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Random;
 
@@ -19,6 +22,7 @@ import java.util.Random;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public class ItemBow extends ItemTool {
 
     public ItemBow() {
@@ -43,12 +47,17 @@ public class ItemBow extends ItemTool {
         return 1;
     }
 
-    public boolean onReleaseUsing(Player player) {
+    @Override
+    public boolean onClickAir(Player player, Vector3 directionVector) {
+        return player.getInventory().contains(Item.get(ItemID.ARROW)) || player.isCreative();
+    }
+
+    public int completeAction(Player player, int ticksUsed) {
         Item itemArrow = Item.get(Item.ARROW, 0, 1);
 
         if (player.isSurvival() && !player.getInventory().contains(itemArrow)) {
             player.getInventory().sendContents(player);
-            return false;
+            return CompletedUsingItemPacket.ACTION_UNKNOWN;
         }
 
         double damage = 2;
@@ -76,13 +85,13 @@ public class ItemBow extends ItemTool {
                 .putShort("Fire", flame ? 45 * 60 : 0)
                 .putDouble("damage", damage);
 
-        int diff = (Server.getInstance().getTick() - player.getStartActionTick());
-        double p = (double) diff / 20;
+        double p = (double) ticksUsed / 20;
+        log.debug("Ticks used {}", ticksUsed);
 
         double f = Math.min((p * p + p * 2) / 3, 1) * 2;
         EntityShootBowEvent entityShootBowEvent = new EntityShootBowEvent(player, this, new EntityArrow(player.chunk, nbt, player, f == 2), f);
 
-        if (f < 0.1 || diff < 5) {
+        if (f < 0.1 || ticksUsed < 3) {
             entityShootBowEvent.setCancelled();
         }
 
@@ -108,11 +117,12 @@ public class ItemBow extends ItemTool {
                         this.setDamage(this.getDamage() + 1);
                         if (this.getDamage() >= getMaxDurability()) {
                             this.count--;
+                            player.getInventory().setItemInHand(this);
                         }
                     }
                 }
             }
-            if (entityShootBowEvent.getProjectile() instanceof EntityProjectile) {
+            if (entityShootBowEvent.getProjectile() != null) {
                 ProjectileLaunchEvent projectev = new ProjectileLaunchEvent(entityShootBowEvent.getProjectile());
                 Server.getInstance().getPluginManager().callEvent(projectev);
                 if (projectev.isCancelled()) {
@@ -121,11 +131,9 @@ public class ItemBow extends ItemTool {
                     entityShootBowEvent.getProjectile().spawnToAll();
                     player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BOW);
                 }
-            } else {
-                entityShootBowEvent.getProjectile().spawnToAll();
             }
         }
 
-        return true;
+        return CompletedUsingItemPacket.ACTION_SHOOT;
     }
 }
