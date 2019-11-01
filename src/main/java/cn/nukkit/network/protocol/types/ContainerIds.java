@@ -14,5 +14,5 @@ public interface ContainerIds {
     int CREATIVE = 121;
     int HOTBAR = 122;
     int FIXED_INVENTORY = 123;
-    int CURSOR = 124;
+    int UI = 124;
 }
