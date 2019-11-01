@@ -52,12 +52,18 @@ public class ItemBow extends ItemTool {
         return player.getInventory().contains(Item.get(ItemID.ARROW)) || player.isCreative();
     }
 
-    public int completeAction(Player player, int ticksUsed) {
+    @Override
+    public int getCompletionAction() {
+        return CompletedUsingItemPacket.ACTION_SHOOT;
+    }
+
+    @Override
+    public boolean onRelease(Player player, int ticksUsed) {
         Item itemArrow = Item.get(Item.ARROW, 0, 1);
 
         if (player.isSurvival() && !player.getInventory().contains(itemArrow)) {
             player.getInventory().sendContents(player);
-            return CompletedUsingItemPacket.ACTION_UNKNOWN;
+            return false;
         }
 
         double damage = 2;
@@ -134,6 +140,6 @@ public class ItemBow extends ItemTool {
             }
         }
 
-        return CompletedUsingItemPacket.ACTION_SHOOT;
+        return true;
     }
 }

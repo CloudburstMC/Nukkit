@@ -3064,10 +3064,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         // Used item
                                         int ticksUsed = this.server.getTick() - this.startAction;
                                         this.stopAction();
-                                        CompletedUsingItemPacket completedUsingItem = new CompletedUsingItemPacket();
-                                        completedUsingItem.itemId = item.getId();
-                                        completedUsingItem.action = item.completeAction(this, ticksUsed);
-                                        this.dataPacket(completedUsingItem);
+
+                                        if (item.onUse(this, ticksUsed)) {
+                                            CompletedUsingItemPacket completedUsingItem = new CompletedUsingItemPacket();
+                                            completedUsingItem.itemId = item.getId();
+                                            completedUsingItem.action = item.getCompletionAction();
+                                            this.dataPacket(completedUsingItem);
+                                        }
                                     }
 
                                     break packetswitch;
@@ -3180,11 +3183,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     case InventoryTransactionPacket.RELEASE_ITEM_ACTION_RELEASE:
                                         if (this.startAction != -1) {
                                             item = this.inventory.getItemInHand();
-                                            CompletedUsingItemPacket completedUsingItem = new CompletedUsingItemPacket();
+
                                             int ticksUsed = this.server.getTick() - this.startAction;
-                                            completedUsingItem.action = item.completeAction(this, ticksUsed);
-                                            completedUsingItem.itemId = item.getId();
-                                            this.dataPacket(completedUsingItem);
+                                            if (item.onRelease(this, ticksUsed)) {
+                                                CompletedUsingItemPacket completedUsingItem = new CompletedUsingItemPacket();
+                                                completedUsingItem.itemId = item.getId();
+                                                completedUsingItem.action = item.getCompletionAction();
+                                                this.dataPacket(completedUsingItem);
+                                            }
+
                                             this.stopAction();
                                         } else {
                                             this.inventory.sendContents(this);
@@ -4895,5 +4902,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.fishing = null;
+    }
+
+    @Override
+    public String toString() {
+        return "Player(name='" + getName() +
+                "', location=" + super.toString() +
+                ')';
     }
 }

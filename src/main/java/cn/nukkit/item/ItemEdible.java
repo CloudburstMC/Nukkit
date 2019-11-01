@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
 import cn.nukkit.item.food.Food;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.network.protocol.CompletedUsingItemPacket;
 
 /**
  * author: MagicDroidX
@@ -37,14 +36,7 @@ public abstract class ItemEdible extends Item {
     }
 
     @Override
-    public int completeAction(Player player, int ticksUsed) {
-        if (consume(player)) {
-            return CompletedUsingItemPacket.ACTION_EAT;
-        }
-        return CompletedUsingItemPacket.ACTION_UNKNOWN;
-    }
-
-    protected boolean consume(Player player) {
+    public boolean onUse(Player player, int ticksUsed) {
         PlayerItemConsumeEvent consumeEvent = new PlayerItemConsumeEvent(player, this);
 
         player.getServer().getPluginManager().callEvent(consumeEvent);

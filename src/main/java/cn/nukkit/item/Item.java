@@ -950,8 +950,16 @@ public class Item implements Cloneable, BlockID, ItemID {
         return false;
     }
 
-    public int completeAction(Player player, int ticksUsed) {
+    public int getCompletionAction() {
         return CompletedUsingItemPacket.ACTION_UNKNOWN;
+    }
+
+    public boolean onUse(Player player, int ticksUsed) {
+        return false;
+    }
+
+    public boolean onRelease(Player player, int ticksUsed) {
+        return false;
     }
 
     @Override
@@ -976,17 +984,6 @@ public class Item implements Cloneable, BlockID, ItemID {
      * @return item changed
      */
     public boolean onClickAir(Player player, Vector3 directionVector) {
-        return false;
-    }
-
-    /**
-     * Called when a player is using this item and releases it. Used to handle bow shoot actions.
-     * Returns whether the item was changed, for example count decrease or durability change.
-     *
-     * @param player player
-     * @return item changed
-     */
-    public boolean onReleaseUsing(Player player) {
         return false;
     }
 
