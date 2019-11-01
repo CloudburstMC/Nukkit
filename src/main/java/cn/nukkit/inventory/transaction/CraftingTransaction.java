@@ -9,6 +9,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.ContainerClosePacket;
 import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.scheduler.Task;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 /**
  * @author CreeperFace
  */
+@Log4j2
 public class CraftingTransaction extends InventoryTransaction {
 
     protected int gridSize;
@@ -47,6 +49,7 @@ public class CraftingTransaction extends InventoryTransaction {
     }
 
     public void setInput(int index, Item item) {
+        log.debug("Setting {} to {}", index, item);
         int y = index / this.gridSize;
         int x = index % this.gridSize;
 

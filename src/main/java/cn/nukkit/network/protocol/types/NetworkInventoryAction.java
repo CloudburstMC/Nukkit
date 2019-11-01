@@ -299,4 +299,13 @@ public class NetworkInventoryAction {
                 return null;
         }
     }
+
+    private static int getCorrectedCraftingSlot(Player player, int slot) {
+        if (slot >= 32 && slot <= 40) {
+            return slot - 32;
+        } else if (slot >= 28 && slot <= 31) {
+            return slot - 28;
+        }
+        return slot;
+    }
 }

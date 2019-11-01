@@ -148,7 +148,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public int craftingType = CRAFTING_SMALL;
 
-    protected PlayerCursorInventory cursorInventory;
+    protected PlayerUIInventory playerUIInventory;
     protected CraftingGrid craftingGrid;
     protected CraftingTransaction craftingTransaction;
 
@@ -1058,6 +1058,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.server.getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {
                 return -1;
+            }
+
+            if (log.isTraceEnabled() && !(packet instanceof BatchPacket)) {
+                log.trace("Outbound: {}", packet);
             }
 
             Integer identifier = this.interfaz.putPacket(this, packet, needACK, false);
@@ -2073,6 +2077,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
                 this.server.getNetwork().processBatch((BatchPacket) packet, this);
                 return;
+            }
+
+            if (log.isTraceEnabled()) {
+                log.trace("Inbound: {}", packet);
             }
 
             packetswitch:
@@ -4429,17 +4437,21 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected void addDefaultWindows() {
         this.addWindow(this.getInventory(), ContainerIds.INVENTORY, true);
 
-        this.cursorInventory = new PlayerCursorInventory(this);
-        this.addWindow(this.cursorInventory, ContainerIds.CURSOR, true);
+        this.playerUIInventory = new PlayerUIInventory(this);
+        this.addWindow(this.playerUIInventory, ContainerIds.UI, true);
 
-        this.craftingGrid = new CraftingGrid(this);
+        this.craftingGrid = this.playerUIInventory.getCraftingGrid();
         this.addWindow(this.craftingGrid, ContainerIds.NONE);
 
         //TODO: more windows
     }
 
+    public PlayerUIInventory getPlayerUIInventory() {
+        return playerUIInventory;
+    }
+
     public PlayerCursorInventory getCursorInventory() {
-        return this.cursorInventory;
+        return this.playerUIInventory.getCursorInventory();
     }
 
     public CraftingGrid getCraftingGrid() {
@@ -4461,18 +4473,18 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
             }
 
-            drops = this.inventory.addItem(this.cursorInventory.getItem(0));
+            drops = this.inventory.addItem(this.getCursorInventory().getItem(0));
             if (drops.length > 0) {
                 for (Item drop : drops) {
                     this.dropItem(drop);
                 }
             }
 
-            this.cursorInventory.clearAll();
+            this.getCursorInventory().clearAll();
             this.craftingGrid.clearAll();
 
             if (this.craftingGrid instanceof BigCraftingGrid) {
-                this.craftingGrid = new CraftingGrid(this);
+                this.craftingGrid = this.playerUIInventory.getCraftingGrid();
                 this.addWindow(this.craftingGrid, ContainerIds.NONE);
 //
 //                ContainerClosePacket pk = new ContainerClosePacket(); //be sure, big crafting is really closed
