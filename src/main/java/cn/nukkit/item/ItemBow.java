@@ -123,8 +123,8 @@ public class ItemBow extends ItemTool {
                         this.setDamage(this.getDamage() + 1);
                         if (this.getDamage() >= getMaxDurability()) {
                             this.count--;
-                            player.getInventory().setItemInHand(this);
                         }
+                        player.getInventory().setItemInHand(this);
                     }
                 }
             }
