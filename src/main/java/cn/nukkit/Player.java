@@ -4489,8 +4489,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
             }
 
-            this.getCursorInventory().clearAll();
-            this.craftingGrid.clearAll();
+            this.playerUIInventory.clearAll();
 
             if (this.craftingGrid instanceof BigCraftingGrid) {
                 this.craftingGrid = this.playerUIInventory.getCraftingGrid();

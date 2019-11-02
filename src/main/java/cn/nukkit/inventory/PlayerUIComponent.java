@@ -3,7 +3,6 @@ package cn.nukkit.inventory;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -58,36 +57,16 @@ public class PlayerUIComponent extends BaseInventory {
         return contents;
     }
 
-    @Override
-    public void sendContents(Player player) {
-
-    }
 
     @Override
     public void sendContents(Player... players) {
-
-    }
-
-    @Override
-    public void sendContents(Collection<Player> players) {
-
-    }
-
-    @Override
-    public void sendSlot(int index, Player player) {
-
+        this.playerUI.sendContents(players);
     }
 
     @Override
     public void sendSlot(int index, Player... players) {
-
+        playerUI.sendSlot(index + this.offset, players);
     }
-
-    @Override
-    public void sendSlot(int index, Collection<Player> players) {
-
-    }
-
 
     @Override
     public Set<Player> getViewers() {
@@ -131,6 +110,6 @@ public class PlayerUIComponent extends BaseInventory {
 
     @Override
     public void onSlotChange(int index, Item before, boolean send) {
-
+        this.playerUI.onSlotChange(index + this.offset, before, send);
     }
 }
