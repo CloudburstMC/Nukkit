@@ -838,6 +838,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.sendData(this);
         this.inventory.sendContents(this);
         this.inventory.sendArmorContents(this);
+        this.offhandInventory.sendContents(this);
 
         SetTimePacket setTimePacket = new SetTimePacket();
         setTimePacket.time = this.level.getTime();
@@ -1292,6 +1293,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.inventory.sendContents(this);
         this.inventory.sendContents(this.getViewers().values());
         this.inventory.sendHeldItem(this.hasSpawned.values());
+        this.offhandInventory.sendContents(this);
+        this.offhandInventory.sendContents(this.getViewers().values());
 
         this.inventory.sendCreativeContents();
         return true;
@@ -1320,7 +1323,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     public Item[] getDrops() {
-        if (!this.isCreative()) {
+        if (!this.isCreative() && !this.isSpectator()) {
             return super.getDrops();
         }
 
@@ -2331,15 +2334,24 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     MobEquipmentPacket mobEquipmentPacket = (MobEquipmentPacket) packet;
 
-                    Item item = this.inventory.getItem(mobEquipmentPacket.hotbarSlot);
+                    Inventory inv = this.getWindowById(mobEquipmentPacket.windowId);
 
-                    if (!item.equals(mobEquipmentPacket.item)) {
-                        this.server.getLogger().debug("Tried to equip " + mobEquipmentPacket.item + " but have " + item + " in target slot");
-                        this.inventory.sendContents(this);
+                    if (inv == null) {
+                        this.server.getLogger().debug("Player " + this.getName() + " has no open container with window ID " + mobEquipmentPacket.windowId);
                         return;
                     }
 
-                    this.inventory.equipItem(mobEquipmentPacket.hotbarSlot);
+                    Item item = inv.getItem(mobEquipmentPacket.hotbarSlot);
+
+                    if (!item.equals(mobEquipmentPacket.item)) {
+                        this.server.getLogger().debug("Tried to equip " + mobEquipmentPacket.item + " but have " + item + " in target slot");
+                        inv.sendContents(this);
+                        return;
+                    }
+
+                    if (inv instanceof PlayerInventory) {
+                        ((PlayerInventory) inv).equipItem(mobEquipmentPacket.hotbarSlot);
+                    }
 
                     this.setDataFlag(Player.DATA_FLAGS, Player.DATA_FLAG_ACTION, false);
 
@@ -2466,6 +2478,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.getAdventureSettings().update();
                             this.inventory.sendContents(this);
                             this.inventory.sendArmorContents(this);
+                            this.offhandInventory.sendContents(this);
 
                             this.spawnToAll();
                             this.scheduleUpdate();
@@ -3831,6 +3844,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             if (this.inventory != null) {
                 this.inventory.clearAll();
             }
+            if (this.offhandInventory != null) {
+                this.offhandInventory.clearAll();
+            }
         }
 
         if (!ev.getKeepExperience() && this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
@@ -4452,6 +4468,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.cursorInventory = new PlayerCursorInventory(this);
         this.addWindow(this.cursorInventory, ContainerIds.CURSOR, true);
+        this.addWindow(this.offhandInventory, ContainerIds.OFFHAND, true);
 
         this.craftingGrid = new CraftingGrid(this);
         this.addWindow(this.craftingGrid, ContainerIds.NONE);
