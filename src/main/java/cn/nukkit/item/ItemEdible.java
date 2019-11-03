@@ -1,5 +1,11 @@
 package cn.nukkit.item;
 
+import cn.nukkit.Player;
+import cn.nukkit.event.player.PlayerItemConsumeEvent;
+import cn.nukkit.item.food.Food;
+import cn.nukkit.math.Vector3;
+import cn.nukkit.network.protocol.CompletedUsingItemPacket;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -21,4 +27,37 @@ public abstract class ItemEdible extends Item {
         super(id, meta, count);
     }
 
+    @Override
+    public boolean onClickAir(Player player, Vector3 directionVector) {
+        if (player.getFoodData().getLevel() < player.getFoodData().getMaxLevel() || player.isCreative()) {
+            return true;
+        }
+        player.getFoodData().sendFoodLevel();
+        return false;
+    }
+
+    @Override
+    public int completeAction(Player player, int ticksUsed) {
+        if (consume(player)) {
+            return CompletedUsingItemPacket.ACTION_EAT;
+        }
+        return CompletedUsingItemPacket.ACTION_UNKNOWN;
+    }
+
+    protected boolean consume(Player player) {
+        PlayerItemConsumeEvent consumeEvent = new PlayerItemConsumeEvent(player, this);
+
+        player.getServer().getPluginManager().callEvent(consumeEvent);
+        if (consumeEvent.isCancelled()) {
+            player.getInventory().sendContents(player);
+            return false;
+        }
+
+        Food food = Food.getByRelative(this);
+        if (player.isSurvival() && food != null && food.eatenBy(player)) {
+            --this.count;
+            player.getInventory().setItemInHand(this);
+        }
+        return true;
+    }
 }
