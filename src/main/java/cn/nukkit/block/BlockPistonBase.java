@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityMovingBlock;
 import cn.nukkit.blockentity.BlockEntityPistonArm;
-import cn.nukkit.event.block.BlockPistonChangeEvent;
 import cn.nukkit.event.block.BlockPistonEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -16,6 +15,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.MainLogger;
 import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
@@ -113,7 +113,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                 boolean powered = this.isPowered();
 
                 if (arm.powered != powered) {
-                    this.level.getServer().getPluginManager().callEvent(new BlockPistonChangeEvent(this, powered ? 0 : 15, powered ? 15 : 0));
+                    MainLogger.getLogger().info("should change state");
 
                     if (checkState(powered)) {
                         arm.powered = powered;
@@ -162,6 +162,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                     return false;
                 }
             } else if (!this.doMove(false)) {
+                MainLogger.getLogger().info("!move");
                 return false;
             }
 
@@ -211,6 +212,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         BlocksCalculator calculator = new BlocksCalculator(extending);
 
         if (!calculator.canMove()) {
+            MainLogger.getLogger().info("!move 2");
             return false;
         } else {
             List<BlockVector3> attached = Collections.emptyList();
@@ -302,12 +304,14 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         private Vector3 armPos;
         private final Block blockToMove;
         private final BlockFace moveDirection;
+        private final boolean extending;
 
         private final List<Block> toMove = new ArrayList<>();
         private final List<Block> toDestroy = new ArrayList<>();
 
         public BlocksCalculator(boolean extending) {
             this.pistonPos = getLocation();
+            this.extending = extending;
 
             BlockFace face = getBlockFace();
             if (!extending) {
@@ -319,11 +323,19 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                 this.blockToMove = getSide(face);
             } else {
                 this.moveDirection = face.getOpposite();
-                this.blockToMove = getSide(face, 2);
+                if (sticky) {
+                    this.blockToMove = getSide(face, 2);
+                } else {
+                    this.blockToMove = null;
+                }
             }
         }
 
         public boolean canMove() {
+            if (!sticky && !extending) {
+                return true;
+            }
+
             this.toMove.clear();
             this.toDestroy.clear();
             Block block = this.blockToMove;
