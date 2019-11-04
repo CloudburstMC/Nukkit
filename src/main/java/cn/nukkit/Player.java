@@ -60,7 +60,6 @@ import cn.nukkit.permission.PermissionAttachment;
 import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
-import cn.nukkit.potion.Potion;
 import cn.nukkit.resourcepacks.ResourcePack;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.Task;
@@ -3069,6 +3068,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                             completedUsingItem.itemId = item.getId();
                                             completedUsingItem.action = item.getCompletionAction();
                                             this.dataPacket(completedUsingItem);
+                                        } else {
+                                            this.inventory.sendContents(this);
                                         }
                                     }
 
@@ -3197,27 +3198,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         }
                                         return;
                                     case InventoryTransactionPacket.RELEASE_ITEM_ACTION_CONSUME:
-                                        Item itemInHand = this.inventory.getItemInHand();
-                                        PlayerItemConsumeEvent consumeEvent = new PlayerItemConsumeEvent(this, itemInHand);
-
-                                        if (itemInHand.getId() == Item.POTION) {
-                                            this.server.getPluginManager().callEvent(consumeEvent);
-                                            if (consumeEvent.isCancelled()) {
-                                                this.inventory.sendContents(this);
-                                                break;
-                                            }
-                                            Potion potion = Potion.getPotion(itemInHand.getDamage()).setSplash(false);
-
-                                            if (this.getGamemode() == SURVIVAL) {
-                                                --itemInHand.count;
-                                                this.inventory.setItemInHand(itemInHand);
-                                                this.inventory.addItem(new ItemGlassBottle());
-                                            }
-
-                                            if (potion != null) {
-                                                potion.applyPotion(this);
-                                            }
-                                        }
+                                        log.debug("Unexpected release item action consume from {}", this::getName);
                                         return;
                                     default:
                                         break;
