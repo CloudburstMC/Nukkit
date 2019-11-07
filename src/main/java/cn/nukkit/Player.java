@@ -4436,7 +4436,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         //TODO: more windows
     }
 
-    public PlayerUIInventory getPlayerUIInventory() {
+    public PlayerUIInventory getUIInventory() {
         return playerUIInventory;
     }
 

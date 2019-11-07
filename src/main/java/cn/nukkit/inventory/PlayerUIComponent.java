@@ -78,16 +78,6 @@ public class PlayerUIComponent extends BaseInventory {
         return playerUI.type;
     }
 
-    /**
-     * This override is here for documentation and code completion purposes only.
-     *
-     * @return Player
-     */
-    @Override
-    public Player getHolder() {
-        return playerUI.getHolder();
-    }
-
     @Override
     public void onOpen(Player who) {
 

@@ -69,7 +69,7 @@ public class BlockBeacon extends BlockTransparent {
                 beacon = new BlockEntityBeacon(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
             }
 
-            player.addWindow(new BeaconInventory(this), Player.BEACON_WINDOW_ID);
+            player.addWindow(new BeaconInventory(player.getUIInventory(), this), Player.BEACON_WINDOW_ID);
         }
         return true;
     }
