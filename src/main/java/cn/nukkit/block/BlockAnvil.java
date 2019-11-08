@@ -111,7 +111,7 @@ public class BlockAnvil extends BlockFallable implements Faceable {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            player.addWindow(new AnvilInventory(this), Player.ANVIL_WINDOW_ID);
+            player.addWindow(new AnvilInventory(player.getUIInventory(), this), Player.ANVIL_WINDOW_ID);
         }
         return true;
     }

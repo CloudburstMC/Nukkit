@@ -1,6 +1,11 @@
 {
+<<<<<<< HEAD
   "version" : 388,
   "recipes" : [
+=======
+  "version": 388,
+  "recipes": [
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     {
       "id" : "Bookshelf_woodplanks_recipeId",
       "type" : 1,
@@ -60,7 +65,11 @@
       },
       "output" : [
         {
+<<<<<<< HEAD
           "id" : -140
+=======
+          "id": -140
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         }
       ],
       "shape" : [
@@ -80,7 +89,11 @@
       },
       "output" : [
         {
+<<<<<<< HEAD
           "id" : -141
+=======
+          "id": -141
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         }
       ],
       "shape" : [
@@ -100,7 +113,11 @@
       },
       "output" : [
         {
+<<<<<<< HEAD
           "id" : -142
+=======
+          "id": -142
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         }
       ],
       "shape" : [
@@ -120,7 +137,11 @@
       },
       "output" : [
         {
+<<<<<<< HEAD
           "id" : -143
+=======
+          "id": -143
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         }
       ],
       "shape" : [
@@ -140,7 +161,11 @@
       },
       "output" : [
         {
+<<<<<<< HEAD
           "id" : -144
+=======
+          "id": -144
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         }
       ],
       "shape" : [
@@ -652,6 +677,7 @@
       "priority" : 50
     },
     {
+<<<<<<< HEAD
       "id" : "Torch_recipeId",
       "type" : 1,
       "input" : {
@@ -671,6 +697,27 @@
         }
       ],
       "shape" : [
+=======
+      "id": "Torch_recipeId",
+      "type": 1,
+      "input": {
+        "A": {
+          "id": 263,
+          "damage": -1
+        },
+        "B": {
+          "id": 280,
+          "damage": -1
+        }
+      },
+      "output": [
+        {
+          "id": 50,
+          "count": 4
+        }
+      ],
+      "shape": [
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         "A",
         "B"
       ],
@@ -849,7 +896,11 @@
       },
       "output" : [
         {
+<<<<<<< HEAD
           "id" : 143
+=======
+          "id": 143
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         }
       ],
       "shape" : [
@@ -954,8 +1005,13 @@
         "AAA",
         "BBB"
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 1
+=======
+      "block": "crafting_table",
+      "priority": 1
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_color_1",
@@ -980,8 +1036,13 @@
         "AAA",
         "BBB"
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 1
+=======
+      "block": "crafting_table",
+      "priority": 1
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_color_10",
@@ -1006,8 +1067,13 @@
         "AAA",
         "BBB"
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 1
+=======
+      "block": "crafting_table",
+      "priority": 1
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_color_11",
@@ -1032,8 +1098,13 @@
         "AAA",
         "BBB"
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 1
+=======
+      "block": "crafting_table",
+      "priority": 1
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_color_12",
@@ -1058,8 +1129,13 @@
         "AAA",
         "BBB"
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 1
+=======
+      "block": "crafting_table",
+      "priority": 1
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_color_13",
@@ -1084,8 +1160,13 @@
         "AAA",
         "BBB"
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 1
+=======
+      "block": "crafting_table",
+      "priority": 1
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_color_14",
@@ -1110,8 +1191,13 @@
         "AAA",
         "BBB"
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 1
+=======
+      "block": "crafting_table",
+      "priority": 1
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_color_15",
@@ -1136,8 +1222,13 @@
         "AAA",
         "BBB"
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 1
+=======
+      "block": "crafting_table",
+      "priority": 1
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_color_2",
@@ -1162,8 +1253,13 @@
         "AAA",
         "BBB"
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 1
+=======
+      "block": "crafting_table",
+      "priority": 1
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_color_3",
@@ -1188,8 +1284,13 @@
         "AAA",
         "BBB"
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 1
+=======
+      "block": "crafting_table",
+      "priority": 1
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_color_4",
@@ -1214,8 +1315,13 @@
         "AAA",
         "BBB"
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 1
+=======
+      "block": "crafting_table",
+      "priority": 1
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_color_5",
@@ -1240,8 +1346,13 @@
         "AAA",
         "BBB"
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 1
+=======
+      "block": "crafting_table",
+      "priority": 1
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_color_6",
@@ -1266,8 +1377,13 @@
         "AAA",
         "BBB"
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 1
+=======
+      "block": "crafting_table",
+      "priority": 1
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_color_7",
@@ -1292,8 +1408,13 @@
         "AAA",
         "BBB"
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 1
+=======
+      "block": "crafting_table",
+      "priority": 1
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_color_8",
@@ -1318,8 +1439,13 @@
         "AAA",
         "BBB"
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 1
+=======
+      "block": "crafting_table",
+      "priority": 1
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_color_9",
@@ -1344,8 +1470,13 @@
         "AAA",
         "BBB"
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 1
+=======
+      "block": "crafting_table",
+      "priority": 1
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_0_1",
@@ -1365,8 +1496,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_0_10",
@@ -1386,8 +1522,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_0_11",
@@ -1407,8 +1548,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_0_12",
@@ -1428,8 +1574,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_0_13",
@@ -1449,8 +1600,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_0_14",
@@ -1470,8 +1626,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_0_15",
@@ -1490,8 +1651,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_0_2",
@@ -1511,8 +1677,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_0_3",
@@ -1532,8 +1703,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_0_4",
@@ -1553,8 +1729,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_0_5",
@@ -1574,8 +1755,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_0_6",
@@ -1595,8 +1781,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_0_7",
@@ -1616,8 +1807,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_0_8",
@@ -1637,8 +1833,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_0_9",
@@ -1658,8 +1859,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_10_0",
@@ -1680,8 +1886,13 @@
           "damage" : 5
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_10_1",
@@ -1702,8 +1913,13 @@
           "damage" : 5
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_10_11",
@@ -1724,8 +1940,13 @@
           "damage" : 5
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_10_12",
@@ -1746,8 +1967,13 @@
           "damage" : 5
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_10_13",
@@ -1768,8 +1994,13 @@
           "damage" : 5
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_10_14",
@@ -1790,8 +2021,13 @@
           "damage" : 5
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_10_15",
@@ -1811,8 +2047,13 @@
           "damage" : 5
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_10_2",
@@ -1833,8 +2074,13 @@
           "damage" : 5
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_10_3",
@@ -1855,8 +2101,13 @@
           "damage" : 5
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_10_4",
@@ -1877,8 +2128,13 @@
           "damage" : 5
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_10_5",
@@ -1899,8 +2155,13 @@
           "damage" : 5
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_10_6",
@@ -1921,8 +2182,13 @@
           "damage" : 5
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_10_7",
@@ -1943,8 +2209,13 @@
           "damage" : 5
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_10_8",
@@ -1965,8 +2236,13 @@
           "damage" : 5
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_10_9",
@@ -1987,8 +2263,13 @@
           "damage" : 5
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_11_0",
@@ -2009,8 +2290,13 @@
           "damage" : 4
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_11_1",
@@ -2031,8 +2317,13 @@
           "damage" : 4
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_11_10",
@@ -2053,8 +2344,13 @@
           "damage" : 4
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_11_12",
@@ -2075,8 +2371,13 @@
           "damage" : 4
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_11_13",
@@ -2097,8 +2398,13 @@
           "damage" : 4
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_11_14",
@@ -2119,8 +2425,13 @@
           "damage" : 4
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_11_15",
@@ -2140,8 +2451,13 @@
           "damage" : 4
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_11_2",
@@ -2162,8 +2478,13 @@
           "damage" : 4
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_11_3",
@@ -2184,8 +2505,13 @@
           "damage" : 4
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_11_4",
@@ -2206,8 +2532,13 @@
           "damage" : 4
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_11_5",
@@ -2228,8 +2559,13 @@
           "damage" : 4
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_11_6",
@@ -2250,8 +2586,13 @@
           "damage" : 4
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_11_7",
@@ -2272,8 +2613,13 @@
           "damage" : 4
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_11_8",
@@ -2294,8 +2640,13 @@
           "damage" : 4
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_11_9",
@@ -2316,8 +2667,13 @@
           "damage" : 4
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_12_0",
@@ -2338,8 +2694,13 @@
           "damage" : 3
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_12_1",
@@ -2360,8 +2721,13 @@
           "damage" : 3
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_12_10",
@@ -2382,8 +2748,13 @@
           "damage" : 3
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_12_11",
@@ -2404,8 +2775,13 @@
           "damage" : 3
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_12_13",
@@ -2426,8 +2802,13 @@
           "damage" : 3
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_12_14",
@@ -2448,8 +2829,13 @@
           "damage" : 3
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_12_15",
@@ -2469,8 +2855,13 @@
           "damage" : 3
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_12_2",
@@ -2491,8 +2882,13 @@
           "damage" : 3
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_12_3",
@@ -2513,8 +2909,13 @@
           "damage" : 3
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_12_4",
@@ -2535,8 +2936,13 @@
           "damage" : 3
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_12_5",
@@ -2557,8 +2963,13 @@
           "damage" : 3
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_12_6",
@@ -2579,8 +2990,13 @@
           "damage" : 3
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_12_7",
@@ -2601,8 +3017,13 @@
           "damage" : 3
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_12_8",
@@ -2623,8 +3044,13 @@
           "damage" : 3
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_12_9",
@@ -2645,8 +3071,13 @@
           "damage" : 3
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_13_0",
@@ -2667,8 +3098,13 @@
           "damage" : 2
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_13_1",
@@ -2689,8 +3125,13 @@
           "damage" : 2
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_13_10",
@@ -2711,8 +3152,13 @@
           "damage" : 2
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_13_11",
@@ -2733,8 +3179,13 @@
           "damage" : 2
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_13_12",
@@ -2755,8 +3206,13 @@
           "damage" : 2
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_13_14",
@@ -2777,8 +3233,13 @@
           "damage" : 2
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_13_15",
@@ -2798,8 +3259,13 @@
           "damage" : 2
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_13_2",
@@ -2820,8 +3286,13 @@
           "damage" : 2
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_13_3",
@@ -2842,8 +3313,13 @@
           "damage" : 2
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_13_4",
@@ -2864,8 +3340,13 @@
           "damage" : 2
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_13_5",
@@ -2886,8 +3367,13 @@
           "damage" : 2
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_13_6",
@@ -2908,8 +3394,13 @@
           "damage" : 2
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_13_7",
@@ -2930,8 +3421,13 @@
           "damage" : 2
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_13_8",
@@ -2952,8 +3448,13 @@
           "damage" : 2
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_13_9",
@@ -2974,8 +3475,13 @@
           "damage" : 2
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_14_0",
@@ -2996,8 +3502,13 @@
           "damage" : 1
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_14_1",
@@ -3018,8 +3529,13 @@
           "damage" : 1
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_14_10",
@@ -3040,8 +3556,13 @@
           "damage" : 1
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_14_11",
@@ -3062,8 +3583,13 @@
           "damage" : 1
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_14_12",
@@ -3084,8 +3610,13 @@
           "damage" : 1
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_14_13",
@@ -3106,8 +3637,13 @@
           "damage" : 1
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_14_15",
@@ -3127,8 +3663,13 @@
           "damage" : 1
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_14_2",
@@ -3149,8 +3690,13 @@
           "damage" : 1
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_14_3",
@@ -3171,8 +3717,13 @@
           "damage" : 1
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_14_4",
@@ -3193,8 +3744,13 @@
           "damage" : 1
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_14_5",
@@ -3215,8 +3771,13 @@
           "damage" : 1
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_14_6",
@@ -3237,8 +3798,13 @@
           "damage" : 1
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_14_7",
@@ -3259,8 +3825,13 @@
           "damage" : 1
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_14_8",
@@ -3281,8 +3852,13 @@
           "damage" : 1
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_14_9",
@@ -3303,8 +3879,13 @@
           "damage" : 1
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_15_0",
@@ -3324,8 +3905,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_15_1",
@@ -3345,8 +3931,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_15_10",
@@ -3366,8 +3957,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_15_11",
@@ -3387,8 +3983,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_15_12",
@@ -3408,8 +4009,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_15_13",
@@ -3429,8 +4035,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_15_14",
@@ -3450,8 +4061,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_15_2",
@@ -3471,8 +4087,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_15_3",
@@ -3492,8 +4113,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_15_4",
@@ -3513,8 +4139,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_15_5",
@@ -3534,8 +4165,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_15_6",
@@ -3555,8 +4191,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_15_7",
@@ -3576,8 +4217,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_15_8",
@@ -3597,8 +4243,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_15_9",
@@ -3618,8 +4269,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_16_1",
@@ -3640,8 +4296,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_16_10",
@@ -3662,8 +4323,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_16_11",
@@ -3684,8 +4350,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_16_12",
@@ -3706,8 +4377,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_16_13",
@@ -3728,8 +4404,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_16_14",
@@ -3750,8 +4431,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_16_15",
@@ -3771,8 +4457,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_16_2",
@@ -3793,8 +4484,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_16_3",
@@ -3815,8 +4511,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_16_4",
@@ -3837,8 +4538,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_16_5",
@@ -3859,8 +4565,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_16_6",
@@ -3881,8 +4592,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_16_7",
@@ -3903,8 +4619,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_16_8",
@@ -3925,8 +4646,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_16_9",
@@ -3947,8 +4673,13 @@
           "damage" : 15
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_17_0",
@@ -3969,8 +4700,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_17_1",
@@ -3991,8 +4727,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_17_10",
@@ -4013,8 +4754,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_17_11",
@@ -4035,8 +4781,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_17_12",
@@ -4057,8 +4808,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_17_13",
@@ -4079,8 +4835,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_17_14",
@@ -4101,8 +4862,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_17_15",
@@ -4122,8 +4888,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_17_2",
@@ -4144,8 +4915,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_17_4",
@@ -4166,8 +4942,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_17_5",
@@ -4188,8 +4969,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_17_6",
@@ -4210,8 +4996,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_17_7",
@@ -4232,8 +5023,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_17_8",
@@ -4254,8 +5050,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_17_9",
@@ -4276,8 +5077,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_18_0",
@@ -4298,8 +5104,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_18_1",
@@ -4320,8 +5131,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_18_10",
@@ -4342,8 +5158,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_18_11",
@@ -4364,8 +5185,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_18_12",
@@ -4386,8 +5212,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_18_13",
@@ -4408,8 +5239,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_18_14",
@@ -4430,8 +5266,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_18_15",
@@ -4451,8 +5292,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_18_2",
@@ -4473,8 +5319,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_18_3",
@@ -4495,8 +5346,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_18_5",
@@ -4517,8 +5373,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_18_6",
@@ -4539,8 +5400,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_18_7",
@@ -4561,8 +5427,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_18_8",
@@ -4583,8 +5454,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_18_9",
@@ -4605,8 +5481,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_19_0",
@@ -4626,8 +5507,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_19_1",
@@ -4647,8 +5533,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_19_10",
@@ -4668,8 +5559,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_19_11",
@@ -4689,8 +5585,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_19_12",
@@ -4710,8 +5611,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_19_13",
@@ -4731,8 +5637,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_19_14",
@@ -4752,8 +5663,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_19_2",
@@ -4773,8 +5689,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_19_3",
@@ -4794,8 +5715,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_19_4",
@@ -4815,8 +5741,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_19_5",
@@ -4836,8 +5767,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_19_6",
@@ -4857,8 +5793,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_19_7",
@@ -4878,8 +5819,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_19_8",
@@ -4899,8 +5845,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_19_9",
@@ -4920,8 +5871,13 @@
           "id" : 355
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_1_0",
@@ -4942,8 +5898,13 @@
           "damage" : 14
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_1_10",
@@ -4964,8 +5925,13 @@
           "damage" : 14
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_1_11",
@@ -4986,8 +5952,13 @@
           "damage" : 14
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_1_12",
@@ -5008,8 +5979,13 @@
           "damage" : 14
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_1_13",
@@ -5030,8 +6006,13 @@
           "damage" : 14
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_1_14",
@@ -5052,8 +6033,13 @@
           "damage" : 14
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_1_15",
@@ -5073,8 +6059,13 @@
           "damage" : 14
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_1_2",
@@ -5095,8 +6086,13 @@
           "damage" : 14
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_1_3",
@@ -5117,8 +6113,13 @@
           "damage" : 14
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_1_4",
@@ -5139,8 +6140,13 @@
           "damage" : 14
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_1_5",
@@ -5161,8 +6167,13 @@
           "damage" : 14
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_1_6",
@@ -5183,8 +6194,13 @@
           "damage" : 14
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_1_7",
@@ -5205,8 +6221,13 @@
           "damage" : 14
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_1_8",
@@ -5227,8 +6248,13 @@
           "damage" : 14
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_1_9",
@@ -5249,8 +6275,13 @@
           "damage" : 14
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_2_0",
@@ -5271,8 +6302,13 @@
           "damage" : 13
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_2_1",
@@ -5293,8 +6329,13 @@
           "damage" : 13
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_2_10",
@@ -5315,8 +6356,13 @@
           "damage" : 13
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_2_11",
@@ -5337,8 +6383,13 @@
           "damage" : 13
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_2_12",
@@ -5359,8 +6410,13 @@
           "damage" : 13
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_2_13",
@@ -5381,8 +6437,13 @@
           "damage" : 13
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_2_14",
@@ -5403,8 +6464,13 @@
           "damage" : 13
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_2_15",
@@ -5424,8 +6490,13 @@
           "damage" : 13
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_2_3",
@@ -5446,8 +6517,13 @@
           "damage" : 13
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_2_4",
@@ -5468,8 +6544,13 @@
           "damage" : 13
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_2_5",
@@ -5490,8 +6571,13 @@
           "damage" : 13
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_2_6",
@@ -5512,8 +6598,13 @@
           "damage" : 13
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_2_7",
@@ -5534,8 +6625,13 @@
           "damage" : 13
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_2_8",
@@ -5556,8 +6652,13 @@
           "damage" : 13
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_2_9",
@@ -5578,8 +6679,13 @@
           "damage" : 13
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_3_0",
@@ -5600,8 +6706,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_3_1",
@@ -5622,8 +6733,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_3_10",
@@ -5644,8 +6760,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_3_11",
@@ -5666,8 +6787,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_3_12",
@@ -5688,8 +6814,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_3_13",
@@ -5710,8 +6841,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_3_14",
@@ -5732,8 +6868,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_3_15",
@@ -5753,8 +6894,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_3_2",
@@ -5775,8 +6921,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_3_4",
@@ -5797,8 +6948,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_3_5",
@@ -5819,8 +6975,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_3_6",
@@ -5841,8 +7002,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_3_7",
@@ -5863,8 +7029,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_3_8",
@@ -5885,8 +7056,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_3_9",
@@ -5907,8 +7083,13 @@
           "damage" : 12
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_4_0",
@@ -5929,8 +7110,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_4_1",
@@ -5951,8 +7137,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_4_10",
@@ -5973,8 +7164,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_4_11",
@@ -5995,8 +7191,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_4_12",
@@ -6017,8 +7218,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_4_13",
@@ -6039,8 +7245,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_4_14",
@@ -6061,8 +7272,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_4_15",
@@ -6082,8 +7298,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_4_2",
@@ -6104,8 +7325,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_4_3",
@@ -6126,8 +7352,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_4_5",
@@ -6148,8 +7379,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_4_6",
@@ -6170,8 +7406,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_4_7",
@@ -6192,8 +7433,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_4_8",
@@ -6214,8 +7460,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_4_9",
@@ -6236,8 +7487,13 @@
           "damage" : 11
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_5_0",
@@ -6258,8 +7514,13 @@
           "damage" : 10
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_5_1",
@@ -6280,8 +7541,13 @@
           "damage" : 10
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_5_10",
@@ -6302,8 +7568,13 @@
           "damage" : 10
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_5_11",
@@ -6324,8 +7595,13 @@
           "damage" : 10
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_5_12",
@@ -6346,8 +7622,13 @@
           "damage" : 10
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_5_13",
@@ -6368,8 +7649,13 @@
           "damage" : 10
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_5_14",
@@ -6390,8 +7676,13 @@
           "damage" : 10
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_5_15",
@@ -6411,8 +7702,13 @@
           "damage" : 10
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_5_2",
@@ -6433,8 +7729,13 @@
           "damage" : 10
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_5_3",
@@ -6455,8 +7756,13 @@
           "damage" : 10
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_5_4",
@@ -6477,8 +7783,13 @@
           "damage" : 10
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_5_6",
@@ -6499,8 +7810,13 @@
           "damage" : 10
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_5_7",
@@ -6521,8 +7837,13 @@
           "damage" : 10
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_5_8",
@@ -6543,8 +7864,13 @@
           "damage" : 10
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_5_9",
@@ -6565,8 +7891,13 @@
           "damage" : 10
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_6_0",
@@ -6587,8 +7918,13 @@
           "damage" : 9
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_6_1",
@@ -6609,8 +7945,13 @@
           "damage" : 9
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_6_10",
@@ -6631,8 +7972,13 @@
           "damage" : 9
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_6_11",
@@ -6653,8 +7999,13 @@
           "damage" : 9
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_6_12",
@@ -6675,8 +8026,13 @@
           "damage" : 9
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_6_13",
@@ -6697,8 +8053,13 @@
           "damage" : 9
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_6_14",
@@ -6719,8 +8080,13 @@
           "damage" : 9
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_6_15",
@@ -6740,8 +8106,13 @@
           "damage" : 9
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_6_2",
@@ -6762,8 +8133,13 @@
           "damage" : 9
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_6_3",
@@ -6784,8 +8160,13 @@
           "damage" : 9
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_6_4",
@@ -6806,8 +8187,13 @@
           "damage" : 9
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_6_5",
@@ -6828,8 +8214,13 @@
           "damage" : 9
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_6_7",
@@ -6850,8 +8241,13 @@
           "damage" : 9
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_6_8",
@@ -6872,8 +8268,13 @@
           "damage" : 9
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_6_9",
@@ -6894,8 +8295,13 @@
           "damage" : 9
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_7_0",
@@ -6916,8 +8322,13 @@
           "damage" : 8
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_7_1",
@@ -6938,8 +8349,13 @@
           "damage" : 8
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_7_10",
@@ -6960,8 +8376,13 @@
           "damage" : 8
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_7_11",
@@ -6982,8 +8403,13 @@
           "damage" : 8
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_7_12",
@@ -7004,8 +8430,13 @@
           "damage" : 8
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_7_13",
@@ -7026,8 +8457,13 @@
           "damage" : 8
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_7_14",
@@ -7048,8 +8484,13 @@
           "damage" : 8
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_7_15",
@@ -7069,8 +8510,13 @@
           "damage" : 8
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_7_2",
@@ -7091,8 +8537,13 @@
           "damage" : 8
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_7_3",
@@ -7113,8 +8564,13 @@
           "damage" : 8
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_7_4",
@@ -7135,8 +8591,13 @@
           "damage" : 8
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_7_5",
@@ -7157,8 +8618,13 @@
           "damage" : 8
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_7_6",
@@ -7179,8 +8645,13 @@
           "damage" : 8
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_7_8",
@@ -7201,8 +8672,13 @@
           "damage" : 8
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_7_9",
@@ -7223,8 +8699,13 @@
           "damage" : 8
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_8_0",
@@ -7245,8 +8726,13 @@
           "damage" : 7
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_8_1",
@@ -7267,8 +8753,13 @@
           "damage" : 7
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_8_10",
@@ -7289,8 +8780,13 @@
           "damage" : 7
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_8_11",
@@ -7311,8 +8807,13 @@
           "damage" : 7
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_8_12",
@@ -7333,8 +8834,13 @@
           "damage" : 7
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_8_13",
@@ -7355,8 +8861,13 @@
           "damage" : 7
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_8_14",
@@ -7377,8 +8888,13 @@
           "damage" : 7
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_8_15",
@@ -7398,8 +8914,13 @@
           "damage" : 7
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_8_2",
@@ -7420,8 +8941,13 @@
           "damage" : 7
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_8_3",
@@ -7442,8 +8968,13 @@
           "damage" : 7
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_8_4",
@@ -7464,8 +8995,13 @@
           "damage" : 7
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_8_5",
@@ -7486,8 +9022,13 @@
           "damage" : 7
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_8_6",
@@ -7508,8 +9049,13 @@
           "damage" : 7
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_8_7",
@@ -7530,8 +9076,13 @@
           "damage" : 7
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_8_9",
@@ -7552,8 +9103,13 @@
           "damage" : 7
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_9_0",
@@ -7574,8 +9130,13 @@
           "damage" : 6
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_9_1",
@@ -7596,8 +9157,13 @@
           "damage" : 6
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_9_10",
@@ -7618,8 +9184,13 @@
           "damage" : 6
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_9_11",
@@ -7640,8 +9211,13 @@
           "damage" : 6
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_9_12",
@@ -7662,8 +9238,13 @@
           "damage" : 6
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_9_13",
@@ -7684,8 +9265,13 @@
           "damage" : 6
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_9_14",
@@ -7706,8 +9292,13 @@
           "damage" : 6
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_9_15",
@@ -7727,8 +9318,13 @@
           "damage" : 6
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_9_2",
@@ -7749,8 +9345,13 @@
           "damage" : 6
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_9_3",
@@ -7771,8 +9372,13 @@
           "damage" : 6
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_9_4",
@@ -7793,8 +9399,13 @@
           "damage" : 6
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_9_5",
@@ -7815,8 +9426,13 @@
           "damage" : 6
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_9_6",
@@ -7837,8 +9453,13 @@
           "damage" : 6
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_9_7",
@@ -7859,8 +9480,13 @@
           "damage" : 6
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "bed_dye_9_8",
@@ -7881,8 +9507,13 @@
           "damage" : 6
         }
       ],
+<<<<<<< HEAD
       "block" : "crafting_table",
       "priority" : 50
+=======
+      "block": "crafting_table",
+      "priority": 50
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     },
     {
       "id" : "birch_stairs_birch_recipeId",
@@ -8107,8 +9738,13 @@
           "id" : 5,
           "damage" : 4
         },
+<<<<<<< HEAD
         "B" : {
           "id" : 269
+=======
+        "B": {
+          "id": 269
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         }
       },
       "output" : [
@@ -8776,6 +10412,7 @@
           "damage" : -1
         },
         {
+<<<<<<< HEAD
           "id" : 457,
           "damage" : -1
         },
@@ -8798,6 +10435,30 @@
         {
           "id" : 457,
           "damage" : -1
+=======
+          "id": 457,
+          "damage": -1
+        },
+        {
+          "id": 457,
+          "damage": -1
+        },
+        {
+          "id": 457,
+          "damage": -1
+        },
+        {
+          "id": 457,
+          "damage": -1
+        },
+        {
+          "id": 457,
+          "damage": -1
+        },
+        {
+          "id": 457,
+          "damage": -1
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         }
       ],
       "output" : [
@@ -8816,8 +10477,13 @@
           "id" : 5,
           "damage" : 2
         },
+<<<<<<< HEAD
         "B" : {
           "id" : 269
+=======
+        "B": {
+          "id": 269
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         }
       },
       "output" : [
@@ -9273,6 +10939,7 @@
       "priority" : 0
     },
     {
+<<<<<<< HEAD
       "id" : "minecraft:black_dye_from_wither_rose",
       "type" : 0,
       "input" : [
@@ -9297,6 +10964,32 @@
         "A" : {
           "id" : 20,
           "damage" : -1
+=======
+      "id": "minecraft:black_dye_from_wither_rose",
+      "type": 0,
+      "input": [
+        {
+          "id": -216,
+          "damage": -1
+        }
+      ],
+      "output": [
+        {
+          "id": 351,
+          "damage": 16
+        }
+      ],
+      "block": "crafting_table",
+      "priority": 0
+    },
+    {
+      "id": "minecraft:black_stained_glass",
+      "type": 1,
+      "input": {
+        "A": {
+          "id": 20,
+          "damage": -1
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         },
         "B" : {
           "id" : 351,
@@ -9897,8 +11590,13 @@
         "A" : {
           "id" : 5
         },
+<<<<<<< HEAD
         "B" : {
           "id" : 269
+=======
+        "B": {
+          "id": 269
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         }
       },
       "output" : [
@@ -10817,11 +12515,19 @@
       "priority" : 0
     },
     {
+<<<<<<< HEAD
       "id" : "minecraft:carrot_on_a_stick",
       "type" : 1,
       "input" : {
         "A" : {
           "id" : 346
+=======
+      "id": "minecraft:carrot_on_a_stick",
+      "type": 1,
+      "input": {
+        "A": {
+          "id": 346
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         },
         "B" : {
           "id" : 391,
@@ -11537,8 +13243,13 @@
           "id" : 5,
           "damage" : 5
         },
+<<<<<<< HEAD
         "B" : {
           "id" : 269
+=======
+        "B": {
+          "id": 269
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         }
       },
       "output" : [
@@ -12232,8 +13943,13 @@
           "id" : 4,
           "damage" : -1
         },
+<<<<<<< HEAD
         "B" : {
           "id" : 261
+=======
+        "B": {
+          "id": 261
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         },
         "C" : {
           "id" : 331,
@@ -14371,8 +16087,13 @@
           "id" : 5,
           "damage" : 3
         },
+<<<<<<< HEAD
         "B" : {
           "id" : 269
+=======
+        "B": {
+          "id": 269
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         }
       },
       "output" : [
@@ -19934,8 +21655,13 @@
           "id" : 5,
           "damage" : 1
         },
+<<<<<<< HEAD
         "B" : {
           "id" : 269
+=======
+        "B": {
+          "id": 269
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         }
       },
       "output" : [
@@ -20311,7 +22037,11 @@
       },
       "output" : [
         {
+<<<<<<< HEAD
           "id" : 77
+=======
+          "id": 77
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         }
       ],
       "shape" : [
@@ -20881,6 +22611,7 @@
       "priority" : 0
     },
     {
+<<<<<<< HEAD
       "id" : "minecraft:suspicious_stew_from_tulip_white",
       "type" : 0,
       "input" : [
@@ -20891,6 +22622,427 @@
         {
           "id" : 40,
           "damage" : -1
+=======
+      "id": "minecraft:suspicious_stew_from_allium",
+      "type": 0,
+      "input": [
+        {
+          "id": 39,
+          "damage": -1
+        },
+        {
+          "id": 40,
+          "damage": -1
+        },
+        {
+          "id": 281,
+          "damage": -1
+        },
+        {
+          "id": 38,
+          "damage": 2
+        }
+      ],
+      "output": [
+        {
+          "id": 734,
+          "damage": 7
+        }
+      ],
+      "block": "crafting_table",
+      "priority": 0
+    },
+    {
+      "id": "minecraft:suspicious_stew_from_azure_bluet",
+      "type": 0,
+      "input": [
+        {
+          "id": 39,
+          "damage": -1
+        },
+        {
+          "id": 40,
+          "damage": -1
+        },
+        {
+          "id": 281,
+          "damage": -1
+        },
+        {
+          "id": 38,
+          "damage": 3
+        }
+      ],
+      "output": [
+        {
+          "id": 734,
+          "damage": 3
+        }
+      ],
+      "block": "crafting_table",
+      "priority": 0
+    },
+    {
+      "id": "minecraft:suspicious_stew_from_blue_orchid",
+      "type": 0,
+      "input": [
+        {
+          "id": 39,
+          "damage": -1
+        },
+        {
+          "id": 40,
+          "damage": -1
+        },
+        {
+          "id": 281,
+          "damage": -1
+        },
+        {
+          "id": 38,
+          "damage": 1
+        }
+      ],
+      "output": [
+        {
+          "id": 734,
+          "damage": 6
+        }
+      ],
+      "block": "crafting_table",
+      "priority": 0
+    },
+    {
+      "id": "minecraft:suspicious_stew_from_cornflower",
+      "type": 0,
+      "input": [
+        {
+          "id": 39,
+          "damage": -1
+        },
+        {
+          "id": 40,
+          "damage": -1
+        },
+        {
+          "id": 281,
+          "damage": -1
+        },
+        {
+          "id": 38,
+          "damage": 9
+        }
+      ],
+      "output": [
+        {
+          "id": 734,
+          "damage": 1
+        }
+      ],
+      "block": "crafting_table",
+      "priority": 0
+    },
+    {
+      "id": "minecraft:suspicious_stew_from_dandelion",
+      "type": 0,
+      "input": [
+        {
+          "id": 39,
+          "damage": -1
+        },
+        {
+          "id": 40,
+          "damage": -1
+        },
+        {
+          "id": 281,
+          "damage": -1
+        },
+        {
+          "id": 37,
+          "damage": -1
+        }
+      ],
+      "output": [
+        {
+          "id": 734,
+          "damage": 5
+        }
+      ],
+      "block": "crafting_table",
+      "priority": 0
+    },
+    {
+      "id": "minecraft:suspicious_stew_from_lily_of_the_valley",
+      "type": 0,
+      "input": [
+        {
+          "id": 39,
+          "damage": -1
+        },
+        {
+          "id": 40,
+          "damage": -1
+        },
+        {
+          "id": 281,
+          "damage": -1
+        },
+        {
+          "id": 38,
+          "damage": 10
+        }
+      ],
+      "output": [
+        {
+          "id": 734,
+          "damage": 4
+        }
+      ],
+      "block": "crafting_table",
+      "priority": 0
+    },
+    {
+      "id": "minecraft:suspicious_stew_from_oxeye_daisy",
+      "type": 0,
+      "input": [
+        {
+          "id": 39,
+          "damage": -1
+        },
+        {
+          "id": 40,
+          "damage": -1
+        },
+        {
+          "id": 281,
+          "damage": -1
+        },
+        {
+          "id": 38,
+          "damage": 8
+        }
+      ],
+      "output": [
+        {
+          "id": 734,
+          "damage": 8
+        }
+      ],
+      "block": "crafting_table",
+      "priority": 0
+    },
+    {
+      "id": "minecraft:suspicious_stew_from_poppy",
+      "type": 0,
+      "input": [
+        {
+          "id": 39,
+          "damage": -1
+        },
+        {
+          "id": 40,
+          "damage": -1
+        },
+        {
+          "id": 281,
+          "damage": -1
+        },
+        {
+          "id": 38
+        }
+      ],
+      "output": [
+        {
+          "id": 734
+        }
+      ],
+      "block": "crafting_table",
+      "priority": 0
+    },
+    {
+      "id": "minecraft:suspicious_stew_from_tulip_orange",
+      "type": 0,
+      "input": [
+        {
+          "id": 39,
+          "damage": -1
+        },
+        {
+          "id": 40,
+          "damage": -1
+        },
+        {
+          "id": 281,
+          "damage": -1
+        },
+        {
+          "id": 38,
+          "damage": 5
+        }
+      ],
+      "output": [
+        {
+          "id": 734,
+          "damage": 2
+        }
+      ],
+      "block": "crafting_table",
+      "priority": 0
+    },
+    {
+      "id": "minecraft:suspicious_stew_from_tulip_pink",
+      "type": 0,
+      "input": [
+        {
+          "id": 39,
+          "damage": -1
+        },
+        {
+          "id": 40,
+          "damage": -1
+        },
+        {
+          "id": 281,
+          "damage": -1
+        },
+        {
+          "id": 38,
+          "damage": 7
+        }
+      ],
+      "output": [
+        {
+          "id": 734,
+          "damage": 2
+        }
+      ],
+      "block": "crafting_table",
+      "priority": 0
+    },
+    {
+      "id": "minecraft:suspicious_stew_from_tulip_red",
+      "type": 0,
+      "input": [
+        {
+          "id": 39,
+          "damage": -1
+        },
+        {
+          "id": 40,
+          "damage": -1
+        },
+        {
+          "id": 281,
+          "damage": -1
+        },
+        {
+          "id": 38,
+          "damage": 4
+        }
+      ],
+      "output": [
+        {
+          "id": 734,
+          "damage": 2
+        }
+      ],
+      "block": "crafting_table",
+      "priority": 0
+    },
+    {
+      "id": "minecraft:suspicious_stew_from_tulip_white",
+      "type": 0,
+      "input": [
+        {
+          "id": 39,
+          "damage": -1
+        },
+        {
+          "id": 40,
+          "damage": -1
+        },
+        {
+          "id": 281,
+          "damage": -1
+        },
+        {
+          "id": 38,
+          "damage": 6
+        }
+      ],
+      "output": [
+        {
+          "id": 734,
+          "damage": 2
+        }
+      ],
+      "block": "crafting_table",
+      "priority": 0
+    },
+    {
+      "id": "minecraft:suspicious_stew_from_wither_rose",
+      "type": 0,
+      "input": [
+        {
+          "id": 39,
+          "damage": -1
+        },
+        {
+          "id": 40,
+          "damage": -1
+        },
+        {
+          "id": 281,
+          "damage": -1
+        },
+        {
+          "id": -216,
+          "damage": -1
+        }
+      ],
+      "output": [
+        {
+          "id": 734,
+          "damage": 9
+        }
+      ],
+      "block": "crafting_table",
+      "priority": 0
+    },
+    {
+      "id": "minecraft:tnt",
+      "type": 1,
+      "input": {
+        "A": {
+          "id": 289,
+          "damage": -1
+        },
+        "B": {
+          "id": 12,
+          "damage": -1
+        }
+      },
+      "output": [
+        {
+          "id": 46
+        }
+      ],
+      "shape": [
+        "ABA",
+        "BAB",
+        "ABA"
+      ],
+      "block": "crafting_table",
+      "priority": 0
+    },
+    {
+      "id": "minecraft:tnt_minecart",
+      "type": 1,
+      "input": {
+        "A": {
+          "id": 46
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         },
         {
           "id" : 281,
@@ -39642,10 +41794,160 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : -156,
         "damage" : -1
+=======
+      "type": 3,
+      "input": {
+        "id": -212
+      },
+      "output": {
+        "id": 263,
+        "damage": 1
+      },
+      "block": "furnace"
+    },
+    {
+      "type": 3,
+      "input": {
+        "id": -212,
+        "damage": 1
+      },
+      "output": {
+        "id": 263,
+        "damage": 1
+      },
+      "block": "furnace"
+    },
+    {
+      "type": 3,
+      "input": {
+        "id": -212,
+        "damage": 2
+      },
+      "output": {
+        "id": 263,
+        "damage": 1
+      },
+      "block": "furnace"
+    },
+    {
+      "type": 3,
+      "input": {
+        "id": -212,
+        "damage": 3
+      },
+      "output": {
+        "id": 263,
+        "damage": 1
+      },
+      "block": "furnace"
+    },
+    {
+      "type": 3,
+      "input": {
+        "id": -212,
+        "damage": 4
+      },
+      "output": {
+        "id": 263,
+        "damage": 1
+      },
+      "block": "furnace"
+    },
+    {
+      "type": 3,
+      "input": {
+        "id": -212,
+        "damage": 5
+      },
+      "output": {
+        "id": 263,
+        "damage": 1
+      },
+      "block": "furnace"
+    },
+    {
+      "type": 3,
+      "input": {
+        "id": -212,
+        "damage": 8
+      },
+      "output": {
+        "id": 263,
+        "damage": 1
+      },
+      "block": "furnace"
+    },
+    {
+      "type": 3,
+      "input": {
+        "id": -212,
+        "damage": 9
+      },
+      "output": {
+        "id": 263,
+        "damage": 1
+      },
+      "block": "furnace"
+    },
+    {
+      "type": 3,
+      "input": {
+        "id": -212,
+        "damage": 10
+      },
+      "output": {
+        "id": 263,
+        "damage": 1
+      },
+      "block": "furnace"
+    },
+    {
+      "type": 3,
+      "input": {
+        "id": -212,
+        "damage": 11
+      },
+      "output": {
+        "id": 263,
+        "damage": 1
+      },
+      "block": "furnace"
+    },
+    {
+      "type": 3,
+      "input": {
+        "id": -212,
+        "damage": 12
+      },
+      "output": {
+        "id": 263,
+        "damage": 1
+      },
+      "block": "furnace"
+    },
+    {
+      "type": 3,
+      "input": {
+        "id": -212,
+        "damage": 13
+      },
+      "output": {
+        "id": 263,
+        "damage": 1
+      },
+      "block": "furnace"
+    },
+    {
+      "type": 3,
+      "input": {
+        "id": -156,
+        "damage": -1
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 351,
@@ -39726,9 +42028,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 1
+=======
+      "type": 3,
+      "input": {
+        "id": 1
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : -183
@@ -40273,9 +42581,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 256
+=======
+      "type": 3,
+      "input": {
+        "id": 256
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40283,9 +42597,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 256
+=======
+      "type": 3,
+      "input": {
+        "id": 256
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40293,9 +42613,15 @@
       "block" : "blast_furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 257
+=======
+      "type": 3,
+      "input": {
+        "id": 257
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40303,9 +42629,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 257
+=======
+      "type": 3,
+      "input": {
+        "id": 257
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40313,9 +42645,15 @@
       "block" : "blast_furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 258
+=======
+      "type": 3,
+      "input": {
+        "id": 258
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40323,9 +42661,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 258
+=======
+      "type": 3,
+      "input": {
+        "id": 258
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40333,9 +42677,15 @@
       "block" : "blast_furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 267
+=======
+      "type": 3,
+      "input": {
+        "id": 267
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40343,9 +42693,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 267
+=======
+      "type": 3,
+      "input": {
+        "id": 267
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40353,9 +42709,15 @@
       "block" : "blast_furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 283
+=======
+      "type": 3,
+      "input": {
+        "id": 283
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 371
@@ -40363,9 +42725,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 283
+=======
+      "type": 3,
+      "input": {
+        "id": 283
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 371
@@ -40373,9 +42741,15 @@
       "block" : "blast_furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 284
+=======
+      "type": 3,
+      "input": {
+        "id": 284
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 371
@@ -40383,9 +42757,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 284
+=======
+      "type": 3,
+      "input": {
+        "id": 284
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 371
@@ -40393,9 +42773,15 @@
       "block" : "blast_furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 285
+=======
+      "type": 3,
+      "input": {
+        "id": 285
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 371
@@ -40403,9 +42789,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 285
+=======
+      "type": 3,
+      "input": {
+        "id": 285
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 371
@@ -40413,9 +42805,15 @@
       "block" : "blast_furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 286
+=======
+      "type": 3,
+      "input": {
+        "id": 286
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 371
@@ -40423,9 +42821,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 286
+=======
+      "type": 3,
+      "input": {
+        "id": 286
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 371
@@ -40433,9 +42837,15 @@
       "block" : "blast_furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 292
+=======
+      "type": 3,
+      "input": {
+        "id": 292
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40443,9 +42853,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 292
+=======
+      "type": 3,
+      "input": {
+        "id": 292
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40453,9 +42869,15 @@
       "block" : "blast_furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 294
+=======
+      "type": 3,
+      "input": {
+        "id": 294
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 371
@@ -40463,9 +42885,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 294
+=======
+      "type": 3,
+      "input": {
+        "id": 294
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 371
@@ -40473,9 +42901,15 @@
       "block" : "blast_furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 302
+=======
+      "type": 3,
+      "input": {
+        "id": 302
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40483,9 +42917,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 302
+=======
+      "type": 3,
+      "input": {
+        "id": 302
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40493,9 +42933,15 @@
       "block" : "blast_furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 303
+=======
+      "type": 3,
+      "input": {
+        "id": 303
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40503,9 +42949,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 303
+=======
+      "type": 3,
+      "input": {
+        "id": 303
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40513,9 +42965,15 @@
       "block" : "blast_furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 304
+=======
+      "type": 3,
+      "input": {
+        "id": 304
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40523,9 +42981,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 304
+=======
+      "type": 3,
+      "input": {
+        "id": 304
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40533,9 +42997,15 @@
       "block" : "blast_furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 305
+=======
+      "type": 3,
+      "input": {
+        "id": 305
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40543,9 +43013,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 305
+=======
+      "type": 3,
+      "input": {
+        "id": 305
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40553,9 +43029,15 @@
       "block" : "blast_furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 306
+=======
+      "type": 3,
+      "input": {
+        "id": 306
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40563,9 +43045,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 306
+=======
+      "type": 3,
+      "input": {
+        "id": 306
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40573,9 +43061,15 @@
       "block" : "blast_furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 307
+=======
+      "type": 3,
+      "input": {
+        "id": 307
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40583,9 +43077,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 307
+=======
+      "type": 3,
+      "input": {
+        "id": 307
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40593,9 +43093,15 @@
       "block" : "blast_furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 308
+=======
+      "type": 3,
+      "input": {
+        "id": 308
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40603,9 +43109,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 308
+=======
+      "type": 3,
+      "input": {
+        "id": 308
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40613,9 +43125,15 @@
       "block" : "blast_furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 309
+=======
+      "type": 3,
+      "input": {
+        "id": 309
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40623,9 +43141,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 309
+=======
+      "type": 3,
+      "input": {
+        "id": 309
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 452
@@ -40633,9 +43157,15 @@
       "block" : "blast_furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 314
+=======
+      "type": 3,
+      "input": {
+        "id": 314
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 371
@@ -40643,9 +43173,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 314
+=======
+      "type": 3,
+      "input": {
+        "id": 314
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 371
@@ -40653,9 +43189,15 @@
       "block" : "blast_furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 315
+=======
+      "type": 3,
+      "input": {
+        "id": 315
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 371
@@ -40663,9 +43205,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 315
+=======
+      "type": 3,
+      "input": {
+        "id": 315
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 371
@@ -40673,9 +43221,15 @@
       "block" : "blast_furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 316
+=======
+      "type": 3,
+      "input": {
+        "id": 316
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 371
@@ -40683,9 +43237,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 316
+=======
+      "type": 3,
+      "input": {
+        "id": 316
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 371
@@ -40693,9 +43253,15 @@
       "block" : "blast_furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 317
+=======
+      "type": 3,
+      "input": {
+        "id": 317
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 371
@@ -40703,9 +43269,15 @@
       "block" : "furnace"
     },
     {
+<<<<<<< HEAD
       "type" : 3,
       "input" : {
         "id" : 317
+=======
+      "type": 3,
+      "input": {
+        "id": 317
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
       },
       "output" : {
         "id" : 371
@@ -41074,6 +43646,325 @@
         "id" : 463
       },
       "block" : "campfire"
+    }
+  ],
+  "potionMixes": [
+    {
+      "fromPotionId": 4,
+      "ingredient": 377,
+      "toPotionId": 31
+    },
+    {
+      "fromPotionId": 4,
+      "ingredient": 376,
+      "toPotionId": 34
+    },
+    {
+      "fromPotionId": 4,
+      "ingredient": 370,
+      "toPotionId": 28
+    },
+    {
+      "fromPotionId": 4,
+      "ingredient": 396,
+      "toPotionId": 5
+    },
+    {
+      "fromPotionId": 4,
+      "ingredient": 378,
+      "toPotionId": 12
+    },
+    {
+      "fromPotionId": 4,
+      "ingredient": 470,
+      "toPotionId": 40
+    },
+    {
+      "fromPotionId": 4,
+      "ingredient": 462,
+      "toPotionId": 19
+    },
+    {
+      "fromPotionId": 4,
+      "ingredient": 414,
+      "toPotionId": 9
+    },
+    {
+      "fromPotionId": 4,
+      "ingredient": 382,
+      "toPotionId": 21
+    },
+    {
+      "fromPotionId": 4,
+      "ingredient": 375,
+      "toPotionId": 25
+    },
+    {
+      "fromPotionId": 4,
+      "ingredient": 353,
+      "toPotionId": 14
+    },
+    {
+      "fromPotionId": 4,
+      "ingredient": 469,
+      "toPotionId": 37
+    },
+    {
+      "fromPotionId": 12,
+      "ingredient": 331,
+      "toPotionId": 13
+    },
+    {
+      "fromPotionId": 23,
+      "ingredient": 348,
+      "toPotionId": 24
+    },
+    {
+      "fromPotionId": 21,
+      "ingredient": 376,
+      "toPotionId": 23
+    },
+    {
+      "fromPotionId": 21,
+      "ingredient": 348,
+      "toPotionId": 22
+    },
+    {
+      "fromPotionId": 7,
+      "ingredient": 331,
+      "toPotionId": 8
+    },
+    {
+      "fromPotionId": 9,
+      "ingredient": 376,
+      "toPotionId": 17
+    },
+    {
+      "fromPotionId": 9,
+      "ingredient": 348,
+      "toPotionId": 11
+    },
+    {
+      "fromPotionId": 9,
+      "ingredient": 331,
+      "toPotionId": 10
+    },
+    {
+      "fromPotionId": 6,
+      "ingredient": 376,
+      "toPotionId": 8
+    },
+    {
+      "fromPotionId": 15,
+      "ingredient": 376,
+      "toPotionId": 18
+    },
+    {
+      "fromPotionId": 10,
+      "ingredient": 376,
+      "toPotionId": 18
+    },
+    {
+      "fromPotionId": 2,
+      "ingredient": 376,
+      "toPotionId": 35
+    },
+    {
+      "fromPotionId": 26,
+      "ingredient": 376,
+      "toPotionId": 23
+    },
+    {
+      "fromPotionId": 32,
+      "ingredient": 376,
+      "toPotionId": 35
+    },
+    {
+      "fromPotionId": 1,
+      "ingredient": 376,
+      "toPotionId": 34
+    },
+    {
+      "fromPotionId": 5,
+      "ingredient": 376,
+      "toPotionId": 7
+    },
+    {
+      "fromPotionId": 5,
+      "ingredient": 331,
+      "toPotionId": 6
+    },
+    {
+      "fromPotionId": 25,
+      "ingredient": 376,
+      "toPotionId": 23
+    },
+    {
+      "fromPotionId": 25,
+      "ingredient": 348,
+      "toPotionId": 27
+    },
+    {
+      "fromPotionId": 25,
+      "ingredient": 331,
+      "toPotionId": 26
+    },
+    {
+      "fromPotionId": 28,
+      "ingredient": 348,
+      "toPotionId": 30
+    },
+    {
+      "fromPotionId": 28,
+      "ingredient": 331,
+      "toPotionId": 29
+    },
+    {
+      "fromPotionId": 17,
+      "ingredient": 331,
+      "toPotionId": 18
+    },
+    {
+      "fromPotionId": 40,
+      "ingredient": 331,
+      "toPotionId": 41
+    },
+    {
+      "fromPotionId": 31,
+      "ingredient": 376,
+      "toPotionId": 34
+    },
+    {
+      "fromPotionId": 31,
+      "ingredient": 348,
+      "toPotionId": 33
+    },
+    {
+      "fromPotionId": 31,
+      "ingredient": 331,
+      "toPotionId": 32
+    },
+    {
+      "fromPotionId": 22,
+      "ingredient": 376,
+      "toPotionId": 24
+    },
+    {
+      "fromPotionId": 27,
+      "ingredient": 376,
+      "toPotionId": 23
+    },
+    {
+      "fromPotionId": 33,
+      "ingredient": 376,
+      "toPotionId": 34
+    },
+    {
+      "fromPotionId": 14,
+      "ingredient": 376,
+      "toPotionId": 17
+    },
+    {
+      "fromPotionId": 14,
+      "ingredient": 348,
+      "toPotionId": 16
+    },
+    {
+      "fromPotionId": 14,
+      "ingredient": 331,
+      "toPotionId": 15
+    },
+    {
+      "fromPotionId": 3,
+      "ingredient": 376,
+      "toPotionId": 34
+    },
+    {
+      "fromPotionId": 37,
+      "ingredient": 348,
+      "toPotionId": 39
+    },
+    {
+      "fromPotionId": 37,
+      "ingredient": 331,
+      "toPotionId": 38
+    },
+    {
+      "fromPotionId": 0,
+      "ingredient": 377,
+      "toPotionId": 1
+    },
+    {
+      "fromPotionId": 19,
+      "ingredient": 331,
+      "toPotionId": 20
+    },
+    {
+      "fromPotionId": 0,
+      "ingredient": 376,
+      "toPotionId": 34
+    },
+    {
+      "fromPotionId": 0,
+      "ingredient": 370,
+      "toPotionId": 1
+    },
+    {
+      "fromPotionId": 0,
+      "ingredient": 348,
+      "toPotionId": 3
+    },
+    {
+      "fromPotionId": 0,
+      "ingredient": 378,
+      "toPotionId": 1
+    },
+    {
+      "fromPotionId": 0,
+      "ingredient": 372,
+      "toPotionId": 4
+    },
+    {
+      "fromPotionId": 0,
+      "ingredient": 414,
+      "toPotionId": 1
+    },
+    {
+      "fromPotionId": 0,
+      "ingredient": 331,
+      "toPotionId": 1
+    },
+    {
+      "fromPotionId": 0,
+      "ingredient": 382,
+      "toPotionId": 1
+    },
+    {
+      "fromPotionId": 0,
+      "ingredient": 375,
+      "toPotionId": 1
+    },
+    {
+      "fromPotionId": 0,
+      "ingredient": 353,
+      "toPotionId": 1
+    },
+    {
+      "fromPotionId": 34,
+      "ingredient": 331,
+      "toPotionId": 35
+    }
+  ],
+  "containerMixes": [
+    {
+      "fromItemId": 373,
+      "ingredient": 289,
+      "toItemId": 438
+    },
+    {
+      "fromItemId": 438,
+      "ingredient": 437,
+      "toItemId": 441
     }
   ]
 }

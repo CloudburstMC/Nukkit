@@ -28,6 +28,14 @@ public abstract class ItemEdible extends Item {
     }
 
     @Override
+<<<<<<< HEAD
+=======
+    public int getCompletionAction() {
+        return CompletedUsingItemPacket.ACTION_EAT;
+    }
+
+    @Override
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     public boolean onClickAir(Player player, Vector3 directionVector) {
         if (player.getFoodData().getLevel() < player.getFoodData().getMaxLevel() || player.isCreative()) {
             return true;
@@ -37,6 +45,7 @@ public abstract class ItemEdible extends Item {
     }
 
     @Override
+<<<<<<< HEAD
     public int completeAction(Player player, int ticksUsed) {
         if (consume(player)) {
             return CompletedUsingItemPacket.ACTION_EAT;
@@ -45,6 +54,9 @@ public abstract class ItemEdible extends Item {
     }
 
     protected boolean consume(Player player) {
+=======
+    public boolean onUse(Player player, int ticksUsed) {
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         PlayerItemConsumeEvent consumeEvent = new PlayerItemConsumeEvent(player, this);
 
         player.getServer().getPluginManager().callEvent(consumeEvent);
