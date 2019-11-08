@@ -4,9 +4,12 @@ import cn.nukkit.Player;
 import cn.nukkit.block.*;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
+import cn.nukkit.event.player.PlayerItemConsumeEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
+import cn.nukkit.math.Vector3;
+import cn.nukkit.network.protocol.CompletedUsingItemPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 /**
@@ -145,5 +148,30 @@ public class ItemBucket extends Item {
         }
 
         return false;
+    }
+
+    @Override
+    public boolean onClickAir(Player player, Vector3 directionVector) {
+        return this.getDamage() == 1; // Milk
+    }
+
+    @Override
+    public int completeAction(Player player, int ticksUsed) {
+        PlayerItemConsumeEvent consumeEvent = new PlayerItemConsumeEvent(player, this);
+
+        player.getServer().getPluginManager().callEvent(consumeEvent);
+        if (consumeEvent.isCancelled()) {
+            player.getInventory().sendContents(player);
+            return CompletedUsingItemPacket.ACTION_UNKNOWN;
+        }
+
+        if (player.isSurvival()) {
+            this.count--;
+            player.getInventory().setItemInHand(this);
+            player.getInventory().addItem(new ItemBucket());
+        }
+
+        player.removeAllEffects();
+        return CompletedUsingItemPacket.ACTION_UNKNOWN;
     }
 }

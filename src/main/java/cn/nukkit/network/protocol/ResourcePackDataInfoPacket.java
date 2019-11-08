@@ -10,13 +10,15 @@ public class ResourcePackDataInfoPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.RESOURCE_PACK_DATA_INFO_PACKET;
 
     public static final int TYPE_INVALID = 0;
-    public static final int TYPE_RESOURCE = 1;
-    public static final int TYPE_BEHAVIOR = 2;
-    public static final int TYPE_WORLD_TEMPLATE = 3;
-    public static final int TYPE_ADDON = 4;
-    public static final int TYPE_SKINS = 5;
-    public static final int TYPE_CACHED = 6;
-    public static final int TYPE_COPY_PROTECTED = 7;
+    public static final int TYPE_ADDON = 1;
+    public static final int TYPE_CACHED = 2;
+    public static final int TYPE_COPY_PROTECTED = 3;
+    public static final int TYPE_BEHAVIOR = 4;
+    public static final int TYPE_PERSONA_PIECE = 5;
+    public static final int TYPE_RESOURCE = 6;
+    public static final int TYPE_SKINS = 7;
+    public static final int TYPE_WORLD_TEMPLATE = 8;
+    public static final int TYPE_COUNT = 9;
 
     public UUID packId;
     public int maxChunkSize;

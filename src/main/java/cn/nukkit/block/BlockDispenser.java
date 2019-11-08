@@ -13,6 +13,7 @@ import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.Faceable;
 
 import java.util.Map.Entry;
@@ -190,16 +191,39 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
             }
         }
 
+        LevelEventPacket pk = new LevelEventPacket();
+
+        BlockFace facing = getBlockFace();
+
+        pk.x = 0.5f + facing.getXOffset() * 0.7f;
+        pk.y = 0.5f + facing.getYOffset() * 0.7f;
+        pk.z = 0.5f + facing.getZOffset() * 0.7f;
+
         if (target == null) {
-//            this.level.addLevelSoundEvent(this); //TODO: sound
+            pk.evid = LevelEventPacket.EVENT_SOUND_CLICK_FAIL;
+            pk.data = 1200;
+
+            this.level.addChunkPacket(getChunkX(), getChunkZ(), pk.clone());
             return;
+        } else {
+            pk.evid = LevelEventPacket.EVENT_SOUND_CLICK;
+            pk.data = 1000;
+
+            this.level.addChunkPacket(getChunkX(), getChunkZ(), pk.clone());
         }
+
+        pk.evid = LevelEventPacket.EVENT_PARTICLE_SHOOT;
+        pk.data = 7;
+        this.level.addChunkPacket(getChunkX(), getChunkZ(), pk);
 
         Item origin = target;
         target = target.clone();
 
         DispenseBehavior behavior = getDispenseBehavior(target);
-        Item result = behavior.dispense(this, getBlockFace(), target);
+        Item result = behavior.dispense(this, facing, target);
+
+
+        pk.evid = LevelEventPacket.EVENT_SOUND_CLICK;
 
         target.count--;
         inv.setItem(slot, target);
