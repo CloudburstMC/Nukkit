@@ -9,7 +9,10 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
 import cn.nukkit.math.Vector3;
+<<<<<<< HEAD
 import cn.nukkit.network.protocol.CompletedUsingItemPacket;
+=======
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 /**
@@ -156,13 +159,21 @@ public class ItemBucket extends Item {
     }
 
     @Override
+<<<<<<< HEAD
     public int completeAction(Player player, int ticksUsed) {
+=======
+    public boolean onUse(Player player, int ticksUsed) {
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         PlayerItemConsumeEvent consumeEvent = new PlayerItemConsumeEvent(player, this);
 
         player.getServer().getPluginManager().callEvent(consumeEvent);
         if (consumeEvent.isCancelled()) {
             player.getInventory().sendContents(player);
+<<<<<<< HEAD
             return CompletedUsingItemPacket.ACTION_UNKNOWN;
+=======
+            return false;
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
         }
 
         if (player.isSurvival()) {
@@ -172,6 +183,10 @@ public class ItemBucket extends Item {
         }
 
         player.removeAllEffects();
+<<<<<<< HEAD
         return CompletedUsingItemPacket.ACTION_UNKNOWN;
+=======
+        return true;
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     }
 }

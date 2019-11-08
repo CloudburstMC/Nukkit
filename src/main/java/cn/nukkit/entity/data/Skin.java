@@ -41,7 +41,12 @@ public class Skin {
     private String capeId;
 
     public boolean isValid() {
+<<<<<<< HEAD
         return true; //TODO: some sort of validation
+=======
+        return skinId != null && !skinId.trim().isEmpty() &&
+                skinData != null && skinData.width >= 64 && skinData.height >= 32;
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     }
 
     public SerializedImage getSkinData() {
@@ -192,7 +197,11 @@ public class Skin {
     }
 
     public String getFullSkinId() {
+<<<<<<< HEAD
         return getSkinId() + '_' + getCapeId();
+=======
+        return skinId; //TODO: Client sends full skin ID as normal skin ID. Find out what this is actually for.
+>>>>>>> 89f8e5c34e0561b09d44e1b85edea7982a24e7a7
     }
 
     private static SerializedImage parseBufferedImage(BufferedImage image) {
