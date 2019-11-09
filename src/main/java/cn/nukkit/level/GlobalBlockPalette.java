@@ -27,22 +27,21 @@ public class GlobalBlockPalette {
         if (stream == null) {
             throw new AssertionError("Unable to locate block state nbt");
         }
-        CompoundTag tag;
+        ListTag<CompoundTag> tag;
         try {
-            tag = NBTIO.read(stream);
+            tag = (ListTag<CompoundTag>) NBTIO.readNetwork(stream);
         } catch (IOException e) {
             throw new AssertionError(e);
         }
 
-        ListTag<CompoundTag> states = tag.getList("Palette", CompoundTag.class);
-        for (CompoundTag state : states.getAll()) {
+        for (CompoundTag state : tag.getAll()) {
             int id = state.getShort("id");
             int meta = state.getShort("meta");
             registerMapping(id << 4 | meta);
             state.remove("meta"); // No point in sending this since the client doesn't use it.
         }
         try {
-            BLOCK_PALETTE = NBTIO.write(tag.getList("Palette"), ByteOrder.LITTLE_ENDIAN, true);
+            BLOCK_PALETTE = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, true);
         } catch (IOException e) {
             throw new AssertionError(e);
         }
