@@ -42,7 +42,7 @@ public class Skin {
 
     public boolean isValid() {
         return skinId != null && !skinId.trim().isEmpty() &&
-                skinData != null && skinData.width >= 64 && skinData.height >= 32;
+                skinData != null && skinData.width >= 64 && skinData.height >= 32 && skinData.data.length >= SINGLE_SKIN_SIZE;
     }
 
     public SerializedImage getSkinData() {
