@@ -3,7 +3,6 @@ package cn.nukkit.item;
 import cn.nukkit.Player;
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.network.protocol.CompletedUsingItemPacket;
 import cn.nukkit.potion.Potion;
 
 import static cn.nukkit.Player.SURVIVAL;
@@ -68,11 +67,6 @@ public class ItemPotion extends Item {
     @Override
     public boolean onClickAir(Player player, Vector3 directionVector) {
         return true;
-    }
-
-    @Override
-    public int getCompletionAction() {
-        return CompletedUsingItemPacket.ACTION_CONSUME;
     }
 
     @Override

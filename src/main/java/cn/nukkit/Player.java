@@ -1060,7 +1060,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
 
             if (log.isTraceEnabled() && !(packet instanceof BatchPacket)) {
-                log.trace("Outbound: {}", packet);
+                log.trace("Outbound {}: {}", this.getName(), packet);
             }
 
             Integer identifier = this.interfaz.putPacket(this, packet, needACK, false);
@@ -2078,7 +2078,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
 
             if (log.isTraceEnabled()) {
-                log.trace("Inbound: {}", packet);
+                log.trace("Inbound {}: {}", this.getName(), packet);
             }
 
             packetswitch:
@@ -2556,8 +2556,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             break;
                     }
 
-                    this.startAction = -1;
-                    this.setDataFlag(Player.DATA_FLAGS, Player.DATA_FLAG_ACTION, false);
+                    this.setUsingItem(false);
                     break;
                 case ProtocolInfo.MOB_ARMOR_EQUIPMENT_PACKET:
                     break;
@@ -2701,7 +2700,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     switch (entityEventPacket.event) {
                         case EntityEventPacket.EATING_ITEM:
-                            if (entityEventPacket.data == 0) {
+                            if (entityEventPacket.data == 0 || entityEventPacket.eid != this.id) {
                                 break;
                             }
 
@@ -3053,22 +3052,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                             this.inventory.setItemInHand(item);
                                         }
 
-                                        if (this.startAction == -1) {
-                                            this.setDataFlag(DATA_FLAGS, DATA_FLAG_ACTION, true);
-                                            this.startAction = this.server.getTick();
+                                        if (!this.isUsingItem()) {
+                                            this.setUsingItem(true);
                                             break packetswitch;
                                         }
 
                                         // Used item
                                         int ticksUsed = this.server.getTick() - this.startAction;
-                                        this.stopAction();
+                                        this.setUsingItem(false);
 
-                                        if (item.onUse(this, ticksUsed)) {
-                                            CompletedUsingItemPacket completedUsingItem = new CompletedUsingItemPacket();
-                                            completedUsingItem.itemId = item.getId();
-                                            completedUsingItem.action = item.getCompletionAction();
-                                            this.dataPacket(completedUsingItem);
-                                        } else {
+                                        if (!item.onUse(this, ticksUsed)) {
                                             this.inventory.sendContents(this);
                                         }
                                     }
@@ -3181,18 +3174,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 type = releaseItemData.actionType;
                                 switch (type) {
                                     case InventoryTransactionPacket.RELEASE_ITEM_ACTION_RELEASE:
-                                        if (this.startAction != -1) {
+                                        if (this.isUsingItem()) {
                                             item = this.inventory.getItemInHand();
 
                                             int ticksUsed = this.server.getTick() - this.startAction;
-                                            if (item.onRelease(this, ticksUsed)) {
-                                                CompletedUsingItemPacket completedUsingItem = new CompletedUsingItemPacket();
-                                                completedUsingItem.itemId = item.getId();
-                                                completedUsingItem.action = item.getCompletionAction();
-                                                this.dataPacket(completedUsingItem);
+                                            if (!item.onRelease(this, ticksUsed)) {
+                                                this.inventory.sendContents(this);
                                             }
 
-                                            this.stopAction();
+                                            this.setUsingItem(false);
                                         } else {
                                             this.inventory.sendContents(this);
                                         }

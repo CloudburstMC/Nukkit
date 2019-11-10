@@ -5,6 +5,8 @@ import cn.nukkit.utils.SerializedImage;
 import cn.nukkit.utils.SkinAnimation;
 import com.google.common.base.Preconditions;
 import lombok.ToString;
+import net.minidev.json.JSONObject;
+import net.minidev.json.JSONValue;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -41,8 +43,26 @@ public class Skin {
     private String capeId;
 
     public boolean isValid() {
+        return isValidSkin() && isValidResourcePatch();
+    }
+
+    private boolean isValidSkin() {
         return skinId != null && !skinId.trim().isEmpty() &&
-                skinData != null && skinData.width >= 64 && skinData.height >= 32 && skinData.data.length >= SINGLE_SKIN_SIZE;
+                skinData != null && skinData.width >= 64 && skinData.height >= 32 &&
+                skinData.data.length >= SINGLE_SKIN_SIZE;
+    }
+
+    private boolean isValidResourcePatch() {
+        if (skinResourcePatch == null) {
+            return false;
+        }
+        try {
+            JSONObject object = (JSONObject) JSONValue.parse(skinResourcePatch);
+            JSONObject geometry = (JSONObject) object.get("geometry");
+            return geometry.containsKey("default") && geometry.get("default") instanceof String;
+        } catch (ClassCastException | NullPointerException e) {
+            return false;
+        }
     }
 
     public SerializedImage getSkinData() {
@@ -209,13 +229,6 @@ public class Skin {
         }
         image.flush();
         return new SerializedImage(image.getWidth(), image.getHeight(), outputStream.toByteArray());
-    }
-
-    private static boolean isValidSkin(int length) {
-        return length == SINGLE_SKIN_SIZE ||
-                length == DOUBLE_SKIN_SIZE ||
-                length == SKIN_128_64_SIZE ||
-                length == SKIN_128_128_SIZE;
     }
 
     private static String convertLegacyGeometryName(String geometryName) {

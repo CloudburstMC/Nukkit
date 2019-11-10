@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
 import cn.nukkit.item.food.Food;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.network.protocol.CompletedUsingItemPacket;
 
 /**
  * author: MagicDroidX
@@ -25,11 +24,6 @@ public abstract class ItemEdible extends Item {
 
     public ItemEdible(int id, Integer meta, int count) {
         super(id, meta, count);
-    }
-
-    @Override
-    public int getCompletionAction() {
-        return CompletedUsingItemPacket.ACTION_EAT;
     }
 
     @Override
