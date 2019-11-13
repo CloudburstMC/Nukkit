@@ -1842,7 +1842,7 @@ public class Server {
 
     public Level getLevelByName(String name) {
         for (Level level : this.levelArray) {
-            if (level.getFolderName().equals(name)) {
+            if (level.getFolderName().equalsIgnoreCase(name)) {
                 return level;
             }
         }
