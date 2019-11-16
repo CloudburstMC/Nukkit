@@ -53,16 +53,7 @@ public class Skin {
     }
 
     private boolean isValidResourcePatch() {
-        if (skinResourcePatch == null) {
-            return false;
-        }
-        try {
-            JSONObject object = (JSONObject) JSONValue.parse(skinResourcePatch);
-            JSONObject geometry = (JSONObject) object.get("geometry");
-            return geometry.containsKey("default") && geometry.get("default") instanceof String;
-        } catch (ClassCastException | NullPointerException e) {
-            return false;
-        }
+        return skinResourcePatch != null;
     }
 
     public SerializedImage getSkinData() {
