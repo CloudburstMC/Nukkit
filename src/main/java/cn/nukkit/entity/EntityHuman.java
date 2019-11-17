@@ -140,7 +140,7 @@ public class EntityHuman extends EntityHumanType {
                     newSkin.setGeometryData(new String(skinTag.getByteArray("GeometryData"), StandardCharsets.UTF_8));
                 }
                 if (skinTag.contains("AnimationData")) {
-                    newSkin.setAnimationData(new String(skinTag.getByteArray("Animation"), StandardCharsets.UTF_8));
+                    newSkin.setAnimationData(new String(skinTag.getByteArray("AnimationData"), StandardCharsets.UTF_8));
                 }
                 if (skinTag.contains("PremiumSkin")) {
                     newSkin.setPremium(skinTag.getBoolean("PremiumSkin"));
