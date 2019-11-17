@@ -111,7 +111,7 @@ public class LoginPacket extends DataPacket {
         }
 
         if (skinToken.has("AnimationData")) {
-            skin.setGeometryData(new String(Base64.getDecoder().decode(skinToken.get("AnimationData").getAsString()), StandardCharsets.UTF_8));
+            skin.setAnimationData(new String(Base64.getDecoder().decode(skinToken.get("AnimationData").getAsString()), StandardCharsets.UTF_8));
         }
 
         if (skinToken.has("AnimatedImageData")) {
