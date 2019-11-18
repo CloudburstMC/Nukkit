@@ -2267,6 +2267,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     PlayerSkinPacket skinPacket = (PlayerSkinPacket) packet;
                     Skin skin = skinPacket.skin;
 
+                    if(!skin.isValid()) {
+                        break;
+                    }
+
                     PlayerChangeSkinEvent playerChangeSkinEvent = new PlayerChangeSkinEvent(this, skin);
                     playerChangeSkinEvent.setCancelled(TimeUnit.SECONDS.toMillis(this.server.getPlayerSkinChangeCooldown()) > System.currentTimeMillis() - this.lastSkinChange);
                     this.server.getPluginManager().callEvent(playerChangeSkinEvent);
