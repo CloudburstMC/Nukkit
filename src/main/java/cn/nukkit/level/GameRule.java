@@ -19,6 +19,7 @@ public enum GameRule {
     MOB_GRIEFING("mobGriefing"),
     NATURAL_REGENERATION("naturalRegeneration"),
     PVP("pvp"),
+    RANDOM_TICK_SPEED("randomTickSpeed"),
     SEND_COMMAND_FEEDBACK("sendCommandFeedback"),
     SHOW_COORDINATES("showCoordinates"),
     TNT_EXPLODES("tntExplodes"),
