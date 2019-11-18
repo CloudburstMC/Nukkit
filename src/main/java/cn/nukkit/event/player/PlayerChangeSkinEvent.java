@@ -28,8 +28,4 @@ public class PlayerChangeSkinEvent extends PlayerEvent implements Cancellable {
         return this.skin;
     }
 
-    public void setSkin(Skin skin) {
-        this.skin = skin;
-    }
-
 }
