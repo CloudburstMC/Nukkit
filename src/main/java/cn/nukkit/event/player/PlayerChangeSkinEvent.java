@@ -17,7 +17,7 @@ public class PlayerChangeSkinEvent extends PlayerEvent implements Cancellable {
         return handlers;
     }
 
-    private Skin skin;
+    private final Skin skin;
 
     public PlayerChangeSkinEvent(Player player, Skin skin) {
         this.player = player;
