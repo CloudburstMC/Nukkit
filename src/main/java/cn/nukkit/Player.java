@@ -2259,6 +2259,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     dataPacket.progress = 1048576 * requestPacket.chunkIndex;
                     this.dataPacket(dataPacket);
                     break;
+                case ProtocolInfo.PLAYER_SKIN_PACKET:
+                    PlayerSkinPacket skinPacket = (PlayerSkinPacket) packet;
+                    Skin skin = skinPacket.skin;
+
+                    PlayerChangeSkinEvent playerChangeSkinEvent = new PlayerChangeSkinEvent(this, skin);
+                    this.server.getPluginManager().callEvent(playerChangeSkinEvent);
+                    if (!playerChangeSkinEvent.isCancelled()) {
+                        this.setSkin(skin);
+                    }
+
+                    break;
                 case ProtocolInfo.PLAYER_INPUT_PACKET:
                     if (!this.isAlive() || !this.spawned) {
                         break;
