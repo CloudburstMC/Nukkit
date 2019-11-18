@@ -71,7 +71,7 @@ public class BlockLeaves extends BlockTransparentMeta {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        setCheckDecay(true);
+        setPersistent(true);
         this.getLevel().setBlock(this, this, true);
         return true;
     }
