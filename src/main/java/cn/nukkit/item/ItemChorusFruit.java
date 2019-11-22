@@ -1,5 +1,8 @@
 package cn.nukkit.item;
 
+import cn.nukkit.Player;
+import cn.nukkit.math.Vector3;
+
 /**
  * Created by Leonidius20 on 20.08.18.
  */
@@ -17,4 +20,8 @@ public class ItemChorusFruit extends ItemEdible {
         super(CHORUS_FRUIT, meta, count, "Chorus Fruit");
     }
 
+    @Override
+    public boolean onClickAir(Player player, Vector3 directionVector) {
+        return true;
+    }
 }
