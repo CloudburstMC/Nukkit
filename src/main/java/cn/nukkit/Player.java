@@ -226,6 +226,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     private BlockEnderChest viewingEnderChest = null;
 
     protected int lastEnderPearl = 20;
+    protected int lastChorusFruitTeleport = 20;
 
     private LoginChainData loginChainData;
 
@@ -267,6 +268,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void onThrowEnderPearl() {
         this.lastEnderPearl = this.server.getTick();
+    }
+
+    public int getLastChorusFruitTeleport() {
+        return lastChorusFruitTeleport;
+    }
+
+    public void onChorusFruitTeleport() {
+        this.lastChorusFruitTeleport = this.server.getTick();
     }
 
     public BlockEnderChest getViewingEnderChest() {
