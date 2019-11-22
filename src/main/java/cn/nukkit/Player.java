@@ -246,6 +246,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public long lastSkinChange;
 
+    protected double lastRightClickTime = 0.0;
+    protected Vector3 lastRightClickPos = null;
+
     public int getStartActionTick() {
         return startAction;
     }
@@ -2963,6 +2966,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             int type = useItemData.actionType;
                             switch (type) {
                                 case InventoryTransactionPacket.USE_ITEM_ACTION_CLICK_BLOCK:
+                                    // Remove if client bug is ever fixed
+                                    boolean spamBug = (lastRightClickPos != null && System.currentTimeMillis() - lastRightClickTime < 100.0 && blockVector.distanceSquared(lastRightClickPos) < 0.00001);
+                                    lastRightClickPos = blockVector.asVector3();
+                                    lastRightClickTime = System.currentTimeMillis();
+                                    if (spamBug) {
+                                        return;
+                                    }
+                                    
                                     this.setDataFlag(DATA_FLAGS, DATA_FLAG_ACTION, false);
 
                                     if (this.canInteract(blockVector.add(0.5, 0.5, 0.5), this.isCreative() ? 13 : 7)) {
