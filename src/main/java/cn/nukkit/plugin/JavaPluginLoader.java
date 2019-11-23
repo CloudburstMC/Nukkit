@@ -3,14 +3,15 @@ package cn.nukkit.plugin;
 import cn.nukkit.Server;
 import cn.nukkit.event.plugin.PluginDisableEvent;
 import cn.nukkit.event.plugin.PluginEnableEvent;
+import cn.nukkit.plugin.simple.Command;
+import cn.nukkit.plugin.simple.Main;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
@@ -46,9 +47,7 @@ public class JavaPluginLoader implements PluginLoader {
             try {
                 Class javaClass = classLoader.loadClass(className);
 
-                if (!PluginBase.class.isAssignableFrom(javaClass)) {
-                    throw new PluginException("Main class `" + description.getMain() + "' does not extend PluginBase");
-                }
+                PluginAssert.isPluginBaseChild(javaClass,description.getMain());
 
                 try {
                     Class<PluginBase> pluginClass = (Class<PluginBase>) javaClass.asSubclass(PluginBase.class);
@@ -64,11 +63,87 @@ public class JavaPluginLoader implements PluginLoader {
                 }
 
             } catch (ClassNotFoundException e) {
-                throw new PluginException("Couldn't load plugin " + description.getName() + ": main class not found");
+                PluginAssert.findMainClass(description.getName());
             }
         }
 
         return null;
+    }
+
+    //TODO
+    @Override
+    public Plugin simpleLoadPlugin(File file) {
+        try {
+            Class<?> pluginClass = getSimplePlugin(file);
+            PluginDescription pluginDescription = getSimpleDescription(pluginClass);
+            this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.plugin.load", pluginDescription.getFullName()));
+            File dataFolder = new File(file.getParentFile(), pluginDescription.getName());
+            PluginBase plugin = (PluginBase) pluginClass.newInstance();
+            this.initPlugin(plugin,pluginDescription,dataFolder,file);
+            return plugin;
+        }catch (InstantiationException | IllegalAccessException e){
+            throw new PluginException(e.getMessage());
+        }
+        //do it
+    }
+
+    private Class getSimplePlugin(File file){
+        try(JarFile jarFile = new JarFile(file)){
+            PluginClassLoader classLoader = new PluginClassLoader(this, this.getClass().getClassLoader(),file);
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()){
+                String name = entries.nextElement().getName();
+                if(name.endsWith(".class")) {
+                    String mainName = name.substring(0, name.lastIndexOf(".")).replace("/", ".");
+                    Class<?> clz = classLoader.loadClass(mainName);
+                    Main main = clz.getAnnotation(Main.class);
+                    if(main != null){
+                        PluginAssert.isPluginBaseChild(clz,mainName);
+                        return clz;
+                    }
+                }
+            }
+            PluginAssert.findMainClass("");
+        }catch (IOException|ClassNotFoundException e){
+            throw new PluginException(e.getMessage());
+        }
+        return null;
+    }
+
+    private PluginDescription getSimpleDescription(Class<?> plugin){
+        Main main = plugin.getAnnotation(Main.class);
+        if(main == null){
+            throw new PluginException("this is not a main class");
+        }
+        String name = main.name();
+        String version = main.version();
+        String author = main.author();
+        String description = main.description();
+        String pluginLoadOrder = main.load();
+        String website = main.website();
+        String prefix = main.prefix();
+        List<String> api = Arrays.asList(main.api());
+        List<String> depend = Arrays.asList(main.depend());
+        List<String> loadBefore = Arrays.asList(main.loadBefore());
+        List<String> softDepend = Arrays.asList(main.softDepend());
+        Map<String,Object> hashMap = new HashMap<>();
+        hashMap.put("name",name);
+        hashMap.put("version",version);
+        hashMap.put("author",author);
+        hashMap.put("api",api);
+        hashMap.put("depend",depend);
+        hashMap.put("loadBefore",loadBefore);
+        hashMap.put("softDepend",softDepend);
+        hashMap.put("description",description);
+        hashMap.put("load",pluginLoadOrder);
+        hashMap.put("website",website);
+        hashMap.put("prefix",prefix);
+        PluginDescription descript = new PluginDescription(hashMap);
+        Command[] commands = main.commands();
+        for(Command command:commands){
+            descript.getCommands().put(command.name(),command);
+        }
+        return descript;
     }
 
     @Override

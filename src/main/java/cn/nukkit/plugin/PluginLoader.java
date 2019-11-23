@@ -59,6 +59,16 @@ public interface PluginLoader {
     Plugin loadPlugin(File file) throws Exception;
 
     /**
+     * 一个简便开发的插件加载系统,基于原来的插件系统<br>
+     * A simple plugin loading system based on the original plugin system
+     * @param file 这个插件的文件的 {@code File}对象。<br>A {@code File} object for this plugin.
+     * @return 加载完毕的插件的 {@code Plugin}对象。<br>The loaded plugin as a {@code Plugin} object.
+     * @see #loadPlugin(File)
+     * @since Nukkit 1.0 | Nukkit API 1.0.9
+     */
+    Plugin simpleLoadPlugin(File file);
+
+    /**
      * 通过插件文件名的字符串，来获得描述这个插件的 {@code PluginDescription}对象。<br>
      * Gets a {@code PluginDescription} object describes the plugin by its file name.
      *
@@ -134,5 +144,6 @@ public interface PluginLoader {
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     void disablePlugin(Plugin plugin);
+
 
 }
