@@ -27,6 +27,7 @@ public class JavaPluginLoader implements PluginLoader {
     private final Map<String, Class> classes = new HashMap<>();
     private final Map<String, PluginClassLoader> classLoaders = new HashMap<>();
 
+    private final Map<File,Class> loadedSimplePlugin = new HashMap<>();
     public JavaPluginLoader(Server server) {
         this.server = server;
     }
@@ -94,6 +95,9 @@ public class JavaPluginLoader implements PluginLoader {
     }
 
     private Class getSimplePlugin(File file){
+        if(loadedSimplePlugin.containsKey(file)){
+            return loadedSimplePlugin.get(file);
+        }
         try(JarFile jarFile = new JarFile(file)){
             PluginClassLoader classLoader = new PluginClassLoader(this, this.getClass().getClassLoader(),file);
             Enumeration<JarEntry> entries = jarFile.entries();
@@ -104,6 +108,7 @@ public class JavaPluginLoader implements PluginLoader {
                     Class<?> clz = classLoader.loadClass(mainName);
                     Main main = clz.getAnnotation(Main.class);
                     if(main != null){
+                        loadedSimplePlugin.put(file,clz);
                         PluginAssert.isPluginBaseChild(clz,mainName);
                         return clz;
                     }
@@ -119,7 +124,7 @@ public class JavaPluginLoader implements PluginLoader {
     private PluginDescription getSimpleDescription(Class<?> plugin){
         Main main = plugin.getAnnotation(Main.class);
         if(main == null){
-            throw new PluginException("this is not a main class");
+            return null;
         }
         String name = main.name();
         String version = main.version();
@@ -143,7 +148,8 @@ public class JavaPluginLoader implements PluginLoader {
         hashMap.put("description",description);
         hashMap.put("load",pluginLoadOrder);
         hashMap.put("website",website);
-        hashMap.put("prefix",prefix);
+        hashMap.put("prefix",prefix.equals("")?name:prefix);
+        hashMap.put("main",plugin.getName());
         PluginDescription descript = new PluginDescription(hashMap);
         Permission[] permissions = main.permissions();
         HashMap<String,Map<String,String>> pers = new HashMap<>();
@@ -174,6 +180,10 @@ public class JavaPluginLoader implements PluginLoader {
             if (entry == null) {
                 entry = jar.getJarEntry("plugin.yml");
                 if (entry == null) {
+                    Class clz = getSimplePlugin(file);
+                    if(clz != null){
+                        return getSimpleDescription(clz);
+                    }
                     return null;
                 }
             }
