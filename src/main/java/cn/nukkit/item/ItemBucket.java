@@ -9,7 +9,6 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.network.protocol.CompletedUsingItemPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 /**
@@ -51,7 +50,7 @@ public class ItemBucket extends Item {
         }
     }
 
-    public static int getDamageByTarget(int target) {
+    protected int getDamageByTarget(int target) {
         switch (target) {
             case 2:
             case 3:
@@ -84,7 +83,7 @@ public class ItemBucket extends Item {
 
         if (targetBlock instanceof BlockAir) {
             if (target instanceof BlockLiquid && target.getDamage() == 0) {
-                Item result = Item.get(BUCKET, getDamageByTarget(target.getId()), 1);
+                Item result = Item.get(BUCKET, this.getDamageByTarget(target.getId()), 1);
                 PlayerBucketFillEvent ev;
                 player.getServer().getPluginManager().callEvent(ev = new PlayerBucketFillEvent(player, block, face, this, result));
                 if (!ev.isCancelled()) {
@@ -156,13 +155,13 @@ public class ItemBucket extends Item {
     }
 
     @Override
-    public int completeAction(Player player, int ticksUsed) {
+    public boolean onUse(Player player, int ticksUsed) {
         PlayerItemConsumeEvent consumeEvent = new PlayerItemConsumeEvent(player, this);
 
         player.getServer().getPluginManager().callEvent(consumeEvent);
         if (consumeEvent.isCancelled()) {
             player.getInventory().sendContents(player);
-            return CompletedUsingItemPacket.ACTION_UNKNOWN;
+            return false;
         }
 
         if (player.isSurvival()) {
@@ -172,6 +171,6 @@ public class ItemBucket extends Item {
         }
 
         player.removeAllEffects();
-        return CompletedUsingItemPacket.ACTION_UNKNOWN;
+        return true;
     }
 }

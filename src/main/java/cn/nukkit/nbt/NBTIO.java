@@ -28,7 +28,7 @@ public class NBTIO {
     }
 
     public static CompoundTag putItemHelper(Item item, Integer slot) {
-        CompoundTag tag = new CompoundTag()
+        CompoundTag tag = new CompoundTag(null)
                 .putShort("id", item.getId())
                 .putByte("Count", item.getCount())
                 .putShort("Damage", item.getDamage());
@@ -148,6 +148,10 @@ public class NBTIO {
 
     public static byte[] write(CompoundTag tag, ByteOrder endianness) throws IOException {
         return write(tag, endianness, false);
+    }
+
+    public static byte[] write(CompoundTag tag, ByteOrder endianness, boolean network) throws IOException {
+        return write((Tag) tag, endianness, network);
     }
 
     public static byte[] write(Tag tag, ByteOrder endianness, boolean network) throws IOException {
