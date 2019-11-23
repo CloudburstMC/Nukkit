@@ -121,6 +121,11 @@ public class JavaPluginLoader implements PluginLoader {
         return null;
     }
 
+    /**
+     * the simple description for simple plugin system
+     * @param plugin the main class
+     * @return the description for simple plugin system
+     */
     private PluginDescription getSimpleDescription(Class<?> plugin){
         Main main = plugin.getAnnotation(Main.class);
         if(main == null){
