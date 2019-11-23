@@ -43,5 +43,7 @@ public @interface Main {
 
     Command[] commands() default {};
 
+    Permission[] permissions() default {};
+
 
 }

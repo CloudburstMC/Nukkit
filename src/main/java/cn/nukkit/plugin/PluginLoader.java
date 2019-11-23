@@ -68,6 +68,8 @@ public interface PluginLoader {
      */
     Plugin simpleLoadPlugin(File file);
 
+    Plugin simpleLoadPlugin(String fileName);
+
     /**
      * 通过插件文件名的字符串，来获得描述这个插件的 {@code PluginDescription}对象。<br>
      * Gets a {@code PluginDescription} object describes the plugin by its file name.

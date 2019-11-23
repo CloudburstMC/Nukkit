@@ -6,6 +6,7 @@ import cn.nukkit.command.SimpleCommandMap;
 import cn.nukkit.event.*;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.permission.Permission;
+import cn.nukkit.plugin.simple.Command;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
@@ -108,6 +109,14 @@ public class PluginManager {
                             Server.getInstance().getLogger().critical("Could not load plugin", e);
                             return null;
                         }
+                    }else{
+                        Plugin plugin = loader.simpleLoadPlugin(file);
+                        this.plugins.put(plugin.getDescription().getName(),plugin);
+                        List<PluginCommand> pluginCommands = this.parseSimplePluginCommands(plugin);
+
+                        if (!pluginCommands.isEmpty()) {
+                            this.commandMap.registerAll(plugin.getDescription().getName(), pluginCommands);
+                        }
                     }
                 }
             }
@@ -115,6 +124,7 @@ public class PluginManager {
 
         return null;
     }
+
 
     public Map<String, Plugin> loadPlugins(String dictionary) {
         return this.loadPlugins(new File(dictionary));
@@ -445,6 +455,21 @@ public class PluginManager {
                 this.disablePlugin(plugin);
             }
         }
+    }
+
+    protected  List<PluginCommand> parseSimplePluginCommands(Plugin plugin){
+        List<PluginCommand> pluginCmds = new ArrayList<>();
+        Set<Map.Entry<String,Object>> commands = plugin.getDescription().getCommands().entrySet();
+        for(Object obj : commands){
+            Command command = (Command)obj;
+            PluginCommand newCmd = new PluginCommand<>(command.name(),plugin);
+            newCmd.setDescription(command.description());
+            newCmd.setUsage(command.usage());
+            newCmd.setAliases(command.aliases());
+            newCmd.setPermission(command.permission());
+            pluginCmds.add(newCmd);
+        }
+        return pluginCmds;
     }
 
     protected List<PluginCommand> parseYamlCommands(Plugin plugin) {

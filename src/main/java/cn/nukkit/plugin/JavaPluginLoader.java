@@ -5,6 +5,7 @@ import cn.nukkit.event.plugin.PluginDisableEvent;
 import cn.nukkit.event.plugin.PluginEnableEvent;
 import cn.nukkit.plugin.simple.Command;
 import cn.nukkit.plugin.simple.Main;
+import cn.nukkit.plugin.simple.Permission;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
 
@@ -70,7 +71,7 @@ public class JavaPluginLoader implements PluginLoader {
         return null;
     }
 
-    //TODO
+    //simple load Plugin
     @Override
     public Plugin simpleLoadPlugin(File file) {
         try {
@@ -85,6 +86,11 @@ public class JavaPluginLoader implements PluginLoader {
             throw new PluginException(e.getMessage());
         }
         //do it
+    }
+
+    @Override
+    public Plugin simpleLoadPlugin(String fileName) {
+        return simpleLoadPlugin(new File(fileName));
     }
 
     private Class getSimplePlugin(File file){
@@ -139,6 +145,16 @@ public class JavaPluginLoader implements PluginLoader {
         hashMap.put("website",website);
         hashMap.put("prefix",prefix);
         PluginDescription descript = new PluginDescription(hashMap);
+        Permission[] permissions = main.permissions();
+        HashMap<String,Map<String,String>> pers = new HashMap<>();
+        for(Permission p:permissions){
+            HashMap<String,String> pers_child = new HashMap<>();
+            pers_child.put("description",p.description());
+            pers_child.put("default",p.theDefault());
+            pers.put(p.permission(),pers_child);
+
+        }
+        hashMap.put("permissions",pers);
         Command[] commands = main.commands();
         for(Command command:commands){
             descript.getCommands().put(command.name(),command);

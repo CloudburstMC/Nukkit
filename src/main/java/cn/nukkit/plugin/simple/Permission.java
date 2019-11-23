@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Permission {
 
+    String permission();
+
     String description() default "";
 
     String theDefault();
