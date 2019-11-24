@@ -31,8 +31,16 @@ public class SimplePluginCommand extends PluginCommand {
             if (!this.testPermission(sender)) {
                 return false;
             }
+            boolean success = false;
+            Class[] clzs = commandMethod.getParameterTypes();
+            if(clzs.length!=0){
+                if(clzs[0].equals(SimpleCommandData.class)){
+                    success = (Boolean) commandMethod.invoke(owningPlugin,new SimpleCommandData(sender,this,commandLabel,args));
+                }else{
+                    success = (Boolean) commandMethod.invoke(owningPlugin, sender, this, commandLabel, args);
+                }
+            }
 
-            boolean success = (Boolean) commandMethod.invoke(owningPlugin, sender, this, commandLabel, args);
 
             if (!success && !this.usageMessage.equals("")) {
                 sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
