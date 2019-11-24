@@ -206,7 +206,8 @@ public class PluginDescription {
             this.permissions = Permission.loadPermissions((Map<String, Object>) plugin.get("permissions"));
         }
         if(plugin.containsKey("isSimple")){
-            this.isSimple = (Boolean) plugin.get("isSimple");
+            Boolean obj = (Boolean) plugin.get("isSimple");
+            this.isSimple = obj==null?false:obj;
         }
     }
 
