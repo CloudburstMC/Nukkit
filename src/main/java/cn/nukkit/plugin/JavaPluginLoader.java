@@ -1,9 +1,11 @@
 package cn.nukkit.plugin;
 
 import cn.nukkit.Server;
+import cn.nukkit.event.Listener;
 import cn.nukkit.event.plugin.PluginDisableEvent;
 import cn.nukkit.event.plugin.PluginEnableEvent;
 import cn.nukkit.plugin.simple.Command;
+import cn.nukkit.plugin.simple.EnableRegister;
 import cn.nukkit.plugin.simple.Main;
 import cn.nukkit.plugin.simple.Permission;
 import cn.nukkit.utils.PluginException;
@@ -28,6 +30,9 @@ public class JavaPluginLoader implements PluginLoader {
     private final Map<String, PluginClassLoader> classLoaders = new HashMap<>();
 
     private final Map<File,Class> loadedSimplePlugin = new HashMap<>();
+
+    private final Map<File,List<Class>> simplePluginEnableClasses = new HashMap<>();
+
     public JavaPluginLoader(Server server) {
         this.server = server;
     }
@@ -101,18 +106,48 @@ public class JavaPluginLoader implements PluginLoader {
         try(JarFile jarFile = new JarFile(file)){
             PluginClassLoader classLoader = new PluginClassLoader(this, this.getClass().getClassLoader(),file);
             Enumeration<JarEntry> entries = jarFile.entries();
+            boolean isEnableRegister = false;
+            boolean hasGeted = false;
+            List<Class> haveLoaded = new ArrayList<>();
+            Class<?> mainClass = null;
             while (entries.hasMoreElements()){
                 String name = entries.nextElement().getName();
                 if(name.endsWith(".class")) {
                     String mainName = name.substring(0, name.lastIndexOf(".")).replace("/", ".");
                     Class<?> clz = classLoader.loadClass(mainName);
                     Main main = clz.getAnnotation(Main.class);
+                    haveLoaded.add(clz);
                     if(main != null){
                         loadedSimplePlugin.put(file,clz);
                         PluginAssert.isPluginBaseChild(clz,mainName);
-                        return clz;
+                        mainClass = clz;
                     }
                 }
+            }
+            EnableRegister register;
+            List<Class<? extends Listener>> noRegister = null;
+            if(mainClass!=null) {
+                for (Class<?> clz1 : haveLoaded) {
+                    if (!hasGeted) {
+                        register = mainClass.getAnnotation(EnableRegister.class);
+                        isEnableRegister = register != null;
+                        hasGeted = true;
+                        List<Class> classes = new ArrayList<>();
+                        simplePluginEnableClasses.put(file, classes);
+                        if (register != null) {
+                            noRegister = Arrays.asList(register.noRegister());
+                        }
+                    }
+                    if (isEnableRegister) {
+
+                        if (Arrays.asList(clz1.getInterfaces()).contains(Listener.class)) {
+                            if (!noRegister.contains(clz1)) {
+                                simplePluginEnableClasses.get(file).add(clz1);
+                            }
+                        }
+                    }
+                }
+                return mainClass;
             }
             PluginAssert.findMainClass("");
         }catch (IOException|ClassNotFoundException e){
@@ -225,6 +260,17 @@ public class JavaPluginLoader implements PluginLoader {
             this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.plugin.enable", plugin.getDescription().getFullName()));
 
             ((PluginBase) plugin).setEnabled(true);
+
+            try {
+                if (plugin.getDescription().isSimple()) {
+                    List<Class> listeners = simplePluginEnableClasses.get(((PluginBase) plugin).getFile());
+                    for (Class clz : listeners) {
+                        server.getPluginManager().registerEvents((Listener) clz.newInstance(), plugin);
+                    }
+                }
+            }catch (InstantiationException|IllegalAccessException e){
+                throw new PluginException(e.getMessage());
+            }
 
             this.server.getPluginManager().callEvent(new PluginEnableEvent(plugin));
         }
