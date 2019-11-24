@@ -158,19 +158,23 @@ public class JavaPluginLoader implements PluginLoader {
         hashMap.put("isSimple",true);
         PluginDescription descript = new PluginDescription(hashMap);
         Permission[] permissions = main.permissions();
-        HashMap<String,Map<String,String>> pers = new HashMap<>();
-        for(Permission p:permissions){
-            HashMap<String,String> pers_child = new HashMap<>();
-            pers_child.put("description",p.description());
-            pers_child.put("default",p.theDefault());
-            pers.put(p.permission(),pers_child);
-        }
-        hashMap.put("permissions",pers);
+        hashMap.put("permissions",parsePermission(permissions));
         Command[] commands = main.commands();
         for(Command command:commands){
             descript.getCommands().put(command.name(),command);
         }
         return descript;
+    }
+
+    public static HashMap<String,Object> parsePermission(Permission[] permissions){
+        HashMap<String,Object> pers = new HashMap<>();
+        for(Permission p:permissions){
+            HashMap<String,Object> pers_child = new HashMap<>();
+            pers_child.put("description",p.description());
+            pers_child.put("default",p.theDefault());
+            pers.put(p.permission(),pers_child);
+        }
+        return pers;
     }
 
     @Override

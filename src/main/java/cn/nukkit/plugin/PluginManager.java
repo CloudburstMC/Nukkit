@@ -7,6 +7,7 @@ import cn.nukkit.event.*;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.permission.Permission;
 import cn.nukkit.plugin.simple.Command;
+import cn.nukkit.plugin.simple.SimplePluginCommand;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
@@ -463,13 +464,33 @@ public class PluginManager {
         for(Map.Entry<String,Object> obj : commands){
             Command command = (Command)(obj.getValue());
             PluginCommand newCmd = new PluginCommand<>(command.name(),plugin);
-            newCmd.setDescription(command.description());
-            newCmd.setUsage(command.usage());
-            newCmd.setAliases(command.aliases());
-            newCmd.setPermission(command.permission());
+            initCommand(newCmd,command);
             pluginCmds.add(newCmd);
         }
+        Class pluginClass = plugin.getClass();
+        Method[] methods = pluginClass.getDeclaredMethods();
+        for(Method method:methods){
+             Command cmd = method.getAnnotation(Command.class);
+             cn.nukkit.plugin.simple.Permission permission =
+                     method.getAnnotation(cn.nukkit.plugin.simple.Permission.class);
+             if(cmd!=null&&permission!=null){
+                 plugin.getDescription().getPermissions().addAll(Permission.loadPermissions(JavaPluginLoader.parsePermission(new cn.nukkit.plugin.simple.Permission[] {
+                         permission
+                 })));
+                 SimplePluginCommand command = new SimplePluginCommand(cmd.name(),plugin);
+                 initCommand(command,cmd);
+                 command.setCommandMethod(method);
+                 pluginCmds.add(command);
+             }
+        }
         return pluginCmds;
+    }
+
+    private void initCommand(PluginCommand newCmd,Command command){
+        newCmd.setDescription(command.description());
+        newCmd.setUsage(command.usage());
+        newCmd.setAliases(command.aliases());
+        newCmd.setPermission(command.permission());
     }
 
     protected List<PluginCommand> parseYamlCommands(Plugin plugin) {
