@@ -91,7 +91,7 @@ public class PluginManager {
             for (Pattern pattern : loader.getPluginFilters()) {
                 if (pattern.matcher(file.getName()).matches()) {
                     PluginDescription description = loader.getPluginDescription(file);
-                    if (description != null) {
+                    if (description != null&&!description.isSimple()) {
                         try {
                             Plugin plugin = loader.loadPlugin(file);
                             if (plugin != null) {
@@ -113,10 +113,10 @@ public class PluginManager {
                         Plugin plugin = loader.simpleLoadPlugin(file);
                         this.plugins.put(plugin.getDescription().getName(),plugin);
                         List<PluginCommand> pluginCommands = this.parseSimplePluginCommands(plugin);
-
                         if (!pluginCommands.isEmpty()) {
                             this.commandMap.registerAll(plugin.getDescription().getName(), pluginCommands);
                         }
+                        return plugin;
                     }
                 }
             }
@@ -460,8 +460,8 @@ public class PluginManager {
     protected  List<PluginCommand> parseSimplePluginCommands(Plugin plugin){
         List<PluginCommand> pluginCmds = new ArrayList<>();
         Set<Map.Entry<String,Object>> commands = plugin.getDescription().getCommands().entrySet();
-        for(Object obj : commands){
-            Command command = (Command)obj;
+        for(Map.Entry<String,Object> obj : commands){
+            Command command = (Command)(obj.getValue());
             PluginCommand newCmd = new PluginCommand<>(command.name(),plugin);
             newCmd.setDescription(command.description());
             newCmd.setUsage(command.usage());

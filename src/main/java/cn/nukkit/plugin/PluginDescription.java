@@ -122,6 +122,7 @@ public class PluginDescription {
     private String website;
     private String prefix;
     private PluginLoadOrder order = PluginLoadOrder.POSTWORLD;
+    private boolean isSimple;
 
     private List<Permission> permissions = new ArrayList<>();
 
@@ -203,6 +204,9 @@ public class PluginDescription {
 
         if (plugin.containsKey("permissions")) {
             this.permissions = Permission.loadPermissions((Map<String, Object>) plugin.get("permissions"));
+        }
+        if(plugin.containsKey("isSimple")){
+            this.isSimple = (Boolean) plugin.get("isSimple");
         }
     }
 
@@ -407,5 +411,14 @@ public class PluginDescription {
      */
     public String getWebsite() {
         return website;
+    }
+
+    /**
+     * the plugin use the simple plugin system,the isSimple will
+     * be true
+     * @return is it a Simple Plugin?
+     */
+    public boolean isSimple() {
+        return isSimple;
     }
 }

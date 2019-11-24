@@ -155,6 +155,7 @@ public class JavaPluginLoader implements PluginLoader {
         hashMap.put("website",website);
         hashMap.put("prefix",prefix.equals("")?name:prefix);
         hashMap.put("main",plugin.getName());
+        hashMap.put("isSimple",true);
         PluginDescription descript = new PluginDescription(hashMap);
         Permission[] permissions = main.permissions();
         HashMap<String,Map<String,String>> pers = new HashMap<>();
@@ -163,7 +164,6 @@ public class JavaPluginLoader implements PluginLoader {
             pers_child.put("description",p.description());
             pers_child.put("default",p.theDefault());
             pers.put(p.permission(),pers_child);
-
         }
         hashMap.put("permissions",pers);
         Command[] commands = main.commands();
