@@ -3392,7 +3392,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     /**
-     * Get an Array with nearby pllayers in a defined radius around the player
+     * Get an Array with nearby Players in a defined radius around the Player
      * @param radiusX
      * @param radiusY
      * @param radiusZ
@@ -3417,7 +3417,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     /**
-     * Get an Array with nearby pllayers in a defined radius around the player
+     * Get an Array with nearby Entities in a defined radius around the Player
      * @param radiusX
      * @param radiusY
      * @param radiusZ
