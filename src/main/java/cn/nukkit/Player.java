@@ -3308,6 +3308,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.resetCraftingGridType();
         this.craftingType = CRAFTING_SMALL;
 
+        // adding command execution like in Nukkit-DOC -> see above
+        if(message.startsWith("/")) {
+            this.server.dispatchCommand(this, message.substring(1));
+            return true;
+        }
+
         if (this.removeFormat) {
             message = TextFormat.clean(message, true);
         }
