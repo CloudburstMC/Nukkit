@@ -1,6 +1,8 @@
 package cn.nukkit.level.biome.type;
 
 import cn.nukkit.level.biome.Biome;
+import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.generator.Normal;
 
 /**
  * author: DaPorkchop_
@@ -10,97 +12,63 @@ import cn.nukkit.level.biome.Biome;
  * </p>
  */
 public abstract class CoveredBiome extends Biome {
-    public final Object synchronizeCover = new Object();
-
-    /**
-     * A single block placed on top of the surface blocks
-     *
-     * @return cover block
-     */
-    public int getCoverBlock() {
-        return AIR;
+    public int getCoverId(int x, int z) {
+        return AIR << 4;
     }
 
-    /**
-     * The amount of times the surface block should be used
-     * <p>
-     * If &lt; 0 bad things will happen!
-     * </p>
-     *
-     * @param y y
-     * @return surface depth
-     */
-    public int getSurfaceDepth(int y) {
+    public int getSurfaceDepth(int x, int y, int z) {
         return 1;
     }
 
-    /**
-     * Between cover and ground
-     *
-     * @param y y
-     * @return surface block
-     */
-    public abstract int getSurfaceBlock(int y);
+    public abstract int getSurfaceId(int x, int y, int z);
 
-    /**
-     * The metadata of the surface block
-     *
-     * @param y y
-     * @return surface meta
-     */
-    public int getSurfaceMeta(int y) {
-        return 0;
-    }
-
-    /**
-     * The amount of times the ground block should be used
-     * <p>
-     * If &lt; 0 bad things will happen!
-     *
-     * @param y y
-     * @return ground depth
-     */
-    public int getGroundDepth(int y) {
+    public int getGroundDepth(int x, int y, int z) {
         return 4;
     }
 
-    /**
-     * Between surface and stone
-     *
-     * @param y y
-     * @return ground block
-     */
-    public abstract int getGroundBlock(int y);
+    public abstract int getGroundId(int x, int y, int z);
 
-    /**
-     * The metadata of the ground block
-     *
-     * @param y y
-     * @return ground meta
-     */
-    public int getGroundMeta(int y) {
-        return 0;
-    }
+    public void doCover(int x, int z, FullChunk chunk) {
+        final int fullX = (chunk.getX() << 4) | x;
+        final int fullZ = (chunk.getZ() << 4) | z;
 
-    /**
-     * The block used as stone/below all other surface blocks
-     *
-     * @return stone block
-     */
-    public int getStoneBlock() {
-        return STONE;
-    }
+        final int coverBlock = this.getCoverId(fullX, fullZ);
 
-    /**
-     * Called before a new block column is covered. Biomes can update any relevant variables here before covering.
-     * <p>
-     * Biome covering is synchronized on the biome, so thread safety isn't an issue.
-     * </p>
-     *
-     * @param x x
-     * @param z z
-     */
-    public void preCover(int x, int z) {
-
+        boolean hasCovered = false;
+        int realY;
+        //start one below build limit in case of cover blocks
+        for (int y = 254; y > 32; y--) {
+            if (chunk.getFullBlock(x, y, z) == STONE << 4) {
+                COVER:
+                if (!hasCovered) {
+                    if (y >= Normal.seaHeight) {
+                        chunk.setFullBlockId(x, y + 1, z, coverBlock);
+                        int surfaceDepth = this.getSurfaceDepth(fullX, y, fullZ);
+                        for (int i = 0; i < surfaceDepth; i++) {
+                            realY = y - i;
+                            if (chunk.getFullBlock(x, realY, z) == STONE << 4) {
+                                chunk.setFullBlockId(x, realY, z, this.getSurfaceId(fullX, realY, fullZ));
+                            } else break COVER;
+                        }
+                        y -= surfaceDepth;
+                    }
+                    int groundDepth = this.getGroundDepth(fullX, y, fullZ);
+                    for (int i = 0; i < groundDepth; i++) {
+                        realY = y - i;
+                        if (chunk.getFullBlock(x, realY, z) == STONE << 4) {
+                            chunk.setFullBlockId(x, realY, z, this.getGroundId(fullX, realY, fullZ));
+                        } else break COVER;
+                    }
+                    //don't take all of groundDepth away because we do y-- in the loop
+                    y -= groundDepth - 1;
+                }
+                hasCovered = true;
+            } else {
+                if (hasCovered) {
+                    //reset it if this isn't a valid stone block (allows us to place ground cover on top and below overhangs)
+                    hasCovered = false;
+                }
+            }
+        }
     }
 }

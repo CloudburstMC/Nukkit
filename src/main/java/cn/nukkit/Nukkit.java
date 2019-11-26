@@ -3,6 +3,9 @@ package cn.nukkit;
 import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.utils.ServerKiller;
 import com.google.common.base.Preconditions;
+import io.netty.util.ResourceLeakDetector;
+import io.netty.util.internal.logging.InternalLoggerFactory;
+import io.netty.util.internal.logging.Log4J2LoggerFactory;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -62,6 +65,10 @@ public class Nukkit {
 
         // Force Mapped ByteBuffers for LevelDB till fixed.
         System.setProperty("leveldb.mmap", "true");
+
+        // Netty logger for debug info
+        InternalLoggerFactory.setDefaultFactory(Log4J2LoggerFactory.INSTANCE);
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
 
         // Define args
         OptionParser parser = new OptionParser();
