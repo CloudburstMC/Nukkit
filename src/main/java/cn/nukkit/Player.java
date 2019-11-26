@@ -241,6 +241,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public EntityFishingHook fishing = null;
 
+    private final Int2ObjectOpenHashMap<Boolean> needACK = new Int2ObjectOpenHashMap<>();
+
     public long lastSkinChange;
 
     protected double lastRightClickTime = 0.0;
@@ -1050,17 +1052,21 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * @return packet successfully sent
      */
     public boolean dataPacket(DataPacket packet) {
+        return this.dataPacket(packet, false) != -1;
+    }
+
+    public int dataPacket(DataPacket packet, boolean needACK) {
         if (!this.connected) {
-            return false;
+            return -1;
         }
+
         try (Timing timing = Timings.getSendDataPacketTiming(packet)) {
             DataPacketSendEvent ev = new DataPacketSendEvent(this, packet);
             this.server.getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {
-                return false;
+                return -1;
             }
 
-<<<<<<< HEAD
             if (log.isTraceEnabled() && !(packet instanceof BatchPacket)) {
                 log.trace("Outbound {}: {}", this.getName(), packet);
             }
@@ -1071,16 +1077,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 this.needACK.put(identifier, Boolean.FALSE);
                 return identifier;
             }
-=======
-            this.interfaz.putPacket(this, packet, false, false);
->>>>>>> new-raknet
         }
-        return true;
-    }
-
-    @Deprecated
-    public int dataPacket(DataPacket packet, boolean needACK) {
-        return this.dataPacket(packet) ? 0 : -1;
+        return 0;
     }
 
     /**
@@ -1091,25 +1089,29 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * @return packet successfully sent
      */
     public boolean directDataPacket(DataPacket packet) {
+        return this.directDataPacket(packet, false) != -1;
+    }
+
+    public int directDataPacket(DataPacket packet, boolean needACK) {
         if (!this.connected) {
-            return false;
+            return -1;
         }
 
         try (Timing timing = Timings.getSendDataPacketTiming(packet)) {
             DataPacketSendEvent ev = new DataPacketSendEvent(this, packet);
             this.server.getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {
-                return false;
+                return -1;
             }
 
-            this.interfaz.putPacket(this, packet, false, true);
-        }
-        return true;
-    }
+            Integer identifier = this.interfaz.putPacket(this, packet, needACK, true);
 
-    @Deprecated
-    public int directDataPacket(DataPacket packet, boolean needACK) {
-        return this.directDataPacket(packet) ? 0 : -1;
+            if (needACK && identifier != null) {
+                this.needACK.put(identifier, Boolean.FALSE);
+                return identifier;
+            }
+        }
+        return 0;
     }
 
     public int getPing() {

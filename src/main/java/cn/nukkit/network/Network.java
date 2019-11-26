@@ -14,13 +14,13 @@ import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
 import lombok.extern.log4j.Log4j2;
 
-<<<<<<< HEAD
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-=======
+
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
->>>>>>> new-raknet
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
