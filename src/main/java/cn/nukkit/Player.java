@@ -3391,6 +3391,44 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.dataPacket(pk);
     }
 
+    /**
+     * Get an Array with nearby pllayers in a defined radius around the player
+     * @param radiusX
+     * @param radiusY
+     * @param radiusZ
+     * @return nearByPlayers
+     */
+    public Player[] getNearByPlayers(int radiusX, int radiusY, int radiusZ) {
+        AxisAlignedBB axisalignedbb = new SimpleAxisAlignedBB(this.x - radiusX, this.y - radiusY, this.z - radiusZ, this.x + radiusX, this.y + radiusY, this.z + radiusZ);
+        Entity[] nearByEntities = this.level.getNearbyEntities(axisalignedbb, this);
+        int i = 0;
+        for(Entity entity : nearByEntities) {
+            if(!(entity instanceof Player)) continue;
+            i++;
+        }
+        Player[] nearByPlayers = new Player[(i+1)];
+        int x = 0;
+        for(Entity entity : nearByEntities) {
+            if(!(entity instanceof Player)) continue;
+            nearByPlayers[x] = (Player)entity;
+            x++;
+        }
+        return nearByPlayers;
+    }
+
+    /**
+     * Get an Array with nearby pllayers in a defined radius around the player
+     * @param radiusX
+     * @param radiusY
+     * @param radiusZ
+     * @return nearbyEntities
+     */
+    public Entity[] getNearByEntities(int radiusX, int radiusY, int radiusZ) {
+        AxisAlignedBB axisalignedbb = new SimpleAxisAlignedBB(this.x - radiusX, this.y - radiusY, this.z - radiusZ, this.x + radiusX, this.y + radiusY, this.z + radiusZ);
+        return this.level.getNearbyEntities(axisalignedbb, this);
+    }
+
+
     public int getViewDistance() {
         return this.chunkRadius;
     }
