@@ -29,6 +29,10 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
             namedTag.putFloat("ItemDropChance", 1.0f);
         }
 
+        if (!namedTag.contains("isMoveable")) {
+            namedTag.putBoolean("isMoveable", true);
+        }
+
         this.level.updateComparatorOutputLevel(this);
 
         super.initBlockEntity();
@@ -72,6 +76,14 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
         this.level.updateComparatorOutputLevel(this);
     }
 
+    public boolean isMoveable() {
+        return this.namedTag.getBoolean("isMoveable");
+    }
+
+    public void setMoveable(boolean moveable) {
+        this.namedTag.putBoolean("isMoveable", moveable);
+    }
+
     public float getItemDropChance() {
         return this.namedTag.getFloat("ItemDropChance");
     }
@@ -90,18 +102,20 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
         if (!this.namedTag.contains("Item")) {
             this.setItem(new ItemBlock(new BlockAir()), false);
         }
-        CompoundTag NBTItem = namedTag.getCompound("Item").copy();
-        NBTItem.setName("Item");
-        boolean item = NBTItem.getShort("id") == Item.AIR;
-        return new CompoundTag()
+        CompoundTag item = namedTag.getCompound("Item").copy();
+        item.setName("Item");
+        CompoundTag tag = new CompoundTag()
                 .putString("id", BlockEntity.ITEM_FRAME)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z)
-                .putCompound("Item", item ? NBTIO.putItemHelper(new ItemBlock(new BlockAir())) : NBTItem)
-                .putByte("ItemRotation", item ? 0 : this.getItemRotation());
-        // TODO: This crashes the client, why?
-        // .putFloat("ItemDropChance", this.getItemDropChance());
+                .putBoolean("isMoveable", true);
+
+        if (item.getShort("id") != Item.AIR) {
+            tag.putCompound("Item", item)
+                    .putByte("ItemRotation", this.getItemRotation());
+        }
+        return tag;
     }
 
     public int getAnalogOutput() {
