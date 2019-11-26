@@ -2978,16 +2978,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             switch (type) {
                                 case InventoryTransactionPacket.USE_ITEM_ACTION_CLICK_BLOCK:
                                     // Remove if client bug is ever fixed
-                                    boolean spamBug = (lastRightClickPos != null && System.currentTimeMillis() - lastRightClickTime < 100.0 && blockVector.distanceSquared(lastRightClickPos) < 0.00001);
-                                    lastRightClickPos = blockVector.asVector3();
-                                    lastRightClickTime = System.currentTimeMillis();
-                                    if (spamBug) {
-                                        return;
-                                    }
+                                    //boolean spamBug = (lastRightClickPos != null && System.currentTimeMillis() - lastRightClickTime < 100.0 && blockVector.distanceSquared(lastRightClickPos) < 0.00001);
+                                    //lastRightClickPos = blockVector.asVector3();
+                                    //lastRightClickTime = System.currentTimeMillis();
+                                    //if (spamBug) {
+                                    //    return;
+                                    //}
                                     
                                     this.setDataFlag(DATA_FLAGS, DATA_FLAG_ACTION, false);
 
-                                    if (this.canInteract(blockVector.add(0.5, 0.5, 0.5), this.isCreative() ? 13 : 7)) {
+                                    if (this.canInteract(blockVector.add(0.0, 0.0, 0.0), this.isCreative() ? 13 : 7)) {
                                         if (this.isCreative()) {
                                             Item i = inventory.getItemInHand();
                                             if (this.level.useItemOn(blockVector.asVector3(), i, face, useItemData.clickPos.x, useItemData.clickPos.y, useItemData.clickPos.z, this) != null) {
@@ -3045,7 +3045,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                                     Item oldItem = i.clone();
 
-                                    if (this.canInteract(blockVector.add(0.5, 0.5, 0.5), this.isCreative() ? 13 : 7) && (i = this.level.useBreakOn(blockVector.asVector3(), face, i, this, true)) != null) {
+                                    if (this.canInteract(blockVector.add(0.1, 0.1, 0.1), this.isCreative() ? 13 : 7) && (i = this.level.useBreakOn(blockVector.asVector3(), face, i, this, true)) != null) {
                                         if (this.isSurvival()) {
                                             this.getFoodData().updateFoodExpLevel(0.025);
                                             if (!i.equals(oldItem) || i.getCount() != oldItem.getCount()) {
