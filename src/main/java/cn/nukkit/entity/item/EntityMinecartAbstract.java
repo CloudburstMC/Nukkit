@@ -287,8 +287,11 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
             return false;
         }
 
-        // Simple
-        return blockInside == null && mountEntity(p);
+        if (blockInside == null) {
+            mountEntity(p);
+        }
+
+        return super.onInteract(p, item, clickedPos);
     }
 
     @Override

@@ -354,7 +354,7 @@ public class EntityBoat extends EntityVehicle {
         }
 
         super.mountEntity(player);
-        return true;
+        return super.onInteract(player, item, clickedPos);
     }
 
     @Override

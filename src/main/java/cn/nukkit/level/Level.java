@@ -1073,7 +1073,7 @@ public class Level implements ChunkManager, Metadatable {
                 for (Entity entity : chunk.getEntities().values()) {
                     entity.scheduleUpdate();
                 }
-                int tickSpeed = 3;
+                int tickSpeed = gameRules.getInteger(GameRule.RANDOM_TICK_SPEED);
 
                 if (tickSpeed > 0) {
                     if (this.useSections) {
