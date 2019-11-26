@@ -149,7 +149,7 @@ public class CompoundTag extends Tag implements Cloneable {
     }
 
     public long getLong(String name) {
-        if (!tags.containsKey(name)) return (long) 0;
+        if (!tags.containsKey(name)) return 0;
         return ((NumberTag) tags.get(name)).getData().longValue();
     }
 
@@ -159,7 +159,7 @@ public class CompoundTag extends Tag implements Cloneable {
     }
 
     public double getDouble(String name) {
-        if (!tags.containsKey(name)) return (double) 0;
+        if (!tags.containsKey(name)) return 0;
         return ((NumberTag) tags.get(name)).getData().doubleValue();
     }
 
