@@ -1,6 +1,7 @@
 package cn.nukkit.permission;
 
 import cn.nukkit.Server;
+import cn.nukkit.plugin.simple.Children;
 
 import java.util.*;
 
@@ -128,6 +129,28 @@ public class Permission {
         this.addParent(perm, value);
 
         return perm;
+    }
+
+    public static HashMap<String,Object> parsePermission(cn.nukkit.plugin.simple.Permission[] permissions){
+        HashMap<String,Object> pers = new HashMap<>();
+        for(cn.nukkit.plugin.simple.Permission p:permissions){
+            HashMap<String,Object> pers_child = new HashMap<>();
+            pers_child.put("description",p.description());
+            pers_child.put("default",p.theDefault());
+            Children[] children = p.childeren();
+            if(children.length!=0) {
+                HashMap<String,Object> map = new HashMap<>();
+                for (Children c : children) {
+                    HashMap<String,Object> childValue = new HashMap<>();
+                    childValue.put("description",c.description());
+                    childValue.put("default",c.theDefault());
+                    map.put(c.name(),childValue);
+                }
+                pers_child.put("children",map);
+            }
+            pers.put(p.permission(),pers_child);
+        }
+        return pers;
     }
 
     public static List<Permission> loadPermissions(Map<String, Object> data) {

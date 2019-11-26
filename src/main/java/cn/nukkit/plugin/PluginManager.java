@@ -474,7 +474,7 @@ public class PluginManager {
              cn.nukkit.plugin.simple.Permission permission =
                      method.getAnnotation(cn.nukkit.plugin.simple.Permission.class);
              if(cmd!=null&&permission!=null){
-                 plugin.getDescription().getPermissions().addAll(Permission.loadPermissions(JavaPluginLoader.parsePermission(new cn.nukkit.plugin.simple.Permission[] {
+                 plugin.getDescription().getPermissions().addAll(Permission.loadPermissions(Permission.parsePermission(new cn.nukkit.plugin.simple.Permission[] {
                          permission
                  })));
                  SimplePluginCommand command = new SimplePluginCommand(cmd.name(),plugin);
@@ -491,6 +491,7 @@ public class PluginManager {
         newCmd.setUsage(command.usage());
         newCmd.setAliases(command.aliases());
         newCmd.setPermission(command.permission());
+        newCmd.setPermissionMessage(command.permissionMessage());
     }
 
     protected List<PluginCommand> parseYamlCommands(Plugin plugin) {

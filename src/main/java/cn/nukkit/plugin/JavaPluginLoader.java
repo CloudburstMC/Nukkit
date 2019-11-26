@@ -19,6 +19,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
+import static cn.nukkit.permission.Permission.parsePermission;
+
 /**
  * Created by Nukkit Team.
  */
@@ -201,16 +203,6 @@ public class JavaPluginLoader implements PluginLoader {
         return descript;
     }
 
-    public static HashMap<String,Object> parsePermission(Permission[] permissions){
-        HashMap<String,Object> pers = new HashMap<>();
-        for(Permission p:permissions){
-            HashMap<String,Object> pers_child = new HashMap<>();
-            pers_child.put("description",p.description());
-            pers_child.put("default",p.theDefault());
-            pers.put(p.permission(),pers_child);
-        }
-        return pers;
-    }
 
     @Override
     public Plugin loadPlugin(String filename) throws Exception {

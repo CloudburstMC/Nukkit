@@ -18,4 +18,6 @@ public @interface Command {
     String permission();
 
     String[] aliases() default {};
+
+    String permissionMessage() default "";
 }

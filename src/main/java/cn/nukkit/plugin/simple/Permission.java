@@ -13,6 +13,7 @@ public @interface Permission {
 
     String description() default "";
 
-    String theDefault();
+    String theDefault() default cn.nukkit.permission.Permission.DEFAULT_PERMISSION;
 
+    Children[] childeren() default {};
 }
