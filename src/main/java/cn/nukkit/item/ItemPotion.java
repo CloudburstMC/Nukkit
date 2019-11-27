@@ -1,5 +1,12 @@
 package cn.nukkit.item;
 
+import cn.nukkit.Player;
+import cn.nukkit.event.player.PlayerItemConsumeEvent;
+import cn.nukkit.math.Vector3;
+import cn.nukkit.potion.Potion;
+
+import static cn.nukkit.Player.SURVIVAL;
+
 public class ItemPotion extends Item {
 
     public static final int NO_EFFECTS = 0;
@@ -57,4 +64,29 @@ public class ItemPotion extends Item {
         return 1;
     }
 
+    @Override
+    public boolean onClickAir(Player player, Vector3 directionVector) {
+        return true;
+    }
+
+    @Override
+    public boolean onUse(Player player, int ticksUsed) {
+        PlayerItemConsumeEvent consumeEvent = new PlayerItemConsumeEvent(player, this);
+        player.getServer().getPluginManager().callEvent(consumeEvent);
+        if (consumeEvent.isCancelled()) {
+            return false;
+        }
+        Potion potion = Potion.getPotion(this.getDamage()).setSplash(false);
+
+        if (player.getGamemode() == SURVIVAL) {
+            --this.count;
+            player.getInventory().setItemInHand(this);
+            player.getInventory().addItem(new ItemGlassBottle());
+        }
+
+        if (potion != null) {
+            potion.applyPotion(player);
+        }
+        return true;
+    }
 }

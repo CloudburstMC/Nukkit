@@ -6,16 +6,10 @@ import cn.nukkit.level.Position;
 /**
  * author: Rover656
  */
-public class BeaconInventory extends ContainerInventory {
+public class BeaconInventory extends FakeBlockUIComponent {
 
-    public BeaconInventory(Position position) {
-        super(null, InventoryType.BEACON);
-        this.holder = new FakeBlockMenu(this, position);
-    }
-
-    @Override
-    public FakeBlockMenu getHolder() {
-        return (FakeBlockMenu) this.holder;
+    public BeaconInventory(PlayerUIInventory playerUI, Position position) {
+        super(playerUI, InventoryType.BEACON, 27, position);
     }
 
     @Override

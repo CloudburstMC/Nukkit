@@ -8,13 +8,15 @@ import cn.nukkit.item.ItemBlock;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockLeaves2 extends BlockLeaves {
+    public static final int ACACIA = 0;
+    public static final int DARK_OAK = 1;
 
     public BlockLeaves2() {
         this(0);
     }
 
     public BlockLeaves2(int meta) {
-        super(meta);
+        super(meta & 0x7); // Anything above this range is invalid
     }
 
     public String getName() {
@@ -37,11 +39,39 @@ public class BlockLeaves2 extends BlockLeaves {
 
     @Override
     protected boolean canDropApple() {
-        return (this.getDamage() & 0x03) == DARK_OAK;
+        return (this.getDamage() & 0x01) == DARK_OAK;
     }
 
     @Override
     protected Item getSapling() {
         return new ItemBlock(get(SAPLING), (this.getDamage() & 0x03) + 4);
+    }
+
+    @Override
+    public boolean isCheckDecay() {
+        return (this.getDamage() & 0x02) != 0;
+    }
+
+    @Override
+    public void setCheckDecay(boolean checkDecay) {
+        if (checkDecay) {
+            this.setDamage(this.getDamage() | 0x02);
+        } else {
+            this.setDamage(this.getDamage() & ~0x02);
+        }
+    }
+
+    @Override
+    public boolean isPersistent() {
+        return (this.getDamage() & 0x04) != 0;
+    }
+
+    @Override
+    public void setPersistent(boolean persistent) {
+        if (persistent) {
+            this.setDamage(this.getDamage() | 0x04);
+        } else {
+            this.setDamage(this.getDamage() & ~0x04);
+        }
     }
 }

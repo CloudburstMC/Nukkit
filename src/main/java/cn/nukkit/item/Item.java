@@ -953,6 +953,14 @@ public class Item implements Cloneable, BlockID, ItemID {
         return false;
     }
 
+    public boolean onUse(Player player, int ticksUsed) {
+        return false;
+    }
+
+    public boolean onRelease(Player player, int ticksUsed) {
+        return false;
+    }
+
     @Override
     final public String toString() {
         return "Item " + this.name + " (" + this.id + ":" + (!this.hasMeta ? "?" : this.meta) + ")x" + this.count + (this.hasCompoundTag() ? " tags:0x" + Binary.bytesToHexString(this.getCompoundTag()) : "");
@@ -975,17 +983,6 @@ public class Item implements Cloneable, BlockID, ItemID {
      * @return item changed
      */
     public boolean onClickAir(Player player, Vector3 directionVector) {
-        return false;
-    }
-
-    /**
-     * Called when a player is using this item and releases it. Used to handle bow shoot actions.
-     * Returns whether the item was changed, for example count decrease or durability change.
-     *
-     * @param player player
-     * @return item changed
-     */
-    public boolean onReleaseUsing(Player player) {
         return false;
     }
 
