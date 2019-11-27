@@ -3308,6 +3308,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.resetCraftingGridType();
         this.craftingType = CRAFTING_SMALL;
 
+        // adding command execution like in Nukkit-DOC -> see above
+        if(message.startsWith("/")) {
+            this.server.dispatchCommand(this, message.substring(1));
+            return true;
+        }
+
         if (this.removeFormat) {
             message = TextFormat.clean(message, true);
         }
@@ -3384,6 +3390,44 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.dataPacket(pk);
     }
+
+    /**
+     * Get an Array with nearby Players in a defined radius around the Player
+     * @param radiusX
+     * @param radiusY
+     * @param radiusZ
+     * @return nearByPlayers
+     */
+    public Player[] getNearByPlayers(int radiusX, int radiusY, int radiusZ) {
+        AxisAlignedBB axisalignedbb = new SimpleAxisAlignedBB(this.x - radiusX, this.y - radiusY, this.z - radiusZ, this.x + radiusX, this.y + radiusY, this.z + radiusZ);
+        Entity[] nearByEntities = this.level.getNearbyEntities(axisalignedbb, this);
+        int i = 0;
+        for(Entity entity : nearByEntities) {
+            if(!(entity instanceof Player)) continue;
+            i++;
+        }
+        Player[] nearByPlayers = new Player[(i+1)];
+        int x = 0;
+        for(Entity entity : nearByEntities) {
+            if(!(entity instanceof Player)) continue;
+            nearByPlayers[x] = (Player)entity;
+            x++;
+        }
+        return nearByPlayers;
+    }
+
+    /**
+     * Get an Array with nearby Entities in a defined radius around the Player
+     * @param radiusX
+     * @param radiusY
+     * @param radiusZ
+     * @return nearbyEntities
+     */
+    public Entity[] getNearByEntities(int radiusX, int radiusY, int radiusZ) {
+        AxisAlignedBB axisalignedbb = new SimpleAxisAlignedBB(this.x - radiusX, this.y - radiusY, this.z - radiusZ, this.x + radiusX, this.y + radiusY, this.z + radiusZ);
+        return this.level.getNearbyEntities(axisalignedbb, this);
+    }
+
 
     public int getViewDistance() {
         return this.chunkRadius;
