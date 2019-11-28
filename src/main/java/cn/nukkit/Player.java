@@ -3854,11 +3854,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             if (this.isSurvival() || this.isAdventure()) {
                 int exp = ev.getExperience() * 7;
                 if (exp > 100) exp = 100;
-                int add = 1;
-                for (int ii = 1; ii < exp; ii += add) {
-                    this.getLevel().dropExpOrb(this, add);
-                    add = new NukkitRandom().nextRange(1, 3);
-                }
+                this.getLevel().dropExpOrb(this, exp);
             }
             this.setExperience(0, 0);
         }
