@@ -17,9 +17,4 @@ public class OceanBiome extends WateryBiome {
     public String getName() {
         return "Ocean";
     }
-
-    @Override
-    public int getGroundBlock(int y) {
-        return GRAVEL;
-    }
 }
