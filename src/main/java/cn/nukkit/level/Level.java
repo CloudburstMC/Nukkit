@@ -1939,12 +1939,13 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void dropExpOrb(Vector3 source, int exp, Vector3 motion, int delay) {
+        Random rand = ThreadLocalRandom.current();
         for (int split : EntityXPOrb.splitIntoOrbSizes(exp)) {
             CompoundTag nbt = Entity.getDefaultNBT(source, motion == null ? new Vector3(
-                    (ThreadLocalRandom.current().nextDouble() * 0.2 - 0.1) * 2,
-                    ThreadLocalRandom.current().nextDouble() * 0.4,
-                    (ThreadLocalRandom.current().nextDouble() * 0.2 - 0.1) * 2) : motion,
-                    ThreadLocalRandom.current().nextFloat() * 360f, 0);
+                    (rand.nextDouble() * 0.2 - 0.1) * 2,
+                    rand.nextDouble() * 0.4,
+                    (rand.nextDouble() * 0.2 - 0.1) * 2) : motion,
+                    rand.nextFloat() * 360f, 0);
 
             nbt.putShort("Value", split);
             nbt.putShort("PickupDelay", delay);
