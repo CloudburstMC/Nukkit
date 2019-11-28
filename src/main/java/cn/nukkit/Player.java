@@ -62,6 +62,7 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.resourcepacks.ResourcePack;
 import cn.nukkit.scheduler.AsyncTask;
+import cn.nukkit.scoreboard.Scoreboard;
 import cn.nukkit.utils.*;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
@@ -4912,5 +4913,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         return "Player(name='" + getName() +
                 "', location=" + super.toString() +
                 ')';
+    }
+
+    public void setScoreboard(Scoreboard scoreboard) {
+        scoreboard.showFor( this );
+    }
+
+    public void removeScoreboard(Scoreboard scoreboard) {
+        scoreboard.hideFor( this );
     }
 }
