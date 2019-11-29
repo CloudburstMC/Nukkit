@@ -8,11 +8,9 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.*;
-import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.SerializedImage;
 import com.google.common.base.Strings;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -24,14 +22,10 @@ import java.util.concurrent.ThreadLocalRandom;
 public class FloatingTextParticle extends Particle {
     private static final Skin EMPTY_SKIN = new Skin();
     private static final SerializedImage SKIN_DATA = SerializedImage.fromLegacy(new byte[8192]);
-    private static final UUID SKIN_UUID = UUID.nameUUIDFromBytes(Binary.appendBytes(Skin.GEOMETRY_CUSTOM.getBytes(StandardCharsets.UTF_8), SKIN_DATA.data));
 
     static {
         EMPTY_SKIN.setSkinData(SKIN_DATA);
-        EMPTY_SKIN.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
-        EMPTY_SKIN.setSkinId(SKIN_UUID + ".FloatingText");
-        EMPTY_SKIN.setCapeData(SerializedImage.EMPTY);
-        EMPTY_SKIN.setCapeId("");
+        EMPTY_SKIN.generateSkinId("FloatingText");
     }
 
     protected UUID uuid = UUID.randomUUID();
