@@ -99,7 +99,8 @@ public class PluginManager {
                                 this.plugins.put(plugin.getDescription().getName(), plugin);
 
                                 List<PluginCommand> pluginCommands = this.parseYamlCommands(plugin);
-
+                                // simple command
+                                pluginCommands.addAll(this.parseSimplePluginCommands(plugin));
                                 if (!pluginCommands.isEmpty()) {
                                     this.commandMap.registerAll(plugin.getDescription().getName(), pluginCommands);
                                 }
@@ -161,14 +162,15 @@ public class PluginManager {
             }
 
             for (final PluginLoader loader : loaders.values()) {
-                for (File file : dictionary.listFiles((dir, name) -> {
+                File[] files = dictionary.listFiles((dir, name) -> {
                     for (Pattern pattern : loader.getPluginFilters()) {
                         if (pattern.matcher(name).matches()) {
                             return true;
                         }
                     }
                     return false;
-                })) {
+                });
+                for (File file : files!=null?files:new File[0]) {
                     if (file.isDirectory() && !includeDir) {
                         continue;
                     }
@@ -278,14 +280,8 @@ public class PluginManager {
                     }
 
                     if (!dependencies.containsKey(name) && !softDependencies.containsKey(name)) {
-                        plugins.remove(name);
                         missingDependency = false;
-                        Plugin plugin = this.loadPlugin(file, loaders);
-                        if (plugin != null) {
-                            loadedPlugins.put(name, plugin);
-                        } else {
-                            this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.genericLoadError", name));
-                        }
+                        load(plugins,name,file,loaders,loadedPlugins);
                     }
                 }
 
@@ -294,14 +290,8 @@ public class PluginManager {
                         File file = plugins.get(name);
                         if (!dependencies.containsKey(name)) {
                             softDependencies.remove(name);
-                            plugins.remove(name);
                             missingDependency = false;
-                            Plugin plugin = this.loadPlugin(file, loaders);
-                            if (plugin != null) {
-                                loadedPlugins.put(name, plugin);
-                            } else {
-                                this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.genericLoadError", name));
-                            }
+                            load(plugins,name,file,loaders,loadedPlugins);
                         }
                     }
 
@@ -317,6 +307,17 @@ public class PluginManager {
             return loadedPlugins;
         } else {
             return new HashMap<>();
+        }
+    }
+
+
+    private void load(Map<String,File> plugins,String name,File file,Map<String,PluginLoader> loaders,Map<String,Plugin> loadedPlugins){
+        plugins.remove(name);
+        Plugin plugin = this.loadPlugin(file, loaders);
+        if (plugin != null) {
+            loadedPlugins.put(name, plugin);
+        } else {
+            this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.genericLoadError", name));
         }
     }
 
@@ -462,10 +463,12 @@ public class PluginManager {
         List<PluginCommand> pluginCmds = new ArrayList<>();
         Set<Map.Entry<String,Object>> commands = plugin.getDescription().getCommands().entrySet();
         for(Map.Entry<String,Object> obj : commands){
-            Command command = (Command)(obj.getValue());
-            PluginCommand newCmd = new PluginCommand<>(command.name(),plugin);
-            initCommand(newCmd,command);
-            pluginCmds.add(newCmd);
+            if(obj.getValue() instanceof Command) {
+                Command command = (Command) (obj.getValue());
+                PluginCommand newCmd = new PluginCommand<>(command.name(), plugin);
+                initCommand(newCmd, command);
+                pluginCmds.add(newCmd);
+            }
         }
         Class pluginClass = plugin.getClass();
         Method[] methods = pluginClass.getDeclaredMethods();
@@ -498,6 +501,9 @@ public class PluginManager {
         List<PluginCommand> pluginCmds = new ArrayList<>();
 
         for (Map.Entry entry : plugin.getDescription().getCommands().entrySet()) {
+            if(entry.getValue() instanceof Command){
+                continue;
+            }
             String key = (String) entry.getKey();
             Object data = entry.getValue();
             if (key.contains(":")) {

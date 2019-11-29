@@ -1,5 +1,7 @@
 package cn.nukkit.plugin.simple;
 
+import cn.nukkit.plugin.PluginLoadOrder;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -35,7 +37,7 @@ public @interface Main {
 
     String description() default "";
 
-    String load() default "POSTWORLD";
+    PluginLoadOrder load() default PluginLoadOrder.POSTWORLD;
 
     String website() default "";
 
