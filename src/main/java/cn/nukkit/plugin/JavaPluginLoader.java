@@ -4,16 +4,14 @@ import cn.nukkit.Server;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.plugin.PluginDisableEvent;
 import cn.nukkit.event.plugin.PluginEnableEvent;
-import cn.nukkit.plugin.simple.Command;
-import cn.nukkit.plugin.simple.EnableRegister;
-import cn.nukkit.plugin.simple.Main;
-import cn.nukkit.plugin.simple.Permission;
+import cn.nukkit.plugin.simple.*;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -141,17 +139,21 @@ public class JavaPluginLoader implements PluginLoader {
     }
 
     private void loadEnableRegister(List<Class> haveLoaded,Class<?> mainClass,boolean hasLoaded,File file,PluginClassLoader loader){
-        boolean isEnableRegister;
-        EnableRegister register;
         List<Class<? extends Listener>> noRegister = null;
-        register = mainClass.getAnnotation(EnableRegister.class);
-        isEnableRegister = register != null;
+        EnableRegister register = mainClass.getAnnotation(EnableRegister.class);
+        boolean isEnableRegister = register != null;
         List<Class> classes = new ArrayList<>();
         simplePluginEnableClasses.put(mainClass, classes);
         if (register != null) {
             noRegister = Arrays.asList(register.noRegister());
         }
-        if (isEnableRegister) {
+        EnableCommand command = mainClass.getAnnotation(EnableCommand.class);
+        boolean isEnableCommand = command !=null;
+        List<Class<? extends cn.nukkit.command.Command>> noCommands = null;
+        if(command != null){
+            noCommands = Arrays.asList(command.noRegister());
+        }
+        if(isEnableCommand||isEnableRegister){
             if(!hasLoaded){
                 try(JarFile jarFile = new JarFile(file)){
                     Enumeration<JarEntry> entries = jarFile.entries();
@@ -165,16 +167,27 @@ public class JavaPluginLoader implements PluginLoader {
                     throw new PluginException(e.getMessage());
                 }
             }
-            for (Class<?> loaded : haveLoaded) {
+        }
 
+        for (Class<?> loaded : haveLoaded) {
+            if(isEnableRegister){
                 if (Arrays.asList(loaded.getInterfaces()).contains(Listener.class)) {
-                    
+
                     if (!noRegister.contains(loaded)) {
                         simplePluginEnableClasses.get(mainClass).add(loaded);
                     }
                 }
-
             }
+            if(isEnableCommand){
+                if (cn.nukkit.command.Command.class.isAssignableFrom(loaded)) {
+
+                    if (!noCommands.contains(loaded)) {
+                        simplePluginEnableClasses.get(mainClass).add(loaded);
+                    }
+                }
+            }
+
+
         }
 
 
@@ -280,9 +293,16 @@ public class JavaPluginLoader implements PluginLoader {
 
             try {
                 if (simplePluginEnableClasses.get(plugin.getClass())!=null) {
-                    List<Class> listeners = simplePluginEnableClasses.get(plugin.getClass());
-                    for (Class clz : listeners) {
-                        server.getPluginManager().registerEvents((Listener) clz.newInstance(), plugin);
+                    List<Class> assemblies = simplePluginEnableClasses.get(plugin.getClass());
+                    for (Class clz : assemblies) {
+                        Object obj = clz.newInstance();
+                        autoPlugin(obj,plugin);
+                        if(cn.nukkit.command.Command.class.isAssignableFrom(clz)){
+                            server.getCommandMap().register(plugin.getName(),(cn.nukkit.command.Command)obj);
+                        }else{
+                            server.getPluginManager().registerEvents((Listener) obj, plugin);
+                        }
+
                     }
                 }
             }catch (InstantiationException|IllegalAccessException e){
@@ -290,6 +310,17 @@ public class JavaPluginLoader implements PluginLoader {
             }
 
             this.server.getPluginManager().callEvent(new PluginEnableEvent(plugin));
+        }
+    }
+
+    private void autoPlugin(Object obj,Plugin plugin) throws IllegalAccessException{
+        Class clz = obj.getClass();
+        Field[] fields = clz.getFields();
+        for(Field field:fields){
+            if(field.getAnnotation(AutoPlugin.class)!=null) {
+                field.setAccessible(true);
+                field.set(obj,plugin);
+            }
         }
     }
 
