@@ -7,11 +7,14 @@ import cn.nukkit.network.protocol.*;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
+import cn.nukkit.utils.VarInt;
 import cn.nukkit.utils.Zlib;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
 import lombok.extern.log4j.Log4j2;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -157,12 +160,9 @@ public class Network {
                 }
                 byte[] buf = stream.getByteArray();
 
-                DataPacket pk;
+                DataPacket pk = this.getPacketFromBuffer(buf);
 
-                //TODO: This needs to be an unsigned VarInt
-                if ((pk = this.getPacket(buf[0])) != null) {
-                    pk.setBuffer(buf, 1);
-
+                if (pk != null) {
                     try {
                         pk.decode();
                     } catch (Exception e) {
@@ -196,6 +196,14 @@ public class Network {
         packets.forEach(player::handleDataPacket);
     }
 
+    private DataPacket getPacketFromBuffer(byte[] buffer) throws IOException {
+        ByteArrayInputStream stream = new ByteArrayInputStream(buffer);
+        DataPacket pk = this.getPacket((byte) VarInt.readUnsignedVarInt(stream));
+        if (pk != null) {
+            pk.setBuffer(buffer, buffer.length - stream.available());
+        }
+        return pk;
+    }
 
     public DataPacket getPacket(byte id) {
         Class<? extends DataPacket> clazz = this.packetPool[id & 0xff];

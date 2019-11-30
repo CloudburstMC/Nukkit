@@ -3,8 +3,12 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created on 2015/11/23 by xtypr.
@@ -82,14 +86,46 @@ public class BlockFlower extends BlockFlowable {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        return new Item[]{
-                toItem()
-        };
+    public BlockColor getColor() {
+        return BlockColor.FOLIAGE_BLOCK_COLOR;
     }
 
     @Override
-    public BlockColor getColor() {
-        return BlockColor.FOLIAGE_BLOCK_COLOR;
+    public boolean canBeActivated() {
+        return true;
+    }
+
+    @Override
+    public boolean onActivate(Item item, Player player) {
+        if (item.getId() == Item.DYE && item.getDamage() == 0x0f) { //Bone meal
+            if (player != null && (player.gamemode & 0x01) == 0) {
+                item.count--;
+            }
+
+            this.level.addParticle(new BoneMealParticle(this));
+
+            for (int i = 0; i < 8; i++) {
+                Vector3 vec = this.add(
+                        ThreadLocalRandom.current().nextInt(-3, 4),
+                        ThreadLocalRandom.current().nextInt(-1, 2),
+                        ThreadLocalRandom.current().nextInt(-3, 4));
+
+                if (level.getBlock(vec).getId() == AIR && level.getBlock(vec.down()).getId() == GRASS && vec.getY() >= 0 && vec.getY() < 256) {
+                    if (ThreadLocalRandom.current().nextInt(10) == 0) {
+                        this.level.setBlock(vec, this.getUncommonFlower(), true);
+                    } else {
+                        this.level.setBlock(vec, get(this.getId()), true);
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    protected Block getUncommonFlower() {
+        return get(DANDELION);
     }
 }

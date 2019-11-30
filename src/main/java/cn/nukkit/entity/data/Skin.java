@@ -1,6 +1,7 @@
 package cn.nukkit.entity.data;
 
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
+import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.SerializedImage;
 import cn.nukkit.utils.SkinAnimation;
 import com.google.common.base.Preconditions;
@@ -10,9 +11,11 @@ import net.minidev.json.JSONValue;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * author: MagicDroidX
@@ -73,6 +76,9 @@ public class Skin {
     }
 
     public String getSkinId() {
+        if (this.skinId == null) {
+            this.generateSkinId("Custom");
+        }
         return skinId;
     }
 
@@ -81,6 +87,11 @@ public class Skin {
             return;
         }
         this.skinId = skinId;
+    }
+
+    public void generateSkinId(String name) {
+        byte[] data = Binary.appendBytes(getSkinData().data, getSkinResourcePatch().getBytes(StandardCharsets.UTF_8));
+        this.skinId = UUID.nameUUIDFromBytes(data) + "." + name;
     }
 
     public void setSkinData(byte[] skinData) {
@@ -212,7 +223,7 @@ public class Skin {
     }
 
     public String getFullSkinId() {
-        return skinId; //TODO: Client sends full skin ID as normal skin ID. Find out what this is actually for.
+        return getSkinId() + getCapeId();
     }
 
     private static SerializedImage parseBufferedImage(BufferedImage image) {
