@@ -8,14 +8,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
-@ Main(name="11",api = "1.0.9",commands ={
-        @ Command(name="fp",
-            permission = @ Permission(
-                    theDefault = "op"
-            )
-        )
-})
-*/
+ * main class positioning annotation. With this annotation,
+ * you can locate the main class and load configuration parameters
+ * without writing plugin.yml.
+ *
+ * @ Main(name="hello",api="1.0.9")
+ * @author magiclu # DreamServer
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Main {

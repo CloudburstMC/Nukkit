@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 
 /**
  * Listener auto-registration for launching SimplePlugin
+ * @author magiclu # DreamServer
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})

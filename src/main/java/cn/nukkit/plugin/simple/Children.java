@@ -4,6 +4,7 @@ import cn.nukkit.permission.Permission;
 
 /**
  * The children permission
+ * @author magiclu # DreamServer
  */
 public @interface Children {
 
