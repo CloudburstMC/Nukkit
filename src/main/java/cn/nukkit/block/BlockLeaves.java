@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.LeavesDecayEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
@@ -78,7 +77,7 @@ public class BlockLeaves extends BlockTransparentMeta {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0, 1);
+        return Item.get(BlockID.LEAVES, this.getDamage() & 0x3);
     }
 
     @Override
@@ -229,6 +228,6 @@ public class BlockLeaves extends BlockTransparentMeta {
     }
 
     protected Item getSapling() {
-        return new ItemBlock(get(SAPLING), this.getDamage() & 0x03);
+        return Item.get(BlockID.SAPLING, this.getDamage() & 0x03);
     }
 }
