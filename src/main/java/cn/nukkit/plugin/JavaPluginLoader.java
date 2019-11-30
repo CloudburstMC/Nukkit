@@ -315,7 +315,7 @@ public class JavaPluginLoader implements PluginLoader {
 
     private void autoPlugin(Object obj,Plugin plugin) throws IllegalAccessException{
         Class clz = obj.getClass();
-        Field[] fields = clz.getFields();
+        Field[] fields = clz.getDeclaredFields();
         for(Field field:fields){
             if(field.getAnnotation(AutoPlugin.class)!=null) {
                 field.setAccessible(true);
