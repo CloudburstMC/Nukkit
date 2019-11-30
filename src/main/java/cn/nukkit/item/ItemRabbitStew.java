@@ -17,4 +17,9 @@ public class ItemRabbitStew extends ItemEdible {
     public ItemRabbitStew(Integer meta, int count) {
         super(RABBIT_STEW, meta, count, "Rabbit Stew");
     }
+
+    @Override
+    public int getMaxStackSize() {
+        return 1;
+    }
 }

@@ -1073,7 +1073,7 @@ public class Level implements ChunkManager, Metadatable {
                 for (Entity entity : chunk.getEntities().values()) {
                     entity.scheduleUpdate();
                 }
-                int tickSpeed = 3;
+                int tickSpeed = gameRules.getInteger(GameRule.RANDOM_TICK_SPEED);
 
                 if (tickSpeed > 0) {
                     if (this.useSections) {
@@ -1914,13 +1914,8 @@ public class Level implements ChunkManager, Metadatable {
 
         if (this.gameRules.getBoolean(GameRule.DO_TILE_DROPS)) {
             int dropExp = target.getDropExp();
-            if (!isSilkTouch && player != null && drops.length != 0) {
-                player.addExperience(dropExp);
-                if (player.isSurvival()) {
-                    for (int ii = 1; ii <= dropExp; ii++) {
-                        this.dropExpOrb(target, 1);
-                    }
-                }
+            if (!isSilkTouch && player != null && player.isSurvival() && dropExp > 0 && drops.length != 0) {
+                this.dropExpOrb(vector.add(0.5, 0.5, 0.5), dropExp);
             }
 
             if (player == null || player.isSurvival()) {
@@ -1944,21 +1939,22 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void dropExpOrb(Vector3 source, int exp, Vector3 motion, int delay) {
-        motion = (motion == null) ? new Vector3(new Random().nextDouble() * 0.2 - 0.1, 0.2,
-                new Random().nextDouble() * 0.2 - 0.1) : motion;
-        CompoundTag nbt = new CompoundTag()
-                .putList(new ListTag<DoubleTag>("Pos").add(new DoubleTag("", source.getX()))
-                        .add(new DoubleTag("", source.getY())).add(new DoubleTag("", source.getZ())))
-                .putList(new ListTag<DoubleTag>("Motion").add(new DoubleTag("", motion.getX()))
-                        .add(new DoubleTag("", motion.getY())).add(new DoubleTag("", motion.getZ())))
-                .putList(new ListTag<FloatTag>("Rotation").add(new FloatTag("", 0)).add(new FloatTag("", 0)));
-        EntityXPOrb entity = new EntityXPOrb(this.getChunk(source.getFloorX() >> 4, source.getFloorZ() >> 4), nbt);
-        entity.setExp(exp);
-        entity.setPickupDelay(delay);
-        entity.saveNBT();
+        Random rand = ThreadLocalRandom.current();
+        for (int split : EntityXPOrb.splitIntoOrbSizes(exp)) {
+            CompoundTag nbt = Entity.getDefaultNBT(source, motion == null ? new Vector3(
+                    (rand.nextDouble() * 0.2 - 0.1) * 2,
+                    rand.nextDouble() * 0.4,
+                    (rand.nextDouble() * 0.2 - 0.1) * 2) : motion,
+                    rand.nextFloat() * 360f, 0);
 
-        entity.spawnToAll();
+            nbt.putShort("Value", split);
+            nbt.putShort("PickupDelay", delay);
 
+            Entity entity = Entity.createEntity("XpOrb", this.getChunk(source.getChunkX(), source.getChunkZ()), nbt);
+            if (entity != null) {
+                entity.spawnToAll();
+            }
+        }
     }
 
     public Item useItemOn(Vector3 vector, Item item, BlockFace face, float fx, float fy, float fz) {

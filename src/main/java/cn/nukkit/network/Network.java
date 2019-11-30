@@ -7,6 +7,7 @@ import cn.nukkit.network.protocol.*;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.Utils;
+import cn.nukkit.utils.VarInt;
 import cn.nukkit.utils.Zlib;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
@@ -15,6 +16,8 @@ import lombok.extern.log4j.Log4j2;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -162,16 +165,14 @@ public class Network {
                 }
                 byte[] buf = stream.getByteArray();
 
-                DataPacket pk;
+                DataPacket pk = this.getPacketFromBuffer(buf);
 
-                //TODO: This needs to be an unsigned VarInt
-                if ((pk = this.getPacket(buf[0])) != null) {
-                    pk.setBuffer(buf, 1);
-
+                if (pk != null) {
                     try {
                         pk.decode();
                     } catch (Exception e) {
                         log.warn("Unable to decode {} from {}", pk.getClass().getSimpleName(), player.getName());
+                        log.throwing(e);
                         if (log.isTraceEnabled()) {
                             log.trace("Dumping Packet\n{}", ByteBufUtil.prettyHexDump(Unpooled.wrappedBuffer(packet.payload)));
                         }
@@ -202,6 +203,14 @@ public class Network {
         packets.forEach(player::handleDataPacket);
     }
 
+    private DataPacket getPacketFromBuffer(byte[] buffer) throws IOException {
+        ByteArrayInputStream stream = new ByteArrayInputStream(buffer);
+        DataPacket pk = this.getPacket((byte) VarInt.readUnsignedVarInt(stream));
+        if (pk != null) {
+            pk.setBuffer(buffer, buffer.length - stream.available());
+        }
+        return pk;
+    }
 
     public DataPacket getPacket(byte id) {
         Class<? extends DataPacket> clazz = this.packetPool[id & 0xff];
@@ -266,7 +275,6 @@ public class Network {
         this.registerPacket(ProtocolInfo.DISCONNECT_PACKET, DisconnectPacket.class);
         this.registerPacket(ProtocolInfo.ENTITY_EVENT_PACKET, EntityEventPacket.class);
         this.registerPacket(ProtocolInfo.ENTITY_FALL_PACKET, EntityFallPacket.class);
-        this.registerPacket(ProtocolInfo.EXPLODE_PACKET, ExplodePacket.class);
         this.registerPacket(ProtocolInfo.FULL_CHUNK_DATA_PACKET, LevelChunkPacket.class);
         this.registerPacket(ProtocolInfo.GAME_RULES_CHANGED_PACKET, GameRulesChangedPacket.class);
         this.registerPacket(ProtocolInfo.HURT_ARMOR_PACKET, HurtArmorPacket.class);
@@ -299,6 +307,7 @@ public class Network {
         this.registerPacket(ProtocolInfo.RESOURCE_PACK_DATA_INFO_PACKET, ResourcePackDataInfoPacket.class);
         this.registerPacket(ProtocolInfo.RESOURCE_PACK_CHUNK_DATA_PACKET, ResourcePackChunkDataPacket.class);
         this.registerPacket(ProtocolInfo.RESOURCE_PACK_CHUNK_REQUEST_PACKET, ResourcePackChunkRequestPacket.class);
+        this.registerPacket(ProtocolInfo.PLAYER_SKIN_PACKET, PlayerSkinPacket.class);
         this.registerPacket(ProtocolInfo.RESPAWN_PACKET, RespawnPacket.class);
         this.registerPacket(ProtocolInfo.RIDER_JUMP_PACKET, RiderJumpPacket.class);
         this.registerPacket(ProtocolInfo.SET_COMMANDS_ENABLED_PACKET, SetCommandsEnabledPacket.class);
@@ -338,5 +347,6 @@ public class Network {
         this.registerPacket(ProtocolInfo.CLIENT_CACHE_STATUS_PACKET, ClientCacheStatusPacket.class);
         this.registerPacket(ProtocolInfo.MAP_CREATE_LOCKED_COPY_PACKET, MapCreateLockedCopyPacket.class);
         this.registerPacket(ProtocolInfo.ON_SCREEN_TEXTURE_ANIMATION_PACKET, OnScreenTextureAnimationPacket.class);
+        this.registerPacket(ProtocolInfo.COMPLETED_USING_ITEM_PACKET, CompletedUsingItemPacket.class);
     }
 }

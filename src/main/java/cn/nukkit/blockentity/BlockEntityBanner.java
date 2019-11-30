@@ -28,14 +28,19 @@ public class BlockEntityBanner extends BlockEntitySpawnable {
         this.namedTag.putInt("Base", color & 0x0f);
     }
 
+    public int getType() {
+        return this.namedTag.getInt("Type");
+    }
+
+    public void setType(int type) {
+        this.namedTag.putInt("Type", type);
+    }
+
     @Override
     public CompoundTag getSpawnCompound() {
-        return new CompoundTag()
-                .putString("id", BlockEntity.BANNER)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z)
+        return getDefaultCompound(this, BANNER)
                 .putInt("Base", getBaseColor())
-                .putList(namedTag.getList("Patterns"));
+                .putList(namedTag.getList("Patterns"))
+                .putInt("Type", getType());
     }
 }
