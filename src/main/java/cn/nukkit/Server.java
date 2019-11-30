@@ -598,24 +598,14 @@ public class Server {
     }
 
     public int broadcast(String message, String permissions) {
-        Set<CommandSender> recipients = new HashSet<>();
-
-        for (String permission : permissions.split(";")) {
-            for (Permissible permissible : this.pluginManager.getPermissionSubscriptions(permission)) {
-                if (permissible instanceof CommandSender && permissible.hasPermission(permission)) {
-                    recipients.add((CommandSender) permissible);
-                }
-            }
-        }
-
-        for (CommandSender recipient : recipients) {
-            recipient.sendMessage(message);
-        }
-
-        return recipients.size();
+        return broadcast((Object) message,permissions);
     }
 
     public int broadcast(TextContainer message, String permissions) {
+        return broadcast((Object) message,permissions);
+    }
+
+    private int broadcast(Object message,String permissions){
         Set<CommandSender> recipients = new HashSet<>();
 
         for (String permission : permissions.split(";")) {
@@ -627,7 +617,11 @@ public class Server {
         }
 
         for (CommandSender recipient : recipients) {
-            recipient.sendMessage(message);
+            if(message instanceof String) {
+                recipient.sendMessage((String) message);
+            }else if(message instanceof TextContainer){
+                recipient.sendMessage((TextContainer) message);
+            }
         }
 
         return recipients.size();
