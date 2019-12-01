@@ -34,7 +34,7 @@ public class Skin {
     public static final String GEOMETRY_CUSTOM_SLIM = convertLegacyGeometryName("geometry.humanoid.customSlim");
 
     private String skinId;
-    private String skinResourcePatch;
+    private String skinResourcePatch = GEOMETRY_CUSTOM;
     private SerializedImage skinData;
     private final List<SkinAnimation> animations = new ArrayList<>();
     private SerializedImage capeData;
