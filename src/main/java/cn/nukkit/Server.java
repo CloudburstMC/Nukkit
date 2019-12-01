@@ -2302,6 +2302,7 @@ public class Server {
         Entity.registerEntity("WanderingTrader", EntityWanderingTrader.class);
         Entity.registerEntity("Wolf", EntityWolf.class);
         Entity.registerEntity("ZombieHorse", EntityZombieHorse.class);
+        Entity.registerEntity("SnowMan", EntitySnowMan.class);
         //Projectile
         Entity.registerEntity("Egg", EntityEgg.class);
         Entity.registerEntity("ThrownExpBottle", EntityExpBottle.class);

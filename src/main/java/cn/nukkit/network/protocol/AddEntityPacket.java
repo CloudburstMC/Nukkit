@@ -62,7 +62,6 @@ public class AddEntityPacket extends DataPacket {
             .put(EntityLlama.NETWORK_ID, "minecraft:llama")
             .put(20, "minecraft:iron_golem")
             .put(EntityRabbit.NETWORK_ID, "minecraft:rabbit")
-            .put(21, "minecraft:snow_golem")
             .put(EntityBat.NETWORK_ID, "minecraft:bat")
             .put(EntityOcelot.NETWORK_ID, "minecraft:ocelot")
             .put(EntityHorse.NETWORK_ID, "minecraft:horse")
@@ -125,6 +124,7 @@ public class AddEntityPacket extends DataPacket {
             .put(EntityVillager.NETWORK_ID, "minecraft:villager_v2")
             .put(EntityZombieVillager.NETWORK_ID, "minecraft:zombie_villager_v2")
             .put(121, "minecraft:fox")
+            .put(EntitySnowMan.NETWORK_ID, "minecraft:snow_golem")
             .build();
 
     @Override
