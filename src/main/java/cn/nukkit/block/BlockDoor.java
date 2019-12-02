@@ -17,6 +17,11 @@ import cn.nukkit.utils.Faceable;
  */
 public abstract class BlockDoor extends BlockTransparentMeta implements Faceable {
 
+    public static int DOOR_OPEN_BIT = 0x04;
+    public static int DOOR_TOP_BIT = 0x08;
+    public static int DOOR_HINGE_BIT = 0x01;
+    public static int DOOR_POWERED_BIT = 0x02;
+
     protected BlockDoor(int meta) {
         super(meta);
     }
@@ -37,22 +42,19 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
     }*/
 
     private int getFullDamage() {
-        int damage = this.getDamage();
-        boolean isUp = (damage & 0x08) > 0;
-
         int up;
         int down;
-        if (isUp) {
+        if (isTop()) {
             down = this.down().getDamage();
-            up = damage;
+            up = this.getDamage();
         } else {
-            down = damage;
+            down = this.getDamage();
             up = this.up().getDamage();
         }
 
-        boolean isRight = (up & 0x01) > 0;
+        boolean isRight = (up & DOOR_HINGE_BIT) > 0;
 
-        return down & 0x07 | (isUp ? 8 : 0) | (isRight ? 0x10 : 0);
+        return down & 0x07 | (isTop() ? 0x08 : 0) | (isRight ? 0x10 : 0);
     }
 
     @Override
@@ -243,9 +245,9 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
 
             Block left = this.getSide(player.getDirection().rotateYCCW());
             Block right = this.getSide(player.getDirection().rotateY());
-            int metaUp = 0x08;
+            int metaUp = DOOR_TOP_BIT;
             if (left.getId() == this.getId() || (!right.isTransparent() && left.isTransparent())) { //Door hinge
-                metaUp |= 0x01;
+                metaUp |= DOOR_HINGE_BIT;
             }
 
             this.setDamage(direction);
@@ -254,7 +256,10 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
 
             if (!this.isOpen() && this.level.isBlockPowered(this.getLocation())) {
                 this.toggle(null);
+                metaUp |= DOOR_POWERED_BIT;
+                this.getLevel().setBlockDataAt(blockUp.getFloorX(), blockUp.getFloorY(), blockUp.getFloorZ(), metaUp);
             }
+
             return true;
         }
 
@@ -263,7 +268,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
 
     @Override
     public boolean onBreak(Item item) {
-        if ((this.getDamage() & 0x08) == 0x08) {
+        if (isTop(this.getDamage())) {
             Block down = this.down();
             if (down.getId() == this.getId()) {
                 this.getLevel().setBlock(down, new BlockAir(), true);
@@ -302,35 +307,45 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
             return false;
         }
 
-        if (isTop(this.getDamage())) { //Top
-            Block down = this.down();
-            if (down.getId() != this.getId()) {
-                return false;
-            }
-
-            this.getLevel().setBlock(down, Block.get(this.getId(), down.getDamage() ^ 0x04), true);
-
-            this.setDamage(this.getDamage() ^ 0x04);
-            this.getLevel().setBlock(this, this, true);
-        } else { //Down
-            Block up = this.up();
-            if (up.getId() != this.getId()) {
-                return false;
-            }
-
-            this.setDamage(this.getDamage() ^ 0x04);
-            this.getLevel().setBlock(this, this, true);
+        Block down;
+        Block up;
+        if (isTop(this.getDamage())) {
+            down = this.down();
+            up = this;
+        } else {
+            down = this;
+            up = this.up();
+        }
+        if( up.getId() != down.getId() ) {
+            return false;
         }
 
+        getLevel().setBlockDataAt(down.getFloorX(), down.getFloorY(), down.getFloorZ(), down.getDamage() ^ 0x04);
         return true;
     }
 
     public boolean isOpen() {
-        return (this.getDamage() & 0x04) > 0;
+
+        if (isTop(this.getDamage())) {
+            return (this.down().getDamage() & DOOR_OPEN_BIT) > 0;
+        }
+        else{
+            return (this.getDamage() & DOOR_OPEN_BIT) >0;
+        }
+    }
+    public boolean isTop() {
+        return isTop(this.getDamage());
     }
 
     public boolean isTop(int meta) {
-        return (meta & 8) != 0;
+        return (meta & DOOR_TOP_BIT) != 0;
+    }
+
+    public boolean isRightHinged() {
+        if (isTop()) {
+            return (this.getDamage() & DOOR_HINGE_BIT ) >0;
+        }
+        return (this.up().getDamage() & DOOR_HINGE_BIT) >0;
     }
 
     @Override
