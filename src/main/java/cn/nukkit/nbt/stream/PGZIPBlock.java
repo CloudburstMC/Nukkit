@@ -3,18 +3,17 @@ package cn.nukkit.nbt.stream;
 import java.util.concurrent.Callable;
 
 public class PGZIPBlock implements Callable<byte[]> {
-    public PGZIPBlock(final PGZIPOutputStream parent) {
-        STATE = new PGZIPThreadLocal(parent);
-    }
-
+    public static final int SIZE = 64 * 1024;
     /**
      * This ThreadLocal avoids the recycling of a lot of memory, causing lumpy performance.
      */
     protected final ThreadLocal<PGZIPState> STATE;
-    public static final int SIZE = 64 * 1024;
     // private final int index;
     protected final byte[] in = new byte[SIZE];
     protected int in_length = 0;
+    public PGZIPBlock(final PGZIPOutputStream parent) {
+        STATE = new PGZIPThreadLocal(parent);
+    }
 
     /*
      public Block(@Nonnegative int index) {

@@ -37,14 +37,14 @@ public abstract class Event {
         return isCancelled;
     }
 
-    public void setCancelled() {
-        setCancelled(true);
-    }
-
     public void setCancelled(boolean value) {
         if (!(this instanceof Cancellable)) {
             throw new EventException("Event is not Cancellable");
         }
         isCancelled = value;
+    }
+
+    public void setCancelled() {
+        setCancelled(true);
     }
 }

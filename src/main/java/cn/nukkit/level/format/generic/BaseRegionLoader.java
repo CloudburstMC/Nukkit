@@ -19,18 +19,14 @@ abstract public class BaseRegionLoader {
     public static final byte COMPRESSION_ZLIB = 2;
     public static final int MAX_SECTOR_LENGTH = 256 << 12;
     public static final int COMPRESSION_LEVEL = 7;
-
+    // TODO: A simple array will perform better and use less memory
+    protected final Map<Integer, Integer[]> locationTable = new HashMap<>();
+    public long lastUsed;
     protected int x;
     protected int z;
     protected int lastSector;
     protected LevelProvider levelProvider;
-
     private RandomAccessFile randomAccessFile;
-
-    // TODO: A simple array will perform better and use less memory
-    protected final Map<Integer, Integer[]> locationTable = new HashMap<>();
-
-    public long lastUsed;
 
     public BaseRegionLoader(LevelProvider level, int regionX, int regionZ, String ext) {
         try {

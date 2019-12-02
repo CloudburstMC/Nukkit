@@ -12,9 +12,8 @@ import java.util.StringJoiner;
 
 public class ListTag<T extends Tag> extends Tag {
 
-    private List<T> list = new ArrayList<>();
-
     public byte type;
+    private List<T> list = new ArrayList<>();
 
     public ListTag() {
         super("");

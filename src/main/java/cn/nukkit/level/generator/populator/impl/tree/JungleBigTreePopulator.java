@@ -14,11 +14,10 @@ import cn.nukkit.math.Vector3;
 
 
 public class JungleBigTreePopulator extends Populator {
+    private final int type;
     private ChunkManager level;
     private int randomAmount;
     private int baseAmount;
-
-    private final int type;
 
     public JungleBigTreePopulator() {
         this(BlockSapling.JUNGLE);

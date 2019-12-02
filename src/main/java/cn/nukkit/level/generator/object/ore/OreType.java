@@ -79,7 +79,7 @@ public class OreType {
                 }
             }
         }
-        
+
         return true;
     }
 }

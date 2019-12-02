@@ -16,13 +16,13 @@ public class EntityEndCrystal extends Entity implements EntityExplosive {
 
     public static final int NETWORK_ID = 71;
 
+    public EntityEndCrystal(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+    }
+
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
-    }
-
-    public EntityEndCrystal(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class EntityEndCrystal extends Entity implements EntityExplosive {
 
     @Override
     public boolean attack(EntityDamageEvent source) {
-    if (source.getCause() == EntityDamageEvent.DamageCause.FIRE || source.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || source.getCause() == EntityDamageEvent.DamageCause.LAVA) {
+        if (source.getCause() == EntityDamageEvent.DamageCause.FIRE || source.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || source.getCause() == EntityDamageEvent.DamageCause.LAVA) {
             return false;
         }
 

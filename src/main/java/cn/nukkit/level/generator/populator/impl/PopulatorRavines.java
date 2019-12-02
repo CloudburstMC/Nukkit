@@ -29,6 +29,10 @@ public class PopulatorRavines extends Populator {
 
     private float[] a = new float[1024];
 
+    public static int numberInRange(Random random, int min, int max) {
+        return min + random.nextInt(max - min + 1);
+    }
+
     @Override
     public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {
         this.random = new Random();
@@ -197,9 +201,5 @@ public class PopulatorRavines extends Populator {
             if (i != 0)
                 break;
         }
-    }
-
-    public static int numberInRange(Random random, int min, int max) {
-        return min + random.nextInt(max - min + 1);
     }
 }

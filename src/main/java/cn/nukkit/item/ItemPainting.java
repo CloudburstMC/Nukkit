@@ -11,7 +11,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.utils.MainLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +35,10 @@ public class ItemPainting extends Item {
 
     public ItemPainting(Integer meta, int count) {
         super(PAINTING, 0, count, "Painting");
+    }
+
+    private static double offset(int value) {
+        return value > 1 ? 0.5 : 0;
     }
 
     @Override
@@ -120,9 +123,5 @@ public class ItemPainting extends Item {
         entity.spawnToAll();
 
         return true;
-    }
-
-    private static double offset(int value) {
-        return value > 1 ? 0.5 : 0;
     }
 }

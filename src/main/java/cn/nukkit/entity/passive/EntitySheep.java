@@ -109,14 +109,14 @@ public class EntitySheep extends EntityAnimal {
         return new Item[0];
     }
 
+    public int getColor() {
+        return namedTag.getByte("Color");
+    }
+
     public void setColor(int color) {
         this.color = color;
         this.setDataProperty(new ByteEntityData(DATA_COLOUR, color));
         this.namedTag.putByte("Color", this.color);
-    }
-
-    public int getColor() {
-        return namedTag.getByte("Color");
     }
 
     private int randomColor() {

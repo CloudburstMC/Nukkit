@@ -20,7 +20,7 @@ public class ItemFlintSteel extends ItemTool {
      * 23x23 in vanilla
      */
     private static final int MAX_PORTAL_SIZE = 23;
-    
+
     public ItemFlintSteel() {
         this(0, 1);
     }
@@ -109,7 +109,8 @@ public class ItemFlintSteel extends ItemTool {
                     }
 
                     int innerWidth = 0;
-                    LOOP: for (int i = 0; i < MAX_PORTAL_SIZE - 2; i++) {
+                    LOOP:
+                    for (int i = 0; i < MAX_PORTAL_SIZE - 2; i++) {
                         int id = level.getBlockIdAt(scanX - i, scanY, scanZ);
                         switch (id) {
                             case AIR:
@@ -122,7 +123,8 @@ public class ItemFlintSteel extends ItemTool {
                         }
                     }
                     int innerHeight = 0;
-                    LOOP: for (int i = 0; i < MAX_PORTAL_SIZE - 2; i++) {
+                    LOOP:
+                    for (int i = 0; i < MAX_PORTAL_SIZE - 2; i++) {
                         int id = level.getBlockIdAt(scanX, scanY + i, scanZ);
                         switch (id) {
                             case AIR:
@@ -137,11 +139,11 @@ public class ItemFlintSteel extends ItemTool {
                     if (!(innerWidth <= MAX_PORTAL_SIZE - 2
                             && innerWidth >= 2
                             && innerHeight <= MAX_PORTAL_SIZE - 2
-                            && innerHeight >= 3))   {
+                            && innerHeight >= 3)) {
                         break PORTAL;
                     }
 
-                    for (int height = 0; height < innerHeight + 1; height++)    {
+                    for (int height = 0; height < innerHeight + 1; height++) {
                         if (height == innerHeight) {
                             for (int width = 0; width < innerWidth; width++) {
                                 if (level.getBlockIdAt(scanX - width, scanY + height, scanZ) != OBSIDIAN) {
@@ -162,8 +164,8 @@ public class ItemFlintSteel extends ItemTool {
                         }
                     }
 
-                    for (int height = 0; height < innerHeight; height++)    {
-                        for (int width = 0; width < innerWidth; width++)    {
+                    for (int height = 0; height < innerHeight; height++) {
+                        for (int width = 0; width < innerWidth; width++) {
                             level.setBlock(new Vector3(scanX - width, scanY + height, scanZ), new BlockNetherPortal());
                         }
                     }
@@ -192,7 +194,8 @@ public class ItemFlintSteel extends ItemTool {
                     }
 
                     int innerWidth = 0;
-                    LOOP: for (int i = 0; i < MAX_PORTAL_SIZE - 2; i++) {
+                    LOOP:
+                    for (int i = 0; i < MAX_PORTAL_SIZE - 2; i++) {
                         int id = level.getBlockIdAt(scanX, scanY, scanZ - i);
                         switch (id) {
                             case AIR:
@@ -205,7 +208,8 @@ public class ItemFlintSteel extends ItemTool {
                         }
                     }
                     int innerHeight = 0;
-                    LOOP: for (int i = 0; i < MAX_PORTAL_SIZE - 2; i++) {
+                    LOOP:
+                    for (int i = 0; i < MAX_PORTAL_SIZE - 2; i++) {
                         int id = level.getBlockIdAt(scanX, scanY + i, scanZ);
                         switch (id) {
                             case AIR:
@@ -220,11 +224,11 @@ public class ItemFlintSteel extends ItemTool {
                     if (!(innerWidth <= MAX_PORTAL_SIZE - 2
                             && innerWidth >= 2
                             && innerHeight <= MAX_PORTAL_SIZE - 2
-                            && innerHeight >= 3))   {
+                            && innerHeight >= 3)) {
                         break PORTAL;
                     }
 
-                    for (int height = 0; height < innerHeight + 1; height++)    {
+                    for (int height = 0; height < innerHeight + 1; height++) {
                         if (height == innerHeight) {
                             for (int width = 0; width < innerWidth; width++) {
                                 if (level.getBlockIdAt(scanX, scanY + height, scanZ - width) != OBSIDIAN) {
@@ -245,8 +249,8 @@ public class ItemFlintSteel extends ItemTool {
                         }
                     }
 
-                    for (int height = 0; height < innerHeight; height++)    {
-                        for (int width = 0; width < innerWidth; width++)    {
+                    for (int height = 0; height < innerHeight; height++) {
+                        for (int width = 0; width < innerWidth; width++) {
                             level.setBlock(new Vector3(scanX, scanY + height, scanZ - width), new BlockNetherPortal());
                         }
                     }

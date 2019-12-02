@@ -30,21 +30,14 @@ import java.util.concurrent.atomic.AtomicReference;
  * Nukkit Project
  */
 public abstract class BaseLevelProvider implements LevelProvider {
-    protected Level level;
-
     protected final String path;
-
-    protected CompoundTag levelData;
-
-    private Vector3 spawn;
-
     protected final AtomicReference<BaseRegionLoader> lastRegion = new AtomicReference<>();
-
     protected final Long2ObjectMap<BaseRegionLoader> regions = new Long2ObjectOpenHashMap<>();
-
     protected final Long2ObjectMap<BaseFullChunk> chunks = new Long2ObjectOpenHashMap<>();
-
     private final AtomicReference<BaseFullChunk> lastChunk = new AtomicReference<>();
+    protected Level level;
+    protected CompoundTag levelData;
+    private Vector3 spawn;
 
     public BaseLevelProvider(Level level, String path) throws IOException {
         this.level = level;
@@ -69,6 +62,14 @@ public abstract class BaseLevelProvider implements LevelProvider {
         }
 
         this.spawn = new Vector3(this.levelData.getInt("SpawnX"), this.levelData.getInt("SpawnY"), this.levelData.getInt("SpawnZ"));
+    }
+
+    protected static int getRegionIndexX(int chunkX) {
+        return chunkX >> 5;
+    }
+
+    protected static int getRegionIndexZ(int chunkZ) {
+        return chunkZ >> 5;
     }
 
     public abstract BaseFullChunk loadChunk(long index, int chunkX, int chunkZ, boolean create);
@@ -132,14 +133,6 @@ public abstract class BaseLevelProvider implements LevelProvider {
         synchronized (regions) {
             return this.regions.get(index);
         }
-    }
-
-    protected static int getRegionIndexX(int chunkX) {
-        return chunkX >> 5;
-    }
-
-    protected static int getRegionIndexZ(int chunkZ) {
-        return chunkZ >> 5;
     }
 
     @Override

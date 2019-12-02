@@ -18,44 +18,6 @@ import cn.nukkit.utils.Faceable;
  */
 public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
 
-    public BlockTrapdoor() {
-        this(0);
-    }
-
-    public BlockTrapdoor(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return TRAPDOOR;
-    }
-
-    @Override
-    public String getName() {
-        return "Wooden Trapdoor";
-    }
-
-    @Override
-    public double getHardness() {
-        return 3;
-    }
-
-    @Override
-    public double getResistance() {
-        return 15;
-    }
-
-    @Override
-    public boolean canBeActivated() {
-        return true;
-    }
-
-    @Override
-    public int getToolType() {
-        return ItemTool.TYPE_AXE;
-    }
-
     private static final AxisAlignedBB[] boundingBoxDamage = new AxisAlignedBB[16];
 
     static {
@@ -124,6 +86,44 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
             }
             boundingBoxDamage[damage] = bb;
         }
+    }
+
+    public BlockTrapdoor() {
+        this(0);
+    }
+
+    public BlockTrapdoor(int meta) {
+        super(meta);
+    }
+
+    @Override
+    public int getId() {
+        return TRAPDOOR;
+    }
+
+    @Override
+    public String getName() {
+        return "Wooden Trapdoor";
+    }
+
+    @Override
+    public double getHardness() {
+        return 3;
+    }
+
+    @Override
+    public double getResistance() {
+        return 15;
+    }
+
+    @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+
+    @Override
+    public int getToolType() {
+        return ItemTool.TYPE_AXE;
     }
 
     private AxisAlignedBB getRelativeBoundingBox() {

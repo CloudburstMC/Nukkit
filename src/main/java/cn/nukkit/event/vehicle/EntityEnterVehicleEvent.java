@@ -8,16 +8,15 @@ import cn.nukkit.event.HandlerList;
 public class EntityEnterVehicleEvent extends VehicleEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     private final cn.nukkit.entity.Entity riding;
 
     public EntityEnterVehicleEvent(cn.nukkit.entity.Entity riding, Entity vehicle) {
         super(vehicle);
         this.riding = riding;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public cn.nukkit.entity.Entity getEntity() {

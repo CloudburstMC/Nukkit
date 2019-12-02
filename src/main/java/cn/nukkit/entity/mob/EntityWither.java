@@ -11,13 +11,13 @@ public class EntityWither extends EntityMob implements EntitySmite {
 
     public static final int NETWORK_ID = 52;
 
+    public EntityWither(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+    }
+
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
-    }
-
-    public EntityWither(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
     }
 
     @Override

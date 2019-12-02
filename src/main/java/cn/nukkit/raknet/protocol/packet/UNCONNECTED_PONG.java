@@ -9,15 +9,14 @@ import cn.nukkit.raknet.protocol.Packet;
  */
 public class UNCONNECTED_PONG extends Packet {
     public static final byte ID = (byte) 0x1c;
+    public long pingID;
+    public long serverID;
+    public String serverName;
 
     @Override
     public byte getID() {
         return ID;
     }
-
-    public long pingID;
-    public long serverID;
-    public String serverName;
 
     @Override
     public void encode() {

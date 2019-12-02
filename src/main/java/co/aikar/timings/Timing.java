@@ -31,19 +31,16 @@ public class Timing implements AutoCloseable {
     final int id = idPool++;
 
     final String name;
-    private final boolean verbose;
-
     final Map<Integer, TimingData> children = new HashMap<>();
-    private Timing parent;
-
-    private final Timing groupTiming;
     final TimingData record;
-
+    private final boolean verbose;
+    private final Timing groupTiming;
+    boolean timed;
+    boolean enabled;
+    private Timing parent;
     private long start = 0;
     private int timingDepth = 0;
     private boolean added;
-    boolean timed;
-    boolean enabled;
 
     Timing(TimingIdentifier id) {
         if (id.name.startsWith("##")) {

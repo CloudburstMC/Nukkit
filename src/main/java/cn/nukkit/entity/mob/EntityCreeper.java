@@ -23,6 +23,10 @@ public class EntityCreeper extends EntityMob {
     public static final int DATA_SWELL_OLD = 18;
     public static final int DATA_POWERED = 19;
 
+    public EntityCreeper(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+    }
+
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
@@ -36,10 +40,6 @@ public class EntityCreeper extends EntityMob {
     @Override
     public float getHeight() {
         return 1.7f;
-    }
-
-    public EntityCreeper(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
     }
 
     public boolean isPowered() {

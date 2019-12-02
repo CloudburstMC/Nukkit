@@ -16,6 +16,23 @@ import cn.nukkit.utils.Faceable;
  */
 public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
 
+    private static final double[] offMinX = new double[2];
+    private static final double[] offMinZ = new double[2];
+    private static final double[] offMaxX = new double[2];
+    private static final double[] offMaxZ = new double[2];
+
+    static {
+        offMinX[0] = 0;
+        offMinZ[0] = 0.375;
+        offMaxX[0] = 1;
+        offMaxZ[0] = 0.625;
+
+        offMinX[1] = 0.375;
+        offMinZ[1] = 0;
+        offMaxX[1] = 0.625;
+        offMaxZ[1] = 1;
+    }
+
     public BlockFenceGate() {
         this(0);
     }
@@ -52,23 +69,6 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_AXE;
-    }
-
-    private static final double[] offMinX = new double[2];
-    private static final double[] offMinZ = new double[2];
-    private static final double[] offMaxX = new double[2];
-    private static final double[] offMaxZ = new double[2];
-
-    static {
-        offMinX[0] = 0;
-        offMinZ[0] = 0.375;
-        offMaxX[0] = 1;
-        offMaxZ[0] = 0.625;
-
-        offMinX[1] = 0.375;
-        offMinZ[1] = 0;
-        offMaxX[1] = 0.625;
-        offMaxZ[1] = 1;
     }
 
     private int getOffsetIndex() {

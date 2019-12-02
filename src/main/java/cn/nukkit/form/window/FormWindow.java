@@ -7,13 +7,13 @@ public abstract class FormWindow {
 
     protected boolean closed = false;
 
-    public String getJSONData(){
+    public String getJSONData() {
         return new Gson().toJson(this);
     }
 
-    public abstract void setResponse(String data);
-
     public abstract FormResponse getResponse();
+
+    public abstract void setResponse(String data);
 
     public boolean wasClosed() {
         return closed;

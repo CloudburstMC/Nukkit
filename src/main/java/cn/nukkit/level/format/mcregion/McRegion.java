@@ -96,6 +96,10 @@ public class McRegion extends BaseLevelProvider {
         NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", levelData), new FileOutputStream(path + "level.dat"), ByteOrder.BIG_ENDIAN);
     }
 
+    public static ChunkSection createChunkSection(int y) {
+        return null;
+    }
+
     @Override
     public AsyncTask requestChunkTask(int x, int z) throws ChunkException {
         BaseFullChunk chunk = this.getChunk(x, z, false);
@@ -207,10 +211,6 @@ public class McRegion extends BaseLevelProvider {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static ChunkSection createChunkSection(int y) {
-        return null;
     }
 
     protected BaseRegionLoader loadRegion(int x, int z) {

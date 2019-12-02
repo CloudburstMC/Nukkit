@@ -6,11 +6,6 @@ import cn.nukkit.lang.TextContainer;
 
 public class PlayerJoinEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     protected TextContainer joinMessage;
 
     public PlayerJoinEvent(Player player, TextContainer joinMessage) {
@@ -21,6 +16,10 @@ public class PlayerJoinEvent extends PlayerEvent {
     public PlayerJoinEvent(Player player, String joinMessage) {
         this.player = player;
         this.joinMessage = new TextContainer(joinMessage);
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public TextContainer getJoinMessage() {

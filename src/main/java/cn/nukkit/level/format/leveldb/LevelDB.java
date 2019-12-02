@@ -33,14 +33,10 @@ import java.util.*;
  */
 public class LevelDB implements LevelProvider {
 
-    protected Map<Long, Chunk> chunks = new HashMap<>();
-
-    protected DB db;
-
-    protected Level level;
-
     protected final String path;
-
+    protected Map<Long, Chunk> chunks = new HashMap<>();
+    protected DB db;
+    protected Level level;
     protected CompoundTag levelData;
 
     public LevelDB(Level level, String path) {
@@ -140,6 +136,10 @@ public class LevelDB implements LevelProvider {
         db.close();
     }
 
+    public static ChunkSection createChunkSection(int y) {
+        return null;
+    }
+
     @Override
     public void saveLevelData() {
         try {
@@ -154,7 +154,6 @@ public class LevelDB implements LevelProvider {
             throw new RuntimeException(e);
         }
     }
-
 
     @Override
     public Chunk getEmptyChunk(int chunkX, int chunkZ) {
@@ -394,10 +393,6 @@ public class LevelDB implements LevelProvider {
         }
 
         this.chunks.put(index, (Chunk) chunk);
-    }
-
-    public static ChunkSection createChunkSection(int y) {
-        return null;
     }
 
     private boolean chunkExists(int chunkX, int chunkZ) {

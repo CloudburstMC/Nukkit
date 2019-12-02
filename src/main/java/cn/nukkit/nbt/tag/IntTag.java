@@ -8,6 +8,15 @@ import java.io.IOException;
 public class IntTag extends NumberTag<Integer> {
     public int data;
 
+    public IntTag(String name) {
+        super(name);
+    }
+
+    public IntTag(String name, int data) {
+        super(name);
+        this.data = data;
+    }
+
     @Override
     public Integer getData() {
         return data;
@@ -16,15 +25,6 @@ public class IntTag extends NumberTag<Integer> {
     @Override
     public void setData(Integer data) {
         this.data = data == null ? 0 : data;
-    }
-
-    public IntTag(String name) {
-        super(name);
-    }
-
-    public IntTag(String name, int data) {
-        super(name);
-        this.data = data;
     }
 
     @Override

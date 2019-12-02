@@ -38,6 +38,18 @@ public class QueryHandler {
         this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.server.query.running", new String[]{addr, String.valueOf(port)}));
     }
 
+    public static String getTokenString(byte[] token, String salt) {
+        return getTokenString(new String(token), salt);
+    }
+
+    public static String getTokenString(String token, String salt) {
+        try {
+            return String.valueOf(Binary.readInt(Binary.subBytes(MessageDigest.getInstance("SHA-512").digest((salt + ":" + token).getBytes()), 7, 4)));
+        } catch (NoSuchAlgorithmException e) {
+            return String.valueOf(new Random().nextInt());
+        }
+    }
+
     public void regenerateInfo() {
         QueryRegenerateEvent ev = this.server.getQueryInformation();
         this.longData = ev.getLongQuery(this.longData);
@@ -52,19 +64,6 @@ public class QueryHandler {
             token[i] = (byte) new Random().nextInt(255);
         }
         this.token = token;
-    }
-
-    public static String getTokenString(byte[] token, String salt) {
-        return getTokenString(new String(token), salt);
-    }
-
-
-    public static String getTokenString(String token, String salt) {
-        try {
-            return String.valueOf(Binary.readInt(Binary.subBytes(MessageDigest.getInstance("SHA-512").digest((salt + ":" + token).getBytes()), 7, 4)));
-        } catch (NoSuchAlgorithmException e) {
-            return String.valueOf(new Random().nextInt());
-        }
     }
 
     public void handle(String address, int port, byte[] packet) {

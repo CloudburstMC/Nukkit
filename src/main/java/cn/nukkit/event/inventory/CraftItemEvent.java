@@ -19,17 +19,9 @@ import java.util.List;
 public class CraftItemEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
-    private Item[] input = new Item[0];
-
     private final Recipe recipe;
-
     private final Player player;
-
+    private Item[] input = new Item[0];
     private CraftingTransaction transaction;
 
     public CraftItemEvent(CraftingTransaction transaction) {
@@ -50,6 +42,10 @@ public class CraftItemEvent extends Event implements Cancellable {
         this.player = player;
         this.input = input;
         this.recipe = recipe;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public CraftingTransaction getTransaction() {

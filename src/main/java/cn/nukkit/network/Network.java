@@ -35,15 +35,10 @@ public class Network {
     public static final byte CHANNEL_ENTITY_SPAWNING = 6; //Entity spawn/despawn channel
     public static final byte CHANNEL_TEXT = 7; //Chat and other text stuff
     public static final byte CHANNEL_END = 31;
-
-    private Class<? extends DataPacket>[] packetPool = new Class[256];
-
     private final Server server;
-
     private final Set<SourceInterface> interfaces = new HashSet<>();
-
     private final Set<AdvancedSourceInterface> advancedInterfaces = new HashSet<>();
-
+    private Class<? extends DataPacket>[] packetPool = new Class[256];
     private double upload = 0;
     private double download = 0;
 
@@ -107,13 +102,13 @@ public class Network {
         this.advancedInterfaces.remove(interfaz);
     }
 
+    public String getName() {
+        return name;
+    }
+
     public void setName(String name) {
         this.name = name;
         this.updateName();
-    }
-
-    public String getName() {
-        return name;
     }
 
     public String getSubName() {

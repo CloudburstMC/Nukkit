@@ -13,24 +13,20 @@ import cn.nukkit.item.Item;
 public class BlockPlaceEvent extends BlockEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     protected final Player player;
-
     protected final Item item;
-
     protected final Block blockReplace;
     protected final Block blockAgainst;
-
     public BlockPlaceEvent(Player player, Block blockPlace, Block blockReplace, Block blockAgainst, Item item) {
         super(blockPlace);
         this.blockReplace = blockReplace;
         this.blockAgainst = blockAgainst;
         this.item = item;
         this.player = player;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public Player getPlayer() {

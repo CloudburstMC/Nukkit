@@ -26,10 +26,6 @@ public class EncapsulatedPacket implements Cloneable {
 
     private int offset;
 
-    public int getOffset() {
-        return offset;
-    }
-
     public static EncapsulatedPacket fromBinary(byte[] binary) {
         return fromBinary(binary, false);
     }
@@ -79,6 +75,10 @@ public class EncapsulatedPacket implements Cloneable {
         packet.offset = offset;
 
         return packet;
+    }
+
+    public int getOffset() {
+        return offset;
     }
 
     public int getTotalLength() {

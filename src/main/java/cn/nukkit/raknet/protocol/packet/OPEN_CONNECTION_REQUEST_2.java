@@ -11,16 +11,15 @@ import java.net.InetSocketAddress;
  */
 public class OPEN_CONNECTION_REQUEST_2 extends Packet {
     public static final byte ID = (byte) 0x07;
+    public long clientID;
+    public String serverAddress;
+    public int serverPort;
+    public short mtuSize;
 
     @Override
     public byte getID() {
         return ID;
     }
-
-    public long clientID;
-    public String serverAddress;
-    public int serverPort;
-    public short mtuSize;
 
     @Override
     public void encode() {

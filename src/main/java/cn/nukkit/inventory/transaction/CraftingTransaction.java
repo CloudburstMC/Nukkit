@@ -145,12 +145,12 @@ public class CraftingTransaction extends InventoryTransaction {
     protected void sendInventories() {
         super.sendInventories();
 
-		/*
+        /*
          * TODO: HACK!
-		 * we can't resend the contents of the crafting window, so we force the client to close it instead.
-		 * So people don't whine about messy desync issues when someone cancels CraftItemEvent, or when a crafting
-		 * transaction goes wrong.
-		 */
+         * we can't resend the contents of the crafting window, so we force the client to close it instead.
+         * So people don't whine about messy desync issues when someone cancels CraftItemEvent, or when a crafting
+         * transaction goes wrong.
+         */
         ContainerClosePacket pk = new ContainerClosePacket();
         pk.windowId = ContainerIds.NONE;
         source.getServer().getScheduler().scheduleDelayedTask(new Task() {

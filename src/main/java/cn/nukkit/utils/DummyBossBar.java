@@ -33,43 +33,6 @@ public class DummyBossBar {
         this.color = builder.color;
     }
 
-    public static class Builder {
-        private final Player player;
-        private final long bossBarId;
-
-        private String text = "";
-        private float length = 100;
-        private BlockColor color = null;
-
-        public Builder(Player player) {
-            this.player = player;
-            this.bossBarId = 1095216660480L + ThreadLocalRandom.current().nextLong(0, 0x7fffffffL);
-        }
-
-        public Builder text(String text) {
-            this.text = text;
-            return this;
-        }
-
-        public Builder length(float length) {
-            if (length >= 0 && length <= 100) this.length = length;
-            return this;
-        }
-
-        public Builder color(BlockColor color) {
-            this.color = color;
-            return this;
-        }
-
-        public Builder color(int red, int green, int blue) {
-            return color(new BlockColor(red, green, blue));
-        }
-
-        public DummyBossBar build() {
-            return new DummyBossBar(this);
-        }
-    }
-
     public Player getPlayer() {
         return player;
     }
@@ -102,17 +65,6 @@ public class DummyBossBar {
         }
     }
 
-    /**
-     * Color is not working in the current version. We are keep waiting for client support.
-     * @param color the boss bar color
-     */
-    public void setColor(BlockColor color) {
-        if (this.color == null || !this.color.equals(color)) {
-            this.color = color;
-            this.sendSetBossBarTexture();
-        }
-    }
-
     public void setColor(int red, int green, int blue) {
         this.setColor(new BlockColor(red, green, blue));
     }
@@ -123,6 +75,18 @@ public class DummyBossBar {
 
     public BlockColor getColor() {
         return this.color;
+    }
+
+    /**
+     * Color is not working in the current version. We are keep waiting for client support.
+     *
+     * @param color the boss bar color
+     */
+    public void setColor(BlockColor color) {
+        if (this.color == null || !this.color.equals(color)) {
+            this.color = color;
+            this.sendSetBossBarTexture();
+        }
     }
 
     private void createBossEntity() {
@@ -248,6 +212,43 @@ public class DummyBossBar {
     public void destroy() {
         sendHideBossBar();
         removeBossEntity();
+    }
+
+    public static class Builder {
+        private final Player player;
+        private final long bossBarId;
+
+        private String text = "";
+        private float length = 100;
+        private BlockColor color = null;
+
+        public Builder(Player player) {
+            this.player = player;
+            this.bossBarId = 1095216660480L + ThreadLocalRandom.current().nextLong(0, 0x7fffffffL);
+        }
+
+        public Builder text(String text) {
+            this.text = text;
+            return this;
+        }
+
+        public Builder length(float length) {
+            if (length >= 0 && length <= 100) this.length = length;
+            return this;
+        }
+
+        public Builder color(BlockColor color) {
+            this.color = color;
+            return this;
+        }
+
+        public Builder color(int red, int green, int blue) {
+            return color(new BlockColor(red, green, blue));
+        }
+
+        public DummyBossBar build() {
+            return new DummyBossBar(this);
+        }
     }
 
 }

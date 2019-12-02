@@ -54,11 +54,6 @@ public class StartGamePacket extends DataPacket {
         ITEM_DATA_PALETTE = paletteBuffer.getBuffer();
     }
 
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
-    }
-
     public long entityUniqueId;
     public long entityRuntimeId;
     public int playerGamemode;
@@ -107,12 +102,14 @@ public class StartGamePacket extends DataPacket {
     public boolean isTrial = false;
     public boolean isMovementServerAuthoritative;
     public long currentTick;
-
     public int enchantmentSeed;
-
     public byte[] blockPalette = GlobalBlockPalette.BLOCK_PALETTE;
-
     public String multiplayerCorrelationId = "";
+
+    @Override
+    public byte pid() {
+        return NETWORK_ID;
+    }
 
     @Override
     public void decode() {

@@ -126,12 +126,6 @@ public class AddEntityPacket extends DataPacket {
             .put(EntityZombieVillager.NETWORK_ID, "minecraft:zombie_villager_v2")
             .put(121, "minecraft:fox")
             .build();
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
-    }
-
     public long entityUniqueId;
     public long entityRuntimeId;
     public int type;
@@ -148,6 +142,11 @@ public class AddEntityPacket extends DataPacket {
     public EntityMetadata metadata = new EntityMetadata();
     public Attribute[] attributes = new Attribute[0];
     public EntityLink[] links = new EntityLink[0];
+
+    @Override
+    public byte pid() {
+        return NETWORK_ID;
+    }
 
     @Override
     public void decode() {

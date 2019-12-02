@@ -33,11 +33,6 @@ public class Chunk extends BaseChunk {
     protected boolean terrainPopulated;
     protected boolean terrainGenerated;
 
-    @Override
-    public Chunk clone() {
-        return (Chunk) super.clone();
-    }
-
     public Chunk(LevelProvider level) {
         this(level, null);
     }
@@ -102,8 +97,8 @@ public class Chunk extends BaseChunk {
             int[] biomeColors = nbt.getIntArray("BiomeColors");
             if (biomeColors != null && biomeColors.length == 256) {
                 BiomePalette palette = new BiomePalette(biomeColors);
-                for (int x = 0; x < 16; x++)    {
-                    for (int z = 0; z < 16; z++)    {
+                for (int x = 0; x < 16; x++) {
+                    for (int z = 0; z < 16; z++) {
                         this.biomes[(x << 4) | z] = (byte) (palette.get(x, z) >> 24);
                     }
                 }
@@ -168,56 +163,6 @@ public class Chunk extends BaseChunk {
         this.terrainGenerated = nbt.getBoolean("TerrainGenerated");
     }
 
-    @Override
-    public boolean isPopulated() {
-        return this.terrainPopulated;
-    }
-
-    @Override
-    public void setPopulated() {
-        this.setPopulated(true);
-    }
-
-    @Override
-    public void setPopulated(boolean value) {
-        if (value != this.terrainPopulated) {
-            this.terrainPopulated = value;
-            setChanged();
-        }
-    }
-
-    @Override
-    public boolean isGenerated() {
-        return this.terrainGenerated || this.terrainPopulated;
-    }
-
-    @Override
-    public void setGenerated() {
-        this.setGenerated(true);
-    }
-
-    @Override
-    public void setGenerated(boolean value) {
-        if (this.terrainGenerated != value) {
-            this.terrainGenerated = value;
-            setChanged();
-        }
-    }
-
-    public CompoundTag getNBT() {
-        CompoundTag tag = new CompoundTag();
-
-        tag.put("LightPopulated", new ByteTag("LightPopulated", (byte) (isLightPopulated() ? 1 : 0)));
-        tag.put("InhabitedTime", new LongTag("InhabitedTime", this.inhabitedTime));
-
-        tag.put("V", new ByteTag("V", (byte) 1));
-
-        tag.put("TerrainGenerated", new ByteTag("TerrainGenerated", (byte) (isGenerated() ? 1 : 0)));
-        tag.put("TerrainPopulated", new ByteTag("TerrainPopulated", (byte) (isPopulated() ? 1 : 0)));
-
-        return tag;
-    }
-
     public static Chunk fromBinary(byte[] data) {
         return fromBinary(data, null);
     }
@@ -237,7 +182,6 @@ public class Chunk extends BaseChunk {
         }
     }
 
-
     public static Chunk fromFastBinary(byte[] data) {
         return fromFastBinary(data, null);
     }
@@ -255,6 +199,86 @@ public class Chunk extends BaseChunk {
         }
     }
 
+    public static Chunk getEmptyChunk(int chunkX, int chunkZ) {
+        return getEmptyChunk(chunkX, chunkZ, null);
+    }
+
+    public static Chunk getEmptyChunk(int chunkX, int chunkZ, LevelProvider provider) {
+        try {
+            Chunk chunk;
+            if (provider != null) {
+                chunk = new Chunk(provider, null);
+            } else {
+                chunk = new Chunk(Anvil.class, null);
+            }
+
+            chunk.setPosition(chunkX, chunkZ);
+
+            chunk.heightMap = new byte[256];
+            chunk.inhabitedTime = 0;
+            chunk.terrainGenerated = false;
+            chunk.terrainPopulated = false;
+//            chunk.lightPopulated = false;
+            return chunk;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public Chunk clone() {
+        return (Chunk) super.clone();
+    }
+
+    @Override
+    public boolean isPopulated() {
+        return this.terrainPopulated;
+    }
+
+    @Override
+    public void setPopulated(boolean value) {
+        if (value != this.terrainPopulated) {
+            this.terrainPopulated = value;
+            setChanged();
+        }
+    }
+
+    @Override
+    public void setPopulated() {
+        this.setPopulated(true);
+    }
+
+    @Override
+    public boolean isGenerated() {
+        return this.terrainGenerated || this.terrainPopulated;
+    }
+
+    @Override
+    public void setGenerated(boolean value) {
+        if (this.terrainGenerated != value) {
+            this.terrainGenerated = value;
+            setChanged();
+        }
+    }
+
+    @Override
+    public void setGenerated() {
+        this.setGenerated(true);
+    }
+
+    public CompoundTag getNBT() {
+        CompoundTag tag = new CompoundTag();
+
+        tag.put("LightPopulated", new ByteTag("LightPopulated", (byte) (isLightPopulated() ? 1 : 0)));
+        tag.put("InhabitedTime", new LongTag("InhabitedTime", this.inhabitedTime));
+
+        tag.put("V", new ByteTag("V", (byte) 1));
+
+        tag.put("TerrainGenerated", new ByteTag("TerrainGenerated", (byte) (isGenerated() ? 1 : 0)));
+        tag.put("TerrainPopulated", new ByteTag("TerrainPopulated", (byte) (isPopulated() ? 1 : 0)));
+
+        return tag;
+    }
 
     @Override
     public byte[] toFastBinary() {
@@ -474,32 +498,6 @@ public class Chunk extends BaseChunk {
             }
         } else {
             return section.getBlockLight(x, y & 0x0f, z);
-        }
-    }
-
-    public static Chunk getEmptyChunk(int chunkX, int chunkZ) {
-        return getEmptyChunk(chunkX, chunkZ, null);
-    }
-
-    public static Chunk getEmptyChunk(int chunkX, int chunkZ, LevelProvider provider) {
-        try {
-            Chunk chunk;
-            if (provider != null) {
-                chunk = new Chunk(provider, null);
-            } else {
-                chunk = new Chunk(Anvil.class, null);
-            }
-
-            chunk.setPosition(chunkX, chunkZ);
-
-            chunk.heightMap = new byte[256];
-            chunk.inhabitedTime = 0;
-            chunk.terrainGenerated = false;
-            chunk.terrainPopulated = false;
-//            chunk.lightPopulated = false;
-            return chunk;
-        } catch (Exception e) {
-            return null;
         }
     }
 

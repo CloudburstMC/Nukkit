@@ -11,13 +11,13 @@ public class EntityWitherSkeleton extends EntityMob implements EntitySmite {
 
     public static final int NETWORK_ID = 48;
 
+    public EntityWitherSkeleton(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+    }
+
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
-    }
-
-    public EntityWitherSkeleton(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
     }
 
     @Override

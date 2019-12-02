@@ -14,13 +14,13 @@ public class WeatherChangeEvent extends WeatherEvent implements Cancellable {
 
     private final boolean to;
 
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     public WeatherChangeEvent(Level level, boolean to) {
         super(level);
         this.to = to;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     /**

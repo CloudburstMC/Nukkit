@@ -10,13 +10,13 @@ public class EntityBlaze extends EntityMob {
 
     public static final int NETWORK_ID = 43;
 
+    public EntityBlaze(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+    }
+
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
-    }
-
-    public EntityBlaze(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
     }
 
     @Override

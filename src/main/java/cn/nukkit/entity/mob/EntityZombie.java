@@ -11,13 +11,13 @@ public class EntityZombie extends EntityMob implements EntitySmite {
 
     public static final int NETWORK_ID = 32;
 
+    public EntityZombie(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+    }
+
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
-    }
-
-    public EntityZombie(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
     }
 
     @Override

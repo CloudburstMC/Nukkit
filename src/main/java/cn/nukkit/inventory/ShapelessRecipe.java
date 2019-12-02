@@ -10,15 +10,11 @@ import java.util.*;
  */
 public class ShapelessRecipe implements CraftingRecipe {
 
-    private String recipeId;
-
     private final Item output;
-
-    private long least,most;
-
     private final List<Item> ingredients;
-
     private final int priority;
+    private String recipeId;
+    private long least, most;
 
     public ShapelessRecipe(Item result, Collection<Item> ingredients) {
         this(null, 10, result, ingredients);

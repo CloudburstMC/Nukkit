@@ -12,12 +12,6 @@ import lombok.ToString;
 @ToString
 public class AddItemEntityPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.ADD_ITEM_ENTITY_PACKET;
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
-    }
-
     public long entityUniqueId;
     public long entityRuntimeId;
     public Item item;
@@ -29,6 +23,11 @@ public class AddItemEntityPacket extends DataPacket {
     public float speedZ;
     public EntityMetadata metadata = new EntityMetadata();
     public boolean isFromFishing = false;
+
+    @Override
+    public byte pid() {
+        return NETWORK_ID;
+    }
 
     @Override
     public void decode() {

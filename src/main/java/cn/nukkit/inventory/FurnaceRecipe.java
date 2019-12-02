@@ -17,12 +17,12 @@ public class FurnaceRecipe implements Recipe {
         this.ingredient = ingredient.clone();
     }
 
-    public void setInput(Item item) {
-        this.ingredient = item.clone();
-    }
-
     public Item getInput() {
         return this.ingredient.clone();
+    }
+
+    public void setInput(Item item) {
+        this.ingredient = item.clone();
     }
 
     @Override

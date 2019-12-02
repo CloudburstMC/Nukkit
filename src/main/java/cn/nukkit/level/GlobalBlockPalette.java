@@ -14,10 +14,10 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GlobalBlockPalette {
+    public static final byte[] BLOCK_PALETTE;
     private static final Int2IntMap legacyToRuntimeId = new Int2IntOpenHashMap();
     private static final Int2IntMap runtimeIdToLegacy = new Int2IntOpenHashMap();
     private static final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
-    public static final byte[] BLOCK_PALETTE;
 
     static {
         legacyToRuntimeId.defaultReturnValue(-1);

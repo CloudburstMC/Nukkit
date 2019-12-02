@@ -8,6 +8,15 @@ import java.io.IOException;
 public class FloatTag extends NumberTag<Float> {
     public float data;
 
+    public FloatTag(String name) {
+        super(name);
+    }
+
+    public FloatTag(String name, float data) {
+        super(name);
+        this.data = data;
+    }
+
     @Override
     public Float getData() {
         return data;
@@ -16,15 +25,6 @@ public class FloatTag extends NumberTag<Float> {
     @Override
     public void setData(Float data) {
         this.data = data == null ? 0 : data;
-    }
-
-    public FloatTag(String name) {
-        super(name);
-    }
-
-    public FloatTag(String name, float data) {
-        super(name);
-        this.data = data;
     }
 
     @Override

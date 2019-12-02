@@ -12,8 +12,8 @@ public class ZlibOriginal implements ZlibProvider {
     public byte[] deflate(byte[][] datas, int level) throws Exception {
         Deflater deflater = new Deflater(level);
         deflater.reset();
-            byte[] buffer = new byte[1024];
-            ByteArrayOutputStream bos = new ByteArrayOutputStream(datas.length);
+        byte[] buffer = new byte[1024];
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(datas.length);
         try {
             for (byte[] data : datas) {
                 deflater.setInput(data);

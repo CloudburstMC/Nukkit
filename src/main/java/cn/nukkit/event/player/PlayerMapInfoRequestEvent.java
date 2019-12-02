@@ -19,11 +19,11 @@ public class PlayerMapInfoRequestEvent extends PlayerEvent implements Cancellabl
         this.item = item;
     }
 
-    public Item getMap() {
-        return item;
-    }
-
     public static HandlerList getHandlers() {
         return handlers;
+    }
+
+    public Item getMap() {
+        return item;
     }
 }

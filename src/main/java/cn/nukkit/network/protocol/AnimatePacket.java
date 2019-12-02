@@ -64,12 +64,12 @@ public class AnimatePacket extends DataPacket {
             this.id = id;
         }
 
-        public int getId() {
-            return id;
-        }
-
         public static Action fromId(int id) {
             return ID_LOOKUP.get(id);
+        }
+
+        public int getId() {
+            return id;
         }
     }
 }

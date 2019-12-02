@@ -9,11 +9,15 @@ import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.generator.noise.vanilla.f.NoiseGeneratorOctavesF;
 import cn.nukkit.level.generator.noise.vanilla.f.NoiseGeneratorPerlinF;
 import cn.nukkit.level.generator.object.ore.OreType;
-import cn.nukkit.level.generator.populator.impl.*;
+import cn.nukkit.level.generator.populator.impl.PopulatorBedrock;
+import cn.nukkit.level.generator.populator.impl.PopulatorCaves;
+import cn.nukkit.level.generator.populator.impl.PopulatorGroundCover;
+import cn.nukkit.level.generator.populator.impl.PopulatorOre;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
+
 import java.util.*;
 
 /**
@@ -99,6 +103,7 @@ import java.util.*;
  * End.java
  */
 public class Normal extends Generator {
+    public static final int seaHeight = 64;
     private static final float[] biomeWeights = new float[25];
 
     static {
@@ -111,7 +116,6 @@ public class Normal extends Generator {
 
     private final List<Populator> populators = new ArrayList<>();
     private final List<Populator> generationPopulators = new ArrayList<>();
-    public static final int seaHeight = 64;
     public NoiseGeneratorOctavesF scaleNoise;
     public NoiseGeneratorOctavesF depthNoise;
     private ChunkManager level;

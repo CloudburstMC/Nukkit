@@ -1,12 +1,33 @@
 package cn.nukkit.utils;
 
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.Deflater;
 import java.util.zip.InflaterInputStream;
 
 public final class ZlibThreadLocal implements ZlibProvider {
+    public static final IterableThreadLocal<byte[]> buf = new IterableThreadLocal<byte[]>() {
+        @Override
+        public byte[] init() {
+            return new byte[8192];
+        }
+    };
+    public static final IterableThreadLocal<Deflater> def = new IterableThreadLocal<Deflater>() {
+        @Override
+        public Deflater init() {
+            return new Deflater();
+        }
+    };
+
+    /* -=-=-=-=-=- Internal -=-=-=-=-=- Do NOT attempt to use in production -=-=-=-=-=- */
+
+    private static Deflater getDef(int level) {
+        def.get().setLevel(level);
+        return def.get();
+    }
+
     @Override
     public byte[] deflate(byte[][] datas, int level) throws Exception {
         Deflater deflater = getDef(level);
@@ -48,28 +69,6 @@ public final class ZlibThreadLocal implements ZlibProvider {
         }
         //Deflater::end is called the time when the process exits.
         return bos.toByteArray();
-    }
-
-    /* -=-=-=-=-=- Internal -=-=-=-=-=- Do NOT attempt to use in production -=-=-=-=-=- */
-
-
-    public static final IterableThreadLocal<byte[]> buf = new IterableThreadLocal<byte[]>() {
-        @Override
-        public byte[] init() {
-            return new byte[8192];
-        }
-    };
-
-    public static final IterableThreadLocal<Deflater> def = new IterableThreadLocal<Deflater>() {
-        @Override
-        public Deflater init() {
-            return new Deflater();
-        }
-    };
-
-    private static Deflater getDef(int level) {
-        def.get().setLevel(level);
-        return def.get();
     }
 
     @Override

@@ -46,7 +46,7 @@ public class ItemBlock extends Item {
         if (this.getBlock().getId() == Block.SHULKER_BOX || this.getBlock().getId() == Block.UNDYED_SHULKER_BOX) {
             return 1;
         }
-        
+
         return super.getMaxStackSize();
     }
 

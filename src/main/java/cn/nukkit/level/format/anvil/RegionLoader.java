@@ -22,6 +22,10 @@ public class RegionLoader extends BaseRegionLoader {
         super(level, regionX, regionZ, "mca");
     }
 
+    protected static int getChunkOffset(int x, int z) {
+        return x | (z << 5);
+    }
+
     @Override
     protected boolean isChunkGenerated(int index) {
         Integer[] array = this.locationTable.get(index);
@@ -42,40 +46,40 @@ public class RegionLoader extends BaseRegionLoader {
         }
 
         try {
-        Integer[] table = this.locationTable.get(index);
-        RandomAccessFile raf = this.getRandomAccessFile();
-        raf.seek(table[0] << 12);
-        int length = raf.readInt();
-        byte compression = raf.readByte();
-        if (length <= 0 || length >= MAX_SECTOR_LENGTH) {
-            if (length >= MAX_SECTOR_LENGTH) {
-                table[0] = ++this.lastSector;
-                table[1] = 1;
-                this.locationTable.put(index, table);
-                MainLogger.getLogger().error("Corrupted chunk header detected");
+            Integer[] table = this.locationTable.get(index);
+            RandomAccessFile raf = this.getRandomAccessFile();
+            raf.seek(table[0] << 12);
+            int length = raf.readInt();
+            byte compression = raf.readByte();
+            if (length <= 0 || length >= MAX_SECTOR_LENGTH) {
+                if (length >= MAX_SECTOR_LENGTH) {
+                    table[0] = ++this.lastSector;
+                    table[1] = 1;
+                    this.locationTable.put(index, table);
+                    MainLogger.getLogger().error("Corrupted chunk header detected");
+                }
+                return null;
             }
-            return null;
-        }
 
-        if (length > (table[1] << 12)) {
-            MainLogger.getLogger().error("Corrupted bigger chunk detected");
-            table[1] = length >> 12;
-            this.locationTable.put(index, table);
-            this.writeLocationIndex(index);
-        } else if (compression != COMPRESSION_ZLIB && compression != COMPRESSION_GZIP) {
-            MainLogger.getLogger().error("Invalid compression type");
-            return null;
-        }
+            if (length > (table[1] << 12)) {
+                MainLogger.getLogger().error("Corrupted bigger chunk detected");
+                table[1] = length >> 12;
+                this.locationTable.put(index, table);
+                this.writeLocationIndex(index);
+            } else if (compression != COMPRESSION_ZLIB && compression != COMPRESSION_GZIP) {
+                MainLogger.getLogger().error("Invalid compression type");
+                return null;
+            }
 
-        byte[] data = new byte[length - 1];
-        raf.readFully(data);
-        Chunk chunk = this.unserializeChunk(data);
-        if (chunk != null) {
-            return chunk;
-        } else {
-            MainLogger.getLogger().error("Corrupted chunk detected at (" + x + ", " + z + ") in " + levelProvider.getName());
-            return null;
-        }
+            byte[] data = new byte[length - 1];
+            raf.readFully(data);
+            Chunk chunk = this.unserializeChunk(data);
+            if (chunk != null) {
+                return chunk;
+            } else {
+                MainLogger.getLogger().error("Corrupted chunk detected at (" + x + ", " + z + ") in " + levelProvider.getName());
+                return null;
+            }
         } catch (EOFException e) {
             MainLogger.getLogger().error("Your world is corrupt, because some code is bad and corrupted it. oops. ");
             return null;
@@ -151,10 +155,6 @@ public class RegionLoader extends BaseRegionLoader {
         this.lastUsed = System.currentTimeMillis();
         byte[] chunkData = chunk.toBinary();
         this.saveChunk(chunk.getX() & 0x1f, chunk.getZ() & 0x1f, chunkData);
-    }
-
-    protected static int getChunkOffset(int x, int z) {
-        return x | (z << 5);
     }
 
     @Override

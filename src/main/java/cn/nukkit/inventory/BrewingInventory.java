@@ -22,12 +22,12 @@ public class BrewingInventory extends ContainerInventory {
         setItem(0, item);
     }
 
-    public void setFuel(Item fuel) {
-        setItem(4, fuel);
-    }
-
     public Item getFuel() {
         return getItem(4);
+    }
+
+    public void setFuel(Item fuel) {
+        setItem(4, fuel);
     }
 
     @Override

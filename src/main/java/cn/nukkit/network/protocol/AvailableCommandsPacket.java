@@ -16,19 +16,10 @@ import java.util.function.ToIntFunction;
 public class AvailableCommandsPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.AVAILABLE_COMMANDS_PACKET;
-
-    private static final ObjIntConsumer<BinaryStream> WRITE_BYTE = (s, v) -> s.putByte((byte) v);
-    private static final ObjIntConsumer<BinaryStream> WRITE_SHORT = BinaryStream::putLShort;
-    private static final ObjIntConsumer<BinaryStream> WRITE_INT = BinaryStream::putLInt;
-    private static final ToIntFunction<BinaryStream> READ_BYTE = BinaryStream::getByte;
-    private static final ToIntFunction<BinaryStream> READ_SHORT = BinaryStream::getLShort;
-    private static final ToIntFunction<BinaryStream> READ_INT = BinaryStream::getLInt;
-
     public static final int ARG_FLAG_VALID = 0x100000;
     public static final int ARG_FLAG_ENUM = 0x200000;
     public static final int ARG_FLAG_POSTFIX = 0x1000000;
     public static final int ARG_FLAG_SOFT_ENUM = 0x4000000;
-
     public static final int ARG_TYPE_INT = 1;
     public static final int ARG_TYPE_FLOAT = 2;
     public static final int ARG_TYPE_VALUE = 3;
@@ -36,19 +27,21 @@ public class AvailableCommandsPacket extends DataPacket {
     public static final int ARG_TYPE_OPERATOR = 5;
     public static final int ARG_TYPE_TARGET = 6;
     public static final int ARG_TYPE_WILDCARD_TARGET = 7;
-
     public static final int ARG_TYPE_FILE_PATH = 14;
-
     public static final int ARG_TYPE_STRING = 29;
     public static final int ARG_TYPE_POSITION = 37;
-
     public static final int ARG_TYPE_MESSAGE = 41;
     public static final int ARG_TYPE_RAWTEXT = 43;
     public static final int ARG_TYPE_JSON = 47;
     public static final int ARG_TYPE_COMMAND = 54;
-
-    public Map<String, CommandDataVersions> commands;
+    private static final ObjIntConsumer<BinaryStream> WRITE_BYTE = (s, v) -> s.putByte((byte) v);
+    private static final ObjIntConsumer<BinaryStream> WRITE_SHORT = BinaryStream::putLShort;
+    private static final ObjIntConsumer<BinaryStream> WRITE_INT = BinaryStream::putLInt;
+    private static final ToIntFunction<BinaryStream> READ_BYTE = BinaryStream::getByte;
+    private static final ToIntFunction<BinaryStream> READ_SHORT = BinaryStream::getLShort;
+    private static final ToIntFunction<BinaryStream> READ_INT = BinaryStream::getLInt;
     public final Map<String, List<String>> softEnums = new HashMap<>();
+    public Map<String, CommandDataVersions> commands;
 
     @Override
     public byte pid() {

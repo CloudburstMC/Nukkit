@@ -42,12 +42,8 @@ public abstract class BlockEntity extends Position {
     public static final String JUKEBOX = "Jukebox";
     public static final String SHULKER_BOX = "ShulkerBox";
     public static final String BANNER = "Banner";
-
-
-    public static long count = 1;
-
     private static final BiMap<String, Class<? extends BlockEntity>> knownBlockEntities = HashBiMap.create(21);
-
+    public static long count = 1;
     public FullChunk chunk;
     public String name;
     public long id;
@@ -82,10 +78,6 @@ public abstract class BlockEntity extends Position {
 
         this.chunk.addBlockEntity(this);
         this.getLevel().addBlockEntity(this);
-    }
-
-    protected void initBlockEntity() {
-
     }
 
     public static BlockEntity createBlockEntity(String type, FullChunk chunk, CompoundTag nbt, Object... args) {
@@ -137,6 +129,18 @@ public abstract class BlockEntity extends Position {
 
         knownBlockEntities.put(name, c);
         return true;
+    }
+
+    public static CompoundTag getDefaultCompound(Vector3 pos, String id) {
+        return new CompoundTag("")
+                .putString("id", id)
+                .putInt("x", pos.getFloorX())
+                .putInt("y", pos.getFloorY())
+                .putInt("z", pos.getFloorZ());
+    }
+
+    protected void initBlockEntity() {
+
     }
 
     public final String getSaveId() {
@@ -207,13 +211,5 @@ public abstract class BlockEntity extends Position {
 
     public boolean isMovable() {
         return movable;
-    }
-
-    public static CompoundTag getDefaultCompound(Vector3 pos, String id) {
-        return new CompoundTag("")
-                .putString("id", id)
-                .putInt("x", pos.getFloorX())
-                .putInt("y", pos.getFloorY())
-                .putInt("z", pos.getFloorZ());
     }
 }

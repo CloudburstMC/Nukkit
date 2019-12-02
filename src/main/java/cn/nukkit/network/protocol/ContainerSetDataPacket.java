@@ -19,15 +19,14 @@ public class ContainerSetDataPacket extends DataPacket {
     public static final int PROPERTY_BREWING_STAND_BREW_TIME = 0;
     public static final int PROPERTY_BREWING_STAND_FUEL_AMOUNT = 1;
     public static final int PROPERTY_BREWING_STAND_FUEL_TOTAL = 2;
+    public int windowId;
+    public int property;
+    public int value;
 
     @Override
     public byte pid() {
         return NETWORK_ID;
     }
-
-    public int windowId;
-    public int property;
-    public int value;
 
     @Override
     public void decode() {

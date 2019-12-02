@@ -32,6 +32,8 @@ import java.util.*;
  * ===============
  */
 public final class ClientChainData implements LoginChainData {
+    public final static int UI_PROFILE_CLASSIC = 0;
+    public final static int UI_PROFILE_POCKET = 1;
     private static final String MOJANG_PUBLIC_KEY_BASE64 =
             "MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAE8ELkixyLcwlZryUQcu1TvPOmI2B7vX83ndnWRUaXm74wFfa5f/lwQNTfrLVHa2PmenpGI6JhIMUJaWZrjmMj90NoKNFSNBuKdm8rYiXsfaz3K36x/1U26HpG0ZxK/V1V";
     private static final PublicKey MOJANG_PUBLIC_KEY;
@@ -44,12 +46,49 @@ public final class ClientChainData implements LoginChainData {
         }
     }
 
+    private boolean xboxAuthed;
+    private String username;
+    private UUID clientUUID;
+    private String xuid;
+    private String identityPublicKey;
+    private long clientId;
+    private String serverAddress;
+    private String deviceModel;
+    private int deviceOS;
+    private String deviceId;
+    private String gameVersion;
+    private int guiScale;
+    private String languageCode;
+    private int currentInputMode;
+    private int defaultInputMode;
+    private int UIProfile;
+    private String capeData;
+    private BinaryStream bs = new BinaryStream();
+
+    private ClientChainData(byte[] buffer) {
+        bs.setBuffer(buffer, 0);
+        decodeChainData();
+        decodeSkinData();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Override
+    ///////////////////////////////////////////////////////////////////////////
+
     public static ClientChainData of(byte[] buffer) {
         return new ClientChainData(buffer);
     }
 
     public static ClientChainData read(LoginPacket pk) {
         return of(pk.getBuffer());
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Internal
+    ///////////////////////////////////////////////////////////////////////////
+
+    private static PublicKey generateKey(String base64) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        return KeyFactory.getInstance("EC").generatePublic(new X509EncodedKeySpec(Base64.getDecoder().decode(base64)));
     }
 
     @Override
@@ -112,8 +151,6 @@ public final class ClientChainData implements LoginChainData {
         return xuid;
     }
 
-    private boolean xboxAuthed;
-
     @Override
     public int getCurrentInputMode() {
         return currentInputMode;
@@ -129,17 +166,10 @@ public final class ClientChainData implements LoginChainData {
         return capeData;
     }
 
-    public final static int UI_PROFILE_CLASSIC = 0;
-    public final static int UI_PROFILE_POCKET = 1;
-
     @Override
     public int getUIProfile() {
         return UIProfile;
     }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Override
-    ///////////////////////////////////////////////////////////////////////////
 
     @Override
     public boolean equals(Object obj) {
@@ -149,42 +179,6 @@ public final class ClientChainData implements LoginChainData {
     @Override
     public int hashCode() {
         return bs.hashCode();
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Internal
-    ///////////////////////////////////////////////////////////////////////////
-
-    private String username;
-    private UUID clientUUID;
-    private String xuid;
-
-    private static PublicKey generateKey(String base64) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        return KeyFactory.getInstance("EC").generatePublic(new X509EncodedKeySpec(Base64.getDecoder().decode(base64)));
-    }
-    private String identityPublicKey;
-
-    private long clientId;
-    private String serverAddress;
-    private String deviceModel;
-    private int deviceOS;
-    private String deviceId;
-    private String gameVersion;
-    private int guiScale;
-    private String languageCode;
-    private int currentInputMode;
-    private int defaultInputMode;
-
-    private int UIProfile;
-
-    private String capeData;
-
-    private BinaryStream bs = new BinaryStream();
-
-    private ClientChainData(byte[] buffer) {
-        bs.setBuffer(buffer, 0);
-        decodeChainData();
-        decodeSkinData();
     }
 
     @Override
@@ -253,7 +247,7 @@ public final class ClientChainData implements LoginChainData {
 
         PublicKey lastKey = null;
         boolean mojangKeyVerified = false;
-        for (String chain: chains) {
+        for (String chain : chains) {
             JWSObject jws = JWSObject.parse(chain);
 
             if (!mojangKeyVerified) {

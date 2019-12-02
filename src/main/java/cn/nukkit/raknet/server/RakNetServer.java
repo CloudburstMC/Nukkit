@@ -84,14 +84,6 @@ public class RakNetServer extends Thread {
         return this.externalQueue.poll();
     }
 
-    private class ShutdownHandler extends Thread {
-        public void run() {
-            if (!shutdown) {
-                logger.emergency("RakNet crashed!");
-            }
-        }
-    }
-
     @Override
     public void run() {
         this.setName("RakNet Thread #" + Thread.currentThread().getId());
@@ -101,6 +93,14 @@ public class RakNetServer extends Thread {
             new SessionManager(this, socket);
         } catch (Exception e) {
             Server.getInstance().getLogger().logException(e);
+        }
+    }
+
+    private class ShutdownHandler extends Thread {
+        public void run() {
+            if (!shutdown) {
+                logger.emergency("RakNet crashed!");
+            }
         }
     }
 }

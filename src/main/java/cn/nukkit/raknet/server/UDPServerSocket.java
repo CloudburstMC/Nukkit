@@ -25,11 +25,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class UDPServerSocket extends ChannelInboundHandlerAdapter {
 
+    public static final boolean EPOLL = Epoll.isAvailable();
     protected final ThreadedLogger logger;
     protected Bootstrap bootstrap;
     protected Channel channel;
-    public static final boolean EPOLL = Epoll.isAvailable();
-
     protected ConcurrentLinkedQueue<DatagramPacket> packets = new ConcurrentLinkedQueue<>();
 
     public UDPServerSocket(ThreadedLogger logger) {
@@ -43,12 +42,12 @@ public class UDPServerSocket extends ChannelInboundHandlerAdapter {
     public UDPServerSocket(ThreadedLogger logger, int port, String interfaz) {
         this.logger = logger;
         try {
-                bootstrap = new Bootstrap()
-                        .channel(EPOLL ? EpollDatagramChannel.class : NioDatagramChannel.class)
-                        .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
-                        .handler(this)
-                        .group(EPOLL ? new EpollEventLoopGroup() : new NioEventLoopGroup());
-                this.logger.info("Epoll Status is " + EPOLL);
+            bootstrap = new Bootstrap()
+                    .channel(EPOLL ? EpollDatagramChannel.class : NioDatagramChannel.class)
+                    .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
+                    .handler(this)
+                    .group(EPOLL ? new EpollEventLoopGroup() : new NioEventLoopGroup());
+            this.logger.info("Epoll Status is " + EPOLL);
             channel = bootstrap.bind(interfaz, port).sync().channel();
         } catch (Exception e) {
             this.logger.critical("**** FAILED TO BIND TO " + interfaz + ":" + port + "!");

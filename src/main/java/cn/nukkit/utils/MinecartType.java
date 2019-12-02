@@ -46,9 +46,6 @@ public enum MinecartType {
      */
     MINECART_UNKNOWN(-1, false, "Unknown Minecart");
 
-    private final int type;
-    private final boolean hasBlockInside;
-    private final String realName;
     private static final Map<Integer, MinecartType> TYPES = new HashMap<>();
 
     static {
@@ -57,10 +54,25 @@ public enum MinecartType {
         }
     }
 
+    private final int type;
+    private final boolean hasBlockInside;
+    private final String realName;
+
     MinecartType(int number, boolean hasBlockInside, String name) {
         type = number;
         this.hasBlockInside = hasBlockInside;
         realName = name;
+    }
+
+    /**
+     * Returns of an instance of Minecart-variants
+     *
+     * @param types The number of minecart
+     * @return Integer
+     */
+    public static MinecartType valueOf(int types) {
+        MinecartType what = TYPES.get(types);
+        return what == null ? MINECART_UNKNOWN : what;
     }
 
     /**
@@ -88,16 +100,5 @@ public enum MinecartType {
      */
     public boolean hasBlockInside() {
         return hasBlockInside;
-    }
-
-    /**
-     * Returns of an instance of Minecart-variants
-     *
-     * @param types The number of minecart
-     * @return Integer
-     */
-    public static MinecartType valueOf(int types) {
-        MinecartType what = TYPES.get(types);
-        return what == null ? MINECART_UNKNOWN : what;
     }
 }

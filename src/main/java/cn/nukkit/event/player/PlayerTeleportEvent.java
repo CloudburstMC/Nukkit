@@ -10,15 +10,9 @@ import cn.nukkit.math.Vector3;
 
 public class PlayerTeleportEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     private TeleportCause cause;
     private Location from;
     private Location to;
-
     private PlayerTeleportEvent(Player player) {
         this.player = player;
     }
@@ -35,6 +29,10 @@ public class PlayerTeleportEvent extends PlayerEvent implements Cancellable {
         this.from = vectorToLocation(player.getLevel(), from);
         this.from = vectorToLocation(player.getLevel(), to);
         this.cause = cause;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public Location getFrom() {

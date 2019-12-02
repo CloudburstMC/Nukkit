@@ -20,6 +20,21 @@ public class EntityArrow extends EntityProjectile {
     public static final int PICKUP_CREATIVE = 2;
 
     protected int pickupMode;
+    protected float gravity = 0.05f;
+    protected float drag = 0.01f;
+
+    public EntityArrow(FullChunk chunk, CompoundTag nbt) {
+        this(chunk, nbt, null);
+    }
+
+    public EntityArrow(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+        this(chunk, nbt, shootingEntity, false);
+    }
+
+    public EntityArrow(FullChunk chunk, CompoundTag nbt, Entity shootingEntity, boolean critical) {
+        super(chunk, nbt, shootingEntity);
+        this.setCritical(critical);
+    }
 
     @Override
     public int getNetworkId() {
@@ -51,22 +66,6 @@ public class EntityArrow extends EntityProjectile {
         return 0.01f;
     }
 
-    protected float gravity = 0.05f;
-    protected float drag = 0.01f;
-
-    public EntityArrow(FullChunk chunk, CompoundTag nbt) {
-        this(chunk, nbt, null);
-    }
-
-    public EntityArrow(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
-        this(chunk, nbt, shootingEntity, false);
-    }
-
-    public EntityArrow(FullChunk chunk, CompoundTag nbt, Entity shootingEntity, boolean critical) {
-        super(chunk, nbt, shootingEntity);
-        this.setCritical(critical);
-    }
-
     @Override
     protected void initEntity() {
         super.initEntity();
@@ -79,12 +78,12 @@ public class EntityArrow extends EntityProjectile {
         this.setCritical(true);
     }
 
-    public void setCritical(boolean value) {
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_CRITICAL, value);
-    }
-
     public boolean isCritical() {
         return this.getDataFlag(DATA_FLAGS, DATA_FLAG_CRITICAL);
+    }
+
+    public void setCritical(boolean value) {
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_CRITICAL, value);
     }
 
     @Override

@@ -12,8 +12,11 @@ import java.awt.image.BufferedImage;
 @ToString
 public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to 1.2
 
+    //update
+    public static final int TEXTURE_UPDATE = 2;
+    public static final int DECORATIONS_UPDATE = 4;
+    public static final int ENTITIES_UPDATE = 8;
     public int[] eids = new int[0];
-
     public long mapId;
     public int update;
     public byte scale;
@@ -22,17 +25,10 @@ public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to
     public int height;
     public int offsetX;
     public int offsetZ;
-
     public byte dimensionId;
-
     public MapDecorator[] decorators = new MapDecorator[0];
     public int[] colors = new int[0];
     public BufferedImage image = null;
-
-    //update
-    public static final int TEXTURE_UPDATE = 2;
-    public static final int DECORATIONS_UPDATE = 4;
-    public static final int ENTITIES_UPDATE = 8;
 
     @Override
     public byte pid() {

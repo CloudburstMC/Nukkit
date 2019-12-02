@@ -14,11 +14,10 @@ import cn.nukkit.math.Vector3;
  * @author DaPorkchop_
  */
 public class SpruceMegaTreePopulator extends Populator {
+    private final int type;
     private ChunkManager level;
     private int randomAmount;
     private int baseAmount;
-
-    private final int type;
 
     public SpruceMegaTreePopulator() {
         this(BlockSapling.SPRUCE);

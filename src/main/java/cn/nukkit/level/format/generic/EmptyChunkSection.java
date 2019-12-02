@@ -12,13 +12,15 @@ import java.util.Arrays;
  */
 public class EmptyChunkSection implements ChunkSection {
     public static final EmptyChunkSection[] EMPTY = new EmptyChunkSection[16];
+    public static byte[] EMPTY_LIGHT_ARR = new byte[2048];
+    public static byte[] EMPTY_SKY_LIGHT_ARR = new byte[2048];
+
     static {
         for (int y = 0; y < EMPTY.length; y++) {
             EMPTY[y] = new EmptyChunkSection(y);
         }
     }
-    public static byte[] EMPTY_LIGHT_ARR = new byte[2048];
-    public static byte[] EMPTY_SKY_LIGHT_ARR = new byte[2048];
+
     static {
         Arrays.fill(EMPTY_SKY_LIGHT_ARR, (byte) 255);
     }

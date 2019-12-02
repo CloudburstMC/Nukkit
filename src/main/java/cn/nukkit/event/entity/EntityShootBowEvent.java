@@ -13,15 +13,8 @@ import cn.nukkit.item.Item;
  */
 public class EntityShootBowEvent extends EntityEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     private final Item bow;
-
     private EntityProjectile projectile;
-
     private double force;
 
     public EntityShootBowEvent(EntityLiving shooter, Item bow, EntityProjectile projectile, double force) {
@@ -29,6 +22,10 @@ public class EntityShootBowEvent extends EntityEvent implements Cancellable {
         this.bow = bow;
         this.projectile = projectile;
         this.force = force;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     @Override

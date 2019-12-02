@@ -58,11 +58,11 @@ public class BlockItemFrame extends BlockTransparentMeta {
         BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
         BlockEntityItemFrame itemFrame = (BlockEntityItemFrame) blockEntity;
         if (itemFrame.getItem().getId() == Item.AIR) {
-        	Item itemOnFrame = item.clone();
-        	if (player != null && player.isSurvival()) {
-        		itemOnFrame.setCount(itemOnFrame.getCount() - 1);
+            Item itemOnFrame = item.clone();
+            if (player != null && player.isSurvival()) {
+                itemOnFrame.setCount(itemOnFrame.getCount() - 1);
                 player.getInventory().setItemInHand(itemOnFrame);
-        	}
+            }
             itemOnFrame.setCount(1);
             itemFrame.setItem(itemOnFrame);
             this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_ADD_ITEM);

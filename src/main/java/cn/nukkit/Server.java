@@ -106,70 +106,48 @@ public class Server {
     public static final String BROADCAST_CHANNEL_USERS = "nukkit.broadcast.user";
 
     private static Server instance = null;
-
-    private BanList banByName;
-
-    private BanList banByIP;
-
-    private Config operators;
-
-    private Config whitelist;
-
-    private AtomicBoolean isRunning = new AtomicBoolean(true);
-
-    private boolean hasStopped = false;
-
-    private PluginManager pluginManager;
-
-    private int profilingTickrate = 20;
-
-    private ServerScheduler scheduler;
-
-    private int tickCounter;
-
-    private long nextTick;
-
     private final float[] tickAverage = {20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20};
-
     private final float[] useAverage = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-    private float maxTick = 20;
-
-    private float maxUse = 0;
-
-    private int sendUsageTicker = 0;
-
-    private boolean dispatchSignals = false;
-
     private final NukkitConsole console;
     private final ConsoleThread consoleThread;
-
-    private SimpleCommandMap commandMap;
-
-    private CraftingManager craftingManager;
-
-    private ResourcePackManager resourcePackManager;
-
-    private ConsoleCommandSender consoleSender;
-
-    private int maxPlayers;
-
-    private boolean autoSave = true;
-
-    private RCON rcon;
-
-    private EntityMetadataStore entityMetadata;
-
-    private PlayerMetadataStore playerMetadata;
-
-    private LevelMetadataStore levelMetadata;
-
-    private Network network;
-
-    private boolean networkCompressionAsync = true;
+    private final String filePath;
+    private final String dataPath;
+    private final String pluginPath;
+    private final Set<UUID> uniquePlayers = new HashSet<>();
+    private final Map<String, Player> players = new HashMap<>();
+    private final Map<UUID, Player> playerList = new HashMap<>();
+    private final Map<Integer, String> identifier = new HashMap<>();
+    private final ServiceManager serviceManager = new NKServiceManager();
+    private final Thread currentThread;
     public int networkCompressionLevel = 7;
+    private BanList banByName;
+    private BanList banByIP;
+    private Config operators;
+    private Config whitelist;
+    private AtomicBoolean isRunning = new AtomicBoolean(true);
+    private boolean hasStopped = false;
+    private PluginManager pluginManager;
+    private int profilingTickrate = 20;
+    private ServerScheduler scheduler;
+    private int tickCounter;
+    private long nextTick;
+    private float maxTick = 20;
+    private float maxUse = 0;
+    private int sendUsageTicker = 0;
+    private boolean dispatchSignals = false;
+    private SimpleCommandMap commandMap;
+    private CraftingManager craftingManager;
+    private ResourcePackManager resourcePackManager;
+    private ConsoleCommandSender consoleSender;
+    private int maxPlayers;
+    private boolean autoSave = true;
+    private RCON rcon;
+    private EntityMetadataStore entityMetadata;
+    private PlayerMetadataStore playerMetadata;
+    private LevelMetadataStore levelMetadata;
+    private Network network;
+    private boolean networkCompressionAsync = true;
     private int networkZlibProvider = 0;
-
     private boolean autoTickRate = true;
     private int autoTickRateLimit = 20;
     private boolean alwaysTickPlayers = false;
@@ -177,35 +155,16 @@ public class Server {
     private Boolean getAllowFlight = null;
     private int difficulty = Integer.MAX_VALUE;
     private int defaultGamemode = Integer.MAX_VALUE;
-
     private int autoSaveTicker = 0;
     private int autoSaveTicks = 6000;
-
     private BaseLang baseLang;
-
     private boolean forceLanguage = false;
-
     private UUID serverID;
-
-    private final String filePath;
-    private final String dataPath;
-    private final String pluginPath;
-
-    private final Set<UUID> uniquePlayers = new HashSet<>();
-
     private QueryHandler queryHandler;
-
     private QueryRegenerateEvent queryRegenerateEvent;
-
     private Config properties;
     private Config config;
-
-    private final Map<String, Player> players = new HashMap<>();
-
-    private final Map<UUID, Player> playerList = new HashMap<>();
-
-    private final Map<Integer, String> identifier = new HashMap<>();
-
+    private Level[] levelArray = new Level[0];
     private final Map<Integer, Level> levels = new HashMap<Integer, Level>() {
         public Level put(Integer key, Level value) {
             Level result = super.put(key, value);
@@ -225,22 +184,14 @@ public class Server {
             return result;
         }
     };
-
-    private Level[] levelArray = new Level[0];
-
-    private final ServiceManager serviceManager = new NKServiceManager();
-
     private Level defaultLevel = null;
-
     private boolean allowNether;
-
-    private final Thread currentThread;
-
     private Watchdog watchdog;
 
     private DB nameLookup;
 
     private PlayerDataSerializer playerDataSerializer = new DefaultPlayerDataSerializer(this);
+    private int lastLevelGC;
 
     Server(final String filePath, String dataPath, String pluginPath, String predefinedLanguage) {
         Preconditions.checkState(instance == null, "Already initialized!");
@@ -298,7 +249,7 @@ public class Server {
                 InputStream conf = this.getClass().getClassLoader().getResourceAsStream("lang/" + lang + "/lang.ini");
                 if (conf != null) {
                     language = lang;
-                } else if(predefinedLanguage != null) {
+                } else if (predefinedLanguage != null) {
                     log.warn("No language found for predefined language: " + predefinedLanguage + ", please choose a valid language");
                     predefinedLanguage = null;
                 }
@@ -565,6 +516,101 @@ public class Server {
         this.start();
     }
 
+    public static void broadcastPacket(Collection<Player> players, DataPacket packet) {
+        broadcastPacket(players.toArray(new Player[0]), packet);
+    }
+
+    public static void broadcastPacket(Player[] players, DataPacket packet) {
+        packet.encode();
+        packet.isEncoded = true;
+
+        if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
+            for (Player player : players) {
+                player.dataPacket(packet);
+            }
+        } else {
+            getInstance().batchPackets(players, new DataPacket[]{packet}, true);
+        }
+
+        if (packet.encapsulatedPacket != null) {
+            packet.encapsulatedPacket = null;
+        }
+    }
+
+    public static String getGamemodeString(int mode) {
+        return getGamemodeString(mode, false);
+    }
+
+    public static String getGamemodeString(int mode, boolean direct) {
+        switch (mode) {
+            case Player.SURVIVAL:
+                return direct ? "Survival" : "%gameMode.survival";
+            case Player.CREATIVE:
+                return direct ? "Creative" : "%gameMode.creative";
+            case Player.ADVENTURE:
+                return direct ? "Adventure" : "%gameMode.adventure";
+            case Player.SPECTATOR:
+                return direct ? "Spectator" : "%gameMode.spectator";
+        }
+        return "UNKNOWN";
+    }
+
+    public static int getGamemodeFromString(String str) {
+        switch (str.trim().toLowerCase()) {
+            case "0":
+            case "survival":
+            case "s":
+                return Player.SURVIVAL;
+
+            case "1":
+            case "creative":
+            case "c":
+                return Player.CREATIVE;
+
+            case "2":
+            case "adventure":
+            case "a":
+                return Player.ADVENTURE;
+
+            case "3":
+            case "spectator":
+            case "spc":
+            case "view":
+            case "v":
+                return Player.SPECTATOR;
+        }
+        return -1;
+    }
+
+    public static int getDifficultyFromString(String str) {
+        switch (str.trim().toLowerCase()) {
+            case "0":
+            case "peaceful":
+            case "p":
+                return 0;
+
+            case "1":
+            case "easy":
+            case "e":
+                return 1;
+
+            case "2":
+            case "normal":
+            case "n":
+                return 2;
+
+            case "3":
+            case "hard":
+            case "h":
+                return 3;
+        }
+        return -1;
+    }
+
+    public static Server getInstance() {
+        return instance;
+    }
+
     public int broadcastMessage(String message) {
         return this.broadcast(message, BROADCAST_CHANNEL_USERS);
     }
@@ -631,27 +677,6 @@ public class Server {
         }
 
         return recipients.size();
-    }
-
-    public static void broadcastPacket(Collection<Player> players, DataPacket packet) {
-        broadcastPacket(players.toArray(new Player[0]), packet);
-    }
-
-    public static void broadcastPacket(Player[] players, DataPacket packet) {
-        packet.encode();
-        packet.isEncoded = true;
-
-        if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
-            for (Player player : players) {
-                player.dataPacket(packet);
-            }
-        } else {
-            getInstance().batchPackets(players, new DataPacket[]{packet}, true);
-        }
-
-        if (packet.encapsulatedPacket != null) {
-            packet.encapsulatedPacket = null;
-        }
     }
 
     public void batchPackets(Player[] players, DataPacket[] packets) {
@@ -893,8 +918,6 @@ public class Server {
         }
     }
 
-    private int lastLevelGC;
-
     public void tickProcessor() {
         this.nextTick = System.currentTimeMillis();
         try {
@@ -1014,11 +1037,11 @@ public class Server {
         pk.type = PlayerListPacket.TYPE_ADD;
         pk.entries = this.playerList.values().stream()
                 .map(p -> new PlayerListPacket.Entry(
-                p.getUniqueId(),
-                p.getId(),
-                p.getDisplayName(),
-                p.getSkin(),
-                p.getLoginChainData().getXUID()))
+                        p.getUniqueId(),
+                        p.getId(),
+                        p.getDisplayName(),
+                        p.getSkin(),
+                        p.getLoginChainData().getXUID()))
                 .toArray(PlayerListPacket.Entry[]::new);
 
         player.dataPacket(pk);
@@ -1329,76 +1352,6 @@ public class Server {
         return this.getPropertyBoolean("force-gamemode", false);
     }
 
-    public static String getGamemodeString(int mode) {
-        return getGamemodeString(mode, false);
-    }
-
-    public static String getGamemodeString(int mode, boolean direct) {
-        switch (mode) {
-            case Player.SURVIVAL:
-                return direct ? "Survival" : "%gameMode.survival";
-            case Player.CREATIVE:
-                return direct ? "Creative" : "%gameMode.creative";
-            case Player.ADVENTURE:
-                return direct ? "Adventure" : "%gameMode.adventure";
-            case Player.SPECTATOR:
-                return direct ? "Spectator" : "%gameMode.spectator";
-        }
-        return "UNKNOWN";
-    }
-
-    public static int getGamemodeFromString(String str) {
-        switch (str.trim().toLowerCase()) {
-            case "0":
-            case "survival":
-            case "s":
-                return Player.SURVIVAL;
-
-            case "1":
-            case "creative":
-            case "c":
-                return Player.CREATIVE;
-
-            case "2":
-            case "adventure":
-            case "a":
-                return Player.ADVENTURE;
-
-            case "3":
-            case "spectator":
-            case "spc":
-            case "view":
-            case "v":
-                return Player.SPECTATOR;
-        }
-        return -1;
-    }
-
-    public static int getDifficultyFromString(String str) {
-        switch (str.trim().toLowerCase()) {
-            case "0":
-            case "peaceful":
-            case "p":
-                return 0;
-
-            case "1":
-            case "easy":
-            case "e":
-                return 1;
-
-            case "2":
-            case "normal":
-            case "n":
-                return 2;
-
-            case "3":
-            case "hard":
-            case "h":
-                return 3;
-        }
-        return -1;
-    }
-
     public int getDifficulty() {
         if (this.difficulty == Integer.MAX_VALUE) {
             this.difficulty = this.getPropertyInt("difficulty", 1);
@@ -1686,7 +1639,7 @@ public class Server {
                 //doing it like this ensures that the playerdata will be saved in a server shutdown
                 @Override
                 public void onCancel() {
-                    if (!this.hasRun)    {
+                    if (!this.hasRun) {
                         this.hasRun = true;
                         saveOfflinePlayerDataInternal(event.getSerializer(), tag, nameLower, event.getUuid().orElse(null));
                     }
@@ -2345,10 +2298,6 @@ public class Server {
 
     public void setPlayerDataSerializer(PlayerDataSerializer playerDataSerializer) {
         this.playerDataSerializer = Preconditions.checkNotNull(playerDataSerializer, "playerDataSerializer");
-    }
-
-    public static Server getInstance() {
-        return instance;
     }
 
     private class ConsoleThread extends Thread implements InterruptibleThread {

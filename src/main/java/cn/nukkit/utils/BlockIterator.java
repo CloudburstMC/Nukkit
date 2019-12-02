@@ -12,26 +12,19 @@ import java.util.Iterator;
  * Nukkit Project
  */
 public class BlockIterator implements Iterator<Block> {
+    private static final int gridSize = 1 << 24;
     private final Level level;
     private final int maxDistance;
-
-    private static final int gridSize = 1 << 24;
-
-    private boolean end = false;
-
     private final Block[] blockQueue;
+    private final int secondStep;
+    private final int thirdStep;
+    private boolean end = false;
     private int currentBlock = 0;
-
     private Block currentBlockObject = null;
     private int currentDistance;
     private int maxDistanceInt = 0;
-
     private int secondError;
     private int thirdError;
-
-    private final int secondStep;
-    private final int thirdStep;
-
     private BlockFace mainFace;
     private BlockFace secondFace;
     private BlockFace thirdFace;

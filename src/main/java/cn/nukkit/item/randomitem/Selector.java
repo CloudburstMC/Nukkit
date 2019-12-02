@@ -14,19 +14,6 @@ public class Selector {
         this.setParent(parent);
     }
 
-    public Selector setParent(Selector parent) {
-        this.parent = parent;
-        return parent;
-    }
-
-    public Selector getParent() {
-        return parent;
-    }
-
-    public Object select() {
-        return this;
-    }
-
     public static Selector selectRandom(Map<Selector, Float> selectorChanceMap) {
         final float[] totalChance = {0};
         selectorChanceMap.values().forEach(f -> totalChance[0] += f);
@@ -42,5 +29,18 @@ public class Selector {
             }
         });
         return temp[0];
+    }
+
+    public Selector getParent() {
+        return parent;
+    }
+
+    public Selector setParent(Selector parent) {
+        this.parent = parent;
+        return parent;
+    }
+
+    public Object select() {
+        return this;
     }
 }

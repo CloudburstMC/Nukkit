@@ -11,10 +11,6 @@ public enum EnumLevel {
 
     Level level;
 
-    public Level getLevel() {
-        return level;
-    }
-
     public static void initLevels() {
         OVERWORLD.level = Server.getInstance().getDefaultLevel();
 
@@ -46,7 +42,7 @@ public enum EnumLevel {
         }
     }
 
-    public static Level getOtherNetherPair(Level current)   {
+    public static Level getOtherNetherPair(Level current) {
         if (current == OVERWORLD.level) {
             return NETHER.level;
         } else if (current == NETHER.level) {
@@ -56,7 +52,7 @@ public enum EnumLevel {
         }
     }
 
-    public static Position moveToNether(Position current)   {
+    public static Position moveToNether(Position current) {
         if (NETHER.level == null) {
             return null;
         } else {
@@ -72,5 +68,9 @@ public enum EnumLevel {
 
     private static final int mRound(int value, int factor) {
         return Math.round((float) value / factor) * factor;
+    }
+
+    public Level getLevel() {
+        return level;
     }
 }

@@ -24,10 +24,8 @@ import java.util.HashSet;
  */
 public class BlockEntityHopper extends BlockEntitySpawnable implements InventoryHolder, BlockEntityContainer, BlockEntityNameable {
 
-    protected HopperInventory inventory;
-
     public int transferCooldown = 8;
-
+    protected HopperInventory inventory;
     private AxisAlignedBB pickupArea;
 
     public BlockEntityHopper(FullChunk chunk, CompoundTag nbt) {
@@ -68,11 +66,6 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
     }
 
     @Override
-    public boolean hasName() {
-        return this.namedTag.contains("CustomName");
-    }
-
-    @Override
     public void setName(String name) {
         if (name == null || name.equals("")) {
             this.namedTag.remove("CustomName");
@@ -80,6 +73,11 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
         }
 
         this.namedTag.putString("CustomName", name);
+    }
+
+    @Override
+    public boolean hasName() {
+        return this.namedTag.contains("CustomName");
     }
 
     public boolean isOnTransferCooldown() {

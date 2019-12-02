@@ -24,6 +24,57 @@ public class BlockNetherPortal extends BlockFlowable implements Faceable {
         super(0);
     }
 
+    public static void spawnPortal(Position pos) {
+        Level lvl = pos.level;
+        int x = pos.getFloorX(), y = pos.getFloorY(), z = pos.getFloorZ();
+
+        for (int xx = -1; xx < 4; xx++) {
+            for (int yy = 1; yy < 4; yy++) {
+                for (int zz = -1; zz < 3; zz++) {
+                    lvl.setBlockAt(x + xx, y + yy, z + zz, AIR);
+                }
+            }
+        }
+
+        lvl.setBlockAt(x + 1, y, z, OBSIDIAN);
+        lvl.setBlockAt(x + 2, y, z, OBSIDIAN);
+
+        z += 1;
+        lvl.setBlockAt(x, y, z, OBSIDIAN);
+        lvl.setBlockAt(x + 1, y, z, OBSIDIAN);
+        lvl.setBlockAt(x + 2, y, z, OBSIDIAN);
+        lvl.setBlockAt(x + 3, y, z, OBSIDIAN);
+
+        z += 1;
+        lvl.setBlockAt(x + 1, y, z, OBSIDIAN);
+        lvl.setBlockAt(x + 2, y, z, OBSIDIAN);
+
+        z -= 1;
+        y += 1;
+        lvl.setBlockAt(x, y, z, OBSIDIAN);
+        lvl.setBlockAt(x + 1, y, z, NETHER_PORTAL);
+        lvl.setBlockAt(x + 2, y, z, NETHER_PORTAL);
+        lvl.setBlockAt(x + 3, y, z, OBSIDIAN);
+
+        y += 1;
+        lvl.setBlockAt(x, y, z, OBSIDIAN);
+        lvl.setBlockAt(x + 1, y, z, NETHER_PORTAL);
+        lvl.setBlockAt(x + 2, y, z, NETHER_PORTAL);
+        lvl.setBlockAt(x + 3, y, z, OBSIDIAN);
+
+        y += 1;
+        lvl.setBlockAt(x, y, z, OBSIDIAN);
+        lvl.setBlockAt(x + 1, y, z, NETHER_PORTAL);
+        lvl.setBlockAt(x + 2, y, z, NETHER_PORTAL);
+        lvl.setBlockAt(x + 3, y, z, OBSIDIAN);
+
+        y += 1;
+        lvl.setBlockAt(x, y, z, OBSIDIAN);
+        lvl.setBlockAt(x + 1, y, z, OBSIDIAN);
+        lvl.setBlockAt(x + 2, y, z, OBSIDIAN);
+        lvl.setBlockAt(x + 3, y, z, OBSIDIAN);
+    }
+
     @Override
     public String getName() {
         return "Nether Portal Block";
@@ -96,57 +147,6 @@ public class BlockNetherPortal extends BlockFlowable implements Faceable {
     @Override
     protected AxisAlignedBB recalculateBoundingBox() {
         return this;
-    }
-
-    public static void spawnPortal(Position pos)   {
-        Level lvl = pos.level;
-        int x = pos.getFloorX(), y = pos.getFloorY(), z = pos.getFloorZ();
-
-        for (int xx = -1; xx < 4; xx++) {
-            for (int yy = 1; yy < 4; yy++)  {
-                for (int zz = -1; zz < 3; zz++) {
-                    lvl.setBlockAt(x + xx, y + yy, z + zz, AIR);
-                }
-            }
-        }
-
-        lvl.setBlockAt(x + 1, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 2, y, z, OBSIDIAN);
-
-        z += 1;
-        lvl.setBlockAt(x, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 1, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 2, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 3, y, z, OBSIDIAN);
-
-        z += 1;
-        lvl.setBlockAt(x + 1, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 2, y, z, OBSIDIAN);
-
-        z -= 1;
-        y += 1;
-        lvl.setBlockAt(x, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 1, y, z, NETHER_PORTAL);
-        lvl.setBlockAt(x + 2, y, z, NETHER_PORTAL);
-        lvl.setBlockAt(x + 3, y, z, OBSIDIAN);
-
-        y += 1;
-        lvl.setBlockAt(x, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 1, y, z, NETHER_PORTAL);
-        lvl.setBlockAt(x + 2, y, z, NETHER_PORTAL);
-        lvl.setBlockAt(x + 3, y, z, OBSIDIAN);
-
-        y += 1;
-        lvl.setBlockAt(x, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 1, y, z, NETHER_PORTAL);
-        lvl.setBlockAt(x + 2, y, z, NETHER_PORTAL);
-        lvl.setBlockAt(x + 3, y, z, OBSIDIAN);
-
-        y += 1;
-        lvl.setBlockAt(x, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 1, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 2, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 3, y, z, OBSIDIAN);
     }
 
     @Override

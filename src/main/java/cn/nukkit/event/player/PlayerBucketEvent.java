@@ -27,6 +27,7 @@ abstract class PlayerBucketEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Returns the bucket used in this event
+     *
      * @return bucket
      */
     public Item getBucket() {
@@ -35,6 +36,7 @@ abstract class PlayerBucketEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Returns the item in hand after the event
+     *
      * @return item
      */
     public Item getItem() {

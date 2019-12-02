@@ -12,16 +12,13 @@ import java.util.*;
  */
 public class ShapedRecipe implements CraftingRecipe {
 
+    private final String[] shape;
+    private final int priority;
+    private final CharObjectHashMap<Item> ingredients = new CharObjectHashMap<>();
     private String recipeId;
     private Item primaryResult;
     private List<Item> extraResults = new ArrayList<>();
-
-    private long least,most;
-
-    private final String[] shape;
-    private final int priority;
-
-    private final CharObjectHashMap<Item> ingredients = new CharObjectHashMap<>();
+    private long least, most;
 
 
     public ShapedRecipe(Item primaryResult, String[] shape, Map<Character, Item> ingredients, List<Item> extraResults) {

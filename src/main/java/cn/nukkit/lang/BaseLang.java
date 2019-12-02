@@ -37,7 +37,8 @@ public class BaseLang {
         if (path == null) {
             path = "lang/";
             this.lang = this.loadLang(this.getClass().getClassLoader().getResourceAsStream(path + this.langName + "/lang.ini"));
-            if (useFallback) this.fallbackLang = this.loadLang(this.getClass().getClassLoader().getResourceAsStream(path + fallback + "/lang.ini"));
+            if (useFallback)
+                this.fallbackLang = this.loadLang(this.getClass().getClassLoader().getResourceAsStream(path + fallback + "/lang.ini"));
         } else {
             this.lang = this.loadLang(path + this.langName + "/lang.ini");
             if (useFallback) this.fallbackLang = this.loadLang(path + fallback + "/lang.ini");

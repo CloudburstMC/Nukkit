@@ -8,6 +8,15 @@ import java.io.IOException;
 public class LongTag extends NumberTag<Long> {
     public long data;
 
+    public LongTag(String name) {
+        super(name);
+    }
+
+    public LongTag(String name, long data) {
+        super(name);
+        this.data = data;
+    }
+
     @Override
     public Long getData() {
         return data;
@@ -16,15 +25,6 @@ public class LongTag extends NumberTag<Long> {
     @Override
     public void setData(Long data) {
         this.data = data == null ? 0 : data;
-    }
-
-    public LongTag(String name) {
-        super(name);
-    }
-
-    public LongTag(String name, long data) {
-        super(name);
-        this.data = data;
     }
 
     @Override

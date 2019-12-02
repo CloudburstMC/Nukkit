@@ -4,6 +4,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.generic.BaseRegionLoader;
 import cn.nukkit.utils.*;
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -21,6 +22,10 @@ public class RegionLoader extends BaseRegionLoader {
 
     public RegionLoader(LevelProvider level, int regionX, int regionZ) {
         super(level, regionX, regionZ, "mcr");
+    }
+
+    protected static int getChunkOffset(int x, int z) {
+        return x | (z << 5);
     }
 
     @Override
@@ -148,10 +153,6 @@ public class RegionLoader extends BaseRegionLoader {
         this.lastUsed = System.currentTimeMillis();
         byte[] chunkData = chunk.toBinary();
         this.saveChunk(chunk.getX() & 0x1f, chunk.getZ() & 0x1f, chunkData);
-    }
-
-    protected static int getChunkOffset(int x, int z) {
-        return x | (z << 5);
     }
 
     @Override

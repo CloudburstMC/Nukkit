@@ -12,15 +12,14 @@ import cn.nukkit.inventory.transaction.InventoryTransaction;
 public class InventoryTransactionEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     private final InventoryTransaction transaction;
 
     public InventoryTransactionEvent(InventoryTransaction transaction) {
         this.transaction = transaction;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public InventoryTransaction getTransaction() {

@@ -37,13 +37,13 @@ public class BlockEntityJukebox extends BlockEntitySpawnable {
         return this.getLevel().getBlockIdAt(getFloorX(), getFloorY(), getFloorZ()) == Block.JUKEBOX;
     }
 
+    public Item getRecordItem() {
+        return recordItem;
+    }
+
     public void setRecordItem(Item recordItem) {
         Objects.requireNonNull(recordItem, "Record item cannot be null");
         this.recordItem = recordItem;
-    }
-
-    public Item getRecordItem() {
-        return recordItem;
     }
 
     public void play() {

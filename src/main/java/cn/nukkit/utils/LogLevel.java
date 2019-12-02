@@ -9,7 +9,9 @@ import java.util.function.BiConsumer;
  * Nukkit Project
  */
 public enum LogLevel implements Comparable<LogLevel> {
-    NONE((logger, message) -> {}, (mainLogger, s, throwable) -> {}),
+    NONE((logger, message) -> {
+    }, (mainLogger, s, throwable) -> {
+    }),
     EMERGENCY(MainLogger::emergency, MainLogger::emergency),
     ALERT(MainLogger::alert, MainLogger::alert),
     CRITICAL(MainLogger::critical, MainLogger::critical),

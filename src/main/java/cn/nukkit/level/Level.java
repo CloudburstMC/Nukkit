@@ -73,10 +73,6 @@ import java.util.concurrent.*;
  */
 public class Level implements ChunkManager, Metadatable {
 
-    private static int levelIdCounter = 1;
-    private static int chunkLoaderCounter = 1;
-    public static int COMPRESSION_LEVEL = 8;
-
     public static final int BLOCK_UPDATE_NORMAL = 1;
     public static final int BLOCK_UPDATE_RANDOM = 2;
     public static final int BLOCK_UPDATE_SCHEDULED = 3;
@@ -84,25 +80,26 @@ public class Level implements ChunkManager, Metadatable {
     public static final int BLOCK_UPDATE_TOUCH = 5;
     public static final int BLOCK_UPDATE_REDSTONE = 6;
     public static final int BLOCK_UPDATE_TICK = 7;
-
     public static final int TIME_DAY = 0;
     public static final int TIME_NOON = 6000;
     public static final int TIME_SUNSET = 12000;
     public static final int TIME_NIGHT = 14000;
     public static final int TIME_MIDNIGHT = 18000;
     public static final int TIME_SUNRISE = 23000;
-
     public static final int TIME_FULL = 24000;
-
     public static final int DIMENSION_OVERWORLD = 0;
     public static final int DIMENSION_NETHER = 1;
     public static final int DIMENSION_THE_END = 2;
-
     // Lower values use less memory
     public static final int MAX_BLOCK_CACHE = 512;
-
     // The blocks that can randomly tick
     private static final boolean[] randomTickBlocks = new boolean[256];
+    private static final int LCG_CONSTANT = 1013904223;
+    public static int COMPRESSION_LEVEL = 8;
+    private static int levelIdCounter = 1;
+    private static int chunkLoaderCounter = 1;
+    private static Entity[] EMPTY_ENTITY_ARR = new Entity[0];
+    private static Entity[] ENTITY_BUFFER = new Entity[512];
 
     static {
         randomTickBlocks[Block.GRASS] = true;
@@ -131,45 +128,19 @@ public class Level implements ChunkManager, Metadatable {
         randomTickBlocks[Block.COCOA_BLOCK] = true;
     }
 
-    private final Long2ObjectOpenHashMap<BlockEntity> blockEntities = new Long2ObjectOpenHashMap<>();
-
-    private final Long2ObjectOpenHashMap<Player> players = new Long2ObjectOpenHashMap<>();
-
-    private final Long2ObjectOpenHashMap<Entity> entities = new Long2ObjectOpenHashMap<>();
-
     public final Long2ObjectOpenHashMap<Entity> updateEntities = new Long2ObjectOpenHashMap<>();
-
+    private final Long2ObjectOpenHashMap<BlockEntity> blockEntities = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectOpenHashMap<Player> players = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectOpenHashMap<Entity> entities = new Long2ObjectOpenHashMap<>();
     private final ConcurrentLinkedQueue<BlockEntity> updateBlockEntities = new ConcurrentLinkedQueue<>();
-
-    private boolean cacheChunks = false;
-
     private final Server server;
-
     private final int levelId;
-
-    private LevelProvider provider;
-
     private final Int2ObjectOpenHashMap<ChunkLoader> loaders = new Int2ObjectOpenHashMap<>();
-
     private final Int2IntMap loaderCounter = new Int2IntOpenHashMap();
-
     private final Long2ObjectOpenHashMap<Map<Integer, ChunkLoader>> chunkLoaders = new Long2ObjectOpenHashMap<>();
-
     private final Long2ObjectOpenHashMap<Map<Integer, Player>> playerLoaders = new Long2ObjectOpenHashMap<>();
-
     private final Long2ObjectOpenHashMap<Deque<DataPacket>> chunkPackets = new Long2ObjectOpenHashMap<>();
-
     private final Long2LongMap unloadQueue = Long2LongMaps.synchronize(new Long2LongOpenHashMap());
-
-    private float time;
-    public boolean stopTime;
-
-    public float skyLightSubtracted;
-
-    private String folderName;
-
-    private Vector3 mutableBlock;
-
     // Avoid OOM, gc'd references result in whole chunk being sent (possibly higher cpu)
     private final Long2ObjectOpenHashMap<SoftReference<Map<Character, Object>>> changedBlocks = new Long2ObjectOpenHashMap<>();
     // Storing the vector is redundant
@@ -181,49 +152,41 @@ public class Level implements ChunkManager, Metadatable {
             return Character.MAX_VALUE;
         }
     };
-
-
     private final BlockUpdateScheduler updateQueue;
     private final Queue<Block> normalUpdateQueue = new ConcurrentLinkedDeque<>();
+    private final ConcurrentMap<Long, Int2ObjectMap<Player>> chunkSendQueue = new ConcurrentHashMap<>();
+    private final LongSet chunkSendTasks = new LongOpenHashSet();
+    private final Long2ObjectOpenHashMap<Boolean> chunkPopulationQueue = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectOpenHashMap<Boolean> chunkPopulationLock = new Long2ObjectOpenHashMap<>();
 //    private final TreeSet<BlockUpdateEntry> updateQueue = new TreeSet<>();
 //    private final List<BlockUpdateEntry> nextTickUpdates = Lists.newArrayList();
     //private final Map<BlockVector3, Integer> updateQueueIndex = new HashMap<>();
-
-    private final ConcurrentMap<Long, Int2ObjectMap<Player>> chunkSendQueue = new ConcurrentHashMap<>();
-    private final LongSet chunkSendTasks = new LongOpenHashSet();
-
-    private final Long2ObjectOpenHashMap<Boolean> chunkPopulationQueue = new Long2ObjectOpenHashMap<>();
-    private final Long2ObjectOpenHashMap<Boolean> chunkPopulationLock = new Long2ObjectOpenHashMap<>();
     private final Long2ObjectOpenHashMap<Boolean> chunkGenerationQueue = new Long2ObjectOpenHashMap<>();
-    private int chunkGenerationQueueSize = 8;
-    private int chunkPopulationQueueSize = 2;
-
-    private boolean autoSave;
-
-    private BlockMetadataStore blockMetadata;
-
-    private boolean useSections;
-
-    private Position temporalPosition;
-    private Vector3 temporalVector;
-
-    public int sleepTicks = 0;
-
-    private int chunkTickRadius;
     private final Long2IntMap chunkTickList = new Long2IntOpenHashMap();
-    private int chunksPerTicks;
-    private boolean clearChunksOnTick;
-
-    private int updateLCG = ThreadLocalRandom.current().nextInt();
-
-    private static final int LCG_CONSTANT = 1013904223;
-
+    public boolean stopTime;
+    public float skyLightSubtracted;
+    public int sleepTicks = 0;
     public LevelTimings timings;
-
-    private int tickRate;
     public int tickRateTime = 0;
     public int tickRateCounter = 0;
-
+    public GameRules gameRules;
+    private boolean cacheChunks = false;
+    private LevelProvider provider;
+    private float time;
+    private String folderName;
+    private Vector3 mutableBlock;
+    private int chunkGenerationQueueSize = 8;
+    private int chunkPopulationQueueSize = 2;
+    private boolean autoSave;
+    private BlockMetadataStore blockMetadata;
+    private boolean useSections;
+    private Position temporalPosition;
+    private Vector3 temporalVector;
+    private int chunkTickRadius;
+    private int chunksPerTicks;
+    private boolean clearChunksOnTick;
+    private int updateLCG = ThreadLocalRandom.current().nextInt();
+    private int tickRate;
     private Class<? extends Generator> generatorClass;
     private IterableThreadLocal<Generator> generators = new IterableThreadLocal<Generator>() {
         @Override
@@ -243,17 +206,14 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
     };
-
     private boolean raining = false;
     private int rainTime = 0;
     private boolean thundering = false;
     private int thunderTime = 0;
-
     private long levelCurrentTick = 0;
-
     private int dimension;
-
-    public GameRules gameRules;
+    private Map<Long, Map<Character, Object>> lightQueue = new ConcurrentHashMap<>(8, 0.9f, 1);
+    private int lastUnloadIndex;
 
     public Level(Server server, String name, String path, Class<? extends LevelProvider> provider) {
         this.levelId = levelIdCounter++;
@@ -395,12 +355,12 @@ public class Level implements ChunkManager, Metadatable {
         return tickRate;
     }
 
-    public int getTickRateTime() {
-        return tickRateTime;
-    }
-
     public void setTickRate(int tickRate) {
         this.tickRate = tickRate;
+    }
+
+    public int getTickRateTime() {
+        return tickRateTime;
     }
 
     public void initLevel() {
@@ -1622,8 +1582,6 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
-    private Map<Long, Map<Character, Object>> lightQueue = new ConcurrentHashMap<>(8, 0.9f, 1);
-
     public void addLightUpdate(int x, int y, int z) {
         long index = chunkHash(x >> 4, z >> 4);
         Map<Character, Object> currentMap = lightQueue.get(index);
@@ -1942,9 +1900,9 @@ public class Level implements ChunkManager, Metadatable {
         Random rand = ThreadLocalRandom.current();
         for (int split : EntityXPOrb.splitIntoOrbSizes(exp)) {
             CompoundTag nbt = Entity.getDefaultNBT(source, motion == null ? new Vector3(
-                    (rand.nextDouble() * 0.2 - 0.1) * 2,
-                    rand.nextDouble() * 0.4,
-                    (rand.nextDouble() * 0.2 - 0.1) * 2) : motion,
+                            (rand.nextDouble() * 0.2 - 0.1) * 2,
+                            rand.nextDouble() * 0.4,
+                            (rand.nextDouble() * 0.2 - 0.1) * 2) : motion,
                     rand.nextFloat() * 360f, 0);
 
             nbt.putShort("Value", split);
@@ -1964,7 +1922,6 @@ public class Level implements ChunkManager, Metadatable {
     public Item useItemOn(Vector3 vector, Item item, BlockFace face, float fx, float fy, float fz, Player player) {
         return this.useItemOn(vector, item, face, fx, fy, fz, player, true);
     }
-
 
     public Item useItemOn(Vector3 vector, Item item, BlockFace face, float fx, float fy, float fz, Player player, boolean playSound) {
         Block target = this.getBlock(vector);
@@ -2156,9 +2113,6 @@ public class Level implements ChunkManager, Metadatable {
     public Entity[] getNearbyEntities(AxisAlignedBB bb) {
         return this.getNearbyEntities(bb, null);
     }
-
-    private static Entity[] EMPTY_ENTITY_ARR = new Entity[0];
-    private static Entity[] ENTITY_BUFFER = new Entity[512];
 
     public Entity[] getNearbyEntities(AxisAlignedBB bb, Entity entity) {
         return getNearbyEntities(bb, entity, false);
@@ -2856,6 +2810,11 @@ public class Level implements ChunkManager, Metadatable {
         return (int) time;
     }
 
+    public void setTime(int time) {
+        this.time = time;
+        this.sendTime();
+    }
+
     public boolean isDaytime() {
         return this.skyLightSubtracted < 4;
     }
@@ -2870,11 +2829,6 @@ public class Level implements ChunkManager, Metadatable {
 
     public String getFolderName() {
         return this.folderName;
-    }
-
-    public void setTime(int time) {
-        this.time = time;
-        this.sendTime();
     }
 
     public void stopTime() {
@@ -3062,8 +3016,6 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
-    private int lastUnloadIndex;
-
     /**
      * @param now
      * @param allocatedTime
@@ -3105,7 +3057,7 @@ public class Level implements ChunkManager, Metadatable {
             }
 
             if (toUnload != null) {
-                long[] arr = (long[]) toUnload.toLongArray();
+                long[] arr = toUnload.toLongArray();
                 for (long index : arr) {
                     int X = getHashX(index);
                     int Z = getHashZ(index);

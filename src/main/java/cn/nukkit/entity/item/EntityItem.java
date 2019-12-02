@@ -22,6 +22,10 @@ public class EntityItem extends Entity {
     public static final int NETWORK_ID = 64;
 
     public static final int DATA_SOURCE_ID = 17;
+    protected String owner;
+    protected String thrower;
+    protected Item item;
+    protected int pickupDelay;
 
     public EntityItem(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -31,13 +35,6 @@ public class EntityItem extends Entity {
     public int getNetworkId() {
         return NETWORK_ID;
     }
-
-    protected String owner;
-    protected String thrower;
-
-    protected Item item;
-
-    protected int pickupDelay;
 
     @Override
     public float getWidth() {
@@ -132,7 +129,7 @@ public class EntityItem extends Entity {
         this.lastUpdate = currentTick;
 
         this.timing.startTiming();
-        
+
         if (this.age % 60 == 0 && this.onGround && this.getItem() != null && this.isAlive()) {
             if (this.getItem().getCount() < this.getItem().getMaxStackSize()) {
                 for (Entity entity : this.getLevel().getNearbyEntities(getBoundingBox().grow(1, 1, 1), this, false)) {
@@ -144,7 +141,7 @@ public class EntityItem extends Entity {
                         if (!closeItem.equals(getItem(), true, true)) {
                             continue;
                         }
-                        if(!entity.isOnGround()) {
+                        if (!entity.isOnGround()) {
                             continue;
                         }
                         int newAmount = this.getItem().getCount() + closeItem.getCount();
@@ -158,7 +155,7 @@ public class EntityItem extends Entity {
                         packet.data = newAmount;
                         packet.event = EntityEventPacket.MERGE_ITEMS;
                         Server.broadcastPacket(this.getLevel().getPlayers().values(), packet);
-                       }
+                    }
                 }
             }
         }

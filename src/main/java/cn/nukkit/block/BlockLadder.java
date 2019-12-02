@@ -15,6 +15,11 @@ import cn.nukkit.utils.Faceable;
  */
 public class BlockLadder extends BlockTransparentMeta implements Faceable {
 
+    private double offMinX;
+    private double offMinZ;
+    private double offMaxX;
+    private double offMaxZ;
+
     public BlockLadder() {
         this(0);
     }
@@ -59,11 +64,6 @@ public class BlockLadder extends BlockTransparentMeta implements Faceable {
         return 2;
     }
 
-    private double offMinX;
-    private double offMinZ;
-    private double offMaxX;
-    private double offMaxZ;
-
     private void calculateOffsets() {
         double f = 0.1875;
 
@@ -94,7 +94,7 @@ public class BlockLadder extends BlockTransparentMeta implements Faceable {
                 break;
             default:
                 this.offMinX = 0;
-                this.offMinZ = 1 ;
+                this.offMinZ = 1;
                 this.offMaxX = 1;
                 this.offMaxZ = 1;
                 break;
@@ -172,11 +172,11 @@ public class BlockLadder extends BlockTransparentMeta implements Faceable {
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
     }
-    
+
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-            Item.get(Item.LADDER, 0, 1)
+                Item.get(Item.LADDER, 0, 1)
         };
     }
 

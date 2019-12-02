@@ -21,8 +21,8 @@ import java.util.Set;
  */
 public class BlockRedstoneWire extends BlockFlowable {
 
-    private boolean canProvidePower = true;
     private final Set<Vector3> blocksNeedingUpdate = new HashSet<>();
+    private boolean canProvidePower = true;
 
     public BlockRedstoneWire() {
         this(0);
@@ -30,6 +30,25 @@ public class BlockRedstoneWire extends BlockFlowable {
 
     public BlockRedstoneWire(int meta) {
         super(meta);
+    }
+
+    protected static boolean canConnectUpwardsTo(Level level, Vector3 pos) {
+        return canConnectUpwardsTo(level.getBlock(pos));
+    }
+
+    protected static boolean canConnectUpwardsTo(Block block) {
+        return canConnectTo(block, null);
+    }
+
+    protected static boolean canConnectTo(Block block, BlockFace side) {
+        if (block.getId() == Block.REDSTONE_WIRE) {
+            return true;
+        } else if (BlockRedstoneDiode.isDiode(block)) {
+            BlockFace face = ((BlockRedstoneDiode) block).getFacing();
+            return face == side || face.getOpposite() == side;
+        } else {
+            return block.isPowerSource() && side != null;
+        }
     }
 
     @Override
@@ -264,25 +283,6 @@ public class BlockRedstoneWire extends BlockFlowable {
         boolean flag = block.isNormalBlock();
         boolean flag1 = this.level.getBlock(pos.up()).isNormalBlock();
         return !flag1 && flag && canConnectUpwardsTo(this.level, v.up()) || (canConnectTo(block, side) || !flag && canConnectUpwardsTo(this.level, block.down()));
-    }
-
-    protected static boolean canConnectUpwardsTo(Level level, Vector3 pos) {
-        return canConnectUpwardsTo(level.getBlock(pos));
-    }
-
-    protected static boolean canConnectUpwardsTo(Block block) {
-        return canConnectTo(block, null);
-    }
-
-    protected static boolean canConnectTo(Block block, BlockFace side) {
-        if (block.getId() == Block.REDSTONE_WIRE) {
-            return true;
-        } else if (BlockRedstoneDiode.isDiode(block)) {
-            BlockFace face = ((BlockRedstoneDiode) block).getFacing();
-            return face == side || face.getOpposite() == side;
-        } else {
-            return block.isPowerSource() && side != null;
-        }
     }
 
     @Override

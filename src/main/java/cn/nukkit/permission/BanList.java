@@ -18,10 +18,8 @@ import java.util.*;
  */
 public class BanList {
 
-    private LinkedHashMap<String, BanEntry> list = new LinkedHashMap<>();
-
     private final String file;
-
+    private LinkedHashMap<String, BanEntry> list = new LinkedHashMap<>();
     private boolean enable = true;
 
     public BanList(String file) {

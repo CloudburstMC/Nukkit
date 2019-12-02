@@ -21,15 +21,15 @@ public class DataPacketReceiveEvent extends ServerEvent implements Cancellable {
         this.player = player;
     }
 
+    public static HandlerList getHandlers() {
+        return handlers;
+    }
+
     public DataPacket getPacket() {
         return packet;
     }
 
     public Player getPlayer() {
         return player;
-    }
-
-    public static HandlerList getHandlers() {
-        return handlers;
     }
 }

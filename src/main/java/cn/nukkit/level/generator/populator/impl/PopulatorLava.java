@@ -139,7 +139,7 @@ public class PopulatorLava extends Populator {
                             (j == 1 && previousDirection == 0) ||
                             (j == 2 && previousDirection == 3) ||
                             (j == 3 && previousDirection == 2)
-                    ) {
+            ) {
                 int x = xx;
                 int y = yy;
                 int z = zz;

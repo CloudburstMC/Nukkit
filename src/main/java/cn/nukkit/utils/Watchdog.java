@@ -1,6 +1,7 @@
 package cn.nukkit.utils;
 
 import cn.nukkit.Server;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.MonitorInfo;
 import java.lang.management.ThreadInfo;
@@ -17,6 +18,23 @@ public class Watchdog extends Thread {
         this.time = time;
         this.running = true;
         this.setName("Watchdog");
+    }
+
+    private static void dumpThread(ThreadInfo thread, Logger logger) {
+        logger.emergency("Current Thread: " + thread.getThreadName());
+        logger.emergency("\tPID: " + thread.getThreadId() + " | Suspended: " + thread.isSuspended() + " | Native: " + thread.isInNative() + " | State: " + thread.getThreadState());
+        // Monitors
+        if (thread.getLockedMonitors().length != 0) {
+            logger.emergency("\tThread is waiting on monitor(s):");
+            for (MonitorInfo monitor : thread.getLockedMonitors()) {
+                logger.emergency("\t\tLocked on:" + monitor.getLockedStackFrame());
+            }
+        }
+
+        logger.emergency("\tStack:");
+        for (StackTraceElement stack : thread.getStackTrace()) {
+            logger.emergency("\t\t" + stack);
+        }
     }
 
     public void kill() {
@@ -63,24 +81,8 @@ public class Watchdog extends Thread {
                 synchronized (this) {
                     this.wait(Math.max(time / 4, 1000));
                 }
-            } catch (InterruptedException ignore) {}
-        }
-    }
-
-    private static void dumpThread(ThreadInfo thread, Logger logger) {
-        logger.emergency("Current Thread: " + thread.getThreadName());
-        logger.emergency("\tPID: " + thread.getThreadId() + " | Suspended: " + thread.isSuspended() + " | Native: " + thread.isInNative() + " | State: " + thread.getThreadState());
-        // Monitors
-        if (thread.getLockedMonitors().length != 0) {
-            logger.emergency("\tThread is waiting on monitor(s):");
-            for (MonitorInfo monitor : thread.getLockedMonitors()) {
-                logger.emergency("\t\tLocked on:" + monitor.getLockedStackFrame());
+            } catch (InterruptedException ignore) {
             }
-        }
-
-        logger.emergency("\tStack:");
-        for (StackTraceElement stack : thread.getStackTrace()) {
-            logger.emergency("\t\t" + stack);
         }
     }
 }

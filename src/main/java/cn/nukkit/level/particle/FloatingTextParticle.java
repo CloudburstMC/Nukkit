@@ -28,8 +28,8 @@ public class FloatingTextParticle extends Particle {
         EMPTY_SKIN.generateSkinId("FloatingText");
     }
 
-    protected UUID uuid = UUID.randomUUID();
     protected final Level level;
+    protected UUID uuid = UUID.randomUUID();
     protected long entityId = -1;
     protected boolean invisible = false;
     protected EntityMetadata metadata = new EntityMetadata();
@@ -58,7 +58,7 @@ public class FloatingTextParticle extends Particle {
                 1L << Entity.DATA_FLAG_NO_AI
         );
         metadata.putLong(Entity.DATA_FLAGS, flags)
-                .putLong(Entity.DATA_LEAD_HOLDER_EID,-1)
+                .putLong(Entity.DATA_LEAD_HOLDER_EID, -1)
                 .putFloat(Entity.DATA_SCALE, 0.01f) //zero causes problems on debug builds?
                 .putFloat(Entity.DATA_BOUNDING_BOX_HEIGHT, 0.01f)
                 .putFloat(Entity.DATA_BOUNDING_BOX_WIDTH, 0.01f);
@@ -108,9 +108,9 @@ public class FloatingTextParticle extends Particle {
     public void setInvisible() {
         this.setInvisible(true);
     }
-    
+
     public long getEntityId() {
-        return entityId;   
+        return entityId;
     }
 
     @Override

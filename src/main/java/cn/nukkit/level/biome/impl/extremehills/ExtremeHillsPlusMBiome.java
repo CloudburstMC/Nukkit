@@ -5,7 +5,7 @@ package cn.nukkit.level.biome.impl.extremehills;
  * Nukkit Project
  * <p>
  * make sure this is touching another extreme hills type or it'll look dumb
- *
+ * <p>
  * very steep (1-2 block at a time) hills with round tops. flat in between
  */
 public class ExtremeHillsPlusMBiome extends ExtremeHillsMBiome {

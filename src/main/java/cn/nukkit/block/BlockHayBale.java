@@ -17,7 +17,7 @@ public class BlockHayBale extends BlockSolidMeta implements Faceable {
 
     public BlockHayBale(int meta) {
         super(meta);
-     }
+    }
 
     @Override
     public int getId() {

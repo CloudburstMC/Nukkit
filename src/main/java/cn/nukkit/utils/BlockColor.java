@@ -4,7 +4,7 @@ package cn.nukkit.utils;
  * Created by Snake1999 on 2016/1/10.
  * Package cn.nukkit.utils in project nukkit
  */
-public class BlockColor  {
+public class BlockColor {
 
     public static final BlockColor TRANSPARENT_BLOCK_COLOR = new BlockColor(0x00, 0x00, 0x00, 0x00);
     public static final BlockColor VOID_BLOCK_COLOR = new BlockColor(0x00, 0x00, 0x00, 0x00);
@@ -75,6 +75,11 @@ public class BlockColor  {
         this.alpha = 0xff;
     }
 
+    @Deprecated
+    public static BlockColor getDyeColor(int dyeColorMeta) {
+        return DyeColor.getByDyeData(dyeColorMeta).getColor();
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof BlockColor)) {
@@ -108,10 +113,5 @@ public class BlockColor  {
 
     public int getRGB() {
         return (this.red << 16 | this.green << 8 | this.blue) & 0xffffff;
-    }
-
-    @Deprecated
-    public static BlockColor getDyeColor(int dyeColorMeta) {
-        return DyeColor.getByDyeData(dyeColorMeta).getColor();
     }
 }

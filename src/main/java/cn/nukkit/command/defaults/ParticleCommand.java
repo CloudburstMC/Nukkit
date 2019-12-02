@@ -23,6 +23,7 @@ public class ParticleCommand extends VanillaCommand {
             , "splash", "wake", "water", "crit", "smoke", "spell", "instantspell", "dripwater", "driplava", "townaura"
             , "spore", "portal", "flame", "lava", "reddust", "snowballpoof", "slime", "itembreak", "terrain", "heart"
             , "ink", "droplet", "enchantmenttable", "happyvillager", "angryvillager", "forcefield"};
+
     public ParticleCommand(String name) {
         super(name, "%nukkit.command.particle.description", "%nukkit.command.particle.usage");
         this.setPermission("nukkit.command.particle");
@@ -33,6 +34,17 @@ public class ParticleCommand extends VanillaCommand {
                 new CommandParameter("count", CommandParamType.INT, true),
                 new CommandParameter("data", true)
         });
+    }
+
+    private static double getDouble(String arg, double defaultValue) throws Exception {
+        if (arg.startsWith("~")) {
+            String relativePos = arg.substring(1);
+            if (relativePos.isEmpty()) {
+                return defaultValue;
+            }
+            return defaultValue + Double.parseDouble(relativePos);
+        }
+        return Double.parseDouble(arg);
     }
 
     @Override
@@ -199,16 +211,5 @@ public class ParticleCommand extends VanillaCommand {
         }
 
         return null;
-    }
-
-    private static double getDouble(String arg, double defaultValue) throws Exception {
-        if (arg.startsWith("~")) {
-            String relativePos = arg.substring(1);
-            if (relativePos.isEmpty()) {
-                return defaultValue;
-            }
-            return defaultValue + Double.parseDouble(relativePos);
-        }
-        return Double.parseDouble(arg);
     }
 }

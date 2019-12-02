@@ -16,36 +16,14 @@ public abstract class IterableThreadLocal<T> extends ThreadLocal<T> implements I
     public IterableThreadLocal() {
     }
 
-    @Override
-    protected final T initialValue() {
-        T value = init();
-        if (value != null) {
-            allValues.add(value);
-        }
-        return value;
-    }
-
-    @Override
-    public final Iterator<T> iterator() {
-        return getAll().iterator();
-    }
-
-    public T init() {
-        return null;
-    }
-
-    public void clean() {
-        IterableThreadLocal.clean(this);
-    }
-
     public static void clean(ThreadLocal instance) {
         try {
-            ThreadGroup rootGroup = Thread.currentThread( ).getThreadGroup( );
+            ThreadGroup rootGroup = Thread.currentThread().getThreadGroup();
             ThreadGroup parentGroup;
-            while ( ( parentGroup = rootGroup.getParent() ) != null ) {
+            while ((parentGroup = rootGroup.getParent()) != null) {
                 rootGroup = parentGroup;
             }
-            Thread[] threads = new Thread[ rootGroup.activeCount() ];
+            Thread[] threads = new Thread[rootGroup.activeCount()];
             if (threads.length != 0) {
                 while (rootGroup.enumerate(threads, true) == threads.length) {
                     threads = new Thread[threads.length * 2];
@@ -65,7 +43,8 @@ public abstract class IterableThreadLocal<T> extends ThreadLocal<T> implements I
                         if (methodRemove != null) {
                             try {
                                 methodRemove.invoke(tlm, instance);
-                            } catch (Throwable ignore) {}
+                            } catch (Throwable ignore) {
+                            }
                         }
                     }
                 }
@@ -101,14 +80,36 @@ public abstract class IterableThreadLocal<T> extends ThreadLocal<T> implements I
                 Object entry = Array.get(table, i);
                 if (entry != null) {
                     // Get a reference to the thread local object and remove it from the table
-                    ThreadLocal threadLocal = (ThreadLocal)referentField.get(entry);
+                    ThreadLocal threadLocal = (ThreadLocal) referentField.get(entry);
                     clean(threadLocal);
                 }
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             // We will tolerate an exception here and just log it
             throw new IllegalStateException(e);
         }
+    }
+
+    @Override
+    protected final T initialValue() {
+        T value = init();
+        if (value != null) {
+            allValues.add(value);
+        }
+        return value;
+    }
+
+    @Override
+    public final Iterator<T> iterator() {
+        return getAll().iterator();
+    }
+
+    public T init() {
+        return null;
+    }
+
+    public void clean() {
+        IterableThreadLocal.clean(this);
     }
 
     public final Collection<T> getAll() {

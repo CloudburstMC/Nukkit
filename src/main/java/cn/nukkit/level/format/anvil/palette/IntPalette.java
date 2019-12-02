@@ -23,9 +23,8 @@ public class IntPalette {
     private int[] insert(int val) {
         lastIndex = Integer.MIN_VALUE;
         if (keys.length == 0) {
-            return new int[] { val };
-        }
-        else if (val < keys[0]) {
+            return new int[]{val};
+        } else if (val < keys[0]) {
             int[] s = new int[keys.length + 1];
             System.arraycopy(keys, 0, s, 1, keys.length);
             s[0] = val;

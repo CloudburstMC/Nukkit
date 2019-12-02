@@ -10,7 +10,6 @@ import cn.nukkit.event.entity.EntityInventoryChangeEvent;
 import cn.nukkit.event.player.PlayerItemHeldEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.item.ItemFishingRod;
 import cn.nukkit.network.protocol.InventoryContentPacket;
 import cn.nukkit.network.protocol.InventorySlotPacket;
 import cn.nukkit.network.protocol.MobArmorEquipmentPacket;
@@ -322,6 +321,26 @@ public class PlayerInventory extends BaseInventory {
         return armor;
     }
 
+    public void setArmorContents(Item[] items) {
+        if (items.length < 4) {
+            Item[] newItems = new Item[4];
+            System.arraycopy(items, 0, newItems, 0, items.length);
+            items = newItems;
+        }
+
+        for (int i = 0; i < 4; ++i) {
+            if (items[i] == null) {
+                items[i] = new ItemBlock(new BlockAir(), null, 0);
+            }
+
+            if (items[i].getId() == Item.AIR) {
+                this.clear(this.getSize() + i);
+            } else {
+                this.setItem(this.getSize() + i, items[i]);
+            }
+        }
+    }
+
     @Override
     public void clearAll() {
         int limit = this.getSize() + 4;
@@ -351,26 +370,6 @@ public class PlayerInventory extends BaseInventory {
                 player.dataPacket(pk2);
             } else {
                 player.dataPacket(pk);
-            }
-        }
-    }
-
-    public void setArmorContents(Item[] items) {
-        if (items.length < 4) {
-            Item[] newItems = new Item[4];
-            System.arraycopy(items, 0, newItems, 0, items.length);
-            items = newItems;
-        }
-
-        for (int i = 0; i < 4; ++i) {
-            if (items[i] == null) {
-                items[i] = new ItemBlock(new BlockAir(), null, 0);
-            }
-
-            if (items[i].getId() == Item.AIR) {
-                this.clear(this.getSize() + i);
-            } else {
-                this.setItem(this.getSize() + i, items[i]);
             }
         }
     }

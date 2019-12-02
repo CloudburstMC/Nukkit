@@ -26,6 +26,10 @@ public class PlayerInteractEntityEvent extends PlayerEvent implements Cancellabl
         this.clickedPos = clickedPos;
     }
 
+    public static HandlerList getHandlers() {
+        return handlers;
+    }
+
     public Entity getEntity() {
         return this.entity;
     }
@@ -36,9 +40,5 @@ public class PlayerInteractEntityEvent extends PlayerEvent implements Cancellabl
 
     public Vector3 getClickedPos() {
         return clickedPos;
-    }
-
-    public static HandlerList getHandlers() {
-        return handlers;
     }
 }

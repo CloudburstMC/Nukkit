@@ -10,7 +10,9 @@ import cn.nukkit.utils.Binary;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * author: MagicDroidX
@@ -20,29 +22,21 @@ public class QueryRegenerateEvent extends ServerEvent {
     //alot todo
 
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     private static final String GAME_ID = "MINECRAFTPE";
-
+    private final String gameType;
+    private final String version;
+    private final String server_engine;
+    private final String whitelist;
+    private final int port;
+    private final String ip;
     private int timeout;
     private String serverName;
     private boolean listPlugins;
     private Plugin[] plugins;
     private Player[] players;
-
-    private final String gameType;
-    private final String version;
-    private final String server_engine;
     private String map;
     private int numPlayers;
     private int maxPlayers;
-    private final String whitelist;
-    private final int port;
-    private final String ip;
-
     private Map<String, String> extraData = new HashMap<>();
 
     public QueryRegenerateEvent(Server server) {
@@ -64,6 +58,10 @@ public class QueryRegenerateEvent extends ServerEvent {
         this.whitelist = server.hasWhitelist() ? "on" : "off";
         this.port = server.getPort();
         this.ip = server.getIp();
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public int getTimeout() {

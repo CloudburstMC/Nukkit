@@ -27,11 +27,10 @@ import java.util.*;
  */
 public class BinaryStream {
 
+    private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
     public int offset;
     private byte[] buffer;
     private int count;
-
-    private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 
     public BinaryStream() {
         this.buffer = new byte[32];
@@ -49,15 +48,19 @@ public class BinaryStream {
         this.count = buffer.length;
     }
 
+    private static int hugeCapacity(int minCapacity) {
+        if (minCapacity < 0) { // overflow
+            throw new OutOfMemoryError();
+        }
+        return (minCapacity > MAX_ARRAY_SIZE) ?
+                Integer.MAX_VALUE :
+                MAX_ARRAY_SIZE;
+    }
+
     public BinaryStream reset() {
         this.offset = 0;
         this.count = 0;
         return this;
-    }
-
-    public void setBuffer(byte[] buffer) {
-        this.buffer = buffer;
-        this.count = buffer == null ? -1 : buffer.length;
     }
 
     public void setBuffer(byte[] buffer, int offset) {
@@ -75,6 +78,11 @@ public class BinaryStream {
 
     public byte[] getBuffer() {
         return Arrays.copyOf(buffer, count);
+    }
+
+    public void setBuffer(byte[] buffer) {
+        this.buffer = buffer;
+        this.count = buffer == null ? -1 : buffer.length;
     }
 
     public int getCount() {
@@ -691,14 +699,5 @@ public class BinaryStream {
             newCapacity = hugeCapacity(minCapacity);
         }
         this.buffer = Arrays.copyOf(buffer, newCapacity);
-    }
-
-    private static int hugeCapacity(int minCapacity) {
-        if (minCapacity < 0) { // overflow
-            throw new OutOfMemoryError();
-        }
-        return (minCapacity > MAX_ARRAY_SIZE) ?
-                Integer.MAX_VALUE :
-                MAX_ARRAY_SIZE;
     }
 }

@@ -7,6 +7,11 @@ import cn.nukkit.math.NukkitRandom;
  * Nukkit Project
  */
 public class SimplexD extends PerlinD {
+    public static final int[][] grad3 = {
+            {1, 1, 0}, {-1, 1, 0}, {1, -1, 0}, {-1, -1, 0},
+            {1, 0, 1}, {-1, 0, 1}, {1, 0, -1}, {-1, 0, -1},
+            {0, 1, 1}, {0, -1, 1}, {0, 1, -1}, {0, -1, -1}
+    };
     protected static double SQRT_3;
     protected static double SQRT_5;
     protected static double F2;
@@ -19,11 +24,6 @@ public class SimplexD extends PerlinD {
     protected static double G42;
     protected static double G43;
     protected static double G44;
-    public static final int[][] grad3 = {
-            {1, 1, 0}, {-1, 1, 0}, {1, -1, 0}, {-1, -1, 0},
-            {1, 0, 1}, {-1, 0, 1}, {1, 0, -1}, {-1, 0, -1},
-            {0, 1, 1}, {0, -1, 1}, {0, 1, -1}, {0, -1, -1}
-    };
     protected final double offsetW;
 
     public SimplexD(NukkitRandom random, double octaves, double persistence) {

@@ -26,14 +26,14 @@ public abstract class Task implements Runnable {
         return this.taskHandler;
     }
 
-    public final int getTaskId() {
-        return this.taskHandler != null ? this.taskHandler.getTaskId() : -1;
-    }
-
     public final void setHandler(TaskHandler taskHandler) {
         if (this.taskHandler == null || taskHandler == null) {
             this.taskHandler = taskHandler;
         }
+    }
+
+    public final int getTaskId() {
+        return this.taskHandler != null ? this.taskHandler.getTaskId() : -1;
     }
 
     /**

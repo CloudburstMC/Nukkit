@@ -17,6 +17,14 @@ public class EntityExpBottle extends EntityProjectile {
 
     public static final int NETWORK_ID = 68;
 
+    public EntityExpBottle(FullChunk chunk, CompoundTag nbt) {
+        this(chunk, nbt, null);
+    }
+
+    public EntityExpBottle(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+        super(chunk, nbt, shootingEntity);
+    }
+
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
@@ -45,14 +53,6 @@ public class EntityExpBottle extends EntityProjectile {
     @Override
     protected float getDrag() {
         return 0.01f;
-    }
-
-    public EntityExpBottle(FullChunk chunk, CompoundTag nbt) {
-        this(chunk, nbt, null);
-    }
-
-    public EntityExpBottle(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
-        super(chunk, nbt, shootingEntity);
     }
 
     @Override

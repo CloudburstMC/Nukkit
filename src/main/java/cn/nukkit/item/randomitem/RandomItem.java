@@ -9,9 +9,8 @@ import java.util.Objects;
  * Package cn.nukkit.item.randomitem in project nukkit.
  */
 public final class RandomItem {
-    private static final Map<Selector, Float> selectors = new HashMap<>();
-
     public static final Selector ROOT = new Selector(null);
+    private static final Map<Selector, Float> selectors = new HashMap<>();
 
     public static Selector putSelector(Selector selector) {
         return putSelector(selector, 1);

@@ -11,11 +11,10 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 
 public class DarkOakTreePopulator extends Populator {
+    private final int type;
     private ChunkManager level;
     private int randomAmount;
     private int baseAmount;
-
-    private final int type;
 
     public DarkOakTreePopulator() {
         this(BlockSapling.DARK_OAK);

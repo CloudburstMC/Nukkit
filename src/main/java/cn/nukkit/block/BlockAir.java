@@ -9,7 +9,8 @@ import cn.nukkit.math.AxisAlignedBB;
  */
 public class BlockAir extends BlockTransparent {
 
-    public BlockAir() {}
+    public BlockAir() {
+    }
 
     @Override
     public int getId() {

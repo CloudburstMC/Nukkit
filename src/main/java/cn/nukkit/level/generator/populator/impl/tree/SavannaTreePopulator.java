@@ -12,11 +12,10 @@ import cn.nukkit.math.Vector3;
 
 public class SavannaTreePopulator extends Populator {
 
+    private final int type;
     private ChunkManager level;
     private int randomAmount;
     private int baseAmount;
-
-    private final int type;
 
     public SavannaTreePopulator() {
         this(BlockSapling.ACACIA);

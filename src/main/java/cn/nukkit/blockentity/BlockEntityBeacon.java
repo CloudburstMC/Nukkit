@@ -17,6 +17,9 @@ import java.util.Map;
  */
 public class BlockEntityBeacon extends BlockEntitySpawnable {
 
+    private static final int POWER_LEVEL_MAX = 4;
+    private long currentTick = 0;
+
     public BlockEntityBeacon(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
@@ -63,8 +66,6 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
                 .putInt("Secondary", this.namedTag.getInt("Secondary"));
     }
 
-    private long currentTick = 0;
-
     @Override
     public boolean onUpdate() {
         //Only apply effects every 4 secs
@@ -96,7 +97,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
         int range = 10 + getPowerLevel() * 10;
         int duration = 9 + getPowerLevel() * 2;
 
-        for(Map.Entry<Long, Player> entry : players.entrySet()) {
+        for (Map.Entry<Long, Player> entry : players.entrySet()) {
             Player p = entry.getValue();
 
             //If the player is in range
@@ -147,8 +148,6 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
         return true;
     }
 
-    private static final int POWER_LEVEL_MAX = 4;
-
     private boolean hasSkyAccess() {
         int tileX = getFloorX();
         int tileY = getFloorY();
@@ -184,7 +183,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
                                     testBlockId != Block.GOLD_BLOCK &&
                                     testBlockId != Block.EMERALD_BLOCK &&
                                     testBlockId != Block.DIAMOND_BLOCK
-                            ) {
+                    ) {
                         return powerLevel - 1;
                     }
 
@@ -245,7 +244,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
 
         this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BEACON_POWER);
 
-        BeaconInventory inv = (BeaconInventory)player.getWindowById(Player.BEACON_WINDOW_ID);
+        BeaconInventory inv = (BeaconInventory) player.getWindowById(Player.BEACON_WINDOW_ID);
 
         inv.setItem(0, new ItemBlock(new BlockAir(), 0, 0));
         return true;

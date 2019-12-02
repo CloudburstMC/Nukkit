@@ -22,9 +22,25 @@ import static cn.nukkit.utils.Rail.Orientation.State.*;
 @API(usage = API.Usage.BLEEDING, definition = API.Definition.INTERNAL)
 public final class Rail {
 
+    private Rail() {
+        //no instance
+    }
+
     public static boolean isRailBlock(Block block) {
         Objects.requireNonNull(block, "Rail block predicate can not accept null block");
         return isRailBlock(block.getId());
+    }
+
+    public static boolean isRailBlock(int blockId) {
+        switch (blockId) {
+            case Block.RAIL:
+            case Block.POWERED_RAIL:
+            case Block.ACTIVATOR_RAIL:
+            case Block.DETECTOR_RAIL:
+                return true;
+            default:
+                return false;
+        }
     }
 
     public enum Orientation {
@@ -40,6 +56,13 @@ public final class Rail {
         CURVED_NORTH_EAST(9, CURVED, NORTH, EAST, null);
 
         private static final Orientation[] META_LOOKUP = new Orientation[values().length];
+
+        static {
+            for (Orientation o : values()) {
+                META_LOOKUP[o.meta] = o;
+            }
+        }
+
         private final int meta;
         private final State state;
         private final List<BlockFace> connectingDirections;
@@ -120,10 +143,6 @@ public final class Rail {
             return Optional.ofNullable(ascendingDirection);
         }
 
-        public enum State {
-            STRAIGHT, ASCENDING, CURVED
-        }
-
         public boolean isStraight() {
             return state == STRAIGHT;
         }
@@ -136,26 +155,8 @@ public final class Rail {
             return state == CURVED;
         }
 
-        static {
-            for (Orientation o : values()) {
-                META_LOOKUP[o.meta] = o;
-            }
+        public enum State {
+            STRAIGHT, ASCENDING, CURVED
         }
-    }
-
-    public static boolean isRailBlock(int blockId) {
-        switch (blockId) {
-            case Block.RAIL:
-            case Block.POWERED_RAIL:
-            case Block.ACTIVATOR_RAIL:
-            case Block.DETECTOR_RAIL:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    private Rail() {
-        //no instance
     }
 }

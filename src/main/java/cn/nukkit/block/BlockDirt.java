@@ -17,7 +17,7 @@ public class BlockDirt extends BlockSolidMeta {
         this(0);
     }
 
-    public BlockDirt(int meta){
+    public BlockDirt(int meta) {
         super(meta);
     }
 

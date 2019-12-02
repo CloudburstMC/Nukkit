@@ -31,6 +31,29 @@ public class LoginPacket extends DataPacket {
     public long clientId;
     public Skin skin;
 
+    private static SkinAnimation getAnimation(JsonObject element) {
+        float frames = element.get("Frames").getAsFloat();
+        int type = element.get("Type").getAsInt();
+        byte[] data = Base64.getDecoder().decode(element.get("Image").getAsString());
+        int width = element.get("ImageWidth").getAsInt();
+        int height = element.get("ImageHeight").getAsInt();
+        return new SkinAnimation(new SerializedImage(width, height, data), type, frames);
+    }
+
+    private static SerializedImage getImage(JsonObject token, String name) {
+        if (token.has(name + "Data")) {
+            byte[] skinImage = Base64.getDecoder().decode(token.get(name + "Data").getAsString());
+            if (token.has(name + "ImageHeight") && token.has(name + "ImageWidth")) {
+                int width = token.get(name + "ImageWidth").getAsInt();
+                int height = token.get(name + "ImageHeight").getAsInt();
+                return new SerializedImage(width, height, skinImage);
+            } else {
+                return SerializedImage.fromLegacy(skinImage);
+            }
+        }
+        return SerializedImage.EMPTY;
+    }
+
     @Override
     public byte pid() {
         return NETWORK_ID;
@@ -126,28 +149,5 @@ public class LoginPacket extends DataPacket {
         String[] base = token.split("\\.");
         if (base.length < 2) return null;
         return new Gson().fromJson(new String(Base64.getDecoder().decode(base[1]), StandardCharsets.UTF_8), JsonObject.class);
-    }
-
-    private static SkinAnimation getAnimation(JsonObject element) {
-        float frames = element.get("Frames").getAsFloat();
-        int type = element.get("Type").getAsInt();
-        byte[] data = Base64.getDecoder().decode(element.get("Image").getAsString());
-        int width = element.get("ImageWidth").getAsInt();
-        int height = element.get("ImageHeight").getAsInt();
-        return new SkinAnimation(new SerializedImage(width, height, data), type, frames);
-    }
-
-    private static SerializedImage getImage(JsonObject token, String name) {
-        if (token.has(name + "Data")) {
-            byte[] skinImage = Base64.getDecoder().decode(token.get(name + "Data").getAsString());
-            if (token.has(name + "ImageHeight") && token.has(name + "ImageWidth")) {
-                int width = token.get(name + "ImageWidth").getAsInt();
-                int height = token.get(name + "ImageHeight").getAsInt();
-                return new SerializedImage(width, height, skinImage);
-            } else {
-                return SerializedImage.fromLegacy(skinImage);
-            }
-        }
-        return SerializedImage.EMPTY;
     }
 }

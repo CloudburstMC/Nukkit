@@ -33,11 +33,9 @@ public class Explosion {
     private final Level level;
     private final Position source;
     private final double size;
-
-    private List<Block> affectedBlocks = new ArrayList<>();
     private final double stepLen = 0.3d;
-
     private final Object what;
+    private List<Block> affectedBlocks = new ArrayList<>();
 
     public Explosion(Position center, double size, Entity what) {
         this.level = center.getLevel();

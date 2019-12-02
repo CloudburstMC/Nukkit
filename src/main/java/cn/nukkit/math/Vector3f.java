@@ -30,6 +30,25 @@ public class Vector3f implements Cloneable {
         this.z = z;
     }
 
+    public static int getOppositeSide(int side) {
+        switch (side) {
+            case Vector3f.SIDE_DOWN:
+                return Vector3f.SIDE_UP;
+            case Vector3f.SIDE_UP:
+                return Vector3f.SIDE_DOWN;
+            case Vector3f.SIDE_NORTH:
+                return Vector3f.SIDE_SOUTH;
+            case Vector3f.SIDE_SOUTH:
+                return Vector3f.SIDE_NORTH;
+            case Vector3f.SIDE_WEST:
+                return Vector3f.SIDE_EAST;
+            case Vector3f.SIDE_EAST:
+                return Vector3f.SIDE_WEST;
+            default:
+                return -1;
+        }
+    }
+
     public float getX() {
         return this.x;
     }
@@ -154,25 +173,6 @@ public class Vector3f implements Cloneable {
                 return new Vector3f(this.x + step, this.y, this.z);
             default:
                 return this;
-        }
-    }
-
-    public static int getOppositeSide(int side) {
-        switch (side) {
-            case Vector3f.SIDE_DOWN:
-                return Vector3f.SIDE_UP;
-            case Vector3f.SIDE_UP:
-                return Vector3f.SIDE_DOWN;
-            case Vector3f.SIDE_NORTH:
-                return Vector3f.SIDE_SOUTH;
-            case Vector3f.SIDE_SOUTH:
-                return Vector3f.SIDE_NORTH;
-            case Vector3f.SIDE_WEST:
-                return Vector3f.SIDE_EAST;
-            case Vector3f.SIDE_EAST:
-                return Vector3f.SIDE_WEST;
-            default:
-                return -1;
         }
     }
 

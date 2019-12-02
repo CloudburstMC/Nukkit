@@ -12,16 +12,15 @@ import cn.nukkit.inventory.Inventory;
 public class InventoryOpenEvent extends InventoryEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     private final Player who;
 
     public InventoryOpenEvent(Inventory inventory, Player who) {
         super(inventory);
         this.who = who;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public Player getPlayer() {

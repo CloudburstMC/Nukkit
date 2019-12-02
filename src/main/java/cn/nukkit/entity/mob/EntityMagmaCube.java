@@ -10,13 +10,13 @@ public class EntityMagmaCube extends EntityMob {
 
     public static final int NETWORK_ID = 42;
 
+    public EntityMagmaCube(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+    }
+
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
-    }
-
-    public EntityMagmaCube(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
     }
 
     @Override

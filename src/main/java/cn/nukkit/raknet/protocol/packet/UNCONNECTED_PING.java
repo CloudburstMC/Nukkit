@@ -9,13 +9,12 @@ import cn.nukkit.raknet.protocol.Packet;
  */
 public class UNCONNECTED_PING extends Packet {
     public static final byte ID = (byte) 0x01;
+    public long pingID;
 
     @Override
     public byte getID() {
         return ID;
     }
-
-    public long pingID;
 
     @Override
     public void encode() {

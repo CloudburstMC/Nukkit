@@ -12,13 +12,13 @@ public class EntitySkeleton extends EntityMob implements EntitySmite {
 
     public static final int NETWORK_ID = 34;
 
+    public EntitySkeleton(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+    }
+
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
-    }
-
-    public EntitySkeleton(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
     }
 
     @Override

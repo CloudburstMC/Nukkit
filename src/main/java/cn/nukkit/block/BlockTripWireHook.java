@@ -194,6 +194,12 @@ public class BlockTripWireHook extends BlockFlowable {
         return (getDamage() & 0x04) > 0;
     }
 
+    public void setAttached(boolean value) {
+        if (value ^ this.isAttached()) {
+            this.setDamage(this.getDamage() ^ 0x04);
+        }
+    }
+
     public boolean isPowered() {
         return (this.getDamage() & 0x08) > 0;
     }
@@ -201,12 +207,6 @@ public class BlockTripWireHook extends BlockFlowable {
     public void setPowered(boolean value) {
         if (value ^ this.isPowered()) {
             this.setDamage(this.getDamage() ^ 0x08);
-        }
-    }
-
-    public void setAttached(boolean value) {
-        if (value ^ this.isAttached()) {
-            this.setDamage(this.getDamage() ^ 0x04);
         }
     }
 

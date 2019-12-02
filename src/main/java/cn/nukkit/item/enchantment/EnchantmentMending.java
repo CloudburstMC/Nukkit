@@ -20,7 +20,9 @@ public class EnchantmentMending extends Enchantment {
     }
 
     @Override
-    public int getMaxLevel() { return 1; }
+    public int getMaxLevel() {
+        return 1;
+    }
 
     @Override
     public boolean isCompatibleWith(Enchantment enchantment) {

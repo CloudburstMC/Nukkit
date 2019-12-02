@@ -38,9 +38,7 @@ public interface AxisAlignedBB extends Cloneable {
         return new SimpleAxisAlignedBB(this.getMinX() - x, this.getMinY() - y, this.getMinZ() - z, this.getMaxX() + x, this.getMaxY() + y, this.getMaxZ() + z);
     }
 
-    default AxisAlignedBB expand(double x, double y, double z)
-
-    {
+    default AxisAlignedBB expand(double x, double y, double z) {
         this.setMinX(this.getMinX() - x);
         this.setMinY(this.getMinY() - y);
         this.setMinZ(this.getMinZ() - z);
@@ -273,37 +271,41 @@ public interface AxisAlignedBB extends Cloneable {
         return MovingObjectPosition.fromBlock(0, 0, 0, face, vector);
     }
 
+    double getMinX();
+
     default void setMinX(double minX) {
         throw new UnsupportedOperationException("Not mutable");
     }
+
+    double getMinY();
 
     default void setMinY(double minY) {
         throw new UnsupportedOperationException("Not mutable");
     }
 
+    double getMinZ();
+
     default void setMinZ(double minZ) {
         throw new UnsupportedOperationException("Not mutable");
     }
+
+    double getMaxX();
 
     default void setMaxX(double maxX) {
         throw new UnsupportedOperationException("Not mutable");
     }
 
+    double getMaxY();
+
     default void setMaxY(double maxY) {
         throw new UnsupportedOperationException("Not mutable");
     }
 
+    double getMaxZ();
+
     default void setMaxZ(double maxZ) {
         throw new UnsupportedOperationException("Not mutable");
     }
-
-
-    double getMinX();
-    double getMinY();
-    double getMinZ();
-    double getMaxX();
-    double getMaxY();
-    double getMaxZ();
 
     AxisAlignedBB clone();
 

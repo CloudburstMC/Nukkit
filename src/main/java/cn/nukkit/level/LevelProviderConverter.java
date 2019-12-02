@@ -34,6 +34,20 @@ class LevelProviderConverter {
         this.path = path;
     }
 
+    private static int getChunkX(byte[] key) {
+        return (key[3] << 24) |
+                (key[2] << 16) |
+                (key[1] << 8) |
+                key[0];
+    }
+
+    private static int getChunkZ(byte[] key) {
+        return (key[7] << 24) |
+                (key[6] << 16) |
+                (key[5] << 8) |
+                key[4];
+    }
+
     LevelProviderConverter from(LevelProvider provider) {
         if (!(provider instanceof McRegion) && !(provider instanceof LevelDB)) {
             throw new IllegalArgumentException("From type can be only McRegion or LevelDB");
@@ -123,19 +137,5 @@ class LevelProviderConverter {
             result.doGarbageCollection();
         }
         return result;
-    }
-
-    private static int getChunkX(byte[] key) {
-        return (key[3] << 24) |
-                (key[2] << 16) |
-                (key[1] << 8) |
-                key[0];
-    }
-
-    private static int getChunkZ(byte[] key) {
-        return (key[7] << 24) |
-                (key[6] << 16) |
-                (key[5] << 8) |
-                key[4];
     }
 }

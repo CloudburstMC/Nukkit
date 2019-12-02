@@ -2,14 +2,14 @@ package cn.nukkit.entity.projectile;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.ProjectileHitEvent;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.Position;
-import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -32,6 +32,20 @@ public class EntityThrownTrident extends EntityProjectile {
     public static final int DATA_SOURCE_ID = 17;
 
     protected Item trident;
+    protected float gravity = 0.04f;
+    protected float drag = 0.01f;
+
+    public EntityThrownTrident(FullChunk chunk, CompoundTag nbt) {
+        this(chunk, nbt, null);
+    }
+
+    public EntityThrownTrident(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+        this(chunk, nbt, shootingEntity, false);
+    }
+
+    public EntityThrownTrident(FullChunk chunk, CompoundTag nbt, Entity shootingEntity, boolean critical) {
+        super(chunk, nbt, shootingEntity);
+    }
 
     @Override
     public int getNetworkId() {
@@ -63,21 +77,6 @@ public class EntityThrownTrident extends EntityProjectile {
         return 0.01f;
     }
 
-    protected float gravity = 0.04f;
-    protected float drag = 0.01f;
-
-    public EntityThrownTrident(FullChunk chunk, CompoundTag nbt) {
-        this(chunk, nbt, null);
-    }
-
-    public EntityThrownTrident(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
-        this(chunk, nbt, shootingEntity, false);
-    }
-
-    public EntityThrownTrident(FullChunk chunk, CompoundTag nbt, Entity shootingEntity, boolean critical) {
-        super(chunk, nbt, shootingEntity);
-    }
-
     @Override
     protected void initEntity() {
         super.initEntity();
@@ -107,12 +106,12 @@ public class EntityThrownTrident extends EntityProjectile {
         this.setCritical(true);
     }
 
-    public void setCritical(boolean value) {
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_CRITICAL, value);
-    }
-
     public boolean isCritical() {
         return this.getDataFlag(DATA_FLAGS, DATA_FLAG_CRITICAL);
+    }
+
+    public void setCritical(boolean value) {
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_CRITICAL, value);
     }
 
     @Override

@@ -12,16 +12,15 @@ import cn.nukkit.inventory.Inventory;
 public class InventoryPickupItemEvent extends InventoryEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     private final EntityItem item;
 
     public InventoryPickupItemEvent(Inventory inventory, EntityItem item) {
         super(inventory);
         this.item = item;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public EntityItem getItem() {

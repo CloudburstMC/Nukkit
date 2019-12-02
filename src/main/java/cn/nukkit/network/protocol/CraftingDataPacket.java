@@ -23,11 +23,10 @@ public class CraftingDataPacket extends DataPacket {
     public static final String CRAFTING_TAG_CAMPFIRE = "campfire";
     public static final String CRAFTING_TAG_BLAST_FURNACE = "blast_furnace";
     public static final String CRAFTING_TAG_SMOKER = "smoker";
-
+    public boolean cleanRecipes;
     private List<Recipe> entries = new ArrayList<>();
     private List<BrewingRecipe> brewingEntries = new ArrayList<>();
     private List<ContainerRecipe> containerEntries = new ArrayList<>();
-    public boolean cleanRecipes;
 
     public void addShapelessRecipe(ShapelessRecipe... recipe) {
         Collections.addAll(entries, recipe);

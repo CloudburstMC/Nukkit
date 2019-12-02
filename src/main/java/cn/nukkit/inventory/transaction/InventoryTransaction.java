@@ -18,14 +18,11 @@ import java.util.Map.Entry;
  */
 public class InventoryTransaction {
 
-    private long creationTime;
     protected boolean hasExecuted;
-
     protected Player source;
-
     protected Set<Inventory> inventories = new HashSet<>();
-
     protected Set<InventoryAction> actions = new HashSet<>();
+    private long creationTime;
 
     public InventoryTransaction(Player source, List<InventoryAction> actions) {
         this(source, actions, true);
@@ -197,8 +194,7 @@ public class InventoryTransaction {
                         lastTargetItem = action.getTargetItem();
                         list.remove(i);
                         sortedThisLoop++;
-                    }
-                    else if (actionSource.equals(lastTargetItem)) {
+                    } else if (actionSource.equals(lastTargetItem)) {
                         lastTargetItem.count -= actionSource.count;
                         list.remove(i);
                         if (lastTargetItem.count == 0) sortedThisLoop++;

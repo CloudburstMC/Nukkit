@@ -10,18 +10,17 @@ import lombok.ToString;
 @ToString
 public class ContainerOpenPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.CONTAINER_OPEN_PACKET;
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
-    }
-
     public int windowId;
     public int type;
     public int x;
     public int y;
     public int z;
     public long entityId = -1;
+
+    @Override
+    public byte pid() {
+        return NETWORK_ID;
+    }
 
     @Override
     public void decode() {

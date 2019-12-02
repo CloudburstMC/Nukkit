@@ -32,7 +32,7 @@ public enum GameRule {
     }
 
     public static Optional<GameRule> parseString(String gameRuleString) {
-        for (GameRule gameRule: values()) {
+        for (GameRule gameRule : values()) {
             if (gameRule.getName().equalsIgnoreCase(gameRuleString)) {
                 return Optional.of(gameRule);
             }

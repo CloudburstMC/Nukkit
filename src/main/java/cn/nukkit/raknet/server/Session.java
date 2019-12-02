@@ -30,49 +30,35 @@ public class Session {
 
     private static final int MAX_MTU_SIZE = 1492;
     private static final int MIN_MTU_SIZE = 400;
-
-    private int messageIndex = 0;
     private final Map<Integer, Integer> channelIndex = new ConcurrentHashMap<>();
-
-    private SessionManager sessionManager;
     private final String address;
     private final int port;
+    private final long startTime;
+    private final List<DataPacket> packetToSend = new ArrayList<>();
+    private final Map<Integer, DataPacket> recoveryQueue = new TreeMap<>();
+    private final Map<Integer, Map<Integer, EncapsulatedPacket>> splitPackets = new HashMap<>();
+    private final Map<Integer, Map<Integer, Integer>> needACK = new TreeMap<>();
+    private final Map<Integer, Integer> receivedWindow = new TreeMap<>();
+    private final Map<Integer, EncapsulatedPacket> reliableWindow = new TreeMap<>();
+    private int messageIndex = 0;
+    private SessionManager sessionManager;
     private int state = STATE_UNCONNECTED;
     //private List<EncapsulatedPacket> preJoinQueue = new ArrayList<>();
     private int mtuSize = MIN_MTU_SIZE;
     private long id = 0;
     private int splitID = 0;
-
     private int sendSeqNumber = 0;
     private int lastSeqNumber = -1;
-
     private long lastUpdate;
-    private final long startTime;
-
     private boolean isTemporal = true;
-
-    private final List<DataPacket> packetToSend = new ArrayList<>();
-
     private boolean isActive;
-
     private Map<Integer, Integer> ACKQueue = new HashMap<>();
     private Map<Integer, Integer> NACKQueue = new HashMap<>();
-
-    private final Map<Integer, DataPacket> recoveryQueue = new TreeMap<>();
-
-    private final Map<Integer, Map<Integer, EncapsulatedPacket>> splitPackets = new HashMap<>();
-
-    private final Map<Integer, Map<Integer, Integer>> needACK = new TreeMap<>();
-
     private DataPacket sendQueue;
-
     private int windowStart;
-    private final Map<Integer, Integer> receivedWindow = new TreeMap<>();
     private int windowEnd;
-
     private int reliableWindowStart;
     private int reliableWindowEnd;
-    private final Map<Integer, EncapsulatedPacket> reliableWindow = new TreeMap<>();
     private int lastReliableIndex = -1;
 
     public Session(SessionManager sessionManager, String address, int port) {

@@ -33,18 +33,18 @@ import java.util.regex.Pattern;
 public class Item implements Cloneable, BlockID, ItemID {
     //Normal Item IDs
 
-    protected static String UNKNOWN_STR = "Unknown";
+    private static final ArrayList<Item> creative = new ArrayList<>();
     public static Class[] list = null;
-
-    protected Block block = null;
+    protected static String UNKNOWN_STR = "Unknown";
     protected final int id;
+    public int count;
+    protected Block block = null;
     protected int meta;
     protected boolean hasMeta = true;
-    private byte[] tags = new byte[0];
-    private CompoundTag cachedNBT = null;
-    public int count;
     protected int durability = 0;
     protected String name;
+    private byte[] tags = new byte[0];
+    private CompoundTag cachedNBT = null;
 
     public Item(int id) {
         this(id, 0, 1, UNKNOWN_STR);
@@ -71,14 +71,6 @@ public class Item implements Cloneable, BlockID, ItemID {
             this.block = Block.get(this.id, this.meta);
             this.name = this.block.getName();
         }*/
-    }
-
-    public boolean hasMeta() {
-        return hasMeta;
-    }
-
-    public boolean canBeActivated() {
-        return false;
     }
 
     public static void init() {
@@ -271,7 +263,7 @@ public class Item implements Cloneable, BlockID, ItemID {
 
             //TODO: list[SHULKER_SHELL] = ItemShulkerShell.class; //445
             list[BANNER] = ItemBanner.class; //446
-            
+
             list[TRIDENT] = ItemTrident.class; //455
 
             list[BEETROOT] = ItemBeetroot.class; //457
@@ -284,7 +276,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[DRIED_KELP] = ItemDriedKelp.class; //464
 
             list[GOLDEN_APPLE_ENCHANTED] = ItemAppleGoldEnchanted.class; //466
-            
+
             list[TURTLE_SHELL] = ItemTurtleShell.class; //469
 
             list[SWEET_BERRIES] = ItemSweetBerries.class; //477
@@ -313,8 +305,6 @@ public class Item implements Cloneable, BlockID, ItemID {
 
         initCreativeItems();
     }
-
-    private static final ArrayList<Item> creative = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
     private static void initCreativeItems() {
@@ -466,6 +456,26 @@ public class Item implements Cloneable, BlockID, ItemID {
         return items;
     }
 
+    public static CompoundTag parseCompoundTag(byte[] tag) {
+        try {
+            return NBTIO.read(tag, ByteOrder.LITTLE_ENDIAN);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean hasMeta() {
+        return hasMeta;
+    }
+
+    public boolean canBeActivated() {
+        return false;
+    }
+
+    public byte[] getCompoundTag() {
+        return tags;
+    }
+
     public Item setCompoundTag(CompoundTag tag) {
         this.setNamedTag(tag);
         return this;
@@ -475,10 +485,6 @@ public class Item implements Cloneable, BlockID, ItemID {
         this.tags = tags;
         this.cachedNBT = null;
         return this;
-    }
-
-    public byte[] getCompoundTag() {
-        return tags;
     }
 
     public boolean hasCompoundTag() {
@@ -509,23 +515,6 @@ public class Item implements Cloneable, BlockID, ItemID {
         return this;
     }
 
-    public Item setCustomBlockData(CompoundTag compoundTag) {
-        CompoundTag tags = compoundTag.copy();
-        tags.setName("BlockEntityTag");
-
-        CompoundTag tag;
-        if (!this.hasCompoundTag()) {
-            tag = new CompoundTag();
-        } else {
-            tag = this.getNamedTag();
-        }
-
-        tag.putCompound("BlockEntityTag", tags);
-        this.setNamedTag(tag);
-
-        return this;
-    }
-
     public CompoundTag getCustomBlockData() {
         if (!this.hasCompoundTag()) {
             return null;
@@ -541,6 +530,23 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
 
         return null;
+    }
+
+    public Item setCustomBlockData(CompoundTag compoundTag) {
+        CompoundTag tags = compoundTag.copy();
+        tags.setName("BlockEntityTag");
+
+        CompoundTag tag;
+        if (!this.hasCompoundTag()) {
+            tag = new CompoundTag();
+        } else {
+            tag = this.getNamedTag();
+        }
+
+        tag.putCompound("BlockEntityTag", tags);
+        this.setNamedTag(tag);
+
+        return this;
     }
 
     public boolean hasEnchantments() {
@@ -794,14 +800,6 @@ public class Item implements Cloneable, BlockID, ItemID {
         return this.setCompoundTag(new byte[0]);
     }
 
-    public static CompoundTag parseCompoundTag(byte[] tag) {
-        try {
-            return NBTIO.read(tag, ByteOrder.LITTLE_ENDIAN);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public byte[] writeCompoundTag(CompoundTag tag) {
         try {
             tag.setName("");
@@ -978,7 +976,7 @@ public class Item implements Cloneable, BlockID, ItemID {
      * Called when a player uses the item on air, for example throwing a projectile.
      * Returns whether the item was changed, for example count decrease or durability change.
      *
-     * @param player player
+     * @param player          player
      * @param directionVector direction
      * @return item changed
      */

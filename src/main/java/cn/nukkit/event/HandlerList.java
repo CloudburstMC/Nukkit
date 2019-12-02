@@ -10,11 +10,19 @@ import java.util.*;
  */
 public class HandlerList {
 
+    private static final ArrayList<HandlerList> allLists = new ArrayList<>();
+    private final EnumMap<EventPriority, ArrayList<RegisteredListener>> handlerslots;
     private volatile RegisteredListener[] handlers = null;
 
-    private final EnumMap<EventPriority, ArrayList<RegisteredListener>> handlerslots;
-
-    private static final ArrayList<HandlerList> allLists = new ArrayList<>();
+    public HandlerList() {
+        handlerslots = new EnumMap<>(EventPriority.class);
+        for (EventPriority o : EventPriority.values()) {
+            handlerslots.put(o, new ArrayList<>());
+        }
+        synchronized (allLists) {
+            allLists.add(this);
+        }
+    }
 
     public static void bakeAll() {
         synchronized (allLists) {
@@ -53,13 +61,27 @@ public class HandlerList {
         }
     }
 
-    public HandlerList() {
-        handlerslots = new EnumMap<>(EventPriority.class);
-        for (EventPriority o : EventPriority.values()) {
-            handlerslots.put(o, new ArrayList<>());
-        }
+    public static ArrayList<RegisteredListener> getRegisteredListeners(Plugin plugin) {
+        ArrayList<RegisteredListener> listeners = new ArrayList<>();
         synchronized (allLists) {
-            allLists.add(this);
+            for (HandlerList h : allLists) {
+                synchronized (h) {
+                    for (List<RegisteredListener> list : h.handlerslots.values()) {
+                        for (RegisteredListener listener : list) {
+                            if (listener.getPlugin().equals(plugin)) {
+                                listeners.add(listener);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return listeners;
+    }
+
+    public static ArrayList<HandlerList> getHandlerLists() {
+        synchronized (allLists) {
+            return new ArrayList<>(allLists);
         }
     }
 
@@ -123,31 +145,6 @@ public class HandlerList {
             bake();
         } // This prevents fringe cases of returning null
         return handlers;
-    }
-
-
-    public static ArrayList<RegisteredListener> getRegisteredListeners(Plugin plugin) {
-        ArrayList<RegisteredListener> listeners = new ArrayList<>();
-        synchronized (allLists) {
-            for (HandlerList h : allLists) {
-                synchronized (h) {
-                    for (List<RegisteredListener> list : h.handlerslots.values()) {
-                        for (RegisteredListener listener : list) {
-                            if (listener.getPlugin().equals(plugin)) {
-                                listeners.add(listener);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return listeners;
-    }
-
-    public static ArrayList<HandlerList> getHandlerLists() {
-        synchronized (allLists) {
-            return new ArrayList<>(allLists);
-        }
     }
 
 }

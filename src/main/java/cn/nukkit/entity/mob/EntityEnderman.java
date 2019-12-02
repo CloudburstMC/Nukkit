@@ -10,13 +10,13 @@ public class EntityEnderman extends EntityMob {
 
     public static final int NETWORK_ID = 38;
 
+    public EntityEnderman(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+    }
+
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
-    }
-
-    public EntityEnderman(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
     }
 
     @Override

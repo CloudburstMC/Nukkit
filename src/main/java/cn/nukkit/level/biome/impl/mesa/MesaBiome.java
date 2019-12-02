@@ -19,8 +19,6 @@ public class MesaBiome extends CoveredBiome {
     static final int[] colorLayer = new int[64];
     static final SimplexF redSandNoise = new SimplexF(new NukkitRandom(937478913), 2f, 1 / 4f, 1 / 4f);
     static final SimplexF colorNoise = new SimplexF(new NukkitRandom(193759875), 2f, 1 / 4f, 1 / 32f);
-    private SimplexF moundNoise = new SimplexF(new NukkitRandom(347228794), 2f, 1 / 4f, getMoundFrequency());
-    protected int moundHeight;
 
     static {
         Random random = new Random(29864);
@@ -32,7 +30,7 @@ public class MesaBiome extends CoveredBiome {
         setRandomLayerColor(random, 10, 14); // red
         for (int i = 0, j = 0; i < random.nextInt(3) + 3; i++) {
             j += random.nextInt(6) + 4;
-            if (j >= colorLayer.length -3) {
+            if (j >= colorLayer.length - 3) {
                 break;
             }
             if (random.nextInt(2) == 0 || j < colorLayer.length - 1 && random.nextInt(2) == 0) {
@@ -43,24 +41,14 @@ public class MesaBiome extends CoveredBiome {
         }
     }
 
-    private static void setRandomLayerColor(Random random, int sliceCount, int color) {
-        for (int i = 0; i < random.nextInt(4) + sliceCount; i++) {
-            int j = random.nextInt(colorLayer.length);
-            int k = 0;
-            while (k < random.nextInt(2) + 1 && j < colorLayer.length) {
-                colorLayer[j++] = color;
-                k++;
-            }
-        }
-    }
-
+    protected int moundHeight;
     int randY = 0;
     int redSandThreshold = 0;
     boolean isRedSand = false;
     //cache this too so we can access it in getSurfaceBlock and getSurfaceMeta without needing to calculate it twice
     int currMeta = 0;
     int startY = 0;
-
+    private SimplexF moundNoise = new SimplexF(new NukkitRandom(347228794), 2f, 1 / 4f, getMoundFrequency());
     public MesaBiome() {
         PopulatorCactus cactus = new PopulatorCactus();
         cactus.setBaseAmount(1);
@@ -75,7 +63,18 @@ public class MesaBiome extends CoveredBiome {
         this.setMoundHeight(17);
     }
 
-    public void setMoundHeight(int height)  {
+    private static void setRandomLayerColor(Random random, int sliceCount, int color) {
+        for (int i = 0; i < random.nextInt(4) + sliceCount; i++) {
+            int j = random.nextInt(colorLayer.length);
+            int k = 0;
+            while (k < random.nextInt(2) + 1 && j < colorLayer.length) {
+                colorLayer[j++] = color;
+                k++;
+            }
+        }
+    }
+
+    public void setMoundHeight(int height) {
         this.moundHeight = height;
     }
 
@@ -128,7 +127,7 @@ public class MesaBiome extends CoveredBiome {
         redSandThreshold = 71 + Math.round((redSandNoise.noise2D(x, z, true) + 1) * 1.5f);
     }
 
-    protected float getMoundFrequency()    {
+    protected float getMoundFrequency() {
         return 1 / 128f;
     }
 
@@ -139,7 +138,7 @@ public class MesaBiome extends CoveredBiome {
         return (n > a && n < a + 0.2f) ? (int) ((n - a) * 5f * moundHeight) : n < a + 0.1f ? 0 : moundHeight;
     }
 
-    protected float minHill()   {
+    protected float minHill() {
         return -0.1f;
     }
 }

@@ -13,21 +13,19 @@ import cn.nukkit.item.Item;
 public class FurnaceSmeltEvent extends BlockEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     private final BlockEntityFurnace furnace;
     private final Item source;
     private Item result;
-
     public FurnaceSmeltEvent(BlockEntityFurnace furnace, Item source, Item result) {
         super(furnace.getBlock());
         this.source = source.clone();
         this.source.setCount(1);
         this.result = result;
         this.furnace = furnace;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public BlockEntityFurnace getFurnace() {

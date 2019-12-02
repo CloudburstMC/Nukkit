@@ -23,20 +23,17 @@ import java.util.UUID;
  */
 @ToString
 public class Skin {
+    public static final String GEOMETRY_CUSTOM = convertLegacyGeometryName("geometry.humanoid.custom");
+    public static final String GEOMETRY_CUSTOM_SLIM = convertLegacyGeometryName("geometry.humanoid.customSlim");
     private static final int PIXEL_SIZE = 4;
-
     public static final int SINGLE_SKIN_SIZE = 64 * 32 * PIXEL_SIZE;
     public static final int DOUBLE_SKIN_SIZE = 64 * 64 * PIXEL_SIZE;
     public static final int SKIN_128_64_SIZE = 128 * 64 * PIXEL_SIZE;
     public static final int SKIN_128_128_SIZE = 128 * 128 * PIXEL_SIZE;
-
-    public static final String GEOMETRY_CUSTOM = convertLegacyGeometryName("geometry.humanoid.custom");
-    public static final String GEOMETRY_CUSTOM_SLIM = convertLegacyGeometryName("geometry.humanoid.customSlim");
-
+    private final List<SkinAnimation> animations = new ArrayList<>();
     private String skinId;
     private String skinResourcePatch = GEOMETRY_CUSTOM;
     private SerializedImage skinData;
-    private final List<SkinAnimation> animations = new ArrayList<>();
     private SerializedImage capeData;
     private String geometryData;
     private String animationData;
@@ -44,6 +41,25 @@ public class Skin {
     private boolean persona;
     private boolean capeOnClassic;
     private String capeId;
+
+    private static SerializedImage parseBufferedImage(BufferedImage image) {
+        FastByteArrayOutputStream outputStream = new FastByteArrayOutputStream();
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                Color color = new Color(image.getRGB(x, y), true);
+                outputStream.write(color.getRed());
+                outputStream.write(color.getGreen());
+                outputStream.write(color.getBlue());
+                outputStream.write(color.getAlpha());
+            }
+        }
+        image.flush();
+        return new SerializedImage(image.getWidth(), image.getHeight(), outputStream.toByteArray());
+    }
+
+    private static String convertLegacyGeometryName(String geometryName) {
+        return "{\"geometry\" : {\"default\" : \"" + geometryName + "\"}}";
+    }
 
     public boolean isValid() {
         return isValidSkin() && isValidResourcePatch();
@@ -75,6 +91,19 @@ public class Skin {
         return skinData;
     }
 
+    public void setSkinData(byte[] skinData) {
+        setSkinData(SerializedImage.fromLegacy(skinData));
+    }
+
+    public void setSkinData(BufferedImage image) {
+        setSkinData(parseBufferedImage(image));
+    }
+
+    public void setSkinData(SerializedImage skinData) {
+        Objects.requireNonNull(skinData, "skinData");
+        this.skinData = skinData;
+    }
+
     public String getSkinId() {
         if (this.skinId == null) {
             this.generateSkinId("Custom");
@@ -94,26 +123,6 @@ public class Skin {
         this.skinId = UUID.nameUUIDFromBytes(data) + "." + name;
     }
 
-    public void setSkinData(byte[] skinData) {
-        setSkinData(SerializedImage.fromLegacy(skinData));
-    }
-
-    public void setSkinData(BufferedImage image) {
-        setSkinData(parseBufferedImage(image));
-    }
-
-    public void setSkinData(SerializedImage skinData) {
-        Objects.requireNonNull(skinData, "skinData");
-        this.skinData = skinData;
-    }
-
-    public void setSkinResourcePatch(String skinResourcePatch) {
-        if (skinResourcePatch == null || skinResourcePatch.trim().isEmpty()) {
-            skinResourcePatch = GEOMETRY_CUSTOM;
-        }
-        this.skinResourcePatch = skinResourcePatch;
-    }
-
     public void setGeometryName(String geometryName) {
         if (geometryName == null || geometryName.trim().isEmpty()) {
             skinResourcePatch = GEOMETRY_CUSTOM;
@@ -130,25 +139,18 @@ public class Skin {
         return skinResourcePatch;
     }
 
+    public void setSkinResourcePatch(String skinResourcePatch) {
+        if (skinResourcePatch == null || skinResourcePatch.trim().isEmpty()) {
+            skinResourcePatch = GEOMETRY_CUSTOM;
+        }
+        this.skinResourcePatch = skinResourcePatch;
+    }
+
     public SerializedImage getCapeData() {
         if (capeData == null) {
             return SerializedImage.EMPTY;
         }
         return capeData;
-    }
-
-    public String getCapeId() {
-        if (capeId == null) {
-            return "";
-        }
-        return capeId;
-    }
-
-    public void setCapeId(String capeId) {
-        if (capeId == null || capeId.trim().isEmpty()) {
-            capeId = null;
-        }
-        this.capeId = capeId;
     }
 
     public void setCapeData(byte[] capeData) {
@@ -164,6 +166,20 @@ public class Skin {
     public void setCapeData(SerializedImage capeData) {
         Objects.requireNonNull(capeData, "capeData");
         this.capeData = capeData;
+    }
+
+    public String getCapeId() {
+        if (capeId == null) {
+            return "";
+        }
+        return capeId;
+    }
+
+    public void setCapeId(String capeId) {
+        if (capeId == null || capeId.trim().isEmpty()) {
+            capeId = null;
+        }
+        this.capeId = capeId;
     }
 
     public String getGeometryData() {
@@ -224,24 +240,5 @@ public class Skin {
 
     public String getFullSkinId() {
         return getSkinId() + getCapeId();
-    }
-
-    private static SerializedImage parseBufferedImage(BufferedImage image) {
-        FastByteArrayOutputStream outputStream = new FastByteArrayOutputStream();
-        for (int y = 0; y < image.getHeight(); y++) {
-            for (int x = 0; x < image.getWidth(); x++) {
-                Color color = new Color(image.getRGB(x, y), true);
-                outputStream.write(color.getRed());
-                outputStream.write(color.getGreen());
-                outputStream.write(color.getBlue());
-                outputStream.write(color.getAlpha());
-            }
-        }
-        image.flush();
-        return new SerializedImage(image.getWidth(), image.getHeight(), outputStream.toByteArray());
-    }
-
-    private static String convertLegacyGeometryName(String geometryName) {
-        return "{\"geometry\" : {\"default\" : \"" + geometryName + "\"}}";
     }
 }

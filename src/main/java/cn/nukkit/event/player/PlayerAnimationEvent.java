@@ -7,11 +7,6 @@ import cn.nukkit.network.protocol.AnimatePacket;
 
 public class PlayerAnimationEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     private final AnimatePacket.Action animationType;
 
     public PlayerAnimationEvent(Player player) {
@@ -21,6 +16,10 @@ public class PlayerAnimationEvent extends PlayerEvent implements Cancellable {
     public PlayerAnimationEvent(Player player, AnimatePacket.Action animation) {
         this.player = player;
         this.animationType = animation;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public AnimatePacket.Action getAnimationType() {

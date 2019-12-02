@@ -6,7 +6,7 @@ import cn.nukkit.level.biome.type.CoveredBiome;
  * @author DaPorkchop_
  * <p>
  * Occurs when Extreme hills and variants touch the ocean.
- *
+ * <p>
  * Nearly ertical cliffs, but no overhangs. Height difference is 2-7 near ocean, and pretty much flat everywhere else
  */
 public class StoneBeachBiome extends CoveredBiome {

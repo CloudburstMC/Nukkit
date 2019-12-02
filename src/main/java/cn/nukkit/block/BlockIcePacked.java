@@ -36,7 +36,7 @@ public class BlockIcePacked extends BlockIce {
     public boolean canHarvestWithHand() {
         return false;
     }
-    
+
     @Override
     public boolean onBreak(Item item) {
         this.getLevel().setBlock(this, new BlockAir(), true); //no water

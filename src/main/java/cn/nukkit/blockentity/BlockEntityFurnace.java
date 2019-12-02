@@ -85,11 +85,6 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
     }
 
     @Override
-    public boolean hasName() {
-        return this.namedTag.contains("CustomName");
-    }
-
-    @Override
     public void setName(String name) {
         if (name == null || name.equals("")) {
             this.namedTag.remove("CustomName");
@@ -97,6 +92,11 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
         }
 
         this.namedTag.putString("CustomName", name);
+    }
+
+    @Override
+    public boolean hasName() {
+        return this.namedTag.contains("CustomName");
     }
 
     @Override

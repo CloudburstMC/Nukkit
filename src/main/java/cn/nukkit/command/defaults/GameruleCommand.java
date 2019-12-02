@@ -19,7 +19,7 @@ public class GameruleCommand extends VanillaCommand {
         this.setPermission("nukkit.command.gamerule");
         this.commandParameters.clear();
         this.commandParameters.put("byString", new CommandParameter[]{
-                new CommandParameter("gamerule", true , GameRule.getNames()),
+                new CommandParameter("gamerule", true, GameRule.getNames()),
                 new CommandParameter("value", CommandParamType.STRING, true)
         });
     }
@@ -39,7 +39,7 @@ public class GameruleCommand extends VanillaCommand {
         switch (args.length) {
             case 0:
                 StringJoiner rulesJoiner = new StringJoiner(", ");
-                for (GameRule rule: rules.getRules()) {
+                for (GameRule rule : rules.getRules()) {
                     rulesJoiner.add(rule.getName().toLowerCase());
                 }
                 sender.sendMessage(rulesJoiner.toString());
@@ -66,7 +66,7 @@ public class GameruleCommand extends VanillaCommand {
                     rules.setGameRules(optionalRule.get(), args[1]);
                     sender.sendMessage(new TranslationContainer("commands.gamerule.success", optionalRule.get().getName(), args[1]));
                 } catch (IllegalArgumentException e) {
-                    sender.sendMessage(new TranslationContainer("commands.generic.syntax", "/gamerule "  + args[0] + " ", args[1], " " + String.join(" ", Arrays.copyOfRange(args, 2, args.length))));
+                    sender.sendMessage(new TranslationContainer("commands.generic.syntax", "/gamerule " + args[0] + " ", args[1], " " + String.join(" ", Arrays.copyOfRange(args, 2, args.length))));
                 }
                 return true;
         }

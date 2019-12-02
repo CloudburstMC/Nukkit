@@ -20,6 +20,12 @@ import cn.nukkit.nbt.tag.CompoundTag;
 public class EntityFallingBlock extends Entity {
 
     public static final int NETWORK_ID = 66;
+    protected int blockId;
+    protected int damage;
+
+    public EntityFallingBlock(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+    }
 
     @Override
     public float getWidth() {
@@ -54,13 +60,6 @@ public class EntityFallingBlock extends Entity {
     @Override
     public boolean canCollide() {
         return false;
-    }
-
-    protected int blockId;
-    protected int damage;
-
-    public EntityFallingBlock(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
     }
 
     @Override

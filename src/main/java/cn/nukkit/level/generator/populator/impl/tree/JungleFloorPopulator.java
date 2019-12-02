@@ -12,15 +12,14 @@ import cn.nukkit.math.Vector3;
 
 /**
  * @author DaPorkchop_
- *
+ * <p>
  * Used for the dense foliage on the floor in the jungle M biome
  */
 public class JungleFloorPopulator extends Populator {
+    private final int type;
     private ChunkManager level;
     private int randomAmount;
     private int baseAmount;
-
-    private final int type;
 
     public JungleFloorPopulator() {
         this(BlockSapling.JUNGLE);

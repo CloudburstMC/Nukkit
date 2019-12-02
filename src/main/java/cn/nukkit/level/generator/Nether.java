@@ -15,9 +15,11 @@ import cn.nukkit.level.generator.populator.impl.PopulatorOre;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
+
 import java.util.*;
 
 public class Nether extends Generator {
+    private final List<Populator> populators = new ArrayList<>();
     private ChunkManager level;
     /**
      * @var Random
@@ -27,7 +29,6 @@ public class Nether extends Generator {
     private double lavaHeight = 32;
     private double bedrockDepth = 5;
     private SimplexF[] noiseGen = new SimplexF[3];
-    private final List<Populator> populators = new ArrayList<>();
     private List<Populator> generationPopulators = new ArrayList<>();
 
     private long localSeed1;
@@ -73,7 +74,7 @@ public class Nether extends Generator {
         this.random = new Random();
         this.nukkitRandom.setSeed(this.level.getSeed());
 
-        for (int i = 0; i < noiseGen.length; i++)   {
+        for (int i = 0; i < noiseGen.length; i++) {
             noiseGen[i] = new SimplexF(nukkitRandom, 4, 1 / 4f, 1 / 64f);
         }
 
@@ -159,9 +160,9 @@ public class Nether extends Generator {
         return new Vector3(0, 64, 0);
     }
 
-    public float getNoise(int x, int y, int z)  {
+    public float getNoise(int x, int y, int z) {
         float val = 0f;
-        for (int i = 0; i < noiseGen.length; i++)   {
+        for (int i = 0; i < noiseGen.length; i++) {
             val += noiseGen[i].noise3D(x >> i, y, z >> i, true);
         }
         return val;

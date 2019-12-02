@@ -5,6 +5,7 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,15 +18,7 @@ public abstract class Generator implements BlockID {
     public static final int TYPE_INFINITE = 1;
     public static final int TYPE_FLAT = 2;
     public static final int TYPE_NETHER = 3;
-
-    public abstract int getId();
-
-    public int getDimension() {
-        return Level.DIMENSION_OVERWORLD;
-    }
-
     private static final Map<String, Class<? extends Generator>> nameList = new HashMap<>();
-
     private static final Map<Integer, Class<? extends Generator>> typeList = new HashMap<>();
 
     public static boolean addGenerator(Class<? extends Generator> clazz, String name, int type) {
@@ -76,6 +69,12 @@ public abstract class Generator implements BlockID {
             }
         }
         return Generator.TYPE_INFINITE;
+    }
+
+    public abstract int getId();
+
+    public int getDimension() {
+        return Level.DIMENSION_OVERWORLD;
     }
 
     public abstract void init(ChunkManager level, NukkitRandom random);

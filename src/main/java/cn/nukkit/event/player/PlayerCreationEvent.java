@@ -12,21 +12,11 @@ import cn.nukkit.network.SourceInterface;
 public class PlayerCreationEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     private final SourceInterface interfaz;
-
     private final Long clientId;
-
     private final String address;
-
     private final int port;
-
     private Class<? extends Player> baseClass;
-
     private Class<? extends Player> playerClass;
 
     public PlayerCreationEvent(SourceInterface interfaz, Class<? extends Player> baseClass, Class<? extends Player> playerClass, Long clientId, String address, int port) {
@@ -37,6 +27,10 @@ public class PlayerCreationEvent extends Event {
 
         this.baseClass = baseClass;
         this.playerClass = playerClass;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public SourceInterface getInterface() {

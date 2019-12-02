@@ -41,7 +41,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
      */
     public static boolean[] hasMeta = null;
 
-    protected Block() {}
+    protected Block() {
+    }
 
     @SuppressWarnings("unchecked")
     public static void init() {
@@ -255,7 +256,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[PURPUR_BLOCK] = BlockPurpur.class; //201
 
             list[PURPUR_STAIRS] = BlockStairsPurpur.class; //203
-            
+
             list[UNDYED_SHULKER_BOX] = BlockUndyedShulkerBox.class; //205
             list[END_BRICKS] = BlockBricksEndStone.class; //206
 
@@ -391,6 +392,77 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return block;
     }
 
+    private static double toolBreakTimeBonus0(
+            int toolType, int toolTier, boolean isWoolBlock, boolean isCobweb) {
+        if (toolType == ItemTool.TYPE_SWORD) return isCobweb ? 15.0 : 1.0;
+        if (toolType == ItemTool.TYPE_SHEARS) return isWoolBlock ? 5.0 : 15.0;
+        if (toolType == ItemTool.TYPE_NONE) return 1.0;
+        switch (toolTier) {
+            case ItemTool.TIER_WOODEN:
+                return 2.0;
+            case ItemTool.TIER_STONE:
+                return 4.0;
+            case ItemTool.TIER_IRON:
+                return 6.0;
+            case ItemTool.TIER_DIAMOND:
+                return 8.0;
+            case ItemTool.TIER_GOLD:
+                return 12.0;
+            default:
+                return 1.0;
+        }
+    }
+
+    private static double speedBonusByEfficiencyLore0(int efficiencyLoreLevel) {
+        if (efficiencyLoreLevel == 0) return 0;
+        return efficiencyLoreLevel * efficiencyLoreLevel + 1;
+    }
+
+    private static double speedRateByHasteLore0(int hasteLoreLevel) {
+        return 1.0 + (0.2 * hasteLoreLevel);
+    }
+
+    private static int toolType0(Item item) {
+        if (item.isSword()) return ItemTool.TYPE_SWORD;
+        if (item.isShovel()) return ItemTool.TYPE_SHOVEL;
+        if (item.isPickaxe()) return ItemTool.TYPE_PICKAXE;
+        if (item.isAxe()) return ItemTool.TYPE_AXE;
+        if (item.isShears()) return ItemTool.TYPE_SHEARS;
+        return ItemTool.TYPE_NONE;
+    }
+
+    private static boolean correctTool0(int blockToolType, Item item) {
+        return (blockToolType == ItemTool.TYPE_SWORD && item.isSword()) ||
+                (blockToolType == ItemTool.TYPE_SHOVEL && item.isShovel()) ||
+                (blockToolType == ItemTool.TYPE_PICKAXE && item.isPickaxe()) ||
+                (blockToolType == ItemTool.TYPE_AXE && item.isAxe()) ||
+                (blockToolType == ItemTool.TYPE_SHEARS && item.isShears()) ||
+                blockToolType == ItemTool.TYPE_NONE;
+    }
+
+    //http://minecraft.gamepedia.com/Breaking
+    private static double breakTime0(double blockHardness, boolean correctTool, boolean canHarvestWithHand,
+                                     int blockId, int toolType, int toolTier, int efficiencyLoreLevel, int hasteEffectLevel,
+                                     boolean insideOfWaterWithoutAquaAffinity, boolean outOfWaterButNotOnGround) {
+        double baseTime = ((correctTool || canHarvestWithHand) ? 1.5 : 5.0) * blockHardness;
+        double speed = 1.0 / baseTime;
+        boolean isWoolBlock = blockId == Block.WOOL, isCobweb = blockId == Block.COBWEB;
+        if (correctTool) speed *= toolBreakTimeBonus0(toolType, toolTier, isWoolBlock, isCobweb);
+        speed += speedBonusByEfficiencyLore0(efficiencyLoreLevel);
+        speed *= speedRateByHasteLore0(hasteEffectLevel);
+        if (insideOfWaterWithoutAquaAffinity) speed *= 0.2;
+        if (outOfWaterButNotOnGround) speed *= 0.2;
+        return 1.0 / speed;
+    }
+
+    public static boolean equals(Block b1, Block b2) {
+        return equals(b1, b2, true);
+    }
+
+    public static boolean equals(Block b1, Block b2, boolean checkDamage) {
+        return b1 != null && b2 != null && b1.getId() == b2.getId() && (!checkDamage || b1.getDamage() == b2.getDamage());
+    }
+
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         return this.getLevel().setBlock(this, this, true, true);
     }
@@ -510,6 +582,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     /**
      * The full id is a combination of the id and data.
+     *
      * @return full id
      */
     public int getFullId() {
@@ -549,69 +622,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         }
     }
 
-    private static double toolBreakTimeBonus0(
-            int toolType, int toolTier, boolean isWoolBlock, boolean isCobweb) {
-        if (toolType == ItemTool.TYPE_SWORD) return isCobweb ? 15.0 : 1.0;
-        if (toolType == ItemTool.TYPE_SHEARS) return isWoolBlock ? 5.0 : 15.0;
-        if (toolType == ItemTool.TYPE_NONE) return 1.0;
-        switch (toolTier) {
-            case ItemTool.TIER_WOODEN:
-                return 2.0;
-            case ItemTool.TIER_STONE:
-                return 4.0;
-            case ItemTool.TIER_IRON:
-                return 6.0;
-            case ItemTool.TIER_DIAMOND:
-                return 8.0;
-            case ItemTool.TIER_GOLD:
-                return 12.0;
-            default:
-                return 1.0;
-        }
-    }
-
-    private static double speedBonusByEfficiencyLore0(int efficiencyLoreLevel) {
-        if (efficiencyLoreLevel == 0) return 0;
-        return efficiencyLoreLevel * efficiencyLoreLevel + 1;
-    }
-
-    private static double speedRateByHasteLore0(int hasteLoreLevel) {
-        return 1.0 + (0.2 * hasteLoreLevel);
-    }
-
-    private static int toolType0(Item item) {
-        if (item.isSword()) return ItemTool.TYPE_SWORD;
-        if (item.isShovel()) return ItemTool.TYPE_SHOVEL;
-        if (item.isPickaxe()) return ItemTool.TYPE_PICKAXE;
-        if (item.isAxe()) return ItemTool.TYPE_AXE;
-        if (item.isShears()) return ItemTool.TYPE_SHEARS;
-        return ItemTool.TYPE_NONE;
-    }
-
-    private static boolean correctTool0(int blockToolType, Item item) {
-        return (blockToolType == ItemTool.TYPE_SWORD && item.isSword()) ||
-                (blockToolType == ItemTool.TYPE_SHOVEL && item.isShovel()) ||
-                (blockToolType == ItemTool.TYPE_PICKAXE && item.isPickaxe()) ||
-                (blockToolType == ItemTool.TYPE_AXE && item.isAxe()) ||
-                (blockToolType == ItemTool.TYPE_SHEARS && item.isShears()) ||
-                blockToolType == ItemTool.TYPE_NONE;
-    }
-
-    //http://minecraft.gamepedia.com/Breaking
-    private static double breakTime0(double blockHardness, boolean correctTool, boolean canHarvestWithHand,
-                                     int blockId, int toolType, int toolTier, int efficiencyLoreLevel, int hasteEffectLevel,
-                                     boolean insideOfWaterWithoutAquaAffinity, boolean outOfWaterButNotOnGround) {
-        double baseTime = ((correctTool || canHarvestWithHand) ? 1.5 : 5.0) * blockHardness;
-        double speed = 1.0 / baseTime;
-        boolean isWoolBlock = blockId == Block.WOOL, isCobweb = blockId == Block.COBWEB;
-        if (correctTool) speed *= toolBreakTimeBonus0(toolType, toolTier, isWoolBlock, isCobweb);
-        speed += speedBonusByEfficiencyLore0(efficiencyLoreLevel);
-        speed *= speedRateByHasteLore0(hasteEffectLevel);
-        if (insideOfWaterWithoutAquaAffinity) speed *= 0.2;
-        if (outOfWaterButNotOnGround) speed *= 0.2;
-        return 1.0 / speed;
-    }
-
     public double getBreakTime(Item item, Player player) {
         Objects.requireNonNull(item, "getBreakTime: Item can not be null");
         Objects.requireNonNull(player, "getBreakTime: Player can not be null");
@@ -634,9 +644,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     /**
-     * @deprecated This function is lack of Player class and is not accurate enough, use #getBreakTime(Item, Player)
      * @param item item used
      * @return break time
+     * @deprecated This function is lack of Player class and is not accurate enough, use #getBreakTime(Item, Player)
      */
     @Deprecated
     public double getBreakTime(Item item) {
@@ -648,7 +658,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                     (this.getToolType() == ItemTool.TYPE_PICKAXE && item.isPickaxe()) ||
                             (this.getToolType() == ItemTool.TYPE_AXE && item.isAxe()) ||
                             (this.getToolType() == ItemTool.TYPE_SHOVEL && item.isShovel())
-                    ) {
+            ) {
                 int tier = item.getTier();
                 switch (tier) {
                     case ItemTool.TIER_WOODEN:
@@ -958,14 +968,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     public boolean isNormalBlock() {
         return !isTransparent() && isSolid() && !isPowerSource();
-    }
-
-    public static boolean equals(Block b1, Block b2) {
-        return equals(b1, b2, true);
-    }
-
-    public static boolean equals(Block b1, Block b2, boolean checkDamage) {
-        return b1 != null && b2 != null && b1.getId() == b2.getId() && (!checkDamage || b1.getDamage() == b2.getDamage());
     }
 
     public Item toItem() {

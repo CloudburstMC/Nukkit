@@ -11,7 +11,7 @@ import cn.nukkit.plugin.Plugin;
  *
  * <p>另外，继承这个类的任务可以通过{@link #getOwner()}来获得这个任务所属的插件。<br>
  * Otherwise, tasks that extend this class can use {@link #getOwner()} to get its owner.</p>
- *
+ * <p>
  * 下面是一个插件创建任务的例子：<br>An example for plugin create a task:
  * <pre>
  *     public class ExampleTask extends PluginTask&lt;ExamplePlugin&gt;{

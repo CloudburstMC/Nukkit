@@ -34,10 +34,6 @@ public class Binary {
         return value << 48 >> 48;
     }
 
-    public int unsignShort(int value) {
-        return value & 0xffff;
-    }
-
     public static int signInt(int value) {
         return value << 32 >> 32;
     }
@@ -503,6 +499,10 @@ public class Binary {
             buffer.put(bytes);
         }
         return buffer.array();
+    }
+
+    public int unsignShort(int value) {
+        return value & 0xffff;
     }
 
 

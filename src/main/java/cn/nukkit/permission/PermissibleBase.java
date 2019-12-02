@@ -17,13 +17,10 @@ import java.util.Set;
  */
 public class PermissibleBase implements Permissible {
 
-    ServerOperator opable = null;
-
-    private Permissible parent = null;
-
     private final Set<PermissionAttachment> attachments = new HashSet<>();
-
     private final Map<String, PermissionAttachmentInfo> permissions = new HashMap<>();
+    ServerOperator opable = null;
+    private Permissible parent = null;
 
     public PermissibleBase(ServerOperator opable) {
         this.opable = opable;

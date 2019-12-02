@@ -120,7 +120,7 @@ public class BlockFire extends BlockFlowable {
                             this.getLevel().canBlockSeeSky(this.west()) ||
                             this.getLevel().canBlockSeeSky(this.south()) ||
                             this.getLevel().canBlockSeeSky(this.north()))
-                    ) {
+            ) {
                 BlockFadeEvent event = new BlockFadeEvent(this, get(AIR));
                 level.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
@@ -282,11 +282,8 @@ public class BlockFire extends BlockFlowable {
                         (block.getDamage() & 8) == 8) {
 
                     return true;
-                } else if (block instanceof BlockSnowLayer &&
-                        (block.getDamage() & 7) == 7) {
-
-                    return true;
-                }
+                } else return block instanceof BlockSnowLayer &&
+                        (block.getDamage() & 7) == 7;
             }
         }
 

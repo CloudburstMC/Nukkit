@@ -43,19 +43,9 @@ import java.util.Set;
 import static co.aikar.timings.TimingIdentifier.DEFAULT_GROUP;
 
 public final class Timings {
-    private static boolean timingsEnabled = false;
-    private static boolean verboseEnabled = false;
-    private static boolean privacy = false;
-    private static Set<String> ignoredConfigSections = new HashSet<>();
-
-    private static final int MAX_HISTORY_FRAMES = 12;
-    private static int historyInterval = -1;
-    private static int historyLength = -1;
-
     public static final FullServerTickTiming fullServerTickTimer;
     public static final Timing timingsTickTimer;
     public static final Timing pluginEventTimer;
-
     public static final Timing connectionTimer;
     public static final Timing schedulerTimer;
     public static final Timing schedulerAsyncTimer;
@@ -63,25 +53,28 @@ public final class Timings {
     public static final Timing commandTimer;
     public static final Timing serverCommandTimer;
     public static final Timing levelSaveTimer;
-
     public static final Timing playerNetworkSendTimer;
     public static final Timing playerNetworkReceiveTimer;
     public static final Timing playerChunkOrderTimer;
     public static final Timing playerChunkSendTimer;
     public static final Timing playerCommandTimer;
-
     public static final Timing tickEntityTimer;
     public static final Timing tickBlockEntityTimer;
     public static final Timing entityMoveTimer;
     public static final Timing entityBaseTickTimer;
     public static final Timing livingEntityBaseTickTimer;
-
     public static final Timing generationTimer;
     public static final Timing populationTimer;
     public static final Timing generationCallbackTimer;
-
     public static final Timing permissibleCalculationTimer;
     public static final Timing permissionDefaultTimer;
+    private static final int MAX_HISTORY_FRAMES = 12;
+    private static boolean timingsEnabled = false;
+    private static boolean verboseEnabled = false;
+    private static boolean privacy = false;
+    private static Set<String> ignoredConfigSections = new HashSet<>();
+    private static int historyInterval = -1;
+    private static int historyLength = -1;
 
     static {
         setTimingsEnabled(Server.getInstance().getConfig("timings.enabled", false));

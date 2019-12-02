@@ -78,20 +78,20 @@ public abstract class Biome implements BlockID {
 
     public abstract String getName();
 
-    public void setBaseHeight(float baseHeight) {
-        this.baseHeight = baseHeight;
-    }
-
-    public void setHeightVariation(float heightVariation)   {
-        this.heightVariation = heightVariation;
-    }
-
     public float getBaseHeight() {
         return baseHeight;
     }
 
+    public void setBaseHeight(float baseHeight) {
+        this.baseHeight = baseHeight;
+    }
+
     public float getHeightVariation() {
         return heightVariation;
+    }
+
+    public void setHeightVariation(float heightVariation) {
+        this.heightVariation = heightVariation;
     }
 
     @Override
@@ -111,12 +111,12 @@ public abstract class Biome implements BlockID {
 
     /**
      * Whether or not overhangs should generate in this biome (places where solid blocks generate over air)
-     *
+     * <p>
      * This should probably be used with a custom max elevation or things can look stupid
      *
      * @return overhang
      */
-    public boolean doesOverhang()   {
+    public boolean doesOverhang() {
         return false;
     }
 
@@ -127,7 +127,7 @@ public abstract class Biome implements BlockID {
      * @param z z
      * @return height offset
      */
-    public int getHeightOffset(int x, int z)    {
+    public int getHeightOffset(int x, int z) {
         return 0;
     }
 }

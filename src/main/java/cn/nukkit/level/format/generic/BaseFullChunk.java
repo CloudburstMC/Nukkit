@@ -34,7 +34,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     /**
      * encoded as:
-     *
+     * <p>
      * (x &lt;&lt; 4) | z
      */
     protected byte[] biomes;
@@ -57,16 +57,12 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     protected LevelProvider provider;
     protected Class<? extends LevelProvider> providerClass;
-
+    protected long changes;
+    protected boolean isInit;
+    protected BatchPacket chunkPacket;
     private int x;
     private int z;
     private long hash;
-
-    protected long changes;
-
-    protected boolean isInit;
-
-    protected BatchPacket chunkPacket;
 
     @Override
     public BaseFullChunk clone() {
@@ -102,19 +98,19 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
         return chunk;
     }
 
-    public void setChunkPacket(BatchPacket packet) {
-        if (packet != null) {
-            packet.trim();
-        }
-        this.chunkPacket = packet;
-    }
-
     public BatchPacket getChunkPacket() {
         BatchPacket pk = chunkPacket;
         if (pk != null) {
             pk.trim();
         }
         return chunkPacket;
+    }
+
+    public void setChunkPacket(BatchPacket packet) {
+        if (packet != null) {
+            packet.trim();
+        }
+        this.chunkPacket = packet;
     }
 
     public void initChunk() {
@@ -179,9 +175,19 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
         return x;
     }
 
+    public final void setX(int x) {
+        this.x = x;
+        this.hash = Level.chunkHash(x, getZ());
+    }
+
     @Override
     public final int getZ() {
         return z;
+    }
+
+    public final void setZ(int z) {
+        this.z = z;
+        this.hash = Level.chunkHash(getX(), z);
     }
 
     @Override
@@ -189,16 +195,6 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
         this.x = x;
         this.z = z;
         this.hash = Level.chunkHash(x, z);
-    }
-
-    public final void setX(int x) {
-        this.x = x;
-        this.hash = Level.chunkHash(x, getZ());
-    }
-
-    public final void setZ(int z) {
-        this.z = z;
-        this.hash = Level.chunkHash(getX(), z);
     }
 
     @Override
@@ -498,15 +494,14 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     }
 
     @Override
-    public void setLightPopulated() {
-        this.setLightPopulated(true);
-    }
-
-    @Override
     public void setLightPopulated(boolean value) {
 
     }
 
+    @Override
+    public void setLightPopulated() {
+        this.setLightPopulated(true);
+    }
 
     @Override
     public int getBlockIdAt(int x, int y, int z) {

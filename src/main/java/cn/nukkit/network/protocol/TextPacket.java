@@ -9,12 +9,6 @@ import lombok.ToString;
 public class TextPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.TEXT_PACKET;
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
-    }
-
     public static final byte TYPE_RAW = 0;
     public static final byte TYPE_CHAT = 1;
     public static final byte TYPE_TRANSLATION = 2;
@@ -25,7 +19,6 @@ public class TextPacket extends DataPacket {
     public static final byte TYPE_WHISPER = 7;
     public static final byte TYPE_ANNOUNCEMENT = 8;
     public static final byte TYPE_JSON = 9;
-
     public byte type;
     public String source = "";
     public String message = "";
@@ -33,6 +26,11 @@ public class TextPacket extends DataPacket {
     public boolean isLocalized = false;
     public String xboxUserId = "";
     public String platformChatId = "";
+
+    @Override
+    public byte pid() {
+        return NETWORK_ID;
+    }
 
     @Override
     public void decode() {

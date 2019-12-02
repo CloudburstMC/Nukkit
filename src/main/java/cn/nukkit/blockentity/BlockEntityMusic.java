@@ -35,11 +35,11 @@ public class BlockEntityMusic extends BlockEntity {
         return this.namedTag.getByte("note");
     }
 
-    public void setPowered(boolean powered) {
-        this.namedTag.putBoolean("powered", powered);
-    }
-
     public boolean isPowered() {
         return this.namedTag.getBoolean("powered");
+    }
+
+    public void setPowered(boolean powered) {
+        this.namedTag.putBoolean("powered", powered);
     }
 }

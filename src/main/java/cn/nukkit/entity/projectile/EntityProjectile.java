@@ -22,19 +22,8 @@ public abstract class EntityProjectile extends Entity {
     public static final int DATA_SHOOTER_ID = 17;
 
     public Entity shootingEntity = null;
-
-    protected double getDamage() {
-        return namedTag.contains("damage") ? namedTag.getDouble("damage") : getBaseDamage();
-    }
-
-    protected double getBaseDamage() {
-        return 0;
-    }
-
     public boolean hadCollision = false;
-
     public boolean closeOnCollide = true;
-
     protected double damage = 0;
 
     public EntityProjectile(FullChunk chunk, CompoundTag nbt) {
@@ -47,6 +36,14 @@ public abstract class EntityProjectile extends Entity {
         if (shootingEntity != null) {
             this.setDataProperty(new LongEntityData(DATA_SHOOTER_ID, shootingEntity.getId()));
         }
+    }
+
+    protected double getDamage() {
+        return namedTag.contains("damage") ? namedTag.getDouble("damage") : getBaseDamage();
+    }
+
+    protected double getBaseDamage() {
+        return 0;
     }
 
     public int getResultDamage() {
@@ -136,7 +133,7 @@ public abstract class EntityProjectile extends Entity {
             for (Entity entity : list) {
                 if (/*!entity.canCollideWith(this) or */
                         (entity == this.shootingEntity && this.ticksLived < 5)
-                        ) {
+                ) {
                     continue;
                 }
 

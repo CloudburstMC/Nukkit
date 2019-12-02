@@ -34,12 +34,12 @@ public class ItemTrident extends ItemTool {
     public int getMaxDurability() {
         return ItemTool.DURABILITY_TRIDENT;
     }
-    
+
     @Override
     public boolean isSword() {
         return true;
     }
-    
+
     @Override
     public int getAttackDamage() {
         return 9;

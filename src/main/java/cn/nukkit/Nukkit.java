@@ -57,7 +57,7 @@ public class Nukkit {
 
     public static void main(String[] args) {
         // Force IPv4 since Nukkit is not compatible with IPv6
-        System.setProperty("java.net.preferIPv4Stack" , "true");
+        System.setProperty("java.net.preferIPv4Stack", "true");
         System.setProperty("log4j.skipJansi", "false");
 
         // Force Mapped ByteBuffers for LevelDB till fixed.
@@ -141,7 +141,7 @@ public class Nukkit {
     private static boolean requiresShortTitle() {
         //Shorter title for windows 8/2012
         String osName = System.getProperty("os.name").toLowerCase();
-        return osName.contains("windows") &&(osName.contains("windows 8") || osName.contains("2012"));
+        return osName.contains("windows") && (osName.contains("windows 8") || osName.contains("2012"));
     }
 
     private static Properties getGitInfo() {

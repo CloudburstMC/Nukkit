@@ -22,6 +22,15 @@ public class BlockEntitySign extends BlockEntitySpawnable {
         super(chunk, nbt);
     }
 
+    private static void sanitizeText(String[] lines) {
+        for (int i = 0; i < lines.length; i++) {
+            // Don't allow excessive text per line.
+            if (lines[i] != null) {
+                lines[i] = lines[i].substring(0, Math.min(255, lines[i].length()));
+            }
+        }
+    }
+
     @Override
     protected void initBlockEntity() {
         text = new String[4];
@@ -135,14 +144,5 @@ public class BlockEntitySign extends BlockEntitySpawnable {
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
 
-    }
-
-    private static void sanitizeText(String[] lines) {
-        for (int i = 0; i < lines.length; i++) {
-            // Don't allow excessive text per line.
-            if (lines[i] != null) {
-                lines[i] = lines[i].substring(0, Math.min(255, lines[i].length()));
-            }
-        }
     }
 }

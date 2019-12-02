@@ -25,19 +25,6 @@ import java.util.zip.Deflater;
 @Log4j2
 public class CraftingManager {
 
-    public final Collection<Recipe> recipes = new ArrayDeque<>();
-
-    public static BatchPacket packet = null;
-    protected final Map<Integer, Map<UUID, ShapedRecipe>> shapedRecipes = new Int2ObjectOpenHashMap<>();
-
-    public final Map<Integer, FurnaceRecipe> furnaceRecipes = new Int2ObjectOpenHashMap<>();
-
-    public final Map<Integer, BrewingRecipe> brewingRecipes = new Int2ObjectOpenHashMap<>();
-    public final Map<Integer, ContainerRecipe> containerRecipes = new Int2ObjectOpenHashMap<>();
-
-    private static int RECIPE_COUNT = 0;
-    protected final Map<Integer, Map<UUID, ShapelessRecipe>> shapelessRecipes = new Int2ObjectOpenHashMap<>();
-
     public static final Comparator<Item> recipeComparator = (i1, i2) -> {
         if (i1.getId() > i2.getId()) {
             return 1;
@@ -49,6 +36,14 @@ public class CraftingManager {
             return -1;
         } else return Integer.compare(i1.getCount(), i2.getCount());
     };
+    public static BatchPacket packet = null;
+    private static int RECIPE_COUNT = 0;
+    public final Collection<Recipe> recipes = new ArrayDeque<>();
+    public final Map<Integer, FurnaceRecipe> furnaceRecipes = new Int2ObjectOpenHashMap<>();
+    public final Map<Integer, BrewingRecipe> brewingRecipes = new Int2ObjectOpenHashMap<>();
+    public final Map<Integer, ContainerRecipe> containerRecipes = new Int2ObjectOpenHashMap<>();
+    protected final Map<Integer, Map<UUID, ShapedRecipe>> shapedRecipes = new Int2ObjectOpenHashMap<>();
+    protected final Map<Integer, Map<UUID, ShapelessRecipe>> shapelessRecipes = new Int2ObjectOpenHashMap<>();
 
     public CraftingManager() {
         InputStream recipesStream = Server.class.getClassLoader().getResourceAsStream("recipes.json");
@@ -70,6 +65,26 @@ public class CraftingManager {
         this.rebuildPacket();
 
         MainLogger.getLogger().info("Loaded " + this.recipes.size() + " recipes.");
+    }
+
+    private static UUID getMultiItemHash(Collection<Item> items) {
+        BinaryStream stream = new BinaryStream();
+        for (Item item : items) {
+            stream.putVarInt(getFullItemHash(item));
+        }
+        return UUID.nameUUIDFromBytes(stream.getBuffer());
+    }
+
+    private static int getFullItemHash(Item item) {
+        return 31 * getItemHash(item) + item.getCount();
+    }
+
+    private static int getItemHash(Item item) {
+        return getItemHash(item.getId(), item.getDamage());
+    }
+
+    private static int getItemHash(int id, int meta) {
+        return (id << 4) | (meta & 0xf);
     }
 
     @SuppressWarnings("unchecked")
@@ -226,29 +241,9 @@ public class CraftingManager {
         return recipe;
     }
 
-    private static UUID getMultiItemHash(Collection<Item> items) {
-        BinaryStream stream = new BinaryStream();
-        for (Item item : items) {
-            stream.putVarInt(getFullItemHash(item));
-        }
-        return UUID.nameUUIDFromBytes(stream.getBuffer());
-    }
-
-    private static int getFullItemHash(Item item) {
-        return 31 * getItemHash(item) + item.getCount();
-    }
-
     public void registerFurnaceRecipe(FurnaceRecipe recipe) {
         Item input = recipe.getInput();
         this.furnaceRecipes.put(getItemHash(input), recipe);
-    }
-
-    private static int getItemHash(Item item) {
-        return getItemHash(item.getId(), item.getDamage());
-    }
-
-    private static int getItemHash(int id, int meta) {
-        return (id << 4) | (meta & 0xf);
     }
 
     public void registerShapedRecipe(ShapedRecipe recipe) {

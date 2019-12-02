@@ -24,6 +24,13 @@ public class Achievement {
             put("diamonds", new Achievement("DIAMONDS!", "acquireIron"));
         }
     };
+    public final String message;
+    public final String[] requires;
+
+    public Achievement(String message, String... requires) {
+        this.message = message;
+        this.requires = requires;
+    }
 
     public static boolean broadcast(Player player, String achievementId) {
         if (!achievements.containsKey(achievementId)) {
@@ -46,14 +53,6 @@ public class Achievement {
 
         achievements.put(name, achievement);
         return true;
-    }
-
-    public final String message;
-    public final String[] requires;
-
-    public Achievement(String message, String... requires) {
-        this.message = message;
-        this.requires = requires;
     }
 
     public String getMessage() {

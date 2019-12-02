@@ -10,9 +10,8 @@ import cn.nukkit.network.protocol.LevelEventPacket;
  */
 public class GenericParticle extends Particle {
 
-    protected int id = 0;
-
     protected final int data;
+    protected int id = 0;
 
     public GenericParticle(Vector3 pos, int id) {
         this(pos, id, 0);

@@ -23,9 +23,8 @@ public class CharPalette {
     private char[] insert(char val) {
         lastIndex = Character.MAX_VALUE;
         if (keys.length == 0) {
-            return new char[] { val };
-        }
-        else if (val < keys[0]) {
+            return new char[]{val};
+        } else if (val < keys[0]) {
             char[] s = new char[keys.length + 1];
             System.arraycopy(keys, 0, s, 1, keys.length);
             s[0] = val;

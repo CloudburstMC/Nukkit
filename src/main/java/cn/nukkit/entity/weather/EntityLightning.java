@@ -19,20 +19,18 @@ import java.util.concurrent.ThreadLocalRandom;
 public class EntityLightning extends Entity implements EntityLightningStrike {
 
     public static final int NETWORK_ID = 93;
-
-    protected boolean isEffect = true;
-
     public int state;
     public int liveTime;
+    protected boolean isEffect = true;
 
+
+    public EntityLightning(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+    }
 
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
-    }
-
-    public EntityLightning(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
     }
 
     @Override

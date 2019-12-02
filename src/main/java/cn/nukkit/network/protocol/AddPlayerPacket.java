@@ -14,12 +14,6 @@ import java.util.UUID;
 @ToString
 public class AddPlayerPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.ADD_PLAYER_PACKET;
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
-    }
-
     public UUID uuid;
     public String username;
     public long entityUniqueId;
@@ -38,6 +32,11 @@ public class AddPlayerPacket extends DataPacket {
     //public EntityLink links = new EntityLink[0];
     public String deviceId = "";
     public int buildPlatform = -1;
+
+    @Override
+    public byte pid() {
+        return NETWORK_ID;
+    }
 
     @Override
     public void decode() {

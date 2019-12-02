@@ -4,7 +4,7 @@ import lombok.ToString;
 
 @ToString
 public class ScriptCustomEventPacket extends DataPacket {
-    
+
     public String eventName;
     public byte[] eventData;
 

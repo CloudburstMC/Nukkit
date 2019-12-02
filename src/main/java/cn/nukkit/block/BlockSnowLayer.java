@@ -118,7 +118,7 @@ public class BlockSnowLayer extends BlockFallable {
     public boolean canHarvestWithHand() {
         return false;
     }
-    
+
     @Override
     public boolean isTransparent() {
         return true;

@@ -31,6 +31,21 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         super(meta);
     }
 
+    public static boolean canPush(Block block, BlockFace face, boolean destroyBlocks) {
+        if (block.canBePushed() && block.getY() >= 0 && (face != BlockFace.DOWN || block.getY() != 0) &&
+                block.getY() <= 255 && (face != BlockFace.UP || block.getY() != 255)) {
+            if (!(block instanceof BlockPistonBase)) {
+
+                if (block instanceof BlockFlowable) {
+                    return destroyBlocks;
+                }
+            } else return !((BlockPistonBase) block).isExtended();
+            return true;
+        }
+        return false;
+
+    }
+
     @Override
     public double getResistance() {
         return 2.5;
@@ -219,19 +234,14 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         }
     }
 
-    public static boolean canPush(Block block, BlockFace face, boolean destroyBlocks) {
-        if (block.canBePushed() && block.getY() >= 0 && (face != BlockFace.DOWN || block.getY() != 0) &&
-                block.getY() <= 255 && (face != BlockFace.UP || block.getY() != 255)) {
-            if (!(block instanceof BlockPistonBase)) {
+    @Override
+    public Item toItem() {
+        return new ItemBlock(this, 0);
+    }
 
-                if (block instanceof BlockFlowable) {
-                    return destroyBlocks;
-                }
-            } else return !((BlockPistonBase) block).isExtended();
-            return true;
-        }
-        return false;
-
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
     }
 
     public class BlocksCalculator {
@@ -392,15 +402,5 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         public List<Block> getBlocksToDestroy() {
             return this.toDestroy;
         }
-    }
-
-    @Override
-    public Item toItem() {
-        return new ItemBlock(this, 0);
-    }
-
-    @Override
-    public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
     }
 }

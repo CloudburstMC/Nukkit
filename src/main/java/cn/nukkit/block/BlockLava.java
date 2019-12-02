@@ -165,29 +165,29 @@ public class BlockLava extends BlockLiquid {
     }
 
     @Override
-    protected void checkForHarden(){ 
+    protected void checkForHarden() {
         Block colliding = null;
-        for(int side = 1; side < 6; ++side){ //don't check downwards side
+        for (int side = 1; side < 6; ++side) { //don't check downwards side
             Block blockSide = this.getSide(BlockFace.fromIndex(side));
-            if(blockSide instanceof BlockWater){
+            if (blockSide instanceof BlockWater) {
                 colliding = blockSide;
                 break;
             }
         }
-        if(colliding != null){
-            if(this.getDamage() == 0){
+        if (colliding != null) {
+            if (this.getDamage() == 0) {
                 this.liquidCollide(colliding, new BlockObsidian());
-            }else if(this.getDamage() <= 4){
+            } else if (this.getDamage() <= 4) {
                 this.liquidCollide(colliding, new BlockCobblestone());
             }
         }
     }
 
     @Override
-    protected void flowIntoBlock(Block block, int newFlowDecay){
-        if(block instanceof BlockWater){
+    protected void flowIntoBlock(Block block, int newFlowDecay) {
+        if (block instanceof BlockWater) {
             ((BlockLiquid) block).liquidCollide(this, new BlockStone());
-        }else{
+        } else {
             super.flowIntoBlock(block, newFlowDecay);
         }
     }
