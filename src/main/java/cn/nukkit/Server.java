@@ -1752,6 +1752,37 @@ public class Server {
         }
     }
 
+    public Player getPlayerByDisplayName(String displayName) {
+        Player found = null;
+        displayName = displayName.toLowerCase();
+        int delta = Integer.MAX_VALUE;
+        for (Player player : this.getOnlinePlayers().values()) {
+            if (player.getDisplayName().toLowerCase().startsWith(displayName)) {
+                int curDelta = player.getDisplayName().length() - displayName.length();
+                if (curDelta < delta) {
+                    found = player;
+                    delta = curDelta;
+                }
+                if (curDelta == 0) {
+                    break;
+                }
+            }
+        }
+
+        return found;
+    }
+
+    public Player getPlayerByDisplayNameExact(String displayName) {
+        displayName = displayName.toLowerCase();
+        for (Player player : this.getOnlinePlayers().values()) {
+            if (player.getDisplayName().toLowerCase().equals(displayName)) {
+                return player;
+            }
+        }
+
+        return null;
+    }
+
     public Player getPlayer(String name) {
         Player found = null;
         name = name.toLowerCase();
