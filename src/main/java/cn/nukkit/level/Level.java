@@ -968,6 +968,10 @@ public class Level implements ChunkManager, Metadatable {
         this.sendBlocks(target, blocks, flags, 0);
     }
 
+    public void sendBlocks(Player[] target, Vector3[] blocks, int flags, boolean optimizeRebuilds) {
+        this.sendBlocks(target, blocks, flags, 0, optimizeRebuilds);
+    }
+
     public void sendBlocks(Player[] target, Vector3[] blocks, int flags, int dataLayer) {
         this.sendBlocks(target, blocks, flags, dataLayer, false);
     }
