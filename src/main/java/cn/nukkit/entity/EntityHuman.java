@@ -85,7 +85,7 @@ public class EntityHuman extends EntityHumanType {
     }
 
     public void setSkin(Skin skin) {
-        List<Player> players = this.server.getOnlinePlayers().values().stream().filter(player -> player.spawned && this.hasSpawned.containsValue(player)).collect(Collectors.toList());
+        List<Player> players = this.hasSpawned.values().stream().filter(player -> player.spawned).collect(Collectors.toList());
 
         PlayerSkinPacket pk = new PlayerSkinPacket();
         pk.oldSkinName = this.skin == null ? "" : this.skin.getFullSkinId();
