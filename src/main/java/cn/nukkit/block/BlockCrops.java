@@ -16,7 +16,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * Nukkit Project
  */
 public abstract class BlockCrops extends BlockFlowable {
-    
+
     public static final int MINIMUM_LIGHT_LEVEL = 9;
 
     protected BlockCrops(int meta) {

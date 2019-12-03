@@ -47,6 +47,11 @@ public class BlockGrass extends BlockDirt {
     }
 
     @Override
+    public boolean onActivate(Item item) {
+        return this.onActivate(item, null);
+    }
+
+    @Override
     public boolean onActivate(Item item, Player player) {
         if (item.getId() == Item.DYE && item.getDamage() == 0x0F) {
             if (player != null && (player.gamemode & 0x01) == 0) {
