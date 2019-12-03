@@ -11,6 +11,7 @@ import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.item.EntityXPOrb;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.weather.EntityLightning;
+import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.block.BlockUpdateEvent;
@@ -1858,15 +1859,10 @@ public class Level implements ChunkManager, Metadatable {
             BlockBreakEvent ev = new BlockBreakEvent(player, target, face, item, eventDrops, player.isCreative(),
                     (player.lastBreak + breakTime * 1000) > System.currentTimeMillis());
 
-            double distance;
             if (player.isSurvival() && !target.isBreakable(item)) {
                 ev.setCancelled();
-            } else if (!player.isOp() && (distance = this.server.getSpawnRadius()) > -1) {
-                Vector2 t = new Vector2(target.x, target.z);
-                Vector2 s = new Vector2(this.getSpawnLocation().x, this.getSpawnLocation().z);
-                if (t.distance(s) <= distance) {
-                    ev.setCancelled();
-                }
+            } else {
+                this.checkSpawnProtection(player, target, ev);
             }
 
             this.server.getPluginManager().callEvent(ev);
@@ -1996,14 +1992,7 @@ public class Level implements ChunkManager, Metadatable {
                 ev.setCancelled();
             }
 
-            int distance = this.server.getSpawnRadius();
-            if (!player.isOp() && distance > -1) {
-                Vector2 t = new Vector2(target.x, target.z);
-                Vector2 s = new Vector2(this.getSpawnLocation().x, this.getSpawnLocation().z);
-                if (t.distance(s) <= distance) {
-                    ev.setCancelled();
-                }
-            }
+            this.checkSpawnProtection(player, target, ev);
 
             this.server.getPluginManager().callEvent(ev);
             if (!ev.isCancelled()) {
@@ -2093,14 +2082,7 @@ public class Level implements ChunkManager, Metadatable {
                     event.setCancelled();
                 }
             }
-            int distance = this.server.getSpawnRadius();
-            if (!player.isOp() && distance > -1) {
-                Vector2 t = new Vector2(target.x, target.z);
-                Vector2 s = new Vector2(this.getSpawnLocation().x, this.getSpawnLocation().z);
-                if (t.distance(s) <= distance) {
-                    event.setCancelled();
-                }
-            }
+            this.checkSpawnProtection(player, target, event);
 
             this.server.getPluginManager().callEvent(event);
             if (event.isCancelled()) {
@@ -2126,6 +2108,17 @@ public class Level implements ChunkManager, Metadatable {
             item = new ItemBlock(new BlockAir(), 0, 0);
         }
         return item;
+    }
+
+    public void checkSpawnProtection(Player player, Block block, Cancellable cancellable) {
+        int distance = this.server.getSpawnRadius();
+        if (!player.isOp() && distance > -1) {
+            Vector2 t = new Vector2(block.x, block.z);
+            Vector2 s = new Vector2(this.getSpawnLocation().x, this.getSpawnLocation().z);
+            if (t.distance(s) <= distance) {
+                cancellable.setCancelled();
+            }
+        }
     }
 
     public Entity getEntity(long entityId) {
