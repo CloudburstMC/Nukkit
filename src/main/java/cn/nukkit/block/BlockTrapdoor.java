@@ -190,7 +190,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
             top = fy > 0.5;
         } else {
             facing = player.getDirection().getOpposite();
-            top = fy > 0.5;
+            top = face != BlockFace.UP;
         }
 
         int[] faces = {2, 1, 3, 0};
