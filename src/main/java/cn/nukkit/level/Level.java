@@ -1861,7 +1861,7 @@ public class Level implements ChunkManager, Metadatable {
 
             if (player.isSurvival() && !target.isBreakable(item)) {
                 ev.setCancelled();
-            } else if(this.isBlockInSpawnRadius(player, target)) {
+            } else if(!player.isOp() && isInSpawnRadius(target)) {
                 ev.setCancelled();
             }
 
@@ -1992,7 +1992,7 @@ public class Level implements ChunkManager, Metadatable {
                 ev.setCancelled();
             }
 
-            if(this.isBlockInSpawnRadius(player, target)) {
+            if(!player.isOp() && isInSpawnRadius(target)) {
                 ev.setCancelled();
             }
 
@@ -2084,7 +2084,7 @@ public class Level implements ChunkManager, Metadatable {
                     event.setCancelled();
                 }
             }
-            if(this.isBlockInSpawnRadius(player, target)) {
+            if(!player.isOp() && isInSpawnRadius(target)) {
                 event.setCancelled();
             }
 
@@ -2114,9 +2114,9 @@ public class Level implements ChunkManager, Metadatable {
         return item;
     }
 
-    public boolean isBlockInSpawnRadius(Player player, Vector3 vector3) {
+    public boolean isInSpawnRadius(Vector3 vector3) {
         int distance = this.server.getSpawnRadius();
-        if (!player.isOp() && distance > -1) {
+        if (distance > -1) {
             Vector2 t = new Vector2(vector3.x, vector3.z);
             Vector2 s = new Vector2(this.getSpawnLocation().x, this.getSpawnLocation().z);
             return t.distance(s) <= distance;
