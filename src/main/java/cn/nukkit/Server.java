@@ -52,10 +52,7 @@ import cn.nukkit.network.CompressBatchedTask;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
-import cn.nukkit.network.protocol.BatchPacket;
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.PlayerListPacket;
-import cn.nukkit.network.protocol.ProtocolInfo;
+import cn.nukkit.network.protocol.*;
 import cn.nukkit.network.query.QueryHandler;
 import cn.nukkit.network.rcon.RCON;
 import cn.nukkit.permission.BanEntry;
@@ -966,6 +963,19 @@ public class Server {
 
             Server.broadcastPacket(this.playerList.values(), pk);
         }
+    }
+
+    public void updatePlayerSkin(UUID uuid, Skin oldSkin, Skin skin) {
+        this.updatePlayerSkin(uuid, oldSkin, skin, this.playerList.values().toArray(new Player[0]));
+    }
+
+    public void updatePlayerSkin(UUID uuid, Skin oldSkin, Skin skin, Player[] players) {
+        PlayerSkinPacket pk = new PlayerSkinPacket();
+        pk.oldSkinName = oldSkin == null ? "" : oldSkin.getFullSkinId();
+        pk.newSkinName = skin.getFullSkinId();
+        pk.uuid = uuid;
+        pk.skin = skin;
+        Server.broadcastPacket(players, pk);
     }
 
     public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin) {
