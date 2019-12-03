@@ -1861,8 +1861,8 @@ public class Level implements ChunkManager, Metadatable {
 
             if (player.isSurvival() && !target.isBreakable(item)) {
                 ev.setCancelled();
-            } else {
-                this.checkSpawnProtection(player, target, ev);
+            } else if(this.checkSpawnProtection(player, target)) {
+                ev.setCancelled();
             }
 
             this.server.getPluginManager().callEvent(ev);
@@ -1992,7 +1992,9 @@ public class Level implements ChunkManager, Metadatable {
                 ev.setCancelled();
             }
 
-            this.checkSpawnProtection(player, target, ev);
+            if(this.checkSpawnProtection(player, target)) {
+                ev.setCancelled();
+            }
 
             this.server.getPluginManager().callEvent(ev);
             if (!ev.isCancelled()) {
@@ -2082,7 +2084,9 @@ public class Level implements ChunkManager, Metadatable {
                     event.setCancelled();
                 }
             }
-            this.checkSpawnProtection(player, target, event);
+            if(this.checkSpawnProtection(player, target)) {
+                event.setCancelled();
+            }
 
             this.server.getPluginManager().callEvent(event);
             if (event.isCancelled()) {
@@ -2110,15 +2114,14 @@ public class Level implements ChunkManager, Metadatable {
         return item;
     }
 
-    public void checkSpawnProtection(Player player, Block block, Cancellable cancellable) {
+    public boolean checkSpawnProtection(Player player, Block block) {
         int distance = this.server.getSpawnRadius();
         if (!player.isOp() && distance > -1) {
             Vector2 t = new Vector2(block.x, block.z);
             Vector2 s = new Vector2(this.getSpawnLocation().x, this.getSpawnLocation().z);
-            if (t.distance(s) <= distance) {
-                cancellable.setCancelled();
-            }
+            return t.distance(s) <= distance;
         }
+        return false;
     }
 
     public Entity getEntity(long entityId) {
