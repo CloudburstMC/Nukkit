@@ -2114,10 +2114,10 @@ public class Level implements ChunkManager, Metadatable {
         return item;
     }
 
-    public boolean isBlockInSpawnRadius(Player player, Block block) {
+    public boolean isBlockInSpawnRadius(Player player, Vector3 vector3) {
         int distance = this.server.getSpawnRadius();
         if (!player.isOp() && distance > -1) {
-            Vector2 t = new Vector2(block.x, block.z);
+            Vector2 t = new Vector2(vector3.x, vector3.z);
             Vector2 s = new Vector2(this.getSpawnLocation().x, this.getSpawnLocation().z);
             return t.distance(s) <= distance;
         }
