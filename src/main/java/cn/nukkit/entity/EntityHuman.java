@@ -7,6 +7,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.AddPlayerPacket;
+import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.network.protocol.SetEntityLinkPacket;
 import cn.nukkit.utils.SerializedImage;
@@ -16,6 +17,7 @@ import cn.nukkit.utils.Utils;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * author: MagicDroidX
@@ -84,6 +86,17 @@ public class EntityHuman extends EntityHumanType {
 
     public void setSkin(Skin skin) {
         this.skin = skin;
+        List<Player> players = this.server.getOnlinePlayers().values().stream().filter(player -> player.spawned && this.hasSpawned.containsValue(player)).collect(Collectors.toList());
+
+        PlayerSkinPacket pk = new PlayerSkinPacket();
+        pk.oldSkinName = this.skin.getFullSkinId();
+        pk.newSkinName = skin.getFullSkinId();
+        pk.uuid = this.getUniqueId();
+        pk.skin = skin;
+
+        for(Player player : players) {
+            player.dataPacket(pk);
+        }
     }
 
     @Override
