@@ -1864,7 +1864,7 @@ public class Level implements ChunkManager, Metadatable {
             } else if (!player.isOp() && (distance = this.server.getSpawnRadius()) > -1) {
                 Vector2 t = new Vector2(target.x, target.z);
                 Vector2 s = new Vector2(this.getSpawnLocation().x, this.getSpawnLocation().z);
-                if (!this.server.getOps().getAll().isEmpty() && t.distance(s) <= distance) {
+                if (t.distance(s) <= distance) {
                     ev.setCancelled();
                 }
             }
@@ -2000,7 +2000,7 @@ public class Level implements ChunkManager, Metadatable {
             if (!player.isOp() && distance > -1) {
                 Vector2 t = new Vector2(target.x, target.z);
                 Vector2 s = new Vector2(this.getSpawnLocation().x, this.getSpawnLocation().z);
-                if (!this.server.getOps().getAll().isEmpty() && t.distance(s) <= distance) {
+                if (t.distance(s) <= distance) {
                     ev.setCancelled();
                 }
             }
@@ -2097,7 +2097,7 @@ public class Level implements ChunkManager, Metadatable {
             if (!player.isOp() && distance > -1) {
                 Vector2 t = new Vector2(target.x, target.z);
                 Vector2 s = new Vector2(this.getSpawnLocation().x, this.getSpawnLocation().z);
-                if (!this.server.getOps().getAll().isEmpty() && t.distance(s) <= distance) {
+                if (t.distance(s) <= distance) {
                     event.setCancelled();
                 }
             }
