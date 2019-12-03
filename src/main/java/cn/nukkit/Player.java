@@ -673,13 +673,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     public void setSkin(Skin skin) {
-        PlayerSkinPacket pk = new PlayerSkinPacket();
-        pk.oldSkinName = this.skin.getFullSkinId();
-        pk.newSkinName = skin.getFullSkinId();
-        pk.uuid = this.getUniqueId();
-        pk.skin = skin;
+        if(this.spawned) {
+            PlayerSkinPacket pk = new PlayerSkinPacket();
+            pk.oldSkinName = this.skin.getFullSkinId();
+            pk.newSkinName = skin.getFullSkinId();
+            pk.uuid = this.getUniqueId();
+            pk.skin = skin;
 
-        this.dataPacket(pk);
+            this.dataPacket(pk);
+        }
         super.setSkin(skin);
     }
 
