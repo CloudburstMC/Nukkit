@@ -185,4 +185,9 @@ public class BlockItemFrame extends BlockTransparentMeta {
 
         return null;
     }
+
+    @Override
+    public double getHardness() {
+        return 0.25;
+    }
 }

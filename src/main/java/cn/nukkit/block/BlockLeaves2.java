@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 
 /**
  * Created on 2015/12/1 by xtypr.
@@ -39,12 +38,17 @@ public class BlockLeaves2 extends BlockLeaves {
 
     @Override
     protected boolean canDropApple() {
-        return (this.getDamage() & 0x01) == DARK_OAK;
+        return (this.getDamage() & 0x01) != 0;
+    }
+
+    @Override
+    public Item toItem() {
+        return Item.get(BlockID.LEAVES2, this.getDamage() & 0x1);
     }
 
     @Override
     protected Item getSapling() {
-        return new ItemBlock(get(SAPLING), (this.getDamage() & 0x03) + 4);
+        return Item.get(BlockID.SAPLING, (this.getDamage() & 0x01) + 4);
     }
 
     @Override
