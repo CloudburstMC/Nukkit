@@ -85,7 +85,9 @@ public class EntityHuman extends EntityHumanType {
     }
 
     public void setSkin(Skin skin) {
-        this.server.updatePlayerSkin(this.getUniqueId(), this.skin, skin);
+        if (this.getUniqueId() != null) {
+            this.server.updatePlayerSkin(this.getUniqueId(), this.skin, skin);
+        }
         this.skin = skin;
     }
 
