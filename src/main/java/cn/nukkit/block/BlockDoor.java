@@ -36,32 +36,21 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         return false;
     }
 
-    /*@Override
-    public boolean canPassThrough() {
-        return true;
-    }*/
+    public int getFullDamage() {
+        int meta;
 
-    private int getFullDamage() {
-        int up;
-        int down;
-        if (isTop()) {
-            down = this.down().getDamage();
-            up = this.getDamage();
+        if(isTop()) {
+            meta = this.down().getDamage();
         } else {
-            down = this.getDamage();
-            up = this.up().getDamage();
+            meta = this.getDamage();
         }
-
-        boolean isRight = (up & DOOR_HINGE_BIT) > 0;
-
-        return down & 0x07 | (isTop() ? 0x08 : 0) | (isRight ? 0x10 : 0);
+        return (this.getId() << 5 ) + (meta & 0x07 | (isTop() ? 0x08 : 0) | (isRightHinged() ? 0x10 :0));
     }
 
     @Override
     protected AxisAlignedBB recalculateBoundingBox() {
 
         double f = 0.1875;
-        int damage = this.getFullDamage();
 
         AxisAlignedBB bb = new SimpleAxisAlignedBB(
                 this.x,
@@ -72,9 +61,9 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
                 this.z + 1
         );
 
-        int j = damage & 0x03;
-        boolean isOpen = ((damage & 0x04) > 0);
-        boolean isRight = ((damage & 0x10) > 0);
+        int j = isTop() ? (this.down().getDamage() & 0x03) : getDamage() & 0x03;
+        boolean isOpen = isOpen();
+        boolean isRight = isRightHinged();
 
         if (j == 0) {
             if (isOpen) {
@@ -251,8 +240,8 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
             }
 
             this.setDamage(direction);
-            this.getLevel().setBlock(block, this, true, true); //Bottom
-            this.getLevel().setBlock(blockUp, Block.get(this.getId(), metaUp), true); //Top
+            this.getLevel().setBlock(block, this, true, false); //Bottom
+            this.getLevel().setBlock(blockUp, Block.get(this.getId(), metaUp), true, true); //Top
 
             if (!this.isOpen() && this.level.isBlockPowered(this.getLocation())) {
                 this.toggle(null);
@@ -319,13 +308,13 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         if( up.getId() != down.getId() ) {
             return false;
         }
-
-        getLevel().setBlockDataAt(down.getFloorX(), down.getFloorY(), down.getFloorZ(), down.getDamage() ^ 0x04);
+        down.setDamage(down.getDamage() ^ DOOR_OPEN_BIT);
+        getLevel().setBlock(down, down, true, true);
+        getLevel().setBlock(up,up,true,true);
         return true;
     }
 
     public boolean isOpen() {
-
         if (isTop(this.getDamage())) {
             return (this.down().getDamage() & DOOR_OPEN_BIT) > 0;
         }

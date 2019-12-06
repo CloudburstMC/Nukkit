@@ -19,8 +19,8 @@ import cn.nukkit.utils.Faceable;
  */
 public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
 
-    public static int TRAPDOOR_OPEN_BIT = 0x08;
-    public static int TRAPDOOR_TOP_BIT = 0x04;
+    public static final int TRAPDOOR_OPEN_BIT = 0x08;
+    public static final int TRAPDOOR_TOP_BIT = 0x04;
 
     public BlockTrapdoor() {
         this(0);
