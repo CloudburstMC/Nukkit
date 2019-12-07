@@ -169,9 +169,7 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(this.isMovementServerAuthoritative);
         this.putLLong(this.currentTick);
         this.putVarInt(this.enchantmentSeed);
-        log.info("BEFORE WRITE: {}", this.getCount());
         this.put(GlobalBlockPalette.BLOCK_PALETTE);
-        log.info("AFTER WRITE: {}", this.getCount());
         this.put(ITEM_DATA_PALETTE);
         this.putString(this.multiplayerCorrelationId);
     }
