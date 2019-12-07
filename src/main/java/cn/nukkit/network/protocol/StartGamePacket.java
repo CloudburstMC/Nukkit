@@ -7,6 +7,7 @@ import cn.nukkit.utils.BinaryStream;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.ToString;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,7 +19,8 @@ import java.util.Collection;
 /**
  * Created on 15-10-13.
  */
-@ToString
+@Log4j2
+@ToString(exclude = {"blockPalette"})
 public class StartGamePacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.START_GAME_PACKET;
@@ -110,8 +112,6 @@ public class StartGamePacket extends DataPacket {
 
     public int enchantmentSeed;
 
-    public byte[] blockPalette = GlobalBlockPalette.BLOCK_PALETTE;
-
     public String multiplayerCorrelationId = "";
 
     @Override
@@ -169,7 +169,9 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(this.isMovementServerAuthoritative);
         this.putLLong(this.currentTick);
         this.putVarInt(this.enchantmentSeed);
-        this.put(this.blockPalette);
+        log.info("BEFORE WRITE: {}", this.getCount());
+        this.put(GlobalBlockPalette.BLOCK_PALETTE);
+        log.info("AFTER WRITE: {}", this.getCount());
         this.put(ITEM_DATA_PALETTE);
         this.putString(this.multiplayerCorrelationId);
     }

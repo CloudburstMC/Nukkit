@@ -168,7 +168,7 @@ public class BlockItemFrame extends BlockTransparentMeta {
     }
 
     public BlockFace getFacing() {
-        switch (this.getDamage() & 7) {
+        switch (this.getDamage() & 3) {
             case 0:
                 return BlockFace.DOWN;
             case 1:

@@ -4,12 +4,13 @@ import cn.nukkit.Server;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import com.google.common.io.ByteStreams;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteOrder;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -29,41 +30,42 @@ public class GlobalBlockPalette {
         }
         ListTag<CompoundTag> tag;
         try {
-            tag = (ListTag<CompoundTag>) NBTIO.readNetwork(stream);
+            //noinspection UnstableApiUsage
+            BLOCK_PALETTE = ByteStreams.toByteArray(stream);
+            //noinspection unchecked
+            tag = (ListTag<CompoundTag>) NBTIO.readNetwork(new ByteArrayInputStream(BLOCK_PALETTE));
         } catch (IOException e) {
             throw new AssertionError(e);
         }
 
         for (CompoundTag state : tag.getAll()) {
+            int runtimeId = runtimeIdAllocator.getAndIncrement();
+            if (!state.contains("meta")) continue;
+
             int id = state.getShort("id");
-            int meta = state.getShort("meta");
-            registerMapping(id << 4 | meta);
+            int[] meta = state.getIntArray("meta");
+
+            // Resolve to first legacy id
+            runtimeIdToLegacy.put(runtimeId, id << 6 | meta[0]);
+            for (int val : meta) {
+                int legacyId = id << 6 | val;
+                legacyToRuntimeId.put(legacyId, runtimeId);
+            }
             state.remove("meta"); // No point in sending this since the client doesn't use it.
-        }
-        try {
-            BLOCK_PALETTE = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, true);
-        } catch (IOException e) {
-            throw new AssertionError(e);
         }
     }
 
     public static int getOrCreateRuntimeId(int id, int meta) {
-        return getOrCreateRuntimeId((id << 4) | meta);
-    }
-
-    public static int getOrCreateRuntimeId(int legacyId) throws NoSuchElementException {
+        int legacyId = id << 6 | meta;
         int runtimeId = legacyToRuntimeId.get(legacyId);
         if (runtimeId == -1) {
             //runtimeId = registerMapping(runtimeIdAllocator.incrementAndGet(), legacyId);
-            throw new NoSuchElementException("Unmapped block registered id:" + (legacyId >>> 4) + " meta:" + (legacyId & 0xf));
+            throw new NoSuchElementException("Unmapped block registered id:" + id + " meta:" + meta);
         }
         return runtimeId;
     }
 
-    private static int registerMapping(int legacyId) {
-        int runtimeId = runtimeIdAllocator.getAndIncrement();
-        runtimeIdToLegacy.put(runtimeId, legacyId);
-        legacyToRuntimeId.put(legacyId, runtimeId);
-        return runtimeId;
+    public static int getOrCreateRuntimeId(int legacyId) throws NoSuchElementException {
+        return getOrCreateRuntimeId(legacyId >> 4, legacyId & 0xf);
     }
 }

@@ -108,8 +108,7 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
                 .putString("id", BlockEntity.ITEM_FRAME)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z)
-                .putBoolean("isMoveable", true);
+                .putInt("z", (int) this.z);
 
         if (item.getShort("id") != Item.AIR) {
             tag.putCompound("Item", item)
