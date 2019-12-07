@@ -297,20 +297,16 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         }
 
         Block down;
-        Block up;
-        if (isTop(this.getDamage())) {
+        if (isTop()) {
             down = this.down();
-            up = this;
         } else {
             down = this;
-            up = this.up();
         }
-        if( up.getId() != down.getId() ) {
+        if( down.up().getId() != down.getId() ) {
             return false;
         }
         down.setDamage(down.getDamage() ^ DOOR_OPEN_BIT);
         getLevel().setBlock(down, down, true, true);
-        getLevel().setBlock(up,up,true,true);
         return true;
     }
 
