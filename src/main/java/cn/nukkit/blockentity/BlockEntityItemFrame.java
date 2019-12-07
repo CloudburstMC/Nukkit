@@ -29,10 +29,6 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
             namedTag.putFloat("ItemDropChance", 1.0f);
         }
 
-        if (!namedTag.contains("isMoveable")) {
-            namedTag.putBoolean("isMoveable", true);
-        }
-
         this.level.updateComparatorOutputLevel(this);
 
         super.initBlockEntity();
@@ -74,14 +70,6 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
         }
 
         this.level.updateComparatorOutputLevel(this);
-    }
-
-    public boolean isMoveable() {
-        return this.namedTag.getBoolean("isMoveable");
-    }
-
-    public void setMoveable(boolean moveable) {
-        this.namedTag.putBoolean("isMoveable", moveable);
     }
 
     public float getItemDropChance() {
