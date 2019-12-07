@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.LeavesDecayEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
@@ -70,14 +71,14 @@ public class BlockLeaves extends BlockTransparentMeta {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        setPersistent(true);
+        this.setPersistent(true);
         this.getLevel().setBlock(this, this, true);
         return true;
     }
 
     @Override
     public Item toItem() {
-        return Item.get(BlockID.LEAVES, this.getDamage() & 0x3);
+        return new ItemBlock(this, this.getDamage() & 0x3, 1);
     }
 
     @Override
