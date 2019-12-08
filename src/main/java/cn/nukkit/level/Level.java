@@ -2,10 +2,7 @@ package cn.nukkit.level;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockAir;
-import cn.nukkit.block.BlockLiquid;
-import cn.nukkit.block.BlockRedstoneDiode;
+import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
@@ -2015,13 +2012,13 @@ public class Level implements ChunkManager, Metadatable {
                     }
                 }
             } else {
-                if(item instanceof ItemBucket && Block.get(((ItemBucket) item).getDamageByTarget(item.getDamage())) instanceof BlockLiquid) {
+                if(item instanceof ItemBucket && ((ItemBucket) item).getDamageByTarget(item.getDamage()) == BlockID.WATER) {
                     player.getLevel().sendBlocks(new Player[]{player}, new Block[]{Block.get(Block.AIR, 0, block)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
                 }
                 return null;
             }
 
-            if(item instanceof ItemBucket && Block.get(((ItemBucket) item).getDamageByTarget(item.getDamage())) instanceof BlockLiquid) {
+            if(item instanceof ItemBucket && ((ItemBucket) item).getDamageByTarget(item.getDamage()) == BlockID.WATER) {
                 player.getLevel().sendBlocks(new Player[] {player}, new Block[] {Block.get(Block.AIR, 0, target)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
             }
         } else if (target.canBeActivated() && target.onActivate(item, player)) {
