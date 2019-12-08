@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.block.BlockRedstoneDiode;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
@@ -21,6 +22,7 @@ import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.weather.LightningStrikeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemBucket;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.ChunkSection;
@@ -2017,7 +2019,9 @@ public class Level implements ChunkManager, Metadatable {
                 return null;
             }
 
-            player.getLevel().sendBlocks(new Player[] {player}, new Block[] {Block.get(Block.AIR, 0, target)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
+            if(item instanceof ItemBucket && Block.get(((ItemBucket) item).getDamageByTarget(item.getDamage())) instanceof BlockLiquid) {
+                player.getLevel().sendBlocks(new Player[] {player}, new Block[] {Block.get(Block.AIR, 0, target)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
+            }
         } else if (target.canBeActivated() && target.onActivate(item, player)) {
             if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
                 item = new ItemBlock(new BlockAir(), 0, 0);
