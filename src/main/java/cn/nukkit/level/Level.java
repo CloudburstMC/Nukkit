@@ -2016,6 +2016,8 @@ public class Level implements ChunkManager, Metadatable {
                 player.getLevel().sendBlocks(new Player[] {player}, new Block[] {Block.get(Block.AIR, 0, block)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
                 return null;
             }
+
+            player.getLevel().sendBlocks(new Player[] {player}, new Block[] {Block.get(Block.AIR, 0, target)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
         } else if (target.canBeActivated() && target.onActivate(item, player)) {
             if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
                 item = new ItemBlock(new BlockAir(), 0, 0);
