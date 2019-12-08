@@ -51,7 +51,7 @@ public class ItemBucket extends Item {
         }
     }
 
-    protected int getDamageByTarget(int target) {
+    public int getDamageByTarget(int target) {
         switch (target) {
             case 2:
             case 3:
