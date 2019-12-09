@@ -71,14 +71,14 @@ public class BlockLeaves extends BlockTransparentMeta {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        setPersistent(true);
+        this.setPersistent(true);
         this.getLevel().setBlock(this, this, true);
         return true;
     }
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0, 1);
+        return new ItemBlock(this, this.getDamage() & 0x3, 1);
     }
 
     @Override
@@ -229,6 +229,6 @@ public class BlockLeaves extends BlockTransparentMeta {
     }
 
     protected Item getSapling() {
-        return new ItemBlock(get(SAPLING), this.getDamage() & 0x03);
+        return Item.get(BlockID.SAPLING, this.getDamage() & 0x03);
     }
 }

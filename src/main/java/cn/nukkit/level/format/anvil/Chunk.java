@@ -109,7 +109,7 @@ public class Chunk extends BaseChunk {
                 }
             }
         } else {
-            this.biomes = nbt.getByteArray("Biomes");
+            this.biomes = Arrays.copyOf(nbt.getByteArray("Biomes"), 256);
         }
 
         int[] heightMap = nbt.getIntArray("HeightMap");
