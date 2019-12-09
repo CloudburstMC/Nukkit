@@ -54,12 +54,12 @@ public class GlobalBlockPalette {
 
             // Resolve to first legacy id
             runtimeIdToLegacy.put(runtimeId, id << 6 | meta[0]);
-            stringToLegacyId.put(name, id << 6 | meta[0]);
+            stringToLegacyId.put(name, id);
+            legacyIdToString.put(id, name);
 
             for (int val : meta) {
                 int legacyId = id << 6 | val;
                 legacyToRuntimeId.put(legacyId, runtimeId);
-                legacyIdToString.put(legacyId, name);
             }
             state.remove("meta"); // No point in sending this since the client doesn't use it.
         }
@@ -83,16 +83,7 @@ public class GlobalBlockPalette {
         return runtimeIdToLegacy.get(runtimeId);
     }
 
-    public static String getName(int id, int meta) {
-        return legacyIdToString.get((id << 6) | meta);
-    }
-
-    private static int registerMapping(int legacyId, String name) {
-        int runtimeId = runtimeIdAllocator.getAndIncrement();
-        runtimeIdToLegacy.put(runtimeId, legacyId);
-        legacyIdToString.put(legacyId, name);
-        stringToLegacyId.put(name, legacyId);
-        legacyToRuntimeId.put(legacyId, runtimeId);
-        return runtimeId;
+    public static String getName(int id) {
+        return legacyIdToString.get(id);
     }
 }
