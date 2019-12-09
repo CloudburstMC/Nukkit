@@ -13,7 +13,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -85,7 +84,7 @@ public class GlobalBlockPalette {
     }
 
     public static String getName(int id, int meta) {
-        return legacyIdToString.get((id << 4) | meta);
+        return legacyIdToString.get((id << 6) | meta);
     }
 
     private static int registerMapping(int legacyId, String name) {

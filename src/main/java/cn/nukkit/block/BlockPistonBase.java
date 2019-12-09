@@ -15,7 +15,6 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.Faceable;
-import cn.nukkit.utils.MainLogger;
 import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
@@ -158,7 +157,6 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                     return false;
                 }
             } else if (!this.doMove(false)) {
-                MainLogger.getLogger().info("!move");
                 return false;
             }
 
@@ -208,7 +206,6 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         BlocksCalculator calculator = new BlocksCalculator(extending);
 
         if (!calculator.canMove()) {
-            MainLogger.getLogger().info("!move 2");
             return false;
         } else {
             List<BlockVector3> attached = Collections.emptyList();
