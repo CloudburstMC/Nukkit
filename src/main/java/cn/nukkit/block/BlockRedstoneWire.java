@@ -46,10 +46,9 @@ public class BlockRedstoneWire extends BlockFlowable {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (target.canBeReplaced()) {
             block = target;
-            target = target.down();
         }
 
-        if (!canBePlacedOn(target)) {
+        if (!canBePlacedOn(block.down())) {
             return false;
         }
 
@@ -235,7 +234,7 @@ public class BlockRedstoneWire extends BlockFlowable {
     }
 
     public boolean canBePlacedOn(Block b) {
-        return b.isSolid() && !b.isTransparent() && b.getId() != Block.GLOWSTONE;
+        return b.isSolid() && (!b.isTransparent() || b.getId() == Block.GLOWSTONE);
     }
 
     public int getStrongPower(BlockFace side) {
