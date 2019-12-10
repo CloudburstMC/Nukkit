@@ -33,6 +33,7 @@ public class Skin {
     public static final String GEOMETRY_CUSTOM = convertLegacyGeometryName("geometry.humanoid.custom");
     public static final String GEOMETRY_CUSTOM_SLIM = convertLegacyGeometryName("geometry.humanoid.customSlim");
 
+    private final String fullSkinId = UUID.randomUUID().toString();
     private String skinId;
     private String skinResourcePatch = GEOMETRY_CUSTOM;
     private SerializedImage skinData;
@@ -223,7 +224,7 @@ public class Skin {
     }
 
     public String getFullSkinId() {
-        return getSkinId() + getCapeId();
+        return fullSkinId;
     }
 
     private static SerializedImage parseBufferedImage(BufferedImage image) {
