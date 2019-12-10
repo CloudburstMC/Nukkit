@@ -39,7 +39,7 @@ public class BlockItemFrame extends BlockTransparentMeta {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.getSide(getFacing().getOpposite()).isTransparent()) {
+            if (this.getSide(getFacing()).isTransparent()) {
                 this.level.useBreakOn(this);
                 return type;
             }
@@ -75,25 +75,19 @@ public class BlockItemFrame extends BlockTransparentMeta {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (!target.isTransparent() && !block.isSolid()) {
+        if (!target.isTransparent() && face.getIndex() > 1 && !block.isSolid()) {
             switch (face) {
-                case DOWN:
-                    this.setDamage(0);
-                    break;
-                case UP:
-                    this.setDamage(1);
-                    break;
                 case NORTH:
-                    this.setDamage(2);
-                    break;
-                case SOUTH:
                     this.setDamage(3);
                     break;
+                case SOUTH:
+                    this.setDamage(2);
+                    break;
                 case WEST:
-                    this.setDamage(4);
+                    this.setDamage(1);
                     break;
                 case EAST:
-                    this.setDamage(5);
+                    this.setDamage(0);
                     break;
                 default:
                     return false;
@@ -168,19 +162,15 @@ public class BlockItemFrame extends BlockTransparentMeta {
     }
 
     public BlockFace getFacing() {
-        switch (this.getDamage() & 7) {
+        switch (this.getDamage() & 3) {
             case 0:
-                return BlockFace.DOWN;
+                return BlockFace.WEST;
             case 1:
-                return BlockFace.UP;
+                return BlockFace.EAST;
             case 2:
                 return BlockFace.NORTH;
             case 3:
                 return BlockFace.SOUTH;
-            case 4:
-                return BlockFace.WEST;
-            case 5:
-                return BlockFace.EAST;
         }
 
         return null;

@@ -10,6 +10,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.UpdateBlockPacket;
 
 /**
  * author: MagicDroidX
@@ -50,7 +51,7 @@ public class ItemBucket extends Item {
         }
     }
 
-    protected int getDamageByTarget(int target) {
+    public int getDamageByTarget(int target) {
         switch (target) {
             case 2:
             case 3:
@@ -120,6 +121,7 @@ public class ItemBucket extends Item {
             Item result = Item.get(BUCKET, 0, 1);
             PlayerBucketEmptyEvent ev;
             player.getServer().getPluginManager().callEvent(ev = new PlayerBucketEmptyEvent(player, block, face, this, result));
+            ev.setCancelled(!block.canBeFlowedInto());
 
             if (player.getLevel().getName().equals("nether") && this.getDamage() != 10) {
                 ev.setCancelled(true);
@@ -142,6 +144,7 @@ public class ItemBucket extends Item {
 
                 return true;
             } else {
+                player.getLevel().sendBlocks(new Player[] {player}, new Block[] {Block.get(Block.AIR, 0, block)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
                 player.getInventory().sendContents(player);
             }
         }

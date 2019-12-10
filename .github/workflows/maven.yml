@@ -9,6 +9,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+        with:
+          submodules: true
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository
@@ -21,3 +23,9 @@ jobs:
           java-version: 1.8
       - name: Build with Maven
         run: mvn -B package
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v1
+        if: success()
+        with:
+          name: Nukkit
+          path: target/nukkit-1.0-SNAPSHOT.jar
