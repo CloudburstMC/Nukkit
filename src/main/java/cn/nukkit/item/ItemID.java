@@ -247,5 +247,6 @@ public interface ItemID {
 
     int SHIELD = 513;
 
-    int HONEYCOMB = 514; //? unconfirmed
+    int HONEYCOMB = 736;
+    int HONEY_BOTTLE = 737;
 }

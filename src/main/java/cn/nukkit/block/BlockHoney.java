@@ -9,6 +9,6 @@ public class BlockHoney extends Block {
 
     @Override
     public int getId() {
-        return HONEY;
+        return HONEY_BLOCK;
     }
 }

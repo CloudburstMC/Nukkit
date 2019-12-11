@@ -308,6 +308,6 @@ public interface BlockID {
 
     int BEE_NEST = 473;
     int BEEHIVE = 474;
-    int HONEY = 475;
-    int HONEYCOMB = 476;
+    int HONEY_BLOCK = 475;
+    int HONEYCOMB_BLOCK = 476;
 }

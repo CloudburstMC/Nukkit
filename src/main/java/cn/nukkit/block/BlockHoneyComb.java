@@ -9,6 +9,6 @@ public class BlockHoneyComb extends Block {
 
     @Override
     public int getId() {
-        return HONEYCOMB;
+        return HONEYCOMB_BLOCK;
     }
 }
