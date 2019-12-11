@@ -428,7 +428,7 @@ public class Server {
         this.forceLanguage = this.getConfig("settings.force-language", false);
         this.baseLang = new BaseLang(this.getConfig("settings.language", BaseLang.FALLBACK_LANGUAGE));
         log.info(this.getLanguage().translateString("language.selected", new String[]{getLanguage().getName(), getLanguage().getLang()}));
-        log.info(getLanguage().translateString("nukkit.server.start", TextFormat.AQUA + this.getVersion() + TextFormat.WHITE));
+        log.info(getLanguage().translateString("nukkit.server.start", TextFormat.AQUA + this.getVersion() + TextFormat.RESET));
 
         Object poolSize = this.getConfig("settings.async-workers", (Object) (-1));
         if (!(poolSize instanceof Integer)) {
@@ -1939,6 +1939,10 @@ public class Server {
 
     public boolean shouldSavePlayerData() {
         return this.getConfig("player.save-player-data", true);
+    }
+
+    public int getPlayerSkinChangeCooldown() {
+        return this.getConfig("player.skin-change-cooldown", 30);
     }
 
     /**

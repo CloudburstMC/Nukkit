@@ -14,6 +14,7 @@ public class ResourcePackStackPacket extends DataPacket {
     public ResourcePack[] behaviourPackStack = new ResourcePack[0];
     public ResourcePack[] resourcePackStack = new ResourcePack[0];
     public boolean isExperimental = false;
+    public String gameVersion = ProtocolInfo.MINECRAFT_VERSION_NETWORK;
 
     @Override
     protected void decode(ByteBuf buffer) {
@@ -37,8 +38,8 @@ public class ResourcePackStackPacket extends DataPacket {
             Binary.writeString(buffer, entry.getPackVersion());
             Binary.writeString(buffer, ""); //TODO: subpack name
         }
-
-        buffer.writeBoolean(isExperimental);
+        buffer.writeBoolean(this.isExperimental);
+        this.putString(this.gameVersion);
     }
 
     @Override

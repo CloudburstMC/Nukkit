@@ -60,7 +60,7 @@ public abstract class Command {
 
     public Command(String name, String description, String usageMessage, String[] aliases) {
         this.commandData = new CommandData();
-        this.name = name;
+        this.name = name.toLowerCase(); // Uppercase letters crash the client?!?
         this.nextLabel = name;
         this.label = name;
         this.description = description;

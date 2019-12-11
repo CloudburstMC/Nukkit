@@ -9,6 +9,8 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.IntTag;
+import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
 
@@ -71,13 +73,15 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
                 this.getLevel().setBlock(block, new BlockWallBanner(this.getDamage()), true);
             }
 
-            CompoundTag nbt = new CompoundTag("")
-                    .putString("id", BlockEntity.BANNER)
-                    .putInt("x", (int) this.x)
-                    .putInt("y", (int) this.y)
-                    .putInt("z", (int) this.z)
-                    .putInt("Base", item.getDamage() & 0x0f);
-            new BlockEntityBanner(this.level.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+            CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.BANNER)
+                    .putInt("Base", item.getDamage() & 0xf);
+
+            Tag type = item.getNamedTagEntry("Type");
+            if (type instanceof IntTag) {
+                nbt.put("Type", type);
+            }
+
+            new BlockEntityBanner(this.getChunk(), nbt);
 
             return true;
         }
@@ -100,10 +104,17 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
     @Override
     public Item toItem() {
         BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
+        Item item = Item.get(Item.BANNER);
         if (blockEntity instanceof BlockEntityBanner) {
-            return Item.get(Item.BANNER, ((BlockEntityBanner) blockEntity).getBaseColor() & 0xf);
+            BlockEntityBanner banner = (BlockEntityBanner) blockEntity;
+            item.setDamage(banner.getBaseColor() & 0xf);
+            int type = banner.namedTag.getInt("Type");
+            if (type > 0) {
+                item.setNamedTag(new CompoundTag()
+                        .putInt("Type", banner.namedTag.getInt("Type")));
+            }
         }
-        return Item.get(Item.BANNER);
+        return item;
     }
 
     @Override

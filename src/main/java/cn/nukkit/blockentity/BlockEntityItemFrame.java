@@ -89,18 +89,19 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
         if (!this.namedTag.contains("Item")) {
             this.setItem(Item.get(BlockID.AIR, 0, 0), false);
         }
-        CompoundTag NBTItem = namedTag.getCompound("Item").copy();
-        NBTItem.setName("Item");
-        boolean item = NBTItem.getShort("id") == Item.AIR;
-        return new CompoundTag()
+        CompoundTag item = namedTag.getCompound("Item").copy();
+        item.setName("Item");
+        CompoundTag tag = new CompoundTag()
                 .putString("id", BlockEntity.ITEM_FRAME)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z)
-                .putCompound("Item", item ? NBTIO.putItemHelper(Item.get(BlockID.AIR, 0, 0)) : NBTItem)
-                .putByte("ItemRotation", item ? 0 : this.getItemRotation());
-        // TODO: This crashes the client, why?
-        // .putFloat("ItemDropChance", this.getItemDropChance());
+                .putInt("z", (int) this.z);
+
+        if (item.getShort("id") != Item.AIR) {
+            tag.putCompound("Item", item)
+                    .putByte("ItemRotation", this.getItemRotation());
+        }
+        return tag;
     }
 
     public int getAnalogOutput() {

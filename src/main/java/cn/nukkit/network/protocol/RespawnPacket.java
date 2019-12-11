@@ -13,9 +13,15 @@ public class RespawnPacket extends DataPacket {
 
     public static final short NETWORK_ID = ProtocolInfo.RESPAWN_PACKET;
 
+    public static final int STATE_SEARCHING_FOR_SPAWN = 0;
+    public static final int STATE_READY_TO_SPAWN = 1;
+    public static final int STATE_CLIENT_READY_TO_SPAWN = 2;
+
     public float x;
     public float y;
     public float z;
+    public int respawnState = STATE_SEARCHING_FOR_SPAWN;
+    public long runtimeEntityId;
 
     @Override
     protected void decode(ByteBuf buffer) {
@@ -23,11 +29,15 @@ public class RespawnPacket extends DataPacket {
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
+        this.respawnState = this.getByte();
+        this.runtimeEntityId = this.getEntityRuntimeId();
     }
 
     @Override
     protected void encode(ByteBuf buffer) {
         Binary.writeVector3f(buffer, this.x, this.y, this.z);
+        this.putByte((byte) respawnState);
+        this.putEntityRuntimeId(runtimeEntityId);
     }
 
     @Override

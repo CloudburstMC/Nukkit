@@ -38,6 +38,7 @@ public class AddPlayerPacket extends DataPacket {
     public EntityMetadata metadata = new EntityMetadata();
     //public EntityLink links = new EntityLink[0];
     public String deviceId = "";
+    public int buildPlatform = -1;
 
     @Override
     protected void decode(ByteBuf buffer) {
@@ -66,5 +67,6 @@ public class AddPlayerPacket extends DataPacket {
         buffer.writeLongLE(entityUniqueId);
         Binary.writeUnsignedVarInt(buffer, 0); //TODO: Entity links
         Binary.writeString(buffer, deviceId);
+        this.putLInt(buildPlatform);
     }
 }

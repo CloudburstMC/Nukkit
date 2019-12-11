@@ -40,15 +40,13 @@ public class AvailableCommandsPacket extends DataPacket {
 
     public static final int ARG_TYPE_FILE_PATH = 14;
 
-    public static final int ARG_TYPE_INT_RANGE = 18;
+    public static final int ARG_TYPE_STRING = 29;
+    public static final int ARG_TYPE_POSITION = 37;
 
-    public static final int ARG_TYPE_STRING = 27;
-    public static final int ARG_TYPE_POSITION = 29;
-
-    public static final int ARG_TYPE_MESSAGE = 32;
-    public static final int ARG_TYPE_RAWTEXT = 34;
-    public static final int ARG_TYPE_JSON = 37;
-    public static final int ARG_TYPE_COMMAND = 44;
+    public static final int ARG_TYPE_MESSAGE = 41;
+    public static final int ARG_TYPE_RAWTEXT = 43;
+    public static final int ARG_TYPE_JSON = 47;
+    public static final int ARG_TYPE_COMMAND = 54;
 
     public Map<String, CommandDataVersions> commands;
     public final Map<String, List<String>> softEnums = new HashMap<>();

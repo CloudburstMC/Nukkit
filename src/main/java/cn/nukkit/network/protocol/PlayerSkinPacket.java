@@ -14,7 +14,6 @@ public class PlayerSkinPacket extends DataPacket {
     public Skin skin;
     public String newSkinName;
     public String oldSkinName;
-    public boolean premium;
 
     @Override
     public short pid() {
@@ -22,29 +21,19 @@ public class PlayerSkinPacket extends DataPacket {
     }
 
     @Override
-    protected void decode(ByteBuf buffer) {
-        uuid = Binary.readUuid(buffer);
-        skin = new Skin();
-        skin.setSkinId(Binary.readString(buffer));
-        newSkinName = Binary.readString(buffer);
-        oldSkinName = Binary.readString(buffer);
-        skin.setSkinData(Binary.readByteArray(buffer));
-        skin.setCapeData(Binary.readByteArray(buffer));
-        skin.setGeometryName(Binary.readString(buffer));
-        skin.setGeometryData(Binary.readString(buffer));
-        premium = buffer.readBoolean();
+    public void decode() {
+        uuid = getUUID();
+        skin = getSkin();
+        newSkinName = getString();
+        oldSkinName = getString();
     }
 
     @Override
-    protected void encode(ByteBuf buffer) {
-        Binary.writeUuid(buffer, uuid);
-        Binary.writeString(buffer, skin.getGeometryName());
-        Binary.writeString(buffer, newSkinName);
-        Binary.writeString(buffer, oldSkinName);
-        Binary.writeByteArray(buffer, skin.getSkinData());
-        Binary.writeByteArray(buffer, skin.getCapeData());
-        Binary.writeString(buffer, skin.getGeometryName());
-        Binary.writeString(buffer, skin.getGeometryData());
-        buffer.writeBoolean(premium);
+    public void encode() {
+        reset();
+        putUUID(uuid);
+        putSkin(skin);
+        putString(newSkinName);
+        putString(oldSkinName);
     }
 }

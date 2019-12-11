@@ -13,20 +13,14 @@ import java.util.Arrays;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class AnvilInventory extends ContainerInventory {
+public class AnvilInventory extends FakeBlockUIComponent {
 
     public static final int TARGET = 0;
     public static final int SACRIFICE = 1;
-    public static final int RESULT = 2;
+    public static final int RESULT = 50;
 
-    public AnvilInventory(Position position) {
-        super(null, InventoryType.ANVIL);
-        this.holder = new FakeBlockMenu(this, position);
-    }
-
-    @Override
-    public FakeBlockMenu getHolder() {
-        return (FakeBlockMenu) this.holder;
+    public AnvilInventory(PlayerUIInventory playerUI, Position position) {
+        super(playerUI, InventoryType.ANVIL, 1, position);
     }
 
     public boolean onRename(Player player, Item resultItem) {
@@ -143,19 +137,4 @@ public class AnvilInventory extends ContainerInventory {
         super.onOpen(who);
         who.craftingType = Player.CRAFTING_ANVIL;
     }
-
-    /*@Override
-    public boolean setItem(int index, Item item, boolean send) {
-        return super.setItem(index, item, false);
-    }
-
-    @Override
-    public void sendSlot(int index, Player... players) {
-
-    }
-
-    @Override
-    public void sendContents(Player... player) {
-
-    }*/
 }

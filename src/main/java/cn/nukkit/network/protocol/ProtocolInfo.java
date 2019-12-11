@@ -13,12 +13,13 @@ public interface ProtocolInfo {
     /**
      * Actual Minecraft: PE protocol version
      */
-    int CURRENT_PROTOCOL = Integer.valueOf("361"); //plugins can change it
+    @SuppressWarnings("UnnecessaryBoxing")
+    int CURRENT_PROTOCOL = Integer.valueOf("389"); // DO NOT REMOVE BOXING
 
     List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(CURRENT_PROTOCOL);
 
-    String MINECRAFT_VERSION = "v1.12.0";
-    String MINECRAFT_VERSION_NETWORK = "1.12.0";
+    String MINECRAFT_VERSION = "v1.14.0";
+    String MINECRAFT_VERSION_NETWORK = "1.14.0";
 
     short LOGIN_PACKET = 0x01;
     short PLAY_STATUS_PACKET = 0x02;
@@ -41,7 +42,7 @@ public interface ProtocolInfo {
     short RIDER_JUMP_PACKET = 0x14;
     short UPDATE_BLOCK_PACKET = 0x15;
     short ADD_PAINTING_PACKET = 0x16;
-    short EXPLODE_PACKET = 0x17;
+    short TICK_SYNC_PACKET = 0x17;
     short LEVEL_SOUND_EVENT_PACKET_V1 = 0x18;
     short LEVEL_EVENT_PACKET = 0x19;
     short BLOCK_EVENT_PACKET = 0x1a;
@@ -150,6 +151,14 @@ public interface ProtocolInfo {
     short UPDATE_BLOCK_PROPERTIES = 0x86;
     short CLIENT_CACHE_BLOB_STATUS_PACKET = 0x87;
     short CLIENT_CACHE_MISS_RESPONSE_PACKET = 0x88;
+    short EDUCATION_SETTINGS_PACKET = 0x89;
+    short EMOTE_PACKET = 0x8a;
+    short MULTIPLAYER_SETTINGS_PACKET = 0x8b;
+    short SETTINGS_COMMAND_PACKET = 0x8c;
+    short ANVIL_DAMAGE_PACKET = 0x8d;
+    short COMPLETED_USING_ITEM_PACKET = 0x8e;
+    short NETWORK_SETTINGS_PACKET = 0x8f;
+    short PLAYER_AUTH_INPUT_PACKET = 0x90;
 
     short BATCH_PACKET = 0xff;
 }

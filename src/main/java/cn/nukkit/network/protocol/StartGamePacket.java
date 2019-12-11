@@ -9,6 +9,7 @@ import com.google.gson.reflect.TypeToken;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import lombok.ToString;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,7 +21,8 @@ import java.util.Collection;
 /**
  * Created on 15-10-13.
  */
-@ToString
+@Log4j2
+@ToString(exclude = {"blockPalette"})
 public class StartGamePacket extends DataPacket {
 
     public static final short NETWORK_ID = ProtocolInfo.START_GAME_PACKET;
@@ -76,7 +78,7 @@ public class StartGamePacket extends DataPacket {
     public int spawnZ;
     public boolean hasAchievementsDisabled = true;
     public int dayCycleStopTime = -1; //-1 = not stopped, any positive value = stopped at that time
-    public boolean eduMode = false;
+    public int eduEditionOffer = 0;
     public boolean hasEduFeaturesEnabled = false;
     public float rainLevel;
     public float lightningLevel;
@@ -103,10 +105,12 @@ public class StartGamePacket extends DataPacket {
     public boolean isFromWorldTemplate = false;
     public boolean isWorldTemplateOptionLocked = false;
     public boolean isOnlySpawningV1Villagers = false;
+    public String vanillaVersion = ProtocolInfo.MINECRAFT_VERSION_NETWORK;
     public String levelId = ""; //base64 string, usually the same as world folder name in vanilla
     public String worldName;
     public String premiumWorldTemplateId = "";
     public boolean isTrial = false;
+    public boolean isMovementServerAuthoritative;
     public long currentTick;
 
     public int enchantmentSeed;
@@ -127,47 +131,49 @@ public class StartGamePacket extends DataPacket {
         buffer.writeFloatLE(this.yaw);
         buffer.writeFloatLE(this.pitch);
 
-        Binary.writeVarInt(buffer, this.seed);
-        Binary.writeVarInt(buffer, this.dimension);
-        Binary.writeVarInt(buffer, this.generator);
-        Binary.writeVarInt(buffer, this.worldGamemode);
-        Binary.writeVarInt(buffer, this.difficulty);
-        Binary.writeBlockVector3(buffer, this.spawnX, this.spawnY, this.spawnZ);
-        buffer.writeBoolean(this.hasAchievementsDisabled);
-        Binary.writeVarInt(buffer, this.dayCycleStopTime);
-        buffer.writeBoolean(this.eduMode);
-        buffer.writeBoolean(this.hasEduFeaturesEnabled);
-        buffer.writeFloatLE(this.rainLevel);
-        buffer.writeFloatLE(this.lightningLevel);
-        buffer.writeBoolean(this.hasConfirmedPlatformLockedContent);
-        buffer.writeBoolean(this.multiplayerGame);
-        buffer.writeBoolean(this.broadcastToLAN);
-        Binary.writeVarInt(buffer, this.xblBroadcastIntent);
-        Binary.writeVarInt(buffer, this.platformBroadcastIntent);
-        buffer.writeBoolean(this.commandsEnabled);
-        buffer.writeBoolean(this.isTexturePacksRequired);
-        Binary.writeGameRules(buffer, this.gameRules);
-        buffer.writeBoolean(this.bonusChest);
-        buffer.writeBoolean(this.hasStartWithMapEnabled);
-        Binary.writeVarInt(buffer, this.permissionLevel);
-        buffer.writeIntLE(this.serverChunkTickRange);
-        buffer.writeBoolean(this.hasLockedBehaviorPack);
-        buffer.writeBoolean(this.hasLockedResourcePack);
-        buffer.writeBoolean(this.isFromLockedWorldTemplate);
-        buffer.writeBoolean(this.isUsingMsaGamertagsOnly);
-        buffer.writeBoolean(this.isFromWorldTemplate);
-        buffer.writeBoolean(this.isWorldTemplateOptionLocked);
-        buffer.writeBoolean(this.isOnlySpawningV1Villagers);
+        this.putVarInt(this.seed);
+        this.putVarInt(this.dimension);
+        this.putVarInt(this.generator);
+        this.putVarInt(this.worldGamemode);
+        this.putVarInt(this.difficulty);
+        this.putBlockVector3(this.spawnX, this.spawnY, this.spawnZ);
+        this.putBoolean(this.hasAchievementsDisabled);
+        this.putVarInt(this.dayCycleStopTime);
+        this.putVarInt(this.eduEditionOffer);
+        this.putBoolean(this.hasEduFeaturesEnabled);
+        this.putLFloat(this.rainLevel);
+        this.putLFloat(this.lightningLevel);
+        this.putBoolean(this.hasConfirmedPlatformLockedContent);
+        this.putBoolean(this.multiplayerGame);
+        this.putBoolean(this.broadcastToLAN);
+        this.putVarInt(this.xblBroadcastIntent);
+        this.putVarInt(this.platformBroadcastIntent);
+        this.putBoolean(this.commandsEnabled);
+        this.putBoolean(this.isTexturePacksRequired);
+        this.putGameRules(this.gameRules);
+        this.putBoolean(this.bonusChest);
+        this.putBoolean(this.hasStartWithMapEnabled);
+        this.putVarInt(this.permissionLevel);
+        this.putLInt(this.serverChunkTickRange);
+        this.putBoolean(this.hasLockedBehaviorPack);
+        this.putBoolean(this.hasLockedResourcePack);
+        this.putBoolean(this.isFromLockedWorldTemplate);
+        this.putBoolean(this.isUsingMsaGamertagsOnly);
+        this.putBoolean(this.isFromWorldTemplate);
+        this.putBoolean(this.isWorldTemplateOptionLocked);
+        this.putBoolean(this.isOnlySpawningV1Villagers);
+        this.putString(this.vanillaVersion);
 
-        Binary.writeString(buffer, this.levelId);
-        Binary.writeString(buffer, this.worldName);
-        Binary.writeString(buffer, this.premiumWorldTemplateId);
-        buffer.writeBoolean(this.isTrial);
-        buffer.writeLongLE(this.currentTick);
-        Binary.writeVarInt(buffer, this.enchantmentSeed);
-        buffer.writeBytes(GlobalBlockPalette.getCompiledPalette());
-        buffer.writeBytes(ITEM_DATA_PALETTE.duplicate());
-        Binary.writeString(buffer, this.multiplayerCorrelationId);
+        this.putString(this.levelId);
+        this.putString(this.worldName);
+        this.putString(this.premiumWorldTemplateId);
+        this.putBoolean(this.isTrial);
+        this.putBoolean(this.isMovementServerAuthoritative);
+        this.putLLong(this.currentTick);
+        this.putVarInt(this.enchantmentSeed);
+        this.put(GlobalBlockPalette.BLOCK_PALETTE);
+        this.put(ITEM_DATA_PALETTE);
+        this.putString(this.multiplayerCorrelationId);
     }
 
     private static class ItemData {

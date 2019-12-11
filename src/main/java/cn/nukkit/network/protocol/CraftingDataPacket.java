@@ -27,7 +27,9 @@ public class CraftingDataPacket extends DataPacket {
     public static final String CRAFTING_TAG_BLAST_FURNACE = "blast_furnace";
     public static final String CRAFTING_TAG_SMOKER = "smoker";
 
-    public List<Recipe> entries = new ArrayList<>();
+    private List<Recipe> entries = new ArrayList<>();
+    private List<BrewingRecipe> brewingEntries = new ArrayList<>();
+    private List<ContainerRecipe> containerEntries = new ArrayList<>();
     public boolean cleanRecipes;
 
     public void addRecipes(Recipe... recipe) {
@@ -36,6 +38,13 @@ public class CraftingDataPacket extends DataPacket {
 
     public void addRecipes(Collection<? extends Recipe> recipes) {
         entries.addAll(recipes);
+
+    public void addBrewingRecipe(BrewingRecipe... recipe) {
+        Collections.addAll(brewingEntries, recipe);
+    }
+
+    public void addContainerRecipe(ContainerRecipe... recipe) {
+        Collections.addAll(containerEntries, recipe);
     }
 
     @Override
@@ -105,6 +114,23 @@ public class CraftingDataPacket extends DataPacket {
             }
         }
 
+        this.putVarInt(0);
+        this.putVarInt(0);
+//        this.putVarInt(this.brewingEntries.size());
+//        for (BrewingRecipe recipe : brewingEntries) {
+//            this.putVarInt(recipe.getInput().getDamage());
+//            this.putVarInt(recipe.getIngredient().getId());
+//            this.putVarInt(recipe.getResult().getDamage());
+//        }
+//
+//        this.putVarInt(this.containerEntries.size());
+//        for (ContainerRecipe recipe : containerEntries) {
+//            this.putVarInt(recipe.getInput().getId());
+//            this.putVarInt(recipe.getIngredient().getId());
+//            this.putVarInt(recipe.getResult().getId());
+//        }
+
+        this.putBoolean(cleanRecipes);
         buffer.writeBoolean(cleanRecipes);
     }
 
