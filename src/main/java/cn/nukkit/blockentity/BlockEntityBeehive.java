@@ -90,7 +90,7 @@ public class BlockEntityBeehive extends BlockEntity {
             hiveTicks += diff;
             if(hiveTicks >= bee.getInt("MinOccupationTicks")) {
                 //TODO more checks to see if need to release (i.e. is nighttime?)
-                releaseBee(bee.getCompound("EntityData"));
+                spawnBee(bee.getCompound("EntityData"));
                 bees.remove(bee);
                 continue;
             }
