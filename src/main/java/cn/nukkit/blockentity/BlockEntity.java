@@ -42,6 +42,8 @@ public abstract class BlockEntity extends Position {
     public static final String JUKEBOX = "Jukebox";
     public static final String SHULKER_BOX = "ShulkerBox";
     public static final String BANNER = "Banner";
+    public static final String BEEHIVE = "Beehive";
+    public static final String BEE_NEST = "Bee nest";
 
 
     public static long count = 1;

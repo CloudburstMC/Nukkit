@@ -305,4 +305,9 @@ public interface BlockID {
     int PISTON_EXTENSION = 250;
 
     int OBSERVER = 251;
+
+    int BEE_NEST = 473;
+    int BEEHIVE = 474;
+    int HONEY = 475;
+    int HONEYCOMB = 476;
 }
