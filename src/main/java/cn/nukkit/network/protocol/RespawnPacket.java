@@ -29,15 +29,15 @@ public class RespawnPacket extends DataPacket {
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
-        this.respawnState = this.getByte();
-        this.runtimeEntityId = this.getEntityRuntimeId();
+        this.respawnState = buffer.readByte();
+        this.runtimeEntityId = Binary.readEntityRuntimeId(buffer);
     }
 
     @Override
     protected void encode(ByteBuf buffer) {
         Binary.writeVector3f(buffer, this.x, this.y, this.z);
-        this.putByte((byte) respawnState);
-        this.putEntityRuntimeId(runtimeEntityId);
+        buffer.writeByte(respawnState);
+        Binary.writeEntityRuntimeId(buffer, runtimeEntityId);
     }
 
     @Override

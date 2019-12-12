@@ -67,6 +67,6 @@ public class AddPlayerPacket extends DataPacket {
         buffer.writeLongLE(entityUniqueId);
         Binary.writeUnsignedVarInt(buffer, 0); //TODO: Entity links
         Binary.writeString(buffer, deviceId);
-        this.putLInt(buildPlatform);
+        buffer.writeIntLE(buildPlatform);
     }
 }

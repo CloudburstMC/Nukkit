@@ -207,15 +207,8 @@ public class CraftingManager {
 
         pk.addRecipes(this.getFurnaceRecipes().values());
 
-        for (BrewingRecipe recipe : brewingRecipes.values()) {
-            pk.addBrewingRecipe(recipe);
-        }
-
-        for (ContainerRecipe recipe : containerRecipes.values()) {
-            pk.addContainerRecipe(recipe);
-        }
-
-        pk.encode();
+        pk.addBrewingRecipes(brewingRecipes.values());
+        pk.addContainerRecipes(containerRecipes.values());
 
         packet = pk.compress(Deflater.BEST_COMPRESSION);
     }

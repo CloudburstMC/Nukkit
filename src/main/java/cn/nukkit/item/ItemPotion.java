@@ -1,11 +1,11 @@
 package cn.nukkit.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.player.Player;
 import cn.nukkit.potion.Potion;
 
-import static cn.nukkit.Player.SURVIVAL;
+import static cn.nukkit.player.Player.SURVIVAL;
 
 public class ItemPotion extends Item {
 

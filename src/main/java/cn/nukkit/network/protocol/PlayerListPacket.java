@@ -33,14 +33,14 @@ public class PlayerListPacket extends DataPacket {
         for (Entry entry : this.entries) {
             Binary.writeUuid(buffer, entry.uuid);
             if (type == TYPE_ADD) {
-                this.putVarLong(entry.entityId);
-                this.putString(entry.name);
-                this.putString(entry.xboxUserId);
-                this.putString(entry.platformChatId);
-                this.putLInt(entry.buildPlatform);
-                this.putSkin(entry.skin);
-                this.putBoolean(entry.isTeacher);
-                this.putBoolean(entry.isHost);
+                Binary.writeEntityRuntimeId(buffer, entry.entityId);
+                Binary.writeString(buffer, entry.name);
+                Binary.writeString(buffer, entry.xboxUserId);
+                Binary.writeString(buffer, entry.platformChatId);
+                buffer.writeIntLE(entry.buildPlatform);
+                Binary.writeSkin(buffer, entry.skin);
+                buffer.writeBoolean(entry.isTeacher);
+                buffer.writeBoolean(entry.isHost);
             }
         }
 

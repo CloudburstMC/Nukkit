@@ -80,22 +80,66 @@ public class Binary {
     }
 
     public static void writeSkin(ByteBuf buffer, Skin skin) {
-        writeString(buffer, skin.getSkinId());
-        writeByteArray(buffer, skin.getSkinData());
-        writeByteArray(buffer, skin.getCapeData());
-        writeString(buffer, skin.getGeometryName());
-        writeString(buffer, skin.getGeometryData());
+        Binary.writeString(buffer, skin.getSkinId());
+        Binary.writeString(buffer, skin.getSkinResourcePatch());
+        Binary.writeImage(buffer, skin.getSkinData());
+
+        List<SkinAnimation> animations = skin.getAnimations();
+        buffer.writeIntLE(animations.size());
+        for (SkinAnimation animation : animations) {
+            Binary.writeImage(buffer, animation.image);
+            buffer.writeIntLE(animation.type);
+            buffer.writeFloatLE(animation.frames);
+        }
+
+        Binary.writeImage(buffer, skin.getCapeData());
+        Binary.writeString(buffer, skin.getGeometryData());
+        Binary.writeString(buffer, skin.getAnimationData());
+        buffer.writeBoolean(skin.isPremium());
+        buffer.writeBoolean(skin.isPersona());
+        buffer.writeBoolean(skin.isCapeOnClassic());
+        Binary.writeString(buffer, skin.getCapeId());
+        Binary.writeString(buffer, skin.getFullSkinId());
     }
 
     public static Skin readSkin(ByteBuf buffer) {
         Skin skin = new Skin();
-        skin.setSkinId(readString(buffer));
-        skin.setSkinData(readByteArray(buffer));
-        skin.setCapeData(readByteArray(buffer));
-        skin.setGeometryName(readString(buffer));
-        skin.setGeometryData(readString(buffer));
+        skin.setSkinId(Binary.readString(buffer));
+        skin.setSkinResourcePatch(Binary.readString(buffer));
+        skin.setSkinData(Binary.readImage(buffer));
+
+        int animationCount = buffer.readIntLE();
+        for (int i = 0; i < animationCount; i++) {
+            SerializedImage image = Binary.readImage(buffer);
+            int type = buffer.readIntLE();
+            float frames = buffer.readFloatLE();
+            skin.getAnimations().add(new SkinAnimation(image, type, frames));
+        }
+
+        skin.setCapeData(Binary.readImage(buffer));
+        skin.setGeometryData(Binary.readString(buffer));
+        skin.setAnimationData(Binary.readString(buffer));
+        skin.setPremium(buffer.readBoolean());
+        skin.setPersona(buffer.readBoolean());
+        skin.setCapeOnClassic(buffer.readBoolean());
+        skin.setCapeId(Binary.readString(buffer));
+        Binary.readString(buffer); // TODO: Full skin id
         return skin;
     }
+
+    public static void writeImage(ByteBuf buffer, SerializedImage image) {
+        buffer.writeIntLE(image.width);
+        buffer.writeIntLE(image.height);
+        Binary.writeByteArray(buffer, image.data);
+    }
+
+    public static SerializedImage readImage(ByteBuf buffer) {
+        int width = buffer.readIntLE();
+        int height = buffer.readIntLE();
+        byte[] data = Binary.readByteArray(buffer);
+        return new SerializedImage(width, height, data);
+    }
+
 
     public static Item readItem(ByteBuf buffer) {
         int id = readVarInt(buffer);

@@ -39,7 +39,7 @@ public class ResourcePackStackPacket extends DataPacket {
             Binary.writeString(buffer, ""); //TODO: subpack name
         }
         buffer.writeBoolean(this.isExperimental);
-        this.putString(this.gameVersion);
+        Binary.writeString(buffer, this.gameVersion);
     }
 
     @Override

@@ -189,7 +189,7 @@ public final class Chunk implements Closeable {
         int fullBlock = this.getFullBlock(x, y, z, layer);
         int xPos = this.x << 4 | x & 0xf;
         int zPos = this.z << 4 | z & 0xf;
-        return Block.get(fullBlock >>> 4, fullBlock & 0xf, new Position(xPos, y, zPos, this.level));
+        return Block.get(fullBlock >> 4, fullBlock & 0xf, new Position(xPos, y, zPos, this.level));
     }
 
     public int getBlockId(int x, int y, int z) {

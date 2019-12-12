@@ -1,11 +1,12 @@
 package cn.nukkit.network.protocol;
 
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
 @ToString
 public class CompletedUsingItemPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.COMPLETED_USING_ITEM_PACKET;
+    public static final short NETWORK_ID = ProtocolInfo.COMPLETED_USING_ITEM_PACKET;
 
     public static final int ACTION_UNKNOWN = -1;
     public static final int ACTION_EQUIP_ARMOR = 0;
@@ -29,18 +30,17 @@ public class CompletedUsingItemPacket extends DataPacket {
 
 
     @Override
-    public byte pid() {
+    public short pid() {
         return NETWORK_ID;
     }
 
     @Override
-    public void decode() {
+    protected void decode(ByteBuf buffer) {
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putLShort(itemId);
-        this.putLInt(action);
+    protected void encode(ByteBuf buffer) {
+        buffer.writeShortLE(itemId);
+        buffer.writeIntLE(action);
     }
 }

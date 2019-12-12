@@ -19,7 +19,6 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.weather.LightningStrikeEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemBucket;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.chunk.Chunk;
@@ -844,13 +843,6 @@ public class Level implements ChunkManager, Metadatable {
         this.sendBlocks(target, blocks, 0, flags);
     }
 
-    public void sendBlocks(Player[] target, Vector3[] blocks, int layer, int flags) {
-        this.sendBlocks(target, blocks, layer, flags, 0);
-    }
-
-    public void sendBlocks(Player[] target, Vector3[] blocks, int layer, int flags, boolean optimizeRebuilds) {
-        this.sendBlocks(target, blocks, flags, 0, optimizeRebuilds);
-    }
 
     public void sendBlocks(Player[] target, Vector3[] blocks, int flags, int dataLayer) {
         this.sendBlocks(target, blocks, flags, dataLayer, false);
@@ -961,7 +953,7 @@ public class Level implements ChunkManager, Metadatable {
 
                 chunk.getEntities().forEach(Entity::scheduleUpdate);
 
-                int tickSpeed = gameRules.getInteger(GameRule.RANDOM_TICK_SPEED);
+                int tickSpeed = getGameRules().get(GameRules.RANDOM_TICK_SPEED);
 
                 if (tickSpeed > 0) {
                     ChunkSection[] sections = chunk.getSections();
@@ -1885,6 +1877,7 @@ public class Level implements ChunkManager, Metadatable {
         } else {
             return null;
         }
+        log.debug("Placing: {}", hand);
 
         if (!(block.canBeReplaced() || (hand.getId() == Item.SLAB && block.getId() == Item.SLAB))) {
             return null;

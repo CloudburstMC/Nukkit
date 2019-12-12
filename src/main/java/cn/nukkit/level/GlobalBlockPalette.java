@@ -4,13 +4,8 @@ import cn.nukkit.Server;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
-import com.google.common.io.ByteStreams;
-import cn.nukkit.utils.Binary;
 import com.google.common.collect.HashBiMap;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
+import com.google.common.io.ByteStreams;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 
@@ -24,6 +19,7 @@ public class GlobalBlockPalette {
     private static final Int2IntMap legacyToRuntimeId = new Int2IntOpenHashMap();
     private static final Int2IntMap runtimeIdToLegacy = new Int2IntOpenHashMap();
     private static final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
+    private static final HashBiMap<String, Integer> nameToLegacyId = HashBiMap.create();
     public static final byte[] BLOCK_PALETTE;
 
     static {
@@ -46,9 +42,13 @@ public class GlobalBlockPalette {
 
         for (CompoundTag state : tag.getAll()) {
             int runtimeId = runtimeIdAllocator.getAndIncrement();
-            if (!state.contains("meta")) continue;
 
             int id = state.getShort("id");
+            String name = state.getCompound("block").getString("name");
+            nameToLegacyId.putIfAbsent(name, id);
+
+            if (!state.contains("meta")) continue;
+
             int[] meta = state.getIntArray("meta");
 
             // Resolve to first legacy id
@@ -73,5 +73,22 @@ public class GlobalBlockPalette {
 
     public static int getOrCreateRuntimeId(int legacyId) throws NoSuchElementException {
         return getOrCreateRuntimeId(legacyId >> 4, legacyId & 0xf);
+    }
+
+    public static int getLegacyId(int runtimeId) {
+        int legacyId = runtimeIdToLegacy.get(runtimeId);
+        if (legacyId == -1) {
+            return 0;
+        }
+        return ((legacyId >> 6) << 4) | legacyId & 0xf;
+    }
+
+    public static int getLegacyIdFromName(String name) {
+        //noinspection ConstantConditions
+        return nameToLegacyId.get(name);
+    }
+
+    public static String getNameFromLegacyId(int id) {
+        return nameToLegacyId.inverse().get(id);
     }
 }

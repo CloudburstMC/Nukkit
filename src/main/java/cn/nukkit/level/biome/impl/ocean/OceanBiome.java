@@ -19,7 +19,7 @@ public class OceanBiome extends WateryBiome {
     }
 
     @Override
-    public int getGroundBlock(int y) {
-        return GRAVEL;
+    public int getGroundId(int x, int y, int z) {
+        return GRAVEL << 4;
     }
 }

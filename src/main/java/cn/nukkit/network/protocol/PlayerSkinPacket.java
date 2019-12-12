@@ -21,19 +21,18 @@ public class PlayerSkinPacket extends DataPacket {
     }
 
     @Override
-    public void decode() {
-        uuid = getUUID();
-        skin = getSkin();
-        newSkinName = getString();
-        oldSkinName = getString();
+    protected void decode(ByteBuf buffer) {
+        uuid = Binary.readUuid(buffer);
+        skin = Binary.readSkin(buffer);
+        newSkinName = Binary.readString(buffer);
+        oldSkinName = Binary.readString(buffer);
     }
 
     @Override
-    public void encode() {
-        reset();
-        putUUID(uuid);
-        putSkin(skin);
-        putString(newSkinName);
-        putString(oldSkinName);
+    protected void encode(ByteBuf buffer) {
+        Binary.writeUuid(buffer, uuid);
+        Binary.writeSkin(buffer, skin);
+        Binary.writeString(buffer, newSkinName);
+        Binary.writeString(buffer, oldSkinName);
     }
 }
