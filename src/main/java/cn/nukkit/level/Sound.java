@@ -493,6 +493,7 @@ public enum Sound {
     RANDOM_DOOR_CLOSE("random.door_close"),
     RANDOM_DOOR_OPEN("random.door_open"),
     RANDOM_DRINK("random.drink"),
+    RANDOM_DRINK_HONEY("random.drink_honey"),
     RANDOM_EAT("random.eat"),
     RANDOM_EXPLODE("random.explode"),
     RANDOM_FIZZ("random.fizz"),
@@ -582,7 +583,18 @@ public enum Sound {
     MUSIC_GAME_END("music.game.end"),
     MUSIC_GAME_ENDBOSS("music.game.endboss"),
     MUSIC_GAME_NETHER("music.game.nether"),
-    MUSIC_GAME_CREDITS("music.game.credits");
+    MUSIC_GAME_CREDITS("music.game.credits"),
+    MOB_BEE_AGGRESSIVE("mob.bee.aggressive"),
+    MOB_BEE_DEATH("mob.bee.death"),
+    MOB_BEE_HURT("mob.bee.hurt"),
+    MOB_BEE_LOOP("mob.bee.loop"),
+    MOB_BEE_POLLINATE("mob.bee.pollinate"),
+    MOB_BEE_STING("mob.bee.sting"),
+    BLOCK_BEEHIVE_ENTER("block.beehive.enter"),
+    BLOCK_BEEHIVE_EXIT("block.beehive.exit"),
+    BLOCK_BEEHIVE_SHEAR("block.beehive.shear"),
+    BLOCK_BEEHIVE_WORK("block.beehive.work"),
+    BLOCK_BEEHIVE_DRIP("block.beehive.drip");
 
     private final String sound;
 
