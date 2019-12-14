@@ -14,22 +14,13 @@ import cn.nukkit.utils.Faceable;
  */
 public class BlockTorch extends BlockFlowable implements Faceable {
 
-    public BlockTorch() {
-        this(0);
-    }
-
-    public BlockTorch(int meta) {
-        super(meta);
+    public BlockTorch(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Torch";
-    }
-
-    @Override
-    public int getId() {
-        return TORCH;
     }
 
     @Override

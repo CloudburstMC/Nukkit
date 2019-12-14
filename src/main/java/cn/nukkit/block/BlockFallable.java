@@ -14,7 +14,8 @@ import cn.nukkit.nbt.tag.ListTag;
  */
 public abstract class BlockFallable extends BlockSolid {
 
-    protected BlockFallable() {
+    public BlockFallable(int id, int meta) {
+        super(id, meta);
     }
 
     public int onUpdate(int type) {

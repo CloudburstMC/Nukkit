@@ -979,8 +979,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return this.directDataPacket(packet);
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("Outbound packet: {}", packet);
+        if (log.isTraceEnabled() && !server.isIgnoredPacket(packet.getClass())) {
+            log.trace("Outbound {}: {}", this.getName(), packet);
         }
 
         try (Timing ignored = Timings.getSendDataPacketTiming(packet).startTiming()) {
@@ -1944,8 +1944,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         try (Timing ignored = Timings.getReceiveDataPacketTiming(packet).startTiming()) {
-            if (log.isTraceEnabled()) {
-                log.trace("Inbound packet: {}", packet);
+            if (log.isTraceEnabled() && !server.isIgnoredPacket(packet.getClass())) {
+                log.trace("Inbound {}: {}", this.getName(), packet);
             }
 
             packetswitch:
@@ -2273,7 +2273,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             }
                             Block block = target.getSide(face);
                             if (block.getId() == Block.FIRE) {
-                                this.level.setBlock(block, new BlockAir(), true);
+                                this.level.setBlock(block, Block.get(BlockID.AIR), true);
                                 this.level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_EXTINGUISH_FIRE);
                                 break;
                             }

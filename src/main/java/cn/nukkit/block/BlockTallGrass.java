@@ -17,17 +17,8 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class BlockTallGrass extends BlockFlowable {
 
-    public BlockTallGrass() {
-        this(1);
-    }
-
-    public BlockTallGrass(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return TALL_GRASS;
+    public BlockTallGrass(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

@@ -12,12 +12,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockIce extends BlockTransparent {
 
-    public BlockIce() {
-    }
-
-    @Override
-    public int getId() {
-        return ICE;
+    public BlockIce(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -47,7 +43,7 @@ public class BlockIce extends BlockTransparent {
 
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, new BlockWater(), true);
+        this.getLevel().setBlock(this, Block.get(WATER), true);
         return true;
     }
 

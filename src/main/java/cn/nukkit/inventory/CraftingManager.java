@@ -156,6 +156,8 @@ public class CraftingManager {
                     default:
                         break;
                 }
+            } catch (NoSuchElementException e) {
+                // ignore non-implemented items
             } catch (Exception e) {
                 log.error("Exception during registering recipe", e);
             }

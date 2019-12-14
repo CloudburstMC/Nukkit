@@ -16,17 +16,13 @@ import cn.nukkit.utils.Faceable;
  */
 public class BlockJukebox extends BlockSolid implements Faceable {
 
-    public BlockJukebox() {
+    public BlockJukebox(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Jukebox";
-    }
-
-    @Override
-    public int getId() {
-        return JUKEBOX;
     }
 
     @Override

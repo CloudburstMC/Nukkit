@@ -81,7 +81,7 @@ public class PopulatorLava extends Populator {
             if (k != decay) {
                 decay = k;
                 if (decay < 0) {
-                    this.level.setBlockAt(x, y, z, 0);
+                    this.level.setBlockIdAt(x, y, z, 0);
                 } else {
                     this.level.setBlockAt(x, y, z, Block.LAVA, decay);
                     this.lavaSpread(x, y, z);

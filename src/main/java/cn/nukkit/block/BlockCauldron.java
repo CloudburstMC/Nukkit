@@ -18,19 +18,10 @@ import java.util.Map;
  * author: CreeperFace
  * Nukkit Project
  */
-public class BlockCauldron extends BlockSolidMeta {
+public class BlockCauldron extends BlockSolid {
 
-    public BlockCauldron() {
-        super(0);
-    }
-
-    public BlockCauldron(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return CAULDRON_BLOCK;
+    public BlockCauldron(int id, int meta) {
+        super(id, meta);
     }
 
     public String getName() {

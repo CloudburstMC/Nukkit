@@ -9,14 +9,10 @@ import cn.nukkit.utils.Faceable;
 /**
  * Created by CreeperFace on 15.4.2017.
  */
-public class BlockDispenser extends BlockSolidMeta implements Faceable {
+public class BlockDispenser extends BlockSolid implements Faceable {
 
-    public BlockDispenser() {
-        this(0);
-    }
-
-    public BlockDispenser(int meta) {
-        super(meta);
+    public BlockDispenser(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -27,11 +23,6 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
     @Override
     public String getName() {
         return "Dispenser";
-    }
-
-    @Override
-    public int getId() {
-        return DISPENSER;
     }
 
     @Override

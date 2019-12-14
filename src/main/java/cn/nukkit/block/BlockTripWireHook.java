@@ -14,22 +14,13 @@ import cn.nukkit.player.Player;
  */
 public class BlockTripWireHook extends BlockFlowable {
 
-    public BlockTripWireHook() {
-        this(0);
-    }
-
-    public BlockTripWireHook(int meta) {
-        super(meta);
+    public BlockTripWireHook(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Tripwire Hook";
-    }
-
-    @Override
-    public int getId() {
-        return TRIPWIRE_HOOK;
     }
 
     public BlockFace getFacing() {
@@ -133,7 +124,7 @@ public class BlockTripWireHook extends BlockFlowable {
 
         canConnect = canConnect & distance > 1;
         nextPowered = nextPowered & canConnect;
-        BlockTripWireHook hook = new BlockTripWireHook();
+        BlockTripWireHook hook = (BlockTripWireHook) Block.get(TRIPWIRE_HOOK);
         hook.setAttached(canConnect);
         hook.setPowered(nextPowered);
 

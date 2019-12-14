@@ -9,24 +9,15 @@ import cn.nukkit.utils.Faceable;
 /**
  * Created by Leonidius20 on 18.08.18.
  */
-public class BlockObserver extends BlockSolidMeta implements Faceable {
+public class BlockObserver extends BlockSolid implements Faceable {
 
-    public BlockObserver() {
-        this(0);
-    }
-
-    public BlockObserver(int meta) {
-        super(meta);
+    public BlockObserver(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Observer";
-    }
-
-    @Override
-    public int getId() {
-        return OBSERVER;
     }
 
     @Override

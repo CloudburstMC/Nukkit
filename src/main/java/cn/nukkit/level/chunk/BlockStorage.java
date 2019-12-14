@@ -1,5 +1,6 @@
 package cn.nukkit.level.chunk;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.chunk.bitarray.BitArray;
 import cn.nukkit.level.chunk.bitarray.BitArrayVersion;
@@ -47,17 +48,43 @@ public class BlockStorage {
         return BitArrayVersion.get(header >> 1, true);
     }
 
-    public synchronized int getFullBlock(int index) {
-        return this.legacyIdFor(this.bitArray.get(index));
+    public synchronized Block getBlock(int index) {
+        return this.blockFor(this.bitArray.get(index)).clone();
     }
 
-    public synchronized void setFullBlock(int index, int legacyId) {
+    public synchronized void setBlock(int index, Block block) {
         try {
-            int idx = this.idFor(legacyId);
+            int idx = this.idFor(GlobalBlockPalette.getRuntimeId(block));
             this.bitArray.set(index, idx);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Unable to set full block RuntimeID:" +
-                    GlobalBlockPalette.getOrCreateRuntimeId(legacyId) + ", palette: " + palette, e);
+            throw new IllegalArgumentException("Unable to set block: " + block + ", palette: " + palette, e);
+        }
+    }
+
+    public synchronized int getBlockId(int index) {
+        return this.blockFor(this.bitArray.get(index)).getId();
+    }
+
+    public synchronized void setBlockId(int index, int blockId) {
+        try {
+            int idx = this.idFor(GlobalBlockPalette.getRuntimeId(blockId, 0));
+            this.bitArray.set(index, idx);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Unable to set full block ID: " + blockId + ", palette: " + palette, e);
+        }
+    }
+
+    public synchronized int getBlockData(int index) {
+        return this.blockFor(this.bitArray.get(index)).getDamage();
+    }
+
+    public synchronized void setBlockData(int index, int blockData) {
+        try {
+            int id = this.getBlockId(index);
+            int idx = this.idFor(GlobalBlockPalette.getRuntimeId(id, blockData));
+            this.bitArray.set(index, idx);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Unable to set full block data: " + blockData + ", palette: " + palette, e);
         }
     }
 
@@ -82,12 +109,11 @@ public class BlockStorage {
 
         try (ByteBufOutputStream stream = new ByteBufOutputStream(buffer)) {
             for (int runtimeId : palette.toIntArray()) {
-                int legacyId = GlobalBlockPalette.getLegacyId(runtimeId);
-                String name = GlobalBlockPalette.getNameFromLegacyId(legacyId >> 4);
-                int data = legacyId & 0xf;
+                Block block = GlobalBlockPalette.getBlock(runtimeId);
+                String name = GlobalBlockPalette.getNameFromLegacyId(block.getId());
                 CompoundTag tag = new CompoundTag();
                 tag.putString("name", name);
-                tag.putShort("val", data);
+                tag.putShort("val", block.getId());
 
                 NBTIO.write(tag, stream, ByteOrder.LITTLE_ENDIAN);
             }
@@ -119,7 +145,7 @@ public class BlockStorage {
                 int id = GlobalBlockPalette.getLegacyIdFromName(tag.getString("name"));
                 int data = tag.getShort("val");
 
-                int runtimeId = GlobalBlockPalette.getOrCreateRuntimeId(id, data);
+                int runtimeId = GlobalBlockPalette.getRuntimeId(id, data);
                 if (palette.indexOf(runtimeId) != -1) {
                     throw new IllegalArgumentException("Palette contains same block state twice!");
                 }
@@ -140,8 +166,8 @@ public class BlockStorage {
         this.bitArray = newBitArray;
     }
 
-    private synchronized int idFor(int legacyId) {
-        int runtimeId = GlobalBlockPalette.getOrCreateRuntimeId(legacyId);
+    private synchronized int idFor(int runtimeId) {
+        ;
         int index = this.palette.indexOf(runtimeId);
         if (index != -1) {
             return index;
@@ -159,9 +185,9 @@ public class BlockStorage {
         return index;
     }
 
-    private synchronized int legacyIdFor(int index) {
+    private synchronized Block blockFor(int index) {
         int runtimeId = this.palette.getInt(index);
-        return GlobalBlockPalette.getLegacyId(runtimeId);
+        return GlobalBlockPalette.getBlock(runtimeId);
     }
 
     public boolean isEmpty() {

@@ -9,12 +9,8 @@ import cn.nukkit.item.ItemTool;
  */
 public class BlockIcePacked extends BlockIce {
 
-    public BlockIcePacked() {
-    }
-
-    @Override
-    public int getId() {
-        return PACKED_ICE;
+    public BlockIcePacked(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -39,7 +35,7 @@ public class BlockIcePacked extends BlockIce {
     
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, new BlockAir(), true); //no water
+        this.getLevel().setBlock(this, Block.get(AIR), true); //no water
         return true;
     }
 

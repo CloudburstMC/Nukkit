@@ -23,12 +23,8 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
     protected float onPitch;
     protected float offPitch;
 
-    protected BlockPressurePlateBase() {
-        this(0);
-    }
-
-    protected BlockPressurePlateBase(int meta) {
-        super(meta);
+    protected BlockPressurePlateBase(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -161,7 +157,7 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
 
     @Override
     public boolean onBreak(Item item) {
-        this.level.setBlock(this, new BlockAir(), true, true);
+        this.level.setBlock(this, Block.get(AIR), true, true);
 
         if (this.getRedstonePower() > 0) {
             this.level.updateAroundRedstone(this, null);

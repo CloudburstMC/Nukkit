@@ -1,6 +1,9 @@
 package cn.nukkit.item;
 
-import cn.nukkit.block.*;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockFire;
+import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockSolid;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
@@ -40,7 +43,7 @@ public class ItemFlintSteel extends ItemTool {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
-        if (block.getId() == AIR && (target instanceof BlockSolid || target instanceof BlockSolidMeta)) {
+        if (block.getId() == AIR && target instanceof BlockSolid) {
             PORTAL:
             if (target.getId() == OBSIDIAN) {
                 final int targX = target.getFloorX();
@@ -164,7 +167,7 @@ public class ItemFlintSteel extends ItemTool {
 
                     for (int height = 0; height < innerHeight; height++)    {
                         for (int width = 0; width < innerWidth; width++)    {
-                            level.setBlock(new Vector3(scanX - width, scanY + height, scanZ), new BlockNetherPortal());
+                            level.setBlock(new Vector3(scanX - width, scanY + height, scanZ), Block.get(BlockID.NETHER_PORTAL));
                         }
                     }
 
@@ -247,7 +250,7 @@ public class ItemFlintSteel extends ItemTool {
 
                     for (int height = 0; height < innerHeight; height++)    {
                         for (int width = 0; width < innerWidth; width++)    {
-                            level.setBlock(new Vector3(scanX, scanY + height, scanZ - width), new BlockNetherPortal());
+                            level.setBlock(new Vector3(scanX, scanY + height, scanZ - width), Block.get(BlockID.NETHER_PORTAL));
                         }
                     }
 
@@ -255,7 +258,7 @@ public class ItemFlintSteel extends ItemTool {
                     return true;
                 }
             }
-            BlockFire fire = new BlockFire();
+            BlockFire fire = (BlockFire) Block.get(BlockID.FIRE);
             fire.x = block.x;
             fire.y = block.y;
             fire.z = block.z;

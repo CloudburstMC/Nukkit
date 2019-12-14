@@ -6,10 +6,10 @@ import cn.nukkit.math.AxisAlignedBB;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class BlockFlowable extends BlockTransparentMeta {
+public abstract class BlockFlowable extends BlockTransparent {
 
-    protected BlockFlowable(int meta) {
-        super(meta);
+    protected BlockFlowable(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

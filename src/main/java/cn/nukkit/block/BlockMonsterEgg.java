@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 
-public class BlockMonsterEgg extends BlockSolidMeta {
+public class BlockMonsterEgg extends BlockSolid {
     public static final int STONE = 0;
     public static final int COBBLESTONE = 1;
     public static final int STONE_BRICK = 2;
@@ -19,17 +19,8 @@ public class BlockMonsterEgg extends BlockSolidMeta {
             "Chiseled Stone Brick"
     };
 
-    public BlockMonsterEgg() {
-        this(0);
-    }
-
-    public BlockMonsterEgg(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return MONSTER_EGG;
+    public BlockMonsterEgg(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

@@ -14,12 +14,8 @@ import cn.nukkit.utils.Faceable;
  */
 public abstract class BlockButton extends BlockFlowable implements Faceable {
 
-    public BlockButton() {
-        this(0);
-    }
-
-    public BlockButton(int meta) {
-        super(meta);
+    public BlockButton(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

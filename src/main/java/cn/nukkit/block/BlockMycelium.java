@@ -14,17 +14,13 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockMycelium extends BlockSolid {
 
-    public BlockMycelium() {
+    public BlockMycelium(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Mycelium";
-    }
-
-    @Override
-    public int getId() {
-        return MYCELIUM;
     }
 
     @Override
@@ -60,7 +56,7 @@ public class BlockMycelium extends BlockSolid {
             Block block = this.getLevel().getBlock(new Vector3(x, y, z));
             if (block.getId() == Block.DIRT) {
                 if (block.up().isTransparent()) {
-                    BlockSpreadEvent ev = new BlockSpreadEvent(block, this, new BlockMycelium());
+                    BlockSpreadEvent ev = new BlockSpreadEvent(block, this, Block.get(MYCELIUM));
                     Server.getInstance().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
                         this.getLevel().setBlock(block, ev.getNewState());

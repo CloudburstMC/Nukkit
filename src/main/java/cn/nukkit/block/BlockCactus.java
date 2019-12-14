@@ -17,19 +17,10 @@ import cn.nukkit.utils.BlockColor;
 /**
  * @author Nukkit Project Team
  */
-public class BlockCactus extends BlockTransparentMeta {
+public class BlockCactus extends BlockTransparent {
 
-    public BlockCactus(int meta) {
-        super(meta);
-    }
-
-    public BlockCactus() {
-        this(0);
-    }
-
-    @Override
-    public int getId() {
-        return CACTUS;
+    public BlockCactus(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -107,7 +98,7 @@ public class BlockCactus extends BlockTransparentMeta {
                     for (int y = 1; y < 3; ++y) {
                         Block b = this.getLevel().getBlock(new Vector3(this.x, this.y + y, this.z));
                         if (b.getId() == AIR) {
-                            BlockGrowEvent event = new BlockGrowEvent(b, new BlockCactus());
+                            BlockGrowEvent event = new BlockGrowEvent(b, Block.get(CACTUS));
                             Server.getInstance().getPluginManager().callEvent(event);
                             if (!event.isCancelled()) {
                                 this.getLevel().setBlock(b, event.getNewState(), true);

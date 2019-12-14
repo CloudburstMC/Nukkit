@@ -1,6 +1,7 @@
 package cn.nukkit.entity.item;
 
-import cn.nukkit.block.BlockChest;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemMinecartChest;
@@ -20,7 +21,7 @@ public class EntityMinecartChest extends EntityMinecartAbstract {
 
     public EntityMinecartChest(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
-        super.setDisplayBlock(new BlockChest(), false);
+        super.setDisplayBlock(Block.get(BlockID.CHEST), false);
     }
 
     // TODO: 2016/1/30 inventory

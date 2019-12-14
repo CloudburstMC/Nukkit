@@ -14,17 +14,13 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class BlockOreEmerald extends BlockSolid {
 
-    public BlockOreEmerald() {
+    public BlockOreEmerald(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Emerald Ore";
-    }
-
-    @Override
-    public int getId() {
-        return EMERALD_ORE;
     }
 
     @Override

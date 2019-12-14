@@ -15,12 +15,8 @@ import cn.nukkit.player.Player;
  */
 public class BlockFlowerPot extends BlockFlowable {
 
-    public BlockFlowerPot() {
-        this(0);
-    }
-
-    public BlockFlowerPot(int meta) {
-        super(meta);
+    public BlockFlowerPot(int id, int meta) {
+        super(id, meta);
     }
 
     protected static boolean canPlaceIntoFlowerPot(int id) {
@@ -45,11 +41,6 @@ public class BlockFlowerPot extends BlockFlowable {
     @Override
     public String getName() {
         return "Flower Pot";
-    }
-
-    @Override
-    public int getId() {
-        return FLOWER_POT_BLOCK;
     }
 
     @Override

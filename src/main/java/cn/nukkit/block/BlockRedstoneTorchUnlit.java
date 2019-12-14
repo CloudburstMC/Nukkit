@@ -11,22 +11,13 @@ import cn.nukkit.math.Vector3;
  */
 public class BlockRedstoneTorchUnlit extends BlockTorch {
 
-    public BlockRedstoneTorchUnlit() {
-        this(0);
-    }
-
-    public BlockRedstoneTorchUnlit(int meta) {
-        super(meta);
+    public BlockRedstoneTorchUnlit(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Unlit Redstone Torch";
-    }
-
-    @Override
-    public int getId() {
-        return UNLIT_REDSTONE_TORCH;
     }
 
     @Override
@@ -75,7 +66,7 @@ public class BlockRedstoneTorchUnlit extends BlockTorch {
         Vector3 pos = getLocation();
 
         if (!this.level.isSidePowered(pos.getSide(face), face)) {
-            this.level.setBlock(pos, new BlockRedstoneTorch(getDamage()), false, true);
+            this.level.setBlock(pos, Block.get(REDSTONE_TORCH, getDamage()), false, true);
 
             for (BlockFace side : BlockFace.values()) {
                 if (side == face) {

@@ -16,7 +16,7 @@ public class PopulatorGlowStone extends Populator {
         if (y != -1 && level.getBlockIdAt(x, y, z) != NETHERRACK) {
             int count = NukkitMath.randomRange(random, 40, 60);
             for (int i = 0; i < count; i++) {
-                level.setBlockAt(x + (random.nextBoundedInt(7) - 3), y + (random.nextBoundedInt(9) - 4), z + (random.nextBoundedInt(7) - 3), GLOWSTONE);
+                level.setBlockIdAt(x + (random.nextBoundedInt(7) - 3), y + (random.nextBoundedInt(9) - 4), z + (random.nextBoundedInt(7) - 3), GLOWSTONE);
             }
         }
     }

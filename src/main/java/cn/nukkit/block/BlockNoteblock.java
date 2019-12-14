@@ -8,8 +8,8 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.network.protocol.BlockEventPacket;
-import cn.nukkit.player.Player;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.player.Player;
 
 /**
  * Created by Snake1999 on 2016/1/17.
@@ -17,18 +17,13 @@ import cn.nukkit.network.protocol.LevelSoundEventPacket;
  */
 public class BlockNoteblock extends BlockSolid {
 
-    public BlockNoteblock() {
-
+    public BlockNoteblock(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Note Block";
-    }
-
-    @Override
-    public int getId() {
-        return NOTEBLOCK;
     }
 
     @Override
@@ -106,7 +101,7 @@ public class BlockNoteblock extends BlockSolid {
             case ACACIA_WOOD_STAIRS:
             case DARK_OAK_WOOD_STAIRS:
             case FENCE:
-            case FENCE_GATE:
+            case FENCE_GATE_OAK:
             case FENCE_GATE_SPRUCE:
             case FENCE_GATE_BIRCH:
             case FENCE_GATE_JUNGLE:

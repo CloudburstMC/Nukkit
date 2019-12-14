@@ -1,5 +1,6 @@
 package cn.nukkit.level.provider.leveldb.serializer;
 
+import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.chunk.BlockStorage;
 import cn.nukkit.level.chunk.Chunk;
@@ -110,7 +111,7 @@ public class ChunkSerializerV3 extends ChunkSerializerV1 {
                                     short value = extraDataMap.get(Level.chunkBlockKey(x, y, z));
                                     int blockId = value & 0xff;
                                     int blockData = (value >> 8) & 0xf;
-                                    blockStorage[1].setFullBlock(ChunkSection.blockIndex(x, y, z), (blockId << 4) | blockData);
+                                    blockStorage[1].setBlock(ChunkSection.blockIndex(x, y, z), GlobalBlockPalette.getBlock(blockId, blockData));
                                 }
                             }
                         }

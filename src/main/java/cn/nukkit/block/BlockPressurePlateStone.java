@@ -12,24 +12,15 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockPressurePlateStone extends BlockPressurePlateBase {
 
-    public BlockPressurePlateStone(int meta) {
-        super(meta);
+    public BlockPressurePlateStone(int id, int meta) {
+        super(id, meta);
         this.onPitch = 0.6f;
         this.offPitch = 0.5f;
-    }
-
-    public BlockPressurePlateStone() {
-        this(0);
     }
 
     @Override
     public String getName() {
         return "Stone Pressure Plate";
-    }
-
-    @Override
-    public int getId() {
-        return STONE_PRESSURE_PLATE;
     }
 
     @Override

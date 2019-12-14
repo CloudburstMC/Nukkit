@@ -9,7 +9,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockDiamond extends BlockSolid {
 
-    public BlockDiamond() {
+    public BlockDiamond(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -25,11 +26,6 @@ public class BlockDiamond extends BlockSolid {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
-    }
-
-    @Override
-    public int getId() {
-        return DIAMOND_BLOCK;
     }
 
     @Override

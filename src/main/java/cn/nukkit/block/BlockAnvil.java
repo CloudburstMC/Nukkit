@@ -30,34 +30,13 @@ public class BlockAnvil extends BlockFallable implements Faceable {
             "Very Damaged Anvil"
     };
 
-    private int meta;
-
-    public BlockAnvil() {
-        this(0);
-    }
-
-    public BlockAnvil(int meta) {
-        this.meta = meta;
-    }
-
-    @Override
-    public int getFullId() {
-        return (getId() << 4) + getDamage();
-    }
-
-    @Override
-    public final int getDamage() {
-        return this.meta;
+    public BlockAnvil(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public final void setDamage(int meta) {
         this.meta = meta;
-    }
-
-    @Override
-    public int getId() {
-        return ANVIL;
     }
 
     @Override
@@ -93,12 +72,12 @@ public class BlockAnvil extends BlockFallable implements Faceable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (!target.isTransparent() || target.getId() == Block.SNOW_LAYER) {
-            int damage = this.getDamage();
+            int meta = this.getDamage();
             int[] faces = {1, 2, 3, 0};
             this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
-            if (damage >= 4 && damage <= 7) {
+            if (meta >= 4 && meta <= 7) {
                 this.setDamage(this.getDamage() | 0x04);
-            } else if (damage >= 8 && damage <= 11) {
+            } else if (meta >= 8 && meta <= 11) {
                 this.setDamage(this.getDamage() | 0x08);
             }
             this.getLevel().setBlock(block, this, true);
@@ -118,10 +97,10 @@ public class BlockAnvil extends BlockFallable implements Faceable {
 
     @Override
     public Item toItem() {
-        int damage = this.getDamage();
-        if (damage >= 4 && damage <= 7) {
+        int meta = this.getDamage();
+        if (meta >= 4 && meta <= 7) {
             return new ItemBlock(this, this.getDamage() & 0x04);
-        } else if (damage >= 8 && damage <= 11) {
+        } else if (meta >= 8 && meta <= 11) {
             return new ItemBlock(this, this.getDamage() & 0x08);
         } else {
             return new ItemBlock(this);

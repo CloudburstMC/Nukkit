@@ -9,19 +9,10 @@ import cn.nukkit.utils.Faceable;
 /**
  * @author CreeperFace
  */
-public class BlockBone extends BlockSolidMeta implements Faceable {
+public class BlockBone extends BlockSolid implements Faceable {
 
-    public BlockBone() {
-        this(0);
-    }
-
-    public BlockBone(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return BONE_BLOCK;
+    public BlockBone(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

@@ -29,17 +29,8 @@ public class BlockSapling extends BlockFlowable {
     public static final int ACACIA = 4;
     public static final int DARK_OAK = 5;
 
-    public BlockSapling() {
-        this(0);
-    }
-
-    public BlockSapling(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return SAPLING;
+    public BlockSapling(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -126,7 +117,8 @@ public class BlockSapling extends BlockFlowable {
                 for (; x >= -1; --x) {
                     for (; z >= -1; --z) {
                         if (this.findSaplings(x, z, JUNGLE)) {
-                            generator = new ObjectJungleBigTree(10, 20, new BlockWood(BlockWood.JUNGLE), new BlockLeaves(BlockLeaves.JUNGLE));
+                            generator = new ObjectJungleBigTree(10, 20,
+                                    Block.get(WOOD, BlockWood.JUNGLE), Block.get(LEAVES, BlockLeaves.JUNGLE));
                             bigTree = true;
                             break loop;
                         }

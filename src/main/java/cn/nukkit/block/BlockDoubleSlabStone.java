@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -9,27 +8,18 @@ import cn.nukkit.utils.BlockColor;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BlockDoubleSlabStone extends BlockSolidMeta {
+public class BlockDoubleSlabStone extends BlockSolid {
     public static final int STONE = 0;
     public static final int SANDSTONE = 1;
-    public static final int WOODEN = 2;
+    public static final int FAKE_WOOD = 2;
     public static final int COBBLESTONE = 3;
     public static final int BRICK = 4;
     public static final int STONE_BRICK = 5;
     public static final int QUARTZ = 6;
     public static final int NETHER_BRICK = 7;
 
-    public BlockDoubleSlabStone() {
-        this(0);
-    }
-
-    public BlockDoubleSlabStone(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return DOUBLE_SLAB;
+    public BlockDoubleSlabStone(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -64,7 +54,7 @@ public class BlockDoubleSlabStone extends BlockSolidMeta {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(new BlockSlabStone(), this.getDamage() & 0x07);
+        return Item.get(STONE_SLAB, this.getDamage() & 0x07);
     }
 
     @Override
@@ -85,7 +75,7 @@ public class BlockDoubleSlabStone extends BlockSolidMeta {
                 return BlockColor.STONE_BLOCK_COLOR;
             case BlockDoubleSlabStone.SANDSTONE:
                 return BlockColor.SAND_BLOCK_COLOR;
-            case BlockDoubleSlabStone.WOODEN:
+            case BlockDoubleSlabStone.FAKE_WOOD:
                 return BlockColor.WOOD_BLOCK_COLOR;
             case BlockDoubleSlabStone.COBBLESTONE:
                 return BlockColor.STONE_BLOCK_COLOR;

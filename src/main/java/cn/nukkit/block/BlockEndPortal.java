@@ -5,22 +5,13 @@ import cn.nukkit.utils.BlockColor;
 
 public class BlockEndPortal extends BlockFlowable {
 
-    public BlockEndPortal() {
-        this(0);
-    }
-
-    public BlockEndPortal(int meta) {
-        super(0);
+    public BlockEndPortal(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "End Portal Block";
-    }
-
-    @Override
-    public int getId() {
-        return END_PORTAL;
     }
 
     @Override

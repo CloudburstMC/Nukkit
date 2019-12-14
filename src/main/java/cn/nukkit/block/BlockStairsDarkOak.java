@@ -6,17 +6,8 @@ package cn.nukkit.block;
  */
 public class BlockStairsDarkOak extends BlockStairsWood {
 
-    public BlockStairsDarkOak() {
-        this(0);
-    }
-
-    public BlockStairsDarkOak(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return DARK_OAK_WOOD_STAIRS;
+    public BlockStairsDarkOak(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

@@ -9,12 +9,8 @@ import cn.nukkit.item.ItemTool;
  */
 public class BlockCobblestone extends BlockSolid {
 
-    public BlockCobblestone() {
-    }
-
-    @Override
-    public int getId() {
-        return COBBLESTONE;
+    public BlockCobblestone(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

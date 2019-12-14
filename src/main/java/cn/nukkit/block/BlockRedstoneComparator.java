@@ -16,12 +16,8 @@ import cn.nukkit.player.Player;
  */
 public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
 
-    public BlockRedstoneComparator() {
-        this(0);
-    }
-
-    public BlockRedstoneComparator(int meta) {
-        super(meta);
+    public BlockRedstoneComparator(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -39,13 +35,13 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
     }
 
     @Override
-    protected BlockRedstoneComparator getUnpowered() {
-        return new BlockRedstoneComparatorUnpowered(this.getDamage());
+    protected Block getUnpowered() {
+        return Block.get(UNPOWERED_COMPARATOR, this.getDamage());
     }
 
     @Override
-    protected BlockRedstoneComparator getPowered() {
-        return new BlockRedstoneComparatorPowered(this.getDamage());
+    protected Block getPowered() {
+        return Block.get(POWERED_COMPARATOR, this.getDamage());
     }
 
     @Override

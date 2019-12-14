@@ -8,17 +8,13 @@ import cn.nukkit.item.ItemTool;
  */
 public class BlockMobSpawner extends BlockSolid {
 
-    public BlockMobSpawner() {
+    public BlockMobSpawner(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Monster Spawner";
-    }
-
-    @Override
-    public int getId() {
-        return MONSTER_SPAWNER;
     }
 
     @Override

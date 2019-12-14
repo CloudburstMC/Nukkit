@@ -14,17 +14,8 @@ import cn.nukkit.math.NukkitRandom;
  */
 public class BlockStemPumpkin extends BlockCrops {
 
-    public BlockStemPumpkin() {
-        this(0);
-    }
-
-    public BlockStemPumpkin(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return PUMPKIN_STEM;
+    public BlockStemPumpkin(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -61,7 +52,7 @@ public class BlockStemPumpkin extends BlockCrops {
                     Block side = this.getSide(Plane.HORIZONTAL.random(random));
                     Block d = side.down();
                     if (side.getId() == AIR && (d.getId() == FARMLAND || d.getId() == GRASS || d.getId() == DIRT)) {
-                        BlockGrowEvent ev = new BlockGrowEvent(side, new BlockPumpkin());
+                        BlockGrowEvent ev = new BlockGrowEvent(side, Block.get(PUMPKIN));
                         Server.getInstance().getPluginManager().callEvent(ev);
                         if (!ev.isCancelled()) {
                             this.getLevel().setBlock(side, ev.getNewState(), true);

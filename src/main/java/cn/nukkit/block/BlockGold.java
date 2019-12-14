@@ -10,13 +10,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockGold extends BlockSolid {
 
-
-    public BlockGold() {
-    }
-
-    @Override
-    public int getId() {
-        return GOLD_BLOCK;
+    public BlockGold(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

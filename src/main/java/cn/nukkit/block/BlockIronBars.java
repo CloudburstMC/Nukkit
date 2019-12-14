@@ -11,17 +11,13 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockIronBars extends BlockThin {
 
-    public BlockIronBars() {
+    public BlockIronBars(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Iron Bars";
-    }
-
-    @Override
-    public int getId() {
-        return IRON_BARS;
     }
 
     @Override

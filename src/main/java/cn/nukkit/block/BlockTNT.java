@@ -19,17 +19,13 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockTNT extends BlockSolid {
 
-    public BlockTNT() {
+    public BlockTNT(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "TNT";
-    }
-
-    @Override
-    public int getId() {
-        return TNT;
     }
 
     @Override
@@ -66,7 +62,7 @@ public class BlockTNT extends BlockSolid {
     }
 
     public void prime(int fuse, Entity source) {
-        this.getLevel().setBlock(this, new BlockAir(), true);
+        this.getLevel().setBlock(this, Block.get(AIR), true);
         double mot = (new NukkitRandom()).nextSignedFloat() * Math.PI * 2;
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")

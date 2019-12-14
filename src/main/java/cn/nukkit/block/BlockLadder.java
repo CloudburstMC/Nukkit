@@ -13,25 +13,16 @@ import cn.nukkit.utils.Faceable;
  * Created on 2015/12/8 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockLadder extends BlockTransparentMeta implements Faceable {
+public class BlockLadder extends BlockTransparent implements Faceable {
 
-    public BlockLadder() {
-        this(0);
-    }
-
-    public BlockLadder(int meta) {
-        super(meta);
+    public BlockLadder(int id, int meta) {
+        super(id, meta);
         calculateOffsets();
     }
 
     @Override
     public String getName() {
         return "Ladder";
-    }
-
-    @Override
-    public int getId() {
-        return LADDER;
     }
 
     @Override

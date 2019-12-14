@@ -9,22 +9,13 @@ import cn.nukkit.utils.BlockColor;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BlockSandstone extends BlockSolidMeta {
+public class BlockSandstone extends BlockSolid {
     public static final int NORMAL = 0;
     public static final int CHISELED = 1;
     public static final int SMOOTH = 2;
 
-    public BlockSandstone() {
-        this(0);
-    }
-
-    public BlockSandstone(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return SANDSTONE;
+    public BlockSandstone(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

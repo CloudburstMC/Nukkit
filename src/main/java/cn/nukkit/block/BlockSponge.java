@@ -17,7 +17,7 @@ import java.util.Queue;
  * author: Angelic47
  * Nukkit Project
  */
-public class BlockSponge extends BlockSolidMeta {
+public class BlockSponge extends BlockSolid {
 
     public static final int DRY = 0;
     public static final int WET = 1;
@@ -26,17 +26,8 @@ public class BlockSponge extends BlockSolidMeta {
             "Wet sponge"
     };
 
-    public BlockSponge() {
-        this(0);
-    }
-
-    public BlockSponge(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return SPONGE;
+    public BlockSponge(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -83,7 +74,7 @@ public class BlockSponge extends BlockSolidMeta {
                     packet.x = (float) block.getX();
                     packet.y = (float) block.getY();
                     packet.z = (float) block.getZ();
-                    packet.data = GlobalBlockPalette.getOrCreateRuntimeId(BlockID.WATER, 0);
+                    packet.data = GlobalBlockPalette.getRuntimeId(BlockID.WATER, 0);
                     level.addChunkPacket(getChunkX(), getChunkZ(), packet);
                 }
             }

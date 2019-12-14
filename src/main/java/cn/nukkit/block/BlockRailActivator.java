@@ -10,23 +10,14 @@ import cn.nukkit.utils.Rail;
  */
 public class BlockRailActivator extends BlockRail {
 
-    public BlockRailActivator(int meta) {
-        super(meta);
-    }
-
-    public BlockRailActivator() {
-        this(0);
+    public BlockRailActivator(int id, int meta) {
+        super(id, meta);
         canBePowered = true;
     }
 
     @Override
     public String getName() {
         return "Activator Rail";
-    }
-
-    @Override
-    public int getId() {
-        return ACTIVATOR_RAIL;
     }
 
     @Override

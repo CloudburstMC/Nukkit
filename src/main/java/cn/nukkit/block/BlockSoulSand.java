@@ -9,17 +9,13 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockSoulSand extends BlockSolid {
 
-    public BlockSoulSand() {
+    public BlockSoulSand(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Soul Sand";
-    }
-
-    @Override
-    public int getId() {
-        return SOUL_SAND;
     }
 
     @Override

@@ -9,17 +9,8 @@ import cn.nukkit.math.BlockFace;
  */
 public class BlockWallSign extends BlockSignPost {
 
-    public BlockWallSign() {
-        this(0);
-    }
-
-    public BlockWallSign(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return WALL_SIGN;
+    public BlockWallSign(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

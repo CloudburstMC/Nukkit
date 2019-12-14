@@ -4,17 +4,8 @@ import cn.nukkit.item.ItemTool;
 
 public class BlockStairsPurpur extends BlockStairs {
 
-    public BlockStairsPurpur() {
-        this(0);
-    }
-
-    public BlockStairsPurpur(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return PURPUR_STAIRS;
+    public BlockStairsPurpur(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

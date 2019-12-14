@@ -224,6 +224,8 @@ public class Server {
     private Properties properties;
     private volatile StorageType defaultStorageType;
 
+    private Set<String> ignoredPackets = new HashSet<>();
+
     public Server(String filePath, String dataPath, String pluginPath, String predefinedLanguage) {
         Preconditions.checkState(instance == null, "Already initialized!");
         instance = this;
@@ -237,13 +239,17 @@ public class Server {
         this.consoleThread = new ConsoleThread();
     }
 
-    public static void broadcastPacket(Player[] players, DataPacket packet) {
-        if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
-            for (Player player : players) {
-                player.dataPacket(packet);
+    public static void broadcastPackets(Player[] players, DataPacket[] packets) {
+        for (Player player : players) {
+            for (DataPacket packet : packets) {
+                broadcastPacket(players, packet);
             }
-        } else {
-            getInstance().batchPackets(players, new DataPacket[]{packet}, false);
+        }
+    }
+
+    public static void broadcastPacket(Player[] players, DataPacket packet) {
+        for (Player player : players) {
+            player.dataPacket(packet);
         }
     }
 
@@ -388,6 +394,8 @@ public class Server {
         log.info("Loading {} ...", TextFormat.GREEN + "nukkit.yml" + TextFormat.WHITE);
         this.config = new Config(this.dataPath + "nukkit.yml", Config.YAML);
 
+        ignoredPackets.addAll(getConfig().getStringList("debug.ignored-packets"));
+
         log.info("Loading {} ...", TextFormat.GREEN + "server.properties" + TextFormat.WHITE);
         this.properties = new Properties();
         this.properties.setProperty("motd", "A Nukkit Powered Server");
@@ -518,7 +526,7 @@ public class Server {
         Effect.init();
         Potion.init();
         Attribute.init();
-        GlobalBlockPalette.getOrCreateRuntimeId(0, 0); //Force it to load
+        GlobalBlockPalette.getRuntimeId(0, 0); //Force it to load
         this.defaultLevelData.getGameRules().putAll(this.gameRuleRegistry.getDefaultRules());
 
         // Convert legacy data before plugins get the chance to mess with it.
@@ -2123,6 +2131,10 @@ public class Server {
 
     public static Server getInstance() {
         return instance;
+    }
+
+    public boolean isIgnoredPacket(Class<? extends DataPacket> clazz) {
+        return this.ignoredPackets.contains(clazz.getSimpleName());
     }
 
     private class ConsoleThread extends Thread implements InterruptibleThread {

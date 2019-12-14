@@ -5,17 +5,13 @@ import cn.nukkit.item.ItemTool;
 
 public class BlockBricksRedNether extends BlockNetherBrick {
 
-    public BlockBricksRedNether() {
+    public BlockBricksRedNether(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Red Nether Bricks";
-    }
-
-    @Override
-    public int getId() {
-        return RED_NETHER_BRICK;
     }
 
     @Override

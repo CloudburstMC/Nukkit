@@ -9,19 +9,10 @@ import cn.nukkit.utils.BlockColor;
  * Created on 2015/12/11 by Pub4Game.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockRedstone extends BlockSolidMeta {
+public class BlockRedstone extends BlockSolid {
 
-    public BlockRedstone() {
-        this(0);
-    }
-
-    public BlockRedstone(int meta) {
-        super(0);
-    }
-
-    @Override
-    public int getId() {
-        return REDSTONE_BLOCK;
+    public BlockRedstone(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

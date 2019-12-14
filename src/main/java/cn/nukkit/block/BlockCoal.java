@@ -8,12 +8,8 @@ import cn.nukkit.item.ItemTool;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockCoal extends BlockSolid {
-    public BlockCoal() {
-    }
-
-    @Override
-    public int getId() {
-        return COAL_BLOCK;
+    public BlockCoal(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

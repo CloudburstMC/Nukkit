@@ -5,17 +5,8 @@ package cn.nukkit.block;
  */
 public class BlockTerracottaGlazedBrown extends BlockTerracottaGlazed {
 
-    public BlockTerracottaGlazedBrown() {
-        this(0);
-    }
-
-    public BlockTerracottaGlazedBrown(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return BROWN_GLAZED_TERRACOTTA;
+    public BlockTerracottaGlazedBrown(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

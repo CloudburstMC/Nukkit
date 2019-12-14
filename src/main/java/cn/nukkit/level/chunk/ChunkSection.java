@@ -1,5 +1,6 @@
 package cn.nukkit.level.chunk;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.utils.NibbleArray;
 import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBuf;
@@ -51,16 +52,40 @@ public class ChunkSection {
         Preconditions.checkArgument(z >= 0 && z < 16, "z (%s) is not between 0 and 15", z);
     }
 
-    public int getFullBlock(int x, int y, int z, int layer) {
+    public Block getBlock(int x, int y, int z, int layer) {
         checkBounds(x, y, z);
         Preconditions.checkElementIndex(layer, this.storage.length);
-        return this.storage[layer].getFullBlock(blockIndex(x, y, z));
+        return this.storage[layer].getBlock(blockIndex(x, y, z)).clone();
     }
 
-    public void setFullBlock(int x, int y, int z, int layer, int fullBlock) {
+    public void setBlock(int x, int y, int z, int layer, Block block) {
         checkBounds(x, y, z);
         Preconditions.checkElementIndex(layer, this.storage.length);
-        this.storage[layer].setFullBlock(blockIndex(x, y, z), fullBlock);
+        this.storage[layer].setBlock(blockIndex(x, y, z), block);
+    }
+
+    public int getBlockId(int x, int y, int z, int layer) {
+        checkBounds(x, y, z);
+        Preconditions.checkElementIndex(layer, this.storage.length);
+        return this.storage[layer].getBlockId(blockIndex(x, y, z));
+    }
+
+    public void setBlockId(int x, int y, int z, int layer, int id) {
+        checkBounds(x, y, z);
+        Preconditions.checkElementIndex(layer, this.storage.length);
+        this.storage[layer].setBlockId(blockIndex(x, y, z), id);
+    }
+
+    public int getBlockData(int x, int y, int z, int layer) {
+        checkBounds(x, y, z);
+        Preconditions.checkElementIndex(layer, this.storage.length);
+        return this.storage[layer].getBlockData(blockIndex(x, y, z));
+    }
+
+    public void setBlockData(int x, int y, int z, int layer, int data) {
+        checkBounds(x, y, z);
+        Preconditions.checkElementIndex(layer, this.storage.length);
+        this.storage[layer].setBlockData(blockIndex(x, y, z), data);
     }
 
     @Synchronized("skyLight")

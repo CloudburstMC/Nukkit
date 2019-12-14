@@ -7,17 +7,8 @@ import cn.nukkit.item.Item;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockFenceGateAcacia extends BlockFenceGate {
-    public BlockFenceGateAcacia() {
-        this(0);
-    }
-
-    public BlockFenceGateAcacia(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return FENCE_GATE_ACACIA;
+    public BlockFenceGateAcacia(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

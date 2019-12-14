@@ -10,17 +10,13 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockObsidian extends BlockSolid {
 
-    public BlockObsidian() {
+    public BlockObsidian(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Obsidian";
-    }
-
-    @Override
-    public int getId() {
-        return OBSIDIAN;
     }
 
     @Override

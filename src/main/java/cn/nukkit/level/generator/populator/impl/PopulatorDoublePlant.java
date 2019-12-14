@@ -1,5 +1,7 @@
 package cn.nukkit.level.generator.populator.impl;
 
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.populator.helper.EnsureCover;
@@ -12,10 +14,10 @@ import cn.nukkit.math.NukkitRandom;
  * Nukkit Project
  */
 public class PopulatorDoublePlant extends PopulatorSurfaceBlock {
-    private int type;
+    private final Block block;
 
     public PopulatorDoublePlant(int type)    {
-        this.type = type;
+        this.block = Block.get(BlockID.DOUBLE_PLANT, type);
     }
 
     @Override
@@ -24,13 +26,13 @@ public class PopulatorDoublePlant extends PopulatorSurfaceBlock {
     }
 
     @Override
-    protected int getBlockId(int x, int z, NukkitRandom random, Chunk chunk) {
-        return (DOUBLE_PLANT << 4) | type;
+    protected Block getBlock(int x, int z, NukkitRandom random, Chunk chunk) {
+        return block;
     }
 
     @Override
-    protected void placeBlock(int x, int y, int z, int id, Chunk chunk, NukkitRandom random) {
-        super.placeBlock(x, y, z, id, chunk, random);
-        chunk.setFullBlock(x, y + 1, z, 8 | id);
+    protected void placeBlock(int x, int y, int z, Block block, Chunk chunk, NukkitRandom random) {
+        super.placeBlock(x, y, z, block, chunk, random);
+        chunk.setBlock(x, y + 1, z, Block.get(block.getId(), block.getDamage() | 8));
     }
 }

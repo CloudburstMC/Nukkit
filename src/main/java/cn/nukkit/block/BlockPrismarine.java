@@ -4,7 +4,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 
 
-public class BlockPrismarine extends BlockSolidMeta {
+public class BlockPrismarine extends BlockSolid {
 
     public static final int NORMAL = 0;
     public static final int BRICKS = 1;
@@ -16,17 +16,8 @@ public class BlockPrismarine extends BlockSolidMeta {
             "Dark prismarine"
     };
 
-    public BlockPrismarine() {
-        this(0);
-    }
-
-    public BlockPrismarine(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return PRISMARINE;
+    public BlockPrismarine(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

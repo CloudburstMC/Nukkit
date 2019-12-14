@@ -15,17 +15,8 @@ public class BlockWood2 extends BlockWood {
             ""
     };
 
-    public BlockWood2() {
-        this(0);
-    }
-
-    public BlockWood2(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return WOOD2;
+    public BlockWood2(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

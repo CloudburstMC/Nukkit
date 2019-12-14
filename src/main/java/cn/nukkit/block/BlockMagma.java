@@ -11,13 +11,8 @@ import cn.nukkit.utils.BlockColor;
 
 public class BlockMagma extends BlockSolid {
 
-    public BlockMagma(){
-
-    }
-
-    @Override
-    public int getId() {
-        return MAGMA;
+    public BlockMagma(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

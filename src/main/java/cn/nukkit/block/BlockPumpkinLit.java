@@ -5,22 +5,13 @@ package cn.nukkit.block;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockPumpkinLit extends BlockPumpkin {
-    public BlockPumpkinLit() {
-        this(0);
-    }
-
-    public BlockPumpkinLit(int meta) {
-        super(0);
+    public BlockPumpkinLit(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Jack o'Lantern";
-    }
-
-    @Override
-    public int getId() {
-        return LIT_PUMPKIN;
     }
 
     @Override

@@ -13,22 +13,13 @@ import cn.nukkit.player.Player;
  */
 public class BlockRedstoneTorch extends BlockTorch {
 
-    public BlockRedstoneTorch() {
-        this(0);
-    }
-
-    public BlockRedstoneTorch(int meta) {
-        super(meta);
+    public BlockRedstoneTorch(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Redstone Torch";
-    }
-
-    @Override
-    public int getId() {
-        return REDSTONE_TORCH;
     }
 
     @Override
@@ -115,7 +106,7 @@ public class BlockRedstoneTorch extends BlockTorch {
             BlockFace face = getBlockFace().getOpposite();
             Vector3 pos = getLocation();
 
-            this.level.setBlock(pos, new BlockRedstoneTorchUnlit(getDamage()), false, true);
+            this.level.setBlock(pos, Block.get(UNLIT_REDSTONE_TORCH, getDamage()), false, true);
 
             for (BlockFace side : BlockFace.values()) {
                 if (side == face) {

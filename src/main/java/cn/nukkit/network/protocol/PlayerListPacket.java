@@ -33,7 +33,7 @@ public class PlayerListPacket extends DataPacket {
         for (Entry entry : this.entries) {
             Binary.writeUuid(buffer, entry.uuid);
             if (type == TYPE_ADD) {
-                Binary.writeEntityRuntimeId(buffer, entry.entityId);
+                Binary.writeEntityUniqueId(buffer, entry.entityId);
                 Binary.writeString(buffer, entry.name);
                 Binary.writeString(buffer, entry.xboxUserId);
                 Binary.writeString(buffer, entry.platformChatId);
@@ -43,7 +43,6 @@ public class PlayerListPacket extends DataPacket {
                 buffer.writeBoolean(entry.isHost);
             }
         }
-
     }
 
     @Override
@@ -80,5 +79,4 @@ public class PlayerListPacket extends DataPacket {
             this.xboxUserId = xboxUserId == null ? "" : xboxUserId;
         }
     }
-
 }

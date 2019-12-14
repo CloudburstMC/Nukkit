@@ -13,13 +13,8 @@ import java.util.Random;
  */
 public class BlockGravel extends BlockFallable {
 
-
-    public BlockGravel() {
-    }
-
-    @Override
-    public int getId() {
-        return GRAVEL;
+    public BlockGravel(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

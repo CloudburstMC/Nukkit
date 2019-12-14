@@ -8,17 +8,13 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockEndGateway extends BlockSolid {
 
-    public BlockEndGateway() {
+    public BlockEndGateway(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "End Gateway";
-    }
-
-    @Override
-    public int getId() {
-        return END_GATEWAY;
     }
 
     @Override

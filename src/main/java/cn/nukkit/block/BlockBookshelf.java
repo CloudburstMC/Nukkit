@@ -8,24 +8,15 @@ import cn.nukkit.utils.BlockColor;
 /**
  * @author Nukkit Project Team
  */
-public class BlockBookshelf extends BlockSolidMeta {
+public class BlockBookshelf extends BlockSolid {
 
-    public BlockBookshelf(int meta) {
-        super(meta);
-    }
-
-    public BlockBookshelf() {
-        this(0);
+    public BlockBookshelf(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Bookshelf";
-    }
-
-    @Override
-    public int getId() {
-        return BOOKSHELF;
     }
 
     @Override

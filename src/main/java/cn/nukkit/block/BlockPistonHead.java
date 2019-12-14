@@ -6,19 +6,10 @@ import cn.nukkit.math.BlockFace;
 /**
  * @author CreeperFace
  */
-public class BlockPistonHead extends BlockTransparentMeta {
+public class BlockPistonHead extends BlockTransparent {
 
-    public BlockPistonHead() {
-        this(0);
-    }
-
-    public BlockPistonHead(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return PISTON_HEAD;
+    public BlockPistonHead(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -43,7 +34,7 @@ public class BlockPistonHead extends BlockTransparentMeta {
 
     @Override
     public boolean onBreak(Item item) {
-        this.level.setBlock(this, new BlockAir(), true, true);
+        this.level.setBlock(this, Block.get(AIR), true, true);
         Block piston = getSide(getFacing().getOpposite());
 
         if (piston instanceof BlockPistonBase && ((BlockPistonBase) piston).getFacing() == this.getFacing()) {

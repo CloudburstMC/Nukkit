@@ -10,22 +10,13 @@ import java.util.Random;
  */
 public class BlockCarrot extends BlockCrops {
 
-    public BlockCarrot(int meta) {
-        super(meta);
-    }
-
-    public BlockCarrot() {
-        this(0);
+    public BlockCarrot(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Carrot Block";
-    }
-
-    @Override
-    public int getId() {
-        return CARROT_BLOCK;
     }
 
     @Override

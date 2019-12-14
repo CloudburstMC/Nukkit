@@ -7,17 +7,8 @@ import cn.nukkit.item.ItemTool;
  */
 public class BlockButtonWooden extends BlockButton {
 
-    public BlockButtonWooden() {
-        this(0);
-    }
-
-    public BlockButtonWooden(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return WOODEN_BUTTON;
+    public BlockButtonWooden(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

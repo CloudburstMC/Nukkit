@@ -5,22 +5,13 @@ import cn.nukkit.item.ItemDoorAcacia;
 
 public class BlockDoorAcacia extends BlockDoorWood {
 
-    public BlockDoorAcacia() {
-        this(0);
-    }
-
-    public BlockDoorAcacia(int meta) {
-        super(meta);
+    public BlockDoorAcacia(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Acacia Door Block";
-    }
-
-    @Override
-    public int getId() {
-        return ACACIA_DOOR_BLOCK;
     }
 
     @Override

@@ -9,22 +9,13 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BlockWall extends BlockTransparentMeta {
+public class BlockWall extends BlockTransparent {
     public static final int NONE_MOSSY_WALL = 0;
     public static final int MOSSY_WALL = 1;
 
 
-    public BlockWall() {
-        this(0);
-    }
-
-    public BlockWall(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return STONE_WALL;
+    public BlockWall(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -83,7 +74,7 @@ public class BlockWall extends BlockTransparentMeta {
     }
 
     public boolean canConnect(Block block) {
-        return (!(block.getId() != COBBLE_WALL && block.getId() != FENCE_GATE)) || block.isSolid() && !block.isTransparent();
+        return (!(block.getId() != COBBLE_WALL && block.getId() != FENCE_GATE_OAK)) || block.isSolid() && !block.isTransparent();
     }
 
     @Override

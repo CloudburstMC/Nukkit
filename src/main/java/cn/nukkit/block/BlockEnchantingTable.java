@@ -19,12 +19,8 @@ import java.util.Map;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockEnchantingTable extends BlockTransparent {
-    public BlockEnchantingTable() {
-    }
-
-    @Override
-    public int getId() {
-        return ENCHANTING_TABLE;
+    public BlockEnchantingTable(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

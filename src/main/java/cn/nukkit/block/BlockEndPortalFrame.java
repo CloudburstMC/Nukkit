@@ -10,19 +10,10 @@ import cn.nukkit.utils.Faceable;
 /**
  * Created by Pub4Game on 26.12.2015.
  */
-public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceable {
+public class BlockEndPortalFrame extends BlockTransparent implements Faceable {
 
-    public BlockEndPortalFrame() {
-        this(0);
-    }
-
-    public BlockEndPortalFrame(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return END_PORTAL_FRAME;
+    public BlockEndPortalFrame(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

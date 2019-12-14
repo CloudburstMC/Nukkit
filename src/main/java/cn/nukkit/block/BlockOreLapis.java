@@ -16,12 +16,8 @@ import java.util.concurrent.ThreadLocalRandom;
 public class BlockOreLapis extends BlockSolid {
 
 
-    public BlockOreLapis() {
-    }
-
-    @Override
-    public int getId() {
-        return LAPIS_ORE;
+    public BlockOreLapis(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

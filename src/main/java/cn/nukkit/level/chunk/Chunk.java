@@ -1,13 +1,14 @@
 package cn.nukkit.level.chunk;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.BlockUpdate;
 import cn.nukkit.level.ChunkLoader;
+import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.Position;
 import cn.nukkit.level.chunk.bitarray.BitArrayVersion;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.network.protocol.LevelChunkPacket;
@@ -186,10 +187,19 @@ public final class Chunk implements Closeable {
 
     @Nonnull
     public Block getBlock(int x, int y, int z, int layer) {
-        int fullBlock = this.getFullBlock(x, y, z, layer);
-        int xPos = this.x << 4 | x & 0xf;
-        int zPos = this.z << 4 | z & 0xf;
-        return Block.get(fullBlock >> 4, fullBlock & 0xf, new Position(xPos, y, zPos, this.level));
+        Chunk.checkBounds(x, y, z);
+        ChunkSection section = this.getSection(y >> 4);
+        Block block;
+        if (section == null) {
+            block = Block.get(BlockID.AIR);
+        } else {
+            block = section.getBlock(x, y & 0xf, z, layer);
+        }
+        block.level = this.level;
+        block.x = this.x << 4 | x & 0xf;
+        block.y = y;
+        block.z = this.z << 4 | z & 0xf;
+        return block;
     }
 
     public int getBlockId(int x, int y, int z) {
@@ -197,7 +207,12 @@ public final class Chunk implements Closeable {
     }
 
     public int getBlockId(int x, int y, int z, int layer) {
-        return this.getFullBlock(x, y, z, layer) >>> 4;
+        Chunk.checkBounds(x, y, z);
+        ChunkSection section = this.getSection(y >> 4);
+        if (section == null) {
+            return 0;
+        }
+        return section.getBlockId(x, y & 0xf, z, layer);
     }
 
     public int getBlockData(int x, int y, int z) {
@@ -205,20 +220,12 @@ public final class Chunk implements Closeable {
     }
 
     public int getBlockData(int x, int y, int z, int layer) {
-        return this.getFullBlock(x, y, z, layer) & 0xf;
-    }
-
-    public int getFullBlock(int x, int y, int z) {
-        return this.getFullBlock(x, y, z, 0);
-    }
-
-    public int getFullBlock(int x, int y, int z, int layer) {
         Chunk.checkBounds(x, y, z);
         ChunkSection section = this.getSection(y >> 4);
         if (section == null) {
             return 0;
         }
-        return section.getFullBlock(x, y & 0xf, z, layer);
+        return section.getBlockData(x, y & 0xf, z, layer);
     }
 
     @Nonnull
@@ -238,7 +245,17 @@ public final class Chunk implements Closeable {
     }
 
     public void setBlock(int x, int y, int z, int layer, Block block) {
-        this.setFullBlock(x, y, z, layer, block.getFullId());
+        Chunk.checkBounds(x, y, z);
+        ChunkSection section = this.getSection(y >> 4);
+        if (section == null) {
+            if (block.getId() == 0) {
+                // Setting air in an empty section.
+                return;
+            }
+            section = this.getOrCreateSection(y >> 4);
+        }
+
+        section.setBlock(x, y & 0xf, z, layer, block);
     }
 
     public void setBlockId(int x, int y, int z, int id) {
@@ -246,7 +263,7 @@ public final class Chunk implements Closeable {
     }
 
     public void setBlockId(int x, int y, int z, int layer, int id) {
-        this.setFullBlock(x, y, z, layer, id << 4);
+        this.setBlock(x, y, z, layer, GlobalBlockPalette.getBlock(id, 0));
     }
 
     public void setBlockData(int x, int y, int z, int data) {
@@ -254,27 +271,17 @@ public final class Chunk implements Closeable {
     }
 
     public void setBlockData(int x, int y, int z, int layer, int data) {
-        int fullBlock = this.getFullBlock(x, y, z, layer);
-
-        this.setFullBlock(x, y, z, layer, (fullBlock & BLOCK_ID_MASK) | data);
-    }
-
-    public void setFullBlock(int x, int y, int z, int fullBlock) {
-        this.setFullBlock(x, y, z, 0, fullBlock);
-    }
-
-    public void setFullBlock(int x, int y, int z, int layer, int fullBlock) {
         Chunk.checkBounds(x, y, z);
         ChunkSection section = this.getSection(y >> 4);
         if (section == null) {
-            if (fullBlock == 0) {
+            if (data == 0) {
                 // Setting air in an empty section.
                 return;
             }
             section = this.getOrCreateSection(y >> 4);
         }
 
-        section.setFullBlock(x, y & 0xf, z, layer, fullBlock);
+        section.setBlockData(x, y & 0xf, z, layer, data);
     }
 
     public short getBlockExtraData(int x, int y, int z) {

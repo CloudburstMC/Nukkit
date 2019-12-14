@@ -12,17 +12,13 @@ import cn.nukkit.level.Level;
  */
 public class BlockOreRedstoneGlowing extends BlockOreRedstone {
 
-    public BlockOreRedstoneGlowing() {
+    public BlockOreRedstoneGlowing(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Glowing Redstone Ore";
-    }
-
-    @Override
-    public int getId() {
-        return GLOWING_REDSTONE_ORE;
     }
 
     @Override

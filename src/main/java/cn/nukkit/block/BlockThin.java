@@ -10,7 +10,8 @@ import cn.nukkit.utils.LevelException;
  */
 public abstract class BlockThin extends BlockTransparent {
 
-    protected BlockThin() {
+    public BlockThin(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

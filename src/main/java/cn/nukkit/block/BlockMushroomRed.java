@@ -5,22 +5,13 @@ package cn.nukkit.block;
  */
 public class BlockMushroomRed extends BlockMushroom {
 
-    public BlockMushroomRed() {
-        super();
-    }
-
-    public BlockMushroomRed(int meta) {
-        super(0);
+    public BlockMushroomRed(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Red Mushroom";
-    }
-
-    @Override
-    public int getId() {
-        return RED_MUSHROOM;
     }
 
     @Override

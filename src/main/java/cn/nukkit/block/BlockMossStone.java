@@ -9,17 +9,13 @@ import cn.nukkit.item.ItemTool;
  */
 public class BlockMossStone extends BlockSolid {
 
-    public BlockMossStone() {
+    public BlockMossStone(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Moss Stone";
-    }
-
-    @Override
-    public int getId() {
-        return MOSS_STONE;
     }
 
     @Override

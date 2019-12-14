@@ -19,19 +19,10 @@ import java.util.Map;
  * author: Angelic47
  * Nukkit Project
  */
-public class BlockFurnaceBurning extends BlockSolidMeta implements Faceable {
+public class BlockFurnaceBurning extends BlockSolid implements Faceable {
 
-    public BlockFurnaceBurning() {
-        this(0);
-    }
-
-    public BlockFurnaceBurning(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return BURNING_FURNACE;
+    public BlockFurnaceBurning(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -94,7 +85,7 @@ public class BlockFurnaceBurning extends BlockSolidMeta implements Faceable {
 
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, new BlockAir(), true, true);
+        this.getLevel().setBlock(this, Block.get(AIR), true, true);
         return true;
     }
 

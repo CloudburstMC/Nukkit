@@ -88,8 +88,7 @@ public interface BlockID {
     int LIT_FURNACE = 62;
     int SIGN_POST = 63;
     int DOOR_BLOCK = 64;
-    int WOODEN_DOOR_BLOCK = 64;
-    int WOOD_DOOR_BLOCK = 64;
+    int OAK_DOOR_BLOCK = 64;
     int LADDER = 65;
     int RAIL = 66;
     int COBBLE_STAIRS = 67;
@@ -143,7 +142,6 @@ public interface BlockID {
     int MELON_STEM = 105;
     int VINE = 106;
     int VINES = 106;
-    int FENCE_GATE = 107;
     int FENCE_GATE_OAK = 107;
     int BRICK_STAIRS = 108;
     int STONE_BRICK_STAIRS = 109;
@@ -303,6 +301,8 @@ public interface BlockID {
     int NETHER_REACTOR = 247; //Should not be removed
 
     int PISTON_EXTENSION = 250;
+
+    int SPRUCE_STANDING_SIGN = 436;
 
     int OBSERVER = 251;
 }

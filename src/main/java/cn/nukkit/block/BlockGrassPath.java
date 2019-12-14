@@ -11,12 +11,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockGrassPath extends BlockGrass {
 
-    public BlockGrassPath() {
-    }
-
-    @Override
-    public int getId() {
-        return GRASS_PATH;
+    public BlockGrassPath(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -43,11 +39,6 @@ public class BlockGrassPath extends BlockGrass {
     public BlockColor getColor() {
         //todo edit this after minecraft pc 1.9 come out
         return BlockColor.GRASS_BLOCK_COLOR;
-    }
-
-    @Override
-    public boolean canSilkTouch() {
-        return true;
     }
 
     @Override

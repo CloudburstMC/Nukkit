@@ -17,18 +17,9 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
  */
 public class BlockRailDetector extends BlockRail {
 
-    public BlockRailDetector() {
-        this(0);
+    public BlockRailDetector(int id, int meta) {
+        super(id, meta);
         canBePowered = true;
-    }
-
-    public BlockRailDetector(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return DETECTOR_RAIL;
     }
 
     @Override

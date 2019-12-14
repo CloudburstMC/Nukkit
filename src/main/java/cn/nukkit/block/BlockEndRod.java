@@ -12,24 +12,15 @@ import cn.nukkit.utils.Faceable;
  *
  * @author PikyCZ
  */
-public class BlockEndRod extends BlockTransparentMeta implements Faceable {
+public class BlockEndRod extends BlockTransparent implements Faceable {
 
-    public BlockEndRod() {
-        this(0);
-    }
-
-    public BlockEndRod(int meta) {
-        super(meta);
+    public BlockEndRod(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "End Rod";
-    }
-
-    @Override
-    public int getId() {
-        return END_ROD;
     }
 
     @Override

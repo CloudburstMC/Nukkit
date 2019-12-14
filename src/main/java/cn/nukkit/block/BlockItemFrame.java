@@ -16,19 +16,10 @@ import java.util.Random;
 /**
  * Created by Pub4Game on 03.07.2016.
  */
-public class BlockItemFrame extends BlockTransparentMeta {
+public class BlockItemFrame extends BlockTransparent {
 
-    public BlockItemFrame() {
-        this(0);
-    }
-
-    public BlockItemFrame(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return ITEM_FRAME_BLOCK;
+    public BlockItemFrame(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -114,7 +105,7 @@ public class BlockItemFrame extends BlockTransparentMeta {
 
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, new BlockAir(), true, true);
+        this.getLevel().setBlock(this, Block.get(AIR), true, true);
         this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_REMOVE_ITEM);
         return true;
     }

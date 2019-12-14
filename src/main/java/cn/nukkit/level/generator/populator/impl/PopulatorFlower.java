@@ -1,5 +1,7 @@
 package cn.nukkit.level.generator.populator.impl;
 
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.populator.helper.EnsureCover;
@@ -18,26 +20,25 @@ import java.util.concurrent.ThreadLocalRandom;
  * </p>
  */
 public class PopulatorFlower extends PopulatorSurfaceBlock {
-    private final List<int[]> flowerTypes = new ArrayList<>();
+    private static final Block AIR = Block.get(BlockID.AIR);
 
-    public void addType(int a, int b) {
-        int[] c = new int[2];
-        c[0] = a;
-        c[1] = b;
-        this.flowerTypes.add(c);
+    private final List<Block> flowerTypes = new ArrayList<>();
+
+    public void addType(Block block) {
+        this.flowerTypes.add(block);
     }
 
-    public List<int[]> getTypes() {
+    public List<Block> getTypes() {
         return this.flowerTypes;
     }
 
     @Override
-    protected void placeBlock(int x, int y, int z, int id, Chunk chunk, NukkitRandom random) {
+    protected void placeBlock(int x, int y, int z, Block block, Chunk chunk, NukkitRandom random) {
         if (flowerTypes.size() != 0) {
-            int[] type = flowerTypes.get(ThreadLocalRandom.current().nextInt(flowerTypes.size()));
-            chunk.setFullBlock(x, y, z, (type[0] << 4) | type[1]);
-            if (type[0] == DOUBLE_PLANT) {
-                chunk.setFullBlock(x, y + 1, z, (type[0] << 4) | (8 | type[1]));
+            Block type = flowerTypes.get(ThreadLocalRandom.current().nextInt(flowerTypes.size()));
+            chunk.setBlock(x, y, z, type);
+            if (type.getId() == DOUBLE_PLANT) {
+                chunk.setBlock(x, y + 1, z, type);
             }
         }
     }
@@ -48,7 +49,7 @@ public class PopulatorFlower extends PopulatorSurfaceBlock {
     }
 
     @Override
-    protected int getBlockId(int x, int z, NukkitRandom random, Chunk chunk) {
-        return 0;
+    protected Block getBlock(int x, int z, NukkitRandom random, Chunk chunk) {
+        return AIR;
     }
 }

@@ -9,14 +9,10 @@ import cn.nukkit.utils.Faceable;
 /**
  * Created by CreeperFace on 2.6.2017.
  */
-public abstract class BlockTerracottaGlazed extends BlockSolidMeta implements Faceable {
+public abstract class BlockTerracottaGlazed extends BlockSolid implements Faceable {
 
-    public BlockTerracottaGlazed() {
-        this(0);
-    }
-
-    public BlockTerracottaGlazed(int meta) {
-        super(meta);
+    public BlockTerracottaGlazed(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

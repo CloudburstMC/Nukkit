@@ -14,12 +14,8 @@ import cn.nukkit.player.Player;
  */
 public class BlockBeacon extends BlockTransparent {
 
-    public BlockBeacon() {
-    }
-
-    @Override
-    public int getId() {
-        return BEACON;
+    public BlockBeacon(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

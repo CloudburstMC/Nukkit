@@ -10,18 +10,9 @@ import cn.nukkit.player.Player;
  */
 public class BlockRedstoneRepeaterUnpowered extends BlockRedstoneDiode {
 
-    public BlockRedstoneRepeaterUnpowered() {
-        this(0);
-    }
-
-    public BlockRedstoneRepeaterUnpowered(int meta) {
-        super(meta);
+    public BlockRedstoneRepeaterUnpowered(int id, int meta) {
+        super(id, meta);
         this.isPowered = false;
-    }
-
-    @Override
-    public int getId() {
-        return UNPOWERED_REPEATER;
     }
 
     @Override
@@ -60,7 +51,7 @@ public class BlockRedstoneRepeaterUnpowered extends BlockRedstoneDiode {
 
     @Override
     protected Block getPowered() {
-        return new BlockRedstoneRepeaterPowered(this.getDamage());
+        return Block.get(POWERED_REPEATER, this.getDamage());
     }
 
     @Override

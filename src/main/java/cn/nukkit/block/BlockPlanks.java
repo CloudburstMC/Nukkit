@@ -7,7 +7,7 @@ import cn.nukkit.utils.BlockColor;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BlockPlanks extends BlockSolidMeta {
+public class BlockPlanks extends BlockSolid {
     public static final int OAK = 0;
     public static final int SPRUCE = 1;
     public static final int BIRCH = 2;
@@ -16,17 +16,8 @@ public class BlockPlanks extends BlockSolidMeta {
     public static final int DARK_OAK = 5;
 
 
-    public BlockPlanks() {
-        this(0);
-    }
-
-    public BlockPlanks(int meta) {
-        super(meta % 6);
-    }
-
-    @Override
-    public int getId() {
-        return WOODEN_PLANKS;
+    public BlockPlanks(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

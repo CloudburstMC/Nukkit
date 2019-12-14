@@ -5,17 +5,13 @@ import cn.nukkit.utils.BlockColor;
 
 public class BlockNetherWartBlock extends BlockSolid {
 
-    public BlockNetherWartBlock() {
+    public BlockNetherWartBlock(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Nether Wart Block";
-    }
-
-    @Override
-    public int getId() {
-        return BLOCK_NETHER_WART_BLOCK;
     }
 
     @Override

@@ -24,22 +24,13 @@ public class BlockRedstoneWire extends BlockFlowable {
     private boolean canProvidePower = true;
     private final Set<Vector3> blocksNeedingUpdate = new HashSet<>();
 
-    public BlockRedstoneWire() {
-        this(0);
-    }
-
-    public BlockRedstoneWire(int meta) {
-        super(meta);
+    public BlockRedstoneWire(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Redstone Wire";
-    }
-
-    @Override
-    public int getId() {
-        return REDSTONE_WIRE;
     }
 
     @Override
@@ -163,7 +154,7 @@ public class BlockRedstoneWire extends BlockFlowable {
 
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, new BlockAir(), true, true);
+        this.getLevel().setBlock(this, Block.get(AIR), true, true);
 
         Vector3 pos = getLocation();
 

@@ -19,23 +19,14 @@ import java.util.concurrent.ThreadLocalRandom;
  * author: Angelic47
  * Nukkit Project
  */
-public class BlockLeaves extends BlockTransparentMeta {
+public class BlockLeaves extends BlockTransparent {
     public static final int OAK = 0;
     public static final int SPRUCE = 1;
     public static final int BIRCH = 2;
     public static final int JUNGLE = 3;
 
-    public BlockLeaves() {
-        this(0);
-    }
-
-    public BlockLeaves(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return LEAVES;
+    public BlockLeaves(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

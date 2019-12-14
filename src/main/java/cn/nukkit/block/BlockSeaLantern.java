@@ -8,17 +8,13 @@ import java.util.concurrent.ThreadLocalRandom;
 
 
 public class BlockSeaLantern extends BlockTransparent {
-    public BlockSeaLantern() {
+    public BlockSeaLantern(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Sea Lantern";
-    }
-
-    @Override
-    public int getId() {
-        return SEA_LANTERN;
     }
 
     @Override

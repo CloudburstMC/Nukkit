@@ -13,17 +13,13 @@ import java.util.Random;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockGlowstone extends BlockTransparent {
-    public BlockGlowstone() {
+    public BlockGlowstone(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Glowstone";
-    }
-
-    @Override
-    public int getId() {
-        return GLOWSTONE_BLOCK;
     }
 
     @Override

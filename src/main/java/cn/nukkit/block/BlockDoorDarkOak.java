@@ -5,22 +5,13 @@ import cn.nukkit.item.ItemDoorDarkOak;
 
 public class BlockDoorDarkOak extends BlockDoorWood {
 
-    public BlockDoorDarkOak() {
-        this(0);
-    }
-
-    public BlockDoorDarkOak(int meta) {
-        super(meta);
+    public BlockDoorDarkOak(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Dark Oak Door Block";
-    }
-
-    @Override
-    public int getId() {
-        return DARK_OAK_DOOR_BLOCK;
     }
 
     @Override

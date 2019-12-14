@@ -14,22 +14,13 @@ import cn.nukkit.utils.Faceable;
  */
 public class BlockLever extends BlockFlowable implements Faceable {
 
-    public BlockLever() {
-        this(0);
-    }
-
-    public BlockLever(int meta) {
-        super(meta);
+    public BlockLever(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Lever";
-    }
-
-    @Override
-    public int getId() {
-        return LEVER;
     }
 
     @Override
@@ -100,7 +91,7 @@ public class BlockLever extends BlockFlowable implements Faceable {
 
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, new BlockAir(), true, true);
+        this.getLevel().setBlock(this, Block.get(AIR), true, true);
 
         if (isPowerOn()) {
             BlockFace face = LeverOrientation.byMetadata(this.isPowerOn() ? this.getDamage() ^ 0x08 : this.getDamage()).getFacing();

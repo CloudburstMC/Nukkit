@@ -24,9 +24,9 @@ public class ObjectTallGrass {
                         if (random.nextBoundedInt(8) == 0) {
                             //porktodo: biomes have specific flower types that can grow in them
                             if (random.nextBoolean()) {
-                                level.setBlockAt(x, y, z, Block.DANDELION);
+                                level.setBlockIdAt(x, y, z, Block.DANDELION);
                             } else {
-                                level.setBlockAt(x, y, z, Block.POPPY);
+                                level.setBlockIdAt(x, y, z, Block.POPPY);
                             }
                         } else {
                             level.setBlockAt(x, y, z, Block.TALL_GRASS, 1);

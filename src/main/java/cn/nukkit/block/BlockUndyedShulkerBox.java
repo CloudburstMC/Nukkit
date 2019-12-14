@@ -24,13 +24,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockUndyedShulkerBox extends BlockTransparent {
 
-    public BlockUndyedShulkerBox() {
-        super();
-    }
-
-    @Override
-    public int getId() {
-        return UNDYED_SHULKER_BOX;
+    public BlockUndyedShulkerBox(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

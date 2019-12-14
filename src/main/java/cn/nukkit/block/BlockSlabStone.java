@@ -18,17 +18,8 @@ public class BlockSlabStone extends BlockSlab {
     public static final int QUARTZ = 6;
     public static final int NETHER_BRICK = 7;
 
-    public BlockSlabStone() {
-        this(0);
-    }
-
-    public BlockSlabStone(int meta) {
-        super(meta, DOUBLE_STONE_SLAB);
-    }
-
-    @Override
-    public int getId() {
-        return STONE_SLAB;
+    public BlockSlabStone(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -96,5 +87,10 @@ public class BlockSlabStone extends BlockSlab {
     @Override
     public boolean canHarvestWithHand() {
         return false;
+    }
+
+    @Override
+    protected int getDoubleSlab() {
+        return DOUBLE_STONE_SLAB;
     }
 }

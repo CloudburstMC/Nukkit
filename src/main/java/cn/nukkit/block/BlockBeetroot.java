@@ -8,17 +8,8 @@ import cn.nukkit.item.ItemSeedsBeetroot;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockBeetroot extends BlockCrops {
-    public BlockBeetroot() {
-        this(0);
-    }
-
-    public BlockBeetroot(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return BEETROOT_BLOCK;
+    public BlockBeetroot(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

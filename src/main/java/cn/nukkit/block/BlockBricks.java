@@ -9,17 +9,13 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockBricks extends BlockSolid {
 
-    public BlockBricks() {
+    public BlockBricks(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Bricks";
-    }
-
-    @Override
-    public int getId() {
-        return BRICKS_BLOCK;
     }
 
     @Override

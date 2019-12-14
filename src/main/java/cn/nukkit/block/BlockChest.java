@@ -21,24 +21,15 @@ import java.util.Map;
  * author: Angelic47
  * Nukkit Project
  */
-public class BlockChest extends BlockTransparentMeta implements Faceable {
+public class BlockChest extends BlockTransparent implements Faceable {
 
-    public BlockChest() {
-        this(0);
-    }
-
-    public BlockChest(int meta) {
-        super(meta);
+    public BlockChest(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public boolean canBeActivated() {
         return true;
-    }
-
-    @Override
-    public int getId() {
-        return CHEST;
     }
 
     @Override
@@ -149,7 +140,7 @@ public class BlockChest extends BlockTransparentMeta implements Faceable {
         if (t instanceof BlockEntityChest) {
             ((BlockEntityChest) t).unpair();
         }
-        this.getLevel().setBlock(this, new BlockAir(), true, true);
+        this.getLevel().setBlock(this, Block.get(AIR), true, true);
 
         return true;
     }

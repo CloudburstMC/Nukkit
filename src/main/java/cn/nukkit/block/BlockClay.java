@@ -10,7 +10,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockClay extends BlockSolid {
 
-    public BlockClay() {
+    public BlockClay(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -26,11 +27,6 @@ public class BlockClay extends BlockSolid {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_SHOVEL;
-    }
-
-    @Override
-    public int getId() {
-        return CLAY_BLOCK;
     }
 
     @Override

@@ -13,17 +13,8 @@ import cn.nukkit.utils.BlockColor;
 public class BlockWater extends BlockLiquid {
 
 
-    public BlockWater() {
-        this(0);
-    }
-
-    public BlockWater(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return WATER;
+    public BlockWater(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -45,8 +36,8 @@ public class BlockWater extends BlockLiquid {
     }
 
     @Override
-    public BlockLiquid getBlock(int meta) {
-        return new BlockWater(meta);
+    public Block getBlock(int meta) {
+        return Block.get(WATER, meta);
     }
 
     @Override

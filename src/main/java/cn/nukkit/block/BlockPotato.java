@@ -10,22 +10,13 @@ import java.util.Random;
  */
 public class BlockPotato extends BlockCrops {
 
-    public BlockPotato(int meta) {
-        super(meta);
-    }
-
-    public BlockPotato() {
-        this(0);
+    public BlockPotato(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Potato Block";
-    }
-
-    @Override
-    public int getId() {
-        return POTATO_BLOCK;
     }
 
     @Override

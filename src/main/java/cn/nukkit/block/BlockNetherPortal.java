@@ -15,22 +15,13 @@ import cn.nukkit.utils.Faceable;
  */
 public class BlockNetherPortal extends BlockFlowable implements Faceable {
 
-    public BlockNetherPortal() {
-        this(0);
-    }
-
-    public BlockNetherPortal(int meta) {
-        super(0);
+    public BlockNetherPortal(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Nether Portal Block";
-    }
-
-    @Override
-    public int getId() {
-        return NETHER_PORTAL;
     }
 
     @Override
@@ -104,48 +95,48 @@ public class BlockNetherPortal extends BlockFlowable implements Faceable {
         for (int xx = -1; xx < 4; xx++) {
             for (int yy = 1; yy < 4; yy++)  {
                 for (int zz = -1; zz < 3; zz++) {
-                    lvl.setBlockAt(x + xx, y + yy, z + zz, AIR);
+                    lvl.setBlockIdAt(x + xx, y + yy, z + zz, AIR);
                 }
             }
         }
 
-        lvl.setBlockAt(x + 1, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 2, y, z, OBSIDIAN);
+        lvl.setBlockIdAt(x + 1, y, z, OBSIDIAN);
+        lvl.setBlockIdAt(x + 2, y, z, OBSIDIAN);
 
         z += 1;
-        lvl.setBlockAt(x, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 1, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 2, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 3, y, z, OBSIDIAN);
+        lvl.setBlockIdAt(x, y, z, OBSIDIAN);
+        lvl.setBlockIdAt(x + 1, y, z, OBSIDIAN);
+        lvl.setBlockIdAt(x + 2, y, z, OBSIDIAN);
+        lvl.setBlockIdAt(x + 3, y, z, OBSIDIAN);
 
         z += 1;
-        lvl.setBlockAt(x + 1, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 2, y, z, OBSIDIAN);
+        lvl.setBlockIdAt(x + 1, y, z, OBSIDIAN);
+        lvl.setBlockIdAt(x + 2, y, z, OBSIDIAN);
 
         z -= 1;
         y += 1;
-        lvl.setBlockAt(x, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 1, y, z, NETHER_PORTAL);
-        lvl.setBlockAt(x + 2, y, z, NETHER_PORTAL);
-        lvl.setBlockAt(x + 3, y, z, OBSIDIAN);
+        lvl.setBlockIdAt(x, y, z, OBSIDIAN);
+        lvl.setBlockIdAt(x + 1, y, z, NETHER_PORTAL);
+        lvl.setBlockIdAt(x + 2, y, z, NETHER_PORTAL);
+        lvl.setBlockIdAt(x + 3, y, z, OBSIDIAN);
 
         y += 1;
-        lvl.setBlockAt(x, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 1, y, z, NETHER_PORTAL);
-        lvl.setBlockAt(x + 2, y, z, NETHER_PORTAL);
-        lvl.setBlockAt(x + 3, y, z, OBSIDIAN);
+        lvl.setBlockIdAt(x, y, z, OBSIDIAN);
+        lvl.setBlockIdAt(x + 1, y, z, NETHER_PORTAL);
+        lvl.setBlockIdAt(x + 2, y, z, NETHER_PORTAL);
+        lvl.setBlockIdAt(x + 3, y, z, OBSIDIAN);
 
         y += 1;
-        lvl.setBlockAt(x, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 1, y, z, NETHER_PORTAL);
-        lvl.setBlockAt(x + 2, y, z, NETHER_PORTAL);
-        lvl.setBlockAt(x + 3, y, z, OBSIDIAN);
+        lvl.setBlockIdAt(x, y, z, OBSIDIAN);
+        lvl.setBlockIdAt(x + 1, y, z, NETHER_PORTAL);
+        lvl.setBlockIdAt(x + 2, y, z, NETHER_PORTAL);
+        lvl.setBlockIdAt(x + 3, y, z, OBSIDIAN);
 
         y += 1;
-        lvl.setBlockAt(x, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 1, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 2, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 3, y, z, OBSIDIAN);
+        lvl.setBlockIdAt(x, y, z, OBSIDIAN);
+        lvl.setBlockIdAt(x + 1, y, z, OBSIDIAN);
+        lvl.setBlockIdAt(x + 2, y, z, OBSIDIAN);
+        lvl.setBlockIdAt(x + 3, y, z, OBSIDIAN);
     }
 
     @Override

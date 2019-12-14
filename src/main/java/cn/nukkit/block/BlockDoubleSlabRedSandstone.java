@@ -1,25 +1,15 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 
 /**
  * Created by CreeperFace on 26. 11. 2016.
  */
-public class BlockDoubleSlabRedSandstone extends BlockSolidMeta {
+public class BlockDoubleSlabRedSandstone extends BlockSolid {
 
-    public BlockDoubleSlabRedSandstone() {
-        this(0);
-    }
-
-    public BlockDoubleSlabRedSandstone(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return DOUBLE_RED_SANDSTONE_SLAB;
+    public BlockDoubleSlabRedSandstone(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -55,7 +45,7 @@ public class BlockDoubleSlabRedSandstone extends BlockSolidMeta {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(new BlockSlabRedSandstone(), this.getDamage() & 0x07);
+        return Item.get(RED_SANDSTONE_SLAB, this.getDamage() & 0x07);
     }
 
     @Override

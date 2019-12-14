@@ -15,12 +15,8 @@ import java.util.Random;
 
 public class BlockMelon extends BlockSolid {
 
-    public BlockMelon() {
-    }
-
-    @Override
-    public int getId() {
-        return MELON_BLOCK;
+    public BlockMelon(int id, int meta) {
+        super(id, meta);
     }
 
     public String getName() {

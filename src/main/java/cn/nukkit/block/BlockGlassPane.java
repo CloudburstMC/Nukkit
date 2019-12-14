@@ -9,17 +9,13 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockGlassPane extends BlockThin {
 
-    public BlockGlassPane() {
+    public BlockGlassPane(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Glass Pane";
-    }
-
-    @Override
-    public int getId() {
-        return GLASS_PANE;
     }
 
     @Override

@@ -5,22 +5,13 @@ import cn.nukkit.item.ItemDoorJungle;
 
 public class BlockDoorJungle extends BlockDoorWood {
 
-    public BlockDoorJungle() {
-        this(0);
-    }
-
-    public BlockDoorJungle(int meta) {
-        super(meta);
+    public BlockDoorJungle(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Jungle Door Block";
-    }
-
-    @Override
-    public int getId() {
-        return JUNGLE_DOOR_BLOCK;
     }
 
     @Override

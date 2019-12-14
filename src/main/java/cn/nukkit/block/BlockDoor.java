@@ -15,15 +15,15 @@ import cn.nukkit.utils.Faceable;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class BlockDoor extends BlockTransparentMeta implements Faceable {
+public abstract class BlockDoor extends BlockTransparent implements Faceable {
 
     public static int DOOR_OPEN_BIT = 0x04;
     public static int DOOR_TOP_BIT = 0x08;
     public static int DOOR_HINGE_BIT = 0x01;
     public static int DOOR_POWERED_BIT = 0x02;
 
-    protected BlockDoor(int meta) {
-        super(meta);
+    public BlockDoor(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -201,7 +201,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
                 Block up = this.up();
 
                 if (up instanceof BlockDoor) {
-                    this.getLevel().setBlock(up, new BlockAir(), false);
+                    this.getLevel().setBlock(up, Block.get(AIR), false);
                     this.getLevel().useBreakOn(this);
                 }
 
@@ -260,15 +260,15 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         if (isTop(this.getDamage())) {
             Block down = this.down();
             if (down.getId() == this.getId()) {
-                this.getLevel().setBlock(down, new BlockAir(), true);
+                this.getLevel().setBlock(down, Block.get(AIR), true);
             }
         } else {
             Block up = this.up();
             if (up.getId() == this.getId()) {
-                this.getLevel().setBlock(up, new BlockAir(), true);
+                this.getLevel().setBlock(up, Block.get(AIR), true);
             }
         }
-        this.getLevel().setBlock(this, new BlockAir(), true);
+        this.getLevel().setBlock(this, Block.get(AIR), true);
 
         return true;
     }

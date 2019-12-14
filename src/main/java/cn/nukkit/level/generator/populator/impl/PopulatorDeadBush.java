@@ -1,5 +1,7 @@
 package cn.nukkit.level.generator.populator.impl;
 
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.populator.helper.EnsureBelow;
@@ -11,6 +13,7 @@ import cn.nukkit.math.NukkitRandom;
  * @author DaPorkchop_
  */
 public class PopulatorDeadBush extends PopulatorSurfaceBlock {
+    private static final Block DEAD_BUSH = Block.get(BlockID.DEAD_BUSH);
 
     @Override
     protected boolean canStay(int x, int y, int z, Chunk chunk, ChunkManager level) {
@@ -18,7 +21,7 @@ public class PopulatorDeadBush extends PopulatorSurfaceBlock {
     }
 
     @Override
-    protected int getBlockId(int x, int z, NukkitRandom random, Chunk chunk) {
-        return DEAD_BUSH << 4;
+    protected Block getBlock(int x, int z, NukkitRandom random, Chunk chunk) {
+        return DEAD_BUSH;
     }
 }

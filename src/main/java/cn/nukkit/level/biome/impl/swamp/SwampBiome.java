@@ -2,6 +2,7 @@ package cn.nukkit.level.biome.impl.swamp;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockFlower;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.level.biome.type.GrassyBiome;
 import cn.nukkit.level.generator.populator.impl.MushroomPopulator;
 import cn.nukkit.level.generator.populator.impl.PopulatorFlower;
@@ -29,7 +30,7 @@ public class SwampBiome extends GrassyBiome {
 
         PopulatorFlower flower = new PopulatorFlower();
         flower.setBaseAmount(2);
-        flower.addType(Block.RED_FLOWER, BlockFlower.TYPE_BLUE_ORCHID);
+        flower.addType(Block.get(BlockID.RED_FLOWER, BlockFlower.TYPE_BLUE_ORCHID));
         this.addPopulator(flower);
 
         MushroomPopulator mushroom = new MushroomPopulator(1);

@@ -12,10 +12,10 @@ import cn.nukkit.utils.Faceable;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class BlockStairs extends BlockTransparentMeta implements Faceable {
+public abstract class BlockStairs extends BlockTransparent implements Faceable {
 
-    protected BlockStairs(int meta) {
-        super(meta);
+    protected BlockStairs(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

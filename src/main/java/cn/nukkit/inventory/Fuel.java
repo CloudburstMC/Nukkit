@@ -25,7 +25,7 @@ public abstract class Fuel {
         duration.put(Item.WOODEN_HOE, (short) 200);
         duration.put(Item.STICK, (short) 100);
         duration.put(Item.FENCE, (short) 300);
-        duration.put(Item.FENCE_GATE, (short) 300);
+        duration.put(Item.FENCE_GATE_OAK, (short) 300);
         duration.put(Item.FENCE_GATE_SPRUCE, (short) 300);
         duration.put(Item.FENCE_GATE_BIRCH, (short) 300);
         duration.put(Item.FENCE_GATE_JUNGLE, (short) 300);

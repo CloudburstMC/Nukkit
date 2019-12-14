@@ -14,17 +14,8 @@ import java.util.Map;
 
 public class BlockTrappedChest extends BlockChest {
 
-    public BlockTrappedChest() {
-        this(0);
-    }
-
-    public BlockTrappedChest(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return TRAPPED_CHEST;
+    public BlockTrappedChest(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

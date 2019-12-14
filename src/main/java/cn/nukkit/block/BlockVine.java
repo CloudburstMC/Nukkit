@@ -13,24 +13,15 @@ import cn.nukkit.player.Player;
 /**
  * Created by Pub4Game on 15.01.2016.
  */
-public class BlockVine extends BlockTransparentMeta {
+public class BlockVine extends BlockTransparent {
 
-    public BlockVine(int meta) {
-        super(meta);
-    }
-
-    public BlockVine() {
-        this(0);
+    public BlockVine(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Vines";
-    }
-
-    @Override
-    public int getId() {
-        return VINE;
     }
 
     @Override

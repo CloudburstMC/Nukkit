@@ -56,17 +56,8 @@ public class Skin {
                 skinData.data.length >= SINGLE_SKIN_SIZE;
     }
 
-    private boolean isValidResourcePatch() {
-        if (skinResourcePatch == null) {
-            return false;
-        }
-        try {
-            JSONObject object = (JSONObject) JSONValue.parse(skinResourcePatch);
-            JSONObject geometry = (JSONObject) object.get("geometry");
-            return geometry.containsKey("default") && geometry.get("default") instanceof String;
-        } catch (ClassCastException | NullPointerException e) {
-            return false;
-        }
+    private static String convertLegacyGeometryName(String geometryName) {
+        return "{\"geometry\" : {\"default\" : \"" + JSONValue.escape(geometryName) + "\"}}";
     }
 
     public SerializedImage getSkinData() {
@@ -115,13 +106,14 @@ public class Skin {
         this.skinResourcePatch = skinResourcePatch;
     }
 
-    public void setGeometryName(String geometryName) {
-        if (geometryName == null || geometryName.trim().isEmpty()) {
-            skinResourcePatch = GEOMETRY_CUSTOM;
-            return;
+    private static boolean validateSkinResourcePatch(String skinResourcePatch) {
+        try {
+            JSONObject object = (JSONObject) JSONValue.parse(skinResourcePatch);
+            JSONObject geometry = (JSONObject) object.get("geometry");
+            return geometry.containsKey("default") && geometry.get("default") instanceof String;
+        } catch (ClassCastException | NullPointerException e) {
+            return false;
         }
-
-        this.skinResourcePatch = "{\"geometry\" : {\"default\" : \"" + geometryName + "\"}}";
     }
 
     public String getSkinResourcePatch() {
@@ -242,7 +234,18 @@ public class Skin {
         return new SerializedImage(image.getWidth(), image.getHeight(), outputStream.toByteArray());
     }
 
-    private static String convertLegacyGeometryName(String geometryName) {
-        return "{\"geometry\" : {\"default\" : \"" + geometryName + "\"}}";
+    private boolean isValidResourcePatch() {
+        return skinResourcePatch != null && validateSkinResourcePatch(skinResourcePatch);
+    }
+
+    public void setGeometryName(String geometryName) {
+        if (geometryName == null || geometryName.trim().isEmpty()) {
+            skinResourcePatch = GEOMETRY_CUSTOM;
+            return;
+        }
+
+        String skinResourcePatch = convertLegacyGeometryName(geometryName);
+        Preconditions.checkArgument(validateSkinResourcePatch(skinResourcePatch), "Invalid skin geometry");
+        this.skinResourcePatch = skinResourcePatch;
     }
 }

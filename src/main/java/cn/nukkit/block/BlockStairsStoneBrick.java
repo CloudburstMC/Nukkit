@@ -7,17 +7,8 @@ import cn.nukkit.item.ItemTool;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockStairsStoneBrick extends BlockStairs {
-    public BlockStairsStoneBrick() {
-        this(0);
-    }
-
-    public BlockStairsStoneBrick(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return STONE_BRICK_STAIRS;
+    public BlockStairsStoneBrick(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

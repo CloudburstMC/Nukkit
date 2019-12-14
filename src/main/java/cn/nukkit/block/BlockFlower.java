@@ -25,17 +25,8 @@ public class BlockFlower extends BlockFlowable {
     public static final int TYPE_PINK_TULIP = 7;
     public static final int TYPE_OXEYE_DAISY = 8;
 
-    public BlockFlower() {
-        this(0);
-    }
-
-    public BlockFlower(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return FLOWER;
+    public BlockFlower(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

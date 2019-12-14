@@ -10,18 +10,9 @@ import cn.nukkit.utils.Faceable;
  * Created on 2015/11/24 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockHayBale extends BlockSolidMeta implements Faceable {
-    public BlockHayBale() {
-        this(0);
-    }
-
-    public BlockHayBale(int meta) {
-        super(meta);
-     }
-
-    @Override
-    public int getId() {
-        return HAY_BALE;
+public class BlockHayBale extends BlockSolid implements Faceable {
+    public BlockHayBale(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

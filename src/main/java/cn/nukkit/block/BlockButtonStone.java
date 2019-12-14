@@ -7,17 +7,8 @@ import cn.nukkit.item.ItemTool;
  */
 public class BlockButtonStone extends BlockButton {
 
-    public BlockButtonStone() {
-        this(0);
-    }
-
-    public BlockButtonStone(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return STONE_BUTTON;
+    public BlockButtonStone(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

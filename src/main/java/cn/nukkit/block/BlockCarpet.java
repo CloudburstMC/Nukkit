@@ -13,21 +13,8 @@ import cn.nukkit.utils.DyeColor;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockCarpet extends BlockFlowable {
-    public BlockCarpet() {
-        this(0);
-    }
-
-    public BlockCarpet(int meta) {
-        super(meta);
-    }
-
-    public BlockCarpet(DyeColor dyeColor) {
-        this(dyeColor.getWoolData());
-    }
-
-    @Override
-    public int getId() {
-        return CARPET;
+    public BlockCarpet(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

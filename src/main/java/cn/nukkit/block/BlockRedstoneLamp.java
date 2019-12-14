@@ -12,17 +12,13 @@ import cn.nukkit.player.Player;
  */
 public class BlockRedstoneLamp extends BlockSolid {
 
-    public BlockRedstoneLamp() {
+    public BlockRedstoneLamp(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Redstone Lamp";
-    }
-
-    @Override
-    public int getId() {
-        return REDSTONE_LAMP;
     }
 
     @Override
@@ -43,7 +39,7 @@ public class BlockRedstoneLamp extends BlockSolid {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (this.level.isBlockPowered(this.getLocation())) {
-            this.level.setBlock(this, new BlockRedstoneLampLit(), false, true);
+            this.level.setBlock(this, Block.get(LIT_REDSTONE_LAMP), false, true);
         } else {
             this.level.setBlock(this, this, false, true);
         }
@@ -60,7 +56,7 @@ public class BlockRedstoneLamp extends BlockSolid {
                 return 0;
             }
             if (this.level.isBlockPowered(this.getLocation())) {
-                this.level.setBlock(this, new BlockRedstoneLampLit(), false, false);
+                this.level.setBlock(this, Block.get(LIT_REDSTONE_LAMP), false, false);
                 return 1;
             }
         }

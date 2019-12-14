@@ -5,12 +5,8 @@ import cn.nukkit.item.ItemTool;
 
 public class BlockChorusFlower extends BlockTransparent {
 
-    public BlockChorusFlower() {
-    }
-
-    @Override
-    public int getId() {
-        return CHORUS_FLOWER;
+    public BlockChorusFlower(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

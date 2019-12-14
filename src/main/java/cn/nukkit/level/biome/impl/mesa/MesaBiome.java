@@ -1,5 +1,7 @@
 package cn.nukkit.level.biome.impl.mesa;
 
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockSand;
 import cn.nukkit.level.biome.type.CoveredBiome;
 import cn.nukkit.level.generator.noise.nukkit.f.SimplexF;
@@ -16,32 +18,38 @@ import java.util.Random;
  * Handles the placement of stained clay for all mesa variants
  */
 public class MesaBiome extends CoveredBiome {
-    static final int[]    colorLayer   = new int[64];
+    static final Block[] colorLayer = new Block[64];
+    private static final Block RED_SANDSTONE = Block.get(BlockID.RED_SANDSTONE);
+    private static final Block RED_SAND = Block.get(BlockID.SAND, BlockSand.RED);
+    private static final Block[] TERRACOTTA_COLORS = new Block[16];
     static final SimplexF redSandNoise = new SimplexF(new NukkitRandom(937478913), 2f, 1 / 4f, 1 / 4f);
     static final SimplexF colorNoise   = new SimplexF(new NukkitRandom(193759875), 2f, 1 / 4f, 1 / 32f);
 
     static {
+        for (int i = 0; i < 16; i++) {
+            TERRACOTTA_COLORS[i] = Block.get(BlockID.STAINED_TERRACOTTA, i);
+        }
         Random random = new Random(29864);
 
-        Arrays.fill(colorLayer, -1); // hard clay, other values are stained clay
-        setRandomLayerColor(random, 14, 1); // orange
-        setRandomLayerColor(random, 8, 4); // yellow
-        setRandomLayerColor(random, 7, 12); // brown
-        setRandomLayerColor(random, 10, 14); // red
+        Arrays.fill(colorLayer, Block.get(BlockID.TERRACOTTA)); // hard clay, other values are stained clay
+        setRandomLayerColor(random, 14, TERRACOTTA_COLORS[1]); // orange
+        setRandomLayerColor(random, 8, TERRACOTTA_COLORS[4]); // yellow
+        setRandomLayerColor(random, 7, TERRACOTTA_COLORS[12]); // brown
+        setRandomLayerColor(random, 10, TERRACOTTA_COLORS[14]); // red
         for (int i = 0, j = 0; i < random.nextInt(3) + 3; i++) {
             j += random.nextInt(6) + 4;
             if (j >= colorLayer.length - 3) {
                 break;
             }
             if (random.nextInt(2) == 0 || j < colorLayer.length - 1 && random.nextInt(2) == 0) {
-                colorLayer[j - 1] = 8; // light gray
+                colorLayer[j - 1] = TERRACOTTA_COLORS[8]; // light gray
             } else {
-                colorLayer[j] = 0; // white
+                colorLayer[j] = TERRACOTTA_COLORS[0]; // white
             }
         }
     }
 
-    private static void setRandomLayerColor(Random random, int sliceCount, int color) {
+    private static void setRandomLayerColor(Random random, int sliceCount, Block color) {
         for (int i = 0; i < random.nextInt(4) + sliceCount; i++) {
             int j = random.nextInt(colorLayer.length);
             int k = 0;
@@ -79,12 +87,11 @@ public class MesaBiome extends CoveredBiome {
     }
 
     @Override
-    public int getSurfaceId(int x, int y, int z) {
+    public Block getSurface(int x, int y, int z) {
         if (y < (71 + Math.round((redSandNoise.noise2D(x, z, true) + 1) * 1.5f))) {
-            return (SAND << 4) | BlockSand.RED;
+            return RED_SAND;
         } else {
-            int meta = colorLayer[(y + Math.round((colorNoise.noise2D(x, z, true) + 1) * 1.5f)) & 0x3F];
-            return (meta == -1 ? TERRACOTTA << 4 : STAINED_TERRACOTTA << 4) | Math.max(0, meta);
+            return colorLayer[(y + Math.round((colorNoise.noise2D(x, z, true) + 1) * 1.5f)) & 0x3F];
         }
     }
 
@@ -94,8 +101,8 @@ public class MesaBiome extends CoveredBiome {
     }
 
     @Override
-    public int getGroundId(int x, int y, int z) {
-        return RED_SANDSTONE << 4;
+    public Block getGround(int x, int y, int z) {
+        return RED_SANDSTONE;
     }
 
     @Override

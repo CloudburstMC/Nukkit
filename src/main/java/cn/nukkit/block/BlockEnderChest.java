@@ -17,26 +17,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class BlockEnderChest extends BlockTransparentMeta implements Faceable {
+public class BlockEnderChest extends BlockTransparent implements Faceable {
 
     private Set<Player> viewers = new HashSet<>();
 
-    public BlockEnderChest() {
-        this(0);
-    }
-
-    public BlockEnderChest(int meta) {
-        super(meta);
+    public BlockEnderChest(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public boolean canBeActivated() {
         return true;
-    }
-
-    @Override
-    public int getId() {
-        return ENDER_CHEST;
     }
 
     @Override

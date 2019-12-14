@@ -8,7 +8,7 @@ import cn.nukkit.utils.BlockColor;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BlockDoubleSlab extends BlockSolidMeta {
+public class BlockDoubleSlab extends BlockSolid {
     public static final int STONE = 0;
     public static final int SANDSTONE = 1;
     public static final int WOODEN = 2;
@@ -18,17 +18,8 @@ public class BlockDoubleSlab extends BlockSolidMeta {
     public static final int QUARTZ = 6;
     public static final int NETHER_BRICK = 7;
 
-    public BlockDoubleSlab() {
-        this(0);
-    }
-
-    public BlockDoubleSlab(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return DOUBLE_SLAB;
+    public BlockDoubleSlab(int id, int meta) {
+        super(id, meta);
     }
 
     //todo hardness and residence

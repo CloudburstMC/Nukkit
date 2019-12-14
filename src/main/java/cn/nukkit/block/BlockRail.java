@@ -30,22 +30,13 @@ public class BlockRail extends BlockFlowable implements Faceable {
     // If the rail can be powered. So its a complex rail!
     protected boolean canBePowered = false;
 
-    public BlockRail() {
-        this(0);
-    }
-
-    public BlockRail(int meta) {
-        super(meta);
+    public BlockRail(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Rail";
-    }
-
-    @Override
-    public int getId() {
-        return RAIL;
     }
 
     @Override

@@ -16,22 +16,13 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockSugarcane extends BlockFlowable {
 
-    public BlockSugarcane() {
-        this(0);
-    }
-
-    public BlockSugarcane(int meta) {
-        super(meta);
+    public BlockSugarcane(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Sugarcane";
-    }
-
-    @Override
-    public int getId() {
-        return SUGARCANE_BLOCK;
     }
 
     @Override
@@ -64,7 +55,7 @@ public class BlockSugarcane extends BlockFlowable {
                 for (int i = 1; i <= toGrow; i++) {
                     Block block = this.up(i);
                     if (block.getId() == 0) {
-                        BlockGrowEvent ev = new BlockGrowEvent(block, new BlockSugarcane());
+                        BlockGrowEvent ev = new BlockGrowEvent(block, Block.get(SUGARCANE_BLOCK));
                         Server.getInstance().getPluginManager().callEvent(ev);
 
                         if (!ev.isCancelled()) {
@@ -104,7 +95,7 @@ public class BlockSugarcane extends BlockFlowable {
                     for (int y = 1; y < 3; ++y) {
                         Block b = this.getLevel().getBlock(new Vector3(this.x, this.y + y, this.z));
                         if (b.getId() == AIR) {
-                            this.getLevel().setBlock(b, new BlockSugarcane(), false);
+                            this.getLevel().setBlock(b, Block.get(SUGARCANE_BLOCK), false);
                             break;
                         }
                     }
@@ -127,7 +118,7 @@ public class BlockSugarcane extends BlockFlowable {
         }
         Block down = this.down();
         if (down.getId() == SUGARCANE_BLOCK) {
-            this.getLevel().setBlock(block, new BlockSugarcane(), true);
+            this.getLevel().setBlock(block, Block.get(SUGARCANE_BLOCK), true);
             return true;
         } else if (down.getId() == GRASS || down.getId() == DIRT || down.getId() == SAND) {
             Block block0 = down.north();
@@ -135,7 +126,7 @@ public class BlockSugarcane extends BlockFlowable {
             Block block2 = down.west();
             Block block3 = down.east();
             if ((block0 instanceof BlockWater) || (block1 instanceof BlockWater) || (block2 instanceof BlockWater) || (block3 instanceof BlockWater)) {
-                this.getLevel().setBlock(block, new BlockSugarcane(), true);
+                this.getLevel().setBlock(block, Block.get(SUGARCANE_BLOCK), true);
                 return true;
             }
         }

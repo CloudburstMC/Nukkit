@@ -8,17 +8,8 @@ import cn.nukkit.level.Level;
  */
 public class BlockLavaStill extends BlockLava {
 
-    public BlockLavaStill() {
-        super(0);
-    }
-
-    public BlockLavaStill(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return STILL_LAVA;
+    public BlockLavaStill(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -27,8 +18,8 @@ public class BlockLavaStill extends BlockLava {
     }
 
     @Override
-    public BlockLiquid getBlock(int meta) {
-        return new BlockLavaStill(meta);
+    public Block getBlock(int meta) {
+        return Block.get(STILL_LAVA);
     }
 
     @Override

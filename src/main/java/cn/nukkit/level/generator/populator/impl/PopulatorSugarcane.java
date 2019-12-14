@@ -1,6 +1,7 @@
 package cn.nukkit.level.generator.populator.impl;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.populator.helper.EnsureBelow;
@@ -16,6 +17,7 @@ import cn.nukkit.math.NukkitRandom;
  * </p>
  */
 public class PopulatorSugarcane extends PopulatorSurfaceBlock {
+    private static final Block SUGARCANE_BLOCK = Block.get(BlockID.SUGARCANE_BLOCK, 1);
 
     private boolean findWater(int x, int y, int z, ChunkManager level) {
         int count = 0;
@@ -39,7 +41,7 @@ public class PopulatorSugarcane extends PopulatorSurfaceBlock {
     }
 
     @Override
-    protected int getBlockId(int x, int z, NukkitRandom random, Chunk chunk) {
-        return (SUGARCANE_BLOCK << 4) | 1;
+    protected Block getBlock(int x, int z, NukkitRandom random, Chunk chunk) {
+        return SUGARCANE_BLOCK;
     }
 }

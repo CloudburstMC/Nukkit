@@ -17,8 +17,8 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public abstract class BlockCrops extends BlockFlowable {
 
-    protected BlockCrops(int meta) {
-        super(meta);
+    protected BlockCrops(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

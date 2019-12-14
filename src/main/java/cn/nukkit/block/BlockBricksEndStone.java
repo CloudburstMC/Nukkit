@@ -5,17 +5,13 @@ import cn.nukkit.item.ItemTool;
 
 public class BlockBricksEndStone extends BlockSolid {
 
-    public BlockBricksEndStone() {
+    public BlockBricksEndStone(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "End Stone Bricks";
-    }
-
-    @Override
-    public int getId() {
-        return END_BRICKS;
     }
 
     @Override

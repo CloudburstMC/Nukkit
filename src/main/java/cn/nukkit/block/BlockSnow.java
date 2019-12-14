@@ -7,17 +7,13 @@ import cn.nukkit.utils.BlockColor;
 
 public class BlockSnow extends BlockSolid {
 
-    public BlockSnow() {
+    public BlockSnow(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Snow Block";
-    }
-
-    @Override
-    public int getId() {
-        return SNOW_BLOCK;
     }
 
     @Override

@@ -5,7 +5,8 @@ package cn.nukkit.block;
  */
 public class BlockSlime extends BlockSolid {
 
-    public BlockSlime() {
+    public BlockSlime(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -16,11 +17,6 @@ public class BlockSlime extends BlockSolid {
     @Override
     public String getName() {
         return "Slime Block";
-    }
-
-    @Override
-    public int getId() {
-        return SLIME_BLOCK;
     }
 
     @Override

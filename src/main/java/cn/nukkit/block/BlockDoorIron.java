@@ -12,22 +12,13 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockDoorIron extends BlockDoor {
 
-    public BlockDoorIron() {
-        this(0);
-    }
-
-    public BlockDoorIron(int meta) {
-        super(meta);
+    public BlockDoorIron(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Iron Door Block";
-    }
-
-    @Override
-    public int getId() {
-        return IRON_DOOR_BLOCK;
     }
 
     @Override

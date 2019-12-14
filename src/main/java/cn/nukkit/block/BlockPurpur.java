@@ -5,17 +5,13 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
 
-public class BlockPurpur extends BlockSolidMeta {
+public class BlockPurpur extends BlockSolid {
 
     public static final int PURPUR_NORMAL = 0;
     public static final int PURPUR_PILLAR = 2;
 
-    public BlockPurpur() {
-        this(0);
-    }
-
-    public BlockPurpur(int meta) {
-        super(meta);
+    public BlockPurpur(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -28,11 +24,6 @@ public class BlockPurpur extends BlockSolidMeta {
         };
 
         return names[this.getDamage() & 0x03];
-    }
-
-    @Override
-    public int getId() {
-        return PURPUR_BLOCK;
     }
 
     @Override

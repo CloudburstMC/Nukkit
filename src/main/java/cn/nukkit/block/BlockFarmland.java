@@ -10,24 +10,15 @@ import cn.nukkit.utils.BlockColor;
  * Created on 2015/12/2 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockFarmland extends BlockTransparentMeta {
+public class BlockFarmland extends BlockTransparent {
 
-    public BlockFarmland() {
-        this(0);
-    }
-
-    public BlockFarmland(int meta) {
-        super(meta);
+    public BlockFarmland(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Farmland";
-    }
-
-    @Override
-    public int getId() {
-        return FARMLAND;
     }
 
     @Override
@@ -60,7 +51,7 @@ public class BlockFarmland extends BlockTransparentMeta {
             }
 
             if (this.level.getBlock(v.setComponents(x, this.y + 1, z)).isSolid()) {
-                this.level.setBlock(this, new BlockDirt(), false, true);
+                this.level.setBlock(this, Block.get(DIRT), false, true);
 
                 return Level.BLOCK_UPDATE_RANDOM;
             }

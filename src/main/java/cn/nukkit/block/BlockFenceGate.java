@@ -14,24 +14,10 @@ import cn.nukkit.utils.Faceable;
  * Created on 2015/11/23 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
+public abstract class BlockFenceGate extends BlockTransparent implements Faceable {
 
-    public BlockFenceGate() {
-        this(0);
-    }
-
-    public BlockFenceGate(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return FENCE_GATE_OAK;
-    }
-
-    @Override
-    public String getName() {
-        return "Oak Fence Gate";
+    public BlockFenceGate(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -192,11 +178,6 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
         }
 
         return 0;
-    }
-
-    @Override
-    public Item toItem() {
-        return Item.get(Item.FENCE_GATE, 0, 1);
     }
 
     @Override

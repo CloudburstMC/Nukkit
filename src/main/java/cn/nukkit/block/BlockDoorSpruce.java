@@ -5,22 +5,13 @@ import cn.nukkit.item.ItemDoorSpruce;
 
 public class BlockDoorSpruce extends BlockDoorWood {
 
-    public BlockDoorSpruce() {
-        this(0);
-    }
-
-    public BlockDoorSpruce(int meta) {
-        super(meta);
+    public BlockDoorSpruce(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Spruce Door Block";
-    }
-
-    @Override
-    public int getId() {
-        return SPRUCE_DOOR_BLOCK;
     }
 
     @Override

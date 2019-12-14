@@ -10,12 +10,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockFenceNetherBrick extends BlockFence {
 
-    public BlockFenceNetherBrick() {
-        this(0);
-    }
-
-    public BlockFenceNetherBrick(int meta) {
-        super(meta);
+    public BlockFenceNetherBrick(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -26,11 +22,6 @@ public class BlockFenceNetherBrick extends BlockFence {
     @Override
     public String getName() {
         return "Nether Brick Fence";
-    }
-
-    @Override
-    public int getId() {
-        return NETHER_BRICK_FENCE;
     }
 
     @Override

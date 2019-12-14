@@ -19,7 +19,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class BlockLiquid extends BlockTransparentMeta {
+public abstract class BlockLiquid extends BlockTransparent {
 
     private final byte CAN_FLOW_DOWN = 1;
     private final byte CAN_FLOW = 0;
@@ -28,8 +28,8 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
     protected Vector3 flowVector = null;
     private Long2ByteMap flowCostVisited = new Long2ByteOpenHashMap();
 
-    protected BlockLiquid(int meta) {
-        super(meta);
+    public BlockLiquid(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -226,7 +226,7 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
                     boolean decayed = decay < 0;
                     Block to;
                     if (decayed) {
-                        to = new BlockAir();
+                        to = Block.get(AIR);
                     } else {
                         to = getBlock(decay);
                     }
@@ -413,7 +413,7 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
         }
     }
 
-    public abstract BlockLiquid getBlock(int meta);
+    public abstract Block getBlock(int meta);
 
     @Override
     public boolean canPassThrough() {

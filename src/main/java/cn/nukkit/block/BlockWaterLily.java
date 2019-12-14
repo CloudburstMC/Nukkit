@@ -14,23 +14,13 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockWaterLily extends BlockFlowable {
 
-    public BlockWaterLily() {
-        this(0);
-    }
-
-    public BlockWaterLily(int meta) {
-        // Lily pad can't have meta. Also stops the server from throwing an exception with the block palette.
-        super(0);
+    public BlockWaterLily(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Lily Pad";
-    }
-
-    @Override
-    public int getId() {
-        return WATER_LILY;
     }
 
     @Override
@@ -99,15 +89,5 @@ public class BlockWaterLily extends BlockFlowable {
     @Override
     public boolean canPassThrough() {
         return false;
-    }
-
-    @Override
-    public int getFullId() {
-        return this.getId() << 4;
-    }
-
-    @Override
-    public void setDamage(int meta) {
-
     }
 }

@@ -2,7 +2,6 @@ package cn.nukkit.level;
 
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockRedstoneDiode;
 import cn.nukkit.blockentity.BlockEntity;
@@ -479,11 +478,7 @@ public class Level implements ChunkManager, Metadatable {
             }
         } else {
             if (packets != null) {
-                if (packets.length == 1) {
-                    Server.broadcastPacket(players, packets[0]);
-                } else {
-                    this.server.batchPackets(players, packets, false);
-                }
+                Server.broadcastPackets(players, packets);
             }
         }
     }
@@ -840,7 +835,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void sendBlocks(Player[] target, Vector3[] blocks, int flags) {
-        this.sendBlocks(target, blocks, 0, flags);
+        this.sendBlocks(target, blocks, flags, 0);
     }
 
 
@@ -879,21 +874,17 @@ public class Level implements ChunkManager, Metadatable {
             updateBlockPacket.z = (int) b.z;
             updateBlockPacket.flags = first ? flags : UpdateBlockPacket.FLAG_NONE;
             updateBlockPacket.dataLayer = dataLayer;
-            int fullId;
-            if (b instanceof Block) {
-                fullId = ((Block) b).getFullId();
-            } else {
-                fullId = getFullBlock((int) b.x, (int) b.y, (int) b.z);
-            }
+
+            Block block = b instanceof Block ? (Block) b : getBlock((int) b.x, (int) b.y, (int) b.z);
             try {
-                updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(fullId);
+                updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getRuntimeId(block);
             } catch (NoSuchElementException e) {
                 throw new IllegalStateException("Unable to create BlockUpdatePacket at (" +
                         b.x + ", " + b.y + ", " + b.z + ") in " + getName(), e);
             }
             packets[packetIndex++] = updateBlockPacket;
         }
-        this.server.batchPackets(target, packets);
+        Server.broadcastPackets(target, packets);
     }
 
     private void tickChunks() {
@@ -966,9 +957,8 @@ public class Level implements ChunkManager, Metadatable {
                                 int y = lcg >>> 8 & 0x0f;
                                 int z = lcg >>> 16 & 0x0f;
 
-                                int fullId = section.getFullBlock(x, y, z, 0);
-                                int blockId = fullId >> 4;
-                                int blockData = fullId & 0x0f;
+                                int blockId = section.getBlockId(x, y, z, 0);
+                                int blockData = section.getBlockData(x, y, z, 0);
                                 if (randomTickBlocks[blockId]) {
                                     Block block = Block.get(blockId, blockData, this, chunkX * 16 + x,
                                             (sectionY << 4) + y, chunkZ * 16 + z);
@@ -1304,10 +1294,6 @@ public class Level implements ChunkManager, Metadatable {
         return (int) (worldTime / 24000 % 8 + 8) % 8;
     }
 
-    public int getFullBlock(int x, int y, int z) {
-        return this.getChunk(x >> 4, z >> 4).getFullBlock(x & 0x0f, y & 0xff, z & 0x0f);
-    }
-
     @Nullable
     public Block getLoadedBlock(Vector3 pos) {
         return this.getLoadedBlock(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
@@ -1495,7 +1481,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void setBlockFullIdAt(int x, int y, int z, int fullId) {
-        this.setBlock(x, y, z, Block.fullList[fullId], false, false);
+        this.setBlock(x, y, z, Block.fullList.get(fullId), false, false);
     }
 
     public boolean setBlock(Vector3 pos, Block block) {
@@ -1517,7 +1503,7 @@ public class Level implements ChunkManager, Metadatable {
         Chunk chunk = this.getChunk(x >> 4, z >> 4);
         Block blockPrevious;
         blockPrevious = chunk.getAndSetBlock(x & 0xF, y, z & 0xF, block);
-        if (blockPrevious.getFullId() == block.getFullId()) {
+        if (Block.equals(blockPrevious, block, true)) {
             return false;
         }
         block.x = x;
@@ -1731,15 +1717,13 @@ public class Level implements ChunkManager, Metadatable {
         Block above = this.getLoadedBlock(new Vector3(target.x, target.y + 1, target.z));
         if (above != null) {
             if (above.getId() == Item.FIRE) {
-                this.setBlock(above, new BlockAir(), true);
+                this.setBlock(above, Block.get(BlockID.AIR), true);
             }
         }
 
         if (createParticles) {
-            log.debug("Broke block");
             Chunk chunk = this.getLoadedChunk(target.getChunkX(), target.getChunkZ());
             if (chunk != null) {
-                log.debug("adding destroy particle");
                 this.addParticle(new DestroyBlockParticle(target.add(0.5), target), chunk.getPlayerLoaders());
             }
         }
@@ -1877,7 +1861,6 @@ public class Level implements ChunkManager, Metadatable {
         } else {
             return null;
         }
-        log.debug("Placing: {}", hand);
 
         if (!(block.canBeReplaced() || (hand.getId() == Item.SLAB && block.getId() == Item.SLAB))) {
             return null;
@@ -1954,7 +1937,7 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (playSound) {
-            this.addLevelSoundEvent(hand, LevelSoundEventPacket.SOUND_PLACE, GlobalBlockPalette.getOrCreateRuntimeId(hand.getId(), hand.getDamage()));
+            this.addLevelSoundEvent(hand, LevelSoundEventPacket.SOUND_PLACE, GlobalBlockPalette.getRuntimeId(hand));
         }
 
         if (item.getCount() <= 0) {
@@ -2101,19 +2084,23 @@ public class Level implements ChunkManager, Metadatable {
     }
 
 
-    public int getBlockIdAt(int x, int y, int z) {
-        return this.getChunk(x >> 4, z >> 4).getBlockId(x & 0x0f, y & 0xff, z & 0x0f);
+    public int getBlockIdAt(int x, int y, int z, int layer) {
+        return this.getChunk(x >> 4, z >> 4).getBlockId(x & 0x0f, y & 0xff, z & 0x0f, layer);
     }
 
-    public void setBlockIdAt(int x, int y, int z, int id) {
-        this.getChunk(x >> 4, z >> 4).setBlockId(x & 0x0f, y & 0xff, z & 0x0f, id & 0xff);
+    public void setBlockIdAt(int x, int y, int z, int layer, int id) {
+        this.getChunk(x >> 4, z >> 4).setBlockId(x & 0x0f, y & 0xff, z & 0x0f, layer, id & 0xff);
         addBlockChange(x, y, z);
     }
 
-    public void setBlockAt(int x, int y, int z, int id, int data) {
+    public Block getBlockAt(int x, int y, int z, int layer) {
         Chunk chunk = this.getChunk(x >> 4, z >> 4);
-        chunk.setBlockId(x & 0x0f, y & 0xff, z & 0x0f, id & 0xff);
-        chunk.setBlockData(x & 0x0f, y & 0xff, z & 0x0f, data & 0xf);
+        return chunk.getBlock(x, y, z, layer);
+    }
+
+    public void setBlockAt(int x, int y, int z, int layer, Block block) {
+        Chunk chunk = this.getChunk(x >> 4, z >> 4);
+        chunk.setBlock(x & 0x0f, y & 0xff, z & 0x0f, layer, block);
         addBlockChange(x, y, z);
     }
 
@@ -2129,13 +2116,13 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     @Override
-    public int getBlockDataAt(int x, int y, int z) {
-        return this.getChunk(x >> 4, z >> 4).getBlockData(x & 0x0f, y & 0xff, z & 0x0f);
+    public int getBlockDataAt(int x, int y, int z, int layer) {
+        return this.getChunk(x >> 4, z >> 4).getBlockData(x & 0x0f, y & 0xff, z & 0x0f, layer);
     }
 
     @Override
-    public void setBlockDataAt(int x, int y, int z, int data) {
-        this.getChunk(x >> 4, z >> 4).setBlockData(x & 0x0f, y & 0xff, z & 0x0f, data & 0x0f);
+    public void setBlockDataAt(int x, int y, int z, int layer, int data) {
+        this.getChunk(x >> 4, z >> 4).setBlockData(x & 0x0f, y & 0xff, z & 0x0f, layer, data & 0x0f);
         this.addBlockChange(x, y, z);
     }
 
@@ -2369,8 +2356,7 @@ public class Level implements ChunkManager, Metadatable {
                 int y = (int) NukkitMath.clamp(v.y, 0, 254);
                 boolean wasAir = chunk.getBlockId(x, y - 1, z) == 0;
                 for (; y > 0; --y) {
-                    int b = chunk.getFullBlock(x, y, z);
-                    Block block = Block.get(b >> 4, b & 0x0f);
+                    Block block = chunk.getBlock(x, y, z);
                     if (this.isFullBlock(block)) {
                         if (wasAir) {
                             y++;
@@ -2382,11 +2368,9 @@ public class Level implements ChunkManager, Metadatable {
                 }
 
                 for (; y >= 0 && y < 255; y++) {
-                    int b = chunk.getFullBlock(x, y + 1, z);
-                    Block block = Block.get(b >> 4, b & 0x0f);
+                    Block block = chunk.getBlock(x, y + 1, z);
                     if (!this.isFullBlock(block)) {
-                        b = chunk.getFullBlock(x, y, z);
-                        block = Block.get(b >> 4, b & 0x0f);
+                        block = chunk.getBlock(x, y, z);
                         if (!this.isFullBlock(block)) {
                             return new Position(spawn.x, y == (int) spawn.y ? spawn.y : y, spawn.z, this);
                         }

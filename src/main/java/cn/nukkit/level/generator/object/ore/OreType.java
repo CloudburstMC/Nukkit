@@ -13,7 +13,7 @@ import static cn.nukkit.block.BlockID.STONE;
  */
 //porktodo: rewrite this, the whole class is terrible and generated ores look stupid
 public class OreType {
-    public final int fullId;
+    public final Block block;
     public final int clusterCount;
     public final int clusterSize;
     public final int maxHeight;
@@ -25,7 +25,7 @@ public class OreType {
     }
 
     public OreType(Block material, int clusterCount, int clusterSize, int minHeight, int maxHeight, int replaceBlockId) {
-        this.fullId = material.getFullId();
+        this.block = material;
         this.clusterCount = clusterCount;
         this.clusterSize = clusterSize;
         this.maxHeight = maxHeight;
@@ -70,7 +70,7 @@ public class OreType {
 
                                 if (xVal * xVal + yVal * yVal + zVal * zVal < 1.0D) {
                                     if (level.getBlockIdAt(xSeg, ySeg, zSeg) == replaceBlockId) {
-                                        level.setBlockFullIdAt(xSeg, ySeg, zSeg, fullId);
+                                        level.setBlockAt(xSeg, ySeg, zSeg, block);
                                     }
                                 }
                             }

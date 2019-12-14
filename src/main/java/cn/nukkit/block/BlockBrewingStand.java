@@ -17,14 +17,10 @@ import cn.nukkit.utils.BlockColor;
 
 import java.util.Map;
 
-public class BlockBrewingStand extends BlockSolidMeta {
+public class BlockBrewingStand extends BlockSolid {
 
-    public BlockBrewingStand() {
-        this(0);
-    }
-
-    public BlockBrewingStand(int meta) {
-        super(meta);
+    public BlockBrewingStand(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -50,11 +46,6 @@ public class BlockBrewingStand extends BlockSolidMeta {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
-    }
-
-    @Override
-    public int getId() {
-        return BREWING_STAND_BLOCK;
     }
 
     @Override

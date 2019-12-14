@@ -15,18 +15,14 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
 
     protected boolean isPowered = false;
 
-    public BlockRedstoneDiode() {
-        this(0);
-    }
-
-    public BlockRedstoneDiode(int meta) {
-        super(meta);
+    public BlockRedstoneDiode(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public boolean onBreak(Item item) {
         Vector3 pos = getLocation();
-        this.level.setBlock(this, new BlockAir(), true, true);
+        this.level.setBlock(this, Block.get(AIR), true, true);
 
         for (BlockFace face : BlockFace.values()) {
             this.level.updateAroundRedstone(pos.getSide(face), null);

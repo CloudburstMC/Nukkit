@@ -6,19 +6,10 @@ import cn.nukkit.item.ItemTool;
 /**
  * Created by CreeperFace on 2.6.2017.
  */
-public class BlockConcrete extends BlockSolidMeta {
+public class BlockConcrete extends BlockSolid {
 
-    public BlockConcrete() {
-        this(0);
-    }
-
-    public BlockConcrete(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return CONCRETE;
+    public BlockConcrete(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

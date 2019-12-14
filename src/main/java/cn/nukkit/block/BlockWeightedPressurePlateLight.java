@@ -11,19 +11,10 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockWeightedPressurePlateLight extends BlockPressurePlateBase {
 
-    public BlockWeightedPressurePlateLight() {
-        this(0);
-    }
-
-    public BlockWeightedPressurePlateLight(int meta) {
-        super(meta);
+    public BlockWeightedPressurePlateLight(int id, int meta) {
+        super(id, meta);
         this.onPitch = 0.90000004f;
         this.offPitch = 0.75f;
-    }
-
-    @Override
-    public int getId() {
-        return LIGHT_WEIGHTED_PRESSURE_PLATE;
     }
 
     @Override

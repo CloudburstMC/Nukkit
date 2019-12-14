@@ -5,22 +5,13 @@ import cn.nukkit.item.ItemDoorBirch;
 
 public class BlockDoorBirch extends BlockDoorWood {
 
-    public BlockDoorBirch() {
-        this(0);
-    }
-
-    public BlockDoorBirch(int meta) {
-        super(meta);
+    public BlockDoorBirch(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Birch Door Block";
-    }
-
-    @Override
-    public int getId() {
-        return BIRCH_DOOR_BLOCK;
     }
 
     @Override

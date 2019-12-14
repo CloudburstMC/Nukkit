@@ -16,19 +16,10 @@ import cn.nukkit.utils.Faceable;
 /**
  * @author CreeperFace
  */
-public class BlockHopper extends BlockTransparentMeta implements Faceable {
+public class BlockHopper extends BlockTransparent implements Faceable {
 
-    public BlockHopper() {
-        this(0);
-    }
-
-    public BlockHopper(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return HOPPER_BLOCK;
+    public BlockHopper(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

@@ -17,7 +17,7 @@ public class PunchBlockParticle extends Particle {
 
     public PunchBlockParticle(Vector3 pos, int blockId, int blockDamage, BlockFace face) {
         super(pos.x, pos.y, pos.z);
-        this.data = GlobalBlockPalette.getOrCreateRuntimeId(blockId, blockDamage) | (face.getIndex() << 24);
+        this.data = GlobalBlockPalette.getRuntimeId(blockId, blockDamage) | (face.getIndex() << 24);
     }
 
     @Override

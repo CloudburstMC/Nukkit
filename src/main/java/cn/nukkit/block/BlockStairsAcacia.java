@@ -6,17 +6,8 @@ package cn.nukkit.block;
  */
 public class BlockStairsAcacia extends BlockStairsWood {
 
-    public BlockStairsAcacia() {
-        this(0);
-    }
-
-    public BlockStairsAcacia(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return ACACIA_WOOD_STAIRS;
+    public BlockStairsAcacia(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

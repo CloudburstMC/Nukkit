@@ -11,12 +11,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockSlabWood extends BlockSlab {
 
-    public BlockSlabWood() {
-        this(0);
-    }
-
-    public BlockSlabWood(int meta) {
-        super(meta, DOUBLE_WOODEN_SLAB);
+    public BlockSlabWood(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -32,11 +28,6 @@ public class BlockSlabWood extends BlockSlab {
                 ""
         };
         return (((this.getDamage() & 0x08) == 0x08) ? "Upper " : "") + names[this.getDamage() & 0x07] + " Wooden Slab";
-    }
-
-    @Override
-    public int getId() {
-        return WOOD_SLAB;
     }
 
     @Override
@@ -69,5 +60,10 @@ public class BlockSlabWood extends BlockSlab {
     @Override
     public BlockColor getColor() {
         return BlockColor.WOOD_BLOCK_COLOR;
+    }
+
+    @Override
+    protected int getDoubleSlab() {
+        return DOUBLE_WOOD_SLAB;
     }
 }

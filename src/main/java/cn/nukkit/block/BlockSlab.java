@@ -9,13 +9,10 @@ import cn.nukkit.player.Player;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class BlockSlab extends BlockTransparentMeta {
+public abstract class BlockSlab extends BlockTransparent {
 
-    protected final int doubleSlab;
-
-    public BlockSlab(int meta, int doubleSlab) {
-        super(meta);
-        this.doubleSlab = doubleSlab;
+    public BlockSlab(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -43,11 +40,11 @@ public abstract class BlockSlab extends BlockTransparentMeta {
         this.setDamage(this.getDamage() & 0x07);
         if (face == BlockFace.DOWN) {
             if (target instanceof BlockSlab && (target.getDamage() & 0x08) == 0x08 && (target.getDamage() & 0x07) == (this.getDamage() & 0x07)) {
-                this.getLevel().setBlock(target, Block.get(doubleSlab, this.getDamage()), true);
+                this.getLevel().setBlock(target, Block.get(getDoubleSlab(), this.getDamage()), true);
 
                 return true;
             } else if (block instanceof BlockSlab && (block.getDamage() & 0x07) == (this.getDamage() & 0x07)) {
-                this.getLevel().setBlock(block, Block.get(doubleSlab, this.getDamage()), true);
+                this.getLevel().setBlock(block, Block.get(getDoubleSlab(), this.getDamage()), true);
 
                 return true;
             } else {
@@ -55,11 +52,11 @@ public abstract class BlockSlab extends BlockTransparentMeta {
             }
         } else if (face == BlockFace.UP) {
             if (target instanceof BlockSlab && (target.getDamage() & 0x08) == 0 && (target.getDamage() & 0x07) == (this.getDamage() & 0x07)) {
-                this.getLevel().setBlock(target, Block.get(doubleSlab, this.getDamage()), true);
+                this.getLevel().setBlock(target, Block.get(getDoubleSlab(), this.getDamage()), true);
 
                 return true;
             } else if (block instanceof BlockSlab && (block.getDamage() & 0x07) == (this.getDamage() & 0x07)) {
-                this.getLevel().setBlock(block, Block.get(doubleSlab, this.getDamage()), true);
+                this.getLevel().setBlock(block, Block.get(getDoubleSlab(), this.getDamage()), true);
 
                 return true;
             }
@@ -67,7 +64,7 @@ public abstract class BlockSlab extends BlockTransparentMeta {
         } else {
             if (block instanceof BlockSlab) {
                 if ((block.getDamage() & 0x07) == (this.getDamage() & 0x07)) {
-                    this.getLevel().setBlock(block, Block.get(doubleSlab, this.getDamage()), true);
+                    this.getLevel().setBlock(block, Block.get(getDoubleSlab(), this.getDamage()), true);
 
                     return true;
                 }
@@ -87,4 +84,6 @@ public abstract class BlockSlab extends BlockTransparentMeta {
 
         return true;
     }
+
+    protected abstract int getDoubleSlab();
 }

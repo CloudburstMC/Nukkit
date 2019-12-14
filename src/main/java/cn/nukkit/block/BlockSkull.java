@@ -15,19 +15,10 @@ import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
 
 
-public class BlockSkull extends BlockTransparentMeta {
+public class BlockSkull extends BlockTransparent {
 
-    public BlockSkull() {
-        this(0);
-    }
-
-    public BlockSkull(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return SKULL_BLOCK;
+    public BlockSkull(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

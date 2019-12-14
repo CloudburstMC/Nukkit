@@ -11,24 +11,15 @@ import cn.nukkit.utils.BlockColor;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BlockWood extends BlockSolidMeta {
+public class BlockWood extends BlockSolid {
     public static final int OAK = 0;
     public static final int SPRUCE = 1;
     public static final int BIRCH = 2;
     public static final int JUNGLE = 3;
 
 
-    public BlockWood() {
-        this(0);
-    }
-
-    public BlockWood(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return WOOD;
+    public BlockWood(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

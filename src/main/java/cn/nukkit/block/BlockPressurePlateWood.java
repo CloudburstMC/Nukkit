@@ -11,24 +11,15 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockPressurePlateWood extends BlockPressurePlateBase {
 
-    public BlockPressurePlateWood(int meta) {
-        super(meta);
+    public BlockPressurePlateWood(int id, int meta) {
+        super(id, meta);
         this.onPitch = 0.8f;
         this.offPitch = 0.7f;
-    }
-
-    public BlockPressurePlateWood() {
-        this(0);
     }
 
     @Override
     public String getName() {
         return "Wooden Pressure Plate";
-    }
-
-    @Override
-    public int getId() {
-        return WOODEN_PRESSURE_PLATE;
     }
 
     @Override

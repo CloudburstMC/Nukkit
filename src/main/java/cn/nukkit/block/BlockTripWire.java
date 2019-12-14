@@ -13,17 +13,8 @@ import cn.nukkit.player.Player;
  */
 public class BlockTripWire extends BlockFlowable {
 
-    public BlockTripWire(int meta) {
-        super(meta);
-    }
-
-    public BlockTripWire() {
-        this(0);
-    }
-
-    @Override
-    public int getId() {
-        return TRIPWIRE;
+    public BlockTripWire(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -171,10 +162,10 @@ public class BlockTripWire extends BlockFlowable {
             this.setDisarmed(true);
             this.level.setBlock(this, this, true, false);
             this.updateHook(false);
-            this.getLevel().setBlock(this, new BlockAir(), true, true);
+            this.getLevel().setBlock(this, Block.get(AIR), true, true);
         } else {
             this.setPowered(true);
-            this.getLevel().setBlock(this, new BlockAir(), true, true);
+            this.getLevel().setBlock(this, Block.get(AIR), true, true);
             this.updateHook(true);
         }
 

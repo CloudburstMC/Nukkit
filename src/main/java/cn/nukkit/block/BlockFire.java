@@ -27,17 +27,8 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class BlockFire extends BlockFlowable {
 
-    public BlockFire() {
-        this(0);
-    }
-
-    public BlockFire(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return FIRE;
+    public BlockFire(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -191,7 +182,7 @@ public class BlockFire extends BlockFlowable {
                                             this.level.getServer().getPluginManager().callEvent(e);
 
                                             if (!e.isCancelled()) {
-                                                this.getLevel().setBlock(block, new BlockFire(damage), true);
+                                                this.getLevel().setBlock(block, Block.get(FIRE, damage), true);
                                                 this.getLevel().scheduleUpdate(block, this.tickRate());
                                             }
                                         }
@@ -225,7 +216,7 @@ public class BlockFire extends BlockFlowable {
                 this.level.getServer().getPluginManager().callEvent(e);
 
                 if (!e.isCancelled()) {
-                    this.getLevel().setBlock(block, new BlockFire(meta), true);
+                    this.getLevel().setBlock(block, Block.get(FIRE, meta), true);
                     this.getLevel().scheduleUpdate(block, this.tickRate());
                 }
             } else {
@@ -233,7 +224,7 @@ public class BlockFire extends BlockFlowable {
                 this.getLevel().getServer().getPluginManager().callEvent(ev);
 
                 if (!ev.isCancelled()) {
-                    this.getLevel().setBlock(block, new BlockAir(), true);
+                    this.getLevel().setBlock(block, Block.get(AIR), true);
                 }
             }
 

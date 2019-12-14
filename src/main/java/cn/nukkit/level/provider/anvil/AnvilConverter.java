@@ -4,6 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.BlockUpdate;
+import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.chunk.*;
 import cn.nukkit.level.provider.anvil.palette.BiomePalette;
 import cn.nukkit.nbt.NBTIO;
@@ -58,7 +59,7 @@ public class AnvilConverter {
                         for (int blockY = 0; blockY < 16; blockY++) {
                             int anvilIndex = getAnvilIndex(blockX, blockY, blockZ);
                             int nukkitIndex = ChunkSection.blockIndex(blockX, blockY, blockZ);
-                            blockStorage.setFullBlock(nukkitIndex, blocks[anvilIndex] << 4 | data.get(anvilIndex));
+                            blockStorage.setBlock(nukkitIndex, GlobalBlockPalette.getBlock(blocks[anvilIndex], data.get(anvilIndex)));
                         }
                     }
                 }

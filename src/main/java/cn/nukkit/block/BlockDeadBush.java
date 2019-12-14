@@ -14,23 +14,14 @@ import java.util.Random;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockDeadBush extends BlockFlowable {
-    public BlockDeadBush() {
-        this(0);
-    }
 
-    public BlockDeadBush(int meta) {
-        // Dead bushes can't have meta. Also stops the server from throwing an exception with the block palette.
-        super(0);
+    public BlockDeadBush(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Dead Bush";
-    }
-
-    @Override
-    public int getId() {
-        return DEAD_BUSH;
     }
     
     @Override

@@ -1576,7 +1576,7 @@ public abstract class Entity extends Location implements Metadatable {
                 if (ev.isCancelled()) {
                     return;
                 }
-                this.level.setBlock(down, new BlockDirt(), false, true);
+                this.level.setBlock(down, Block.get(BlockID.DIRT), false, true);
             }
         }
     }

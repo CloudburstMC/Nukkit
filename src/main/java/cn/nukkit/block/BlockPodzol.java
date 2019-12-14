@@ -9,18 +9,8 @@ import cn.nukkit.player.Player;
  */
 public class BlockPodzol extends BlockDirt {
 
-    public BlockPodzol() {
-        this(0);
-    }
-
-    public BlockPodzol(int meta) {
-        // Podzol can't have meta.
-        super(0);
-    }
-
-    @Override
-    public int getId() {
-        return PODZOL;
+    public BlockPodzol(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -41,15 +31,5 @@ public class BlockPodzol extends BlockDirt {
     @Override
     public boolean onActivate(Item item, Player player) {
         return false;
-    }
-
-    @Override
-    public int getFullId() {
-        return this.getId() << 4;
-    }
-
-    @Override
-    public void setDamage(int meta) {
-
     }
 }

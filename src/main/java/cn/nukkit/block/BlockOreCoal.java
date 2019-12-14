@@ -14,12 +14,8 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class BlockOreCoal extends BlockSolid {
 
-    public BlockOreCoal() {
-    }
-
-    @Override
-    public int getId() {
-        return COAL_ORE;
+    public BlockOreCoal(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

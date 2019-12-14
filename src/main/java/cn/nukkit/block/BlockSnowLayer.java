@@ -16,34 +16,13 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockSnowLayer extends BlockFallable {
 
-    private int meta;
-
-    public BlockSnowLayer() {
-        this(0);
-    }
-
-    public BlockSnowLayer(int meta) {
-        this.meta = meta;
-    }
-
-    @Override
-    public final int getDamage() {
-        return this.meta;
-    }
-
-    @Override
-    public final void setDamage(int meta) {
-        this.meta = meta;
+    public BlockSnowLayer(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Snow Layer";
-    }
-
-    @Override
-    public int getId() {
-        return SNOW_LAYER;
     }
 
     @Override

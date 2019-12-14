@@ -9,17 +9,13 @@ import cn.nukkit.item.ItemTool;
  */
 public class BlockEndStone extends BlockSolid {
 
-    public BlockEndStone() {
+    public BlockEndStone(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "End Stone";
-    }
-
-    @Override
-    public int getId() {
-        return END_STONE;
     }
 
     @Override

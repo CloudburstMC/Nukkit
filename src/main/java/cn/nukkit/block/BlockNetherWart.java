@@ -16,12 +16,8 @@ import java.util.Random;
  */
 public class BlockNetherWart extends BlockFlowable {
 
-    public BlockNetherWart() {
-        this(0);
-    }
-
-    public BlockNetherWart(int meta) {
-        super(meta);
+    public BlockNetherWart(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -71,11 +67,6 @@ public class BlockNetherWart extends BlockFlowable {
     @Override
     public String getName() {
         return "Nether Wart Block";
-    }
-
-    @Override
-    public int getId() {
-        return NETHER_WART_BLOCK;
     }
 
     @Override

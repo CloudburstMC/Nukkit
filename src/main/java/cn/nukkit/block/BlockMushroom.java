@@ -14,12 +14,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class BlockMushroom extends BlockFlowable {
 
-    public BlockMushroom() {
-        this(0);
-    }
-
-    public BlockMushroom(int meta) {
-        super(0);
+    public BlockMushroom(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -66,7 +62,7 @@ public abstract class BlockMushroom extends BlockFlowable {
     }
 
     public boolean grow() {
-        this.level.setBlock(this, new BlockAir(), true, false);
+        this.level.setBlock(this, Block.get(AIR), true, false);
 
         BigMushroom generator = new BigMushroom(getType());
 

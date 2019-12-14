@@ -7,24 +7,15 @@ import cn.nukkit.math.NukkitRandom;
 /**
  * Created by Pub4Game on 28.01.2016.
  */
-public class BlockHugeMushroomRed extends BlockSolidMeta {
+public class BlockHugeMushroomRed extends BlockSolid {
 
-    public BlockHugeMushroomRed() {
-        this(0);
-    }
-
-    public BlockHugeMushroomRed(int meta) {
-        super(meta);
+    public BlockHugeMushroomRed(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
     public String getName() {
         return "Red Mushroom Block";
-    }
-
-    @Override
-    public int getId() {
-        return RED_MUSHROOM_BLOCK;
     }
 
     @Override

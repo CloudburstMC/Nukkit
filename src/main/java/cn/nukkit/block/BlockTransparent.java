@@ -8,6 +8,10 @@ import cn.nukkit.utils.BlockColor;
  */
 public abstract class BlockTransparent extends Block {
 
+    public BlockTransparent(int id, int meta) {
+        super(id, meta);
+    }
+
     @Override
     public boolean isTransparent() {
         return true;

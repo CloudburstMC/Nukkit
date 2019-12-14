@@ -6,17 +6,8 @@ package cn.nukkit.block;
  */
 public class BlockStairsSpruce extends BlockStairsWood {
 
-    public BlockStairsSpruce() {
-        this(0);
-    }
-
-    public BlockStairsSpruce(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return SPRUCE_WOOD_STAIRS;
+    public BlockStairsSpruce(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

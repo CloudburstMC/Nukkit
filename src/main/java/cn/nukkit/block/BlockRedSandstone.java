@@ -9,17 +9,8 @@ import cn.nukkit.item.ItemTool;
  */
 public class BlockRedSandstone extends BlockSandstone {
 
-    public BlockRedSandstone() {
-        this(0);
-    }
-
-    public BlockRedSandstone(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return RED_SANDSTONE;
+    public BlockRedSandstone(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

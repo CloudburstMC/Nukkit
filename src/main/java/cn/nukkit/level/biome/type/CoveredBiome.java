@@ -1,5 +1,7 @@
 package cn.nukkit.level.biome.type;
 
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.Normal;
@@ -12,42 +14,44 @@ import cn.nukkit.level.generator.Normal;
  * </p>
  */
 public abstract class CoveredBiome extends Biome {
-    public int getCoverId(int x, int z) {
-        return AIR << 4;
+    private static final Block AIR = Block.get(BlockID.AIR);
+
+    public Block getCover(int x, int z) {
+        return AIR;
     }
 
     public int getSurfaceDepth(int x, int y, int z) {
         return 1;
     }
 
-    public abstract int getSurfaceId(int x, int y, int z);
+    public abstract Block getSurface(int x, int y, int z);
 
     public int getGroundDepth(int x, int y, int z) {
         return 4;
     }
 
-    public abstract int getGroundId(int x, int y, int z);
+    public abstract Block getGround(int x, int y, int z);
 
     public void doCover(int x, int z, Chunk chunk) {
         final int fullX = (chunk.getX() << 4) | x;
         final int fullZ = (chunk.getZ() << 4) | z;
 
-        final int coverBlock = this.getCoverId(fullX, fullZ);
+        final Block coverBlock = this.getCover(fullX, fullZ);
 
         boolean hasCovered = false;
         int realY;
         //start one below build limit in case of cover blocks
         for (int y = 254; y > 32; y--) {
-            if (chunk.getFullBlock(x, y, z) == STONE << 4) {
+            if (chunk.getBlockId(x, y, z) == STONE) {
                 COVER:
                 if (!hasCovered) {
                     if (y >= Normal.seaHeight) {
-                        chunk.setFullBlock(x, y + 1, z, coverBlock);
+                        chunk.setBlock(x, y + 1, z, coverBlock);
                         int surfaceDepth = this.getSurfaceDepth(fullX, y, fullZ);
                         for (int i = 0; i < surfaceDepth; i++) {
                             realY = y - i;
-                            if (chunk.getFullBlock(x, realY, z) == STONE << 4) {
-                                chunk.setFullBlock(x, realY, z, this.getSurfaceId(fullX, realY, fullZ));
+                            if (chunk.getBlockId(x, realY, z) == STONE) {
+                                chunk.setBlock(x, realY, z, this.getSurface(fullX, realY, fullZ));
                             } else break COVER;
                         }
                         y -= surfaceDepth;
@@ -55,8 +59,8 @@ public abstract class CoveredBiome extends Biome {
                     int groundDepth = this.getGroundDepth(fullX, y, fullZ);
                     for (int i = 0; i < groundDepth; i++) {
                         realY = y - i;
-                        if (chunk.getFullBlock(x, realY, z) == STONE << 4) {
-                            chunk.setFullBlock(x, realY, z, this.getGroundId(fullX, realY, fullZ));
+                        if (chunk.getBlockId(x, realY, z) == STONE) {
+                            chunk.setBlock(x, realY, z, this.getGround(fullX, realY, fullZ));
                         } else break COVER;
                     }
                     //don't take all of groundDepth away because we do y-- in the loop

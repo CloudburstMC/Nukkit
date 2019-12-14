@@ -17,22 +17,13 @@ import cn.nukkit.utils.Faceable;
 /**
  * Created by Pub4Game on 26.12.2015.
  */
-public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
+public class BlockTrapdoor extends BlockTransparent implements Faceable {
 
     public static final int TRAPDOOR_OPEN_BIT = 0x08;
     public static final int TRAPDOOR_TOP_BIT = 0x04;
 
-    public BlockTrapdoor() {
-        this(0);
-    }
-
-    public BlockTrapdoor(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return TRAPDOOR;
+    public BlockTrapdoor(int id, int meta) {
+        super(id, meta);
     }
 
     @Override

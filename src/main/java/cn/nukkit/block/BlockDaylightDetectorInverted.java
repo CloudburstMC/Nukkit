@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 
 /**
  * Created on 2015/11/22 by CreeperFace.
@@ -9,12 +8,8 @@ import cn.nukkit.item.ItemBlock;
  */
 public class BlockDaylightDetectorInverted extends BlockDaylightDetector {
 
-    public BlockDaylightDetectorInverted() {
-    }
-
-    @Override
-    public int getId() {
-        return DAYLIGHT_DETECTOR_INVERTED;
+    public BlockDaylightDetectorInverted(int id, int meta) {
+        super(id, meta);
     }
 
     @Override
@@ -24,7 +19,7 @@ public class BlockDaylightDetectorInverted extends BlockDaylightDetector {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(new BlockDaylightDetector(), 0);
+        return Item.get(BlockID.DAYLIGHT_DETECTOR);
     }
 
     protected boolean invertDetect() {
