@@ -69,7 +69,6 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
                     this.level.scheduleUpdate(this, this, 2, 0);
                 }*/
 
-                //System.out.println("schedule update 0");
                 this.level.scheduleUpdate(this, this, 2);
             }
         }

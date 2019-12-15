@@ -38,7 +38,7 @@ public final class DispenseBehaviorRegister {
         registerBehavior(ItemID.ARROW, new ProjectileDispenseBehavior("Arrow") {
             @Override
             protected double getMotion() {
-                return super.getMotion() * 2;
+                return super.getMotion() * 1.5;
             }
         });
         //TODO: tipped arrow
