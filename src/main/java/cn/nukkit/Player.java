@@ -2679,7 +2679,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     PlayerBlockPickEvent pickEvent = new PlayerBlockPickEvent(this, block, item);
                     if (this.isSpectator()) {
-                        this.server.getLogger().debug("Got block-pick request from " + this.getName() + " when in spectator mode");
+                        log.debug("Got block-pick request from " + this.getName() + " when in spectator mode");
                         pickEvent.setCancelled();
                     }
 
