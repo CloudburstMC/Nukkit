@@ -88,6 +88,8 @@ public final class Chunk implements Closeable {
 
     private volatile boolean populated;
 
+    private volatile boolean closed;
+
     private CacheSoftReference cached;
 
     private Collection<ChunkDataLoader> chunkDataLoaders;
@@ -165,6 +167,7 @@ public final class Chunk implements Closeable {
         if (section == null) {
             section = new ChunkSection();
             this.sections[y] = section;
+            this.setDirty();
         }
         return section;
     }
@@ -242,6 +245,7 @@ public final class Chunk implements Closeable {
 
     public void setBlock(int x, int y, int z, Block block) {
         this.setBlock(x, y, z, 0, block);
+        this.setDirty();
     }
 
     public void setBlock(int x, int y, int z, int layer, Block block) {
@@ -256,6 +260,7 @@ public final class Chunk implements Closeable {
         }
 
         section.setBlock(x, y & 0xf, z, layer, block);
+        this.setDirty();
     }
 
     public void setBlockId(int x, int y, int z, int id) {
@@ -264,6 +269,7 @@ public final class Chunk implements Closeable {
 
     public void setBlockId(int x, int y, int z, int layer, int id) {
         this.setBlock(x, y, z, layer, GlobalBlockPalette.getBlock(id, 0));
+        this.setDirty();
     }
 
     public void setBlockData(int x, int y, int z, int data) {
@@ -282,6 +288,7 @@ public final class Chunk implements Closeable {
         }
 
         section.setBlockData(x, y & 0xf, z, layer, data);
+        this.setDirty();
     }
 
     public short getBlockExtraData(int x, int y, int z) {
@@ -334,6 +341,7 @@ public final class Chunk implements Closeable {
     public void setSkyLight(int x, int y, int z, int level) {
         checkBounds(x, y, z);
         this.getOrCreateSection(y >> 4).setSkyLight(x, y & 0xf, z, (byte) level);
+        setDirty();
     }
 
     public byte getBlockLight(int x, int y, int z) {
@@ -345,6 +353,7 @@ public final class Chunk implements Closeable {
     public void setBlockLight(int x, int y, int z, int level) {
         checkBounds(x, y, z);
         this.getOrCreateSection(y >> 4).setBlockLight(x, y & 0xf, z, (byte) level);
+        setDirty();
     }
 
     public void recalculateHeightMap() {
@@ -353,6 +362,7 @@ public final class Chunk implements Closeable {
                 this.setHeightMap(x, z, this.getHighestBlock(x, z, false));
             }
         }
+        setDirty();
     }
 
     public synchronized int getHeightMap(int x, int z) {
@@ -361,6 +371,7 @@ public final class Chunk implements Closeable {
 
     public synchronized void setHeightMap(int x, int z, int value) {
         this.heightMap[Chunk.getXZIndex(x, z)] = (byte) value;
+        setDirty();
     }
 
     public int getHighestBlock(int x, int z) {
@@ -638,7 +649,11 @@ public final class Chunk implements Closeable {
     }
 
     public void setGenerated() {
-        this.generated = true;
+        this.setGenerated(true);
+    }
+
+    public void setGenerated(boolean generated) {
+        this.generated = generated;
     }
 
     public boolean isPopulated() {
@@ -646,7 +661,11 @@ public final class Chunk implements Closeable {
     }
 
     public void setPopulated() {
-        this.populated = true;
+        this.setPopulated(true);
+    }
+
+    public void setPopulated(boolean populated) {
+        this.populated = populated;
     }
 
     /**
@@ -659,10 +678,10 @@ public final class Chunk implements Closeable {
     }
 
     /**
-     * Refreshes chunk's dirty status.
+     * Sets the chunk's dirty status.
      */
-    private void refresh() {
-        this.dirty = false;
+    public void setDirty(boolean dirty) {
+        this.dirty = dirty;
     }
 
     public void setDirty() {
@@ -700,11 +719,12 @@ public final class Chunk implements Closeable {
         this.entities.clear();
         this.generated = false;
         this.chunkDataLoaders = null;
+        this.dirty = true;
         this.clearCache();
     }
 
     @Override
-    public void close() {
+    public synchronized void close() {
         for (Entity entity : this.entities) {
             if (entity instanceof Player) {
                 continue;

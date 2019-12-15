@@ -37,6 +37,7 @@ public class ChunkGenerateFunction implements Function<Chunk, Chunk> {
             chunk = manager.getChunk(chunk.getX(), chunk.getZ());
             chunk.setGenerated();
         } finally {
+            chunk.setDirty(false);
             manager.cleanChunks(level.getSeed());
         }
         return chunk;

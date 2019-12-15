@@ -1584,7 +1584,7 @@ public class Level implements ChunkManager, Metadatable {
         CompoundTag itemTag = NBTIO.putItemHelper(item);
         itemTag.setName("Item");
 
-        if (item.getId() > 0 && item.getCount() > 0) {
+        if (item.getId() != 0 && item.getCount() > 0) {
             EntityItem itemEntity = new EntityItem(
                     this.getChunk((int) source.getX() >> 4, (int) source.getZ() >> 4),
                     new CompoundTag().putList(new ListTag<DoubleTag>("Pos").add(new DoubleTag("", source.getX()))
@@ -2254,29 +2254,6 @@ public class Level implements ChunkManager, Metadatable {
             this.chunkSendQueue.remove(index);
             this.chunkSendTasks.remove(index);
         }*/
-    }
-
-    private void processChunkRequest() {
-        this.timings.syncChunkSendTimer.startTiming();
-        for (long index : this.chunkSendQueue.keySet()) {
-            if (this.chunkSendTasks.contains(index)) {
-                continue;
-            }
-            int x = getHashX(index);
-            int z = getHashZ(index);
-            this.chunkSendTasks.add(index);
-            this.timings.syncChunkSendPrepareTimer.startTiming();
-            this.getChunkFuture(x, z).whenComplete((chunk, throwable) -> {
-                if (chunk == null) {
-                    return;
-                }
-
-                LevelChunkPacket packet = chunk.createChunkPacket();
-                this.sendChunk(x, z, index, packet);
-            });
-            this.timings.syncChunkSendPrepareTimer.stopTiming();
-        }
-        this.timings.syncChunkSendTimer.stopTiming();
     }
 
     public void scheduleEntityUpdate(Entity entity) {

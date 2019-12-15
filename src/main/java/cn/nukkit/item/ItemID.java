@@ -226,10 +226,15 @@ public interface ItemID {
     int NAUTILUS_SHELL = 465;
     int GOLDEN_APPLE_ENCHANTED = 466;
     int HEART_OF_THE_SEA = 467;
-    int SCUTE = 468;
+    int TURTLE_SHELL_PIECE = 468;
     int TURTLE_SHELL = 469;
     int PHANTOM_MEMBRANE = 470;
-
+    int CROSSBOW = 471;
+    int SPRUCE_SIGN = 472;
+    int BIRCH_SIGN = 473;
+    int JUNGLE_SIGN = 474;
+    int ACACIA_SIGN = 475;
+    int DARKOAK_SIGN = 476;
     int SWEET_BERRIES = 477;
 
     int RECORD_13 = 500;

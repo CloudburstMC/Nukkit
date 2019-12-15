@@ -294,7 +294,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
         list.put(OBSERVER, BlockObserver.class); //251
 
-        list.put(SPRUCE_STANDING_SIGN, BlockSpruceSignPost.class);
+        list.put(SPRUCE_STANDING_SIGN, BlockSignPost.class);
     }
 
     public static Block get(int id) {
@@ -461,7 +461,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public void setDamage(int meta) {
-        // no op
+        this.meta = meta;
     }
 
     public final void position(Position v) {

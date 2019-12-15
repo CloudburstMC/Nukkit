@@ -86,9 +86,10 @@ public class LevelDBProvider implements LevelProvider {
         final int z = chunk.getZ();
 
         return CompletableFuture.supplyAsync(() -> {
-            this.db.put(LevelDBKey.VERSION.getKey(x, z), new byte[]{3});
 
-            ChunkSerializers.serializeChunk(this.db, chunk, 3);
+            ChunkSerializers.serializeChunk(this.db, chunk, 7);
+
+            this.db.put(LevelDBKey.VERSION.getKey(x, z), new byte[]{7});
 
             return null;
         }, this.executor);

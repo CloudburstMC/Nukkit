@@ -113,7 +113,7 @@ public class BlockStorage {
                 String name = GlobalBlockPalette.getNameFromLegacyId(block.getId());
                 CompoundTag tag = new CompoundTag();
                 tag.putString("name", name);
-                tag.putShort("val", block.getId());
+                tag.putShort("val", block.getDamage());
 
                 NBTIO.write(tag, stream, ByteOrder.LITTLE_ENDIAN);
             }

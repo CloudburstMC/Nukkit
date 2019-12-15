@@ -55,6 +55,7 @@ public class ChunkPopulateFunction implements BiFunction<Chunk, List<Chunk>, Chu
 
             manager.setChunk(chunk);
         } finally {
+            chunk.setDirty(false);
             manager.cleanChunks(this.level.getSeed());
         }
 

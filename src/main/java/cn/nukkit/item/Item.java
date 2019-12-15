@@ -287,6 +287,7 @@ public class Item implements Cloneable, BlockID, ItemID {
         list.put(GOLDEN_APPLE_ENCHANTED, ItemAppleGoldEnchanted.class); //466
 
         list.put(TURTLE_SHELL, ItemTurtleShell.class); //469
+        list.put(SPRUCE_SIGN, ItemSignSpruce.class); //472
 
         list.put(SWEET_BERRIES, ItemSweetBerries.class); //477
 

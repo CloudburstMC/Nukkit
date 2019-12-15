@@ -14,6 +14,7 @@ import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Map;
 
@@ -21,6 +22,7 @@ import java.util.Map;
  * author: Angelic47
  * Nukkit Project
  */
+@Log4j2
 public class BlockChest extends BlockTransparent implements Faceable {
 
     public BlockChest(int id, int meta) {

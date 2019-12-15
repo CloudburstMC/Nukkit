@@ -38,7 +38,7 @@ public class ChunkSerializerV3 extends ChunkSerializerV1 {
                 buffer.writeByte(ChunkSection.CHUNK_SECTION_VERSION);
                 ChunkSectionSerializers.serialize(buffer, section.getBlockStorageArray(), ChunkSection.CHUNK_SECTION_VERSION);
 
-                byte[] payload = new byte[buffer.writerIndex()];
+                byte[] payload = new byte[buffer.readableBytes()];
                 buffer.readBytes(payload);
 
                 db.put(LevelDBKey.SUBCHUNK_PREFIX.getKey(chunk.getX(), chunk.getZ(), ySection), payload);
@@ -50,7 +50,7 @@ public class ChunkSerializerV3 extends ChunkSerializerV1 {
         // Write height map and biomes.
         byte[] data2d = new byte[768];
         ByteBuf buffer = Unpooled.wrappedBuffer(data2d);
-
+        buffer.writerIndex(0);
         int[] heightMap = chunk.getHeightMapArray();
         byte[] biomes = chunk.getBiomeArray();
         for (int height : heightMap) {

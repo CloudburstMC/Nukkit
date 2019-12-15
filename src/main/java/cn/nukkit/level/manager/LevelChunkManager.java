@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 @Log4j2
@@ -41,6 +42,7 @@ public final class LevelChunkManager {
     private final Long2LongMap chunkLastAccessTimes = new Long2LongOpenHashMap();
     private final ChunkGenerateFunction chunkGenerateFunction;
     private final ChunkPopulateFunction chunkPopulateFunction;
+    private final Executor executor;
 
     public LevelChunkManager(Level level) {
         this(level, level.getProvider());
@@ -48,6 +50,8 @@ public final class LevelChunkManager {
 
     public LevelChunkManager(Level level, LevelProvider provider) {
         this.level = level;
+        this.executor = this.level.getServer().getScheduler().getAsyncPool();
+        log.debug("Level Provider: {}", provider.getClass().getSimpleName());
         this.provider = provider;
         this.chunkGenerateFunction = new ChunkGenerateFunction(this.level);
         this.chunkPopulateFunction = new ChunkPopulateFunction(this.level);
@@ -153,10 +157,15 @@ public final class LevelChunkManager {
                 }
                 return chunk;
             });
+        } else if (chunksLoaded.containsKey(chunkKey)) {
+            Chunk chunk = chunksLoaded.get(chunkKey);
+            if ((!generate || chunk.isGenerated()) && (!populate || chunk.isPopulated())) {
+                return future;
+            }
         }
 
         if (generate) {
-            future = future.thenApplyAsync(this.chunkGenerateFunction);
+            future = future.thenApplyAsync(this.chunkGenerateFunction, this.executor);
         }
 
         if (populate) {
@@ -260,7 +269,7 @@ public final class LevelChunkManager {
     }
 
     public void saveChunks() {
-
+        this.chunksLoaded.values().forEach(this::saveChunk);
     }
 
     public void saveChunk(Chunk chunk) {
@@ -268,7 +277,11 @@ public final class LevelChunkManager {
         Preconditions.checkArgument(chunk.getLevel() == this.level,
                 "Chunk is not from this ChunkManager's Level");
         if (chunk.isDirty()) {
-            this.provider.saveChunk(chunk);
+            this.provider.saveChunk(chunk).exceptionally(throwable -> {
+                log.warn("Unable to save chunk", throwable);
+                return null;
+            });
+            chunk.setDirty(false);
         }
     }
 
@@ -315,7 +328,7 @@ public final class LevelChunkManager {
         if (generate) {
             future = future.thenCombine(aroundFuture, this.chunkPopulateFunction);
         } else {
-            future = future.thenCombineAsync(aroundFuture, this.chunkPopulateFunction);
+            future = future.thenCombineAsync(aroundFuture, this.chunkPopulateFunction, this.executor);
         }
         return future;
     }
@@ -326,7 +339,7 @@ public final class LevelChunkManager {
         // Spawn chunk
         final int spawnX = this.level.getSafeSpawn().getFloorX() >> 4;
         final int spawnZ = this.level.getSafeSpawn().getFloorZ() >> 4;
-        final int spawnRadius = 1;//server.getConfiguration().getAdvanced().getSpawnChunkRadius();
+        final int spawnRadius = 4;//server.getConfiguration().getAdvanced().getSpawnChunkRadius();
 
         Config config = this.level.getServer().getConfig();
 
@@ -338,8 +351,9 @@ public final class LevelChunkManager {
                 long chunkKey = entry.getLongKey();
                 Chunk chunk = entry.getValue();
 
-                if (Math.abs(chunk.getX() - spawnX) <= spawnRadius || Math.abs(chunk.getZ() - spawnZ) <= spawnRadius) {
-                    continue; // Already loaded
+                if (Math.abs(chunk.getX() - spawnX) <= spawnRadius || Math.abs(chunk.getZ() - spawnZ) <= spawnRadius ||
+                        !chunk.getLoaders().isEmpty()) {
+                    continue; // Spawn protection or is loaded
                 }
 
                 long loadedTime = this.chunkLoadedTimes.get(chunkKey);
@@ -354,16 +368,12 @@ public final class LevelChunkManager {
                     continue;
                 }
 
-                if (!chunk.getLoaders().isEmpty()) {
-                    continue;
-                }
-
                 if (this.unloadChunk0(chunkKey, true, true)) {
                     iterator.remove();
 
-                    if (log.isTraceEnabled()) {
-                        log.trace("Cleared chunk ({},{}) from {}", chunk.getX(), chunk.getZ(), level.getId());
-                    }
+//                    if (log.isTraceEnabled()) {
+//                        log.trace("Cleared chunk ({},{}) from {}", chunk.getX(), chunk.getZ(), level.getId());
+//                    }
                 }
             }
         }

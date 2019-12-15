@@ -56,7 +56,9 @@ public class GlobalBlockPalette {
 
             if (!state.contains("meta")) continue;
 
+            String name = state.getCompound("block").getString("name");
             int id = state.getShort("id");
+            nameToLegacyId.putIfAbsent(name, id);
             int[] meta = state.getIntArray("meta");
 
             for (int i = 0; i < meta.length; i++) {

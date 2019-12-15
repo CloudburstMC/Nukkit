@@ -600,7 +600,6 @@ public class Server {
 
         // Wait for levels to load.
         CompletableFutures.allAsList(levelFutures).join();
-        log.debug("Levels: {}", this.levelManager.getLevels());
 
         if (this.getDefaultLevel() == null) {
             String defaultName = this.getProperty("level-name", "world");
@@ -985,17 +984,17 @@ public class Server {
 
     public void doAutoSave() {
         if (this.getAutoSave()) {
-            Timings.levelSaveTimer.startTiming();
-            for (Player player : new ArrayList<>(this.players.values())) {
-                if (player.isOnline()) {
-                    player.save(true);
-                } else if (!player.isConnected()) {
-                    this.removePlayer(player);
+            try (Timing ignored = Timings.levelSaveTimer.startTiming()) {
+                for (Player player : new ArrayList<>(this.players.values())) {
+                    if (player.isOnline()) {
+                        player.save(true);
+                    } else if (!player.isConnected()) {
+                        this.removePlayer(player);
+                    }
                 }
-            }
 
-            this.levelManager.save();
-            Timings.levelSaveTimer.stopTiming();
+                this.levelManager.save();
+            }
         }
     }
 
