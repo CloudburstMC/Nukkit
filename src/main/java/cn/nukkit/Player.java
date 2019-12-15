@@ -2688,7 +2688,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (!pickEvent.isCancelled()) {
                         boolean itemExists = false;
                         int itemSlot = -1;
-                        for (int slot = 0; slot != this.inventory.getSize(); slot++) {
+                        for (int slot = 0; slot < this.inventory.getSize(); slot++) {
                             if (this.inventory.getItem(slot).equals(pickEvent.getItem())) {
                                 if(slot < this.inventory.getHotbarSize()) {
                                     this.inventory.setHeldItemSlot(slot);
@@ -2700,7 +2700,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             }
                         }
 
-                        for(int slot = 0; slot != this.inventory.getHotbarSize(); slot++) {
+                        for(int slot = 0; slot < this.inventory.getHotbarSize(); slot++) {
                             if(this.inventory.getItem(slot).isNull()) {
                                 if(!itemExists && this.isCreative()) {
                                     this.inventory.setHeldItemSlot(slot);
@@ -2719,7 +2719,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             Item itemInHand = this.inventory.getItemInHand();
                             this.inventory.setItemInHand(pickEvent.getItem());
                             if(!this.inventory.isFull()) {
-                                for(int slot = 0; slot != this.inventory.getSize(); slot++) {
+                                for(int slot = 0; slot < this.inventory.getSize(); slot++) {
                                     if(this.inventory.getItem(slot).isNull()) {
                                         this.inventory.setItem(slot, itemInHand);
                                         break;
