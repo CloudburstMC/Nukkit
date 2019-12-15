@@ -182,11 +182,11 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
 
             if (!extending && this.level.getBlock(getSide(facing)).getId() == BlockID.PISTON_HEAD) {
                 this.level.setBlock(getSide(facing), new BlockAir());
+                this.movable = true;
             }
 
             this.level.scheduleUpdate(this.getLevelBlock(), 1);
             this.attachedBlocks.clear();
-            this.movable = true;
             hasUpdate = false;
         }
 

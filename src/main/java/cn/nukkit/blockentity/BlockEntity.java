@@ -55,7 +55,7 @@ public abstract class BlockEntity extends Position {
     public String name;
     public long id;
 
-    public boolean movable = true;
+    public boolean movable;
 
     public boolean closed = false;
     public CompoundTag namedTag;
