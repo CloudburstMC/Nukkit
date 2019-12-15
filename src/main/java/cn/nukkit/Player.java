@@ -2705,31 +2705,31 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 if(!itemExists && this.isCreative()) {
                                     this.inventory.setHeldItemSlot(slot);
                                     this.inventory.setItemInHand(pickEvent.getItem());
-                                    break;
+                                    break packetswitch;
                                 } else if(itemSlot > -1) {
                                     this.inventory.setHeldItemSlot(slot);
                                     this.inventory.setItemInHand(this.inventory.getItem(itemSlot));
                                     this.inventory.clear(itemSlot, true);
-                                    break;
-                                }
-                            } else if(slot + 1 == this.inventory.getHotbarSize()) {
-                                if(!itemExists && this.isCreative()) {
-                                    Item itemInHand = this.inventory.getItemInHand();
-                                    this.inventory.setItemInHand(pickEvent.getItem());
-                                    if(!this.inventory.isFull()) {
-                                        for(slot = 0; slot != this.inventory.getSize(); slot++) {
-                                            if(this.inventory.getItem(slot).isNull()) {
-                                                this.inventory.setItem(slot, itemInHand);
-                                                break;
-                                            }
-                                        }
-                                    }
-                                } else if(itemSlot > -1) {
-                                    Item itemInHand = this.inventory.getItemInHand();
-                                    this.inventory.setItemInHand(this.inventory.getItem(itemSlot));
-                                    this.inventory.setItem(itemSlot, itemInHand);
+                                    break packetswitch;
                                 }
                             }
+                        }
+
+                        if(!itemExists && this.isCreative()) {
+                            Item itemInHand = this.inventory.getItemInHand();
+                            this.inventory.setItemInHand(pickEvent.getItem());
+                            if(!this.inventory.isFull()) {
+                                for(int slot = 0; slot != this.inventory.getSize(); slot++) {
+                                    if(this.inventory.getItem(slot).isNull()) {
+                                        this.inventory.setItem(slot, itemInHand);
+                                        break;
+                                    }
+                                }
+                            }
+                        } else if(itemSlot > -1) {
+                            Item itemInHand = this.inventory.getItemInHand();
+                            this.inventory.setItemInHand(this.inventory.getItem(itemSlot));
+                            this.inventory.setItem(itemSlot, itemInHand);
                         }
                     }
                     break;
