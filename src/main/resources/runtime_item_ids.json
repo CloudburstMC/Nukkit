@@ -2806,5 +2806,9 @@
     {
         "name" : "minecraft:honeycomb_block",
         "id" : -221
+    },
+    {
+        "name" : "minecraft:totem",
+        "id" : 450
     }
 ]
