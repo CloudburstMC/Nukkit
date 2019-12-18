@@ -34,10 +34,10 @@ public class ItemBanner extends Item {
         return this.getNamedTag().getInt("Base");
     }
 
-    public void setBaseColor(int color) {
+    public void setBaseColor(DyeColor color) {
         CompoundTag tag = this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag();
-        tag.putInt("Base", color & 0x0f);
-        this.setDamage(color & 0x0f);
+        tag.putInt("Base", color.getDyeData() & 0x0f);
+        this.setDamage(color.getDyeData() & 0x0f);
         this.setNamedTag(tag);
     }
 

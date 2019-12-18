@@ -65,8 +65,8 @@ public class BlockEntityBanner extends BlockEntitySpawnable {
         return this.namedTag.getInt("Base");
     }
 
-    public void setBaseColor(int color) {
-        this.namedTag.putInt("Base", color & 0x0f);
+    public void setBaseColor(DyeColor color) {
+        this.namedTag.putInt("Base", color.getDyeData() & 0x0f);
     }
 
     public int getType() {
