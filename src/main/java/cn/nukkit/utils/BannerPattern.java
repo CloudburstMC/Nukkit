@@ -2,6 +2,7 @@ package cn.nukkit.utils;
 
 import cn.nukkit.nbt.tag.CompoundTag;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,7 +69,7 @@ public class BannerPattern {
         PATTERN_FLOWER("flo"),
         PATTERN_MOJANG("moj");
 
-        private final static Map<String, Type> BY_NAME;
+        private final static Map<String, Type> BY_NAME = new HashMap<>();
 
         private String name;
 
@@ -81,8 +82,6 @@ public class BannerPattern {
         }
 
         static {
-            BY_NAME = new HashMap<>();
-
             for (Type type : values()) {
                 BY_NAME.put(type.getName(), type);
             }
