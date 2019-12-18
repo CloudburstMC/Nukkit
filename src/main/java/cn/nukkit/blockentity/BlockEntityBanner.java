@@ -4,48 +4,10 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.utils.BannerPattern;
 import cn.nukkit.utils.DyeColor;
 
 public class BlockEntityBanner extends BlockEntitySpawnable {
-
-    public static final String PATTERN_BOTTOM_STRIPE = "bs";
-    public static final String PATTERN_TOP_STRIPE = "ts";
-    public static final String PATTERN_LEFT_STRIPE = "ls";
-    public static final String PATTERN_RIGHT_STRIPE = "rs";
-    public static final String PATTERN_CENTER_STRIPE = "cs";
-    public static final String PATTERN_MIDDLE_STRIPE = "ms";
-    public static final String PATTERN_DOWN_RIGHT_STRIPE = "drs";
-    public static final String PATTERN_DOWN_LEFT_STRIPE = "dls";
-    public static final String PATTERN_SMALL_STRIPES = "ss";
-    public static final String PATTERN_DIAGONAL_CROSS = "cr";
-    public static final String PATTERN_SQUARE_CROSS = "sc";
-    public static final String PATTERN_LEFT_OF_DIAGONAL = "ld";
-    public static final String PATTERN_RIGHT_OF_UPSIDE_DOWN_DIAGONAL = "rud";
-    public static final String PATTERN_LEFT_OF_UPSIDE_DOWN_DIAGONAL = "lud";
-    public static final String PATTERN_RIGHT_OF_DIAGONAL = "rd";
-    public static final String PATTERN_VERTICAL_HALF_LEFT = "vh";
-    public static final String PATTERN_VERTICAL_HALF_RIGHT = "vhr";
-    public static final String PATTERN_HORIZONTAL_HALF_TOP = "hh";
-    public static final String PATTERN_HORIZONTAL_HALF_BOTTOM = "hhb";
-    public static final String PATTERN_BOTTOM_LEFT_CORNER = "bl";
-    public static final String PATTERN_BOTTOM_RIGHT_CORNER = "br";
-    public static final String PATTERN_TOP_LEFT_CORNER = "tl";
-    public static final String PATTERN_TOP_RIGHT_CORNER = "tr";
-    public static final String PATTERN_BOTTOM_TRIANGLE = "bt";
-    public static final String PATTERN_TOP_TRIANGLE = "tt";
-    public static final String PATTERN_BOTTOM_TRIANGLE_SAWTOOTH = "bts";
-    public static final String PATTERN_TOP_TRIANGLE_SAWTOOTH = "tts";
-    public static final String PATTERN_MIDDLE_CIRCLE = "mc";
-    public static final String PATTERN_MIDDLE_RHOMBUS = "mr";
-    public static final String PATTERN_BORDER = "bo";
-    public static final String PATTERN_CURLY_BORDER = "cbo";
-    public static final String PATTERN_BRICK = "bri";
-    public static final String PATTERN_GRADIENT = "gra";
-    public static final String PATTERN_GRADIENT_UPSIDE_DOWN = "gru";
-    public static final String PATTERN_CREEPER = "cre";
-    public static final String PATTERN_SKULL = "sku";
-    public static final String PATTERN_FLOWER = "flo";
-    public static final String PATTERN_MOJANG = "moj";
 
     public BlockEntityBanner(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -77,16 +39,16 @@ public class BlockEntityBanner extends BlockEntitySpawnable {
         this.namedTag.putInt("Type", type);
     }
 
-    public void addPattern(String pattern, DyeColor color) {
+    public void addPattern(BannerPattern pattern) {
         ListTag<CompoundTag> patterns = this.namedTag.getList("Patterns", CompoundTag.class);
         patterns.add(new CompoundTag("").
-                putInt("Color", color.getDyeData() & 0x0f).
-                putString("Pattern", pattern));
+                putInt("Color", pattern.getColor().getDyeData() & 0x0f).
+                putString("Pattern", pattern.getType().getName()));
         this.namedTag.putList(patterns);
     }
 
-    public CompoundTag getPattern(int index) {
-        return this.namedTag.getList("Patterns").size() > index && index >= 0 ? this.namedTag.getList("Patterns", CompoundTag.class).get(index) : new CompoundTag();
+    public BannerPattern getPattern(int index) {
+        return BannerPattern.fromCompoundTag(this.namedTag.getList("Patterns").size() > index && index >= 0 ? this.namedTag.getList("Patterns", CompoundTag.class).get(index) : new CompoundTag());
     }
 
     public void removePattern(int index) {

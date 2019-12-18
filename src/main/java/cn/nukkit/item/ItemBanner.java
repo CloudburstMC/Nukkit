@@ -4,6 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.IntTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.utils.BannerPattern;
 import cn.nukkit.utils.DyeColor;
 
 /**
@@ -51,18 +52,18 @@ public class ItemBanner extends Item {
         this.setNamedTag(tag);
     }
 
-    public void addPattern(String pattern, DyeColor color) {
+    public void addPattern(BannerPattern pattern) {
         CompoundTag tag = this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag();
         ListTag<CompoundTag> patterns = tag.getList("Patterns", CompoundTag.class);
         patterns.add(new CompoundTag("").
-                putInt("Color", color.getDyeData() & 0x0f).
-                putString("Pattern", pattern));
+                putInt("Color", pattern.getColor().getDyeData() & 0x0f).
+                putString("Pattern", pattern.getType().getName()));
         tag.putList(patterns);
         this.setNamedTag(tag);
     }
 
-    public CompoundTag getPattern(int index) {
-        return this.getNamedTag().getList("Patterns").size() > index && index >= 0 ? this.getNamedTag().getList("Patterns", CompoundTag.class).get(index) : new CompoundTag();
+    public BannerPattern getPattern(int index) {
+        return BannerPattern.fromCompoundTag(this.getNamedTag().getList("Patterns").size() > index && index >= 0 ? this.getNamedTag().getList("Patterns", CompoundTag.class).get(index) : new CompoundTag());
     }
 
     public void removePattern(int index) {
