@@ -4,6 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.IntTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.utils.DyeColor;
 
 /**
  * Created by PetteriM1
@@ -48,6 +49,10 @@ public class ItemBanner extends Item {
         CompoundTag tag = this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag();
         tag.putInt("Type", type);
         this.setNamedTag(tag);
+    }
+
+    public void addPattern(String pattern, DyeColor color) {
+        this.addPattern(pattern, color.getDyeData());
     }
 
     public void addPattern(String pattern, int color) {

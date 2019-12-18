@@ -4,6 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.utils.DyeColor;
 
 public class BlockEntityBanner extends BlockEntitySpawnable {
 
@@ -45,23 +46,6 @@ public class BlockEntityBanner extends BlockEntitySpawnable {
     public static final String PATTERN_SKULL = "sku";
     public static final String PATTERN_FLOWER = "flo";
     public static final String PATTERN_MOJANG = "moj";
-    
-    public static final int COLOR_BLACK = 0;
-    public static final int COLOR_RED = 1;
-    public static final int COLOR_GREEN = 2;
-    public static final int COLOR_BROWN = 3;
-    public static final int COLOR_BLUE = 4;
-    public static final int COLOR_PURPLE = 5;
-    public static final int COLOR_CYAN = 6;
-    public static final int COLOR_LIGHT_GRAY = 7;
-    public static final int COLOR_GRAY = 8;
-    public static final int COLOR_PINK = 9;
-    public static final int COLOR_LIME = 10;
-    public static final int COLOR_YELLOW = 11;
-    public static final int COLOR_LIGHT_BLUE = 12;
-    public static final int COLOR_MAGENTA = 13;
-    public static final int COLOR_ORANGE = 14;
-    public static final int COLOR_WHITE = 15;
 
     public BlockEntityBanner(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -91,6 +75,10 @@ public class BlockEntityBanner extends BlockEntitySpawnable {
 
     public void setType(int type) {
         this.namedTag.putInt("Type", type);
+    }
+
+    public void addPattern(String pattern, DyeColor color) {
+        this.addPattern(pattern, color.getDyeData());
     }
 
     public void addPattern(String pattern, int color) {
