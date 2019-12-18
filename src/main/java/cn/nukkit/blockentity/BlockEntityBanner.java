@@ -78,13 +78,9 @@ public class BlockEntityBanner extends BlockEntitySpawnable {
     }
 
     public void addPattern(String pattern, DyeColor color) {
-        this.addPattern(pattern, color.getDyeData());
-    }
-
-    public void addPattern(String pattern, int color) {
         ListTag<CompoundTag> patterns = this.namedTag.getList("Patterns", CompoundTag.class);
         patterns.add(new CompoundTag("").
-                putInt("Color", color & 0x0f).
+                putInt("Color", color.getDyeData() & 0x0f).
                 putString("Pattern", pattern));
         this.namedTag.putList(patterns);
     }

@@ -52,14 +52,10 @@ public class ItemBanner extends Item {
     }
 
     public void addPattern(String pattern, DyeColor color) {
-        this.addPattern(pattern, color.getDyeData());
-    }
-
-    public void addPattern(String pattern, int color) {
         CompoundTag tag = this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag();
         ListTag<CompoundTag> patterns = tag.getList("Patterns", CompoundTag.class);
         patterns.add(new CompoundTag("").
-                putInt("Color", color & 0x0f).
+                putInt("Color", color.getDyeData() & 0x0f).
                 putString("Pattern", pattern));
         tag.putList(patterns);
         this.setNamedTag(tag);
