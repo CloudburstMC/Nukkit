@@ -63,7 +63,8 @@ public class ItemBanner extends Item {
     }
 
     public BannerPattern getPattern(int index) {
-        return BannerPattern.fromCompoundTag(this.getNamedTag().getList("Patterns").size() > index && index >= 0 ? this.getNamedTag().getList("Patterns", CompoundTag.class).get(index) : new CompoundTag());
+        CompoundTag tag = this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag();
+        return BannerPattern.fromCompoundTag(tag.getList("Patterns").size() > index && index >= 0 ? tag.getList("Patterns", CompoundTag.class).get(index) : new CompoundTag());
     }
 
     public void removePattern(int index) {
@@ -75,14 +76,8 @@ public class ItemBanner extends Item {
         this.setNamedTag(tag);
     }
 
-    public void setPatterns(ListTag<CompoundTag> patterns) {
-        CompoundTag tag = this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag();
-        tag.put("Patterns", patterns);
-        this.setNamedTag(tag);
-    }
-
-    public ListTag<CompoundTag> getPatterns() {
-        return this.getNamedTag().getList("Patterns", CompoundTag.class);
+    public int getPatternsSize() {
+        return (this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag()).getList("Patterns").size();
     }
 
     public void correctNBT() {

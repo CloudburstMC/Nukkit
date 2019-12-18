@@ -58,12 +58,8 @@ public class BlockEntityBanner extends BlockEntitySpawnable {
         }
     }
 
-    public void setPatterns(ListTag<CompoundTag> patterns) {
-        this.namedTag.put("Patterns", patterns);
-    }
-
-    public ListTag<CompoundTag> getPatterns() {
-        return this.namedTag.getList("Patterns", CompoundTag.class);
+    public int getPatternsSize() {
+        return this.namedTag.getList("Patterns").size();
     }
 
     @Override
