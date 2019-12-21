@@ -1,17 +1,19 @@
 package cn.nukkit.level.format.anvil;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.format.anvil.util.BlockStorage;
 import cn.nukkit.level.format.anvil.util.NibbleArray;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.utils.Binary;
-import cn.nukkit.utils.ThreadCache;
-import cn.nukkit.utils.Utils;
-import cn.nukkit.utils.Zlib;
+import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.utils.*;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * author: MagicDroidX
@@ -19,9 +21,12 @@ import java.util.Arrays;
  */
 public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
+    public static final int STORAGE_VERSION = 8;
+
     private final int y;
 
-    private final BlockStorage storage;
+    // Array but with fixed size of 2 for now
+    private final BlockStorage[] storage;
 
     protected byte[] blockLight;
     protected byte[] skyLight;
@@ -29,7 +34,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     protected boolean hasBlockLight;
     protected boolean hasSkyLight;
 
-    private ChunkSection(int y, BlockStorage storage, byte[] blockLight, byte[] skyLight, byte[] compressedLight,
+    private ChunkSection(int y, BlockStorage[] storage, byte[] blockLight, byte[] skyLight, byte[] compressedLight,
                          boolean hasBlockLight, boolean hasSkyLight) {
         this.y = y;
         this.storage = storage;
@@ -45,24 +50,41 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         hasBlockLight = false;
         hasSkyLight = false;
 
-        storage = new BlockStorage();
+        storage = new BlockStorage[]{ new BlockStorage(), new BlockStorage() };
     }
 
     public ChunkSection(CompoundTag nbt) {
         this.y = nbt.getByte("Y");
 
-        byte[] blocks = nbt.getByteArray("Blocks");
-        NibbleArray data = new NibbleArray(nbt.getByteArray("Data"));
+        storage = new BlockStorage[]{ new BlockStorage(), new BlockStorage() };
 
-        storage = new BlockStorage();
+        int version = nbt.getByte("Version");
 
-        // Convert YZX to XZY
-        for (int x = 0; x < 16; x++) {
-            for (int z = 0; z < 16; z++) {
-                for (int y = 0; y < 16; y++) {
-                    int index = getAnvilIndex(x, y, z);
-                    storage.setBlockId(x, y, z, blocks[index]);
-                    storage.setBlockData(x, y, z, data.get(index));
+        ListTag<CompoundTag> storageList;
+        if (version == 8) {
+            storageList = nbt.getList("Storage", CompoundTag.class);
+        } else if (version == 0) {
+            storageList = new ListTag<>("Storage");
+            storageList.add(nbt);
+        } else {
+            throw new ChunkException("Unsupported chunk section version: " + version);
+        }
+
+        for (int i = 0; i < storageList.size(); i++) {
+            CompoundTag storageTag = storageList.get(i);
+            BlockStorage storage = this.storage[i];
+
+            byte[] blocks = storageTag.getByteArray("Blocks");
+            NibbleArray data = new NibbleArray(storageTag.getByteArray("Data"));
+
+            // Convert YZX to XZY
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    for (int y = 0; y < 16; y++) {
+                        int index = getAnvilIndex(x, y, z);
+                        storage.setBlockId(x, y, z, blocks[index]);
+                        storage.setBlockData(x, y, z, data.get(index));
+                    }
                 }
             }
         }
@@ -83,21 +105,43 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     @Override
     public int getBlockId(int x, int y, int z) {
         synchronized (storage) {
-            return storage.getBlockId(x, y, z);
+            return storage[0].getBlockId(x, y, z);
+        }
+    }
+
+    @Override
+    public int getBlockId(int x, int y, int z, int layer) {
+        synchronized (storage) {
+            return storage[layer].getBlockId(x, y, z);
         }
     }
 
     @Override
     public void setBlockId(int x, int y, int z, int id) {
         synchronized (storage) {
-            storage.setBlockId(x, y, z, id);
+            storage[0].setBlockId(x, y, z, id);
+        }
+    }
+
+    @Override
+    public void setBlockId(int x, int y, int z, int layer, int id) {
+        synchronized (storage) {
+            storage[layer].setBlockId(x, y, z, id);
         }
     }
 
     @Override
     public boolean setFullBlockId(int x, int y, int z, int fullId) {
         synchronized (storage) {
-            storage.setFullBlock(x, y, z, (char) fullId);
+            storage[0].setFullBlock(x, y, z, (char) fullId);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean setFullBlockId(int x, int y, int z, int layer, int fullId) {
+        synchronized (storage) {
+            storage[layer].setFullBlock(x, y, z, (char) fullId);
         }
         return true;
     }
@@ -105,21 +149,42 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     @Override
     public int getBlockData(int x, int y, int z) {
         synchronized (storage) {
-            return storage.getBlockData(x, y, z);
+            return storage[0].getBlockData(x, y, z);
+        }
+    }
+
+    @Override
+    public int getBlockData(int x, int y, int z, int layer) {
+        synchronized (storage) {
+            return storage[layer].getBlockData(x, y, z);
         }
     }
 
     @Override
     public void setBlockData(int x, int y, int z, int data) {
         synchronized (storage) {
-            storage.setBlockData(x, y, z, data);
+            storage[0].setBlockData(x, y, z, data);
+        }
+    }
+
+    @Override
+    public void setBlockData(int x, int y, int z, int layer, int data) {
+        synchronized (storage) {
+            storage[layer].setBlockData(x, y, z, data);
         }
     }
 
     @Override
     public int getFullBlock(int x, int y, int z) {
         synchronized (storage) {
-            return storage.getFullBlock(x, y, z);
+            return storage[0].getFullBlock(x, y, z);
+        }
+    }
+
+    @Override
+    public int getFullBlock(int x, int y, int z, int layer) {
+        synchronized (storage) {
+            return storage[layer].getFullBlock(x, y, z);
         }
     }
 
@@ -130,9 +195,25 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         }
     }
 
+    @Override
+    public boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId) {
+        synchronized (storage) {
+            return setBlockAtLayer(x, y, z, layer, blockId, 0);
+        }
+    }
+
+    @Override
     public Block getAndSetBlock(int x, int y, int z, Block block) {
         synchronized (storage) {
-            int fullId = storage.getAndSetFullBlock(x, y, z, block.getFullId());
+            int fullId = storage[0].getAndSetFullBlock(x, y, z, block.getFullId());
+            return Block.fullList[fullId].clone();
+        }
+    }
+
+    @Override
+    public Block getAndSetBlock(int x, int y, int z, int layer, Block block) {
+        synchronized (storage) {
+            int fullId = storage[layer].getAndSetFullBlock(x, y, z, block.getFullId());
             return Block.fullList[fullId].clone();
         }
     }
@@ -141,7 +222,16 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     public boolean setBlock(int x, int y, int z, int blockId, int meta) {
         int newFullId = (blockId << 4) + meta;
         synchronized (storage) {
-            int previousFullId = storage.getAndSetFullBlock(x, y, z, newFullId);
+            int previousFullId = storage[0].getAndSetFullBlock(x, y, z, newFullId);
+            return (newFullId != previousFullId);
+        }
+    }
+
+    @Override
+    public boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId, int meta) {
+        int newFullId = (blockId << 4) + meta;
+        synchronized (storage) {
+            int previousFullId = storage[layer].getAndSetFullBlock(x, y, z, newFullId);
             return (newFullId != previousFullId);
         }
     }
@@ -218,14 +308,14 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     }
 
     @Override
-    public byte[] getIdArray() {
+    public byte[] getIdArray(int layer) {
         synchronized (storage) {
             byte[] anvil = new byte[4096];
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < 16; y++) {
                         int index = getAnvilIndex(x, y, z);
-                        anvil[index] = (byte) storage.getBlockId(x, y, z);
+                        anvil[index] = (byte) storage[layer].getBlockId(x, y, z);
                     }
                 }
             }
@@ -234,14 +324,24 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     }
 
     @Override
+    public byte[] getIdArray() {
+        return getIdArray(0);
+    }
+
+    @Override
     public byte[] getDataArray() {
+        return getDataArray(0);
+    }
+
+    @Override
+    public byte[] getDataArray(int layer) {
         synchronized (storage) {
             NibbleArray anvil = new NibbleArray(4096);
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < 16; y++) {
                         int index = getAnvilIndex(x, y, z);
-                        anvil.set(index, (byte) storage.getBlockData(x, y, z));
+                        anvil.set(index, (byte) storage[layer].getBlockData(x, y, z));
                     }
                 }
             }
@@ -316,18 +416,99 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         return buffer;
     }
 
+    public void writeToStream(BinaryStream stream) {
+        synchronized (storage) {
+            stream.putByte((byte) STORAGE_VERSION);
+            stream.putByte((byte) storage.length);
+            for (BlockStorage blockStorage : storage) {
+                byte[] ids = blockStorage.getBlockIds();
+                NibbleArray data = new NibbleArray(blockStorage.getBlockData());
+                int[] blockStates = new int[ids.length];
+                Int2IntOpenHashMap runtime2palette = new Int2IntOpenHashMap();
+                ArrayList<Integer> palette2runtime = new ArrayList<>();
+                AtomicInteger nextPaletteId = new AtomicInteger(0);
+                //TODO Use compressed formats based on the value of this variable
+                AtomicInteger maxRuntimeId = new AtomicInteger(0);
+                for (int i = 0; i < blockStates.length; i++) {
+                    int runtimeId = GlobalBlockPalette.getOrCreateRuntimeId(ids[i] & 0xFF, data.get(i) & 0xF);
+                    int paletteId = runtime2palette.computeIfAbsent(runtimeId, rid -> {
+                        int pid = nextPaletteId.getAndIncrement();
+                        palette2runtime.add(rid);
+                        if (maxRuntimeId.get() < rid) {
+                            maxRuntimeId.set(rid);
+                        }
+                        return pid;
+                    });
+                    blockStates[i] = paletteId;
+                }
+
+                int bitsPerBlock = 16;
+                stream.putByte( (byte) (1 | (bitsPerBlock << 1)) );
+                for (int blockState : blockStates) {
+                    stream.putLShort(blockState);
+                }
+                stream.putVarInt(palette2runtime.size());
+                for (int i = 0; i < palette2runtime.size(); i++) {
+                    stream.putVarInt(palette2runtime.get(i));
+                }
+            }
+        }
+    }
+
     @Override
     public byte[] getBytes() {
+        BinaryStream stream = new BinaryStream();
+        writeToStream(stream);
+        return stream.getBuffer();
+        /*synchronized (storage) {
+
+            byte[][] storageBytes = new byte[storage.length][];
+            int totalLength = 0;
+            for (int i = 0; i < storage.length; i++) {
+                BlockStorage storage = this.storage[i];
+                byte[] ids = storage.getBlockIds();
+                byte[] data = storage.getBlockData();
+
+
+
+                byte[] merged = new byte[ids.length + data.length + 1];
+                totalLength += merged.length;
+                storageBytes[i] = merged;
+
+                merged[0] = (byte) STORAGE_VERSION;
+                System.arraycopy(ids, 0, merged, 1, ids.length);
+                System.arraycopy(data, 0, merged, ids.length + 1, data.length);
+            }
+
+            byte[] fullyMerged = new byte[totalLength];
+            int pos = 0;
+            for (byte[] merged: storageBytes) {
+                System.arraycopy(merged, 0, fullyMerged, pos, merged.length);
+                pos += merged.length;
+            }
+            return fullyMerged;
+        }*/
+    }
+
+    @Override
+    public CompoundTag toNBT() {
+        // For simplicity, not using the actual palette format to save in the disk
+        CompoundTag s = new CompoundTag(null);
+        s.putByte("Y", (getY()));
+        s.putByte("Version", STORAGE_VERSION);
+        ListTag<CompoundTag> storageList = new ListTag<>("Storage");
         synchronized (storage) {
-
-            byte[] ids = storage.getBlockIds();
-            byte[] data = storage.getBlockData();
-            byte[] merged = new byte[ids.length + data.length];
-
-            System.arraycopy(ids, 0, merged, 0, ids.length);
-            System.arraycopy(data, 0, merged, ids.length, data.length);
-            return merged;
+            for (BlockStorage blockStorage: this.storage) {
+                CompoundTag storageTag = new CompoundTag();
+                storageTag.putByteArray("Blocks", blockStorage.getBlockIds());
+                storageTag.putByteArray("Data", blockStorage.getBlockData());
+                storageList.add(storageTag);
+            }
         }
+        s.putList(storageList);
+        s.putByteArray("BlockLight", getLightArray());
+        s.putByteArray("SkyLight", getSkyLightArray());
+        return s;
     }
 
     public boolean compress() {
@@ -365,9 +546,13 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     }
 
     public ChunkSection copy() {
+        BlockStorage[] storageCopy = new BlockStorage[this.storage.length];
+        for (int i = 0; i < storageCopy.length; i++) {
+            storageCopy[i] = this.storage[i].copy();
+        }
         return new ChunkSection(
                 this.y,
-                this.storage.copy(),
+                storageCopy,
                 this.blockLight == null ? null : this.blockLight.clone(),
                 this.skyLight == null ? null : this.skyLight.clone(),
                 this.compressedLight == null ? null : this.compressedLight.clone(),

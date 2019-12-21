@@ -119,9 +119,24 @@ public class Chunk extends BaseFullChunk {
     }
 
     @Override
+    public int getBlockId(int x, int y, int z, int layer) {
+        if (layer == 0) {
+            return getBlockId(x, y, z);
+        }
+        return 0;
+    }
+
+    @Override
     public void setBlockId(int x, int y, int z, int id) {
         this.blocks[(x << 11) | (z << 7) | y] = (byte) id;
         setChanged();
+    }
+
+    @Override
+    public void setBlockId(int x, int y, int z, int layer, int id) {
+        if (layer == 0) {
+            setBlockId(x, y, z, id);
+        }
     }
 
     @Override
@@ -132,6 +147,14 @@ public class Chunk extends BaseFullChunk {
         } else {
             return b >> 4;
         }
+    }
+
+    @Override
+    public int getBlockData(int x, int y, int z, int layer) {
+        if (layer == 0) {
+            return getBlockData(x, y, z);
+        }
+        return 0;
     }
 
     @Override
@@ -147,6 +170,13 @@ public class Chunk extends BaseFullChunk {
     }
 
     @Override
+    public void setBlockData(int x, int y, int z, int layer, int data) {
+        if (layer == 0) {
+            setBlockData(x, y, z, data);
+        }
+    }
+
+    @Override
     public int getFullBlock(int x, int y, int z) {
         int i = (x << 11) | (z << 7) | y;
         int block = this.blocks[i] & 0xff;
@@ -156,6 +186,14 @@ public class Chunk extends BaseFullChunk {
         } else {
             return (block << 4) | (data >> 4);
         }
+    }
+
+    @Override
+    public int getFullBlock(int x, int y, int z, int layer) {
+        if (layer == 0) {
+            return getFullBlock(x, y, z);
+        }
+        return 0;
     }
 
     @Override
@@ -196,6 +234,14 @@ public class Chunk extends BaseFullChunk {
             setChanged();
         }
         return Block.get(previousId, previousData);
+    }
+
+    @Override
+    public Block getAndSetBlock(int x, int y, int z, int layer, Block block) {
+        if (layer == 0) {
+            return getAndSetBlock(x, y, z, block);
+        }
+        return Block.get(0);
     }
 
     @Override
@@ -322,6 +368,22 @@ public class Chunk extends BaseFullChunk {
     @Override
     public void setGenerated(boolean value) {
         this.isGenerated = true;
+    }
+
+    @Override
+    public byte[] getBlockIdArray(int layer) {
+        if (layer == 0) {
+            return getBlockIdArray();
+        }
+        return new byte[blocks.length];
+    }
+
+    @Override
+    public byte[] getBlockDataArray(int layer) {
+        if (layer == 0) {
+            return getBlockDataArray();
+        }
+        return new byte[data.length];
     }
 
     public static Chunk fromBinary(byte[] data) {
@@ -532,6 +594,36 @@ public class Chunk extends BaseFullChunk {
             return chunk;
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public int getBlockIdAt(int x, int y, int z, int layer) {
+        if (layer == 0) {
+            return getBlockIdAt(x, y, z);
+        }
+        return 0;
+    }
+
+    @Override
+    public void setBlockIdAt(int x, int y, int z, int layer, int id) {
+        if (layer == 0) {
+            setBlockIdAt(x, y, z, id);
+        }
+    }
+
+    @Override
+    public int getBlockDataAt(int x, int y, int z, int layer) {
+        if (layer == 0) {
+            return getBlockDataAt(x, y, z);
+        }
+        return 0;
+    }
+
+    @Override
+    public void setBlockDataAt(int x, int y, int z, int layer, int data) {
+        if (layer == 0) {
+            setBlockDataAt(x, y, z, data);
         }
     }
 }

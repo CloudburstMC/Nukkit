@@ -2,6 +2,8 @@ package cn.nukkit.level.format.generic;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.format.ChunkSection;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
 
 import java.util.Arrays;
@@ -22,6 +24,15 @@ public class EmptyChunkSection implements ChunkSection {
     static {
         Arrays.fill(EMPTY_SKY_LIGHT_ARR, (byte) 255);
     }
+    private static byte[] EMPTY_ID_ARRAY = new byte[4096];
+    private static byte[] EMPTY_DATA_ARRAY = new byte[2048];
+    private static byte[] EMPTY_CHUNK_DATA;
+    static {
+        BinaryStream stream = new BinaryStream();
+        stream.putByte((byte) cn.nukkit.level.format.anvil.ChunkSection.STORAGE_VERSION);
+        stream.putVarInt(0);
+        EMPTY_CHUNK_DATA = stream.getBuffer();
+    }
 
     private final int y;
 
@@ -40,14 +51,36 @@ public class EmptyChunkSection implements ChunkSection {
     }
 
     @Override
+    public int getBlockId(int x, int y, int z, int layer) {
+        return 0;
+    }
+
+    @Override
     public int getFullBlock(int x, int y, int z) throws ChunkException {
         return 0;
+    }
+
+    @Override
+    public boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId) {
+        if (blockId != 0) throw new ChunkException("Tried to modify an empty Chunk");
+        return false;
+    }
+
+    @Override
+    public Block getAndSetBlock(int x, int y, int z, int layer, Block block) {
+        if (block.getId() != 0) throw new ChunkException("Tried to modify an empty Chunk");
+        return Block.get(0);
     }
 
     @Override
     public Block getAndSetBlock(int x, int y, int z, Block block) {
         if (block.getId() != 0) throw new ChunkException("Tried to modify an empty Chunk");
         return Block.get(0);
+    }
+
+    @Override
+    public void setBlockId(int x, int y, int z, int layer, int id) {
+        if (id != 0) throw new ChunkException("Tried to modify an empty Chunk");
     }
 
     @Override
@@ -63,13 +96,29 @@ public class EmptyChunkSection implements ChunkSection {
     }
 
     @Override
+    public boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId, int meta) {
+        if (blockId != 0) throw new ChunkException("Tried to modify an empty Chunk");
+        return false;
+    }
+
+    @Override
     public byte[] getIdArray() {
-        return new byte[4096];
+        return EMPTY_ID_ARRAY;
+    }
+
+    @Override
+    public byte[] getIdArray(int layer) {
+        return EMPTY_ID_ARRAY;
     }
 
     @Override
     public byte[] getDataArray() {
-        return new byte[2048];
+        return EMPTY_DATA_ARRAY;
+    }
+
+    @Override
+    public byte[] getDataArray(int layer) {
+        return EMPTY_DATA_ARRAY;
     }
 
     @Override
@@ -88,7 +137,18 @@ public class EmptyChunkSection implements ChunkSection {
     }
 
     @Override
+    public boolean setFullBlockId(int x, int y, int z, int layer, int fullId) {
+        if (fullId != 0) throw new ChunkException("Tried to modify an empty Chunk");
+        return false;
+    }
+
+    @Override
     final public int getBlockData(int x, int y, int z) {
+        return 0;
+    }
+
+    @Override
+    public int getBlockData(int x, int y, int z, int layer) {
         return 0;
     }
 
@@ -98,9 +158,19 @@ public class EmptyChunkSection implements ChunkSection {
     }
 
     @Override
+    public void setBlockData(int x, int y, int z, int layer, int data) {
+        if (data != 0) throw new ChunkException("Tried to modify an empty Chunk");
+    }
+
+    @Override
     public boolean setFullBlockId(int x, int y, int z, int fullId) {
         if (fullId != 0) throw new ChunkException("Tried to modify an empty Chunk");
         return false;
+    }
+
+    @Override
+    public int getFullBlock(int x, int y, int z, int layer) {
+        return 0;
     }
 
     @Override
@@ -130,7 +200,12 @@ public class EmptyChunkSection implements ChunkSection {
 
     @Override
     public byte[] getBytes() {
-        return new byte[6144];
+        return new byte[6145];
+    }
+
+    @Override
+    public CompoundTag toNBT() {
+        return null;
     }
 
     @Override

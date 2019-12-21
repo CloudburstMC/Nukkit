@@ -507,26 +507,58 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     }
 
-
     @Override
     public int getBlockIdAt(int x, int y, int z) {
+        return getBlockIdAt(x, y, z, 0);
+    }
+
+    @Override
+    public int getBlockIdAt(int x, int y, int z, int layer) {
         if (x >> 4 == getX() && z >> 4 == getZ()) {
-            return getBlockId(x & 15, y, z & 15);
+            return getBlockId(x & 15, y, z & 15, layer);
         }
         return 0;
     }
 
     @Override
     public void setBlockFullIdAt(int x, int y, int z, int fullId) {
+        setFullBlockId(x, y, z, 0, fullId);
+    }
+
+    @Override
+    public void setBlockFullIdAt(int x, int y, int z, int layer, int fullId) {
         if (x >> 4 == getX() && z >> 4 == getZ()) {
-            setFullBlockId(x & 15, y, z & 15, fullId);
+            setFullBlockId(x & 15, y, z & 15, layer, fullId);
+        }
+    }
+
+    @Override
+    public boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId) {
+        return setBlockAtLayer(x, y, z, layer, blockId, 0);
+    }
+
+    @Override
+    public boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId, int meta) {
+        int oldId = getBlockId(x, y, z, layer);
+        int oldData = getBlockData(x, y, z, layer);
+        if (oldId != blockId || oldData != meta) {
+            setBlock(x, y, z, layer, blockId);
+            setBlockData(x, y, z, layer, meta);
+            return true;
+        } else {
+            return false;
         }
     }
 
     @Override
     public void setBlockIdAt(int x, int y, int z, int id) {
+        setBlockIdAt(x, y, z, 0, id);
+    }
+
+    @Override
+    public void setBlockIdAt(int x, int y, int z, int layer, int id) {
         if (x >> 4 == getX() && z >> 4 == getZ()) {
-            setBlockId(x & 15, y, z & 15, id);
+            setBlockId(x & 15, y, z & 15, layer, id);
         }
     }
 
@@ -539,16 +571,26 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public int getBlockDataAt(int x, int y, int z) {
+        return getBlockDataAt(x, y, z, 0);
+    }
+
+    @Override
+    public int getBlockDataAt(int x, int y, int z, int layer) {
         if (x >> 4 == getX() && z >> 4 == getZ()) {
-            return getBlockIdAt(x & 15, y, z & 15);
+            return getBlockIdAt(x & 15, y, z & 15, layer);
         }
         return 0;
     }
 
     @Override
     public void setBlockDataAt(int x, int y, int z, int data) {
+        setBlockDataAt(x, y, z, 0, data);
+    }
+
+    @Override
+    public void setBlockDataAt(int x, int y, int z, int layer, int data) {
         if (x >> 4 == getX() && z >> 4 == getZ()) {
-            setBlockData(x & 15, y, z & 15, data);
+            setBlockData(x & 15, y, z & 15, layer, data);
         }
     }
 

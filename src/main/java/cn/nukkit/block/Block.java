@@ -41,6 +41,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
      */
     public static boolean[] hasMeta = null;
 
+    public int layer;
+
     protected Block() {}
 
     @SuppressWarnings("unchecked")
@@ -366,14 +368,19 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static Block get(int id, Integer meta, Position pos) {
+        return get(id, meta, pos, 0);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Block get(int id, Integer meta, Position pos, int layer) {
         Block block = fullList[(id << 4) | (meta == null ? 0 : meta)].clone();
         if (pos != null) {
             block.x = pos.x;
             block.y = pos.y;
             block.z = pos.z;
             block.level = pos.level;
+            block.layer = layer;
         }
         return block;
     }
@@ -383,11 +390,16 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public static Block get(int fullId, Level level, int x, int y, int z) {
+        return get(fullId, level, x, y, z, 0);
+    }
+
+    public static Block get(int fullId, Level level, int x, int y, int z, int layer) {
         Block block = fullList[fullId].clone();
         block.x = x;
         block.y = y;
         block.z = z;
         block.level = level;
+        block.layer = layer;
         return block;
     }
 
@@ -702,6 +714,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         block.x = (int) x + face.getXOffset() * step;
         block.y = (int) y + face.getYOffset() * step;
         block.z = (int) z + face.getZOffset() * step;
+        block.layer = this.layer;
         return block;
     }
 
