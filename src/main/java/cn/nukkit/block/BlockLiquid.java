@@ -211,6 +211,8 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
                 if (layer0.getId() == 0) {
                     this.level.setBlock(this, 1, Block.get(Block.AIR), false, false);
                     this.level.setBlock(this, 0, this, false, false);
+                } else if (layer0.getWaterloggingLevel() <= 0 || layer0.getWaterloggingLevel() == 1 && getDamage() > 0) {
+                    this.level.setBlock(this, 1, Block.get(Block.AIR), true, true);
                 }
             }
             this.level.scheduleUpdate(this, this.tickRate());

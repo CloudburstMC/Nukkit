@@ -123,13 +123,6 @@ public class ItemBucket extends Item {
                         level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_FILL_WATER);
                     }
 
-                    //player.getLevel().sendBlocks(new Player[] {player}, new Block[] {block.getLevelBlockAtLayer(0)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 0);
-                    //player.getLevel().sendBlocks(new Player[] {player}, new Block[] {block.getLevelBlockAtLayer(1)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
-                    //BlockEntity blockEntity = player.getLevel().getBlockEntity(block);
-                    //if (blockEntity instanceof BlockEntitySpawnable) {
-                    //    ((BlockEntitySpawnable) blockEntity).spawnTo(player);
-                    //}
-
                     return true;
                 } else {
                     player.getInventory().sendContents(player);
@@ -177,13 +170,6 @@ public class ItemBucket extends Item {
                 } else {
                     level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_EMPTY_WATER);
                 }
-
-                //player.getLevel().sendBlocks(new Player[] {player}, new Block[] {block.getLevelBlockAtLayer(0)}, UpdateBlockPacket.FLAG_NONE, 0);
-                //player.getLevel().sendBlocks(new Player[] {player}, new Block[] {block.getLevelBlockAtLayer(1)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
-                //BlockEntity blockEntity = player.getLevel().getBlockEntity(block);
-                //if (blockEntity instanceof BlockEntitySpawnable) {
-                //    ((BlockEntitySpawnable) blockEntity).spawnTo(player);
-                //}
 
                 return true;
             } else {

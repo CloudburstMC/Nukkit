@@ -2151,13 +2151,10 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
-        if (hand.getWaterloggingLevel() > 0 && (block instanceof BlockLiquid) && ((BlockLiquid) block).usesWaterLogging()) {
-            if (block.getDamage() == 0 && hand.getWaterloggingLevel() >= 1
-                    || block.getDamage() > 0 && hand.getWaterloggingLevel() >= 2) {
-                this.setBlock(block, 1, block, false, false);
-                this.setBlock(block, 0, Block.get(BlockID.AIR), true, false);
-                this.scheduleUpdate(block, 1);
-            }
+        if ((block instanceof BlockLiquid) && ((BlockLiquid) block).usesWaterLogging()) {
+            this.setBlock(block, 1, block, false, false);
+            this.setBlock(block, 0, Block.get(BlockID.AIR), true, false);
+            this.scheduleUpdate(block, 1);
         }
 
         if (!hand.place(item, block, target, face, fx, fy, fz, player)) {
