@@ -48,14 +48,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @SuppressWarnings("unchecked")
     public static void init() {
         if (list == null) {
-            list = new Class[256];
-            fullList = new Block[4096];
-            light = new int[256];
-            lightFilter = new int[256];
-            solid = new boolean[256];
-            hardness = new double[256];
-            transparent = new boolean[256];
-            hasMeta = new boolean[256];
+            list = new Class[512];
+            fullList = new Block[8192];
+            light = new int[512];
+            lightFilter = new int[512];
+            solid = new boolean[512];
+            hardness = new double[512];
+            transparent = new boolean[512];
+            hasMeta = new boolean[512];
 
             list[AIR] = BlockAir.class; //0
             list[STONE] = BlockStone.class; //1
@@ -302,7 +302,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
             list[OBSERVER] = BlockObserver.class; //251
 
-            for (int id = 0; id < 256; id++) {
+            list[PRISMARINE_STAIRS] = BlockStairsPrismarine.class; //257
+
+            list[BARRIER] = BlockBarrier.class; //416
+
+            for (int id = 0; id < 512; id++) {
                 Class c = list[id];
                 if (c != null) {
                     Block block;
@@ -357,10 +361,16 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public static Block get(int id) {
+        if (id < 0) {
+            id = 255 - id;
+        }
         return fullList[id << 4].clone();
     }
 
     public static Block get(int id, Integer meta) {
+        if (id < 0) {
+            id = 255 - id;
+        }
         if (meta != null) {
             return fullList[(id << 4) + meta].clone();
         } else {
@@ -374,6 +384,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     @SuppressWarnings("unchecked")
     public static Block get(int id, Integer meta, Position pos, int layer) {
+        if (id < 0) {
+            id = 255 - id;
+        }
+
         Block block = fullList[(id << 4) | (meta == null ? 0 : meta)].clone();
         if (pos != null) {
             block.x = pos.x;
@@ -386,6 +400,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public static Block get(int id, int data) {
+        if (id < 0) {
+            id = 255 - id;
+        }
         return fullList[(id << 4) + data].clone();
     }
 
@@ -527,6 +544,15 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public abstract String getName();
 
     public abstract int getId();
+
+    public int getItemId() {
+        int id = getId();
+        if (id > 255) {
+            return 255 - id;
+        } else {
+            return id;
+        }
+    }
 
     /**
      * The full id is a combination of the id and data.

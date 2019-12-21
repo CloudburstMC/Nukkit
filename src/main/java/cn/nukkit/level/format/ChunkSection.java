@@ -54,6 +54,8 @@ public interface ChunkSection {
 
     void setBlockLight(int x, int y, int z, int level);
 
+    byte[] getIdExtraArray(int layer);
+
     byte[] getIdArray(int layer);
 
     byte[] getIdArray();

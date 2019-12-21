@@ -107,6 +107,11 @@ public class EmptyChunkSection implements ChunkSection {
     }
 
     @Override
+    public byte[] getIdExtraArray(int layer) {
+        return EMPTY_ID_ARRAY;
+    }
+
+    @Override
     public byte[] getIdArray(int layer) {
         return EMPTY_ID_ARRAY;
     }

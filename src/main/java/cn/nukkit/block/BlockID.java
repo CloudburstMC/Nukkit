@@ -305,4 +305,7 @@ public interface BlockID {
     int PISTON_EXTENSION = 250;
 
     int OBSERVER = 251;
+
+    int PRISMARINE_STAIRS = 257;
+    int BARRIER = 416;
 }

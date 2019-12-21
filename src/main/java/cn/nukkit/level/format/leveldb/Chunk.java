@@ -200,6 +200,7 @@ public class Chunk extends BaseFullChunk {
     public Block getAndSetBlock(int x, int y, int z, Block block) {
         int i = (x << 11) | (z << 7) | y;
         boolean changed = false;
+        //TODO Unsupported ID > 255
         byte id = (byte) block.getId();
 
         byte previousId = this.blocks[i];
@@ -214,6 +215,7 @@ public class Chunk extends BaseFullChunk {
         int old = this.data[i] & 0xff;
         if ((y & 1) == 0) {
             previousData = old & 0x0f;
+            //TODO Unsupported ID > 255
             if (Block.hasMeta[block.getId()]) {
                 this.data[i] = (byte) ((old & 0xf0) | (block.getDamage() & 0x0f));
                 if (block.getDamage() != previousData) {
@@ -222,6 +224,7 @@ public class Chunk extends BaseFullChunk {
             }
         } else {
             previousData = old >> 4;
+            //TODO Unsupported ID > 255
             if (Block.hasMeta[block.getId()]) {
                 this.data[i] = (byte) (((block.getDamage() & 0x0f) << 4) | (old & 0x0f));
                 if (block.getDamage() != previousData) {

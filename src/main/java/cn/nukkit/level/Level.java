@@ -2087,6 +2087,7 @@ public class Level implements ChunkManager, Metadatable {
             return null;
         }
 
+        //TODO WOODEN_SLABS? stone_slab2? stone_slab3? stone_slab4?
         if (!(block.canBeReplaced() || (hand.getId() == Item.SLAB && block.getId() == Item.SLAB))) {
             return null;
         }

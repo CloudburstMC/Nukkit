@@ -59,7 +59,8 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     public Item(int id, Integer meta, int count, String name) {
-        this.id = id & 0xffff;
+        //this.id = id & 0xffff;
+        this.id = id;
         if (meta != null && meta >= 0) {
             this.meta = meta & 0xffff;
         } else {
@@ -393,7 +394,13 @@ public class Item implements Cloneable, BlockID, ItemID {
 
     public static Item get(int id, Integer meta, int count, byte[] tags) {
         try {
-            Class c = list[id];
+            Class c = null;
+            if (id < 0) {
+                int blockId = 255 - id;
+                c = Block.list[blockId];
+            } else {
+                c = list[id];
+            }
             Item item;
 
             if (c == null) {
@@ -424,17 +431,25 @@ public class Item implements Cloneable, BlockID, ItemID {
         int id = 0;
         int meta = 0;
 
-        Pattern integerPattern = Pattern.compile("^[1-9]\\d*$");
+        Pattern integerPattern = Pattern.compile("^-[1-9]\\d*$");
         if (integerPattern.matcher(b[0]).matches()) {
             id = Integer.valueOf(b[0]);
         } else {
             try {
-                id = Item.class.getField(b[0].toUpperCase()).getInt(null);
-            } catch (Exception ignore) {
+                id = BlockID.class.getField(b[0].toUpperCase()).getInt(null);
+                if (id > 255) {
+                    id = 255 - id;
+                }
+            } catch (Exception ignore1) {
+                try {
+                    id = ItemID.class.getField(b[0].toUpperCase()).getInt(null);
+                } catch (Exception ignore2) {
+
+                }
             }
         }
 
-        id = id & 0xFFFF;
+        //id = id & 0xFFFF;
         if (b.length != 1) meta = Integer.valueOf(b[1]) & 0xFFFF;
 
         return get(id, meta);
