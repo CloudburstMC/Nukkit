@@ -1016,7 +1016,7 @@ public class Level implements ChunkManager, Metadatable {
             if (b instanceof Block) {
                 fullId = ((Block) b).getFullId();
             } else {
-                fullId = getFullBlock((int) b.x, (int) b.y, (int) b.z);
+                fullId = getFullBlock((int) b.x, (int) b.y, (int) b.z, dataLayer);
             }
             try {
                 updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(fullId);
@@ -1728,7 +1728,7 @@ public class Level implements ChunkManager, Metadatable {
         int cz = z >> 4;
         long index = Level.chunkHash(cx, cz);
         if (direct) {
-            this.sendBlocks(this.getChunkPlayers(cx, cz).values().toArray(new Player[0]), new Block[]{block}, UpdateBlockPacket.FLAG_ALL_PRIORITY);
+            this.sendBlocks(this.getChunkPlayers(cx, cz).values().toArray(new Player[0]), new Block[]{block.getLevelBlockAtLayer(0)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 0);
             this.sendBlocks(this.getChunkPlayers(cx, cz).values().toArray(new Player[0]), new Block[]{block.getLevelBlockAtLayer(1)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
         } else {
             addBlockChange(index, x, y, z);
