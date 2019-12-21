@@ -59,6 +59,11 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public boolean onActivate(Item item) {
         return this.onActivate(item, null);
     }

@@ -48,6 +48,11 @@ public class BlockEnchantingTable extends BlockTransparent {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public int getLightLevel() {
         return 12;
     }

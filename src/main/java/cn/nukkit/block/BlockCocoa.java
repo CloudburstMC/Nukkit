@@ -223,6 +223,16 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 2;
+    }
+
+    @Override
+    public boolean canBeFlowedInto() {
+        return false;
+    }
+
+    @Override
     public Item toItem() {
         return new ItemDye(DyeColor.BROWN.getDyeData());
     }

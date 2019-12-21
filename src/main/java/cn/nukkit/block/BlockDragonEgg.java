@@ -46,6 +46,11 @@ public class BlockDragonEgg extends BlockFallable {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_TOUCH) {
             this.teleport();

@@ -50,6 +50,11 @@ public class BlockLadder extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public double getHardness() {
         return 0.4;
     }

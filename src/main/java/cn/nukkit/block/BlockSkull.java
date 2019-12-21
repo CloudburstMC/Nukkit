@@ -46,6 +46,16 @@ public class BlockSkull extends BlockTransparentMeta {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
+    public boolean canBeFlowedInto() {
+        return true;
+    }
+
+    @Override
     public String getName() {
         int itemMeta = 0;
 

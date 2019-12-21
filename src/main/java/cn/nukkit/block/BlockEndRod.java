@@ -78,6 +78,16 @@ public class BlockEndRod extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 2;
+    }
+
+    @Override
+    public boolean canBeFlowedInto() {
+        return false;
+    }
+
+    @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         int[] faces = {0, 1, 3, 2, 5, 4};
         this.setDamage(faces[player != null ? face.getIndex() : 0]);

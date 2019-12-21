@@ -24,6 +24,16 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 2;
+    }
+
+    @Override
+    public boolean canBeFlowedInto() {
+        return false;
+    }
+
+    @Override
     public boolean onBreak(Item item) {
         Vector3 pos = getLocation();
         this.level.setBlock(this, new BlockAir(), true, true);

@@ -86,6 +86,10 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
         return this;
     }
 
+    public boolean usesWaterLogging() {
+        return false;
+    }
+
     public float getFluidHeightPercent() {
         float d = (float) this.getDamage();
         if (d >= 8) {
@@ -202,6 +206,13 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             this.checkForHarden();
+            if (usesWaterLogging() && layer > 0) {
+                Block layer0 = this.level.getBlock(this, 0);
+                if (layer0.getId() == 0) {
+                    this.level.setBlock(this, 1, Block.get(Block.AIR), false, false);
+                    this.level.setBlock(this, 0, this, false, false);
+                }
+            }
             this.level.scheduleUpdate(this, this.tickRate());
             return 0;
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
@@ -228,6 +239,11 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
                         newDecay = 0;
                     } else if (bottomBlock instanceof BlockWater && bottomBlock.getDamage() == 0) {
                         newDecay = 0;
+                    } else {
+                        bottomBlock = bottomBlock.getLevelBlockAtLayer(1);
+                        if (bottomBlock instanceof BlockWater && bottomBlock.getDamage() == 0) {
+                            newDecay = 0;
+                        }
                     }
                 }
                 if (newDecay != decay) {
@@ -242,7 +258,7 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
                     BlockFromToEvent event = new BlockFromToEvent(this, to);
                     level.getServer().getPluginManager().callEvent(event);
                     if (!event.isCancelled()) {
-                        this.level.setBlock(this, to, true, true);
+                        this.level.setBlock(this, layer, to, true, true);
                         if (!decayed) {
                             this.level.scheduleUpdate(this, this.tickRate());
                         }
@@ -252,7 +268,7 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
             if (decay >= 0) {
                 Block bottomBlock = this.level.getBlock((int) this.x, (int) this.y - 1, (int) this.z);
                 this.flowIntoBlock(bottomBlock, decay | 0x08);
-                if (decay == 0 || !bottomBlock.canBeFlowedInto()) {
+                if (decay == 0 || !(usesWaterLogging()? bottomBlock.canWaterloggingFlowInto(): bottomBlock.canBeFlowedInto())) {
                     int adjacentDecay;
                     if (decay >= 8) {
                         adjacentDecay = 1;
@@ -283,13 +299,24 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
 
     protected void flowIntoBlock(Block block, int newFlowDecay) {
         if (this.canFlowInto(block) && !(block instanceof BlockLiquid)) {
+            if (usesWaterLogging()) {
+                Block layer1 = block.getLevelBlockAtLayer(1);
+                if (layer1 instanceof BlockLiquid) {
+                    return;
+                }
+
+                if (block.getWaterloggingLevel() > 1) {
+                    block = layer1;
+                }
+            }
+
             LiquidFlowEvent event = new LiquidFlowEvent(block, this, newFlowDecay);
             level.getServer().getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
-                if (block.getId() > 0) {
+                if (block.layer == 0 && block.getId() > 0) {
                     this.level.useBreakOn(block);
                 }
-                this.level.setBlock(block, getBlock(newFlowDecay), true, true);
+                this.level.setBlock(block, block.layer, getBlock(newFlowDecay), true, true);
                 this.level.scheduleUpdate(block, this.tickRate());
             }
         }
@@ -318,7 +345,9 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
                 Block blockSide = this.level.getBlock(x, y, z);
                 if (!this.canFlowInto(blockSide)) {
                     this.flowCostVisited.put(hash, BLOCKED);
-                } else if (this.level.getBlock(x, y - 1, z).canBeFlowedInto()) {
+                } else if (usesWaterLogging()?
+                        this.level.getBlock(x, y - 1, z).canWaterloggingFlowInto() :
+                        this.level.getBlock(x, y - 1, z).canBeFlowedInto()) {
                     this.flowCostVisited.put(hash, CAN_FLOW_DOWN);
                 } else {
                     this.flowCostVisited.put(hash, CAN_FLOW);
@@ -375,7 +404,9 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
             Block block = this.level.getBlock(x, y, z);
             if (!this.canFlowInto(block)) {
                 this.flowCostVisited.put(Level.blockHash(x, y, z), BLOCKED);
-            } else if (this.level.getBlock(x, y - 1, z).canBeFlowedInto()) {
+            } else if (usesWaterLogging()?
+                    this.level.getBlock(x, y - 1, z).canWaterloggingFlowInto():
+                    this.level.getBlock(x, y - 1, z).canBeFlowedInto()) {
                 this.flowCostVisited.put(Level.blockHash(x, y, z), CAN_FLOW_DOWN);
                 flowCost[j] = maxCost = 0;
             } else if (maxCost > 0) {
@@ -441,12 +472,21 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
             return false;
         }
         this.level.setBlock(this, result, true, true);
+        this.level.setBlock(this, 1, Block.get(Block.AIR), true, true);
         this.getLevel().addLevelSoundEvent(this.add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_FIZZ);
         return true;
     }
 
     protected boolean canFlowInto(Block block) {
-        return block.canBeFlowedInto() && !(block instanceof BlockLiquid && block.getDamage() == 0);
+        if (usesWaterLogging()) {
+            if (block.canWaterloggingFlowInto()) {
+                block = block.getLevelBlockAtLayer(1);
+                return !(block instanceof BlockLiquid && block.getDamage() == 0);
+            }
+            return false;
+        } else {
+            return block.canBeFlowedInto() && !(block instanceof BlockLiquid && block.getDamage() == 0);
+        }
     }
 
     @Override

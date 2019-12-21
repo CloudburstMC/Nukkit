@@ -231,6 +231,16 @@ public class BlockTripWireHook extends BlockFlowable {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 2;
+    }
+
+    @Override
+    public boolean canBeFlowedInto() {
+        return false;
+    }
+
+    @Override
     public Item toItem() {
         return new ItemBlock(this, 0);
     }

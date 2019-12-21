@@ -32,6 +32,11 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public boolean isSolid() {
         return false;
     }

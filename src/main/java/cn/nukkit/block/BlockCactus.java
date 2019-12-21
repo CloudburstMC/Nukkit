@@ -43,6 +43,11 @@ public class BlockCactus extends BlockTransparentMeta {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public boolean hasEntityCollision() {
         return true;
     }

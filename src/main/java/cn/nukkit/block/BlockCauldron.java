@@ -66,6 +66,11 @@ public class BlockCauldron extends BlockSolidMeta {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public boolean onActivate(Item item, Player player) {
         BlockEntity be = this.level.getBlockEntity(this);
 
@@ -85,7 +90,7 @@ public class BlockCauldron extends BlockSolidMeta {
                     ItemBucket bucket = (ItemBucket) item.clone();
                     bucket.setDamage(8);//water bucket
 
-                    PlayerBucketFillEvent ev = new PlayerBucketFillEvent(player, this, null, item, bucket);
+                    PlayerBucketFillEvent ev = new PlayerBucketFillEvent(player, this, null, this, item, bucket);
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
                         if (player.isSurvival()) {
@@ -105,7 +110,7 @@ public class BlockCauldron extends BlockSolidMeta {
                     ItemBucket bucket = (ItemBucket) item.clone();
                     bucket.setDamage(0);//empty bucket
 
-                    PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, this, null, item, bucket);
+                    PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, this, null, this, item, bucket);
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
                         if (player.isSurvival()) {

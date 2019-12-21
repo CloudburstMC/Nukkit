@@ -45,6 +45,11 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public String getName() {
         return "Chest";
     }

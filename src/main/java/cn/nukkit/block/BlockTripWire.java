@@ -37,6 +37,16 @@ public class BlockTripWire extends BlockFlowable {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 2;
+    }
+
+    @Override
+    public boolean canBeFlowedInto() {
+        return false;
+    }
+
+    @Override
     public double getResistance() {
         return 0;
     }

@@ -43,6 +43,11 @@ public class BlockFlowerPot extends BlockFlowable {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public String getName() {
         return "Flower Pot";
     }

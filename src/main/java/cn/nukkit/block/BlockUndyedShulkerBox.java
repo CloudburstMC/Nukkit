@@ -60,6 +60,11 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public Item toItem() {
         ItemBlock item = new ItemBlock(this, this.getDamage(), 1);
 
