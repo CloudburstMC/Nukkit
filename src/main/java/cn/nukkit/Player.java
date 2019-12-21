@@ -1409,6 +1409,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
 
             block.onEntityCollide(this);
+            block.getLevelBlockAtLayer(1).onEntityCollide(this);
         }
 
         if (portal) {
