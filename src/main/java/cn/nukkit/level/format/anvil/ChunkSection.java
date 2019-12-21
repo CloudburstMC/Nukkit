@@ -498,10 +498,10 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         s.putByte("Version", STORAGE_VERSION);
         ListTag<CompoundTag> storageList = new ListTag<>("Storage");
         synchronized (storage) {
-            for (BlockStorage blockStorage: this.storage) {
+            for (int layer = 0; layer < storage.length; layer++) {
                 CompoundTag storageTag = new CompoundTag();
-                storageTag.putByteArray("Blocks", blockStorage.getBlockIds());
-                storageTag.putByteArray("Data", blockStorage.getBlockData());
+                storageTag.putByteArray("Blocks", getIdArray(layer));
+                storageTag.putByteArray("Data", getDataArray(layer));
                 storageList.add(storageTag);
             }
         }
