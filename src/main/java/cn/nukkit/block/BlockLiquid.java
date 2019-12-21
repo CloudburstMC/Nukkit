@@ -97,14 +97,22 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
 
     protected int getFlowDecay(Block block) {
         if (block.getId() != this.getId()) {
-            return -1;
+            Block layer1 = block.getLevelBlockAtLayer(1);
+            if (layer1.getId() != this.getId()) {
+                return -1;
+            } else {
+                return layer1.getDamage();
+            }
         }
         return block.getDamage();
     }
 
     protected int getEffectiveFlowDecay(Block block) {
         if (block.getId() != this.getId()) {
-            return -1;
+            block = block.getLevelBlockAtLayer(1);
+            if (block.getId() != this.getId()) {
+                return -1;
+            }
         }
         int decay = block.getDamage();
         if (decay >= 8) {

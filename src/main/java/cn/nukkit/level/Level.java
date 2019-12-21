@@ -1203,39 +1203,44 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void updateAround(int x, int y, int z) {
+        updateAround(x, y, z, 0);
+        updateAround(x, y, z, 1);
+    }
+
+    public void updateAround(int x, int y, int z, int layer) {
         BlockUpdateEvent ev;
         this.server.getPluginManager().callEvent(
-                ev = new BlockUpdateEvent(this.getBlock(x, y - 1, z)));
+                ev = new BlockUpdateEvent(this.getBlock(x, y - 1, z, layer)));
         if (!ev.isCancelled()) {
             normalUpdateQueue.add(ev.getBlock());
         }
 
         this.server.getPluginManager().callEvent(
-                ev = new BlockUpdateEvent(this.getBlock(x, y + 1, z)));
+                ev = new BlockUpdateEvent(this.getBlock(x, y + 1, z, layer)));
         if (!ev.isCancelled()) {
             normalUpdateQueue.add(ev.getBlock());
         }
 
         this.server.getPluginManager().callEvent(
-                ev = new BlockUpdateEvent(this.getBlock(x - 1, y, z)));
+                ev = new BlockUpdateEvent(this.getBlock(x - 1, y, z, layer)));
         if (!ev.isCancelled()) {
             normalUpdateQueue.add(ev.getBlock());
         }
 
         this.server.getPluginManager().callEvent(
-                ev = new BlockUpdateEvent(this.getBlock(x + 1, y, z)));
+                ev = new BlockUpdateEvent(this.getBlock(x + 1, y, z, layer)));
         if (!ev.isCancelled()) {
             normalUpdateQueue.add(ev.getBlock());
         }
 
         this.server.getPluginManager().callEvent(
-                ev = new BlockUpdateEvent(this.getBlock(x, y, z - 1)));
+                ev = new BlockUpdateEvent(this.getBlock(x, y, z - 1, layer)));
         if (!ev.isCancelled()) {
             normalUpdateQueue.add(ev.getBlock());
         }
 
         this.server.getPluginManager().callEvent(
-                ev = new BlockUpdateEvent(this.getBlock(x, y, z + 1)));
+                ev = new BlockUpdateEvent(this.getBlock(x, y, z + 1, layer)));
         if (!ev.isCancelled()) {
             normalUpdateQueue.add(ev.getBlock());
         }
