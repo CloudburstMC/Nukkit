@@ -129,34 +129,19 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             return false;
         }
 
-        BlockFace facing = getBlockFace();
         if (isPowered == null) {
             isPowered = this.isPowered();
         }
 
         if (isPowered && !isExtended()) {
-            BlocksCalculator calculator = new BlocksCalculator(true);
-            if (calculator.canMove()) {
-                if (!this.doMove(true)) {
-                    return false;
-                }
-
-                this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_PISTON_OUT);
-                return true;
+            if (!this.doMove(true)) {
+                return false;
             }
-        } else if (!isPowered && isExtended()) {
-            if (this.sticky) {
-                Vector3 pos = this.add(0).getSide(facing, 2);
-                Block block = this.level.getBlock(pos);
 
-                if (canPush(block, facing.getOpposite(), false) && (!(block instanceof BlockFlowable) || block.getId() == PISTON || block.getId() == STICKY_PISTON)) {
-                    if (!this.doMove(false)) {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-            } else if (!this.doMove(false)) {
+            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_PISTON_OUT);
+            return true;
+        } else if (!isPowered && isExtended()) {
+            if (!this.doMove(false)) {
                 return false;
             }
 
@@ -186,102 +171,97 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             }
         }
 
-        if (this.level.isSidePowered(this, BlockFace.DOWN)) {
-            return true;
-        } else {
-            Vector3 pos = this.getLocation().up();
-
-            for (BlockFace side : BlockFace.values()) {
-                if (side != BlockFace.DOWN && this.level.isSidePowered(pos.getSide(side), side)) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
+        return false;
     }
 
     private boolean doMove(boolean extending) {
         BlockFace direction = getBlockFace();
         BlocksCalculator calculator = new BlocksCalculator(extending);
 
-        if (!calculator.canMove()) {
+        boolean canMove = calculator.canMove();
+
+        if (!canMove && extending) {
             return false;
-        } else {
-            List<BlockVector3> attached = Collections.emptyList();
+        }
 
-            BlockPistonEvent event = new BlockPistonEvent(this, direction, calculator.getBlocksToMove(), calculator.getBlocksToDestroy(), extending);
-            this.level.getServer().getPluginManager().callEvent(event);
+        List<BlockVector3> attached = Collections.emptyList();
 
-            if (event.isCancelled()) {
+        BlockPistonEvent event = new BlockPistonEvent(this, direction, calculator.getBlocksToMove(), calculator.getBlocksToDestroy(), extending);
+        this.level.getServer().getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) {
+            return false;
+        }
+
+        if (canMove && (this.sticky || extending)) {
+            List<Block> destroyBlocks = calculator.getBlocksToDestroy();
+            for (int i = destroyBlocks.size() - 1; i >= 0; --i) {
+                Block block = destroyBlocks.get(i);
+                this.level.useBreakOn(block, null, null, false);
+            }
+
+            List<Block> newBlocks = calculator.getBlocksToMove();
+
+            attached = newBlocks.stream().map(Vector3::asBlockVector3).collect(Collectors.toList());
+
+            BlockFace side = extending ? direction : direction.getOpposite();
+
+            for (Block newBlock : newBlocks) {
+                Vector3 oldPos = newBlock.add(0);
+                newBlock.position(newBlock.add(0).getSide(side));
+
+                BlockEntity blockEntity = this.level.getBlockEntity(oldPos);
+
+                this.level.setBlock(newBlock, Block.get(BlockID.MOVING_BLOCK), true);
+
+                CompoundTag nbt = BlockEntity.getDefaultCompound(newBlock, BlockEntity.MOVING_BLOCK)
+                        .putInt("pistonPosX", this.getFloorX())
+                        .putInt("pistonPosY", this.getFloorY())
+                        .putInt("pistonPosZ", this.getFloorZ())
+                        .putCompound("movingBlock", new CompoundTag()
+                                .putInt("id", newBlock.getId()) //only for nukkit purpose
+                                .putInt("meta", newBlock.getDamage()) //only for nukkit purpose
+                                .putShort("val", newBlock.getDamage())
+                                .putString("name", GlobalBlockPalette.getName(newBlock.getId()))
+                        );
+
+                if (blockEntity != null && !(blockEntity instanceof BlockEntityMovingBlock)) {
+                    blockEntity.saveNBT();
+
+                    CompoundTag t = new CompoundTag(blockEntity.namedTag.getTags());
+
+                    nbt.putCompound("movingEntity", t);
+                    blockEntity.close();
+                }
+
+                new BlockEntityMovingBlock(this.level.getChunk(newBlock.getChunkX(), newBlock.getChunkZ()), nbt);
+
+                if (this.level.getBlockIdAt(oldPos.getFloorX(), oldPos.getFloorY(), oldPos.getFloorZ()) != BlockID.MOVING_BLOCK) {
+                    this.level.setBlock(oldPos, Block.get(BlockID.AIR));
+                }
+            }
+        }
+
+        if (extending) {
+            this.level.setBlock(this.getSide(direction), new BlockPistonHead(this.getDamage()));
+        }
+
+        BlockEntityPistonArm blockEntity = (BlockEntityPistonArm) this.level.getBlockEntity(this);
+        blockEntity.move(extending, attached);
+        return true;
+    }
+
+    public static boolean canPush(Block block, BlockFace face, boolean destroyBlocks, boolean extending) {
+        if (
+                block.getY() >= 0 && (face != BlockFace.DOWN || block.getY() != 0) &&
+                        block.getY() <= 255 && (face != BlockFace.UP || block.getY() != 255)
+        ) {
+            if (extending && !block.canBePushed() || !extending && !block.canBePulled()) {
                 return false;
             }
 
-            if (this.sticky || extending) {
-                List<Block> destroyBlocks = calculator.getBlocksToDestroy();
-                for (int i = destroyBlocks.size() - 1; i >= 0; --i) {
-                    Block block = destroyBlocks.get(i);
-                    this.level.useBreakOn(block, null, null, false);
-                }
-
-                List<Block> newBlocks = calculator.getBlocksToMove();
-
-                attached = newBlocks.stream().map(Vector3::asBlockVector3).collect(Collectors.toList());
-
-                BlockFace side = extending ? direction : direction.getOpposite();
-
-                for (Block newBlock : newBlocks) {
-                    Vector3 oldPos = newBlock.add(0);
-                    newBlock.position(newBlock.add(0).getSide(side));
-
-                    BlockEntity blockEntity = this.level.getBlockEntity(oldPos);
-
-                    this.level.setBlock(newBlock, Block.get(BlockID.MOVING_BLOCK), true);
-
-                    CompoundTag nbt = BlockEntity.getDefaultCompound(newBlock, BlockEntity.MOVING_BLOCK)
-                            .putInt("pistonPosX", this.getFloorX())
-                            .putInt("pistonPosY", this.getFloorY())
-                            .putInt("pistonPosZ", this.getFloorZ())
-                            .putCompound("movingBlock", new CompoundTag()
-                                    .putInt("id", newBlock.getId()) //only for nukkit purpose
-                                    .putInt("meta", newBlock.getDamage()) //only for nukkit purpose
-                                    .putShort("val", newBlock.getDamage())
-                                    .putString("name", GlobalBlockPalette.getName(newBlock.getId()))
-                            );
-
-                    if (blockEntity != null && !(blockEntity instanceof BlockEntityMovingBlock)) {
-                        blockEntity.saveNBT();
-
-                        CompoundTag t = new CompoundTag(blockEntity.namedTag.getTags());
-
-                        nbt.putCompound("movingEntity", t);
-                        blockEntity.close();
-                    }
-
-                    new BlockEntityMovingBlock(this.level.getChunk(newBlock.getChunkX(), newBlock.getChunkZ()), nbt);
-
-                    if (this.level.getBlockIdAt(oldPos.getFloorX(), oldPos.getFloorY(), oldPos.getFloorZ()) != BlockID.MOVING_BLOCK) {
-                        this.level.setBlock(oldPos, Block.get(BlockID.AIR));
-                    }
-                }
-            }
-
-            if (extending) {
-                this.level.setBlock(this.getSide(direction), new BlockPistonHead(this.getDamage()));
-            }
-
-            BlockEntityPistonArm blockEntity = (BlockEntityPistonArm) this.level.getBlockEntity(this);
-            blockEntity.move(extending, attached);
-            return true;
-        }
-    }
-
-    public static boolean canPush(Block block, BlockFace face, boolean destroyBlocks) {
-        if (block.canBePushed() && block.getY() >= 0 && (face != BlockFace.DOWN || block.getY() != 0) &&
-                block.getY() <= 255 && (face != BlockFace.UP || block.getY() != 255)) {
-
-            if (block instanceof BlockFlowable) {
-                return destroyBlocks;
+            if (block.breaksWhenMoved()) {
+                return destroyBlocks || block.sticksToPiston();
             }
 
             BlockEntity be = block.level.getBlockEntity(block);
@@ -333,16 +313,19 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             this.toDestroy.clear();
             Block block = this.blockToMove;
 
-            if (!canPush(block, this.moveDirection, false)) {
-                if (block instanceof BlockFlowable) {
-                    this.toDestroy.add(this.blockToMove);
-                    return true;
-                }
-
+            if (!canPush(block, this.moveDirection, true, extending)) {
                 return false;
             }
 
-            if (!this.addBlockLine(this.blockToMove)) {
+            if (block.breaksWhenMoved()) {
+                if (extending || block.sticksToPiston()) {
+                    this.toDestroy.add(this.blockToMove);
+                }
+
+                return true;
+            }
+
+            if (!this.addBlockLine(this.blockToMove, this.moveDirection)) {
                 return false;
             }
 
@@ -357,14 +340,14 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             return true;
         }
 
-        private boolean addBlockLine(Block origin) {
+        private boolean addBlockLine(Block origin, BlockFace from) {
             Block block = origin.clone();
 
             if (block.getId() == AIR) {
                 return true;
             }
 
-            if (!canPush(origin, this.moveDirection, false)) {
+            if (!canPush(origin, this.moveDirection, false, extending)) {
                 return true;
             }
 
@@ -388,7 +371,12 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             while (block.getId() == SLIME_BLOCK) {
                 block = origin.getSide(this.moveDirection.getOpposite(), count);
 
-                if (block.getId() == AIR || !canPush(block, this.moveDirection, false) || block.equals(this.pistonPos)) {
+                if (block.getId() == AIR || !canPush(block, this.moveDirection, false, extending) || block.equals(this.pistonPos)) {
+                    break;
+                }
+
+                if (block.breaksWhenMoved() && block.sticksToPiston()) {
+                    this.toDestroy.add(block);
                     break;
                 }
 
@@ -429,11 +417,11 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                     return true;
                 }
 
-                if (!canPush(nextBlock, this.moveDirection, true) || nextBlock.equals(this.pistonPos)) {
+                if (!canPush(nextBlock, this.moveDirection, true, extending) || nextBlock.equals(this.pistonPos)) {
                     return false;
                 }
 
-                if (nextBlock instanceof BlockFlowable && !nextBlock.canBePushed()) {
+                if (nextBlock.breaksWhenMoved()) {
                     this.toDestroy.add(nextBlock);
                     return true;
                 }
@@ -460,7 +448,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
         private boolean addBranchingBlocks(Block block) {
             for (BlockFace face : BlockFace.values()) {
-                if (face.getAxis() != this.moveDirection.getAxis() && !this.addBlockLine(block.getSide(face))) {
+                if (face.getAxis() != this.moveDirection.getAxis() && !this.addBlockLine(block.getSide(face), face)) {
                     return false;
                 }
             }

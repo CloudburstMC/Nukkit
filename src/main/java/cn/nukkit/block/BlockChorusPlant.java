@@ -37,4 +37,14 @@ public class BlockChorusPlant extends BlockTransparent {
     public Item[] getDrops(Item item) {
         return new Item[0];
     }
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
+    }
 }

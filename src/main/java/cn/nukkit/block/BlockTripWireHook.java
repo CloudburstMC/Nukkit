@@ -12,7 +12,7 @@ import cn.nukkit.network.protocol.LevelSoundEventPacket;
 /**
  * @author CreeperFace
  */
-public class BlockTripWireHook extends BlockFlowable {
+public class BlockTripWireHook extends BlockTransparentMeta {
 
     public BlockTripWireHook() {
         this(0);

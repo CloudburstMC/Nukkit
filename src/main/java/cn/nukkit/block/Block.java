@@ -487,6 +487,18 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return true;
     }
 
+    public boolean canBePulled() {
+        return true;
+    }
+
+    public boolean breaksWhenMoved() {
+        return false;
+    }
+
+    public boolean sticksToPiston() {
+        return true;
+    }
+
     public boolean hasComparatorInputOverride() {
         return false;
     }

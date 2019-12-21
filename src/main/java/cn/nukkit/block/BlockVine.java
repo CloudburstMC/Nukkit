@@ -202,4 +202,14 @@ public class BlockVine extends BlockTransparentMeta {
     public int getToolType() {
         return ItemTool.TYPE_SHEARS;
     }
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
+    }
 }

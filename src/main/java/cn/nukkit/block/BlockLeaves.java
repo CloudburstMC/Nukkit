@@ -231,4 +231,14 @@ public class BlockLeaves extends BlockTransparentMeta {
     protected Item getSapling() {
         return Item.get(BlockID.SAPLING, this.getDamage() & 0x03);
     }
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
+    }
 }

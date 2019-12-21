@@ -177,4 +177,14 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
     public BlockColor getColor() {
         return BlockColor.PURPLE_BLOCK_COLOR;
     }
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
+    }
 }

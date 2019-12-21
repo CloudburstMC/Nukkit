@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 
-public class BlockMoving extends Block {
+public class BlockMoving extends BlockTransparent {
 
     public BlockMoving() {
         this(0);
@@ -28,6 +28,11 @@ public class BlockMoving extends Block {
     }
 
     @Override
+    public boolean canBePulled() {
+        return false;
+    }
+
+    @Override
     public boolean isBreakable(Item item) {
         return false;
     }
@@ -35,5 +40,10 @@ public class BlockMoving extends Block {
     @Override
     public boolean canPassThrough() {
         return true;
+    }
+
+    @Override
+    public boolean isSolid() {
+        return false;
     }
 }

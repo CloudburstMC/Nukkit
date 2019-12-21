@@ -94,4 +94,9 @@ public class BlockBeacon extends BlockTransparent {
     public boolean canBePushed() {
         return false;
     }
+
+    @Override
+    public boolean canBePulled() {
+        return false;
+    }
 }

@@ -67,6 +67,16 @@ public class BlockPistonHead extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
+    public boolean canBePulled() {
+        return false;
+    }
+
+    @Override
+    public boolean isSolid() {
+        return false;
+    }
+
+    @Override
     public Item toItem() {
         return new ItemBlock(new BlockAir());
     }

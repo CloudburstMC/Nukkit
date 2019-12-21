@@ -128,4 +128,9 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
     public BlockFace getBlockFace() {
         return BlockFace.fromIndex(this.getDamage() & 0x07);
     }
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
 }
