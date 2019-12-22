@@ -229,7 +229,12 @@ public interface ItemID {
     int SCUTE = 468;
     int TURTLE_SHELL = 469;
     int PHANTOM_MEMBRANE = 470;
-
+    int CROSSBOW = 471;
+    int SPRUCE_SIGN = 472;
+    int BIRCH_SIGN = 473;
+    int JUNGLE_SIGN = 474;
+    int ACACIA_SIGN = 475;
+    int DARKOAK_SIGN = 476;
     int SWEET_BERRIES = 477;
 
     int RECORD_13 = 500;
@@ -246,4 +251,11 @@ public interface ItemID {
     int RECORD_WAIT = 511;
 
     int SHIELD = 513;
+
+    int CAMPFIRE = 720;
+
+    int SUSPICIOUS_STEW = 734;
+
+    int HONEYCOMB = 736;
+    int HONEY_BOTTLE = 737;
 }
