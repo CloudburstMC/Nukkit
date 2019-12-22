@@ -102,7 +102,7 @@ public class Level implements ChunkManager, Metadatable {
     public static final int MAX_BLOCK_CACHE = 512;
 
     // The blocks that can randomly tick
-    private static final boolean[] randomTickBlocks = new boolean[256];
+    private static final boolean[] randomTickBlocks = new boolean[Block.MAX_BLOCK_ID];
 
     static {
         randomTickBlocks[Block.GRASS] = true;
@@ -1515,7 +1515,7 @@ public class Level implements ChunkManager, Metadatable {
         } else {
             fullState = 0;
         }
-        Block block = Block.fullList[fullState & 0xFFF].clone();
+        Block block = Block.fullList[fullState].clone();
         block.x = x;
         block.y = y;
         block.z = z;

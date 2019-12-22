@@ -81,8 +81,9 @@ public class BlockStorage {
 
     private int getFullBlock(int index) {
         byte block = blockIds[index];
+        byte extra = blockIdsExtra[index];
         byte data = blockData.get(index);
-        return ((block & 0xff) << 4) | data;
+        return (extra & 0xff) << 12 | (block & 0xff) << 4 | data;
     }
 
     private void setFullBlock(int index, int value) {

@@ -29,6 +29,8 @@ import java.util.Optional;
  * Nukkit Project
  */
 public abstract class Block extends Position implements Metadatable, Cloneable, AxisAlignedBB, BlockID {
+    public static final int MAX_BLOCK_ID = 512;
+
     public static Class[] list = null;
     public static Block[] fullList = null;
     public static int[] light = null;
@@ -48,14 +50,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @SuppressWarnings("unchecked")
     public static void init() {
         if (list == null) {
-            list = new Class[512];
-            fullList = new Block[8192];
-            light = new int[512];
-            lightFilter = new int[512];
-            solid = new boolean[512];
-            hardness = new double[512];
-            transparent = new boolean[512];
-            hasMeta = new boolean[512];
+            list = new Class[MAX_BLOCK_ID];
+            fullList = new Block[MAX_BLOCK_ID * 16];
+            light = new int[MAX_BLOCK_ID];
+            lightFilter = new int[MAX_BLOCK_ID];
+            solid = new boolean[MAX_BLOCK_ID];
+            hardness = new double[MAX_BLOCK_ID];
+            transparent = new boolean[MAX_BLOCK_ID];
+            hasMeta = new boolean[MAX_BLOCK_ID];
 
             list[AIR] = BlockAir.class; //0
             list[STONE] = BlockStone.class; //1
@@ -306,7 +308,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
             list[BARRIER] = BlockBarrier.class; //416
 
-            for (int id = 0; id < 512; id++) {
+            for (int id = 0; id < MAX_BLOCK_ID; id++) {
                 Class c = list[id];
                 if (c != null) {
                     Block block;
