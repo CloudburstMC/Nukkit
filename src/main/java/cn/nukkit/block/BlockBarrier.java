@@ -24,7 +24,7 @@ public class BlockBarrier extends BlockSolid {
 
     @Override
     public int getWaterloggingLevel() {
-        return 2;
+        return 1;
     }
 
     @Override
