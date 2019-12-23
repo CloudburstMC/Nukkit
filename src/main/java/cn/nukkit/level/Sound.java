@@ -594,7 +594,12 @@ public enum Sound {
     BLOCK_BEEHIVE_EXIT("block.beehive.exit"),
     BLOCK_BEEHIVE_SHEAR("block.beehive.shear"),
     BLOCK_BEEHIVE_WORK("block.beehive.work"),
-    BLOCK_BEEHIVE_DRIP("block.beehive.drip");
+    BLOCK_BEEHIVE_DRIP("block.beehive.drip"),
+    BLOCK_LECTERN_PLACE("block.lectern.place"),
+    BLOCK_LECTERN_BREAK("block.lectern.break"),
+    BLOCK_LECTERN_HIT("block.lectern.hit"),
+    BLOCK_LECTERN_STEP("block.lectern.step"),
+    BLOCK_LECTERN_FALL("block.lectern.fall"),;
 
     private final String sound;
 

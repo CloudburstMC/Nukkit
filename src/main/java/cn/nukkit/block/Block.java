@@ -308,6 +308,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
             list[BARRIER] = BlockBarrier.class; //416
 
+            list[LECTERN] = BlockLectern.class; //449
+
             for (int id = 0; id < MAX_BLOCK_ID; id++) {
                 Class c = list[id];
                 if (c != null) {

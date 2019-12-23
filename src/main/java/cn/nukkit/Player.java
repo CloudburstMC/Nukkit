@@ -4,6 +4,7 @@ import cn.nukkit.AdventureSettings.Type;
 import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityItemFrame;
+import cn.nukkit.blockentity.BlockEntityLectern;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
@@ -14,6 +15,7 @@ import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntityThrownTrident;
 import cn.nukkit.event.block.ItemFrameDropItemEvent;
+import cn.nukkit.event.block.LecternPageChangeEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -2416,6 +2418,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 case Block.DRAGON_EGG:
                                     ((BlockDragonEgg) target).teleport();
                                     break actionswitch;
+                                case Block.LECTERN:
+                                    ((BlockLectern) target).dropBook();
+                                    break;
                             }
                             Block block = target.getSide(face);
                             if (block.getId() == Block.FIRE) {
@@ -2904,6 +2909,21 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             }
                         } else {
                             itemFrame.spawnTo(this);
+                        }
+                    }
+                    break;
+                case ProtocolInfo.LECTERN_UPDATE_PACKET:
+                    LecternUpdatePacket lecternUpdatePacket = (LecternUpdatePacket) packet;
+                    BlockVector3 blockPosition = lecternUpdatePacket.blockPosition;
+                    this.temporalVector.setComponents(blockPosition.x, blockPosition.y, blockPosition.z);
+                    BlockEntity blockEntityLectern = this.level.getBlockEntity(this.temporalVector);
+                    if (blockEntityLectern instanceof BlockEntityLectern) {
+                        BlockEntityLectern lectern = (BlockEntityLectern) blockEntityLectern;
+                        LecternPageChangeEvent lecternPageChangeEvent = new LecternPageChangeEvent(this, lectern, lecternUpdatePacket.page);
+                        this.server.getPluginManager().callEvent(lecternPageChangeEvent);
+                        if (!lecternPageChangeEvent.isCancelled()) {
+                            lectern.setPage(lecternPageChangeEvent.getNewPage());
+                            lectern.spawnToAll();
                         }
                     }
                     break;
