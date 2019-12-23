@@ -1843,6 +1843,10 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public Item useBreakOn(Vector3 vector, BlockFace face, Item item, Player player, boolean createParticles) {
+        return useBreakOn(vector, face, item, player, createParticles, false);
+    }
+
+    public Item useBreakOn(Vector3 vector, BlockFace face, Item item, Player player, boolean createParticles, boolean setBlockDestroy) {
         if (player != null && player.getGamemode() > 2) {
             return null;
         }
@@ -1879,7 +1883,7 @@ public class Level implements ChunkManager, Metadatable {
             // block
             // class
 
-            if (player.isCreative() && breakTime > 0.15) {
+            if ((setBlockDestroy || player.isCreative()) && breakTime > 0.15) {
                 breakTime = 0.15;
             }
 
@@ -1900,7 +1904,7 @@ public class Level implements ChunkManager, Metadatable {
             breakTime -= 0.15;
 
             Item[] eventDrops;
-            if (!player.isSurvival()) {
+            if (!setBlockDestroy && !player.isSurvival()) {
                 eventDrops = new Item[0];
             } else if (isSilkTouch && target.canSilkTouch()) {
                 eventDrops = new Item[]{target.toItem()};
@@ -1908,27 +1912,31 @@ public class Level implements ChunkManager, Metadatable {
                 eventDrops = target.getDrops(item);
             }
 
-            BlockBreakEvent ev = new BlockBreakEvent(player, target, face, item, eventDrops, player.isCreative(),
-                    (player.lastBreak + breakTime * 1000) > System.currentTimeMillis());
+            if (!setBlockDestroy) {
+                BlockBreakEvent ev = new BlockBreakEvent(player, target, face, item, eventDrops, player.isCreative(),
+                        (player.lastBreak + breakTime * 1000) > System.currentTimeMillis());
 
-            if (player.isSurvival() && !target.isBreakable(item)) {
-                ev.setCancelled();
-            } else if(!player.isOp() && isInSpawnRadius(target)) {
-                ev.setCancelled();
+                if (player.isSurvival() && !target.isBreakable(item)) {
+                    ev.setCancelled();
+                } else if (!player.isOp() && isInSpawnRadius(target)) {
+                    ev.setCancelled();
+                }
+
+                this.server.getPluginManager().callEvent(ev);
+                if (ev.isCancelled()) {
+                    return null;
+                }
+
+                if (!ev.getInstaBreak() && ev.isFastBreak()) {
+                    return null;
+                }
+
+                player.lastBreak = System.currentTimeMillis();
+
+                drops = ev.getDrops();
+            } else {
+                drops = eventDrops;
             }
-
-            this.server.getPluginManager().callEvent(ev);
-            if (ev.isCancelled()) {
-                return null;
-            }
-
-            if (!ev.getInstaBreak() && ev.isFastBreak()) {
-                return null;
-            }
-
-            player.lastBreak = System.currentTimeMillis();
-
-            drops = ev.getDrops();
         } else if (!target.isBreakable(item)) {
             return null;
         } else if (item.getEnchantment(Enchantment.ID_SILK_TOUCH) != null) {
@@ -1949,7 +1957,7 @@ public class Level implements ChunkManager, Metadatable {
 
             this.addParticle(new DestroyBlockParticle(target.add(0.5), target), players.values());
 
-            if (player != null) {
+            if (player != null && !setBlockDestroy) {
                 players.remove(player.getLoaderId());
             }
         }
@@ -1972,11 +1980,11 @@ public class Level implements ChunkManager, Metadatable {
 
         if (this.gameRules.getBoolean(GameRule.DO_TILE_DROPS)) {
             int dropExp = target.getDropExp();
-            if (!isSilkTouch && player != null && player.isSurvival() && dropExp > 0 && drops.length != 0) {
+            if (!isSilkTouch && player != null && (player.isSurvival() || setBlockDestroy) && dropExp > 0 && drops.length != 0) {
                 this.dropExpOrb(vector.add(0.5, 0.5, 0.5), dropExp);
             }
 
-            if (player == null || player.isSurvival()) {
+            if (player == null || setBlockDestroy || player.isSurvival()) {
                 for (Item drop : drops) {
                     if (drop.getCount() > 0) {
                         this.dropItem(vector.add(0.5, 0.5, 0.5), drop);
