@@ -2419,7 +2419,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     ((BlockDragonEgg) target).teleport();
                                     break actionswitch;
                                 case Block.LECTERN:
-                                    ((BlockLectern) target).dropBook();
+                                    ((BlockLectern) target).dropBook(this);
                                     break;
                             }
                             Block block = target.getSide(face);
@@ -2916,14 +2916,21 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     LecternUpdatePacket lecternUpdatePacket = (LecternUpdatePacket) packet;
                     BlockVector3 blockPosition = lecternUpdatePacket.blockPosition;
                     this.temporalVector.setComponents(blockPosition.x, blockPosition.y, blockPosition.z);
-                    BlockEntity blockEntityLectern = this.level.getBlockEntity(this.temporalVector);
-                    if (blockEntityLectern instanceof BlockEntityLectern) {
-                        BlockEntityLectern lectern = (BlockEntityLectern) blockEntityLectern;
-                        LecternPageChangeEvent lecternPageChangeEvent = new LecternPageChangeEvent(this, lectern, lecternUpdatePacket.page);
-                        this.server.getPluginManager().callEvent(lecternPageChangeEvent);
-                        if (!lecternPageChangeEvent.isCancelled()) {
-                            lectern.setPage(lecternPageChangeEvent.getNewPage());
-                            lectern.spawnToAll();
+                    if (lecternUpdatePacket.dropBook) {
+                        Block blockLectern = this.getLevel().getBlock(temporalVector);
+                        if (blockLectern instanceof BlockLectern) {
+                            ((BlockLectern) blockLectern).dropBook(this);
+                        }
+                    } else {
+                        BlockEntity blockEntityLectern = this.level.getBlockEntity(this.temporalVector);
+                        if (blockEntityLectern instanceof BlockEntityLectern) {
+                            BlockEntityLectern lectern = (BlockEntityLectern) blockEntityLectern;
+                            LecternPageChangeEvent lecternPageChangeEvent = new LecternPageChangeEvent(this, lectern, lecternUpdatePacket.page);
+                            this.server.getPluginManager().callEvent(lecternPageChangeEvent);
+                            if (!lecternPageChangeEvent.isCancelled()) {
+                                lectern.setPage(lecternPageChangeEvent.getNewPage());
+                                lectern.spawnToAll();
+                            }
                         }
                     }
                     break;

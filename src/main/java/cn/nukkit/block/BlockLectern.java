@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityLectern;
+import cn.nukkit.event.block.LecternDropBookEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Sound;
@@ -116,15 +117,19 @@ public class BlockLectern extends BlockTransparentMeta {
         return BlockColor.WOOD_BLOCK_COLOR;
     }
 
-    public void dropBook() {
+    public void dropBook(Player player) {
         BlockEntity t = this.getLevel().getBlockEntity(this);
         if (t instanceof BlockEntityLectern) {
             BlockEntityLectern lectern = (BlockEntityLectern) t;
             Item book = lectern.getBook();
             if (book.getId() != Item.AIR) {
-                lectern.setBook(Item.get(Item.AIR));
-                lectern.spawnToAll();
-                this.level.dropItem(lectern.add(0.5f, 0.6f, 0.5f), book);
+                LecternDropBookEvent dropBookEvent = new LecternDropBookEvent(player,lectern, book);
+                this.getLevel().getServer().getPluginManager().callEvent(dropBookEvent);
+                if (!dropBookEvent.isCancelled()) {
+                    lectern.setBook(Item.get(Item.AIR));
+                    lectern.spawnToAll();
+                    this.level.dropItem(lectern.add(0.5f, 0.6f, 0.5f), dropBookEvent.getBook());
+                }
             }
         }
     }
