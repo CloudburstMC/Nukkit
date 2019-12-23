@@ -8,6 +8,7 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.BlockColor;
 
 public class BlockLectern extends BlockTransparentMeta {
     public BlockLectern() {
@@ -102,8 +103,7 @@ public class BlockLectern extends BlockTransparentMeta {
                     newBook.setCount(1);
                     lectern.setBook(newBook);
                     lectern.spawnToAll();
-                    //TODO Couldn't find out the exact sound name that vanilla does
-                    this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_ADD_ITEM);
+                    this.getLevel().addSound(this.add(0.5, 0.5, 0.5), Sound.ITEM_BOOK_PUT);
                 }
             }
         }
@@ -112,8 +112,8 @@ public class BlockLectern extends BlockTransparentMeta {
     }
 
     @Override
-    public boolean isBreakable(Item item) {
-        return super.isBreakable(item);
+    public BlockColor getColor() {
+        return BlockColor.WOOD_BLOCK_COLOR;
     }
 
     public void dropBook() {
