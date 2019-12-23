@@ -19,7 +19,7 @@ public class BlockStairsPrismarine extends BlockStairs {
 
     @Override
     public double getHardness() {
-        return 2;
+        return 1.5;
     }
 
     @Override
