@@ -2930,6 +2930,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             if (!lecternPageChangeEvent.isCancelled()) {
                                 lectern.setRawPage(lecternPageChangeEvent.getNewRawPage());
                                 lectern.spawnToAll();
+                                Block blockLectern = lectern.getBlock();
+                                if (blockLectern instanceof BlockLectern) {
+                                    ((BlockLectern) blockLectern).executeRedstonePulse();
+                                }
                             }
                         }
                     }

@@ -3,9 +3,11 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityLectern;
+import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.event.block.LecternDropBookEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -95,7 +97,7 @@ public class BlockLectern extends BlockTransparentMeta {
 
         new BlockEntityLectern(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
 
-        return super.place(item, block, target, face, fx, fy, fz, player);
+        return true;
     }
 
     @Override
@@ -132,6 +134,65 @@ public class BlockLectern extends BlockTransparentMeta {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean isPowerSource() {
+        return true;
+    }
+
+    public boolean isActivated() {
+        return (this.getDamage() & 0x04) == 0x04;
+    }
+
+    public void setActivated(boolean activated) {
+        if (activated) {
+            setDamage(getDamage() | 0x04);
+        } else {
+            setDamage(getDamage() ^ 0x04);
+        }
+    }
+
+    public void executeRedstonePulse() {
+        if (isActivated()) {
+            level.cancelSheduledUpdate(this, this);
+        } else {
+            this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
+        }
+
+        level.scheduleUpdate(this, this, 4);
+        setActivated(true);
+        level.setBlock(this, this, true, false);
+        level.addSound(this.add(0.5, 0.5, 0.5), Sound.ITEM_BOOK_PAGE_TURN);
+
+        level.updateAroundRedstone(this, null);
+    }
+
+    @Override
+    public int getWeakPower(BlockFace face) {
+        return isActivated()? 15 : 0;
+    }
+
+    @Override
+    public int getStrongPower(BlockFace side) {
+        return 0;
+    }
+
+    @Override
+    public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+            if (isActivated()) {
+                this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
+
+                setActivated(false);
+                level.setBlock(this, this, true, false);
+                level.updateAroundRedstone(this, null);
+            }
+
+            return Level.BLOCK_UPDATE_SCHEDULED;
+        }
+
+        return 0;
     }
 
     @Override
