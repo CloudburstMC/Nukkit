@@ -310,6 +310,18 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
             list[BARRIER] = BlockBarrier.class; //416
 
+            list[SPRUCE_STANDING_SIGN] = BlockSpruceSignPost.class; //436
+            list[SPRUCE_WALL_SIGN] = BlockSpruceWallSign.class; //437
+
+            list[BIRCH_STANDING_SIGN] = BlockBirchSignPost.class; //441
+            list[BIRCH_WALL_SIGN] = BlockBirchWallSign.class; //442
+            list[JUNGLE_STANDING_SIGN] = BlockJungleSignPost.class; //443
+            list[JUNGLE_WALL_SIGN] = BlockJungleWallSign.class; //444
+            list[ACACIA_STANDING_SIGN] = BlockAcaciaSignPost.class; //445
+            list[ACACIA_WALL_SIGN] = BlockAcaciaWallSign.class; //446
+            list[DARKOAK_STANDING_SIGN] = BlockDarkOakSignPost.class; //447
+            list[DARKOAK_WALL_SIGN] = BlockDarkOakWallSign.class; //448
+
             list[LECTERN] = BlockLectern.class; //449
 
             list[BLAST_FURNACE] = BlockBlastFurnace.class; //451

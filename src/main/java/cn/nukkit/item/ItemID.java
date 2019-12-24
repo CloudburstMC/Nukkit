@@ -235,6 +235,7 @@ public interface ItemID {
     int JUNGLE_SIGN = 474;
     int ACACIA_SIGN = 475;
     int DARKOAK_SIGN = 476;
+    int DARK_OAK_SIGN = 476;
     int SWEET_BERRIES = 477;
 
     int RECORD_13 = 500;

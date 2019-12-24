@@ -23,6 +23,16 @@ public class BlockWallSign extends BlockSignPost {
     }
 
     @Override
+    public int getWallId() {
+        return getId();
+    }
+
+    @Override
+    protected int getPostId() {
+        return SIGN_POST;
+    }
+
+    @Override
     public String getName() {
         return "Wall Sign";
     }

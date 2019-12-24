@@ -380,7 +380,9 @@ public interface BlockID {
     int ACACIA_STANDING_SIGN = 445;
     int ACACIA_WALL_SIGN = 446;
     int DARKOAK_STANDING_SIGN = 447;
+    int DARK_OAK_STANDING_SIGN = 447;
     int DARKOAK_WALL_SIGN = 448;
+    int DARK_OAK_WALL_SIGN = 448;
     int LECTERN = 449;
     int GRINDSTONE = 450;
     int BLAST_FURNACE = 451;

@@ -288,6 +288,11 @@ public class Item implements Cloneable, BlockID, ItemID {
             
             list[TURTLE_SHELL] = ItemTurtleShell.class; //469
 
+            list[SPRUCE_SIGN] = ItemSpruceSign.class; //472
+            list[BIRCH_SIGN] = ItemBirchSign.class; //473
+            list[JUNGLE_SIGN] = ItemJungleSign.class; //474
+            list[ACACIA_SIGN] = ItemAcaciaSign.class; //475
+            list[DARKOAK_SIGN] = ItemDarkOakSign.class; //476
             list[SWEET_BERRIES] = ItemSweetBerries.class; //477
 
             list[RECORD_11] = ItemRecord11.class;
