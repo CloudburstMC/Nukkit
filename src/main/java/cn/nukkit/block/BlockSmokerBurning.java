@@ -3,6 +3,8 @@ package cn.nukkit.block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityFurnace;
 import cn.nukkit.blockentity.BlockEntitySmoker;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -33,5 +35,10 @@ public class BlockSmokerBurning extends BlockFurnaceBurning {
     @Override
     protected BlockEntityFurnace createEntity(FullChunk chunk, CompoundTag nbt) {
         return new BlockEntitySmoker(chunk, nbt);
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(new BlockSmoker());
     }
 }
