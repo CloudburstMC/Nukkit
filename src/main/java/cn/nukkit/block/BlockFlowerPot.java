@@ -35,6 +35,7 @@ public class BlockFlowerPot extends BlockFlowable {
             case BROWN_MUSHROOM:
             case CACTUS:
             case SUGARCANE_BLOCK:
+            case WITHER_ROSE:
                 // TODO: 2016/2/4 case NETHER_WART:
                 return true;
             default:
@@ -103,19 +104,19 @@ public class BlockFlowerPot extends BlockFlowable {
         BlockEntity blockEntity = getLevel().getBlockEntity(this);
         if (!(blockEntity instanceof BlockEntityFlowerPot)) return false;
         if (blockEntity.namedTag.getShort("item") != 0 || blockEntity.namedTag.getInt("mData") != 0) return false;
-        int itemID;
+        int blockId;
         int itemMeta;
         if (!canPlaceIntoFlowerPot(item.getId())) {
             if (!canPlaceIntoFlowerPot(item.getBlock().getId())) {
                 return true;
             }
-            itemID = item.getBlock().getItemId();
+            blockId = item.getBlock().getId();
             itemMeta = item.getDamage();
         } else {
-            itemID = item.getId();
+            blockId = item.getId();
             itemMeta = item.getDamage();
         }
-        blockEntity.namedTag.putShort("item", itemID);
+        blockEntity.namedTag.putShort("item", blockId);
         blockEntity.namedTag.putInt("data", itemMeta);
 
         this.setDamage(1);

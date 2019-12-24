@@ -319,6 +319,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
             list[LIT_BLAST_FURNACE] = BlockBlastFurnaceBurning.class; //469
             list[LIGHT_BLOCK] = BlockLight.class; //470
+            list[WITHER_ROSE] = BlockWitherRose.class; //471
 
             list[HONEYCOMB_BLOCK] = BlockHoneycomb.class; //476
 
