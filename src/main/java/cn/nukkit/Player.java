@@ -2928,7 +2928,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             LecternPageChangeEvent lecternPageChangeEvent = new LecternPageChangeEvent(this, lectern, lecternUpdatePacket.page);
                             this.server.getPluginManager().callEvent(lecternPageChangeEvent);
                             if (!lecternPageChangeEvent.isCancelled()) {
-                                lectern.setPage(lecternPageChangeEvent.getNewPage());
+                                lectern.setRawPage(lecternPageChangeEvent.getNewRawPage());
                                 lectern.spawnToAll();
                             }
                         }

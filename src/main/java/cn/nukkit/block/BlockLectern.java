@@ -61,6 +61,28 @@ public class BlockLectern extends BlockTransparentMeta {
     }
 
     @Override
+    public boolean hasComparatorInputOverride() {
+        return true;
+    }
+
+    @Override
+    public int getComparatorInputOverride() {
+        int power = 0;
+        int page = 0;
+        int maxPage = 0;
+        BlockEntity be = this.getLevel().getBlockEntity(this);
+        if (be instanceof BlockEntityLectern) {
+            BlockEntityLectern lectern = (BlockEntityLectern) be;
+            if (lectern.hasBook()) {
+                maxPage = lectern.getTotalPages();
+                page = lectern.getLeftPage() + 1;
+                power = (int)(((float)page / maxPage) * 16);
+            }
+        }
+        return power;
+    }
+
+    @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         int[] faces = {0, 1, 2, 3};
         this.setDamage(faces[player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0]);
