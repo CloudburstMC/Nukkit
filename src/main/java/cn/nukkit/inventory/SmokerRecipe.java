@@ -2,17 +2,13 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.item.Item;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class FurnaceRecipe implements SmeltingRecipe {
+public class SmokerRecipe implements SmeltingRecipe {
 
     private final Item output;
 
     private Item ingredient;
 
-    public FurnaceRecipe(Item result, Item ingredient) {
+    public SmokerRecipe(Item result, Item ingredient) {
         this.output = result.clone();
         this.ingredient = ingredient.clone();
     }
@@ -33,11 +29,11 @@ public class FurnaceRecipe implements SmeltingRecipe {
 
     @Override
     public void registerToCraftingManager(CraftingManager manager) {
-        manager.registerFurnaceRecipe(this);
+        manager.registerSmokerRecipe(this);
     }
 
     @Override
     public RecipeType getType() {
-        return this.ingredient.hasMeta() ? RecipeType.FURNACE_DATA : RecipeType.FURNACE;
+        return this.ingredient.hasMeta() ? RecipeType.SMOKER_DATA : RecipeType.SMOKER;
     }
 }

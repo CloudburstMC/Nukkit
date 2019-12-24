@@ -310,6 +310,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
             list[LECTERN] = BlockLectern.class; //449
 
+            list[BLAST_FURNACE] = BlockBlastFurnace.class; //451
+
+            list[SMOKER] = BlockSmoker.class; //453
+            list[LIT_SMOKER] = BlockSmokerBurning.class; //454
+
+            list[LIT_BLAST_FURNACE] = BlockBlastFurnaceBurning.class; //469
+
             for (int id = 0; id < MAX_BLOCK_ID; id++) {
                 Class c = list[id];
                 if (c != null) {

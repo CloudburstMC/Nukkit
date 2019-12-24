@@ -7,6 +7,7 @@ import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -65,6 +66,14 @@ public class BlockFurnaceBurning extends BlockSolidMeta implements Faceable {
         return 13;
     }
 
+    protected String getEntityName() {
+        return BlockEntity.FURNACE;
+    }
+
+    protected BlockEntityFurnace createEntity(FullChunk chunk, CompoundTag nbt) {
+        return new BlockEntityFurnace(chunk, nbt);
+    }
+
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         int[] faces = {2, 5, 3, 4};
@@ -72,7 +81,7 @@ public class BlockFurnaceBurning extends BlockSolidMeta implements Faceable {
         this.getLevel().setBlock(block, this, true, true);
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<>("Items"))
-                .putString("id", BlockEntity.FURNACE)
+                .putString("id", getEntityName())
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
@@ -88,7 +97,7 @@ public class BlockFurnaceBurning extends BlockSolidMeta implements Faceable {
             }
         }
 
-        new BlockEntityFurnace(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+        createEntity(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
 
         return true;
     }
@@ -109,11 +118,11 @@ public class BlockFurnaceBurning extends BlockSolidMeta implements Faceable {
             } else {
                 CompoundTag nbt = new CompoundTag()
                         .putList(new ListTag<>("Items"))
-                        .putString("id", BlockEntity.FURNACE)
+                        .putString("id", getEntityName())
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
-                furnace = new BlockEntityFurnace(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+                furnace = createEntity(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
             }
 
             if (furnace.namedTag.contains("Lock") && furnace.namedTag.get("Lock") instanceof StringTag) {
