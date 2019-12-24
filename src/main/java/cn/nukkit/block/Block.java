@@ -34,6 +34,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public static Class[] list = null;
     public static Block[] fullList = null;
     public static int[] light = null;
+    public static int[] fullLight = null;
     public static int[] lightFilter = null;
     public static boolean[] solid = null;
     public static double[] hardness = null;
@@ -52,6 +53,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         if (list == null) {
             list = new Class[MAX_BLOCK_ID];
             fullList = new Block[MAX_BLOCK_ID * 16];
+            fullLight = new int[MAX_BLOCK_ID * 16];
             light = new int[MAX_BLOCK_ID];
             lightFilter = new int[MAX_BLOCK_ID];
             solid = new boolean[MAX_BLOCK_ID];
@@ -328,12 +330,17 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                             Constructor constructor = c.getDeclaredConstructor(int.class);
                             constructor.setAccessible(true);
                             for (int data = 0; data < 16; ++data) {
-                                fullList[(id << 4) | data] = (Block) constructor.newInstance(data);
+                                Block b = (Block) constructor.newInstance(data);
+                                int fullId = (id << 4) | data;
+                                fullList[fullId] = b;
+                                fullLight[fullId] = b.getLightLevel();
                             }
                             hasMeta[id] = true;
                         } catch (NoSuchMethodException ignore) {
                             for (int data = 0; data < 16; ++data) {
-                                fullList[(id << 4) | data] = block;
+                                int fullId = (id << 4) | data;
+                                fullList[fullId] = block;
+                                fullLight[fullId] = block.getLightLevel();
                             }
                         }
                     } catch (Exception e) {
