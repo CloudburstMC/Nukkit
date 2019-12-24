@@ -321,6 +321,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[LIGHT_BLOCK] = BlockLight.class; //470
             list[WITHER_ROSE] = BlockWitherRose.class; //471
 
+            list[HONEY_BLOCK] = BlockHoney.class; //475
             list[HONEYCOMB_BLOCK] = BlockHoneycomb.class; //476
 
             for (int id = 0; id < MAX_BLOCK_ID; id++) {
@@ -366,6 +367,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                             } else {
                                 lightFilter[id] = 1;
                             }
+                        } else if (block instanceof BlockSlime || block instanceof BlockHoney) {
+                            lightFilter[id] = 1;
                         } else {
                             lightFilter[id] = 15;
                         }
