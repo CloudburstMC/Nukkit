@@ -120,12 +120,17 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
             return;
         }
 
-        float diff = this.progress - this.lastProgress;
-        entity.move(
-                diff * moveDirection.getXOffset(),
-                diff * moveDirection.getYOffset(),
-                diff * moveDirection.getZOffset()
-        );
+        entity.onPushByPiston(this);
+
+        if (!entity.closed) {
+            float diff = Math.abs(this.progress - this.lastProgress);
+
+            entity.move(
+                    diff * moveDirection.getXOffset(),
+                    diff * moveDirection.getYOffset(),
+                    diff * moveDirection.getZOffset()
+            );
+        }
     }
 
     public void move(boolean extending, List<BlockVector3> attachedBlocks) {
