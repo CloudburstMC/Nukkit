@@ -76,7 +76,7 @@ public class BlockStorage {
         if (oldData != newData) {
             blockData.set(index, newData);
         }
-        return ((oldBlock & 0xff) << 4) | oldData;
+        return (((oldBlockExtra & 0xff) << 12) | (oldBlock & 0xff) << 4) | oldData;
     }
 
     private int getFullBlock(int index) {
