@@ -22,7 +22,7 @@ public class BlockStorage {
     private static int getIndex(int x, int y, int z) {
         int index = (x << 8) + (z << 4) + y; // XZY = Bedrock format
         //Preconditions.checkArgument(index >= 0 && index < SECTION_SIZE, "Invalid index");
-        if(index < 0 || index >= SECTION_SIZE) throw new IllegalArgumentException();
+        if(index < 0 || index >= SECTION_SIZE) throw new IllegalArgumentException("Invalid index");
         return index;
     }
 
