@@ -3,7 +3,9 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockBeehive;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 
 public class ItemGlassBottle extends Item {
@@ -27,21 +29,29 @@ public class ItemGlassBottle extends Item {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+        Item filled = null;
         if (target.getId() == WATER || target.getId() == STILL_WATER) {
-            Item potion = new ItemPotion();
-
+            filled = new ItemPotion();
+        } else if (target instanceof BlockBeehive && ((BlockBeehive) target).isFull()) {
+            filled = Item.get(HONEY_BOTTLE);
+            ((BlockBeehive) target).honeyCollected(player);
+            level.addSound(player, Sound.BUCKET_FILL_WATER);
+        }
+        
+        if (filled != null) {
             if (this.count == 1) {
-                player.getInventory().setItemInHand(potion);
+                player.getInventory().setItemInHand(filled);
             } else if (this.count > 1) {
                 this.count--;
                 player.getInventory().setItemInHand(this);
-                if (player.getInventory().canAddItem(potion)) {
-                    player.getInventory().addItem(potion);
+                if (player.getInventory().canAddItem(filled)) {
+                    player.getInventory().addItem(filled);
                 } else {
-                    player.getLevel().dropItem(player.add(0, 1.3, 0), potion, player.getDirectionVector().multiply(0.4));
+                    player.getLevel().dropItem(player.add(0, 1.3, 0), filled, player.getDirectionVector().multiply(0.4));
                 }
             }
         }
+        
         return false;
     }
 }

@@ -1965,7 +1965,7 @@ public class Level implements ChunkManager, Metadatable {
         // Close BlockEntity before we check onBreak
         BlockEntity blockEntity = this.getBlockEntity(target);
         if (blockEntity != null) {
-            blockEntity.onBreak();
+            blockEntity.onBreak(isSilkTouch);
             blockEntity.close();
 
             this.updateComparatorOutputLevel(target);

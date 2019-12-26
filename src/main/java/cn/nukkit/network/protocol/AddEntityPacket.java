@@ -125,7 +125,7 @@ public class AddEntityPacket extends DataPacket {
             .put(EntityVillager.NETWORK_ID, "minecraft:villager_v2")
             .put(EntityZombieVillager.NETWORK_ID, "minecraft:zombie_villager_v2")
             .put(121, "minecraft:fox")
-            .put(122, "minecraft:bee")
+            .put(EntityBee.NETWORK_ID, "minecraft:bee")
             .build();
 
     @Override

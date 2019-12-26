@@ -45,6 +45,7 @@ public abstract class BlockEntity extends Position {
     public static final String SHULKER_BOX = "ShulkerBox";
     public static final String BANNER = "Banner";
     public static final String LECTERN = "Lectern";
+    public static final String BEEHIVE = "Beehive";
 
 
     public static long count = 1;
@@ -198,6 +199,10 @@ public abstract class BlockEntity extends Position {
 
     public void onBreak() {
 
+    }
+    
+    public void onBreak(boolean isSilkTouch) {
+        onBreak();
     }
 
     public void setDirty() {
