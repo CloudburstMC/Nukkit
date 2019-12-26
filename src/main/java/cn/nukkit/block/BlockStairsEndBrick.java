@@ -3,28 +3,28 @@ package cn.nukkit.block;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
-public class BlockStairsPrismarine extends BlockStairs {
-    public BlockStairsPrismarine() {
+public class BlockStairsEndBrick extends BlockStairs {
+    public BlockStairsEndBrick() {
         this(0);
     }
 
-    public BlockStairsPrismarine(int meta) {
+    public BlockStairsEndBrick(int meta) {
         super(meta);
     }
 
     @Override
     public int getId() {
-        return PRISMARINE_STAIRS;
+        return END_BRICK_STAIRS;
     }
 
     @Override
     public double getHardness() {
-        return 1.5;
+        return 2;
     }
 
     @Override
     public double getResistance() {
-        return 30;
+        return 45;
     }
 
     @Override
@@ -34,12 +34,12 @@ public class BlockStairsPrismarine extends BlockStairs {
 
     @Override
     public String getName() {
-        return "Prismarine Stairs";
+        return "End Stone Brick Stairs";
     }
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.CYAN_BLOCK_COLOR;
+        return BlockColor.SAND_BLOCK_COLOR;
     }
 
     @Override

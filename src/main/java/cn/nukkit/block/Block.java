@@ -307,8 +307,26 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[OBSERVER] = BlockObserver.class; //251
 
             list[PRISMARINE_STAIRS] = BlockStairsPrismarine.class; //257
+            list[DARK_PRISMARINE_STAIRS] = BlockStairsDarkPrismarine.class; //258
+            list[PRISMARINE_BRICKS_STAIRS] = BlockStairsPrismarineBrick.class; // 259
 
             list[BARRIER] = BlockBarrier.class; //416
+
+            list[GRANITE_STAIRS] = BlockStairsGranite.class; //424
+            list[DIORITE_STAIRS] = BlockStairsDiorite.class; //425
+            list[ANDESITE_STAIRS] = BlockStairsAndesite.class; //426
+            list[POLISHED_GRANITE_STAIRS] = BlockStairsGranitePolished.class; //427
+            list[POLISHED_DIORITE_STAIRS] = BlockStairsDioritePolished.class; //428
+            list[POLISHED_ANDESITE_STAIRS] = BlockStairsAndesitePolished.class; //429
+            list[MOSSY_STONE_BRICK_STAIRS] = BlockStairsMossyStoneBrick.class; //430
+            list[SMOOTH_RED_SANDSTONE_STAIRS] = BlockStairsSmoothRedSandstone.class; //431
+            list[SMOOTH_SANDSTONE_STAIRS] = BlockStairsSmoothSandstone.class; //432
+            list[END_BRICK_STAIRS] = BlockStairsEndBrick.class; //433
+            list[MOSSY_COBBLESTONE_STAIRS] = BlockStairsMossyCobblestone.class; //434
+            list[NORMAL_STONE_STAIRS] = BlockStairsStone.class; //435
+
+            list[RED_NETHER_BRICK_STAIRS] = BlockStairsRedNetherBrick.class; //439
+            list[SMOOTH_QUARTZ_STAIRS] = BlockStairsSmoothQuartz.class; //440
 
             list[SPRUCE_STANDING_SIGN] = BlockSpruceSignPost.class; //436
             list[SPRUCE_WALL_SIGN] = BlockSpruceWallSign.class; //437
