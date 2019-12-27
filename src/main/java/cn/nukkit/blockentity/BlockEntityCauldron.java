@@ -1,9 +1,12 @@
 package cn.nukkit.blockentity;
 
+import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
+import cn.nukkit.network.protocol.UpdateBlockPacket;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -103,6 +106,22 @@ public class BlockEntityCauldron extends BlockEntitySpawnable {
         int color = (r << 16 | g << 8 | b) & 0xffffff;
 
         namedTag.putInt("CustomColor", color);
+    
+        Block block = getBlock();
+        Player[] viewers = this.level.getChunkPlayers(getChunkX(), getChunkZ()).values().toArray(new Player[0]);
+        UpdateBlockPacket air = new UpdateBlockPacket();
+        air.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(0, 0);
+        air.flags = UpdateBlockPacket.FLAG_ALL_PRIORITY;
+        air.x = (int) x;
+        air.y = (int) y;
+        air.z = (int) z;
+        UpdateBlockPacket self = (UpdateBlockPacket) air.clone();
+        self.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(block.getId(), block.getDamage());
+        for (Player viewer : viewers) {
+            viewer.dataPacket(air);
+            viewer.dataPacket(self);
+        }
+        
         spawnToAll();
     }
 
@@ -119,12 +138,16 @@ public class BlockEntityCauldron extends BlockEntitySpawnable {
 
     @Override
     public CompoundTag getSpawnCompound() {
-        return new CompoundTag()
+        CompoundTag compoundTag = new CompoundTag()
                 .putString("id", BlockEntity.CAULDRON)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z)
                 .putShort("PotionId", namedTag.getShort("PotionId"))
                 .putByte("PotionType", namedTag.getShort("PotionType"));
+        if (namedTag.contains("CustomColor")) {
+            compoundTag.putInt("CustomColor", namedTag.getInt("CustomColor"));
+        }
+        return compoundTag;
     }
 }

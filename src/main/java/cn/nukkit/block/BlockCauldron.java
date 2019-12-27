@@ -142,12 +142,39 @@ public class BlockCauldron extends BlockSolidMeta {
                     }
                 }
                 break;
-            case Item.DYE: //TODO
+            case Item.DYE:
+                if (isEmpty() || cauldron.hasPotion()) {
+                    break;
+                }
+    
+                if (player.isSurvival() || player.isAdventure()) {
+                    item.setCount(item.getCount()-1);
+                    player.getInventory().setItemInHand(item);
+                }
+                
+                // TODO this shouldn't be replacing, this should be adding to mixtures
+                cauldron.setCustomColor(new ItemDye(item.getDamage()).getDyeColor().getColor());
+                this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.CAULDRON_ADDDYE);
+                
                 break;
             case Item.LEATHER_CAP:
             case Item.LEATHER_TUNIC:
             case Item.LEATHER_PANTS:
             case Item.LEATHER_BOOTS:
+            case Item.LEATHER_HORSE_ARMOR:
+                if (isEmpty() || cauldron.hasPotion()) {
+                    break;
+                }
+                
+                CompoundTag compoundTag = item.hasCompoundTag()? item.getNamedTag() : new CompoundTag();
+                compoundTag.putInt("customColor", cauldron.getCustomColor().getRGB());
+                item.setCompoundTag(compoundTag);
+                player.getInventory().setItemInHand(item);
+                
+                setFillLevel(getFillLevel() - 1);
+                this.level.setBlock(this, this, true, true);
+                this.level.addSound(add(0.5, 0.5, 0.5), Sound.CAULDRON_DYEARMOR);
+                
                 break;
             case Item.POTION:
             case Item.SPLASH_POTION:
