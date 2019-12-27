@@ -11,6 +11,12 @@ import cn.nukkit.utils.BlockColor;
  * Nukkit Project
  */
 public class BlockEntityCauldron extends BlockEntitySpawnable {
+    
+    public static final int POTION_TYPE_EMPTY = 0xFFFF;
+    public static final int POTION_TYPE_NORMAL = 0;
+    public static final int POTION_TYPE_SPLASH = 1;
+    public static final int POTION_TYPE_LINGERING = 2;
+    public static final int POTION_TYPE_LAVA = 0xF19B;
 
     public BlockEntityCauldron(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -18,13 +24,22 @@ public class BlockEntityCauldron extends BlockEntitySpawnable {
 
     @Override
     protected void initBlockEntity() {
+        int potionId;
         if (!namedTag.contains("PotionId")) {
             namedTag.putShort("PotionId", 0xffff);
         }
-
-        if (!namedTag.contains("SplashPotion")) {
-            namedTag.putByte("SplashPotion", 0);
+        potionId = namedTag.getShort("PotionId");
+        
+        int potionType = (potionId & 0xFFFF) == 0xFFFF? POTION_TYPE_EMPTY : POTION_TYPE_NORMAL;
+        if (namedTag.getBoolean("SplashPotion")) {
+            potionType = POTION_TYPE_SPLASH;
+            namedTag.remove("SplashPotion");
         }
+        
+        if (!namedTag.contains("PotionType")) {
+            namedTag.putShort("PotionType", potionType);
+        }
+
 
         super.initBlockEntity();
     }
@@ -41,13 +56,25 @@ public class BlockEntityCauldron extends BlockEntitySpawnable {
     public boolean hasPotion() {
         return getPotionId() != 0xffff;
     }
-
-    public boolean isSplashPotion() {
-        return namedTag.getByte("SplashPotion") > 0;
+    
+    public void setPotionType(int potionType) {
+        this.namedTag.putShort("PotionType", potionType & 0xFFFF);
+    }
+    
+    public int getPotionType() {
+        return this.namedTag.getShort("PotionType") & 0xFFFF;
     }
 
+    public boolean isSplashPotion() {
+        return namedTag.getShort("PotionType") == POTION_TYPE_SPLASH;
+    }
+    
+    /**
+     * @deprecated Use {@link #setPotionType(int)} instead.
+     */
+    @Deprecated
     public void setSplashPotion(boolean value) {
-        namedTag.putByte("SplashPotion", value ? 1 : 0);
+        namedTag.putShort("PotionType", value ? 1 : 0);
     }
 
     public BlockColor getCustomColor() {
@@ -86,7 +113,8 @@ public class BlockEntityCauldron extends BlockEntitySpawnable {
 
     @Override
     public boolean isBlockEntityValid() {
-        return getBlock().getId() == Block.CAULDRON_BLOCK;
+        int id = getBlock().getId();
+        return id == Block.CAULDRON_BLOCK || id == Block.LAVA_CAULDRON;
     }
 
     @Override
@@ -97,6 +125,6 @@ public class BlockEntityCauldron extends BlockEntitySpawnable {
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z)
                 .putShort("PotionId", namedTag.getShort("PotionId"))
-                .putByte("SplashPotion", namedTag.getByte("SplashPotion"));
+                .putByte("PotionType", namedTag.getShort("PotionType"));
     }
 }
