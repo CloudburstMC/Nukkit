@@ -407,6 +407,7 @@ public interface BlockID {
     int LIGHT_BLOCK = 470;
     int WITHER_ROSE = 471;
     int STICKYPISTONARMCOLLISION = 472;
+    int PISTON_HEAD_STICKY = 472;
     int BEE_NEST = 473;
     int BEEHIVE = 474;
     int HONEY_BLOCK = 475;
