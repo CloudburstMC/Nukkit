@@ -58,6 +58,7 @@ public class BlockCauldronLava extends BlockCauldron {
     
     @Override
     public void setFillLevel(int fillLevel) {
+        super.setFillLevel(fillLevel);
         setDamage(getDamage() | 0x8);
     }
     
@@ -127,7 +128,7 @@ public class BlockCauldronLava extends BlockCauldron {
                         if (cauldron.hasPotion()) {//if has potion
                             clearWithFizz(cauldron);
                         } else if (item.getDamage() == 10) { //lava bucket
-                            this.setFillLevel(0xE);//fill
+                            this.setFillLevel(5);//fill
                             cauldron.clearCustomColor();
                             this.level.setBlock(this, this, true);
                             this.getLevel().addLevelSoundEvent(this.add(0.5, 1, 0.5), LevelSoundEventPacket.SOUND_BUCKET_EMPTY_LAVA);
