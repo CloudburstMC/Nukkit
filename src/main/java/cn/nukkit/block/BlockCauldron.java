@@ -12,6 +12,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.utils.BlockColor;
 
 import java.util.Map;
 
@@ -151,9 +152,19 @@ public class BlockCauldron extends BlockSolidMeta {
                     item.setCount(item.getCount()-1);
                     player.getInventory().setItemInHand(item);
                 }
-                
-                // TODO this shouldn't be replacing, this should be adding to mixtures
-                cauldron.setCustomColor(new ItemDye(item.getDamage()).getDyeColor().getColor());
+    
+                BlockColor color = new ItemDye(item.getDamage()).getDyeColor().getColor();
+                if (!cauldron.isCustomColor()) {
+                    cauldron.setCustomColor(color);
+                } else {
+                    BlockColor current = cauldron.getCustomColor();
+                    BlockColor mixed = new BlockColor(
+                            current.getRed() + (color.getRed() - current.getRed()) / 2,
+                            current.getGreen() + (color.getGreen() - current.getGreen()) / 2,
+                            current.getBlue() + (color.getBlue() - current.getBlue()) / 2
+                    );
+                    cauldron.setCustomColor(mixed);
+                }
                 this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.CAULDRON_ADDDYE);
                 
                 break;
