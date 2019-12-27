@@ -1,5 +1,6 @@
 package cn.nukkit.blockentity;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
@@ -13,18 +14,18 @@ import cn.nukkit.nbt.tag.ListTag;
 /**
  * @author CreeperFace
  */
-public class BlockEntityPistonArm extends BlockEntity {
+public class BlockEntityPistonArm extends BlockEntitySpawnable {
 
-    public float progress = 1.0F;
-    public float lastProgress = 1.0F;
+    public float progress;
+    public float lastProgress;
     public BlockFace facing;
-    public boolean extending = false;
-    public boolean sticky = false;
-    public byte state = 1;
-    public byte newState = 1;
-    public Vector3 attachedBlock = null;
-    public boolean isMovable = true;
-    public boolean powered = false;
+    public boolean extending;
+    public boolean sticky;
+    public byte state;
+    public byte newState;
+    public Vector3 attachedBlock;
+    public boolean isMovable;
+    public boolean powered;
 
     public BlockEntityPistonArm(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -32,6 +33,8 @@ public class BlockEntityPistonArm extends BlockEntity {
 
     @Override
     protected void initBlockEntity() {
+        this.isMovable = true;
+        
         if (namedTag.contains("Progress")) {
             this.progress = namedTag.getFloat("Progress");
         }
@@ -82,7 +85,8 @@ public class BlockEntityPistonArm extends BlockEntity {
     }
 
     public boolean isBlockEntityValid() {
-        return true;
+        int blockId = getBlock().getId();
+        return blockId == Block.PISTON || blockId == Block.STICKY_PISTON;
     }
 
     public void saveNBT() {
@@ -96,6 +100,15 @@ public class BlockEntityPistonArm extends BlockEntity {
     }
 
     public CompoundTag getSpawnCompound() {
-        return (new CompoundTag()).putString("id", "PistonArm").putInt("x", (int) this.x).putInt("y", (int) this.y).putInt("z", (int) this.z);
+        return new CompoundTag()
+                .putString("id", BlockEntity.PISTON_ARM)
+                .putInt("x", (int) this.x)
+                .putInt("y", (int) this.y)
+                .putInt("z", (int) this.z)
+                .putFloat("Progress", this.progress)
+                .putFloat("LastProgress", this.lastProgress)
+                .putBoolean("Sticky", this.sticky)
+                .putByte("State", this.state)
+                .putByte("NewState", this.newState);
     }
 }
