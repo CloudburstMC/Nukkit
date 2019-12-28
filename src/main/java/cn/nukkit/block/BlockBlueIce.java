@@ -1,6 +1,10 @@
 package cn.nukkit.block;
 
 public class BlockBlueIce extends BlockIcePacked {
+    
+    public BlockBlueIce() {
+    }
+    
     @Override
     public int getId() {
         return BLUE_ICE;

@@ -320,6 +320,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[STRIPPED_OAK_LOG] = BlockWoodStrippedOak.class; //265
             list[BLUE_ICE] = BlockBlueIce.class; //266
 
+            list[SEAGRASS] = BlockSeagrass.class; //385
+            
             list[BARRIER] = BlockBarrier.class; //416
 
             list[GRANITE_STAIRS] = BlockStairsGranite.class; //424
