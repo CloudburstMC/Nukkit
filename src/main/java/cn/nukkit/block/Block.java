@@ -321,6 +321,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[BLUE_ICE] = BlockBlueIce.class; //266
 
             list[SEAGRASS] = BlockSeagrass.class; //385
+            list[CORAL] = BlockCoral.class; //386
             
             list[BARRIER] = BlockBarrier.class; //416
 
