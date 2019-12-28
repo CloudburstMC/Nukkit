@@ -378,7 +378,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[BEE_NEST] = BlockBeeNest.class; //473
             list[BEEHIVE] = BlockBeehive.class; //474
             list[HONEY_BLOCK] = BlockHoney.class; //475
-            list[HONEYCOMB_BLOCK] = BlockHoneycomb.class; //476
+            list[HONEYCOMB_BLOCK] = BlockHoneycombBlock.class; //476
 
             for (int id = 0; id < MAX_BLOCK_ID; id++) {
                 Class c = list[id];

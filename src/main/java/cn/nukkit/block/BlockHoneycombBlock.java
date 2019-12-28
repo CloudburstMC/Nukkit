@@ -3,9 +3,9 @@ package cn.nukkit.block;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
-public class BlockHoneycomb extends BlockSolid {
+public class BlockHoneycombBlock extends BlockSolid {
 
-    public BlockHoneycomb() {
+    public BlockHoneycombBlock() {
 
     }
 
