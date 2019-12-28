@@ -52,7 +52,13 @@ public class BlockWoodBark extends BlockWood {
     
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        //TODO A way to set pillar_axis to z and y, it's always rendering to x
+        if (face.getAxis().isHorizontal()) {
+            if (face.getAxis() == BlockFace.Axis.X) {
+                setDamage(getDamage() | 0x10);
+            } else {
+                setDamage(getDamage() | 0x20);
+            }
+        }
         this.getLevel().setBlock(block, this, true, true);
         
         return true;
