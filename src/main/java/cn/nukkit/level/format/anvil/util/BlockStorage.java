@@ -1,5 +1,6 @@
 package cn.nukkit.level.format.anvil.util;
 
+import cn.nukkit.block.Block;
 import com.google.common.base.Preconditions;
 
 import java.util.Arrays;
@@ -9,17 +10,20 @@ public class BlockStorage {
     private final byte[] blockIds;
     private final byte[] blockIdsExtra;
     private final NibbleArray blockData;
+    private final NibbleArray blockDataExtra;
 
     public BlockStorage() {
         blockIds = new byte[SECTION_SIZE];
         blockIdsExtra = new byte[SECTION_SIZE];
         blockData = new NibbleArray(SECTION_SIZE);
+        blockDataExtra = new NibbleArray(SECTION_SIZE);
     }
 
-    private BlockStorage(byte[] blockIds, byte[] blockIdsExtra, NibbleArray blockData) {
+    private BlockStorage(byte[] blockIds, byte[] blockIdsExtra, NibbleArray blockData, NibbleArray blockDataExtra) {
         this.blockIds = blockIds;
         this.blockIdsExtra = blockIdsExtra;
         this.blockData = blockData;
+        this.blockDataExtra = blockDataExtra;
     }
 
     private static int getIndex(int x, int y, int z) {
@@ -29,7 +33,10 @@ public class BlockStorage {
     }
 
     public int getBlockData(int x, int y, int z) {
-        return blockData.get(getIndex(x, y, z)) & 0xf;
+        int index = getIndex(x, y, z);
+        int base = blockData.get(index) & 0xf;
+        int extra = blockDataExtra.get(index) & 0xf;
+        return (extra << 4) | base;
     }
 
     public int getBlockId(int x, int y, int z) {
@@ -44,7 +51,9 @@ public class BlockStorage {
     }
 
     public void setBlockData(int x, int y, int z, int data) {
-        blockData.set(getIndex(x, y, z), (byte) data);
+        int index = getIndex(x, y, z);
+        blockData.set(index, (byte) (data & 0xF));
+        blockDataExtra.set(index, (byte) ((data >> 4) & 0xF));
     }
 
     public int getFullBlock(int x, int y, int z) {
@@ -60,13 +69,15 @@ public class BlockStorage {
     }
 
     private int getAndSetFullBlock(int index, int value) {
-        Preconditions.checkArgument(value < 0x1fff, "Invalid full block");
+        Preconditions.checkArgument(value < (0x1FF << Block.DATA_BITS | Block.DATA_MASK), "Invalid full block");
         byte oldBlockExtra = blockIdsExtra[index];
         byte oldBlock = blockIds[index];
         byte oldData = blockData.get(index);
-        byte newBlockExtra = (byte) ((value & 0xff000) >> 12);
-        byte newBlock = (byte) ((value & 0xff0) >> 4);
+        byte oldDataExtra = blockDataExtra.get(index);
+        byte newBlockExtra = (byte) ((value >> (Block.DATA_BITS + 8)) & 0xFF);
+        byte newBlock = (byte) ((value >> Block.DATA_BITS) & 0xFF);
         byte newData = (byte) (value & 0xf);
+        byte newDataExtra = (byte) (value & (Block.DATA_BITS >> 4) & 0xF);
         if (oldBlock != newBlock) {
             blockIds[index] = newBlock;
         }
@@ -76,25 +87,31 @@ public class BlockStorage {
         if (oldData != newData) {
             blockData.set(index, newData);
         }
-        return (((oldBlockExtra & 0xff) << 12) | (oldBlock & 0xff) << 4) | oldData;
+        if (oldDataExtra != newDataExtra) {
+            blockDataExtra.set(index, newBlockExtra);
+        }
+        return (oldBlockExtra & 0xff) << Block.DATA_BITS + 8 | (oldBlock & 0xff) << Block.DATA_BITS | (oldDataExtra & 0xF) << 1 | oldData;
     }
 
     private int getFullBlock(int index) {
         byte block = blockIds[index];
         byte extra = blockIdsExtra[index];
         byte data = blockData.get(index);
-        return (extra & 0xff) << 12 | (block & 0xff) << 4 | data;
+        byte dataExtra = blockDataExtra.get(index);
+        return (extra & 0xff) << Block.DATA_BITS + 8 | ((block & 0xff) << Block.DATA_BITS) | ((dataExtra & 0xF) << 1) | data;
     }
 
     private void setFullBlock(int index, int value) {
-        Preconditions.checkArgument(value < 0xfff, "Invalid full block");
-        byte extra = (byte) ((value & 0xff000) >> 12);
-        byte block = (byte) ((value & 0xff0) >> 4);
+        Preconditions.checkArgument(value < (0x1FF << Block.DATA_BITS | Block.DATA_MASK), "Invalid full block");
+        byte extra = (byte) ((value >> (Block.DATA_BITS + 8)) & 0xFF);
+        byte block = (byte) ((value >> Block.DATA_BITS) & 0xFF);
+        byte dataExtra = (byte) (value & (Block.DATA_BITS >> 4) & 0xF);
         byte data = (byte) (value & 0xf);
 
         blockIds[index] = block;
         blockIdsExtra[index] = extra;
         blockData.set(index, data);
+        blockDataExtra.set(index, dataExtra);
     }
 
     public byte[] getBlockIds() {
@@ -108,8 +125,28 @@ public class BlockStorage {
     public byte[] getBlockData() {
         return blockData.getData();
     }
+    
+    public byte[] getBlockDataExtra() {
+        return blockDataExtra.getData();
+    }
+    
+    public int[] getBlockIdsExtended() {
+        int[] ids = new int[SECTION_SIZE];
+        for (int i = 0; i < SECTION_SIZE; i++) {
+            ids[i] = blockIds[i] & 0xFF | (blockIdsExtra[i] & 0xFF) << 8;
+        }
+        return ids;
+    }
+    
+    public int[] getBlockDataExtended() {
+        int[] data = new int[SECTION_SIZE];
+        for (int i = 0; i < SECTION_SIZE; i++) {
+            data[i] = blockData.get(i) & 0xFF | (blockDataExtra.get(i) & 0xFF) << 8;
+        }
+        return data;
+    }
 
     public BlockStorage copy() {
-        return new BlockStorage(blockIds.clone(), blockIdsExtra.clone(), blockData.copy());
+        return new BlockStorage(blockIds.clone(), blockIdsExtra.clone(), blockData.copy(), blockDataExtra.copy());
     }
 }

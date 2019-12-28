@@ -1,5 +1,6 @@
 package cn.nukkit.level.generator.populator.impl;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.populator.helper.EnsureBelow;
 import cn.nukkit.level.generator.populator.helper.EnsureCover;
@@ -18,6 +19,6 @@ public class PopulatorDeadBush extends PopulatorSurfaceBlock {
 
     @Override
     protected int getBlockId(int x, int z, NukkitRandom random, FullChunk chunk) {
-        return DEAD_BUSH << 4;
+        return DEAD_BUSH << Block.DATA_BITS;
     }
 }

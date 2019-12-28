@@ -39,11 +39,11 @@ public interface FullChunk extends Cloneable {
     Block getAndSetBlock(int x, int y, int z, int layer, Block block);
 
     default boolean setFullBlockId(int x, int y, int z, int fullId) {
-        return setFullBlockId(x, y, z, 0, fullId >> 4);
+        return setFullBlockId(x, y, z, 0, fullId >> Block.DATA_BITS);
     }
 
     default boolean setFullBlockId(int x, int y, int z, int layer, int fullId) {
-        return setBlockAtLayer(x, y, z, layer, fullId >> 4, fullId & 0xF);
+        return setBlockAtLayer(x, y, z, layer, fullId >> Block.DATA_BITS, fullId & Block.DATA_MASK);
     }
 
     boolean setBlock(int x, int y, int z, int blockId);

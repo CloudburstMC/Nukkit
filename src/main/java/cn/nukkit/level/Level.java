@@ -1099,7 +1099,7 @@ public class Level implements ChunkManager, Metadatable {
                                     int z = lcg >>> 16 & 0x0f;
 
                                     int fullId = section.getFullBlock(x, y, z);
-                                    int blockId = fullId >> 4;
+                                    int blockId = fullId >> Block.DATA_BITS;
                                     if (randomTickBlocks[blockId]) {
                                         Block block = Block.get(fullId, this, chunkX * 16 + x, (Y << 4) + y, chunkZ * 16 + z);
                                         block.onUpdate(BLOCK_UPDATE_RANDOM);
@@ -1117,7 +1117,7 @@ public class Level implements ChunkManager, Metadatable {
                                 int z = lcg >>> 16 & 0x0f;
 
                                 int fullId = chunk.getFullBlock(x, y + (Y << 4), z);
-                                int blockId = fullId >> 4;
+                                int blockId = fullId >> Block.DATA_BITS;
                                 blockTest |= fullId;
                                 if (Level.randomTickBlocks[blockId]) {
                                     Block block = Block.get(fullId, this, x, y + (Y << 4), z);
@@ -2358,7 +2358,7 @@ public class Level implements ChunkManager, Metadatable {
 
     @Override
     public synchronized void setBlockIdAt(int x, int y, int z, int layer, int id) {
-        this.getChunk(x >> 4, z >> 4, true).setBlockId(x & 0x0f, y & 0xff, z & 0x0f, layer, id & 0xff);
+        this.getChunk(x >> 4, z >> 4, true).setBlockId(x & 0x0f, y & 0xff, z & 0x0f, layer, id & 0xfff);
         addBlockChange(x, y, z);
         temporalVector.setComponents(x, y, z);
         for (ChunkLoader loader : this.getChunkLoaders(x >> 4, z >> 4)) {
@@ -2936,7 +2936,7 @@ public class Level implements ChunkManager, Metadatable {
                 boolean wasAir = chunk.getBlockId(x, y - 1, z) == 0;
                 for (; y > 0; --y) {
                     int b = chunk.getFullBlock(x, y, z);
-                    Block block = Block.get(b >> 4, b & 0x0f);
+                    Block block = Block.get(b >> Block.DATA_BITS, b & Block.DATA_MASK);
                     if (this.isFullBlock(block)) {
                         if (wasAir) {
                             y++;
@@ -2949,10 +2949,10 @@ public class Level implements ChunkManager, Metadatable {
 
                 for (; y >= 0 && y < 255; y++) {
                     int b = chunk.getFullBlock(x, y + 1, z);
-                    Block block = Block.get(b >> 4, b & 0x0f);
+                    Block block = Block.get(b >> Block.DATA_BITS, b & Block.DATA_MASK);
                     if (!this.isFullBlock(block)) {
                         b = chunk.getFullBlock(x, y, z);
-                        block = Block.get(b >> 4, b & 0x0f);
+                        block = Block.get(b >> Block.DATA_BITS, b & Block.DATA_MASK);
                         if (!this.isFullBlock(block)) {
                             return new Position(spawn.x, y == (int) spawn.y ? spawn.y : y, spawn.z, this);
                         }

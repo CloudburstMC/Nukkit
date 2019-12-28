@@ -31,7 +31,7 @@ public class PopulatorDoublePlant extends PopulatorSurfaceBlock {
 
     @Override
     protected int getBlockId(int x, int z, NukkitRandom random, FullChunk chunk) {
-        return (DOUBLE_PLANT << 4) | type;
+        return (DOUBLE_PLANT << Block.DATA_BITS) | type;
     }
 
     @Override

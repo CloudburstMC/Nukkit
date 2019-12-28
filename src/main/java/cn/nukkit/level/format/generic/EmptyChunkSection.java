@@ -125,7 +125,12 @@ public class EmptyChunkSection implements ChunkSection {
     public byte[] getDataArray(int layer) {
         return EMPTY_DATA_ARRAY;
     }
-
+    
+    @Override
+    public byte[] getDataExtraArray(int layer) {
+        return EMPTY_DATA_ARRAY;
+    }
+    
     @Override
     public byte[] getSkyLightArray() {
         return EMPTY_SKY_LIGHT_ARR;

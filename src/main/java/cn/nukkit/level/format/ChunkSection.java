@@ -63,6 +63,12 @@ public interface ChunkSection {
     byte[] getDataArray();
 
     byte[] getDataArray(int layer);
+    
+    default byte[] getDataExtraArray() {
+        return getDataExtraArray(0);
+    }
+    
+    byte[] getDataExtraArray(int layer);
 
     byte[] getSkyLightArray();
 

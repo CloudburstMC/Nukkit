@@ -103,7 +103,7 @@ public class BlockWaterLily extends BlockFlowable {
 
     @Override
     public int getFullId() {
-        return this.getId() << 4;
+        return this.getId() << DATA_BITS;
     }
 
     @Override

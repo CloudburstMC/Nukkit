@@ -1,6 +1,7 @@
 package cn.nukkit.level;
 
 import cn.nukkit.Server;
+import cn.nukkit.block.Block;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -102,6 +103,6 @@ public class GlobalBlockPalette {
     }
 
     public static int getOrCreateRuntimeId(int legacyId) throws NoSuchElementException {
-        return getOrCreateRuntimeId(legacyId >> 4, legacyId & 0xf);
+        return getOrCreateRuntimeId(legacyId >> Block.DATA_BITS, legacyId & Block.DATA_MASK);
     }
 }

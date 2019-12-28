@@ -1,6 +1,7 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Server;
+import cn.nukkit.block.Block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.network.protocol.BatchPacket;
@@ -282,7 +283,7 @@ public class CraftingManager {
     }
 
     private static int getItemHash(int id, int meta) {
-        return (id << 4) | (meta & 0xf);
+        return (id << Block.DATA_BITS) | (meta & Block.DATA_MASK);
     }
 
     public void registerShapedRecipe(ShapedRecipe recipe) {

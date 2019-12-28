@@ -80,6 +80,11 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                 blocksExtra = new byte[blocks.length];
             }
             NibbleArray data = new NibbleArray(storageTag.getByteArray("Data"));
+            byte[] dataExtraBytes = storageTag.getByteArray("DataExtra");
+            if (dataExtraBytes.length == 0) {
+                dataExtraBytes = new byte[dataExtraBytes.length];
+            }
+            NibbleArray dataExtra = new NibbleArray(dataExtraBytes);
 
             // Convert YZX to XZY
             for (int x = 0; x < 16; x++) {
@@ -87,7 +92,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                     for (int y = 0; y < 16; y++) {
                         int index = getAnvilIndex(x, y, z);
                         storage.setBlockId(x, y, z, blocks[index] & 0xFF | ((blocksExtra[index] & 0xFF) << 8));
-                        storage.setBlockData(x, y, z, data.get(index));
+                        storage.setBlockData(x, y, z, data.get(index) & 0xF | ((dataExtra.get(index) & 0xF) << 4));
                     }
                 }
             }
@@ -224,7 +229,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     @Override
     public boolean setBlock(int x, int y, int z, int blockId, int meta) {
-        int newFullId = (blockId << 4) + meta;
+        int newFullId = (blockId << Block.DATA_BITS) + meta;
         synchronized (storage) {
             int previousFullId = storage[0].getAndSetFullBlock(x, y, z, newFullId);
             return (newFullId != previousFullId);
@@ -233,7 +238,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     @Override
     public boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId, int meta) {
-        int newFullId = (blockId << 4) + meta;
+        int newFullId = (blockId << Block.DATA_BITS) + meta;
         synchronized (storage) {
             int previousFullId = storage[layer].getAndSetFullBlock(x, y, z, newFullId);
             return (newFullId != previousFullId);
@@ -361,7 +366,23 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < 16; y++) {
                         int index = getAnvilIndex(x, y, z);
-                        anvil.set(index, (byte) storage[layer].getBlockData(x, y, z));
+                        anvil.set(index, (byte) (storage[layer].getBlockData(x, y, z) & 0xF));
+                    }
+                }
+            }
+            return anvil.getData();
+        }
+    }
+    
+    @Override
+    public byte[] getDataExtraArray(int layer) {
+        synchronized (storage) {
+            NibbleArray anvil = new NibbleArray(4096);
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    for (int y = 0; y < 16; y++) {
+                        int index = getAnvilIndex(x, y, z);
+                        anvil.set(index, (byte) ((storage[layer].getBlockData(x, y, z) >> 4) & 0xF));
                     }
                 }
             }
@@ -441,9 +462,8 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
             stream.putByte((byte) STORAGE_VERSION);
             stream.putByte((byte) storage.length);
             for (BlockStorage blockStorage : storage) {
-                byte[] ids = blockStorage.getBlockIds();
-                byte[] blockIdsExtra = blockStorage.getBlockIdsExtra();
-                NibbleArray data = new NibbleArray(blockStorage.getBlockData());
+                int[] ids = blockStorage.getBlockIdsExtended();
+                int[] data = blockStorage.getBlockDataExtended();
                 int[] blockStates = new int[ids.length];
                 Int2IntOpenHashMap runtime2palette = new Int2IntOpenHashMap();
                 ArrayList<Integer> palette2runtime = new ArrayList<>();
@@ -451,7 +471,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                 //TODO Use compressed formats based on the value of this variable
                 AtomicInteger maxRuntimeId = new AtomicInteger(0);
                 for (int i = 0; i < blockStates.length; i++) {
-                    int runtimeId = GlobalBlockPalette.getOrCreateRuntimeId(ids[i] & 0xFF | ((blockIdsExtra[i] & 0xFF) << 8), data.get(i) & 0xF);
+                    int runtimeId = GlobalBlockPalette.getOrCreateRuntimeId(ids[i], data[i]);
                     int paletteId = runtime2palette.computeIfAbsent(runtimeId, rid -> {
                         int pid = nextPaletteId.getAndIncrement();
                         palette2runtime.add(rid);
@@ -469,8 +489,8 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                     stream.putLShort(blockState);
                 }
                 stream.putVarInt(palette2runtime.size());
-                for (int i = 0; i < palette2runtime.size(); i++) {
-                    stream.putVarInt(palette2runtime.get(i));
+                for (Integer runtimeId : palette2runtime) {
+                    stream.putVarInt(runtimeId);
                 }
             }
         }
@@ -496,6 +516,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                 storageTag.putByteArray("Blocks", getIdArray(layer));
                 storageTag.putByteArray("BlocksExtra", getIdExtraArray(layer));
                 storageTag.putByteArray("Data", getDataArray(layer));
+                storageTag.putByteArray("DataExtra", getDataExtraArray(layer));
                 storageList.add(storageTag);
             }
         }

@@ -30,6 +30,9 @@ import java.util.Optional;
  */
 public abstract class Block extends Position implements Metadatable, Cloneable, AxisAlignedBB, BlockID {
     public static final int MAX_BLOCK_ID = 512;
+    public static final int DATA_BITS = 6;
+    public static final int DATA_SIZE = 1 << DATA_BITS;
+    public static final int DATA_MASK = DATA_SIZE - 1;
 
     public static Class[] list = null;
     public static Block[] fullList = null;
@@ -52,8 +55,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public static void init() {
         if (list == null) {
             list = new Class[MAX_BLOCK_ID];
-            fullList = new Block[MAX_BLOCK_ID * 16];
-            fullLight = new int[MAX_BLOCK_ID * 16];
+            fullList = new Block[MAX_BLOCK_ID * (1 << DATA_BITS)];
+            fullLight = new int[MAX_BLOCK_ID * (1 << DATA_BITS)];
             light = new int[MAX_BLOCK_ID];
             lightFilter = new int[MAX_BLOCK_ID];
             solid = new boolean[MAX_BLOCK_ID];
@@ -376,24 +379,24 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                         try {
                             Constructor constructor = c.getDeclaredConstructor(int.class);
                             constructor.setAccessible(true);
-                            for (int data = 0; data < 16; ++data) {
+                            for (int data = 0; data < (1 << DATA_BITS); ++data) {
                                 Block b = (Block) constructor.newInstance(data);
-                                int fullId = (id << 4) | data;
+                                int fullId = (id << DATA_BITS) | data;
                                 fullList[fullId] = b;
                                 fullLight[fullId] = b.getLightLevel();
                             }
                             hasMeta[id] = true;
                         } catch (NoSuchMethodException ignore) {
-                            for (int data = 0; data < 16; ++data) {
-                                int fullId = (id << 4) | data;
+                            for (int data = 0; data < DATA_SIZE; ++data) {
+                                int fullId = (id << DATA_BITS) | data;
                                 fullList[fullId] = block;
                                 fullLight[fullId] = block.getLightLevel();
                             }
                         }
                     } catch (Exception e) {
                         Server.getInstance().getLogger().error("Error while registering " + c.getName(), e);
-                        for (int data = 0; data < 16; ++data) {
-                            fullList[(id << 4) | data] = new BlockUnknown(id, data);
+                        for (int data = 0; data < DATA_SIZE; ++data) {
+                            fullList[(id << DATA_BITS) | data] = new BlockUnknown(id, data);
                         }
                         return;
                     }
@@ -420,8 +423,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                     }
                 } else {
                     lightFilter[id] = 1;
-                    for (int data = 0; data < 16; ++data) {
-                        fullList[(id << 4) | data] = new BlockUnknown(id, data);
+                    for (int data = 0; data < DATA_SIZE; ++data) {
+                        fullList[(id << DATA_BITS) | data] = new BlockUnknown(id, data);
                     }
                 }
             }
@@ -432,7 +435,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         if (id < 0) {
             id = 255 - id;
         }
-        return fullList[id << 4].clone();
+        return fullList[id << DATA_BITS].clone();
     }
 
     public static Block get(int id, Integer meta) {
@@ -440,9 +443,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             id = 255 - id;
         }
         if (meta != null) {
-            return fullList[(id << 4) + meta].clone();
+            return fullList[(id << DATA_BITS) + meta].clone();
         } else {
-            return fullList[id << 4].clone();
+            return fullList[id << DATA_BITS].clone();
         }
     }
 
@@ -456,7 +459,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             id = 255 - id;
         }
 
-        Block block = fullList[(id << 4) | (meta == null ? 0 : meta)].clone();
+        Block block = fullList[(id << DATA_BITS) | (meta == null ? 0 : meta)].clone();
         if (pos != null) {
             block.x = pos.x;
             block.y = pos.y;
@@ -471,7 +474,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         if (id < 0) {
             id = 255 - id;
         }
-        return fullList[(id << 4) + data].clone();
+        return fullList[(id << DATA_BITS) + data].clone();
     }
 
     public static Block get(int fullId, Level level, int x, int y, int z) {
@@ -627,7 +630,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
      * @return full id
      */
     public int getFullId() {
-        return (getId() << 4);
+        return (getId() << DATA_BITS);
     }
 
     public void addVelocityToEntity(Entity entity, Vector3 vector) {

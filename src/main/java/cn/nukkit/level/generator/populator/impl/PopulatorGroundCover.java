@@ -1,5 +1,6 @@
 package cn.nukkit.level.generator.populator.impl;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.biome.EnumBiome;
@@ -15,7 +16,7 @@ import cn.nukkit.math.NukkitRandom;
  * Nukkit Project
  */
 public class PopulatorGroundCover extends Populator {
-    public static final int STONE = BlockID.STONE << 4;
+    public static final int STONE = BlockID.STONE << Block.DATA_BITS;
 
     @Override
     public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {
@@ -29,7 +30,7 @@ public class PopulatorGroundCover extends Populator {
                     //just in case!
                     synchronized (biome.synchronizeCover) {
                         biome.preCover(realX | x, realZ | z);
-                        int coverBlock = biome.getCoverBlock() << 4;
+                        int coverBlock = biome.getCoverBlock() << Block.DATA_BITS;
 
                         boolean hasCovered = false;
                         int realY;
@@ -44,7 +45,7 @@ public class PopulatorGroundCover extends Populator {
                                         for (int i = 0; i < surfaceDepth; i++) {
                                             realY = y - i;
                                             if (chunk.getFullBlock(x, realY, z) == STONE) {
-                                                chunk.setFullBlockId(x, realY, z, (biome.getSurfaceBlock(realY) << 4) | biome.getSurfaceMeta(realY));
+                                                chunk.setFullBlockId(x, realY, z, (biome.getSurfaceBlock(realY) << Block.DATA_BITS) | biome.getSurfaceMeta(realY));
                                             } else break COVER;
                                         }
                                         y -= surfaceDepth;
@@ -53,7 +54,7 @@ public class PopulatorGroundCover extends Populator {
                                     for (int i = 0; i < groundDepth; i++) {
                                         realY = y - i;
                                         if (chunk.getFullBlock(x, realY, z) == STONE) {
-                                            chunk.setFullBlockId(x, realY, z, (biome.getGroundBlock(realY) << 4) | biome.getGroundMeta(realY));
+                                            chunk.setFullBlockId(x, realY, z, (biome.getGroundBlock(realY) << Block.DATA_BITS) | biome.getGroundMeta(realY));
                                         } else break COVER;
                                     }
                                     //don't take all of groundDepth away because we do y-- in the loop
