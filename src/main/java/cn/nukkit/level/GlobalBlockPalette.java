@@ -4,11 +4,10 @@ import cn.nukkit.Server;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
-import com.google.common.io.ByteStreams;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 
-import java.io.ByteArrayInputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
@@ -28,8 +27,15 @@ public class GlobalBlockPalette {
     
         Map<CompoundTag, int[]> metaOverrides = new LinkedHashMap<>();
         try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_block_states_overrides.dat")) {
+            if (stream == null) {
+                throw new AssertionError("Unable to locate block state nbt");
+            }
     
-            ListTag<CompoundTag> states = NBTIO.read(stream).getList("Overrides", CompoundTag.class);
+            ListTag<CompoundTag> states;
+            try (BufferedInputStream buffered = new BufferedInputStream(stream)) {
+                states = NBTIO.read(buffered).getList("Overrides", CompoundTag.class);
+            }
+            
             for (CompoundTag override : states.getAll()) {
                 if (override.contains("block") && override.contains("meta")) {
                     metaOverrides.put(override.getCompound("block").remove("version"), override.getIntArray("meta"));
@@ -46,10 +52,11 @@ public class GlobalBlockPalette {
                 throw new AssertionError("Unable to locate block state nbt");
             }
             
-            //noinspection UnstableApiUsage
-            byte[] blockPalette = ByteStreams.toByteArray(stream);
-            //noinspection unchecked
-            tag = (ListTag<CompoundTag>) NBTIO.readNetwork(new ByteArrayInputStream(blockPalette));
+            try(BufferedInputStream buffered = new BufferedInputStream(stream)) {
+                //noinspection unchecked
+                tag = (ListTag<CompoundTag>) NBTIO.readNetwork(buffered);
+            }
+            
         } catch (IOException e) {
             throw new AssertionError(e);
         }
