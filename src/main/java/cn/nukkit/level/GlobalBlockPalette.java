@@ -11,6 +11,8 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -23,13 +25,27 @@ public class GlobalBlockPalette {
     static {
         legacyToRuntimeId.defaultReturnValue(-1);
         runtimeIdToLegacy.defaultReturnValue(-1);
-
-        InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_block_states.dat");
-        if (stream == null) {
-            throw new AssertionError("Unable to locate block state nbt");
+    
+        Map<CompoundTag, int[]> metaOverrides = new LinkedHashMap<>();
+        try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_block_states_overrides.dat")) {
+    
+            ListTag<CompoundTag> states = NBTIO.read(stream).getList("Overrides", CompoundTag.class);
+            for (CompoundTag override : states.getAll()) {
+                if (override.contains("block") && override.contains("meta")) {
+                    metaOverrides.put(override.getCompound("block").remove("version"), override.getIntArray("meta"));
+                }
+            }
+    
+        } catch (IOException e) {
+            throw new AssertionError(e);
         }
+    
         ListTag<CompoundTag> tag;
-        try {
+        try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_block_states.dat")) {
+            if (stream == null) {
+                throw new AssertionError("Unable to locate block state nbt");
+            }
+            
             //noinspection UnstableApiUsage
             BLOCK_PALETTE = ByteStreams.toByteArray(stream);
             //noinspection unchecked
@@ -40,10 +56,16 @@ public class GlobalBlockPalette {
 
         for (CompoundTag state : tag.getAll()) {
             int runtimeId = runtimeIdAllocator.getAndIncrement();
-            if (!state.contains("meta")) continue;
+            int[] meta = metaOverrides.get(state.getCompound("block").copy().remove("version"));
+            if (meta == null) {
+                if (!state.contains("meta")) {
+                    continue;
+                } else {
+                    meta = state.getIntArray("meta");
+                }
+            }
 
             int id = state.getShort("id");
-            int[] meta = state.getIntArray("meta");
 
             // Resolve to first legacy id
             runtimeIdToLegacy.put(runtimeId, id << 6 | meta[0]);
