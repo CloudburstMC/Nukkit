@@ -97,14 +97,13 @@ public class BlockCauldronLava extends BlockCauldron {
                     }
     
                     ItemBucket bucket = (ItemBucket) item.clone();
+                    bucket.setCount(1);
                     bucket.setDamage(10);//lava bucket
     
                     PlayerBucketFillEvent ev = new PlayerBucketFillEvent(player, this, null, this, item, bucket);
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
-                        if (player.isSurvival() || player.isAdventure()) {
-                            player.getInventory().setItemInHand(ev.getItem());
-                        }
+                        replaceBucket(item, player, ev.getItem());
                         this.setFillLevel(0);//empty
                         this.level.setBlock(this, new BlockCauldron(0), true);
                         cauldron.clearCustomColor();
@@ -116,14 +115,13 @@ public class BlockCauldronLava extends BlockCauldron {
                     }
     
                     ItemBucket bucket = (ItemBucket) item.clone();
+                    bucket.setCount(1);
                     bucket.setDamage(0);//empty bucket
     
                     PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, this, null, this, item, bucket);
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
-                        if (player.isSurvival() || player.isAdventure()) {
-                            player.getInventory().setItemInHand(ev.getItem());
-                        }
+                        replaceBucket(item, player, ev.getItem());
     
                         if (cauldron.hasPotion()) {//if has potion
                             clearWithFizz(cauldron);
