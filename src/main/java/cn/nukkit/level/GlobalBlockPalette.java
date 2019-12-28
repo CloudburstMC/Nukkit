@@ -47,9 +47,9 @@ public class GlobalBlockPalette {
             }
             
             //noinspection UnstableApiUsage
-            BLOCK_PALETTE = ByteStreams.toByteArray(stream);
+            byte[] blockPalette = ByteStreams.toByteArray(stream);
             //noinspection unchecked
-            tag = (ListTag<CompoundTag>) NBTIO.readNetwork(new ByteArrayInputStream(BLOCK_PALETTE));
+            tag = (ListTag<CompoundTag>) NBTIO.readNetwork(new ByteArrayInputStream(blockPalette));
         } catch (IOException e) {
             throw new AssertionError(e);
         }
@@ -74,6 +74,12 @@ public class GlobalBlockPalette {
                 legacyToRuntimeId.put(legacyId, runtimeId);
             }
             state.remove("meta"); // No point in sending this since the client doesn't use it.
+        }
+    
+        try {
+            BLOCK_PALETTE = NBTIO.writeNetwork(tag);
+        } catch (IOException e) {
+            throw new ExceptionInInitializerError(e);
         }
     }
 
