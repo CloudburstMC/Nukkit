@@ -53,7 +53,6 @@ public class BlockWoodBark extends BlockWood {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         //TODO A way to set pillar_axis to z and y, it's always rendering to x
-        //TODO Fix runtime mapping to meta 12 (stripped acacia wood bark)
         this.getLevel().setBlock(block, this, true, true);
         
         return true;
