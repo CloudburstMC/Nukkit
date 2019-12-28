@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.MathHelper;
 
 public class BlockWoodBark extends BlockWood {
     public BlockWoodBark() {
@@ -12,12 +11,12 @@ public class BlockWoodBark extends BlockWood {
     }
     
     public BlockWoodBark(int meta) {
-        super(MathHelper.clamp(meta, 0, 5));
+        super(meta);
     }
     
     @Override
     public void setDamage(int meta) {
-        super.setDamage(MathHelper.clamp(meta, 0, 5));
+        super.setDamage(meta);
     }
     
     @Override
@@ -34,20 +33,34 @@ public class BlockWoodBark extends BlockWood {
                 "Jungle Wood",
                 "Acacia Wood",
                 "Dark Oak Wood",
+                // illegal
+                "Oak Wood",
+                "Oak Wood"
         };
-        return names[getDamage() % names.length];
+        return names[getDamage() & 0x7];
+    }
+    
+    @Override
+    protected int getStrippedId() {
+        return getId();
+    }
+    
+    @Override
+    protected int getStrippedDamage() {
+        return getDamage() | 0x8;
     }
     
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.setDamage(item.getDamage() % 6);
+        //TODO A way to set pillar_axis to z and y, it's always rendering to x
+        //TODO Fix runtime mapping to meta 12 (stripped acacia wood bark)
         this.getLevel().setBlock(block, this, true, true);
-    
+        
         return true;
     }
     
     @Override
     public Item toItem() {
-        return new ItemBlock(new BlockWoodBark(getDamage()));
+        return new ItemBlock(new BlockWoodBark(), getDamage() & 0xF);
     }
 }
