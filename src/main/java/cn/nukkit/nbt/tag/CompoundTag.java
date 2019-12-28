@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 public class CompoundTag extends Tag implements Cloneable {
@@ -257,7 +258,12 @@ public class CompoundTag extends Tag implements Cloneable {
         }
         return false;
     }
-
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), tags);
+    }
+    
     /**
      * Check existence of NBT tag
      *
