@@ -129,6 +129,8 @@ public class Level implements ChunkManager, Metadatable {
         randomTickBlocks[Block.FIRE] = true;
         randomTickBlocks[Block.GLOWING_REDSTONE_ORE] = true;
         randomTickBlocks[Block.COCOA_BLOCK] = true;
+        randomTickBlocks[Block.CORAL_FAN] = true;
+        randomTickBlocks[Block.CORAL_FAN_DEAD] = true;
     }
 
     private final Long2ObjectOpenHashMap<BlockEntity> blockEntities = new Long2ObjectOpenHashMap<>();

@@ -12,8 +12,9 @@ import java.util.concurrent.ThreadLocalRandom;
 public class BlockCoral extends BlockFlowable {
     public static final int TYPE_TUBE = 0;
     public static final int TYPE_BRAIN = 1;
-    public static final int TYPE_FIRE = 2;
-    public static final int TYPE_HORN = 3;
+    public static final int TYPE_BUBBLE = 2;
+    public static final int TYPE_FIRE = 3;
+    public static final int TYPE_HORN = 4;
     
     public BlockCoral() {
         this(0);
@@ -54,7 +55,7 @@ public class BlockCoral extends BlockFlowable {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             Block down = down();
-            if (!down.isSolid() || down.getId() == Block.MAGMA) {
+            if (!down.isSolid()) {
                 this.getLevel().useBreakOn(this);
             } else if (!isDead()) {
                 this.getLevel().scheduleUpdate(this, 60 + ThreadLocalRandom.current().nextInt(40));
@@ -79,9 +80,6 @@ public class BlockCoral extends BlockFlowable {
         }
         
         if (down.isSolid()) {
-            if (layer1.getId() != Block.AIR) {
-                this.getLevel().setBlock(this, 1, block, true, false);
-            }
             this.getLevel().setBlock(this, 0, this, true, true);
             return true;
         }

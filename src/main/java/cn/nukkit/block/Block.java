@@ -323,6 +323,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[SEAGRASS] = BlockSeagrass.class; //385
             list[CORAL] = BlockCoral.class; //386
             list[CORAL_BLOCK] = BlockCoralBlock.class; //387
+            list[CORAL_FAN] = BlockCoralFan.class; //388
+            list[CORAL_FAN_DEAD] = BlockCoralFanDead.class; //389
+            list[CORAL_FAN_HANG] = BlockCoralFanHang.class; //390
+            list[CORAL_FAN_HANG2] = BlockCoralFanHang2.class; //391
+            list[CORAL_FAN_HANG3] = BlockCoralFanHang3.class; //392
             
             list[DRIED_KELP_BLOCK] = BlockDriedKelpBlock.class; //394
             
