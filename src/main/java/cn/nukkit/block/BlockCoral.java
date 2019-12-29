@@ -75,9 +75,14 @@ public class BlockCoral extends BlockFlowable {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = down();
         Block layer1 = block.getLevelBlockAtLayer(1);
-        int damage;
-        if (layer1.getId() != Block.AIR && (!(layer1 instanceof BlockWater) || ((damage = layer1.getDamage()) != 0) && damage != 8)) {
+        boolean hasWater = layer1 instanceof BlockWater;
+        int waterDamage;
+        if (layer1.getId() != Block.AIR && (!hasWater || ((waterDamage = layer1.getDamage()) != 0) && waterDamage != 8)) {
             return false;
+        }
+        
+        if (hasWater && layer1.getDamage() == 8) {
+            this.getLevel().setBlock(this, 1, new BlockWater(), true, false);
         }
         
         if (down.isSolid()) {

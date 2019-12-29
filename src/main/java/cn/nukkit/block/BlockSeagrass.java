@@ -38,15 +38,13 @@ public class BlockSeagrass extends BlockFlowable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = down();
-        Block layer1Block;
-        boolean waterAtLayer1 = false;
-        int damage;
-        if (((block instanceof BlockWater && ((damage = block.getDamage()) == 0 || damage == 8))
-                || (waterAtLayer1 = (layer1Block = block.getLevelBlockAtLayer(1)) instanceof BlockWater
-                        && ((damage = layer1Block.getDamage()) == 0 || damage == 8)))
-                && down.isSolid() && down.getId() != Block.MAGMA) {
-            if (!waterAtLayer1) {
-                this.getLevel().setBlock(this, 1, block, true, false);
+        Block layer1Block = block.getLevelBlockAtLayer(1);
+        int waterDamage;
+        if (down.isSolid() && down.getId() != Block.MAGMA &&
+                (layer1Block instanceof BlockWater && ((waterDamage = (block.getDamage())) == 0 || waterDamage == 8))
+        ) {
+            if (waterDamage == 8) {
+                this.getLevel().setBlock(this, 1, new BlockWater(), true, false);
             }
             this.getLevel().setBlock(this, 0, this, true, true);
             return true;

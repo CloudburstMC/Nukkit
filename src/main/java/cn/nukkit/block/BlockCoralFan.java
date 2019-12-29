@@ -104,9 +104,12 @@ public class BlockCoralFan extends BlockFlowable implements Faceable {
         
         Block layer1 = block.getLevelBlockAtLayer(1);
         boolean hasWater = layer1 instanceof BlockWater;
-        int damage;
-        if (layer1.getId() != Block.AIR && (!hasWater || ((damage = layer1.getDamage()) != 0 && damage != 8))) {
+        if (layer1.getId() != Block.AIR && (!hasWater || layer1.getDamage() != 0 && layer1.getDamage() != 8)) {
             return false;
+        }
+        
+        if (hasWater && layer1.getDamage() == 8) {
+            this.getLevel().setBlock(this, 1, new BlockWater(), true, false);
         }
         
         if (face == BlockFace.UP) {
