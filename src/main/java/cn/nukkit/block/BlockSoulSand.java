@@ -54,6 +54,20 @@ public class BlockSoulSand extends BlockSolid {
     }
 
     @Override
+    public int onUpdate(int type) {
+        for(int y = 1; y < 255 - this.getFloorY(); y++) {
+            if(this.add(0, y).getLevelBlockAtLayer(1) instanceof BlockWater && this.add(0, y).getLevelBlock().canBeReplaced() || this.add(0, y).getLevelBlock() instanceof BlockWater) {
+                this.getLevel().setBlock(this.add(0, y), get(BUBBLE_COLUMN, 1), true, false);
+                this.getLevel().setBlock(this.add(0, y), 1, get(WATER), true, false);
+            } else {
+                break;
+            }
+        }
+
+        return 0;
+    }
+
+    @Override
     public BlockColor getColor() {
         return BlockColor.SAND_BLOCK_COLOR;
     }
