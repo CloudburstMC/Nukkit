@@ -40,8 +40,10 @@ public class BlockSeagrass extends BlockFlowable {
         Block down = down();
         Block layer1Block;
         boolean waterAtLayer1 = false;
-        if (((block instanceof BlockWater && block.getDamage() == 0)
-                || (waterAtLayer1 = (layer1Block = block.getLevelBlockAtLayer(1)) instanceof BlockWater && layer1Block.getDamage() == 0))
+        int damage;
+        if (((block instanceof BlockWater && ((damage = block.getDamage()) == 0 || damage == 8))
+                || (waterAtLayer1 = (layer1Block = block.getLevelBlockAtLayer(1)) instanceof BlockWater
+                        && ((damage = layer1Block.getDamage()) == 0 || damage == 8)))
                 && down.isSolid() && down.getId() != Block.MAGMA) {
             if (!waterAtLayer1) {
                 this.getLevel().setBlock(this, 1, block, true, false);
@@ -56,13 +58,14 @@ public class BlockSeagrass extends BlockFlowable {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             Block blockLayer1 = getLevelBlockAtLayer(1);
-            if (!(blockLayer1 instanceof BlockWater) || blockLayer1.getDamage() != 0) {
+            int damage;
+            if (!(blockLayer1 instanceof BlockWater) || ((damage = blockLayer1.getDamage()) != 0 && damage != 8)) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
             
             Block down = down();
-            int damage = getDamage();
+            damage = getDamage();
             if (damage == 0 || damage == 2) {
                 if (!down.isSolid() || down.getId() == Block.MAGMA) {
                     this.getLevel().useBreakOn(this);
@@ -94,8 +97,8 @@ public class BlockSeagrass extends BlockFlowable {
     public boolean onActivate(Item item, Player player) {
         if (getDamage() == 0 && item.getId() == Item.DYE && item.getDamage() == DyeColor.WHITE.getDyeData()) {
             Block up = this.up();
-    
-            if (up instanceof BlockWater && up.getDamage() == 0) {
+            int damage;
+            if (up instanceof BlockWater && ((damage = up.getDamage()) == 0 || damage == 8)) {
                 if (player != null && (player.gamemode & 0x01) == 0) {
                     item.count--;
                 }
