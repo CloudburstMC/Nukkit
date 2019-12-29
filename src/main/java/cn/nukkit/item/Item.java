@@ -163,6 +163,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[SNOWBALL] = ItemSnowball.class; //332
             list[BOAT] = ItemBoat.class; //333
             list[LEATHER] = ItemLeather.class; //334
+            list[KELP] = ItemKelp.class; //335
 
             list[BRICK] = ItemBrick.class; //336
             list[CLAY] = ItemClay.class; //337

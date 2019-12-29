@@ -325,7 +325,7 @@ public interface BlockID {
     int CORAL_FAN_HANG = 390;
     int CORAL_FAN_HANG2 = 391;
     int CORAL_FAN_HANG3 = 392;
-    int KELP = 393;
+    int BLOCK_KELP = 393;
     int DRIED_KELP_BLOCK = 394;
     int ACACIA_BUTTON = 395;
     int BIRCH_BUTTON = 396;
