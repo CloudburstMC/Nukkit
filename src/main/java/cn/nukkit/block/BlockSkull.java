@@ -106,6 +106,14 @@ public class BlockSkull extends BlockTransparentMeta {
     }
 
     @Override
+    public Item toItem() {
+        BlockEntity blockEntity = getLevel().getBlockEntity(this);
+        int itemMeta = 0;
+        if (blockEntity != null) itemMeta = blockEntity.namedTag.getByte("SkullType");
+        return new ItemSkull(itemMeta);
+    }
+
+    @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }
