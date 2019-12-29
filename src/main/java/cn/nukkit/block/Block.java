@@ -329,9 +329,22 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[CORAL_FAN_HANG2] = BlockCoralFanHang2.class; //391
             list[CORAL_FAN_HANG3] = BlockCoralFanHang3.class; //392
             list[BLOCK_KELP] = BlockKelp.class; //393
-            
             list[DRIED_KELP_BLOCK] = BlockDriedKelpBlock.class; //394
-            
+            list[ACACIA_BUTTON] = BlockButtonAcacia.class; //395
+            list[BIRCH_BUTTON] = BlockButtonBirch.class; //396
+            list[DARK_OAK_BUTTON] = BlockButtonDarkOak.class; //397
+            list[JUNGLE_BUTTON] = BlockButtonJungle.class; //398
+            list[SPRUCE_BUTTON] = BlockButtonSpruce.class; //399
+            list[ACACIA_TRAPDOOR] = BlockTrapdoorAcacia.class; //400
+            list[BIRCH_TRAPDOOR] = BlockTrapdoorBirch.class; //401
+            list[DARK_OAK_TRAPDOOR] = BlockTrapdoorDarkOak.class; //402
+            list[JUNGLE_TRAPDOOR] = BlockTrapdoorJungle.class; //403
+            list[SPRUCE_TRAPDOOR] = BlockTrapdoorSpruce.class; //404
+            list[ACACIA_PRESSURE_PLATE] = BlockPressurePlateAcacia.class; //405
+            list[BIRCH_PRESSURE_PLATE] = BlockPressurePlateBirch.class; //406
+            list[DARK_OAK_PRESSURE_PLATE] = BlockPressurePlateDarkOak.class; //407
+            list[JUNGLE_PRESSURE_PLATE] = BlockPressurePlateJungle.class; //408
+            list[SPRUCE_PRESSURE_PLATE] = BlockPressurePlateSpruce.class; //409
             list[CARVED_PUMPKIN] = BlockCarvedPumpkin.class; //410
             
             list[BARRIER] = BlockBarrier.class; //416

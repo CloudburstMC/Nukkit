@@ -37,7 +37,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
 
     @Override
     public String getName() {
-        return "Wooden Trapdoor";
+        return "Oak Trapdoor";
     }
 
     @Override
