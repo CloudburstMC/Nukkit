@@ -79,10 +79,11 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
             if (blocksExtra.length == 0) {
                 blocksExtra = new byte[blocks.length];
             }
-            NibbleArray data = new NibbleArray(storageTag.getByteArray("Data"));
+            byte[] dataBytes = storageTag.getByteArray("Data");
+            NibbleArray data = new NibbleArray(dataBytes);
             byte[] dataExtraBytes = storageTag.getByteArray("DataExtra");
             if (dataExtraBytes.length == 0) {
-                dataExtraBytes = new byte[dataExtraBytes.length];
+                dataExtraBytes = new byte[dataBytes.length];
             }
             NibbleArray dataExtra = new NibbleArray(dataExtraBytes);
 
