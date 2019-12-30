@@ -50,7 +50,7 @@ public class BlockSeaPickle extends BlockFlowable {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             Block down = down();
-            if (!down.isSolid() || down.getId() == MAGMA) {
+            if (!down.isSolid() || down.getId() == MAGMA || down.getId() == SOUL_SAND || down.getId() == ICE) {
                 this.getLevel().useBreakOn(this);
                 return type;
             }
@@ -82,7 +82,7 @@ public class BlockSeaPickle extends BlockFlowable {
             return true;
         }
 
-        if (target.isSolid() && target.getId() != MAGMA) {
+        if (target.isSolid() && target.getId() != MAGMA && target.getId() != SOUL_SAND && target.getId() != ICE) {
             Block layer1 = block.getLevelBlockAtLayer(1);
             if (layer1 instanceof BlockWater) {
                 if (layer1.getDamage() != 0 && layer1.getDamage() != 8) {
@@ -162,7 +162,7 @@ public class BlockSeaPickle extends BlockFlowable {
         if (isDead()) {
             return 0;
         } else {
-            return (getDamage() + 1) * 3;
+            return (getDamage() + 2) * 3;
         }
     }
 

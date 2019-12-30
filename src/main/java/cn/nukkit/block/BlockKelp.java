@@ -36,7 +36,7 @@ public class BlockKelp extends BlockFlowable {
         Block down = down();
         Block layer1Block = block.getLevelBlockAtLayer(1);
         int waterDamage;
-        if ((down.getId() == BLOCK_KELP || down.isSolid()) && down.getId() != MAGMA && down.getId() != ICE &&
+        if ((down.getId() == BLOCK_KELP || down.isSolid()) && down.getId() != MAGMA && down.getId() != ICE && down.getId() != SOUL_SAND &&
                 (layer1Block instanceof BlockWater && ((waterDamage = (block.getDamage())) == 0 || waterDamage == 8))
         ) {
             if (waterDamage == 8) {
@@ -68,7 +68,7 @@ public class BlockKelp extends BlockFlowable {
             }
         
             Block down = down();
-            if ((!down.isSolid() && down.getId() != BLOCK_KELP) || down.getId() == MAGMA || down.getId() == ICE) {
+            if ((!down.isSolid() && down.getId() != BLOCK_KELP) || down.getId() == MAGMA || down.getId() == ICE || down.getId() == SOUL_SAND) {
                 this.getLevel().useBreakOn(this);
                 return type;
             }

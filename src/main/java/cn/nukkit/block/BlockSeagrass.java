@@ -40,7 +40,7 @@ public class BlockSeagrass extends BlockFlowable {
         Block down = down();
         Block layer1Block = block.getLevelBlockAtLayer(1);
         int waterDamage;
-        if (down.isSolid() && down.getId() != Block.MAGMA &&
+        if (down.isSolid() && down.getId() != MAGMA && down.getId() != SOUL_SAND &&
                 (layer1Block instanceof BlockWater && ((waterDamage = (block.getDamage())) == 0 || waterDamage == 8))
         ) {
             if (waterDamage == 8) {
@@ -65,7 +65,7 @@ public class BlockSeagrass extends BlockFlowable {
             Block down = down();
             damage = getDamage();
             if (damage == 0 || damage == 2) {
-                if (!down.isSolid() || down.getId() == Block.MAGMA) {
+                if (!down.isSolid() || down.getId() == MAGMA || down.getId() == SOUL_SAND) {
                     this.getLevel().useBreakOn(this);
                     return Level.BLOCK_UPDATE_NORMAL;
                 }

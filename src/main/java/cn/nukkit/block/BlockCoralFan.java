@@ -74,13 +74,20 @@ public class BlockCoralFan extends BlockFlowable implements Faceable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (!getSide(getRootsFace()).isSolid()) {
+            Block side = getSide(getRootsFace());
+            if (!side.isSolid() || side.getId() == MAGMA || side.getId() == SOUL_SAND) {
                 this.getLevel().useBreakOn(this);
             } else {
                 this.getLevel().scheduleUpdate(this, 60 + ThreadLocalRandom.current().nextInt(40));
             }
             return type;
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+            Block side = getSide(getRootsFace());
+            if (side.getId() == ICE) {
+                this.getLevel().useBreakOn(this);
+                return type;
+            }
+
             if (!isDead() && !(getLevelBlockAtLayer(1) instanceof BlockWater)) {
                 BlockFadeEvent event = new BlockFadeEvent(this, new BlockCoralFanDead(getDamage()));
                 if (!event.isCancelled()) {
@@ -115,19 +122,20 @@ public class BlockCoralFan extends BlockFlowable implements Faceable {
         if (hasWater && layer1.getDamage() == 8) {
             this.getLevel().setBlock(this, 1, new BlockWater(), true, false);
         }
+
+        if (!target.isSolid() || target.getId() == MAGMA || target.getId() == SOUL_SAND) {
+            return false;
+        }
         
         if (face == BlockFace.UP) {
-            if (target.isSolid()) {
-                double rotation = player.yaw % 360;
-                if (rotation < 0) {
-                    rotation += 360.0;
-                }
-                int axisBit = rotation >= 0 && rotation < 12 || (342 <= rotation && rotation < 360)? 0x0 : 0x8;
-                setDamage(getDamage() & 0x7 | axisBit);
-                this.getLevel().setBlock(this, 0, hasWater? new BlockCoralFan(getDamage()) : new BlockCoralFanDead(getDamage()), true, true);
-                return true;
+            double rotation = player.yaw % 360;
+            if (rotation < 0) {
+                rotation += 360.0;
             }
-        } else if (target.isSolid()) {
+            int axisBit = rotation >= 0 && rotation < 12 || (342 <= rotation && rotation < 360)? 0x0 : 0x8;
+            setDamage(getDamage() & 0x7 | axisBit);
+            this.getLevel().setBlock(this, 0, hasWater? new BlockCoralFan(getDamage()) : new BlockCoralFanDead(getDamage()), true, true);
+        } else {
             int type = getType();
             int typeBit = type % 2;
             int deadBit = isDead()? 0x1 : 0;
@@ -164,9 +172,9 @@ public class BlockCoralFan extends BlockFlowable implements Faceable {
                     break;
             }
             this.getLevel().setBlock(this, 0, Block.get(deadBlockId, deadData), true, true);
-            return true;
         }
-        return false;
+
+        return true;
     }
     
     @Override
