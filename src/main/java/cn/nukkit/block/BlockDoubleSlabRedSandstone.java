@@ -2,14 +2,17 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.STONE_SLAB2;
 
 /**
  * Created by CreeperFace on 26. 11. 2016.
  */
 public class BlockDoubleSlabRedSandstone extends BlockSolid {
 
-    public BlockDoubleSlabRedSandstone(int id, int meta) {
-        super(id, meta);
+    public BlockDoubleSlabRedSandstone(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -28,31 +31,15 @@ public class BlockDoubleSlabRedSandstone extends BlockSolid {
     }
 
     @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Red Sandstone",
-                "Purpur",
-                "",
-                "",
-                "",
-                "",
-                "",
-                ""
-        };
-
-        return "Double " + names[this.getDamage() & 0x07] + " Slab";
-    }
-
-    @Override
     public Item toItem() {
-        return Item.get(RED_SANDSTONE_SLAB, this.getDamage() & 0x07);
+        return Item.get(STONE_SLAB2, this.getDamage() & 0x07);
     }
 
     @Override
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
-                    Item.get(Item.RED_SANDSTONE_SLAB, this.getDamage() & 0x07, 2)
+                    Item.get(STONE_SLAB2, this.getDamage() & 0x07, 2)
             };
         } else {
             return new Item[0];

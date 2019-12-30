@@ -1,21 +1,15 @@
 package cn.nukkit.item;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class ItemChestplateChain extends ItemArmor {
 
-    public ItemChestplateChain() {
-        this(0, 1);
-    }
-
-    public ItemChestplateChain(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemChestplateChain(Integer meta, int count) {
-        super(CHAIN_CHESTPLATE, meta, count, "Chain Chestplate");
+    public ItemChestplateChain(Identifier id) {
+        super(id);
     }
 
     @Override

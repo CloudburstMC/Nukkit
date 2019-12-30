@@ -56,6 +56,7 @@ import cn.nukkit.network.SourceInterface;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
+import cn.nukkit.pack.Pack;
 import cn.nukkit.permission.PermissibleBase;
 import cn.nukkit.permission.Permission;
 import cn.nukkit.permission.PermissionAttachment;
@@ -63,7 +64,6 @@ import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.player.manager.PlayerChunkManager;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
-import cn.nukkit.resourcepacks.ResourcePack;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.*;
 import co.aikar.timings.Timing;
@@ -89,6 +89,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.LongConsumer;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * @author MagicDroidX &amp; Box
@@ -1057,7 +1059,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         boolean portal = false;
 
         for (Block block : this.getCollisionBlocks()) {
-            if (block.getId() == Block.NETHER_PORTAL) {
+            if (block.getId() == BlockIds.PORTAL) {
                 portal = true;
                 continue;
             }
@@ -1499,8 +1501,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             double expectedVelocity = (-this.getGravity()) / ((double) this.getDrag()) - ((-this.getGravity()) / ((double) this.getDrag())) * Math.exp(-((double) this.getDrag()) * ((double) (this.inAirTicks - this.startAirTicks)));
                             double diff = (this.speed.y - expectedVelocity) * (this.speed.y - expectedVelocity);
 
-                            int block = level.getBlock(this).getId();
-                            boolean ignore = block == Block.LADDER || block == Block.VINES || block == Block.COBWEB;
+                            Identifier block = level.getBlock(this).getId();
+                            boolean ignore = block == BlockIds.LADDER || block == BlockIds.VINE || block == BlockIds.WEB;
 
                             if (!this.hasEffect(Effect.JUMP) && diff > 0.6 && expectedVelocity < this.speed.y && !ignore) {
                                 if (this.inAirTicks < 100) {
@@ -1638,6 +1640,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.dataPacket(new BiomeDefinitionListPacket());
         this.dataPacket(new AvailableEntityIdentifiersPacket());
+        this.dataPacket(new UpdateBlockPropertiesPacket());
 
         this.loggedIn = true;
 
@@ -1840,10 +1843,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.forceMovement = this.teleportPosition = this.getPosition();
 
-        ResourcePacksInfoPacket infoPacket = new ResourcePacksInfoPacket();
-        infoPacket.resourcePackEntries = this.server.getResourcePackManager().getResourceStack();
-        infoPacket.mustAccept = this.server.getForceResources();
-        this.dataPacket(infoPacket);
+        this.dataPacket(this.server.getPackManager().getPacksInfos());
     }
 
     /**
@@ -2077,34 +2077,32 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     break;
                 case ProtocolInfo.RESOURCE_PACK_CLIENT_RESPONSE_PACKET:
                     ResourcePackClientResponsePacket responsePacket = (ResourcePackClientResponsePacket) packet;
-                    switch (responsePacket.responseStatus) {
-                        case ResourcePackClientResponsePacket.STATUS_REFUSED:
+                    switch (responsePacket.status) {
+                        case REFUSED:
                             this.close("", "disconnectionScreen.noReason");
                             break;
-                        case ResourcePackClientResponsePacket.STATUS_SEND_PACKS:
-                            for (ResourcePackClientResponsePacket.Entry entry : responsePacket.packEntries) {
-                                ResourcePack resourcePack = this.server.getResourcePackManager().getPackById(entry.uuid);
-                                if (resourcePack == null) {
+                        case SEND_PACKS:
+                            for (String entry : responsePacket.packEntries) {
+                                Pack pack = this.server.getPackManager().getPackByIdVersion(entry);
+                                if (pack == null) {
                                     this.close("", "disconnectionScreen.resourcePack");
                                     break;
                                 }
 
                                 ResourcePackDataInfoPacket dataInfoPacket = new ResourcePackDataInfoPacket();
-                                dataInfoPacket.packId = resourcePack.getPackId();
+                                dataInfoPacket.packId = pack.getId() + "_" + pack.getVersion(); // Why not a separate field?
                                 dataInfoPacket.maxChunkSize = 1048576; //megabyte
-                                dataInfoPacket.chunkCount = resourcePack.getPackSize() / dataInfoPacket.maxChunkSize;
-                                dataInfoPacket.compressedPackSize = resourcePack.getPackSize();
-                                dataInfoPacket.sha256 = resourcePack.getSha256();
+                                dataInfoPacket.chunkCount = (int) (pack.getSize() / dataInfoPacket.maxChunkSize);
+                                dataInfoPacket.compressedPackSize = pack.getSize();
+                                dataInfoPacket.sha256 = pack.getHash();
+                                dataInfoPacket.type = pack.getType();
                                 this.dataPacket(dataInfoPacket);
                             }
                             break;
-                        case ResourcePackClientResponsePacket.STATUS_HAVE_ALL_PACKS:
-                            ResourcePackStackPacket stackPacket = new ResourcePackStackPacket();
-                            stackPacket.mustAccept = this.server.getForceResources();
-                            stackPacket.resourcePackStack = this.server.getResourcePackManager().getResourceStack();
-                            this.dataPacket(stackPacket);
+                        case HAVE_ALL_PACKS:
+                            this.dataPacket(this.server.getPackManager().getPackStack());
                             break;
-                        case ResourcePackClientResponsePacket.STATUS_COMPLETED:
+                        case COMPLETED:
                             if (this.preLoginEventTask.isFinished()) {
                                 this.completeLoginSequence();
                             } else {
@@ -2115,16 +2113,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     break;
                 case ProtocolInfo.RESOURCE_PACK_CHUNK_REQUEST_PACKET:
                     ResourcePackChunkRequestPacket requestPacket = (ResourcePackChunkRequestPacket) packet;
-                    ResourcePack resourcePack = this.server.getResourcePackManager().getPackById(requestPacket.packId);
+                    Pack resourcePack = this.server.getPackManager().getPackByIdVersion(requestPacket.packId);
                     if (resourcePack == null) {
                         this.close("", "disconnectionScreen.resourcePack");
                         break;
                     }
 
                     ResourcePackChunkDataPacket dataPacket = new ResourcePackChunkDataPacket();
-                    dataPacket.packId = resourcePack.getPackId();
+                    dataPacket.packId = requestPacket.packId;
                     dataPacket.chunkIndex = requestPacket.chunkIndex;
-                    dataPacket.data = resourcePack.getPackChunk(1048576 * requestPacket.chunkIndex, 1048576);
+                    dataPacket.data = resourcePack.getChunk(1048576 * requestPacket.chunkIndex, 1048576);
                     dataPacket.progress = 1048576 * requestPacket.chunkIndex;
                     this.dataPacket(dataPacket);
                     break;
@@ -2257,23 +2255,22 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 break;
                             }
                             Block target = this.level.getBlock(pos);
-                            PlayerInteractEvent playerInteractEvent = new PlayerInteractEvent(this, this.inventory.getItemInHand(), target, face, target.getId() == 0 ? Action.LEFT_CLICK_AIR : Action.LEFT_CLICK_BLOCK);
+                            PlayerInteractEvent playerInteractEvent = new PlayerInteractEvent(this, this.inventory.getItemInHand(), target, face, target.getId() == AIR ? Action.LEFT_CLICK_AIR : Action.LEFT_CLICK_BLOCK);
                             this.getServer().getPluginManager().callEvent(playerInteractEvent);
                             if (playerInteractEvent.isCancelled()) {
                                 this.inventory.sendHeldItem(this);
                                 break;
                             }
-                            switch (target.getId()) {
-                                case Block.NOTEBLOCK:
-                                    ((BlockNoteblock) target).emitSound();
-                                    break actionswitch;
-                                case Block.DRAGON_EGG:
-                                    ((BlockDragonEgg) target).teleport();
-                                    break actionswitch;
+                            if (target.getId() == BlockIds.NOTEBLOCK) {
+                                ((BlockNoteblock) target).emitSound();
+                                break actionswitch;
+                            } else if (target.getId() == BlockIds.DRAGON_EGG) {
+                                ((BlockDragonEgg) target).teleport();
+                                break actionswitch;
                             }
                             Block block = target.getSide(face);
-                            if (block.getId() == Block.FIRE) {
-                                this.level.setBlock(block, Block.get(BlockID.AIR), true);
+                            if (block.getId() == BlockIds.FIRE) {
+                                this.level.setBlock(block, Block.get(AIR), true);
                                 this.level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_EXTINGUISH_FIRE);
                                 break;
                             }
@@ -2715,10 +2712,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         ItemFrameDropItemEvent itemFrameDropItemEvent = new ItemFrameDropItemEvent(this, block, itemFrame, itemDrop);
                         this.server.getPluginManager().callEvent(itemFrameDropItemEvent);
                         if (!itemFrameDropItemEvent.isCancelled()) {
-                            if (itemDrop.getId() != Item.AIR) {
+                            if (itemDrop.getId() != AIR) {
                                 vector3 = temporalVector.get().setComponents(itemFrame.x + 0.5, itemFrame.y, itemFrame.z + 0.5);
                                 this.level.dropItem(vector3, itemDrop);
-                                itemFrame.setItem(Item.get(BlockID.AIR, 0, 0));
+                                itemFrame.setItem(Item.get(AIR, 0, 0));
                                 itemFrame.setItemRotation(0);
                                 this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_REMOVE_ITEM);
                             }
@@ -2988,13 +2985,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     if (target.onInteract(this, item, useItemOnEntityData.clickPos) && this.isSurvival()) {
                                         if (item.isTool()) {
                                             if (item.useOn(target) && item.getDamage() >= item.getMaxDurability()) {
-                                                item = Item.get(BlockID.AIR, 0, 0);
+                                                item = Item.get(AIR, 0, 0);
                                             }
                                         } else {
-                                            if (item.count > 1) {
-                                                item.count--;
+                                            if (item.getCount() > 1) {
+                                                item.decrementCount();
                                             } else {
-                                                item = Item.get(BlockID.AIR, 0, 0);
+                                                item = Item.get(AIR, 0, 0);
                                             }
                                         }
 
@@ -3040,7 +3037,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                                     if (item.isTool() && this.isSurvival()) {
                                         if (item.useOn(target) && item.getDamage() >= item.getMaxDurability()) {
-                                            this.inventory.setItemInHand(Item.get(BlockID.AIR, 0, 0));
+                                            this.inventory.setItemInHand(Item.get(AIR, 0, 0));
                                         } else {
                                             this.inventory.setItemInHand(item);
                                         }
@@ -3538,7 +3535,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             //source.setCancelled();
             return false;
         } else if (source.getCause() == DamageCause.FALL) {
-            if (this.getLevel().getBlock(this.getPosition().floor().add(0.5, -1, 0.5)).getId() == Block.SLIME_BLOCK) {
+            if (this.getLevel().getBlock(this.getPosition().floor().add(0.5, -1, 0.5)).getId() == BlockIds.SLIME) {
                 if (!this.isSneaking()) {
                     //source.setCancelled();
                     this.resetFallDistance();
@@ -3736,7 +3733,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 case LAVA:
                     Block block = this.level.getBlock(new Vector3(this.x, this.y - 1, this.z));
-                    if (block.getId() == Block.MAGMA) {
+                    if (block.getId() == BlockIds.MAGMA) {
                         message = "death.attack.lava.magma";
                         break;
                     }
@@ -3757,7 +3754,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 case CONTACT:
                     if (cause instanceof EntityDamageByBlockEvent) {
-                        if (((EntityDamageByBlockEvent) cause).getDamager().getId() == Block.CACTUS) {
+                        if (((EntityDamageByBlockEvent) cause).getDamager().getId() == BlockIds.CACTUS) {
                             message = "death.attack.cactus";
                         }
                     }
@@ -4497,7 +4494,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         if (near) {
             if (entity instanceof EntityArrow && ((EntityArrow) entity).hadCollision) {
-                ItemArrow item = new ItemArrow();
+                Item item = Item.get(ItemIds.ARROW);
                 if (this.isSurvival() && !this.inventory.canAddItem(item)) {
                     return false;
                 }
@@ -4557,14 +4554,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             return false;
                         }
 
-                        switch (item.getId()) {
-                            case Item.WOOD:
-                            case Item.WOOD2:
-                                this.awardAchievement("mineWood");
-                                break;
-                            case Item.DIAMOND:
-                                this.awardAchievement("diamond");
-                                break;
+                        if (item.getId() == BlockIds.LOG) {
+                            this.awardAchievement("mineWood");
+                        } else if (item.getId() == ItemIds.DIAMOND) {
+                            this.awardAchievement("diamond");
                         }
 
                         TakeItemEntityPacket pk = new TakeItemEntityPacket();

@@ -1,7 +1,7 @@
 package cn.nukkit.level.biome.impl.mesa;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.block.BlockSand;
 import cn.nukkit.level.biome.type.CoveredBiome;
 import cn.nukkit.level.generator.noise.nukkit.f.SimplexF;
@@ -19,19 +19,19 @@ import java.util.Random;
  */
 public class MesaBiome extends CoveredBiome {
     static final Block[] colorLayer = new Block[64];
-    private static final Block RED_SANDSTONE = Block.get(BlockID.RED_SANDSTONE);
-    private static final Block RED_SAND = Block.get(BlockID.SAND, BlockSand.RED);
+    private static final Block RED_SANDSTONE = Block.get(BlockIds.RED_SANDSTONE);
+    private static final Block RED_SAND = Block.get(BlockIds.SAND, BlockSand.RED);
     private static final Block[] TERRACOTTA_COLORS = new Block[16];
     static final SimplexF redSandNoise = new SimplexF(new NukkitRandom(937478913), 2f, 1 / 4f, 1 / 4f);
-    static final SimplexF colorNoise   = new SimplexF(new NukkitRandom(193759875), 2f, 1 / 4f, 1 / 32f);
+    static final SimplexF colorNoise = new SimplexF(new NukkitRandom(193759875), 2f, 1 / 4f, 1 / 32f);
 
     static {
         for (int i = 0; i < 16; i++) {
-            TERRACOTTA_COLORS[i] = Block.get(BlockID.STAINED_TERRACOTTA, i);
+            TERRACOTTA_COLORS[i] = Block.get(BlockIds.STAINED_HARDENED_CLAY, i);
         }
         Random random = new Random(29864);
 
-        Arrays.fill(colorLayer, Block.get(BlockID.TERRACOTTA)); // hard clay, other values are stained clay
+        Arrays.fill(colorLayer, Block.get(BlockIds.HARDENED_CLAY)); // hard clay, other values are stained clay
         setRandomLayerColor(random, 14, TERRACOTTA_COLORS[1]); // orange
         setRandomLayerColor(random, 8, TERRACOTTA_COLORS[4]); // yellow
         setRandomLayerColor(random, 7, TERRACOTTA_COLORS[12]); // brown

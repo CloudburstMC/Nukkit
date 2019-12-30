@@ -4,6 +4,9 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.FARMLAND;
 
 /**
  * Created on 2015/11/22 by xtypr.
@@ -11,13 +14,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockGrassPath extends BlockGrass {
 
-    public BlockGrassPath(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Grass Path";
+    public BlockGrassPath(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -50,7 +48,7 @@ public class BlockGrassPath extends BlockGrass {
     public boolean onActivate(Item item, Player player) {
         if (item.isHoe()) {
             item.useOn(this);
-            this.getLevel().setBlock(this, get(FARMLAND), true);
+            this.getLevel().setBlock(this, Block.get(FARMLAND), true);
             return true;
         }
 

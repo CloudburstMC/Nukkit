@@ -3,19 +3,17 @@ package cn.nukkit.block;
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.REDSTONE_LAMP;
 
 /**
  * @author Pub4Game
  */
 public class BlockRedstoneLampLit extends BlockRedstoneLamp {
 
-    public BlockRedstoneLampLit(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Lit Redstone Lamp";
+    public BlockRedstoneLampLit(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -25,7 +23,7 @@ public class BlockRedstoneLampLit extends BlockRedstoneLamp {
 
     @Override
     public Item toItem() {
-        return Item.get(BlockID.REDSTONE_LAMP);
+        return Item.get(REDSTONE_LAMP);
     }
 
     @Override

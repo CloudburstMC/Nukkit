@@ -3,19 +3,17 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.BRICK_BLOCK;
 
 /**
  * @author Nukkit Project Team
  */
 public class BlockBricks extends BlockSolid {
 
-    public BlockBricks(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Bricks";
+    public BlockBricks(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -37,7 +35,7 @@ public class BlockBricks extends BlockSolid {
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
-                    Item.get(Item.BRICKS_BLOCK, 0, 1)
+                    Item.get(BRICK_BLOCK, 0, 1)
             };
         } else {
             return new Item[0];

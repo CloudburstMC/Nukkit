@@ -121,7 +121,7 @@ public class TimingsExport extends Thread {
         idmap.add("worlds", JsonUtil.mapToObject(TimingsHistory.levelMap.entrySet(), (entry) ->
                 new JsonUtil.JSONPair(entry.getValue(), entry.getKey())));
         idmap.add("tileentity", JsonUtil.mapToObject(TimingsHistory.blockEntityMap.entrySet(), (entry) ->
-                new JsonUtil.JSONPair(entry.getKey(), entry.getValue())));
+                new JsonUtil.JSONPair(entry.getKey().toString(), entry.getValue())));
         idmap.add("entity", JsonUtil.mapToObject(TimingsHistory.entityMap.entrySet(), (entry) ->
                 new JsonUtil.JSONPair(entry.getKey(), entry.getValue())));
         out.add("idmap", idmap);

@@ -1,6 +1,5 @@
 package cn.nukkit.entity;
 
-import cn.nukkit.block.BlockID;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -19,6 +18,8 @@ import cn.nukkit.player.Player;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 public abstract class EntityHumanType extends EntityCreature implements InventoryHolder {
 
@@ -95,7 +96,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
 
             for (int slot = 100; slot < 104; ++slot) {
                 Item item = this.inventory.getItem(this.inventory.getSize() + slot - 100);
-                if (item != null && item.getId() != Item.AIR) {
+                if (item != null && item.getId() != AIR) {
                     inventoryTag.add(NBTIO.putItemHelper(item, slot));
                 }
             }
@@ -105,7 +106,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
         if (this.enderChestInventory != null) {
             for (int slot = 0; slot < 27; ++slot) {
                 Item item = this.enderChestInventory.getItem(slot);
-                if (item != null && item.getId() != Item.AIR) {
+                if (item != null && item.getId() != AIR) {
                     this.namedTag.getList("EnderItems", CompoundTag.class).add(NBTIO.putItemHelper(item, slot));
                 }
             }
@@ -176,7 +177,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
                 armor.setDamage(armor.getDamage() + 1);
 
                 if (armor.getDamage() >= armor.getMaxDurability()) {
-                    inventory.setArmorItem(slot, Item.get(BlockID.AIR, 0, 0));
+                    inventory.setArmorItem(slot, Item.get(AIR, 0, 0));
                 } else {
                     inventory.setArmorItem(slot, armor, true);
                 }

@@ -1,7 +1,7 @@
 package cn.nukkit.level.biome.impl.extremehills;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.biome.type.CoveredBiome;
 
 /**
@@ -12,7 +12,7 @@ import cn.nukkit.level.biome.type.CoveredBiome;
  * Nearly ertical cliffs, but no overhangs. Height difference is 2-7 near ocean, and pretty much flat everywhere else
  */
 public class StoneBeachBiome extends CoveredBiome {
-    private static final Block AIR = Block.get(BlockID.AIR);
+    private static final Block AIR = Block.get(BlockIds.AIR);
 
     public StoneBeachBiome() {
         this.setBaseHeight(0.1f);

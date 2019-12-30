@@ -5,19 +5,16 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.FLOWING_WATER;
+import static cn.nukkit.block.BlockIds.WATER;
+import static cn.nukkit.item.ItemIds.POTION;
 
 public class ItemGlassBottle extends Item {
 
-    public ItemGlassBottle() {
-        this(0, 1);
-    }
-
-    public ItemGlassBottle(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemGlassBottle(Integer meta, int count) {
-        super(GLASS_BOTTLE, meta, count, "Glass Bottle");
+    public ItemGlassBottle(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -27,13 +24,13 @@ public class ItemGlassBottle extends Item {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
-        if (target.getId() == WATER || target.getId() == STILL_WATER) {
-            Item potion = new ItemPotion();
+        if (target.getId() == WATER || target.getId() == FLOWING_WATER) {
+            Item potion = Item.get(POTION);
 
-            if (this.count == 1) {
+            if (this.getCount() == 1) {
                 player.getInventory().setItemInHand(potion);
-            } else if (this.count > 1) {
-                this.count--;
+            } else if (this.getCount() > 1) {
+                this.decrementCount();
                 player.getInventory().setItemInHand(this);
                 if (player.getInventory().canAddItem(potion)) {
                     player.getInventory().addItem(potion);

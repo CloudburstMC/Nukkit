@@ -1,21 +1,15 @@
 package cn.nukkit.item;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class ItemSwordWood extends ItemTool {
 
-    public ItemSwordWood() {
-        this(0, 1);
-    }
-
-    public ItemSwordWood(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemSwordWood(Integer meta, int count) {
-        super(WOODEN_SWORD, meta, count, "Wooden Sword");
+    public ItemSwordWood(Identifier id) {
+        super(id);
     }
 
     @Override

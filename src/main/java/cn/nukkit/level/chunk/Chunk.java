@@ -1,20 +1,20 @@
 package cn.nukkit.level.chunk;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.BlockUpdate;
 import cn.nukkit.level.ChunkLoader;
-import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.chunk.bitarray.BitArrayVersion;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.network.protocol.LevelChunkPacket;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.ChunkException;
+import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.Utils;
 import co.aikar.timings.Timing;
 import com.google.common.base.FinalizableReferenceQueue;
@@ -41,6 +41,8 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.*;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 @Log4j2
 @ThreadSafe
@@ -194,7 +196,7 @@ public final class Chunk implements Closeable {
         ChunkSection section = this.getSection(y >> 4);
         Block block;
         if (section == null) {
-            block = Block.get(BlockID.AIR);
+            block = Block.get(AIR);
         } else {
             block = section.getBlock(x, y & 0xf, z, layer);
         }
@@ -205,15 +207,15 @@ public final class Chunk implements Closeable {
         return block;
     }
 
-    public int getBlockId(int x, int y, int z) {
+    public Identifier getBlockId(int x, int y, int z) {
         return this.getBlockId(x, y, z, 0);
     }
 
-    public int getBlockId(int x, int y, int z, int layer) {
+    public Identifier getBlockId(int x, int y, int z, int layer) {
         Chunk.checkBounds(x, y, z);
         ChunkSection section = this.getSection(y >> 4);
         if (section == null) {
-            return 0;
+            return AIR;
         }
         return section.getBlockId(x, y & 0xf, z, layer);
     }
@@ -252,7 +254,7 @@ public final class Chunk implements Closeable {
         Chunk.checkBounds(x, y, z);
         ChunkSection section = this.getSection(y >> 4);
         if (section == null) {
-            if (block.getId() == 0) {
+            if (block.getId() == AIR) {
                 // Setting air in an empty section.
                 return;
             }
@@ -263,12 +265,12 @@ public final class Chunk implements Closeable {
         this.setDirty();
     }
 
-    public void setBlockId(int x, int y, int z, int id) {
+    public void setBlockId(int x, int y, int z, Identifier id) {
         this.setBlockId(x, y, z, 0, id);
     }
 
-    public void setBlockId(int x, int y, int z, int layer, int id) {
-        this.setBlock(x, y, z, layer, GlobalBlockPalette.getBlock(id, 0));
+    public void setBlockId(int x, int y, int z, int layer, Identifier id) {
+        this.setBlock(x, y, z, layer, BlockRegistry.get().getBlock(id, 0));
         this.setDirty();
     }
 
@@ -386,7 +388,7 @@ public final class Chunk implements Closeable {
             }
         }
         for (int y = 255; y >= 0; --y) {
-            if (getBlockId(x, y, z) != 0x00) {
+            if (getBlockId(x, y, z) != AIR) {
                 this.setHeightMap(x, z, y);
                 return y;
             }
@@ -460,7 +462,7 @@ public final class Chunk implements Closeable {
                     this.setSkyLight(x, y, z, (byte) 15);
                 }
                 for (int y = top; y >= 0; --y) {
-                    if (Block.solid[this.getBlockId(x, y, z)]) {
+                    if (BlockRegistry.get().getBlock(this.getBlockId(x, y, z), 0).isSolid()) {
                         break;
                     }
                     this.setSkyLight(x, y, z, (byte) 15);
@@ -677,16 +679,18 @@ public final class Chunk implements Closeable {
         return dirty;
     }
 
+    public void setDirty() {
+        setDirty(true);
+    }
+
     /**
      * Sets the chunk's dirty status.
      */
     public void setDirty(boolean dirty) {
-        this.dirty = dirty;
-    }
-
-    public void setDirty() {
-        if (!this.dirty) {
-            this.dirty = true;
+        if (this.dirty != dirty) {
+            this.dirty = dirty;
+        }
+        if (dirty) {
             this.clearCache();
         }
     }
@@ -725,7 +729,7 @@ public final class Chunk implements Closeable {
 
     @Override
     public synchronized void close() {
-        for (Entity entity : this.entities) {
+        for (Entity entity : ImmutableList.copyOf(this.entities)) {
             if (entity instanceof Player) {
                 continue;
             }

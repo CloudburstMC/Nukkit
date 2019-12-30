@@ -4,6 +4,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
+import static cn.nukkit.item.ItemIds.LEATHER;
+
 /**
  * @author PikyCZ
  */
@@ -44,6 +46,6 @@ public class EntityHorse extends EntityAnimal {
 
     @Override
     public Item[] getDrops() {
-        return new Item[]{Item.get(Item.LEATHER)};
+        return new Item[]{Item.get(LEATHER)};
     }
 }

@@ -1,7 +1,7 @@
 package cn.nukkit.level.biome.impl.ocean;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.biome.type.WateryBiome;
 
 /**
@@ -9,7 +9,7 @@ import cn.nukkit.level.biome.type.WateryBiome;
  * Nukkit Project
  */
 public class OceanBiome extends WateryBiome {
-    private static final Block GRAVEL = Block.get(BlockID.GRAVEL);
+    private static final Block GRAVEL = Block.get(BlockIds.GRAVEL);
 
     public OceanBiome() {
         this.setBaseHeight(-1f);

@@ -1,17 +1,14 @@
 package cn.nukkit.block;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * @author CreeperFace
  */
 public class BlockRedstoneComparatorUnpowered extends BlockRedstoneComparator {
 
-    public BlockRedstoneComparatorUnpowered(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Comparator Block Unpowered";
+    public BlockRedstoneComparatorUnpowered(Identifier id) {
+        super(id);
     }
 
     @Override

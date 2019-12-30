@@ -1,6 +1,6 @@
 package cn.nukkit.blockentity;
 
-import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -16,7 +16,7 @@ public class BlockEntityEnchantTable extends BlockEntitySpawnable implements Blo
 
     @Override
     public boolean isBlockEntityValid() {
-        return getBlock().getId() == Block.ENCHANT_TABLE;
+        return getBlock().getId() == BlockIds.ENCHANTING_TABLE;
     }
 
     @Override

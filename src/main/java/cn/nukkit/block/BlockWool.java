@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -10,13 +11,8 @@ import cn.nukkit.utils.DyeColor;
  */
 public class BlockWool extends BlockSolid {
 
-    public BlockWool(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return getDyeColor().getName() + " Wool";
+    public BlockWool(Identifier id) {
+        super(id);
     }
 
     @Override

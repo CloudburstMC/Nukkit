@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * author: MagicDroidX
@@ -8,8 +9,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public abstract class BlockSolid extends Block {
 
-    public BlockSolid(int id, int meta) {
-        super(id, meta);
+    public BlockSolid(Identifier id) {
+        super(id);
     }
 
     @Override

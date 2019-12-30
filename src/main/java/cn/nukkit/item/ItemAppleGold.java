@@ -2,6 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.math.Vector3;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 
 /**
  * author: MagicDroidX
@@ -9,16 +10,8 @@ import cn.nukkit.player.Player;
  */
 public class ItemAppleGold extends ItemEdible {
 
-    public ItemAppleGold() {
-        this(0, 1);
-    }
-
-    public ItemAppleGold(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemAppleGold(Integer meta, int count) {
-        super(GOLDEN_APPLE, meta, count, "Golden Apple");
+    public ItemAppleGold(Identifier id) {
+        super(id);
     }
 
     @Override

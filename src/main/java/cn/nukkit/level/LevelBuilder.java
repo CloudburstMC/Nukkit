@@ -10,6 +10,7 @@ import lombok.extern.log4j.Log4j2;
 import javax.annotation.Nonnull;
 import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 @Log4j2
 public class LevelBuilder {
@@ -49,6 +50,8 @@ public class LevelBuilder {
             return CompletableFuture.completedFuture(loadedLevel);
         }
 
+        final Executor executor = this.server.getScheduler().getAsyncPool();
+
         // Load chunk provider
         CompletableFuture<LevelProvider> providerFuture = CompletableFuture.supplyAsync(() -> {
             LevelProvider.Factory factory = this.server.getStorageRegistry().getLevelProviderFactory(storageType);
@@ -58,14 +61,14 @@ public class LevelBuilder {
             log.debug("Loading level provider: {}", id);
             try {
                 LevelProvider provider = factory.create(id, Paths.get(server.getDataPath()).resolve("worlds"),
-                        server.getScheduler().getAsyncPool());
+                        executor);
                 // Load level data
                 provider.loadLevelData(levelData);
                 return provider;
             } catch (Exception e) {
                 throw new IllegalStateException("Unable to load level provider for level '" + id + "'", e);
             }
-        });
+        }, executor);
 
         // Combine futures
         return providerFuture.thenApply(levelProvider -> {

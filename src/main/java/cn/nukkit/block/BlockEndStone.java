@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created on 2015/12/1 by xtypr.
@@ -9,13 +10,8 @@ import cn.nukkit.item.ItemTool;
  */
 public class BlockEndStone extends BlockSolid {
 
-    public BlockEndStone(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "End Stone";
+    public BlockEndStone(Identifier id) {
+        super(id);
     }
 
     @Override

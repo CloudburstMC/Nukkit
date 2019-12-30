@@ -1,10 +1,12 @@
 package cn.nukkit.level.biome.type;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.Normal;
+
+import static cn.nukkit.block.BlockIds.STONE;
 
 /**
  * author: DaPorkchop_
@@ -14,7 +16,7 @@ import cn.nukkit.level.generator.Normal;
  * </p>
  */
 public abstract class CoveredBiome extends Biome {
-    private static final Block AIR = Block.get(BlockID.AIR);
+    private static final Block AIR = Block.get(BlockIds.AIR);
 
     public Block getCover(int x, int z) {
         return AIR;

@@ -1,9 +1,12 @@
 package cn.nukkit.level.generator.object.tree;
 
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockWood;
+import cn.nukkit.block.BlockLog;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.LEAVES;
+import static cn.nukkit.block.BlockIds.LOG;
 
 /**
  * author: MagicDroidX
@@ -13,18 +16,18 @@ public class ObjectOakTree extends ObjectTree {
     private int treeHeight = 7;
 
     @Override
-    public int getTrunkBlock() {
-        return Block.LOG;
+    public Identifier getTrunkBlock() {
+        return LOG;
     }
 
     @Override
-    public int getLeafBlock() {
-        return Block.LEAVES;
+    public Identifier getLeafBlock() {
+        return LEAVES;
     }
 
     @Override
     public int getType() {
-        return BlockWood.OAK;
+        return BlockLog.OAK;
     }
 
     @Override

@@ -1,19 +1,42 @@
 package cn.nukkit.blockentity;
 
-import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemRecord;
+import cn.nukkit.item.RecordItem;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.utils.Identifier;
 
+import java.util.IdentityHashMap;
+import java.util.Map;
 import java.util.Objects;
+
+import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.item.ItemIds.*;
 
 /**
  * @author CreeperFace
  */
 public class BlockEntityJukebox extends BlockEntitySpawnable {
+
+    private static final Map<Identifier, Integer> LEVEL_EVENT_MAP = new IdentityHashMap<>();
+
+    static {
+        LEVEL_EVENT_MAP.put(RECORD_13, LevelSoundEventPacket.SOUND_RECORD_13);
+        LEVEL_EVENT_MAP.put(RECORD_CAT, LevelSoundEventPacket.SOUND_RECORD_CAT);
+        LEVEL_EVENT_MAP.put(RECORD_BLOCKS, LevelSoundEventPacket.SOUND_RECORD_BLOCKS);
+        LEVEL_EVENT_MAP.put(RECORD_CHIRP, LevelSoundEventPacket.SOUND_RECORD_CHIRP);
+        LEVEL_EVENT_MAP.put(RECORD_FAR, LevelSoundEventPacket.SOUND_RECORD_FAR);
+        LEVEL_EVENT_MAP.put(RECORD_MALL, LevelSoundEventPacket.SOUND_RECORD_MALL);
+        LEVEL_EVENT_MAP.put(RECORD_MELLOHI, LevelSoundEventPacket.SOUND_RECORD_MELLOHI);
+        LEVEL_EVENT_MAP.put(RECORD_STAL, LevelSoundEventPacket.SOUND_RECORD_STAL);
+        LEVEL_EVENT_MAP.put(RECORD_STRAD, LevelSoundEventPacket.SOUND_RECORD_STRAD);
+        LEVEL_EVENT_MAP.put(RECORD_WARD, LevelSoundEventPacket.SOUND_RECORD_WARD);
+        LEVEL_EVENT_MAP.put(RECORD_11, LevelSoundEventPacket.SOUND_RECORD_11);
+        LEVEL_EVENT_MAP.put(RECORD_WAIT, LevelSoundEventPacket.SOUND_RECORD_WAIT);
+    }
 
     private Item recordItem;
 
@@ -34,7 +57,7 @@ public class BlockEntityJukebox extends BlockEntitySpawnable {
 
     @Override
     public boolean isBlockEntityValid() {
-        return this.getLevel().getBlockIdAt(getFloorX(), getFloorY(), getFloorZ()) == Block.JUKEBOX;
+        return this.getLevel().getBlockIdAt(getFloorX(), getFloorY(), getFloorZ()) == BlockIds.JUKEBOX;
     }
 
     public void setRecordItem(Item recordItem) {
@@ -47,45 +70,8 @@ public class BlockEntityJukebox extends BlockEntitySpawnable {
     }
 
     public void play() {
-        if (this.recordItem instanceof ItemRecord) {
-            switch (this.recordItem.getId()) {
-                case Item.RECORD_13:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_13);
-                    break;
-                case Item.RECORD_CAT:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_CAT);
-                    break;
-                case Item.RECORD_BLOCKS:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_BLOCKS);
-                    break;
-                case Item.RECORD_CHIRP:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_CHIRP);
-                    break;
-                case Item.RECORD_FAR:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_FAR);
-                    break;
-                case Item.RECORD_MALL:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_MALL);
-                    break;
-                case Item.RECORD_MELLOHI:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_MELLOHI);
-                    break;
-                case Item.RECORD_STAL:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_STAL);
-                    break;
-                case Item.RECORD_STRAD:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_STRAD);
-                    break;
-                case Item.RECORD_WARD:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_WARD);
-                    break;
-                case Item.RECORD_11:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_11);
-                    break;
-                case Item.RECORD_WAIT:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_WAIT);
-                    break;
-            }
+        if (this.recordItem instanceof RecordItem) {
+            this.getLevel().addLevelSoundEvent(this, LEVEL_EVENT_MAP.get(this.recordItem.getId()));
         }
     }
 
@@ -94,7 +80,7 @@ public class BlockEntityJukebox extends BlockEntitySpawnable {
     }
 
     public void dropItem() {
-        if (this.recordItem.getId() != 0) {
+        if (this.recordItem.getId() != AIR) {
             stop();
             this.level.dropItem(this.up(), this.recordItem);
             this.recordItem = Item.get(0);

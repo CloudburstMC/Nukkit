@@ -1,25 +1,23 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemCake;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.food.Food;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * @author Nukkit Project Team
  */
 public class BlockCake extends BlockTransparent {
 
-    public BlockCake(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Cake Block";
+    public BlockCake(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -39,7 +37,7 @@ public class BlockCake extends BlockTransparent {
 
     @Override
     public double getMinX() {
-        return this.x + (1 + getDamage() * 2) / 16;
+        return this.x + (1 + getDamage() * 2) / 16D;
     }
 
     @Override
@@ -69,7 +67,7 @@ public class BlockCake extends BlockTransparent {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (down().getId() != Block.AIR) {
+        if (down().getId() != AIR) {
             getLevel().setBlock(block, this, true, true);
 
             return true;
@@ -80,7 +78,7 @@ public class BlockCake extends BlockTransparent {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (down().getId() == Block.AIR) {
+            if (down().getId() == AIR) {
                 getLevel().setBlock(this, Block.get(AIR), true);
 
                 return Level.BLOCK_UPDATE_NORMAL;
@@ -97,7 +95,7 @@ public class BlockCake extends BlockTransparent {
 
     @Override
     public Item toItem() {
-        return new ItemCake();
+        return Item.get(ItemIds.CAKE);
     }
 
     @Override

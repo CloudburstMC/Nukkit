@@ -11,6 +11,7 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,16 +26,8 @@ public class ItemPainting extends Item {
     private static final int[] RIGHT = {4, 5, 3, 2};
     private static final double OFFSET = 0.53125;
 
-    public ItemPainting() {
-        this(0, 1);
-    }
-
-    public ItemPainting(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemPainting(Integer meta, int count) {
-        super(PAINTING, 0, count, "Painting");
+    public ItemPainting(Identifier id) {
+        super(id);
     }
 
     @Override

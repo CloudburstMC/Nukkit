@@ -1,18 +1,15 @@
 package cn.nukkit.block;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * author: Angelic47
  * Nukkit Project
  */
 public class BlockFurnace extends BlockFurnaceBurning {
 
-    public BlockFurnace(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Furnace";
+    public BlockFurnace(Identifier id) {
+        super(id);
     }
 
     @Override

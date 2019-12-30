@@ -9,15 +9,16 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created on 2015/11/23 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public abstract class BlockFenceGate extends BlockTransparent implements Faceable {
+public class BlockFenceGate extends BlockTransparent implements Faceable {
 
-    public BlockFenceGate(int id, int meta) {
-        super(id, meta);
+    public BlockFenceGate(Identifier id) {
+        super(id);
     }
 
     @Override

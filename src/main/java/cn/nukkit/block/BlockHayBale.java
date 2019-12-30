@@ -5,19 +5,15 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created on 2015/11/24 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockHayBale extends BlockSolid implements Faceable {
-    public BlockHayBale(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Hay Bale";
+    public BlockHayBale(Identifier id) {
+        super(id);
     }
 
     @Override

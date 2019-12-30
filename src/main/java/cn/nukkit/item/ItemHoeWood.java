@@ -1,21 +1,15 @@
 package cn.nukkit.item;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class ItemHoeWood extends ItemTool {
 
-    public ItemHoeWood() {
-        this(0, 1);
-    }
-
-    public ItemHoeWood(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemHoeWood(Integer meta, int count) {
-        super(WOODEN_HOE, meta, count, "Wooden Hoe");
+    public ItemHoeWood(Identifier id) {
+        super(id);
     }
 
     @Override

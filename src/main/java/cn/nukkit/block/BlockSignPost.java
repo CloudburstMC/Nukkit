@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySign;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemSign;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
@@ -13,14 +13,17 @@ import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.*;
 
 /**
  * @author Nukkit Project Team
  */
 public class BlockSignPost extends BlockTransparent implements Faceable {
 
-    public BlockSignPost(int id, int meta) {
-        super(id, meta);
+    public BlockSignPost(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -36,11 +39,6 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
     @Override
     public boolean isSolid() {
         return false;
-    }
-
-    @Override
-    public String getName() {
-        return "Sign Post";
     }
 
     @Override
@@ -63,7 +61,7 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
 
             if (face == BlockFace.UP) {
                 setDamage((int) Math.floor(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f);
-                getLevel().setBlock(block, Block.get(SIGN_POST, getDamage()), true);
+                getLevel().setBlock(block, Block.get(STANDING_SIGN, getDamage()), true);
             } else {
                 setDamage(face.getIndex());
                 getLevel().setBlock(block, Block.get(WALL_SIGN, getDamage()), true);
@@ -90,7 +88,7 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (down().getId() == Block.AIR) {
+            if (down().getId() == AIR) {
                 getLevel().useBreakOn(this);
 
                 return Level.BLOCK_UPDATE_NORMAL;
@@ -102,7 +100,7 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemSign();
+        return Item.get(ItemIds.SIGN);
     }
 
     @Override

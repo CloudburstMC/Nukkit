@@ -5,7 +5,7 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBrewingStand;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBrewingStand;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -14,18 +14,14 @@ import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Map;
 
 public class BlockBrewingStand extends BlockSolid {
 
-    public BlockBrewingStand(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Brewing Stand";
+    public BlockBrewingStand(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -114,7 +110,7 @@ public class BlockBrewingStand extends BlockSolid {
 
     @Override
     public Item toItem() {
-        return new ItemBrewingStand();
+        return Item.get(ItemIds.BREWING_STAND);
     }
 
     @Override

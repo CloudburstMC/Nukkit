@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBanner;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
@@ -13,14 +14,18 @@ import cn.nukkit.nbt.tag.IntTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.block.BlockIds.WALL_BANNER;
 
 /**
  * Created by PetteriM1
  */
 public class BlockBanner extends BlockTransparent implements Faceable {
 
-    public BlockBanner(int id, int meta) {
-        super(id, meta);
+    public BlockBanner(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -36,11 +41,6 @@ public class BlockBanner extends BlockTransparent implements Faceable {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_AXE;
-    }
-
-    @Override
-    public String getName() {
-        return "Banner";
     }
 
     @Override
@@ -82,7 +82,7 @@ public class BlockBanner extends BlockTransparent implements Faceable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.down().getId() == Block.AIR) {
+            if (this.down().getId() == AIR) {
                 this.getLevel().useBreakOn(this);
 
                 return Level.BLOCK_UPDATE_NORMAL;
@@ -95,7 +95,7 @@ public class BlockBanner extends BlockTransparent implements Faceable {
     @Override
     public Item toItem() {
         BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
-        Item item = Item.get(Item.BANNER);
+        Item item = Item.get(ItemIds.BANNER);
         if (blockEntity instanceof BlockEntityBanner) {
             BlockEntityBanner banner = (BlockEntityBanner) blockEntity;
             item.setDamage(banner.getBaseColor() & 0xf);

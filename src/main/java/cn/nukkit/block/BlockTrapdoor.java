@@ -3,7 +3,6 @@ package cn.nukkit.block;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.event.block.DoorToggleEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
@@ -13,6 +12,7 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by Pub4Game on 26.12.2015.
@@ -22,13 +22,8 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
     public static final int TRAPDOOR_OPEN_BIT = 0x08;
     public static final int TRAPDOOR_TOP_BIT = 0x04;
 
-    public BlockTrapdoor(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Wooden Trapdoor";
+    public BlockTrapdoor(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -198,7 +193,7 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return Item.get(id, 0);
     }
 
     @Override

@@ -14,12 +14,22 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class StorageRegistry implements Registry {
+    private static final StorageRegistry INSTANCE = new StorageRegistry();
+
     private final Map<Identifier, StorageType> identifiers = new IdentityHashMap<>();
     private final Map<StorageType, LevelProvider.Factory> providers = new IdentityHashMap<>();
     private volatile boolean closed;
 
-    public StorageRegistry() {
-        this.registerVanillaTypes();
+    private StorageRegistry() {
+        try {
+            this.registerVanillaStorage();
+        } catch (RegistryException e) {
+            throw new IllegalStateException("Unable to register vanilla block palette", e);
+        }
+    }
+
+    public static StorageRegistry get() {
+        return INSTANCE;
     }
 
     public synchronized void register(StorageType type, LevelProvider.Factory levelProviderFactory)
@@ -54,7 +64,7 @@ public class StorageRegistry implements Registry {
         this.closed = true;
     }
 
-    private void registerVanillaTypes() {
+    private void registerVanillaStorage() throws RegistryException {
         this.register(StorageTypes.ANVIL, AnvilProvider.FACTORY);
         this.register(StorageTypes.LEVELDB, LevelDBProvider.FACTORY);
     }

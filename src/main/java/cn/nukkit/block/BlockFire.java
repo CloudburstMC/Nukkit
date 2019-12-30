@@ -17,28 +17,26 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static cn.nukkit.block.BlockIds.*;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BlockFire extends BlockFlowable {
+public class BlockFire extends FloodableBlock {
 
-    public BlockFire(int id, int meta) {
-        super(id, meta);
+    public BlockFire(Identifier id) {
+        super(id);
     }
 
     @Override
     public boolean hasEntityCollision() {
         return true;
-    }
-
-    @Override
-    public String getName() {
-        return "Fire Block";
     }
 
     @Override
@@ -90,7 +88,7 @@ public class BlockFire extends BlockFlowable {
 
             return Level.BLOCK_UPDATE_NORMAL;
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED && this.level.getGameRules().get(GameRules.DO_FIRE_TICK)) {
-            boolean forever = this.down().getId() == Block.NETHERRACK || this.down().getId() == Block.MAGMA;
+            boolean forever = this.down().getId() == NETHERRACK || this.down().getId() == MAGMA;
 
             ThreadLocalRandom random = ThreadLocalRandom.current();
 
@@ -300,6 +298,6 @@ public class BlockFire extends BlockFlowable {
 
     @Override
     public Item toItem() {
-        return Item.get(BlockID.AIR, 0, 0);
+        return Item.get(AIR);
     }
 }

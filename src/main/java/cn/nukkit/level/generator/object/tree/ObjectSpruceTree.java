@@ -1,9 +1,13 @@
 package cn.nukkit.level.generator.object.tree;
 
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockWood;
+import cn.nukkit.block.BlockLog;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.registry.BlockRegistry;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.LEAVES;
+import static cn.nukkit.block.BlockIds.LOG;
 
 /**
  * author: MagicDroidX
@@ -13,18 +17,18 @@ public class ObjectSpruceTree extends ObjectTree {
     protected int treeHeight;
 
     @Override
-    public int getTrunkBlock() {
-        return Block.LOG;
+    public Identifier getTrunkBlock() {
+        return LOG;
     }
 
     @Override
-    public int getLeafBlock() {
-        return Block.LEAVES;
+    public Identifier getLeafBlock() {
+        return LEAVES;
     }
 
     @Override
     public int getType() {
-        return BlockWood.SPRUCE;
+        return BlockLog.SPRUCE;
     }
 
     @Override
@@ -60,7 +64,7 @@ public class ObjectSpruceTree extends ObjectTree {
                         continue;
                     }
 
-                    if (!Block.solid[level.getBlockIdAt(xx, yyy, zz)]) {
+                    if (!BlockRegistry.get().getBlock(level.getBlockIdAt(xx, yyy, zz), 0).isSolid()) {
                         level.setBlockAt(xx, yyy, zz, this.getLeafBlock(), this.getType());
                     }
                 }

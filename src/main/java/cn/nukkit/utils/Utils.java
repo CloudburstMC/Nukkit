@@ -7,9 +7,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -19,6 +17,25 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Utils {
 
     public static final FinalizableReferenceQueue REFERENCE_QUEUE = new FinalizableReferenceQueue();
+
+    private static final Deque<Runnable> SHUTDOWN_QUEUE = new ArrayDeque<>();
+
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            synchronized (SHUTDOWN_QUEUE) {
+                for (Runnable runnable : SHUTDOWN_QUEUE) {
+                    runnable.run();
+                }
+            }
+        }));
+    }
+
+    public static void addShutdownTask(Runnable runnable) {
+        Objects.requireNonNull(runnable, "runnable");
+        synchronized (SHUTDOWN_QUEUE) {
+            SHUTDOWN_QUEUE.add(runnable);
+        }
+    }
 
     public static void writeFile(String fileName, String content) throws IOException {
         writeFile(fileName, new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));

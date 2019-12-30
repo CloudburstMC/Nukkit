@@ -1,7 +1,7 @@
 package cn.nukkit.level.generator.populator.impl;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.populator.helper.EnsureBelow;
@@ -9,6 +9,9 @@ import cn.nukkit.level.generator.populator.helper.EnsureCover;
 import cn.nukkit.level.generator.populator.helper.EnsureGrassBelow;
 import cn.nukkit.level.generator.populator.type.PopulatorSurfaceBlock;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.*;
 
 /**
  * @author Niall Lindsay (Niall7459)
@@ -17,14 +20,14 @@ import cn.nukkit.math.NukkitRandom;
  * </p>
  */
 public class PopulatorSugarcane extends PopulatorSurfaceBlock {
-    private static final Block SUGARCANE_BLOCK = Block.get(BlockID.SUGARCANE_BLOCK, 1);
+    private static final Block SUGARCANE_BLOCK = Block.get(BlockIds.REEDS, 1);
 
     private boolean findWater(int x, int y, int z, ChunkManager level) {
         int count = 0;
         for (int i = x - 4; i < (x + 4); i++) {
             for (int j = z - 4; j < (z + 4); j++) {
-                int b = level.getBlockIdAt(i, y, j);
-                if (b == Block.WATER || b == Block.STILL_WATER) {
+                Identifier b = level.getBlockIdAt(i, y, j);
+                if (b == FLOWING_WATER || b == WATER) {
                     count++;
                 }
                 if (count > 10) {

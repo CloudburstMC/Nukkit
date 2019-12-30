@@ -1,9 +1,11 @@
 package cn.nukkit.level.generator;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * author: MagicDroidX
@@ -18,16 +20,16 @@ public abstract class SimpleChunkManager implements ChunkManager {
     }
 
     @Override
-    public int getBlockIdAt(int x, int y, int z, int layer) {
+    public Identifier getBlockIdAt(int x, int y, int z, int layer) {
         Chunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
             return chunk.getBlockId(x & 0xf, y & 0xff, z & 0xf, layer);
         }
-        return 0;
+        return AIR;
     }
 
     @Override
-    public void setBlockIdAt(int x, int y, int z, int layer, int id) {
+    public void setBlockIdAt(int x, int y, int z, int layer, Identifier id) {
         Chunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
             chunk.setBlockId(x & 0xf, y & 0xff, z & 0xf, layer, id);
@@ -40,7 +42,7 @@ public abstract class SimpleChunkManager implements ChunkManager {
         if (chunk != null) {
             return chunk.getBlock(x & 0xf, y & 0xff, z & 0xf, layer);
         }
-        return Block.get(BlockID.AIR);
+        return Block.get(AIR);
     }
 
     @Override

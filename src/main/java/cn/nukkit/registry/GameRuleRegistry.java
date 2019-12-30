@@ -11,11 +11,17 @@ import java.util.Map;
 import java.util.Set;
 
 public class GameRuleRegistry implements Registry {
+    private static final GameRuleRegistry INSTANCE = new GameRuleRegistry();
+
     private final Map<String, GameRule> registered = new IdentityHashMap<>();
     private volatile boolean closed;
 
-    public GameRuleRegistry() {
+    private GameRuleRegistry() {
         this.registerVanilla();
+    }
+
+    public static GameRuleRegistry get() {
+        return INSTANCE;
     }
 
     public <T extends Comparable<T>> void register(GameRule<T> gameRule) {

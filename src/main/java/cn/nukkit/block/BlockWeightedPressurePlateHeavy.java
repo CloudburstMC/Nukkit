@@ -1,25 +1,20 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * @author CreeperFace
  */
 public class BlockWeightedPressurePlateHeavy extends BlockPressurePlateBase {
 
-    public BlockWeightedPressurePlateHeavy(int id, int meta) {
-        super(id, meta);
+    public BlockWeightedPressurePlateHeavy(Identifier id) {
+        super(id);
         this.onPitch = 0.90000004f;
         this.offPitch = 0.75f;
-    }
-
-    @Override
-    public String getName() {
-        return "Weighted Pressure Plate (Heavy)";
     }
 
     @Override
@@ -50,7 +45,7 @@ public class BlockWeightedPressurePlateHeavy extends BlockPressurePlateBase {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return Item.get(id, 0);
     }
 
     @Override

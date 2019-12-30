@@ -1,9 +1,11 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.DOUBLE_WOODEN_SLAB;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -11,23 +13,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockSlabWood extends BlockSlab {
 
-    public BlockSlabWood(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Oak",
-                "Spruce",
-                "Birch",
-                "Jungle",
-                "Acacia",
-                "Dark Oak",
-                "",
-                ""
-        };
-        return (((this.getDamage() & 0x08) == 0x08) ? "Upper " : "") + names[this.getDamage() & 0x07] + " Wooden Slab";
+    public BlockSlabWood(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -54,7 +41,7 @@ public class BlockSlabWood extends BlockSlab {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, this.getDamage() & 0x07);
+        return Item.get(id, this.getDamage() & 0x07);
     }
 
     @Override
@@ -63,7 +50,7 @@ public class BlockSlabWood extends BlockSlab {
     }
 
     @Override
-    protected int getDoubleSlab() {
-        return DOUBLE_WOOD_SLAB;
+    protected Identifier getDoubleSlab() {
+        return DOUBLE_WOODEN_SLAB;
     }
 }

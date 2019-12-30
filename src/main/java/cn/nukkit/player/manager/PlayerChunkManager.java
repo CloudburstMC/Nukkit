@@ -141,7 +141,7 @@ public class PlayerChunkManager {
 
             this.sendQueue.put(key, null);
 
-            this.player.getLevel().getChunkFuture(cx, cz).thenApplyAsync(Chunk::createChunkPacket)
+            this.player.getLevel().getChunkFuture(cx, cz).thenApplyAsync(Chunk::createChunkPacket, this.player.getServer().getScheduler().getAsyncPool())
                     .whenCompleteAsync((packet, throwable) -> {
                         synchronized (PlayerChunkManager.this) {
                             if (throwable != null) {
@@ -155,7 +155,7 @@ public class PlayerChunkManager {
                                 packet.release();
                             }
                         }
-                    });
+                    }, this.player.getServer().getScheduler().getAsyncPool());
         }
 
         sentCopy.removeAll(chunksForRadius);

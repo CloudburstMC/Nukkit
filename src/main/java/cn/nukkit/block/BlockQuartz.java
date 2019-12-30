@@ -5,6 +5,9 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.QUARTZ_BLOCK;
 
 /**
  * author: MagicDroidX
@@ -18,8 +21,8 @@ public class BlockQuartz extends BlockSolid {
     public static final int QUARTZ_PILLAR2 = 3;
 
 
-    public BlockQuartz(int id, int meta) {
-        super(id, meta);
+    public BlockQuartz(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -30,18 +33,6 @@ public class BlockQuartz extends BlockSolid {
     @Override
     public double getResistance() {
         return 4;
-    }
-
-    @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Quartz Block",
-                "Chiseled Quartz Block",
-                "Quartz Pillar",
-                "Quartz Pillar"
-        };
-
-        return names[this.getDamage() & 0x03];
     }
 
     @Override
@@ -76,7 +67,7 @@ public class BlockQuartz extends BlockSolid {
 
     @Override
     public Item toItem() {
-        return Item.get(BlockID.QUARTZ_BLOCK, this.getDamage() & 0x03, 1);
+        return Item.get(QUARTZ_BLOCK, this.getDamage() & 0x03, 1);
     }
 
     @Override

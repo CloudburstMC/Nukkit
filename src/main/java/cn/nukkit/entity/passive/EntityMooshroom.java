@@ -1,6 +1,7 @@
 package cn.nukkit.entity.passive;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -38,7 +39,7 @@ public class EntityMooshroom extends EntityAnimal {
 
     @Override
     public Item[] getDrops() {
-        return new Item[]{Item.get(Item.LEATHER), Item.get(Item.RAW_BEEF)};
+        return new Item[]{Item.get(ItemIds.LEATHER), Item.get(ItemIds.BEEF)};
     }
 
     @Override

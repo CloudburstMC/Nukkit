@@ -1,7 +1,6 @@
 package cn.nukkit.blockentity;
 
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.inventory.BaseInventory;
 import cn.nukkit.inventory.ChestInventory;
 import cn.nukkit.inventory.DoubleChestInventory;
@@ -13,8 +12,11 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 
 import java.util.HashSet;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * author: MagicDroidX
@@ -84,8 +86,8 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
 
     @Override
     public boolean isBlockEntityValid() {
-        int blockID = this.getBlock().getId();
-        return blockID == Block.CHEST || blockID == Block.TRAPPED_CHEST;
+        Identifier blockId = this.getBlock().getId();
+        return blockId == BlockIds.CHEST || blockId == BlockIds.TRAPPED_CHEST;
     }
 
     @Override
@@ -108,12 +110,13 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
     public Item getItem(int index) {
         int i = this.getSlotIndex(index);
         if (i < 0) {
-            return Item.get(BlockID.AIR, 0, 0);
+            return Item.get(AIR, 0, 0);
         } else {
             CompoundTag data = (CompoundTag) this.namedTag.getList("Items").get(i);
             return NBTIO.getItemHelper(data);
         }
     }
+
 
     @Override
     public void setItem(int index, Item item) {
@@ -122,7 +125,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
         CompoundTag d = NBTIO.putItemHelper(item, index);
 
         // If item is air or count less than 0, remove the item from the "Items" list
-        if (item.getId() == Item.AIR || item.getCount() <= 0) {
+        if (item.getId() == AIR || item.getCount() <= 0) {
             if (i >= 0) {
                 this.namedTag.getList("Items").remove(i);
             }

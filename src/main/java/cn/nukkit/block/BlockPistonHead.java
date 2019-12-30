@@ -2,19 +2,17 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * @author CreeperFace
  */
 public class BlockPistonHead extends BlockTransparent {
 
-    public BlockPistonHead(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Piston Head";
+    public BlockPistonHead(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -54,6 +52,6 @@ public class BlockPistonHead extends BlockTransparent {
 
     @Override
     public Item toItem() {
-        return Item.get(BlockID.AIR, 0, 0);
+        return Item.get(AIR, 0, 0);
     }
 }

@@ -15,7 +15,7 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.vehicle.VehicleMoveEvent;
 import cn.nukkit.event.vehicle.VehicleUpdateEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemMinecart;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.gamerule.GameRules;
@@ -25,6 +25,7 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.MinecartType;
 import cn.nukkit.utils.Rail;
 import cn.nukkit.utils.Rail.Orientation;
@@ -255,7 +256,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
     }
 
     public void dropItem() {
-        level.dropItem(this, new ItemMinecart());
+        level.dropItem(this, Item.get(ItemIds.MINECART));
     }
 
     @Override
@@ -688,7 +689,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
             }
         } else {
             int display = blockInside == null ? 0
-                    : blockInside.getId()
+                    : BlockRegistry.get().getLegacyId(blockInside.getId())
                     | blockInside.getDamage() << 16;
             if (display == 0) {
                 setDataProperty(new ByteEntityData(DATA_HAS_DISPLAY, 0));
@@ -707,7 +708,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         int offSet;
         namedTag.putBoolean("CustomDisplayTile", hasDisplay);
         if (hasDisplay) {
-            display = blockInside.getId()
+            display = BlockRegistry.get().getLegacyId(blockInside.getId())
                     | blockInside.getDamage() << 16;
             offSet = getDataPropertyInt(DATA_DISPLAY_OFFSET);
             namedTag.putInt("DisplayTile", display);
@@ -745,7 +746,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         if (block != null) {
             if (block.isNormalBlock()) {
                 blockInside = block;
-                int display = blockInside.getId()
+                int display = BlockRegistry.get().getLegacyId(blockInside.getId())
                         | blockInside.getDamage() << 16;
                 setDataProperty(new ByteEntityData(DATA_HAS_DISPLAY, 1));
                 setDataProperty(new IntEntityData(DATA_DISPLAY_ITEM, display));

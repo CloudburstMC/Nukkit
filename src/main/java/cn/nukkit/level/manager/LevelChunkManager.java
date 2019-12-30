@@ -306,7 +306,7 @@ public final class LevelChunkManager {
             });
         }
 
-        future = future.thenApplyAsync(this.chunkGenerateFunction);
+        future = future.thenApplyAsync(this.chunkGenerateFunction, this.executor);
         future = this.populateChunk(future, x, z, true);
         this.chunkFutures.put(chunkKey, future);
         return future;

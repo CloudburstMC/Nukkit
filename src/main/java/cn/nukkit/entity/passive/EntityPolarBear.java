@@ -4,6 +4,9 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
+import static cn.nukkit.item.ItemIds.FISH;
+import static cn.nukkit.item.ItemIds.SALMON;
+
 /**
  * @author PikyCZ
  */
@@ -44,6 +47,6 @@ public class EntityPolarBear extends EntityAnimal {
 
     @Override
     public Item[] getDrops() {
-        return new Item[]{Item.get(Item.RAW_FISH), Item.get(Item.RAW_SALMON)};
+        return new Item[]{Item.get(FISH), Item.get(SALMON)};
     }
 }

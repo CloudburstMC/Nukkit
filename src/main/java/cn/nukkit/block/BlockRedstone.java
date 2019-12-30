@@ -4,6 +4,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /*
  * Created on 2015/12/11 by Pub4Game.
@@ -11,8 +12,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockRedstone extends BlockSolid {
 
-    public BlockRedstone(int id, int meta) {
-        super(id, meta);
+    public BlockRedstone(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -28,11 +29,6 @@ public class BlockRedstone extends BlockSolid {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
-    }
-
-    @Override
-    public String getName() {
-        return "Redstone Block";
     }
 
     //TODO: redstone

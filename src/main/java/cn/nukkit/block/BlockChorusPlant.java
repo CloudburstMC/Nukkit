@@ -2,16 +2,12 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.Identifier;
 
 public class BlockChorusPlant extends BlockTransparent {
 
-    public BlockChorusPlant(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Chorus Plant";
+    public BlockChorusPlant(Identifier id) {
+        super(id);
     }
 
     @Override

@@ -1,8 +1,8 @@
 package cn.nukkit.level.particle;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.registry.BlockRegistry;
 
 /**
  * Created on 2015/11/21 by xtypr.
@@ -10,6 +10,6 @@ import cn.nukkit.math.Vector3;
  */
 public class TerrainParticle extends GenericParticle {
     public TerrainParticle(Vector3 pos, Block block) {
-        super(pos, Particle.TYPE_TERRAIN, GlobalBlockPalette.getRuntimeId(block.getId(), block.getDamage()));
+        super(pos, Particle.TYPE_TERRAIN, BlockRegistry.get().getRuntimeId(block.getId(), block.getDamage()));
     }
 }

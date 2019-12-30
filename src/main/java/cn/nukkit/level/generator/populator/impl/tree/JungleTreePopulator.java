@@ -1,6 +1,5 @@
 package cn.nukkit.level.generator.populator.impl.tree;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockSapling;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.Chunk;
@@ -9,6 +8,9 @@ import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.*;
 
 public class JungleTreePopulator extends Populator {
     private ChunkManager level;
@@ -53,10 +55,10 @@ public class JungleTreePopulator extends Populator {
     private int getHighestWorkableBlock(int x, int z) {
         int y;
         for (y = 255; y > 0; --y) {
-            int b = this.level.getBlockIdAt(x, y, z);
-            if (b == Block.DIRT || b == Block.GRASS) {
+            Identifier b = this.level.getBlockIdAt(x, y, z);
+            if (b == DIRT || b == GRASS) {
                 break;
-            } else if (b != Block.AIR && b != Block.SNOW_LAYER) {
+            } else if (b != AIR && b != SNOW_LAYER) {
                 return -1;
             }
         }

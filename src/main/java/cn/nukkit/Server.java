@@ -1,6 +1,5 @@
 package cn.nukkit;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.*;
 import cn.nukkit.command.*;
 import cn.nukkit.console.NukkitConsole;
@@ -50,6 +49,7 @@ import cn.nukkit.network.protocol.PlayerListPacket;
 import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.network.query.QueryHandler;
 import cn.nukkit.network.rcon.RCON;
+import cn.nukkit.pack.PackManager;
 import cn.nukkit.permission.BanEntry;
 import cn.nukkit.permission.BanList;
 import cn.nukkit.permission.DefaultPermissions;
@@ -65,9 +65,7 @@ import cn.nukkit.plugin.service.NKServiceManager;
 import cn.nukkit.plugin.service.ServiceManager;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
-import cn.nukkit.registry.GameRuleRegistry;
-import cn.nukkit.registry.StorageRegistry;
-import cn.nukkit.resourcepacks.ResourcePackManager;
+import cn.nukkit.registry.*;
 import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.*;
@@ -91,7 +89,10 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -150,7 +151,7 @@ public class Server {
 
     private CraftingManager craftingManager;
 
-    private ResourcePackManager resourcePackManager;
+    private final PackManager packManager = new PackManager();
 
     private ConsoleCommandSender consoleSender;
 
@@ -200,13 +201,16 @@ public class Server {
     private QueryHandler queryHandler;
 
     private QueryRegenerateEvent queryRegenerateEvent;
-    private final StorageRegistry storageRegistry = new StorageRegistry();
     private Config config;
+
+    private final GameRuleRegistry gameRuleRegistry = GameRuleRegistry.get();
+    private final StorageRegistry storageRegistry = StorageRegistry.get();
+    private final BlockRegistry blockRegistry = BlockRegistry.get();
+    private final ItemRegistry itemRegistry = ItemRegistry.get();
 
     private final Map<InetSocketAddress, Player> players = new HashMap<>();
 
     private final Map<UUID, Player> playerList = new HashMap<>();
-    private final GameRuleRegistry gameRuleRegistry = new GameRuleRegistry();
     private final LevelData defaultLevelData = new LevelData();
     private String predefinedLanguage;
 
@@ -447,10 +451,11 @@ public class Server {
             }
         }
         int parallelism = (int) poolSize;
-
+        System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", String.valueOf(parallelism));
+        System.setProperty("java.util.concurrent.ForkJoinPool.common.exceptionHandler", "cn.nukkit.scheduler.ServerScheduler.ExceptionHandler");
         log.debug("Async pool parallelism: {}", parallelism == -1 ? "auto" : parallelism);
 
-        this.scheduler = new ServerScheduler(parallelism);
+        this.scheduler = new ServerScheduler();
 
 //        this.networkZlibProvider = this.getConfig("network.zlib-provider", 2);
 //        Zlib.setProvider(this.networkZlibProvider);
@@ -516,18 +521,7 @@ public class Server {
         this.consoleSender = new ConsoleCommandSender();
         this.commandMap = new SimpleCommandMap(this);
 
-        this.registerEntities();
-        this.registerBlockEntities();
-
-        Block.init();
-        Enchantment.init();
-        Item.init();
-        EnumBiome.values(); //load class, this also registers biomes
-        Effect.init();
-        Potion.init();
-        Attribute.init();
-        GlobalBlockPalette.getRuntimeId(0, 0); //Force it to load
-        this.defaultLevelData.getGameRules().putAll(this.gameRuleRegistry.getDefaultRules());
+        this.registerVanillaComponents();
 
         // Convert legacy data before plugins get the chance to mess with it.
         try {
@@ -538,10 +532,9 @@ public class Server {
             throw new RuntimeException(e);
         }
 
-        convertLegacyPlayerData();
+        this.convertLegacyPlayerData();
 
         this.craftingManager = new CraftingManager();
-        this.resourcePackManager = new ResourcePackManager(new File(dataPath, "resource_packs"));
 
         this.pluginManager = new PluginManager(this, this.commandMap);
         this.pluginManager.subscribeToPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE, this.consoleSender);
@@ -556,11 +549,22 @@ public class Server {
 
         this.enablePlugins(PluginLoadOrder.STARTUP);
 
-        Generator.addGenerator(Flat.class, "flat", Generator.TYPE_FLAT);
-        Generator.addGenerator(Normal.class, "normal", Generator.TYPE_INFINITE);
-        Generator.addGenerator(Normal.class, "default", Generator.TYPE_INFINITE);
-        Generator.addGenerator(Nether.class, "nether", Generator.TYPE_NETHER);
-        //todo: add old generator and hell generator
+        // load packs before registry closes to register new blocks and after plugins to register block factories.
+        this.loadPacks();
+
+        Identifier nukkitId = Identifier.fromString("nukkit:logo");
+        this.blockRegistry.registerBlock(nukkitId, BlockRegistry.UNKNOWN_FACTORY);
+        //Item.addCreativeItem(this.itemRegistry.getItem(nukkitId));
+
+        // Close registries
+        try {
+            this.blockRegistry.close();
+            this.itemRegistry.close();
+            this.gameRuleRegistry.close();
+            this.storageRegistry.close();
+        } catch (RegistryException e) {
+            throw new IllegalStateException("Unable to close registries", e);
+        }
 
         Optional<StorageType> storageType = this.storageRegistry.fromIdentifier(this.getConfig().get(
                 "level-settings.default-format", "minecraft:anvil"));
@@ -1036,7 +1040,10 @@ public class Server {
 
             this.levelManager.tick(this.tickCounter);
 
+            String message = "TPS: " + NukkitMath.round(getTicksPerSecondAverage(), 4);
+
             for (Player player : new ArrayList<>(this.players.values())) {
+                player.sendTip(message + ", block: " + player.getLevel().getBlock(player));
                 player.checkNetwork();
             }
 
@@ -1359,8 +1366,8 @@ public class Server {
         return craftingManager;
     }
 
-    public ResourcePackManager getResourcePackManager() {
-        return resourcePackManager;
+    public PackManager getPackManager() {
+        return packManager;
     }
 
     public ServerScheduler getScheduler() {
@@ -1972,6 +1979,38 @@ public class Server {
         return currentThread;
     }
 
+    private void loadPacks() {
+        Path dataPath = Paths.get(this.dataPath);
+        Path resourcePath = dataPath.resolve("resource_packs");
+        if (Files.notExists(resourcePath)) {
+            try {
+                Files.createDirectory(resourcePath);
+            } catch (IOException e) {
+                throw new IllegalStateException("Unable to create resource_packs directory");
+            }
+        }
+        this.packManager.loadPacks(resourcePath);
+    }
+
+    private void registerVanillaComponents() {
+        this.registerEntities();
+        this.registerBlockEntities();
+
+        // Generators
+        Generator.addGenerator(Flat.class, "flat", Generator.TYPE_FLAT);
+        Generator.addGenerator(Normal.class, "normal", Generator.TYPE_INFINITE);
+        Generator.addGenerator(Normal.class, "default", Generator.TYPE_INFINITE);
+        Generator.addGenerator(Nether.class, "nether", Generator.TYPE_NETHER);
+
+        Enchantment.init();
+        EnumBiome.values(); //load class, this also registers biomes
+        Item.initCreativeItems();
+        Effect.init();
+        Potion.init();
+        Attribute.init();
+        this.defaultLevelData.getGameRules().putAll(this.gameRuleRegistry.getDefaultRules());
+    }
+
     private void registerEntities() {
         Entity.registerEntity("Arrow", EntityArrow.class);
         Entity.registerEntity("EnderPearl", EntityEnderPearl.class);
@@ -2114,6 +2153,14 @@ public class Server {
 
     public GameRuleRegistry getGameRuleRegistry() {
         return gameRuleRegistry;
+    }
+
+    public BlockRegistry getBlockRegistry() {
+        return blockRegistry;
+    }
+
+    public ItemRegistry getItemRegistry() {
+        return itemRegistry;
     }
 
     public int getBaseTickRate() {

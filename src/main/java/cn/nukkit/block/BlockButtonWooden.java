@@ -1,19 +1,15 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by CreeperFace on 27. 11. 2016.
  */
 public class BlockButtonWooden extends BlockButton {
 
-    public BlockButtonWooden(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Wooden Button";
+    public BlockButtonWooden(Identifier id) {
+        super(id);
     }
 
     @Override

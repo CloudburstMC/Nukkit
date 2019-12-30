@@ -7,6 +7,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
 
 /**
  * author: MagicDroidX
@@ -14,8 +15,8 @@ import cn.nukkit.utils.Faceable;
  */
 public abstract class BlockStairs extends BlockTransparent implements Faceable {
 
-    protected BlockStairs(int id, int meta) {
-        super(id, meta);
+    public BlockStairs(Identifier id) {
+        super(id);
     }
 
     @Override

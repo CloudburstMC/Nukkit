@@ -2,5 +2,5 @@ package cn.nukkit.registry;
 
 public interface Registry {
 
-    void close();
+    void close() throws RegistryException;
 }

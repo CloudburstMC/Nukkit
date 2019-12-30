@@ -25,12 +25,14 @@ import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
 import cn.nukkit.potion.Effect;
+import cn.nukkit.utils.Identifier;
 import co.aikar.timings.Timings;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * author: MagicDroidX
@@ -303,15 +305,10 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     }
 
     public Block[] getLineOfSight(int maxDistance, int maxLength) {
-        return this.getLineOfSight(maxDistance, maxLength, new Integer[]{});
+        return this.getLineOfSight(maxDistance, maxLength, new Identifier[0]);
     }
 
-    @Deprecated
-    public Block[] getLineOfSight(int maxDistance, int maxLength, Map<Integer, Object> transparent) {
-        return this.getLineOfSight(maxDistance, maxLength, transparent.keySet().toArray(new Integer[0]));
-    }
-
-    public Block[] getLineOfSight(int maxDistance, int maxLength, Integer[] transparent) {
+    public Block[] getLineOfSight(int maxDistance, int maxLength, Identifier[] transparent) {
         if (maxDistance > 120) {
             maxDistance = 120;
         }
@@ -335,10 +332,10 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
                 blocks.remove(0);
             }
 
-            int id = block.getId();
+            Identifier id = block.getId();
 
             if (transparent == null) {
-                if (id != 0) {
+                if (id != AIR) {
                     break;
                 }
             } else {
@@ -352,15 +349,10 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     }
 
     public Block getTargetBlock(int maxDistance) {
-        return getTargetBlock(maxDistance, new Integer[]{});
+        return getTargetBlock(maxDistance, new Identifier[0]);
     }
 
-    @Deprecated
-    public Block getTargetBlock(int maxDistance, Map<Integer, Object> transparent) {
-        return getTargetBlock(maxDistance, transparent.keySet().toArray(new Integer[0]));
-    }
-
-    public Block getTargetBlock(int maxDistance, Integer[] transparent) {
+    public Block getTargetBlock(int maxDistance, Identifier[] transparent) {
         try {
             Block[] blocks = this.getLineOfSight(maxDistance, 1, transparent);
             Block block = blocks[0];

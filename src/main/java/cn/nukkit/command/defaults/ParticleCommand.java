@@ -14,6 +14,9 @@ import cn.nukkit.utils.TextFormat;
 
 import java.util.Random;
 
+import static cn.nukkit.item.ItemIds.SLIME_BALL;
+import static cn.nukkit.item.ItemIds.SNOWBALL;
+
 /**
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -152,9 +155,9 @@ public class ParticleCommand extends VanillaCommand {
             case "reddust":
                 return new RedstoneParticle(pos, data != -1 ? data : 1);
             case "snowballpoof":
-                return new ItemBreakParticle(pos, Item.get(Item.SNOWBALL));
+                return new ItemBreakParticle(pos, Item.get(SNOWBALL));
             case "slime":
-                return new ItemBreakParticle(pos, Item.get(Item.SLIMEBALL));
+                return new ItemBreakParticle(pos, Item.get(SLIME_BALL));
             case "itembreak":
                 if (data != -1 && data != 0) {
                     return new ItemBreakParticle(pos, Item.get(data));

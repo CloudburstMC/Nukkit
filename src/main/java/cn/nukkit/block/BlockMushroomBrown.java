@@ -1,17 +1,14 @@
 package cn.nukkit.block;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * @author Nukkit Project Team
  */
 public class BlockMushroomBrown extends BlockMushroom {
 
-    public BlockMushroomBrown(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Brown Mushroom";
+    public BlockMushroomBrown(Identifier id) {
+        super(id);
     }
 
     @Override

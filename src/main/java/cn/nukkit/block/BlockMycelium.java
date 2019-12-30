@@ -8,19 +8,18 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.DIRT;
+import static cn.nukkit.block.BlockIds.MYCELIUM;
 
 /**
  * Created by Pub4Game on 03.01.2016.
  */
 public class BlockMycelium extends BlockSolid {
 
-    public BlockMycelium(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Mycelium";
+    public BlockMycelium(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -41,7 +40,7 @@ public class BlockMycelium extends BlockSolid {
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-                Item.get(BlockID.DIRT)
+                Item.get(DIRT)
         };
     }
 
@@ -54,7 +53,7 @@ public class BlockMycelium extends BlockSolid {
             y = random.nextRange((int) y - 1, (int) y + 1);
             z = random.nextRange((int) z - 1, (int) z + 1);
             Block block = this.getLevel().getBlock(new Vector3(x, y, z));
-            if (block.getId() == Block.DIRT) {
+            if (block.getId() == DIRT) {
                 if (block.up().isTransparent()) {
                     BlockSpreadEvent ev = new BlockSpreadEvent(block, this, Block.get(MYCELIUM));
                     Server.getInstance().getPluginManager().callEvent(ev);

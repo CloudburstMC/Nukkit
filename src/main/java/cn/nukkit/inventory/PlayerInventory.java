@@ -1,7 +1,6 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Server;
-import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.EntityHumanType;
 import cn.nukkit.event.entity.EntityArmorChangeEvent;
@@ -14,13 +13,18 @@ import cn.nukkit.network.protocol.MobArmorEquipmentPacket;
 import cn.nukkit.network.protocol.MobEquipmentPacket;
 import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.player.Player;
+import lombok.extern.log4j.Log4j2;
 
+import java.util.Arrays;
 import java.util.Collection;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public class PlayerInventory extends BaseInventory {
 
     protected int itemInHandIndex = 0;
@@ -120,7 +124,7 @@ public class PlayerInventory extends BaseInventory {
         if (item != null) {
             return item;
         } else {
-            return Item.get(BlockID.AIR, 0, 0);
+            return Item.get(AIR, 0, 0);
         }
     }
 
@@ -240,7 +244,7 @@ public class PlayerInventory extends BaseInventory {
     private boolean setItem(int index, Item item, boolean send, boolean ignoreArmorEvents) {
         if (index < 0 || index >= this.size) {
             return false;
-        } else if (item.getId() == 0 || item.getCount() <= 0) {
+        } else if (item.getId() == AIR || item.getCount() <= 0) {
             return this.clear(index);
         }
 
@@ -271,7 +275,7 @@ public class PlayerInventory extends BaseInventory {
     @Override
     public boolean clear(int index, boolean send) {
         if (this.slots.containsKey(index)) {
-            Item item = Item.get(BlockID.AIR, 0, 0);
+            Item item = Item.get(AIR, 0, 0);
             Item old = this.slots.get(index);
             if (index >= this.getSize() && index < this.size) {
                 EntityArmorChangeEvent ev = new EntityArmorChangeEvent(this.getHolder(), old, item, index);
@@ -299,7 +303,7 @@ public class PlayerInventory extends BaseInventory {
                 item = ev.getNewItem();
             }
 
-            if (item.getId() != Item.AIR) {
+            if (item.getId() != AIR) {
                 this.slots.put(index, item.clone());
             } else {
                 this.slots.remove(index);
@@ -360,10 +364,10 @@ public class PlayerInventory extends BaseInventory {
 
         for (int i = 0; i < 4; ++i) {
             if (items[i] == null) {
-                items[i] = Item.get(BlockID.AIR, 0, 0);
+                items[i] = Item.get(AIR, 0, 0);
             }
 
-            if (items[i].getId() == Item.AIR) {
+            if (items[i].getId() == AIR) {
                 this.clear(this.getSize() + i);
             } else {
                 this.setItem(this.getSize() + i, items[i]);
@@ -420,6 +424,7 @@ public class PlayerInventory extends BaseInventory {
         for (int i = 0; i < this.getSize(); ++i) {
             pk.slots[i] = this.getItem(i);
         }
+        log.debug("Sending slots {}", Arrays.toString(pk.slots));
 
         /*//Because PE is stupid and shows 9 less slots than you send it, give it 9 dummy slots so it shows all the REAL slots.
         for(int i = this.getSize(); i < this.getSize() + this.getHotbarSize(); ++i){

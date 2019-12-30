@@ -1,21 +1,15 @@
 package cn.nukkit.item;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class ItemBook extends Item {
 
-    public ItemBook() {
-        this(0, 1);
-    }
-
-    public ItemBook(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemBook(Integer meta, int count) {
-        super(BOOK, meta, count, "Book");
+    public ItemBook(Identifier id) {
+        super(id);
     }
 
     @Override

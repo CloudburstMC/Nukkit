@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.utils.Identifier;
 
 public class BlockMonsterEgg extends BlockSolid {
     public static final int STONE = 0;
@@ -10,17 +11,8 @@ public class BlockMonsterEgg extends BlockSolid {
     public static final int CRACKED_BRICK = 4;
     public static final int CHISELED_BRICK = 5;
 
-    private static final String[] NAMES = new String[]{
-            "Stone",
-            "Cobblestone",
-            "Stone Brick",
-            "Mossy Stone Brick",
-            "Cracked Stone Brick",
-            "Chiseled Stone Brick"
-    };
-
-    public BlockMonsterEgg(int id, int meta) {
-        super(id, meta);
+    public BlockMonsterEgg(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -31,11 +23,6 @@ public class BlockMonsterEgg extends BlockSolid {
     @Override
     public double getResistance() {
         return 3.75;
-    }
-
-    @Override
-    public String getName() {
-        return NAMES[this.getDamage() > 5 ? 0 : this.getDamage()] + " Monster Egg";
     }
 
     @Override

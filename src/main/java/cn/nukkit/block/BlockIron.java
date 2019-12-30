@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * author: Angelic47
@@ -10,13 +11,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockIron extends BlockSolid {
 
-    public BlockIron(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Iron Block";
+    public BlockIron(Identifier id) {
+        super(id);
     }
 
     @Override

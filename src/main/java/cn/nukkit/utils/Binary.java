@@ -14,6 +14,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.network.protocol.types.EntityLink;
+import cn.nukkit.registry.ItemRegistry;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufUtil;
@@ -24,6 +25,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+
+import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.item.ItemIds.SHIELD;
 
 /**
  * author: MagicDroidX
@@ -221,7 +225,7 @@ public class Binary {
             item.setNamedTag(namedTag);
         }
 
-        if (item.getId() == 513) { // TODO: Shields
+        if (item.getId() == SHIELD) { // TODO: Shields
             readVarLong(buffer);
         }
 
@@ -229,14 +233,14 @@ public class Binary {
     }
 
     public static void writeItem(ByteBuf buffer, Item item) {
-        if (item == null || item.getId() == 0) {
+        if (item == null || item.getId() == AIR) {
             writeVarInt(buffer, 0);
             return;
         }
 
         boolean isDurable = item instanceof ItemDurable;
 
-        writeVarInt(buffer, item.getId());
+        writeVarInt(buffer, ItemRegistry.get().getRuntimeId(item.getId()));
 
         int auxValue = item.getCount();
         if (!isDurable) {
@@ -281,7 +285,7 @@ public class Binary {
             writeString(buffer, block);
         }
 
-        if (item.getId() == 513) { // TODO: Shields
+        if (item.getId() == SHIELD) { // TODO: Shields
             writeVarLong(buffer, 0);
         }
     }
@@ -304,7 +308,7 @@ public class Binary {
         if (ingredient.isNull()) {
             writeVarInt(buffer, 0);
         } else {
-            writeVarInt(buffer, ingredient.getId());
+            writeVarInt(buffer, ItemRegistry.get().getRuntimeId(ingredient.getId()));
             writeVarInt(buffer, ingredient.getDamage() & 0x7fff);
             writeVarInt(buffer, ingredient.getCount());
         }

@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * author: MagicDroidX
@@ -8,8 +9,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public abstract class BlockTransparent extends Block {
 
-    public BlockTransparent(int id, int meta) {
-        super(id, meta);
+    public BlockTransparent(Identifier id) {
+        super(id);
     }
 
     @Override

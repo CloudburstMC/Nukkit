@@ -1,21 +1,15 @@
 package cn.nukkit.item;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class ItemShears extends ItemTool {
 
-    public ItemShears() {
-        this(0, 1);
-    }
-
-    public ItemShears(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemShears(Integer meta, int count) {
-        super(SHEARS, meta, count, "Shears");
+    public ItemShears(Identifier id) {
+        super(id);
     }
 
     @Override

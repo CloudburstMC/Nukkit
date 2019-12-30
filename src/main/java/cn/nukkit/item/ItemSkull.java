@@ -1,6 +1,8 @@
 package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockIds;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by Snake1999 on 2016/2/3.
@@ -14,17 +16,13 @@ public class ItemSkull extends Item {
     public static final int CREEPER_HEAD = 4;
     public static final int DRAGON_HEAD = 5;
 
-    public ItemSkull() {
-        this(0, 1);
+    public ItemSkull(Identifier id) {
+        super(id);
     }
 
-    public ItemSkull(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemSkull(Integer meta, int count) {
-        super(SKULL, meta, count, getItemSkullName(meta));
-        this.block = Block.get(Block.SKULL_BLOCK);
+    @Override
+    public Block getBlock() {
+        return Block.get(BlockIds.SKULL);
     }
 
     public static String getItemSkullName(int meta) {

@@ -10,6 +10,9 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * author: MagicDroidX
@@ -22,8 +25,8 @@ public abstract class BlockDoor extends BlockTransparent implements Faceable {
     public static int DOOR_HINGE_BIT = 0x01;
     public static int DOOR_POWERED_BIT = 0x02;
 
-    public BlockDoor(int id, int meta) {
-        super(id, meta);
+    public BlockDoor(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -34,17 +37,6 @@ public abstract class BlockDoor extends BlockTransparent implements Faceable {
     @Override
     public boolean isSolid() {
         return false;
-    }
-
-    public int getFullDamage() {
-        int meta;
-
-        if(isTop()) {
-            meta = this.down().getDamage();
-        } else {
-            meta = this.getDamage();
-        }
-        return (this.getId() << 5 ) + (meta & 0x07 | (isTop() ? 0x08 : 0) | (isRightHinged() ? 0x10 :0));
     }
 
     @Override

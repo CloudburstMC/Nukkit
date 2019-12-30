@@ -1,6 +1,7 @@
 package cn.nukkit.item.randomitem;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by Snake1999 on 2016/1/15.
@@ -10,15 +11,15 @@ public class ConstantItemSelector extends Selector {
 
     protected final Item item;
 
-    public ConstantItemSelector(int id, Selector parent) {
+    public ConstantItemSelector(Identifier id, Selector parent) {
         this(id, 0, parent);
     }
 
-    public ConstantItemSelector(int id, Integer meta, Selector parent) {
+    public ConstantItemSelector(Identifier id, Integer meta, Selector parent) {
         this(id, meta, 1, parent);
     }
 
-    public ConstantItemSelector(int id, Integer meta, int count, Selector parent) {
+    public ConstantItemSelector(Identifier id, Integer meta, int count, Selector parent) {
         this(Item.get(id, meta, count), parent);
     }
 

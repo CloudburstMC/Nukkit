@@ -12,6 +12,11 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.item.ItemIds.FIREBALL;
+import static cn.nukkit.item.ItemIds.FLINT_AND_STEEL;
 
 /**
  * Created on 2015/12/8 by xtypr.
@@ -19,13 +24,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockTNT extends BlockSolid {
 
-    public BlockTNT(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "TNT";
+    public BlockTNT(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -96,13 +96,13 @@ public class BlockTNT extends BlockSolid {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.getId() == Item.FLINT_STEEL) {
+        if (item.getId() == FLINT_AND_STEEL) {
             item.useOn(this);
             this.prime(80, player);
             return true;
         }
-        if (item.getId() == Item.FIRE_CHARGE) {
-            if (!player.isCreative()) player.getInventory().removeItem(Item.get(Item.FIRE_CHARGE, 0, 1));
+        if (item.getId() == FIREBALL) {
+            if (!player.isCreative()) player.getInventory().removeItem(Item.get(FIREBALL, 0, 1));
             this.level.addSound(player, Sound.MOB_GHAST_FIREBALL);
             this.prime(80, player);
             return true;

@@ -11,6 +11,10 @@ import cn.nukkit.utils.DyeColor;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+import static cn.nukkit.block.BlockIds.WOOL;
+import static cn.nukkit.item.ItemIds.DYE;
+import static cn.nukkit.item.ItemIds.SHEARS;
+
 /**
  * Author: BeYkeRYkt Nukkit Project
  */
@@ -80,12 +84,12 @@ public class EntitySheep extends EntityAnimal {
 
     @Override
     public boolean onInteract(Player player, Item item) {
-        if (item.getId() == Item.DYE) {
+        if (item.getId() == DYE) {
             this.setColor(((ItemDye) item).getDyeColor().getWoolData());
             return true;
         }
 
-        return item.getId() == Item.SHEARS && shear();
+        return item.getId() == SHEARS && shear();
     }
 
     public boolean shear() {
@@ -96,14 +100,14 @@ public class EntitySheep extends EntityAnimal {
         this.sheared = true;
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_SHEARED, true);
 
-        this.level.dropItem(this, Item.get(Item.WOOL, getColor(), ThreadLocalRandom.current().nextInt(2) + 1));
+        this.level.dropItem(this, Item.get(WOOL, getColor(), ThreadLocalRandom.current().nextInt(2) + 1));
         return true;
     }
 
     @Override
     public Item[] getDrops() {
         if (this.lastDamageCause instanceof EntityDamageByEntityEvent) {
-            return new Item[]{Item.get(Item.WOOL, getColor(), 1)};
+            return new Item[]{Item.get(WOOL, getColor(), 1)};
         }
         return new Item[0];
     }

@@ -11,36 +11,38 @@ public class ResourcePackClientResponsePacket extends DataPacket {
 
     public static final short NETWORK_ID = ProtocolInfo.RESOURCE_PACK_CLIENT_RESPONSE_PACKET;
 
-    public static final byte STATUS_REFUSED = 1;
-    public static final byte STATUS_SEND_PACKS = 2;
-    public static final byte STATUS_HAVE_ALL_PACKS = 3;
-    public static final byte STATUS_COMPLETED = 4;
-
-    public byte responseStatus;
-    public Entry[] packEntries;
+    public Status status;
+    public String[] packEntries;
 
     @Override
     protected void decode(ByteBuf buffer) {
-        this.responseStatus = buffer.readByte();
-        this.packEntries = new Entry[buffer.readShortLE()];
+        this.status = Status.values()[buffer.readUnsignedByte()];
+        this.packEntries = new String[buffer.readShortLE()];
         for (int i = 0; i < this.packEntries.length; i++) {
-            String[] entry = Binary.readString(buffer).split("_");
-            this.packEntries[i] = new Entry(UUID.fromString(entry[0]), entry[1]);
+            this.packEntries[i] = Binary.readString(buffer);
         }
     }
 
     @Override
     protected void encode(ByteBuf buffer) {
-        buffer.writeByte(this.responseStatus);
+        buffer.writeByte(this.status.ordinal());
         buffer.writeShortLE(this.packEntries.length);
-        for (Entry entry : this.packEntries) {
-            Binary.writeString(buffer, entry.uuid.toString() + '_' + entry.version);
+        for (String entry : this.packEntries) {
+            Binary.writeString(buffer, entry);
         }
     }
 
     @Override
     public short pid() {
         return NETWORK_ID;
+    }
+
+    public enum Status {
+        UNKNOWN,
+        REFUSED,
+        SEND_PACKS,
+        HAVE_ALL_PACKS,
+        COMPLETED
     }
 
     @ToString

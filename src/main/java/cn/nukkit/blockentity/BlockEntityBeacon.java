@@ -1,16 +1,18 @@
 package cn.nukkit.blockentity;
 
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.inventory.BeaconInventory;
-import cn.nukkit.item.Item;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
 import cn.nukkit.potion.Effect;
+import cn.nukkit.registry.BlockRegistry;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Map;
+
+import static cn.nukkit.block.BlockIds.*;
 
 /**
  * author: Rover656
@@ -46,8 +48,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
 
     @Override
     public boolean isBlockEntityValid() {
-        int blockID = getBlock().getId();
-        return blockID == Block.BEACON;
+        return getBlock().getId() == BlockIds.BEACON;
     }
 
     @Override
@@ -156,8 +157,8 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
 
         //Check every block from our y coord to the top of the world
         for (int y = tileY + 1; y <= 255; y++) {
-            int testBlockId = level.getBlockIdAt(tileX, y, tileZ);
-            if (!Block.transparent[testBlockId]) {
+            Identifier testBlockId = level.getBlockIdAt(tileX, y, tileZ);
+            if (!BlockRegistry.get().getBlock(testBlockId, 0).isTransparent()) {
                 //There is no sky access
                 return false;
             }
@@ -178,13 +179,13 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
             for (int queryX = tileX - powerLevel; queryX <= tileX + powerLevel; queryX++) {
                 for (int queryZ = tileZ - powerLevel; queryZ <= tileZ + powerLevel; queryZ++) {
 
-                    int testBlockId = level.getBlockIdAt(queryX, queryY, queryZ);
+                    Identifier testBlockId = level.getBlockIdAt(queryX, queryY, queryZ);
                     if (
-                            testBlockId != Block.IRON_BLOCK &&
-                                    testBlockId != Block.GOLD_BLOCK &&
-                                    testBlockId != Block.EMERALD_BLOCK &&
-                                    testBlockId != Block.DIAMOND_BLOCK
-                            ) {
+                            testBlockId != IRON_BLOCK &&
+                                    testBlockId != GOLD_BLOCK &&
+                                    testBlockId != EMERALD_BLOCK &&
+                                    testBlockId != DIAMOND_BLOCK
+                    ) {
                         return powerLevel - 1;
                     }
 
@@ -247,7 +248,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
 
         BeaconInventory inv = (BeaconInventory)player.getWindowById(Player.BEACON_WINDOW_ID);
 
-        inv.setItem(0, Item.get(BlockID.AIR, 0, 0));
+        inv.clear(0);
         return true;
     }
 }

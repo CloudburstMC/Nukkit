@@ -12,8 +12,12 @@ import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Map;
+
+import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.block.BlockIds.FURNACE;
 
 /**
  * author: Angelic47
@@ -21,13 +25,8 @@ import java.util.Map;
  */
 public class BlockFurnaceBurning extends BlockSolid implements Faceable {
 
-    public BlockFurnaceBurning(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Burning Furnace";
+    public BlockFurnaceBurning(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -120,7 +119,7 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
 
     @Override
     public Item toItem() {
-        return Item.get(BlockID.FURNACE);
+        return Item.get(FURNACE);
     }
 
     @Override

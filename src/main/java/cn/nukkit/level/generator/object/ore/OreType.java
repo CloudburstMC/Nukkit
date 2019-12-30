@@ -4,8 +4,9 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.utils.Identifier;
 
-import static cn.nukkit.block.BlockID.STONE;
+import static cn.nukkit.block.BlockIds.STONE;
 
 /**
  * author: MagicDroidX
@@ -18,13 +19,13 @@ public class OreType {
     public final int clusterSize;
     public final int maxHeight;
     public final int minHeight;
-    public final int replaceBlockId;
+    public final Identifier replaceBlockId;
 
     public OreType(Block material, int clusterCount, int clusterSize, int minHeight, int maxHeight) {
         this(material, clusterCount, clusterSize, minHeight, maxHeight, STONE);
     }
 
-    public OreType(Block material, int clusterCount, int clusterSize, int minHeight, int maxHeight, int replaceBlockId) {
+    public OreType(Block material, int clusterCount, int clusterSize, int minHeight, int maxHeight, Identifier replaceBlockId) {
         this.block = material;
         this.clusterCount = clusterCount;
         this.clusterSize = clusterSize;
@@ -33,7 +34,7 @@ public class OreType {
         this.replaceBlockId = replaceBlockId;
     }
 
-    public boolean spawn(ChunkManager level, NukkitRandom rand, int replaceId, int x, int y, int z) {
+    public boolean spawn(ChunkManager level, NukkitRandom rand, Identifier replaceId, int x, int y, int z) {
         float piScaled = rand.nextFloat() * (float) Math.PI;
         double scaleMaxX = (double) ((float) (x + 8) + MathHelper.sin(piScaled) * (float) clusterSize / 8.0F);
         double scaleMinX = (double) ((float) (x + 8) - MathHelper.sin(piScaled) * (float) clusterSize / 8.0F);

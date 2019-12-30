@@ -1,21 +1,15 @@
 package cn.nukkit.item;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class ItemPickaxeWood extends ItemTool {
 
-    public ItemPickaxeWood() {
-        this(0, 1);
-    }
-
-    public ItemPickaxeWood(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemPickaxeWood(Integer meta, int count) {
-        super(WOODEN_PICKAXE, meta, count, "Wooden Pickaxe");
+    public ItemPickaxeWood(Identifier id) {
+        super(id);
     }
 
     @Override

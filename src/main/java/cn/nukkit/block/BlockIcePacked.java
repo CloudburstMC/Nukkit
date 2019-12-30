@@ -2,6 +2,9 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * author: MagicDroidX
@@ -9,13 +12,8 @@ import cn.nukkit.item.ItemTool;
  */
 public class BlockIcePacked extends BlockIce {
 
-    public BlockIcePacked(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Packed Ice";
+    public BlockIcePacked(Identifier id) {
+        super(id);
     }
 
     @Override

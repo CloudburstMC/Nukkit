@@ -1,15 +1,15 @@
 package cn.nukkit.level.biome.type;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 
 /**
  * author: DaPorkchop_
  * Nukkit Project
  */
 public abstract class WateryBiome extends CoveredBiome {
-    private static final Block AIR = Block.get(BlockID.AIR);
-    private static final Block DIRT = Block.get(BlockID.DIRT);
+    private static final Block AIR = Block.get(BlockIds.AIR);
+    private static final Block DIRT = Block.get(BlockIds.DIRT);
 
     @Override
     public int getSurfaceDepth(int x, int y, int z) {

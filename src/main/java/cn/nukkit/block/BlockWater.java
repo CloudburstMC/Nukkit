@@ -5,6 +5,9 @@ import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.FLOWING_WATER;
 
 /**
  * author: MagicDroidX
@@ -12,14 +15,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockWater extends BlockLiquid {
 
-
-    public BlockWater(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Water";
+    public BlockWater(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -37,7 +34,7 @@ public class BlockWater extends BlockLiquid {
 
     @Override
     public Block getBlock(int meta) {
-        return Block.get(WATER, meta);
+        return Block.get(FLOWING_WATER, meta);
     }
 
     @Override

@@ -1,18 +1,18 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by CreeperFace on 15.4.2017.
  */
 public class BlockDispenser extends BlockSolid implements Faceable {
 
-    public BlockDispenser(int id, int meta) {
-        super(id, meta);
+    public BlockDispenser(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -21,13 +21,8 @@ public class BlockDispenser extends BlockSolid implements Faceable {
     }
 
     @Override
-    public String getName() {
-        return "Dispenser";
-    }
-
-    @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return Item.get(id, 0);
     }
 
     @Override

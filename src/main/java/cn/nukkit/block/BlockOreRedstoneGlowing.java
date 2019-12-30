@@ -3,6 +3,9 @@ package cn.nukkit.block;
 import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.REDSTONE_ORE;
 
 //和pm源码有点出入，这里参考了wiki
 
@@ -12,13 +15,8 @@ import cn.nukkit.level.Level;
  */
 public class BlockOreRedstoneGlowing extends BlockOreRedstone {
 
-    public BlockOreRedstoneGlowing(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Glowing Redstone Ore";
+    public BlockOreRedstoneGlowing(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -28,7 +26,7 @@ public class BlockOreRedstoneGlowing extends BlockOreRedstone {
 
     @Override
     public Item toItem() {
-        return Item.get(BlockID.REDSTONE_ORE);
+        return Item.get(REDSTONE_ORE);
     }
 
     @Override

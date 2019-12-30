@@ -2,7 +2,7 @@ package cn.nukkit.level.generator.populator.helper;
 
 import cn.nukkit.level.chunk.Chunk;
 
-import static cn.nukkit.block.BlockID.GRASS;
+import static cn.nukkit.block.BlockIds.GRASS;
 
 /**
  * @author DaPorkchop_

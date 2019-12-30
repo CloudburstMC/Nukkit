@@ -5,19 +5,15 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by Leonidius20 on 18.08.18.
  */
 public class BlockObserver extends BlockSolid implements Faceable {
 
-    public BlockObserver(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Observer";
+    public BlockObserver(Identifier id) {
+        super(id);
     }
 
     @Override

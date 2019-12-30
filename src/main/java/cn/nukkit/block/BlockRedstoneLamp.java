@@ -6,19 +6,18 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.LIT_REDSTONE_LAMP;
+import static cn.nukkit.block.BlockIds.REDSTONE_LAMP;
 
 /**
  * @author Nukkit Project Team
  */
 public class BlockRedstoneLamp extends BlockSolid {
 
-    public BlockRedstoneLamp(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Redstone Lamp";
+    public BlockRedstoneLamp(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -67,7 +66,7 @@ public class BlockRedstoneLamp extends BlockSolid {
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-                Item.get(BlockID.REDSTONE_LAMP)
+                Item.get(REDSTONE_LAMP)
         };
     }
 

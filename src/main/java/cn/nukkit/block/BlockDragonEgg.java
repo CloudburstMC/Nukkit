@@ -3,18 +3,16 @@ package cn.nukkit.block;
 import cn.nukkit.level.Level;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+import static cn.nukkit.block.BlockIds.AIR;
+
 public class BlockDragonEgg extends BlockFallable {
 
-    public BlockDragonEgg(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Dragon Egg";
+    public BlockDragonEgg(Identifier id) {
+        super(id);
     }
 
     @Override

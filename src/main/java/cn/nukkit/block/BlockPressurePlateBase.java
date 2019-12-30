@@ -13,18 +13,21 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * Created by Snake1999 on 2016/1/11.
  * Package cn.nukkit.block in project nukkit
  */
-public abstract class BlockPressurePlateBase extends BlockFlowable {
+public abstract class BlockPressurePlateBase extends FloodableBlock {
 
     protected float onPitch;
     protected float offPitch;
 
-    protected BlockPressurePlateBase(int id, int meta) {
-        super(id, meta);
+    protected BlockPressurePlateBase(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -197,6 +200,6 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
 
     @Override
     public Item toItem() {
-        return Item.get(BlockID.AIR, 0, 0);
+        return Item.get(AIR, 0, 0);
     }
 }

@@ -1,7 +1,7 @@
 package cn.nukkit.level.generator;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.object.ore.OreType;
@@ -9,6 +9,7 @@ import cn.nukkit.level.generator.populator.impl.PopulatorOre;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.registry.BlockRegistry;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
@@ -16,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * author: MagicDroidX
@@ -35,7 +38,7 @@ public class Flat extends Generator {
 
     private final List<Populator> populators = new ArrayList<>();
 
-    private int[][] structure;
+    private Block[] structure;
 
     private final Map<String, Object> options;
 
@@ -71,15 +74,15 @@ public class Flat extends Generator {
         this.options = options;
 
         if (this.options.containsKey("decoration")) {
-            PopulatorOre ores = new PopulatorOre(BlockID.STONE, new OreType[]{
-                    new OreType(Block.get(BlockID.COAL_ORE), 20, 16, 0, 128),
-                    new OreType(Block.get(BlockID.IRON_ORE), 20, 8, 0, 64),
-                    new OreType(Block.get(BlockID.REDSTONE_ORE), 8, 7, 0, 16),
-                    new OreType(Block.get(BlockID.LAPIS_ORE), 1, 6, 0, 32),
-                    new OreType(Block.get(BlockID.GOLD_ORE), 2, 8, 0, 32),
-                    new OreType(Block.get(BlockID.DIAMOND_ORE), 1, 7, 0, 16),
-                    new OreType(Block.get(BlockID.DIRT), 20, 32, 0, 128),
-                    new OreType(Block.get(BlockID.GRAVEL), 20, 16, 0, 128),
+            PopulatorOre ores = new PopulatorOre(BlockIds.STONE, new OreType[]{
+                    new OreType(Block.get(BlockIds.COAL_ORE), 20, 16, 0, 128),
+                    new OreType(Block.get(BlockIds.IRON_ORE), 20, 8, 0, 64),
+                    new OreType(Block.get(BlockIds.REDSTONE_ORE), 8, 7, 0, 16),
+                    new OreType(Block.get(BlockIds.LAPIS_ORE), 1, 6, 0, 32),
+                    new OreType(Block.get(BlockIds.GOLD_ORE), 2, 8, 0, 32),
+                    new OreType(Block.get(BlockIds.DIAMOND_ORE), 1, 7, 0, 16),
+                    new OreType(Block.get(BlockIds.DIRT), 20, 32, 0, 128),
+                    new OreType(Block.get(BlockIds.GRAVEL), 20, 16, 0, 128),
             });
             this.populators.add(ores);
         }
@@ -93,7 +96,7 @@ public class Flat extends Generator {
             String blocks = presetArray.length > 1 ? presetArray[1] : "";
             this.biome = presetArray.length > 2 ? Integer.valueOf(presetArray[2]) : 1;
             String options = presetArray.length > 3 ? presetArray[1] : "";
-            this.structure = new int[256][];
+            this.structure = new Block[256];
             int y = 0;
             for (String block : blocks.split(",")) {
                 int id, meta = 0, cnt = 1;
@@ -119,12 +122,12 @@ public class Flat extends Generator {
                     y = 0xFF;
                 }
                 for (; cY < y; ++cY) {
-                    this.structure[cY] = new int[]{id, meta};
+                    this.structure[cY] = BlockRegistry.get().getBlock(id, meta);
                 }
             }
             this.floorLevel = y;
             for (; y <= 0xFF; ++y) {
-                this.structure[y] = new int[]{0, 0};
+                this.structure[y] = Block.get(AIR);
             }
             for (String option : options.split(",")) {
                 if (Pattern.matches("^[0-9a-z_]+$", option)) {
@@ -173,9 +176,7 @@ public class Flat extends Generator {
                 chunk.setBiome(X, Z, biome);
 
                 for (int y = 0; y < 256; ++y) {
-                    int k = this.structure[y][0];
-                    int l = this.structure[y][1];
-                    chunk.setBlockId(X, y, Z, this.structure[y][0], this.structure[y][1]);
+                    chunk.setBlock(X, y, Z, this.structure[y]);
                 }
             }
         }

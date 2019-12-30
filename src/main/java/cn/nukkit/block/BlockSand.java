@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * author: MagicDroidX
@@ -12,8 +13,8 @@ public class BlockSand extends BlockFallable {
     public static final int DEFAULT = 0;
     public static final int RED = 1;
 
-    public BlockSand(int id, int meta) {
-        super(id, meta);
+    public BlockSand(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -29,15 +30,6 @@ public class BlockSand extends BlockFallable {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_SHOVEL;
-    }
-
-    @Override
-    public String getName() {
-        if (this.getDamage() == 0x01) {
-            return "Red Sand";
-        }
-
-        return "Sand";
     }
 
     @Override

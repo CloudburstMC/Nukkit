@@ -2,6 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.utils.Identifier;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -9,12 +10,8 @@ public class ItemBookWritten extends Item {
 
     protected boolean isWritten = false;
 
-    public ItemBookWritten() {
-        this(0, 1);
-    }
-
-    public ItemBookWritten(Integer meta, int count) {
-        super(Item.WRITTEN_BOOK, 0, count, "Book");
+    public ItemBookWritten(Identifier id) {
+        super(id);
     }
 
     public Item writeBook(String author, String title, String[] pages) {

@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -17,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Log4j2
 public class ServerScheduler {
 
-    private final AsyncPool asyncPool;
+    private final ForkJoinPool asyncPool;
 
     private final Queue<TaskHandler> pending;
     private final Map<Integer, ArrayDeque<TaskHandler>> queueMap;
@@ -26,12 +27,12 @@ public class ServerScheduler {
 
     private volatile int currentTick = -1;
 
-    public ServerScheduler(int workers) {
+    public ServerScheduler() {
         this.pending = new ConcurrentLinkedQueue<>();
         this.currentTaskId = new AtomicInteger();
         this.queueMap = new ConcurrentHashMap<>();
         this.taskMap = new ConcurrentHashMap<>();
-        this.asyncPool = AsyncPool.makePool(workers);
+        this.asyncPool = ForkJoinPool.commonPool();
     }
 
     public TaskHandler scheduleTask(Task task) {
@@ -83,7 +84,7 @@ public class ServerScheduler {
         return asyncPool.getPoolSize();
     }
 
-    public AsyncPool getAsyncPool() {
+    public ForkJoinPool getAsyncPool() {
         return asyncPool;
     }
 
@@ -323,4 +324,11 @@ public class ServerScheduler {
         return currentTaskId.incrementAndGet();
     }
 
+    public static class ExceptionHandler implements Thread.UncaughtExceptionHandler {
+
+        @Override
+        public void uncaughtException(Thread t, Throwable e) {
+            log.fatal("Exception in scheduled task on thread: " + t.getName(), e);
+        }
+    }
 }

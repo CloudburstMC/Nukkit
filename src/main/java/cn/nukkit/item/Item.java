@@ -2,7 +2,6 @@ package cn.nukkit.item;
 
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -15,312 +14,46 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.ItemRegistry;
+import cn.nukkit.registry.RegistryException;
 import cn.nukkit.utils.Config;
+import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.Utils;
 import io.netty.buffer.ByteBufUtil;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteOrder;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.item.ItemIds.BUCKET;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 @Log4j2
-public class Item implements Cloneable, BlockID, ItemID {
-    //Normal Item IDs
+public abstract class Item implements Cloneable {
 
-    protected static String UNKNOWN_STR = "Unknown";
-    public static final Int2ObjectMap<Class> list = new Int2ObjectOpenHashMap<>();
+    private static final Pattern ITEM_STRING_PATTERN = Pattern.compile("^((?:[A-Za-z_0-9]+:)?[A-Za-z_0-9]+):?([0-9]+)?$");
 
-    protected Block block = null;
-    protected final int id;
-    protected int meta;
-    protected boolean hasMeta = true;
+    private final Identifier id;
+    private int meta;
+    private int count;
+    private int durability;
+
     private byte[] tags = new byte[0];
     private CompoundTag cachedNBT = null;
-    public int count;
-    protected int durability = 0;
-    protected String name;
 
-    public Item(int id) {
-        this(id, 0, 1, UNKNOWN_STR);
-    }
-
-    public Item(int id, Integer meta) {
-        this(id, meta, 1, UNKNOWN_STR);
-    }
-
-    public Item(int id, Integer meta, int count) {
-        this(id, meta, count, UNKNOWN_STR);
-    }
-
-    public Item(int id, Integer meta, int count, String name) {
+    public Item(Identifier id) {
         this.id = id;
-        if (meta != null && meta >= 0) {
-            this.meta = meta & 0xffff;
-        } else {
-            this.hasMeta = false;
-        }
-        this.count = count;
-        this.name = name;
-        /*f (this.block != null && this.id <= 0xff && Block.list[id] != null) { //probably useless
-            this.block = Block.get(this.id, this.meta);
-            this.name = this.block.getName();
-        }*/
     }
-
-    public boolean hasMeta() {
-        return hasMeta;
-    }
-
-    public boolean canBeActivated() {
-        return false;
-    }
-
-    public static void init() {
-        list.put(IRON_SHOVEL, ItemShovelIron.class); //256
-        list.put(IRON_PICKAXE, ItemPickaxeIron.class); //257
-        list.put(IRON_AXE, ItemAxeIron.class); //258
-        list.put(FLINT_AND_STEEL, ItemFlintSteel.class); //259
-        list.put(APPLE, ItemApple.class); //260
-        list.put(BOW, ItemBow.class); //261
-        list.put(ARROW, ItemArrow.class); //262
-        list.put(COAL, ItemCoal.class); //263
-        list.put(DIAMOND, ItemDiamond.class); //264
-        list.put(IRON_INGOT, ItemIngotIron.class); //265
-        list.put(GOLD_INGOT, ItemIngotGold.class); //266
-        list.put(IRON_SWORD, ItemSwordIron.class); //267
-        list.put(WOODEN_SWORD, ItemSwordWood.class); //268
-        list.put(WOODEN_SHOVEL, ItemShovelWood.class); //269
-        list.put(WOODEN_PICKAXE, ItemPickaxeWood.class); //270
-        list.put(WOODEN_AXE, ItemAxeWood.class); //271
-        list.put(STONE_SWORD, ItemSwordStone.class); //272
-        list.put(STONE_SHOVEL, ItemShovelStone.class); //273
-        list.put(STONE_PICKAXE, ItemPickaxeStone.class); //274
-        list.put(STONE_AXE, ItemAxeStone.class); //275
-        list.put(DIAMOND_SWORD, ItemSwordDiamond.class); //276
-        list.put(DIAMOND_SHOVEL, ItemShovelDiamond.class); //277
-        list.put(DIAMOND_PICKAXE, ItemPickaxeDiamond.class); //278
-        list.put(DIAMOND_AXE, ItemAxeDiamond.class); //279
-        list.put(STICK, ItemStick.class); //280
-        list.put(BOWL, ItemBowl.class); //281
-        list.put(MUSHROOM_STEW, ItemMushroomStew.class); //282
-        list.put(GOLD_SWORD, ItemSwordGold.class); //283
-        list.put(GOLD_SHOVEL, ItemShovelGold.class); //284
-        list.put(GOLD_PICKAXE, ItemPickaxeGold.class); //285
-        list.put(GOLD_AXE, ItemAxeGold.class); //286
-        list.put(STRING, ItemString.class); //287
-        list.put(FEATHER, ItemFeather.class); //288
-        list.put(GUNPOWDER, ItemGunpowder.class); //289
-        list.put(WOODEN_HOE, ItemHoeWood.class); //290
-        list.put(STONE_HOE, ItemHoeStone.class); //291
-        list.put(IRON_HOE, ItemHoeIron.class); //292
-        list.put(DIAMOND_HOE, ItemHoeDiamond.class); //293
-        list.put(GOLD_HOE, ItemHoeGold.class); //294
-        list.put(WHEAT_SEEDS, ItemSeedsWheat.class); //295
-        list.put(WHEAT, ItemWheat.class); //296
-        list.put(BREAD, ItemBread.class); //297
-        list.put(LEATHER_CAP, ItemHelmetLeather.class); //298
-        list.put(LEATHER_TUNIC, ItemChestplateLeather.class); //299
-        list.put(LEATHER_PANTS, ItemLeggingsLeather.class); //300
-        list.put(LEATHER_BOOTS, ItemBootsLeather.class); //301
-        list.put(CHAIN_HELMET, ItemHelmetChain.class); //302
-        list.put(CHAIN_CHESTPLATE, ItemChestplateChain.class); //303
-        list.put(CHAIN_LEGGINGS, ItemLeggingsChain.class); //304
-        list.put(CHAIN_BOOTS, ItemBootsChain.class); //305
-        list.put(IRON_HELMET, ItemHelmetIron.class); //306
-        list.put(IRON_CHESTPLATE, ItemChestplateIron.class); //307
-        list.put(IRON_LEGGINGS, ItemLeggingsIron.class); //308
-        list.put(IRON_BOOTS, ItemBootsIron.class); //309
-        list.put(DIAMOND_HELMET, ItemHelmetDiamond.class); //310
-        list.put(DIAMOND_CHESTPLATE, ItemChestplateDiamond.class); //311
-        list.put(DIAMOND_LEGGINGS, ItemLeggingsDiamond.class); //312
-        list.put(DIAMOND_BOOTS, ItemBootsDiamond.class); //313
-        list.put(GOLD_HELMET, ItemHelmetGold.class); //314
-        list.put(GOLD_CHESTPLATE, ItemChestplateGold.class); //315
-        list.put(GOLD_LEGGINGS, ItemLeggingsGold.class); //316
-        list.put(GOLD_BOOTS, ItemBootsGold.class); //317
-        list.put(FLINT, ItemFlint.class); //318
-        list.put(RAW_PORKCHOP, ItemPorkchopRaw.class); //319
-        list.put(COOKED_PORKCHOP, ItemPorkchopCooked.class); //320
-        list.put(PAINTING, ItemPainting.class); //321
-        list.put(GOLDEN_APPLE, ItemAppleGold.class); //322
-        list.put(SIGN, ItemSign.class); //323
-        list.put(WOODEN_DOOR, ItemDoorWood.class); //324
-        list.put(BUCKET, ItemBucket.class); //325
-
-        list.put(MINECART, ItemMinecart.class); //328
-        list.put(SADDLE, ItemSaddle.class); //329
-        list.put(IRON_DOOR, ItemDoorIron.class); //330
-        list.put(REDSTONE, ItemRedstone.class); //331
-        list.put(SNOWBALL, ItemSnowball.class); //332
-        list.put(BOAT, ItemBoat.class); //333
-        list.put(LEATHER, ItemLeather.class); //334
-
-        list.put(BRICK, ItemBrick.class); //336
-        list.put(CLAY, ItemClay.class); //337
-        list.put(SUGARCANE, ItemSugarcane.class); //338
-        list.put(PAPER, ItemPaper.class); //339
-        list.put(BOOK, ItemBook.class); //340
-        list.put(SLIMEBALL, ItemSlimeball.class); //341
-        list.put(MINECART_WITH_CHEST, ItemMinecartChest.class); //342
-
-        list.put(EGG, ItemEgg.class); //344
-        list.put(COMPASS, ItemCompass.class); //345
-        list.put(FISHING_ROD, ItemFishingRod.class); //346
-        list.put(CLOCK, ItemClock.class); //347
-        list.put(GLOWSTONE_DUST, ItemGlowstoneDust.class); //348
-        list.put(RAW_FISH, ItemFish.class); //349
-        list.put(COOKED_FISH, ItemFishCooked.class); //350
-        list.put(DYE, ItemDye.class); //351
-        list.put(BONE, ItemBone.class); //352
-        list.put(SUGAR, ItemSugar.class); //353
-        list.put(CAKE, ItemCake.class); //354
-        list.put(BED, ItemBed.class); //355
-        list.put(REPEATER, ItemRedstoneRepeater.class); //356
-        list.put(COOKIE, ItemCookie.class); //357
-        list.put(MAP, ItemMap.class); //358
-        list.put(SHEARS, ItemShears.class); //359
-        list.put(MELON, ItemMelon.class); //360
-        list.put(PUMPKIN_SEEDS, ItemSeedsPumpkin.class); //361
-        list.put(MELON_SEEDS, ItemSeedsMelon.class); //362
-        list.put(RAW_BEEF, ItemBeefRaw.class); //363
-        list.put(STEAK, ItemSteak.class); //364
-        list.put(RAW_CHICKEN, ItemChickenRaw.class); //365
-        list.put(COOKED_CHICKEN, ItemChickenCooked.class); //366
-        list.put(ROTTEN_FLESH, ItemRottenFlesh.class); //367
-        list.put(ENDER_PEARL, ItemEnderPearl.class); //368
-        list.put(BLAZE_ROD, ItemBlazeRod.class); //369
-        list.put(GHAST_TEAR, ItemGhastTear.class); //370
-        list.put(GOLD_NUGGET, ItemNuggetGold.class); //371
-        list.put(NETHER_WART, ItemNetherWart.class); //372
-        list.put(POTION, ItemPotion.class); //373
-        list.put(GLASS_BOTTLE, ItemGlassBottle.class); //374
-        list.put(SPIDER_EYE, ItemSpiderEye.class); //375
-        list.put(FERMENTED_SPIDER_EYE, ItemSpiderEyeFermented.class); //376
-        list.put(BLAZE_POWDER, ItemBlazePowder.class); //377
-        list.put(MAGMA_CREAM, ItemMagmaCream.class); //378
-        list.put(BREWING_STAND, ItemBrewingStand.class); //379
-        list.put(CAULDRON, ItemCauldron.class); //380
-        list.put(ENDER_EYE, ItemEnderEye.class); //381
-        list.put(GLISTERING_MELON, ItemMelonGlistering.class); //382
-        list.put(SPAWN_EGG, ItemSpawnEgg.class); //383
-        list.put(EXPERIENCE_BOTTLE, ItemExpBottle.class); //384
-        list.put(FIRE_CHARGE, ItemFireCharge.class); //385
-        //TODO: list.put(BOOK_AND_QUILL, ItemBookAndQuill.class); //386
-        list.put(WRITTEN_BOOK, ItemBookWritten.class); //387
-        list.put(EMERALD, ItemEmerald.class); //388
-        list.put(ITEM_FRAME, ItemItemFrame.class); //389
-        list.put(FLOWER_POT, ItemFlowerPot.class); //390
-        list.put(CARROT, ItemCarrot.class); //391
-        list.put(POTATO, ItemPotato.class); //392
-        list.put(BAKED_POTATO, ItemPotatoBaked.class); //393
-        list.put(POISONOUS_POTATO, ItemPotatoPoisonous.class); //394
-        //TODO: list.put(EMPTY_MAP, ItemEmptyMap.class); //395
-        list.put(GOLDEN_CARROT, ItemCarrotGolden.class); //396
-        list.put(SKULL, ItemSkull.class); //397
-        list.put(CARROT_ON_A_STICK, ItemCarrotOnAStick.class); //398
-        list.put(NETHER_STAR, ItemNetherStar.class); //399
-        list.put(PUMPKIN_PIE, ItemPumpkinPie.class); //400
-        list.put(FIREWORKS, ItemFirework.class); //401
-
-        list.put(ENCHANTED_BOOK, ItemBookEnchanted.class); //403
-        list.put(COMPARATOR, ItemRedstoneComparator.class); //404
-        list.put(NETHER_BRICK, ItemNetherBrick.class); //405
-        list.put(QUARTZ, ItemQuartz.class); //406
-        list.put(MINECART_WITH_TNT, ItemMinecartTNT.class); //407
-        list.put(MINECART_WITH_HOPPER, ItemMinecartHopper.class); //408
-        list.put(PRISMARINE_SHARD, ItemPrismarineShard.class); //409
-        list.put(HOPPER, ItemHopper.class);
-        list.put(RAW_RABBIT, ItemRabbitRaw.class); //411
-        list.put(COOKED_RABBIT, ItemRabbitCooked.class); //412
-        list.put(RABBIT_STEW, ItemRabbitStew.class); //413
-        list.put(RABBIT_FOOT, ItemRabbitFoot.class); //414
-        //TODO: list.put(RABBIT_HIDE, ItemRabbitHide.class); //415
-        list.put(LEATHER_HORSE_ARMOR, ItemHorseArmorLeather.class); //416
-        list.put(IRON_HORSE_ARMOR, ItemHorseArmorIron.class); //417
-        list.put(GOLD_HORSE_ARMOR, ItemHorseArmorGold.class); //418
-        list.put(DIAMOND_HORSE_ARMOR, ItemHorseArmorDiamond.class); //419
-        //TODO: list.put(LEAD, ItemLead.class); //420
-        //TODO: list.put(NAME_TAG, ItemNameTag.class); //421
-        list.put(PRISMARINE_CRYSTALS, ItemPrismarineCrystals.class); //422
-        list.put(RAW_MUTTON, ItemMuttonRaw.class); //423
-        list.put(COOKED_MUTTON, ItemMuttonCooked.class); //424
-
-        list.put(END_CRYSTAL, ItemEndCrystal.class); //426
-        list.put(SPRUCE_DOOR, ItemDoorSpruce.class); //427
-        list.put(BIRCH_DOOR, ItemDoorBirch.class); //428
-        list.put(JUNGLE_DOOR, ItemDoorJungle.class); //429
-        list.put(ACACIA_DOOR, ItemDoorAcacia.class); //430
-        list.put(DARK_OAK_DOOR, ItemDoorDarkOak.class); //431
-        list.put(CHORUS_FRUIT, ItemChorusFruit.class); //432
-        //TODO: list.put(POPPED_CHORUS_FRUIT, ItemChorusFruitPopped.class); //433
-
-        //TODO: list.put(DRAGON_BREATH, ItemDragonBreath.class); //437
-        list.put(SPLASH_POTION, ItemPotionSplash.class); //438
-
-        list.put(LINGERING_POTION, ItemPotionLingering.class); //441
-
-        list.put(ELYTRA, ItemElytra.class); //444
-
-        //TODO: list.put(SHULKER_SHELL, ItemShulkerShell.class); //445
-        list.put(BANNER, ItemBanner.class); //446
-
-        list.put(TRIDENT, ItemTrident.class); //455
-
-        list.put(BEETROOT, ItemBeetroot.class); //457
-        list.put(BEETROOT_SEEDS, ItemSeedsBeetroot.class); //458
-        list.put(BEETROOT_SOUP, ItemBeetrootSoup.class); //459
-        list.put(RAW_SALMON, ItemSalmon.class); //460
-        list.put(CLOWNFISH, ItemClownfish.class); //461
-        list.put(PUFFERFISH, ItemPufferfish.class); //462
-        list.put(COOKED_SALMON, ItemSalmonCooked.class); //463
-        list.put(DRIED_KELP, ItemDriedKelp.class); //464
-
-        list.put(GOLDEN_APPLE_ENCHANTED, ItemAppleGoldEnchanted.class); //466
-
-        list.put(TURTLE_SHELL, ItemTurtleShell.class); //469
-        list.put(SPRUCE_SIGN, ItemSignSpruce.class); //472
-
-        list.put(SWEET_BERRIES, ItemSweetBerries.class); //477
-
-        list.put(RECORD_11, ItemRecord11.class);
-        list.put(RECORD_CAT, ItemRecordCat.class);
-        list.put(RECORD_13, ItemRecord13.class);
-        list.put(RECORD_BLOCKS, ItemRecordBlocks.class);
-        list.put(RECORD_CHIRP, ItemRecordChirp.class);
-        list.put(RECORD_FAR, ItemRecordFar.class);
-        list.put(RECORD_WARD, ItemRecordWard.class);
-        list.put(RECORD_MALL, ItemRecordMall.class);
-        list.put(RECORD_MELLOHI, ItemRecordMellohi.class);
-        list.put(RECORD_STAL, ItemRecordStal.class);
-        list.put(RECORD_STRAD, ItemRecordStrad.class);
-        list.put(RECORD_WAIT, ItemRecordWait.class);
-
-        list.put(SHIELD, ItemShield.class); //513
-
-        Block.list.forEach((blockId, blockClass) -> {
-            int itemId = blockId;
-            if (blockId > 255) {
-                itemId = 255 - blockId;
-            }
-            list.put(itemId, blockClass);
-        });
-
-        initCreativeItems();
-    }
-
-    private static final ArrayList<Item> creative = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
-    private static void initCreativeItems() {
+    public static void initCreativeItems() {
         clearCreativeItems();
 
         Config config = new Config(Config.YAML);
@@ -328,21 +61,30 @@ public class Item implements Cloneable, BlockID, ItemID {
         List<Map> list = config.getMapList("items");
 
         for (Map map : list) {
+            int id = -1;
             try {
-                int id = (int) map.get("id");
+                id = (int) map.get("id");
                 int damage = (int) map.getOrDefault("damage", 0);
                 String hex = (String) map.get("nbt_hex");
                 byte[] nbt = hex != null ? Utils.parseHexBinary(hex) : new byte[0];
 
-                try {
-                    addCreativeItem(Item.get(id, damage, 1, nbt));
-                } catch (NoSuchElementException e) {
-                    // ignore items that don't exist
-                }
+                addCreativeItem(Item.get(id, damage, 1, nbt));
+            } catch (RegistryException e) {
+                log.debug("Could not register non-existent creative item ID: {}", id);
             } catch (Exception e) {
                 log.error("Error whilst adding creative item", e);
             }
         }
+    }
+
+    public boolean canBeActivated() {
+        return false;
+    }
+
+    private static final ArrayList<Item> creative = new ArrayList<>();
+
+    public static Item get(Identifier id) {
+        return get(id, 0);
     }
 
     public static void clearCreativeItems() {
@@ -386,51 +128,47 @@ public class Item implements Cloneable, BlockID, ItemID {
         return -1;
     }
 
+    public static Item get(Identifier id, int meta) {
+        return get(id, meta, 1);
+    }
+
+    public static Item get(Identifier id, int meta, int count) {
+        return get(id, meta, count, new byte[0]);
+    }
+
+    public static Item get(Identifier id, int meta, int count, byte[] tags) {
+        Item item = Server.getInstance().getItemRegistry().getItem(id);
+        item.setDamage(meta);
+        item.setCount(count);
+        if (tags.length != 0) {
+            item.setCompoundTag(tags);
+        }
+
+        return item;
+    }
+
+    @Deprecated
     public static Item get(int id) {
         return get(id, 0);
     }
 
+    @Deprecated
     public static Item get(int id, int meta) {
         return get(id, meta, 1);
     }
 
+    @Deprecated
     public static Item get(int id, int meta, int count) {
         return get(id, meta, count, new byte[0]);
     }
 
+    @Deprecated
     public static Item get(int id, int meta, int count, byte[] tags) {
-        Item item;
-        Class clazz;
-
-        if (id > 0 && (id & 0x8000) != 0) {
-            throw new IllegalArgumentException("Invalid item ID " + id);
-        }
-
-        if (id < 256) {
-            // Blocks
-            int blockId;
-            if (id < 0) {
-                blockId = 255 - id;
-            } else {
-                blockId = id;
-            }
-
-            if (meta < 0) {
-                item = new ItemBlock(Block.get(blockId), -1, count);
-            } else {
-                item = new ItemBlock(Block.get(blockId, meta), count);
-            }
-        } else if ((clazz = list.get(id)) == null) {
-            item = new Item(id, meta, count);
-        } else {
-            try {
-                item = ((Item) clazz.getConstructor(Integer.class, int.class).newInstance(meta, count));
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
-                    InvocationTargetException e) {
-                item = new Item(id, meta, count).setCompoundTag(tags);
-            }
-        }
-
+        ItemRegistry registry = Server.getInstance().getItemRegistry();
+        Identifier identifier = registry.fromLegacy(id);
+        Item item = registry.getItem(identifier);
+        item.setDamage(meta);
+        item.setCount(count);
         if (tags.length != 0) {
             item.setCompoundTag(tags);
         }
@@ -439,25 +177,30 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     public static Item fromString(String str) {
-        String[] b = str.trim().replace(' ', '_').replace("minecraft:", "").split(":");
-
-        int id = 0;
-        int meta = 0;
-
-        Pattern integerPattern = Pattern.compile("^[1-9]\\d*$");
-        if (integerPattern.matcher(b[0]).matches()) {
-            id = Integer.parseInt(b[0]);
-        } else {
-            try {
-                id = Item.class.getField(b[0].toUpperCase()).getInt(null);
-            } catch (Exception ignore) {
-            }
+        Matcher matcher = ITEM_STRING_PATTERN.matcher(str);
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("Invalid item string");
         }
 
-        id = id & 0xFFFF;
-        if (b.length != 1) meta = Integer.parseInt(b[1]) & 0xFFFF;
+        Identifier id;
+        int meta = 0;
+
+        String stringId = matcher.group(1);
+        Pattern integerPattern = Pattern.compile("^[1-9]\\d*$");
+        if (integerPattern.matcher(stringId).matches()) {
+            id = ItemRegistry.get().fromLegacy(Integer.parseInt(stringId));
+        } else {
+            id = Identifier.fromString(stringId);
+        }
+
+        String metaString = matcher.group(2);
+        if (metaString != null) meta = Integer.parseInt(metaString) & 0xFFFF;
 
         return get(id, meta);
+    }
+
+    public boolean hasMeta() {
+        return this.meta < Short.MAX_VALUE;
     }
 
     public static Item fromJson(Map<String, Object> data) {
@@ -831,6 +574,22 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
     }
 
+    public void decrementCount() {
+        this.decrementCount(1);
+    }
+
+    public void decrementCount(int amount) {
+        this.count -= amount;
+    }
+
+    public void incrementCount() {
+        this.incrementCount(1);
+    }
+
+    public void incrementCount(int amount) {
+        this.count += amount;
+    }
+
     public int getCount() {
         return count;
     }
@@ -844,22 +603,18 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     final public String getName() {
-        return this.hasCustomName() ? this.getCustomName() : this.name;
+        return this.getCustomName();
     }
 
     final public boolean canBePlaced() {
-        return ((this.block != null) && this.block.canBePlaced());
+        return this.getBlock().canBePlaced();
     }
 
     public Block getBlock() {
-        if (this.block != null) {
-            return this.block.clone();
-        } else {
-            return Block.get(AIR);
-        }
+        return Block.get(AIR);
     }
 
-    public int getId() {
+    public Identifier getId() {
         return id;
     }
 
@@ -867,12 +622,8 @@ public class Item implements Cloneable, BlockID, ItemID {
         return meta;
     }
 
-    public void setDamage(Integer meta) {
-        if (meta != null) {
-            this.meta = meta & 0xffff;
-        } else {
-            this.hasMeta = false;
-        }
+    public void setDamage(int meta) {
+        this.meta = meta & 0xffff;
     }
 
     public int getMaxStackSize() {
@@ -983,7 +734,7 @@ public class Item implements Cloneable, BlockID, ItemID {
 
     @Override
     final public String toString() {
-        return "Item " + this.name + " (" + this.id + ":" + (!this.hasMeta ? "?" : this.meta) + ")x" + this.count + (this.hasCompoundTag() ? " tags:0x" + ByteBufUtil.hexDump(this.getCompoundTag()) : "");
+        return "Item(" + this.id + ", " + (!this.hasMeta() ? "?" : this.meta) + ")x" + this.count + (this.hasCompoundTag() ? " tags:0x" + ByteBufUtil.hexDump(this.getCompoundTag()) : "");
     }
 
     public int getDestroySpeed(Block block, Player player) {

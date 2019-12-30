@@ -5,21 +5,17 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * @author Nukkit Project Team
  */
 public class BlockPressurePlateWood extends BlockPressurePlateBase {
 
-    public BlockPressurePlateWood(int id, int meta) {
-        super(id, meta);
+    public BlockPressurePlateWood(Identifier id) {
+        super(id);
         this.onPitch = 0.8f;
         this.offPitch = 0.7f;
-    }
-
-    @Override
-    public String getName() {
-        return "Wooden Pressure Plate";
     }
 
     @Override

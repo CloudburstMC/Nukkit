@@ -2,6 +2,10 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.COBBLESTONE;
+import static cn.nukkit.block.BlockIds.STONE;
 
 /**
  * author: MagicDroidX
@@ -17,8 +21,8 @@ public class BlockStone extends BlockSolid {
     public static final int POLISHED_ANDESITE = 6;
 
 
-    public BlockStone(int id, int meta) {
-        super(id, meta);
+    public BlockStone(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -37,25 +41,10 @@ public class BlockStone extends BlockSolid {
     }
 
     @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Stone",
-                "Granite",
-                "Polished Granite",
-                "Diorite",
-                "Polished Diorite",
-                "Andesite",
-                "Polished Andesite",
-                "Unknown Stone"
-        };
-        return names[this.getDamage() & 0x07];
-    }
-
-    @Override
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
-                    Item.get(this.getDamage() == 0 ? Item.COBBLESTONE : Item.STONE, this.getDamage(), 1)
+                    Item.get(this.getDamage() == 0 ? COBBLESTONE : STONE, this.getDamage(), 1)
             };
         } else {
             return new Item[0];

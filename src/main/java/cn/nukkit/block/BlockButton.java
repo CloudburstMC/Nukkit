@@ -8,14 +8,15 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by CreeperFace on 27. 11. 2016.
  */
-public abstract class BlockButton extends BlockFlowable implements Faceable {
+public abstract class BlockButton extends FloodableBlock implements Faceable {
 
-    public BlockButton(int id, int meta) {
-        super(id, meta);
+    public BlockButton(Identifier id) {
+        super(id);
     }
 
     @Override

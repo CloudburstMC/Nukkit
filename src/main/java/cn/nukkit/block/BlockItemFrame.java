@@ -3,28 +3,26 @@ package cn.nukkit.block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityItemFrame;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemItemFrame;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * Created by Pub4Game on 03.07.2016.
  */
 public class BlockItemFrame extends BlockTransparent {
 
-    public BlockItemFrame(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Item Frame";
+    public BlockItemFrame(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -48,12 +46,12 @@ public class BlockItemFrame extends BlockTransparent {
     public boolean onActivate(Item item, Player player) {
         BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
         BlockEntityItemFrame itemFrame = (BlockEntityItemFrame) blockEntity;
-        if (itemFrame.getItem().getId() == Item.AIR) {
-        	Item itemOnFrame = item.clone();
-        	if (player != null && player.isSurvival()) {
-        		itemOnFrame.setCount(itemOnFrame.getCount() - 1);
+        if (itemFrame.getItem() == null || itemFrame.getItem().getId() == AIR) {
+            Item itemOnFrame = item.clone();
+            if (player != null && player.isSurvival()) {
+                itemOnFrame.setCount(itemOnFrame.getCount() - 1);
                 player.getInventory().setItemInHand(itemOnFrame);
-        	}
+            }
             itemOnFrame.setCount(1);
             itemFrame.setItem(itemOnFrame);
             this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_ADD_ITEM);
@@ -128,7 +126,7 @@ public class BlockItemFrame extends BlockTransparent {
 
     @Override
     public Item toItem() {
-        return new ItemItemFrame();
+        return Item.get(ItemIds.FRAME);
     }
 
     @Override

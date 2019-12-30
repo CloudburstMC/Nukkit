@@ -8,16 +8,12 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.player.Player;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 public class BlockMagma extends BlockSolid {
 
-    public BlockMagma(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Magma Block";
+    public BlockMagma(Identifier id) {
+        super(id);
     }
 
     @Override

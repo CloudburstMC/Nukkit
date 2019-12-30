@@ -1,15 +1,19 @@
 package cn.nukkit.level.generator.populator.helper;
 
-import cn.nukkit.block.BlockID;
 import cn.nukkit.level.chunk.Chunk;
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import it.unimi.dsi.fastutil.ints.IntSet;
+import cn.nukkit.utils.Identifier;
+
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Set;
+
+import static cn.nukkit.block.BlockIds.*;
 
 /**
  * @author DaPorkchop_
  */
-public final class PopulatorHelpers implements BlockID {
-    private static final IntSet nonSolidBlocks = new IntOpenHashSet();
+public final class PopulatorHelpers {
+    private static final Set<Identifier> nonSolidBlocks = Collections.newSetFromMap(new IdentityHashMap<>());
 
     static {
         nonSolidBlocks.add(AIR);
@@ -25,7 +29,7 @@ public final class PopulatorHelpers implements BlockID {
         return EnsureCover.ensureCover(x, y, z, chunk) && EnsureGrassBelow.ensureGrassBelow(x, y, z, chunk);
     }
 
-    public static boolean isNonSolid(int id)   {
+    public static boolean isNonSolid(Identifier id) {
         return nonSolidBlocks.contains(id);
     }
 }

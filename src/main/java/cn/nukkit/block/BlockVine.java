@@ -2,26 +2,21 @@ package cn.nukkit.block;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by Pub4Game on 15.01.2016.
  */
 public class BlockVine extends BlockTransparent {
 
-    public BlockVine(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Vines";
+    public BlockVine(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -143,7 +138,7 @@ public class BlockVine extends BlockTransparent {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return Item.get(id, 0);
     }
 
     @Override

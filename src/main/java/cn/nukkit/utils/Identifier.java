@@ -3,12 +3,11 @@ package cn.nukkit.utils;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
 
-public final class Identifier {
+public final class Identifier implements Comparable<Identifier> {
     public static final Identifier EMPTY = new Identifier("", "", ":");
 
     private static final Pattern PATTERN = Pattern.compile("^([a-zA-Z0-9_]+):([a-zA-Z0-9_]+)$");
@@ -67,20 +66,12 @@ public final class Identifier {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == this) return true;
-        if (!(o instanceof Identifier)) return false;
-        Identifier that = (Identifier) o;
-        return Objects.equals(this.fullName, that.fullName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(namespace, name);
-    }
-
-    @Override
     public String toString() {
         return fullName;
+    }
+
+    @Override
+    public int compareTo(Identifier o) {
+        return this.fullName.compareTo(o.fullName);
     }
 }

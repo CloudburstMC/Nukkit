@@ -2,7 +2,7 @@ package cn.nukkit.item.food;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockLiquid;
-import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.NukkitRandom;
@@ -16,7 +16,7 @@ public class FoodChorusFruit extends FoodNormal {
 
     public FoodChorusFruit() {
         super(4, 2.4F);
-        addRelative(Item.CHORUS_FRUIT);
+        addRelative(ItemIds.CHORUS_FRUIT);
     }
 
     @Override

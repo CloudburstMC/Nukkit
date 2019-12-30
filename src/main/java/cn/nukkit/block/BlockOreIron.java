@@ -2,6 +2,9 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.IRON_ORE;
 
 /**
  * author: MagicDroidX
@@ -10,8 +13,8 @@ import cn.nukkit.item.ItemTool;
 public class BlockOreIron extends BlockSolid {
 
 
-    public BlockOreIron(int id, int meta) {
-        super(id, meta);
+    public BlockOreIron(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -27,11 +30,6 @@ public class BlockOreIron extends BlockSolid {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
-    }
-
-    @Override
-    public String getName() {
-        return "Iron Ore";
     }
 
     @Override

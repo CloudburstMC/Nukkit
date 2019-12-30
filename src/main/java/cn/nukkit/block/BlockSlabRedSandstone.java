@@ -1,8 +1,10 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.DOUBLE_STONE_SLAB2;
 
 /**
  * Created by CreeperFace on 26. 11. 2016.
@@ -12,24 +14,8 @@ public class BlockSlabRedSandstone extends BlockSlab {
     public static final int RED_SANDSTONE = 0;
     public static final int PURPUR = 1; //WHY THIS
 
-    public BlockSlabRedSandstone(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Red Sandstone",
-                "Purpur",
-                "",
-                "",
-                "",
-                "",
-                "",
-                ""
-        };
-
-        return ((this.getDamage() & 0x08) > 0 ? "Upper " : "") + names[this.getDamage() & 0x07] + " Slab";
+    public BlockSlabRedSandstone(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -45,7 +31,7 @@ public class BlockSlabRedSandstone extends BlockSlab {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, this.getDamage() & 0x07);
+        return Item.get(id, this.getDamage() & 0x07);
     }
 
     @Override
@@ -54,7 +40,7 @@ public class BlockSlabRedSandstone extends BlockSlab {
     }
 
     @Override
-    protected int getDoubleSlab() {
-        return DOUBLE_RED_SANDSTONE_SLAB;
+    protected Identifier getDoubleSlab() {
+        return DOUBLE_STONE_SLAB2;
     }
 }

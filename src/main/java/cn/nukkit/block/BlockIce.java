@@ -5,6 +5,9 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.WATER;
 
 /**
  * author: MagicDroidX
@@ -12,13 +15,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockIce extends BlockTransparent {
 
-    public BlockIce(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Ice";
+    public BlockIce(Identifier id) {
+        super(id);
     }
 
     @Override

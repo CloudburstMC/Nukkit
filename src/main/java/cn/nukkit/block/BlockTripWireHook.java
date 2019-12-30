@@ -2,25 +2,22 @@ package cn.nukkit.block;
 
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.*;
 
 /**
  * @author CreeperFace
  */
-public class BlockTripWireHook extends BlockFlowable {
+public class BlockTripWireHook extends FloodableBlock {
 
-    public BlockTripWireHook(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Tripwire Hook";
+    public BlockTripWireHook(Identifier id) {
+        super(id);
     }
 
     public BlockFace getFacing() {
@@ -100,7 +97,7 @@ public class BlockTripWireHook extends BlockFlowable {
                 break;
             }
 
-            if (b.getId() != Block.TRIPWIRE && i != pos) {
+            if (b.getId() != TRIPWIRE && i != pos) {
                 blocks[i] = null;
                 canConnect = false;
             } else {
@@ -156,7 +153,7 @@ public class BlockTripWireHook extends BlockFlowable {
                 Vector3 vc = v.getSide(facing, i);
                 block = blocks[i];
 
-                if (block != null && this.level.getBlockIdAt(vc.getFloorX(), vc.getFloorY(), vc.getFloorZ()) != Block.AIR) {
+                if (block != null && this.level.getBlockIdAt(vc.getFloorX(), vc.getFloorY(), vc.getFloorZ()) != AIR) {
                     if (canConnect ^ ((block.getDamage() & 0x04) > 0)) {
                         block.setDamage(block.getDamage() ^ 0x04);
                     }
@@ -223,6 +220,6 @@ public class BlockTripWireHook extends BlockFlowable {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return Item.get(id, 0);
     }
 }

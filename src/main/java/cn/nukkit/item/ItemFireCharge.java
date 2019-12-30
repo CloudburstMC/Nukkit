@@ -8,24 +8,20 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 
 import java.util.concurrent.ThreadLocalRandom;
+
+import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.block.BlockIds.FIRE;
 
 /**
  * Created by PetteriM1
  */
 public class ItemFireCharge extends Item {
 
-    public ItemFireCharge() {
-        this(0, 1);
-    }
-
-    public ItemFireCharge(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemFireCharge(Integer meta, int count) {
-        super(FIRE_CHARGE, 0, count, "Fire Charge");
+    public ItemFireCharge(Identifier id) {
+        super(id);
     }
 
     @Override

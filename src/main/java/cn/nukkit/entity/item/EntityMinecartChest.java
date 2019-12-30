@@ -1,10 +1,10 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemMinecartChest;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -21,7 +21,7 @@ public class EntityMinecartChest extends EntityMinecartAbstract {
 
     public EntityMinecartChest(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
-        super.setDisplayBlock(Block.get(BlockID.CHEST), false);
+        super.setDisplayBlock(Block.get(BlockIds.CHEST), false);
     }
 
     // TODO: 2016/1/30 inventory
@@ -43,7 +43,7 @@ public class EntityMinecartChest extends EntityMinecartAbstract {
 
     @Override
     public void dropItem() {
-        level.dropItem(this, new ItemMinecartChest());
+        level.dropItem(this, Item.get(ItemIds.CHEST_MINECART));
     }
 
     @Override

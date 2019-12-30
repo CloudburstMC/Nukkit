@@ -7,14 +7,17 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * Created on 2015/11/24 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockCarpet extends BlockFlowable {
-    public BlockCarpet(int id, int meta) {
-        super(id, meta);
+public class BlockCarpet extends FloodableBlock {
+    public BlockCarpet(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -30,11 +33,6 @@ public class BlockCarpet extends BlockFlowable {
     @Override
     public boolean isSolid() {
         return true;
-    }
-
-    @Override
-    public String getName() {
-        return DyeColor.getByWoolData(getDamage()) + " Carpet";
     }
 
     @Override
@@ -55,7 +53,7 @@ public class BlockCarpet extends BlockFlowable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
-        if (down.getId() != Item.AIR) {
+        if (down.getId() != AIR) {
             this.getLevel().setBlock(block, this, true, true);
             return true;
         }
@@ -65,7 +63,7 @@ public class BlockCarpet extends BlockFlowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.down().getId() == Item.AIR) {
+            if (this.down().getId() == AIR) {
                 this.getLevel().useBreakOn(this);
 
                 return Level.BLOCK_UPDATE_NORMAL;

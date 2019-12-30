@@ -1,23 +1,21 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemRedstoneRepeater;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.UNPOWERED_REPEATER;
 
 /**
  * Created by CreeperFace on 10.4.2017.
  */
 public class BlockRedstoneRepeaterPowered extends BlockRedstoneDiode {
 
-    public BlockRedstoneRepeaterPowered(int id, int meta) {
-        super(id, meta);
+    public BlockRedstoneRepeaterPowered(Identifier id) {
+        super(id);
         this.isPowered = true;
-    }
-
-    @Override
-    public String getName() {
-        return "Powered Repeater";
     }
 
     @Override
@@ -32,7 +30,7 @@ public class BlockRedstoneRepeaterPowered extends BlockRedstoneDiode {
 
     @Override
     public Item toItem() {
-        return new ItemRedstoneRepeater();
+        return Item.get(ItemIds.REPEATER);
     }
 
     @Override

@@ -3,21 +3,19 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.Rail;
+
+import static cn.nukkit.block.BlockIds.ACTIVATOR_RAIL;
 
 /**
  * @author Nukkit Project Team
  */
 public class BlockRailActivator extends BlockRail {
 
-    public BlockRailActivator(int id, int meta) {
-        super(id, meta);
+    public BlockRailActivator(Identifier id) {
+        super(id);
         canBePowered = true;
-    }
-
-    @Override
-    public String getName() {
-        return "Activator Rail";
     }
 
     @Override
@@ -160,7 +158,7 @@ public class BlockRailActivator extends BlockRail {
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-                Item.get(Item.ACTIVATOR_RAIL, 0, 1)
+                Item.get(ACTIVATOR_RAIL)
         };
     }
 

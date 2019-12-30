@@ -3,21 +3,24 @@ package cn.nukkit.block;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemNetherWart;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
+
+import static cn.nukkit.block.BlockIds.SOUL_SAND;
 
 /**
  * Created by Leonidius20 on 22.03.17.
  */
-public class BlockNetherWart extends BlockFlowable {
+public class BlockNetherWart extends FloodableBlock {
 
-    public BlockNetherWart(int id, int meta) {
-        super(id, meta);
+    public BlockNetherWart(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -65,26 +68,21 @@ public class BlockNetherWart extends BlockFlowable {
     }
 
     @Override
-    public String getName() {
-        return "Nether Wart Block";
-    }
-
-    @Override
     public Item[] getDrops(Item item) {
         if (this.getDamage() == 0x03) {
             return new Item[]{
-                    new ItemNetherWart(0, 2 + (int) (Math.random() * ((4 - 2) + 1)))
+                    Item.get(ItemIds.NETHER_WART, 0, 2 + (int) (Math.random() * ((4 - 2) + 1)))
             };
         } else {
             return new Item[]{
-                    new ItemNetherWart()
+                    Item.get(ItemIds.NETHER_WART)
             };
         }
     }
 
     @Override
     public Item toItem() {
-        return new ItemNetherWart();
+        return Item.get(ItemIds.NETHER_WART);
     }
 }
 

@@ -8,6 +8,9 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.LADDER;
 
 /**
  * Created on 2015/12/8 by xtypr.
@@ -15,14 +18,9 @@ import cn.nukkit.utils.Faceable;
  */
 public class BlockLadder extends BlockTransparent implements Faceable {
 
-    public BlockLadder(int id, int meta) {
-        super(id, meta);
+    public BlockLadder(Identifier id) {
+        super(id);
         calculateOffsets();
-    }
-
-    @Override
-    public String getName() {
-        return "Ladder";
     }
 
     @Override
@@ -167,7 +165,7 @@ public class BlockLadder extends BlockTransparent implements Faceable {
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-            Item.get(Item.LADDER, 0, 1)
+                Item.get(LADDER, 0, 1)
         };
     }
 

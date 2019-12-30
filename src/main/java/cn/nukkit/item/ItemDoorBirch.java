@@ -1,20 +1,18 @@
 package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
+import cn.nukkit.utils.Identifier;
 
 public class ItemDoorBirch extends Item {
-    public ItemDoorBirch() {
-        this(0, 1);
+
+    public ItemDoorBirch(Identifier id) {
+        super(id);
     }
 
-    public ItemDoorBirch(Integer meta) {
-        this(meta, 1);
-    }
 
-    public ItemDoorBirch(Integer meta, int count) {
-        super(BIRCH_DOOR, 0, count, "Birch Door");
-        this.block = Block.get(BlockID.BIRCH_DOOR_BLOCK);
+    @Override
+    public Block getBlock() {
+        return Block.get(BlockIds.BIRCH_DOOR);
     }
-
 }

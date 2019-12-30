@@ -4,6 +4,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
+import static cn.nukkit.item.ItemIds.IRON_AXE;
+
 /**
  * @author PikyCZ
  */
@@ -43,6 +45,6 @@ public class EntityVindicator extends EntityMob {
 
     @Override
     public Item[] getDrops() {
-        return new Item[]{Item.get(Item.IRON_AXE)};
+        return new Item[]{Item.get(IRON_AXE)};
     }
 }

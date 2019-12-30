@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
@@ -9,6 +8,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.Rail;
 import cn.nukkit.utils.Rail.Orientation;
 
@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static cn.nukkit.block.BlockIds.RAIL;
 import static cn.nukkit.math.BlockFace.*;
 import static cn.nukkit.utils.Rail.Orientation.*;
 
@@ -23,20 +24,15 @@ import static cn.nukkit.utils.Rail.Orientation.*;
  * Created by Snake1999 on 2016/1/11.
  * Package cn.nukkit.block in project nukkit
  */
-public class BlockRail extends BlockFlowable implements Faceable {
+public class BlockRail extends FloodableBlock implements Faceable {
 
     // 0x8: Set the block active
     // 0x7: Reset the block to normal
     // If the rail can be powered. So its a complex rail!
     protected boolean canBePowered = false;
 
-    public BlockRail(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Rail";
+    public BlockRail(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -249,13 +245,13 @@ public class BlockRail extends BlockFlowable implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return Item.get(id, 0);
     }
 
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-                Item.get(Item.RAIL, 0, 1)
+                Item.get(RAIL)
         };
     }
 

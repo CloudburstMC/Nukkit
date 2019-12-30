@@ -1,16 +1,14 @@
 package cn.nukkit.block;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * @author CreeperFace
  */
 public class BlockPiston extends BlockPistonBase {
 
-    public BlockPiston(int id, int meta) {
-        super(id, meta);
+    public BlockPiston(Identifier id) {
+        super(id);
     }
 
-    @Override
-    public String getName() {
-        return "Piston";
-    }
 }

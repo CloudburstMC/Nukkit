@@ -1,10 +1,11 @@
 package cn.nukkit.blockentity;
 
-import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.event.block.SignChangeEvent;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.TextFormat;
 
 import java.util.Arrays;
@@ -66,8 +67,13 @@ public class BlockEntitySign extends BlockEntitySpawnable {
 
     @Override
     public boolean isBlockEntityValid() {
-        int blockID = getBlock().getId();
-        return blockID == Block.SIGN_POST || blockID == Block.WALL_SIGN;
+        Identifier blockId = getBlock().getId();
+        return blockId == BlockIds.STANDING_SIGN || blockId == BlockIds.WALL_SIGN ||
+                blockId == BlockIds.SPRUCE_STANDING_SIGN || blockId == BlockIds.SPRUCE_WALL_SIGN ||
+                blockId == BlockIds.BIRCH_STANDING_SIGN || blockId == BlockIds.BIRCH_WALL_SIGN ||
+                blockId == BlockIds.JUNGLE_STANDING_SIGN || blockId == BlockIds.JUNGLE_WALL_SIGN ||
+                blockId == BlockIds.ACACIA_STANDING_SIGN || blockId == BlockIds.ACACIA_WALL_SIGN ||
+                blockId == BlockIds.DARK_OAK_STANDING_SIGN || blockId == BlockIds.DARK_OAK_WALL_SIGN;
     }
 
     public boolean setText(String... lines) {

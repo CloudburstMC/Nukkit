@@ -1,20 +1,14 @@
 package cn.nukkit.item;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * Created by PetteriM1
  */
 public class ItemTurtleShell extends ItemArmor {
 
-    public ItemTurtleShell() {
-        this(0, 1);
-    }
-
-    public ItemTurtleShell(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemTurtleShell(Integer meta, int count) {
-        super(TURTLE_SHELL, meta, count, "Turtle Shell");
+    public ItemTurtleShell(Identifier id) {
+        super(id);
     }
 
     @Override

@@ -1,22 +1,17 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created on 2015/11/25 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockStairsWood extends BlockStairs {
-    public BlockStairsWood(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Wood Stairs";
+    public BlockStairsWood(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -26,7 +21,7 @@ public class BlockStairsWood extends BlockStairs {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return Item.get(id, 0);
     }
 
     @Override

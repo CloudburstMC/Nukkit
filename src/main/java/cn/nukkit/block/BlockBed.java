@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBed;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBed;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
@@ -13,6 +13,10 @@ import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.block.BlockIds.BED;
 
 /**
  * author: MagicDroidX
@@ -20,8 +24,8 @@ import cn.nukkit.utils.Faceable;
  */
 public class BlockBed extends BlockTransparent implements Faceable {
 
-    public BlockBed(int id, int meta) {
-        super(id, meta);
+    public BlockBed(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -37,11 +41,6 @@ public class BlockBed extends BlockTransparent implements Faceable {
     @Override
     public double getHardness() {
         return 0.2;
-    }
-
-    @Override
-    public String getName() {
-        return this.getDyeColor().getName() + " Bed Block";
     }
 
     @Override
@@ -131,13 +130,13 @@ public class BlockBed extends BlockTransparent implements Faceable {
         Block air = Block.get(AIR);
 
         if ((this.getDamage() & 0x08) == 0x08) { //This is the Top part of bed
-            if (blockNorth.getId() == BED_BLOCK && (blockNorth.getDamage() & 0x08) != 0x08) { //Checks if the block ID&&meta are right
+            if (blockNorth.getId() == BED && (blockNorth.getDamage() & 0x08) != 0x08) { //Checks if the block ID&&meta are right
                 this.getLevel().setBlock(blockNorth, air, true, true);
-            } else if (blockSouth.getId() == BED_BLOCK && (blockSouth.getDamage() & 0x08) != 0x08) {
+            } else if (blockSouth.getId() == BED && (blockSouth.getDamage() & 0x08) != 0x08) {
                 this.getLevel().setBlock(blockSouth, air, true, true);
-            } else if (blockEast.getId() == BED_BLOCK && (blockEast.getDamage() & 0x08) != 0x08) {
+            } else if (blockEast.getId() == BED && (blockEast.getDamage() & 0x08) != 0x08) {
                 this.getLevel().setBlock(blockEast, air, true, true);
-            } else if (blockWest.getId() == BED_BLOCK && (blockWest.getDamage() & 0x08) != 0x08) {
+            } else if (blockWest.getId() == BED && (blockWest.getDamage() & 0x08) != 0x08) {
                 this.getLevel().setBlock(blockWest, air, true, true);
             }
         } else { //Bottom Part of Bed
@@ -166,7 +165,7 @@ public class BlockBed extends BlockTransparent implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemBed(this.getDyeColor().getWoolData());
+        return Item.get(ItemIds.BED, this.getDyeColor().getWoolData());
     }
 
     @Override

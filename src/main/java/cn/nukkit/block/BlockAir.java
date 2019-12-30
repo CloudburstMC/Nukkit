@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.utils.Identifier;
 
 /**
  * author: MagicDroidX
@@ -10,13 +11,8 @@ import cn.nukkit.math.AxisAlignedBB;
 public class BlockAir extends BlockTransparent {
 
 
-    public BlockAir(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Air";
+    public BlockAir(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -30,7 +26,7 @@ public class BlockAir extends BlockTransparent {
     }
 
     @Override
-    public boolean canBeFlowedInto() {
+    public boolean canBeFlooded() {
         return true;
     }
 

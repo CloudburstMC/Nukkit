@@ -6,6 +6,8 @@ import io.netty.util.collection.CharObjectHashMap;
 
 import java.util.*;
 
+import static cn.nukkit.block.BlockIds.AIR;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -156,7 +158,7 @@ public class ShapedRecipe implements CraftingRecipe {
     public Item getIngredient(int x, int y) {
         Item item = this.ingredients.get(this.shape[y].charAt(x));
 
-        return item != null ? item.clone() : Item.get(Item.AIR);
+        return item != null ? item.clone() : Item.get(AIR);
     }
 
     public String[] getShape() {

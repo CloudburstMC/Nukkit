@@ -3,6 +3,9 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.STONE_SLAB;
 
 /**
  * author: MagicDroidX
@@ -18,8 +21,8 @@ public class BlockDoubleSlabStone extends BlockSolid {
     public static final int QUARTZ = 6;
     public static final int NETHER_BRICK = 7;
 
-    public BlockDoubleSlabStone(int id, int meta) {
-        super(id, meta);
+    public BlockDoubleSlabStone(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -38,21 +41,6 @@ public class BlockDoubleSlabStone extends BlockSolid {
     }
 
     @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Stone",
-                "Sandstone",
-                "Wooden",
-                "Cobblestone",
-                "Brick",
-                "Stone Brick",
-                "Quartz",
-                "Nether Brick"
-        };
-        return "Double " + names[this.getDamage() & 0x07] + " Slab";
-    }
-
-    @Override
     public Item toItem() {
         return Item.get(STONE_SLAB, this.getDamage() & 0x07);
     }
@@ -61,7 +49,7 @@ public class BlockDoubleSlabStone extends BlockSolid {
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
-                    Item.get(Item.SLAB, this.getDamage() & 0x07, 2)
+                    Item.get(STONE_SLAB, this.getDamage() & 0x07, 2)
             };
         } else {
             return new Item[0];

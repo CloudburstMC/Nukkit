@@ -1,7 +1,7 @@
 package cn.nukkit.entity.passive;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemDye;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.DyeColor;
@@ -40,6 +40,6 @@ public class EntitySquid extends EntityWaterAnimal {
 
     @Override
     public Item[] getDrops() {
-        return new Item[]{new ItemDye(DyeColor.BLACK.getDyeData())};
+        return new Item[]{Item.get(ItemIds.DYE, DyeColor.BLACK.getDyeData())};
     }
 }

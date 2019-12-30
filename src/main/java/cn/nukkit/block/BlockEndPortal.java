@@ -2,16 +2,14 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
-public class BlockEndPortal extends BlockFlowable {
+import static cn.nukkit.block.BlockIds.AIR;
 
-    public BlockEndPortal(int id, int meta) {
-        super(id, meta);
-    }
+public class BlockEndPortal extends FloodableBlock {
 
-    @Override
-    public String getName() {
-        return "End Portal Block";
+    public BlockEndPortal(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -61,6 +59,6 @@ public class BlockEndPortal extends BlockFlowable {
 
     @Override
     public Item toItem() {
-        return Item.get(BlockID.AIR, 0, 0);
+        return Item.get(AIR, 0, 0);
     }
 }

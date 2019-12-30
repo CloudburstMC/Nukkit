@@ -7,12 +7,15 @@ import cn.nukkit.event.entity.EntityBlockChangeEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.registry.BlockRegistry;
+
+import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.block.BlockIds.ANVIL;
 
 /**
  * @author MagicDroidX
@@ -85,7 +88,7 @@ public class EntityFallingBlock extends Entity {
             return;
         }
 
-        setDataProperty(new IntEntityData(DATA_VARIANT, GlobalBlockPalette.getRuntimeId(this.getBlock(), this.getDamage())));
+        setDataProperty(new IntEntityData(DATA_VARIANT, BlockRegistry.get().getRuntimeId(this.getBlock(), this.getDamage())));
     }
 
     public boolean canCollideWith(Entity entity) {
@@ -131,7 +134,7 @@ public class EntityFallingBlock extends Entity {
             if (onGround) {
                 close();
                 Block block = level.getBlock(pos);
-                if (block.getId() > 0 && block.isTransparent() && !block.canBeReplaced()) {
+                if (block.getId() != AIR && block.isTransparent() && !block.canBeReplaced()) {
                     if (this.level.getGameRules().get(GameRules.DO_ENTITY_DROPS)) {
                         getLevel().dropItem(this, Item.get(this.getBlock(), this.getDamage(), 1));
                     }
@@ -141,7 +144,7 @@ public class EntityFallingBlock extends Entity {
                     if (!event.isCancelled()) {
                         getLevel().setBlock(pos, event.getTo(), true);
 
-                        if (event.getTo().getId() == Item.ANVIL) {
+                        if (event.getTo().getId() == ANVIL) {
                             getLevel().addSound(pos, Sound.RANDOM_ANVIL_LAND);
                         }
                     }

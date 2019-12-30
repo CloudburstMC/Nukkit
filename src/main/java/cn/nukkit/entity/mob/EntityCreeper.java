@@ -6,6 +6,7 @@ import cn.nukkit.entity.weather.EntityLightningStrike;
 import cn.nukkit.event.entity.CreeperPowerEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -88,7 +89,7 @@ public class EntityCreeper extends EntityMob {
     @Override
     public Item[] getDrops() {
         if (this.lastDamageCause instanceof EntityDamageByEntityEvent) {
-            return new Item[]{Item.get(Item.GUNPOWDER, ThreadLocalRandom.current().nextInt(2) + 1)};
+            return new Item[]{Item.get(ItemIds.GUNPOWDER, ThreadLocalRandom.current().nextInt(2) + 1)};
         }
         return new Item[0];
     }

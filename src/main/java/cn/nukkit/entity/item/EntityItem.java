@@ -15,6 +15,9 @@ import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.player.Player;
 
+import static cn.nukkit.block.BlockIds.FLOWING_WATER;
+import static cn.nukkit.block.BlockIds.WATER;
+
 /**
  * @author MagicDroidX
  */
@@ -185,7 +188,8 @@ public class EntityItem extends Entity {
                 }
             }
 
-            if (this.level.getBlockIdAt((int) this.x, (int) this.boundingBox.getMaxY(), (int) this.z) == 8 || this.level.getBlockIdAt((int) this.x, (int) this.boundingBox.getMaxY(), (int) this.z) == 9) { //item is fully in water or in still water
+            if (this.level.getBlockIdAt((int) this.x, (int) this.boundingBox.getMaxY(), (int) this.z) == FLOWING_WATER ||
+                    this.level.getBlockIdAt((int) this.x, (int) this.boundingBox.getMaxY(), (int) this.z) == WATER) { //item is fully in water or in still water
                 this.motionY -= this.getGravity() * -0.015;
             } else if (this.isInsideOfWater()) {
                 this.motionY = this.getGravity() - 0.06; //item is going up in water, don't let it go back down too fast

@@ -1,13 +1,17 @@
 package cn.nukkit.item.food;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.event.player.PlayerEatFoodEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.player.Player;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
+import cn.nukkit.utils.Identifier;
 
 import java.util.*;
+
+import static cn.nukkit.item.ItemIds.*;
 
 /**
  * Created by Snake1999 on 2016/1/13.
@@ -18,69 +22,69 @@ public abstract class Food {
     private static final Map<NodeIDMetaPlugin, Food> registryCustom = new LinkedHashMap<>();
     private static final Map<NodeIDMeta, Food> registryDefault = new LinkedHashMap<>();
 
-    public static final Food apple = registerDefaultFood(new FoodNormal(4, 2.4F).addRelative(Item.APPLE));
+    public static final Food apple = registerDefaultFood(new FoodNormal(4, 2.4F).addRelative(APPLE));
     public static final Food apple_golden = registerDefaultFood(new FoodEffective(4, 9.6F)
             .addEffect(Effect.getEffect(Effect.REGENERATION).setAmplifier(1).setDuration(5 * 20))
             .addEffect(Effect.getEffect(Effect.ABSORPTION).setDuration(2 * 60 * 20))
-            .addRelative(Item.GOLDEN_APPLE));
+            .addRelative(GOLDEN_APPLE));
     public static final Food apple_golden_enchanted = registerDefaultFood(new FoodEffective(4, 9.6F)
             .addEffect(Effect.getEffect(Effect.REGENERATION).setAmplifier(4).setDuration(30 * 20))
             .addEffect(Effect.getEffect(Effect.ABSORPTION).setDuration(2 * 60 * 20).setAmplifier(3))
             .addEffect(Effect.getEffect(Effect.DAMAGE_RESISTANCE).setDuration(5 * 60 * 20))
             .addEffect(Effect.getEffect(Effect.FIRE_RESISTANCE).setDuration(5 * 60 * 20))
-            .addRelative(Item.GOLDEN_APPLE_ENCHANTED));
-    public static final Food beef_raw = registerDefaultFood(new FoodNormal(3, 1.8F).addRelative(Item.RAW_BEEF));
-    public static final Food beetroot = registerDefaultFood(new FoodNormal(1, 1.2F).addRelative(Item.BEETROOT));
-    public static final Food beetroot_soup = registerDefaultFood(new FoodInBowl(6, 7.2F).addRelative(Item.BEETROOT_SOUP));
-    public static final Food bread = registerDefaultFood(new FoodNormal(5, 6F).addRelative(Item.BREAD));
+            .addRelative(APPLE_ENCHANTED));
+    public static final Food beef_raw = registerDefaultFood(new FoodNormal(3, 1.8F).addRelative(BEEF));
+    public static final Food beetroot = registerDefaultFood(new FoodNormal(1, 1.2F).addRelative(BEETROOT));
+    public static final Food beetroot_soup = registerDefaultFood(new FoodInBowl(6, 7.2F).addRelative(BEETROOT_SOUP));
+    public static final Food bread = registerDefaultFood(new FoodNormal(5, 6F).addRelative(BREAD));
     public static final Food cake_slice = registerDefaultFood(new FoodNormal(2, 0.4F)
-            .addRelative(Block.CAKE_BLOCK, 0).addRelative(Block.CAKE_BLOCK, 1).addRelative(Block.CAKE_BLOCK, 2)
-            .addRelative(Block.CAKE_BLOCK, 3).addRelative(Block.CAKE_BLOCK, 4).addRelative(Block.CAKE_BLOCK, 5)
-            .addRelative(Block.CAKE_BLOCK, 6));
-    public static final Food carrot = registerDefaultFood(new FoodNormal(3, 4.8F).addRelative(Item.CARROT));
-    public static final Food carrot_golden = registerDefaultFood(new FoodNormal(6, 14.4F).addRelative(Item.GOLDEN_CARROT));
+            .addRelative(BlockIds.CAKE, 0).addRelative(BlockIds.CAKE, 1).addRelative(BlockIds.CAKE, 2)
+            .addRelative(BlockIds.CAKE, 3).addRelative(BlockIds.CAKE, 4).addRelative(BlockIds.CAKE, 5)
+            .addRelative(BlockIds.CAKE, 6));
+    public static final Food carrot = registerDefaultFood(new FoodNormal(3, 4.8F).addRelative(CARROT));
+    public static final Food carrot_golden = registerDefaultFood(new FoodNormal(6, 14.4F).addRelative(GOLDEN_CARROT));
     public static final Food chicken_raw = registerDefaultFood(new FoodEffective(2, 1.2F)
             .addChanceEffect(0.3F, Effect.getEffect(Effect.HUNGER).setDuration(30 * 20))
-            .addRelative(Item.RAW_CHICKEN));
-    public static final Food chicken_cooked = registerDefaultFood(new FoodNormal(6, 7.2F).addRelative(Item.COOKED_CHICKEN));
+            .addRelative(CHICKEN));
+    public static final Food chicken_cooked = registerDefaultFood(new FoodNormal(6, 7.2F).addRelative(COOKED_CHICKEN));
     public static final Food chorus_fruit = registerDefaultFood(new FoodChorusFruit());
-    public static final Food cookie = registerDefaultFood(new FoodNormal(2, 0.4F).addRelative(Item.COOKIE));
-    public static final Food melon_slice = registerDefaultFood(new FoodNormal(2, 1.2F).addRelative(Item.MELON_SLICE));
-    public static final Food milk = registerDefaultFood(new FoodMilk().addRelative(Item.BUCKET, 1));
-    public static final Food mushroom_stew = registerDefaultFood(new FoodInBowl(6, 7.2F).addRelative(Item.MUSHROOM_STEW));
-    public static final Food mutton_cooked = registerDefaultFood(new FoodNormal(6, 9.6F).addRelative(Item.COOKED_MUTTON));
-    public static final Food mutton_raw = registerDefaultFood(new FoodNormal(2, 1.2F).addRelative(Item.RAW_MUTTON));
-    public static final Food porkchop_cooked = registerDefaultFood(new FoodNormal(8, 12.8F).addRelative(Item.COOKED_PORKCHOP));
-    public static final Food porkchop_raw = registerDefaultFood(new FoodNormal(3, 1.8F).addRelative(Item.RAW_PORKCHOP));
-    public static final Food potato_raw = registerDefaultFood(new FoodNormal(1, 0.6F).addRelative(Item.POTATO));
-    public static final Food potato_baked = registerDefaultFood(new FoodNormal(5, 7.2F).addRelative(Item.BAKED_POTATO));
+    public static final Food cookie = registerDefaultFood(new FoodNormal(2, 0.4F).addRelative(COOKIE));
+    public static final Food melon_slice = registerDefaultFood(new FoodNormal(2, 1.2F).addRelative(MELON));
+    public static final Food milk = registerDefaultFood(new FoodMilk().addRelative(BUCKET, 1));
+    public static final Food mushroom_stew = registerDefaultFood(new FoodInBowl(6, 7.2F).addRelative(MUSHROOM_STEW));
+    public static final Food mutton_cooked = registerDefaultFood(new FoodNormal(6, 9.6F).addRelative(MUTTON_COOKED));
+    public static final Food mutton_raw = registerDefaultFood(new FoodNormal(2, 1.2F).addRelative(MUTTON_RAW));
+    public static final Food porkchop_cooked = registerDefaultFood(new FoodNormal(8, 12.8F).addRelative(COOKED_PORKCHOP));
+    public static final Food porkchop_raw = registerDefaultFood(new FoodNormal(3, 1.8F).addRelative(PORKCHOP));
+    public static final Food potato_raw = registerDefaultFood(new FoodNormal(1, 0.6F).addRelative(POTATO));
+    public static final Food potato_baked = registerDefaultFood(new FoodNormal(5, 7.2F).addRelative(BAKED_POTATO));
     public static final Food potato_poisonous = registerDefaultFood(new FoodEffective(2, 1.2F)
             .addChanceEffect(0.6F, Effect.getEffect(Effect.POISON).setDuration(4 * 20))
-            .addRelative(Item.POISONOUS_POTATO));
-    public static final Food pumpkin_pie = registerDefaultFood(new FoodNormal(8, 4.8F).addRelative(Item.PUMPKIN_PIE));
-    public static final Food rabbit_cooked = registerDefaultFood(new FoodNormal(5, 6F).addRelative(Item.COOKED_RABBIT));
-    public static final Food rabbit_raw = registerDefaultFood(new FoodNormal(3, 1.8F).addRelative(Item.RAW_RABBIT));
-    public static final Food rabbit_stew = registerDefaultFood(new FoodInBowl(10, 12F).addRelative(Item.RABBIT_STEW));
+            .addRelative(POISONOUS_POTATO));
+    public static final Food pumpkin_pie = registerDefaultFood(new FoodNormal(8, 4.8F).addRelative(PUMPKIN_PIE));
+    public static final Food rabbit_cooked = registerDefaultFood(new FoodNormal(5, 6F).addRelative(COOKED_RABBIT));
+    public static final Food rabbit_raw = registerDefaultFood(new FoodNormal(3, 1.8F).addRelative(RABBIT));
+    public static final Food rabbit_stew = registerDefaultFood(new FoodInBowl(10, 12F).addRelative(RABBIT_STEW));
     public static final Food rotten_flesh = registerDefaultFood(new FoodEffective(4, 0.8F)
             .addChanceEffect(0.8F, Effect.getEffect(Effect.HUNGER).setDuration(30 * 20))
-            .addRelative(Item.ROTTEN_FLESH));
+            .addRelative(ROTTEN_FLESH));
     public static final Food spider_eye = registerDefaultFood(new FoodEffective(2, 3.2F)
             .addEffect(Effect.getEffect(Effect.POISON).setDuration(4 * 20))
-            .addRelative(Item.SPIDER_EYE));
-    public static final Food steak = registerDefaultFood(new FoodNormal(8, 12.8F).addRelative(Item.COOKED_BEEF));
+            .addRelative(SPIDER_EYE));
+    public static final Food steak = registerDefaultFood(new FoodNormal(8, 12.8F).addRelative(COOKED_BEEF));
     //different kinds of fishes
-    public static final Food clownfish = registerDefaultFood(new FoodNormal(1, 0.2F).addRelative(Item.CLOWNFISH));
-    public static final Food fish_cooked = registerDefaultFood(new FoodNormal(5, 6F).addRelative(Item.COOKED_FISH));
-    public static final Food fish_raw = registerDefaultFood(new FoodNormal(2, 0.4F).addRelative(Item.RAW_FISH));
-    public static final Food salmon_cooked = registerDefaultFood(new FoodNormal(6, 9.6F).addRelative(Item.COOKED_SALMON));
-    public static final Food salmon_raw = registerDefaultFood(new FoodNormal(2, 0.4F).addRelative(Item.RAW_SALMON));
+    public static final Food clownfish = registerDefaultFood(new FoodNormal(1, 0.2F).addRelative(CLOWNFISH));
+    public static final Food fish_cooked = registerDefaultFood(new FoodNormal(5, 6F).addRelative(COOKED_FISH));
+    public static final Food fish_raw = registerDefaultFood(new FoodNormal(2, 0.4F).addRelative(FISH));
+    public static final Food salmon_cooked = registerDefaultFood(new FoodNormal(6, 9.6F).addRelative(COOKED_SALMON));
+    public static final Food salmon_raw = registerDefaultFood(new FoodNormal(2, 0.4F).addRelative(SALMON));
     public static final Food pufferfish = registerDefaultFood(new FoodEffective(1, 0.2F)
             .addEffect(Effect.getEffect(Effect.HUNGER).setAmplifier(2).setDuration(15 * 20))
             .addEffect(Effect.getEffect(Effect.NAUSEA).setAmplifier(1).setDuration(15 * 20))
             .addEffect(Effect.getEffect(Effect.POISON).setAmplifier(4).setDuration(60 * 20))
-            .addRelative(Item.PUFFERFISH));
-    public static final Food dried_kelp = registerDefaultFood(new FoodNormal(1, 0.6F).addRelative(Item.DRIED_KELP));
-    public static final Food sweet_berries = registerDefaultFood(new FoodNormal(2, 0.4F).addRelative(Item.SWEET_BERRIES));
+            .addRelative(PUFFERFISH));
+    public static final Food dried_kelp = registerDefaultFood(new FoodNormal(1, 0.6F).addRelative(DRIED_KELP));
+    public static final Food sweet_berries = registerDefaultFood(new FoodNormal(2, 0.4F).addRelative(SWEET_BERRIES));
 
     //Opened API for plugins
     public static Food registerFood(Food food, Plugin plugin) {
@@ -105,7 +109,7 @@ public abstract class Food {
         return getByRelative(block.getId(), block.getDamage());
     }
 
-    public static Food getByRelative(int relativeID, int meta) {
+    public static Food getByRelative(Identifier relativeID, int meta) {
         final Food[] result = {null};
         registryCustom.forEach((n, f) -> {
             if (n.id == relativeID && n.meta == meta && n.plugin.isEnabled()) result[0] = f;
@@ -134,11 +138,11 @@ public abstract class Food {
         return true;
     }
 
-    public Food addRelative(int relativeID) {
+    public Food addRelative(Identifier relativeID) {
         return addRelative(relativeID, 0);
     }
 
-    public Food addRelative(int relativeID, int meta) {
+    public Food addRelative(Identifier relativeID, int meta) {
         NodeIDMeta node = new NodeIDMeta(relativeID, meta);
         return addRelative(node);
     }
@@ -167,10 +171,10 @@ public abstract class Food {
     }
 
     static class NodeIDMeta {
-        final int id;
+        final Identifier id;
         final int meta;
 
-        NodeIDMeta(int id, int meta) {
+        NodeIDMeta(Identifier id, int meta) {
             this.id = id;
             this.meta = meta;
         }
@@ -179,7 +183,7 @@ public abstract class Food {
     static class NodeIDMetaPlugin extends NodeIDMeta {
         final Plugin plugin;
 
-        NodeIDMetaPlugin(int id, int meta, Plugin plugin) {
+        NodeIDMetaPlugin(Identifier id, int meta, Plugin plugin) {
             super(id, meta);
             this.plugin = plugin;
         }

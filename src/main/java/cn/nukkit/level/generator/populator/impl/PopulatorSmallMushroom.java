@@ -1,7 +1,7 @@
 package cn.nukkit.level.generator.populator.impl;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.populator.helper.EnsureCover;
@@ -13,7 +13,7 @@ import cn.nukkit.math.NukkitRandom;
  * @author DaPorkchop_
  */
 public class PopulatorSmallMushroom extends PopulatorSurfaceBlock {
-    private static final Block BROWN_MUSHROOM = Block.get(BlockID.BROWN_MUSHROOM);
+    private static final Block BROWN_MUSHROOM = Block.get(BlockIds.BROWN_MUSHROOM);
 
     @Override
     protected boolean canStay(int x, int y, int z, Chunk chunk, ChunkManager level) {

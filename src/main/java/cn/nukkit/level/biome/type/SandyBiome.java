@@ -1,15 +1,15 @@
 package cn.nukkit.level.biome.type;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public abstract class SandyBiome extends CoveredBiome {
-    private static final Block SAND = Block.get(BlockID.SAND);
-    private static final Block SANDSTONE = Block.get(BlockID.SANDSTONE);
+    private static final Block SAND = Block.get(BlockIds.SAND);
+    private static final Block SANDSTONE = Block.get(BlockIds.SANDSTONE);
 
     @Override
     public int getSurfaceDepth(int x, int y, int z) {

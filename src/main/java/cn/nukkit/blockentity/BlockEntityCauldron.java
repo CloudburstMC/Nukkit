@@ -1,6 +1,6 @@
 package cn.nukkit.blockentity;
 
-import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
@@ -85,7 +85,7 @@ public class BlockEntityCauldron extends BlockEntitySpawnable {
 
     @Override
     public boolean isBlockEntityValid() {
-        return getBlock().getId() == Block.CAULDRON_BLOCK;
+        return getBlock().getId() == BlockIds.CAULDRON;
     }
 
     @Override

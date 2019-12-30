@@ -2,19 +2,15 @@ package cn.nukkit.block;
 
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by CreeperFace on 7.8.2017.
  */
 public class BlockGlassStained extends BlockGlass {
 
-    public BlockGlassStained(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return getDyeColor().getName() + " Stained Glass";
+    public BlockGlassStained(Identifier id) {
+        super(id);
     }
 
     @Override

@@ -5,6 +5,8 @@ import cn.nukkit.block.BlockDoublePlant;
 import cn.nukkit.block.BlockFlower;
 import cn.nukkit.level.generator.populator.impl.PopulatorFlower;
 
+import static cn.nukkit.block.BlockIds.*;
+
 /**
  * author: DaPorkchop_
  * Nukkit Project
@@ -20,7 +22,7 @@ public class FlowerForestBiome extends ForestBiome {
         //see https://minecraft.gamepedia.com/Flower#Flower_biomes
         PopulatorFlower flower = new PopulatorFlower();
         flower.setBaseAmount(10);
-        flower.addType(Block.get(DANDELION));
+        flower.addType(Block.get(YELLOW_FLOWER));
         flower.addType(Block.get(RED_FLOWER, BlockFlower.TYPE_POPPY));
         flower.addType(Block.get(RED_FLOWER, BlockFlower.TYPE_ALLIUM));
         flower.addType(Block.get(RED_FLOWER, BlockFlower.TYPE_AZURE_BLUET));

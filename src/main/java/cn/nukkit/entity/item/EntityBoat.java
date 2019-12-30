@@ -11,7 +11,7 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.vehicle.VehicleMoveEvent;
 import cn.nukkit.event.vehicle.VehicleUpdateEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBoat;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.gamerule.GameRules;
@@ -413,7 +413,7 @@ public class EntityBoat extends EntityVehicle {
         super.kill();
 
         if (level.getGameRules().get(GameRules.DO_ENTITY_DROPS)) {
-            this.level.dropItem(this, new ItemBoat());
+            this.level.dropItem(this, Item.get(ItemIds.BOAT));
         }
     }
 }

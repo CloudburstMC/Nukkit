@@ -9,13 +9,17 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
+import cn.nukkit.utils.Identifier;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public abstract class BlockMushroom extends BlockFlowable {
+import static cn.nukkit.block.BlockIds.*;
+import static cn.nukkit.item.ItemIds.DYE;
 
-    public BlockMushroom(int id, int meta) {
-        super(id, meta);
+public abstract class BlockMushroom extends FloodableBlock {
+
+    public BlockMushroom(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -46,9 +50,9 @@ public abstract class BlockMushroom extends BlockFlowable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.getId() == Item.DYE && item.getDamage() == DyeColor.WHITE.getDyeData()) {
+        if (item.getId() == DYE && item.getDamage() == DyeColor.WHITE.getDyeData()) {
             if (player != null && (player.gamemode & 0x01) == 0) {
-                item.count--;
+                item.decrementCount();
             }
 
             if (ThreadLocalRandom.current().nextFloat() < 0.4) {

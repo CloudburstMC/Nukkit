@@ -7,18 +7,19 @@ package cn.nukkit.block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySkull;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemSkull;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 
 
 public class BlockSkull extends BlockTransparent {
 
-    public BlockSkull(int id, int meta) {
-        super(id, meta);
+    public BlockSkull(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -34,18 +35,6 @@ public class BlockSkull extends BlockTransparent {
     @Override
     public boolean isSolid() {
         return false;
-    }
-
-    @Override
-    public String getName() {
-        int itemMeta = 0;
-
-        if (this.level != null) {
-            BlockEntity blockEntity = getLevel().getBlockEntity(this);
-            if (blockEntity != null) itemMeta = blockEntity.namedTag.getByte("SkullType");
-        }
-
-        return ItemSkull.getItemSkullName(itemMeta);
     }
 
     @Override
@@ -89,7 +78,7 @@ public class BlockSkull extends BlockTransparent {
         int dropMeta = 0;
         if (blockEntity != null) dropMeta = blockEntity.namedTag.getByte("SkullType");
         return new Item[]{
-                new ItemSkull(dropMeta)
+                Item.get(ItemIds.SKULL, dropMeta)
         };
     }
 

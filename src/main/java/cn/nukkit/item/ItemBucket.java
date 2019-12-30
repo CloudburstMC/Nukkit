@@ -1,6 +1,9 @@
 package cn.nukkit.item;
 
-import cn.nukkit.block.*;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockLava;
+import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
@@ -11,6 +14,10 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.network.protocol.UpdateBlockPacket;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.*;
+import static cn.nukkit.item.ItemIds.BUCKET;
 
 /**
  * author: MagicDroidX
@@ -18,16 +25,8 @@ import cn.nukkit.player.Player;
  */
 public class ItemBucket extends Item {
 
-    public ItemBucket() {
-        this(0, 1);
-    }
-
-    public ItemBucket(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemBucket(Integer meta, int count) {
-        super(BUCKET, meta, count, getName(meta));
+    public ItemBucket(Identifier id) {
+        super(id);
     }
 
     protected static String getName(int meta) {
@@ -51,7 +50,7 @@ public class ItemBucket extends Item {
         }
     }
 
-    public int getDamageByTarget(int target) {
+    public Identifier getBlockIdFromDamage(int target) {
         switch (target) {
             case 2:
             case 3:
@@ -59,18 +58,27 @@ public class ItemBucket extends Item {
             case 5:
             case 8:
             case 9:
-                return 8;
+                return FLOWING_WATER;
             case 10:
             case 11:
-                return 10;
+                return FLOWING_LAVA;
             default:
-                return 0;
+                return AIR;
         }
+    }
+
+    public int getDamageFromIdentifier(Identifier id) {
+        if (id == FLOWING_WATER) {
+            return 8;
+        } else if (id == FLOWING_LAVA) {
+            return 10;
+        }
+        throw new IllegalArgumentException(id + " cannot be in bucket");
     }
 
     @Override
     public int getMaxStackSize() {
-        return this.meta == 0 ? 16 : 1;
+        return this.getDamage() == 0 ? 16 : 1;
     }
 
     @Override
@@ -80,22 +88,22 @@ public class ItemBucket extends Item {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
-        Block targetBlock = Block.get(getDamageByTarget(this.meta));
+        Block targetBlock = Block.get(getBlockIdFromDamage(this.getDamage()));
 
         if (targetBlock instanceof BlockAir) {
             if (target instanceof BlockLiquid && target.getDamage() == 0) {
-                Item result = Item.get(BUCKET, this.getDamageByTarget(target.getId()), 1);
+                Item result = Item.get(BUCKET, this.getDamageFromIdentifier(target.getId()), 1);
                 PlayerBucketFillEvent ev;
                 player.getServer().getPluginManager().callEvent(ev = new PlayerBucketFillEvent(player, block, face, this, result));
                 if (!ev.isCancelled()) {
-                    player.getLevel().setBlock(target, Block.get(BlockID.AIR), true, true);
+                    player.getLevel().setBlock(target, Block.get(AIR), true, true);
 
                     // When water is removed ensure any adjacent still water is
                     // replaced with water that can flow.
                     for (BlockFace side : Plane.HORIZONTAL) {
                         Block b = target.getSide(side);
-                        if (b.getId() == STILL_WATER) {
-                            level.setBlock(b, Block.get(BlockID.WATER));
+                        if (b.getId() == WATER) {
+                            level.setBlock(b, Block.get(FLOWING_WATER));
                         }
                     }
 
@@ -121,7 +129,7 @@ public class ItemBucket extends Item {
             Item result = Item.get(BUCKET, 0, 1);
             PlayerBucketEmptyEvent ev;
             player.getServer().getPluginManager().callEvent(ev = new PlayerBucketEmptyEvent(player, block, face, this, result));
-            ev.setCancelled(!block.canBeFlowedInto());
+            ev.setCancelled(!block.canBeFlooded());
 
             if (player.getLevel().getName().equals("nether") && this.getDamage() != 10) {
                 ev.setCancelled(true);
@@ -144,7 +152,7 @@ public class ItemBucket extends Item {
 
                 return true;
             } else {
-                player.getLevel().sendBlocks(new Player[] {player}, new Block[] {Block.get(Block.AIR, 0, block)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
+                player.getLevel().sendBlocks(new Player[]{player}, new Block[]{Block.get(AIR, 0, block)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
                 player.getInventory().sendContents(player);
             }
         }
@@ -168,9 +176,9 @@ public class ItemBucket extends Item {
         }
 
         if (player.isSurvival()) {
-            this.count--;
+            this.decrementCount();
             player.getInventory().setItemInHand(this);
-            player.getInventory().addItem(new ItemBucket());
+            player.getInventory().addItem(Item.get(BUCKET));
         }
 
         player.removeAllEffects();

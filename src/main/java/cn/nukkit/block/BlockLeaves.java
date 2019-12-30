@@ -3,17 +3,21 @@ package cn.nukkit.block;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.LeavesDecayEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Hash;
+import cn.nukkit.utils.Identifier;
 import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
 import java.util.concurrent.ThreadLocalRandom;
+
+import static cn.nukkit.block.BlockIds.*;
+import static cn.nukkit.item.ItemIds.APPLE;
+import static cn.nukkit.item.ItemIds.STICK;
 
 /**
  * author: Angelic47
@@ -25,8 +29,8 @@ public class BlockLeaves extends BlockTransparent {
     public static final int BIRCH = 2;
     public static final int JUNGLE = 3;
 
-    public BlockLeaves(int id, int meta) {
-        super(id, meta);
+    public BlockLeaves(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -37,17 +41,6 @@ public class BlockLeaves extends BlockTransparent {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_SHEARS;
-    }
-
-    @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Oak Leaves",
-                "Spruce Leaves",
-                "Birch Leaves",
-                "Jungle Leaves"
-        };
-        return names[this.getDamage() & 0x03];
     }
 
     @Override
@@ -69,7 +62,7 @@ public class BlockLeaves extends BlockTransparent {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, this.getDamage() & 0x3, 1);
+        return Item.get(id, this.getDamage() & 0x3, 1);
     }
 
     @Override
@@ -81,13 +74,13 @@ public class BlockLeaves extends BlockTransparent {
         } else {
             if (this.canDropApple() && ThreadLocalRandom.current().nextInt(200) == 0) {
                 return new Item[]{
-                        Item.get(Item.APPLE)
+                        Item.get(APPLE)
                 };
             }
             if (ThreadLocalRandom.current().nextInt(20) == 0) {
                 if (ThreadLocalRandom.current().nextBoolean()) {
                     return new Item[]{
-                            Item.get(Item.STICK, 0, ThreadLocalRandom.current().nextInt(1, 2))
+                            Item.get(STICK, 0, ThreadLocalRandom.current().nextInt(1, 2))
                     };
                 } else if ((this.getDamage() & 0x03) != JUNGLE || ThreadLocalRandom.current().nextInt(20) == 0) {
                     return new Item[]{
@@ -129,11 +122,11 @@ public class BlockLeaves extends BlockTransparent {
         ++check;
         long index = Hash.hashBlock((int) pos.x, (int) pos.y, (int) pos.z);
         if (visited.contains(index)) return false;
-        if (pos.getId() == WOOD || pos.getId() == WOOD2) return true;
+        if (pos.getId() == LOG || pos.getId() == LOG2) return true;
         if ((pos.getId() == LEAVES || pos.getId() == LEAVES2) && distance <= 4) {
             visited.add(index);
-            int down = pos.down().getId();
-            if (down == WOOD || down == WOOD2) {
+            Identifier down = pos.down().getId();
+            if (down == LOG || down == LOG2) {
                 return true;
             }
             if (fromSide == null) {
@@ -220,6 +213,6 @@ public class BlockLeaves extends BlockTransparent {
     }
 
     protected Item getSapling() {
-        return Item.get(BlockID.SAPLING, this.getDamage() & 0x03);
+        return Item.get(SAPLING, this.getDamage() & 0x03);
     }
 }

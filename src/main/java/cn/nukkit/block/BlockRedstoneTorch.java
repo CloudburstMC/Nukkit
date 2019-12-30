@@ -6,6 +6,9 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.UNLIT_REDSTONE_TORCH;
 
 /**
  * author: Angelic47
@@ -13,13 +16,8 @@ import cn.nukkit.player.Player;
  */
 public class BlockRedstoneTorch extends BlockTorch {
 
-    public BlockRedstoneTorch(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Redstone Torch";
+    public BlockRedstoneTorch(Identifier id) {
+        super(id);
     }
 
     @Override

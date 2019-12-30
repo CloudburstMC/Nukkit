@@ -2,6 +2,7 @@ package cn.nukkit.entity.passive;
 
 import cn.nukkit.entity.EntitySmite;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -39,6 +40,6 @@ public class EntityZombieHorse extends EntityAnimal implements EntitySmite {
 
     @Override
     public Item[] getDrops() {
-        return new Item[]{Item.get(Item.ROTTEN_FLESH, 1, 1)};
+        return new Item[]{Item.get(ItemIds.ROTTEN_FLESH, 1, 1)};
     }
 }

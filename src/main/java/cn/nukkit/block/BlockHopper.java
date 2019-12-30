@@ -4,7 +4,7 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityHopper;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemHopper;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
@@ -12,19 +12,15 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
 
 /**
  * @author CreeperFace
  */
 public class BlockHopper extends BlockTransparent implements Faceable {
 
-    public BlockHopper(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Hopper Block";
+    public BlockHopper(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -143,7 +139,7 @@ public class BlockHopper extends BlockTransparent implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemHopper();
+        return Item.get(ItemIds.HOPPER);
     }
 
     @Override

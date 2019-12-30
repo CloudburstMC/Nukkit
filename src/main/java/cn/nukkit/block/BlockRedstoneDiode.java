@@ -7,16 +7,19 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.*;
 
 /**
  * @author CreeperFace
  */
-public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceable {
+public abstract class BlockRedstoneDiode extends FloodableBlock implements Faceable {
 
     protected boolean isPowered = false;
 
-    public BlockRedstoneDiode(int id, int meta) {
-        super(id, meta);
+    public BlockRedstoneDiode(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -115,7 +118,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
             return power;
         } else {
             Block block = this.level.getBlock(pos);
-            return Math.max(power, block.getId() == Block.REDSTONE_WIRE ? block.getDamage() : 0);
+            return Math.max(power, block.getId() == REDSTONE_WIRE ? block.getDamage() : 0);
         }
     }
 
@@ -130,7 +133,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
 
     protected int getPowerOnSide(Vector3 pos, BlockFace side) {
         Block block = this.level.getBlock(pos);
-        return isAlternateInput(block) ? (block.getId() == Block.REDSTONE_BLOCK ? 15 : (block.getId() == Block.REDSTONE_WIRE ? block.getDamage() : this.level.getStrongPower(pos, side))) : 0;
+        return isAlternateInput(block) ? (block.getId() == REDSTONE_BLOCK ? 15 : (block.getId() == REDSTONE_WIRE ? block.getDamage() : this.level.getStrongPower(pos, side))) : 0;
     }
 
     @Override

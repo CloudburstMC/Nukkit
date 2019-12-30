@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemDye;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
@@ -13,8 +13,12 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
 
 import java.util.concurrent.ThreadLocalRandom;
+
+import static cn.nukkit.block.BlockIds.LOG;
+import static cn.nukkit.item.ItemIds.DYE;
 
 /**
  * Created by CreeperFace on 27. 10. 2016.
@@ -27,13 +31,8 @@ public class BlockCocoa extends BlockTransparent implements Faceable {
     protected static final AxisAlignedBB[] SOUTH = new SimpleAxisAlignedBB[]{new SimpleAxisAlignedBB(0.375D, 0.4375D, 0.6875D, 0.625D, 0.75D, 0.9375D), new SimpleAxisAlignedBB(0.3125D, 0.3125D, 0.5625D, 0.6875D, 0.75D, 0.9375D), new SimpleAxisAlignedBB(0.3125D, 0.3125D, 0.5625D, 0.6875D, 0.75D, 0.9375D)};
     protected static final AxisAlignedBB[] ALL = new AxisAlignedBB[12];
 
-    public BlockCocoa(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Cocoa";
+    public BlockCocoa(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -113,7 +112,7 @@ public class BlockCocoa extends BlockTransparent implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (target.getId() == Block.WOOD && (target.getDamage() & 0x03) == BlockWood.JUNGLE) {
+        if (target.getId() == LOG && (target.getDamage() & 0x03) == BlockLog.JUNGLE) {
             if (face != BlockFace.DOWN && face != BlockFace.UP) {
                 int[] faces = new int[]{
                         0,
@@ -141,7 +140,7 @@ public class BlockCocoa extends BlockTransparent implements Faceable {
 
             Block side = this.getSide(BlockFace.fromIndex(faces[this.getDamage()]));
 
-            if (side.getId() != Block.WOOD && side.getDamage() != BlockWood.JUNGLE) {
+            if (side.getId() != LOG && side.getDamage() != BlockLog.JUNGLE) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -174,7 +173,7 @@ public class BlockCocoa extends BlockTransparent implements Faceable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0f) {
+        if (item.getId() == DYE && item.getDamage() == 0x0f) {
             Block block = this.clone();
             if (this.getDamage() / 4 < 2) {
                 block.setDamage(block.getDamage() + 4);
@@ -188,7 +187,7 @@ public class BlockCocoa extends BlockTransparent implements Faceable {
                 this.level.addParticle(new BoneMealParticle(this));
 
                 if (player != null && (player.gamemode & 0x01) == 0) {
-                    item.count--;
+                    item.decrementCount();
                 }
             }
 
@@ -215,18 +214,18 @@ public class BlockCocoa extends BlockTransparent implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemDye(DyeColor.BROWN.getDyeData());
+        return Item.get(ItemIds.DYE, DyeColor.BROWN.getDyeData());
     }
 
     @Override
     public Item[] getDrops(Item item) {
         if (this.getDamage() >= 8) {
             return new Item[]{
-                    new ItemDye(3, 3)
+                    Item.get(ItemIds.DYE, 3, 3)
             };
         } else {
             return new Item[]{
-                    new ItemDye(3, 1)
+                    Item.get(ItemIds.DYE, 3, 1)
             };
         }
     }

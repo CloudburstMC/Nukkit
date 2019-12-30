@@ -7,6 +7,7 @@ import cn.nukkit.nbt.stream.NBTOutputStream;
 import cn.nukkit.nbt.stream.PGZIPOutputStream;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.registry.ItemRegistry;
 import cn.nukkit.utils.ThreadCache;
 
 import java.io.*;
@@ -29,7 +30,7 @@ public class NBTIO {
 
     public static CompoundTag putItemHelper(Item item, Integer slot) {
         CompoundTag tag = new CompoundTag(null)
-                .putShort("id", item.getId())
+                .putShort("id", ItemRegistry.get().getRuntimeId(item.getId()))
                 .putByte("Count", item.getCount())
                 .putShort("Damage", item.getDamage());
         if (slot != null) {

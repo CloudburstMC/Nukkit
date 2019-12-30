@@ -1,7 +1,7 @@
 package cn.nukkit.level.generator.populator.impl;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.populator.helper.EnsureCover;
@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static cn.nukkit.block.BlockIds.DOUBLE_PLANT;
+
 /**
  * @author Angelic47, Niall Lindsay (Niall7459)
  * <p>
@@ -20,7 +22,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * </p>
  */
 public class PopulatorFlower extends PopulatorSurfaceBlock {
-    private static final Block AIR = Block.get(BlockID.AIR);
+    private static final Block AIR = Block.get(BlockIds.AIR);
 
     private final List<Block> flowerTypes = new ArrayList<>();
 

@@ -1,8 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemSeedsWheat;
-import cn.nukkit.item.ItemWheat;
+import cn.nukkit.item.ItemIds;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -10,30 +10,25 @@ import cn.nukkit.item.ItemWheat;
  */
 public class BlockWheat extends BlockCrops {
 
-    public BlockWheat(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Wheat Block";
+    public BlockWheat(Identifier id) {
+        super(id);
     }
 
     @Override
     public Item toItem() {
-        return new ItemSeedsWheat();
+        return Item.get(ItemIds.WHEAT);
     }
 
     @Override
     public Item[] getDrops(Item item) {
         if (this.getDamage() >= 0x07) {
             return new Item[]{
-                    new ItemWheat(),
-                    new ItemSeedsWheat(0, (int) (4d * Math.random()))
+                    Item.get(ItemIds.WHEAT),
+                    Item.get(ItemIds.WHEAT, 0, (int) (4d * Math.random()))
             };
         } else {
             return new Item[]{
-                    new ItemSeedsWheat()
+                    Item.get(ItemIds.WHEAT)
             };
         }
     }

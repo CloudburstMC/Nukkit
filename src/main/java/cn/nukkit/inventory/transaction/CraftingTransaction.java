@@ -5,13 +5,18 @@ import cn.nukkit.inventory.BigCraftingGrid;
 import cn.nukkit.inventory.CraftingRecipe;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.network.protocol.ContainerClosePacket;
 import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.player.Player;
 import cn.nukkit.scheduler.Task;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static cn.nukkit.block.BlockIds.*;
+import static cn.nukkit.item.ItemIds.*;
 
 /**
  * @author CreeperFace
@@ -32,7 +37,7 @@ public class CraftingTransaction extends InventoryTransaction {
         super(source, actions, false);
 
         this.gridSize = (source.getCraftingGrid() instanceof BigCraftingGrid) ? 3 : 2;
-        Item air = Item.get(Item.AIR, 0, 1);
+        Item air = Item.get(AIR, 0, 1);
         this.inputs = new Item[gridSize][gridSize];
         for (Item[] a : this.inputs) {
             Arrays.fill(a, air);
@@ -165,37 +170,25 @@ public class CraftingTransaction extends InventoryTransaction {
 
     public boolean execute() {
         if (super.execute()) {
-            switch (this.primaryOutput.getId()) {
-                case Item.CRAFTING_TABLE:
-                    source.awardAchievement("buildWorkBench");
-                    break;
-                case Item.WOODEN_PICKAXE:
-                    source.awardAchievement("buildPickaxe");
-                    break;
-                case Item.FURNACE:
-                    source.awardAchievement("buildFurnace");
-                    break;
-                case Item.WOODEN_HOE:
-                    source.awardAchievement("buildHoe");
-                    break;
-                case Item.BREAD:
-                    source.awardAchievement("makeBread");
-                    break;
-                case Item.CAKE:
-                    source.awardAchievement("bakeCake");
-                    break;
-                case Item.STONE_PICKAXE:
-                case Item.GOLDEN_PICKAXE:
-                case Item.IRON_PICKAXE:
-                case Item.DIAMOND_PICKAXE:
-                    source.awardAchievement("buildBetterPickaxe");
-                    break;
-                case Item.WOODEN_SWORD:
-                    source.awardAchievement("buildSword");
-                    break;
-                case Item.DIAMOND:
-                    source.awardAchievement("diamond");
-                    break;
+            Identifier id = this.primaryOutput.getId();
+            if (id == CRAFTING_TABLE) {
+                source.awardAchievement("buildWorkBench");
+            } else if (id == WOODEN_PICKAXE) {
+                source.awardAchievement("buildPickaxe");
+            } else if (id == FURNACE) {
+                source.awardAchievement("buildFurnace");
+            } else if (id == WOODEN_HOE) {
+                source.awardAchievement("buildHoe");
+            } else if (id == BREAD) {
+                source.awardAchievement("makeBread");
+            } else if (id == ItemIds.CAKE) {
+                source.awardAchievement("bakeCake");
+            } else if (id == STONE_PICKAXE || id == GOLDEN_PICKAXE || id == IRON_PICKAXE || id == DIAMOND_PICKAXE) {
+                source.awardAchievement("buildBetterPickaxe");
+            } else if (id == WOODEN_SWORD) {
+                source.awardAchievement("buildSword");
+            } else if (id == DIAMOND) {
+                source.awardAchievement("diamond");
             }
 
             return true;

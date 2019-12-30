@@ -1,7 +1,6 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Server;
-import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
@@ -24,8 +23,11 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 
 /**
@@ -147,8 +149,8 @@ public class EntityFishingHook extends EntityProjectile {
 
     public int getWaterHeight() {
         for (int y = this.getFloorY(); y < 256; y++) {
-            int id = this.level.getBlockIdAt(this.getFloorX(), y, this.getFloorZ());
-            if (id == Block.AIR) {
+            Identifier id = this.level.getBlockIdAt(this.getFloorX(), y, this.getFloorZ());
+            if (id == AIR) {
                 return y;
             }
         }

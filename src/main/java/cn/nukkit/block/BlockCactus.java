@@ -13,14 +13,17 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.*;
 
 /**
  * @author Nukkit Project Team
  */
 public class BlockCactus extends BlockTransparent {
 
-    public BlockCactus(int id, int meta) {
-        super(id, meta);
+    public BlockCactus(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -87,7 +90,7 @@ public class BlockCactus extends BlockTransparent {
             } else {
                 for (int side = 2; side <= 5; ++side) {
                     Block block = getSide(BlockFace.fromIndex(side));
-                    if (!block.canBeFlowedInto()) {
+                    if (!block.canBeFlooded()) {
                         this.getLevel().useBreakOn(this);
                     }
                 }
@@ -125,18 +128,13 @@ public class BlockCactus extends BlockTransparent {
             Block block1 = south();
             Block block2 = west();
             Block block3 = east();
-            if (block0.canBeFlowedInto() && block1.canBeFlowedInto() && block2.canBeFlowedInto() && block3.canBeFlowedInto()) {
+            if (block0.canBeFlooded() && block1.canBeFlooded() && block2.canBeFlooded() && block3.canBeFlooded()) {
                 this.getLevel().setBlock(this, this, true);
 
                 return true;
             }
         }
         return false;
-    }
-
-    @Override
-    public String getName() {
-        return "Cactus";
     }
 
     @Override
@@ -147,7 +145,7 @@ public class BlockCactus extends BlockTransparent {
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-            Item.get(Item.CACTUS, 0, 1)
+                Item.get(CACTUS, 0, 1)
         };
     }
 }

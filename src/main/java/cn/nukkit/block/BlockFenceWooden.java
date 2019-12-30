@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 public class BlockFenceWooden extends BlockFence {
 
@@ -12,8 +13,8 @@ public class BlockFenceWooden extends BlockFence {
     public static final int FENCE_ACACIA = 4;
     public static final int FENCE_DARK_OAK = 5;
 
-    public BlockFenceWooden(int id, int meta) {
-        super(id, meta);
+    public BlockFenceWooden(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -29,21 +30,6 @@ public class BlockFenceWooden extends BlockFence {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_AXE;
-    }
-
-    @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Oak Fence",
-                "Spruce Fence",
-                "Birch Fence",
-                "Jungle Fence",
-                "Acacia Fence",
-                "Dark Oak Fence",
-                "",
-                ""
-        };
-        return names[this.getDamage() & 0x07];
     }
 
     @Override

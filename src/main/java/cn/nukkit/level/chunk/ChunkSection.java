@@ -1,6 +1,7 @@
 package cn.nukkit.level.chunk;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.NibbleArray;
 import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBuf;
@@ -64,7 +65,7 @@ public class ChunkSection {
         this.storage[layer].setBlock(blockIndex(x, y, z), block);
     }
 
-    public int getBlockId(int x, int y, int z, int layer) {
+    public Identifier getBlockId(int x, int y, int z, int layer) {
         checkBounds(x, y, z);
         Preconditions.checkElementIndex(layer, this.storage.length);
         return this.storage[layer].getBlockId(blockIndex(x, y, z));

@@ -1,13 +1,16 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemRedstone;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
+
+import static cn.nukkit.block.BlockIds.LIT_REDSTONE_ORE;
 
 /**
  * author: MagicDroidX
@@ -15,8 +18,8 @@ import java.util.Random;
  */
 public class BlockOreRedstone extends BlockSolid {
 
-    public BlockOreRedstone(int id, int meta) {
-        super(id, meta);
+    public BlockOreRedstone(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -35,11 +38,6 @@ public class BlockOreRedstone extends BlockSolid {
     }
 
     @Override
-    public String getName() {
-        return "Redstone Ore";
-    }
-
-    @Override
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_IRON) {
             int count = new Random().nextInt(2) + 4;
@@ -50,7 +48,7 @@ public class BlockOreRedstone extends BlockSolid {
             }
 
             return new Item[]{
-                    new ItemRedstone(0, count)
+                    Item.get(ItemIds.REDSTONE, 0, count)
             };
         } else {
             return new Item[0];
@@ -60,7 +58,7 @@ public class BlockOreRedstone extends BlockSolid {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_TOUCH) { //type == Level.BLOCK_UPDATE_NORMAL ||
-            this.getLevel().setBlock(this, Block.get(GLOWING_REDSTONE_ORE), false, false);
+            this.getLevel().setBlock(this, Block.get(LIT_REDSTONE_ORE), false, false);
 
             return Level.BLOCK_UPDATE_WEAK;
         }

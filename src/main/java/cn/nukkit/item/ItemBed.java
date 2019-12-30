@@ -1,8 +1,8 @@
 package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
-import cn.nukkit.utils.DyeColor;
+import cn.nukkit.block.BlockIds;
+import cn.nukkit.utils.Identifier;
 
 /**
  * author: MagicDroidX
@@ -10,17 +10,13 @@ import cn.nukkit.utils.DyeColor;
  */
 public class ItemBed extends Item {
 
-    public ItemBed() {
-        this(0, 1);
+    public ItemBed(Identifier id) {
+        super(id);
     }
 
-    public ItemBed(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemBed(Integer meta, int count) {
-        super(BED, meta, count, DyeColor.getByWoolData(meta).getName() + " Bed");
-        this.block = Block.get(BlockID.BED_BLOCK);
+    @Override
+    public Block getBlock() {
+        return Block.get(BlockIds.BED);
     }
 
     @Override

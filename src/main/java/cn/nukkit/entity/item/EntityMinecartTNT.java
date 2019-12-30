@@ -1,13 +1,13 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityExplosive;
 import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemMinecartTNT;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Explosion;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.gamerule.GameRules;
@@ -32,7 +32,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
 
     public EntityMinecartTNT(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
-        super.setDisplayBlock(Block.get(BlockID.TNT), false);
+        super.setDisplayBlock(Block.get(BlockIds.TNT), false);
     }
 
     @Override
@@ -114,7 +114,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
 
     @Override
     public void dropItem() {
-        level.dropItem(this, new ItemMinecartTNT());
+        level.dropItem(this, Item.get(ItemIds.TNT_MINECART));
     }
 
     @Override
@@ -137,7 +137,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
     @Override
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
         boolean interact = super.onInteract(player, item, clickedPos);
-        if (item.getId() == Item.FLINT_AND_STEEL || item.getId() == Item.FIRE_CHARGE) {
+        if (item.getId() == ItemIds.FLINT_AND_STEEL || item.getId() == ItemIds.FIREBALL) {
             level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_IGNITE);
             this.fuse = 79;
             return true;

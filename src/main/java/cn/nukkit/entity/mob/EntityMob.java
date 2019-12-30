@@ -7,6 +7,8 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.player.Player;
 
+import static cn.nukkit.item.ItemIds.NAME_TAG;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -19,7 +21,7 @@ public abstract class EntityMob extends EntityCreature {
 
     @Override
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
-        if (item.getId() == Item.NAME_TAG) {
+        if (item.getId() == NAME_TAG) {
             if (item.hasCustomName()) {
                 this.setNameTag(item.getCustomName());
                 this.setNameTagVisible(true);

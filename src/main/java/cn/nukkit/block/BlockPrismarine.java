@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.Identifier;
 
 
 public class BlockPrismarine extends BlockSolid {
@@ -10,14 +11,8 @@ public class BlockPrismarine extends BlockSolid {
     public static final int BRICKS = 1;
     public static final int DARK = 2;
 
-    private static final String[] NAMES = new String[]{
-            "Prismarine",
-            "Prismarine bricks",
-            "Dark prismarine"
-    };
-
-    public BlockPrismarine(int id, int meta) {
-        super(id, meta);
+    public BlockPrismarine(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -33,11 +28,6 @@ public class BlockPrismarine extends BlockSolid {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
-    }
-
-    @Override
-    public String getName() {
-        return NAMES[this.getDamage() > 2 ? 0 : this.getDamage()];
     }
 
     @Override

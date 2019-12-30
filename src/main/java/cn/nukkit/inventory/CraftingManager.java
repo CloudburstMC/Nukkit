@@ -2,11 +2,13 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Server;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemID;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.CraftingDataPacket;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.RegistryException;
 import cn.nukkit.utils.Config;
+import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.Utils;
 import io.netty.util.collection.CharObjectHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -38,17 +40,8 @@ public class CraftingManager {
     private int RECIPE_COUNT = 0;
     protected final Map<Integer, Map<UUID, ShapelessRecipe>> shapelessRecipes = new Int2ObjectOpenHashMap<>();
 
-    public static final Comparator<Item> recipeComparator = (i1, i2) -> {
-        if (i1.getId() > i2.getId()) {
-            return 1;
-        } else if (i1.getId() < i2.getId()) {
-            return -1;
-        } else if (i1.getDamage() > i2.getDamage()) {
-            return 1;
-        } else if (i1.getDamage() < i2.getDamage()) {
-            return -1;
-        } else return Integer.compare(i1.getCount(), i2.getCount());
-    };
+    public static final Comparator<Item> recipeComparator = Comparator.comparing(Item::getId)
+            .thenComparingInt(Item::getDamage).thenComparingInt(Item::getCount);
 
     public CraftingManager() {
         InputStream recipesStream = Server.class.getClassLoader().getResourceAsStream("recipes.json");
@@ -70,6 +63,74 @@ public class CraftingManager {
         this.rebuildPacket();
 
         log.info("Loaded " + this.recipes.size() + " recipes.");
+    }
+
+    private static int getFullItemHash(Item item) {
+        return Objects.hash(System.identityHashCode(item.getId()), item.getDamage(), item.getCount());
+    }
+
+    private static UUID getMultiItemHash(Collection<Item> items) {
+        ByteBuffer buffer = ByteBuffer.allocate(items.size() * 8);
+        for (Item item : items) {
+            buffer.putInt(getFullItemHash(item));
+        }
+        return UUID.nameUUIDFromBytes(buffer.array());
+    }
+
+    public void rebuildPacket() {
+        rebuildPacket(true);
+    }
+
+    public void rebuildPacket(boolean cleanRecipes) {
+        if (packet != null) {
+            packet.release();
+            packet = null;
+        }
+        CraftingDataPacket pk = new CraftingDataPacket();
+        pk.cleanRecipes = true;
+
+        pk.addRecipes(this.getRecipes());
+
+        pk.addRecipes(this.getFurnaceRecipes().values());
+
+        pk.addBrewingRecipes(brewingRecipes.values());
+        pk.addContainerRecipes(containerRecipes.values());
+
+        packet = pk.compress(Deflater.BEST_COMPRESSION);
+    }
+
+    public Collection<Recipe> getRecipes() {
+        return recipes;
+    }
+
+    public Map<Integer, FurnaceRecipe> getFurnaceRecipes() {
+        return furnaceRecipes;
+    }
+
+    public FurnaceRecipe matchFurnaceRecipe(Item input) {
+        FurnaceRecipe recipe = this.furnaceRecipes.get(getItemHash(input));
+        if (recipe == null) recipe = this.furnaceRecipes.get(getItemHash(input.getId(), 0));
+        return recipe;
+    }
+
+    public void sendRecipesTo(Player player) {
+        if (packet == null) {
+            rebuildPacket();
+        }
+        player.dataPacket(packet.copy());
+    }
+
+    private static int getItemHash(Identifier id, int meta) {
+        return Objects.hash(System.identityHashCode(id), meta);
+    }
+
+    public void registerFurnaceRecipe(FurnaceRecipe recipe) {
+        Item input = recipe.getInput();
+        this.furnaceRecipes.put(getItemHash(input), recipe);
+    }
+
+    private static int getItemHash(Item item) {
+        return getItemHash(item.getId(), item.getDamage());
     }
 
     @SuppressWarnings("unchecked")
@@ -156,7 +217,7 @@ public class CraftingManager {
                     default:
                         break;
                 }
-            } catch (NoSuchElementException e) {
+            } catch (RegistryException e) {
                 // ignore non-implemented items
             } catch (Exception e) {
                 log.error("Exception during registering recipe", e);
@@ -171,7 +232,11 @@ public class CraftingManager {
             int ingredient = ((Number) potionMix.get("ingredient")).intValue();
             int toPotionId = ((Number) potionMix.get("toPotionId")).intValue();
 
-            registerBrewingRecipe(new BrewingRecipe(Item.get(ItemID.POTION, fromPotionId), Item.get(ingredient), Item.get(ItemID.POTION, toPotionId)));
+            try {
+                registerBrewingRecipe(new BrewingRecipe(Item.get(ItemIds.POTION, fromPotionId), Item.get(ingredient), Item.get(ItemIds.POTION, toPotionId)));
+            } catch (RegistryException e) {
+                // ignore
+            }
         }
 
         List<Map> containerMixes = config.getMapList("containerMixes");
@@ -181,76 +246,12 @@ public class CraftingManager {
             int ingredient = ((Number) containerMix.get("ingredient")).intValue();
             int toItemId = ((Number) containerMix.get("toItemId")).intValue();
 
-            registerContainerRecipe(new ContainerRecipe(Item.get(fromItemId), Item.get(ingredient), Item.get(toItemId)));
+            try {
+                registerContainerRecipe(new ContainerRecipe(Item.get(fromItemId), Item.get(ingredient), Item.get(toItemId)));
+            } catch (RegistryException e) {
+                // ignore
+            }
         }
-    }
-
-    private static UUID getMultiItemHash(Collection<Item> items) {
-        ByteBuffer buffer = ByteBuffer.allocate(items.size() * 8);
-        for (Item item : items) {
-            buffer.putInt(getFullItemHash(item));
-        }
-        return UUID.nameUUIDFromBytes(buffer.array());
-    }
-
-    public void rebuildPacket() {
-        rebuildPacket(true);
-    }
-
-    public void rebuildPacket(boolean cleanRecipes) {
-        if (packet != null) {
-            packet.release();
-            packet = null;
-        }
-        CraftingDataPacket pk = new CraftingDataPacket();
-        pk.cleanRecipes = true;
-
-        pk.addRecipes(this.getRecipes());
-
-        pk.addRecipes(this.getFurnaceRecipes().values());
-
-        pk.addBrewingRecipes(brewingRecipes.values());
-        pk.addContainerRecipes(containerRecipes.values());
-
-        packet = pk.compress(Deflater.BEST_COMPRESSION);
-    }
-
-    public Collection<Recipe> getRecipes() {
-        return recipes;
-    }
-
-    public Map<Integer, FurnaceRecipe> getFurnaceRecipes() {
-        return furnaceRecipes;
-    }
-
-    public FurnaceRecipe matchFurnaceRecipe(Item input) {
-        FurnaceRecipe recipe = this.furnaceRecipes.get(getItemHash(input));
-        if (recipe == null) recipe = this.furnaceRecipes.get(getItemHash(input.getId(), 0));
-        return recipe;
-    }
-
-    public void sendRecipesTo(Player player) {
-        if (packet == null) {
-            rebuildPacket();
-        }
-        player.dataPacket(packet.copy());
-    }
-
-    private static int getFullItemHash(Item item) {
-        return 31 * getItemHash(item) + item.getCount();
-    }
-
-    public void registerFurnaceRecipe(FurnaceRecipe recipe) {
-        Item input = recipe.getInput();
-        this.furnaceRecipes.put(getItemHash(input), recipe);
-    }
-
-    private static int getItemHash(Item item) {
-        return getItemHash(item.getId(), item.getDamage());
-    }
-
-    private static int getItemHash(int id, int meta) {
-        return (id << 4) | (meta & 0xf);
     }
 
     public void registerShapedRecipe(ShapedRecipe recipe) {
@@ -313,7 +314,7 @@ public class CraftingManager {
         Item input = recipe.getIngredient();
         Item potion = recipe.getInput();
 
-        this.containerRecipes.put(getItemHash(input.getId(), potion.getId()), recipe);
+        this.containerRecipes.put(getItemHash(input.getId(), potion.getDamage()), recipe);
     }
 
     public BrewingRecipe matchBrewingRecipe(Item input, Item potion) {

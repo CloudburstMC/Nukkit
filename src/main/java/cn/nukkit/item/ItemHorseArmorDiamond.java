@@ -1,16 +1,11 @@
 package cn.nukkit.item;
 
+import cn.nukkit.utils.Identifier;
+
 public class ItemHorseArmorDiamond extends Item {
-    public ItemHorseArmorDiamond() {
-        this(0, 0);
-    }
 
-    public ItemHorseArmorDiamond(Integer meta) {
-        this(meta, 0);
-    }
-
-    public ItemHorseArmorDiamond(Integer meta, int count) {
-        super(DIAMOND_HORSE_ARMOR, meta, count, "Diamond Horse Armor");
+    public ItemHorseArmorDiamond(Identifier id) {
+        super(id);
     }
 
     @Override

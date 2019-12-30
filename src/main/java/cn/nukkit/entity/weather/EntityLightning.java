@@ -2,7 +2,7 @@ package cn.nukkit.entity.weather;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockFire;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -13,6 +13,9 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 import java.util.concurrent.ThreadLocalRandom;
+
+import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.block.BlockIds.TALL_GRASS;
 
 /**
  * Created by boybook on 2016/2/27.
@@ -48,8 +51,8 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
 
         if (isEffect && this.level.getGameRules().get(GameRules.DO_FIRE_TICK) && (this.server.getDifficulty() >= 2)) {
             Block block = this.getLevelBlock();
-            if (block.getId() == 0 || block.getId() == Block.TALL_GRASS) {
-                BlockFire fire = (BlockFire) Block.get(BlockID.FIRE);
+            if (block.getId() == AIR || block.getId() == TALL_GRASS) {
+                BlockFire fire = (BlockFire) Block.get(BlockIds.FIRE);
                 fire.x = block.x;
                 fire.y = block.y;
                 fire.z = block.z;
@@ -118,12 +121,12 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
                 if (this.isEffect && this.level.getGameRules().get(GameRules.DO_FIRE_TICK)) {
                     Block block = this.getLevelBlock();
 
-                    if (block.getId() == Block.AIR || block.getId() == Block.TALL_GRASS) {
+                    if (block.getId() == AIR || block.getId() == TALL_GRASS) {
                         BlockIgniteEvent e = new BlockIgniteEvent(block, null, this, BlockIgniteEvent.BlockIgniteCause.LIGHTNING);
                         getServer().getPluginManager().callEvent(e);
 
                         if (!e.isCancelled()) {
-                            Block fire = Block.get(BlockID.FIRE);
+                            Block fire = Block.get(BlockIds.FIRE);
                             this.level.setBlock(block, fire);
                             this.getLevel().scheduleUpdate(fire, fire.tickRate());
                         }

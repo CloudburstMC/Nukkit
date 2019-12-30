@@ -5,14 +5,15 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by CreeperFace on 2.6.2017.
  */
-public abstract class BlockTerracottaGlazed extends BlockSolid implements Faceable {
+public class BlockTerracottaGlazed extends BlockSolid implements Faceable {
 
-    public BlockTerracottaGlazed(int id, int meta) {
-        super(id, meta);
+    public BlockTerracottaGlazed(Identifier id) {
+        super(id);
     }
 
     @Override

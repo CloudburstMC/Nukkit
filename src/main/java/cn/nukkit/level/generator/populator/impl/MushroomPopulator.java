@@ -1,12 +1,14 @@
 package cn.nukkit.level.generator.populator.impl;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.object.mushroom.BigMushroom;
 import cn.nukkit.level.generator.populator.type.PopulatorCount;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.*;
 
 /**
  * @author DaPorkchop_
@@ -38,10 +40,10 @@ public class MushroomPopulator extends PopulatorCount {
         x &= 0xF;
         z &= 0xF;
         for (y = 254; y > 0; --y) {
-            int b = chunk.getBlockId(x, y, z);
-            if (b == Block.DIRT || b == Block.GRASS) {
+            Identifier b = chunk.getBlockId(x, y, z);
+            if (b == DIRT || b == GRASS) {
                 break;
-            } else if (b != Block.AIR && b != Block.SNOW_LAYER) {
+            } else if (b != AIR && b != SNOW_LAYER) {
                 return -1;
             }
         }

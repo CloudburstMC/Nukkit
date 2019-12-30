@@ -4,6 +4,10 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.DIRT;
+import static cn.nukkit.block.BlockIds.FARMLAND;
 
 /**
  * author: MagicDroidX
@@ -12,8 +16,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockDirt extends BlockSolid {
 
-    public BlockDirt(int id, int meta) {
-        super(id, meta);
+    public BlockDirt(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -37,15 +41,10 @@ public class BlockDirt extends BlockSolid {
     }
 
     @Override
-    public String getName() {
-        return this.getDamage() == 0 ? "Dirt" : "Coarse Dirt";
-    }
-
-    @Override
     public boolean onActivate(Item item, Player player) {
         if (item.isHoe()) {
             item.useOn(this);
-            this.getLevel().setBlock(this, this.getDamage() == 0 ? get(FARMLAND) : get(DIRT), true);
+            this.getLevel().setBlock(this, this.getDamage() == 0 ? Block.get(FARMLAND) : Block.get(DIRT), true);
 
             return true;
         }
@@ -55,7 +54,7 @@ public class BlockDirt extends BlockSolid {
 
     @Override
     public Item[] getDrops(Item item) {
-        return new Item[]{Item.get(BlockID.DIRT)};
+        return new Item[]{Item.get(DIRT)};
     }
 
     @Override

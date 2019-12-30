@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * author: MagicDroidX
@@ -16,8 +17,8 @@ public class BlockPlanks extends BlockSolid {
     public static final int DARK_OAK = 5;
 
 
-    public BlockPlanks(int id, int meta) {
-        super(id, meta);
+    public BlockPlanks(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -38,20 +39,6 @@ public class BlockPlanks extends BlockSolid {
     @Override
     public int getBurnAbility() {
         return 20;
-    }
-
-    @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Oak Wood Planks",
-                "Spruce Wood Planks",
-                "Birch Wood Planks",
-                "Jungle Wood Planks",
-                "Acacia Wood Planks",
-                "Dark Oak Wood Planks",
-        };
-
-        return this.getDamage() < 0 ? "Unknown" : names[this.getDamage() % 6];
     }
 
     @Override

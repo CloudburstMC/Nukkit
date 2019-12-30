@@ -1,21 +1,15 @@
 package cn.nukkit.item;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class ItemEgg extends ProjectileItem {
 
-    public ItemEgg() {
-        this(0, 1);
-    }
-
-    public ItemEgg(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemEgg(Integer meta, int count) {
-        super(EGG, meta, count, "Egg");
+    public ItemEgg(Identifier id) {
+        super(id);
     }
 
     @Override

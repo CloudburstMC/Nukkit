@@ -1,7 +1,6 @@
 package cn.nukkit.level;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockTNT;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockUpdateEvent;
@@ -21,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.block.BlockIds.TNT;
 
 /**
  * author: Angelic47
@@ -91,7 +93,7 @@ public class Explosion {
                             }
                             Block block = this.level.getBlock(vBlock);
 
-                            if (block.getId() != 0) {
+                            if (block.getId() != AIR) {
                                 blastForce -= (block.getResistance() / 5 + 0.3d) * this.stepLen;
                                 if (blastForce > 0) {
                                     if (!this.affectedBlocks.contains(block)) {
@@ -162,12 +164,12 @@ public class Explosion {
             }
         }
 
-        Item air = Item.get(BlockID.AIR, 0, 0);
+        Item air = Item.get(AIR, 0, 0);
 
         //Iterator iter = this.affectedBlocks.entrySet().iterator();
         for (Block block : this.affectedBlocks) {
             //Block block = (Block) ((HashMap.Entry) iter.next()).getValue();
-            if (block.getId() == Block.TNT) {
+            if (block.getId() == TNT) {
                 ((BlockTNT) block).prime(new NukkitRandom().nextRange(10, 30), this.what instanceof Entity ? (Entity) this.what : null);
             } else if (Math.random() * 100 < yield) {
                 for (Item drop : block.getDrops(air)) {
@@ -175,7 +177,7 @@ public class Explosion {
                 }
             }
 
-            this.level.setBlockIdAt((int) block.x, (int) block.y, (int) block.z, BlockID.AIR);
+            this.level.setBlockIdAt((int) block.x, (int) block.y, (int) block.z, AIR);
 
             Vector3 pos = new Vector3(block.x, block.y, block.z);
 

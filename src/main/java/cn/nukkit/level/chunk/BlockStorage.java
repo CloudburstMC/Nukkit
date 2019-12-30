@@ -1,12 +1,13 @@
 package cn.nukkit.level.chunk;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.chunk.bitarray.BitArray;
 import cn.nukkit.level.chunk.bitarray.BitArrayVersion;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.Identifier;
 import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
@@ -54,20 +55,20 @@ public class BlockStorage {
 
     public synchronized void setBlock(int index, Block block) {
         try {
-            int idx = this.idFor(GlobalBlockPalette.getRuntimeId(block));
+            int idx = this.idFor(BlockRegistry.get().getRuntimeId(block));
             this.bitArray.set(index, idx);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Unable to set block: " + block + ", palette: " + palette, e);
         }
     }
 
-    public synchronized int getBlockId(int index) {
+    public synchronized Identifier getBlockId(int index) {
         return this.blockFor(this.bitArray.get(index)).getId();
     }
 
     public synchronized void setBlockId(int index, int blockId) {
         try {
-            int idx = this.idFor(GlobalBlockPalette.getRuntimeId(blockId, 0));
+            int idx = this.idFor(BlockRegistry.get().getRuntimeId(blockId, 0));
             this.bitArray.set(index, idx);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Unable to set full block ID: " + blockId + ", palette: " + palette, e);
@@ -80,8 +81,8 @@ public class BlockStorage {
 
     public synchronized void setBlockData(int index, int blockData) {
         try {
-            int id = this.getBlockId(index);
-            int idx = this.idFor(GlobalBlockPalette.getRuntimeId(id, blockData));
+            Identifier id = this.getBlockId(index);
+            int idx = this.idFor(BlockRegistry.get().getRuntimeId(id, blockData));
             this.bitArray.set(index, idx);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Unable to set full block data: " + blockData + ", palette: " + palette, e);
@@ -109,10 +110,10 @@ public class BlockStorage {
 
         try (ByteBufOutputStream stream = new ByteBufOutputStream(buffer)) {
             for (int runtimeId : palette.toIntArray()) {
-                Block block = GlobalBlockPalette.getBlock(runtimeId);
-                String name = GlobalBlockPalette.getNameFromLegacyId(block.getId());
+                Block block = BlockRegistry.get().getBlock(runtimeId);
+
                 CompoundTag tag = new CompoundTag();
-                tag.putString("name", name);
+                tag.putString("name", block.getId().toString());
                 tag.putShort("val", block.getDamage());
 
                 NBTIO.write(tag, stream, ByteOrder.LITTLE_ENDIAN);
@@ -142,10 +143,10 @@ public class BlockStorage {
         try (ByteBufInputStream stream = new ByteBufInputStream(buffer)) {
             for (int i = 0; i < paletteSize; i++) {
                 CompoundTag tag = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN);
-                int id = GlobalBlockPalette.getLegacyIdFromName(tag.getString("name"));
+                int id = BlockRegistry.get().getLegacyId(tag.getString("name"));
                 int data = tag.getShort("val");
 
-                int runtimeId = GlobalBlockPalette.getRuntimeId(id, data);
+                int runtimeId = BlockRegistry.get().getRuntimeId(id, data);
                 if (palette.indexOf(runtimeId) != -1) {
                     throw new IllegalArgumentException("Palette contains same block state twice!");
                 }
@@ -187,7 +188,7 @@ public class BlockStorage {
 
     private synchronized Block blockFor(int index) {
         int runtimeId = this.palette.getInt(index);
-        return GlobalBlockPalette.getBlock(runtimeId);
+        return BlockRegistry.get().getBlock(runtimeId);
     }
 
     public boolean isEmpty() {

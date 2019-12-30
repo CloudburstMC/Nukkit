@@ -10,20 +10,13 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.Rail;
 
 public class ItemMinecartChest extends Item {
 
-    public ItemMinecartChest() {
-        this(0, 1);
-    }
-
-    public ItemMinecartChest(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemMinecartChest(Integer meta, int count) {
-        super(MINECART_WITH_CHEST, meta, count, "Minecart with Chest");
+    public ItemMinecartChest(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -54,7 +47,7 @@ public class ItemMinecartChest extends Item {
                             .add(new FloatTag("", 0)))
             );
             minecart.spawnToAll();
-            count -= 1;
+            decrementCount();
             return true;
         }
         return false;

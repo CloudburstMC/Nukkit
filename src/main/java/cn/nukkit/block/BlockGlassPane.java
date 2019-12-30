@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created on 2015/12/6 by xtypr.
@@ -9,13 +10,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockGlassPane extends BlockThin {
 
-    public BlockGlassPane(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Glass Pane";
+    public BlockGlassPane(Identifier id) {
+        super(id);
     }
 
     @Override

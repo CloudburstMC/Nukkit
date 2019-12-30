@@ -1,21 +1,15 @@
 package cn.nukkit.item;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class ItemSwordIron extends ItemTool {
 
-    public ItemSwordIron() {
-        this(0, 1);
-    }
-
-    public ItemSwordIron(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemSwordIron(Integer meta, int count) {
-        super(IRON_SWORD, meta, count, "Iron Sword");
+    public ItemSwordIron(Identifier id) {
+        super(id);
     }
 
     @Override

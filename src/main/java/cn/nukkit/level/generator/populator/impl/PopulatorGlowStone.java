@@ -1,11 +1,13 @@
 package cn.nukkit.level.generator.populator.impl;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.*;
 
 public class PopulatorGlowStone extends Populator {
     @Override
@@ -25,8 +27,8 @@ public class PopulatorGlowStone extends Populator {
         int y;
         //start scanning a bit lower down to allow space for placing on top
         for (y = 120; y >= 0; y--) {
-            int b = chunk.getBlockId(x, y, z);
-            if (b == Block.AIR) {
+            Identifier b = chunk.getBlockId(x, y, z);
+            if (b == AIR) {
                 break;
             }
         }

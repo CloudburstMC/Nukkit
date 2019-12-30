@@ -4,6 +4,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 
 /**
  * author: MagicDroidX
@@ -11,8 +12,8 @@ import cn.nukkit.player.Player;
  */
 public abstract class BlockSlab extends BlockTransparent {
 
-    public BlockSlab(int id, int meta) {
-        super(id, meta);
+    public BlockSlab(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -85,5 +86,5 @@ public abstract class BlockSlab extends BlockTransparent {
         return true;
     }
 
-    protected abstract int getDoubleSlab();
+    protected abstract Identifier getDoubleSlab();
 }

@@ -4,8 +4,6 @@ import cn.nukkit.utils.Binary;
 import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
-import java.util.UUID;
-
 @ToString(exclude = "sha256")
 public class ResourcePackDataInfoPacket extends DataPacket {
 
@@ -20,9 +18,8 @@ public class ResourcePackDataInfoPacket extends DataPacket {
     public static final int TYPE_RESOURCE = 6;
     public static final int TYPE_SKINS = 7;
     public static final int TYPE_WORLD_TEMPLATE = 8;
-    public static final int TYPE_COUNT = 9;
 
-    public UUID packId;
+    public String packId;
     public int maxChunkSize;
     public int chunkCount;
     public long compressedPackSize;
@@ -32,7 +29,7 @@ public class ResourcePackDataInfoPacket extends DataPacket {
 
     @Override
     protected void decode(ByteBuf buffer) {
-        this.packId = UUID.fromString(Binary.readString(buffer));
+        this.packId = Binary.readString(buffer);
         this.maxChunkSize = buffer.readIntLE();
         this.chunkCount = buffer.readIntLE();
         this.compressedPackSize = buffer.readLongLE();
@@ -43,7 +40,7 @@ public class ResourcePackDataInfoPacket extends DataPacket {
 
     @Override
     protected void encode(ByteBuf buffer) {
-        Binary.writeString(buffer, this.packId.toString());
+        Binary.writeString(buffer, this.packId);
         buffer.writeIntLE(this.maxChunkSize);
         buffer.writeIntLE(this.chunkCount);
         buffer.writeLongLE(this.compressedPackSize);

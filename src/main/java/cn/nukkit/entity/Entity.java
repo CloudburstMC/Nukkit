@@ -28,6 +28,7 @@ import cn.nukkit.network.protocol.types.EntityLink;
 import cn.nukkit.player.Player;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
+import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.ChunkException;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
@@ -41,6 +42,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static cn.nukkit.block.BlockIds.*;
 import static cn.nukkit.network.protocol.SetEntityLinkPacket.*;
 
 /**
@@ -1095,13 +1097,15 @@ public abstract class Entity extends Location implements Metadatable {
         double diffY = y - j;
         double diffZ = z - k;
 
-        if (!Block.transparent[this.level.getBlockIdAt(i, j, k)]) {
-            boolean flag = Block.transparent[this.level.getBlockIdAt(i - 1, j, k)];
-            boolean flag1 = Block.transparent[this.level.getBlockIdAt(i + 1, j, k)];
-            boolean flag2 = Block.transparent[this.level.getBlockIdAt(i, j - 1, k)];
-            boolean flag3 = Block.transparent[this.level.getBlockIdAt(i, j + 1, k)];
-            boolean flag4 = Block.transparent[this.level.getBlockIdAt(i, j, k - 1)];
-            boolean flag5 = Block.transparent[this.level.getBlockIdAt(i, j, k + 1)];
+        BlockRegistry registry = BlockRegistry.get();
+
+        if (!registry.getBlock(this.level.getBlockIdAt(i, j, k), 0).isTransparent()) {
+            boolean flag = registry.getBlock(this.level.getBlockIdAt(i - 1, j, k), 0).isTransparent();
+            boolean flag1 = registry.getBlock(this.level.getBlockIdAt(i + 1, j, k), 0).isTransparent();
+            boolean flag2 = registry.getBlock(this.level.getBlockIdAt(i, j - 1, k), 0).isTransparent();
+            boolean flag3 = registry.getBlock(this.level.getBlockIdAt(i, j + 1, k), 0).isTransparent();
+            boolean flag4 = registry.getBlock(this.level.getBlockIdAt(i, j, k - 1), 0).isTransparent();
+            boolean flag5 = registry.getBlock(this.level.getBlockIdAt(i, j, k + 1), 0).isTransparent();
 
             int direction = -1;
             double limit = 9999;
@@ -1563,7 +1567,7 @@ public abstract class Entity extends Location implements Metadatable {
         if (fallDistance > 0.75) {
             Block down = this.level.getBlock(this.floor().down());
 
-            if (down.getId() == Item.FARMLAND) {
+            if (down.getId() == FARMLAND) {
                 Event ev;
 
                 if (this instanceof Player) {
@@ -1576,7 +1580,7 @@ public abstract class Entity extends Location implements Metadatable {
                 if (ev.isCancelled()) {
                     return;
                 }
-                this.level.setBlock(down, Block.get(BlockID.DIRT), false, true);
+                this.level.setBlock(down, Block.get(BlockIds.DIRT), false, true);
             }
         }
     }
@@ -1737,7 +1741,7 @@ public abstract class Entity extends Location implements Metadatable {
                         NukkitMath.floorDouble(this.z))
         );
 
-        return block != null && block.getId() == Block.LADDER;
+        return block != null && block.getId() == LADDER;
     }
 
     public boolean fastMove(double dx, double dy, double dz) {
@@ -1908,8 +1912,12 @@ public abstract class Entity extends Location implements Metadatable {
             for (int z = minZ; z <= maxZ; ++z) {
                 for (int x = minX; x <= maxX; ++x) {
                     for (int y = minY; y <= maxY; ++y) {
-                        Block block = this.level.getBlock(temporalVector.get().setComponents(x, y, z));
-                        this.blocksAround.add(block);
+                        Block block = this.level.getLoadedBlock(temporalVector.get().setComponents(x, y, z));
+                        if (block != null) {
+                            this.blocksAround.add(block);
+                        } else {
+                            log.warn("Could not load block around player");
+                        }
                     }
                 }
             }
@@ -1946,7 +1954,7 @@ public abstract class Entity extends Location implements Metadatable {
         boolean portal = false;
 
         for (Block block : this.getCollisionBlocks()) {
-            if (block.getId() == Block.NETHER_PORTAL) {
+            if (block.getId() == PORTAL) {
                 portal = true;
                 continue;
             }

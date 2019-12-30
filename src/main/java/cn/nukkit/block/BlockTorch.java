@@ -1,26 +1,23 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.COBBLESTONE_WALL;
 
 /**
  * Created on 2015/12/2 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockTorch extends BlockFlowable implements Faceable {
+public class BlockTorch extends FloodableBlock implements Faceable {
 
-    public BlockTorch(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Torch";
+    public BlockTorch(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -43,7 +40,7 @@ public class BlockTorch extends BlockFlowable implements Faceable {
                     0  //6
             };
 
-            if (this.getSide(BlockFace.fromIndex(faces[side])).isTransparent() && !(side == 0 && (below instanceof BlockFence || below.getId() == COBBLE_WALL))) {
+            if (this.getSide(BlockFace.fromIndex(faces[side])).isTransparent() && !(side == 0 && (below instanceof BlockFence || below.getId() == COBBLESTONE_WALL))) {
                 this.getLevel().useBreakOn(this);
 
                 return Level.BLOCK_UPDATE_NORMAL;
@@ -70,7 +67,7 @@ public class BlockTorch extends BlockFlowable implements Faceable {
             this.getLevel().setBlock(block, this, true, true);
 
             return true;
-        } else if (!below.isTransparent() || below instanceof BlockFence || below.getId() == COBBLE_WALL) {
+        } else if (!below.isTransparent() || below instanceof BlockFence || below.getId() == COBBLESTONE_WALL) {
             this.setDamage(0);
             this.getLevel().setBlock(block, this, true, true);
 
@@ -81,7 +78,7 @@ public class BlockTorch extends BlockFlowable implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return Item.get(id, 0);
     }
 
     @Override

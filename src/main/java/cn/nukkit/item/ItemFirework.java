@@ -12,6 +12,7 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.DyeColor;
+import cn.nukkit.utils.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,17 +22,8 @@ import java.util.List;
  */
 public class ItemFirework extends Item {
 
-    public ItemFirework() {
-        this(0);
-    }
-
-    public ItemFirework(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemFirework(Integer meta, int count) {
-        super(FIREWORKS, meta, count, "Fireworks");
-
+    public ItemFirework(Identifier id) {
+        super(id);
         if (!hasCompoundTag() || !this.getNamedTag().contains("Fireworks")) {
             CompoundTag tag = getNamedTag();
             if (tag == null) {
@@ -85,7 +77,7 @@ public class ItemFirework extends Item {
                     Math.cos(Math.toRadians(player.yaw)) * Math.cos(Math.toRadians(player.pitch)) * 2));
 
             if (!player.isCreative()) {
-                this.count--;
+                this.decrementCount();
             }
 
             return true;

@@ -2,14 +2,15 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by CreeperFace on 2.6.2017.
  */
 public class BlockConcrete extends BlockSolid {
 
-    public BlockConcrete(int id, int meta) {
-        super(id, meta);
+    public BlockConcrete(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -20,11 +21,6 @@ public class BlockConcrete extends BlockSolid {
     @Override
     public double getHardness() {
         return 1.8;
-    }
-
-    @Override
-    public String getName() {
-        return "Concrete";
     }
 
     @Override

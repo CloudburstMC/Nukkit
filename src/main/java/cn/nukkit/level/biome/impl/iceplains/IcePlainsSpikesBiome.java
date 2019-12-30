@@ -1,18 +1,20 @@
 package cn.nukkit.level.biome.impl.iceplains;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
+
+import static cn.nukkit.block.BlockIds.PACKED_ICE;
 
 /**
  * author: DaPorkchop_
  * Nukkit Project
  */
 public class IcePlainsSpikesBiome extends IcePlainsBiome {
-    private static final Block SNOW_BLOCK = Block.get(BlockID.SNOW_BLOCK);
+    private static final Block SNOW_BLOCK = Block.get(BlockIds.SNOW);
 
     public IcePlainsSpikesBiome() {
         super();

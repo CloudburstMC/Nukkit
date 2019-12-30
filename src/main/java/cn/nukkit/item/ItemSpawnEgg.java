@@ -12,6 +12,7 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
 
@@ -21,16 +22,8 @@ import java.util.Random;
  */
 public class ItemSpawnEgg extends Item {
 
-    public ItemSpawnEgg() {
-        this(0, 1);
-    }
-
-    public ItemSpawnEgg(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemSpawnEgg(Integer meta, int count) {
-        super(SPAWN_EGG, meta, count, "Spawn EntityEgg");
+    public ItemSpawnEgg(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -63,14 +56,14 @@ public class ItemSpawnEgg extends Item {
             nbt.putString("CustomName", this.getCustomName());
         }
 
-        CreatureSpawnEvent ev = new CreatureSpawnEvent(this.meta, block, nbt, SpawnReason.SPAWN_EGG);
+        CreatureSpawnEvent ev = new CreatureSpawnEvent(this.getDamage(), block, nbt, SpawnReason.SPAWN_EGG);
         level.getServer().getPluginManager().callEvent(ev);
 
         if (ev.isCancelled()) {
             return false;
         }
 
-        Entity entity = Entity.createEntity(this.meta, chunk, nbt);
+        Entity entity = Entity.createEntity(this.getDamage(), chunk, nbt);
 
         if (entity != null) {
             if (player.isSurvival()) {

@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static cn.nukkit.block.BlockIds.AIR;
+
 /**
  * Created on 2015/11/21 by xtypr.
  * Package cn.nukkit.level.particle in project Nukkit .
@@ -148,7 +150,7 @@ public class FloatingTextParticle extends Particle {
             pk.yaw = 0;
             pk.pitch = 0;
             pk.metadata = this.metadata;
-            pk.item = Item.get(Item.AIR);
+            pk.item = Item.get(AIR);
             packets.add(pk);
 
             PlayerListPacket playerRemove = new PlayerListPacket();

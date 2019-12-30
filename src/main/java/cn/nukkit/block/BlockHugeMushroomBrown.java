@@ -3,19 +3,17 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.BROWN_MUSHROOM;
 
 /**
  * Created by Pub4Game on 28.01.2016.
  */
 public class BlockHugeMushroomBrown extends BlockSolid {
 
-    public BlockHugeMushroomBrown(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Brown Mushroom Block";
+    public BlockHugeMushroomBrown(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -37,7 +35,7 @@ public class BlockHugeMushroomBrown extends BlockSolid {
     public Item[] getDrops(Item item) {
         if (new NukkitRandom().nextRange(1, 20) == 0) {
             return new Item[]{
-                    Item.get(BlockID.BROWN_MUSHROOM)
+                    Item.get(BROWN_MUSHROOM)
             };
         } else {
             return new Item[0];

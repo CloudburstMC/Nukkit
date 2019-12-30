@@ -6,15 +6,16 @@ import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.utils.Identifier;
 
 /**
  * @author DaPorkchop_
  */
 public class PopulatorOre extends Populator {
-    private final int replaceId;
+    private final Identifier replaceId;
     private final OreType[] oreTypes;
 
-    public PopulatorOre(int replaceId, OreType[] oreTypes) {
+    public PopulatorOre(Identifier replaceId, OreType[] oreTypes) {
         this.replaceId = replaceId;
         this.oreTypes = oreTypes;
     }

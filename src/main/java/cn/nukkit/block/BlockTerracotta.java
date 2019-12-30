@@ -4,19 +4,15 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created on 2015/11/24 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockTerracotta extends BlockSolid {
-    public BlockTerracotta(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Terracotta";
+    public BlockTerracotta(Identifier id) {
+        super(id);
     }
 
     @Override

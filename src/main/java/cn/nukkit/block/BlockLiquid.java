@@ -10,10 +10,13 @@ import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.utils.Identifier;
 import it.unimi.dsi.fastutil.longs.Long2ByteMap;
 import it.unimi.dsi.fastutil.longs.Long2ByteOpenHashMap;
 
 import java.util.concurrent.ThreadLocalRandom;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * author: MagicDroidX
@@ -28,12 +31,12 @@ public abstract class BlockLiquid extends BlockTransparent {
     protected Vector3 flowVector = null;
     private Long2ByteMap flowCostVisited = new Long2ByteOpenHashMap();
 
-    public BlockLiquid(int id, int meta) {
-        super(id, meta);
+    public BlockLiquid(Identifier id) {
+        super(id);
     }
 
     @Override
-    public boolean canBeFlowedInto() {
+    public boolean canBeFlooded() {
         return true;
     }
 
@@ -143,7 +146,7 @@ public abstract class BlockLiquid extends BlockTransparent {
             Block sideBlock = this.level.getBlock(x, y, z);
             int blockDecay = this.getEffectiveFlowDecay(sideBlock);
             if (blockDecay < 0) {
-                if (!sideBlock.canBeFlowedInto()) {
+                if (!sideBlock.canBeFlooded()) {
                     continue;
                 }
                 blockDecay = this.getEffectiveFlowDecay(this.level.getBlock(x, y - 1, z));
@@ -243,7 +246,7 @@ public abstract class BlockLiquid extends BlockTransparent {
             if (decay >= 0) {
                 Block bottomBlock = this.level.getBlock((int) this.x, (int) this.y - 1, (int) this.z);
                 this.flowIntoBlock(bottomBlock, decay | 0x08);
-                if (decay == 0 || !bottomBlock.canBeFlowedInto()) {
+                if (decay == 0 || !bottomBlock.canBeFlooded()) {
                     int adjacentDecay;
                     if (decay >= 8) {
                         adjacentDecay = 1;
@@ -277,7 +280,7 @@ public abstract class BlockLiquid extends BlockTransparent {
             LiquidFlowEvent event = new LiquidFlowEvent(block, this, newFlowDecay);
             level.getServer().getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
-                if (block.getId() > 0) {
+                if (block.getId() != AIR) {
                     this.level.useBreakOn(block);
                 }
                 this.level.setBlock(block, getBlock(newFlowDecay), true, true);
@@ -309,7 +312,7 @@ public abstract class BlockLiquid extends BlockTransparent {
                 Block blockSide = this.level.getBlock(x, y, z);
                 if (!this.canFlowInto(blockSide)) {
                     this.flowCostVisited.put(hash, BLOCKED);
-                } else if (this.level.getBlock(x, y - 1, z).canBeFlowedInto()) {
+                } else if (this.level.getBlock(x, y - 1, z).canBeFlooded()) {
                     this.flowCostVisited.put(hash, CAN_FLOW_DOWN);
                 } else {
                     this.flowCostVisited.put(hash, CAN_FLOW);
@@ -366,7 +369,7 @@ public abstract class BlockLiquid extends BlockTransparent {
             Block block = this.level.getBlock(x, y, z);
             if (!this.canFlowInto(block)) {
                 this.flowCostVisited.put(Level.blockHash(x, y, z), BLOCKED);
-            } else if (this.level.getBlock(x, y - 1, z).canBeFlowedInto()) {
+            } else if (this.level.getBlock(x, y - 1, z).canBeFlooded()) {
                 this.flowCostVisited.put(Level.blockHash(x, y, z), CAN_FLOW_DOWN);
                 flowCost[j] = maxCost = 0;
             } else if (maxCost > 0) {
@@ -437,11 +440,11 @@ public abstract class BlockLiquid extends BlockTransparent {
     }
 
     protected boolean canFlowInto(Block block) {
-        return block.canBeFlowedInto() && !(block instanceof BlockLiquid && block.getDamage() == 0);
+        return block.canBeFlooded() && !(block instanceof BlockLiquid && block.getDamage() == 0);
     }
 
     @Override
     public Item toItem() {
-        return Item.get(BlockID.AIR, 0, 0);
+        return Item.get(AIR, 0, 0);
     }
 }

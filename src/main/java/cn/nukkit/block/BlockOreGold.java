@@ -2,6 +2,9 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.GOLD_ORE;
 
 /**
  * author: MagicDroidX
@@ -9,8 +12,8 @@ import cn.nukkit.item.ItemTool;
  */
 public class BlockOreGold extends BlockSolid {
 
-    public BlockOreGold(int id, int meta) {
-        super(id, meta);
+    public BlockOreGold(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -26,11 +29,6 @@ public class BlockOreGold extends BlockSolid {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
-    }
-
-    @Override
-    public String getName() {
-        return "Gold Ore";
     }
 
     @Override

@@ -1,21 +1,18 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * Created by Pub4Game on 26.12.2015.
  */
 public class BlockWallSign extends BlockSignPost {
 
-    public BlockWallSign(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Wall Sign";
+    public BlockWallSign(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -28,7 +25,7 @@ public class BlockWallSign extends BlockSignPost {
         };
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (this.getDamage() >= 2 && this.getDamage() <= 5) {
-                if (this.getSide(BlockFace.fromIndex(faces[this.getDamage() - 2])).getId() == Item.AIR) {
+                if (this.getSide(BlockFace.fromIndex(faces[this.getDamage() - 2])).getId() == AIR) {
                     this.getLevel().useBreakOn(this);
                 }
                 return Level.BLOCK_UPDATE_NORMAL;

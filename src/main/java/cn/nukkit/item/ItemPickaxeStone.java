@@ -1,21 +1,15 @@
 package cn.nukkit.item;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class ItemPickaxeStone extends ItemTool {
 
-    public ItemPickaxeStone() {
-        this(0, 1);
-    }
-
-    public ItemPickaxeStone(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemPickaxeStone(Integer meta, int count) {
-        super(STONE_PICKAXE, meta, count, "Stone Pickaxe");
+    public ItemPickaxeStone(Identifier id) {
+        super(id);
     }
 
     @Override

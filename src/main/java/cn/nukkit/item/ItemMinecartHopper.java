@@ -10,20 +10,13 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.Rail;
 
 public class ItemMinecartHopper extends Item {
 
-    public ItemMinecartHopper() {
-        this(0, 1);
-    }
-
-    public ItemMinecartHopper(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemMinecartHopper(Integer meta, int count) {
-        super(MINECART_WITH_HOPPER, meta, count, "Minecart with Hopper");
+    public ItemMinecartHopper(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -54,7 +47,7 @@ public class ItemMinecartHopper extends Item {
                             .add(new FloatTag("", 0)))
             );
             minecart.spawnToAll();
-            count -= 1;
+            decrementCount();
             return true;
         }
         return false;

@@ -1,28 +1,16 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by CreeperFace on 26. 11. 2016.
  */
 public class BlockRedSandstone extends BlockSandstone {
 
-    public BlockRedSandstone(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Red Sandstone",
-                "Chiseled Red Sandstone",
-                "Smooth Red Sandstone",
-                ""
-        };
-
-        return names[this.getDamage() & 0x03];
+    public BlockRedSandstone(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -38,7 +26,7 @@ public class BlockRedSandstone extends BlockSandstone {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, this.getDamage() & 0x03);
+        return Item.get(id, this.getDamage() & 0x03);
     }
 
     @Override

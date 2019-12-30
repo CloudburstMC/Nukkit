@@ -9,18 +9,14 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Map;
 
 public class BlockTrappedChest extends BlockChest {
 
-    public BlockTrappedChest(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Trapped Chest";
+    public BlockTrappedChest(Identifier id) {
+        super(id);
     }
 
     @Override

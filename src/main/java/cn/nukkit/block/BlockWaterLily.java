@@ -1,26 +1,23 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * Created on 2015/12/1 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockWaterLily extends BlockFlowable {
+public class BlockWaterLily extends FloodableBlock {
 
-    public BlockWaterLily(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Lily Pad";
+    public BlockWaterLily(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -57,7 +54,7 @@ public class BlockWaterLily extends BlockFlowable {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (target instanceof BlockWater) {
             Block up = target.up();
-            if (up.getId() == Block.AIR) {
+            if (up.getId() == AIR) {
                 this.getLevel().setBlock(up, this, true, true);
                 return true;
             }
@@ -78,7 +75,7 @@ public class BlockWaterLily extends BlockFlowable {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return Item.get(id, 0);
     }
 
     @Override

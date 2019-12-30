@@ -1,21 +1,15 @@
 package cn.nukkit.item;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class ItemHoeIron extends ItemTool {
 
-    public ItemHoeIron() {
-        this(0, 1);
-    }
-
-    public ItemHoeIron(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemHoeIron(Integer meta, int count) {
-        super(IRON_HOE, meta, count, "Iron Hoe");
+    public ItemHoeIron(Identifier id) {
+        super(id);
     }
 
     @Override

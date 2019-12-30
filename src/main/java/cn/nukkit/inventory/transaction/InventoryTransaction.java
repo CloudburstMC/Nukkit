@@ -13,6 +13,8 @@ import lombok.extern.log4j.Log4j2;
 import java.util.*;
 import java.util.Map.Entry;
 
+import static cn.nukkit.block.BlockIds.AIR;
+
 /**
  * @author CreeperFace
  */
@@ -84,7 +86,7 @@ public class InventoryTransaction {
 
     protected boolean matchItems(List<Item> needItems, List<Item> haveItems) {
         for (InventoryAction action : this.actions) {
-            if (action.getTargetItem().getId() != Item.AIR) {
+            if (action.getTargetItem().getId() != AIR) {
                 needItems.add(action.getTargetItem());
             }
 
@@ -92,7 +94,7 @@ public class InventoryTransaction {
                 return false;
             }
 
-            if (action.getSourceItem().getId() != Item.AIR) {
+            if (action.getSourceItem().getId() != AIR) {
                 haveItems.add(action.getSourceItem());
             }
         }
@@ -200,9 +202,9 @@ public class InventoryTransaction {
                         sortedThisLoop++;
                     }
                     else if (actionSource.equals(lastTargetItem)) {
-                        lastTargetItem.count -= actionSource.count;
+                        lastTargetItem.decrementCount(actionSource.getCount());
                         list.remove(i);
-                        if (lastTargetItem.count == 0) sortedThisLoop++;
+                        if (lastTargetItem.getCount() == 0) sortedThisLoop++;
                     }
                 }
             } while (sortedThisLoop > 0);

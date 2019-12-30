@@ -1,7 +1,7 @@
 package cn.nukkit.level.generator.populator.impl;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.populator.helper.EnsureCover;
@@ -17,7 +17,7 @@ public class PopulatorDoublePlant extends PopulatorSurfaceBlock {
     private final Block block;
 
     public PopulatorDoublePlant(int type)    {
-        this.block = Block.get(BlockID.DOUBLE_PLANT, type);
+        this.block = Block.get(BlockIds.DOUBLE_PLANT, type);
     }
 
     @Override

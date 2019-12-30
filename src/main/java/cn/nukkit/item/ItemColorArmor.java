@@ -3,26 +3,15 @@ package cn.nukkit.item;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by fromgate on 27.03.2016.
  */
 abstract public class ItemColorArmor extends ItemArmor {
 
-    public ItemColorArmor(int id) {
+    public ItemColorArmor(Identifier id) {
         super(id);
-    }
-
-    public ItemColorArmor(int id, Integer meta) {
-        super(id, meta);
-    }
-
-    public ItemColorArmor(int id, Integer meta, int count) {
-        super(id, meta, count);
-    }
-
-    public ItemColorArmor(int id, Integer meta, int count, String name) {
-        super(id, meta, count, name);
     }
 
     /**

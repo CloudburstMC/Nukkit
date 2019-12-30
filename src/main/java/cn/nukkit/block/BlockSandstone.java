@@ -1,9 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * author: MagicDroidX
@@ -14,8 +14,8 @@ public class BlockSandstone extends BlockSolid {
     public static final int CHISELED = 1;
     public static final int SMOOTH = 2;
 
-    public BlockSandstone(int id, int meta) {
-        super(id, meta);
+    public BlockSandstone(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -26,18 +26,6 @@ public class BlockSandstone extends BlockSolid {
     @Override
     public double getResistance() {
         return 4;
-    }
-
-    @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Sandstone",
-                "Chiseled Sandstone",
-                "Smooth Sandstone",
-                ""
-        };
-
-        return names[this.getDamage() & 0x03];
     }
 
     @Override
@@ -53,7 +41,7 @@ public class BlockSandstone extends BlockSolid {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, this.getDamage() & 0x03);
+        return Item.get(id, this.getDamage() & 0x03);
     }
 
     @Override

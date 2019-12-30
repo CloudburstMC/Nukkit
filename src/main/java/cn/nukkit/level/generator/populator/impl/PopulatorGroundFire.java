@@ -1,19 +1,24 @@
 package cn.nukkit.level.generator.populator.impl;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.populator.helper.EnsureBelow;
 import cn.nukkit.level.generator.populator.helper.EnsureCover;
 import cn.nukkit.level.generator.populator.type.PopulatorSurfaceBlock;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.registry.BlockRegistry;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.block.BlockIds.NETHERRACK;
 
 /**
  * @author DaPorkchop_
  */
 public class PopulatorGroundFire extends PopulatorSurfaceBlock {
-    private static final Block FIRE = Block.get(BlockID.FIRE);
+    private static final Block FIRE = Block.get(BlockIds.FIRE);
 
     @Override
     protected boolean canStay(int x, int y, int z, Chunk chunk, ChunkManager level) {
@@ -28,15 +33,15 @@ public class PopulatorGroundFire extends PopulatorSurfaceBlock {
     @Override
     protected void placeBlock(int x, int y, int z, Block block, Chunk chunk, NukkitRandom random) {
         super.placeBlock(x, y, z, block, chunk, random);
-        chunk.setBlockLight(x, y, z, Block.light[FIRE.getId()]);
+        chunk.setBlockLight(x, y, z, BlockRegistry.get().getBlock(FIRE.getId(), 0).getLightLevel());
     }
 
     @Override
     protected int getHighestWorkableBlock(ChunkManager level, int x, int z, Chunk chunk) {
         int y;
         for (y = 0; y <= 127; ++y) {
-            int b = chunk.getBlockId(x, y, z);
-            if (b == Block.AIR) {
+            Identifier b = chunk.getBlockId(x, y, z);
+            if (b == AIR) {
                 break;
             }
         }

@@ -3,6 +3,7 @@ package cn.nukkit.item;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.ClientboundMapItemDataPacket;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 import lombok.extern.log4j.Log4j2;
 
 import javax.imageio.ImageIO;
@@ -21,17 +22,8 @@ public class ItemMap extends Item {
 
     public static int mapCount = 0;
 
-    public ItemMap() {
-        this(0, 1);
-    }
-
-    public ItemMap(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemMap(Integer meta, int count) {
-        super(MAP, 0, count, "Map");
-
+    public ItemMap(Identifier id) {
+        super(id);
         if (!hasCompoundTag() || !getNamedTag().contains("map_uuid")) {
             CompoundTag tag = new CompoundTag();
             tag.putLong("map_uuid", mapCount++);

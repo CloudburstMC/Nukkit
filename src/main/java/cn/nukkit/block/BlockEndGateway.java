@@ -2,19 +2,17 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * @author PikyCZ
  */
 public class BlockEndGateway extends BlockSolid {
 
-    public BlockEndGateway(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "End Gateway";
+    public BlockEndGateway(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -54,7 +52,7 @@ public class BlockEndGateway extends BlockSolid {
 
     @Override
     public Item toItem() {
-        return Item.get(BlockID.AIR, 0, 0);
+        return Item.get(AIR, 0, 0);
     }
 
 }

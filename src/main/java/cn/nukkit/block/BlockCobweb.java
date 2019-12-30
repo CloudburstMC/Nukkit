@@ -2,22 +2,18 @@ package cn.nukkit.block;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemString;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created on 2015/12/2 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockCobweb extends BlockFlowable {
-    public BlockCobweb(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Cobweb";
+public class BlockCobweb extends FloodableBlock {
+    public BlockCobweb(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -44,7 +40,7 @@ public class BlockCobweb extends BlockFlowable {
     public Item[] getDrops(Item item) {
         if (item.isShears() || item.isSword()) {
             return new Item[]{
-                    new ItemString()
+                    Item.get(ItemIds.STRING)
             };
         } else {
             return new Item[0];

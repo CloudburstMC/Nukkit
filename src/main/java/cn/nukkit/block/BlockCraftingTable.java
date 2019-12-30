@@ -4,19 +4,15 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created on 2015/12/5 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockCraftingTable extends BlockSolid {
-    public BlockCraftingTable(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Crafting Table";
+    public BlockCraftingTable(Identifier id) {
+        super(id);
     }
 
     @Override

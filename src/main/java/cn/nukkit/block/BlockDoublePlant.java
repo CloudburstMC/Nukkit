@@ -1,20 +1,24 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemSeedsWheat;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 import java.util.concurrent.ThreadLocalRandom;
+
+import static cn.nukkit.block.BlockIds.*;
+import static cn.nukkit.item.ItemIds.DYE;
 
 /**
  * Created on 2015/11/23 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockDoublePlant extends BlockFlowable {
+public class BlockDoublePlant extends FloodableBlock {
     public static final int SUNFLOWER = 0;
     public static final int LILAC = 1;
     public static final int TALL_GRASS = 2;
@@ -23,27 +27,13 @@ public class BlockDoublePlant extends BlockFlowable {
     public static final int PEONY = 5;
     public static final int TOP_HALF_BITMASK = 0x8;
 
-    private static final String[] NAMES = new String[]{
-            "Sunflower",
-            "Lilac",
-            "Double Tallgrass",
-            "Large Fern",
-            "Rose Bush",
-            "Peony"
-    };
-
-    public BlockDoublePlant(int id, int meta) {
-        super(id, meta);
+    public BlockDoublePlant(Identifier id) {
+        super(id);
     }
 
     @Override
     public boolean canBeReplaced() {
         return this.getDamage() == TALL_GRASS || this.getDamage() == LARGE_FERN;
-    }
-
-    @Override
-    public String getName() {
-        return NAMES[this.getDamage() > 5 ? 0 : this.getDamage()];
     }
 
     @Override
@@ -104,7 +94,7 @@ public class BlockDoublePlant extends BlockFlowable {
                         //todo enchantment
                         if (dropSeeds) {
                             return new Item[]{
-                                    new ItemSeedsWheat(0, 1),
+                                    Item.get(ItemIds.WHEAT, 0, 1),
                                     toItem()
                             };
                         } else {
@@ -116,7 +106,7 @@ public class BlockDoublePlant extends BlockFlowable {
 
                     if (dropSeeds) {
                         return new Item[]{
-                                new ItemSeedsWheat()
+                                Item.get(ItemIds.WHEAT)
                         };
                     } else {
                         return new Item[0];
@@ -141,14 +131,14 @@ public class BlockDoublePlant extends BlockFlowable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0f) { //Bone meal
+        if (item.getId() == DYE && item.getDamage() == 0x0f) { //Bone meal
             switch (this.getDamage() & 0x07) {
                 case SUNFLOWER:
                 case LILAC:
                 case ROSE_BUSH:
                 case PEONY:
                     if (player != null && (player.gamemode & 0x01) == 0) {
-                        item.count--;
+                        item.decrementCount();
                     }
                     this.level.addParticle(new BoneMealParticle(this));
                     this.level.dropItem(this, this.toItem());

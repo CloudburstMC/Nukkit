@@ -3,19 +3,15 @@ package cn.nukkit.block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by Pub4Game on 27.12.2015.
  */
 public class BlockSoulSand extends BlockSolid {
 
-    public BlockSoulSand(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Soul Sand";
+    public BlockSoulSand(Identifier id) {
+        super(id);
     }
 
     @Override

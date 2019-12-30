@@ -3,21 +3,25 @@ package cn.nukkit.block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityComparator;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemRedstoneComparator;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.POWERED_COMPARATOR;
+import static cn.nukkit.block.BlockIds.UNPOWERED_COMPARATOR;
 
 /**
  * @author CreeperFace
  */
 public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
 
-    public BlockRedstoneComparator(int id, int meta) {
-        super(id, meta);
+    public BlockRedstoneComparator(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -182,7 +186,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
 
     @Override
     public Item toItem() {
-        return new ItemRedstoneComparator();
+        return Item.get(ItemIds.COMPARATOR);
     }
 
     public enum Mode {

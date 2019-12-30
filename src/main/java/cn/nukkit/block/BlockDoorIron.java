@@ -1,10 +1,11 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemDoorIron;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * author: MagicDroidX
@@ -12,13 +13,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockDoorIron extends BlockDoor {
 
-    public BlockDoorIron(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Iron Door Block";
+    public BlockDoorIron(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -54,7 +50,7 @@ public class BlockDoorIron extends BlockDoor {
 
     @Override
     public Item toItem() {
-        return new ItemDoorIron();
+        return Item.get(ItemIds.IRON_DOOR);
     }
 
     @Override

@@ -1,7 +1,8 @@
 package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
+import cn.nukkit.utils.Identifier;
 
 /**
  * author: MagicDroidX
@@ -9,17 +10,12 @@ import cn.nukkit.block.BlockID;
  */
 public class ItemCarrot extends ItemEdible {
 
-    public ItemCarrot() {
-        this(0, 1);
+    public ItemCarrot(Identifier id) {
+        super(id);
     }
 
-    public ItemCarrot(Integer meta) {
-        this(meta, 1);
+    @Override
+    public Block getBlock() {
+        return Block.get(BlockIds.CARROTS);
     }
-
-    public ItemCarrot(Integer meta, int count) {
-        super(CARROT, 0, count, "Carrot");
-        this.block = Block.get(BlockID.CARROT_BLOCK);
-    }
-
 }

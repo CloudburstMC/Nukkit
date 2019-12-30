@@ -1,7 +1,7 @@
 package cn.nukkit.level.generator;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.block.BlockStone;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.biome.Biome;
@@ -25,6 +25,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import static cn.nukkit.block.BlockIds.STONE;
+import static cn.nukkit.block.BlockIds.WATER;
 
 /**
  * Nukkit's terrain generator
@@ -199,17 +202,17 @@ public class Normal extends Generator {
 
         this.populators = ImmutableList.of(
                 new PopulatorOre(STONE, new OreType[]{
-                        new OreType(Block.get(BlockID.COAL_ORE), 20, 17, 0, 128),
-                        new OreType(Block.get(BlockID.IRON_ORE), 20, 9, 0, 64),
-                        new OreType(Block.get(BlockID.REDSTONE_ORE), 8, 8, 0, 16),
-                        new OreType(Block.get(BlockID.LAPIS_ORE), 1, 7, 0, 16),
-                        new OreType(Block.get(BlockID.GOLD_ORE), 2, 9, 0, 32),
-                        new OreType(Block.get(BlockID.DIAMOND_ORE), 1, 8, 0, 16),
-                        new OreType(Block.get(BlockID.DIRT), 10, 33, 0, 128),
-                        new OreType(Block.get(BlockID.GRAVEL), 8, 33, 0, 128),
-                        new OreType(Block.get(BlockID.STONE, BlockStone.GRANITE), 10, 33, 0, 80),
-                        new OreType(Block.get(BlockID.STONE, BlockStone.DIORITE), 10, 33, 0, 80),
-                        new OreType(Block.get(BlockID.STONE, BlockStone.ANDESITE), 10, 33, 0, 80)
+                        new OreType(Block.get(BlockIds.COAL_ORE), 20, 17, 0, 128),
+                        new OreType(Block.get(BlockIds.IRON_ORE), 20, 9, 0, 64),
+                        new OreType(Block.get(BlockIds.REDSTONE_ORE), 8, 8, 0, 16),
+                        new OreType(Block.get(BlockIds.LAPIS_ORE), 1, 7, 0, 16),
+                        new OreType(Block.get(BlockIds.GOLD_ORE), 2, 9, 0, 32),
+                        new OreType(Block.get(BlockIds.DIAMOND_ORE), 1, 8, 0, 16),
+                        new OreType(Block.get(BlockIds.DIRT), 10, 33, 0, 128),
+                        new OreType(Block.get(BlockIds.GRAVEL), 8, 33, 0, 128),
+                        new OreType(Block.get(STONE, BlockStone.GRANITE), 10, 33, 0, 80),
+                        new OreType(Block.get(STONE, BlockStone.DIORITE), 10, 33, 0, 80),
+                        new OreType(Block.get(STONE, BlockStone.ANDESITE), 10, 33, 0, 80)
                 }),
                 new PopulatorCaves()//,
                 //new PopulatorRavines()
@@ -357,7 +360,7 @@ public class Normal extends Generator {
                                 if ((scaleZ2 += scaleZ) > 0.0f) {
                                     chunk.setBlockId(xSeg * 4 + zIn, ySeg * 8 + yIn, zSeg * 4 + xIn, STONE);
                                 } else if (ySeg * 8 + yIn <= seaHeight) {
-                                    chunk.setBlockId(xSeg * 4 + zIn, ySeg * 8 + yIn, zSeg * 4 + xIn, STILL_WATER);
+                                    chunk.setBlockId(xSeg * 4 + zIn, ySeg * 8 + yIn, zSeg * 4 + xIn, WATER);
                                 }
                             }
 

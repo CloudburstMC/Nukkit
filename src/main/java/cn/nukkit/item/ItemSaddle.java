@@ -1,16 +1,11 @@
 package cn.nukkit.item;
 
+import cn.nukkit.utils.Identifier;
+
 public class ItemSaddle extends Item {
-    public ItemSaddle() {
-        this(0, 0);
-    }
 
-    public ItemSaddle(Integer meta) {
-        this(meta, 0);
-    }
-
-    public ItemSaddle(Integer meta, int count) {
-        super(SADDLE, meta, count, "Saddle");
+    public ItemSaddle(Identifier id) {
+        super(id);
     }
 
     @Override

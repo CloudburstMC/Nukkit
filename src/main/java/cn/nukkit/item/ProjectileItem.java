@@ -11,14 +11,15 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 
 /**
  * @author CreeperFace
  */
 public abstract class ProjectileItem extends Item {
 
-    public ProjectileItem(int id, Integer meta, int count, String name) {
-        super(id, meta, count, name);
+    public ProjectileItem(Identifier id) {
+        super(id);
     }
 
     abstract public String getProjectileEntityType();
@@ -60,7 +61,7 @@ public abstract class ProjectileItem extends Item {
                     projectile.kill();
                 } else {
                     if (!player.isCreative()) {
-                        this.count--;
+                        this.decrementCount();
                     }
                     if (projectile instanceof EntityEnderPearl) {
                         player.onThrowEnderPearl();

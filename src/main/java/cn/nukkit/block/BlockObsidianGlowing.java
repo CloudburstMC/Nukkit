@@ -2,6 +2,9 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.OBSIDIAN;
 
 /**
  * Created on 2015/11/22 by xtypr.
@@ -9,18 +12,13 @@ import cn.nukkit.item.ItemTool;
  */
 public class BlockObsidianGlowing extends BlockSolid {
 
-    public BlockObsidianGlowing(int id, int meta) {
-        super(id, meta);
+    public BlockObsidianGlowing(Identifier id) {
+        super(id);
     }
 
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
-    }
-
-    @Override
-    public String getName() {
-        return "Glowing Obsidian";
     }
 
     @Override
@@ -40,12 +38,12 @@ public class BlockObsidianGlowing extends BlockSolid {
 
     @Override
     public Item toItem() {
-        return Item.get(BlockID.OBSIDIAN);
+        return Item.get(OBSIDIAN);
     }
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() > ItemTool.DIAMOND_PICKAXE) {
+        if (item.isPickaxe() && item.getTier() > ItemTool.TIER_DIAMOND) {
             return new Item[]{
                     toItem()
             };

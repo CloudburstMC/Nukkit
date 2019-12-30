@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created on 2015/11/22 by xtypr.
@@ -9,13 +10,8 @@ import cn.nukkit.player.Player;
  */
 public class BlockPodzol extends BlockDirt {
 
-    public BlockPodzol(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Podzol";
+    public BlockPodzol(Identifier id) {
+        super(id);
     }
 
     @Override

@@ -1,7 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemPotato;
+import cn.nukkit.item.ItemIds;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
 
@@ -10,29 +11,24 @@ import java.util.Random;
  */
 public class BlockPotato extends BlockCrops {
 
-    public BlockPotato(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Potato Block";
+    public BlockPotato(Identifier id) {
+        super(id);
     }
 
     @Override
     public Item toItem() {
-        return new ItemPotato();
+        return Item.get(ItemIds.POTATO);
     }
 
     @Override
     public Item[] getDrops(Item item) {
         if (getDamage() >= 0x07) {
             return new Item[]{
-                    new ItemPotato(0, new Random().nextInt(3) + 1)
+                    Item.get(ItemIds.POTATO, 0, new Random().nextInt(3) + 1)
             };
         } else {
             return new Item[]{
-                    new ItemPotato()
+                    Item.get(ItemIds.POTATO)
             };
         }
     }

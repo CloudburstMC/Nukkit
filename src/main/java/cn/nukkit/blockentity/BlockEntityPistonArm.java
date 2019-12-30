@@ -60,7 +60,7 @@ public class BlockEntityPistonArm extends BlockEntity {
                 this.attachedBlock = new Vector3((double) ((IntTag) blocks.get(0)).getData(), (double) ((IntTag) blocks.get(1)).getData(), (double) ((IntTag) blocks.get(2)).getData());
             }
         } else {
-            namedTag.putList(new ListTag("AttachedBlocks"));
+            namedTag.putList(new ListTag<>("AttachedBlocks"));
         }
 
         super.initBlockEntity();

@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.utils.Identifier;
 
 /**
  * author: Angelic47
@@ -8,13 +9,8 @@ import cn.nukkit.item.Item;
  */
 public class BlockGlass extends BlockTransparent {
 
-    public BlockGlass(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Glass";
+    public BlockGlass(Identifier id) {
+        super(id);
     }
 
     @Override

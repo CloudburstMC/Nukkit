@@ -12,21 +12,14 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
 
 public class ItemEndCrystal extends Item {
 
-    public ItemEndCrystal() {
-        this(0, 1);
-    }
-
-    public ItemEndCrystal(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemEndCrystal(Integer meta, int count) {
-        super(END_CRYSTAL, meta, count, "End Crystal");
+    public ItemEndCrystal(Identifier id) {
+        super(id);
     }
 
     @Override

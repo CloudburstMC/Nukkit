@@ -1,8 +1,10 @@
 package cn.nukkit.entity.passive;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Author: BeYkeRYkt Nukkit Project
@@ -38,7 +40,7 @@ public class EntityChicken extends EntityAnimal {
 
     @Override
     public Item[] getDrops() {
-        return new Item[]{Item.get(Item.RAW_CHICKEN), Item.get(Item.FEATHER)};
+        return new Item[]{Item.get(ItemIds.CHICKEN), Item.get(ItemIds.FEATHER)};
     }
 
     @Override
@@ -54,8 +56,9 @@ public class EntityChicken extends EntityAnimal {
 
     @Override
     public boolean isBreedingItem(Item item) {
-        int id = item.getId();
+        Identifier id = item.getId();
 
-        return id == Item.WHEAT_SEEDS || id == Item.MELON_SEEDS || id == Item.PUMPKIN_SEEDS || id == Item.BEETROOT_SEEDS;
+        return id == ItemIds.WHEAT_SEEDS || id == ItemIds.MELON_SEEDS || id == ItemIds.PUMPKIN_SEEDS ||
+                id == ItemIds.BEETROOT_SEEDS;
     }
 }

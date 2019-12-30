@@ -2,6 +2,7 @@ package cn.nukkit.network.protocol;
 
 import cn.nukkit.inventory.*;
 import cn.nukkit.item.Item;
+import cn.nukkit.registry.ItemRegistry;
 import cn.nukkit.utils.Binary;
 import io.netty.buffer.ByteBuf;
 import lombok.ToString;
@@ -103,7 +104,7 @@ public class CraftingDataPacket extends DataPacket {
                 case FURNACE_DATA:
                     FurnaceRecipe furnace = (FurnaceRecipe) recipe;
                     Item input = furnace.getInput();
-                    Binary.writeVarInt(buffer, input.getId());
+                    Binary.writeVarInt(buffer, ItemRegistry.get().getRuntimeId(input.getId()));
                     if (recipe.getType() == RecipeType.FURNACE_DATA) {
                         Binary.writeVarInt(buffer, input.getDamage());
                     }

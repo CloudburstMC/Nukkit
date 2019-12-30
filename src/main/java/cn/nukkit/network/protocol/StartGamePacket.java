@@ -1,28 +1,18 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.Server;
-import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.gamerule.GameRuleMap;
+import cn.nukkit.registry.BlockRegistry;
+import cn.nukkit.registry.ItemRegistry;
 import cn.nukkit.utils.Binary;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
-
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 
 /**
  * Created on 15-10-13.
  */
 @Log4j2
-@ToString(exclude = {"blockPalette"})
+@ToString
 public class StartGamePacket extends DataPacket {
 
     public static final short NETWORK_ID = ProtocolInfo.START_GAME_PACKET;
@@ -32,31 +22,6 @@ public class StartGamePacket extends DataPacket {
     public static final int GAME_PUBLISH_SETTING_FRIENDS_ONLY = 2;
     public static final int GAME_PUBLISH_SETTING_FRIENDS_OF_FRIENDS = 3;
     public static final int GAME_PUBLISH_SETTING_PUBLIC = 4;
-
-    private static final ByteBuf ITEM_DATA_PALETTE;
-
-    static {
-        InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_item_ids.json");
-        if (stream == null) {
-            throw new AssertionError("Unable to locate RuntimeID table");
-        }
-        Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
-
-        Gson gson = new Gson();
-        Type collectionType = new TypeToken<Collection<ItemData>>() {
-        }.getType();
-        Collection<ItemData> entries = gson.fromJson(reader, collectionType);
-        ByteBuf buffer = Unpooled.directBuffer();
-
-        Binary.writeUnsignedVarInt(buffer, entries.size());
-
-        for (ItemData data : entries) {
-            Binary.writeString(buffer, data.name);
-            buffer.writeShortLE(data.id);
-        }
-
-        ITEM_DATA_PALETTE = buffer;
-    }
 
     public GameRuleMap gameRules;
 
@@ -105,7 +70,7 @@ public class StartGamePacket extends DataPacket {
     public boolean isFromWorldTemplate = false;
     public boolean isWorldTemplateOptionLocked = false;
     public boolean isOnlySpawningV1Villagers = false;
-    public String vanillaVersion = ProtocolInfo.MINECRAFT_VERSION_NETWORK;
+    public String vanillaVersion = "*";
     public String levelId = ""; //base64 string, usually the same as world folder name in vanilla
     public String worldName;
     public String premiumWorldTemplateId = "";
@@ -171,8 +136,8 @@ public class StartGamePacket extends DataPacket {
         buffer.writeBoolean(this.isMovementServerAuthoritative);
         buffer.writeLongLE(this.currentTick);
         Binary.writeVarInt(buffer, this.enchantmentSeed);
-        buffer.writeBytes(GlobalBlockPalette.BLOCK_PALETTE);
-        buffer.writeBytes(ITEM_DATA_PALETTE);
+        buffer.writeBytes(BlockRegistry.get().getCachedPalette());
+        buffer.writeBytes(ItemRegistry.get().getCachedRuntimeItems());
         Binary.writeString(buffer, this.multiplayerCorrelationId);
     }
 

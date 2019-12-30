@@ -2,19 +2,15 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by Pub4Game on 27.12.2015.
  */
 public class BlockMobSpawner extends BlockSolid {
 
-    public BlockMobSpawner(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Monster Spawner";
+    public BlockMobSpawner(Identifier id) {
+        super(id);
     }
 
     @Override

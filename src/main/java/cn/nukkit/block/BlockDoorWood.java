@@ -2,15 +2,16 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class BlockDoorWood extends BlockDoor {
+public class BlockDoorWood extends BlockDoor {
 
-    public BlockDoorWood(int id, int meta) {
-        super(id, meta);
+    public BlockDoorWood(Identifier id) {
+        super(id);
     }
 
     @Override

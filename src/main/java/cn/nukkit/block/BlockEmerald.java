@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created on 2015/12/1 by xtypr.
@@ -10,13 +11,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockEmerald extends BlockSolid {
 
-    public BlockEmerald(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Emerald Block";
+    public BlockEmerald(Identifier id) {
+        super(id);
     }
 
     @Override

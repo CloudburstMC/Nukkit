@@ -10,22 +10,15 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by yescallop on 2016/2/13.
  */
 public class ItemBoat extends Item {
 
-    public ItemBoat() {
-        this(0, 1);
-    }
-
-    public ItemBoat(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemBoat(Integer meta, int count) {
-        super(BOAT, meta, count, "Boat");
+    public ItemBoat(Identifier id) {
+        super(id);
     }
 
     @Override

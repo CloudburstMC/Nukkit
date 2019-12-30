@@ -1,11 +1,15 @@
 package cn.nukkit.level.generator.object.mushroom;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.object.BasicGenerator;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.registry.BlockRegistry;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.*;
 
 public class BigMushroom extends BasicGenerator {
     public static final int NORTH_WEST = 1;
@@ -43,7 +47,7 @@ public class BigMushroom extends BasicGenerator {
             block = rand.nextBoolean() ? RED : BROWN;
         }
 
-        Block mushroom = block == 0 ? Block.get(BlockID.BROWN_MUSHROOM_BLOCK) : Block.get(BlockID.RED_MUSHROOM_BLOCK);
+        Block mushroom = block == 0 ? Block.get(BlockIds.BROWN_MUSHROOM_BLOCK) : Block.get(BlockIds.RED_MUSHROOM_BLOCK);
 
         int i = rand.nextBoundedInt(3) + 4;
 
@@ -67,9 +71,9 @@ public class BigMushroom extends BasicGenerator {
                     for (int i1 = position.getFloorZ() - k; i1 <= position.getZ() + k && flag; ++i1) {
                         if (j >= 0 && j < 256) {
                             pos.setComponents(l, j, i1);
-                            int material = level.getBlockIdAt(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
+                            Identifier material = level.getBlockIdAt(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
 
-                            if (material != Block.AIR && material != Block.LEAVES) {
+                            if (material != AIR && material != LEAVES) {
                                 flag = false;
                             }
                         } else {
@@ -83,9 +87,9 @@ public class BigMushroom extends BasicGenerator {
                 return false;
             } else {
                 Vector3 pos2 = position.down();
-                int block1 = level.getBlockIdAt(pos2.getFloorX(), pos2.getFloorY(), pos2.getFloorZ());
+                Identifier block1 = level.getBlockIdAt(pos2.getFloorX(), pos2.getFloorY(), pos2.getFloorZ());
 
-                if (block1 != Block.DIRT && block1 != Block.GRASS && block1 != Block.MYCELIUM) {
+                if (block1 != DIRT && block1 != GRASS && block1 != MYCELIUM) {
                     return false;
                 } else {
                     int k2 = position.getFloorY() + i;
@@ -173,7 +177,8 @@ public class BigMushroom extends BasicGenerator {
                                 if (position.getY() >= position.getY() + i - 1 || meta != ALL_INSIDE) {
                                     Vector3 blockPos = new Vector3(l1, l2, i2);
 
-                                    if (!Block.solid[level.getBlockIdAt(blockPos.getFloorX(), blockPos.getFloorY(), blockPos.getFloorZ())]) {
+                                    if (!BlockRegistry.get().getBlock(level.getBlockIdAt(
+                                            blockPos.getFloorX(), blockPos.getFloorY(), blockPos.getFloorZ()), 0).isSolid()) {
                                         mushroom.setDamage(meta);
                                         this.setBlockAndNotifyAdequately(level, blockPos, mushroom);
                                     }
@@ -184,9 +189,9 @@ public class BigMushroom extends BasicGenerator {
 
                     for (int i3 = 0; i3 < i; ++i3) {
                         Vector3 pos = position.up(i3);
-                        int id = level.getBlockIdAt(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
+                        Identifier id = level.getBlockIdAt(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
 
-                        if (!Block.solid[id]) {
+                        if (!BlockRegistry.get().getBlock(id, 0).isSolid()) {
                             mushroom.setDamage(STEM);
                             this.setBlockAndNotifyAdequately(level, pos, mushroom);
                         }

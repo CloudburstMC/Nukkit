@@ -1,6 +1,7 @@
 package cn.nukkit.entity.passive;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -38,7 +39,7 @@ public class EntityRabbit extends EntityAnimal {
 
     @Override
     public Item[] getDrops() {
-        return new Item[]{Item.get(Item.RAW_RABBIT), Item.get(Item.RABBIT_HIDE), Item.get(Item.RABBIT_FOOT)};
+        return new Item[]{Item.get(ItemIds.RABBIT), Item.get(ItemIds.RABBIT_HIDE), Item.get(ItemIds.RABBIT_FOOT)};
     }
 
     @Override

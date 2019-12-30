@@ -5,6 +5,9 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
+import static cn.nukkit.item.ItemIds.SPIDER_EYE;
+import static cn.nukkit.item.ItemIds.STRING;
+
 /**
  * @author PikyCZ
  */
@@ -44,6 +47,6 @@ public class EntitySpider extends EntityMob implements EntityArthropod {
 
     @Override
     public Item[] getDrops() {
-        return new Item[]{Item.get(Item.STRING, Item.SPIDER_EYE)};
+        return new Item[]{Item.get(STRING), Item.get(SPIDER_EYE)};
     }
 }

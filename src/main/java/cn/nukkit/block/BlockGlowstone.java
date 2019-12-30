@@ -1,10 +1,11 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemGlowstoneDust;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
 
@@ -13,13 +14,8 @@ import java.util.Random;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockGlowstone extends BlockTransparent {
-    public BlockGlowstone(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Glowstone";
+    public BlockGlowstone(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -48,7 +44,7 @@ public class BlockGlowstone extends BlockTransparent {
         }
 
         return new Item[]{
-                new ItemGlowstoneDust(0, MathHelper.clamp(count, 1, 4))
+                Item.get(ItemIds.GLOWSTONE_DUST, 0, MathHelper.clamp(count, 1, 4))
         };
     }
 

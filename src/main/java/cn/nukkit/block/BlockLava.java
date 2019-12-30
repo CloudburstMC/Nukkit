@@ -15,9 +15,12 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.player.Player;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static cn.nukkit.block.BlockIds.*;
 
 /**
  * author: MagicDroidX
@@ -25,18 +28,13 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class BlockLava extends BlockLiquid {
 
-    public BlockLava(int id, int meta) {
-        super(id, meta);
+    public BlockLava(Identifier id) {
+        super(id);
     }
 
     @Override
     public int getLightLevel() {
         return 15;
-    }
-
-    @Override
-    public String getName() {
-        return "Lava";
     }
 
     @Override

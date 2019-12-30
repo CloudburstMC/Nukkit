@@ -10,6 +10,12 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.network.protocol.BlockEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
+
+import java.util.IdentityHashMap;
+import java.util.Map;
+
+import static cn.nukkit.block.BlockIds.*;
 
 /**
  * Created by Snake1999 on 2016/1/17.
@@ -17,13 +23,130 @@ import cn.nukkit.player.Player;
  */
 public class BlockNoteblock extends BlockSolid {
 
-    public BlockNoteblock(int id, int meta) {
-        super(id, meta);
+    private static final Map<Identifier, Instrument> INSTRUMENTS = new IdentityHashMap<>();
+    ;
+
+    static {
+        INSTRUMENTS.put(GOLD_BLOCK, Instrument.GLOCKENSPIEL);
+        INSTRUMENTS.put(CLAY, Instrument.FLUTE);
+        INSTRUMENTS.put(PACKED_ICE, Instrument.CHIME);
+        INSTRUMENTS.put(WOOL, Instrument.GUITAR);
+        INSTRUMENTS.put(BONE_BLOCK, Instrument.XYLOPHONE);
+        INSTRUMENTS.put(IRON_BLOCK, Instrument.VIBRAPHONE);
+        INSTRUMENTS.put(SOUL_SAND, Instrument.COW_BELL);
+        INSTRUMENTS.put(PUMPKIN, Instrument.DIDGERIDOO);
+        INSTRUMENTS.put(EMERALD_BLOCK, Instrument.SQUARE_WAVE);
+        INSTRUMENTS.put(HAY_BLOCK, Instrument.BANJO);
+        INSTRUMENTS.put(GLOWSTONE, Instrument.ELECTRIC_PIANO);
+        INSTRUMENTS.put(LOG, Instrument.BASS);
+        INSTRUMENTS.put(LOG2, Instrument.BASS);
+        INSTRUMENTS.put(PLANKS, Instrument.BASS);
+        INSTRUMENTS.put(DOUBLE_WOODEN_SLAB, Instrument.BASS);
+        INSTRUMENTS.put(WOODEN_SLAB, Instrument.BASS);
+        INSTRUMENTS.put(OAK_STAIRS, Instrument.BASS);
+        INSTRUMENTS.put(SPRUCE_STAIRS, Instrument.BASS);
+        INSTRUMENTS.put(BIRCH_STAIRS, Instrument.BASS);
+        INSTRUMENTS.put(JUNGLE_STAIRS, Instrument.BASS);
+        INSTRUMENTS.put(ACACIA_STAIRS, Instrument.BASS);
+        INSTRUMENTS.put(DARK_OAK_STAIRS, Instrument.BASS);
+        INSTRUMENTS.put(FENCE, Instrument.BASS);
+        INSTRUMENTS.put(SPRUCE_FENCE_GATE, Instrument.BASS);
+        INSTRUMENTS.put(BIRCH_FENCE_GATE, Instrument.BASS);
+        INSTRUMENTS.put(JUNGLE_FENCE_GATE, Instrument.BASS);
+        INSTRUMENTS.put(DARK_OAK_FENCE_GATE, Instrument.BASS);
+        INSTRUMENTS.put(ACACIA_FENCE_GATE, Instrument.BASS);
+        INSTRUMENTS.put(WOODEN_DOOR, Instrument.BASS);
+        INSTRUMENTS.put(SPRUCE_DOOR, Instrument.BASS);
+        INSTRUMENTS.put(BIRCH_DOOR, Instrument.BASS);
+        INSTRUMENTS.put(JUNGLE_DOOR, Instrument.BASS);
+        INSTRUMENTS.put(ACACIA_DOOR, Instrument.BASS);
+        INSTRUMENTS.put(DARK_OAK_DOOR, Instrument.BASS);
+        INSTRUMENTS.put(WOODEN_PRESSURE_PLATE, Instrument.BASS);
+        INSTRUMENTS.put(TRAPDOOR, Instrument.BASS);
+        INSTRUMENTS.put(STANDING_SIGN, Instrument.BASS);
+        INSTRUMENTS.put(WALL_SIGN, Instrument.BASS);
+        INSTRUMENTS.put(NOTEBLOCK, Instrument.BASS);
+        INSTRUMENTS.put(BOOKSHELF, Instrument.BASS);
+        INSTRUMENTS.put(CHEST, Instrument.BASS);
+        INSTRUMENTS.put(TRAPPED_CHEST, Instrument.BASS);
+        INSTRUMENTS.put(CRAFTING_TABLE, Instrument.BASS);
+        INSTRUMENTS.put(JUKEBOX, Instrument.BASS);
+        INSTRUMENTS.put(BROWN_MUSHROOM_BLOCK, Instrument.BASS);
+        INSTRUMENTS.put(RED_MUSHROOM_BLOCK, Instrument.BASS);
+        INSTRUMENTS.put(DAYLIGHT_DETECTOR, Instrument.BASS);
+        INSTRUMENTS.put(DAYLIGHT_DETECTOR_INVERTED, Instrument.BASS);
+        INSTRUMENTS.put(STANDING_BANNER, Instrument.BASS);
+        INSTRUMENTS.put(WALL_BANNER, Instrument.BASS);
+        INSTRUMENTS.put(SAND, Instrument.DRUM);
+        INSTRUMENTS.put(GRAVEL, Instrument.DRUM);
+        INSTRUMENTS.put(CONCRETE_POWDER, Instrument.DRUM);
+        INSTRUMENTS.put(GLASS, Instrument.STICKS);
+        INSTRUMENTS.put(GLASS_PANE, Instrument.STICKS);
+        INSTRUMENTS.put(STAINED_GLASS_PANE, Instrument.STICKS);
+        INSTRUMENTS.put(STAINED_GLASS, Instrument.STICKS);
+        INSTRUMENTS.put(BEACON, Instrument.STICKS);
+        INSTRUMENTS.put(SEA_LANTERN, Instrument.STICKS);
+        INSTRUMENTS.put(STONE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(SANDSTONE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(RED_SANDSTONE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(COBBLESTONE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(MOSSY_COBBLESTONE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(BRICK_BLOCK, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(STONEBRICK, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(NETHER_BRICK, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(RED_NETHER_BRICK, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(QUARTZ_BLOCK, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(DOUBLE_STONE_SLAB, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(STONE_SLAB, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(DOUBLE_STONE_SLAB2, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(STONE_SLAB2, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(STONE_STAIRS, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(BRICK_STAIRS, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(STONE_BRICK_STAIRS, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(NETHER_BRICK_STAIRS, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(SANDSTONE_STAIRS, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(QUARTZ_STAIRS, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(RED_SANDSTONE_STAIRS, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(PURPUR_STAIRS, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(COBBLESTONE_WALL, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(NETHER_BRICK_FENCE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(BEDROCK, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(GOLD_ORE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(IRON_ORE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(COAL_ORE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(LAPIS_ORE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(DIAMOND_ORE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(REDSTONE_ORE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(LIT_REDSTONE_ORE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(EMERALD_ORE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(DROPPER, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(DISPENSER, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(FURNACE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(LIT_FURNACE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(OBSIDIAN, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(GLOWING_OBSIDIAN, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(MOB_SPAWNER, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(STONE_PRESSURE_PLATE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(NETHERRACK, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(QUARTZ_ORE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(ENCHANTING_TABLE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(END_PORTAL_FRAME, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(END_STONE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(END_BRICKS, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(ENDER_CHEST, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(STAINED_HARDENED_CLAY, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(HARDENED_CLAY, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(PRISMARINE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(COAL_BLOCK, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(PURPUR_BLOCK, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(MAGMA, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(CONCRETE, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(STONECUTTER, Instrument.BASS_DRUM);
+        INSTRUMENTS.put(OBSERVER, Instrument.BASS_DRUM);
     }
 
-    @Override
-    public String getName() {
-        return "Note Block";
+    public BlockNoteblock(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -66,142 +189,7 @@ public class BlockNoteblock extends BlockSolid {
     }
 
     public Instrument getInstrument() {
-        switch (this.down().getId()) {
-            case GOLD_BLOCK:
-                return Instrument.GLOCKENSPIEL;
-            case CLAY_BLOCK:
-                return Instrument.FLUTE;
-            case PACKED_ICE:
-                return Instrument.CHIME;
-            case WOOL:
-                return Instrument.GUITAR;
-            case BONE_BLOCK:
-                return Instrument.XYLOPHONE;
-            case IRON_BLOCK:
-                return Instrument.VIBRAPHONE;
-            case SOUL_SAND:
-                return Instrument.COW_BELL;
-            case PUMPKIN:
-                return Instrument.DIDGERIDOO;
-            case EMERALD_BLOCK:
-                return Instrument.SQUARE_WAVE;
-            case HAY_BALE:
-                return Instrument.BANJO;
-            case GLOWSTONE_BLOCK:
-                return Instrument.ELECTRIC_PIANO;
-            case LOG:
-            case LOG2:
-            case PLANKS:
-            case DOUBLE_WOODEN_SLAB:
-            case WOODEN_SLAB:
-            case WOOD_STAIRS:
-            case SPRUCE_WOOD_STAIRS:
-            case BIRCH_WOOD_STAIRS:
-            case JUNGLE_WOOD_STAIRS:
-            case ACACIA_WOOD_STAIRS:
-            case DARK_OAK_WOOD_STAIRS:
-            case FENCE:
-            case FENCE_GATE_OAK:
-            case FENCE_GATE_SPRUCE:
-            case FENCE_GATE_BIRCH:
-            case FENCE_GATE_JUNGLE:
-            case FENCE_GATE_DARK_OAK:
-            case FENCE_GATE_ACACIA:
-            case DOOR_BLOCK:
-            case SPRUCE_DOOR_BLOCK:
-            case BIRCH_DOOR_BLOCK:
-            case JUNGLE_DOOR_BLOCK:
-            case ACACIA_DOOR_BLOCK:
-            case DARK_OAK_DOOR_BLOCK:
-            case WOODEN_PRESSURE_PLATE:
-            case TRAPDOOR:
-            case SIGN_POST:
-            case WALL_SIGN:
-            case NOTEBLOCK:
-            case BOOKSHELF:
-            case CHEST:
-            case TRAPPED_CHEST:
-            case CRAFTING_TABLE:
-            case JUKEBOX:
-            case BROWN_MUSHROOM_BLOCK:
-            case RED_MUSHROOM_BLOCK:
-            case DAYLIGHT_DETECTOR:
-            case DAYLIGHT_DETECTOR_INVERTED:
-            case STANDING_BANNER:
-            case WALL_BANNER:
-                return Instrument.BASS;
-            case SAND:
-            case GRAVEL:
-            case CONCRETE_POWDER:
-                return Instrument.DRUM;
-            case GLASS:
-            case GLASS_PANEL:
-            case STAINED_GLASS_PANE:
-            case STAINED_GLASS:
-            case BEACON:
-            case SEA_LANTERN:
-                return Instrument.STICKS;
-            case STONE:
-            case SANDSTONE:
-            case RED_SANDSTONE:
-            case COBBLESTONE:
-            case MOSSY_STONE:
-            case BRICKS:
-            case STONE_BRICKS:
-            case NETHER_BRICK_BLOCK:
-            case RED_NETHER_BRICK:
-            case QUARTZ_BLOCK:
-            case DOUBLE_SLAB:
-            case SLAB:
-            case DOUBLE_RED_SANDSTONE_SLAB:
-            case RED_SANDSTONE_SLAB:
-            case COBBLE_STAIRS:
-            case BRICK_STAIRS:
-            case STONE_BRICK_STAIRS:
-            case NETHER_BRICKS_STAIRS:
-            case SANDSTONE_STAIRS:
-            case QUARTZ_STAIRS:
-            case RED_SANDSTONE_STAIRS:
-            case PURPUR_STAIRS:
-            case COBBLE_WALL:
-            case NETHER_BRICK_FENCE:
-            case BEDROCK:
-            case GOLD_ORE:
-            case IRON_ORE:
-            case COAL_ORE:
-            case LAPIS_ORE:
-            case DIAMOND_ORE:
-            case REDSTONE_ORE:
-            case GLOWING_REDSTONE_ORE:
-            case EMERALD_ORE:
-            case DROPPER:
-            case DISPENSER:
-            case FURNACE:
-            case BURNING_FURNACE:
-            case OBSIDIAN:
-            case GLOWING_OBSIDIAN:
-            case MONSTER_SPAWNER:
-            case STONE_PRESSURE_PLATE:
-            case NETHERRACK:
-            case QUARTZ_ORE:
-            case ENCHANTING_TABLE:
-            case END_PORTAL_FRAME:
-            case END_STONE:
-            case END_BRICKS:
-            case ENDER_CHEST:
-            case STAINED_TERRACOTTA:
-            case TERRACOTTA:
-            case PRISMARINE:
-            case COAL_BLOCK:
-            case PURPUR_BLOCK:
-            case MAGMA:
-            case CONCRETE:
-            case STONECUTTER:
-            case OBSERVER:
-                return Instrument.BASS_DRUM;
-            default:
-                return Instrument.PIANO;
-        }
+        return INSTRUMENTS.getOrDefault(this.down().getId(), Instrument.PIANO);
     }
 
     public void emitSound() {

@@ -4,6 +4,8 @@ import cn.nukkit.block.Block;
 import cn.nukkit.math.Vector3;
 import com.google.common.base.Preconditions;
 
+import static cn.nukkit.block.BlockIds.AIR;
+
 public class BlockUpdate {
 
     private final Block block;
@@ -36,7 +38,7 @@ public class BlockUpdate {
     public static BlockUpdate of(Block block, Vector3 pos, int delay, int priority, boolean checkArea) {
         Preconditions.checkNotNull(block, "block");
         Preconditions.checkNotNull(pos, "pos");
-        Preconditions.checkArgument(block.getId() != 0, "Air cannot be ticked");
+        Preconditions.checkArgument(block.getId() != AIR, "Air cannot be ticked");
 
         return new BlockUpdate(block, pos.floor(), delay, priority, checkArea);
     }

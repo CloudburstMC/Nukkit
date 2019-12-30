@@ -8,14 +8,15 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 
 /**
  * author: Angelic47 Nukkit Project
  */
 public class BlockBeacon extends BlockTransparent {
 
-    public BlockBeacon(int id, int meta) {
-        super(id, meta);
+    public BlockBeacon(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -36,11 +37,6 @@ public class BlockBeacon extends BlockTransparent {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
-    }
-
-    @Override
-    public String getName() {
-        return "Beacon";
     }
 
     @Override

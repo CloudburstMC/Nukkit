@@ -9,6 +9,8 @@ import cn.nukkit.player.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static cn.nukkit.block.BlockIds.AIR;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -37,7 +39,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
             return true;
         }
 
-        if (local.getId() != 0 && second.getId() == 0) { //only rename
+        if (local.getId() != AIR && second.getId() == AIR) { //only rename
             local.setCustomName(resultItem.getCustomName());
             setItem(RESULT, local);
             player.getInventory().addItem(local);
@@ -47,12 +49,12 @@ public class AnvilInventory extends FakeBlockUIComponent {
 
             player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_RANDOM_ANVIL_USE);
             return true;
-        } else if (local.getId() != 0 && second.getId() != 0) { //enchants combining
+        } else if (local.getId() != AIR && second.getId() != AIR) { //enchants combining
             if (!local.equals(second, true, false)) {
                 return false;
             }
 
-            if (local.getId() != 0 && second.getId() != 0) {
+            if (local.getId() != AIR && second.getId() != AIR) {
                 Item result = local.clone();
                 int enchants = 0;
 

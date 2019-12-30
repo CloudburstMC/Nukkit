@@ -2,6 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.math.Vector3;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by Snake1999 on 2016/1/14.
@@ -9,16 +10,8 @@ import cn.nukkit.player.Player;
  */
 public class ItemFishingRod extends ItemTool {
 
-    public ItemFishingRod() {
-        this(0, 1);
-    }
-
-    public ItemFishingRod(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemFishingRod(Integer meta, int count) {
-        super(FISHING_ROD, meta, count, "Fishing Rod");
+    public ItemFishingRod(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -37,7 +30,7 @@ public class ItemFishingRod extends ItemTool {
             player.stopFishing(true);
         } else {
             player.startFishing(this);
-            this.meta++;
+            this.setDamage(this.getDamage() + 1);
         }
         return true;
     }

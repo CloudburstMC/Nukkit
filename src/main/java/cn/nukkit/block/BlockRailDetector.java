@@ -6,6 +6,9 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.DETECTOR_RAIL;
 
 /**
  * Created on 2015/11/22 by CreeperFace.
@@ -17,14 +20,9 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
  */
 public class BlockRailDetector extends BlockRail {
 
-    public BlockRailDetector(int id, int meta) {
-        super(id, meta);
+    public BlockRailDetector(Identifier id) {
+        super(id);
         canBePowered = true;
-    }
-
-    @Override
-    public String getName() {
-        return "Detector Rail";
     }
 
     @Override
@@ -90,7 +88,7 @@ public class BlockRailDetector extends BlockRail {
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-                Item.get(Item.DETECTOR_RAIL, 0, 1)
+                Item.get(DETECTOR_RAIL, 0, 1)
         };
     }
 }

@@ -1,6 +1,6 @@
 package cn.nukkit.blockentity;
 
-import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -24,7 +24,7 @@ public class BlockEntityMusic extends BlockEntity {
 
     @Override
     public boolean isBlockEntityValid() {
-        return this.getBlock().getId() == Block.NOTEBLOCK;
+        return this.getBlock().getId() == BlockIds.NOTEBLOCK;
     }
 
     public void changePitch() {

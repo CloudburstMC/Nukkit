@@ -1,6 +1,8 @@
 package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockIds;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by Snake1999 on 2016/2/4.
@@ -8,17 +10,12 @@ import cn.nukkit.block.Block;
  */
 public class ItemFlowerPot extends Item {
 
-    public ItemFlowerPot() {
-        this(0, 1);
+    public ItemFlowerPot(Identifier id) {
+        super(id);
     }
 
-    public ItemFlowerPot(Integer meta) {
-        this(meta, 1);
+    @Override
+    public Block getBlock() {
+        return Block.get(BlockIds.FLOWER_POT);
     }
-
-    public ItemFlowerPot(Integer meta, int count) {
-        super(FLOWER_POT, meta, count, "Flower Pot");
-        this.block = Block.get(Block.FLOWER_POT_BLOCK);
-    }
-
 }

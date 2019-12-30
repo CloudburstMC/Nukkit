@@ -3,7 +3,10 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.Rail;
+
+import static cn.nukkit.block.BlockIds.GOLDEN_RAIL;
 
 /**
  * Created by Snake1999 on 2016/1/11.
@@ -15,14 +18,9 @@ import cn.nukkit.utils.Rail;
  */
 public class BlockRailPowered extends BlockRail {
 
-    public BlockRailPowered(int id, int meta) {
-        super(id, meta);
+    public BlockRailPowered(Identifier id) {
+        super(id);
         canBePowered = true;
-    }
-
-    @Override
-    public String getName() {
-        return "Powered Rail";
     }
 
     @Override
@@ -176,7 +174,7 @@ public class BlockRailPowered extends BlockRail {
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-                Item.get(Item.POWERED_RAIL, 0, 1)
+                Item.get(GOLDEN_RAIL)
         };
     }
 }

@@ -1,6 +1,5 @@
 package cn.nukkit.level.generator.populator.impl;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockSapling;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.Chunk;
@@ -8,6 +7,9 @@ import cn.nukkit.level.generator.object.tree.ObjectTree;
 import cn.nukkit.level.generator.populator.type.PopulatorCount;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.*;
 
 /**
  * author: DaPorkchop_
@@ -41,10 +43,10 @@ public class PopulatorTree extends PopulatorCount {
     private int getHighestWorkableBlock(int x, int z) {
         int y;
         for (y = 254; y > 0; --y) {
-            int b = this.level.getBlockIdAt(x, y, z);
-            if (b == Block.DIRT || b == Block.GRASS) {
+            Identifier b = this.level.getBlockIdAt(x, y, z);
+            if (b == DIRT || b == GRASS) {
                 break;
-            } else if (b != Block.AIR && b != Block.SNOW_LAYER) {
+            } else if (b != AIR && b != SNOW_LAYER) {
                 return -1;
             }
         }

@@ -5,6 +5,9 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.*;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -12,13 +15,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockFarmland extends BlockTransparent {
 
-    public BlockFarmland(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Farmland";
+    public BlockFarmland(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -69,9 +67,9 @@ public class BlockFarmland extends BlockTransparent {
                             }
 
                             v.setComponents(x, y, z);
-                            int block = this.level.getBlockIdAt(v.getFloorX(), v.getFloorY(), v.getFloorZ());
+                            Identifier block = this.level.getBlockIdAt(v.getFloorX(), v.getFloorY(), v.getFloorZ());
 
-                            if (block == WATER || block == STILL_WATER) {
+                            if (block == FLOWING_WATER || block == WATER) {
                                 found = true;
                                 break;
                             }
@@ -93,7 +91,7 @@ public class BlockFarmland extends BlockTransparent {
                 this.setDamage(this.getDamage() - 1);
                 this.level.setBlock(this, this, false, false);
             } else {
-                this.level.setBlock(this, Block.get(Block.DIRT), false, true);
+                this.level.setBlock(this, Block.get(DIRT), false, true);
             }
 
             return Level.BLOCK_UPDATE_RANDOM;
@@ -104,7 +102,7 @@ public class BlockFarmland extends BlockTransparent {
 
     @Override
     public Item toItem() {
-        return Item.get(BlockID.DIRT);
+        return Item.get(DIRT);
     }
 
     @Override

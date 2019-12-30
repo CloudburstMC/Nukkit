@@ -13,8 +13,11 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
+
+import static cn.nukkit.item.ItemIds.ARROW;
 
 /**
  * author: MagicDroidX
@@ -22,16 +25,8 @@ import java.util.Random;
  */
 public class ItemBow extends ItemTool {
 
-    public ItemBow() {
-        this(0, 1);
-    }
-
-    public ItemBow(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemBow(Integer meta, int count) {
-        super(BOW, meta, count, "Bow");
+    public ItemBow(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -46,12 +41,12 @@ public class ItemBow extends ItemTool {
 
     @Override
     public boolean onClickAir(Player player, Vector3 directionVector) {
-        return player.getInventory().contains(Item.get(ItemID.ARROW)) || player.isCreative();
+        return player.getInventory().contains(Item.get(ARROW)) || player.isCreative();
     }
 
     @Override
     public boolean onRelease(Player player, int ticksUsed) {
-        Item itemArrow = Item.get(Item.ARROW, 0, 1);
+        Item itemArrow = Item.get(ARROW, 0, 1);
 
         if (player.isSurvival() && !player.getInventory().contains(itemArrow)) {
             player.getInventory().sendContents(player);
@@ -113,7 +108,7 @@ public class ItemBow extends ItemTool {
                     if (!(durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= new Random().nextInt(100))) {
                         this.setDamage(this.getDamage() + 1);
                         if (this.getDamage() >= getMaxDurability()) {
-                            this.count--;
+                            this.decrementCount();
                         }
                         player.getInventory().setItemInHand(this);
                     }

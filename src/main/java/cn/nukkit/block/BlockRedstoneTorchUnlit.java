@@ -5,19 +5,17 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.REDSTONE_TORCH;
 
 /**
  * Created by CreeperFace on 10.4.2017.
  */
 public class BlockRedstoneTorchUnlit extends BlockTorch {
 
-    public BlockRedstoneTorchUnlit(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Unlit Redstone Torch";
+    public BlockRedstoneTorchUnlit(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -37,7 +35,7 @@ public class BlockRedstoneTorchUnlit extends BlockTorch {
 
     @Override
     public Item toItem() {
-        return Item.get(BlockID.REDSTONE_TORCH);
+        return Item.get(REDSTONE_TORCH);
     }
 
     @Override

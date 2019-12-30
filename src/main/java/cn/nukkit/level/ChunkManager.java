@@ -2,6 +2,8 @@ package cn.nukkit.level;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.registry.BlockRegistry;
+import cn.nukkit.utils.Identifier;
 
 /**
  * author: MagicDroidX
@@ -9,17 +11,17 @@ import cn.nukkit.level.chunk.Chunk;
  */
 public interface ChunkManager {
 
-    default int getBlockIdAt(int x, int y, int z) {
+    default Identifier getBlockIdAt(int x, int y, int z) {
         return getBlockIdAt(x, y, z, 0);
     }
 
-    int getBlockIdAt(int x, int y, int z, int layer);
+    Identifier getBlockIdAt(int x, int y, int z, int layer);
 
-    default void setBlockIdAt(int x, int y, int z, int id) {
+    default void setBlockIdAt(int x, int y, int z, Identifier id) {
         setBlockIdAt(x, y, z, 0, id);
     }
 
-    void setBlockIdAt(int x, int y, int z, int layer, int id);
+    void setBlockIdAt(int x, int y, int z, int layer, Identifier id);
 
     default int getBlockDataAt(int x, int y, int z) {
         return getBlockDataAt(x, y, z, 0);
@@ -39,12 +41,12 @@ public interface ChunkManager {
 
     Block getBlockAt(int x, int y, int z, int layer);
 
-    default void setBlockAt(int x, int y, int z, int id, int data) {
+    default void setBlockAt(int x, int y, int z, Identifier id, int data) {
         setBlockAt(x, y, z, 0, id, data);
     }
 
-    default void setBlockAt(int x, int y, int z, int layer, int id, int data) {
-        setBlockAt(x, y, z, layer, GlobalBlockPalette.getBlock(id, data));
+    default void setBlockAt(int x, int y, int z, int layer, Identifier id, int data) {
+        setBlockAt(x, y, z, layer, BlockRegistry.get().getBlock(id, data));
     }
 
     default void setBlockAt(int x, int y, int z, Block block) {

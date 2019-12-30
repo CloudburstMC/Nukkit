@@ -1,20 +1,16 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemPrismarineCrystals;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 
 public class BlockSeaLantern extends BlockTransparent {
-    public BlockSeaLantern(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Sea Lantern";
+    public BlockSeaLantern(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -35,7 +31,7 @@ public class BlockSeaLantern extends BlockTransparent {
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-                new ItemPrismarineCrystals(0, ThreadLocalRandom.current().nextInt(2, 4))
+                Item.get(ItemIds.PRISMARINE_CRYSTALS, 0, ThreadLocalRandom.current().nextInt(2, 4))
         };
     }
 

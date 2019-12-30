@@ -7,6 +7,9 @@ import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 
+import static cn.nukkit.block.BlockIds.ICE;
+import static cn.nukkit.block.BlockIds.WATER;
+
 public class WaterIcePopulator extends Populator {
     @Override
     public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, Chunk chunk) {
@@ -15,7 +18,7 @@ public class WaterIcePopulator extends Populator {
                 Biome biome = EnumBiome.getBiome(chunk.getBiome(x, z));
                 if (biome.isFreezing()) {
                     int topBlock = chunk.getHighestBlock(x, z);
-                    if (chunk.getBlockId(x, topBlock, z) == STILL_WATER)     {
+                    if (chunk.getBlockId(x, topBlock, z) == WATER) {
                         chunk.setBlockId(x, topBlock, z, ICE);
                     }
                 }

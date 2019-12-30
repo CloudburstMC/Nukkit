@@ -1,9 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created on 2015/12/7 by xtypr.
@@ -11,8 +11,8 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
  */
 public abstract class BlockFence extends BlockTransparent {
 
-    public BlockFence(int id, int meta) {
-        super(id, meta);
+    public BlockFence(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -39,6 +39,6 @@ public abstract class BlockFence extends BlockTransparent {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, this.getDamage());
+        return Item.get(id, this.getDamage());
     }
 }

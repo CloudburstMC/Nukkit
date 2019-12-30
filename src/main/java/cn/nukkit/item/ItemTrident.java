@@ -12,29 +12,22 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by PetteriM1
  */
 public class ItemTrident extends ItemTool {
 
-    public ItemTrident() {
-        this(0, 1);
-    }
-
-    public ItemTrident(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemTrident(Integer meta, int count) {
-        super(TRIDENT, meta, count, "Trident");
+    public ItemTrident(Identifier id) {
+        super(id);
     }
 
     @Override
     public int getMaxDurability() {
         return ItemTool.DURABILITY_TRIDENT;
     }
-    
+
     @Override
     public boolean isSword() {
         return true;
@@ -93,7 +86,7 @@ public class ItemTrident extends ItemTool {
                     entityShootBowEvent.getProjectile().spawnToAll();
                     player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_ITEM_TRIDENT_THROW);
                     if (!player.isCreative()) {
-                        this.count--;
+                        this.decrementCount();
                         player.getInventory().setItemInHand(this);
                     }
                 }

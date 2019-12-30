@@ -6,21 +6,17 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * @author Nukkit Project Team
  */
 public class BlockPressurePlateStone extends BlockPressurePlateBase {
 
-    public BlockPressurePlateStone(int id, int meta) {
-        super(id, meta);
+    public BlockPressurePlateStone(Identifier id) {
+        super(id);
         this.onPitch = 0.6f;
         this.offPitch = 0.5f;
-    }
-
-    @Override
-    public String getName() {
-        return "Stone Pressure Plate";
     }
 
     @Override

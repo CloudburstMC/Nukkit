@@ -2,19 +2,17 @@ package cn.nukkit.block;
 
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * Created by PetteriM1
  */
 public class BlockWallBanner extends BlockBanner {
 
-    public BlockWallBanner(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Wall Banner";
+    public BlockWallBanner(Identifier id) {
+        super(id);
     }
 
     @Override

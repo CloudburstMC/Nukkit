@@ -1,10 +1,11 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemMelon;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
 
@@ -15,12 +16,8 @@ import java.util.Random;
 
 public class BlockMelon extends BlockSolid {
 
-    public BlockMelon(int id, int meta) {
-        super(id, meta);
-    }
-
-    public String getName() {
-        return "Melon Block";
+    public BlockMelon(Identifier id) {
+        super(id);
     }
 
     public double getHardness() {
@@ -43,7 +40,7 @@ public class BlockMelon extends BlockSolid {
         }
 
         return new Item[]{
-                new ItemMelon(0, Math.min(9, count))
+                Item.get(ItemIds.MELON, 0, Math.min(9, count))
         };
     }
 

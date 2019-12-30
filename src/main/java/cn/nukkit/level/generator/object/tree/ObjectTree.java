@@ -1,51 +1,19 @@
 package cn.nukkit.level.generator.object.tree;
 
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.block.BlockSapling;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.registry.BlockRegistry;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.*;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public abstract class ObjectTree {
-    protected boolean overridable(int id) {
-        switch (id) {
-            case Block.AIR:
-            case Block.SAPLING:
-            case Block.LOG:
-            case Block.LEAVES:
-            case Block.SNOW_LAYER:
-            case Block.LOG2:
-            case Block.LEAVES2:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    public int getType() {
-        return 0;
-    }
-
-    public int getTrunkBlock() {
-        return Block.LOG;
-    }
-
-    public int getLeafBlock() {
-        return Block.LEAVES;
-    }
-
-    public int getTreeHeight() {
-        return 7;
-    }
-
-    public static void growTree(ChunkManager level, int x, int y, int z, NukkitRandom random) {
-        growTree(level, x, y, z, random, 0);
-    }
-
     public static void growTree(ChunkManager level, int x, int y, int z, NukkitRandom random, int type) {
         ObjectTree tree;
         switch (type) {
@@ -64,13 +32,37 @@ public abstract class ObjectTree {
             case BlockSapling.OAK:
             default:
                 tree = new ObjectOakTree();
-                //todo: more complex treeeeeeeeeeeeeeeee
+                //todo: more complex tree
                 break;
         }
 
         if (tree.canPlaceObject(level, x, y, z, random)) {
             tree.placeObject(level, x, y, z, random);
         }
+    }
+
+    public int getType() {
+        return 0;
+    }
+
+    protected boolean overridable(Identifier id) {
+        return id == AIR || id == SAPLING || id == LOG || id == LOG2 || id == LEAVES || id == LEAVES2 || id == SNOW_LAYER;
+    }
+
+    public Identifier getTrunkBlock() {
+        return LOG;
+    }
+
+    public int getTreeHeight() {
+        return 7;
+    }
+
+    public static void growTree(ChunkManager level, int x, int y, int z, NukkitRandom random) {
+        growTree(level, x, y, z, random, 0);
+    }
+
+    public Identifier getLeafBlock() {
+        return LEAVES;
     }
 
 
@@ -106,7 +98,7 @@ public abstract class ObjectTree {
                     if (xOff == mid && zOff == mid && (yOff == 0 || random.nextBoundedInt(2) == 0)) {
                         continue;
                     }
-                    if (!Block.solid[level.getBlockIdAt(xx, yy, zz)]) {
+                    if (!BlockRegistry.get().getBlock(level.getBlockIdAt(xx, yy, zz), 0).isSolid()) {
                         level.setBlockAt(xx, yy, zz, this.getLeafBlock(), this.getType());
                     }
                 }
@@ -116,10 +108,10 @@ public abstract class ObjectTree {
 
     protected void placeTrunk(ChunkManager level, int x, int y, int z, NukkitRandom random, int trunkHeight) {
         // The base dirt block
-        level.setBlockIdAt(x, y - 1, z, BlockID.DIRT);
+        level.setBlockIdAt(x, y - 1, z, BlockIds.DIRT);
 
         for (int yy = 0; yy < trunkHeight; ++yy) {
-            int blockId = level.getBlockIdAt(x, y + yy, z);
+            Identifier blockId = level.getBlockIdAt(x, y + yy, z);
             if (this.overridable(blockId)) {
                 level.setBlockAt(x, y + yy, z, this.getTrunkBlock(), this.getType());
             }

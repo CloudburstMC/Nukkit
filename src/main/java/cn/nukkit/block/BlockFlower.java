@@ -7,14 +7,18 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 import java.util.concurrent.ThreadLocalRandom;
+
+import static cn.nukkit.block.BlockIds.*;
+import static cn.nukkit.item.ItemIds.DYE;
 
 /**
  * Created on 2015/11/23 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockFlower extends BlockFlowable {
+public class BlockFlower extends FloodableBlock {
     public static final int TYPE_POPPY = 0;
     public static final int TYPE_BLUE_ORCHID = 1;
     public static final int TYPE_ALLIUM = 2;
@@ -25,37 +29,14 @@ public class BlockFlower extends BlockFlowable {
     public static final int TYPE_PINK_TULIP = 7;
     public static final int TYPE_OXEYE_DAISY = 8;
 
-    public BlockFlower(int id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Poppy",
-                "Blue Orchid",
-                "Allium",
-                "Azure Bluet",
-                "Red Tulip",
-                "Orange Tulip",
-                "White Tulip",
-                "Pink Tulip",
-                "Oxeye Daisy",
-                "Unknown",
-                "Unknown",
-                "Unknown",
-                "Unknown",
-                "Unknown",
-                "Unknown",
-                "Unknown"
-        };
-        return names[this.getDamage() & 0x0f];
+    public BlockFlower(Identifier id) {
+        super(id);
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
-        if (down.getId() == Block.GRASS || down.getId() == Block.DIRT || down.getId() == Block.FARMLAND || down.getId() == Block.PODZOL) {
+        if (down.getId() == GRASS || down.getId() == DIRT || down.getId() == FARMLAND || down.getId() == PODZOL) {
             this.getLevel().setBlock(block, this, true);
 
             return true;
@@ -88,9 +69,9 @@ public class BlockFlower extends BlockFlowable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0f) { //Bone meal
+        if (item.getId() == DYE && item.getDamage() == 0x0f) { //Bone meal
             if (player != null && (player.gamemode & 0x01) == 0) {
-                item.count--;
+                item.decrementCount();
             }
 
             this.level.addParticle(new BoneMealParticle(this));
@@ -105,7 +86,7 @@ public class BlockFlower extends BlockFlowable {
                     if (ThreadLocalRandom.current().nextInt(10) == 0) {
                         this.level.setBlock(vec, this.getUncommonFlower(), true);
                     } else {
-                        this.level.setBlock(vec, get(this.getId()), true);
+                        this.level.setBlock(vec, Block.get(this.getId()), true);
                     }
                 }
             }
@@ -117,6 +98,6 @@ public class BlockFlower extends BlockFlowable {
     }
 
     protected Block getUncommonFlower() {
-        return get(DANDELION);
+        return Block.get(YELLOW_FLOWER);
     }
 }
