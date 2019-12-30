@@ -85,7 +85,10 @@ public class BlockSkull extends BlockTransparentMeta {
                 nbt.put(aTag.getName(), aTag);
             }
         }
-        new BlockEntitySkull(getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
+        BlockEntitySkull skull = (BlockEntitySkull) BlockEntity.createBlockEntity(BlockEntity.SKULL, getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
+        if (skull == null) {
+            return false;
+        }
 
         // TODO: 2016/2/3 SPAWN WITHER
 
@@ -100,6 +103,14 @@ public class BlockSkull extends BlockTransparentMeta {
         return new Item[]{
                 new ItemSkull(dropMeta)
         };
+    }
+
+    @Override
+    public Item toItem() {
+        BlockEntity blockEntity = getLevel().getBlockEntity(this);
+        int itemMeta = 0;
+        if (blockEntity != null) itemMeta = blockEntity.namedTag.getByte("SkullType");
+        return new ItemSkull(itemMeta);
     }
 
     @Override

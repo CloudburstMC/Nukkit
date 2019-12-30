@@ -105,7 +105,10 @@ public class BlockItemFrame extends BlockTransparentMeta {
                     nbt.put(aTag.getName(), aTag);
                 }
             }
-            new BlockEntityItemFrame(this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+            BlockEntityItemFrame frame = (BlockEntityItemFrame) BlockEntity.createBlockEntity(BlockEntity.ITEM_FRAME, this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+            if (frame == null) {
+                return false;
+            }
             this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_PLACE);
             return true;
         }
