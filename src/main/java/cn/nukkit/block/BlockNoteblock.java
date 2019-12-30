@@ -54,8 +54,7 @@ public class BlockNoteblock extends BlockSolid {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         this.getLevel().setBlock(block, this, true);
-        this.createBlockEntity();
-        return true;
+        return this.createBlockEntity() != null;
     }
 
     public int getStrength() {
@@ -259,7 +258,7 @@ public class BlockNoteblock extends BlockSolid {
     }
 
     private BlockEntityMusic createBlockEntity() {
-        return new BlockEntityMusic(this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
+        return (BlockEntityMusic) BlockEntity.createBlockEntity(BlockEntity.MUSIC, this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
                                         BlockEntity.getDefaultCompound(this, BlockEntity.MUSIC));
     }
 

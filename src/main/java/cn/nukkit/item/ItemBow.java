@@ -2,6 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.entity.EntityShootBowEvent;
@@ -84,9 +85,15 @@ public class ItemBow extends ItemTool {
                 .putDouble("damage", damage);
 
         double p = (double) ticksUsed / 20;
-
         double f = Math.min((p * p + p * 2) / 3, 1) * 2;
-        EntityShootBowEvent entityShootBowEvent = new EntityShootBowEvent(player, this, new EntityArrow(player.chunk, nbt, player, f == 2), f);
+
+        EntityArrow arrow = (EntityArrow) Entity.createEntity("Arrow", player.chunk, nbt, player, f == 2);
+
+        if (arrow == null) {
+            return false;
+        }
+
+        EntityShootBowEvent entityShootBowEvent = new EntityShootBowEvent(player, this, arrow, f);
 
         if (f < 0.1 || ticksUsed < 3) {
             entityShootBowEvent.setCancelled();
