@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.event.block.BlockCoralDeathEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
@@ -63,8 +64,11 @@ public class BlockCoral extends BlockFlowable {
             return type;
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
             if (!isDead() && !(getLevelBlockAtLayer(1) instanceof BlockWater)) {
-                setDead(true);
-                this.getLevel().setBlock(this, this, true, true);
+                BlockCoralDeathEvent event = new BlockCoralDeathEvent(this, new BlockCoral(getDamage() | 0x8));
+                if (!event.isCancelled()) {
+                    setDead(true);
+                    this.getLevel().setBlock(this, event.getNewState(), true, true);
+                }
             }
             return type;
         }
