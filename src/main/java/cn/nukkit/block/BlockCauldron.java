@@ -222,13 +222,6 @@ public class BlockCauldron extends BlockSolidMeta {
                     break;
                 }
 
-                setFillLevel(getFillLevel() - 1);
-                if (isEmpty()) {
-                    cauldron.setPotionId(0xffff);//reset potion
-                    cauldron.clearCustomColor();
-                }
-                this.level.setBlock(this, this, true);
-                
                 int meta = cauldron.hasPotion() ? cauldron.getPotionId() : 0;
                 
                 Item potion;
@@ -248,6 +241,13 @@ public class BlockCauldron extends BlockSolidMeta {
                             break;
                     }
                 }
+
+                setFillLevel(getFillLevel() - 1);
+                if (isEmpty()) {
+                    cauldron.setPotionId(0xffff);//reset potion
+                    cauldron.clearCustomColor();
+                }
+                this.level.setBlock(this, this, true);
                 
                 boolean consumeBottle = player.isSurvival() || player.isAdventure();
                 if (consumeBottle && item.getCount() == 1) {
