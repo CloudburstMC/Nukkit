@@ -29,7 +29,7 @@ public class NBTIO {
 
     public static CompoundTag putItemHelper(Item item, Integer slot) {
         CompoundTag tag = new CompoundTag(null)
-                .putShort("id", item.getId() & 0xFFFF)
+                .putShort("id", item.getId())
                 .putByte("Count", item.getCount())
                 .putShort("Damage", item.getDamage());
         if (slot != null) {
