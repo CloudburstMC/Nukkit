@@ -1,6 +1,6 @@
 package cn.nukkit.block;
 
-import cn.nukkit.event.block.BlockCoralDeathEvent;
+import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
@@ -113,7 +113,7 @@ public class BlockCoralBlock extends BlockSolidMeta {
                         return type;
                     }
                 }
-                BlockCoralDeathEvent event = new BlockCoralDeathEvent(this, new BlockCoralBlock(getDamage() | 0x8));
+                BlockFadeEvent event = new BlockFadeEvent(this, new BlockCoralBlock(getDamage() | 0x8));
                 if (!event.isCancelled()) {
                     setDead(true);
                     this.getLevel().setBlock(this, event.getNewState(), true, true);

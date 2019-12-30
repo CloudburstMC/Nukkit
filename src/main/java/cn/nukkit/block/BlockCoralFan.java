@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.event.block.BlockCoralDeathEvent;
+import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
@@ -82,7 +82,7 @@ public class BlockCoralFan extends BlockFlowable implements Faceable {
             return type;
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
             if (!isDead() && !(getLevelBlockAtLayer(1) instanceof BlockWater)) {
-                BlockCoralDeathEvent event = new BlockCoralDeathEvent(this, new BlockCoralFanDead(getDamage()));
+                BlockFadeEvent event = new BlockFadeEvent(this, new BlockCoralFanDead(getDamage()));
                 if (!event.isCancelled()) {
                     this.getLevel().setBlock(this, event.getNewState(), true, true);
                 }
