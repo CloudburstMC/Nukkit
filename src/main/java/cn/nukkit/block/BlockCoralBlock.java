@@ -1,7 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
@@ -120,8 +122,12 @@ public class BlockCoralBlock extends BlockSolidMeta {
     
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe()) {
-            return new Item[]{toItem()};
+        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+            if (item.getEnchantment(Enchantment.ID_SILK_TOUCH) != null) {
+                return new Item[]{ toItem() };
+            } else {
+                return new Item[]{ new ItemBlock(clone(), getDamage() | 0x8) };
+            }
         } else {
             return new Item[0];
         }
