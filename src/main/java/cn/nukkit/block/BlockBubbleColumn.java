@@ -62,7 +62,7 @@ public class BlockBubbleColumn extends BlockTransparentMeta {
 
     @Override
     protected AxisAlignedBB recalculateCollisionBoundingBox() {
-        return null;
+        return this;
     }
     
     @Override
@@ -92,17 +92,17 @@ public class BlockBubbleColumn extends BlockTransparentMeta {
 
     @Override
     protected AxisAlignedBB recalculateBoundingBox() {
-        return this;
+        return null;
     }
     
     @Override
     public void addVelocityToEntity(Entity entity, Vector3 vector) {
         if (entity.canBeMovedByCurrents()) {
             if (up().getId() == AIR) {
-                if (getDamage() == 0) {
-                    vector.y = Math.max(-0.9, vector.y - 0.03);
+                if (getDamage() == 1) {
+                    entity.motionY = Math.max(-0.9, entity.motionY - 0.03);
                 } else {
-                    vector.y = Math.min(1.8, vector.y + 0.1);
+                    entity.motionY = Math.min(1.8, entity.motionY + 0.1);
                 }
                 
                 ThreadLocalRandom random = ThreadLocalRandom.current();
@@ -112,12 +112,14 @@ public class BlockBubbleColumn extends BlockTransparentMeta {
                 }
                 
             } else {
-                if (getDamage() == 0) {
-                    vector.y = Math.max(-0.3, vector.y - 0.03);
+                if (getDamage() == 1) {
+                    entity.motionY = Math.max(-0.3, entity.motionY - 0.3);
                 } else {
-                    vector.y = Math.min(0.7, vector.y + 0.06);
+                    entity.motionY = Math.min(0.7, entity.motionY + 0.06);
                 }
             }
+            entity.motionChanged = true;
+            entity.resetFallDistance();
         }
     }
 
