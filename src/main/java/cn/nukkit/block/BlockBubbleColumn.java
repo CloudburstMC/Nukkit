@@ -94,9 +94,9 @@ public class BlockBubbleColumn extends BlockTransparentMeta {
     protected AxisAlignedBB recalculateBoundingBox() {
         return null;
     }
-    
+
     @Override
-    public void addVelocityToEntity(Entity entity, Vector3 vector) {
+    public void onEntityCollide(Entity entity) {
         if (entity.canBeMovedByCurrents()) {
             if (up().getId() == AIR) {
                 if (getDamage() == 1) {
@@ -146,11 +146,6 @@ public class BlockBubbleColumn extends BlockTransparentMeta {
     @Override
     public boolean hasEntityCollision() {
         return true;
-    }
-
-    @Override
-    public void onEntityCollide(Entity entity) {
-        entity.resetFallDistance();
     }
 
     @Override
