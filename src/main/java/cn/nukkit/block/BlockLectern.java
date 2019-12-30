@@ -88,15 +88,18 @@ public class BlockLectern extends BlockTransparentMeta {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         int[] faces = {0, 1, 2, 3};
         this.setDamage(faces[player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0]);
-        this.getLevel().setBlock(block, this, true, true);
         CompoundTag nbt = new CompoundTag()
                 .putString("id", BlockEntity.LECTERN)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
 
-        new BlockEntityLectern(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+        BlockEntityLectern lectern = (BlockEntityLectern) BlockEntity.createBlockEntity(BlockEntity.LECTERN, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+        if (lectern == null) {
+            return false;
+        }
 
+        this.getLevel().setBlock(block, this, true, true);
         return true;
     }
 
@@ -114,7 +117,10 @@ public class BlockLectern extends BlockTransparentMeta {
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
 
-                lectern = new BlockEntityLectern(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+                lectern = (BlockEntityLectern) BlockEntity.createBlockEntity(BlockEntity.LECTERN, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+                if (lectern == null) {
+                    return false;
+                }
             }
 
             Item currentBook = lectern.getBook();

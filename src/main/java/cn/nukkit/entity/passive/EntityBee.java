@@ -64,10 +64,12 @@ public class EntityBee extends EntityAnimal {
             for (Block collisionBlock : level.getCollisionBlocks(getBoundingBox().grow(1.5, 1.5, 1.5))) {
                 if (collisionBlock instanceof BlockBeehive) {
                     BlockEntityBeehive beehive = ((BlockBeehive) collisionBlock).getOrCreateEntity();
-                    double distance;
-                    if (beehive.getOccupantsCount() < 4 && (distance = beehive.distanceSquared(this)) < closestDistance) {
-                        closestBeehive = beehive;
-                        closestDistance = distance;
+                    if (beehive != null) {
+                        double distance;
+                        if(beehive.getOccupantsCount() < 4 && (distance = beehive.distanceSquared(this)) < closestDistance) {
+                            closestBeehive = beehive;
+                            closestDistance = distance;
+                        }
                     }
                 }
             }
