@@ -34,7 +34,7 @@ public class BlockBlastFurnaceBurning extends BlockFurnaceBurning {
 
     @Override
     protected BlockEntityFurnace createEntity(FullChunk chunk, CompoundTag nbt) {
-        return new BlockEntityBlastFurnace(chunk, nbt);
+        return (BlockEntityFurnace) BlockEntity.createBlockEntity(BlockEntity.BLAST_FURNACE, chunk, nbt);
     }
 
     @Override
