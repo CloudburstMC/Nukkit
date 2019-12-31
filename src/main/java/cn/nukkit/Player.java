@@ -1448,6 +1448,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected void processMovement(int tickDiff) {
         if (!this.isAlive() || !this.spawned || this.newPosition == null || this.teleportPosition != null || this.isSleeping()) {
+            this.positionChanged = false;
             return;
         }
         Vector3 newPos = this.newPosition;
@@ -2349,6 +2350,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                         this.setRotation(movePlayerPacket.yaw, movePlayerPacket.pitch);
                         this.newPosition = newPos;
+                        this.positionChanged = true;
                         this.forceMovement = null;
                     }
 
