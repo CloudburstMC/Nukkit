@@ -209,6 +209,9 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_BRIBED = 57; //dolphins have this set when they go to find treasure for the player
     public static final int DATA_FLAG_PREGNANT = 58;
     public static final int DATA_FLAG_LAYING_EGG = 59;
+    public static final int DATA_FLAG_IN_SCAFFOLDING = 68;
+    public static final int DATA_FLAG_OVER_SCAFFOLDING = 69;
+    public static final int DATA_FLAG_FALL_THROUGH_SCAFFOLDING = 70;
 
     public static long entityCount = 1;
 
@@ -1942,17 +1945,27 @@ public abstract class Entity extends Location implements Metadatable {
     protected void checkBlockCollision() {
         Vector3 vector = new Vector3(0, 0, 0);
         boolean portal = false;
+        boolean scaffolding = false;
+        boolean overScaffolding = false;
 
         for (Block block : this.getCollisionBlocks()) {
             if (block.getId() == Block.NETHER_PORTAL) {
                 portal = true;
-                continue;
+            } else if (block.getId() == Block.SCAFFOLDING) {
+                scaffolding = true;
+            }
+
+            if (block.getFloorY() == getFloorY() && block.down().getId() == BlockID.SCAFFOLDING) {
+                overScaffolding = true;
             }
 
             block.onEntityCollide(this);
             block.getLevelBlockAtLayer(1).onEntityCollide(this);
             block.addVelocityToEntity(this, vector);
         }
+
+        setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_IN_SCAFFOLDING, scaffolding);
+        setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_OVER_SCAFFOLDING, overScaffolding);
 
         if (portal) {
             if (this.inPortalTicks < 80) {

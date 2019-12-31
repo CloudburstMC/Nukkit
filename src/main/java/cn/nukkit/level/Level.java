@@ -2039,6 +2039,12 @@ public class Level implements ChunkManager, Metadatable {
         Block target = this.getBlock(vector);
         Block block = target.getSide(face);
 
+        if (item.getBlock() instanceof BlockScaffolding && face == BlockFace.UP && block.getId() == BlockID.SCAFFOLDING) {
+            while (block instanceof BlockScaffolding) {
+                block = block.up();
+            }
+        }
+
         if (block.y > 255 || block.y < 0) {
             return null;
         }

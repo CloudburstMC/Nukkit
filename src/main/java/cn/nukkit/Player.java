@@ -1403,16 +1403,25 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     @Override
     protected void checkBlockCollision() {
         boolean portal = false;
-
+        boolean scaffolding = false;
+        boolean overScaffolding = false;
         for (Block block : this.getCollisionBlocks()) {
             if (block.getId() == Block.NETHER_PORTAL) {
                 portal = true;
-                continue;
+            } else if (block.getId() == Block.SCAFFOLDING) {
+                scaffolding = true;
+            }
+
+            if (block.getFloorY() == getFloorY() && block.down().getId() == BlockID.SCAFFOLDING) {
+                overScaffolding = true;
             }
 
             block.onEntityCollide(this);
             block.getLevelBlockAtLayer(1).onEntityCollide(this);
         }
+
+        setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_IN_SCAFFOLDING, scaffolding);
+        setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_OVER_SCAFFOLDING, overScaffolding);
 
         if (portal) {
             if (this.isCreative() && this.inPortalTicks < 80) {

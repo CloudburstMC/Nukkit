@@ -351,6 +351,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[BUBBLE_COLUMN] = BlockBubbleColumn.class; //415
             list[BARRIER] = BlockBarrier.class; //416
 
+            list[SCAFFOLDING] = BlockScaffolding.class; //420
+
             list[GRANITE_STAIRS] = BlockStairsGranite.class; //424
             list[DIORITE_STAIRS] = BlockStairsDiorite.class; //425
             list[ANDESITE_STAIRS] = BlockStairsAndesite.class; //426
