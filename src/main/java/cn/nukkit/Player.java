@@ -1734,8 +1734,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         double expectedVelocity = (-this.getGravity()) / ((double) this.getDrag()) - ((-this.getGravity()) / ((double) this.getDrag())) * Math.exp(-((double) this.getDrag()) * ((double) (this.inAirTicks - this.startAirTicks)));
                         double diff = (this.speed.y - expectedVelocity) * (this.speed.y - expectedVelocity);
 
-                        int block = level.getBlock(this).getId();
-                        boolean ignore = block == Block.LADDER || block == Block.VINES || block == Block.COBWEB;
+                        Block block = level.getBlock(this);
+                        int blockId = block.getId();
+                        boolean ignore = blockId == Block.LADDER || blockId == Block.VINES || blockId == Block.COBWEB
+                                || blockId == Block.SCAFFOLDING;// || (blockId == Block.SWEET_BERRY_BUSH && block.getDamage() > 0);
 
                         if (!this.hasEffect(Effect.JUMP) && diff > 0.6 && expectedVelocity < this.speed.y && !ignore) {
                             if (this.inAirTicks < 100) {
@@ -2437,6 +2439,18 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             if (block.getId() == Block.FIRE) {
                                 this.level.setBlock(block, new BlockAir(), true);
                                 this.level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_EXTINGUISH_FIRE);
+                                break;
+                            }
+                            if (block.getId() == Block.SWEET_BERRY_BUSH && block.getDamage() == 0) {
+                                Item oldItem = playerInteractEvent.getItem();
+                                Item i = this.level.useBreakOn(block, oldItem, this, true);
+                                if (this.isSurvival()) {
+                                    this.getFoodData().updateFoodExpLevel(0.025);
+                                    if (!i.equals(oldItem) || i.getCount() != oldItem.getCount()) {
+                                        inventory.setItemInHand(i);
+                                        inventory.sendHeldItem(this.getViewers().values());
+                                    }
+                                }
                                 break;
                             }
                             if (!this.isCreative()) {
