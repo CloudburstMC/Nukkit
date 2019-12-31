@@ -123,9 +123,8 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
             }
         }
 
-        new BlockEntityShulkerBox(this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), nbt);
-
-        return true;
+        BlockEntityShulkerBox box = (BlockEntityShulkerBox) BlockEntity.createBlockEntity(BlockEntity.SHULKER_BOX, this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), nbt);
+        return box != null;
     }
 
     @Override
@@ -142,7 +141,10 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
                 box = (BlockEntityShulkerBox) t;
             } else {
                 CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.SHULKER_BOX);
-                box = new BlockEntityShulkerBox(this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), nbt);
+                box = (BlockEntityShulkerBox) BlockEntity.createBlockEntity(BlockEntity.SHULKER_BOX, this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), nbt);
+                if (box == null) {
+                    return false;
+                }
             }
 
             Block block = this.getSide(BlockFace.fromIndex(box.namedTag.getByte("facing")));

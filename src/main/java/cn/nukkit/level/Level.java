@@ -22,6 +22,7 @@ import cn.nukkit.event.weather.LightningStrikeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemBucket;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.ChunkSection;
@@ -881,7 +882,8 @@ public class Level implements ChunkManager, Metadatable {
                     .putList(new ListTag<FloatTag>("Rotation").add(new FloatTag("", 0))
                             .add(new FloatTag("", 0)));
 
-            EntityLightning bolt = new EntityLightning(chunk, nbt);
+            EntityLightning bolt = (EntityLightning) Entity.createEntity("Lightning", chunk, nbt);
+            if(bolt == null) return;
             LightningStrikeEvent ev = new LightningStrikeEvent(this, bolt);
             getServer().getPluginManager().callEvent(ev);
             if (!ev.isCancelled()) {
@@ -1757,7 +1759,7 @@ public class Level implements ChunkManager, Metadatable {
         itemTag.setName("Item");
 
         if (item.getId() > 0 && item.getCount() > 0) {
-            EntityItem itemEntity = new EntityItem(
+            EntityItem itemEntity = (EntityItem) Entity.createEntity("Item",
                     this.getChunk((int) source.getX() >> 4, (int) source.getZ() >> 4, true),
                     new CompoundTag().putList(new ListTag<DoubleTag>("Pos").add(new DoubleTag("", source.getX()))
                             .add(new DoubleTag("", source.getY())).add(new DoubleTag("", source.getZ())))
@@ -1766,12 +1768,14 @@ public class Level implements ChunkManager, Metadatable {
                                     .add(new DoubleTag("", motion.y)).add(new DoubleTag("", motion.z)))
 
                             .putList(new ListTag<FloatTag>("Rotation")
-                                    .add(new FloatTag("", new java.util.Random().nextFloat() * 360))
+                                    .add(new FloatTag("", new Random().nextFloat() * 360))
                                     .add(new FloatTag("", 0)))
 
                             .putShort("Health", 5).putCompound("Item", itemTag).putShort("PickupDelay", delay));
 
-            itemEntity.spawnToAll();
+            if (itemEntity != null) {
+                itemEntity.spawnToAll();
+            }
         }
     }
 
@@ -2014,13 +2018,13 @@ public class Level implements ChunkManager, Metadatable {
                     }
                 }
             } else {
-                if(item instanceof ItemBucket && ((ItemBucket) item).getDamageByTarget(item.getDamage()) == BlockID.WATER) {
-                    player.getLevel().sendBlocks(new Player[]{player}, new Block[]{Block.get(Block.AIR, 0, block)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
+                if(item.getId() == ItemID.BUCKET && ItemBucket.getDamageByTarget(item.getDamage()) == BlockID.WATER) {
+                    player.getLevel().sendBlocks(new Player[]{player}, new Block[]{Block.get(Block.AIR, 0, target)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
                 }
                 return null;
             }
 
-            if(item instanceof ItemBucket && ((ItemBucket) item).getDamageByTarget(item.getDamage()) == BlockID.WATER) {
+            if(item.getId() == ItemID.BUCKET && ItemBucket.getDamageByTarget(item.getDamage()) == BlockID.WATER) {
                 player.getLevel().sendBlocks(new Player[] {player}, new Block[] {Block.get(Block.AIR, 0, target)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
             }
         } else if (target.canBeActivated() && target.onActivate(item, player)) {
