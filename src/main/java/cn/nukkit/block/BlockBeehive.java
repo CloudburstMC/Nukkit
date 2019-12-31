@@ -80,6 +80,9 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
         int honeyLevel = item.hasCustomBlockData()? item.getCustomBlockData().getByte("HoneyLevel") : 0;
         setDisplayedHoneyLevel(honeyLevel);
         BlockEntityBeehive beehive = createEntity(item.getCustomBlockData());
+        if (beehive == null) {
+            return false;
+        }
         if (beehive.namedTag.getByte("ShouldSpawnBees") > 0) {
             List<BlockFace> validSpawnFaces = beehive.scanValidSpawnFaces(true);
             for (BlockEntityBeehive.Occupant occupant : beehive.getOccupants()) {
@@ -187,7 +190,7 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
             nbt.putByte("HoneyLevel", getDisplayedHoneyLevel());
         }
 
-        return new BlockEntityBeehive(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+        return (BlockEntityBeehive) BlockEntity.createBlockEntity(BlockEntity.BEEHIVE, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
     }
 
     public void setBlockFace(BlockFace face) {
@@ -200,7 +203,9 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
 
     public void setHoneyLevel(int honeyLevel) {
         BlockEntityBeehive entityBeehive = getOrCreateEntity();
-        entityBeehive.setHoneyLevel(honeyLevel);
+        if (entityBeehive != null) {
+            entityBeehive.setHoneyLevel(honeyLevel);
+        }
     }
 
     public int getHoneyLevel() {

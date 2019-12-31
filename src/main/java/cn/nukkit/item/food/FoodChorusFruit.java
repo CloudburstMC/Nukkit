@@ -3,6 +3,7 @@ package cn.nukkit.item.food;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockLiquid;
+import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
@@ -56,7 +57,7 @@ public class FoodChorusFruit extends FoodNormal {
 
             // Sounds are broadcast at both source and destination
             level.addSound(player.asBlockVector3().asVector3(), Sound.MOB_ENDERMEN_PORTAL);
-            player.teleport(new Vector3(x + 0.5, y + 1, z + 0.5));
+            player.teleport(new Vector3(x + 0.5, y + 1, z + 0.5), PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
             level.addSound(player.asBlockVector3().asVector3(), Sound.MOB_ENDERMEN_PORTAL);
 
             break;

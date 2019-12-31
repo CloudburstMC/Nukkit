@@ -34,7 +34,7 @@ public class BlockSmokerBurning extends BlockFurnaceBurning {
 
     @Override
     protected BlockEntityFurnace createEntity(FullChunk chunk, CompoundTag nbt) {
-        return new BlockEntitySmoker(chunk, nbt);
+        return (BlockEntityFurnace) BlockEntity.createBlockEntity(BlockEntity.SMOKER, chunk, nbt);
     }
 
     @Override
