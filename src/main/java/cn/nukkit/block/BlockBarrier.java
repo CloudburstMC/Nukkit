@@ -56,9 +56,4 @@ public class BlockBarrier extends BlockSolid {
     public boolean canBePushed() {
         return false;
     }
-
-    @Override
-    public Item toItem() {
-        return new ItemBlock(new BlockAir());
-    }
 }
