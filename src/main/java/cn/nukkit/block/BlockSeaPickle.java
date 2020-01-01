@@ -87,7 +87,7 @@ public class BlockSeaPickle extends BlockFlowable {
 
         Block down = block.down().getLevelBlockAtLayer(0);
         if (down.isSolid() && down.getId() != ICE) {
-            if (down instanceof BlockSlab || down instanceof BlockStairs) {
+            if (down instanceof BlockSlab || down instanceof BlockStairs || block.getId() == BUBBLE_COLUMN) {
                 return false;
             }
             Block layer1 = block.getLevelBlockAtLayer(1);
