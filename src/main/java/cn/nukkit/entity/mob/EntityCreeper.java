@@ -1,7 +1,6 @@
 package cn.nukkit.entity.mob;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.entity.weather.EntityLightningStrike;
 import cn.nukkit.event.entity.CreeperPowerEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -11,6 +10,8 @@ import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.concurrent.ThreadLocalRandom;
+
+import static cn.nukkit.entity.data.EntityFlag.POWERED;
 
 /**
  * @author Box.
@@ -44,7 +45,7 @@ public class EntityCreeper extends EntityMob {
     }
 
     public boolean isPowered() {
-        return getDataPropertyBoolean(DATA_POWERED);
+        return getFlag(POWERED);
     }
 
     public void setPowered(EntityLightningStrike bolt) {
@@ -52,7 +53,7 @@ public class EntityCreeper extends EntityMob {
         this.getServer().getPluginManager().callEvent(ev);
 
         if (!ev.isCancelled()) {
-            this.setDataProperty(new ByteEntityData(DATA_POWERED, 1));
+            this.setFlag(POWERED, true);
             this.namedTag.putBoolean("powered", true);
         }
     }
@@ -62,7 +63,7 @@ public class EntityCreeper extends EntityMob {
         this.getServer().getPluginManager().callEvent(ev);
 
         if (!ev.isCancelled()) {
-            this.setDataProperty(new ByteEntityData(DATA_POWERED, powered ? 1 : 0));
+            this.setFlag(POWERED, powered);
             this.namedTag.putBoolean("powered", powered);
         }
     }
@@ -76,7 +77,7 @@ public class EntityCreeper extends EntityMob {
         super.initEntity();
 
         if (this.namedTag.getBoolean("powered") || this.namedTag.getBoolean("IsPowered")) {
-            this.dataProperties.putBoolean(DATA_POWERED, true);
+            this.setFlag(POWERED, true);
         }
         this.setMaxHealth(20);
     }

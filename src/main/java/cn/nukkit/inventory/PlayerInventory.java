@@ -15,7 +15,6 @@ import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.player.Player;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 import static cn.nukkit.block.BlockIds.AIR;
@@ -424,7 +423,6 @@ public class PlayerInventory extends BaseInventory {
         for (int i = 0; i < this.getSize(); ++i) {
             pk.slots[i] = this.getItem(i);
         }
-        log.debug("Sending slots {}", Arrays.toString(pk.slots));
 
         /*//Because PE is stupid and shows 9 less slots than you send it, give it 9 dummy slots so it shows all the REAL slots.
         for(int i = this.getSize(); i < this.getSize() + this.getHotbarSize(); ++i){

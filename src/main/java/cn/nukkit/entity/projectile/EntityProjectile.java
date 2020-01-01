@@ -2,7 +2,7 @@ package cn.nukkit.entity.projectile;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
-import cn.nukkit.entity.data.LongEntityData;
+import cn.nukkit.entity.data.EntityData;
 import cn.nukkit.entity.item.EntityEndCrystal;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -20,8 +20,6 @@ import java.util.Set;
  * Nukkit Project
  */
 public abstract class EntityProjectile extends Entity {
-
-    public static final int DATA_SHOOTER_ID = 17;
 
     public Entity shootingEntity = null;
 
@@ -47,7 +45,7 @@ public abstract class EntityProjectile extends Entity {
         super(chunk, nbt);
         this.shootingEntity = shootingEntity;
         if (shootingEntity != null) {
-            this.setDataProperty(new LongEntityData(DATA_SHOOTER_ID, shootingEntity.getId()));
+            this.setLongData(EntityData.OWNER_EID, shootingEntity.getId());
         }
     }
 

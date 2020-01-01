@@ -22,14 +22,14 @@ import cn.nukkit.player.Player;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static cn.nukkit.entity.data.EntityFlag.CRITICAL;
+
 /**
  * Created by PetteriM1
  */
 public class EntityThrownTrident extends EntityProjectile {
 
     public static final int NETWORK_ID = 73;
-
-    public static final int DATA_SOURCE_ID = 17;
 
     protected Item trident;
 
@@ -107,12 +107,12 @@ public class EntityThrownTrident extends EntityProjectile {
         this.setCritical(true);
     }
 
-    public void setCritical(boolean value) {
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_CRITICAL, value);
+    public boolean isCritical() {
+        return this.getFlag(CRITICAL);
     }
 
-    public boolean isCritical() {
-        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_CRITICAL);
+    public void setCritical(boolean value) {
+        this.setFlag(CRITICAL, value);
     }
 
     @Override
@@ -173,7 +173,7 @@ public class EntityThrownTrident extends EntityProjectile {
         pk.speedZ = (float) this.motionZ;
         pk.yaw = (float) this.yaw;
         pk.pitch = (float) this.pitch;
-        pk.metadata = this.dataProperties;
+        pk.dataMap.putAll(this.getData());
         player.dataPacket(pk);
 
         super.spawnTo(player);

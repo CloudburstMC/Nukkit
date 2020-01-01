@@ -1,11 +1,12 @@
 package cn.nukkit.entity.passive;
 
 import cn.nukkit.entity.EntityOwnable;
-import cn.nukkit.entity.data.ByteEntityData;
-import cn.nukkit.entity.data.StringEntityData;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.player.Player;
+
+import static cn.nukkit.entity.data.EntityData.OWNER_EID;
+import static cn.nukkit.entity.data.EntityFlag.SITTING;
+import static cn.nukkit.entity.data.EntityFlag.TAMED;
 
 /**
  * Author: BeYkeRYkt
@@ -13,8 +14,6 @@ import cn.nukkit.player.Player;
  */
 public abstract class EntityTameable extends EntityAnimal implements EntityOwnable {
 
-    public static final int DATA_TAMED_FLAG = 16;
-    public static final int DATA_OWNER_NAME = 17;
 
     public EntityTameable(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -23,23 +22,20 @@ public abstract class EntityTameable extends EntityAnimal implements EntityOwnab
     @Override
     protected void initEntity() {
         super.initEntity();
-        if (getDataProperty(DATA_TAMED_FLAG) == null) {
-            setDataProperty(new ByteEntityData(DATA_TAMED_FLAG, (byte) 0));
+
+        if (!hasData(OWNER_EID)) {
+            setLongData(OWNER_EID, -1);
         }
 
-        if (getDataProperty(DATA_OWNER_NAME) == null) {
-            setDataProperty(new StringEntityData(DATA_OWNER_NAME, ""));
-        }
-
-        String ownerName = "";
+        long ownerId = -1;
 
         if (namedTag != null) {
-            if (namedTag.contains("Owner")) {
-                ownerName = namedTag.getString("Owner");
+            if (namedTag.contains("OwnerID")) {
+                ownerId = namedTag.getLong("OwnerID");
             }
 
-            if (ownerName.length() > 0) {
-                this.setOwnerName(ownerName);
+            if (ownerId != -1) {
+                this.setOwnerId(ownerId);
                 this.setTamed(true);
             }
 
@@ -51,28 +47,19 @@ public abstract class EntityTameable extends EntityAnimal implements EntityOwnab
     public void saveNBT() {
         super.saveNBT();
 
-        if (this.getOwnerName() == null) {
-            namedTag.putString("Owner", "");
-        } else {
-            namedTag.putString("Owner", getOwnerName());
-        }
+        namedTag.putLong("OwnerID", getOwnerId());
 
         namedTag.putBoolean("Sitting", isSitting());
     }
 
     @Override
-    public String getOwnerName() {
-        return getDataPropertyString(DATA_OWNER_NAME);
+    public long getOwnerId() {
+        return getLongData(OWNER_EID);
     }
 
     @Override
-    public void setOwnerName(String playerName) {
-        setDataProperty(new StringEntityData(DATA_OWNER_NAME, playerName));
-    }
-
-    @Override
-    public Player getOwner() {
-        return getServer().getPlayer(getOwnerName());
+    public void setOwnerId(long id) {
+        setLongData(OWNER_EID, id);
     }
 
     @Override
@@ -81,30 +68,18 @@ public abstract class EntityTameable extends EntityAnimal implements EntityOwnab
     }
 
     public boolean isTamed() {
-        return (getDataPropertyByte(DATA_TAMED_FLAG) & 4) != 0;
+        return getFlag(TAMED);
     }
 
-    public void setTamed(boolean flag) {
-        int var = getDataPropertyByte(DATA_TAMED_FLAG); // ?
-
-        if (flag) {
-            setDataProperty(new ByteEntityData(DATA_TAMED_FLAG, (byte) (var | 4)));
-        } else {
-            setDataProperty(new ByteEntityData(DATA_TAMED_FLAG, (byte) (var & -5)));
-        }
+    public void setTamed(boolean value) {
+        setFlag(TAMED, value);
     }
 
     public boolean isSitting() {
-        return (getDataPropertyByte(DATA_TAMED_FLAG) & 1) != 0;
+        return getFlag(SITTING);
     }
 
-    public void setSitting(boolean flag) {
-        int var = getDataPropertyByte(DATA_TAMED_FLAG); // ?
-
-        if (flag) {
-            setDataProperty(new ByteEntityData(DATA_TAMED_FLAG, (byte) (var | 1)));
-        } else {
-            setDataProperty(new ByteEntityData(DATA_TAMED_FLAG, (byte) (var & -2)));
-        }
+    public void setSitting(boolean value) {
+        setFlag(SITTING, value);
     }
 }

@@ -2,9 +2,6 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.data.ByteEntityData;
-import cn.nukkit.entity.data.IntEntityData;
-import cn.nukkit.entity.data.NBTEntityData;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
@@ -16,6 +13,8 @@ import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 import java.util.Random;
+
+import static cn.nukkit.entity.data.EntityData.*;
 
 /**
  * @author CreeperFace
@@ -45,9 +44,9 @@ public class EntityFirework extends Entity {
             firework = Item.get(ItemIds.FIREWORKS);
         }
 
-        this.setDataProperty(new NBTEntityData(Entity.DATA_DISPLAY_ITEM, firework.getNamedTag()));
-        this.setDataProperty(new IntEntityData(Entity.DATA_DISPLAY_OFFSET, 1));
-        this.setDataProperty(new ByteEntityData(Entity.DATA_HAS_DISPLAY, 1));
+        this.setTagData(DISPLAY_ITEM, firework.getNamedTag());
+        this.setIntData(DISPLAY_OFFSET, 1);
+        this.setByteData(HAS_DISPLAY, 1);
     }
 
     @Override
@@ -128,7 +127,7 @@ public class EntityFirework extends Entity {
 
     public void setFirework(Item item) {
         this.firework = item;
-        this.setDataProperty(new NBTEntityData(Entity.DATA_DISPLAY_ITEM, item.getNamedTag()));
+        this.setTagData(DISPLAY_ITEM, item.getNamedTag());
     }
 
     @Override

@@ -3,7 +3,6 @@ package cn.nukkit.entity.item;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityInteractable;
 import cn.nukkit.entity.EntityRideable;
-import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.vehicle.VehicleDamageEvent;
@@ -11,6 +10,8 @@ import cn.nukkit.event.vehicle.VehicleDestroyEvent;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.player.Player;
+
+import static cn.nukkit.entity.data.EntityData.*;
 
 /**
  * author: MagicDroidX
@@ -23,27 +24,27 @@ public abstract class EntityVehicle extends Entity implements EntityRideable, En
     }
 
     public int getRollingAmplitude() {
-        return this.getDataPropertyInt(DATA_HURT_TIME);
+        return this.getIntData(HURT_TIME);
     }
 
     public void setRollingAmplitude(int time) {
-        this.setDataProperty(new IntEntityData(DATA_HURT_TIME, time));
+        this.setIntData(HURT_TIME, time);
     }
 
     public int getRollingDirection() {
-        return this.getDataPropertyInt(DATA_HURT_DIRECTION);
+        return this.getIntData(HURT_DIRECTION);
     }
 
     public void setRollingDirection(int direction) {
-        this.setDataProperty(new IntEntityData(DATA_HURT_DIRECTION, direction));
+        this.setIntData(HURT_DIRECTION, direction);
     }
 
     public int getDamage() {
-        return this.getDataPropertyInt(DATA_HEALTH); // false data name (should be DATA_DAMAGE_TAKEN)
+        return this.getIntData(HEALTH); // false data name (should be DATA_DAMAGE_TAKEN)
     }
 
     public void setDamage(int damage) {
-        this.setDataProperty(new IntEntityData(DATA_HEALTH, damage));
+        this.setIntData(HEALTH, damage);
     }
 
     @Override

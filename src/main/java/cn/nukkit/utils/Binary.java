@@ -1,7 +1,6 @@
 package cn.nukkit.utils;
 
 import cn.nukkit.entity.Attribute;
-import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDurable;
@@ -17,8 +16,10 @@ import cn.nukkit.network.protocol.types.EntityLink;
 import cn.nukkit.registry.ItemRegistry;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.ByteBufUtil;
 import lombok.experimental.UtilityClass;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -33,6 +34,7 @@ import static cn.nukkit.item.ItemIds.SHIELD;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 @UtilityClass
 public class Binary {
 
@@ -511,98 +513,116 @@ public class Binary {
         );
     }
 
-    public static void writeMetadata(ByteBuf buffer, EntityMetadata metadata) {
-        Map<Integer, EntityData> map = metadata.getMap();
-        writeUnsignedVarInt(buffer, map.size());
-        for (int id : map.keySet()) {
-            EntityData d = map.get(id);
-            writeUnsignedVarInt(buffer, id);
-            writeUnsignedVarInt(buffer, d.getType());
-            switch (d.getType()) {
-                case Entity.DATA_TYPE_BYTE:
-                    buffer.writeByte(((ByteEntityData) d).getData().byteValue());
+    public static void writeEntityData(ByteBuf buffer, EntityDataMap entityData) {
+        writeUnsignedVarInt(buffer, entityData.size());
+
+        entityData.forEach((key, value) -> {
+            EntityDataType type = EntityDataType.from(value);
+            writeUnsignedVarInt(buffer, key.getId());
+            writeUnsignedVarInt(buffer, type.ordinal());
+
+            if (key.isFlags()) {
+                value = ((EntityFlags) value).get(key.getFlagsIndex());
+            }
+
+            switch (type) {
+                case BYTE:
+                    buffer.writeByte((byte) value);
                     break;
-                case Entity.DATA_TYPE_SHORT:
-                    buffer.writeShortLE(((ShortEntityData) d).getData());
+                case SHORT:
+                    buffer.writeShortLE((short) value);
                     break;
-                case Entity.DATA_TYPE_INT:
-                    writeVarInt(buffer, ((IntEntityData) d).getData());
+                case INT:
+                    writeVarInt(buffer, (int) value);
                     break;
-                case Entity.DATA_TYPE_FLOAT:
-                    buffer.writeFloatLE(((FloatEntityData) d).getData());
+                case FLOAT:
+                    buffer.writeFloatLE((float) value);
                     break;
-                case Entity.DATA_TYPE_STRING:
-                    writeString(buffer, ((StringEntityData) d).getData());
+                case STRING:
+                    writeString(buffer, (String) value);
                     break;
-                case Entity.DATA_TYPE_NBT:
-                    NBTEntityData slot = (NBTEntityData) d;
-                    try {
-                        buffer.writeBytes(NBTIO.write(slot.getData(), ByteOrder.LITTLE_ENDIAN, true));
+                case NBT:
+                    try (ByteBufOutputStream stream = new ByteBufOutputStream(buffer)) {
+                        NBTIO.write((CompoundTag) value, stream, ByteOrder.LITTLE_ENDIAN, true);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                     break;
-                case Entity.DATA_TYPE_POS:
-                    IntPositionEntityData pos = (IntPositionEntityData) d;
-                    writeSignedBlockPosition(buffer, pos.getData());
+                case POS:
+                    writeSignedBlockPosition(buffer, (BlockVector3) value);
                     break;
-                case Entity.DATA_TYPE_LONG:
-                    writeVarLong(buffer, ((LongEntityData) d).getData());
+                case LONG:
+                    writeVarLong(buffer, (long) value);
                     break;
-                case Entity.DATA_TYPE_VECTOR3F:
-                    Vector3fEntityData v3data = (Vector3fEntityData) d;
-                    writeVector3f(buffer, v3data.getData());
+                case VECTOR3F:
+                    writeVector3f(buffer, (Vector3f) value);
                     break;
+                default:
+                    throw new UnsupportedOperationException("Invalid EntityDataType" + type);
             }
-        }
+        });
     }
 
-    public static EntityMetadata readMetadata(ByteBuf buffer) {
+    public static EntityDataMap readEntityData(ByteBuf buffer) {
+        EntityDataMap entityData = new EntityDataMap();
         long count = readUnsignedVarInt(buffer);
-        EntityMetadata m = new EntityMetadata();
         for (int i = 0; i < count; i++) {
-            int key = (int) readUnsignedVarInt(buffer);
-            int type = (int) readUnsignedVarInt(buffer);
-            EntityData value = null;
+            int id = (int) readUnsignedVarInt(buffer);
+            EntityData key = EntityData.from(id);
+            EntityDataType type = EntityDataType.from((int) readUnsignedVarInt(buffer));
+            Object value = null;
             switch (type) {
-                case Entity.DATA_TYPE_BYTE:
-                    value = new ByteEntityData(key, buffer.readByte());
+                case BYTE:
+                    value = buffer.readByte();
                     break;
-                case Entity.DATA_TYPE_SHORT:
-                    value = new ShortEntityData(key, buffer.readShortLE());
+                case SHORT:
+                    value = buffer.readShortLE();
                     break;
-                case Entity.DATA_TYPE_INT:
-                    value = new IntEntityData(key, readVarInt(buffer));
+                case INT:
+                    value = readVarInt(buffer);
                     break;
-                case Entity.DATA_TYPE_FLOAT:
-                    value = new FloatEntityData(key, buffer.readFloatLE());
+                case FLOAT:
+                    value = buffer.readFloatLE();
                     break;
-                case Entity.DATA_TYPE_STRING:
-                    value = new StringEntityData(key, readString(buffer));
+                case STRING:
+                    value = readString(buffer);
                     break;
-                case Entity.DATA_TYPE_NBT:
-                    ByteBufInputStream stream = new ByteBufInputStream(buffer);
-                    try {
-                        CompoundTag tag = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN, true);
-                        value = new NBTEntityData(key, tag);
+                case NBT:
+                    try (ByteBufInputStream stream = new ByteBufInputStream(buffer)) {
+                        value = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN, true);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                     break;
-                case Entity.DATA_TYPE_POS:
-                    BlockVector3 v3 = readSignedBlockPosition(buffer);
-                    value = new IntPositionEntityData(key, v3.x, v3.y, v3.z);
+                case POS:
+                    value = readSignedBlockPosition(buffer);
                     break;
-                case Entity.DATA_TYPE_LONG:
-                    value = new LongEntityData(key, readVarLong(buffer));
+                case LONG:
+                    value = readVarLong(buffer);
                     break;
-                case Entity.DATA_TYPE_VECTOR3F:
-                    value = new Vector3fEntityData(key, readVector3f(buffer));
+                case VECTOR3F:
+                    value = readVector3f(buffer);
                     break;
+                default:
+                    throw new UnsupportedOperationException("Unknown EntityDataType " + type);
             }
-            if (value != null) m.put(value);
+
+            if (key == null) {
+                log.debug("Unknown EntityData ID {} with type {}", id, type);
+            } else if (key.isFlags()) {
+                long val = (long) value;
+                EntityFlags flags = EntityFlags.create(val, key.getFlagsIndex());
+                EntityFlags existing = entityData.getFlags();
+                if (existing == null) {
+                    entityData.putFlags(flags);
+                } else {
+                    existing.addAll(flags);
+                }
+            } else {
+                entityData.put(key, value);
+            }
         }
-        return m;
+        return entityData;
     }
 
     public static String bytesToHexString(ByteBuf src) {

@@ -1,6 +1,6 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.entity.data.EntityMetadata;
+import cn.nukkit.entity.data.EntityDataMap;
 import cn.nukkit.utils.Binary;
 import io.netty.buffer.ByteBuf;
 import lombok.ToString;
@@ -19,17 +19,17 @@ public class SetEntityDataPacket extends DataPacket {
     }
 
     public long eid;
-    public EntityMetadata metadata;
+    public EntityDataMap dataMap = new EntityDataMap();
 
     @Override
     public void decode(ByteBuf buffer) {
         this.eid = Binary.readEntityRuntimeId(buffer);
-        this.metadata = Binary.readMetadata(buffer);
+        this.dataMap = Binary.readEntityData(buffer);
     }
 
     @Override
     public void encode(ByteBuf buffer) {
         Binary.writeEntityRuntimeId(buffer, this.eid);
-        Binary.writeMetadata(buffer, this.metadata);
+        Binary.writeEntityData(buffer, this.dataMap);
     }
 }

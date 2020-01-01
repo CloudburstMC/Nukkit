@@ -9,8 +9,6 @@ import cn.nukkit.block.BlockRailActivator;
 import cn.nukkit.block.BlockRailPowered;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.EntityLiving;
-import cn.nukkit.entity.data.ByteEntityData;
-import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.vehicle.VehicleMoveEvent;
 import cn.nukkit.event.vehicle.VehicleUpdateEvent;
@@ -32,6 +30,8 @@ import cn.nukkit.utils.Rail.Orientation;
 
 import java.util.Iterator;
 import java.util.Objects;
+
+import static cn.nukkit.entity.data.EntityData.*;
 
 /**
  * Created by: larryTheCoder on 2017/6/26.
@@ -683,34 +683,33 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
             if (namedTag.getBoolean("CustomDisplayTile")) {
                 int display = namedTag.getInt("DisplayTile");
                 int offSet = namedTag.getInt("DisplayOffset");
-                setDataProperty(new ByteEntityData(DATA_HAS_DISPLAY, 1));
-                setDataProperty(new IntEntityData(DATA_DISPLAY_ITEM, display));
-                setDataProperty(new IntEntityData(DATA_DISPLAY_OFFSET, offSet));
+                setByteData(HAS_DISPLAY, 1);
+                setIntData(DISPLAY_ITEM, display);
+                setIntData(DISPLAY_OFFSET, offSet);
             }
         } else {
             int display = blockInside == null ? 0
                     : BlockRegistry.get().getLegacyId(blockInside.getId())
                     | blockInside.getDamage() << 16;
             if (display == 0) {
-                setDataProperty(new ByteEntityData(DATA_HAS_DISPLAY, 0));
+                setByteData(HAS_DISPLAY, 0);
                 return;
             }
-            setDataProperty(new ByteEntityData(DATA_HAS_DISPLAY, 1));
-            setDataProperty(new IntEntityData(DATA_DISPLAY_ITEM, display));
-            setDataProperty(new IntEntityData(DATA_DISPLAY_OFFSET, 6));
+            setByteData(HAS_DISPLAY, 1);
+            setIntData(DISPLAY_ITEM, display);
+            setIntData(DISPLAY_OFFSET, 6);
         }
     }
 
     private void saveEntityData() {
-        boolean hasDisplay = super.getDataPropertyByte(DATA_HAS_DISPLAY) == 1
-                || blockInside != null;
+        boolean hasDisplay = getByteData(HAS_DISPLAY) == 1 || blockInside != null;
         int display;
         int offSet;
         namedTag.putBoolean("CustomDisplayTile", hasDisplay);
         if (hasDisplay) {
             display = BlockRegistry.get().getLegacyId(blockInside.getId())
                     | blockInside.getDamage() << 16;
-            offSet = getDataPropertyInt(DATA_DISPLAY_OFFSET);
+            offSet = getIntData(DISPLAY_OFFSET);
             namedTag.putInt("DisplayTile", display);
             namedTag.putInt("DisplayOffset", offSet);
         }
@@ -748,15 +747,15 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
                 blockInside = block;
                 int display = BlockRegistry.get().getLegacyId(blockInside.getId())
                         | blockInside.getDamage() << 16;
-                setDataProperty(new ByteEntityData(DATA_HAS_DISPLAY, 1));
-                setDataProperty(new IntEntityData(DATA_DISPLAY_ITEM, display));
+                setByteData(HAS_DISPLAY, 1);
+                setIntData(DISPLAY_ITEM, display);
                 setDisplayBlockOffset(6);
             }
         } else {
             // Set block to air (default).
             blockInside = null;
-            setDataProperty(new ByteEntityData(DATA_HAS_DISPLAY, 0));
-            setDataProperty(new IntEntityData(DATA_DISPLAY_ITEM, 0));
+            setByteData(HAS_DISPLAY, 0);
+            setIntData(DISPLAY_ITEM, 0);
             setDisplayBlockOffset(0);
         }
         return true;
@@ -773,23 +772,23 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
     }
 
     /**
-     * Set the block offset.
-     *
-     * @param offset The offset
-     */
-    @API(usage = Usage.EXPERIMENTAL, definition = Definition.PLATFORM_NATIVE)
-    public void setDisplayBlockOffset(int offset) {
-        setDataProperty(new IntEntityData(DATA_DISPLAY_OFFSET, offset));
-    }
-
-    /**
      * Get the block display offset
      *
      * @return integer
      */
     @API(usage = Usage.EXPERIMENTAL, definition = Definition.UNIVERSAL)
     public int getDisplayBlockOffset() {
-        return super.getDataPropertyInt(DATA_DISPLAY_OFFSET);
+        return getIntData(DISPLAY_OFFSET);
+    }
+
+    /**
+     * Set the block offset.
+     *
+     * @param offset The offset
+     */
+    @API(usage = Usage.EXPERIMENTAL, definition = Definition.PLATFORM_NATIVE)
+    public void setDisplayBlockOffset(int offset) {
+        setIntData(DISPLAY_OFFSET, offset);
     }
 
     /**

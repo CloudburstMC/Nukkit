@@ -1,6 +1,6 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.entity.data.EntityMetadata;
+import cn.nukkit.entity.data.EntityDataMap;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Binary;
 import io.netty.buffer.ByteBuf;
@@ -28,7 +28,7 @@ public class AddItemEntityPacket extends DataPacket {
     public float speedX;
     public float speedY;
     public float speedZ;
-    public EntityMetadata metadata = new EntityMetadata();
+    public EntityDataMap dataMap = new EntityDataMap();
     public boolean isFromFishing = false;
 
     @Override
@@ -43,7 +43,7 @@ public class AddItemEntityPacket extends DataPacket {
         Binary.writeItem(buffer, this.item);
         Binary.writeVector3f(buffer, this.x, this.y, this.z);
         Binary.writeVector3f(buffer, this.speedX, this.speedY, this.speedZ);
-        Binary.writeMetadata(buffer, metadata);
+        Binary.writeEntityData(buffer, dataMap);
         buffer.writeBoolean(this.isFromFishing);
     }
 }

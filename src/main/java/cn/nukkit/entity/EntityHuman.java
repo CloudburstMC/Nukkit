@@ -1,6 +1,6 @@
 package cn.nukkit.entity;
 
-import cn.nukkit.entity.data.IntPositionEntityData;
+import cn.nukkit.entity.data.EntityData;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -8,28 +8,23 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.AddPlayerPacket;
 import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.network.protocol.SetEntityLinkPacket;
+import cn.nukkit.player.Player;
+import cn.nukkit.player.PlayerFlag;
 import cn.nukkit.utils.SerializedImage;
 import cn.nukkit.utils.SkinAnimation;
-import cn.nukkit.player.Player;
 import cn.nukkit.utils.Utils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
+import static cn.nukkit.entity.data.EntityFlag.*;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class EntityHuman extends EntityHumanType {
-
-    public static final int DATA_PLAYER_FLAG_SLEEP = 1;
-    public static final int DATA_PLAYER_FLAG_DEAD = 2;
-
-    public static final int DATA_PLAYER_FLAGS = 26;
-
-    public static final int DATA_PLAYER_BED_POSITION = 28;
-    public static final int DATA_PLAYER_BUTTON_TEXT = 40;
 
     protected UUID uuid;
 
@@ -83,10 +78,8 @@ public class EntityHuman extends EntityHumanType {
 
     @Override
     protected void initEntity() {
-        this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, false);
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_GRAVITY);
-
-        this.setDataProperty(new IntPositionEntityData(DATA_PLAYER_BED_POSITION, 0, 0, 0), false);
+        this.setPlayerFlag(PlayerFlag.SLEEP, false);
+        this.setFlag(GRAVITY, true);
 
         if (!(this instanceof Player)) {
             if (this.namedTag.contains("NameTag")) {
@@ -237,7 +230,7 @@ public class EntityHuman extends EntityHumanType {
             pk.yaw = (float) this.yaw;
             pk.pitch = (float) this.pitch;
             pk.item = this.getInventory().getItemInHand();
-            pk.metadata = this.dataProperties;
+            pk.dataMap.putAll(this.getData());
             player.dataPacket(pk);
 
             this.inventory.sendArmorContents(player);
@@ -280,6 +273,70 @@ public class EntityHuman extends EntityHumanType {
 
             super.close();
         }
+    }
+
+    public boolean getPlayerFlag(PlayerFlag flag) {
+        byte bitSet = this.getByteData(EntityData.PLAYER_FLAGS);
+        return (bitSet & (1 << flag.getId())) != 0;
+    }
+
+    public void setPlayerFlag(PlayerFlag flag, boolean value) {
+        byte bitSet = this.getByteData(EntityData.PLAYER_FLAGS);
+        int mask = 1 << flag.getId();
+        if (value) {
+            bitSet |= mask;
+        } else {
+            bitSet &= ~mask;
+        }
+        setByteData(EntityData.PLAYER_FLAGS, bitSet);
+    }
+
+    public boolean isSneaking() {
+        return getFlag(SNEAKING);
+    }
+
+    public void setSneaking(boolean value) {
+        this.setFlag(SNEAKING, value);
+    }
+
+    public void setSneaking() {
+        this.setSneaking(true);
+    }
+
+    public boolean isSwimming() {
+        return this.getFlag(SWIMMING);
+    }
+
+    public void setSwimming(boolean value) {
+        this.setFlag(SWIMMING, value);
+    }
+
+    public void setSwimming() {
+        this.setSwimming(true);
+    }
+
+    public boolean isSprinting() {
+        return this.getFlag(SPRINTING);
+    }
+
+    public void setSprinting(boolean value) {
+        this.setFlag(SPRINTING, value);
+    }
+
+    public void setSprinting() {
+        this.setSprinting(true);
+    }
+
+    public boolean isGliding() {
+        return this.getFlag(GLIDING);
+    }
+
+    public void setGliding(boolean value) {
+        this.setFlag(GLIDING, value);
+    }
+
+    public void setGliding() {
+        this.setGliding(true);
     }
 
 }

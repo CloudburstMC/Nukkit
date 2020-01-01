@@ -178,7 +178,7 @@ public class PackManager implements Closeable {
         packStack.behaviourPackStack.clear();
         packStack.isExperimental = true; // Needed for custom blocks, items and entities
         for (Pack pack : packs.values()) {
-            if (pack.getType() != ResourcePackDataInfoPacket.TYPE_RESOURCE) {
+            if (pack.getType() != ResourcePackDataInfoPacket.TYPE_BEHAVIOR) {
                 packsInfos.resourcePackEntries.add(pack);
                 packStack.resourcePackStack.add(pack);
             }

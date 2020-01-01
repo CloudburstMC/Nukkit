@@ -3,6 +3,8 @@ package cn.nukkit.entity.mob;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
+import static cn.nukkit.entity.data.EntityFlag.ELDER;
+
 /**
  * @author PikyCZ
  */
@@ -23,7 +25,7 @@ public class EntityElderGuardian extends EntityMob {
     protected void initEntity() {
         super.initEntity();
         this.setMaxHealth(80);
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_ELDER, true);
+        this.setFlag(ELDER, true);
     }
 
     @Override

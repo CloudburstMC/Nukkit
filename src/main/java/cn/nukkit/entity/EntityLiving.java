@@ -3,7 +3,7 @@ package cn.nukkit.entity;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockMagma;
-import cn.nukkit.entity.data.ShortEntityData;
+import cn.nukkit.entity.data.EntityData;
 import cn.nukkit.entity.passive.EntityWaterAnimal;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.entity.data.EntityFlag.BREATHING;
 
 /**
  * author: MagicDroidX
@@ -222,8 +223,8 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
                 turtleTicks = 200;
             }
         }
-        
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_BREATHING, isBreathing);
+
+        this.setFlag(BREATHING, isBreathing);
 
         boolean hasUpdate = super.entityBaseTick(tickDiff);
 
@@ -381,10 +382,10 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     }
 
     public int getAirTicks() {
-        return this.getDataPropertyShort(DATA_AIR);
+        return this.getShortData(EntityData.AIR);
     }
 
     public void setAirTicks(int ticks) {
-        this.setDataProperty(new ShortEntityData(DATA_AIR, ticks));
+        this.setShortData(EntityData.AIR, ticks);
     }
 }

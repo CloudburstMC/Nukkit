@@ -111,7 +111,7 @@ public class BlockTallGrass extends FloodableBlock {
             //todo enchantment
             if (dropSeeds) {
                 return new Item[]{
-                        Item.get(ItemIds.WHEAT),
+                        Item.get(ItemIds.WHEAT_SEEDS),
                         Item.get(BlockIds.TALL_GRASS, this.getDamage(), 1)
                 };
             } else {
@@ -123,7 +123,7 @@ public class BlockTallGrass extends FloodableBlock {
 
         if (dropSeeds) {
             return new Item[]{
-                    Item.get(ItemIds.WHEAT)
+                    Item.get(ItemIds.WHEAT_SEEDS)
             };
         } else {
             return new Item[0];

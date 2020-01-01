@@ -10,6 +10,8 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 
 import java.util.List;
 
+import static cn.nukkit.entity.data.EntityData.EXPERIENCE_VALUE;
+
 /**
  * Created on 2015/12/26 by xtypr.
  * Package cn.nukkit.entity in project Nukkit .
@@ -92,7 +94,7 @@ public class EntityXPOrb extends Entity {
             this.exp = 1;
         }
 
-        this.dataProperties.putInt(DATA_EXPERIENCE_VALUE, this.exp);
+        this.setIntData(EXPERIENCE_VALUE, this.exp);
 
         //call event item spawn event
     }

@@ -28,6 +28,7 @@ import cn.nukkit.utils.Identifier;
 import java.util.Random;
 
 import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.entity.data.EntityData.OWNER_EID;
 
 
 /**
@@ -282,7 +283,7 @@ public class EntityFishingHook extends EntityProjectile {
         if (this.shootingEntity != null) {
             ownerId = this.shootingEntity.getId();
         }
-        pk.metadata = this.dataProperties.putLong(DATA_OWNER_EID, ownerId);
+        pk.dataMap.putAll(this.getData().putLong(OWNER_EID, ownerId));
         player.dataPacket(pk);
         super.spawnTo(player);
     }

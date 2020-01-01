@@ -2,7 +2,6 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityBlockChangeEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -16,6 +15,7 @@ import cn.nukkit.registry.BlockRegistry;
 
 import static cn.nukkit.block.BlockIds.AIR;
 import static cn.nukkit.block.BlockIds.ANVIL;
+import static cn.nukkit.entity.data.EntityData.VARIANT;
 
 /**
  * @author MagicDroidX
@@ -88,7 +88,7 @@ public class EntityFallingBlock extends Entity {
             return;
         }
 
-        setDataProperty(new IntEntityData(DATA_VARIANT, BlockRegistry.get().getRuntimeId(this.getBlock(), this.getDamage())));
+        setIntData(VARIANT, BlockRegistry.get().getRuntimeId(this.getBlock(), this.getDamage()));
     }
 
     public boolean canCollideWith(Entity entity) {

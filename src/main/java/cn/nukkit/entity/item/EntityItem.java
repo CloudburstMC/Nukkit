@@ -17,6 +17,7 @@ import cn.nukkit.player.Player;
 
 import static cn.nukkit.block.BlockIds.FLOWING_WATER;
 import static cn.nukkit.block.BlockIds.WATER;
+import static cn.nukkit.entity.data.EntityFlag.IMMOBILE;
 
 /**
  * @author MagicDroidX
@@ -106,7 +107,7 @@ public class EntityItem extends Entity {
         }
 
         this.item = NBTIO.getItemHelper(this.namedTag.getCompound("Item"));
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_IMMOBILE, true);
+        this.setFlag(IMMOBILE, true);
 
         this.server.getPluginManager().callEvent(new ItemSpawnEvent(this));
     }
@@ -303,7 +304,7 @@ public class EntityItem extends Entity {
         addEntity.speedX = (float) this.motionX;
         addEntity.speedY = (float) this.motionY;
         addEntity.speedZ = (float) this.motionZ;
-        addEntity.metadata = this.dataProperties;
+        addEntity.dataMap.putAll(this.getData());
         addEntity.item = this.getItem();
         return addEntity;
     }

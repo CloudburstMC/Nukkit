@@ -13,7 +13,8 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandDataVersions;
 import cn.nukkit.entity.*;
-import cn.nukkit.entity.data.*;
+import cn.nukkit.entity.data.EntityData;
+import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntityThrownTrident;
@@ -91,6 +92,10 @@ import java.util.function.Consumer;
 import java.util.function.LongConsumer;
 
 import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.entity.data.EntityData.INTERACTIVE_TAG;
+import static cn.nukkit.entity.data.EntityData.PLAYER_BED_POSITION;
+import static cn.nukkit.entity.data.EntityFlag.ACTION;
+import static cn.nukkit.player.PlayerFlag.SLEEP;
 
 /**
  * @author MagicDroidX &amp; Box
@@ -694,12 +699,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * @return bool
      */
     public boolean isUsingItem() {
-        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_ACTION) && this.startAction > -1;
+        return this.getFlag(ACTION) && this.startAction > -1;
     }
 
     public void setUsingItem(boolean value) {
         this.startAction = value ? this.server.getTick() : -1;
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_ACTION, value);
+        this.setFlag(ACTION, value);
     }
 
     public String getButtonText() {
@@ -708,7 +713,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void setButtonText(String text) {
         this.buttonText = text;
-        this.setDataProperty(new StringEntityData(Entity.DATA_INTERACTIVE_TAG, this.buttonText));
+        this.setStringData(INTERACTIVE_TAG, this.buttonText);
     }
 
     public Position getSpawn() {
@@ -866,8 +871,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.sleeping = pos.clone();
         this.teleport(new Location(pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, this.yaw, this.pitch, this.level), null);
 
-        this.setDataProperty(new IntPositionEntityData(DATA_PLAYER_BED_POSITION, (int) pos.x, (int) pos.y, (int) pos.z));
-        this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, true);
+        this.setPosData(PLAYER_BED_POSITION, pos.asBlockVector3());
+        this.setPlayerFlag(SLEEP, true);
 
         this.setSpawn(pos);
 
@@ -897,8 +902,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.server.getPluginManager().callEvent(new PlayerBedLeaveEvent(this, this.level.getBlock(this.sleeping)));
 
             this.sleeping = null;
-            this.setDataProperty(new IntPositionEntityData(DATA_PLAYER_BED_POSITION, 0, 0, 0));
-            this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, false);
+            this.setPosData(PLAYER_BED_POSITION, new BlockVector3());
+            this.setPlayerFlag(SLEEP, false);
 
 
             this.level.sleepTicks = 0;
@@ -1019,20 +1024,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         return new Item[0];
-    }
-
-    @Override
-    public boolean setDataProperty(EntityData data) {
-        return setDataProperty(data, true);
-    }
-
-    @Override
-    public boolean setDataProperty(EntityData data, boolean send) {
-        if (super.setDataProperty(data, send)) {
-            if (send) this.sendData(this, new EntityMetadata().put(this.getDataProperty(data.getId())));
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -1538,6 +1529,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             if (this.spawned && this.dummyBossBars.size() > 0 && currentTick % 100 == 0) {
                 this.dummyBossBars.values().forEach(DummyBossBar::updateBossEntityPosition);
             }
+
+            this.updateData();
         }
 
         return true;
@@ -2021,7 +2014,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.username = TextFormat.clean(username);
                     this.displayName = this.username;
                     this.iusername = this.username.toLowerCase();
-                    this.setDataProperty(new StringEntityData(DATA_NAMETAG, this.username), false);
+                    this.setNameTag(this.username);
 
                     if (!valid || Objects.equals(this.iusername, "rcon") || Objects.equals(this.iusername, "console")) {
                         this.close("", "disconnectionScreen.invalidName");
@@ -2232,7 +2225,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     this.inventory.equipItem(mobEquipmentPacket.hotbarSlot);
 
-                    this.setDataFlag(Player.DATA_FLAGS, Player.DATA_FLAG_ACTION, false);
+                    this.setFlag(ACTION, false);
 
                     break;
                 case ProtocolInfo.PLAYER_ACTION_PACKET:
@@ -2335,7 +2328,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.setSprinting(false);
                             this.setSneaking(false);
 
-                            this.setDataProperty(new ShortEntityData(Player.DATA_AIR, 400), false);
+                            this.setShortData(EntityData.AIR, 400);
                             this.deadTicks = 0;
                             this.noDamageTicks = 60;
 
@@ -2372,6 +2365,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 this.sendData(this);
                             } else {
                                 this.setSprinting(false);
+                            }
+                            if (isSwimming()) {
+                                PlayerToggleSwimEvent ptse = new PlayerToggleSwimEvent(this, false);
+                                this.server.getPluginManager().callEvent(ptse);
+
+                                if (ptse.isCancelled()) {
+                                    this.sendData(this);
+                                } else {
+                                    this.setSwimming(false);
+                                }
                             }
                             break packetswitch;
                         case PlayerActionPacket.ACTION_START_SNEAK:
@@ -2843,7 +2846,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         return;
                                     }
 
-                                    this.setDataFlag(DATA_FLAGS, DATA_FLAG_ACTION, false);
+                                    this.setFlag(ACTION, false);
 
                                     if (this.canInteract(blockVector.add(0.5, 0.5, 0.5), this.isCreative() ? 13 : 7)) {
                                         if (this.isCreative()) {
@@ -3583,7 +3586,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.level.dropItem(this.add(0, 1.3, 0), item, motion, 40);
 
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_ACTION, false);
+        this.setFlag(ACTION, false);
         return true;
     }
 

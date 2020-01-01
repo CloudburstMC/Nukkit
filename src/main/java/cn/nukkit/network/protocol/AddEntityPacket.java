@@ -1,7 +1,7 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.entity.Attribute;
-import cn.nukkit.entity.data.EntityMetadata;
+import cn.nukkit.entity.data.EntityDataMap;
 import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.mob.*;
 import cn.nukkit.entity.passive.*;
@@ -146,7 +146,7 @@ public class AddEntityPacket extends DataPacket {
     public float yaw;
     public float pitch;
     public float headYaw;
-    public EntityMetadata metadata = new EntityMetadata();
+    public EntityDataMap dataMap = new EntityDataMap();
     public Attribute[] attributes = new Attribute[0];
     public EntityLink[] links = new EntityLink[0];
 
@@ -169,7 +169,7 @@ public class AddEntityPacket extends DataPacket {
         buffer.writeFloatLE(this.yaw);
         buffer.writeFloatLE(this.headYaw);
         Binary.writeAttributes(buffer, this.attributes);
-        Binary.writeMetadata(buffer, this.metadata);
+        Binary.writeEntityData(buffer, this.dataMap);
         Binary.writeUnsignedVarInt(buffer, this.links.length);
         for (EntityLink link : links) {
             Binary.writeEntityLink(buffer, link);

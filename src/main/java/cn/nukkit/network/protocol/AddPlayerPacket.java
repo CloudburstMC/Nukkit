@@ -1,6 +1,6 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.entity.data.EntityMetadata;
+import cn.nukkit.entity.data.EntityDataMap;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Binary;
 import io.netty.buffer.ByteBuf;
@@ -35,7 +35,7 @@ public class AddPlayerPacket extends DataPacket {
     public float pitch;
     public float yaw;
     public Item item;
-    public EntityMetadata metadata = new EntityMetadata();
+    public EntityDataMap dataMap = new EntityDataMap();
     //public EntityLink links = new EntityLink[0];
     public String deviceId = "";
     public int buildPlatform = -1;
@@ -58,7 +58,7 @@ public class AddPlayerPacket extends DataPacket {
         buffer.writeFloatLE(this.yaw); //TODO headrot
         buffer.writeFloatLE(this.yaw);
         Binary.writeItem(buffer, this.item);
-        Binary.writeMetadata(buffer, this.metadata);
+        Binary.writeEntityData(buffer, this.dataMap);
         Binary.writeUnsignedVarInt(buffer, 0); //TODO: Adventure settings
         Binary.writeUnsignedVarInt(buffer, 0);
         Binary.writeUnsignedVarInt(buffer, 0);

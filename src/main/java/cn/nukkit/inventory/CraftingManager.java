@@ -206,12 +206,8 @@ public class CraftingManager {
                         Map<String, Object> resultMap = (Map) recipe.get("output");
                         Item resultItem = Item.fromJson(resultMap);
                         Item inputItem;
-                        try {
-                            Map<String, Object> inputMap = (Map) recipe.get("input");
-                            inputItem = Item.fromJson(inputMap);
-                        } catch (Exception old) {
-                            inputItem = Item.get(Utils.toInt(recipe.get("inputId")), recipe.containsKey("inputDamage") ? Utils.toInt(recipe.get("inputDamage")) : -1, 1);
-                        }
+                        Map<String, Object> inputMap = (Map) recipe.get("input");
+                        inputItem = Item.fromJson(inputMap);
                         this.registerRecipe(new FurnaceRecipe(resultItem, inputItem));
                         break;
                     default:
@@ -220,7 +216,7 @@ public class CraftingManager {
             } catch (RegistryException e) {
                 // ignore non-implemented items
             } catch (Exception e) {
-                log.error("Exception during registering recipe", e);
+                log.error("Exception during registering recipe: " + recipe, e);
             }
         }
 

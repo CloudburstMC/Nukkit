@@ -1,6 +1,5 @@
 package cn.nukkit.entity.passive;
 
-import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDye;
@@ -12,6 +11,8 @@ import cn.nukkit.utils.DyeColor;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static cn.nukkit.block.BlockIds.WOOL;
+import static cn.nukkit.entity.data.EntityData.COLOR;
+import static cn.nukkit.entity.data.EntityFlag.SHEARED;
 import static cn.nukkit.item.ItemIds.DYE;
 import static cn.nukkit.item.ItemIds.SHEARS;
 
@@ -71,7 +72,7 @@ public class EntitySheep extends EntityAnimal {
             this.sheared = this.namedTag.getBoolean("Sheared");
         }
 
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_SHEARED, this.sheared);
+        this.setFlag(SHEARED, this.sheared);
     }
 
     @Override
@@ -98,7 +99,7 @@ public class EntitySheep extends EntityAnimal {
         }
 
         this.sheared = true;
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_SHEARED, true);
+        this.setFlag(SHEARED, true);
 
         this.level.dropItem(this, Item.get(WOOL, getColor(), ThreadLocalRandom.current().nextInt(2) + 1));
         return true;
@@ -114,7 +115,7 @@ public class EntitySheep extends EntityAnimal {
 
     public void setColor(int color) {
         this.color = color;
-        this.setDataProperty(new ByteEntityData(DATA_COLOUR, color));
+        this.setByteData(COLOR, color);
         this.namedTag.putByte("Color", this.color);
     }
 

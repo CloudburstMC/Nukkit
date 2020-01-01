@@ -43,6 +43,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static cn.nukkit.block.BlockIds.*;
+import static cn.nukkit.entity.data.EntityData.AIR;
+import static cn.nukkit.entity.data.EntityData.ALWAYS_SHOW_NAMETAG;
+import static cn.nukkit.entity.data.EntityData.*;
+import static cn.nukkit.entity.data.EntityFlag.*;
 import static cn.nukkit.network.protocol.SetEntityLinkPacket.*;
 
 /**
@@ -54,165 +58,6 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int NETWORK_ID = -1;
 
     public abstract int getNetworkId();
-
-    public static final int DATA_TYPE_BYTE = 0;
-    public static final int DATA_TYPE_SHORT = 1;
-    public static final int DATA_TYPE_INT = 2;
-    public static final int DATA_TYPE_FLOAT = 3;
-    public static final int DATA_TYPE_STRING = 4;
-    public static final int DATA_TYPE_NBT = 5;
-    public static final int DATA_TYPE_POS = 6;
-    public static final int DATA_TYPE_LONG = 7;
-    public static final int DATA_TYPE_VECTOR3F = 8;
-
-    public static final int DATA_FLAGS = 0;
-    public static final int DATA_HEALTH = 1; //int (minecart/boat)
-    public static final int DATA_VARIANT = 2; //int
-    public static final int DATA_COLOR = 3, DATA_COLOUR = 3; //byte
-    public static final int DATA_NAMETAG = 4; //string
-    public static final int DATA_OWNER_EID = 5; //long
-    public static final int DATA_TARGET_EID = 6; //long
-    public static final int DATA_AIR = 7; //short
-    public static final int DATA_POTION_COLOR = 8; //int (ARGB!)
-    public static final int DATA_POTION_AMBIENT = 9; //byte
-    public static final int DATA_JUMP_DURATION = 10; //long
-    public static final int DATA_HURT_TIME = 11; //int (minecart/boat)
-    public static final int DATA_HURT_DIRECTION = 12; //int (minecart/boat)
-    public static final int DATA_PADDLE_TIME_LEFT = 13; //float
-    public static final int DATA_PADDLE_TIME_RIGHT = 14; //float
-    public static final int DATA_EXPERIENCE_VALUE = 15; //int (xp orb)
-    public static final int DATA_DISPLAY_ITEM = 16; //int (id | (data << 16))
-    public static final int DATA_DISPLAY_OFFSET = 17; //int
-    public static final int DATA_HAS_DISPLAY = 18; //byte (must be 1 for minecart to show block inside)
-    //TODO: add more properties
-    public static final int DATA_ENDERMAN_HELD_RUNTIME_ID = 23; //short
-    public static final int DATA_ENTITY_AGE = 24; //short
-    public static final int DATA_PLAYER_FLAGS = 26; //byte
-    /* 27 (int) player "index"? */
-    public static final int DATA_PLAYER_BED_POSITION = 28; //block coords
-    public static final int DATA_FIREBALL_POWER_X = 29; //float
-    public static final int DATA_FIREBALL_POWER_Y = 30;
-    public static final int DATA_FIREBALL_POWER_Z = 31;
-    /* 32 (unknown)
-     * 33 (float) fishing bobber
-     * 34 (float) fishing bobber
-     * 35 (float) fishing bobber */
-    public static final int DATA_POTION_AUX_VALUE = 36; //short
-    public static final int DATA_LEAD_HOLDER_EID = 37; //long
-    public static final int DATA_SCALE = 38; //float
-    public static final int DATA_INTERACTIVE_TAG = 39; //string (button text)
-    public static final int DATA_NPC_SKIN_ID = 40; //string
-    public static final int DATA_URL_TAG = 41; //string
-    public static final int DATA_MAX_AIR = 42; //short
-    public static final int DATA_MARK_VARIANT = 43; //int
-    public static final int DATA_CONTAINER_TYPE = 44; //byte
-    public static final int DATA_CONTAINER_BASE_SIZE = 45; //int
-    public static final int DATA_CONTAINER_EXTRA_SLOTS_PER_STRENGTH = 46; //int
-    public static final int DATA_BLOCK_TARGET = 47; //block coords (ender crystal)
-    public static final int DATA_WITHER_INVULNERABLE_TICKS = 48; //int
-    public static final int DATA_WITHER_TARGET_1 = 49; //long
-    public static final int DATA_WITHER_TARGET_2 = 50; //long
-    public static final int DATA_WITHER_TARGET_3 = 51; //long
-    /* 52 (short) */
-    public static final int DATA_BOUNDING_BOX_WIDTH = 53; //float
-    public static final int DATA_BOUNDING_BOX_HEIGHT = 54; //float
-    public static final int DATA_FUSE_LENGTH = 55; //int
-    public static final int DATA_RIDER_SEAT_POSITION = 56; //vector3f
-    public static final int DATA_RIDER_ROTATION_LOCKED = 57; //byte
-    public static final int DATA_RIDER_MAX_ROTATION = 58; //float
-    public static final int DATA_RIDER_MIN_ROTATION = 59; //float
-    public static final int DATA_AREA_EFFECT_CLOUD_RADIUS = 60; //float
-    public static final int DATA_AREA_EFFECT_CLOUD_WAITING = 61; //int
-    public static final int DATA_AREA_EFFECT_CLOUD_PARTICLE_ID = 62; //int
-    /* 63 (int) shulker-related */
-    public static final int DATA_SHULKER_ATTACH_FACE = 64; //byte
-    /* 65 (short) shulker-related */
-    public static final int DATA_SHULKER_ATTACH_POS = 66; //block coords
-    public static final int DATA_TRADING_PLAYER_EID = 67; //long
-
-    /* 69 (byte) command-block */
-    public static final int DATA_COMMAND_BLOCK_COMMAND = 70; //string
-    public static final int DATA_COMMAND_BLOCK_LAST_OUTPUT = 71; //string
-    public static final int DATA_COMMAND_BLOCK_TRACK_OUTPUT = 72; //byte
-    public static final int DATA_CONTROLLING_RIDER_SEAT_NUMBER = 73; //byte
-    public static final int DATA_STRENGTH = 74; //int
-    public static final int DATA_MAX_STRENGTH = 75; //int
-    // 76 (int)
-    public static final int DATA_LIMITED_LIFE = 77;
-    public static final int DATA_ARMOR_STAND_POSE_INDEX = 78; // int
-    public static final int DATA_ENDER_CRYSTAL_TIME_OFFSET = 79; // int
-    public static final int DATA_ALWAYS_SHOW_NAMETAG = 80; // byte
-    public static final int DATA_COLOR_2 = 81; // byte
-    // 82 unknown
-    public static final int DATA_SCORE_TAG = 83; //String
-    public static final int DATA_BALLOON_ATTACHED_ENTITY = 84; // long
-    public static final int DATA_PUFFERFISH_SIZE = 85;
-
-    public static final int DATA_FLAGS_EXTENDED = 91;
-
-    public static final int DATA_SKIN_ID = 103; // int ???
-
-    // Flags
-    public static final int DATA_FLAG_ONFIRE = 0;
-    public static final int DATA_FLAG_SNEAKING = 1;
-    public static final int DATA_FLAG_RIDING = 2;
-    public static final int DATA_FLAG_SPRINTING = 3;
-    public static final int DATA_FLAG_ACTION = 4;
-    public static final int DATA_FLAG_INVISIBLE = 5;
-    public static final int DATA_FLAG_TEMPTED = 6;
-    public static final int DATA_FLAG_INLOVE = 7;
-    public static final int DATA_FLAG_SADDLED = 8;
-    public static final int DATA_FLAG_POWERED = 9;
-    public static final int DATA_FLAG_IGNITED = 10;
-    public static final int DATA_FLAG_BABY = 11; //disable head scaling
-    public static final int DATA_FLAG_CONVERTING = 12;
-    public static final int DATA_FLAG_CRITICAL = 13;
-    public static final int DATA_FLAG_CAN_SHOW_NAMETAG = 14;
-    public static final int DATA_FLAG_ALWAYS_SHOW_NAMETAG = 15;
-    public static final int DATA_FLAG_IMMOBILE = 16, DATA_FLAG_NO_AI = 16;
-    public static final int DATA_FLAG_SILENT = 17;
-    public static final int DATA_FLAG_WALLCLIMBING = 18;
-    public static final int DATA_FLAG_CAN_CLIMB = 19;
-    public static final int DATA_FLAG_SWIMMER = 20;
-    public static final int DATA_FLAG_CAN_FLY = 21;
-    public static final int DATA_FLAG_WALKER = 22;
-    public static final int DATA_FLAG_RESTING = 23;
-    public static final int DATA_FLAG_SITTING = 24;
-    public static final int DATA_FLAG_ANGRY = 25;
-    public static final int DATA_FLAG_INTERESTED = 26;
-    public static final int DATA_FLAG_CHARGED = 27;
-    public static final int DATA_FLAG_TAMED = 28;
-    public static final int DATA_FLAG_ORPHANED = 29;
-    public static final int DATA_FLAG_LEASHED = 30;
-    public static final int DATA_FLAG_SHEARED = 31;
-    public static final int DATA_FLAG_GLIDING = 32;
-    public static final int DATA_FLAG_ELDER = 33;
-    public static final int DATA_FLAG_MOVING = 34;
-    public static final int DATA_FLAG_BREATHING = 35;
-    public static final int DATA_FLAG_CHESTED = 36;
-    public static final int DATA_FLAG_STACKABLE = 37;
-    public static final int DATA_FLAG_SHOWBASE = 38;
-    public static final int DATA_FLAG_REARING = 39;
-    public static final int DATA_FLAG_VIBRATING = 40;
-    public static final int DATA_FLAG_IDLING = 41;
-    public static final int DATA_FLAG_EVOKER_SPELL = 42;
-    public static final int DATA_FLAG_CHARGE_ATTACK = 43;
-    public static final int DATA_FLAG_WASD_CONTROLLED = 44;
-    public static final int DATA_FLAG_CAN_POWER_JUMP = 45;
-    public static final int DATA_FLAG_LINGER = 46;
-    public static final int DATA_FLAG_HAS_COLLISION = 47;
-    public static final int DATA_FLAG_GRAVITY = 48;
-    public static final int DATA_FLAG_FIRE_IMMUNE = 49;
-    public static final int DATA_FLAG_DANCING = 50;
-    public static final int DATA_FLAG_ENCHANTED = 51;
-    public static final int DATA_FLAG_SHOW_TRIDENT_ROPE = 52; // tridents show an animated rope when enchanted with loyalty after they are thrown and return to their owner. To be combined with DATA_OWNER_EID
-    public static final int DATA_FLAG_CONTAINER_PRIVATE = 53; //inventory is private, doesn't drop contents when killed if true
-    //public static final int TransformationComponent 54; ???
-    public static final int DATA_FLAG_SPIN_ATTACK = 55;
-    public static final int DATA_FLAG_SWIMMING = 56;
-    public static final int DATA_FLAG_BRIBED = 57; //dolphins have this set when they go to find treasure for the player
-    public static final int DATA_FLAG_PREGNANT = 58;
-    public static final int DATA_FLAG_LAYING_EGG = 59;
 
     public static long entityCount = 1;
 
@@ -227,13 +72,16 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected long id;
 
-    protected final EntityMetadata dataProperties = new EntityMetadata()
-            .putLong(DATA_FLAGS, 0)
-            .putShort(DATA_AIR, 400)
-            .putShort(DATA_MAX_AIR, 400)
-            .putString(DATA_NAMETAG, "")
-            .putLong(DATA_LEAD_HOLDER_EID, -1)
-            .putFloat(DATA_SCALE, 1f);
+    private final EntityFlags flags = new EntityFlags();
+    private final EntityDataMap data = new EntityDataMap()
+            .putFlags(flags)
+            .putShort(AIR, 400)
+            .putShort(MAX_AIR, 400)
+            .putString(NAMETAG, "")
+            .putLong(LEAD_HOLDER_EID, -1)
+            .putFloat(SCALE, 1f);
+    private final EntityDataMap dataChangeSet = new EntityDataMap();
+    private volatile boolean flagsDirty;
 
     public final List<Entity> passengers = new ArrayList<>();
 
@@ -381,15 +229,15 @@ public abstract class Entity extends Location implements Metadatable {
             if (this.namedTag.contains("CustomNameVisible")) {
                 this.setNameTagVisible(this.namedTag.getBoolean("CustomNameVisible"));
             }
-            if(this.namedTag.contains("CustomNameAlwaysVisible")){
+            if (this.namedTag.contains("CustomNameAlwaysVisible")) {
                 this.setNameTagAlwaysVisible(this.namedTag.getBoolean("CustomNameAlwaysVisible"));
             }
         }
 
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_HAS_COLLISION, true);
-        this.dataProperties.putFloat(DATA_BOUNDING_BOX_HEIGHT, this.getHeight());
-        this.dataProperties.putFloat(DATA_BOUNDING_BOX_WIDTH, this.getWidth());
-        this.dataProperties.putInt(DATA_HEALTH, (int) this.getHealth());
+        this.setFlag(HAS_COLLISION, true);
+        this.setFloatData(BOUNDING_BOX_HEIGHT, this.getHeight());
+        this.setFloatData(BOUNDING_BOX_WIDTH, this.getWidth());
+        this.setIntData(HEALTH, (int) this.getHealth());
 
         this.scheduleUpdate();
     }
@@ -434,32 +282,50 @@ public abstract class Entity extends Location implements Metadatable {
         return entity;
     }
 
+    public EntityDataMap getData() {
+        EntityDataMap map = new EntityDataMap();
+        map.putAll(this.data);
+        return map;
+    }
+
+    public boolean getFlag(EntityFlag flag) {
+        return flags.getFlag(flag);
+    }
+
+    public void setFlag(EntityFlag flag, boolean value) {
+        boolean oldValue = this.flags.getFlag(flag);
+        if (value != oldValue) {
+            this.flags.setFlag(flag, value);
+            this.flagsDirty = true;
+        }
+    }
+
     public boolean hasCustomName() {
         return !this.getNameTag().isEmpty();
     }
 
     public String getNameTag() {
-        return this.getDataPropertyString(DATA_NAMETAG);
-    }
-
-    public boolean isNameTagVisible() {
-        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_CAN_SHOW_NAMETAG);
-    }
-
-    public boolean isNameTagAlwaysVisible() {
-        return this.getDataPropertyByte(DATA_ALWAYS_SHOW_NAMETAG) == 1;
+        return this.getStringData(NAMETAG);
     }
 
     public void setNameTag(String name) {
-        this.setDataProperty(new StringEntityData(DATA_NAMETAG, name));
+        this.setStringData(NAMETAG, name);
+    }
+
+    public boolean isNameTagVisible() {
+        return this.getFlag(CAN_SHOW_NAMETAG);
+    }
+
+    public void setNameTagVisible(boolean value) {
+        this.setFlag(CAN_SHOW_NAMETAG, value);
     }
 
     public void setNameTagVisible() {
         this.setNameTagVisible(true);
     }
 
-    public void setNameTagVisible(boolean value) {
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_CAN_SHOW_NAMETAG, value);
+    public boolean isNameTagAlwaysVisible() {
+        return this.getByteData(ALWAYS_SHOW_NAMETAG) == 1;
     }
 
     public void setNameTagAlwaysVisible() {
@@ -467,67 +333,19 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void setNameTagAlwaysVisible(boolean value) {
-        this.setDataProperty(new ByteEntityData(DATA_ALWAYS_SHOW_NAMETAG, value ? 1 : 0));
-    }
-
-    public void setScoreTag(String score) {
-        this.setDataProperty(new StringEntityData(DATA_SCORE_TAG, score));
+        this.setByteData(ALWAYS_SHOW_NAMETAG, value ? 1 : 0);
     }
 
     public String getScoreTag() {
-        return this.getDataPropertyString(DATA_SCORE_TAG);
+        return this.getStringData(SCORE_TAG);
     }
 
-    public boolean isSneaking() {
-        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_SNEAKING);
-    }
-
-    public void setSneaking() {
-        this.setSneaking(true);
-    }
-
-    public void setSneaking(boolean value) {
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_SNEAKING, value);
-    }
-
-    public boolean isSwimming() {
-        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_SWIMMING);
-    }
-
-    public void setSwimming() {
-        this.setSwimming(true);
-    }
-
-    public void setSwimming(boolean value) {
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_SWIMMING, value);
-    }
-
-    public boolean isSprinting() {
-        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_SPRINTING);
-    }
-
-    public void setSprinting() {
-        this.setSprinting(true);
-    }
-
-    public void setSprinting(boolean value) {
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_SPRINTING, value);
-    }
-
-    public boolean isGliding() {
-        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_GLIDING);
-    }
-
-    public void setGliding() {
-        this.setGliding(true);
-    }
-
-    public void setGliding(boolean value) {
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_GLIDING, value);
+    public void setScoreTag(String score) {
+        this.setStringData(SCORE_TAG, score);
     }
 
     public boolean isImmobile() {
-        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_IMMOBILE);
+        return this.getFlag(IMMOBILE);
     }
 
     public void setImmobile() {
@@ -535,11 +353,11 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void setImmobile(boolean value) {
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_IMMOBILE, value);
+        this.setFlag(IMMOBILE, value);
     }
 
     public boolean canClimb() {
-        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_CAN_CLIMB);
+        return this.getFlag(CAN_CLIMB);
     }
 
     public void setCanClimb() {
@@ -547,11 +365,11 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void setCanClimb(boolean value) {
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_CAN_CLIMB, value);
+        this.setFlag(CAN_CLIMB, value);
     }
 
     public boolean canClimbWalls() {
-        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_WALLCLIMBING);
+        return this.getFlag(WALLCLIMBING);
     }
 
     public void setCanClimbWalls() {
@@ -559,12 +377,12 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void setCanClimbWalls(boolean value) {
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_WALLCLIMBING, value);
+        this.setFlag(WALLCLIMBING, value);
     }
 
     public void setScale(float scale) {
         this.scale = scale;
-        this.setDataProperty(new FloatEntityData(DATA_SCALE, this.scale));
+        this.setFloatData(SCALE, this.scale);
 
         float height = this.getHeight() * this.scale;
         double radius = (this.getWidth() * this.scale) / 2d;
@@ -667,11 +485,11 @@ public abstract class Entity extends Location implements Metadatable {
             int g = (color[1] / count) & 0xff;
             int b = (color[2] / count) & 0xff;
 
-            this.setDataProperty(new IntEntityData(Entity.DATA_POTION_COLOR, (r << 16) + (g << 8) + b));
-            this.setDataProperty(new ByteEntityData(Entity.DATA_POTION_AMBIENT, ambient ? 1 : 0));
+            this.setIntData(POTION_COLOR, (r << 16) + (g << 8) + b);
+            this.setByteData(POTION_AMBIENT, ambient ? 1 : 0);
         } else {
-            this.setDataProperty(new IntEntityData(Entity.DATA_POTION_COLOR, 0));
-            this.setDataProperty(new ByteEntityData(Entity.DATA_POTION_AMBIENT, 0));
+            this.setIntData(POTION_COLOR, 0);
+            this.setByteData(POTION_AMBIENT, 0);
         }
     }
 
@@ -745,7 +563,7 @@ public abstract class Entity extends Location implements Metadatable {
         if (!this.namedTag.contains("Air")) {
             this.namedTag.putShort("Air", 300);
         }
-        this.setDataProperty(new ShortEntityData(DATA_AIR, this.namedTag.getShort("Air")), false);
+        this.setShortData(AIR, this.namedTag.getShort("Air"));
 
         if (!this.namedTag.contains("OnGround")) {
             this.namedTag.putBoolean("OnGround", false);
@@ -761,7 +579,7 @@ public abstract class Entity extends Location implements Metadatable {
             this.namedTag.putFloat("Scale", 1);
         }
         this.scale = this.namedTag.getFloat("Scale");
-        this.setDataProperty(new FloatEntityData(DATA_SCALE, scale), false);
+        this.setFloatData(SCALE, scale);
 
         this.chunk.addEntity(this);
         this.level.addEntity(this);
@@ -858,7 +676,7 @@ public abstract class Entity extends Location implements Metadatable {
 
         this.namedTag.putFloat("FallDistance", this.fallDistance);
         this.namedTag.putShort("Fire", this.fireTicks);
-        this.namedTag.putShort("Air", this.getDataPropertyShort(DATA_AIR));
+        this.namedTag.putShort("Air", this.getShortData(AIR));
         this.namedTag.putBoolean("OnGround", this.onGround);
         this.namedTag.putBoolean("Invulnerable", this.invulnerable);
         this.namedTag.putFloat("Scale", this.scale);
@@ -927,7 +745,7 @@ public abstract class Entity extends Location implements Metadatable {
         addEntity.speedX = (float) this.motionX;
         addEntity.speedY = (float) this.motionY;
         addEntity.speedZ = (float) this.motionZ;
-        addEntity.metadata = this.dataProperties;
+        addEntity.dataMap = this.data;
 
         addEntity.links = new EntityLink[this.passengers.size()];
         for (int i = 0; i < addEntity.links.length; i++) {
@@ -955,38 +773,44 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    public void sendData(Player player) {
-        this.sendData(player, null);
+    public void updateData() {
+        boolean dirty = !this.dataChangeSet.isEmpty() || this.flagsDirty;
+        if (!dirty) {
+            return;
+        }
+
+        if (flagsDirty) {
+            this.dataChangeSet.putFlags(this.flags);
+        }
+
+        this.sendDataToViewers(this.dataChangeSet);
+
+        if (this.isPlayer) {
+            sendData((Player) this, this.dataChangeSet);
+        }
+
+        this.flagsDirty = false;
+        this.dataChangeSet.clear();
     }
 
-    public void sendData(Player player, EntityMetadata data) {
-        SetEntityDataPacket pk = new SetEntityDataPacket();
-        pk.eid = this.getId();
-        pk.metadata = data == null ? this.dataProperties : data;
-
-        if (player.isOnline()) {
-            player.dataPacket(pk);
-        }
+    protected void sendData(Player player) {
+        sendData(player, this.data);
     }
 
-    public void sendData(Player[] players) {
-        this.sendData(players, null);
+    private void sendData(Player player, EntityDataMap map) {
+        SetEntityDataPacket packet = new SetEntityDataPacket();
+        packet.eid = this.id;
+        packet.dataMap.putAll(map);
+
+        player.dataPacket(packet);
     }
 
-    public void sendData(Player[] players, EntityMetadata data) {
-        SetEntityDataPacket pk = new SetEntityDataPacket();
-        pk.eid = this.getId();
-        pk.metadata = data == null ? this.dataProperties : data;
+    private void sendDataToViewers(EntityDataMap map) {
+        SetEntityDataPacket packet = new SetEntityDataPacket();
+        packet.eid = this.id;
+        packet.dataMap.putAll(map);
 
-        for (Player player : players) {
-            if (player == this || !player.isOnline()) {
-                continue;
-            }
-            player.dataPacket(pk.clone());
-        }
-        if (this instanceof Player && ((Player) this).isOnline()) {
-            ((Player) this).dataPacket(pk);
-        }
+        Server.broadcastPacket(this.getViewers(), packet);
     }
 
     public void despawnFrom(Player player) {
@@ -1061,7 +885,7 @@ public abstract class Entity extends Location implements Metadatable {
             this.health = this.getMaxHealth();
         }
 
-        setDataProperty(new IntEntityData(DATA_HEALTH, (int) this.health));
+        this.setIntData(HEALTH, (int) this.health);
     }
 
     public void setLastDamageCause(EntityDamageEvent type) {
@@ -1251,7 +1075,7 @@ public abstract class Entity extends Location implements Metadatable {
             if (this.fireTicks <= 0) {
                 this.extinguish();
             } else if (!this.fireProof && (!(this instanceof Player) || !((Player) this).isSpectator())) {
-                this.setDataFlag(DATA_FLAGS, DATA_FLAG_ONFIRE, true);
+                this.setFlag(ON_FIRE, true);
                 hasUpdate = true;
             }
         }
@@ -1378,6 +1202,8 @@ public abstract class Entity extends Location implements Metadatable {
 
         this.updateMovement();
 
+        this.updateData();
+
         return hasUpdate;
     }
 
@@ -1412,7 +1238,7 @@ public abstract class Entity extends Location implements Metadatable {
 
             // Add variables to entity
             entity.riding = this;
-            entity.setDataFlag(DATA_FLAGS, DATA_FLAG_RIDING, true);
+            entity.setFlag(RIDING, true);
             passengers.add(entity);
 
             entity.setSeatPosition(getMountedOffset(entity));
@@ -1433,7 +1259,7 @@ public abstract class Entity extends Location implements Metadatable {
 
         // Refurbish the entity
         entity.riding = null;
-        entity.setDataFlag(DATA_FLAGS, DATA_FLAG_RIDING, false);
+        entity.setFlag(RIDING, false);
         passengers.remove(entity);
 
         entity.setSeatPosition(new Vector3f());
@@ -1470,12 +1296,12 @@ public abstract class Entity extends Location implements Metadatable {
         passenger.setPosition(this.add(passenger.getSeatPosition().asVector3()));
     }
 
-    public void setSeatPosition(Vector3f pos) {
-        this.setDataProperty(new Vector3fEntityData(DATA_RIDER_SEAT_POSITION, pos));
+    public Vector3f getSeatPosition() {
+        return this.getVector3fData(RIDER_SEAT_POSITION);
     }
 
-    public Vector3f getSeatPosition() {
-        return this.getDataPropertyVector3f(DATA_RIDER_SEAT_POSITION);
+    public void setSeatPosition(Vector3f pos) {
+        this.setVector3fData(RIDER_SEAT_POSITION, pos);
     }
 
     public Vector3f getMountedOffset(Entity entity) {
@@ -1529,7 +1355,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     public void extinguish() {
         this.fireTicks = 0;
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_ONFIRE, false);
+        this.setFlag(ON_FIRE, false);
     }
 
     public boolean canTriggerWalking() {
@@ -2198,94 +2024,134 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    public boolean setDataProperty(EntityData data) {
-        return setDataProperty(data, true);
+    public boolean hasData(EntityData data) {
+        return this.data.contains(data);
     }
 
-    public boolean setDataProperty(EntityData data, boolean send) {
-        if (!Objects.equals(data, this.getDataProperties().get(data.getId()))) {
-            this.getDataProperties().put(data);
-            if (send) {
-                this.sendData(this.hasSpawned.toArray(new Player[0]), new EntityMetadata().put(this.dataProperties.get(data.getId())));
-            }
-            return true;
-        }
-        return false;
+    public EntityDataType getDataType(EntityData data) {
+        return this.data.getType(data);
     }
 
-    public EntityMetadata getDataProperties() {
-        return this.dataProperties;
+    public int getIntData(EntityData data) {
+        return this.data.getInt(data);
     }
 
-    public EntityData getDataProperty(int id) {
-        return this.getDataProperties().get(id);
-    }
-
-    public int getDataPropertyInt(int id) {
-        return this.getDataProperties().getInt(id);
-    }
-
-    public int getDataPropertyShort(int id) {
-        return this.getDataProperties().getShort(id);
-    }
-
-    public int getDataPropertyByte(int id) {
-        return this.getDataProperties().getByte(id);
-    }
-
-    public boolean getDataPropertyBoolean(int id) {
-        return this.getDataProperties().getBoolean(id);
-    }
-
-    public long getDataPropertyLong(int id) {
-        return this.getDataProperties().getLong(id);
-    }
-
-    public String getDataPropertyString(int id) {
-        return this.getDataProperties().getString(id);
-    }
-
-    public float getDataPropertyFloat(int id) {
-        return this.getDataProperties().getFloat(id);
-    }
-
-    public CompoundTag getDataPropertyNBT(int id) {
-        return this.getDataProperties().getNBT(id);
-    }
-
-    public Vector3 getDataPropertyPos(int id) {
-        return this.getDataProperties().getPosition(id);
-    }
-
-    public Vector3f getDataPropertyVector3f(int id) {
-        return this.getDataProperties().getFloatPosition(id);
-    }
-
-    public int getDataPropertyType(int id) {
-        return this.getDataProperties().exists(id) ? this.getDataProperty(id).getType() : -1;
-    }
-
-    public void setDataFlag(int propertyId, int id) {
-        this.setDataFlag(propertyId, id, true);
-    }
-
-    public void setDataFlag(int propertyId, int id, boolean value) {
-        if (this.getDataFlag(propertyId, id) != value) {
-            if (propertyId == EntityHuman.DATA_PLAYER_FLAGS) {
-                byte flags = (byte) this.getDataPropertyByte(propertyId);
-                flags ^= 1 << id;
-                this.setDataProperty(new ByteEntityData(propertyId, flags));
-            } else {
-                long flags = this.getDataPropertyLong(propertyId);
-                flags ^= 1L << id;
-                this.setDataProperty(new LongEntityData(propertyId, flags));
-            }
-
+    public void setIntData(EntityData data, int value) {
+        int oldValue = getIntData(data);
+        if (oldValue != value) {
+            this.data.putInt(data, value);
+            this.dataChangeSet.putInt(data, value);
         }
     }
 
-    public boolean getDataFlag(int propertyId, int id) {
-        return (((propertyId == EntityHuman.DATA_PLAYER_FLAGS ? this.getDataPropertyByte(propertyId) & 0xff : this.getDataPropertyLong(propertyId))) & (1L << id)) > 0;
+    public short getShortData(EntityData data) {
+        return this.data.getShort(data);
+    }
+
+    public void setShortData(EntityData data, int value) {
+        value = (short) value;
+        int oldValue = getShortData(data);
+        if (oldValue != value) {
+            this.data.putShort(data, value);
+            this.dataChangeSet.putShort(data, value);
+        }
+    }
+
+    public byte getByteData(EntityData data) {
+        return this.data.getByte(data);
+    }
+
+    public void setByteData(EntityData data, int value) {
+        value = (byte) value;
+        int oldValue = getByteData(data);
+        if (oldValue != value) {
+            this.data.putByte(data, value);
+            this.dataChangeSet.putByte(data, value);
+        }
+    }
+
+    public boolean getBooleanData(EntityData data) {
+        return getByteData(data) != 0;
+    }
+
+    public void setBooleanData(EntityData data, boolean value) {
+        boolean oldValue = getBooleanData(data);
+        if (oldValue != value) {
+            this.data.putByte(data, value ? 1 : 0);
+            this.dataChangeSet.putByte(data, value ? 1 : 0);
+        }
+    }
+
+    public long getLongData(EntityData data) {
+        return this.data.getLong(data);
+    }
+
+    public void setLongData(EntityData data, long value) {
+        long oldValue = getLongData(data);
+        if (oldValue != value) {
+            this.data.putLong(data, value);
+            this.dataChangeSet.putLong(data, value);
+        }
+    }
+
+    public String getStringData(EntityData data) {
+        return this.data.getString(data);
+    }
+
+    public void setStringData(EntityData data, String value) {
+        String oldValue = getStringData(data);
+        if (!Objects.equals(oldValue, value)) {
+            this.data.putString(data, value);
+            this.dataChangeSet.putString(data, value);
+        }
+    }
+
+    public float getFloatData(EntityData data) {
+        return this.data.getFloat(data);
+    }
+
+    public void setFloatData(EntityData data, float value) {
+        float oldValue = getFloatData(data);
+        if (oldValue != value) {
+            this.data.putFloat(data, value);
+            this.dataChangeSet.putFloat(data, value);
+        }
+    }
+
+    public CompoundTag getTagData(EntityData data) {
+        return this.data.getTag(data);
+    }
+
+    public void setTagData(EntityData data, CompoundTag value) {
+        CompoundTag oldValue = getTagData(data);
+        if (!Objects.equals(oldValue, value)) {
+            this.data.putTag(data, value);
+            this.dataChangeSet.putTag(data, value);
+        }
+    }
+
+    public BlockVector3 getPosData(EntityData data) {
+        return this.data.getPos(data);
+    }
+
+    public void setPosData(EntityData data, BlockVector3 value) {
+        BlockVector3 oldValue = getPosData(data);
+        if (!Objects.equals(oldValue, value)) {
+            this.data.putPos(data, value);
+            this.dataChangeSet.putPos(data, value);
+        }
+    }
+
+    public Vector3f getVector3fData(EntityData data) {
+        return this.data.getVector3f(data);
+    }
+
+    public void setVector3fData(EntityData data, Vector3f value) {
+        Vector3f oldValue = getVector3fData(data);
+        if (!Objects.equals(oldValue, value)) {
+            this.data.putVector3f(data, value);
+            this.dataChangeSet.putVector3f(data, value);
+        }
     }
 
     @Override

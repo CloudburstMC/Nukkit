@@ -6,14 +6,14 @@ import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+import static cn.nukkit.entity.data.EntityFlag.CRITICAL;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class EntityArrow extends EntityProjectile {
     public static final int NETWORK_ID = 80;
-
-    public static final int DATA_SOURCE_ID = 17;
 
     public static final int PICKUP_NONE = 0;
     public static final int PICKUP_ANY = 1;
@@ -79,12 +79,12 @@ public class EntityArrow extends EntityProjectile {
         this.setCritical(true);
     }
 
-    public void setCritical(boolean value) {
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_CRITICAL, value);
+    public boolean isCritical() {
+        return this.getFlag(CRITICAL);
     }
 
-    public boolean isCritical() {
-        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_CRITICAL);
+    public void setCritical(boolean value) {
+        this.setFlag(CRITICAL, value);
     }
 
     @Override

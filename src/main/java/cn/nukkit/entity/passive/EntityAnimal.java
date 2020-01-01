@@ -1,6 +1,5 @@
 package cn.nukkit.entity.passive;
 
-import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityAgeable;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.item.Item;
@@ -10,6 +9,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.player.Player;
 
+import static cn.nukkit.entity.data.EntityFlag.BABY;
 import static cn.nukkit.item.ItemIds.NAME_TAG;
 
 /**
@@ -23,7 +23,7 @@ public abstract class EntityAnimal extends EntityCreature implements EntityAgeab
 
     @Override
     public boolean isBaby() {
-        return this.getDataFlag(DATA_FLAGS, Entity.DATA_FLAG_BABY);
+        return this.getFlag(BABY);
     }
 
     public boolean isBreedingItem(Item item) {

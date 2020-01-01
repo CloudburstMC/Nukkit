@@ -4,8 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockWater;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
-import cn.nukkit.entity.data.ByteEntityData;
-import cn.nukkit.entity.data.FloatEntityData;
+import cn.nukkit.entity.data.EntityData;
 import cn.nukkit.entity.passive.EntityWaterAnimal;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.vehicle.VehicleMoveEvent;
@@ -26,6 +25,8 @@ import cn.nukkit.network.protocol.SetEntityLinkPacket;
 import cn.nukkit.player.Player;
 
 import java.util.ArrayList;
+
+import static cn.nukkit.entity.data.EntityData.*;
 
 /**
  * Created by yescallop on 2016/2/13.
@@ -62,7 +63,7 @@ public class EntityBoat extends EntityVehicle {
     protected void initEntity() {
         super.initEntity();
 
-        this.dataProperties.putByte(DATA_WOOD_ID, this.namedTag.getByte("woodID"));
+        this.setIntData(VARIANT, this.namedTag.getInt("Variant"));
     }
 
     @Override
@@ -314,10 +315,10 @@ public class EntityBoat extends EntityVehicle {
         if (entity.riding != null) {
             updatePassengers(true);
 
-            entity.setDataProperty(new ByteEntityData(DATA_RIDER_ROTATION_LOCKED, 1));
-            entity.setDataProperty(new FloatEntityData(DATA_RIDER_MAX_ROTATION, 90));
+            entity.setByteData(RIDER_ROTATION_LOCKED, 1);
+            entity.setFloatData(RIDER_MAX_ROTATION, 90);
 
-            entity.setDataProperty(new FloatEntityData(DATA_RIDER_MIN_ROTATION, this.passengers.indexOf(entity) == 1 ? -90 : 0));
+            entity.setFloatData(RIDER_MIN_ROTATION, this.passengers.indexOf(entity) == 1 ? -90 : 0);
 
             //            if(entity instanceof Player && mode == SetEntityLinkPacket.TYPE_RIDE){ //TODO: controlling?
 //                entity.setDataProperty(new ByteEntityData(DATA_FLAG_WASD_CONTROLLED))
@@ -337,7 +338,7 @@ public class EntityBoat extends EntityVehicle {
         boolean r = super.dismountEntity(entity);
 
         updatePassengers();
-        entity.setDataProperty(new ByteEntityData(DATA_RIDER_ROTATION_LOCKED, 0));
+        entity.setByteData(RIDER_ROTATION_LOCKED, 0);
 
         return r;
     }
@@ -363,10 +364,10 @@ public class EntityBoat extends EntityVehicle {
     }
 
     public void onPaddle(AnimatePacket.Action animation, float value) {
-        int propertyId = animation == AnimatePacket.Action.ROW_RIGHT ? DATA_PADDLE_TIME_RIGHT : DATA_PADDLE_TIME_LEFT;
+        EntityData data = animation == AnimatePacket.Action.ROW_RIGHT ? PADDLE_TIME_RIGHT : PADDLE_TIME_LEFT;
 
-        if (getDataPropertyFloat(propertyId) != value) {
-            this.setDataProperty(new FloatEntityData(propertyId, value));
+        if (getFloatData(data) != value) {
+            this.setFloatData(data, value);
         }
     }
 

@@ -9,6 +9,8 @@ import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.nbt.tag.CompoundTag;
 
+import static cn.nukkit.entity.data.EntityFlag.SHOWBASE;
+
 /**
  * Created by PetteriM1
  */
@@ -74,10 +76,10 @@ public class EntityEndCrystal extends Entity implements EntityExplosive {
     }
 
     public boolean showBase() {
-        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_SHOWBASE);
+        return this.getFlag(SHOWBASE);
     }
 
     public void setShowBase(boolean value) {
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_SHOWBASE, value);
+        this.setFlag(SHOWBASE, value);
     }
 }

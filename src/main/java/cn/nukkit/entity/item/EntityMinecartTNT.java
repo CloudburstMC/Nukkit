@@ -4,7 +4,6 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityExplosive;
-import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
@@ -18,6 +17,9 @@ import cn.nukkit.player.Player;
 import cn.nukkit.utils.MinecartType;
 
 import java.util.concurrent.ThreadLocalRandom;
+
+import static cn.nukkit.entity.data.EntityData.FUSE_LENGTH;
+import static cn.nukkit.entity.data.EntityFlag.CHARGED;
 
 /**
  * Author: Adam Matthew [larryTheCoder]
@@ -49,7 +51,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
         } else {
             fuse = 80;
         }
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_CHARGED, false);
+        this.setFlag(CHARGED, false);
     }
 
     @Override
@@ -62,7 +64,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
             lastUpdate = currentTick;
 
             if (fuse % 5 == 0) {
-                setDataProperty(new IntEntityData(DATA_FUSE_LENGTH, fuse));
+                setIntData(FUSE_LENGTH, fuse);
             }
 
             fuse -= tickDiff;

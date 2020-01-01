@@ -1,10 +1,11 @@
 package cn.nukkit.entity.passive;
 
-import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityAgeable;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+
+import static cn.nukkit.entity.data.EntityFlag.BABY;
 
 /**
  * Created by Pub4Game on 21.06.2016.
@@ -69,6 +70,6 @@ public class EntityVillagerV1 extends EntityCreature implements EntityNPC, Entit
 
     @Override
     public boolean isBaby() {
-        return this.getDataFlag(DATA_FLAGS, Entity.DATA_FLAG_BABY);
+        return this.getFlag(BABY);
     }
 }

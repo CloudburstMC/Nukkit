@@ -5,6 +5,8 @@ import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
+import static cn.nukkit.entity.data.EntityFlag.BABY;
+
 public class EntityVillager extends EntityCreature implements EntityNPC, EntityAgeable {
 
     public static final int NETWORK_ID = 115;
@@ -46,11 +48,11 @@ public class EntityVillager extends EntityCreature implements EntityNPC, EntityA
     }
 
     public boolean isBaby() {
-        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_BABY);
+        return this.getFlag(BABY);
     }
 
     public void setBaby(boolean baby) {
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_BABY, baby);
+        this.setFlag(BABY, baby);
         this.setScale(baby ? 0.5f : 1);
     }
 }

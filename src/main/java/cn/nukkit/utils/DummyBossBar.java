@@ -1,13 +1,14 @@
 package cn.nukkit.utils;
 
 import cn.nukkit.entity.Attribute;
-import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.data.EntityMetadata;
+import cn.nukkit.entity.data.EntityDataMap;
 import cn.nukkit.entity.mob.EntityCreeper;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.player.Player;
 
 import java.util.concurrent.ThreadLocalRandom;
+
+import static cn.nukkit.entity.data.EntityData.*;
 
 /**
  * DummyBossBar
@@ -136,14 +137,14 @@ public class DummyBossBar {
         pkAdd.speedX = 0;
         pkAdd.speedY = 0;
         pkAdd.speedZ = 0;
-        pkAdd.metadata = new EntityMetadata()
+        pkAdd.dataMap = new EntityDataMap()
                 // Default Metadata tags
-                .putLong(Entity.DATA_FLAGS, 0)
-                .putShort(Entity.DATA_AIR, 400)
-                .putShort(Entity.DATA_MAX_AIR, 400)
-                .putLong(Entity.DATA_LEAD_HOLDER_EID, -1)
-                .putString(Entity.DATA_NAMETAG, text) // Set the entity name
-                .putFloat(Entity.DATA_SCALE, 0); // And make it invisible
+                .putLong(FLAGS, 0)
+                .putShort(AIR, 400)
+                .putShort(MAX_AIR, 400)
+                .putLong(LEAD_HOLDER_EID, -1)
+                .putString(NAMETAG, text) // Set the entity name
+                .putFloat(SCALE, 0); // And make it invisible
 
         player.dataPacket(pkAdd);
     }
@@ -218,7 +219,7 @@ public class DummyBossBar {
     private void updateBossEntityNameTag() {
         SetEntityDataPacket pk = new SetEntityDataPacket();
         pk.eid = this.bossBarId;
-        pk.metadata = new EntityMetadata().putString(Entity.DATA_NAMETAG, this.text);
+        pk.dataMap = new EntityDataMap().putString(NAMETAG, this.text);
         player.dataPacket(pk);
     }
 

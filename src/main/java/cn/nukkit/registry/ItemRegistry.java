@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,8 +26,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static cn.nukkit.item.ItemIds.*;
 
+@Log4j2
 public class ItemRegistry implements Registry {
-    private static final ItemRegistry INSTANCE = new ItemRegistry(BlockRegistry.get());
+    private static final ItemRegistry INSTANCE;
     private static final List<ItemData> VANILLA_STATES;
 
     static {
@@ -40,6 +42,8 @@ public class ItemRegistry implements Registry {
         Type collectionType = new TypeToken<List<ItemData>>() {
         }.getType();
         VANILLA_STATES = gson.fromJson(reader, collectionType);
+
+        INSTANCE = new ItemRegistry(BlockRegistry.get()); // Needs to be initialized afterwards
     }
 
     private final Map<Identifier, ItemFactory> factoryMap = new IdentityHashMap<>();

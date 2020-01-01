@@ -1,7 +1,8 @@
 package cn.nukkit.level.particle;
 
-import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.data.EntityMetadata;
+import cn.nukkit.entity.data.EntityDataMap;
+import cn.nukkit.entity.data.EntityFlag;
+import cn.nukkit.entity.data.EntityFlags;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
@@ -16,6 +17,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.entity.data.EntityData.*;
 
 /**
  * Created on 2015/11/21 by xtypr.
@@ -34,7 +36,7 @@ public class FloatingTextParticle extends Particle {
     protected final Level level;
     protected long entityId = -1;
     protected boolean invisible = false;
-    protected EntityMetadata metadata = new EntityMetadata();
+    protected EntityDataMap dataMap = new EntityDataMap();
 
     public FloatingTextParticle(Location location, String title) {
         this(location, title, null);
@@ -56,37 +58,36 @@ public class FloatingTextParticle extends Particle {
         super(pos.x, pos.y, pos.z);
         this.level = level;
 
-        long flags = (
-                1L << Entity.DATA_FLAG_NO_AI
-        );
-        metadata.putLong(Entity.DATA_FLAGS, flags)
-                .putLong(Entity.DATA_LEAD_HOLDER_EID,-1)
-                .putFloat(Entity.DATA_SCALE, 0.01f) //zero causes problems on debug builds?
-                .putFloat(Entity.DATA_BOUNDING_BOX_HEIGHT, 0.01f)
-                .putFloat(Entity.DATA_BOUNDING_BOX_WIDTH, 0.01f);
+        EntityFlags flags = new EntityFlags();
+        flags.setFlag(EntityFlag.IMMOBILE, true);
+        dataMap.putFlags(flags)
+                .putLong(LEAD_HOLDER_EID, -1)
+                .putFloat(SCALE, 0.01f) //zero causes problems on debug builds?
+                .putFloat(BOUNDING_BOX_HEIGHT, 0.01f)
+                .putFloat(BOUNDING_BOX_WIDTH, 0.01f);
         if (!Strings.isNullOrEmpty(title)) {
-            metadata.putString(Entity.DATA_NAMETAG, title);
+            dataMap.putString(NAMETAG, title);
         }
         if (!Strings.isNullOrEmpty(text)) {
-            metadata.putString(Entity.DATA_SCORE_TAG, text);
+            dataMap.putString(SCORE_TAG, text);
         }
     }
 
     public String getText() {
-        return metadata.getString(Entity.DATA_SCORE_TAG);
+        return dataMap.getString(SCORE_TAG);
     }
 
     public void setText(String text) {
-        this.metadata.putString(Entity.DATA_SCORE_TAG, text);
+        this.dataMap.putString(SCORE_TAG, text);
         sendMetadata();
     }
 
     public String getTitle() {
-        return metadata.getString(Entity.DATA_NAMETAG);
+        return dataMap.getString(NAMETAG);
     }
 
     public void setTitle(String title) {
-        this.metadata.putString(Entity.DATA_NAMETAG, title);
+        this.dataMap.putString(NAMETAG, title);
         sendMetadata();
     }
 
@@ -94,7 +95,7 @@ public class FloatingTextParticle extends Particle {
         if (level != null) {
             SetEntityDataPacket packet = new SetEntityDataPacket();
             packet.eid = entityId;
-            packet.metadata = metadata;
+            packet.dataMap.putAll(dataMap);
             level.addChunkPacket(getChunkX(), getChunkZ(), packet);
         }
     }
@@ -130,7 +131,7 @@ public class FloatingTextParticle extends Particle {
 
         if (!this.invisible) {
             PlayerListPacket.Entry[] entry = {new PlayerListPacket.Entry(uuid, entityId,
-                    metadata.getString(Entity.DATA_NAMETAG), EMPTY_SKIN)};
+                    dataMap.getString(NAMETAG), EMPTY_SKIN)};
             PlayerListPacket playerAdd = new PlayerListPacket();
             playerAdd.entries = entry;
             playerAdd.type = PlayerListPacket.TYPE_ADD;
@@ -149,7 +150,7 @@ public class FloatingTextParticle extends Particle {
             pk.speedZ = 0;
             pk.yaw = 0;
             pk.pitch = 0;
-            pk.metadata = this.metadata;
+            pk.dataMap = this.dataMap;
             pk.item = Item.get(AIR);
             packets.add(pk);
 
