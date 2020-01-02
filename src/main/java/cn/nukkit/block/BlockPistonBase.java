@@ -111,7 +111,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                 BlockEntityPistonArm arm = (BlockEntityPistonArm) blockEntity;
                 boolean powered = this.isPowered();
 
-                if (arm.powered != powered && checkState(powered)) {
+                if (arm.state % 2 == 0 && arm.powered != powered && checkState(powered)) {
                     arm.powered = powered;
 
                     if (arm.chunk != null) {
