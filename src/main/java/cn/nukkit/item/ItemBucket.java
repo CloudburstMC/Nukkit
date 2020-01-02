@@ -125,7 +125,7 @@ public class ItemBucket extends Item {
             if(!ev.isCancelled()) {
                 ev.setCancelled(!block.canBeFlowedInto());
 
-                if (player.getLevel().getName().equals("nether") && this.getDamage() != 10) {
+                if (player.getLevel().getDimension() == Level.DIMENSION_NETHER && this.getDamage() != 10) {
                     ev.setCancelled(true);
                 }
             }
