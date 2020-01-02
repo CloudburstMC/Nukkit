@@ -121,10 +121,13 @@ public class ItemBucket extends Item {
             Item result = Item.get(BUCKET, 0, 1);
             PlayerBucketEmptyEvent ev;
             player.getServer().getPluginManager().callEvent(ev = new PlayerBucketEmptyEvent(player, block, face, this, result));
-            ev.setCancelled(!block.canBeFlowedInto());
 
-            if (player.getLevel().getName().equals("nether") && this.getDamage() != 10) {
-                ev.setCancelled(true);
+            if(!ev.isCancelled()) {
+                ev.setCancelled(!block.canBeFlowedInto());
+
+                if (player.getLevel().getName().equals("nether") && this.getDamage() != 10) {
+                    ev.setCancelled(true);
+                }
             }
 
             if (!ev.isCancelled()) {
