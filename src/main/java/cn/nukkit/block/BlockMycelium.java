@@ -59,7 +59,7 @@ public class BlockMycelium extends BlockSolid {
             y = random.nextRange((int) y - 1, (int) y + 1);
             z = random.nextRange((int) z - 1, (int) z + 1);
             Block block = this.getLevel().getBlock(new Vector3(x, y, z));
-            if (block.getId() == Block.DIRT) {
+            if (block.getId() == Block.DIRT && block.getDamage() == 0) {
                 if (block.up().isTransparent()) {
                     BlockSpreadEvent ev = new BlockSpreadEvent(block, this, new BlockMycelium());
                     Server.getInstance().getPluginManager().callEvent(ev);

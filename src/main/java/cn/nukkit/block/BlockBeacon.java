@@ -55,7 +55,6 @@ public class BlockBeacon extends BlockTransparent {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-
             BlockEntity t = this.getLevel().getBlockEntity(this);
             BlockEntityBeacon beacon;
             if (t instanceof BlockEntityBeacon) {
@@ -66,7 +65,10 @@ public class BlockBeacon extends BlockTransparent {
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
-                beacon = new BlockEntityBeacon(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+                beacon = (BlockEntityBeacon) BlockEntity.createBlockEntity(BlockEntity.BEACON, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+                if (beacon == null) {
+                    return false;
+                }
             }
 
             player.addWindow(new BeaconInventory(player.getUIInventory(), this), Player.BEACON_WINDOW_ID);
@@ -84,7 +86,10 @@ public class BlockBeacon extends BlockTransparent {
                     .putInt("x", (int) this.x)
                     .putInt("y", (int) this.y)
                     .putInt("z", (int) this.z);
-            new BlockEntityBeacon(this.level.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+            BlockEntityBeacon beacon = (BlockEntityBeacon) BlockEntity.createBlockEntity(BlockEntity.BEACON, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+            if (beacon == null) {
+                return false;
+            }
         }
 
         return blockSuccess;
