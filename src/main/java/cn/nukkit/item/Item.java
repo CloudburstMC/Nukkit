@@ -77,10 +77,6 @@ public class Item implements Cloneable, BlockID, ItemID {
         return hasMeta;
     }
 
-    public int getMeta(){
-        return meta;
-    }
-
     public boolean canBeActivated() {
         return false;
     }
