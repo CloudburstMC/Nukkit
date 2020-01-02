@@ -49,7 +49,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (Math.abs(player.x - this.x) < 2 && Math.abs(player.z - this.z) < 2) {
+        if (Math.abs(player.getFloorX() - this.x) <= 1 && Math.abs(player.getFloorZ() - this.z) <= 1) {
             double y = player.y + player.getEyeHeight();
 
             if (y - this.y > 2) {
