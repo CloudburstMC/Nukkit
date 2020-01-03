@@ -11,6 +11,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.math.Vector2;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -50,15 +51,18 @@ public class BlockSeaPickle extends BlockFlowable {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             Block down = down();
-            if (!down.isSolid() || down.getId() == MAGMA || down.getId() == SOUL_SAND || down.getId() == ICE) {
+            if (!down.isSolid() || down.getId() == ICE) {
                 this.getLevel().useBreakOn(this);
                 return type;
             }
 
             Block layer1 = getLevelBlockAtLayer(1);
             if (layer1 instanceof BlockWater) {
-                if (isDead() || layer1.getDamage() != 0 && layer1.getDamage() != 8) {
-                    this.getLevel().useBreakOn(this);
+                if (isDead() && layer1.getDamage() == 0 || layer1.getDamage() == 8) {
+                    BlockFadeEvent event = new BlockFadeEvent(this, new BlockSeaPickle(getDamage() ^ 0x4));
+                    if (!event.isCancelled()) {
+                        this.getLevel().setBlock(this, event.getNewState(), true, true);
+                    }
                     return type;
                 }
             } else if (!isDead()) {
@@ -82,7 +86,11 @@ public class BlockSeaPickle extends BlockFlowable {
             return true;
         }
 
-        if (target.isSolid() && target.getId() != MAGMA && target.getId() != SOUL_SAND && target.getId() != ICE) {
+        Block down = block.down().getLevelBlockAtLayer(0);
+        if (down.isSolid() && down.getId() != ICE) {
+            if (down instanceof BlockSlab || down instanceof BlockStairs || block.getId() == BUBBLE_COLUMN) {
+                return false;
+            }
             Block layer1 = block.getLevelBlockAtLayer(1);
             if (layer1 instanceof BlockWater) {
                 if (layer1.getDamage() != 0 && layer1.getDamage() != 8) {
@@ -138,7 +146,7 @@ public class BlockSeaPickle extends BlockFlowable {
             for (Block blockNearby : blocksAround) {
                 if (blockNearby.getId() == CORAL_BLOCK) {
                     Block up = blockNearby.up();
-                    if (up instanceof BlockWater && (up.getDamage() == 0 || up.getDamage() == 8) && random.nextInt(6) == 0) {
+                    if (up instanceof BlockWater && (up.getDamage() == 0 || up.getDamage() == 8) && random.nextInt(6) == 0 && new Vector2(up.x, up.z).distance(new Vector2(this.x, this.z)) <= 2) {
                         BlockSpreadEvent blockSpreadEvent = new BlockSpreadEvent(up, this, new BlockSeaPickle(random.nextInt(3)));
                         if (!blockSpreadEvent.isCancelled()) {
                             this.getLevel().setBlock(up, 1, new BlockWater(), true, false);
