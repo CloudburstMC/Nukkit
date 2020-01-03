@@ -46,6 +46,7 @@ public abstract class BlockEntity extends Position {
     public static final String BANNER = "Banner";
     public static final String LECTERN = "Lectern";
     public static final String BEEHIVE = "Beehive";
+    public static final String CONDUIT = "Conduit";
 
 
     public static long count = 1;

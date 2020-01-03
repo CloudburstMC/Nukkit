@@ -2342,6 +2342,7 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.BLAST_FURNACE, BlockEntityBlastFurnace.class);
         BlockEntity.registerBlockEntity(BlockEntity.SMOKER, BlockEntitySmoker.class);
         BlockEntity.registerBlockEntity(BlockEntity.BEEHIVE, BlockEntityBeehive.class);
+        BlockEntity.registerBlockEntity(BlockEntity.CONDUIT, BlockEntityConduit.class);
     }
 
     public boolean isNetherAllowed() {

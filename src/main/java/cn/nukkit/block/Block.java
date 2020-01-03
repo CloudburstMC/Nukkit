@@ -347,6 +347,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[SPRUCE_PRESSURE_PLATE] = BlockPressurePlateSpruce.class; //409
             list[CARVED_PUMPKIN] = BlockCarvedPumpkin.class; //410
             list[SEA_PICKLE] = BlockSeaPickle.class; //411
+            list[CONDUIT] = BlockConduit.class; //412
 
             list[BUBBLE_COLUMN] = BlockBubbleColumn.class; //415
             list[BARRIER] = BlockBarrier.class; //416
