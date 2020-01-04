@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * author: MagicDroidX
@@ -58,6 +59,21 @@ public class BlockStone extends BlockSolidMeta {
                 "Unknown Stone"
         };
         return names[this.getDamage() & 0x07];
+    }
+
+    @Override
+    public BlockColor getColor() {
+        BlockColor[] colors = new BlockColor[]{
+                BlockColor.STONE_BLOCK_COLOR,
+                BlockColor.DIRT_BLOCK_COLOR,
+                BlockColor.DIRT_BLOCK_COLOR,
+                BlockColor.QUARTZ_BLOCK_COLOR,
+                BlockColor.QUARTZ_BLOCK_COLOR,
+                BlockColor.STONE_BLOCK_COLOR,
+                BlockColor.STONE_BLOCK_COLOR,
+                BlockColor.STONE_BLOCK_COLOR
+        };
+        return colors[this.getDamage() & 0x07];
     }
 
     @Override

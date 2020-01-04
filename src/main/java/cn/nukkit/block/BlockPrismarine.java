@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.BlockColor;
 
 
 public class BlockPrismarine extends BlockSolidMeta {
@@ -63,5 +64,19 @@ public class BlockPrismarine extends BlockSolidMeta {
     @Override
     public boolean canHarvestWithHand() {
         return false;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        int type = this.getDamage() > 2 ? 0 : this.getDamage();
+        switch (type) {
+            case NORMAL:
+                return BlockColor.CYAN_BLOCK_COLOR;
+            default:
+            case DARK:
+            case BRICKS:
+                return BlockColor.DIAMOND_BLOCK_COLOR;
+
+        }
     }
 }

@@ -34,7 +34,7 @@ public class BlockSlabStone extends BlockSlab {
     @Override
     public String getName() {
         String[] names = new String[]{
-                "Stone",
+                "Smooth Stone",
                 "Sandstone",
                 "Wooden",
                 "Cobblestone",
