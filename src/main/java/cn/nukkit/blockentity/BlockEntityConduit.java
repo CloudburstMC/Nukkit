@@ -3,11 +3,22 @@ package cn.nukkit.blockentity;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.mob.EntityMob;
+import cn.nukkit.event.entity.EntityDamageByBlockEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.Sound;
+import cn.nukkit.level.biome.Biome;
+import cn.nukkit.level.biome.type.SnowyBiome;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class BlockEntityConduit extends BlockEntitySpawnable {
     public static IntSet VALID_STRUCTURE_BLOCKS = new IntOpenHashSet(new int[]{
@@ -84,6 +95,13 @@ public class BlockEntityConduit extends BlockEntitySpawnable {
             }
         }
 
+        if (!active) {
+            targetEntity = null;
+            target = -1;
+        } else if (level.getCurrentTick() % 40 == 0) {
+            attackMob();
+        }
+
         return true;
     }
 
@@ -108,6 +126,56 @@ public class BlockEntityConduit extends BlockEntitySpawnable {
         return active;
     }
 
+
+    public void attackMob() {
+        int radius = getAttackRadius();
+        if (radius <= 0) {
+            return;
+        }
+
+        boolean updated = false;
+
+        Entity target = this.targetEntity;
+        if (target != null && !canAttack(target)) {
+            target = null;
+            updated = true;
+            this.targetEntity = null;
+            this.target = -1;
+        }
+
+        if (target == null) {
+            Entity[] mobs = Arrays.stream(level.getCollidingEntities(new SimpleAxisAlignedBB(x - radius, y - radius, z - radius, x + 1 + radius, y + 1 + radius, z + 1 + radius)))
+                    .filter(this::canAttack)
+                    .toArray(Entity[]::new);
+            if (mobs.length == 0) {
+                if (updated) {
+                    spawnToAll();
+                }
+                return;
+            }
+            target = mobs[ThreadLocalRandom.current().nextInt(mobs.length)];
+            this.targetEntity = target;
+            updated = true;
+        }
+
+        if (!target.attack(new EntityDamageByBlockEvent(getBlock(), target, EntityDamageEvent.DamageCause.MAGIC, 4))) {
+            this.targetEntity = null;
+            updated = true;
+        }
+
+        if (updated) {
+            spawnToAll();
+        }
+    }
+
+    public boolean canAttack(Entity target) {
+        return target instanceof EntityMob && (
+                target.isTouchingWater()
+                || target.level.isRaining() && target.level.canBlockSeeSky(target)
+                        && !(Biome.getBiome(target.level.getBiomeId(target.getFloorX(), target.getFloorZ())) instanceof SnowyBiome)
+        );
+    }
+
     private boolean scanWater() {
         int x = getFloorX();
         int y = getFloorY();
@@ -129,7 +197,7 @@ public class BlockEntityConduit extends BlockEntitySpawnable {
         return true;
     }
 
-    private int scanMainStructure() {
+    private int scanFrame() {
         int validBlocks = 0;
         int x = getFloorX();
         int y = getFloorY();
@@ -187,8 +255,8 @@ public class BlockEntityConduit extends BlockEntitySpawnable {
         return validBlocks;
     }
 
-    private int scanExtraStructure() {
-        int validBlocks = 0;
+    public List<Block> scanEdgeBlock() {
+        List<Block> validBlocks = new ArrayList<>();
         int x = getFloorX();
         int y = getFloorY();
         int z = getFloorZ();
@@ -204,11 +272,11 @@ public class BlockEntityConduit extends BlockEntitySpawnable {
                             continue;
                         }
 
-                        int blockId = level.getBlockIdAt(x + ix, y + iy, z + iz);
+                        Block block = level.getBlock(x + ix, y + iy, z + iz);
                         //validBlocks++;
                         //level.setBlock(x + ix, y + iy, z + iz, new BlockDiamond(), true, true);
-                        if (VALID_STRUCTURE_BLOCKS.contains(blockId)) {
-                            validBlocks++;
+                        if (VALID_STRUCTURE_BLOCKS.contains(block.getId())) {
+                            validBlocks.add(block);
                         }
                     }
                 }
@@ -224,13 +292,11 @@ public class BlockEntityConduit extends BlockEntitySpawnable {
             return false;
         }
 
-        int validBlocks = scanMainStructure();
+        int validBlocks = scanFrame();
         if (validBlocks < 16) {
             this.validBlocks = 0;
             return false;
         }
-
-        validBlocks += scanExtraStructure();
 
         this.validBlocks = validBlocks;
 
@@ -239,6 +305,19 @@ public class BlockEntityConduit extends BlockEntitySpawnable {
 
     public int getValidBlocks() {
         return validBlocks;
+    }
+
+    public int getPlayerRadius() {
+        int radius = validBlocks / 7;
+        return radius * 16;
+    }
+
+    public int getAttackRadius() {
+        if (validBlocks == 42) {
+            return 8;
+        } else {
+            return 0;
+        }
     }
 
     @Override
