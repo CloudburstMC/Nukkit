@@ -18,18 +18,25 @@ public enum InventoryType {
     DISPENSER(0, "Dispenser", 6), //9 CONTAINER
     DROPPER(9, "Dropper", 7), //9 CONTAINER
     HOPPER(5, "Hopper", 8), //5 CONTAINER
+    //CAULDRON typeId:9
+    //MINECART_CHEST typeId:10
+    //MINECART_HOPPER typeId:11
+    //MINECART_COMMAND_BLOCK typeId:16
+    //HORSE typeId:12
+    //JUKEBOX typeId:17
     UI(1, "UI", -1),
     SHULKER_BOX(27, "Shulker Box", 0),
     BEACON(1, "Beacon", 13),
     // 14 is something (crash)
-    // 20 is something (crash)
-    // 21 is something (crash)
-    // 22 is something (crash)
-    // 23 is something (crash)
+    //COMPOUND_CREATOR typeId:20
+    //ELEMENT_CONSTRUCTOR typeId:21
+    //MATERIAL_REDUCER typeId:22
+    //LAB_TABLE typeId:23
     // 26 is GRINDSTONE
-    // 27 is something (no crash)
     BLAST_FURNACE(3, "Blast Furnace", 27),
-    SMOKER(3, "Smoker", 28);
+    SMOKER(3, "Smoker", 28),
+    //STONECUTTER typeId:29
+    BARREL(27, "Barrel", 0);
 
 
     private final int size;
