@@ -395,6 +395,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[LIT_SMOKER] = BlockSmokerBurning.class; //454
 
             list[SWEET_BERRY_BUSH] = BlockSweetBerryBush.class; //462
+            list[LANTERN] = BlockLantern.class; //463
 
             list[LAVA_CAULDRON] = BlockCauldronLava.class; //465
             list[JIGSAW] = BlockJigsaw.class; //466
