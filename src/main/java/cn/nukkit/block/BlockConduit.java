@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityConduit;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
@@ -39,23 +38,8 @@ public class BlockConduit extends BlockTransparent {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
-        BlockEntity blockEntity = level.getBlockEntity(this);
-        if (blockEntity instanceof BlockEntityConduit) {
-            BlockEntityConduit conduit = (BlockEntityConduit) blockEntity;
-            conduit.scanStructure();
-        }
-        return false;
-    }
-
-    @Override
-    public boolean canBeActivated() {
-        return true;
-    }
-
-    @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (item.getId() == CONDUIT && target.getId() == CONDUIT) {
+        if (item.getBlock() != null && item.getBlock().getId() == CONDUIT && target.getId() == CONDUIT) {
             return false;
         }
 
@@ -88,5 +72,35 @@ public class BlockConduit extends BlockTransparent {
     @Override
     public BlockColor getColor() {
         return BlockColor.DIAMOND_BLOCK_COLOR;
+    }
+
+    @Override
+    public double getMinX() {
+        return x + (5.0/16);
+    }
+
+    @Override
+    public double getMinY() {
+        return y + (5.0/16);
+    }
+
+    @Override
+    public double getMinZ() {
+        return z + (5.0/16);
+    }
+
+    @Override
+    public double getMaxX() {
+        return x + (11.0/16);
+    }
+
+    @Override
+    public double getMaxY() {
+        return y + (11.0/16);
+    }
+
+    @Override
+    public double getMaxZ() {
+        return z + (11.0/16);
     }
 }

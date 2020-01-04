@@ -778,7 +778,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                 .map(Enchantment::getLevel).orElse(0);
         int hasteEffectLevel = Optional.ofNullable(player.getEffect(Effect.HASTE))
                 .map(Effect::getAmplifier).orElse(0);
-        boolean insideOfWaterWithoutAquaAffinity = player.isInsideOfWater() &&
+        //TODO Fix the break time with CONDUIT_POWER, it's not right
+        int conduitPowerLevel = Optional.ofNullable(player.getEffect(Effect.CONDUIT_POWER))
+                .map(e -> /*(e.getAmplifier() +1) * 4*/ e.getAmplifier())
+                .orElse(0);
+        hasteEffectLevel += conduitPowerLevel;
+        boolean insideOfWaterWithoutAquaAffinity = player.isInsideOfWater() && conduitPowerLevel <= 0 &&
                 Optional.ofNullable(player.getInventory().getHelmet().getEnchantment(Enchantment.ID_WATER_WORKER))
                         .map(Enchantment::getLevel).map(l -> l >= 1).orElse(false);
         boolean outOfWaterButNotOnGround = (!player.isInsideOfWater()) && (!player.isOnGround());

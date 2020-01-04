@@ -4,6 +4,8 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.mob.EntityMob;
+import cn.nukkit.event.block.ConduitActivateEvent;
+import cn.nukkit.event.block.ConduitDeactivateEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.Sound;
@@ -11,7 +13,9 @@ import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.biome.type.SnowyBiome;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.math.Vector2;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.potion.Effect;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 
@@ -90,8 +94,10 @@ public class BlockEntityConduit extends BlockEntitySpawnable {
             this.spawnToAll();
             if (activeBeforeUpdate && !active) {
                 level.addSound(add(0, 0.5, 0), Sound.CONDUIT_DEACTIVATE);
+                level.getServer().getPluginManager().callEvent(new ConduitDeactivateEvent(getBlock()));
             } else if (!activeBeforeUpdate && active) {
                 level.addSound(add(0, 0.5, 0), Sound.CONDUIT_ACTIVATE);
+                level.getServer().getPluginManager().callEvent(new ConduitActivateEvent(getBlock()));
             }
         }
 
@@ -100,6 +106,7 @@ public class BlockEntityConduit extends BlockEntitySpawnable {
             target = -1;
         } else if (level.getCurrentTick() % 40 == 0) {
             attackMob();
+            addEffectToPlayers();
         }
 
         return true;
@@ -118,14 +125,35 @@ public class BlockEntityConduit extends BlockEntitySpawnable {
         return targetEntity;
     }
 
-    public void setActive(boolean active) {
+    // Client validates the structure, so if we set it to an invalid state it would cause a visual desync
+    /*public void setActive(boolean active) {
         this.active = active;
-    }
+    }*/
 
     public boolean isActive() {
         return active;
     }
 
+    public void addEffectToPlayers() {
+        int radius = getPlayerRadius();
+        if (radius <= 0) {
+            return;
+        }
+        final int radiusSquared = radius * radius;
+
+        Vector2 conduitPos = new Vector2(x, z);
+
+        this.getLevel().getPlayers().values().stream()
+                .filter(this::canAffect)
+                .filter(p -> conduitPos.distanceSquared(p.x, p.z) <= radiusSquared)
+                .forEach(p -> p.addEffect(Effect.getEffect(Effect.CONDUIT_POWER)
+                                .setDuration(260)
+                                .setVisible(true)
+                                .setAmplifier(0)
+                                .setAmbient(true)
+                    )
+                );
+    }
 
     public void attackMob() {
         int radius = getAttackRadius();
@@ -169,11 +197,13 @@ public class BlockEntityConduit extends BlockEntitySpawnable {
     }
 
     public boolean canAttack(Entity target) {
-        return target instanceof EntityMob && (
-                target.isTouchingWater()
+        return target instanceof EntityMob && canAffect(target);
+    }
+
+    public boolean canAffect(Entity target) {
+        return target.isTouchingWater()
                 || target.level.isRaining() && target.level.canBlockSeeSky(target)
-                        && !(Biome.getBiome(target.level.getBiomeId(target.getFloorX(), target.getFloorZ())) instanceof SnowyBiome)
-        );
+                        && !(Biome.getBiome(target.level.getBiomeId(target.getFloorX(), target.getFloorZ())) instanceof SnowyBiome);
     }
 
     private boolean scanWater() {
@@ -313,7 +343,7 @@ public class BlockEntityConduit extends BlockEntitySpawnable {
     }
 
     public int getAttackRadius() {
-        if (validBlocks == 42) {
+        if (validBlocks >= 42) {
             return 8;
         } else {
             return 0;
