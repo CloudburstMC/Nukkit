@@ -68,7 +68,7 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
             }
 
             if (player != null) {
-                nbt.putString("Creator", player.getUniqueId().toString());
+                nbt.putString("Creator", player.getServerId().toString());
             }
 
             if (item.hasCustomBlockData()) {

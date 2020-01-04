@@ -13,6 +13,6 @@ public class EntityMetadataStore extends MetadataStore {
         if (!(entity instanceof Entity)) {
             throw new IllegalArgumentException("Argument must be an Entity instance");
         }
-        return ((Entity) entity).getId() + ":" + metadataKey;
+        return ((Entity) entity).getUniqueId() + ":" + metadataKey;
     }
 }

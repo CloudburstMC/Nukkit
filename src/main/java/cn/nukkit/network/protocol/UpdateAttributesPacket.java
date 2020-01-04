@@ -14,7 +14,7 @@ public class UpdateAttributesPacket extends DataPacket {
     public static final short NETWORK_ID = ProtocolInfo.UPDATE_ATTRIBUTES_PACKET;
 
     public Attribute[] entries;
-    public long entityId;
+    public long entityRuntimeId;
 
     @Override
     public short pid() {
@@ -27,7 +27,7 @@ public class UpdateAttributesPacket extends DataPacket {
 
     protected void encode(ByteBuf buffer) {
 
-        Binary.writeEntityRuntimeId(buffer, this.entityId);
+        Binary.writeEntityRuntimeId(buffer, this.entityRuntimeId);
 
         if (this.entries == null) {
             Binary.writeUnsignedVarInt(buffer, 0);

@@ -1,7 +1,7 @@
 package cn.nukkit.item.enchantment.damage;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.EntitySmite;
+import cn.nukkit.entity.Smiteable;
 
 /**
  * author: MagicDroidX
@@ -25,7 +25,7 @@ public class EnchantmentDamageSmite extends EnchantmentDamage {
 
     @Override
     public double getDamageBonus(Entity entity) {
-        if(entity instanceof EntitySmite) {
+        if (entity instanceof Smiteable) {
             return getLevel() * 2.5;
         }
 

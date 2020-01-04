@@ -3,6 +3,7 @@ package cn.nukkit.entity;
 import cn.nukkit.Server;
 import cn.nukkit.block.*;
 import cn.nukkit.entity.data.*;
+import cn.nukkit.entity.passive.Bat;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -29,6 +30,7 @@ import cn.nukkit.player.Player;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.registry.BlockRegistry;
+import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.utils.ChunkException;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
@@ -37,7 +39,6 @@ import com.google.common.collect.Iterables;
 import com.spotify.futures.CompletableFutures;
 import lombok.extern.log4j.Log4j2;
 
-import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,22 +56,13 @@ import static cn.nukkit.network.protocol.SetEntityLinkPacket.*;
 @Log4j2
 public abstract class Entity extends Location implements Metadatable {
 
-    public static final int NETWORK_ID = -1;
-
-    public abstract int getNetworkId();
-
-    public static long entityCount = 1;
-
-    private static final Map<String, Class<? extends Entity>> knownEntities = new HashMap<>();
-    private static final Map<String, String> shortNames = new HashMap<>();
-
     protected static final ThreadLocal<Vector3> temporalVector = ThreadLocal.withInitial(Vector3::new);
 
     protected final Set<Player> hasSpawned = ConcurrentHashMap.newKeySet();
 
     protected final Map<Integer, Effect> effects = new ConcurrentHashMap<>();
 
-    protected long id;
+    private final long runtimeId = EntityRegistry.get().newEntityId();
 
     private final EntityFlags flags = new EntityFlags();
     private final EntityDataMap data = new EntityDataMap()
@@ -84,6 +76,7 @@ public abstract class Entity extends Location implements Metadatable {
     private volatile boolean flagsDirty;
 
     public final List<Entity> passengers = new ArrayList<>();
+    private final EntityType<?> type;
 
     public Entity riding = null;
 
@@ -201,12 +194,13 @@ public abstract class Entity extends Location implements Metadatable {
         return 0;
     }
 
-    public Entity(Chunk chunk, CompoundTag nbt) {
+    public Entity(EntityType<?> type, Chunk chunk, CompoundTag tag) {
+        this.type = type;
         if (this instanceof Player) {
             return;
         }
 
-        this.init(chunk, nbt);
+        this.init(chunk, tag);
     }
 
     protected void initEntity() {
@@ -242,44 +236,8 @@ public abstract class Entity extends Location implements Metadatable {
         this.scheduleUpdate();
     }
 
-    public static Entity createEntity(String name, Chunk chunk, CompoundTag nbt, Object... args) {
-        Entity entity = null;
-
-        if (knownEntities.containsKey(name)) {
-            Class<? extends Entity> clazz = knownEntities.get(name);
-
-            if (clazz == null) {
-                return null;
-            }
-
-            for (Constructor constructor : clazz.getConstructors()) {
-                if (entity != null) {
-                    break;
-                }
-
-                if (constructor.getParameterCount() != (args == null ? 2 : args.length + 2)) {
-                    continue;
-                }
-
-                try {
-                    if (args == null || args.length == 0) {
-                        entity = (Entity) constructor.newInstance(chunk, nbt);
-                    } else {
-                        Object[] objects = new Object[args.length + 2];
-
-                        objects[0] = chunk;
-                        objects[1] = nbt;
-                        System.arraycopy(args, 0, objects, 2, args.length);
-                        entity = (Entity) constructor.newInstance(objects);
-
-                    }
-                } catch (Exception e) {
-                    log.error("Error whilst creating new entity", e);
-                }
-            }
-        }
-
-        return entity;
+    public EntityType<?> getType() {
+        return type;
     }
 
     public EntityDataMap getData() {
@@ -493,18 +451,6 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    public static Entity createEntity(String name, Position pos, Object... args) {
-        return createEntity(name, pos.getChunk(), getDefaultNBT(pos), args);
-    }
-
-    public static Entity createEntity(int type, Position pos, Object... args) {
-        return createEntity(String.valueOf(type), pos.getChunk(), getDefaultNBT(pos), args);
-    }
-
-    public static Entity createEntity(int type, Chunk chunk, CompoundTag nbt, Object... args) {
-        return createEntity(String.valueOf(type), chunk, nbt, args);
-    }
-
     protected final void init(Chunk chunk, CompoundTag nbt) {
         if (chunk == null) {
             throw new ChunkException("Invalid garbage Chunk given to Entity");
@@ -520,7 +466,6 @@ public abstract class Entity extends Location implements Metadatable {
 
         this.isPlayer = this instanceof Player;
 
-        this.id = Entity.entityCount++;
         this.justCreated = true;
         this.namedTag = nbt;
 
@@ -592,28 +537,6 @@ public abstract class Entity extends Location implements Metadatable {
         this.scheduleUpdate();
     }
 
-    public static boolean registerEntity(String name, Class<? extends Entity> clazz) {
-        return registerEntity(name, clazz, false);
-    }
-
-    public static boolean registerEntity(String name, Class<? extends Entity> clazz, boolean force) {
-        if (clazz == null) {
-            return false;
-        }
-        try {
-            int networkId = clazz.getField("NETWORK_ID").getInt(null);
-            knownEntities.put(String.valueOf(networkId), clazz);
-        } catch (Exception e) {
-            if (!force) {
-                return false;
-            }
-        }
-
-        knownEntities.put(name, clazz);
-        shortNames.put(clazz.getSimpleName(), name);
-        return true;
-    }
-
     public static CompoundTag getDefaultNBT(Vector3 pos) {
         return getDefaultNBT(pos, null);
     }
@@ -645,7 +568,6 @@ public abstract class Entity extends Location implements Metadatable {
 
     public void saveNBT() {
         if (!(this instanceof Player)) {
-            this.namedTag.putString("id", this.getSaveId());
             if (!this.getNameTag().equals("")) {
                 this.namedTag.putString("CustomName", this.getNameTag());
                 this.namedTag.putBoolean("CustomNameVisible", this.isNameTagVisible());
@@ -703,12 +625,9 @@ public abstract class Entity extends Location implements Metadatable {
         if (this.hasCustomName()) {
             return this.getNameTag();
         } else {
-            return this.getSaveId();
+            // FIXME: 04/01/2020 Use language files
+            return EntityRegistry.get().getLegacyName(this.type.getIdentifier());
         }
-    }
-
-    public final String getSaveId() {
-        return shortNames.getOrDefault(this.getClass().getSimpleName(), "");
     }
 
     public void spawnTo(Player player) {
@@ -722,8 +641,8 @@ public abstract class Entity extends Location implements Metadatable {
             this.riding.spawnTo(player);
 
             SetEntityLinkPacket pkk = new SetEntityLinkPacket();
-            pkk.vehicleUniqueId = this.riding.getId();
-            pkk.riderUniqueId = this.getId();
+            pkk.vehicleUniqueId = this.riding.getUniqueId();
+            pkk.riderUniqueId = this.getUniqueId();
             pkk.type = 1;
             pkk.immediate = 1;
 
@@ -733,9 +652,9 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected DataPacket createAddEntityPacket() {
         AddEntityPacket addEntity = new AddEntityPacket();
-        addEntity.type = this.getNetworkId();
-        addEntity.entityUniqueId = this.getId();
-        addEntity.entityRuntimeId = this.getId();
+        addEntity.type = this.getType().getIdentifier();
+        addEntity.entityUniqueId = this.getUniqueId();
+        addEntity.entityRuntimeId = this.getUniqueId();
         addEntity.yaw = (float) this.yaw;
         addEntity.headYaw = (float) this.yaw;
         addEntity.pitch = (float) this.pitch;
@@ -749,7 +668,7 @@ public abstract class Entity extends Location implements Metadatable {
 
         addEntity.links = new EntityLink[this.passengers.size()];
         for (int i = 0; i < addEntity.links.length; i++) {
-            addEntity.links[i] = new EntityLink(this.getId(), this.passengers.get(i).getId(), i == 0 ? EntityLink.TYPE_RIDER : TYPE_PASSENGER, false);
+            addEntity.links[i] = new EntityLink(this.getUniqueId(), this.passengers.get(i).getUniqueId(), i == 0 ? EntityLink.TYPE_RIDER : TYPE_PASSENGER, false);
         }
 
         return addEntity;
@@ -762,7 +681,7 @@ public abstract class Entity extends Location implements Metadatable {
     public void sendPotionEffects(Player player) {
         for (Effect effect : this.effects.values()) {
             MobEffectPacket pk = new MobEffectPacket();
-            pk.eid = this.getId();
+            pk.eid = this.getUniqueId();
             pk.effectId = effect.getId();
             pk.amplifier = effect.getAmplifier();
             pk.particles = effect.isVisible();
@@ -799,7 +718,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     private void sendData(Player player, EntityDataMap map) {
         SetEntityDataPacket packet = new SetEntityDataPacket();
-        packet.eid = this.id;
+        packet.entityRuntimeId = this.getUniqueId();
         packet.dataMap.putAll(map);
 
         player.dataPacket(packet);
@@ -807,7 +726,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     private void sendDataToViewers(EntityDataMap map) {
         SetEntityDataPacket packet = new SetEntityDataPacket();
-        packet.eid = this.id;
+        packet.entityRuntimeId = this.getRuntimeId();
         packet.dataMap.putAll(map);
 
         Server.broadcastPacket(this.getViewers(), packet);
@@ -816,7 +735,7 @@ public abstract class Entity extends Location implements Metadatable {
     public void despawnFrom(Player player) {
         if (this.hasSpawned.contains(player)) {
             RemoveEntityPacket pk = new RemoveEntityPacket();
-            pk.eid = this.getId();
+            pk.entityUniqueId = this.getUniqueId();
             player.dataPacket(pk);
             this.hasSpawned.remove(player);
         }
@@ -1153,7 +1072,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     public void addMotion(double motionX, double motionY, double motionZ) {
         SetEntityMotionPacket pk = new SetEntityMotionPacket();
-        pk.eid = this.id;
+        pk.entityRuntimeId = this.getRuntimeId();
         pk.motionX = (float) motionX;
         pk.motionY = (float) motionY;
         pk.motionZ = (float) motionZ;
@@ -1270,8 +1189,8 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected void broadcastLinkPacket(Entity rider, byte type) {
         SetEntityLinkPacket pk = new SetEntityLinkPacket();
-        pk.vehicleUniqueId = getId();         // To the?
-        pk.riderUniqueId = rider.getId(); // From who?
+        pk.vehicleUniqueId = getUniqueId();         // To the?
+        pk.riderUniqueId = rider.getUniqueId(); // From who?
         pk.type = type;
 
         Server.broadcastPacket(this.hasSpawned, pk);
@@ -1372,7 +1291,7 @@ public abstract class Entity extends Location implements Metadatable {
 
             if (fallDistance > 0) {
                 // check if we fell into at least 1 block of water
-                if (this instanceof EntityLiving && !(this.getLevelBlock() instanceof BlockWater)) {
+                if (this instanceof LivingEntity && !(this.getLevelBlock() instanceof BlockWater)) {
                     this.fall(fallDistance);
                 }
                 this.resetFallDistance();
@@ -1433,7 +1352,7 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    public void onCollideWithPlayer(EntityHuman entityPlayer) {
+    public void onCollideWithPlayer(Human entityPlayer) {
 
     }
 
@@ -1825,7 +1744,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     /**
      * Whether the entity can active pressure plates.
-     * Used for {@link cn.nukkit.entity.passive.EntityBat}s only.
+     * Used for {@link Bat}s only.
      *
      * @return triggers pressure plate
      */
@@ -1980,8 +1899,12 @@ public abstract class Entity extends Location implements Metadatable {
         return false;
     }
 
-    public long getId() {
-        return this.id;
+    public long getUniqueId() {
+        return this.runtimeId;
+    }
+
+    public long getRuntimeId() {
+        return this.runtimeId;
     }
 
     public void respawnToAll() {
@@ -2187,13 +2110,13 @@ public abstract class Entity extends Location implements Metadatable {
             return false;
         }
         Entity other = (Entity) obj;
-        return this.getId() == other.getId();
+        return this.getUniqueId() == other.getUniqueId();
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = (int) (29 * hash + this.getId());
+        hash = (int) (29 * hash + this.getUniqueId());
         return hash;
     }
 }

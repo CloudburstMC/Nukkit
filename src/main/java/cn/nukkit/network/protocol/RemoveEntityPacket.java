@@ -12,7 +12,7 @@ import lombok.ToString;
 public class RemoveEntityPacket extends DataPacket {
     public static final short NETWORK_ID = ProtocolInfo.REMOVE_ENTITY_PACKET;
 
-    public long eid;
+    public long entityUniqueId;
 
     @Override
     public short pid() {
@@ -21,11 +21,11 @@ public class RemoveEntityPacket extends DataPacket {
 
     @Override
     protected void decode(ByteBuf buffer) {
-
+        this.entityUniqueId = Binary.readEntityUniqueId(buffer);
     }
 
     @Override
     protected void encode(ByteBuf buffer) {
-        Binary.writeEntityUniqueId(buffer, this.eid);
+        Binary.writeEntityUniqueId(buffer, this.entityUniqueId);
     }
 }

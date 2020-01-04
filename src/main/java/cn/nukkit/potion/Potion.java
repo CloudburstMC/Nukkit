@@ -1,7 +1,7 @@
 package cn.nukkit.potion;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.EntityLiving;
+import cn.nukkit.entity.LivingEntity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
@@ -171,7 +171,7 @@ public class Potion implements Cloneable {
     }
 
     public void applyPotion(Entity entity, double health) {
-        if (!(entity instanceof EntityLiving)) {
+        if (!(entity instanceof LivingEntity)) {
             return;
         }
 

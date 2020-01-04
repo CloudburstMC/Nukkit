@@ -1,12 +1,14 @@
 package cn.nukkit.block;
 
-import cn.nukkit.entity.item.EntityFallingBlock;
+import cn.nukkit.entity.EntityTypes;
+import cn.nukkit.entity.misc.FallingBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.registry.BlockRegistry;
+import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.utils.Identifier;
 
 import static cn.nukkit.block.BlockIds.AIR;
@@ -43,7 +45,8 @@ public abstract class BlockFallable extends BlockSolid {
                         .putInt("TileID", BlockRegistry.get().getLegacyId(this.getId()))
                         .putByte("Data", this.getDamage());
 
-                EntityFallingBlock fall = new EntityFallingBlock(this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+                FallingBlock fall = EntityRegistry.get().newEntity(EntityTypes.FALLING_BLOCK,
+                        this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
 
                 fall.spawnToAll();
             }

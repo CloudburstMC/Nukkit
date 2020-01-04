@@ -2,6 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityType;
 import cn.nukkit.event.entity.CreatureSpawnEvent;
 import cn.nukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import cn.nukkit.level.Level;
@@ -12,6 +13,7 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
@@ -63,7 +65,9 @@ public class ItemSpawnEgg extends Item {
             return false;
         }
 
-        Entity entity = Entity.createEntity(this.getDamage(), chunk, nbt);
+        EntityRegistry registry = EntityRegistry.get();
+        EntityType<?> type = registry.getEntityType(this.getDamage()); // FIXME: 04/01/2020 Use string identifier in NBT
+        Entity entity = registry.newEntity(type, chunk, nbt);
 
         if (entity != null) {
             if (player.isSurvival()) {

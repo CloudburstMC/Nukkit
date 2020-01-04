@@ -1,10 +1,12 @@
 package cn.nukkit.event.entity;
 
+import cn.nukkit.entity.Creature;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.EntityCreature;
-import cn.nukkit.entity.EntityHuman;
-import cn.nukkit.entity.item.EntityItem;
-import cn.nukkit.entity.projectile.EntityProjectile;
+import cn.nukkit.entity.EntityType;
+import cn.nukkit.entity.Human;
+import cn.nukkit.entity.misc.DroppedItem;
+import cn.nukkit.entity.projectile.Projectile;
+import cn.nukkit.entity.vehicle.Vehicle;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.Position;
 
@@ -19,39 +21,36 @@ public class EntityDespawnEvent extends EntityEvent {
         return handlers;
     }
 
-    private final int entityType;
-
-    public EntityDespawnEvent(cn.nukkit.entity.Entity entity) {
+    public EntityDespawnEvent(Entity entity) {
         this.entity = entity;
-        this.entityType = entity.getNetworkId();
     }
 
     public Position getPosition() {
         return this.entity.getPosition();
     }
 
-    public int getType() {
-        return this.entityType;
+    public EntityType<?> getType() {
+        return this.entity.getType();
     }
 
     public boolean isCreature() {
-        return this.entity instanceof EntityCreature;
+        return this.entity instanceof Creature;
     }
 
     public boolean isHuman() {
-        return this.entity instanceof EntityHuman;
+        return this.entity instanceof Human;
     }
 
     public boolean isProjectile() {
-        return this.entity instanceof EntityProjectile;
+        return this.entity instanceof Projectile;
     }
 
     public boolean isVehicle() {
-        return this.entity instanceof Entity;
+        return this.entity instanceof Vehicle;
     }
 
     public boolean isItem() {
-        return this.entity instanceof EntityItem;
+        return this.entity instanceof DroppedItem;
     }
 
 }

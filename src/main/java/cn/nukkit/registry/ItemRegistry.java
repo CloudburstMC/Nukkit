@@ -1,6 +1,5 @@
 package cn.nukkit.registry;
 
-import cn.nukkit.Server;
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.item.*;
 import cn.nukkit.utils.Binary;
@@ -32,10 +31,7 @@ public class ItemRegistry implements Registry {
     private static final List<ItemData> VANILLA_STATES;
 
     static {
-        InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_item_ids.json");
-        if (stream == null) {
-            throw new AssertionError("Unable to locate RuntimeID table");
-        }
+        InputStream stream = RegistryUtils.getOrAssertResource("runtime_item_ids.json");
         Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
 
         Gson gson = new Gson();

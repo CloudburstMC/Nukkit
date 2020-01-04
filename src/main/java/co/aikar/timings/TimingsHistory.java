@@ -54,7 +54,7 @@ public class TimingsHistory {
 
     private static int levelIdPool = 1;
     static Map<String, Integer> levelMap = new HashMap<>();
-    static Map<Integer, String> entityMap = new HashMap<>();
+    static Map<Identifier, String> entityMap = new HashMap<>();
     static Map<Identifier, String> blockEntityMap = new HashMap<>();
 
     private final long endTime;
@@ -92,7 +92,7 @@ public class TimingsHistory {
             this.entries[i++] = new TimingsHistoryEntry(timing);
         }
 
-        final Map<Integer, AtomicInteger> entityCounts = new HashMap<>();
+        final Map<Identifier, AtomicInteger> entityCounts = new HashMap<>();
         final Map<Identifier, AtomicInteger> blockEntityCounts = new HashMap<>();
         final Gson GSON = new Gson();
         // Information about all loaded entities/block entities
@@ -104,10 +104,10 @@ public class TimingsHistory {
 
                 //count entities
                 for (Entity entity : chunk.getEntities()) {
-                    if (!entityCounts.containsKey(entity.getNetworkId()))
-                        entityCounts.put(entity.getNetworkId(), new AtomicInteger(0));
-                    entityCounts.get(entity.getNetworkId()).incrementAndGet();
-                    entityMap.put(entity.getNetworkId(), entity.getClass().getSimpleName());
+                    if (!entityCounts.containsKey(entity.getType().getIdentifier()))
+                        entityCounts.put(entity.getType().getIdentifier(), new AtomicInteger(0));
+                    entityCounts.get(entity.getType().getIdentifier()).incrementAndGet();
+                    entityMap.put(entity.getType().getIdentifier(), entity.getClass().getSimpleName());
                 }
 
                 //count block entities
@@ -126,7 +126,7 @@ public class TimingsHistory {
                 jsonChunk.add(chunk.getX());
                 jsonChunk.add(chunk.getZ());
                 jsonChunk.add(GSON.toJsonTree(JsonUtil.mapToObject(entityCounts.entrySet(), (entry) ->
-                        new JsonUtil.JSONPair(entry.getKey(), entry.getValue().get()))).getAsJsonObject());
+                        new JsonUtil.JSONPair(entry.getKey().toString(), entry.getValue().get()))).getAsJsonObject());
                 jsonChunk.add(GSON.toJsonTree(JsonUtil.mapToObject(blockEntityCounts.entrySet(), (entry) ->
                         new JsonUtil.JSONPair(entry.getKey().toString(), entry.getValue().get()))).getAsJsonObject());
                 jsonLevel.add(jsonChunk);

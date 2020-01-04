@@ -1,6 +1,5 @@
 package cn.nukkit.registry;
 
-import cn.nukkit.Server;
 import cn.nukkit.block.*;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -28,10 +27,7 @@ public class BlockRegistry implements Registry {
     private static final List<CompoundTag> VANILLA_PALETTE;
 
     static {
-        InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_block_states.dat");
-        if (stream == null) {
-            throw new AssertionError("Unable to locate block state nbt");
-        }
+        InputStream stream = RegistryUtils.getOrAssertResource("runtime_block_states.dat");
         try {
             //noinspection unchecked
             VANILLA_PALETTE = ((ListTag<CompoundTag>) NBTIO.readNetwork(stream)).getAll();
@@ -201,7 +197,7 @@ public class BlockRegistry implements Registry {
 
         // generate cache
 
-        List<CompoundTag> palette = new ArrayList<>(VANILLA_PALETTE);
+        List<CompoundTag> palette = new ArrayList<>(VANILLA_PALETTE); // Add all vanilla palette entries
 
         int startId = VANILLA_PALETTE.size();
         int size = this.runtimeIdAllocator.get();
@@ -217,12 +213,13 @@ public class BlockRegistry implements Registry {
             CompoundTag tag = new CompoundTag()
                     .putShort("id", this.idLegacyMap.get(block.getId()))
                     .putCompound("block", new CompoundTag()
-                            .putString("name", block.getId().getFullName())
-                            .putCompound("states", new CompoundTag()));
+                            .putString("name", block.getId().toString())
+                            .putCompound("states", new CompoundTag())); // custom blocks can't have states
 
             palette.add(tag);
 
-            propertiesTag.putCompound(block.getId().getFullName(), new CompoundTag()
+            // this doesn't have to be sent
+            propertiesTag.putCompound(block.getId().toString(), new CompoundTag()
                     .putCompound("minecraft:block_light_absorption", new CompoundTag()
                             .putInt("value", 1))
                     .putCompound("minecraft:block_light_emission", new CompoundTag()

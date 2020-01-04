@@ -1,7 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.item.EntityPrimedTNT;
+import cn.nukkit.entity.EntityTypes;
+import cn.nukkit.entity.misc.Tnt;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
@@ -77,10 +78,8 @@ public class BlockTNT extends BlockSolid {
                         .add(new FloatTag("", 0))
                         .add(new FloatTag("", 0)))
                 .putShort("Fuse", fuse);
-        Entity tnt = new EntityPrimedTNT(
-                this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
-                nbt, source
-        );
+        Entity tnt = new Tnt(EntityTypes.TNT,
+                this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), nbt, source);
         tnt.spawnToAll();
         this.level.addSound(this, Sound.RANDOM_FUSE);
     }

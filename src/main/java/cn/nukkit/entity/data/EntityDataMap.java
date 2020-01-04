@@ -186,8 +186,9 @@ public class EntityDataMap {
         this.map.forEach(consumer);
     }
 
-    public void clear() {
+    public EntityDataMap clear() {
         this.map.clear();
+        return this;
     }
 
     public boolean isEmpty() {

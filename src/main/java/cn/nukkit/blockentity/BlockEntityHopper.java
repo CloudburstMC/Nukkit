@@ -2,7 +2,7 @@ package cn.nukkit.blockentity;
 
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.item.EntityItem;
+import cn.nukkit.entity.misc.DroppedItem;
 import cn.nukkit.event.inventory.InventoryMoveItemEvent;
 import cn.nukkit.inventory.*;
 import cn.nukkit.item.Item;
@@ -259,11 +259,11 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
         boolean pickedUpItem = false;
 
         for (Entity entity : this.level.getCollidingEntities(this.pickupArea)) {
-            if (entity.isClosed() || !(entity instanceof EntityItem)) {
+            if (entity.isClosed() || !(entity instanceof DroppedItem)) {
                 continue;
             }
 
-            EntityItem itemEntity = (EntityItem) entity;
+            DroppedItem itemEntity = (DroppedItem) entity;
             Item item = itemEntity.getItem();
 
             if (item.isNull()) {

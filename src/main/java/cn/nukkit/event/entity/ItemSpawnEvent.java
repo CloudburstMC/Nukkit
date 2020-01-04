@@ -1,6 +1,6 @@
 package cn.nukkit.event.entity;
 
-import cn.nukkit.entity.item.EntityItem;
+import cn.nukkit.entity.misc.DroppedItem;
 import cn.nukkit.event.HandlerList;
 
 /**
@@ -14,12 +14,12 @@ public class ItemSpawnEvent extends EntityEvent {
         return handlers;
     }
 
-    public ItemSpawnEvent(EntityItem item) {
+    public ItemSpawnEvent(DroppedItem item) {
         this.entity = item;
     }
 
     @Override
-    public EntityItem getEntity() {
-        return (EntityItem) this.entity;
+    public DroppedItem getEntity() {
+        return (DroppedItem) this.entity;
     }
 }

@@ -1,8 +1,8 @@
 package cn.nukkit.utils;
 
 import cn.nukkit.entity.Attribute;
+import cn.nukkit.entity.EntityTypes;
 import cn.nukkit.entity.data.EntityDataMap;
-import cn.nukkit.entity.mob.EntityCreeper;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.player.Player;
 
@@ -128,7 +128,7 @@ public class DummyBossBar {
 
     private void createBossEntity() {
         AddEntityPacket pkAdd = new AddEntityPacket();
-        pkAdd.type = EntityCreeper.NETWORK_ID;
+        pkAdd.type = EntityTypes.CREEPER.getIdentifier();
         pkAdd.entityUniqueId = bossBarId;
         pkAdd.entityRuntimeId = bossBarId;
         pkAdd.x = (float) player.x;
@@ -151,7 +151,7 @@ public class DummyBossBar {
 
     private void sendAttributes() {
         UpdateAttributesPacket pkAttributes = new UpdateAttributesPacket();
-        pkAttributes.entityId = bossBarId;
+        pkAttributes.entityRuntimeId = bossBarId;
         Attribute attr = Attribute.getAttribute(Attribute.MAX_HEALTH);
         attr.setMaxValue(100); // Max value - We need to change the max value first, or else the "setValue" will return a IllegalArgumentException
         attr.setValue(length); // Entity health
@@ -218,14 +218,14 @@ public class DummyBossBar {
 
     private void updateBossEntityNameTag() {
         SetEntityDataPacket pk = new SetEntityDataPacket();
-        pk.eid = this.bossBarId;
-        pk.dataMap = new EntityDataMap().putString(NAMETAG, this.text);
+        pk.entityRuntimeId = this.bossBarId;
+        pk.dataMap.putString(NAMETAG, this.text);
         player.dataPacket(pk);
     }
 
     private void removeBossEntity() {
         RemoveEntityPacket pkRemove = new RemoveEntityPacket();
-        pkRemove.eid = bossBarId;
+        pkRemove.entityUniqueId = bossBarId;
         player.dataPacket(pkRemove);
     }
 

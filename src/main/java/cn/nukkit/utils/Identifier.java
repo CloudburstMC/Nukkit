@@ -61,10 +61,6 @@ public final class Identifier implements Comparable<Identifier> {
         return namespace;
     }
 
-    public String getFullName() {
-        return fullName;
-    }
-
     @Override
     public String toString() {
         return fullName;

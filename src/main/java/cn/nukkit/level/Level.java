@@ -6,10 +6,12 @@ import cn.nukkit.block.BlockIds;
 import cn.nukkit.block.BlockRedstoneDiode;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.item.EntityItem;
-import cn.nukkit.entity.item.EntityXPOrb;
-import cn.nukkit.entity.projectile.EntityArrow;
-import cn.nukkit.entity.weather.EntityLightning;
+import cn.nukkit.entity.EntityType;
+import cn.nukkit.entity.EntityTypes;
+import cn.nukkit.entity.misc.DroppedItem;
+import cn.nukkit.entity.misc.LightningBolt;
+import cn.nukkit.entity.misc.XpOrb;
+import cn.nukkit.entity.projectile.Arrow;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.block.BlockUpdateEvent;
@@ -43,6 +45,7 @@ import cn.nukkit.player.Player;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.registry.BlockRegistry;
+import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.scheduler.BlockUpdateScheduler;
 import cn.nukkit.timings.LevelTimings;
 import cn.nukkit.utils.*;
@@ -424,13 +427,12 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
-    public void addLevelSoundEvent(Vector3 pos, int type, int data, int entityType) {
-        addLevelSoundEvent(pos, type, data, entityType, false, false);
+    public void addLevelSoundEvent(Vector3 pos, int event, int data, EntityType<?> type) {
+        addLevelSoundEvent(pos, event, data, type, false, false);
     }
 
-    public void addLevelSoundEvent(Vector3 pos, int type, int data, int entityType, boolean isBaby, boolean isGlobal) {
-        String identifier = AddEntityPacket.LEGACY_IDS.getOrDefault(entityType, ":");
-        addLevelSoundEvent(pos, type, data, identifier, isBaby, isGlobal);
+    public void addLevelSoundEvent(Vector3 pos, int event, int data, EntityType<?> type, boolean isBaby, boolean isGlobal) {
+        addLevelSoundEvent(pos, event, data, type.getIdentifier(), isBaby, isGlobal);
     }
 
     public void addLevelSoundEvent(Vector3 pos, int type) {
@@ -445,21 +447,21 @@ public class Level implements ChunkManager, Metadatable {
      * @param data generic data that can affect sound
      */
     public void addLevelSoundEvent(Vector3 pos, int type, int data) {
-        this.addLevelSoundEvent(pos, type, data, ":", false, false);
+        this.addLevelSoundEvent(pos, type, data, Identifier.EMPTY, false, false);
     }
 
-    public void addLevelSoundEvent(Vector3 pos, int type, int data, String identifier, boolean isBaby, boolean isGlobal) {
-        LevelSoundEventPacket pk = new LevelSoundEventPacket();
-        pk.sound = type;
-        pk.extraData = data;
-        pk.entityIdentifier = identifier;
-        pk.x = (float) pos.x;
-        pk.y = (float) pos.y;
-        pk.z = (float) pos.z;
-        pk.isGlobal = isGlobal;
-        pk.isBabyMob = isBaby;
+    public void addLevelSoundEvent(Vector3 pos, int event, int data, Identifier identifier, boolean isBaby, boolean isGlobal) {
+        LevelSoundEventPacket packet = new LevelSoundEventPacket();
+        packet.event = event;
+        packet.data = data;
+        packet.identifier = identifier;
+        packet.x = (float) pos.x;
+        packet.y = (float) pos.y;
+        packet.z = (float) pos.z;
+        packet.isGlobal = isGlobal;
+        packet.isBabyMob = isBaby;
 
-        this.addChunkPacket(pos.getFloorX() >> 4, pos.getFloorZ() >> 4, pk);
+        this.addChunkPacket(pos.getFloorX() >> 4, pos.getFloorZ() >> 4, packet);
     }
 
     public void addParticle(Particle particle) {
@@ -752,7 +754,7 @@ public class Level implements ChunkManager, Metadatable {
                     .putList(new ListTag<FloatTag>("Rotation").add(new FloatTag("", 0))
                             .add(new FloatTag("", 0)));
 
-            EntityLightning bolt = new EntityLightning(chunk, nbt);
+            LightningBolt bolt = new LightningBolt(EntityTypes.LIGHTNING_BOLT, chunk, nbt);
             LightningStrikeEvent ev = new LightningStrikeEvent(this, bolt);
             getServer().getPluginManager().callEvent(ev);
             if (!ev.isCancelled()) {
@@ -761,8 +763,8 @@ public class Level implements ChunkManager, Metadatable {
                 bolt.setEffect(false);
             }
 
-            this.addLevelSoundEvent(vector, LevelSoundEventPacket.SOUND_THUNDER, -1, EntityLightning.NETWORK_ID);
-            this.addLevelSoundEvent(vector, LevelSoundEventPacket.SOUND_EXPLODE, -1, EntityLightning.NETWORK_ID);
+            this.addLevelSoundEvent(vector, LevelSoundEventPacket.SOUND_THUNDER, -1, EntityTypes.LIGHTNING_BOLT);
+            this.addLevelSoundEvent(vector, LevelSoundEventPacket.SOUND_EXPLODE, -1, EntityTypes.LIGHTNING_BOLT);
         }
     }
 
@@ -1584,7 +1586,7 @@ public class Level implements ChunkManager, Metadatable {
         itemTag.setName("Item");
 
         if (item.getId() != AIR && item.getCount() > 0) {
-            EntityItem itemEntity = new EntityItem(
+            DroppedItem itemEntity = EntityRegistry.get().newEntity(EntityTypes.ITEM,
                     this.getChunk((int) source.getX() >> 4, (int) source.getZ() >> 4),
                     new CompoundTag().putList(new ListTag<DoubleTag>("Pos").add(new DoubleTag("", source.getX()))
                             .add(new DoubleTag("", source.getY())).add(new DoubleTag("", source.getZ())))
@@ -1771,17 +1773,17 @@ public class Level implements ChunkManager, Metadatable {
 
     public void dropExpOrb(Vector3 source, int exp, Vector3 motion, int delay) {
         Random rand = ThreadLocalRandom.current();
-        for (int split : EntityXPOrb.splitIntoOrbSizes(exp)) {
+        for (int split : XpOrb.splitIntoOrbSizes(exp)) {
             CompoundTag nbt = Entity.getDefaultNBT(source, motion == null ? new Vector3(
-                    (rand.nextDouble() * 0.2 - 0.1) * 2,
-                    rand.nextDouble() * 0.4,
-                    (rand.nextDouble() * 0.2 - 0.1) * 2) : motion,
+                            (rand.nextDouble() * 0.2 - 0.1) * 2,
+                            rand.nextDouble() * 0.4,
+                            (rand.nextDouble() * 0.2 - 0.1) * 2) : motion,
                     rand.nextFloat() * 360f, 0);
 
             nbt.putShort("Value", split);
             nbt.putShort("PickupDelay", delay);
 
-            Entity entity = Entity.createEntity("XpOrb", this.getChunk(source.getChunkX(), source.getChunkZ()), nbt);
+            Entity entity = EntityRegistry.get().newEntity(EntityTypes.XP_ORB, this.getChunk(source.getChunkX(), source.getChunkZ()), nbt);
             if (entity != null) {
                 entity.spawnToAll();
             }
@@ -1874,7 +1876,7 @@ public class Level implements ChunkManager, Metadatable {
             Set<Entity> entities = this.getCollidingEntities(hand.getBoundingBox());
             int realCount = 0;
             for (Entity e : entities) {
-                if (e instanceof EntityArrow || e instanceof EntityItem || (e instanceof Player && ((Player) e).isSpectator())) {
+                if (e instanceof Arrow || e instanceof DroppedItem || (e instanceof Player && ((Player) e).isSpectator())) {
                     continue;
                 }
                 ++realCount;
@@ -2266,13 +2268,13 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (entity instanceof Player) {
-            this.players.remove(entity.getId());
+            this.players.remove(entity.getUniqueId());
             this.checkSleep();
         } else {
             entity.close();
         }
 
-        this.entities.remove(entity.getId());
+        this.entities.remove(entity.getUniqueId());
         this.updateEntities.remove(entity);
     }
 
@@ -2282,9 +2284,9 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (entity instanceof Player) {
-            this.players.put(entity.getId(), (Player) entity);
+            this.players.put(entity.getUniqueId(), (Player) entity);
         }
-        this.entities.put(entity.getId(), entity);
+        this.entities.put(entity.getUniqueId(), entity);
     }
 
     public void addBlockEntity(BlockEntity blockEntity) {
@@ -2429,7 +2431,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public void addEntityMovement(Entity entity, double x, double y, double z, double yaw, double pitch, double headYaw) {
         MoveEntityAbsolutePacket pk = new MoveEntityAbsolutePacket();
-        pk.eid = entity.getId();
+        pk.eid = entity.getUniqueId();
         pk.x = (float) x;
         pk.y = (float) y;
         pk.z = (float) z;

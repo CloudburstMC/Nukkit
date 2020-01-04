@@ -3,12 +3,15 @@ package cn.nukkit.level.provider.anvil;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityType;
 import cn.nukkit.level.BlockUpdate;
 import cn.nukkit.level.chunk.*;
 import cn.nukkit.level.provider.anvil.palette.BiomePalette;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.*;
 import cn.nukkit.registry.BlockRegistry;
+import cn.nukkit.registry.EntityRegistry;
+import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.NibbleArray;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
@@ -181,7 +184,13 @@ public class AnvilConverter {
                     dirty = true;
                     continue;
                 }
-                Entity entity = Entity.createEntity(entityTag.getString("id"), chunk, entityTag);
+                EntityRegistry registry = EntityRegistry.get();
+                Identifier identifier = registry.getIdentifier(entityTag.getString("id"));
+                if (identifier == null) {
+                    continue;
+                }
+                EntityType<?> type = registry.getEntityType(identifier);
+                Entity entity = registry.newEntity(type, chunk, entityTag);
                 if (entity != null) {
                     dirty = true;
                 }

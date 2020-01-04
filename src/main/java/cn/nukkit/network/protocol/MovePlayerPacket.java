@@ -18,7 +18,7 @@ public class MovePlayerPacket extends DataPacket {
     public static final int MODE_TELEPORT = 2;
     public static final int MODE_PITCH = 3; //facepalm Mojang
 
-    public long eid;
+    public long entityRuntimeId;
     public float x;
     public float y;
     public float z;
@@ -33,7 +33,7 @@ public class MovePlayerPacket extends DataPacket {
 
     @Override
     protected void decode(ByteBuf buffer) {
-        this.eid = Binary.readEntityRuntimeId(buffer);
+        this.entityRuntimeId = Binary.readEntityRuntimeId(buffer);
         Vector3f v = Binary.readVector3f(buffer);
         this.x = v.x;
         this.y = v.y;
@@ -52,7 +52,7 @@ public class MovePlayerPacket extends DataPacket {
 
     @Override
     protected void encode(ByteBuf buffer) {
-        Binary.writeEntityRuntimeId(buffer, this.eid);
+        Binary.writeEntityRuntimeId(buffer, this.entityRuntimeId);
         Binary.writeVector3f(buffer, this.x, this.y, this.z);
         buffer.writeFloatLE(this.pitch);
         buffer.writeFloatLE(this.yaw);

@@ -1,8 +1,8 @@
 package cn.nukkit.item;
 
-import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.projectile.EntityEnderPearl;
-import cn.nukkit.entity.projectile.EntityProjectile;
+import cn.nukkit.entity.EntityType;
+import cn.nukkit.entity.projectile.EnderPearl;
+import cn.nukkit.entity.projectile.Projectile;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -11,6 +11,7 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.utils.Identifier;
 
 /**
@@ -22,7 +23,7 @@ public abstract class ProjectileItem extends Item {
         super(id);
     }
 
-    abstract public String getProjectileEntityType();
+    abstract public EntityType<? extends Projectile> getProjectileEntityType();
 
     abstract public float getThrowForce();
 
@@ -42,36 +43,31 @@ public abstract class ProjectileItem extends Item {
 
         this.correctNBT(nbt);
 
-        Entity projectile = Entity.createEntity(this.getProjectileEntityType(), player.getLevel().getChunk(player.getFloorX() >> 4, player.getFloorZ() >> 4), nbt, player);
-        if (projectile != null) {
-            if (projectile instanceof EntityEnderPearl) {
-                if (player.getServer().getTick() - player.getLastEnderPearlThrowingTick() < 20) {
-                    projectile.kill();
-                    return false;
-                }
+        Projectile projectile = EntityRegistry.get().newEntity(this.getProjectileEntityType(), player.getLevel().getChunk(player.getFloorX() >> 4, player.getFloorZ() >> 4), nbt);
+        projectile.shootingEntity = player;
+        if (projectile instanceof EnderPearl) {
+            if (player.getServer().getTick() - player.getLastEnderPearlThrowingTick() < 20) {
+                projectile.kill();
+                return false;
             }
+        }
 
-            projectile.setMotion(projectile.getMotion().multiply(this.getThrowForce()));
+        projectile.setMotion(projectile.getMotion().multiply(this.getThrowForce()));
 
-            if (projectile instanceof EntityProjectile) {
-                ProjectileLaunchEvent ev = new ProjectileLaunchEvent((EntityProjectile) projectile);
+        ProjectileLaunchEvent ev = new ProjectileLaunchEvent((Projectile) projectile);
 
-                player.getServer().getPluginManager().callEvent(ev);
-                if (ev.isCancelled()) {
-                    projectile.kill();
-                } else {
-                    if (!player.isCreative()) {
-                        this.decrementCount();
-                    }
-                    if (projectile instanceof EntityEnderPearl) {
-                        player.onThrowEnderPearl();
-                    }
-                    projectile.spawnToAll();
-                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BOW);
-                }
-            }
+        player.getServer().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
+            projectile.kill();
         } else {
-            return false;
+            if (!player.isCreative()) {
+                this.decrementCount();
+            }
+            if (projectile instanceof EnderPearl) {
+                player.onThrowEnderPearl();
+            }
+            projectile.spawnToAll();
+            player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BOW);
         }
         return true;
     }

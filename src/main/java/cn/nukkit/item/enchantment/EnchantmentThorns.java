@@ -1,7 +1,7 @@
 package cn.nukkit.item.enchantment;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.EntityHumanType;
+import cn.nukkit.entity.Human;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
@@ -34,11 +34,11 @@ public class EnchantmentThorns extends Enchantment {
 
     @Override
     public void doPostAttack(Entity attacker, Entity entity) {
-        if (!(entity instanceof EntityHumanType)) {
+        if (!(entity instanceof Human)) {
             return;
         }
 
-        EntityHumanType human = (EntityHumanType) entity;
+        Human human = (Human) entity;
 
         int thornsLevel = 0;
 

@@ -45,20 +45,20 @@ public class EntityEventPacket extends DataPacket {
         return NETWORK_ID;
     }
 
-    public long eid;
+    public long entityRuntimeId;
     public int event;
     public int data;
 
     @Override
     protected void decode(ByteBuf buffer) {
-        this.eid = Binary.readEntityRuntimeId(buffer);
+        this.entityRuntimeId = Binary.readEntityRuntimeId(buffer);
         this.event = buffer.readUnsignedByte();
         this.data = Binary.readVarInt(buffer);
     }
 
     @Override
     protected void encode(ByteBuf buffer) {
-        Binary.writeEntityRuntimeId(buffer, this.eid);
+        Binary.writeEntityRuntimeId(buffer, this.entityRuntimeId);
         buffer.writeByte(this.event);
         Binary.writeVarInt(buffer, this.data);
     }

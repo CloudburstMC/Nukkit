@@ -1,8 +1,7 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Server;
-import cn.nukkit.entity.EntityHuman;
-import cn.nukkit.entity.EntityHumanType;
+import cn.nukkit.entity.Human;
 import cn.nukkit.event.entity.EntityArmorChangeEvent;
 import cn.nukkit.event.entity.EntityInventoryChangeEvent;
 import cn.nukkit.event.player.PlayerItemHeldEvent;
@@ -29,7 +28,7 @@ public class PlayerInventory extends BaseInventory {
     protected int itemInHandIndex = 0;
     private int[] hotbar;
 
-    public PlayerInventory(EntityHumanType player) {
+    public PlayerInventory(Human player) {
         super(player, InventoryType.PLAYER);
         this.hotbar = new int[this.getHotbarSize()];
 
@@ -158,9 +157,9 @@ public class PlayerInventory extends BaseInventory {
         pk.inventorySlot = pk.hotbarSlot = this.getHeldItemIndex();
 
         for (Player player : players) {
-            pk.eid = this.getHolder().getId();
+            pk.eid = this.getHolder().getUniqueId();
             if (player.equals(this.getHolder())) {
-                pk.eid = player.getId();
+                pk.eid = player.getUniqueId();
                 this.sendSlot(this.getHeldItemIndex(), player);
             }
 
@@ -174,7 +173,7 @@ public class PlayerInventory extends BaseInventory {
 
     @Override
     public void onSlotChange(int index, Item before, boolean send) {
-        EntityHuman holder = this.getHolder();
+        Human holder = this.getHolder();
         if (holder instanceof Player && !((Player) holder).spawned) {
             return;
         }
@@ -339,7 +338,7 @@ public class PlayerInventory extends BaseInventory {
         Item[] armor = this.getArmorContents();
 
         MobArmorEquipmentPacket packet = new MobArmorEquipmentPacket();
-        packet.eid = this.getHolder().getId();
+        packet.eid = this.getHolder().getUniqueId();
         packet.slots = armor;
 
         for (Player player : players) {
@@ -386,7 +385,7 @@ public class PlayerInventory extends BaseInventory {
         Item[] armor = this.getArmorContents();
 
         MobArmorEquipmentPacket armorEquipmentPacket = new MobArmorEquipmentPacket();
-        armorEquipmentPacket.eid = this.getHolder().getId();
+        armorEquipmentPacket.eid = this.getHolder().getUniqueId();
         armorEquipmentPacket.slots = armor;
 
         for (Player player : players) {
@@ -492,7 +491,7 @@ public class PlayerInventory extends BaseInventory {
     }
 
     @Override
-    public EntityHuman getHolder() {
-        return (EntityHuman) super.getHolder();
+    public Human getHolder() {
+        return (Human) super.getHolder();
     }
 }

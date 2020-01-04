@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.item.EntityMinecartAbstract;
+import cn.nukkit.entity.vehicle.AbstractMinecart;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
@@ -65,7 +65,7 @@ public class BlockRailDetector extends BlockRail {
                 getFloorX() + 0.875D,
                 getFloorY() + 0.525D,
                 getFloorZ() + 0.875D))) {
-            if (entity instanceof EntityMinecartAbstract) {
+            if (entity instanceof AbstractMinecart) {
                 isPowered = true;
             }
         }

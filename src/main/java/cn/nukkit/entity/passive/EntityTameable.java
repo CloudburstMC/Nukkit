@@ -1,6 +1,7 @@
 package cn.nukkit.entity.passive;
 
 import cn.nukkit.entity.EntityOwnable;
+import cn.nukkit.entity.EntityType;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -12,11 +13,11 @@ import static cn.nukkit.entity.data.EntityFlag.TAMED;
  * Author: BeYkeRYkt
  * Nukkit Project
  */
-public abstract class EntityTameable extends EntityAnimal implements EntityOwnable {
+public abstract class EntityTameable extends Animal implements EntityOwnable {
 
 
-    public EntityTameable(Chunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
+    public EntityTameable(EntityType<?> type, Chunk chunk, CompoundTag nbt) {
+        super(type, chunk, nbt);
     }
 
     @Override

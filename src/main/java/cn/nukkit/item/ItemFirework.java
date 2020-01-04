@@ -1,7 +1,8 @@
 package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.entity.item.EntityFirework;
+import cn.nukkit.entity.EntityTypes;
+import cn.nukkit.entity.misc.FireworksRocket;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
@@ -11,6 +12,7 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Identifier;
 
@@ -133,7 +135,8 @@ public class ItemFirework extends Item {
                         .add(new FloatTag("", 0)))
                 .putCompound("FireworkItem", NBTIO.putItemHelper(this));
 
-        EntityFirework entity = new EntityFirework(level.getChunk(pos.getFloorX() >> 4, pos.getFloorZ() >> 4), nbt);
+        FireworksRocket entity = EntityRegistry.get().newEntity(EntityTypes.FIREWORKS_ROCKET,
+                level.getChunk(pos.getFloorX() >> 4, pos.getFloorZ() >> 4), nbt);
         entity.spawnToAll();
     }
 

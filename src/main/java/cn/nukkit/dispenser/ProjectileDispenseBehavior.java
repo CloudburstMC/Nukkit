@@ -2,24 +2,26 @@ package cn.nukkit.dispenser;
 
 import cn.nukkit.block.BlockDispenser;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityType;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.registry.EntityRegistry;
 
 /**
  * @author CreeperFace
  */
 public class ProjectileDispenseBehavior implements DispenseBehavior {
 
-    private String entityType;
+    private EntityType<?> entityType;
 
     public ProjectileDispenseBehavior() {
 
     }
 
-    public ProjectileDispenseBehavior(String entity) {
+    public ProjectileDispenseBehavior(EntityType<?> entity) {
         this.entityType = entity;
     }
 
@@ -31,7 +33,7 @@ public class ProjectileDispenseBehavior implements DispenseBehavior {
 
         BlockFace face = source.getFacing();
 
-        Entity projectile = Entity.createEntity(getEntityType(), dispensePos.getLevel().getChunk(dispensePos.getFloorX(), dispensePos.getFloorZ()), nbt);
+        Entity projectile = EntityRegistry.get().newEntity(getEntityType(), dispensePos.getLevel().getChunk(dispensePos.getFloorX(), dispensePos.getFloorZ()), nbt);
         if (projectile == null) {
             return;
         }
@@ -40,7 +42,7 @@ public class ProjectileDispenseBehavior implements DispenseBehavior {
         projectile.spawnToAll();
     }
 
-    protected String getEntityType() {
+    protected EntityType<?> getEntityType() {
         return this.entityType;
     }
 

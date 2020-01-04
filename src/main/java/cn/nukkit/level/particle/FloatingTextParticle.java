@@ -94,7 +94,7 @@ public class FloatingTextParticle extends Particle {
     private void sendMetadata() {
         if (level != null) {
             SetEntityDataPacket packet = new SetEntityDataPacket();
-            packet.eid = entityId;
+            packet.entityRuntimeId = entityId;
             packet.dataMap.putAll(dataMap);
             level.addChunkPacket(getChunkX(), getChunkZ(), packet);
         }
@@ -124,7 +124,7 @@ public class FloatingTextParticle extends Particle {
             this.entityId = 1095216660480L + ThreadLocalRandom.current().nextLong(0, 0x7fffffffL);
         } else {
             RemoveEntityPacket pk = new RemoveEntityPacket();
-            pk.eid = this.entityId;
+            pk.entityUniqueId = this.entityId;
 
             packets.add(pk);
         }

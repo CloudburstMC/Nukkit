@@ -1,8 +1,9 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Server;
-import cn.nukkit.entity.projectile.EntityProjectile;
-import cn.nukkit.entity.projectile.EntityThrownTrident;
+import cn.nukkit.entity.EntityTypes;
+import cn.nukkit.entity.projectile.Projectile;
+import cn.nukkit.entity.projectile.ThrownTrident;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.math.Vector3;
@@ -12,6 +13,7 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.utils.Identifier;
 
 /**
@@ -63,7 +65,9 @@ public class ItemTrident extends ItemTool {
         double p = (double) ticksUsed / 20;
 
         double f = Math.min((p * p + p * 2) / 3, 1) * 2;
-        EntityThrownTrident trident = new EntityThrownTrident(player.chunk, nbt, player, f == 2);
+        ThrownTrident trident = EntityRegistry.get().newEntity(EntityTypes.THROWN_TRIDENT, player.chunk, nbt);
+        trident.shootingEntity = player;
+        trident.setCritical(f == 2);
         trident.setItem(this);
 
         EntityShootBowEvent entityShootBowEvent = new EntityShootBowEvent(player, this, trident, f);
@@ -77,7 +81,7 @@ public class ItemTrident extends ItemTool {
             entityShootBowEvent.getProjectile().kill();
         } else {
             entityShootBowEvent.getProjectile().setMotion(entityShootBowEvent.getProjectile().getMotion().multiply(entityShootBowEvent.getForce()));
-            if (entityShootBowEvent.getProjectile() instanceof EntityProjectile) {
+            if (entityShootBowEvent.getProjectile() instanceof Projectile) {
                 ProjectileLaunchEvent ev = new ProjectileLaunchEvent(entityShootBowEvent.getProjectile());
                 Server.getInstance().getPluginManager().callEvent(ev);
                 if (ev.isCancelled()) {

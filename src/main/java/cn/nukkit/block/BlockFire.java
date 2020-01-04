@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.projectile.EntityArrow;
+import cn.nukkit.entity.projectile.Arrow;
 import cn.nukkit.event.block.BlockBurnEvent;
 import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.event.block.BlockIgniteEvent;
@@ -61,7 +61,7 @@ public class BlockFire extends FloodableBlock {
         }
 
         EntityCombustByBlockEvent ev = new EntityCombustByBlockEvent(this, entity, 8);
-        if (entity instanceof EntityArrow) {
+        if (entity instanceof Arrow) {
             ev.setCancelled();
         }
         Server.getInstance().getPluginManager().callEvent(ev);

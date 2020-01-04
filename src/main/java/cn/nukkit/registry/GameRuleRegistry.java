@@ -13,7 +13,7 @@ import java.util.Set;
 public class GameRuleRegistry implements Registry {
     private static final GameRuleRegistry INSTANCE = new GameRuleRegistry();
 
-    private final Map<String, GameRule> registered = new IdentityHashMap<>();
+    private final Map<String, GameRule<?>> registered = new IdentityHashMap<>();
     private volatile boolean closed;
 
     private GameRuleRegistry() {
@@ -35,12 +35,13 @@ public class GameRuleRegistry implements Registry {
     }
 
     @Nullable
-    public GameRule fromString(String name) {
+    public GameRule<? extends Comparable<?>> fromString(String name) {
         name = name.trim().toLowerCase();
         return this.registered.get(name);
     }
 
     @Nonnull
+    @SuppressWarnings("unchecked")
     public GameRuleMap getDefaultRules() {
         GameRuleMap gameRules = new GameRuleMap();
         for (GameRule gameRule : this.registered.values()) {

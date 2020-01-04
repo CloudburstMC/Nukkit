@@ -15,14 +15,14 @@ public class AnimatePacket extends DataPacket {
     public static final short NETWORK_ID = ProtocolInfo.ANIMATE_PACKET;
 
 
-    public long eid;
+    public long entityRuntimeId;
     public Action action;
     public float rowingTime;
 
     @Override
     protected void decode(ByteBuf buffer) {
         this.action = Action.fromId(Binary.readVarInt(buffer));
-        this.eid = Binary.readEntityRuntimeId(buffer);
+        this.entityRuntimeId = Binary.readEntityRuntimeId(buffer);
         if (this.action == Action.ROW_RIGHT || this.action == Action.ROW_LEFT) {
             this.rowingTime = buffer.readFloatLE();
         }
@@ -31,7 +31,7 @@ public class AnimatePacket extends DataPacket {
     @Override
     protected void encode(ByteBuf buffer) {
         Binary.writeVarInt(buffer, this.action.getId());
-        Binary.writeEntityRuntimeId(buffer, this.eid);
+        Binary.writeEntityRuntimeId(buffer, this.entityRuntimeId);
         if (this.action == Action.ROW_RIGHT || this.action == Action.ROW_LEFT) {
             buffer.writeFloatLE(this.rowingTime);
         }

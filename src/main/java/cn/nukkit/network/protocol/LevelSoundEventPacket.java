@@ -2,6 +2,7 @@ package cn.nukkit.network.protocol;
 
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.Identifier;
 import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 
@@ -261,34 +262,34 @@ public class LevelSoundEventPacket extends DataPacket {
     public static final int SOUND_CANT_BREED = 254;
     public static final int SOUND_UNDEFINED = 255;
 
-    public int sound;
+    public int event;
     public float x;
     public float y;
     public float z;
-    public int extraData = -1;
-    public String entityIdentifier;
+    public int data = -1;
+    public Identifier identifier;
     public boolean isBabyMob;
     public boolean isGlobal;
 
     @Override
     protected void decode(ByteBuf buffer) {
-        this.sound = (int) Binary.readUnsignedVarInt(buffer);
+        this.event = (int) Binary.readUnsignedVarInt(buffer);
         Vector3f v = Binary.readVector3f(buffer);
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
-        this.extraData = Binary.readVarInt(buffer);
-        this.entityIdentifier = Binary.readString(buffer);
+        this.data = Binary.readVarInt(buffer);
+        this.identifier = Identifier.fromString(Binary.readString(buffer));
         this.isBabyMob = buffer.readBoolean();
         this.isGlobal = buffer.readBoolean();
     }
 
     @Override
     protected void encode(ByteBuf buffer) {
-        Binary.writeUnsignedVarInt(buffer, this.sound);
+        Binary.writeUnsignedVarInt(buffer, this.event);
         Binary.writeVector3f(buffer, this.x, this.y, this.z);
-        Binary.writeVarInt(buffer, this.extraData);
-        Binary.writeString(buffer, this.entityIdentifier);
+        Binary.writeVarInt(buffer, this.data);
+        Binary.writeString(buffer, this.identifier.toString());
         buffer.writeBoolean(this.isBabyMob);
         buffer.writeBoolean(this.isGlobal);
     }

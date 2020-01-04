@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.item.EntityPrimedTNT;
+import cn.nukkit.entity.misc.Tnt;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.event.entity.EntityCombustByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
@@ -183,7 +183,7 @@ public class BlockLava extends BlockLiquid {
 
     @Override
     public void addVelocityToEntity(Entity entity, Vector3 vector) {
-        if (!(entity instanceof EntityPrimedTNT)) {
+        if (!(entity instanceof Tnt)) {
             super.addVelocityToEntity(entity, vector);
         }
     }

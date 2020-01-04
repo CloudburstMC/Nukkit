@@ -38,7 +38,7 @@ public class PlayerActionPacket extends DataPacket {
     public static final int ACTION_START_SPIN_ATTACK = 23;
     public static final int ACTION_STOP_SPIN_ATTACK = 24;
 
-    public long entityId;
+    public long entityRuntimeId;
     public int action;
     public int x;
     public int y;
@@ -48,7 +48,7 @@ public class PlayerActionPacket extends DataPacket {
 
     @Override
     protected void decode(ByteBuf buffer) {
-        this.entityId = Binary.readEntityRuntimeId(buffer);
+        this.entityRuntimeId = Binary.readEntityRuntimeId(buffer);
         this.action = Binary.readVarInt(buffer);
         BlockVector3 v = Binary.readBlockVector3(buffer);
         this.x = v.x;
@@ -59,7 +59,7 @@ public class PlayerActionPacket extends DataPacket {
 
     @Override
     protected void encode(ByteBuf buffer) {
-        Binary.writeEntityRuntimeId(buffer, this.entityId);
+        Binary.writeEntityRuntimeId(buffer, this.entityRuntimeId);
         Binary.writeVarInt(buffer, this.action);
         Binary.writeBlockVector3(buffer, this.x, this.y, this.z);
         Binary.writeVarInt(buffer, this.face);

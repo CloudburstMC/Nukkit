@@ -1,8 +1,7 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.block.BlockEnderChest;
-import cn.nukkit.entity.EntityHuman;
-import cn.nukkit.entity.EntityHumanType;
+import cn.nukkit.entity.Human;
 import cn.nukkit.level.Level;
 import cn.nukkit.network.protocol.BlockEventPacket;
 import cn.nukkit.network.protocol.ContainerClosePacket;
@@ -12,13 +11,13 @@ import cn.nukkit.player.Player;
 
 public class PlayerEnderChestInventory extends BaseInventory {
 
-    public PlayerEnderChestInventory(EntityHumanType player) {
+    public PlayerEnderChestInventory(Human player) {
         super(player, InventoryType.ENDER_CHEST);
     }
 
     @Override
-    public EntityHuman getHolder() {
-        return (EntityHuman) this.holder;
+    public Human getHolder() {
+        return (Human) this.holder;
     }
 
     @Override

@@ -18,18 +18,18 @@ public class SetEntityDataPacket extends DataPacket {
         return NETWORK_ID;
     }
 
-    public long eid;
-    public EntityDataMap dataMap = new EntityDataMap();
+    public final EntityDataMap dataMap = new EntityDataMap();
+    public long entityRuntimeId;
 
     @Override
     public void decode(ByteBuf buffer) {
-        this.eid = Binary.readEntityRuntimeId(buffer);
-        this.dataMap = Binary.readEntityData(buffer);
+        this.entityRuntimeId = Binary.readEntityRuntimeId(buffer);
+        this.dataMap.clear().putAll(Binary.readEntityData(buffer));
     }
 
     @Override
     public void encode(ByteBuf buffer) {
-        Binary.writeEntityRuntimeId(buffer, this.eid);
+        Binary.writeEntityRuntimeId(buffer, this.entityRuntimeId);
         Binary.writeEntityData(buffer, this.dataMap);
     }
 }

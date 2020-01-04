@@ -123,7 +123,7 @@ public class TimingsExport extends Thread {
         idmap.add("tileentity", JsonUtil.mapToObject(TimingsHistory.blockEntityMap.entrySet(), (entry) ->
                 new JsonUtil.JSONPair(entry.getKey().toString(), entry.getValue())));
         idmap.add("entity", JsonUtil.mapToObject(TimingsHistory.entityMap.entrySet(), (entry) ->
-                new JsonUtil.JSONPair(entry.getKey(), entry.getValue())));
+                new JsonUtil.JSONPair(entry.getKey().toString(), entry.getValue())));
         out.add("idmap", idmap);
 
         //Information about loaded plugins

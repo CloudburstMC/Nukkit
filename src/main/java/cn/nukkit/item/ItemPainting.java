@@ -1,7 +1,8 @@
 package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.entity.item.EntityPainting;
+import cn.nukkit.entity.EntityTypes;
+import cn.nukkit.entity.misc.Painting;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.BlockFace;
@@ -11,6 +12,7 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.utils.Identifier;
 
 import java.util.ArrayList;
@@ -43,8 +45,8 @@ public class ItemPainting extends Item {
             return false;
         }
 
-        List<EntityPainting.Motive> validMotives = new ArrayList<>();
-        for (EntityPainting.Motive motive : EntityPainting.motives) {
+        List<Painting.Motive> validMotives = new ArrayList<>();
+        for (Painting.Motive motive : Painting.motives) {
             boolean valid = true;
             for (int x = 0; x < motive.width && valid; x++) {
                 for (int z = 0; z < motive.height && valid; z++) {
@@ -62,7 +64,7 @@ public class ItemPainting extends Item {
             }
         }
         int direction = DIRECTION[face.getIndex() - 2];
-        EntityPainting.Motive motive = validMotives.get(ThreadLocalRandom.current().nextInt(validMotives.size()));
+        Painting.Motive motive = validMotives.get(ThreadLocalRandom.current().nextInt(validMotives.size()));
 
         Vector3 position = new Vector3(target.x + 0.5, target.y + 0.5, target.z + 0.5);
         double widthOffset = offset(motive.width);
@@ -102,7 +104,7 @@ public class ItemPainting extends Item {
                         .add(new FloatTag("0", direction * 90))
                         .add(new FloatTag("1", 0)));
 
-        EntityPainting entity = new EntityPainting(chunk, nbt);
+        Painting entity = EntityRegistry.get().newEntity(EntityTypes.PAINTING, chunk, nbt);
 
         if (player.isSurvival()) {
             Item item = player.getInventory().getItemInHand();

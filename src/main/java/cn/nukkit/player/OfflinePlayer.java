@@ -77,7 +77,7 @@ public class OfflinePlayer implements IPlayer {
     }
 
     @Override
-    public UUID getUniqueId() {
+    public UUID getServerId() {
         if (namedTag != null) {
             long least = namedTag.getLong("UUIDLeast");
             long most = namedTag.getLong("UUIDMost");

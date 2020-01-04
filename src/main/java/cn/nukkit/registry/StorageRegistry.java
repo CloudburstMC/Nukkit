@@ -21,11 +21,7 @@ public class StorageRegistry implements Registry {
     private volatile boolean closed;
 
     private StorageRegistry() {
-        try {
-            this.registerVanillaStorage();
-        } catch (RegistryException e) {
-            throw new IllegalStateException("Unable to register vanilla block palette", e);
-        }
+        this.registerVanillaStorage();
     }
 
     public static StorageRegistry get() {

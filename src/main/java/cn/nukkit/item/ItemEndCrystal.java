@@ -3,7 +3,8 @@ package cn.nukkit.item;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockBedrock;
 import cn.nukkit.block.BlockObsidian;
-import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityTypes;
+import cn.nukkit.entity.misc.EnderCrystal;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.BlockFace;
@@ -12,6 +13,7 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
@@ -53,17 +55,14 @@ public class ItemEndCrystal extends Item {
             nbt.putString("CustomName", this.getCustomName());
         }
 
-        Entity entity = Entity.createEntity("EndCrystal", chunk, nbt);
+        EnderCrystal enderCrystal = EntityRegistry.get().newEntity(EntityTypes.ENDER_CRYSTAL, chunk, nbt);
 
-        if (entity != null) {
-            if (player.isSurvival()) {
-                Item item = player.getInventory().getItemInHand();
-                item.setCount(item.getCount() - 1);
-                player.getInventory().setItemInHand(item);
-            }
-            entity.spawnToAll();
-            return true;
+        if (player.isSurvival()) {
+            Item item = player.getInventory().getItemInHand();
+            item.setCount(item.getCount() - 1);
+            player.getInventory().setItemInHand(item);
         }
-        return false;
+        enderCrystal.spawnToAll();
+        return true;
     }
 }

@@ -43,7 +43,7 @@ public interface IPlayer extends ServerOperator, Metadatable {
      */
     String getName();
 
-    UUID getUniqueId();
+    UUID getServerId();
 
     /**
      * 返回这个玩家是否被封禁(ban)。<br>

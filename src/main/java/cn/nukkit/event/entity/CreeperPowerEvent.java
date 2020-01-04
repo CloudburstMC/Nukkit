@@ -1,7 +1,7 @@
 package cn.nukkit.event.entity;
 
-import cn.nukkit.entity.mob.EntityCreeper;
-import cn.nukkit.entity.weather.EntityLightningStrike;
+import cn.nukkit.entity.hostile.Creeper;
+import cn.nukkit.entity.misc.LightningBolt;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
@@ -17,21 +17,21 @@ public class CreeperPowerEvent extends EntityEvent implements Cancellable {
     }
 
     private final PowerCause cause;
-    private EntityLightningStrike bolt;
+    private LightningBolt lightningBolt;
 
-    public CreeperPowerEvent(final EntityCreeper creeper, final EntityLightningStrike bolt, final PowerCause cause) {
+    public CreeperPowerEvent(final Creeper creeper, final LightningBolt lightningBolt, final PowerCause cause) {
         this(creeper, cause);
-        this.bolt = bolt;
+        this.lightningBolt = lightningBolt;
     }
 
-    public CreeperPowerEvent(final EntityCreeper creeper, final PowerCause cause) {
+    public CreeperPowerEvent(final Creeper creeper, final PowerCause cause) {
         this.entity = creeper;
         this.cause = cause;
     }
 
     @Override
-    public EntityCreeper getEntity() {
-        return (EntityCreeper) super.getEntity();
+    public Creeper getEntity() {
+        return (Creeper) super.getEntity();
     }
 
     /**
@@ -39,8 +39,8 @@ public class CreeperPowerEvent extends EntityEvent implements Cancellable {
      *
      * @return The Entity for the lightning bolt which is striking the Creeper
      */
-    public EntityLightningStrike getLightning() {
-        return bolt;
+    public LightningBolt getLightningBolt() {
+        return lightningBolt;
     }
 
     /**

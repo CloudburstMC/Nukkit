@@ -18,9 +18,7 @@ public class RegistryException extends RuntimeException {
         super(cause);
     }
 
-    protected RegistryException(String message, Throwable cause,
-                                boolean enableSuppression,
-                                boolean writableStackTrace) {
+    protected RegistryException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

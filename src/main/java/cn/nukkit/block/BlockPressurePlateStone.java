@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.EntityLiving;
+import cn.nukkit.entity.LivingEntity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
@@ -55,7 +55,7 @@ public class BlockPressurePlateStone extends BlockPressurePlateBase {
         AxisAlignedBB bb = getCollisionBoundingBox();
 
         for (Entity entity : this.level.getCollidingEntities(bb)) {
-            if (entity instanceof EntityLiving && entity.doesTriggerPressurePlate()) {
+            if (entity instanceof LivingEntity && entity.doesTriggerPressurePlate()) {
                 return 15;
             }
         }

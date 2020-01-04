@@ -112,7 +112,7 @@ public class BlockEntitySign extends BlockEntitySpawnable {
 
         SignChangeEvent signChangeEvent = new SignChangeEvent(this.getBlock(), player, lines);
 
-        if (!this.namedTag.contains("Creator") || !Objects.equals(player.getUniqueId().toString(), this.namedTag.getString("Creator"))) {
+        if (!this.namedTag.contains("Creator") || !Objects.equals(player.getServerId().toString(), this.namedTag.getString("Creator"))) {
             signChangeEvent.setCancelled();
         }
 

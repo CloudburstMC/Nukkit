@@ -1,8 +1,9 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Server;
-import cn.nukkit.entity.projectile.EntityArrow;
-import cn.nukkit.entity.projectile.EntityProjectile;
+import cn.nukkit.entity.EntityTypes;
+import cn.nukkit.entity.projectile.Arrow;
+import cn.nukkit.entity.projectile.Projectile;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -81,7 +82,8 @@ public class ItemBow extends ItemTool {
         double p = (double) ticksUsed / 20;
 
         double f = Math.min((p * p + p * 2) / 3, 1) * 2;
-        EntityShootBowEvent entityShootBowEvent = new EntityShootBowEvent(player, this, new EntityArrow(player.chunk, nbt, player, f == 2), f);
+        EntityShootBowEvent entityShootBowEvent = new EntityShootBowEvent(player, this,
+                new Arrow(EntityTypes.ARROW, player.chunk, nbt, player, f == 2), f);
 
         if (f < 0.1 || ticksUsed < 3) {
             entityShootBowEvent.setCancelled();
@@ -95,9 +97,9 @@ public class ItemBow extends ItemTool {
             entityShootBowEvent.getProjectile().setMotion(entityShootBowEvent.getProjectile().getMotion().multiply(entityShootBowEvent.getForce()));
             Enchantment infinityEnchant = this.getEnchantment(Enchantment.ID_BOW_INFINITY);
             boolean infinity = infinityEnchant != null && infinityEnchant.getLevel() > 0;
-            EntityProjectile projectile;
-            if (infinity && (projectile = entityShootBowEvent.getProjectile()) instanceof EntityArrow) {
-                ((EntityArrow) projectile).setPickupMode(EntityArrow.PICKUP_CREATIVE);
+            Projectile projectile;
+            if (infinity && (projectile = entityShootBowEvent.getProjectile()) instanceof Arrow) {
+                ((Arrow) projectile).setPickupMode(Arrow.PICKUP_CREATIVE);
             }
             if (player.isSurvival()) {
                 if (!infinity) {
