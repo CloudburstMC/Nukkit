@@ -257,11 +257,11 @@ public abstract class BaseInventory implements Inventory {
             Item slot = this.getItem(i);
             if (item.equals(slot, checkDamage, checkTag)) {
                 int diff;
-                if ((diff = slot.getMaxStackSize() - slot.getCount()) > 0) {
+                if ((diff = Math.min(slot.getMaxStackSize(), this.getMaxStackSize()) - slot.getCount()) > 0) {
                     item.setCount(item.getCount() - diff);
                 }
             } else if (slot.getId() == Item.AIR) {
-                item.setCount(item.getCount() - this.getMaxStackSize());
+                item.setCount(item.getCount() - Math.min(slot.getMaxStackSize(), this.getMaxStackSize()));
             }
 
             if (item.getCount() <= 0) {
@@ -290,15 +290,18 @@ public abstract class BaseInventory implements Inventory {
             }
 
             for (Item slot : new ArrayList<>(itemSlots)) {
-                if (slot.equals(item) && item.getCount() < item.getMaxStackSize()) {
-                    int amount = Math.min(item.getMaxStackSize() - item.getCount(), slot.getCount());
-                    amount = Math.min(amount, this.getMaxStackSize());
-                    if (amount > 0) {
-                        slot.setCount(slot.getCount() - amount);
-                        item.setCount(item.getCount() + amount);
-                        this.setItem(i, item);
-                        if (slot.getCount() <= 0) {
-                            itemSlots.remove(slot);
+                if (slot.equals(item)) {
+                    int maxStackSize = Math.min(this.getMaxStackSize() ,item.getMaxStackSize());
+                    if (item.getCount() < maxStackSize) {
+                        int amount = Math.min(maxStackSize - item.getCount(), slot.getCount());
+                        amount = Math.min(amount, this.getMaxStackSize());
+                        if (amount > 0) {
+                            slot.setCount(slot.getCount() - amount);
+                            item.setCount(item.getCount() + amount);
+                            this.setItem(i, item);
+                            if (slot.getCount() <= 0) {
+                                itemSlots.remove(slot);
+                            }
                         }
                     }
                 }
@@ -312,7 +315,8 @@ public abstract class BaseInventory implements Inventory {
             for (int slotIndex : emptySlots) {
                 if (!itemSlots.isEmpty()) {
                     Item slot = itemSlots.get(0);
-                    int amount = Math.min(slot.getMaxStackSize(), slot.getCount());
+                    int maxStackSize = Math.min(slot.getMaxStackSize(), this.getMaxStackSize());
+                    int amount = Math.min(maxStackSize, slot.getCount());
                     amount = Math.min(amount, this.getMaxStackSize());
                     slot.setCount(slot.getCount() - amount);
                     Item item = slot.clone();
