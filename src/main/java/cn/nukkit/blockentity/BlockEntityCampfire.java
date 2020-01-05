@@ -1,7 +1,9 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockCampfire;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.event.inventory.CampfireSmeltEvent;
 import cn.nukkit.inventory.CampfireInventory;
@@ -52,6 +54,8 @@ public class BlockEntityCampfire extends BlockEntitySpawnable implements Invento
     @Override
     public boolean onUpdate() {
         boolean needsUpdate = false;
+        Block block = getBlock();
+        boolean isLit = block instanceof BlockCampfire && !((BlockCampfire) block).isExtinguished();
         for (int slot = 0; slot < inventory.getSize(); slot++) {
             Item item = inventory.getItem(slot);
             if (item == null || item.getId() == BlockID.AIR || item.getCount() <= 0) {
@@ -89,9 +93,11 @@ public class BlockEntityCampfire extends BlockEntitySpawnable implements Invento
                         burnTime[slot] = 0;
                         recipes[slot] = null;
                     }
-                } else {
+                } else if (isLit) {
                     burnTime[slot]--;
                     needsUpdate = true;
+                } else {
+                    burnTime[slot] = 600;
                 }
             }
         }
