@@ -3,6 +3,7 @@ package cn.nukkit.blockentity;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockBeehive;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.passive.EntityBee;
@@ -265,10 +266,12 @@ public class BlockEntityBeehive extends BlockEntity {
         if (!isEmpty()) {
             for (BlockEntityBeehive.Occupant occupant : getOccupants()) {
                 Entity entity = spawnOccupant(occupant, null);
-                if (entity instanceof EntityBee) {
-                    ((EntityBee) entity).setAngry(true);
-                } else {
-                    // TODO attack nearest player
+                if (level == null || level.getBlock(down()).getId() != BlockID.CAMPFIRE_BLOCK) {
+                    if (entity instanceof EntityBee) {
+                        ((EntityBee) entity).setAngry(true);
+                    } else {
+                        // TODO attack nearest player
+                    }
                 }
             }
         }

@@ -310,7 +310,9 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[RECORD_WAIT] = ItemRecordWait.class;
 
             list[SHIELD] = ItemShield.class; //513
-            
+
+            list[CAMPFIRE] = ItemCampfire.class; //720
+
             list[SUSPICIOUS_STEW] = ItemSuspiciousStew.class; //734
     
             list[HONEYCOMB] = ItemHoneycomb.class; //736

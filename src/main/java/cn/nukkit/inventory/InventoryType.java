@@ -36,7 +36,8 @@ public enum InventoryType {
     BLAST_FURNACE(3, "Blast Furnace", 27),
     SMOKER(3, "Smoker", 28),
     //STONECUTTER typeId:29
-    BARREL(27, "Barrel", 0);
+    BARREL(27, "Barrel", 0),
+    CAMPFIRE(4, "Campfire", -1);
 
 
     private final int size;

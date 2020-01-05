@@ -34,6 +34,7 @@ public class CraftingManager {
     public final Map<Integer, FurnaceRecipe> furnaceRecipes = new Int2ObjectOpenHashMap<>();
     public final Map<Integer, BlastFurnaceRecipe> blastFurnaceRecipes = new Int2ObjectOpenHashMap<>();
     public final Map<Integer, SmokerRecipe> smokerRecipes = new Int2ObjectOpenHashMap<>();
+    public final Map<Integer, CampfireRecipe> campfireRecipes = new Int2ObjectOpenHashMap<>();
 
     public final Map<Integer, BrewingRecipe> brewingRecipes = new Int2ObjectOpenHashMap<>();
     public final Map<Integer, ContainerRecipe> containerRecipes = new Int2ObjectOpenHashMap<>();
@@ -141,8 +142,9 @@ public class CraftingManager {
                     case 2:
                     case 3:
                         craftingBlock = (String) recipe.get("block");
-                        if (!"furnace".equals(craftingBlock) && !"blast_furnace".equals(craftingBlock) && !"smoker".equals(craftingBlock)) {
-                            // Ignore other recipes than furnaces, blast furnaces and smokers
+                        if (!"furnace".equals(craftingBlock) && !"blast_furnace".equals(craftingBlock)
+                                && !"smoker".equals(craftingBlock) && !"campfire".equals(craftingBlock)) {
+                            // Ignore other recipes than furnaces, blast furnaces, smokers and campfire
                             continue;
                         }
                         Map<String, Object> resultMap = (Map) recipe.get("output");
@@ -163,6 +165,9 @@ public class CraftingManager {
                                 break;
                             case "smoker":
                                 this.registerRecipe(new SmokerRecipe(resultItem, inputItem));
+                                break;
+                            case "campfire":
+                                this.registerRecipe(new CampfireRecipe(resultItem, inputItem));
                                 break;
                         }
                         break;
@@ -239,6 +244,12 @@ public class CraftingManager {
         return recipe;
     }
 
+    public CampfireRecipe matchCampfireRecipe(Item input) {
+        CampfireRecipe recipe = this.campfireRecipes.get(getItemHash(input));
+        if (recipe == null) recipe = this.campfireRecipes.get(getItemHash(input.getId(), 0));
+        return recipe;
+    }
+
     public BlastFurnaceRecipe matchBlastFurnaceRecipe(Item input) {
         BlastFurnaceRecipe recipe = this.blastFurnaceRecipes.get(getItemHash(input));
         if (recipe == null) recipe = this.blastFurnaceRecipes.get(getItemHash(input.getId(), 0));
@@ -276,6 +287,11 @@ public class CraftingManager {
     public void registerSmokerRecipe(SmokerRecipe recipe) {
         Item input = recipe.getInput();
         this.smokerRecipes.put(getItemHash(input), recipe);
+    }
+
+    public void registerCampfireRecipe(CampfireRecipe recipe) {
+        Item input = recipe.getInput();
+        this.campfireRecipes.put(getItemHash(input), recipe);
     }
 
     private static int getItemHash(Item item) {

@@ -12,5 +12,7 @@ public enum RecipeType {
     BLAST_FURNACE,
     BLAST_FURNACE_DATA,
     SMOKER,
-    SMOKER_DATA
+    SMOKER_DATA,
+    CAMPFIRE,
+    CAMPFIRE_DATA
 }

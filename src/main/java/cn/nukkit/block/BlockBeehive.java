@@ -119,7 +119,7 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
     
     public void honeyCollected(Player player, boolean angerBees) {
         setHoneyLevel(0);
-        if (angerBees) {
+        if (down().getId() != CAMPFIRE_BLOCK && angerBees) {
             angerBees(player);
         }
     }
