@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.utils.DyeColor;
+
 /**
  * Created by CreeperFace on 2.6.2017.
  */
@@ -21,5 +23,9 @@ public class BlockTerracottaGlazedLightBlue extends BlockTerracottaGlazed {
     @Override
     public String getName() {
         return "Light Blue Glazed Terracotta";
+    }
+
+    public DyeColor getDyeColor() {
+        return DyeColor.LIGHT_BLUE;
     }
 }

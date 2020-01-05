@@ -9,6 +9,7 @@ import cn.nukkit.item.ItemRecord;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
 /**
@@ -96,5 +97,10 @@ public class BlockJukebox extends BlockSolid implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.DIRT_BLOCK_COLOR;
     }
 }
