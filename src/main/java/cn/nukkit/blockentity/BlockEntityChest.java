@@ -15,7 +15,7 @@ import java.util.HashSet;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BlockEntityChest extends BlockEntityChestBase {
+public class BlockEntityChest extends BlockEntitySpawnableContainer implements BlockEntityNameable {
 
     protected DoubleChestInventory doubleInventory = null;
 
@@ -183,4 +183,23 @@ public class BlockEntityChest extends BlockEntityChestBase {
         return c;
     }
 
+    @Override
+    public String getName() {
+        return this.hasName() ? this.namedTag.getString("CustomName") : "Chest";
+    }
+
+    @Override
+    public boolean hasName() {
+        return this.namedTag.contains("CustomName");
+    }
+
+    @Override
+    public void setName(String name) {
+        if (name == null || name.equals("")) {
+            this.namedTag.remove("CustomName");
+            return;
+        }
+
+        this.namedTag.putString("CustomName", name);
+    }
 }

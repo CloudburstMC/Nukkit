@@ -13,10 +13,10 @@ import cn.nukkit.nbt.tag.ListTag;
 
 import java.util.HashSet;
 
-public abstract class BlockEntityChestBase extends BlockEntitySpawnable implements InventoryHolder, BlockEntityContainer, BlockEntityNameable {
+public abstract class BlockEntitySpawnableContainer extends BlockEntitySpawnable implements InventoryHolder, BlockEntityContainer {
     protected ContainerInventory inventory;
 
-    public BlockEntityChestBase(FullChunk chunk, CompoundTag nbt) {
+    public BlockEntitySpawnableContainer(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
@@ -101,25 +101,5 @@ public abstract class BlockEntityChestBase extends BlockEntitySpawnable implemen
             // If it is more than i, then it is an update on a inventorySlot, so we are going to overwrite the item in the list
             (this.namedTag.getList("Items", CompoundTag.class)).add(i, d);
         }
-    }
-
-    @Override
-    public String getName() {
-        return this.hasName() ? this.namedTag.getString("CustomName") : "Chest";
-    }
-
-    @Override
-    public boolean hasName() {
-        return this.namedTag.contains("CustomName");
-    }
-
-    @Override
-    public void setName(String name) {
-        if (name == null || name.equals("")) {
-            this.namedTag.remove("CustomName");
-            return;
-        }
-
-        this.namedTag.putString("CustomName", name);
     }
 }
