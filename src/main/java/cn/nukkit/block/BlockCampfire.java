@@ -12,7 +12,10 @@ import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemCampfire;
 import cn.nukkit.item.ItemCoal;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
@@ -106,12 +109,30 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
 
     @Override
     public void onEntityCollide(Entity entity) {
-        entity.attack(new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.DamageCause.FIRE, 1));
+        if (!isExtinguished() && !entity.isSneaking()) {
+            entity.attack(new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.DamageCause.FIRE, 1));
+        }
     }
 
     @Override
     public boolean canBeActivated() {
         return true;
+    }
+
+    @Override
+    public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
+            if (!isExtinguished()) {
+                Block layer1 = getLevelBlockAtLayer(1);
+                if (layer1 instanceof BlockWater) {
+                    setExtinguished(true);
+                    this.level.setBlock(this, this, true, true);
+                    this.level.addSound(this, Sound.RANDOM_FIZZ);
+                }
+            }
+            return type;
+        }
+        return 0;
     }
 
     @Override
@@ -125,8 +146,25 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
             entity = createBlockEntity(Item.get(0));
         }
 
+        boolean itemUsed = false;
+        if (item.isShovel() && !isExtinguished()) {
+            setExtinguished(true);
+            this.level.setBlock(this, this, true, true);
+            this.level.addSound(this, Sound.RANDOM_FIZZ);
+            itemUsed = true;
+        } else if (item.getId() == ItemID.FLINT_AND_STEEL) {
+            item.useOn(this);
+            setExtinguished(false);
+            this.level.setBlock(this, this, true, true);
+            if (entity != null) {
+                entity.scheduleUpdate();
+            }
+            this.level.addSound(this, Sound.FIRE_IGNITE);
+            itemUsed = true;
+        }
+
         if (entity == null) {
-            return false;
+            return itemUsed;
         }
 
         BlockEntityCampfire campfire = (BlockEntityCampfire) entity;
@@ -142,7 +180,12 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
             }
         }
 
-        return false;
+        return itemUsed;
+    }
+
+    @Override
+    public int getWaterloggingLevel() {
+        return 2;
     }
 
     @Override
