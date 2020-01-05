@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBarrel;
+import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
@@ -160,5 +161,21 @@ public class BlockBarrel extends BlockSolidMeta implements Faceable {
 
     public void setOpen(boolean open) {
         setDamage((getDamage() & 0x7) | (open? 0x8 : 0x0));
+    }
+
+
+    public boolean hasComparatorInputOverride() {
+        return true;
+    }
+
+    @Override
+    public int getComparatorInputOverride() {
+        BlockEntity blockEntity = this.level.getBlockEntity(this);
+
+        if (blockEntity instanceof BlockEntityBarrel) {
+            return ContainerInventory.calculateRedstone(((BlockEntityBarrel) blockEntity).getInventory());
+        }
+
+        return super.getComparatorInputOverride();
     }
 }
