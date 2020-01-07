@@ -34,6 +34,8 @@ import java.util.concurrent.TimeUnit;
 @ParametersAreNonnullByDefault
 public final class LevelChunkManager {
 
+    private static final CompletableFuture<Void> COMPLETED_VOID_FUTURE = CompletableFuture.completedFuture(null);
+
     private final Level level;
     private final LevelProvider provider;
     private final Long2ObjectMap<Chunk> chunksLoaded = new Long2ObjectOpenHashMap<>();
@@ -149,27 +151,32 @@ public final class LevelChunkManager {
         this.chunkLastAccessTimes.put(chunkKey, System.currentTimeMillis());
         CompletableFuture<Chunk> future = this.chunkFutures.get(chunkKey);
         boolean unloadedChunk = false;
+        boolean preGenerated = false;
+        boolean prePopulated = false;
         if (future == null) {
             unloadedChunk = true;
             future = this.provider.readChunk(new ChunkBuilder(chunkX, chunkZ, this.level)).thenApply(chunk -> {
                 if (chunk == null) {
                     return new Chunk(chunkX, chunkZ, this.level);
                 }
+                chunk.init();
                 return chunk;
             });
         } else if (chunksLoaded.containsKey(chunkKey)) {
             Chunk chunk = chunksLoaded.get(chunkKey);
-            if ((!generate || chunk.isGenerated()) && (!populate || chunk.isPopulated())) {
+            preGenerated = chunk.isGenerated();
+            prePopulated = chunk.isPopulated();
+            if ((!generate || preGenerated) && (!populate || prePopulated)) {
                 return future;
             }
         }
 
-        if (generate) {
+        if (generate && !preGenerated) {
             future = future.thenApplyAsync(this.chunkGenerateFunction, this.executor);
         }
 
-        if (populate) {
-            future = this.populateChunk(future, chunkX, chunkZ, generate);
+        if (populate && !prePopulated) {
+            future = this.populateChunk(future, chunkX, chunkZ, generate && !preGenerated);
         }
 
         if (unloadedChunk) {
@@ -268,21 +275,29 @@ public final class LevelChunkManager {
         }
     }
 
-    public void saveChunks() {
+    public synchronized CompletableFuture<Void> saveChunks() {
+        CompletableFuture<?>[] futures = new CompletableFuture[this.chunksLoaded.size()];
+        int count = 0;
+        for (Chunk chunk : this.chunksLoaded.values()) {
+            futures[count++] = saveChunk(chunk);
+        }
         this.chunksLoaded.values().forEach(this::saveChunk);
+
+        return CompletableFuture.allOf(futures);
     }
 
-    public void saveChunk(Chunk chunk) {
+    public CompletableFuture<Void> saveChunk(Chunk chunk) {
         Preconditions.checkNotNull(chunk, "chunk");
         Preconditions.checkArgument(chunk.getLevel() == this.level,
                 "Chunk is not from this ChunkManager's Level");
         if (chunk.isDirty()) {
-            this.provider.saveChunk(chunk).exceptionally(throwable -> {
+            chunk.setDirty(false);
+            return this.provider.saveChunk(chunk).exceptionally(throwable -> {
                 log.warn("Unable to save chunk", throwable);
                 return null;
             });
-            chunk.setDirty(false);
         }
+        return COMPLETED_VOID_FUTURE;
     }
 
     @Nonnull

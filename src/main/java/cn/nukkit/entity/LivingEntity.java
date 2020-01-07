@@ -26,6 +26,7 @@ import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.Identifier;
+import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 
 import java.util.ArrayList;
@@ -207,94 +208,92 @@ public abstract class LivingEntity extends Entity implements EntityDamageable {
 
     @Override
     public boolean entityBaseTick(int tickDiff) {
-        Timings.livingEntityBaseTickTimer.startTiming();
-        boolean isBreathing = !this.isInsideOfWater();
-        if (this instanceof Player && (((Player) this).isCreative() || ((Player) this).isSpectator())) {
-            isBreathing = true;
-        }
-
-        if (this instanceof Player) {
-            if (!isBreathing && ((Player) this).getInventory().getHelmet() instanceof ItemTurtleShell) {
-                if (turtleTicks > 0) {
-                    isBreathing = true;
-                    turtleTicks--;
-                }
-            } else {
-                turtleTicks = 200;
-            }
-        }
-
-        this.setFlag(BREATHING, isBreathing);
-
-        boolean hasUpdate = super.entityBaseTick(tickDiff);
-
-        if (this.isAlive()) {
-
-            if (this.isInsideOfSolid()) {
-                hasUpdate = true;
-                this.attack(new EntityDamageEvent(this, DamageCause.SUFFOCATION, 1));
+        try (Timing ignored = Timings.livingEntityBaseTickTimer.startTiming()) {
+            boolean isBreathing = !this.isInsideOfWater();
+            if (this instanceof Player && (((Player) this).isCreative() || ((Player) this).isSpectator())) {
+                isBreathing = true;
             }
 
-            if (this.isOnLadder() || this.hasEffect(Effect.LEVITATION)) {
-                this.resetFallDistance();
-            }
-
-            if (!this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()) {
-                if (this instanceof WaterAnimal || (this instanceof Player && (((Player) this).isCreative() || ((Player) this).isSpectator()))) {
-                    this.setAirTicks(400);
+            if (this instanceof Player) {
+                if (!isBreathing && ((Player) this).getInventory().getHelmet() instanceof ItemTurtleShell) {
+                    if (turtleTicks > 0) {
+                        isBreathing = true;
+                        turtleTicks--;
+                    }
                 } else {
-                    if (turtleTicks == 0 || turtleTicks == 200) {
+                    turtleTicks = 200;
+                }
+            }
+
+            this.setFlag(BREATHING, isBreathing);
+
+            boolean hasUpdate = super.entityBaseTick(tickDiff);
+
+            if (this.isAlive()) {
+
+                if (this.isInsideOfSolid()) {
+                    hasUpdate = true;
+                    this.attack(new EntityDamageEvent(this, DamageCause.SUFFOCATION, 1));
+                }
+
+                if (this.isOnLadder() || this.hasEffect(Effect.LEVITATION)) {
+                    this.resetFallDistance();
+                }
+
+                if (!this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()) {
+                    if (this instanceof WaterAnimal || (this instanceof Player && (((Player) this).isCreative() || ((Player) this).isSpectator()))) {
+                        this.setAirTicks(400);
+                    } else {
+                        if (turtleTicks == 0 || turtleTicks == 200) {
+                            hasUpdate = true;
+                            int airTicks = this.getAirTicks() - tickDiff;
+
+                            if (airTicks <= -20) {
+                                airTicks = 0;
+                                this.attack(new EntityDamageEvent(this, DamageCause.DROWNING, 2));
+                            }
+
+                            setAirTicks(airTicks);
+                        }
+                    }
+                } else {
+                    if (this instanceof WaterAnimal) {
                         hasUpdate = true;
-                        int airTicks = this.getAirTicks() - tickDiff;
+                        int airTicks = getAirTicks() - tickDiff;
 
                         if (airTicks <= -20) {
                             airTicks = 0;
-                            this.attack(new EntityDamageEvent(this, DamageCause.DROWNING, 2));
+                            this.attack(new EntityDamageEvent(this, DamageCause.SUFFOCATION, 2));
                         }
 
                         setAirTicks(airTicks);
-                    }
-                }
-            } else {
-                if (this instanceof WaterAnimal) {
-                    hasUpdate = true;
-                    int airTicks = getAirTicks() - tickDiff;
+                    } else {
+                        int airTicks = getAirTicks();
 
-                    if (airTicks <= -20) {
-                        airTicks = 0;
-                        this.attack(new EntityDamageEvent(this, DamageCause.SUFFOCATION, 2));
-                    }
-
-                    setAirTicks(airTicks);
-                } else {
-                    int airTicks = getAirTicks();
-
-                    if (airTicks < 400) {
-                        setAirTicks(Math.min(400, airTicks + tickDiff * 5));
+                        if (airTicks < 400) {
+                            setAirTicks(Math.min(400, airTicks + tickDiff * 5));
+                        }
                     }
                 }
             }
-        }
 
-        if (this.attackTime > 0) {
-            this.attackTime -= tickDiff;
-        }
+            if (this.attackTime > 0) {
+                this.attackTime -= tickDiff;
+            }
 
-        if (this.riding == null) {
-            for (Entity entity : level.getNearbyEntities(this.boundingBox.grow(0.20000000298023224, 0.0D, 0.20000000298023224), this)) {
-                if (entity instanceof EntityRideable) {
-                    this.collidingWith(entity);
+            if (this.riding == null) {
+                for (Entity entity : level.getNearbyEntities(this.boundingBox.grow(0.20000000298023224, 0.0D, 0.20000000298023224), this)) {
+                    if (entity instanceof EntityRideable) {
+                        this.collidingWith(entity);
+                    }
                 }
             }
+
+            // Used to check collisions with magma blocks
+            Block block = this.level.getLoadedBlock((int) x, (int) y - 1, (int) z);
+            if (block instanceof BlockMagma) block.onEntityCollide(this);
+            return hasUpdate;
         }
-
-        // Used to check collisions with magma blocks
-        Block block = this.level.getLoadedBlock((int) x, (int) y - 1, (int) z);
-        if (block instanceof BlockMagma) block.onEntityCollide(this);
-
-        Timings.livingEntityBaseTickTimer.stopTiming();
-
-        return hasUpdate;
     }
 
     public Item[] getDrops() {

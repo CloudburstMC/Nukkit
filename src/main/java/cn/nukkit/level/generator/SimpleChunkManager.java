@@ -84,4 +84,8 @@ public abstract class SimpleChunkManager implements ChunkManager {
     }
 
     public abstract void setChunk(Chunk chunk);
+
+    public void isValid(int chunkX, int chunkZ) {
+        this.getChunk(chunkX, chunkZ);
+    }
 }

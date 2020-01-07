@@ -352,17 +352,17 @@ public class PluginManager {
     }
 
     private void calculatePermissionDefault(Permission permission) {
-        Timings.permissionDefaultTimer.startTiming();
-        if (permission.getDefault().equals(Permission.DEFAULT_OP) || permission.getDefault().equals(Permission.DEFAULT_TRUE)) {
-            this.defaultPermsOp.put(permission.getName(), permission);
-            this.dirtyPermissibles(true);
-        }
+        try (Timing ignored = Timings.permissionDefaultTimer.startTiming()) {
+            if (permission.getDefault().equals(Permission.DEFAULT_OP) || permission.getDefault().equals(Permission.DEFAULT_TRUE)) {
+                this.defaultPermsOp.put(permission.getName(), permission);
+                this.dirtyPermissibles(true);
+            }
 
-        if (permission.getDefault().equals(Permission.DEFAULT_NOT_OP) || permission.getDefault().equals(Permission.DEFAULT_TRUE)) {
-            this.defaultPerms.put(permission.getName(), permission);
-            this.dirtyPermissibles(false);
+            if (permission.getDefault().equals(Permission.DEFAULT_NOT_OP) || permission.getDefault().equals(Permission.DEFAULT_TRUE)) {
+                this.defaultPerms.put(permission.getName(), permission);
+                this.dirtyPermissibles(false);
+            }
         }
-        Timings.permissionDefaultTimer.startTiming();
     }
 
     private void dirtyPermissibles(boolean op) {

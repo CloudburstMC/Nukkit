@@ -4,7 +4,7 @@ import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.chunk.ChunkBuilder;
 import org.iq80.leveldb.DB;
 
-public interface ChunkSerializer {
+interface ChunkSerializer {
 
     void serialize(DB db, Chunk chunk);
 

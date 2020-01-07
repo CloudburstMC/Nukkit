@@ -4,7 +4,9 @@ import cn.nukkit.level.LevelData;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.chunk.ChunkBuilder;
 import cn.nukkit.level.provider.LevelProvider;
+import cn.nukkit.level.provider.leveldb.serializer.BlockEntitySerializer;
 import cn.nukkit.level.provider.leveldb.serializer.ChunkSerializers;
+import cn.nukkit.level.provider.leveldb.serializer.EntitySerializer;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.LoadState;
@@ -12,6 +14,7 @@ import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
 import org.iq80.leveldb.CompressionType;
 import org.iq80.leveldb.DB;
+import org.iq80.leveldb.DBIterator;
 import org.iq80.leveldb.Options;
 import org.iq80.leveldb.impl.Iq80DBFactory;
 
@@ -21,15 +24,14 @@ import java.io.InputStream;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 
 @Log4j2
 @ParametersAreNonnullByDefault
-public class LevelDBProvider implements LevelProvider {
-
-    public static final LevelProvider.Factory FACTORY = LevelDBProvider::new;
+class LevelDBProvider implements LevelProvider {
 
     private final String levelId;
     private final Path path;
@@ -37,7 +39,7 @@ public class LevelDBProvider implements LevelProvider {
     private final DB db;
     private volatile boolean closed;
 
-    private LevelDBProvider(String levelId, Path worldPath, Executor executor) throws IOException {
+    LevelDBProvider(String levelId, Path worldPath, Executor executor) throws IOException {
         this.levelId = levelId;
         this.path = worldPath.resolve(levelId);
         this.executor = executor;
@@ -76,6 +78,9 @@ public class LevelDBProvider implements LevelProvider {
 
             ChunkSerializers.deserializeChunk(this.db, chunkBuilder, chunkVersion);
 
+            BlockEntitySerializer.loadBlockEntities(this.db, chunkBuilder);
+            EntitySerializer.loadEntities(this.db, chunkBuilder);
+
             return chunkBuilder.build();
         }, this.executor);
     }
@@ -91,6 +96,9 @@ public class LevelDBProvider implements LevelProvider {
 
             this.db.put(LevelDBKey.VERSION.getKey(x, z), new byte[]{7});
 
+            BlockEntitySerializer.saveBlockEntities(this.db, chunk);
+            EntitySerializer.saveEntities(this.db, chunk);
+
             return null;
         }, this.executor);
     }
@@ -98,9 +106,11 @@ public class LevelDBProvider implements LevelProvider {
     @Override
     public void forEachChunk(BiConsumer<Chunk, Throwable> consumer) {
         executor.execute(() -> {
-            this.db.forEach(entry -> {
-
-            });
+            DBIterator iterator = this.db.iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<byte[], byte[]> entry = iterator.next();
+                // TODO: 06/01/2020 Add support for iterating chunks
+            }
         });
     }
 
@@ -121,7 +131,7 @@ public class LevelDBProvider implements LevelProvider {
                 CompoundTag tag;
                 try (InputStream stream = Files.newInputStream(dataPath)) {
                     if (stream.skip(8) != 8) {
-                        throw new IllegalArgumentException("Corrupt level.dat size");
+                        throw new IOException("Corrupt level.dat size");
                     }
                     tag = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN, true);
                 }

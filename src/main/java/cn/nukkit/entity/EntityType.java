@@ -28,4 +28,9 @@ public final class EntityType<T extends Entity> {
     public Identifier getIdentifier() {
         return identifier;
     }
+
+    @Override
+    public String toString() {
+        return identifier + "(" + entityClass + ")";
+    }
 }

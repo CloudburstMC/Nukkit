@@ -9,9 +9,9 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ChunkSectionSerializerV8 implements ChunkSectionSerializer {
+class ChunkSectionSerializerV8 implements ChunkSectionSerializer {
 
-    public static final ChunkSectionSerializer INSTANCE = new ChunkSectionSerializerV8();
+    static final ChunkSectionSerializer INSTANCE = new ChunkSectionSerializerV8();
 
     @Override
     public void serialize(ByteBuf buf, BlockStorage[] storage) {

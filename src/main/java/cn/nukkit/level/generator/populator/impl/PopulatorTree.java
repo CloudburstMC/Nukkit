@@ -8,6 +8,7 @@ import cn.nukkit.level.generator.populator.type.PopulatorCount;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.Identifier;
+import lombok.extern.log4j.Log4j2;
 
 import static cn.nukkit.block.BlockIds.*;
 
@@ -15,6 +16,7 @@ import static cn.nukkit.block.BlockIds.*;
  * author: DaPorkchop_
  * Nukkit Project
  */
+@Log4j2
 public class PopulatorTree extends PopulatorCount {
 
     private final int type;
@@ -31,8 +33,12 @@ public class PopulatorTree extends PopulatorCount {
     @Override
     public void populateCount(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, Chunk chunk) {
         this.level = level;
+
         int x = NukkitMath.randomRange(random, chunkX << 4, (chunkX << 4) + 15);
         int z = NukkitMath.randomRange(random, chunkZ << 4, (chunkZ << 4) + 15);
+        if (x >> 4 != chunkX || z >> 4 != chunkZ) {
+            throw new IllegalStateException("Coordinate is outside chunk!");
+        }
         int y = this.getHighestWorkableBlock(x, z);
         if (y < 3) {
             return;

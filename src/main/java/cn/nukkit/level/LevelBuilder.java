@@ -2,6 +2,7 @@ package cn.nukkit.level;
 
 import cn.nukkit.Server;
 import cn.nukkit.level.provider.LevelProvider;
+import cn.nukkit.level.provider.LevelProviderFactory;
 import cn.nukkit.level.storage.StorageType;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -54,7 +55,7 @@ public class LevelBuilder {
 
         // Load chunk provider
         CompletableFuture<LevelProvider> providerFuture = CompletableFuture.supplyAsync(() -> {
-            LevelProvider.Factory factory = this.server.getStorageRegistry().getLevelProviderFactory(storageType);
+            LevelProviderFactory factory = this.server.getStorageRegistry().getLevelProviderFactory(storageType);
             if (factory == null) {
                 throw new IllegalArgumentException("Unregistered storageType");
             }

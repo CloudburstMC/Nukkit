@@ -66,6 +66,8 @@ public class Nukkit {
         // Force Mapped ByteBuffers for LevelDB till fixed.
         System.setProperty("leveldb.mmap", "true");
 
+        System.getProperties().putIfAbsent("io.netty.allocator.type", "unpooled");
+
         // Netty logger for debug info
         InternalLoggerFactory.setDefaultFactory(Log4J2LoggerFactory.INSTANCE);
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);

@@ -10,7 +10,9 @@ import cn.nukkit.entity.passive.*;
 import cn.nukkit.entity.projectile.*;
 import cn.nukkit.entity.vehicle.*;
 import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.Identifier;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -22,13 +24,19 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -40,49 +48,66 @@ public class EntityRegistry implements Registry {
     private static final EntityRegistry INSTANCE;
 
     private static final BiMap<String, Identifier> LEGACY_NAMES;
+    private static final List<CompoundTag> VANILLA_ENTITIES;
 
     static {
-        InputStream stream = RegistryUtils.getOrAssertResource("legacy/entity_names.json");
-        Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
-        Gson gson = new Gson();
-        Type collectionType = new TypeToken<Map<String, String>>() {
-        }.getType();
-        Map<String, String> legacyNames = gson.fromJson(reader, collectionType);
+        try (InputStream stream = RegistryUtils.getOrAssertResource("legacy/entity_names.json")) {
+            Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
+            Gson gson = new Gson();
+            Type collectionType = new TypeToken<Map<String, String>>() {
+            }.getType();
+            Map<String, String> legacyNames = gson.fromJson(reader, collectionType);
 
-        ImmutableBiMap.Builder<String, Identifier> mapBuilder = ImmutableBiMap.builder();
+            ImmutableBiMap.Builder<String, Identifier> mapBuilder = ImmutableBiMap.builder();
 
-        legacyNames.forEach((name, identifier) -> mapBuilder.put(name, Identifier.fromString(identifier)));
-        LEGACY_NAMES = mapBuilder.build();
+            legacyNames.forEach((name, identifier) -> mapBuilder.put(name, Identifier.fromString(identifier)));
+            LEGACY_NAMES = mapBuilder.build();
+        } catch (IOException e) {
+            throw new AssertionError("Unable to close resource stream", e);
+        }
+
+        try (InputStream stream = RegistryUtils.getOrAssertResource("entity_identifiers.dat")) {
+            CompoundTag tag = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN, true);
+            ListTag<CompoundTag> vanillaEntities = tag.getList("idlist", CompoundTag.class);
+            VANILLA_ENTITIES = vanillaEntities.getAll();
+        } catch (IOException e) {
+            throw new AssertionError("Unable to close resource stream", e);
+        }
 
         INSTANCE = new EntityRegistry();
     }
 
     private final BiMap<Identifier, EntityType<?>> identifierTypeMap = HashBiMap.create();
     private final AtomicLong entityIdAllocator = new AtomicLong();
-    private final Map<EntityType<?>, FastBinaryMinHeap<EntityFactory<?>>> factoryMap = new IdentityHashMap<>();
-    private final Int2ObjectMap<EntityType<?>> runtimeToTypes = new Int2ObjectOpenHashMap<>();
+    private final Map<EntityType<?>, EntityData> dataMap = new IdentityHashMap<>();
+    private final Int2ObjectMap<EntityType<?>> runtimeTypeMap = new Int2ObjectOpenHashMap<>();
     private final Object2IntMap<EntityType<?>> typeToRuntimeMap = new Object2IntLinkedOpenHashMap<>();
+    private final int customEntityStart;
     private int runtimeTypeAllocator;
     private volatile boolean closed;
+    private byte[] cachedEntityIdentifiers;
 
     private EntityRegistry() {
         this.registerVanillaEntities();
+        customEntityStart = runtimeTypeAllocator;
     }
 
     public static EntityRegistry get() {
         return INSTANCE;
     }
 
-    public synchronized <T extends Entity> void register(EntityType<T> type, EntityFactory<T> factory, int weight) {
-        this.registerInternal(type, factory, this.runtimeTypeAllocator++, weight);
+    public synchronized <T extends Entity> void register(EntityType<T> type, EntityFactory<T> factory, int weight,
+                                                         boolean hasSpawnEgg) {
+        this.registerInternal(type, factory, this.runtimeTypeAllocator++, weight, hasSpawnEgg);
     }
 
     private <T extends Entity> void registerVanilla(EntityType<T> type, EntityFactory<T> factory, int legacyId) {
-        this.registerInternal(type, factory, legacyId, 100);
+        this.registerInternal(type, factory, legacyId, 100, false); // Vanilla NBT decides
     }
 
     private synchronized <T extends Entity> void registerInternal(EntityType<T> type, EntityFactory<T> factory,
-                                                                  int runtimeType, int weight) throws RegistryException {
+                                                                  int runtimeType, int weight, boolean hasSpawnEgg)
+            throws RegistryException {
         checkClosed();
         checkNotNull(type, "type");
         checkNotNull(factory, "factory");
@@ -93,14 +118,14 @@ public class EntityRegistry implements Registry {
                 this.runtimeTypeAllocator = runtimeType + 1;
             }
 
-            this.runtimeToTypes.put(runtimeType, type);
+            this.runtimeTypeMap.put(runtimeType, type);
             this.typeToRuntimeMap.put(type, runtimeType);
             this.identifierTypeMap.put(type.getIdentifier(), type);
-            FastBinaryMinHeap<EntityFactory<?>> factories = new FastBinaryMinHeap<>();
-            factories.insert(weight, factory);
-            this.factoryMap.put(type, factories);
+            EntityData entityData = new EntityData(hasSpawnEgg);
+            entityData.factories.insert(weight, factory);
+            this.dataMap.put(type, entityData);
         } else if (existingType == type) { // existing
-            this.factoryMap.get(type).insert(weight, factory);
+            this.dataMap.get(type).factories.insert(weight, factory);
         } else { // invalid
             throw new RegistryException(type.getIdentifier() + " is already registered");
         }
@@ -111,7 +136,7 @@ public class EntityRegistry implements Registry {
     }
 
     public EntityType<?> getEntityType(int runtimeId) {
-        return runtimeToTypes.get(runtimeId);
+        return runtimeTypeMap.get(runtimeId);
     }
 
     public EntityType<?> getEntityType(Identifier identifier) {
@@ -131,7 +156,7 @@ public class EntityRegistry implements Registry {
         checkNotNull(type, "type");
         checkNotNull(chunk, "chunk");
         checkNotNull(tag, "tag");
-        FastBinaryMinHeap<EntityFactory<?>> factories = this.factoryMap.get(type);
+        FastBinaryMinHeap<EntityFactory<?>> factories = this.dataMap.get(type).factories;
         if (factories == null) {
             throw new RegistryException(type.getIdentifier() + " is not a registered entity");
         }
@@ -156,10 +181,41 @@ public class EntityRegistry implements Registry {
         return LEGACY_NAMES.inverse().get(identifier);
     }
 
+    public byte[] getCachedEntityIdentifiers() {
+        return cachedEntityIdentifiers;
+    }
+
     @Override
     public synchronized void close() throws RegistryException {
         checkClosed();
         this.closed = true;
+
+        // generate cache
+
+        List<CompoundTag> entityIdentifiers = new ArrayList<>(VANILLA_ENTITIES);
+
+        for (int id = customEntityStart; id < runtimeTypeAllocator; id++) {
+            EntityType<?> type = this.runtimeTypeMap.get(id);
+            EntityData data = this.dataMap.get(type);
+
+            entityIdentifiers.add(new CompoundTag()
+                    .putBoolean("summonable", true) // TODO: 07/01/2020 This affects the summon command auto completion
+                    .putBoolean("hasSpawnEgg", data.hasSpawnEgg)
+                    .putBoolean("experimental", true) // If there are experimental features, we may as well enable them
+                    .putString("id", type.getIdentifier().toString())
+                    .putString("bid", "") // ???
+                    .putInt("rid", id)
+            );
+        }
+
+        ListTag<CompoundTag> idList = new ListTag<>("idlist");
+        idList.setAll(entityIdentifiers);
+
+        try {
+            this.cachedEntityIdentifiers = NBTIO.write(new CompoundTag().putList(idList), ByteOrder.LITTLE_ENDIAN, true);
+        } catch (IOException e) {
+            throw new RegistryException("Unable to create entity identifiers cache");
+        }
     }
 
     private void checkClosed() {
@@ -249,5 +305,11 @@ public class EntityRegistry implements Registry {
         registerVanilla(VILLAGER, Villager::new, 115);
         registerVanilla(ZOMBIE_VILLAGER, ZombieVillager::new, 116);
         registerVanilla(WANDERING_TRADER, WanderingTrader::new, 118);
+    }
+
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    private static class EntityData {
+        private final boolean hasSpawnEgg;
+        private final FastBinaryMinHeap<EntityFactory<?>> factories = new FastBinaryMinHeap<>();
     }
 }

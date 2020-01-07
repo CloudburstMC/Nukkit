@@ -35,11 +35,11 @@ import java.util.regex.Pattern;
  * Nukkit Project
  */
 @ParametersAreNonnullByDefault
-public class AnvilProvider implements LevelProvider {
+class AnvilProvider implements LevelProvider {
 
     public static final int VERSION = 19133;
     private static final RemovalListener<RegionPosition, RegionFile> REMOVAL_LISTENER = new RegionRemovalListener();
-    public static final Factory FACTORY = AnvilProvider::new;
+
     private final String levelId;
 
     private final Path dataPath;
@@ -52,7 +52,7 @@ public class AnvilProvider implements LevelProvider {
 
     private volatile boolean closed;
 
-    private AnvilProvider(String levelId, Path levelsPath, Executor executor) throws IOException {
+    AnvilProvider(String levelId, Path levelsPath, Executor executor) throws IOException {
         this.levelId = levelId;
         this.executor = executor;
         Path levelPath = levelsPath.resolve(levelId);

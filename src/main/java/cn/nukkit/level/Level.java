@@ -382,7 +382,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public void close() {
         if (this.getAutoSave()) {
-            this.save(true);
+            this.save(true, true);
         }
 
         try {
@@ -633,12 +633,11 @@ public class Level implements ChunkManager, Metadatable {
 
             this.levelData.tick();
 
-            this.timings.doTickPending.startTiming();
-
             int polled = 0;
 
-            this.updateQueue.tick(this.getCurrentTick());
-            this.timings.doTickPending.stopTiming();
+            try (Timing ignored2 = timings.doTickPending.startTiming()) {
+                this.updateQueue.tick(this.getCurrentTick());
+            }
 
             Block block;
             while ((block = this.normalUpdateQueue.poll()) != null) {
@@ -660,9 +659,9 @@ public class Level implements ChunkManager, Metadatable {
             }
 
             try (Timing ignored2 = this.timings.tickChunks.startTiming()) {
-                this.timings.tickChunks.startTiming();
-                this.tickChunks();
-                this.timings.tickChunks.stopTiming();
+                try (Timing ignored3 = this.timings.tickChunks.startTiming()) {
+                    this.tickChunks();
+                }
 
                 synchronized (changedBlocks) {
                     if (!this.changedBlocks.isEmpty()) {
@@ -986,20 +985,29 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public boolean save(boolean force) {
+        return this.save(force, false);
+    }
+
+    private boolean save(boolean force, boolean sync) {
         if (!this.getAutoSave() && !force) {
             return false;
         }
 
         this.server.getPluginManager().callEvent(new LevelSaveEvent(this));
 
-        this.saveChunks();
-        this.provider.saveLevelData(this.levelData).join();
+        CompletableFuture<Void> chunksFuture = this.saveChunks();
+        CompletableFuture<Void> dataFuture = this.provider.saveLevelData(this.levelData);
+
+        if (sync) {
+            chunksFuture.join();
+            dataFuture.join();
+        }
 
         return true;
     }
 
-    public void saveChunks() {
-        this.chunkManager.saveChunks();
+    public CompletableFuture<Void> saveChunks() {
+        return this.chunkManager.saveChunks();
     }
 
     public void updateAroundRedstone(Vector3 pos, BlockFace face) {
@@ -1980,7 +1988,8 @@ public class Level implements ChunkManager, Metadatable {
 
             for (int x = minX; x <= maxX; ++x) {
                 for (int z = minZ; z <= maxZ; ++z) {
-                    for (Entity ent : this.getLoadedChunkEntities(x, z)) {
+                    Set<Entity> colliding = this.getLoadedChunkEntities(x, z);
+                    for (Entity ent : colliding) {
                         if ((entity == null || (ent != entity && entity.canCollideWith(ent)))
                                 && ent.boundingBox.intersectsWith(bb)) {
                             if (entities == null) {
@@ -2069,7 +2078,13 @@ public class Level implements ChunkManager, Metadatable {
     @Nonnull
     public Set<Entity> getLoadedChunkEntities(int chunkX, int chunkZ) {
         Chunk chunk = this.getLoadedChunk(chunkX, chunkZ);
-        return chunk == null ? Collections.emptySet() : chunk.getEntities();
+        if (chunk != null) {
+            return ImmutableSet.<Entity>builder()
+                    .addAll(chunk.getEntities())
+                    .addAll(chunk.getPlayers())
+                    .build();
+        }
+        return Collections.emptySet();
     }
 
 

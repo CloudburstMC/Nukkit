@@ -8,7 +8,8 @@ import cn.nukkit.network.protocol.ChunkRadiusUpdatedPacket;
 import cn.nukkit.network.protocol.LevelChunkPacket;
 import cn.nukkit.network.protocol.NetworkChunkPublisherUpdatePacket;
 import cn.nukkit.player.Player;
-import com.google.common.base.Preconditions;
+import co.aikar.timings.Timing;
+import co.aikar.timings.Timings;
 import it.unimi.dsi.fastutil.longs.*;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import lombok.AccessLevel;
@@ -17,6 +18,8 @@ import lombok.extern.log4j.Log4j2;
 
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.LongConsumer;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 @Log4j2
 public class PlayerChunkManager {
@@ -57,37 +60,40 @@ public class PlayerChunkManager {
 
         LongList list = new LongArrayList(this.sendQueue.keySet());
 
-        // Order chunks around player.
-        list.sort(this.comparator);
+        try (Timing ignored = Timings.playerChunkOrderTimer.startTiming()) {
+            // Order chunks around player.
+            list.unstableSort(this.comparator);
+        }
 
-        for (long key : list.toLongArray()) {
-            if (chunksPerTick < 0) {
-                break;
-            }
-
-            LevelChunkPacket packet = this.sendQueue.get(key);
-            if (packet == null) {
-                // Next packet is not available.
-                break;
-            }
-
-            this.sendQueue.remove(key);
-            this.player.dataPacket(packet);
-
-            Chunk chunk = this.player.getLevel().getLoadedChunk(key);
-            Preconditions.checkArgument(chunk != null, "Unloaded chunk sent to %s",
-                    this.player.getName());
-
-            chunk.addLoader(this.player);
-            // Spawn entities
-            for (Entity entity : chunk.getEntities()) {
-                if (this.player != entity && !entity.closed && entity.isAlive()) {
-                    entity.spawnTo(this.player);
+        try (Timing ignored = Timings.playerChunkSendTimer.startTiming()) {
+            for (long key : list.toLongArray()) {
+                if (chunksPerTick < 0) {
+                    break;
                 }
-            }
 
-            chunksPerTick--;
-            this.chunksSentCounter.incrementAndGet();
+                LevelChunkPacket packet = this.sendQueue.get(key);
+                if (packet == null) {
+                    // Next packet is not available.
+                    break;
+                }
+
+                this.sendQueue.remove(key);
+                this.player.dataPacket(packet);
+
+                Chunk chunk = this.player.getLevel().getLoadedChunk(key);
+                checkArgument(chunk != null, "Unloaded chunk sent to %s", this.player.getName());
+
+                chunk.addLoader(this.player);
+                // Spawn entities
+                for (Entity entity : chunk.getEntities()) {
+                    if (this.player != entity && !entity.closed && entity.isAlive()) {
+                        entity.spawnTo(this.player);
+                    }
+                }
+
+                chunksPerTick--;
+                this.chunksSentCounter.incrementAndGet();
+            }
         }
     }
 
@@ -132,30 +138,33 @@ public class PlayerChunkManager {
             this.player.dataPacket(packet);
         }
 
-        // Order chunks for faster loading
+        // Order chunks for smoother loading
         chunksToLoad.sort(this.comparator);
 
         for (final long key : chunksToLoad.toLongArray()) {
-            int cx = Level.getHashX(key);
-            int cz = Level.getHashZ(key);
+            final int cx = Level.getHashX(key);
+            final int cz = Level.getHashZ(key);
 
-            this.sendQueue.put(key, null);
-
-            this.player.getLevel().getChunkFuture(cx, cz).thenApplyAsync(Chunk::createChunkPacket, this.player.getServer().getScheduler().getAsyncPool())
-                    .whenCompleteAsync((packet, throwable) -> {
-                        synchronized (PlayerChunkManager.this) {
-                            if (throwable != null) {
-                                if (this.sendQueue.remove(key, null)) {
-                                    this.loadedChunks.remove(key);
+            if (this.sendQueue.putIfAbsent(key, null) == null) {
+                this.player.getLevel().getChunkFuture(cx, cz).thenApplyAsync(Chunk::createChunkPacket, this.player.getServer().getScheduler().getAsyncPool())
+                        .whenComplete((packet, throwable) -> {
+                            synchronized (PlayerChunkManager.this) {
+                                if (throwable != null) {
+                                    if (this.sendQueue.remove(key, null)) {
+                                        this.loadedChunks.remove(key);
+                                    }
+                                    log.error("Unable to create chunk packet for " + this.player.getName(), throwable);
+                                } else if (!this.sendQueue.replace(key, null, packet)) {
+                                    // The chunk was already loaded!?
+                                    if (this.sendQueue.containsKey(key)) {
+                                        log.warn("Chunk ({},{}) already loaded for {}, value {}", cx, cz,
+                                                this.player.getName(), this.sendQueue.get(key));
+                                    }
+                                    packet.release();
                                 }
-                                log.error("Unable to create chunk packet for " + this.player.getName(), throwable);
-                            } else if (!this.sendQueue.replace(key, null, packet)) {
-                                // The chunk was already loaded!?
-                                log.warn("Chunk already loaded for {}", this.player.getName());
-                                packet.release();
                             }
-                        }
-                    }, this.player.getServer().getScheduler().getAsyncPool());
+                        });
+            }
         }
 
         sentCopy.removeAll(chunksForRadius);

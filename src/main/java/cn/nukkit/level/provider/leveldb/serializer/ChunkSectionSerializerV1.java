@@ -7,9 +7,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ChunkSectionSerializerV1 implements ChunkSectionSerializer {
+class ChunkSectionSerializerV1 implements ChunkSectionSerializer {
 
-    public static final ChunkSectionSerializer INSTANCE = new ChunkSectionSerializerV1();
+    static final ChunkSectionSerializer INSTANCE = new ChunkSectionSerializerV1();
 
     @Override
     public void serialize(ByteBuf buf, BlockStorage[] storage) {

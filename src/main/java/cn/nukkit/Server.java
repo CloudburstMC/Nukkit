@@ -558,6 +558,7 @@ public class Server {
             this.entityRegistry.close();
             this.gameRuleRegistry.close();
             this.storageRegistry.close();
+            this.packManager.closeRegistration();
         } catch (RegistryException e) {
             throw new IllegalStateException("Unable to close registries", e);
         }

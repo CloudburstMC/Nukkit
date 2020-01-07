@@ -1,8 +1,8 @@
 package cn.nukkit.registry;
 
-import cn.nukkit.level.provider.LevelProvider;
-import cn.nukkit.level.provider.anvil.AnvilProvider;
-import cn.nukkit.level.provider.leveldb.LevelDBProvider;
+import cn.nukkit.level.provider.LevelProviderFactory;
+import cn.nukkit.level.provider.anvil.AnvilProviderFactory;
+import cn.nukkit.level.provider.leveldb.LevelDBProviderFactory;
 import cn.nukkit.level.storage.StorageType;
 import cn.nukkit.level.storage.StorageTypes;
 import cn.nukkit.utils.Identifier;
@@ -17,7 +17,7 @@ public class StorageRegistry implements Registry {
     private static final StorageRegistry INSTANCE = new StorageRegistry();
 
     private final Map<Identifier, StorageType> identifiers = new IdentityHashMap<>();
-    private final Map<StorageType, LevelProvider.Factory> providers = new IdentityHashMap<>();
+    private final Map<StorageType, LevelProviderFactory> providers = new IdentityHashMap<>();
     private volatile boolean closed;
 
     private StorageRegistry() {
@@ -28,7 +28,7 @@ public class StorageRegistry implements Registry {
         return INSTANCE;
     }
 
-    public synchronized void register(StorageType type, LevelProvider.Factory levelProviderFactory)
+    public synchronized void register(StorageType type, LevelProviderFactory levelProviderFactory)
             throws RegistryException {
         Objects.requireNonNull(type, "type");
         Objects.requireNonNull(levelProviderFactory, "levelProviderFactory");
@@ -48,7 +48,7 @@ public class StorageRegistry implements Registry {
         return Optional.ofNullable(this.identifiers.get(identifier));
     }
 
-    public LevelProvider.Factory getLevelProviderFactory(StorageType type) {
+    public LevelProviderFactory getLevelProviderFactory(StorageType type) {
         Objects.requireNonNull(type, "type");
 
         return this.providers.get(type);
@@ -61,7 +61,7 @@ public class StorageRegistry implements Registry {
     }
 
     private void registerVanillaStorage() throws RegistryException {
-        this.register(StorageTypes.ANVIL, AnvilProvider.FACTORY);
-        this.register(StorageTypes.LEVELDB, LevelDBProvider.FACTORY);
+        this.register(StorageTypes.ANVIL, AnvilProviderFactory.INSTANCE);
+        this.register(StorageTypes.LEVELDB, LevelDBProviderFactory.INSTANCE);
     }
 }

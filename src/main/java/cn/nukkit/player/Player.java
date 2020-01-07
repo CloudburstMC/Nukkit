@@ -1409,9 +1409,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.lastPitch = from.pitch;
 
             // We have to send slightly above otherwise the player will fall into the ground.
-            this.sendPosition(from.add(0, 0.00001, 0), from.yaw, from.pitch, MovePlayerPacket.MODE_RESET);
+            Location location = from.add(0, 0.00001, 0);
+            this.sendPosition(location, from.yaw, from.pitch, MovePlayerPacket.MODE_RESET);
             //this.sendSettings();
-            this.forceMovement = new Vector3(from.x, from.y + 0.00001, from.z);
+            this.forceMovement = location;
         } else {
             this.forceMovement = null;
         }
@@ -1822,7 +1823,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.sendPlayStatus(PlayStatusPacket.LOGIN_SUCCESS);
         this.server.onPlayerLogin(this);
 
-        ListTag<DoubleTag> posList = nbt.getList("Pos", DoubleTag.class);
+        ListTag<FloatTag> posList = nbt.getList("Pos", FloatTag.class);
 
         super.init(this.level.getChunk((int) posList.get(0).data >> 4, (int) posList.get(2).data >> 4), nbt);
 
@@ -2174,14 +2175,15 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         break;
                     }
 
-                    boolean revert = false;
-                    if (!this.isAlive() || !this.spawned) {
-                        revert = true;
-                        this.forceMovement = new Vector3(this.x, this.y, this.z);
-                    }
+//                    boolean revert = false;
+//                    if (!this.isAlive() || !this.spawned) {
+//                        revert = true;
+//                        this.forceMovement = new Vector3(this.x, this.y, this.z);
+//                    }
 
 
-                    if (this.forceMovement != null && (newPos.distanceSquared(this.forceMovement) > 0.1 || revert)) {
+                    if (this.forceMovement != null && (newPos.distanceSquared(this.forceMovement) > 0.1)) {
+                        log.debug("Forcing movement New POS: {}, OLD POS: {}", this.forceMovement, newPos);
                         this.sendPosition(this.forceMovement, movePlayerPacket.yaw, movePlayerPacket.pitch, MovePlayerPacket.MODE_RESET);
                     } else {
                         this.setRotation(movePlayerPacket.yaw, movePlayerPacket.pitch);
@@ -2625,9 +2627,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         break;
                     }
 
-                    Timings.playerCommandTimer.startTiming();
-                    this.server.dispatchCommand(playerCommandPreprocessEvent.getPlayer(), playerCommandPreprocessEvent.getMessage().substring(1));
-                    Timings.playerCommandTimer.stopTiming();
+                    try (Timing ignored2 = Timings.playerCommandTimer.startTiming()) {
+                        this.server.dispatchCommand(playerCommandPreprocessEvent.getPlayer(), playerCommandPreprocessEvent.getMessage().substring(1));
+                    }
                     break;
                 case ProtocolInfo.TEXT_PACKET:
                     if (!this.spawned || !this.isAlive()) {

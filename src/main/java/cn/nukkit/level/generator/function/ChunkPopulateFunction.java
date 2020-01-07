@@ -5,11 +5,18 @@ import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.SimpleChunkManager;
 import com.google.common.base.Preconditions;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
+import it.unimi.dsi.fastutil.longs.LongSets;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 import java.util.function.BiFunction;
 
+@Log4j2
 public class ChunkPopulateFunction implements BiFunction<Chunk, List<Chunk>, Chunk> {
+    private static final LongSet populated = LongSets.synchronize(new LongOpenHashSet());
+
     private final Level level;
 
     public ChunkPopulateFunction(Level level) {
@@ -32,6 +39,10 @@ public class ChunkPopulateFunction implements BiFunction<Chunk, List<Chunk>, Chu
             return chunk;
         }
 
+        if (!populated.add(Level.chunkKey(chunk.getX(), chunk.getZ()))) {
+            log.debug("Already Populating chunk ({}, {})", chunk.getX(), chunk.getZ());
+        }
+
         manager.cleanChunks(this.level.getSeed());
         try {
             manager.setChunk(chunk);
@@ -44,14 +55,14 @@ public class ChunkPopulateFunction implements BiFunction<Chunk, List<Chunk>, Chu
                 }
             }
 
-            if (!chunk.isPopulated()) {
-                generator.populateChunk(chunk.getX(), chunk.getZ());
-                //chunk = manager.getChunk(chunk.getX(), chunk.getZ());
-                chunk.setPopulated();
-                chunk.recalculateHeightMap();
-                chunk.populateSkyLight();
-                //chunk.setLightPopulated();
-            }
+            manager.isValid(chunk.getX(), chunk.getZ());
+
+            generator.populateChunk(chunk.getX(), chunk.getZ());
+            //chunk = manager.getChunk(chunk.getX(), chunk.getZ());
+            chunk.setPopulated();
+            chunk.recalculateHeightMap();
+            chunk.populateSkyLight();
+            //chunk.setLightPopulated();
 
             manager.setChunk(chunk);
         } finally {

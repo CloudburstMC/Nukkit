@@ -20,9 +20,9 @@ import org.iq80.leveldb.DB;
 
 @Log4j2
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ChunkSerializerV3 extends ChunkSerializerV1 {
+class ChunkSerializerV3 extends ChunkSerializerV1 {
 
-    public static ChunkSerializer INSTANCE = new ChunkSerializerV3();
+    static ChunkSerializer INSTANCE = new ChunkSerializerV3();
 
     @Override
     public void serialize(DB db, Chunk chunk) {

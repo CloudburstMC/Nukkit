@@ -4,7 +4,7 @@ import cn.nukkit.level.chunk.BlockStorage;
 import cn.nukkit.level.chunk.ChunkBuilder;
 import io.netty.buffer.ByteBuf;
 
-public interface ChunkSectionSerializer {
+interface ChunkSectionSerializer {
 
     void serialize(ByteBuf buf, BlockStorage[] storage);
 

@@ -4,6 +4,7 @@ import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.ServerException;
+import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 
 import java.util.HashMap;
@@ -118,23 +119,22 @@ public class PermissibleBase implements Permissible {
 
     @Override
     public void recalculatePermissions() {
-        Timings.permissibleCalculationTimer.startTiming();
+        try (Timing ignored = Timings.permissibleCalculationTimer.startTiming()) {
+            this.clearPermissions();
+            Map<String, Permission> defaults = Server.getInstance().getPluginManager().getDefaultPermissions(this.isOp());
+            Server.getInstance().getPluginManager().subscribeToDefaultPerms(this.isOp(), this.parent != null ? this.parent : this);
 
-        this.clearPermissions();
-        Map<String, Permission> defaults = Server.getInstance().getPluginManager().getDefaultPermissions(this.isOp());
-        Server.getInstance().getPluginManager().subscribeToDefaultPerms(this.isOp(), this.parent != null ? this.parent : this);
+            for (Permission perm : defaults.values()) {
+                String name = perm.getName();
+                this.permissions.put(name, new PermissionAttachmentInfo(this.parent != null ? this.parent : this, name, null, true));
+                Server.getInstance().getPluginManager().subscribeToPermission(name, this.parent != null ? this.parent : this);
+                this.calculateChildPermissions(perm.getChildren(), false, null);
+            }
 
-        for (Permission perm : defaults.values()) {
-            String name = perm.getName();
-            this.permissions.put(name, new PermissionAttachmentInfo(this.parent != null ? this.parent : this, name, null, true));
-            Server.getInstance().getPluginManager().subscribeToPermission(name, this.parent != null ? this.parent : this);
-            this.calculateChildPermissions(perm.getChildren(), false, null);
+            for (PermissionAttachment attachment : this.attachments) {
+                this.calculateChildPermissions(attachment.getPermissions(), false, attachment);
+            }
         }
-
-        for (PermissionAttachment attachment : this.attachments) {
-            this.calculateChildPermissions(attachment.getPermissions(), false, attachment);
-        }
-        Timings.permissibleCalculationTimer.stopTiming();
     }
 
     public void clearPermissions() {

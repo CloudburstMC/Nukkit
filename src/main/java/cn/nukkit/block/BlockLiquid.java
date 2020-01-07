@@ -8,6 +8,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.Identifier;
@@ -126,30 +127,15 @@ public abstract class BlockLiquid extends BlockTransparent {
         }
         Vector3 vector = new Vector3(0, 0, 0);
         int decay = this.getEffectiveFlowDecay(this);
-        for (int j = 0; j < 4; ++j) {
-            int x = (int) this.x;
-            int y = (int) this.y;
-            int z = (int) this.z;
-            switch (j) {
-                case 0:
-                    --x;
-                    break;
-                case 1:
-                    x++;
-                    break;
-                case 2:
-                    z--;
-                    break;
-                default:
-                    z++;
-            }
-            Block sideBlock = this.level.getBlock(x, y, z);
+        for (BlockFace face : BlockFace.Plane.HORIZONTAL) {
+            Block sideBlock = this.getSide(face);
+
             int blockDecay = this.getEffectiveFlowDecay(sideBlock);
             if (blockDecay < 0) {
                 if (!sideBlock.canBeFlooded()) {
                     continue;
                 }
-                blockDecay = this.getEffectiveFlowDecay(this.level.getBlock(x, y - 1, z));
+                blockDecay = this.getEffectiveFlowDecay(this.level.getBlock(sideBlock.getFloorX(), sideBlock.getFloorY() - 1, sideBlock.getFloorZ()));
                 if (blockDecay >= 0) {
                     int realDecay = blockDecay - (decay - 8);
                     vector.x += (sideBlock.x - this.x) * realDecay;

@@ -66,13 +66,13 @@ public final class Chunk implements Closeable {
 
     private final ChunkSection[] sections;
 
-    private final Set<Player> players = new HashSet<>();
+    private final Set<Player> players = Collections.newSetFromMap(new IdentityHashMap<>());
 
-    private final Set<Entity> entities = new HashSet<>();
+    private final Set<Entity> entities = Collections.newSetFromMap(new IdentityHashMap<>());
 
-    private final Set<ChunkLoader> loaders = new HashSet<>();
+    private final Set<ChunkLoader> loaders = Collections.newSetFromMap(new IdentityHashMap<>());
 
-    private final Set<Player> playerLoaders = new HashSet<>();
+    private final Set<Player> playerLoaders = Collections.newSetFromMap(new IdentityHashMap<>());
 
     private final TIntObjectMap<BlockEntity> tiles = new TIntObjectHashMap<>();
 
@@ -138,6 +138,7 @@ public final class Chunk implements Closeable {
 
     public synchronized void init() {
         if (!this.initialized) {
+            this.initialized = true;
             try (Timing ignored = this.level.timings.syncChunkLoadEntitiesTimer.startTiming()) {
                 boolean dirty = false;
 
@@ -147,17 +148,12 @@ public final class Chunk implements Closeable {
                     }
                 }
 
-                if (dirty) {
-                    this.setDirty();
-                }
-
+                this.setDirty(dirty);
             }
             for (BlockUpdate blockUpdate : this.blockUpdates) {
                 this.level.scheduleUpdate(blockUpdate);
             }
             this.blockUpdates = null;
-
-            this.initialized = true;
         }
     }
 
@@ -410,7 +406,7 @@ public final class Chunk implements Closeable {
         Preconditions.checkNotNull(chunkLoader, "chunkLoader");
         this.loaders.remove(chunkLoader);
         if (chunkLoader instanceof Player) {
-            this.playerLoaders.remove((Player) chunkLoader);
+            this.playerLoaders.remove(chunkLoader);
         }
     }
 
@@ -539,7 +535,7 @@ public final class Chunk implements Closeable {
                 }
             }
 
-            packet.data = buffer;//.asReadOnly(); // Stop any accidental corruption
+            packet.data = buffer.asReadOnly(); // Stop any accidental corruption
 
             this.cached = new CacheSoftReference(packet, Utils.REFERENCE_QUEUE);
 

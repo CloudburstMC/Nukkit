@@ -40,7 +40,9 @@ public class PopulatorSugarcane extends PopulatorSurfaceBlock {
 
     @Override
     protected boolean canStay(int x, int y, int z, Chunk chunk, ChunkManager level) {
-        return EnsureCover.ensureCover(x, y, z, chunk) && (EnsureGrassBelow.ensureGrassBelow(x, y, z, chunk) || EnsureBelow.ensureBelow(x, y, z, SAND, chunk)) && findWater(x, y - 1, z, level);
+        return EnsureCover.ensureCover(x, y, z, chunk) &&
+                (EnsureGrassBelow.ensureGrassBelow(x, y, z, chunk) || EnsureBelow.ensureBelow(x, y, z, SAND, chunk)) &&
+                findWater(x + (chunk.getX() << 4), y - 1, z + (chunk.getZ() << 4), level);
     }
 
     @Override

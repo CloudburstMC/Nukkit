@@ -7,10 +7,7 @@ import cn.nukkit.utils.LoadState;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.Closeable;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 
 /**
@@ -19,16 +16,35 @@ import java.util.function.BiConsumer;
 @ParametersAreNonnullByDefault
 public interface LevelProvider extends PlayerDataProvider, Closeable {
 
+    /**
+     * Level ID
+     *
+     * @return id
+     */
     String getLevelId();
 
     /**
+     * Reads chunk from provider asynchronously
+     *
      * @param chunkBuilder builder
      * @return future when chunk is loaded. Will return null if the chunk does not exist
      */
     CompletableFuture<Chunk> readChunk(ChunkBuilder chunkBuilder);
 
+    /**
+     * Saves chunk to provider asynchronously
+     *
+     * @param chunk chunk
+     * @return void future when chunk is saved.
+     */
     CompletableFuture<Void> saveChunk(Chunk chunk);
 
+    /**
+     * Iterate over all chunks that the provider has.
+     *
+     * @param consumer
+     * @throws UnsupportedOperationException if the provider does not support chunk iteration.
+     */
     void forEachChunk(BiConsumer<Chunk, Throwable> consumer);
 
     /**
@@ -45,17 +61,4 @@ public interface LevelProvider extends PlayerDataProvider, Closeable {
      * @param levelData levelData to save
      */
     CompletableFuture<Void> saveLevelData(LevelData levelData);
-
-    @FunctionalInterface
-    interface Factory {
-
-        /**
-         * @param levelId   level ID
-         * @param worldPath path to worlds directory
-         * @param executor  executor to run tasks async
-         * @return chunk provider
-         * @throws IOException
-         */
-        LevelProvider create(String levelId, Path worldPath, Executor executor) throws IOException;
-    }
 }

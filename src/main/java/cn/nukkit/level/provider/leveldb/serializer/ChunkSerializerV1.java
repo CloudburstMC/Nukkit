@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 import org.iq80.leveldb.DB;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ChunkSerializerV1 implements ChunkSerializer {
+class ChunkSerializerV1 implements ChunkSerializer {
 
-    public static final ChunkSerializer INSTANCE = new ChunkSerializerV1();
+    static final ChunkSerializer INSTANCE = new ChunkSerializerV1();
 
     @Override
     public void serialize(DB db, Chunk chunk) {

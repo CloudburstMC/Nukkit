@@ -477,7 +477,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     @Override
     public String toString() {
-        return "Block(id=" + this.getId() + ", data=" + this.getDamage() + ")";
+        return "Block(id=" + this.getId() + ", data=" + this.getDamage() +
+                ", min=(" + getMinX() + ", " + getMinY() + ", " + getMinZ() + ")" +
+                ", max=(" + getMaxX() + ", " + getMaxY() + ", " + getMaxZ() + ")";
     }
 
     public boolean collidesWithBB(AxisAlignedBB bb) {

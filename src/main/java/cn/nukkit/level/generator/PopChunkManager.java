@@ -4,6 +4,8 @@ import cn.nukkit.level.chunk.Chunk;
 
 import java.util.Arrays;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 public class PopChunkManager extends SimpleChunkManager {
     private boolean clean = true;
     private final Chunk[] chunks = new Chunk[9];
@@ -17,43 +19,22 @@ public class PopChunkManager extends SimpleChunkManager {
     @Override
     public void cleanChunks(long seed) {
         super.cleanChunks(seed);
-        if (!clean) {
+        if (!this.clean) {
             Arrays.fill(chunks, null);
             CX = Integer.MAX_VALUE;
             CZ = Integer.MAX_VALUE;
-            clean = true;
+            this.clean = true;
         }
     }
 
     @Override
     public Chunk getChunk(int chunkX, int chunkZ) {
-        int index;
-        switch (chunkX - CX) {
-            case -1:
-                index = 0;
-                break;
-            case 0:
-                index = 1;
-                break;
-            case 1:
-                index = 2;
-                break;
-            default:
-                return null;
-        }
-        switch (chunkZ - CZ) {
-            case -1:
-                break;
-            case 0:
-                index += 3;
-                break;
-            case 1:
-                index += 6;
-                break;
-            default:
-                return null;
-        }
-        return chunks[index];
+        int offsetX = (chunkX - CX) + 1;
+        int offsetZ = (chunkZ - CZ) + 1;
+        checkArgument(offsetX >= 0 && offsetX < 3 && offsetZ >= 0 && offsetZ < 3,
+                "Chunk (%s, %s) is outside population area (%s, %s)", chunkX, chunkZ, CX, CZ);
+
+        return chunks[offsetX + (offsetZ * 3)];
     }
 
     @Override
@@ -65,33 +46,12 @@ public class PopChunkManager extends SimpleChunkManager {
             CZ = chunkZ;
         }
 
-        int index;
-        switch (chunkX - CX) {
-            case -1:
-                index = 0;
-                break;
-            case 0:
-                index = 1;
-                break;
-            case 1:
-                index = 2;
-                break;
-            default:
-                throw new IllegalArgumentException("Chunk (" + chunkX + ", " + chunkZ + ") is outside population area (" + CX + ", " + CZ + ")");
-        }
-        switch (chunkZ - CZ) {
-            case -1:
-                break;
-            case 0:
-                index += 3;
-                break;
-            case 1:
-                index += 6;
-                break;
-            default:
-                throw new IllegalArgumentException("Chunk (" + chunkX + ", " + chunkZ + ") is outside population area (" + CX + ", " + CZ + ")");
-        }
-        clean = false;
-        chunks[index] = chunk;
+        int offsetX = (chunkX - CX) + 1;
+        int offsetZ = (chunkZ - CZ) + 1;
+        checkArgument(offsetX >= 0 && offsetX < 3 && offsetZ >= 0 && offsetZ < 3,
+                "Chunk (%s, %s) is outside population area (%s, %s)", chunkX, chunkZ, CX, CZ);
+
+        this.clean = false;
+        this.chunks[offsetX + (offsetZ * 3)] = chunk;
     }
 }

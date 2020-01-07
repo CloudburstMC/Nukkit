@@ -30,6 +30,7 @@ public class PackManager implements Closeable {
 
     private final ResourcePacksInfoPacket packsInfos = new ResourcePacksInfoPacket();
     private final ResourcePackStackPacket packStack = new ResourcePackStackPacket();
+    private volatile boolean closed;
 
     public PackManager() {
         this.registerLoader(DirectoryPackLoader.class, DirectoryPackLoader.FACTORY);
@@ -61,6 +62,7 @@ public class PackManager implements Closeable {
     }
 
     public void loadPacks(Path directoryPath) {
+        checkRegistrationClosed();
         Preconditions.checkNotNull(directoryPath, "directoryPath");
         Preconditions.checkArgument(Files.isDirectory(directoryPath), "%s is not a directory", directoryPath);
 
@@ -146,10 +148,34 @@ public class PackManager implements Closeable {
             loader.getNetworkPreparedFile();
         }
 
-        rebuildPacket();
-
         log.info(Server.getInstance().getLanguage()
                 .translateString("nukkit.resources.success", String.valueOf(manifestMap.size())));
+    }
+
+    public void loadPack(Path packPath) throws IOException {
+        checkRegistrationClosed();
+        PackLoader loader = getLoader(packPath);
+        if (loader == null) {
+            throw new IOException("No suitable loader found for pack");
+        }
+
+        PackManifest manifest = getManifest(loader);
+        if (manifest == null) {
+            throw new IOException("No manifest found");
+        }
+
+        PackManifest.Module module = manifest.getModules().get(0);
+        Pack.Factory factory = this.packFactories.get(module.getType());
+        if (factory == null) {
+            throw new IOException("Unsupported pack type " + module.getType());
+        }
+        UUID uuid = manifest.getHeader().getUuid();
+        Pack pack = factory.create(loader, manifest, module);
+        this.packs.put(uuid + "_" + manifest.getHeader().getVersion(), pack);
+        this.packsById.put(uuid, pack);
+
+        // prepare for network
+        loader.getNetworkPreparedFile();
     }
 
     @Nullable
@@ -167,7 +193,9 @@ public class PackManager implements Closeable {
         return loader;
     }
 
-    private void rebuildPacket() {
+    public synchronized void closeRegistration() {
+        checkRegistrationClosed();
+
         boolean mustAccept = Server.getInstance().getForceResources();
         packsInfos.mustAccept = mustAccept;
         packStack.mustAccept = mustAccept;
@@ -182,6 +210,12 @@ public class PackManager implements Closeable {
                 packsInfos.resourcePackEntries.add(pack);
                 packStack.resourcePackStack.add(pack);
             }
+        }
+    }
+
+    private void checkRegistrationClosed() {
+        if (closed) {
+            throw new IllegalStateException("PackManager registration is closed");
         }
     }
 

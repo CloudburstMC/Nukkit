@@ -187,6 +187,7 @@ public class AnvilConverter {
                 EntityRegistry registry = EntityRegistry.get();
                 Identifier identifier = registry.getIdentifier(entityTag.getString("id"));
                 if (identifier == null) {
+                    dirty = true;
                     continue;
                 }
                 EntityType<?> type = registry.getEntityType(identifier);

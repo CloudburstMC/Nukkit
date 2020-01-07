@@ -52,9 +52,9 @@ public class RegisteredListener {
                 return;
             }
         }
-        this.timing.startTiming();
-        executor.execute(listener, event);
-        this.timing.stopTiming();
+        try (Timing ignored = this.timing.startTiming()) {
+            executor.execute(listener, event);
+        }
     }
 
     public boolean isIgnoringCancelled() {

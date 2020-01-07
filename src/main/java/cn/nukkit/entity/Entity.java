@@ -20,10 +20,7 @@ import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.*;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.nbt.tag.*;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.network.protocol.types.EntityLink;
 import cn.nukkit.player.Player;
@@ -475,23 +472,23 @@ public abstract class Entity extends Location implements Metadatable {
 
         this.boundingBox = new SimpleAxisAlignedBB(0, 0, 0, 0, 0, 0);
 
-        ListTag<DoubleTag> posList = this.namedTag.getList("Pos", DoubleTag.class);
+        ListTag<NumberTag> posList = this.namedTag.getList("Pos", NumberTag.class);
         ListTag<FloatTag> rotationList = this.namedTag.getList("Rotation", FloatTag.class);
-        ListTag<DoubleTag> motionList = this.namedTag.getList("Motion", DoubleTag.class);
+        ListTag<NumberTag> motionList = this.namedTag.getList("Motion", NumberTag.class);
         this.setPositionAndRotation(
                 temporalVector.get().setComponents(
-                        posList.get(0).data,
-                        posList.get(1).data,
-                        posList.get(2).data
+                        posList.get(0).getData().doubleValue(),
+                        posList.get(1).getData().doubleValue(),
+                        posList.get(2).getData().doubleValue()
                 ),
                 rotationList.get(0).data,
                 rotationList.get(1).data
         );
 
         this.setMotion(temporalVector.get().setComponents(
-                motionList.get(0).data,
-                motionList.get(1).data,
-                motionList.get(2).data
+                motionList.get(0).getData().doubleValue(),
+                motionList.get(1).getData().doubleValue(),
+                motionList.get(2).getData().doubleValue()
         ));
 
         if (!this.namedTag.contains("FallDistance")) {
@@ -568,6 +565,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     public void saveNBT() {
         if (!(this instanceof Player)) {
+            this.namedTag.putString("identifier", this.type.getIdentifier().toString());
             if (!this.getNameTag().equals("")) {
                 this.namedTag.putString("CustomName", this.getNameTag());
                 this.namedTag.putBoolean("CustomNameVisible", this.isNameTagVisible());
@@ -579,16 +577,16 @@ public abstract class Entity extends Location implements Metadatable {
             }
         }
 
-        this.namedTag.putList(new ListTag<DoubleTag>("Pos")
-                .add(new DoubleTag("0", this.x))
-                .add(new DoubleTag("1", this.y))
-                .add(new DoubleTag("2", this.z))
+        this.namedTag.putList(new ListTag<FloatTag>("Pos")
+                .add(new FloatTag("0", (float) this.x))
+                .add(new FloatTag("1", (float) this.y))
+                .add(new FloatTag("2", (float) this.z))
         );
 
-        this.namedTag.putList(new ListTag<DoubleTag>("Motion")
-                .add(new DoubleTag("0", this.motionX))
-                .add(new DoubleTag("1", this.motionY))
-                .add(new DoubleTag("2", this.motionZ))
+        this.namedTag.putList(new ListTag<FloatTag>("Motion")
+                .add(new FloatTag("0", (float) this.motionX))
+                .add(new FloatTag("1", (float) this.motionY))
+                .add(new FloatTag("2", (float) this.motionZ))
         );
 
         this.namedTag.putList(new ListTag<FloatTag>("Rotation")
@@ -929,115 +927,114 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean entityBaseTick(int tickDiff) {
-        Timings.entityBaseTickTimer.startTiming();
+        try (Timing ignored = Timings.entityBaseTickTimer.startTiming()) {
 
-        if (!this.isPlayer) {
-            this.blocksAround = null;
-            this.collisionBlocks = null;
-        }
-        this.justCreated = false;
-
-        if (!this.isAlive()) {
-            this.removeAllEffects();
-            this.despawnFromAll();
             if (!this.isPlayer) {
-                this.close();
+                this.blocksAround = null;
+                this.collisionBlocks = null;
             }
-            Timings.entityBaseTickTimer.stopTiming();
-            return false;
-        }
-        if (riding != null && !riding.isAlive() && riding instanceof EntityRideable) {
-            ((EntityRideable) riding).mountEntity(this);
-        }
+            this.justCreated = false;
 
-        updatePassengers();
-
-        if (!this.effects.isEmpty()) {
-            for (Effect effect : this.effects.values()) {
-                if (effect.canTick()) {
-                    effect.applyEffect(this);
+            if (!this.isAlive()) {
+                this.removeAllEffects();
+                this.despawnFromAll();
+                if (!this.isPlayer) {
+                    this.close();
                 }
-                effect.setDuration(effect.getDuration() - tickDiff);
-
-                if (effect.getDuration() <= 0) {
-                    this.removeEffect(effect.getId());
-                }
+                return false;
             }
-        }
-
-        boolean hasUpdate = false;
-
-        this.checkBlockCollision();
-
-        if (this.y <= -16 && this.isAlive()) {
-            if (this instanceof Player) {
-                Player player = (Player) this;
-                if (player.getGamemode() != 1) this.attack(new EntityDamageEvent(this, DamageCause.VOID, 10));
-            } else {
-                this.attack(new EntityDamageEvent(this, DamageCause.VOID, 10));
-                hasUpdate = true;
+            if (riding != null && !riding.isAlive() && riding instanceof EntityRideable) {
+                ((EntityRideable) riding).mountEntity(this);
             }
-        }
 
-        if (this.fireTicks > 0) {
-            if (this.fireProof) {
-                this.fireTicks -= 4 * tickDiff;
-                if (this.fireTicks < 0) {
-                    this.fireTicks = 0;
-                }
-            } else {
-                if (!this.hasEffect(Effect.FIRE_RESISTANCE) && ((this.fireTicks % 20) == 0 || tickDiff > 20)) {
-                    this.attack(new EntityDamageEvent(this, DamageCause.FIRE_TICK, 1));
-                }
-                this.fireTicks -= tickDiff;
-            }
-            if (this.fireTicks <= 0) {
-                this.extinguish();
-            } else if (!this.fireProof && (!(this instanceof Player) || !((Player) this).isSpectator())) {
-                this.setFlag(ON_FIRE, true);
-                hasUpdate = true;
-            }
-        }
+            updatePassengers();
 
-        if (this.noDamageTicks > 0) {
-            this.noDamageTicks -= tickDiff;
-            if (this.noDamageTicks < 0) {
-                this.noDamageTicks = 0;
-            }
-        }
-
-        if (this.inPortalTicks == 80) {
-            EntityPortalEnterEvent ev = new EntityPortalEnterEvent(this, PortalType.NETHER);
-            getServer().getPluginManager().callEvent(ev);
-
-            if (!ev.isCancelled()) {
-                Position newPos = EnumLevel.moveToNether(this);
-                if (newPos != null) {
-                    List<CompletableFuture<Chunk>> chunksToLoad = new ArrayList<>();
-                    for (int x = -1; x < 2; x++) {
-                        for (int z = -1; z < 2; z++) {
-                            int chunkX = (newPos.getFloorX() >> 4) + x, chunkZ = (newPos.getFloorZ() >> 4) + z;
-                            chunksToLoad.add(newPos.level.getChunkFuture(chunkX, chunkZ));
-                        }
+            if (!this.effects.isEmpty()) {
+                for (Effect effect : this.effects.values()) {
+                    if (effect.canTick()) {
+                        effect.applyEffect(this);
                     }
-                    CompletableFutures.allAsList(chunksToLoad).whenComplete((chunks, throwable) -> {
-                        if (chunks == null || throwable != null) {
-                            return;
-                        }
+                    effect.setDuration(effect.getDuration() - tickDiff);
 
-                        this.teleport(newPos.add(1.5, 1, 0.5));
-                        BlockNetherPortal.spawnPortal(newPos);
-                    });
+                    if (effect.getDuration() <= 0) {
+                        this.removeEffect(effect.getId());
+                    }
                 }
             }
+
+            boolean hasUpdate = false;
+
+            this.checkBlockCollision();
+
+            if (this.y <= -16 && this.isAlive()) {
+                if (this instanceof Player) {
+                    Player player = (Player) this;
+                    if (player.getGamemode() != 1) this.attack(new EntityDamageEvent(this, DamageCause.VOID, 10));
+                } else {
+                    this.attack(new EntityDamageEvent(this, DamageCause.VOID, 10));
+                    hasUpdate = true;
+                }
+            }
+
+            if (this.fireTicks > 0) {
+                if (this.fireProof) {
+                    this.fireTicks -= 4 * tickDiff;
+                    if (this.fireTicks < 0) {
+                        this.fireTicks = 0;
+                    }
+                } else {
+                    if (!this.hasEffect(Effect.FIRE_RESISTANCE) && ((this.fireTicks % 20) == 0 || tickDiff > 20)) {
+                        this.attack(new EntityDamageEvent(this, DamageCause.FIRE_TICK, 1));
+                    }
+                    this.fireTicks -= tickDiff;
+                }
+                if (this.fireTicks <= 0) {
+                    this.extinguish();
+                } else if (!this.fireProof && (!(this instanceof Player) || !((Player) this).isSpectator())) {
+                    this.setFlag(ON_FIRE, true);
+                    hasUpdate = true;
+                }
+            }
+
+            if (this.noDamageTicks > 0) {
+                this.noDamageTicks -= tickDiff;
+                if (this.noDamageTicks < 0) {
+                    this.noDamageTicks = 0;
+                }
+            }
+
+            if (this.inPortalTicks == 80) {
+                EntityPortalEnterEvent ev = new EntityPortalEnterEvent(this, PortalType.NETHER);
+                getServer().getPluginManager().callEvent(ev);
+
+                if (!ev.isCancelled()) {
+                    Position newPos = EnumLevel.moveToNether(this);
+                    if (newPos != null) {
+                        List<CompletableFuture<Chunk>> chunksToLoad = new ArrayList<>();
+                        for (int x = -1; x < 2; x++) {
+                            for (int z = -1; z < 2; z++) {
+                                int chunkX = (newPos.getFloorX() >> 4) + x, chunkZ = (newPos.getFloorZ() >> 4) + z;
+                                chunksToLoad.add(newPos.level.getChunkFuture(chunkX, chunkZ));
+                            }
+                        }
+                        CompletableFutures.allAsList(chunksToLoad).whenComplete((chunks, throwable) -> {
+                            if (chunks == null || throwable != null) {
+                                return;
+                            }
+
+                            this.teleport(newPos.add(1.5, 1, 0.5));
+                            BlockNetherPortal.spawnPortal(newPos);
+                        });
+                    }
+                }
+            }
+
+            this.age += tickDiff;
+            this.ticksLived += tickDiff;
+            TimingsHistory.activatedEntityTicks++;
+
+            return hasUpdate;
         }
-
-        this.age += tickDiff;
-        this.ticksLived += tickDiff;
-        TimingsHistory.activatedEntityTicks++;
-
-        Timings.entityBaseTickTimer.stopTiming();
-        return hasUpdate;
     }
 
     public void updateMovement() {
@@ -1494,30 +1491,29 @@ public abstract class Entity extends Location implements Metadatable {
             return true;
         }
 
-        Timings.entityMoveTimer.startTiming();
+        try (Timing ignored = Timings.entityMoveTimer.startTiming()) {
+            AxisAlignedBB newBB = this.boundingBox.getOffsetBoundingBox(dx, dy, dz);
 
-        AxisAlignedBB newBB = this.boundingBox.getOffsetBoundingBox(dx, dy, dz);
+            if (server.getAllowFlight() || !this.level.hasCollision(this, newBB, false)) {
+                this.boundingBox = newBB;
+            }
 
-        if (server.getAllowFlight() || !this.level.hasCollision(this, newBB, false)) {
-            this.boundingBox = newBB;
+            this.x = (this.boundingBox.getMinX() + this.boundingBox.getMaxX()) / 2;
+            this.y = this.boundingBox.getMinY() - this.ySize;
+            this.z = (this.boundingBox.getMinZ() + this.boundingBox.getMaxZ()) / 2;
+
+            this.checkChunks();
+
+            if (!this.onGround || dy != 0) {
+                AxisAlignedBB bb = this.boundingBox.clone();
+                bb.setMinY(bb.getMinY() - 0.75);
+
+                this.onGround = this.level.getCollisionBlocks(bb).length > 0;
+            }
+            this.isCollided = this.onGround;
+            this.updateFallState(this.onGround);
+            return true;
         }
-
-        this.x = (this.boundingBox.getMinX() + this.boundingBox.getMaxX()) / 2;
-        this.y = this.boundingBox.getMinY() - this.ySize;
-        this.z = (this.boundingBox.getMinZ() + this.boundingBox.getMaxZ()) / 2;
-
-        this.checkChunks();
-
-        if (!this.onGround || dy != 0) {
-            AxisAlignedBB bb = this.boundingBox.clone();
-            bb.setMinY(bb.getMinY() - 0.75);
-
-            this.onGround = this.level.getCollisionBlocks(bb).length > 0;
-        }
-        this.isCollided = this.onGround;
-        this.updateFallState(this.onGround);
-        Timings.entityMoveTimer.stopTiming();
-        return true;
     }
 
     public boolean move(double dx, double dy, double dz) {
@@ -1529,60 +1525,26 @@ public abstract class Entity extends Location implements Metadatable {
             this.boundingBox.offset(dx, dy, dz);
             this.setPosition(temporalVector.get().setComponents((this.boundingBox.getMinX() + this.boundingBox.getMaxX()) / 2, this.boundingBox.getMinY(), (this.boundingBox.getMinZ() + this.boundingBox.getMaxZ()) / 2));
             this.onGround = this.isPlayer;
-            return true;
         } else {
 
-            Timings.entityMoveTimer.startTiming();
+            try (Timing ignored = Timings.entityMoveTimer.startTiming()) {
+                this.ySize *= 0.4;
 
-            this.ySize *= 0.4;
+                double movX = dx;
+                double movY = dy;
+                double movZ = dz;
 
-            double movX = dx;
-            double movY = dy;
-            double movZ = dz;
+                AxisAlignedBB axisalignedbb = this.boundingBox.clone();
 
-            AxisAlignedBB axisalignedbb = this.boundingBox.clone();
-
-            AxisAlignedBB[] list = this.level.getCollisionCubes(this, this.level.getTickRate() > 1 ? this.boundingBox.getOffsetBoundingBox(dx, dy, dz) : this.boundingBox.addCoord(dx, dy, dz), false, true);
-
-            for (AxisAlignedBB bb : list) {
-                dy = bb.calculateYOffset(this.boundingBox, dy);
-            }
-
-            this.boundingBox.offset(0, dy, 0);
-
-            boolean fallingFlag = (this.onGround || (dy != movY && movY < 0));
-
-            for (AxisAlignedBB bb : list) {
-                dx = bb.calculateXOffset(this.boundingBox, dx);
-            }
-
-            this.boundingBox.offset(dx, 0, 0);
-
-            for (AxisAlignedBB bb : list) {
-                dz = bb.calculateZOffset(this.boundingBox, dz);
-            }
-
-            this.boundingBox.offset(0, 0, dz);
-
-            if (this.getStepHeight() > 0 && fallingFlag && this.ySize < 0.05 && (movX != dx || movZ != dz)) {
-                double cx = dx;
-                double cy = dy;
-                double cz = dz;
-                dx = movX;
-                dy = this.getStepHeight();
-                dz = movZ;
-
-                AxisAlignedBB axisalignedbb1 = this.boundingBox.clone();
-
-                this.boundingBox.setBB(axisalignedbb);
-
-                list = this.level.getCollisionCubes(this, this.boundingBox.addCoord(dx, dy, dz), false);
+                AxisAlignedBB[] list = this.level.getCollisionCubes(this, this.level.getTickRate() > 1 ? this.boundingBox.getOffsetBoundingBox(dx, dy, dz) : this.boundingBox.addCoord(dx, dy, dz), false, true);
 
                 for (AxisAlignedBB bb : list) {
                     dy = bb.calculateYOffset(this.boundingBox, dy);
                 }
 
                 this.boundingBox.offset(0, dy, 0);
+
+                boolean fallingFlag = (this.onGround || (dy != movY && movY < 0));
 
                 for (AxisAlignedBB bb : list) {
                     dx = bb.calculateXOffset(this.boundingBox, dx);
@@ -1596,44 +1558,76 @@ public abstract class Entity extends Location implements Metadatable {
 
                 this.boundingBox.offset(0, 0, dz);
 
-                this.boundingBox.offset(0, 0, dz);
+                if (this.getStepHeight() > 0 && fallingFlag && this.ySize < 0.05 && (movX != dx || movZ != dz)) {
+                    double cx = dx;
+                    double cy = dy;
+                    double cz = dz;
+                    dx = movX;
+                    dy = this.getStepHeight();
+                    dz = movZ;
 
-                if ((cx * cx + cz * cz) >= (dx * dx + dz * dz)) {
-                    dx = cx;
-                    dy = cy;
-                    dz = cz;
-                    this.boundingBox.setBB(axisalignedbb1);
-                } else {
-                    this.ySize += 0.5;
+                    AxisAlignedBB axisalignedbb1 = this.boundingBox.clone();
+
+                    this.boundingBox.setBB(axisalignedbb);
+
+                    list = this.level.getCollisionCubes(this, this.boundingBox.addCoord(dx, dy, dz), false);
+
+                    for (AxisAlignedBB bb : list) {
+                        dy = bb.calculateYOffset(this.boundingBox, dy);
+                    }
+
+                    this.boundingBox.offset(0, dy, 0);
+
+                    for (AxisAlignedBB bb : list) {
+                        dx = bb.calculateXOffset(this.boundingBox, dx);
+                    }
+
+                    this.boundingBox.offset(dx, 0, 0);
+
+                    for (AxisAlignedBB bb : list) {
+                        dz = bb.calculateZOffset(this.boundingBox, dz);
+                    }
+
+                    this.boundingBox.offset(0, 0, dz);
+
+                    this.boundingBox.offset(0, 0, dz);
+
+                    if ((cx * cx + cz * cz) >= (dx * dx + dz * dz)) {
+                        dx = cx;
+                        dy = cy;
+                        dz = cz;
+                        this.boundingBox.setBB(axisalignedbb1);
+                    } else {
+                        this.ySize += 0.5;
+                    }
+
                 }
 
+                this.x = (this.boundingBox.getMinX() + this.boundingBox.getMaxX()) / 2;
+                this.y = this.boundingBox.getMinY() - this.ySize;
+                this.z = (this.boundingBox.getMinZ() + this.boundingBox.getMaxZ()) / 2;
+
+                this.checkChunks();
+
+                this.checkGroundState(movX, movY, movZ, dx, dy, dz);
+                this.updateFallState(this.onGround);
+
+                if (movX != dx) {
+                    this.motionX = 0;
+                }
+
+                if (movY != dy) {
+                    this.motionY = 0;
+                }
+
+                if (movZ != dz) {
+                    this.motionZ = 0;
+                }
+
+                //TODO: vehicle collision events (first we need to spawn them!)
             }
-
-            this.x = (this.boundingBox.getMinX() + this.boundingBox.getMaxX()) / 2;
-            this.y = this.boundingBox.getMinY() - this.ySize;
-            this.z = (this.boundingBox.getMinZ() + this.boundingBox.getMaxZ()) / 2;
-
-            this.checkChunks();
-
-            this.checkGroundState(movX, movY, movZ, dx, dy, dz);
-            this.updateFallState(this.onGround);
-
-            if (movX != dx) {
-                this.motionX = 0;
-            }
-
-            if (movY != dy) {
-                this.motionY = 0;
-            }
-
-            if (movZ != dz) {
-                this.motionZ = 0;
-            }
-
-            //TODO: vehicle collision events (first we need to spawn them!)
-            Timings.entityMoveTimer.stopTiming();
-            return true;
         }
+        return true;
     }
 
     protected void checkGroundState(double movX, double movY, double movZ, double dx, double dy, double dz) {
@@ -2102,21 +2096,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Entity other = (Entity) obj;
-        return this.getUniqueId() == other.getUniqueId();
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = (int) (29 * hash + this.getUniqueId());
-        return hash;
+    public String toString() {
+        return "Entity(type=" + type.getIdentifier() + ", id=" + getUniqueId() + ")";
     }
 }
