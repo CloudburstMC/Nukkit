@@ -171,7 +171,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
                     .putInt("x", (int) this.x)
                     .putInt("y", (int) this.y)
                     .putInt("z", (int) this.z);
-            BlockEntityComparator comparator = (BlockEntityComparator) BlockEntity.createBlockEntity(BlockEntity.HOPPER, this.level.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+            BlockEntityComparator comparator = (BlockEntityComparator) BlockEntity.createBlockEntity(BlockEntity.COMPARATOR, this.level.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
             if (comparator == null) {
                 return false;
             }
