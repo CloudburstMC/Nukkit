@@ -24,8 +24,6 @@ public class BlockLeaves extends BlockTransparentMeta {
     public static final int SPRUCE = 1;
     public static final int BIRCH = 2;
     public static final int JUNGLE = 3;
-    public static final int ACACIA = 4;
-    public static final int DARK_OAK = 5;
 
     public BlockLeaves() {
         this(0);
@@ -73,14 +71,14 @@ public class BlockLeaves extends BlockTransparentMeta {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.setDamage(this.getDamage() | 0x04);
+        this.setPersistent(true);
         this.getLevel().setBlock(this, this, true);
         return true;
     }
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0, 1);
+        return new ItemBlock(this, this.getDamage() & 0x3, 1);
     }
 
     @Override
@@ -112,23 +110,21 @@ public class BlockLeaves extends BlockTransparentMeta {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_RANDOM && (getDamage() & 0b00001100) == 0x00) {
-            setDamage(getDamage() | 0x08);
+        if (type == Level.BLOCK_UPDATE_RANDOM && !isPersistent() && !isCheckDecay()) {
+            setCheckDecay(true);
             getLevel().setBlock(this, this, false, false);
-        } else if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if ((getDamage() & 0b00001100) == 0x08) {
-                setDamage(getDamage() & 0x03);
-                int check = 0;
+        } else if (type == Level.BLOCK_UPDATE_RANDOM && isCheckDecay() && !isPersistent()) {
+            setDamage(getDamage() & 0x03);
+            int check = 0;
 
-                LeavesDecayEvent ev = new LeavesDecayEvent(this);
+            LeavesDecayEvent ev = new LeavesDecayEvent(this);
 
-                Server.getInstance().getPluginManager().callEvent(ev);
-                if (ev.isCancelled() || findLog(this, new LongArraySet(), 0, check)) {
-                    getLevel().setBlock(this, this, false, false);
-                } else {
-                    getLevel().useBreakOn(this);
-                    return Level.BLOCK_UPDATE_NORMAL;
-                }
+            Server.getInstance().getPluginManager().callEvent(ev);
+            if (ev.isCancelled() || findLog(this, new LongArraySet(), 0, check)) {
+                getLevel().setBlock(this, this, false, false);
+            } else {
+                getLevel().useBreakOn(this);
+                return Level.BLOCK_UPDATE_NORMAL;
             }
         }
         return 0;
@@ -194,12 +190,28 @@ public class BlockLeaves extends BlockTransparentMeta {
         return false;
     }
 
-    public boolean isChechDecay() {
-        return (this.getDamage() & 0x08) > 0;
+    public boolean isCheckDecay() {
+        return (this.getDamage() & 0x08) != 0;
     }
 
-    public boolean isDecayable() {
-        return (this.getDamage() & 0x04) == 0;
+    public void setCheckDecay(boolean checkDecay) {
+        if (checkDecay) {
+            this.setDamage(this.getDamage() | 0x08);
+        } else {
+            this.setDamage(this.getDamage() & ~0x08);
+        }
+    }
+
+    public boolean isPersistent() {
+        return (this.getDamage() & 0x04) != 0;
+    }
+
+    public void setPersistent(boolean persistent) {
+        if (persistent) {
+            this.setDamage(this.getDamage() | 0x04);
+        } else {
+            this.setDamage(this.getDamage() & ~0x04);
+        }
     }
 
     @Override
@@ -217,6 +229,6 @@ public class BlockLeaves extends BlockTransparentMeta {
     }
 
     protected Item getSapling() {
-        return new ItemBlock(get(SAPLING), this.getDamage() & 0x03);
+        return Item.get(BlockID.SAPLING, this.getDamage() & 0x03);
     }
 }

@@ -12,6 +12,7 @@ import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.mob.*;
 import cn.nukkit.entity.passive.*;
 import cn.nukkit.entity.projectile.*;
+import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
@@ -1842,7 +1843,7 @@ public class Server {
 
     public Level getLevelByName(String name) {
         for (Level level : this.levelArray) {
-            if (level.getFolderName().equals(name)) {
+            if (level.getFolderName().equalsIgnoreCase(name)) {
                 return level;
             }
         }
@@ -2199,6 +2200,10 @@ public class Server {
         return this.getConfig("player.save-player-data", true);
     }
 
+    public int getPlayerSkinChangeCooldown() {
+        return this.getConfig("player.skin-change-cooldown", 30);
+    }
+
     /**
      * Checks the current thread against the expected primary thread for the
      * server.
@@ -2220,6 +2225,7 @@ public class Server {
     }
 
     private void registerEntities() {
+        Entity.registerEntity("Lightning", EntityLightning.class);
         Entity.registerEntity("Arrow", EntityArrow.class);
         Entity.registerEntity("EnderPearl", EntityEnderPearl.class);
         Entity.registerEntity("FallingSand", EntityFallingBlock.class);

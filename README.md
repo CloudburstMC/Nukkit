@@ -30,8 +30,10 @@ Links
 
 Build JAR file
 -------------
+- `git clone https://github.com/NukkitX/Nukkit`
+- `cd Nukkit`
 - `git submodule update --init`
-- `mvn clean package`
+- `./mvnw clean package`
 
 The compiled JAR can be found in the `target/` directory.
 
