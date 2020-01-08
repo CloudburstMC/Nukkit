@@ -72,25 +72,20 @@ public class BlockDoubleSlab extends BlockSolidMeta {
     @Override
     public BlockColor getColor() {
         switch (this.getDamage() & 0x07) {
-            case BlockDoubleSlab.STONE:
-                return BlockColor.STONE_BLOCK_COLOR;
-            case BlockDoubleSlab.SANDSTONE:
-                return BlockColor.SAND_BLOCK_COLOR;
             case BlockDoubleSlab.WOODEN:
                 return BlockColor.WOOD_BLOCK_COLOR;
-            case BlockDoubleSlab.COBBLESTONE:
-                return BlockColor.STONE_BLOCK_COLOR;
-            case BlockDoubleSlab.BRICK:
-                return BlockColor.STONE_BLOCK_COLOR;
-            case BlockDoubleSlab.STONE_BRICK:
-                return BlockColor.STONE_BLOCK_COLOR;
+            default:
+                case BlockDoubleSlab.COBBLESTONE:
+                case BlockDoubleSlab.BRICK:
+                case BlockDoubleSlab.STONE_BRICK:
+                case BlockDoubleSlab.STONE:
+                    return BlockColor.STONE_BLOCK_COLOR;
+            case BlockDoubleSlab.SANDSTONE:
+                return BlockColor.SAND_BLOCK_COLOR;
             case BlockDoubleSlab.QUARTZ:
                 return BlockColor.QUARTZ_BLOCK_COLOR;
             case BlockDoubleSlab.NETHER_BRICK:
                 return BlockColor.NETHERRACK_BLOCK_COLOR;
-
-            default:
-                return BlockColor.STONE_BLOCK_COLOR;     //unreachable
         }
     }
 }

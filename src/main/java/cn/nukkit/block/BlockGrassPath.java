@@ -40,10 +40,7 @@ public class BlockGrassPath extends BlockGrass {
     }
 
     @Override
-    public BlockColor getColor() {
-        //todo edit this after minecraft pc 1.9 come out
-        return BlockColor.GRASS_BLOCK_COLOR;
-    }
+    public BlockColor getColor() { return BlockColor.DIRT_BLOCK_COLOR; }
 
     @Override
     public boolean canSilkTouch() {

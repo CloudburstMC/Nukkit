@@ -74,7 +74,7 @@ public class BlockMycelium extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.GRASS_BLOCK_COLOR;
+        return BlockColor.PURPLE_BLOCK_COLOR;
     }
 
     @Override
