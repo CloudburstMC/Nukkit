@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.BlockColor;
 
 public class BlockChorusPlant extends BlockTransparent {
 
@@ -46,5 +47,10 @@ public class BlockChorusPlant extends BlockTransparent {
     @Override
     public boolean sticksToPiston() {
         return false;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.PURPLE_BLOCK_COLOR;
     }
 }

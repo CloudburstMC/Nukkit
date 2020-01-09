@@ -56,7 +56,7 @@ public class BlockSponge extends BlockSolidMeta {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.CLOTH_BLOCK_COLOR;
+        return BlockColor.YELLOW_BLOCK_COLOR;
     }
 
     @Override

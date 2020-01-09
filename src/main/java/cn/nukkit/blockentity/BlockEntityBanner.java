@@ -9,13 +9,32 @@ import cn.nukkit.utils.DyeColor;
 
 public class BlockEntityBanner extends BlockEntitySpawnable {
 
+    public int color;
+
     public BlockEntityBanner(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
     @Override
+    protected void initBlockEntity() {
+        if (!this.namedTag.contains("color")) {
+            this.namedTag.putByte("color", 0);
+        }
+
+        this.color = this.namedTag.getByte("color");
+
+        super.initBlockEntity();
+    }
+
+    @Override
     public boolean isBlockEntityValid() {
         return this.getBlock().getId() == Block.WALL_BANNER || this.getBlock().getId() == Block.STANDING_BANNER;
+    }
+
+    @Override
+    public void saveNBT() {
+        super.saveNBT();
+        this.namedTag.putByte("color", this.color);
     }
 
     @Override
@@ -67,6 +86,11 @@ public class BlockEntityBanner extends BlockEntitySpawnable {
         return getDefaultCompound(this, BANNER)
                 .putInt("Base", getBaseColor())
                 .putList(this.namedTag.getList("Patterns"))
-                .putInt("Type", getType());
+                .putInt("Type", getType())
+                .putByte("color", this.color);
+    }
+
+    public DyeColor getDyeColor() {
+        return DyeColor.getByWoolData(color);
     }
 }

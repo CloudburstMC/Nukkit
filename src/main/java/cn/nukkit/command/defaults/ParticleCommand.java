@@ -10,7 +10,6 @@ import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.particle.*;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.utils.TextFormat;
 
 import java.util.Random;
 
@@ -93,7 +92,7 @@ public class ParticleCommand extends VanillaCommand {
         Particle particle = this.getParticle(name, position, data);
 
         if (particle == null) {
-            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.particle.notFound", name));
+            position.level.addParticleEffect(position.asVector3f(), args[0], -1, position.level.getDimension());
             return true;
         }
 
