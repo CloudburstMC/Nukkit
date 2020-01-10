@@ -218,16 +218,18 @@ public class Level implements ChunkManager, Metadatable {
     private final StorageType storageType;
     private final LevelChunkManager chunkManager;
     private final LevelData levelData;
-    private IterableThreadLocal<Generator> generators = new IterableThreadLocal<Generator>() {
+    private ThreadLocal<Generator> generators = new ThreadLocal<Generator>() {
         @Override
-        public Generator init() {
+        protected Generator initialValue() {
             try {
                 Generator generator = generatorClass.getConstructor(Map.class).newInstance(levelData.getGeneratorOptions());
                 NukkitRandom rand = new NukkitRandom(getSeed());
                 if (Server.getInstance().isPrimaryThread()) {
                     generator.init(Level.this, rand);
                 }
-                generator.init(new PopChunkManager(getSeed()), rand);
+                PopChunkManager manager = new PopChunkManager();
+                manager.setSeed(getSeed());
+                generator.init(manager, rand);
                 return generator;
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -393,7 +395,6 @@ public class Level implements ChunkManager, Metadatable {
         this.provider = null;
         this.blockMetadata = null;
         this.temporalPosition = null;
-        this.generators.clean();
     }
 
     public void addSound(Vector3 pos, Sound sound) {
@@ -2058,7 +2059,7 @@ public class Level implements ChunkManager, Metadatable {
     public BlockEntity getBlockEntity(Vector3 pos) {
         Chunk chunk = this.getChunk(pos.getChunkX(), pos.getChunkZ());
         if (chunk != null) {
-            return chunk.getTile((int) pos.x & 0x0f, (int) pos.y & 0xff, (int) pos.z & 0x0f);
+            return chunk.getBlockEntity((int) pos.x & 0x0f, (int) pos.y & 0xff, (int) pos.z & 0x0f);
         }
         return null;
 
@@ -2067,7 +2068,7 @@ public class Level implements ChunkManager, Metadatable {
     @Nullable
     public BlockEntity getLoadedBlockEntity(Vector3 pos) {
         Chunk chunk = this.getLoadedChunk((int) pos.x >> 4, (int) pos.z >> 4);
-        return chunk == null ? null : chunk.getTile((int) pos.x & 0x0f, (int) pos.y & 0xff, (int) pos.z & 0x0f);
+        return chunk == null ? null : chunk.getBlockEntity((int) pos.x & 0x0f, (int) pos.y & 0xff, (int) pos.z & 0x0f);
     }
 
     @Nonnull
@@ -2118,17 +2119,6 @@ public class Level implements ChunkManager, Metadatable {
         Chunk chunk = this.getChunk(x >> 4, z >> 4);
         chunk.setBlock(x & 0x0f, y & 0xff, z & 0x0f, layer, block);
         addBlockChange(x, y, z);
-    }
-
-    public int getBlockExtraDataAt(int x, int y, int z) {
-        return this.getChunk(x >> 4, z >> 4).getBlockExtraData(x & 0x0f, y & 0xff, z & 0x0f);
-    }
-
-    public void setBlockExtraDataAt(int x, int y, int z, int id, int data) {
-        this.getChunk(x >> 4, z >> 4).setBlockExtraData(x & 0x0f, y & 0xff, z & 0x0f,
-                (short) ((data << 8) | id));
-
-        this.sendBlockExtraData(x, y, z, id, data);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package cn.nukkit.level.generator.populator.impl;
 
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.object.mushroom.BigMushroom;
 import cn.nukkit.level.generator.populator.type.PopulatorCount;
 import cn.nukkit.math.NukkitRandom;
@@ -25,7 +25,7 @@ public class MushroomPopulator extends PopulatorCount {
     }
 
     @Override
-    public void populateCount(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, Chunk chunk) {
+    public void populateCount(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, IChunk chunk) {
         int x = (chunkX << 4) | random.nextBoundedInt(16);
         int z = (chunkZ << 4) | random.nextBoundedInt(16);
         int y = this.getHighestWorkableBlock(level, x, z, chunk);
@@ -35,7 +35,7 @@ public class MushroomPopulator extends PopulatorCount {
     }
 
     @Override
-    protected int getHighestWorkableBlock(ChunkManager level, int x, int z, Chunk chunk) {
+    protected int getHighestWorkableBlock(ChunkManager level, int x, int z, IChunk chunk) {
         int y;
         x &= 0xF;
         z &= 0xF;

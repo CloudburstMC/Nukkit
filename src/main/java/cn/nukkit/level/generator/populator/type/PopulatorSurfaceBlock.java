@@ -2,7 +2,7 @@ package cn.nukkit.level.generator.populator.type;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.populator.helper.PopulatorHelpers;
 import cn.nukkit.math.NukkitRandom;
 
@@ -13,7 +13,7 @@ import cn.nukkit.math.NukkitRandom;
  */
 public abstract class PopulatorSurfaceBlock extends PopulatorCount {
     @Override
-    protected void populateCount(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, Chunk chunk) {
+    protected void populateCount(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, IChunk chunk) {
         int x = random.nextBoundedInt(16);
         int z = random.nextBoundedInt(16);
         int y = getHighestWorkableBlock(level, x, z, chunk);
@@ -22,12 +22,12 @@ public abstract class PopulatorSurfaceBlock extends PopulatorCount {
         }
     }
 
-    protected abstract boolean canStay(int x, int y, int z, Chunk chunk, ChunkManager level);
+    protected abstract boolean canStay(int x, int y, int z, IChunk chunk, ChunkManager level);
 
-    protected abstract Block getBlock(int x, int z, NukkitRandom random, Chunk chunk);
+    protected abstract Block getBlock(int x, int z, NukkitRandom random, IChunk chunk);
 
     @Override
-    protected int getHighestWorkableBlock(ChunkManager level, int x, int z, Chunk chunk) {
+    protected int getHighestWorkableBlock(ChunkManager level, int x, int z, IChunk chunk) {
         int y;
         //start at 254 because we add one afterwards
         for (y = 254; y >= 0; --y) {
@@ -39,7 +39,7 @@ public abstract class PopulatorSurfaceBlock extends PopulatorCount {
         return y == 0 ? -1 : ++y;
     }
 
-    protected void placeBlock(int x, int y, int z, Block block, Chunk chunk, NukkitRandom random) {
+    protected void placeBlock(int x, int y, int z, Block block, IChunk chunk, NukkitRandom random) {
         chunk.setBlock(x, y, z, block);
     }
 }

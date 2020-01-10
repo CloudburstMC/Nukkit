@@ -1,18 +1,18 @@
 package cn.nukkit.level.generator;
 
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.chunk.IChunk;
 
 public class SingleChunkManager extends SimpleChunkManager {
     private int CX = Integer.MAX_VALUE;
     private int CZ = Integer.MAX_VALUE;
-    private Chunk chunk;
+    private IChunk chunk;
 
-    public SingleChunkManager(long seed) {
-        super(seed);
+    public SingleChunkManager() {
+        super();
     }
 
     @Override
-    public Chunk getChunk(int chunkX, int chunkZ) {
+    public IChunk getChunk(int chunkX, int chunkZ) {
         if (chunkX == CX && chunkZ == CZ) {
             return chunk;
         }
@@ -20,7 +20,7 @@ public class SingleChunkManager extends SimpleChunkManager {
     }
 
     @Override
-    public void setChunk(Chunk chunk) {
+    public void setChunk(IChunk chunk) {
         if (chunk == null) {
             this.chunk = null;
             this.CX = Integer.MAX_VALUE;
@@ -35,8 +35,8 @@ public class SingleChunkManager extends SimpleChunkManager {
     }
 
     @Override
-    public void cleanChunks(long seed) {
-        super.cleanChunks(seed);
+    public void clean() {
+        super.clean();
         chunk = null;
         CX = Integer.MAX_VALUE;
         CZ = Integer.MAX_VALUE;

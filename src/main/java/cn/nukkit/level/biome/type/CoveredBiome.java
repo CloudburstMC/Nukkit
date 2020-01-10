@@ -3,7 +3,7 @@ package cn.nukkit.level.biome.type;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.biome.Biome;
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.Normal;
 
 import static cn.nukkit.block.BlockIds.STONE;
@@ -34,7 +34,7 @@ public abstract class CoveredBiome extends Biome {
 
     public abstract Block getGround(int x, int y, int z);
 
-    public void doCover(int x, int z, Chunk chunk) {
+    public void doCover(int x, int z, IChunk chunk) {
         final int fullX = (chunk.getX() << 4) | x;
         final int fullZ = (chunk.getZ() << 4) | z;
 

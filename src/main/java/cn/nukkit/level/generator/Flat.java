@@ -3,7 +3,7 @@ package cn.nukkit.level.generator;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.level.generator.populator.impl.PopulatorOre;
 import cn.nukkit.level.generator.populator.type.Populator;
@@ -168,7 +168,7 @@ public class Flat extends Generator {
         this.generateChunk(level.getChunk(chunkX, chunkZ));
     }
 
-    private void generateChunk(Chunk chunk) {
+    private void generateChunk(IChunk chunk) {
         chunk.setGenerated();
 
         for (int Z = 0; Z < 16; ++Z) {
@@ -184,7 +184,7 @@ public class Flat extends Generator {
 
     @Override
     public void populateChunk(int chunkX, int chunkZ) {
-        Chunk chunk = level.getChunk(chunkX, chunkZ);
+        IChunk chunk = level.getChunk(chunkX, chunkZ);
         this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
         for (Populator populator : this.populators) {
             populator.populate(this.level, chunkX, chunkZ, this.random, chunk);

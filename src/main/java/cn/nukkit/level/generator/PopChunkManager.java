@@ -1,6 +1,6 @@
 package cn.nukkit.level.generator;
 
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.chunk.IChunk;
 
 import java.util.Arrays;
 
@@ -8,27 +8,27 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 public class PopChunkManager extends SimpleChunkManager {
     private boolean clean = true;
-    private final Chunk[] chunks = new Chunk[9];
-    private int CX = Integer.MAX_VALUE;
-    private int CZ = Integer.MAX_VALUE;
+    private final IChunk[] chunks = new IChunk[9];
+    private int CX = 0;
+    private int CZ = 0;
 
-    public PopChunkManager(long seed) {
-        super(seed);
+    public PopChunkManager() {
+        super();
     }
 
     @Override
-    public void cleanChunks(long seed) {
-        super.cleanChunks(seed);
+    public void clean() {
+        super.clean();
         if (!this.clean) {
             Arrays.fill(chunks, null);
-            CX = Integer.MAX_VALUE;
-            CZ = Integer.MAX_VALUE;
+            CX = 0;
+            CZ = 0;
             this.clean = true;
         }
     }
 
     @Override
-    public Chunk getChunk(int chunkX, int chunkZ) {
+    public IChunk getChunk(int chunkX, int chunkZ) {
         int offsetX = (chunkX - CX) + 1;
         int offsetZ = (chunkZ - CZ) + 1;
         checkArgument(offsetX >= 0 && offsetX < 3 && offsetZ >= 0 && offsetZ < 3,
@@ -38,12 +38,13 @@ public class PopChunkManager extends SimpleChunkManager {
     }
 
     @Override
-    public void setChunk(Chunk chunk) {
+    public void setChunk(IChunk chunk) {
         int chunkX = chunk.getX();
         int chunkZ = chunk.getZ();
-        if (CX == Integer.MAX_VALUE) {
+        if (clean) {
             CX = chunkX;
             CZ = chunkZ;
+            clean = false;
         }
 
         int offsetX = (chunkX - CX) + 1;
@@ -51,7 +52,6 @@ public class PopChunkManager extends SimpleChunkManager {
         checkArgument(offsetX >= 0 && offsetX < 3 && offsetZ >= 0 && offsetZ < 3,
                 "Chunk (%s, %s) is outside population area (%s, %s)", chunkX, chunkZ, CX, CZ);
 
-        this.clean = false;
         this.chunks[offsetX + (offsetZ * 3)] = chunk;
     }
 }

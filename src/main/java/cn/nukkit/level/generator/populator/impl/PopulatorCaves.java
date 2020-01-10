@@ -4,7 +4,7 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.biome.type.CoveredBiome;
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.NukkitRandom;
@@ -38,7 +38,7 @@ public class PopulatorCaves extends Populator {
     public int worldHeightCap = 128;
 
     @Override
-    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, Chunk chunk) {
+    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, IChunk chunk) {
         this.random = new Random();
         this.random.setSeed(level.getSeed());
         long worldLong1 = this.random.nextLong();
@@ -56,11 +56,11 @@ public class PopulatorCaves extends Populator {
         }
     }
 
-    protected void generateLargeCaveNode(long seed, Chunk chunk, double x, double y, double z) {
+    protected void generateLargeCaveNode(long seed, IChunk chunk, double x, double y, double z) {
         generateCaveNode(seed, chunk, x, y, z, 1.0F + this.random.nextFloat() * 6.0F, 0.0F, 0.0F, -1, -1, 0.5D);
     }
 
-    protected void generateCaveNode(long seed, Chunk chunk, double x, double y, double z, float radius, float angelOffset, float angel, int angle, int maxAngle, double scale) {
+    protected void generateCaveNode(long seed, IChunk chunk, double x, double y, double z, float radius, float angelOffset, float angel, int angle, int maxAngle, double scale) {
         int chunkX = chunk.getX();
         int chunkZ = chunk.getZ();
 
@@ -225,7 +225,7 @@ public class PopulatorCaves extends Populator {
         }
     }
 
-    protected void generateChunk(int chunkX, int chunkZ, Chunk generatingChunkBuffer) {
+    protected void generateChunk(int chunkX, int chunkZ, IChunk generatingChunkBuffer) {
         int i = this.random.nextInt(this.random.nextInt(this.random.nextInt(caveFrequency) + 1) + 1);
         if (evenCaveDistribution)
             i = caveFrequency;

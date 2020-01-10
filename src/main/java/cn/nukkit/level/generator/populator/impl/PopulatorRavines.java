@@ -1,7 +1,7 @@
 package cn.nukkit.level.generator.populator.impl;
 
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.NukkitRandom;
@@ -32,7 +32,7 @@ public class PopulatorRavines extends Populator {
     private float[] a = new float[1024];
 
     @Override
-    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, Chunk chunk) {
+    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, IChunk chunk) {
         this.random = new Random();
         this.random.setSeed(level.getSeed());
         worldLong1 = this.random.nextLong();
@@ -49,7 +49,7 @@ public class PopulatorRavines extends Populator {
             }
     }
 
-    protected void generateChunk(int chunkX, int chunkZ, Chunk generatingChunkBuffer) {
+    protected void generateChunk(int chunkX, int chunkZ, IChunk generatingChunkBuffer) {
         if (this.random.nextInt(300) >= this.ravineRarity)
             return;
         double d1 = (chunkX * 16) + this.random.nextInt(16);
@@ -69,7 +69,7 @@ public class PopulatorRavines extends Populator {
         }
     }
 
-    protected void createRavine(long paramLong, Chunk generatingChunkBuffer, double paramDouble1, double paramDouble2, double paramDouble3,
+    protected void createRavine(long paramLong, IChunk generatingChunkBuffer, double paramDouble1, double paramDouble2, double paramDouble3,
                                 float paramFloat1, float paramFloat2, float paramFloat3, int size, double paramDouble4) {
         Random localRandom = new Random(paramLong);
 

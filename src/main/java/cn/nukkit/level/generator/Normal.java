@@ -7,7 +7,7 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.biome.BiomeSelector;
 import cn.nukkit.level.biome.EnumBiome;
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.noise.vanilla.f.NoiseGeneratorOctavesF;
 import cn.nukkit.level.generator.noise.vanilla.f.NoiseGeneratorPerlinF;
 import cn.nukkit.level.generator.object.ore.OreType;
@@ -225,7 +225,7 @@ public class Normal extends Generator {
         int baseZ = chunkZ << 4;
         this.nukkitRandom.setSeed(chunkX * this.localSeed1 ^ chunkZ * this.localSeed2 ^ this.level.getSeed());
 
-        Chunk chunk = this.level.getChunk(chunkX, chunkZ);
+        IChunk chunk = this.level.getChunk(chunkX, chunkZ);
 
         //generate base noise values
         float[] depthRegion = this.depthNoise.generateNoiseOctaves(this.depthRegion.get(), chunkX * 4, chunkZ * 4, 5, 5, 200f, 200f, 0.5f);
@@ -392,8 +392,8 @@ public class Normal extends Generator {
     }
 
     @Override
-    public void populateChunk(int chunkX, int chunkZ) {
-        Chunk chunk = this.level.getChunk(chunkX, chunkZ);
+    public void populateChunk(final int chunkX, final int chunkZ) {
+        IChunk chunk = this.level.getChunk(chunkX, chunkZ);
         this.nukkitRandom.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
         for (Populator populator : this.populators) {
             populator.populate(this.level, chunkX, chunkZ, this.nukkitRandom, chunk);

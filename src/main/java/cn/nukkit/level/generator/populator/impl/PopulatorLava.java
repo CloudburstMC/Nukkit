@@ -1,7 +1,7 @@
 package cn.nukkit.level.generator.populator.impl;
 
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.registry.BlockRegistry;
@@ -24,7 +24,7 @@ public class PopulatorLava extends Populator {
     }
 
     @Override
-    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, Chunk chunk) {
+    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, IChunk chunk) {
         this.random = random;
         if (random.nextRange(0, 100) < 5) {
             this.level = level;
@@ -220,7 +220,7 @@ public class PopulatorLava extends Populator {
     }
 
 
-    private int getHighestWorkableBlock(Chunk chunk, int x, int z) {
+    private int getHighestWorkableBlock(IChunk chunk, int x, int z) {
         int y;
         for (y = 127; y >= 0; y--) {
             Identifier b = chunk.getBlockId(x, y, z);

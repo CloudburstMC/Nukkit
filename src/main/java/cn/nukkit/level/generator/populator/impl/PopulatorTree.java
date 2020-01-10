@@ -2,7 +2,7 @@ package cn.nukkit.level.generator.populator.impl;
 
 import cn.nukkit.block.BlockSapling;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.object.tree.ObjectTree;
 import cn.nukkit.level.generator.populator.type.PopulatorCount;
 import cn.nukkit.math.NukkitMath;
@@ -31,15 +31,20 @@ public class PopulatorTree extends PopulatorCount {
     }
 
     @Override
-    public void populateCount(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, Chunk chunk) {
+    public void populateCount(ChunkManager level, final int chunkX, final int chunkZ, NukkitRandom random, IChunk chunk) {
         this.level = level;
 
-        int x = NukkitMath.randomRange(random, chunkX << 4, (chunkX << 4) + 15);
-        int z = NukkitMath.randomRange(random, chunkZ << 4, (chunkZ << 4) + 15);
-        if (x >> 4 != chunkX || z >> 4 != chunkZ) {
-            throw new IllegalStateException("Coordinate is outside chunk!");
+        int cX = chunkX << 4;
+        int cZ = chunkZ << 4;
+        int x = NukkitMath.randomRange(random, cX, cX + 15);
+        int z = NukkitMath.randomRange(random, cZ, cZ + 15);
+        level.getChunk(chunkX, chunkZ);
+        int y;
+        try {
+            y = this.getHighestWorkableBlock(x, z);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(String.format("Chunk (%d, %d) > %d, %d", chunkX, chunkZ, x >> 4, z >> 4), e);
         }
-        int y = this.getHighestWorkableBlock(x, z);
         if (y < 3) {
             return;
         }

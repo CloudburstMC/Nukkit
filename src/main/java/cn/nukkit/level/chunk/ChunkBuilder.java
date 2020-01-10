@@ -95,8 +95,8 @@ public class ChunkBuilder {
         Preconditions.checkNotNull(this.sections, "sections");
         Preconditions.checkNotNull(this.biomes, "biomes");
         Preconditions.checkNotNull(this.heightMap, "heightMap");
-        Chunk chunk = new Chunk(this.x, this.z, this.level, this.sections, this.chunkDataLoaders, this.extraData, this.biomes,
-                this.heightMap, this.blockUpdates);
+        Chunk chunk = new Chunk(new UnsafeChunk(this.x, this.z, this.level, this.sections, this.biomes,
+                this.heightMap), this.chunkDataLoaders, this.blockUpdates);
         chunk.setGenerated(this.generated);
         chunk.setPopulated(this.populated);
         chunk.setDirty(this.dirty);

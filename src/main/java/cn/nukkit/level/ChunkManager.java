@@ -1,7 +1,7 @@
 package cn.nukkit.level;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
 
@@ -56,7 +56,7 @@ public interface ChunkManager {
     void setBlockAt(int x, int y, int z, int layer, Block block);
 
 
-    Chunk getChunk(int chunkX, int chunkZ);
+    IChunk getChunk(int chunkX, int chunkZ);
 
     long getSeed();
 }

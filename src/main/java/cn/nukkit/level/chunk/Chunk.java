@@ -11,7 +11,6 @@ import cn.nukkit.level.chunk.bitarray.BitArrayVersion;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.network.protocol.LevelChunkPacket;
 import cn.nukkit.player.Player;
-import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.Identifier;
@@ -20,13 +19,7 @@ import co.aikar.timings.Timing;
 import com.google.common.base.FinalizableReferenceQueue;
 import com.google.common.base.FinalizableSoftReference;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import gnu.trove.TCollections;
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.TIntShortMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.map.hash.TIntShortHashMap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
@@ -41,56 +34,30 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.*;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import static cn.nukkit.block.BlockIds.AIR;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 @Log4j2
 @ThreadSafe
 @ParametersAreNonnullByDefault
-public final class Chunk implements Closeable {
+public final class Chunk implements IChunk, Closeable {
 
     public static final int SECTION_COUNT = 16;
 
-    private static final int ARRAY_SIZE = 256;
-
-    private static final int BLOCK_ID_MASK = ~0b11;
+    static final int ARRAY_SIZE = 256;
 
     private static final ChunkSection EMPTY = new ChunkSection(new BlockStorage[]{new BlockStorage(BitArrayVersion.V1),
             new BlockStorage(BitArrayVersion.V1)});
 
-    private final int x;
-
-    private final int z;
-
-    private final Level level;
-
-    private final ChunkSection[] sections;
-
-    private final Set<Player> players = Collections.newSetFromMap(new IdentityHashMap<>());
-
-    private final Set<Entity> entities = Collections.newSetFromMap(new IdentityHashMap<>());
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     private final Set<ChunkLoader> loaders = Collections.newSetFromMap(new IdentityHashMap<>());
 
     private final Set<Player> playerLoaders = Collections.newSetFromMap(new IdentityHashMap<>());
 
-    private final TIntObjectMap<BlockEntity> tiles = new TIntObjectHashMap<>();
-
-    private final byte[] biomes;
-
-    private final int[] heightMap;
-
-    private final TIntShortMap extraData = new TIntShortHashMap();
-
-    private volatile boolean dirty;
-
-    private volatile boolean initialized;
-
-    private volatile boolean generated;
-
-    private volatile boolean populated;
-
-    private volatile boolean closed;
+    private final UnsafeChunk unsafe;
 
     private CacheSoftReference cached;
 
@@ -99,47 +66,19 @@ public final class Chunk implements Closeable {
     private List<BlockUpdate> blockUpdates;
 
     public Chunk(int x, int z, Level level) {
-        this.x = x;
-        this.z = z;
-        this.level = level;
-        this.sections = new ChunkSection[SECTION_COUNT];
-        this.biomes = new byte[ARRAY_SIZE];
-        this.heightMap = new int[ARRAY_SIZE];
+        this.unsafe = new UnsafeChunk(x, z, level);
     }
 
-    Chunk(int x, int z, Level level, ChunkSection[] sections, Collection<ChunkDataLoader> chunkDataLoaders,
-          TIntShortMap extraData, byte[] biomes, int[] heightMap, List<BlockUpdate> blockUpdates) {
-        this.x = x;
-        this.z = z;
-        this.level = level;
-        Preconditions.checkNotNull(sections, "sections");
-        this.sections = Arrays.copyOf(sections, SECTION_COUNT);
-        this.chunkDataLoaders = Preconditions.checkNotNull(chunkDataLoaders, "chunkEntityLoaders");
-        Preconditions.checkNotNull(extraData, "extraData");
-        this.extraData.putAll(extraData);
-        Preconditions.checkNotNull(biomes, "biomes");
-        this.biomes = Arrays.copyOf(biomes, ARRAY_SIZE);
-        Preconditions.checkNotNull(heightMap, "heightMap");
-        this.heightMap = Arrays.copyOf(heightMap, ARRAY_SIZE);
-        this.blockUpdates = Preconditions.checkNotNull(blockUpdates, "blockUpdates");
+    Chunk(UnsafeChunk unsafe, Collection<ChunkDataLoader> chunkDataLoaders, List<BlockUpdate> blockUpdates) {
+        this.unsafe = checkNotNull(unsafe, "chunk");
+        this.chunkDataLoaders = checkNotNull(chunkDataLoaders, "chunkEntityLoaders");
+        this.blockUpdates = checkNotNull(blockUpdates, "blockUpdates");
     }
 
-    private static void checkBounds(int x, int y, int z) {
-        Preconditions.checkArgument(x >= 0 && x < 16, "x value was %s. Expected 0-15", x);
-        Preconditions.checkArgument(y >= 0 && y < 256, "y value was %s. Expected 0-255", y);
-        Preconditions.checkArgument(z >= 0 && z < 16, "z value was %s. Expected 0-15", z);
-    }
-
-    private static int getXZIndex(int x, int z) {
-        int index = z << 4 | x;
-        Preconditions.checkElementIndex(index, Chunk.ARRAY_SIZE);
-        return index;
-    }
-
-    public synchronized void init() {
-        if (!this.initialized) {
-            this.initialized = true;
-            try (Timing ignored = this.level.timings.syncChunkLoadEntitiesTimer.startTiming()) {
+    public void init() {
+        boolean init = this.unsafe.init();
+        if (init) {
+            try (Timing ignored = unsafe.getLevel().timings.syncChunkLoadEntitiesTimer.startTiming()) {
                 boolean dirty = false;
 
                 for (ChunkDataLoader chunkDataLoader : this.chunkDataLoaders) {
@@ -150,246 +89,375 @@ public final class Chunk implements Closeable {
 
                 this.setDirty(dirty);
             }
-            for (BlockUpdate blockUpdate : this.blockUpdates) {
-                this.level.scheduleUpdate(blockUpdate);
+
+            for (BlockUpdate update : blockUpdates) {
+                this.unsafe.getLevel().scheduleUpdate(update);
             }
             this.blockUpdates = null;
         }
     }
 
     @Nonnull
-    public synchronized ChunkSection getOrCreateSection(int y) {
-        Preconditions.checkElementIndex(y, sections.length);
-
-        ChunkSection section = this.sections[y];
-        if (section == null) {
-            section = new ChunkSection();
-            this.sections[y] = section;
-            this.setDirty();
+    @Override
+    public ChunkSection getOrCreateSection(int y) {
+        this.lock.writeLock().lock();
+        try {
+            return unsafe.getOrCreateSection(y);
+        } finally {
+            this.lock.writeLock().unlock();
         }
-        return section;
     }
 
     @Nullable
-    public synchronized ChunkSection getSection(int y) {
-        Preconditions.checkElementIndex(y, sections.length);
-        return this.sections[y];
+    @Override
+    public ChunkSection getSection(int y) {
+        this.lock.readLock().lock();
+        try {
+            return unsafe.getSection(y);
+        } finally {
+            this.lock.readLock().unlock();
+        }
     }
 
     @Nonnull
+    @Override
     public ChunkSection[] getSections() {
-        return Arrays.copyOf(this.sections, SECTION_COUNT);
+        this.lock.readLock().lock();
+        try {
+            ChunkSection[] sections = unsafe.getSections();
+            return Arrays.copyOf(sections, sections.length);
+        } finally {
+            this.lock.readLock().unlock();
+        }
     }
 
     @Nonnull
-    public Block getBlock(int x, int y, int z) {
-        return this.getBlock(x, y, z, 0);
-    }
-
-    @Nonnull
+    @Override
     public Block getBlock(int x, int y, int z, int layer) {
-        Chunk.checkBounds(x, y, z);
-        ChunkSection section = this.getSection(y >> 4);
-        Block block;
-        if (section == null) {
-            block = Block.get(AIR);
-        } else {
-            block = section.getBlock(x, y & 0xf, z, layer);
+        this.lock.readLock().lock();
+        try {
+            return unsafe.getBlock(x, y, z, layer);
+        } finally {
+            this.lock.readLock().unlock();
         }
-        block.level = this.level;
-        block.x = this.x << 4 | x & 0xf;
-        block.y = y;
-        block.z = this.z << 4 | z & 0xf;
-        return block;
     }
 
-    public Identifier getBlockId(int x, int y, int z) {
-        return this.getBlockId(x, y, z, 0);
-    }
-
+    @Nonnull
+    @Override
     public Identifier getBlockId(int x, int y, int z, int layer) {
-        Chunk.checkBounds(x, y, z);
-        ChunkSection section = this.getSection(y >> 4);
-        if (section == null) {
-            return AIR;
+        this.lock.readLock().lock();
+        try {
+            return unsafe.getBlockId(x, y, z, layer);
+        } finally {
+            this.lock.readLock().unlock();
         }
-        return section.getBlockId(x, y & 0xf, z, layer);
     }
 
-    public int getBlockData(int x, int y, int z) {
-        return this.getBlockData(x, y, z, 0);
-    }
-
+    @Override
     public int getBlockData(int x, int y, int z, int layer) {
-        Chunk.checkBounds(x, y, z);
-        ChunkSection section = this.getSection(y >> 4);
-        if (section == null) {
-            return 0;
+        this.lock.readLock().lock();
+        try {
+            return unsafe.getBlockData(x, y, z, layer);
+        } finally {
+            this.lock.readLock().unlock();
         }
-        return section.getBlockData(x, y & 0xf, z, layer);
     }
 
     @Nonnull
-    public Block getAndSetBlock(int x, int y, int z, Block block) {
-        return this.getAndSetBlock(x, y, z, 0, block);
-    }
-
-    @Nonnull
+    @Override
     public Block getAndSetBlock(int x, int y, int z, int layer, Block block) {
-        Block previousBlock = this.getBlock(x, y, z, layer);
-        this.setBlock(x, y, z, layer, block);
-        return previousBlock;
+        this.lock.writeLock().lock();
+        try {
+            return unsafe.getAndSetBlock(x, y, z, layer, block);
+        } finally {
+            this.lock.writeLock().unlock();
+        }
     }
 
-    public void setBlock(int x, int y, int z, Block block) {
-        this.setBlock(x, y, z, 0, block);
-        this.setDirty();
-    }
-
+    @Override
     public void setBlock(int x, int y, int z, int layer, Block block) {
-        Chunk.checkBounds(x, y, z);
-        ChunkSection section = this.getSection(y >> 4);
-        if (section == null) {
-            if (block.getId() == AIR) {
-                // Setting air in an empty section.
-                return;
-            }
-            section = this.getOrCreateSection(y >> 4);
+        this.lock.writeLock().lock();
+        try {
+            unsafe.setBlock(x, y, z, layer, block);
+        } finally {
+            this.lock.writeLock().unlock();
         }
-
-        section.setBlock(x, y & 0xf, z, layer, block);
-        this.setDirty();
     }
 
-    public void setBlockId(int x, int y, int z, Identifier id) {
-        this.setBlockId(x, y, z, 0, id);
-    }
-
+    @Override
     public void setBlockId(int x, int y, int z, int layer, Identifier id) {
-        this.setBlock(x, y, z, layer, BlockRegistry.get().getBlock(id, 0));
-        this.setDirty();
+        this.lock.writeLock().lock();
+        try {
+            unsafe.setBlockId(x, y, z, layer, id);
+        } finally {
+            this.lock.writeLock().unlock();
+        }
     }
 
-    public void setBlockData(int x, int y, int z, int data) {
-        this.setBlockData(x, y, z, 0, data);
-    }
-
+    @Override
     public void setBlockData(int x, int y, int z, int layer, int data) {
-        Chunk.checkBounds(x, y, z);
-        ChunkSection section = this.getSection(y >> 4);
-        if (section == null) {
-            if (data == 0) {
-                // Setting air in an empty section.
-                return;
-            }
-            section = this.getOrCreateSection(y >> 4);
-        }
-
-        section.setBlockData(x, y & 0xf, z, layer, data);
-        this.setDirty();
-    }
-
-    public short getBlockExtraData(int x, int y, int z) {
-        return this.getBlockExtraData(Level.chunkBlockKey(x, y, z));
-    }
-
-    public synchronized short getBlockExtraData(int index) {
-        return this.extraData.get(index);
-    }
-
-    public void setBlockExtraData(int x, int y, int z, short data) {
-        Chunk.checkBounds(x, y, z);
-        this.setBlockExtraData(Level.chunkBlockKey(x, y, z), data);
-    }
-
-    public synchronized void setBlockExtraData(int index, short data) {
-        boolean dirty = false;
-        if (data == 0) {
-            if (this.extraData.remove(index) != -1) {
-                dirty = true;
-            }
-        } else {
-            this.extraData.put(index, data);
-            dirty = true;
-        }
-        if (dirty) {
-            this.setDirty();
+        this.lock.writeLock().lock();
+        try {
+            unsafe.setBlockData(x, y, z, layer, data);
+        } finally {
+            this.lock.writeLock().unlock();
         }
     }
 
-    public synchronized int getBiome(int x, int z) {
-        return this.biomes[Chunk.getXZIndex(x, z)] & 0xFF;
+    @Override
+    public int getBiome(int x, int z) {
+        this.lock.readLock().lock();
+        try {
+            return unsafe.getBiome(x, z);
+        } finally {
+            this.lock.readLock().unlock();
+        }
     }
 
+    @Override
     public synchronized void setBiome(int x, int z, int biome) {
-        int index = Chunk.getXZIndex(x, z);
-        int oldBiome = this.biomes[index] & 0xf;
-        if (oldBiome != biome) {
-            this.biomes[index] = (byte) biome;
-            this.setDirty();
+        this.lock.writeLock().lock();
+        try {
+            unsafe.setBiome(x, z, biome);
+        } finally {
+            this.lock.writeLock().unlock();
         }
     }
 
+    @Override
     public byte getSkyLight(int x, int y, int z) {
-        checkBounds(x, y, z);
-        ChunkSection section = this.getSection(y >> 4);
-        return section == null ? 0 : section.getSkyLight(x, y, z);
+        this.lock.readLock().lock();
+        try {
+            return unsafe.getSkyLight(x, y, z);
+        } finally {
+            this.lock.readLock().unlock();
+        }
     }
 
+    @Override
     public void setSkyLight(int x, int y, int z, int level) {
-        checkBounds(x, y, z);
-        this.getOrCreateSection(y >> 4).setSkyLight(x, y & 0xf, z, (byte) level);
-        setDirty();
+        this.lock.writeLock().lock();
+        try {
+            unsafe.setSkyLight(x, y, z, level);
+        } finally {
+            this.lock.writeLock().unlock();
+        }
     }
 
+    @Override
     public byte getBlockLight(int x, int y, int z) {
-        checkBounds(x, y, z);
-        ChunkSection section = this.getSection(y >> 4);
-        return section == null ? 0 : section.getBlockLight(x, y & 0xf, z);
+        this.lock.readLock().lock();
+        try {
+            return unsafe.getBlockLight(x, y, z);
+        } finally {
+            this.lock.readLock().unlock();
+        }
     }
 
+    @Override
     public void setBlockLight(int x, int y, int z, int level) {
-        checkBounds(x, y, z);
-        this.getOrCreateSection(y >> 4).setBlockLight(x, y & 0xf, z, (byte) level);
-        setDirty();
+        this.lock.writeLock().lock();
+        try {
+            unsafe.setBlockLight(x, y, z, level);
+        } finally {
+            this.lock.writeLock().unlock();
+        }
     }
 
+    @Override
     public void recalculateHeightMap() {
-        for (int z = 0; z < 16; ++z) {
-            for (int x = 0; x < 16; ++x) {
-                this.setHeightMap(x, z, this.getHighestBlock(x, z, false));
+        this.lock.writeLock().lock();
+        try {
+            for (int z = 0; z < 16; ++z) {
+                for (int x = 0; x < 16; ++x) {
+                    unsafe.setHeightMap(x, z, unsafe.getHighestBlock(x, z, false));
+                }
             }
+            setDirty();
+        } finally {
+            this.lock.writeLock().unlock();
         }
-        setDirty();
     }
 
+    @Override
     public synchronized int getHeightMap(int x, int z) {
-        return this.heightMap[Chunk.getXZIndex(x, z)] & 0xFF;
+        this.lock.readLock().lock();
+        try {
+            return unsafe.getHeightMap(x, z);
+        } finally {
+            this.lock.readLock().unlock();
+        }
     }
 
+    @Override
     public synchronized void setHeightMap(int x, int z, int value) {
-        this.heightMap[Chunk.getXZIndex(x, z)] = (byte) value;
-        setDirty();
+        this.lock.writeLock().lock();
+        try {
+            unsafe.setHeightMap(x, z, value);
+        } finally {
+            this.lock.writeLock().unlock();
+        }
     }
 
-    public int getHighestBlock(int x, int z) {
-        return this.getHighestBlock(x, z, true);
+    @Override
+    public void addEntity(@Nonnull Entity entity) {
+        this.lock.writeLock().lock();
+        try {
+            unsafe.addEntity(entity);
+        } finally {
+            this.lock.writeLock().unlock();
+        }
     }
 
-    public int getHighestBlock(int x, int z, boolean cache) {
-        if (cache) {
-            int h = this.getHeightMap(x, z);
-            if (h != 0 && h != 255) {
-                return h;
-            }
+    @Override
+    public void removeEntity(Entity entity) {
+        this.lock.writeLock().lock();
+        try {
+            unsafe.removeEntity(entity);
+        } finally {
+            this.lock.writeLock().unlock();
         }
-        for (int y = 255; y >= 0; --y) {
-            if (getBlockId(x, y, z) != AIR) {
-                this.setHeightMap(x, z, y);
-                return y;
-            }
+    }
+
+    @Override
+    public void addBlockEntity(BlockEntity blockEntity) {
+        this.lock.writeLock().lock();
+        try {
+            unsafe.addBlockEntity(blockEntity);
+        } finally {
+            this.lock.writeLock().unlock();
         }
-        return 0;
+    }
+
+    @Override
+    public void removeBlockEntity(BlockEntity blockEntity) {
+        this.lock.writeLock().lock();
+        try {
+            unsafe.removeBlockEntity(blockEntity);
+        } finally {
+            this.lock.writeLock().unlock();
+        }
+    }
+
+    @Override
+    public BlockEntity getBlockEntity(int x, int y, int z) {
+        return null;
+    }
+
+    @Override
+    public int getX() {
+        return unsafe.getX();
+    }
+
+    @Override
+    public int getZ() {
+        return unsafe.getZ();
+    }
+
+    @Nonnull
+    @Override
+    public Level getLevel() {
+        return unsafe.getLevel();
+    }
+
+    @Nonnull
+    @Override
+    public byte[] getBiomeArray() {
+        this.lock.readLock().lock();
+        try {
+            byte[] biomes = unsafe.getBiomeArray();
+            return Arrays.copyOf(biomes, biomes.length);
+        } finally {
+            this.lock.readLock().unlock();
+        }
+    }
+
+    @Nonnull
+    @Override
+    public int[] getHeightMapArray() {
+        this.lock.readLock().lock();
+        try {
+            int[] heightMap = unsafe.getHeightMapArray();
+            return Arrays.copyOf(heightMap, heightMap.length);
+        } finally {
+            this.lock.readLock().unlock();
+        }
+    }
+
+    @Nonnull
+    @Override
+    public Set<Player> getPlayers() {
+        this.lock.readLock().lock();
+        try {
+            return new HashSet<>(unsafe.getPlayers());
+        } finally {
+            this.lock.readLock().unlock();
+        }
+    }
+
+    @Nonnull
+    @Override
+    public Set<Entity> getEntities() {
+        this.lock.readLock().lock();
+        try {
+            return new HashSet<>(unsafe.getEntities());
+        } finally {
+            this.lock.readLock().unlock();
+        }
+    }
+
+    @Nonnull
+    @Override
+    public Set<BlockEntity> getBlockEntities() {
+        this.lock.readLock().lock();
+        try {
+            return new HashSet<>(unsafe.getBlockEntities());
+        } finally {
+            this.lock.readLock().unlock();
+        }
+    }
+
+    @Override
+    public boolean isGenerated() {
+        return unsafe.isGenerated();
+    }
+
+    @Override
+    public void setGenerated(boolean generated) {
+        unsafe.setGenerated(generated);
+    }
+
+    @Override
+    public boolean isPopulated() {
+        return unsafe.isPopulated();
+    }
+
+    @Override
+    public void setPopulated(boolean populated) {
+        unsafe.setPopulated(populated);
+    }
+
+    @Override
+    public boolean isDirty() {
+        return unsafe.isDirty();
+    }
+
+    @Override
+    public boolean setDirty() {
+        boolean changed = unsafe.setDirty();
+        if (changed) {
+            clearCache();
+        }
+        return changed;
+    }
+
+    @Override
+    public boolean setDirty(boolean dirty) {
+        boolean changed = unsafe.setDirty(dirty);
+        if (changed) {
+            clearCache();
+        }
+        return changed;
     }
 
     @Synchronized("loaders")
@@ -410,64 +478,6 @@ public final class Chunk implements Closeable {
         }
     }
 
-    public synchronized void addEntity(Entity entity) {
-        Preconditions.checkNotNull(entity, "entity");
-        if (entity instanceof Player) {
-            this.players.add((Player) entity);
-        } else if (this.entities.add(entity) && this.initialized) {
-            this.setDirty();
-        }
-    }
-
-    public synchronized void removeEntity(Entity entity) {
-        Preconditions.checkNotNull(entity, "entity");
-        if (entity instanceof Player) {
-            this.players.remove(entity);
-        } else if (this.entities.remove(entity) && this.initialized) {
-            this.setDirty();
-        }
-    }
-
-    public synchronized void addBlockEntity(BlockEntity blockEntity) {
-        Preconditions.checkNotNull(blockEntity, "blockEntity");
-        int hash = Level.chunkBlockKey(blockEntity.getFloorX() & 0xf, blockEntity.getFloorY(), blockEntity.getFloorZ() & 0xf);
-        if (this.tiles.put(hash, blockEntity) != blockEntity && this.initialized) {
-            this.setDirty();
-        }
-    }
-
-    public synchronized void removeBlockEntity(BlockEntity blockEntity) {
-        Preconditions.checkNotNull(blockEntity, "blockEntity");
-        int hash = Level.chunkBlockKey(blockEntity.getFloorX() & 0xf, blockEntity.getFloorY(), blockEntity.getFloorZ() & 0xf);
-        if (this.tiles.remove(hash) == blockEntity && this.initialized) {
-            this.setDirty();
-        }
-    }
-
-    @Nullable
-    public synchronized BlockEntity getTile(int x, int y, int z) {
-        Chunk.checkBounds(x, y, z);
-        return this.tiles.get(Level.chunkBlockKey(x, y, z));
-    }
-
-    public void populateSkyLight() {
-        for (int z = 0; z < 16; ++z) {
-            for (int x = 0; x < 16; ++x) {
-                int top = this.getHeightMap(x, z);
-                for (int y = 255; y > top; --y) {
-                    this.setSkyLight(x, y, z, (byte) 15);
-                }
-                for (int y = top; y >= 0; --y) {
-                    if (BlockRegistry.get().getBlock(this.getBlockId(x, y, z), 0).isSolid()) {
-                        break;
-                    }
-                    this.setSkyLight(x, y, z, (byte) 15);
-                }
-                this.setHeightMap(x, z, this.getHighestBlock(x, z, false));
-            }
-        }
-    }
-
     @Nonnull
     public synchronized LevelChunkPacket createChunkPacket() {
         if (this.cached != null) {
@@ -480,120 +490,71 @@ public final class Chunk implements Closeable {
         }
 
         LevelChunkPacket packet = new LevelChunkPacket();
-        packet.chunkX = this.x;
-        packet.chunkZ = this.z;
+        packet.chunkX = this.getX();
+        packet.chunkZ = this.getZ();
 
-        int subChunkCount = SECTION_COUNT - 1; // index
-        while (subChunkCount >= 0 && (this.sections[subChunkCount] == null || this.sections[subChunkCount].isEmpty())) {
-            subChunkCount--;
-        }
-        subChunkCount++; // length
-
-        ChunkSection[] sections = Arrays.copyOf(this.sections, subChunkCount);
-        for (int i = 0; i < subChunkCount; i++) {
-            if (sections[i] == null) {
-                sections[i] = EMPTY;
-            }
-        }
-
-        packet.subChunkCount = subChunkCount;
-
-        ByteBuf buffer = Unpooled.buffer();
+        this.lock.readLock().lock();
         try {
+            ChunkSection[] sections = unsafe.getSections();
+
+            int subChunkCount = SECTION_COUNT - 1; // index
+            while (subChunkCount >= 0 && (sections[subChunkCount] == null || sections[subChunkCount].isEmpty())) {
+                subChunkCount--;
+            }
+            subChunkCount++; // length
+
+            ChunkSection[] networkSections = Arrays.copyOf(sections, subChunkCount);
             for (int i = 0; i < subChunkCount; i++) {
-                sections[i].writeToNetwork(buffer);
-            }
-
-            buffer.writeBytes(this.biomes); // Biomes - 256 bytes
-            buffer.writeByte(0); // Border blocks size - Education Edition only
-
-            // Extra Data
-            TIntShortMap extraData = this.extraData;
-            Binary.writeUnsignedVarInt(buffer, extraData.size());
-            if (!extraData.isEmpty()) {
-                extraData.forEachEntry((position, data) -> {
-                    Binary.writeVarInt(buffer, position);
-                    buffer.writeShortLE(data);
-                    return false;
-                });
-            }
-
-            // Block entities
-            if (!this.tiles.isEmpty()) {
-                try (ByteBufOutputStream stream = new ByteBufOutputStream(buffer)) {
-                    this.tiles.forEachValue(blockEntity -> {
-                        if (blockEntity instanceof BlockEntitySpawnable) {
-                            try {
-                                NBTIO.write(((BlockEntitySpawnable) blockEntity).getSpawnCompound(), stream,
-                                        ByteOrder.LITTLE_ENDIAN, true);
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                        return false;
-                    });
+                if (networkSections[i] == null) {
+                    networkSections[i] = EMPTY;
                 }
             }
 
-            packet.data = buffer.asReadOnly(); // Stop any accidental corruption
+            packet.subChunkCount = subChunkCount;
 
-            this.cached = new CacheSoftReference(packet, Utils.REFERENCE_QUEUE);
+            ByteBuf buffer = Unpooled.buffer();
+            try {
+                for (int i = 0; i < subChunkCount; i++) {
+                    networkSections[i].writeToNetwork(buffer);
+                }
 
-            return packet.copy();
-        } catch (IOException e) {
-            buffer.release();
-            log.error("Error whilst encoding chunk", e);
-            this.cached = null;
-            throw new ChunkException("Unable to create chunk packet", e);
+                buffer.writeBytes(unsafe.getBiomeArray()); // Biomes - 256 bytes
+                buffer.writeByte(0); // Border blocks size - Education Edition only
+
+                // Extra Data length. Replaced by second block layer.
+                Binary.writeUnsignedVarInt(buffer, 0);
+
+                Collection<BlockEntity> tiles = unsafe.getBlockEntities();
+                // Block entities
+                if (!tiles.isEmpty()) {
+                    try (ByteBufOutputStream stream = new ByteBufOutputStream(buffer)) {
+                        tiles.forEach(blockEntity -> {
+                            if (blockEntity instanceof BlockEntitySpawnable) {
+                                try {
+                                    NBTIO.write(((BlockEntitySpawnable) blockEntity).getSpawnCompound(), stream,
+                                            ByteOrder.LITTLE_ENDIAN, true);
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                        });
+                    }
+                }
+
+                packet.data = buffer.asReadOnly(); // Stop any accidental corruption
+
+                this.cached = new CacheSoftReference(packet, Utils.REFERENCE_QUEUE);
+
+                return packet.copy();
+            } catch (IOException e) {
+                buffer.release();
+                log.error("Error whilst encoding chunk", e);
+                this.cached = null;
+                throw new ChunkException("Unable to create chunk packet", e);
+            }
+        } finally {
+            this.lock.readLock().unlock();
         }
-    }
-
-    /**
-     * Get the chunk's X coordinate in the level it was loaded.
-     *
-     * @return chunk x
-     */
-    public int getX() {
-        return x;
-    }
-
-    /**
-     * Get the chunk's Z coordinate in the level it was loaded.
-     *
-     * @return chunk z
-     */
-    public int getZ() {
-        return z;
-    }
-
-    /**
-     * Get the level the chunk was loaded in.
-     *
-     * @return chunk level
-     */
-    @Nonnull
-    public Level getLevel() {
-        return level;
-    }
-
-    /**
-     * Get the copy of the biome array.
-     *
-     * @return biome array
-     */
-    @Nonnull
-    public synchronized byte[] getBiomeArray() {
-        return Arrays.copyOf(this.biomes, ARRAY_SIZE);
-    }
-
-    /**
-     * Get a copy of the height map array.
-     *
-     * @return height map
-     */
-    @Nonnull
-    public int[] getHeightMapArray() {
-        return Arrays.copyOf(this.heightMap, ARRAY_SIZE);
     }
 
     @Nonnull
@@ -608,88 +569,6 @@ public final class Chunk implements Closeable {
         return new HashSet<>(playerLoaders);
     }
 
-    /**
-     * Gets an immutable copy of players currently in this chunk
-     *
-     * @return player set
-     */
-    @Nonnull
-    public synchronized Set<Player> getPlayers() {
-        return ImmutableSet.copyOf(players);
-    }
-
-    /**
-     * Gets an immutable copy of entities currently in this chunk
-     *
-     * @return entity set
-     */
-    @Nonnull
-    public synchronized Set<Entity> getEntities() {
-        return ImmutableSet.copyOf(this.entities);
-    }
-
-    /**
-     * Gets an immutable copy of all block entities within the current chunk.
-     *
-     * @return block entity collection
-     */
-    @Nonnull
-    public synchronized Collection<BlockEntity> getBlockEntities() {
-        return ImmutableList.copyOf(this.tiles.valueCollection());
-    }
-
-    public synchronized TIntShortMap getBlockExtraData() {
-        return TCollections.unmodifiableMap(this.extraData);
-    }
-
-    public boolean isGenerated() {
-        return generated;
-    }
-
-    public void setGenerated() {
-        this.setGenerated(true);
-    }
-
-    public void setGenerated(boolean generated) {
-        this.generated = generated;
-    }
-
-    public boolean isPopulated() {
-        return populated;
-    }
-
-    public void setPopulated() {
-        this.setPopulated(true);
-    }
-
-    public void setPopulated(boolean populated) {
-        this.populated = populated;
-    }
-
-    /**
-     * Whether the chunk has changed since it was last loaded or saved.
-     *
-     * @return dirty
-     */
-    public boolean isDirty() {
-        return dirty;
-    }
-
-    public void setDirty() {
-        setDirty(true);
-    }
-
-    /**
-     * Sets the chunk's dirty status.
-     */
-    public void setDirty(boolean dirty) {
-        if (this.dirty != dirty) {
-            this.dirty = dirty;
-        }
-        if (dirty) {
-            this.clearCache();
-        }
-    }
 
     private synchronized void clearCache() {
         // Clear cached packet
@@ -702,41 +581,34 @@ public final class Chunk implements Closeable {
         }
     }
 
-    public synchronized void tick(int tick) {
-
+    public void tick(int tick) {
+        //todo
     }
 
-    /**
-     * Clear chunk to a state as if it was not generated.
-     */
-    public synchronized void clear() {
-        Arrays.fill(this.sections, null);
-        Arrays.fill(this.biomes, (byte) 0);
-        Arrays.fill(this.heightMap, (byte) 0);
-        this.extraData.clear();
-        this.blockUpdates.clear();
-        this.tiles.clear();
-        this.entities.clear();
-        this.generated = false;
-        this.chunkDataLoaders = null;
-        this.dirty = true;
+    public LockableChunk lockable() {
+        return new LockableChunk(unsafe, lock.writeLock());
+    }
+
+    public void clear() {
+        this.lock.writeLock().lock();
+        try {
+            unsafe.clear();
+            this.blockUpdates.clear();
+            this.chunkDataLoaders = null;
+        } finally {
+            this.lock.writeLock().unlock();
+        }
         this.clearCache();
     }
 
     @Override
     public synchronized void close() {
-        for (Entity entity : ImmutableList.copyOf(this.entities)) {
-            if (entity instanceof Player) {
-                continue;
-            }
-            entity.close();
+        this.lock.writeLock().lock();
+        try {
+            unsafe.close();
+        } finally {
+            this.lock.writeLock().unlock();
         }
-
-        this.tiles.forEachValue(blockEntity -> {
-            blockEntity.close();
-            return false;
-        });
-
         this.clearCache();
     }
 

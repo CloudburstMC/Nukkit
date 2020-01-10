@@ -41,7 +41,7 @@ public class BlockStorage {
         this.bitArray = bitArray;
     }
 
-    private static int getPaletteHeader(BitArrayVersion version, boolean runtime) {
+    private int getPaletteHeader(BitArrayVersion version, boolean runtime) {
         return (version.getId() << 1) | (runtime ? 1 : 0);
     }
 
@@ -49,11 +49,11 @@ public class BlockStorage {
         return BitArrayVersion.get(header >> 1, true);
     }
 
-    public synchronized Block getBlock(int index) {
+    public Block getBlock(int index) {
         return this.blockFor(this.bitArray.get(index)).clone();
     }
 
-    public synchronized void setBlock(int index, Block block) {
+    public void setBlock(int index, Block block) {
         try {
             int idx = this.idFor(BlockRegistry.get().getRuntimeId(block));
             this.bitArray.set(index, idx);
@@ -62,11 +62,11 @@ public class BlockStorage {
         }
     }
 
-    public synchronized Identifier getBlockId(int index) {
+    public Identifier getBlockId(int index) {
         return this.blockFor(this.bitArray.get(index)).getId();
     }
 
-    public synchronized void setBlockId(int index, int blockId) {
+    public void setBlockId(int index, int blockId) {
         try {
             int idx = this.idFor(BlockRegistry.get().getRuntimeId(blockId, 0));
             this.bitArray.set(index, idx);
@@ -75,11 +75,11 @@ public class BlockStorage {
         }
     }
 
-    public synchronized int getBlockData(int index) {
+    public int getBlockData(int index) {
         return this.blockFor(this.bitArray.get(index)).getDamage();
     }
 
-    public synchronized void setBlockData(int index, int blockData) {
+    public void setBlockData(int index, int blockData) {
         try {
             Identifier id = this.getBlockId(index);
             int idx = this.idFor(BlockRegistry.get().getRuntimeId(id, blockData));
@@ -89,7 +89,7 @@ public class BlockStorage {
         }
     }
 
-    public synchronized void writeToNetwork(ByteBuf buffer) {
+    public void writeToNetwork(ByteBuf buffer) {
         buffer.writeByte(getPaletteHeader(bitArray.getVersion(), true));
 
         for (int word : bitArray.getWords()) {
@@ -100,7 +100,7 @@ public class BlockStorage {
         palette.forEach((IntConsumer) id -> Binary.writeVarInt(buffer, id));
     }
 
-    public synchronized void writeToStorage(ByteBuf buffer) {
+    public void writeToStorage(ByteBuf buffer) {
         buffer.writeByte(getPaletteHeader(bitArray.getVersion(), false));
         for (int word : bitArray.getWords()) {
             buffer.writeIntLE(word);
@@ -123,7 +123,7 @@ public class BlockStorage {
         }
     }
 
-    public synchronized void readFromStorage(ByteBuf buffer) {
+    public void readFromStorage(ByteBuf buffer) {
         BitArrayVersion version = getVersionFromHeader(buffer.readByte());
 
         int expectedWordCount = version.getWordsForSize(SIZE);
@@ -158,7 +158,7 @@ public class BlockStorage {
         }
     }
 
-    private synchronized void onResize(BitArrayVersion version) {
+    private void onResize(BitArrayVersion version) {
         BitArray newBitArray = version.createPalette(SIZE);
 
         for (int i = 0; i < SIZE; i++) {
@@ -167,8 +167,7 @@ public class BlockStorage {
         this.bitArray = newBitArray;
     }
 
-    private synchronized int idFor(int runtimeId) {
-        ;
+    private int idFor(int runtimeId) {
         int index = this.palette.indexOf(runtimeId);
         if (index != -1) {
             return index;
@@ -186,7 +185,7 @@ public class BlockStorage {
         return index;
     }
 
-    private synchronized Block blockFor(int index) {
+    private Block blockFor(int index) {
         int runtimeId = this.palette.getInt(index);
         return BlockRegistry.get().getBlock(runtimeId);
     }

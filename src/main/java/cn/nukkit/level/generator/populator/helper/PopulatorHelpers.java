@@ -1,6 +1,6 @@
 package cn.nukkit.level.generator.populator.helper;
 
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.utils.Identifier;
 
 import java.util.Collections;
@@ -25,7 +25,7 @@ public final class PopulatorHelpers {
     private PopulatorHelpers() {
     }
 
-    public static boolean canGrassStay(int x, int y, int z, Chunk chunk) {
+    public static boolean canGrassStay(int x, int y, int z, IChunk chunk) {
         return EnsureCover.ensureCover(x, y, z, chunk) && EnsureGrassBelow.ensureGrassBelow(x, y, z, chunk);
     }
 

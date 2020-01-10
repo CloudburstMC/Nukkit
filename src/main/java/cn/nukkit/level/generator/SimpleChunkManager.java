@@ -2,10 +2,11 @@ package cn.nukkit.level.generator;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.utils.Identifier;
 
 import static cn.nukkit.block.BlockIds.AIR;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * author: MagicDroidX
@@ -13,15 +14,14 @@ import static cn.nukkit.block.BlockIds.AIR;
  */
 public abstract class SimpleChunkManager implements ChunkManager {
 
-    protected long seed;
+    protected Long seed;
 
-    public SimpleChunkManager(long seed) {
-        this.seed = seed;
+    public SimpleChunkManager() {
     }
 
     @Override
     public Identifier getBlockIdAt(int x, int y, int z, int layer) {
-        Chunk chunk = this.getChunk(x >> 4, z >> 4);
+        IChunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
             return chunk.getBlockId(x & 0xf, y & 0xff, z & 0xf, layer);
         }
@@ -30,7 +30,7 @@ public abstract class SimpleChunkManager implements ChunkManager {
 
     @Override
     public void setBlockIdAt(int x, int y, int z, int layer, Identifier id) {
-        Chunk chunk = this.getChunk(x >> 4, z >> 4);
+        IChunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
             chunk.setBlockId(x & 0xf, y & 0xff, z & 0xf, layer, id);
         }
@@ -38,7 +38,7 @@ public abstract class SimpleChunkManager implements ChunkManager {
 
     @Override
     public Block getBlockAt(int x, int y, int z, int layer) {
-        Chunk chunk = this.getChunk(x >> 4, z >> 4);
+        IChunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
             return chunk.getBlock(x & 0xf, y & 0xff, z & 0xf, layer);
         }
@@ -47,7 +47,7 @@ public abstract class SimpleChunkManager implements ChunkManager {
 
     @Override
     public void setBlockAt(int x, int y, int z, int layer, Block block) {
-        Chunk chunk = this.getChunk(x >> 4, z >> 4);
+        IChunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
             chunk.setBlock(x & 0xf, y & 0xff, z & 0xf, layer, block);
         }
@@ -55,7 +55,7 @@ public abstract class SimpleChunkManager implements ChunkManager {
 
     @Override
     public int getBlockDataAt(int x, int y, int z, int layer) {
-        Chunk chunk = this.getChunk(x >> 4, z >> 4);
+        IChunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
             return chunk.getBlockData(x & 0xf, y & 0xff, z & 0xf, layer);
         }
@@ -64,7 +64,7 @@ public abstract class SimpleChunkManager implements ChunkManager {
 
     @Override
     public void setBlockDataAt(int x, int y, int z, int layer, int data) {
-        Chunk chunk = this.getChunk(x >> 4, z >> 4);
+        IChunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
             chunk.setBlockData(x & 0xf, y & 0xff, z & 0xf, layer, data);
         }
@@ -79,11 +79,12 @@ public abstract class SimpleChunkManager implements ChunkManager {
         this.seed = seed;
     }
 
-    public void cleanChunks(long seed) {
-        this.seed = seed;
+    public void clean() {
+        checkState(seed != null, "ChunkManager has already been cleaned");
+        this.seed = null;
     }
 
-    public abstract void setChunk(Chunk chunk);
+    public abstract void setChunk(IChunk chunk);
 
     public void isValid(int chunkX, int chunkZ) {
         this.getChunk(chunkX, chunkZ);
