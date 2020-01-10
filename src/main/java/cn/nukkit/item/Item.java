@@ -326,12 +326,7 @@ public class Item implements Cloneable, BlockID, ItemID {
 
         for (Map map : list) {
             try {
-                int id = (int) map.get("id");
-                int damage = (int) map.getOrDefault("damage", 0);
-                String hex = (String) map.get("nbt_hex");
-                byte[] nbt = hex != null ? Utils.parseHexBinary(hex) : new byte[0];
-
-                addCreativeItem(Item.get(id, damage, 1, nbt));
+                addCreativeItem(fromJson(map));
             } catch (Exception e) {
                 MainLogger.getLogger().logException(e);
             }
