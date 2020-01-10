@@ -1792,10 +1792,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         if ((level = this.server.getLevelByName(nbt.getString("Level"))) == null || !alive) {
             this.setLevel(this.server.getDefaultLevel());
             nbt.putString("Level", this.level.getName());
-            nbt.getList("Pos", DoubleTag.class)
-                    .add(new DoubleTag("0", this.level.getSpawnLocation().x))
-                    .add(new DoubleTag("1", this.level.getSpawnLocation().y))
-                    .add(new DoubleTag("2", this.level.getSpawnLocation().z));
+            nbt.getList("Pos", NumberTag.class)
+                    .add(new FloatTag("0", (float) this.level.getSpawnLocation().x))
+                    .add(new FloatTag("1", (float) this.level.getSpawnLocation().y))
+                    .add(new FloatTag("2", (float) this.level.getSpawnLocation().z));
         } else {
             this.setLevel(level);
         }
@@ -1823,9 +1823,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.sendPlayStatus(PlayStatusPacket.LOGIN_SUCCESS);
         this.server.onPlayerLogin(this);
 
-        ListTag<FloatTag> posList = nbt.getList("Pos", FloatTag.class);
+        ListTag<NumberTag> posList = nbt.getList("Pos", NumberTag.class);
 
-        super.init(this.level.getChunk((int) posList.get(0).data >> 4, (int) posList.get(2).data >> 4), nbt);
+        super.init(this.level.getChunk(posList.get(0).getData().intValue() >> 4, posList.get(2).getData().intValue() >> 4), nbt);
 
         if (!this.namedTag.contains("foodLevel")) {
             this.namedTag.putInt("foodLevel", 20);
