@@ -2058,11 +2058,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public BlockEntity getBlockEntity(Vector3 pos) {
         Chunk chunk = this.getChunk(pos.getChunkX(), pos.getChunkZ());
-        if (chunk != null) {
-            return chunk.getBlockEntity((int) pos.x & 0x0f, (int) pos.y & 0xff, (int) pos.z & 0x0f);
-        }
-        return null;
-
+        return chunk.getBlockEntity((int) pos.x & 0x0f, (int) pos.y & 0xff, (int) pos.z & 0x0f);
     }
 
     @Nullable

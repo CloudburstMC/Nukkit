@@ -341,7 +341,12 @@ public final class Chunk implements IChunk, Closeable {
 
     @Override
     public BlockEntity getBlockEntity(int x, int y, int z) {
-        return null;
+        this.lock.readLock().lock();
+        try {
+            return unsafe.getBlockEntity(x, y, z);
+        } finally {
+            this.lock.readLock().unlock();
+        }
     }
 
     @Override
