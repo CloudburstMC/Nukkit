@@ -698,8 +698,8 @@ public abstract class Entity extends Location implements Metadatable {
         FloatEntityData bbW = new FloatEntityData(DATA_BOUNDING_BOX_WIDTH, this.getWidth());
         this.dataProperties.put(bbH);
         this.dataProperties.put(bbW);
-        if( send ) {
-            sendData(this.hasSpawned.values().toArray(new Player[0]),new EntityMetadata().put(bbH).put(bbW));
+        if (send) {
+            sendData(this.hasSpawned.values().toArray(new Player[0]), new EntityMetadata().put(bbH).put(bbW));
         }
     }
 
