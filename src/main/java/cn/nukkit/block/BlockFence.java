@@ -104,7 +104,21 @@ public class BlockFence extends BlockTransparentMeta {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.WOOD_BLOCK_COLOR;
+        switch(this.getDamage() & 0x07){
+            default:
+            case 1: //OAK
+                return BlockColor.WOOD_BLOCK_COLOR;
+            case 2: //SPRUCE
+                return BlockColor.SPRUCE_BLOCK_COLOR;
+            case 3: //BIRCH
+                return BlockColor.SAND_BLOCK_COLOR;
+            case 4: //JUNGLE
+                return BlockColor.DIRT_BLOCK_COLOR;
+            case 5: //ACACIA
+                return BlockColor.ORANGE_BLOCK_COLOR;
+            case 6: //DARK OAK
+                return BlockColor.BROWN_BLOCK_COLOR;
+        }
     }
 
     @Override

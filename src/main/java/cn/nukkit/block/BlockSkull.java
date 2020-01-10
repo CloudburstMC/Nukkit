@@ -13,6 +13,7 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.utils.BlockColor;
 
 
 public class BlockSkull extends BlockTransparentMeta {
@@ -126,6 +127,11 @@ public class BlockSkull extends BlockTransparentMeta {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.AIR_BLOCK_COLOR;
     }
 
 }

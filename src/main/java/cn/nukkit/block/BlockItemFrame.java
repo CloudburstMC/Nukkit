@@ -134,7 +134,7 @@ public class BlockItemFrame extends BlockTransparentMeta {
         int chance = new Random().nextInt(100) + 1;
         if (itemFrame != null && chance <= (itemFrame.getItemDropChance() * 100)) {
             return new Item[]{
-                    toItem(), Item.get(itemFrame.getItem().getId(), itemFrame.getItem().getDamage(), 1)
+                    toItem(), itemFrame.getItem().clone()
             };
         } else {
             return new Item[]{

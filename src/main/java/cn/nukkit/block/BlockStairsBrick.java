@@ -43,7 +43,7 @@ public class BlockStairsBrick extends BlockStairs {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.STONE_BLOCK_COLOR;
+        return BlockColor.RED_BLOCK_COLOR;
     }
 
     @Override

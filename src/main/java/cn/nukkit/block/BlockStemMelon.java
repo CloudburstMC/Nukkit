@@ -8,6 +8,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created by Pub4Game on 15.01.2016.
