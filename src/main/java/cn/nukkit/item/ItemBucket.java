@@ -119,13 +119,14 @@ public class ItemBucket extends Item {
             }
         } else if (targetBlock instanceof BlockLiquid) {
             Item result = Item.get(BUCKET, 0, 1);
-            PlayerBucketEmptyEvent ev;
-            player.getServer().getPluginManager().callEvent(ev = new PlayerBucketEmptyEvent(player, block, face, this, result));
+            PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, block, face, this, result);
             ev.setCancelled(!block.canBeFlowedInto());
 
-            if (player.getLevel().getName().equals("nether") && this.getDamage() != 10) {
+            if (player.getLevel().getDimension() == Level.DIMENSION_NETHER && this.getDamage() != 10) {
                 ev.setCancelled(true);
             }
+
+            player.getServer().getPluginManager().callEvent(ev);
 
             if (!ev.isCancelled()) {
                 player.getLevel().setBlock(block, targetBlock, true, true);
@@ -144,7 +145,7 @@ public class ItemBucket extends Item {
 
                 return true;
             } else {
-                player.getLevel().sendBlocks(new Player[] {player}, new Block[] {Block.get(Block.AIR, 0, block)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
+                player.getLevel().sendBlocks(new Player[]{player}, new Block[]{Block.get(Block.AIR, 0, block)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
                 player.getInventory().sendContents(player);
             }
         }

@@ -68,6 +68,20 @@ public class BlockSlabWood extends BlockSlab {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.WOOD_BLOCK_COLOR;
+        switch(getDamage() & 0x07){
+            default:
+            case 0: //OAK
+                return BlockColor.WOOD_BLOCK_COLOR;
+            case 1: //SPRUCE
+                return BlockColor.SPRUCE_BLOCK_COLOR;
+            case 2: //BIRCH
+                return BlockColor.SAND_BLOCK_COLOR;
+            case 3: //JUNGLE
+                return BlockColor.DIRT_BLOCK_COLOR;
+            case 4: //ACACIA
+                return BlockColor.ORANGE_BLOCK_COLOR;
+            case 5: //DARK OAK
+                return BlockColor.BROWN_BLOCK_COLOR;
+        }
     }
 }

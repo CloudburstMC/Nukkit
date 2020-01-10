@@ -4,13 +4,13 @@ import cn.nukkit.Server;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
-import com.google.common.io.ByteStreams;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,12 +30,10 @@ public class GlobalBlockPalette {
         }
         ListTag<CompoundTag> tag;
         try {
-            //noinspection UnstableApiUsage
-            BLOCK_PALETTE = ByteStreams.toByteArray(stream);
             //noinspection unchecked
-            tag = (ListTag<CompoundTag>) NBTIO.readNetwork(new ByteArrayInputStream(BLOCK_PALETTE));
+            tag = (ListTag<CompoundTag>) NBTIO.readTag(stream, ByteOrder.LITTLE_ENDIAN, false);
         } catch (IOException e) {
-            throw new AssertionError(e);
+            throw new AssertionError("Unable to load block palette", e);
         }
 
         for (CompoundTag state : tag.getAll()) {
@@ -52,6 +50,12 @@ public class GlobalBlockPalette {
                 legacyToRuntimeId.put(legacyId, runtimeId);
             }
             state.remove("meta"); // No point in sending this since the client doesn't use it.
+        }
+
+        try {
+            BLOCK_PALETTE = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, true);
+        } catch (IOException e) {
+            throw new AssertionError("Unable to write block palette", e);
         }
     }
 
