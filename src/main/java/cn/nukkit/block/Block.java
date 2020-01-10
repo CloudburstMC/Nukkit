@@ -462,6 +462,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                             }
                         } else if (block instanceof BlockSlime || block instanceof BlockHoney) {
                             lightFilter[id] = 1;
+                        } else if (id == CAULDRON_BLOCK) {
+                                lightFilter[id] = 3;
                         } else {
                             lightFilter[id] = 15;
                         }
