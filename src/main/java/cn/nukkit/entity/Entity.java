@@ -2039,9 +2039,9 @@ public abstract class Entity extends Location implements Metadatable {
         this.y = pos.y;
         this.z = pos.z;
 
-        double radius = this.getWidth() / 2d;
+        double radius = this.getWidth() * this.getScale() / 2d;
 
-        this.boundingBox.setBounds(pos.x - radius, pos.y, pos.z - radius, pos.x + radius, pos.y + (this.getHeight() * this.scale), pos.z
+        this.boundingBox.setBounds(pos.x - radius, pos.y, pos.z - radius, pos.x + radius, pos.y + (this.getHeight() * this.getScale()), pos.z
                 + radius);
 
         this.checkChunks();
