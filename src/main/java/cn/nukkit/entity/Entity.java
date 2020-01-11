@@ -685,9 +685,21 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void recalculateBoundingBox() {
+        this.recalculateBoundingBox(true);
+    }
+
+    public void recalculateBoundingBox(boolean send) {
         float height = this.getHeight() * this.scale;
         double radius = (this.getWidth() * this.scale) / 2d;
         this.boundingBox.setBounds(x - radius, y, z - radius, x + radius, y + height, z + radius);
+
+        FloatEntityData bbH = new FloatEntityData(DATA_BOUNDING_BOX_HEIGHT, this.getHeight());
+        FloatEntityData bbW = new FloatEntityData(DATA_BOUNDING_BOX_WIDTH, this.getWidth());
+        this.dataProperties.put(bbH);
+        this.dataProperties.put(bbW);
+        if (send) {
+            sendData(this.hasSpawned.values().toArray(new Player[0]), new EntityMetadata().put(bbH).put(bbW));
+        }
     }
 
     protected void recalculateEffectColor() {
@@ -2041,7 +2053,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.y = pos.y;
         this.z = pos.z;
 
-        this.recalculateBoundingBox();
+        this.recalculateBoundingBox(false); // Don't need to send BB height/width to client on position change
 
         this.checkChunks();
 
