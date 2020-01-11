@@ -16,6 +16,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
 public class BlockBell extends BlockTransparentMeta implements Faceable {
@@ -402,5 +403,10 @@ public class BlockBell extends BlockTransparentMeta implements Faceable {
     @Override
     public double getResistance() {
         return 25;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.GOLD_BLOCK_COLOR;
     }
 }
