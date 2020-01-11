@@ -399,6 +399,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[SMITHING_TABLE] = BlockSmithingTable.class; //457
             list[BARREL] = BlockBarrel.class; //458
 
+            list[BELL] = BlockBell.class; //462
             list[SWEET_BERRY_BUSH] = BlockSweetBerryBush.class; //462
             list[LANTERN] = BlockLantern.class; //463
 
@@ -462,6 +463,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                             }
                         } else if (block instanceof BlockSlime || block instanceof BlockHoney) {
                             lightFilter[id] = 1;
+                        } else if (id == CAULDRON_BLOCK) {
+                                lightFilter[id] = 3;
                         } else {
                             lightFilter[id] = 15;
                         }
