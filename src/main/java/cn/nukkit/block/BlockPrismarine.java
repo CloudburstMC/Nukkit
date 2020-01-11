@@ -68,15 +68,14 @@ public class BlockPrismarine extends BlockSolidMeta {
 
     @Override
     public BlockColor getColor() {
-        int type = this.getDamage() > 2 ? 0 : this.getDamage();
-        switch (type) {
+        switch(getDamage() & 0x07){
             case NORMAL:
                 return BlockColor.CYAN_BLOCK_COLOR;
-            default:
-            case DARK:
             case BRICKS:
+            case DARK:
                 return BlockColor.DIAMOND_BLOCK_COLOR;
-
+            default:
+                return BlockColor.STONE_BLOCK_COLOR;
         }
     }
 }

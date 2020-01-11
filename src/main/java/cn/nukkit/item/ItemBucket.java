@@ -2,8 +2,6 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.*;
-import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
@@ -144,17 +142,19 @@ public class ItemBucket extends Item {
                 placementBlock = block;
             }
 
-            PlayerBucketEmptyEvent ev;
-            player.getServer().getPluginManager().callEvent(ev = new PlayerBucketEmptyEvent(player, placementBlock, face, target, this, result));
+            PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, placementBlock, face, target, this, result);
+            player.getServer().getPluginManager().callEvent(ev);
             if (usesWaterlogging) {
                 ev.setCancelled(placementBlock.getWaterloggingLevel() <= 0 && !placementBlock.canBeFlowedInto());
             } else {
                 ev.setCancelled(!placementBlock.canBeFlowedInto());
             }
 
-            if (player.getLevel().getName().equals("nether") && this.getDamage() != 10) {
+            if (player.getLevel().getDimension() == Level.DIMENSION_NETHER && this.getDamage() != 10) {
                 ev.setCancelled(true);
             }
+
+            player.getServer().getPluginManager().callEvent(ev);
 
             if (!ev.isCancelled()) {
                 player.getLevel().setBlock(placementBlock, placementBlock.layer, targetBlock, true, true);

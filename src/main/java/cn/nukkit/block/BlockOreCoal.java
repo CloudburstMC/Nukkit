@@ -5,6 +5,7 @@ import cn.nukkit.item.ItemCoal;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.utils.BlockColor;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -78,5 +79,10 @@ public class BlockOreCoal extends BlockSolid {
     @Override
     public boolean canSilkTouch() {
         return true;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.BLACK_BLOCK_COLOR;
     }
 }

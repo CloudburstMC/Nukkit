@@ -8,6 +8,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * author: Angelic47 Nukkit Project
@@ -103,5 +104,10 @@ public class BlockBeacon extends BlockTransparent {
     @Override
     public boolean canBePushed() {
         return false;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.DIAMOND_BLOCK_COLOR;
     }
 }
