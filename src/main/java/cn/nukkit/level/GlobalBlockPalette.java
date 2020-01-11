@@ -11,6 +11,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteOrder;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -25,39 +26,39 @@ public class GlobalBlockPalette {
     static {
         legacyToRuntimeId.defaultReturnValue(-1);
         runtimeIdToLegacy.defaultReturnValue(-1);
-    
+
         Map<CompoundTag, int[]> metaOverrides = new LinkedHashMap<>();
         try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_block_states_overrides.dat")) {
             if (stream == null) {
                 throw new AssertionError("Unable to locate block state nbt");
             }
-    
+
             ListTag<CompoundTag> states;
             try (BufferedInputStream buffered = new BufferedInputStream(stream)) {
                 states = NBTIO.read(buffered).getList("Overrides", CompoundTag.class);
             }
-            
+
             for (CompoundTag override : states.getAll()) {
                 if (override.contains("block") && override.contains("meta")) {
                     metaOverrides.put(override.getCompound("block").remove("version"), override.getIntArray("meta"));
                 }
             }
-    
+
         } catch (IOException e) {
             throw new AssertionError(e);
         }
-    
+
         ListTag<CompoundTag> tag;
         try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_block_states.dat")) {
             if (stream == null) {
                 throw new AssertionError("Unable to locate block state nbt");
             }
-            
+
             try(BufferedInputStream buffered = new BufferedInputStream(stream)) {
                 //noinspection unchecked
-                tag = (ListTag<CompoundTag>) NBTIO.readNetwork(buffered);
+                tag = (ListTag<CompoundTag>) NBTIO.readTag(buffered, ByteOrder.LITTLE_ENDIAN, false);
             }
-            
+
         } catch (IOException e) {
             throw new AssertionError(e);
         }
@@ -83,9 +84,9 @@ public class GlobalBlockPalette {
             }
             state.remove("meta"); // No point in sending this since the client doesn't use it.
         }
-    
+
         try {
-            BLOCK_PALETTE = NBTIO.writeNetwork(tag);
+            BLOCK_PALETTE = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, true);
         } catch (IOException e) {
             throw new ExceptionInInitializerError(e);
         }
