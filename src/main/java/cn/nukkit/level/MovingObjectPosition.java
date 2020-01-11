@@ -45,4 +45,17 @@ public class MovingObjectPosition {
         objectPosition.hitVector = new Vector3(entity.x, entity.y, entity.z);
         return objectPosition;
     }
+
+    @Override
+    public String toString() {
+        return "MovingObjectPosition{" +
+                "typeOfHit=" + typeOfHit +
+                ", blockX=" + blockX +
+                ", blockY=" + blockY +
+                ", blockZ=" + blockZ +
+                ", sideHit=" + sideHit +
+                ", hitVector=" + hitVector +
+                ", entityHit=" + entityHit +
+                '}';
+    }
 }
