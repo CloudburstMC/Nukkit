@@ -399,6 +399,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[SMITHING_TABLE] = BlockSmithingTable.class; //457
             list[BARREL] = BlockBarrel.class; //458
 
+            list[BELL] = BlockBell.class; //462
             list[SWEET_BERRY_BUSH] = BlockSweetBerryBush.class; //462
             list[LANTERN] = BlockLantern.class; //463
 

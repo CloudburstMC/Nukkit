@@ -1,11 +1,18 @@
 package cn.nukkit.entity.projectile;
 
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockBell;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.LongEntityData;
 import cn.nukkit.entity.item.EntityEndCrystal;
-import cn.nukkit.event.entity.*;
+import cn.nukkit.event.block.BellRingEvent;
+import cn.nukkit.event.entity.EntityCombustByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
+import cn.nukkit.event.entity.ProjectileHitEvent;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
@@ -177,6 +184,7 @@ public abstract class EntityProjectile extends Entity {
                 this.motionZ = 0;
 
                 this.server.getPluginManager().callEvent(new ProjectileHitEvent(this, MovingObjectPosition.fromBlock(this.getFloorX(), this.getFloorY(), this.getFloorZ(), -1, this)));
+                onCollideWithBlock();
                 addHitSound();
                 return false;
             } else if (!this.isCollided && this.hadCollision) {
@@ -195,6 +203,20 @@ public abstract class EntityProjectile extends Entity {
         }
 
         return hasUpdate;
+    }
+
+    protected void onCollideWithBlock() {
+        for (Block collisionBlock : level.getCollisionBlocks(getBoundingBox().grow(0.1, 0.1, 0.1))) {
+            onCollideWithBlock(collisionBlock);
+        }
+    }
+
+    protected boolean onCollideWithBlock(Block collisionBlock) {
+        if (collisionBlock instanceof BlockBell) {
+            ((BlockBell) collisionBlock).ring(this, BellRingEvent.RingCause.PROJECTILE);
+            return true;
+        }
+        return false;
     }
 
     protected void addHitSound() {

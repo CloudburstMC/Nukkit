@@ -49,6 +49,7 @@ public abstract class BlockEntity extends Position {
     public static final String CONDUIT = "Conduit";
     public static final String BARREL = "Barrel";
     public static final String CAMPFIRE = "Campfire";
+    public static final String BELL = "Bell";
 
 
     public static long count = 1;
@@ -93,6 +94,10 @@ public abstract class BlockEntity extends Position {
 
     protected void initBlockEntity() {
 
+    }
+
+    public static BlockEntity createBlockEntity(String type, Position pos, CompoundTag nbt, Object... args) {
+        return createBlockEntity(type, pos.getLevel().getChunk(pos.getFloorX() >> 4, pos.getFloorZ() >> 4), nbt, args);
     }
 
     public static BlockEntity createBlockEntity(String type, FullChunk chunk, CompoundTag nbt, Object... args) {
