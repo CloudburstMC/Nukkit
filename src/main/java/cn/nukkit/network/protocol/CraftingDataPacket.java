@@ -118,21 +118,19 @@ public class CraftingDataPacket extends DataPacket {
             }
         }
 
-        this.putVarInt(0);
-        this.putVarInt(0);
-//        this.putVarInt(this.brewingEntries.size());
-//        for (BrewingRecipe recipe : brewingEntries) {
-//            this.putVarInt(recipe.getInput().getDamage());
-//            this.putVarInt(recipe.getIngredient().getId());
-//            this.putVarInt(recipe.getResult().getDamage());
-//        }
-//
-//        this.putVarInt(this.containerEntries.size());
-//        for (ContainerRecipe recipe : containerEntries) {
-//            this.putVarInt(recipe.getInput().getId());
-//            this.putVarInt(recipe.getIngredient().getId());
-//            this.putVarInt(recipe.getResult().getId());
-//        }
+        this.putUnsignedVarInt(this.brewingEntries.size());
+        for (BrewingRecipe recipe : brewingEntries) {
+            this.putVarInt(recipe.getInput().getDamage());
+            this.putVarInt(recipe.getIngredient().getId());
+            this.putVarInt(recipe.getResult().getDamage());
+        }
+
+        this.putUnsignedVarInt(this.containerEntries.size());
+        for (ContainerRecipe recipe : containerEntries) {
+            this.putVarInt(recipe.getInput().getId());
+            this.putVarInt(recipe.getIngredient().getId());
+            this.putVarInt(recipe.getResult().getId());
+        }
 
         this.putBoolean(cleanRecipes);
     }
