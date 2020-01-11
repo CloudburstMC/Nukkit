@@ -300,22 +300,39 @@ public class CraftingManager {
         map.put(hash, recipe);
     }
 
+    private static int getPotionHash(int ingredientId, int potionType) {
+        return (ingredientId << 6) | potionType;
+    }
+
+    private static int getContainerHash(int ingredientId, int containerId) {
+        return (ingredientId << 9) | containerId;
+    }
+
     public void registerBrewingRecipe(BrewingRecipe recipe) {
         Item input = recipe.getIngredient();
         Item potion = recipe.getInput();
 
-        this.brewingRecipes.put(getItemHash(input.getId(), potion.getDamage()), recipe);
+        this.brewingRecipes.put(getPotionHash(input.getId(), potion.getDamage()), recipe);
     }
 
     public void registerContainerRecipe(ContainerRecipe recipe) {
         Item input = recipe.getIngredient();
         Item potion = recipe.getInput();
 
-        this.containerRecipes.put(getItemHash(input.getId(), potion.getId()), recipe);
+        this.containerRecipes.put(getContainerHash(input.getId(), potion.getId()), recipe);
     }
 
     public BrewingRecipe matchBrewingRecipe(Item input, Item potion) {
-        return brewingRecipes.get(getItemHash(input.getId(), potion.getDamage()));
+        int id = potion.getId();
+        if (id == Item.POTION || id == Item.SPLASH_POTION || id == Item.LINGERING_POTION) {
+            return this.brewingRecipes.get(getPotionHash(input.getId(), potion.getDamage()));
+        }
+
+        return null;
+    }
+
+    public ContainerRecipe matchContainerRecipe(Item input, Item potion) {
+        return this.containerRecipes.get(getContainerHash(input.getId(), potion.getId()));
     }
 
     public CraftingRecipe matchRecipe(Item[][] inputMap, Item primaryOutput, Item[][] extraOutputMap) {
