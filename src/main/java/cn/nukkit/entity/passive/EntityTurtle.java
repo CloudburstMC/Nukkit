@@ -1,6 +1,7 @@
 package cn.nukkit.entity.passive;
 
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
@@ -37,5 +38,13 @@ public class EntityTurtle extends EntityAnimal {
     public void initEntity() {
         super.initEntity();
         this.setMaxHealth(30);
+    }
+
+    public void setBreedingAge(int ticks) {
+
+    }
+
+    public void setHomePos(Vector3 pos) {
+
     }
 }

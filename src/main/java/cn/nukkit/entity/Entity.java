@@ -39,6 +39,7 @@ import com.google.common.collect.Iterables;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static cn.nukkit.network.protocol.SetEntityLinkPacket.*;
 
@@ -1563,7 +1564,8 @@ public abstract class Entity extends Location implements Metadatable {
 
     public void fall(float fallDistance) {
         float damage = (float) Math.floor(fallDistance - 3 - (this.hasEffect(Effect.JUMP) ? this.getEffect(Effect.JUMP).getAmplifier() + 1 : 0));
-        Block down = this.level.getBlock(this.floor().down());
+        Location floorLocation = this.floor();
+        Block down = this.level.getBlock(floorLocation.down());
         if (damage > 0) {
             if (down.getId() == BlockID.HONEY_BLOCK) {
                 damage *= 0.2F;
@@ -1573,22 +1575,38 @@ public abstract class Entity extends Location implements Metadatable {
 
         if (fallDistance > 0.75) {
 
-            if (down.getId() == Item.FARMLAND) {
-                Event ev;
-
-                if (this instanceof Player) {
-                    ev = new PlayerInteractEvent((Player) this, null, down, null, Action.PHYSICAL);
-                } else {
-                    ev = new EntityInteractEvent(this, down);
-                }
-
-                this.server.getPluginManager().callEvent(ev);
-                if (ev.isCancelled()) {
+            if (down.getId() == Block.FARMLAND) {
+                if (onPhysicalInteraction(down, false)) {
                     return;
                 }
                 this.level.setBlock(down, new BlockDirt(), false, true);
+                return;
+            }
+
+            Block floor = this.level.getBlock(floorLocation);
+
+            if (floor instanceof BlockTurtleEgg) {
+                if (onPhysicalInteraction(floor, ThreadLocalRandom.current().nextInt(10) >= 3)) {
+                    return;
+                }
+                this.level.useBreakOn(this, null, null, true);
             }
         }
+    }
+
+    private boolean onPhysicalInteraction(Block block, boolean cancelled) {
+        Event ev;
+
+        if (this instanceof Player) {
+            ev = new PlayerInteractEvent((Player) this, null, block, null, Action.PHYSICAL);
+        } else {
+            ev = new EntityInteractEvent(this, block);
+        }
+
+        ev.setCancelled(cancelled);
+
+        this.server.getPluginManager().callEvent(ev);
+        return ev.isCancelled();
     }
 
     public void handleLavaMovement() {
