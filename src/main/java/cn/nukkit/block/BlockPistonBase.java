@@ -72,9 +72,10 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                 .putInt("facing", this.getBlockFace().getIndex())
                 .putBoolean("Sticky", this.sticky);
 
-        BlockEntity.createBlockEntity(BlockEntity.PISTON_ARM, this.level.getChunk(getChunkX(), getChunkZ()), nbt);
+        BlockEntityPistonArm piston = (BlockEntityPistonArm) BlockEntity.createBlockEntity(BlockEntity.PISTON_ARM, this.level.getChunk(getChunkX(), getChunkZ()), nbt);
+        piston.powered = isPowered();
 
-        this.checkState(null);
+        this.checkState(piston.powered);
         return true;
     }
 

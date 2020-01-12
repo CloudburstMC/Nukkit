@@ -43,20 +43,22 @@ public class BlockRedstoneTorch extends BlockTorch {
             return false;
         }
 
-//        if (!checkState()) {
-//            BlockFace facing = getFacing().getOpposite();
-//            Vector3 pos = getLocation();
-//
-//            for (BlockFace side : BlockFace.values()) {
-//                if (facing == side) {
-//                    continue;
-//                }
-//
-//                this.level.updateAround(pos.getSide(side));
-//            }
-//        }
+        if (this.level.getServer().isRedstoneEnabled()) {
+            if (!checkState()) {
+                BlockFace facing = getBlockFace().getOpposite();
+                Vector3 pos = getLocation();
 
-        checkState();
+                for (BlockFace side : BlockFace.values()) {
+                    if (facing == side) {
+                        continue;
+                    }
+
+                    this.level.updateAroundRedstone(pos.getSide(side), null);
+                }
+            }
+
+            checkState();
+        }
 
         return true;
     }
