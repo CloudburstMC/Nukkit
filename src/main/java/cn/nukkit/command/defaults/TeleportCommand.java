@@ -36,6 +36,16 @@ public class TeleportCommand extends VanillaCommand {
         });
     }
 
+    private double parseTilde(String arg, double pos) {
+        if (arg.equals("~")) {
+            return pos;
+        } else if (!arg.startsWith("~")) {
+            return Double.parseDouble(arg);
+        } else {
+            return pos + Double.parseDouble(arg.substring(1));
+        }
+    }
+
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         if (!this.testPermission(sender)) {
@@ -93,9 +103,9 @@ public class TeleportCommand extends VanillaCommand {
             double yaw;
             double pitch;
             try {
-                x = Double.parseDouble(args[pos++].replace("~", "" + ((Player) target).x));
-                y = Double.parseDouble(args[pos++].replace("~", "" + ((Player) target).y));
-                z = Double.parseDouble(args[pos++].replace("~", "" + ((Player) target).z));
+                x = parseTilde(args[0], ((Player) target).x);
+                y = parseTilde(args[1], ((Player) target).y);
+                z = parseTilde(args[2], ((Player) target).z);
                 yaw = ((Player) target).getYaw();
                 pitch = ((Player) target).getPitch();
             } catch (NumberFormatException e1) {
