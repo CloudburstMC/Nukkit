@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.inventory.AnvilInventory;
 import cn.nukkit.inventory.BeaconInventory;
 import cn.nukkit.inventory.EnchantInventory;
+import cn.nukkit.inventory.GrindstoneInventory;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.transaction.action.*;
 import cn.nukkit.item.Item;
@@ -186,35 +187,65 @@ public class NetworkInventoryAction {
                 if (this.windowId >= SOURCE_TYPE_ANVIL_OUTPUT && this.windowId <= SOURCE_TYPE_ANVIL_INPUT) { //anvil actions
                     Inventory inv = player.getWindowById(Player.ANVIL_WINDOW_ID);
 
-                    if (!(inv instanceof AnvilInventory)) {
-                        player.getServer().getLogger().debug("Player " + player.getName() + " has no open anvil inventory");
-                        return null;
-                    }
-                    AnvilInventory anvil = (AnvilInventory) inv;
+                    //TODO Anvil and Grindstones are completely hackable! Needs to be fixed!
+                    if (inv instanceof AnvilInventory) {
+                        AnvilInventory anvil = (AnvilInventory) inv;
 
-                    switch (this.windowId) {
-                        case SOURCE_TYPE_ANVIL_INPUT:
-                            //System.out.println("action input");
-                            this.inventorySlot = 0;
-                            return new SlotChangeAction(anvil, this.inventorySlot, this.oldItem, this.newItem);
-                        case SOURCE_TYPE_ANVIL_MATERIAL:
-                            //System.out.println("material");
-                            this.inventorySlot = 1;
-                            return new SlotChangeAction(anvil, this.inventorySlot, this.oldItem, this.newItem);
-                        case SOURCE_TYPE_ANVIL_OUTPUT:
-                            //System.out.println("action output");
-                            break;
-                        case SOURCE_TYPE_ANVIL_RESULT:
-                            this.inventorySlot = 2;
-                            anvil.clear(0);
-                            Item material = anvil.getItem(1);
-                            if (!material.isNull()) {
-                                material.setCount(material.getCount() - 1);
-                                anvil.setItem(1, material);
-                            }
-                            anvil.setItem(2, this.oldItem);
-                            //System.out.println("action result");
-                            return new SlotChangeAction(anvil, this.inventorySlot, this.oldItem, this.newItem);
+                        switch (this.windowId) {
+                            case SOURCE_TYPE_ANVIL_INPUT:
+                                //System.out.println("action input");
+                                this.inventorySlot = 0;
+                                //anvil.setItem(0, this.oldItem);
+                                return new SlotChangeAction(anvil, this.inventorySlot, this.oldItem, this.newItem);
+                            case SOURCE_TYPE_ANVIL_MATERIAL:
+                                //System.out.println("material");
+                                this.inventorySlot = 1;
+                                //anvil.setItem(1, this.oldItem);
+                                return new SlotChangeAction(anvil, this.inventorySlot, this.oldItem, this.newItem);
+                            case SOURCE_TYPE_ANVIL_OUTPUT:
+                                //System.out.println("action output");
+                                break;
+                            case SOURCE_TYPE_ANVIL_RESULT:
+                                this.inventorySlot = 2;
+                                anvil.clear(0);
+                                //Item material = anvil.getItem(1);
+                                //if (!material.isNull()) {
+                                //    material.setCount(material.getCount() - 1);
+                                //    anvil.setItem(1, material);
+                                //}
+                                anvil.setItem(2, this.oldItem);
+                                //System.out.println("action result");
+                                return new SlotChangeAction(anvil, this.inventorySlot, this.oldItem, this.newItem);
+                        }
+                    } else if (inv instanceof GrindstoneInventory) {
+                        GrindstoneInventory grindstone = (GrindstoneInventory) inv;
+
+                        switch (this.windowId) {
+                            case SOURCE_TYPE_ANVIL_INPUT:
+                                //System.out.println("action input");
+                                this.inventorySlot = 0;
+                                grindstone.setItem(0, this.oldItem);
+                                return new SlotChangeAction(grindstone, this.inventorySlot, this.oldItem, this.newItem);
+                            case SOURCE_TYPE_ANVIL_MATERIAL:
+                                //System.out.println("material");
+                                grindstone.setItem(1, this.oldItem);
+                                this.inventorySlot = 1;
+                                return new SlotChangeAction(grindstone, this.inventorySlot, this.oldItem, this.newItem);
+                            case SOURCE_TYPE_ANVIL_OUTPUT:
+                                //System.out.println("action output");
+                                break;
+                            case SOURCE_TYPE_ANVIL_RESULT:
+                                this.inventorySlot = 2;
+                                //grindstone.clear(0);
+                                //grindstone.clear(1);
+                                grindstone.setItem(2, this.oldItem);
+                                //player.getCursorInventory().setItem(0, this.newItem);
+                                //System.out.println("action result");
+                                return new SlotChangeAction(grindstone, this.inventorySlot, this.oldItem, this.newItem);
+                        }
+                    } else {
+                        player.getServer().getLogger().debug("Player " + player.getName() + " has no open anvil or grindstone inventory");
+                        return null;
                     }
                 }
 

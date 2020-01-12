@@ -28,6 +28,7 @@ import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.utils.BlockColor;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -347,5 +348,10 @@ public class BlockTurtleEgg extends BlockFlowable {
     @Override
     public BlockTurtleEgg clone() {
         return (BlockTurtleEgg) super.clone();
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.SAND_BLOCK_COLOR;
     }
 }

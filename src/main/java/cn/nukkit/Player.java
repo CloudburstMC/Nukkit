@@ -111,6 +111,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public static final int CRAFTING_ANVIL = 2;
     public static final int CRAFTING_ENCHANT = 3;
     public static final int CRAFTING_BEACON = 4;
+    public static final int CRAFTING_GRINDSTONE = 5; //TODO Should it really be 5?
 
     public static final float DEFAULT_SPEED = 0.1f;
     public static final float MAXIMUM_SPEED = 0.5f;
@@ -123,6 +124,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public static final int ANVIL_WINDOW_ID = 2;
     public static final int ENCHANT_WINDOW_ID = 3;
     public static final int BEACON_WINDOW_ID = 4;
+    public static final int GRINDSTONE_WINDOW_ID = 2;
 
     protected final SourceInterface interfaz;
 
@@ -2802,12 +2804,23 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (!this.spawned || !this.isAlive()) {
                         break;
                     }
-                    this.craftingType = CRAFTING_SMALL;
-                    //this.resetCraftingGridType();
+
+                    if (craftingType != CRAFTING_ANVIL) {
+                        this.craftingType = CRAFTING_SMALL;
+                        //this.resetCraftingGridType();
+                    }
 
                     EntityEventPacket entityEventPacket = (EntityEventPacket) packet;
 
                     switch (entityEventPacket.event) {
+                        case EntityEventPacket.ENCHANT:
+                            if (entityEventPacket.eid != this.id) {
+                                break;
+                            }
+
+                            setExperience(getExperience(), getExperienceLevel() + entityEventPacket.data);
+
+                            break;
                         case EntityEventPacket.EATING_ITEM:
                             if (entityEventPacket.data == 0 || entityEventPacket.eid != this.id) {
                                 break;
