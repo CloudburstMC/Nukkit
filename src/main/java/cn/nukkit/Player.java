@@ -1613,13 +1613,19 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 for (int coordX = this.getFloorX() - radius; coordX < this.getFloorX() + radius + 1; coordX++) {
                     for (int coordZ = this.getFloorZ() - radius; coordZ < this.getFloorZ() + radius + 1; coordZ++) {
                         Block block = level.getBlock(coordX, this.getFloorY() - 1, coordZ);
-                        if ((block.getId() == Block.STILL_WATER || block.getId() == Block.WATER && block.getDamage() == 0) && block.up().getId() == Block.AIR) {
-                            WaterFrostEvent ev = new WaterFrostEvent(block, this);
-                            server.getPluginManager().callEvent(ev);
-                            if (!ev.isCancelled()) {
-                                level.setBlock(block, Block.get(Block.ICE_FROSTED), true, false);
-                                level.scheduleUpdate(level.getBlock(block), ThreadLocalRandom.current().nextInt(20, 40));
+                        int layer = 0;
+                        if ((block.getId() != Block.STILL_WATER && (block.getId() != Block.WATER || block.getDamage() != 0)) || block.up().getId() != Block.AIR) {
+                            block = block.getLevelBlockAtLayer(1);
+                            layer = 1;
+                            if ((block.getId() != Block.STILL_WATER && (block.getId() != Block.WATER || block.getDamage() != 0)) || block.up().getId() != Block.AIR) {
+                                continue;
                             }
+                        }
+                        WaterFrostEvent ev = new WaterFrostEvent(block, this);
+                        server.getPluginManager().callEvent(ev);
+                        if (!ev.isCancelled()) {
+                            level.setBlock(block, layer, Block.get(Block.ICE_FROSTED), true, false);
+                            level.scheduleUpdate(level.getBlock(block, layer), ThreadLocalRandom.current().nextInt(20, 40));
                         }
                     }
                 }
