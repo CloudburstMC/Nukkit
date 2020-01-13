@@ -190,7 +190,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[DRAGON_EGG] = BlockDragonEgg.class; //122
             list[REDSTONE_LAMP] = BlockRedstoneLamp.class; //123
             list[LIT_REDSTONE_LAMP] = BlockRedstoneLampLit.class; //124
-            //TODO: list[DROPPER] = BlockDropper.class; //125
+            list[DROPPER] = BlockDropper.class; //125
             list[ACTIVATOR_RAIL] = BlockRailActivator.class; //126
             list[COCOA] = BlockCocoa.class; //127
             list[SANDSTONE_STAIRS] = BlockStairsSandstone.class; //128
@@ -307,8 +307,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[GLOWING_OBSIDIAN] = BlockObsidianGlowing.class; //246
             //list[NETHER_REACTOR] = BlockNetherReactor.class; //247 Should not be removed
 
-            //TODO: list[PISTON_EXTENSION] = BlockPistonExtension.class; //250
-
+            list[MOVING_BLOCK] = BlockMoving.class; //250
             list[OBSERVER] = BlockObserver.class; //251
 
             list[PRISMARINE_STAIRS] = BlockStairsPrismarine.class; //257
@@ -654,6 +653,18 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public boolean canBePushed() {
+        return true;
+    }
+
+    public boolean canBePulled() {
+        return true;
+    }
+
+    public boolean breaksWhenMoved() {
+        return false;
+    }
+
+    public boolean sticksToPiston() {
         return true;
     }
 

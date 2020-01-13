@@ -64,15 +64,21 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
             return false;
         }
 
-        this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
+        this.level.scheduleUpdate(this, 30);
+
         this.setDamage(this.getDamage() ^ 0x08);
         this.level.setBlock(this, this, true, false);
-        this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_CLICK);
-        this.level.scheduleUpdate(this, 30);
-        Vector3 pos = getLocation();
 
-        level.updateAroundRedstone(pos, null);
-        level.updateAroundRedstone(pos.getSide(getFacing().getOpposite()), null);
+        if (this.level.getServer().isRedstoneEnabled()) {
+            this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
+
+            Vector3 pos = getLocation();
+
+            level.updateAroundRedstone(pos, null);
+            level.updateAroundRedstone(pos.getSide(getFacing().getOpposite()), null);
+        }
+
+        this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_CLICK);
         return true;
     }
 
@@ -85,15 +91,17 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
             }
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
             if (this.isActivated()) {
-                this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
-
                 this.setDamage(this.getDamage() ^ 0x08);
                 this.level.setBlock(this, this, true, false);
                 this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_CLICK);
 
-                Vector3 pos = getLocation();
-                level.updateAroundRedstone(pos, null);
-                level.updateAroundRedstone(pos.getSide(getFacing().getOpposite()), null);
+                if (this.level.getServer().isRedstoneEnabled()) {
+                    this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
+
+                    Vector3 pos = getLocation();
+                    level.updateAroundRedstone(pos, null);
+                    level.updateAroundRedstone(pos.getSide(getFacing().getOpposite()), null);
+                }
             }
 
             return Level.BLOCK_UPDATE_SCHEDULED;

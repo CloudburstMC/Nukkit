@@ -495,4 +495,14 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
     public Item toItem() {
         return new ItemBlock(new BlockAir());
     }
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
+    }
 }

@@ -188,4 +188,14 @@ public class BlockItemFrame extends BlockTransparentMeta {
     public double getHardness() {
         return 0.25;
     }
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
+    }
 }

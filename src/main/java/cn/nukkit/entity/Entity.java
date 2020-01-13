@@ -3,6 +3,7 @@ package cn.nukkit.entity;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.*;
+import cn.nukkit.blockentity.BlockEntityPistonArm;
 import cn.nukkit.entity.data.*;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.entity.*;
@@ -1527,6 +1528,10 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
+    public boolean canBePushed() {
+        return true;
+    }
+
     public BlockFace getDirection() {
         double rotation = this.yaw % 360;
         if (rotation < 0) {
@@ -1685,6 +1690,10 @@ public abstract class Entity extends Location implements Metadatable {
                 this.setOnFire(8);
             }
         }
+    }
+
+    public void onPushByPiston(BlockEntityPistonArm piston) {
+
     }
 
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {

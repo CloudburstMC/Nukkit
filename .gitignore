@@ -232,4 +232,5 @@ creativeitems.json
 recipes.json
 data/
 data/*
+/src/main/resources/rebel.xml
 /run

@@ -67,10 +67,10 @@ public class BlockDoubleSlabWood extends BlockSolidMeta {
 
     @Override
     public BlockColor getColor() {
-        switch(this.getDamage() & 0x07){
+        switch (this.getDamage() & 0x07) {
             default:
-                case 0: //OAK
-                    return BlockColor.WOOD_BLOCK_COLOR;
+            case 0: //OAK
+                return BlockColor.WOOD_BLOCK_COLOR;
             case 1: //SPRUCE
                 return BlockColor.SPRUCE_BLOCK_COLOR;
             case 2: //BIRCH

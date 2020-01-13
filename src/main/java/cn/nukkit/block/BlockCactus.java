@@ -157,11 +157,21 @@ public class BlockCactus extends BlockTransparentMeta {
     public BlockColor getColor() {
         return BlockColor.FOLIAGE_BLOCK_COLOR;
     }
-    
+
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-            Item.get(Item.CACTUS, 0, 1)
+                Item.get(Item.CACTUS, 0, 1)
         };
+    }
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
     }
 }

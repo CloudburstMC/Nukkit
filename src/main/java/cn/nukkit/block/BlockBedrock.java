@@ -42,6 +42,11 @@ public class BlockBedrock extends BlockSolid {
     }
 
     @Override
+    public boolean canBePulled() {
+        return false;
+    }
+
+    @Override
     public boolean canHarvestWithHand() {
         return false;
     }

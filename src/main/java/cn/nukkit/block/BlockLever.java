@@ -67,13 +67,21 @@ public class BlockLever extends BlockFlowable implements Faceable {
         this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isPowerOn() ? 15 : 0, isPowerOn() ? 0 : 15));
         this.setDamage(this.getDamage() ^ 0x08);
 
-        this.getLevel().setBlock(this, this, false, true);
+        boolean redstone = this.level.getServer().isRedstoneEnabled();
+
+        this.getLevel().setBlock(this, this, false, !redstone);
         this.getLevel().addSound(this, Sound.RANDOM_CLICK); //TODO: correct pitch
 
         LeverOrientation orientation = LeverOrientation.byMetadata(this.isPowerOn() ? this.getDamage() ^ 0x08 : this.getDamage());
         BlockFace face = orientation.getFacing();
-        //this.level.updateAroundRedstone(this, null);
-        this.level.updateAroundRedstone(this.getLocation().getSide(face.getOpposite()), isPowerOn() ? face : null);
+
+        if (redstone) {
+            Block target = this.getSide(face.getOpposite());
+            target.onUpdate(Level.BLOCK_UPDATE_REDSTONE);
+
+            this.level.updateAroundRedstone(this.getLocation(), isPowerOn() ? face.getOpposite() : null);
+            this.level.updateAroundRedstone(target.getLocation(), isPowerOn() ? face : null);
+        }
         return true;
     }
 

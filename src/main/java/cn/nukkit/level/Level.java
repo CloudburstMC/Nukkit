@@ -806,9 +806,15 @@ public class Level implements ChunkManager, Metadatable {
         this.updateQueue.tick(this.getCurrentTick());
         this.timings.doTickPending.stopTiming();
 
-        Block block;
-        while ((block = this.normalUpdateQueue.poll()) != null) {
-            block.onUpdate(BLOCK_UPDATE_NORMAL);
+        while (!this.normalUpdateQueue.isEmpty()) {
+            Block block = this.normalUpdateQueue.poll();
+            block = getBlock(block, block.layer);
+            BlockUpdateEvent event = new BlockUpdateEvent(block);
+            this.server.getPluginManager().callEvent(event);
+
+            if (!event.isCancelled()) {
+                block.onUpdate(BLOCK_UPDATE_NORMAL);
+            }
         }
 
         TimingsHistory.entityTicks += this.updateEntities.size();
@@ -1076,7 +1082,7 @@ public class Level implements ChunkManager, Metadatable {
 
         int chunksPerLoader = Math.min(200, Math.max(1, (int) (((double) (this.chunksPerTicks - this.loaders.size()) / this.loaders.size() + 0.5))));
         int randRange = 3 + chunksPerLoader / 30;
-        randRange = randRange > this.chunkTickRadius ? this.chunkTickRadius : randRange;
+        randRange = Math.min(randRange, this.chunkTickRadius);
 
         ThreadLocalRandom random = ThreadLocalRandom.current();
         if (!this.loaders.isEmpty()) {
@@ -1238,51 +1244,16 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void updateAround(Vector3 pos) {
-        updateAround((int) pos.x, (int) pos.y, (int) pos.z);
+        Block block = getBlock(pos);
+        for (BlockFace face : BlockFace.values()) {
+            final Block side = block.getSideAtLayer(0, face);
+            normalUpdateQueue.add(side);
+            normalUpdateQueue.add(side.getLevelBlockAtLayer(1));
+        }
     }
 
     public void updateAround(int x, int y, int z) {
-        updateAround(x, y, z, 0);
-        updateAround(x, y, z, 1);
-    }
-
-    public void updateAround(int x, int y, int z, int layer) {
-        BlockUpdateEvent ev;
-        this.server.getPluginManager().callEvent(
-                ev = new BlockUpdateEvent(this.getBlock(x, y - 1, z, layer)));
-        if (!ev.isCancelled()) {
-            normalUpdateQueue.add(ev.getBlock());
-        }
-
-        this.server.getPluginManager().callEvent(
-                ev = new BlockUpdateEvent(this.getBlock(x, y + 1, z, layer)));
-        if (!ev.isCancelled()) {
-            normalUpdateQueue.add(ev.getBlock());
-        }
-
-        this.server.getPluginManager().callEvent(
-                ev = new BlockUpdateEvent(this.getBlock(x - 1, y, z, layer)));
-        if (!ev.isCancelled()) {
-            normalUpdateQueue.add(ev.getBlock());
-        }
-
-        this.server.getPluginManager().callEvent(
-                ev = new BlockUpdateEvent(this.getBlock(x + 1, y, z, layer)));
-        if (!ev.isCancelled()) {
-            normalUpdateQueue.add(ev.getBlock());
-        }
-
-        this.server.getPluginManager().callEvent(
-                ev = new BlockUpdateEvent(this.getBlock(x, y, z - 1, layer)));
-        if (!ev.isCancelled()) {
-            normalUpdateQueue.add(ev.getBlock());
-        }
-
-        this.server.getPluginManager().callEvent(
-                ev = new BlockUpdateEvent(this.getBlock(x, y, z + 1, layer)));
-        if (!ev.isCancelled()) {
-            normalUpdateQueue.add(ev.getBlock());
-        }
+        updateAround(new Vector3(x, y, z));
     }
 
     public void scheduleUpdate(Block pos, int delay) {
@@ -1867,6 +1838,10 @@ public class Level implements ChunkManager, Metadatable {
                 block.onUpdate(BLOCK_UPDATE_NORMAL);
                 block.getLevelBlockAtLayer(layer == 0? 1 : 0).onUpdate(BLOCK_UPDATE_NORMAL);
                 this.updateAround(x, y, z);
+
+                if (block.hasComparatorInputOverride()) {
+                    this.updateComparatorOutputLevel(block);
+                }
             }
         }
         return true;
@@ -2429,10 +2404,14 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public BlockEntity getBlockEntity(Vector3 pos) {
-        FullChunk chunk = this.getChunk((int) pos.x >> 4, (int) pos.z >> 4, false);
+        return getBlockEntity(pos.asBlockVector3());
+    }
+
+    public BlockEntity getBlockEntity(BlockVector3 pos) {
+        FullChunk chunk = this.getChunk(pos.x >> 4, pos.z >> 4, false);
 
         if (chunk != null) {
-            return chunk.getTile((int) pos.x & 0x0f, (int) pos.y & 0xff, (int) pos.z & 0x0f);
+            return chunk.getTile(pos.x & 0x0f, pos.y & 0xff, pos.z & 0x0f);
         }
 
         return null;
@@ -3579,7 +3558,15 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public int getRedstonePower(Vector3 pos, BlockFace face) {
-        Block block = this.getBlock(pos);
+        Block block;
+
+        if (pos instanceof Block) {
+            block = (Block) pos;
+            pos = pos.add(0);
+        } else {
+            block = this.getBlock(pos);
+        }
+
         return block.isNormalBlock() ? this.getStrongPower(pos) : block.getWeakPower(face);
     }
 

@@ -242,4 +242,14 @@ public class BlockLeaves extends BlockTransparentMeta {
         return true;
     }
 
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
+    }
 }
