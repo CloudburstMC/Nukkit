@@ -1471,29 +1471,42 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public int calculateSkylightSubtracted(float tickDiff) {
-        float angle = this.calculateCelestialAngle(getTime(), tickDiff);
-        float light = 1 - (MathHelper.cos(angle * ((float) Math.PI * 2F)) * 2 + 0.5f);
-        light = light < 0 ? 0 : light > 1 ? 1 : light;
-        light = 1 - light;
-        light = (float) ((double) light * ((isRaining() ? 1 : 0) - (double) 5f / 16d));
-        light = (float) ((double) light * ((isThundering() ? 1 : 0) - (double) 5f / 16d));
-        light = 1 - light;
-        return (int) (light * 11f);
+        float angle = this.getCelestialAngle(tickDiff);
+        float light = 1.0F - (MathHelper.cos(angle * ((float) Math.PI * 2F)) * 2.0F + 0.5F);
+        light = MathHelper.clamp(light, 0.0F, 1.0F);
+        light = 1.0F - light;
+        light = (float)((double)light * (1.0D - (double)(this.getRainStrength(tickDiff) * 5.0F) / 16.0D));
+        light = (float)((double)light * (1.0D - (double)(this.getThunderStrength(tickDiff) * 5.0F) / 16.0D));
+        light = 1.0F - light;
+        return (int)(light * 11.0F);
+    }
+
+    public float getRainStrength(float tickDiff) {
+        return isRaining() ? 1 : 0; // TODO: real implementation
+    }
+
+    public float getThunderStrength(float tickDiff) {
+        return isThundering() ? 1 : 0; // TODO: real implementation
+    }
+
+    public float getCelestialAngle(float tickDiff) {
+        return calculateCelestialAngle(getTime(), tickDiff);
     }
 
     public float calculateCelestialAngle(int time, float tickDiff) {
-        float angle = ((float) time + tickDiff) / 24000f - 0.25f;
+        int i = (int)(time % 24000L);
+        float angle = ((float)i + tickDiff) / 24000.0F - 0.25F;
 
-        if (angle < 0) {
+        if (angle < 0.0F) {
             ++angle;
         }
 
-        if (angle > 1) {
+        if (angle > 1.0F) {
             --angle;
         }
 
-        float i = 1 - (float) ((Math.cos((double) angle * Math.PI) + 1) / 2d);
-        angle = angle + (i - angle) / 3;
+        float f1 = 1.0F - (float)((Math.cos((double) angle * Math.PI) + 1.0D) / 2.0D);
+        angle = angle + (f1 - angle) / 3.0F;
         return angle;
     }
 
@@ -1571,7 +1584,63 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void updateBlockSkyLight(int x, int y, int z) {
-        // todo
+        BaseFullChunk chunk = getChunkIfLoaded(x >> 4, z >> 4);
+
+        if (chunk == null) return;
+
+        int oldHeightMap = chunk.getHeightMap(x & 0xf, z & 0xf);
+        int sourceId = getBlockIdAt(x, y, z);
+
+        int yPlusOne = y + 1;
+
+        int newHeightMap;
+        if (yPlusOne == oldHeightMap) { // Block changed directly beneath the heightmap. Check if a block was removed or changed to a different light-filter
+            newHeightMap = chunk.recalculateHeightMapColumn(x & 0x0f, z & 0x0f);
+        } else if (yPlusOne > oldHeightMap) { // Block changed above the heightmap
+            if (Block.lightFilter[sourceId] > 1 || Block.diffusesSkyLight[sourceId]) {
+                chunk.setHeightMap(x & 0xf, y & 0xf, yPlusOne);
+                newHeightMap = yPlusOne;
+            } else { // Block changed which has no effect on direct sky light, for example placing or removing glass.
+                return;
+            }
+        } else { // Block changed below heightmap
+            newHeightMap = oldHeightMap;
+        }
+
+        if (newHeightMap > oldHeightMap) { // Heightmap increase, block placed, remove sky light
+            for (int i = y; i >= oldHeightMap; --i) {
+                setBlockSkyLightAt(x, i, z, 0);
+            }
+        } else if (newHeightMap < oldHeightMap) { // Heightmap decrease, block changed or removed, add sky light
+            for (int i = y; i >= newHeightMap; --i) {
+                setBlockSkyLightAt(x, i, z, 15);
+            }
+        } else { // No heightmap change, block changed "underground"
+            setBlockSkyLightAt(x, y, z, Math.max(0, getHighestAdjacentBlockSkyLight(x, y, z) - Block.lightFilter[sourceId]));
+        }
+    }
+
+    /**
+     * Returns the highest block skylight level available in the positions adjacent to the specified block coordinates.
+     */
+    public int getHighestAdjacentBlockSkyLight(int x, int y, int z) {
+        int[] lightLevels = new int[] {
+                getBlockSkyLightAt(x + 1, y, z),
+                getBlockSkyLightAt(x - 1, y, z),
+                getBlockSkyLightAt(x, y + 1, z),
+                getBlockSkyLightAt(x, y - 1, z),
+                getBlockSkyLightAt(x, y, z + 1),
+                getBlockSkyLightAt(x, y, z - 1),
+        };
+
+        int maxValue = lightLevels[0];
+        for(int i = 1; i < lightLevels.length; i++) {
+            if (lightLevels[i] > maxValue) {
+                maxValue = lightLevels[i];
+            }
+        }
+
+        return maxValue;
     }
 
     public void updateBlockLight(Map<Long, Map<Character, Object>> map) {
@@ -1783,9 +1852,11 @@ public class Level implements ChunkManager, Metadatable {
             loader.onBlockChanged(block);
         }
         if (update) {
-            if (blockPrevious.isTransparent() != block.isTransparent() || blockPrevious.getLightLevel() != block.getLightLevel()) {
+            updateAllLight(block);
+
+            /*if (blockPrevious.isTransparent() != block.isTransparent() || blockPrevious.getLightLevel() != block.getLightLevel()) {
                 addLightUpdate(x, y, z);
-            }
+            }*/
             BlockUpdateEvent ev = new BlockUpdateEvent(block);
             this.server.getPluginManager().callEvent(ev);
             if (!ev.isCancelled()) {

@@ -42,6 +42,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public static boolean[] solid = null;
     public static double[] hardness = null;
     public static boolean[] transparent = null;
+    public static boolean[] diffusesSkyLight = null;
     /**
      * if a block has can have variants
      */
@@ -62,6 +63,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             solid = new boolean[MAX_BLOCK_ID];
             hardness = new double[MAX_BLOCK_ID];
             transparent = new boolean[MAX_BLOCK_ID];
+            diffusesSkyLight = new boolean[MAX_BLOCK_ID];
             hasMeta = new boolean[MAX_BLOCK_ID];
 
             list[AIR] = BlockAir.class; //0
@@ -454,6 +456,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
                     solid[id] = block.isSolid();
                     transparent[id] = block.isTransparent();
+                    diffusesSkyLight[id] = block.diffusesSkyLight();
                     hardness[id] = block.getHardness();
                     light[id] = block.getLightLevel();
 
@@ -619,6 +622,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     public boolean isSolid() {
         return true;
+    }
+
+    // https://minecraft.gamepedia.com/Opacity#Lighting
+    public boolean diffusesSkyLight() {
+        return false;
     }
 
     public boolean canBeFlowedInto() {
