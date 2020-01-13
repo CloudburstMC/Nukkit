@@ -124,7 +124,7 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (!isExtinguished()) {
                 Block layer1 = getLevelBlockAtLayer(1);
-                if (layer1 instanceof BlockWater) {
+                if (layer1 instanceof BlockWater || layer1 instanceof BlockIceFrosted) {
                     setExtinguished(true);
                     this.level.setBlock(this, this, true, true);
                     this.level.addSound(this, Sound.RANDOM_FIZZ);

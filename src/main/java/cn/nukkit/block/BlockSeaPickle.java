@@ -57,8 +57,8 @@ public class BlockSeaPickle extends BlockFlowable {
             }
 
             Block layer1 = getLevelBlockAtLayer(1);
-            if (layer1 instanceof BlockWater) {
-                if (isDead() && layer1.getDamage() == 0 || layer1.getDamage() == 8) {
+            if (layer1 instanceof BlockWater || layer1.getId() == ICE_FROSTED) {
+                if (isDead() && (layer1.getId() == ICE_FROSTED || layer1.getDamage() == 0 || layer1.getDamage() == 8)) {
                     BlockFadeEvent event = new BlockFadeEvent(this, new BlockSeaPickle(getDamage() ^ 0x4));
                     if (!event.isCancelled()) {
                         this.getLevel().setBlock(this, event.getNewState(), true, true);

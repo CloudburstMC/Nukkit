@@ -109,7 +109,8 @@ public class BlockCoralBlock extends BlockSolidMeta {
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
             if (!isDead()) {
                 for (BlockFace face : BlockFace.values()) {
-                    if (getSideAtLayer(0, face) instanceof BlockWater || getSideAtLayer(1, face) instanceof BlockWater) {
+                    if (getSideAtLayer(0, face) instanceof BlockWater || getSideAtLayer(1, face) instanceof BlockWater
+                        || getSideAtLayer(0, face) instanceof BlockIceFrosted || getSideAtLayer(1, face) instanceof BlockIceFrosted) {
                         return type;
                     }
                 }

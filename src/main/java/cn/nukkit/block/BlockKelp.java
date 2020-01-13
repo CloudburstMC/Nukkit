@@ -61,8 +61,9 @@ public class BlockKelp extends BlockFlowable {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             Block blockLayer1 = getLevelBlockAtLayer(1);
-            int waterDamage;
-            if (!(blockLayer1 instanceof BlockWater) || ((waterDamage = blockLayer1.getDamage()) != 0 && waterDamage != 8)) {
+            int waterDamage = 0;
+            if (!(blockLayer1 instanceof BlockIceFrosted) &&
+                    (!(blockLayer1 instanceof BlockWater) || ((waterDamage = blockLayer1.getDamage()) != 0 && waterDamage != 8))) {
                 this.getLevel().useBreakOn(this);
                 return type;
             }

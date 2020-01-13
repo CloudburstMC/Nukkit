@@ -84,6 +84,12 @@ public class BlockFarmland extends BlockTransparentMeta {
                             if (block == WATER || block == STILL_WATER || block == ICE_FROSTED) {
                                 found = true;
                                 break;
+                            } else {
+                                block = this.level.getBlockIdAt(v.getFloorX(), v.getFloorY(), v.getFloorZ(), 1);
+                                if (block == WATER || block == STILL_WATER || block == ICE_FROSTED) {
+                                    found = true;
+                                    break;
+                                }
                             }
                         }
                     }
