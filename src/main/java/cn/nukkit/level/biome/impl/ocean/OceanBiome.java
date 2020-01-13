@@ -1,5 +1,6 @@
 package cn.nukkit.level.biome.impl.ocean;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.level.biome.type.WateryBiome;
 
 /**
@@ -18,8 +19,7 @@ public class OceanBiome extends WateryBiome {
         return "Ocean";
     }
 
-    @Override
-    public int getGroundBlock(int y) {
-        return GRAVEL;
+    public int getGroundId(int y) {
+        return GRAVEL << Block.DATA_BITS;
     }
 }

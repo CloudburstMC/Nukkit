@@ -1,5 +1,6 @@
 package cn.nukkit.level.biome.impl.mesa;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockSapling;
 import cn.nukkit.level.generator.populator.impl.PopulatorTree;
 
@@ -17,8 +18,8 @@ public class MesaPlateauFBiome extends MesaPlateauBiome {
     }
 
     @Override
-    public int getCoverBlock() {
-        return GRASS;
+    public int getCoverId(int x, int z) {
+        return GRASS << Block.DATA_BITS;
     }
 
     @Override
