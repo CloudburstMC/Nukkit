@@ -49,7 +49,7 @@ public class BlockBamboo extends BlockTransparentMeta {
             level.useBreakOn(this, null, null, true);
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             Block up = up();
-            if (getAge() == 0 && up.getId() == AIR && level.getFullLight(this) >= 6 && ThreadLocalRandom.current().nextInt(3) == 0) {
+            if (getAge() == 0 && up.getId() == AIR && level.getFullLight(up) >= BlockCrops.MINIMUM_LIGHT_LEVEL && ThreadLocalRandom.current().nextInt(3) == 0) {
                 grow(up);
             }
             return type;

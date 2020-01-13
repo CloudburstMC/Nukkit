@@ -49,7 +49,7 @@ public class BlockBambooSampling extends BlockFlowable {
             return type;
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             Block up = up();
-            if (getAge() == 0 && up.getId() == AIR && level.getFullLight(this) >= 6 && ThreadLocalRandom.current().nextInt(3) == 0) {
+            if (getAge() == 0 && up.getId() == AIR && level.getFullLight(up) >= BlockCrops.MINIMUM_LIGHT_LEVEL && ThreadLocalRandom.current().nextInt(3) == 0) {
                 BlockBamboo newState = new BlockBamboo();
                 newState.setLeafSize(BlockBamboo.LEAF_SIZE_SMALL);
                 BlockGrowEvent blockGrowEvent = new BlockGrowEvent(up, newState);

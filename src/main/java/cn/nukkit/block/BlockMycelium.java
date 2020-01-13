@@ -53,18 +53,20 @@ public class BlockMycelium extends BlockSolid {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_RANDOM) {
-            //TODO: light levels
-            NukkitRandom random = new NukkitRandom();
-            x = random.nextRange((int) x - 1, (int) x + 1);
-            y = random.nextRange((int) y - 1, (int) y + 1);
-            z = random.nextRange((int) z - 1, (int) z + 1);
-            Block block = this.getLevel().getBlock(new Vector3(x, y, z));
-            if (block.getId() == Block.DIRT && block.getDamage() == 0) {
-                if (block.up().isTransparent()) {
-                    BlockSpreadEvent ev = new BlockSpreadEvent(block, this, new BlockMycelium());
-                    Server.getInstance().getPluginManager().callEvent(ev);
-                    if (!ev.isCancelled()) {
-                        this.getLevel().setBlock(block, ev.getNewState());
+            if (getLevel().getFullLight(add(0, 1, 0)) >= BlockCrops.MINIMUM_LIGHT_LEVEL) {
+                //TODO: light levels
+                NukkitRandom random = new NukkitRandom();
+                x = random.nextRange((int) x - 1, (int) x + 1);
+                y = random.nextRange((int) y - 1, (int) y + 1);
+                z = random.nextRange((int) z - 1, (int) z + 1);
+                Block block = this.getLevel().getBlock(new Vector3(x, y, z));
+                if (block.getId() == Block.DIRT && block.getDamage() == 0) {
+                    if (block.up().isTransparent()) {
+                        BlockSpreadEvent ev = new BlockSpreadEvent(block, this, new BlockMycelium());
+                        Server.getInstance().getPluginManager().callEvent(ev);
+                        if (!ev.isCancelled()) {
+                            this.getLevel().setBlock(block, ev.getNewState());
+                        }
                     }
                 }
             }

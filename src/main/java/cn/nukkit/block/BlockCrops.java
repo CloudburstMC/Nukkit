@@ -16,6 +16,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * Nukkit Project
  */
 public abstract class BlockCrops extends BlockFlowable {
+    
+    public static final int MINIMUM_LIGHT_LEVEL = 9;
 
     protected BlockCrops(int meta) {
         super(meta);
@@ -75,7 +77,7 @@ public abstract class BlockCrops extends BlockFlowable {
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if (ThreadLocalRandom.current().nextInt(2) == 1) {
+            if (ThreadLocalRandom.current().nextInt(2) == 1 && getLevel().getFullLight(this) >= MINIMUM_LIGHT_LEVEL) {
                 if (this.getDamage() < 0x07) {
                     BlockCrops block = (BlockCrops) this.clone();
                     block.setDamage(block.getDamage() + 1);
