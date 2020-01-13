@@ -112,6 +112,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public static final int CRAFTING_ENCHANT = 3;
     public static final int CRAFTING_BEACON = 4;
     public static final int CRAFTING_GRINDSTONE = 5; //TODO Should it really be 5?
+    public static final int CRAFTING_STONECUTTER = 6; //TODO Should it really be 6?
 
     public static final float DEFAULT_SPEED = 0.1f;
     public static final float MAXIMUM_SPEED = 0.5f;

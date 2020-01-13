@@ -353,7 +353,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[BUBBLE_COLUMN] = BlockBubbleColumn.class; //415
             list[BARRIER] = BlockBarrier.class; //416
             list[STONE_SLAB3] = BlockSlabStone3.class ; //417
-
+            list[BAMBOO] = BlockBamboo.class; //418
+            list[BAMBOO_SAPLING] = BlockBambooSampling.class; //419
             list[SCAFFOLDING] = BlockScaffolding.class; //420
             list[STONE_SLAB4] = BlockSlabStone4.class ; //421
             list[DOUBLE_STONE_SLAB3] = BlockDoubleSlabStone3.class; //422
@@ -391,7 +392,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[LECTERN] = BlockLectern.class; //449
             list[GRINDSTONE] = BlockGrindstone.class; //450
             list[BLAST_FURNACE] = BlockBlastFurnace.class; //451
-
+            list[STONECUTTER_BLOCK] = BlockStonecutterBlock.class; //452
             list[SMOKER] = BlockSmoker.class; //453
             list[LIT_SMOKER] = BlockSmokerBurning.class; //454
 
@@ -399,6 +400,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[FLETCHING_TABLE] = BlockFletchingTable.class; //456
             list[SMITHING_TABLE] = BlockSmithingTable.class; //457
             list[BARREL] = BlockBarrel.class; //458
+            list[LOOM] = BlockLoom.class; //459
 
             list[BELL] = BlockBell.class; //462
             list[SWEET_BERRY_BUSH] = BlockSweetBerryBush.class; //462

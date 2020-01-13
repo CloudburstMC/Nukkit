@@ -35,7 +35,7 @@ public enum InventoryType {
     GRINDSTONE(2, "Grindstone", 26),
     BLAST_FURNACE(3, "Blast Furnace", 27),
     SMOKER(3, "Smoker", 28),
-    //STONECUTTER typeId:29
+    STONECUTTER(2, "Stonecutter", 29),
     BARREL(27, "Barrel", 0),
     CAMPFIRE(4, "Campfire", -9) // -9 = NONE
     ;

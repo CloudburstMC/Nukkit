@@ -36,6 +36,7 @@ public class BlockFlowerPot extends BlockFlowable {
             case CACTUS:
             case SUGARCANE_BLOCK:
             case WITHER_ROSE:
+            case BAMBOO:
                 // TODO: 2016/2/4 case NETHER_WART:
                 return true;
             default:
@@ -146,7 +147,7 @@ public class BlockFlowerPot extends BlockFlowable {
         if (dropInside) {
             return new Item[]{
                     new ItemFlowerPot(),
-                    Item.get(insideID, insideMeta, 1)
+                    Block.get(insideID, insideMeta).toItem()
             };
         } else {
             return new Item[]{
