@@ -48,7 +48,7 @@ public class UDPServerSocket extends ChannelInboundHandlerAdapter {
                         .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                         .handler(this)
                         .group(EPOLL ? new EpollEventLoopGroup() : new NioEventLoopGroup());
-                this.logger.info("Epoll Status is " + EPOLL);
+            this.logger.info("Epoll Status is " + EPOLL);
             channel = bootstrap.bind(interfaz, port).sync().channel();
         } catch (Exception e) {
             this.logger.critical("**** FAILED TO BIND TO " + interfaz + ":" + port + "!");

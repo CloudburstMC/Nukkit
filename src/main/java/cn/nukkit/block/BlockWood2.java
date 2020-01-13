@@ -59,7 +59,7 @@ public class BlockWood2 extends BlockWood {
 
     @Override
     public BlockColor getColor() {
-        switch(getDamage() & 0x07){
+        switch (getDamage() & 0x07) {
             case ACACIA:
                 return BlockColor.ORANGE_BLOCK_COLOR;
             case DARK_OAK:

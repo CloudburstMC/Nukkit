@@ -40,7 +40,9 @@ public class BlockGrassPath extends BlockGrass {
     }
 
     @Override
-    public BlockColor getColor() { return BlockColor.DIRT_BLOCK_COLOR; }
+    public BlockColor getColor() {
+        return BlockColor.DIRT_BLOCK_COLOR;
+    }
 
     @Override
     public boolean canSilkTouch() {

@@ -71,8 +71,8 @@ public class BlockSponge extends BlockSolidMeta {
 
                 for (int i = 0; i < 8; ++i) {
                     this.getLevel().addParticle(
-                        //TODO: Use correct smoke particle
-                        new SmokeParticle(block.getLocation().add(Math.random(), 1, Math.random())));
+                            //TODO: Use correct smoke particle
+                            new SmokeParticle(block.getLocation().add(Math.random(), 1, Math.random())));
                 }
             } else if (this.getDamage() == DRY && performWaterAbsorb(block)) {
                 level.setBlock(block, Block.get(BlockID.SPONGE, WET));

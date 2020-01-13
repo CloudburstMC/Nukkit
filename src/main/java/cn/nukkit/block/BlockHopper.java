@@ -61,10 +61,12 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
 
         this.setDamage(facing.getIndex());
 
-        boolean powered = this.level.isBlockPowered(this.getLocation());
+        if (this.level.getServer().isRedstoneEnabled()) {
+            boolean powered = this.level.isBlockPowered(this.getLocation());
 
-        if (powered == this.isEnabled()) {
-            this.setEnabled(!powered);
+            if (powered == this.isEnabled()) {
+                this.setEnabled(!powered);
+            }
         }
 
         this.level.setBlock(this, this);
@@ -127,12 +129,24 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (!this.level.getServer().isRedstoneEnabled()) {
+            return 0;
+        }
+
+        if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) {
             boolean powered = this.level.isBlockPowered(this.getLocation());
 
             if (powered == this.isEnabled()) {
                 this.setEnabled(!powered);
-                this.level.setBlock(this, this, true, false);
+                this.level.setBlock(this, this, false, false);
+
+                if (!powered) {
+                    BlockEntity be = this.level.getBlockEntity(this);
+
+                    if (be != null) {
+                        be.scheduleUpdate();
+                    }
+                }
             }
 
             return type;
