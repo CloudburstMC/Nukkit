@@ -69,7 +69,7 @@ public class BlockStonecutterBlock extends BlockTransparentMeta implements Facea
 
     @Override
     public double getHardness() {
-        return 3;
+        return 3.5;
     }
 
     @Override
@@ -79,7 +79,7 @@ public class BlockStonecutterBlock extends BlockTransparentMeta implements Facea
 
     @Override
     public boolean canHarvestWithHand() {
-        return true;
+        return false;
     }
 
     @Override
