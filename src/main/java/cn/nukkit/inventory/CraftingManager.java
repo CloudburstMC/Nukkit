@@ -38,6 +38,7 @@ public class CraftingManager {
 
     public final Map<Integer, BrewingRecipe> brewingRecipes = new Int2ObjectOpenHashMap<>();
     public final Map<Integer, ContainerRecipe> containerRecipes = new Int2ObjectOpenHashMap<>();
+    public final Map<Integer, StonecutterRecipe> stonecutterRecipes = new Int2ObjectOpenHashMap<>();
 
     private static int RECIPE_COUNT = 0;
     protected final Map<Integer, Map<UUID, ShapelessRecipe>> shapelessRecipes = new Int2ObjectOpenHashMap<>();
@@ -85,8 +86,8 @@ public class CraftingManager {
                 switch (Utils.toInt(recipe.get("type"))) {
                     case 0:
                         String craftingBlock = (String) recipe.get("block");
-                        if (!"crafting_table".equals(craftingBlock)) {
-                            // Ignore other recipes than crafting table ones
+                        if (!"crafting_table".equals(craftingBlock) && !"stonecutter".equals(craftingBlock)) {
+                            // Ignore other recipes than crafting table and stonecutter
                             continue;
                         }
                         // TODO: handle multiple result items
@@ -105,9 +106,14 @@ public class CraftingManager {
                         String recipeId = (String) recipe.get("id");
                         int priority = Utils.toInt(recipe.get("priority"));
 
-                        ShapelessRecipe result = new ShapelessRecipe(recipeId, priority, Item.fromJson(first), sorted);
-
-                        this.registerRecipe(result);
+                        switch (craftingBlock) {
+                            case "crafting_table":
+                                this.registerRecipe(new ShapelessRecipe(recipeId, priority, Item.fromJson(first), sorted));
+                                break;
+                            case "stonecutter":
+                                this.registerRecipe(new StonecutterRecipe(recipeId, priority, Item.fromJson(first), sorted.get(0)));
+                                break;
+                        }
                         break;
                     case 1:
                         craftingBlock = (String) recipe.get("block");
@@ -217,12 +223,28 @@ public class CraftingManager {
             pk.addFurnaceRecipe(recipe);
         }
 
+        for (SmokerRecipe recipe : smokerRecipes.values()) {
+            pk.addSmokerRecipe(recipe);
+        }
+
+        for (BlastFurnaceRecipe recipe : blastFurnaceRecipes.values()) {
+            pk.addBlastFurnaceRecipe(recipe);
+        }
+
+        for (CampfireRecipe recipe : campfireRecipes.values()) {
+            pk.addCampfireRecipeRecipe(recipe);
+        }
+
         for (BrewingRecipe recipe : brewingRecipes.values()) {
             pk.addBrewingRecipe(recipe);
         }
 
         for (ContainerRecipe recipe : containerRecipes.values()) {
             pk.addContainerRecipe(recipe);
+        }
+
+        for (StonecutterRecipe recipe : stonecutterRecipes.values()) {
+            pk.addStonecutterRecipe(recipe);
         }
 
         pk.encode();
@@ -274,10 +296,16 @@ public class CraftingManager {
         return 31 * getItemHash(item) + item.getCount();
     }
 
+    public void registerStonecutterRecipe(StonecutterRecipe recipe) {
+        Item input = recipe.getIngredient();
+        this.stonecutterRecipes.put(getItemHash(input), recipe);
+    }
+
     public void registerFurnaceRecipe(FurnaceRecipe recipe) {
         Item input = recipe.getInput();
         this.furnaceRecipes.put(getItemHash(input), recipe);
     }
+
 
     public void registerBlastFurnaceRecipe(BlastFurnaceRecipe recipe) {
         Item input = recipe.getInput();

@@ -33,11 +33,27 @@ public class CraftingDataPacket extends DataPacket {
         Collections.addAll(entries, recipe);
     }
 
+    public void addStonecutterRecipe(StonecutterRecipe... recipes) {
+        Collections.addAll(entries, recipes);
+    }
+
     public void addShapedRecipe(ShapedRecipe... recipe) {
         Collections.addAll(entries, recipe);
     }
 
     public void addFurnaceRecipe(FurnaceRecipe... recipe) {
+        Collections.addAll(entries, recipe);
+    }
+
+    public void addSmokerRecipe(SmokerRecipe... recipe) {
+        Collections.addAll(entries, recipe);
+    }
+
+    public void addBlastFurnaceRecipe(BlastFurnaceRecipe... recipe) {
+        Collections.addAll(entries, recipe);
+    }
+
+    public void addCampfireRecipeRecipe(CampfireRecipe... recipe) {
         Collections.addAll(entries, recipe);
     }
 
@@ -66,8 +82,19 @@ public class CraftingDataPacket extends DataPacket {
         this.putUnsignedVarInt(entries.size());
 
         for (Recipe recipe : entries) {
-            this.putVarInt(recipe.getType().ordinal());
+            this.putVarInt(recipe.getType().networkType);
             switch (recipe.getType()) {
+                case STONECUTTER:
+                    StonecutterRecipe stonecutter = (StonecutterRecipe) recipe;
+                    this.putString(stonecutter.getRecipeId());
+                    this.putUnsignedVarInt(1);
+                    this.putRecipeIngredient(stonecutter.getIngredient());
+                    this.putUnsignedVarInt(1);
+                    this.putSlot(stonecutter.getResult());
+                    this.putUUID(stonecutter.getId());
+                    this.putString(CRAFTING_TAG_STONECUTTER);
+                    this.putVarInt(stonecutter.getPriority());
+                    break;
                 case SHAPELESS:
                     ShapelessRecipe shapeless = (ShapelessRecipe) recipe;
                     this.putString(shapeless.getRecipeId());
@@ -106,14 +133,37 @@ public class CraftingDataPacket extends DataPacket {
                     break;
                 case FURNACE:
                 case FURNACE_DATA:
-                    FurnaceRecipe furnace = (FurnaceRecipe) recipe;
-                    Item input = furnace.getInput();
+                case SMOKER:
+                case SMOKER_DATA:
+                case BLAST_FURNACE:
+                case BLAST_FURNACE_DATA:
+                case CAMPFIRE:
+                case CAMPFIRE_DATA:
+                    SmeltingRecipe smelting = (SmeltingRecipe) recipe;
+                    Item input = smelting.getInput();
                     this.putVarInt(input.getId());
-                    if (recipe.getType() == RecipeType.FURNACE_DATA) {
+                    if (recipe.getType().name().endsWith("_DATA")) {
                         this.putVarInt(input.getDamage());
                     }
-                    this.putSlot(furnace.getResult());
-                    this.putString(CRAFTING_TAG_FURNACE);
+                    this.putSlot(smelting.getResult());
+                    switch (recipe.getType()) {
+                        case FURNACE:
+                        case FURNACE_DATA:
+                            this.putString(CRAFTING_TAG_FURNACE);
+                            break;
+                        case SMOKER:
+                        case SMOKER_DATA:
+                            this.putString(CRAFTING_TAG_SMOKER);
+                            break;
+                        case BLAST_FURNACE:
+                        case BLAST_FURNACE_DATA:
+                            this.putString(CRAFTING_TAG_BLAST_FURNACE);
+                            break;
+                        case CAMPFIRE:
+                        case CAMPFIRE_DATA:
+                            this.putString(CRAFTING_TAG_CAMPFIRE);
+                            break;
+                    }
                     break;
             }
         }
