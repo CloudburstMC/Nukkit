@@ -16,6 +16,7 @@ import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntityThrownTrident;
 import cn.nukkit.event.block.ItemFrameDropItemEvent;
 import cn.nukkit.event.block.LecternPageChangeEvent;
+import cn.nukkit.event.block.WaterFrostEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -87,6 +88,7 @@ import java.nio.ByteOrder;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -1599,6 +1601,26 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             jump = 0.2;
                         }
                         this.getFoodData().updateFoodExpLevel(0.01 * distance + jump + swimming);
+                    }
+                }
+            }
+        }
+
+        if (!revert && delta > 0.0001d) {
+            Enchantment frostWalker = inventory.getBoots().getEnchantment(Enchantment.ID_FROST_WALKER);
+            if (frostWalker != null && frostWalker.getLevel() > 0 && !this.isSpectator() && this.y >= 1 && this.y <= 255) {
+                int radius = 2 + frostWalker.getLevel();
+                for (int coordX = this.getFloorX() - radius; coordX < this.getFloorX() + radius + 1; coordX++) {
+                    for (int coordZ = this.getFloorZ() - radius; coordZ < this.getFloorZ() + radius + 1; coordZ++) {
+                        Block block = level.getBlock(coordX, this.getFloorY() - 1, coordZ);
+                        if ((block.getId() == Block.STILL_WATER || block.getId() == Block.WATER && block.getDamage() == 0) && block.up().getId() == Block.AIR) {
+                            WaterFrostEvent ev = new WaterFrostEvent(block, this);
+                            server.getPluginManager().callEvent(ev);
+                            if (!ev.isCancelled()) {
+                                level.setBlock(block, Block.get(Block.ICE_FROSTED), true, false);
+                                level.scheduleUpdate(level.getBlock(block), ThreadLocalRandom.current().nextInt(20, 40));
+                            }
+                        }
                     }
                 }
             }
