@@ -2350,6 +2350,7 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.BARREL, BlockEntityBarrel.class);
         BlockEntity.registerBlockEntity(BlockEntity.CAMPFIRE, BlockEntityCampfire.class);
         BlockEntity.registerBlockEntity(BlockEntity.BELL, BlockEntityBell.class);
+        BlockEntity.registerBlockEntity(BlockEntity.DAYLIGHT_DETECTOR, BlockEntityDaylightDetector.class);
     }
 
     public boolean isNetherAllowed() {
