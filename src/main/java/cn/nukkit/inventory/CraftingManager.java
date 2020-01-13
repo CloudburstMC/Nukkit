@@ -38,7 +38,7 @@ public class CraftingManager {
 
     public final Map<Integer, BrewingRecipe> brewingRecipes = new Int2ObjectOpenHashMap<>();
     public final Map<Integer, ContainerRecipe> containerRecipes = new Int2ObjectOpenHashMap<>();
-    public final Map<Integer, StonecutterRecipe> stonecutterRecipes = new Int2ObjectOpenHashMap<>();
+    public final Map<Integer, Map<UUID, StonecutterRecipe>> stonecutterRecipes = new Int2ObjectOpenHashMap<>();
 
     private static int RECIPE_COUNT = 0;
     protected final Map<Integer, Map<UUID, ShapelessRecipe>> shapelessRecipes = new Int2ObjectOpenHashMap<>();
@@ -243,9 +243,7 @@ public class CraftingManager {
             pk.addContainerRecipe(recipe);
         }
 
-        for (StonecutterRecipe recipe : stonecutterRecipes.values()) {
-            pk.addStonecutterRecipe(recipe);
-        }
+        stonecutterRecipes.values().stream().flatMap(m-> m.values().stream()).forEachOrdered(pk::addStonecutterRecipe);
 
         pk.encode();
 
@@ -297,8 +295,9 @@ public class CraftingManager {
     }
 
     public void registerStonecutterRecipe(StonecutterRecipe recipe) {
-        Item input = recipe.getIngredient();
-        this.stonecutterRecipes.put(getItemHash(input), recipe);
+        int itemHash = getItemHash(recipe.getIngredient());
+        Map<UUID, StonecutterRecipe> map = this.stonecutterRecipes.computeIfAbsent(itemHash, h -> new HashMap<>());
+        map.put(recipe.getId(), recipe);
     }
 
     public void registerFurnaceRecipe(FurnaceRecipe recipe) {
@@ -357,11 +356,15 @@ public class CraftingManager {
     }
 
     public void registerRecipe(Recipe recipe) {
+        UUID id = null;
+        if (recipe instanceof CraftingRecipe || recipe instanceof StonecutterRecipe) {
+            id = Utils.dataToUUID(String.valueOf(++RECIPE_COUNT), String.valueOf(recipe.getResult().getId()), String.valueOf(recipe.getResult().getDamage()), String.valueOf(recipe.getResult().getCount()), Arrays.toString(recipe.getResult().getCompoundTag()));
+        }
         if (recipe instanceof CraftingRecipe) {
-            UUID id = Utils.dataToUUID(String.valueOf(++RECIPE_COUNT), String.valueOf(recipe.getResult().getId()), String.valueOf(recipe.getResult().getDamage()), String.valueOf(recipe.getResult().getCount()), Arrays.toString(recipe.getResult().getCompoundTag()));
-
             ((CraftingRecipe) recipe).setId(id);
             this.recipes.add(recipe);
+        } else if (recipe instanceof StonecutterRecipe) {
+            ((StonecutterRecipe) recipe).setId(id);
         }
 
         recipe.registerToCraftingManager(this);
