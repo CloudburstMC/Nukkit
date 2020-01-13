@@ -131,7 +131,9 @@ public class ItemBucket extends Item {
             boolean usesWaterlogging = ((BlockLiquid) targetBlock).usesWaterLogging();
             Block placementBlock;
             if (usesWaterlogging) {
-                if (target.getWaterloggingLevel() > 0) {
+                if (block.getId() == BlockID.BAMBOO) {
+                    placementBlock = block;
+                } else if (target.getWaterloggingLevel() > 0) {
                     placementBlock = target.getLevelBlockAtLayer(1);
                 } else if (block.getWaterloggingLevel() > 0) {
                     placementBlock = block.getLevelBlockAtLayer(1);
@@ -144,10 +146,11 @@ public class ItemBucket extends Item {
 
             PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, placementBlock, face, target, this, result);
             player.getServer().getPluginManager().callEvent(ev);
+            boolean canBeFlowedInto = placementBlock.canBeFlowedInto() || placementBlock.getId() == BlockID.BAMBOO;
             if (usesWaterlogging) {
-                ev.setCancelled(placementBlock.getWaterloggingLevel() <= 0 && !placementBlock.canBeFlowedInto());
+                ev.setCancelled(placementBlock.getWaterloggingLevel() <= 0 && !canBeFlowedInto);
             } else {
-                ev.setCancelled(!placementBlock.canBeFlowedInto());
+                ev.setCancelled(!canBeFlowedInto);
             }
 
             if (player.getLevel().getDimension() == Level.DIMENSION_NETHER && this.getDamage() != 10) {
