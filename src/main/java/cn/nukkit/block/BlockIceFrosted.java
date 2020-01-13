@@ -69,7 +69,7 @@ public class BlockIceFrosted extends BlockTransparentMeta {
             }
         } else if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (countNeighbors() < 2) {
-                level.setBlock(this, get(WATER), true);
+                level.setBlock(this, layer, get(WATER), true);
             }
         }
         return super.onUpdate(type);
@@ -94,10 +94,10 @@ public class BlockIceFrosted extends BlockTransparentMeta {
         int age = getDamage();
         if (age < 3) {
             setDamage(age + 1);
-            level.setBlock(this, this, true);
+            level.setBlock(this, layer, this, true);
             level.scheduleUpdate(level.getBlock(this), ThreadLocalRandom.current().nextInt(20, 40));
         } else {
-            level.setBlock(this, get(WATER), true);
+            level.setBlock(this, layer, get(WATER), true);
             if (isSource) {
                 for (BlockFace face : BlockFace.values()) {
                     Block block = getSide(face);
