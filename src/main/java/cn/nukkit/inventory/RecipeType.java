@@ -1,18 +1,25 @@
 package cn.nukkit.inventory;
 
 public enum RecipeType {
-    SHAPELESS,
-    SHAPED,
-    FURNACE,
-    FURNACE_DATA,
-    MULTI,
-    SHULKER_BOX,
-    SHAPELESS_CHEMISTRY,
-    SHAPED_CHEMISTRY,
-    BLAST_FURNACE,
-    BLAST_FURNACE_DATA,
-    SMOKER,
-    SMOKER_DATA,
-    CAMPFIRE,
-    CAMPFIRE_DATA
+    SHAPELESS(0),
+    SHAPED(1),
+    FURNACE(2),
+    FURNACE_DATA(3),
+    MULTI(4),
+    SHULKER_BOX(5),
+    SHAPELESS_CHEMISTRY(6),
+    SHAPED_CHEMISTRY(7),
+    BLAST_FURNACE(2),
+    BLAST_FURNACE_DATA(3),
+    SMOKER(2),
+    SMOKER_DATA(3),
+    CAMPFIRE(2),
+    CAMPFIRE_DATA(3),
+    STONECUTTER(0);
+
+    public final int networkType;
+
+    RecipeType(int networkType) {
+        this.networkType = networkType;
+    }
 }

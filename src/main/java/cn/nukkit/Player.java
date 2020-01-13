@@ -3030,6 +3030,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     List<InventoryAction> actions = new ArrayList<>();
                     for (NetworkInventoryAction networkInventoryAction : transactionPacket.actions) {
+                        if (craftingType == CRAFTING_STONECUTTER && craftingTransaction != null
+                                && networkInventoryAction.sourceType == NetworkInventoryAction.SOURCE_TODO) {
+                            networkInventoryAction.windowId = NetworkInventoryAction.SOURCE_TYPE_CRAFTING_RESULT;
+                        }
                         InventoryAction a = networkInventoryAction.createInventoryAction(this);
 
                         if (a == null) {
@@ -3053,7 +3057,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         if (this.craftingTransaction.getPrimaryOutput() != null) {
                             //we get the actions for this in several packets, so we can't execute it until we get the result
 
-                            this.craftingTransaction.execute();
+                            if (this.craftingTransaction.execute() && craftingType == CRAFTING_STONECUTTER) {
+                                Collection<Player> players = level.getChunkPlayers(getChunkX(), getChunkZ()).values();
+                                players.remove(this);
+                                if (!players.isEmpty()) {
+                                    level.addSound(this, Sound.BLOCK_STONECUTTER_USE, 1f, 1f, players);
+                                }
+                            }
                             this.craftingTransaction = null;
                         }
 

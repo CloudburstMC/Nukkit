@@ -390,6 +390,25 @@ public class Item implements Cloneable, BlockID, ItemID {
         return -1;
     }
 
+    public static Item getBlock(int id) {
+        return getBlock(id, 0);
+    }
+
+    public static Item getBlock(int id, Integer meta) {
+        return getBlock(id, meta, 1);
+    }
+
+    public static Item getBlock(int id, Integer meta, int count) {
+        return getBlock(id, meta, count, new byte[0]);
+    }
+
+    public static Item getBlock(int id, Integer meta, int count, byte[] tags) {
+        if (id > 255) {
+            id = 255 - id;
+        }
+        return get(id, meta, count, tags);
+    }
+
     public static Item get(int id) {
         return get(id, 0);
     }
