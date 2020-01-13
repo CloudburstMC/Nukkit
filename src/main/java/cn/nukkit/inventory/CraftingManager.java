@@ -38,7 +38,7 @@ public class CraftingManager {
 
     public final Map<Integer, BrewingRecipe> brewingRecipes = new Int2ObjectOpenHashMap<>();
     public final Map<Integer, ContainerRecipe> containerRecipes = new Int2ObjectOpenHashMap<>();
-    public final Map<Integer, Map<UUID, StonecutterRecipe>> stonecutterRecipes = new Int2ObjectOpenHashMap<>();
+    public final Map<Integer, StonecutterRecipe> stonecutterRecipes = new Int2ObjectOpenHashMap<>();
 
     private static int RECIPE_COUNT = 0;
     protected final Map<Integer, Map<UUID, ShapelessRecipe>> shapelessRecipes = new Int2ObjectOpenHashMap<>();
@@ -243,7 +243,9 @@ public class CraftingManager {
             pk.addContainerRecipe(recipe);
         }
 
-        stonecutterRecipes.values().stream().flatMap(m-> m.values().stream()).forEachOrdered(pk::addStonecutterRecipe);
+        for (StonecutterRecipe recipe : stonecutterRecipes.values()) {
+            pk.addStonecutterRecipe(recipe);
+        }
 
         pk.encode();
 
@@ -295,9 +297,7 @@ public class CraftingManager {
     }
 
     public void registerStonecutterRecipe(StonecutterRecipe recipe) {
-        int itemHash = getItemHash(recipe.getIngredient());
-        Map<UUID, StonecutterRecipe> map = this.stonecutterRecipes.computeIfAbsent(itemHash, h -> new HashMap<>());
-        map.put(recipe.getId(), recipe);
+        this.stonecutterRecipes.put(getItemHash(recipe.getResult()), recipe);
     }
 
     public void registerFurnaceRecipe(FurnaceRecipe recipe) {
@@ -415,6 +415,10 @@ public class CraftingManager {
 
     public ContainerRecipe matchContainerRecipe(Item input, Item potion) {
         return this.containerRecipes.get(getContainerHash(input.getId(), potion.getId()));
+    }
+
+    public StonecutterRecipe matchStonecutterRecipe(Item output) {
+        return this.stonecutterRecipes.get(getItemHash(output));
     }
 
     public CraftingRecipe matchRecipe(Item[][] inputMap, Item primaryOutput, Item[][] extraOutputMap) {

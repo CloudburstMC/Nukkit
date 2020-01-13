@@ -3,7 +3,8 @@ package cn.nukkit.inventory.transaction;
 import cn.nukkit.Player;
 import cn.nukkit.event.inventory.CraftItemEvent;
 import cn.nukkit.inventory.BigCraftingGrid;
-import cn.nukkit.inventory.CraftingRecipe;
+import cn.nukkit.inventory.CraftingManager;
+import cn.nukkit.inventory.Recipe;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.ContainerClosePacket;
@@ -26,21 +27,32 @@ public class CraftingTransaction extends InventoryTransaction {
 
     protected Item primaryOutput;
 
-    protected CraftingRecipe recipe;
+    protected Recipe recipe;
+
+    protected int craftingType;
 
     public CraftingTransaction(Player source, List<InventoryAction> actions) {
         super(source, actions, false);
 
-        this.gridSize = (source.getCraftingGrid() instanceof BigCraftingGrid) ? 3 : 2;
         Item air = Item.get(Item.AIR, 0, 1);
-        this.inputs = new Item[gridSize][gridSize];
-        for (Item[] a : this.inputs) {
-            Arrays.fill(a, air);
-        }
+        this.craftingType = source.craftingType;
+        if (source.craftingType == Player.CRAFTING_STONECUTTER) {
+            this.gridSize = 1;
+            this.inputs = new Item[1][1];
+            this.inputs[0][0] = air;
+            this.secondaryOutputs = new Item[1][1];
+            this.secondaryOutputs[0][0] = air;
+        } else {
+            this.gridSize = (source.getCraftingGrid() instanceof BigCraftingGrid) ? 3 : 2;
+            this.inputs = new Item[gridSize][gridSize];
+            for (Item[] a : this.inputs) {
+                Arrays.fill(a, air);
+            }
 
-        this.secondaryOutputs = new Item[gridSize][gridSize];
-        for (Item[] a : this.secondaryOutputs) {
-            Arrays.fill(a, air);
+            this.secondaryOutputs = new Item[gridSize][gridSize];
+            for (Item[] a : this.secondaryOutputs) {
+                Arrays.fill(a, air);
+            }
         }
 
         init(source, actions);
@@ -84,7 +96,7 @@ public class CraftingTransaction extends InventoryTransaction {
         }
     }
 
-    public CraftingRecipe getRecipe() {
+    public Recipe getRecipe() {
         return recipe;
     }
 
@@ -130,7 +142,12 @@ public class CraftingTransaction extends InventoryTransaction {
     public boolean canExecute() {
         Item[][] inputs = reindexInputs();
 
-        recipe = source.getServer().getCraftingManager().matchRecipe(inputs, this.primaryOutput, this.secondaryOutputs);
+        CraftingManager craftingManager = source.getServer().getCraftingManager();
+        if (craftingType == Player.CRAFTING_STONECUTTER) {
+            recipe = craftingManager.matchStonecutterRecipe(this.primaryOutput);
+        } else {
+            recipe = craftingManager.matchRecipe(inputs, this.primaryOutput, this.secondaryOutputs);
+        }
 
         return this.recipe != null && super.canExecute();
     }
