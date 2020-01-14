@@ -23,9 +23,9 @@ public class BlockPistonSticky extends BlockPistonBase {
     public String getName() {
         return "Sticky Piston";
     }
-    
+
     @Override
-    protected BlockPistonHead createHead(int damage) {
-        return new BlockPistonHeadSticky(damage);
+    public int getPistonHeadBlockId() {
+        return PISTON_HEAD_STICKY;
     }
 }

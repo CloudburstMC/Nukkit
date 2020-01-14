@@ -257,7 +257,11 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         return true;
     }
     
-    protected abstract BlockPistonHead createHead(int damage);
+    protected BlockPistonHead createHead(int damage) {
+        return (BlockPistonHead) Block.get(getPistonHeadBlockId(), damage);
+    }
+
+    public abstract int getPistonHeadBlockId();
 
     public static boolean canPush(Block block, BlockFace face, boolean destroyBlocks, boolean extending) {
         if (
