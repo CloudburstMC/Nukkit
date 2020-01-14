@@ -337,14 +337,15 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                 return true;
             }
 
-            if (!this.addBlockLine(this.blockToMove, this.moveDirection)) {
+            if (!this.addBlockLine(this.blockToMove, this.blockToMove.getSide(this.moveDirection.getOpposite()))) {
                 return false;
             }
 
             for (int i = 0; i < this.toMove.size(); ++i) {
                 Block b = this.toMove.get(i);
 
-                if (b.getId() == SLIME_BLOCK && !this.addBranchingBlocks(b)) {
+                int blockId = b.getId();
+                if ((blockId == SLIME_BLOCK || blockId == HONEY_BLOCK) && !this.addBranchingBlocks(b)) {
                     return false;
                 }
             }
@@ -352,10 +353,15 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             return true;
         }
 
-        private boolean addBlockLine(Block origin, BlockFace from) {
+        private boolean addBlockLine(Block origin, Block from) {
             Block block = origin.clone();
 
             if (block.getId() == AIR) {
+                return true;
+            }
+
+            if (block.getId() == SLIME_BLOCK && from.getId() == HONEY_BLOCK
+                    || block.getId() == HONEY_BLOCK && from.getId() == SLIME_BLOCK) {
                 return true;
             }
 
@@ -460,7 +466,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
         private boolean addBranchingBlocks(Block block) {
             for (BlockFace face : BlockFace.values()) {
-                if (face.getAxis() != this.moveDirection.getAxis() && !this.addBlockLine(block.getSide(face), face)) {
+                if (face.getAxis() != this.moveDirection.getAxis() && !this.addBlockLine(block.getSide(face), block)) {
                     return false;
                 }
             }
