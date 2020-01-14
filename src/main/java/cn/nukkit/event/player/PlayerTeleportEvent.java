@@ -5,7 +5,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.Position;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 
 public class PlayerTeleportEvent extends PlayerEvent implements Cancellable {
@@ -30,7 +30,7 @@ public class PlayerTeleportEvent extends PlayerEvent implements Cancellable {
         this.cause = cause;
     }
 
-    public PlayerTeleportEvent(Player player, Vector3 from, Vector3 to, TeleportCause cause) {
+    public PlayerTeleportEvent(Player player, Vector3f from, Vector3f to, TeleportCause cause) {
         this(player);
         this.from = vectorToLocation(player.getLevel(), from);
         this.from = vectorToLocation(player.getLevel(), to);
@@ -49,7 +49,7 @@ public class PlayerTeleportEvent extends PlayerEvent implements Cancellable {
         return cause;
     }
 
-    private Location vectorToLocation(Level baseLevel, Vector3 vector) {
+    private Location vectorToLocation(Level baseLevel, Vector3f vector) {
         if (vector instanceof Location) return (Location) vector;
         if (vector instanceof Position) return ((Position) vector).getLocation();
         return new Location(vector.getX(), vector.getY(), vector.getZ(), 0, 0, baseLevel);

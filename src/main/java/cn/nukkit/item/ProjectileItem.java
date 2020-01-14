@@ -4,7 +4,7 @@ import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.projectile.EnderPearl;
 import cn.nukkit.entity.projectile.Projectile;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
@@ -27,7 +27,7 @@ public abstract class ProjectileItem extends Item {
 
     abstract public float getThrowForce();
 
-    public boolean onClickAir(Player player, Vector3 directionVector) {
+    public boolean onClickAir(Player player, Vector3f directionVector) {
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", player.x))
@@ -43,7 +43,7 @@ public abstract class ProjectileItem extends Item {
 
         this.correctNBT(nbt);
 
-        Projectile projectile = EntityRegistry.get().newEntity(this.getProjectileEntityType(), player.getLevel().getChunk(player.getFloorX() >> 4, player.getFloorZ() >> 4), nbt);
+        Projectile projectile = EntityRegistry.get().newEntity(this.getProjectileEntityType(), player.getLevel().getChunk(player.getChunkX(), player.getChunkZ()), nbt);
         projectile.shootingEntity = player;
         if (projectile instanceof EnderPearl) {
             if (player.getServer().getTick() - player.getLastEnderPearlThrowingTick() < 20) {

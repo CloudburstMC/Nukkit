@@ -1,6 +1,5 @@
 package cn.nukkit.entity.data;
 
-import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.HashSet;
@@ -8,7 +7,6 @@ import java.util.Objects;
 import java.util.Set;
 
 @Log4j2
-@ToString
 public class EntityFlags {
 
     private final Set<EntityFlag> flags = new HashSet<>();
@@ -96,5 +94,10 @@ public class EntityFlags {
         EntityFlags flags = new EntityFlags();
         flags.flags.addAll(this.flags);
         return flags;
+    }
+
+    @Override
+    public String toString() {
+        return flags.toString();
     }
 }

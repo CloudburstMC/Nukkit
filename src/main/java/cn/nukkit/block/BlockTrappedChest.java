@@ -5,6 +5,7 @@ import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.Tag;
@@ -20,7 +21,7 @@ public class BlockTrappedChest extends BlockChest {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         int[] faces = {2, 5, 3, 4};
 
         BlockEntityChest chest = null;
@@ -46,9 +47,9 @@ public class BlockTrappedChest extends BlockChest {
         CompoundTag nbt = new CompoundTag("")
                 .putList(new ListTag<>("Items"))
                 .putString("id", BlockEntity.CHEST)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z);
+                .putInt("x", this.x)
+                .putInt("y", this.y)
+                .putInt("z", this.z);
 
         if (item.hasCustomName()) {
             nbt.putString("CustomName", item.getCustomName());
@@ -61,7 +62,7 @@ public class BlockTrappedChest extends BlockChest {
             }
         }
 
-        BlockEntityChest blockEntity = new BlockEntityChest(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+        BlockEntityChest blockEntity = new BlockEntityChest(this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
 
         if (chest != null) {
             chest.pairWith(blockEntity);

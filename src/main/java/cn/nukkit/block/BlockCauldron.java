@@ -10,6 +10,7 @@ import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
@@ -179,7 +180,7 @@ public class BlockCauldron extends BlockSolid {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         CompoundTag nbt = new CompoundTag("")
                 .putString("id", BlockEntity.CAULDRON)
                 .putInt("x", (int) this.x)
@@ -195,7 +196,7 @@ public class BlockCauldron extends BlockSolid {
             }
         }
 
-        new BlockEntityCauldron(this.level.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+        new BlockEntityCauldron(this.level.getChunk(this.getChunkX(), this.getChunkZ()), nbt);
         this.getLevel().setBlock(block, this, true, true);
         return true;
     }

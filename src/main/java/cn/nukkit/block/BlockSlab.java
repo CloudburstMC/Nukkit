@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
 
@@ -37,7 +38,7 @@ public abstract class BlockSlab extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         this.setDamage(this.getDamage() & 0x07);
         if (face == BlockFace.DOWN) {
             if (target instanceof BlockSlab && (target.getDamage() & 0x08) == 0x08 && (target.getDamage() & 0x07) == (this.getDamage() & 0x07)) {
@@ -72,7 +73,7 @@ public abstract class BlockSlab extends BlockTransparent {
 
                 return false;
             } else {
-                if (fy > 0.5) {
+                if (clickPos.getY() > 0.5) {
                     this.setDamage(this.getDamage() | 0x08);
                 }
             }

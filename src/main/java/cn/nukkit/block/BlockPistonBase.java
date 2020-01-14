@@ -4,9 +4,11 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityPistonArm;
 import cn.nukkit.event.block.BlockPistonChangeEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.BlockPosition;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
@@ -40,7 +42,7 @@ public abstract class BlockPistonBase extends BlockSolid implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (Math.abs(player.x - this.x) < 2 && Math.abs(player.z - this.z) < 2) {
             double y = player.y + player.getEyeHeight();
 
@@ -63,7 +65,7 @@ public abstract class BlockPistonBase extends BlockSolid implements Faceable {
                 .putInt("z", (int) this.z)
                 .putBoolean("Sticky", this.sticky);
 
-        BlockEntityPistonArm be = new BlockEntityPistonArm(this.level.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+        BlockEntityPistonArm be = new BlockEntityPistonArm(this.level.getChunk(this.getChunkX(), this.getChunkZ()), nbt);
 
         //this.checkState();
         return true;
@@ -132,7 +134,7 @@ public abstract class BlockPistonBase extends BlockSolid implements Faceable {
         BlockFace face = getFacing();
 
         for (BlockFace side : BlockFace.values()) {
-            if (side != face && this.level.isSidePowered(this.getLocation().getSide(side), side)) {
+            if (side != face && this.level.isSidePowered(this.asVector3i().getSide(side), side)) {
                 return true;
             }
         }
@@ -140,7 +142,7 @@ public abstract class BlockPistonBase extends BlockSolid implements Faceable {
         if (this.level.isSidePowered(this, BlockFace.DOWN)) {
             return true;
         } else {
-            Vector3 pos = this.getLocation().up();
+            Vector3i pos = this.asVector3i().up();
 
             for (BlockFace side : BlockFace.values()) {
                 if (side != BlockFace.DOWN && this.level.isSidePowered(pos.getSide(side), side)) {
@@ -162,32 +164,32 @@ public abstract class BlockPistonBase extends BlockSolid implements Faceable {
                     return;
                 }
 
-                this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_PISTON_OUT);
+                this.getLevel().addLevelSoundEvent(this.asVector3f(), LevelSoundEventPacket.SOUND_PISTON_OUT);
             } else {
             }
         } else if (!isPowered && isExtended()) {
             //this.level.setBlock() TODO: set piston extension?
 
             if (this.sticky) {
-                Vector3 pos = this.add(facing.getXOffset() * 2, facing.getYOffset() * 2, facing.getZOffset() * 2);
+                BlockPosition pos = this.add(facing.getXOffset() * 2, facing.getYOffset() * 2, facing.getZOffset() * 2);
                 Block block = this.level.getBlock(pos);
 
                 if (block.getId() == AIR) {
-                    this.level.setBlock(this.getLocation().getSide(facing), Block.get(AIR), true, true);
+                    this.level.setBlock(this.asVector3i().getSide(facing), Block.get(AIR), true, true);
                 }
                 if (canPush(block, facing.getOpposite(), false) && (!(block instanceof FloodableBlock) || block.getId() == PISTON || block.getId() == STICKY_PISTON)) {
                     this.doMove(false);
                 }
             } else {
-                this.level.setBlock(getLocation().getSide(facing), Block.get(AIR), true, false);
+                this.level.setBlock(asVector3i().getSide(facing), Block.get(AIR), true, false);
             }
 
-            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_PISTON_IN);
+            this.getLevel().addLevelSoundEvent(this.asVector3f(), LevelSoundEventPacket.SOUND_PISTON_IN);
         }
     }
 
     private boolean doMove(boolean extending) {
-        Vector3 pos = this.getLocation();
+        Vector3i pos = this.asVector3i();
         BlockFace direction = getFacing();
 
         if (!extending) {
@@ -214,13 +216,13 @@ public abstract class BlockPistonBase extends BlockSolid implements Faceable {
             for (int i = blocks.size() - 1; i >= 0; --i) {
                 Block block = blocks.get(i);
                 this.level.setBlock(block, Block.get(AIR));
-                Vector3 newPos = block.getLocation().getSide(side);
+                Vector3i newPos = block.asVector3i().getSide(side);
 
                 //TODO: change this to block entity
                 this.level.setBlock(newPos, newBlocks.get(i));
             }
 
-            Vector3 pistonHead = pos.getSide(direction);
+            Vector3i pistonHead = pos.getSide(direction);
 
             if (extending) {
                 //extension block entity
@@ -239,7 +241,7 @@ public abstract class BlockPistonBase extends BlockSolid implements Faceable {
     public class BlocksCalculator {
 
         private final Level level;
-        private final Vector3 pistonPos;
+        private final Vector3i pistonPos;
         private final Block blockToMove;
         private final BlockFace moveDirection;
 
@@ -248,7 +250,7 @@ public abstract class BlockPistonBase extends BlockSolid implements Faceable {
 
         public BlocksCalculator(Level level, Block pos, BlockFace facing, boolean extending) {
             this.level = level;
-            this.pistonPos = pos.getLocation();
+            this.pistonPos = pos.asVector3i();
 
             if (extending) {
                 this.moveDirection = facing;

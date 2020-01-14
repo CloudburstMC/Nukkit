@@ -1,6 +1,6 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.math.BlockVector3;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.utils.Binary;
 import io.netty.buffer.ByteBuf;
 import lombok.ToString;
@@ -12,7 +12,7 @@ public class LecternUpdatePacket extends DataPacket {
 
     public int page;
     public int totalPages;
-    public BlockVector3 blockPosition;
+    public Vector3i blockPosition;
     public boolean dropBook;
 
     @Override

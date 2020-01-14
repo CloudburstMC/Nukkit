@@ -7,7 +7,7 @@ import cn.nukkit.inventory.DoubleChestInventory;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -72,7 +72,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
     @Override
     public void onBreak() {
         for (Item content : inventory.getContents().values()) {
-            level.dropItem(this, content);
+            level.dropItem(this.asVector3f(), content);
         }
     }
 
@@ -204,7 +204,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
 
     public BlockEntityChest getPair() {
         if (this.isPaired()) {
-            BlockEntity blockEntity = this.getLevel().getLoadedBlockEntity(new Vector3(this.namedTag.getInt("pairx"), this.y, this.namedTag.getInt("pairz")));
+            BlockEntity blockEntity = this.getLevel().getLoadedBlockEntity(new Vector3i(this.namedTag.getInt("pairx"), this.y, this.namedTag.getInt("pairz")));
             if (blockEntity instanceof BlockEntityChest) {
                 return (BlockEntityChest) blockEntity;
             }

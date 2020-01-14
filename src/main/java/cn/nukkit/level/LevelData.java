@@ -3,7 +3,7 @@ package cn.nukkit.level;
 
 import cn.nukkit.level.gamerule.GameRuleMap;
 import cn.nukkit.level.gamerule.GameRules;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import lombok.ToString;
 
 import java.util.HashMap;
@@ -24,7 +24,7 @@ public class LevelData {
     private int generator;
     private String name = "World";
     private int time;
-    private Vector3 spawn = new Vector3(0, 128, 0);
+    private Vector3f spawn = new Vector3f(0, 128, 0);
     private int serverChunkTickRange;
     private int spawnRadius;
     private int rainTime;
@@ -34,7 +34,7 @@ public class LevelData {
     private int difficulty;
     private int storageVersion;
     private int gameType;
-    private Vector3 limitedWorldOrigin;
+    private Vector3f limitedWorldOrigin;
     private int netherScale;
     private int networkVersion;
     private int platform;
@@ -141,11 +141,11 @@ public class LevelData {
         this.time = time;
     }
 
-    public Vector3 getSpawn() {
+    public Vector3f getSpawn() {
         return this.spawn;
     }
 
-    public void setSpawn(Vector3 spawn) {
+    public void setSpawn(Vector3f spawn) {
         this.spawn = spawn;
     }
 
@@ -221,11 +221,11 @@ public class LevelData {
         this.gameType = gameType;
     }
 
-    public Vector3 getLimitedWorldOrigin() {
+    public Vector3f getLimitedWorldOrigin() {
         return this.limitedWorldOrigin;
     }
 
-    public void setLimitedWorldOrigin(Vector3 limitedWorldOrigin) {
+    public void setLimitedWorldOrigin(Vector3f limitedWorldOrigin) {
         this.limitedWorldOrigin = limitedWorldOrigin;
     }
 

@@ -4,7 +4,8 @@ import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
 
@@ -26,8 +27,8 @@ public class BlockRedstoneTorch extends BlockTorch {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (!super.place(item, block, target, face, fx, fy, fz, player)) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        if (!super.place(item, block, target, face, clickPos, player)) {
             return false;
         }
 
@@ -63,7 +64,7 @@ public class BlockRedstoneTorch extends BlockTorch {
     public boolean onBreak(Item item) {
         super.onBreak(item);
 
-        Vector3 pos = getLocation();
+        Vector3i pos = asVector3i();
 
         BlockFace face = getBlockFace().getOpposite();
 
@@ -102,7 +103,7 @@ public class BlockRedstoneTorch extends BlockTorch {
     protected boolean checkState() {
         if (isPoweredFromSide()) {
             BlockFace face = getBlockFace().getOpposite();
-            Vector3 pos = getLocation();
+            Vector3i pos = asVector3i();
 
             this.level.setBlock(pos, Block.get(UNLIT_REDSTONE_TORCH, getDamage()), false, true);
 
@@ -122,7 +123,7 @@ public class BlockRedstoneTorch extends BlockTorch {
 
     protected boolean isPoweredFromSide() {
         BlockFace face = getBlockFace().getOpposite();
-        return this.level.isSidePowered(this.getLocation().getSide(face), face);
+        return this.level.isSidePowered(this.asVector3i().getSide(face), face);
     }
 
     @Override

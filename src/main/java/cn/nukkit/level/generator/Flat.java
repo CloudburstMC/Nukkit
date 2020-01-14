@@ -8,7 +8,7 @@ import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.level.generator.populator.impl.PopulatorOre;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.registry.BlockRegistry;
 import lombok.extern.log4j.Log4j2;
 
@@ -192,7 +192,7 @@ public class Flat extends Generator {
     }
 
     @Override
-    public Vector3 getSpawn() {
-        return new Vector3(128, this.floorLevel, 128);
+    public Vector3f getSpawn() {
+        return new Vector3f(128, this.floorLevel, 128);
     }
 }

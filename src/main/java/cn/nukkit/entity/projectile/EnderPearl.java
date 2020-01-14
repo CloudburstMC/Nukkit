@@ -8,7 +8,7 @@ import cn.nukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.player.Player;
 
@@ -80,7 +80,7 @@ public class EnderPearl extends Projectile {
     }
 
     private void teleport() {
-        this.shootingEntity.teleport(new Vector3(NukkitMath.floorDouble(this.x) + 0.5, this.y, NukkitMath.floorDouble(this.z) + 0.5), TeleportCause.ENDER_PEARL);
+        this.shootingEntity.teleport(new Vector3f(NukkitMath.floorDouble(this.x) + 0.5, this.y, NukkitMath.floorDouble(this.z) + 0.5), TeleportCause.ENDER_PEARL);
         if ((((Player) this.shootingEntity).getGamemode() & 0x01) == 0) {
             this.shootingEntity.attack(new EntityDamageByEntityEvent(this, shootingEntity, EntityDamageEvent.DamageCause.PROJECTILE, 5f, 0f));
         }

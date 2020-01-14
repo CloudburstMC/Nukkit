@@ -11,6 +11,7 @@ import cn.nukkit.inventory.ShulkerBoxInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -96,7 +97,7 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         this.getLevel().setBlock(block, this, true);
         CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.SHULKER_BOX)
                 .putByte("facing", face.getIndex());
@@ -113,7 +114,7 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
             }
         }
 
-        new BlockEntityShulkerBox(this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), nbt);
+        new BlockEntityShulkerBox(this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
 
         return true;
     }
@@ -132,7 +133,7 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
                 box = (BlockEntityShulkerBox) t;
             } else {
                 CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.SHULKER_BOX);
-                box = new BlockEntityShulkerBox(this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), nbt);
+                box = new BlockEntityShulkerBox(this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
             }
 
             Block block = this.getSide(BlockFace.fromIndex(box.namedTag.getByte("facing")));

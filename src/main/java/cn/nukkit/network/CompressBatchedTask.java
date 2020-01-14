@@ -1,8 +1,10 @@
 package cn.nukkit.network;
 
 import cn.nukkit.Server;
+import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.player.Player;
+import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Zlib;
 import io.netty.buffer.ByteBuf;
@@ -15,26 +17,25 @@ import java.util.List;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class CompressBatchedTask implements Runnable {
+public class CompressBatchedTask extends AsyncTask {
 
-    private final Server server;
     private final List<DataPacket> toBatch;
     private final List<Player> targets;
     private final int level;
+    private ByteBuf compressed;
 
     public CompressBatchedTask(Server server, List<DataPacket> toBatch, List<Player> targets) {
-        this(server, toBatch, targets, 7);
+        this(toBatch, targets, 7);
     }
 
-    public CompressBatchedTask(Server server, List<DataPacket> toBatch, List<Player> targets, int level) {
-        this.server = server;
+    public CompressBatchedTask(List<DataPacket> toBatch, List<Player> targets, int level) {
         this.toBatch = toBatch;
         this.targets = targets;
         this.level = level;
     }
 
     @Override
-    public void run() {
+    public void onRun() {
         ByteBuf packetBuffer = ByteBufAllocator.DEFAULT.ioBuffer(32);
         ByteBuf payload = ByteBufAllocator.DEFAULT.ioBuffer();
         try {
@@ -46,17 +47,31 @@ public class CompressBatchedTask implements Runnable {
                 packetBuffer.clear();
             }
 
-            ByteBuf compressed = ByteBufAllocator.DEFAULT.ioBuffer(payload.readableBytes() / 2);
+            this.compressed = ByteBufAllocator.DEFAULT.ioBuffer(payload.readableBytes() / 2);
             try {
                 Zlib.DEFAULT.deflate(payload, compressed, this.level);
-                this.server.broadcastPacketsCallback(compressed, this.targets);
             } catch (Exception e) {
                 compressed.release();
+                throw e;
             }
         } finally {
             this.toBatch.forEach(ReferenceCountUtil::release);
             packetBuffer.release();
             payload.release();
+        }
+    }
+
+    @Override
+    public void onCompletion(Server server) {
+        BatchPacket packet = new BatchPacket();
+        packet.payload = this.compressed;
+
+        try {
+            for (Player target : targets) {
+                target.directDataPacket(packet);
+            }
+        } finally {
+            packet.release();
         }
     }
 }

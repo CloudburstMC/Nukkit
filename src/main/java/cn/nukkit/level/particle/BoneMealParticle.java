@@ -1,6 +1,7 @@
 package cn.nukkit.level.particle;
 
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.LevelEventPacket;
 
@@ -9,9 +10,13 @@ import cn.nukkit.network.protocol.LevelEventPacket;
  */
 public class BoneMealParticle extends Particle {
 
-    private Vector3 position;
+    private Vector3f position;
 
-    public BoneMealParticle(Vector3 pos) {
+    public BoneMealParticle(Vector3i pos) {
+        this(pos.add(0.5, 0.5, 0.5));
+    }
+
+    public BoneMealParticle(Vector3f pos) {
         super(pos.x, pos.y, pos.z);
     }
 

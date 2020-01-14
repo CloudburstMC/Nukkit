@@ -5,6 +5,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.player.Player;
 import cn.nukkit.registry.BlockRegistry;
@@ -45,19 +46,19 @@ public class BlockSponge extends BlockSolid {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         Level level = block.getLevel();
         boolean blockSet = level.setBlock(block, this);
 
         if (blockSet) {
             if (this.getDamage() == WET && level.getDimension() == Level.DIMENSION_NETHER) {
                 level.setBlock(block, Block.get(SPONGE, DRY));
-                this.getLevel().addSound(block.getLocation(), Sound.RANDOM_FIZZ);
+                this.getLevel().addSound(block.asVector3f(), Sound.RANDOM_FIZZ);
 
                 for (int i = 0; i < 8; ++i) {
                     this.getLevel().addParticle(
-                        //TODO: Use correct smoke particle
-                        new SmokeParticle(block.getLocation().add(Math.random(), 1, Math.random())));
+                            //TODO: Use correct smoke particle
+                            new SmokeParticle(block.asVector3f().add(Math.random(), 1, Math.random())));
                 }
             } else if (this.getDamage() == DRY && performWaterAbsorb(block)) {
                 level.setBlock(block, Block.get(SPONGE, WET));

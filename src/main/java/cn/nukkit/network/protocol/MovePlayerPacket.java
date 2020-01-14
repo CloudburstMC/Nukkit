@@ -35,9 +35,9 @@ public class MovePlayerPacket extends DataPacket {
     protected void decode(ByteBuf buffer) {
         this.entityRuntimeId = Binary.readEntityRuntimeId(buffer);
         Vector3f v = Binary.readVector3f(buffer);
-        this.x = v.x;
-        this.y = v.y;
-        this.z = v.z;
+        this.x = (float) v.x;
+        this.y = (float) v.y;
+        this.z = (float) v.z;
         this.pitch = buffer.readFloatLE();
         this.yaw = buffer.readFloatLE();
         this.headYaw = buffer.readFloatLE();

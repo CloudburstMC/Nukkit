@@ -1,8 +1,8 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.event.inventory.InventoryOpenEvent;
-import cn.nukkit.level.Position;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.level.BlockPosition;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.ContainerClosePacket;
 import cn.nukkit.network.protocol.ContainerOpenPacket;
 import cn.nukkit.player.Player;
@@ -10,7 +10,7 @@ import cn.nukkit.player.Player;
 public class FakeBlockUIComponent extends PlayerUIComponent {
     private final InventoryType type;
 
-    FakeBlockUIComponent(PlayerUIInventory playerUI, InventoryType type, int offset, Position position) {
+    FakeBlockUIComponent(PlayerUIInventory playerUI, InventoryType type, int offset, BlockPosition position) {
         super(playerUI, offset, type.getDefaultSize());
         this.type = type;
         this.holder = new FakeBlockMenu(this, position);
@@ -42,9 +42,9 @@ public class FakeBlockUIComponent extends PlayerUIComponent {
         pk.type = type.getNetworkType();
         InventoryHolder holder = this.getHolder();
         if (holder != null) {
-            pk.x = (int) ((Vector3) holder).getX();
-            pk.y = (int) ((Vector3) holder).getY();
-            pk.z = (int) ((Vector3) holder).getZ();
+            pk.x = (int) ((Vector3f) holder).getX();
+            pk.y = (int) ((Vector3f) holder).getY();
+            pk.z = (int) ((Vector3f) holder).getZ();
         } else {
             pk.x = pk.y = pk.z = 0;
         }

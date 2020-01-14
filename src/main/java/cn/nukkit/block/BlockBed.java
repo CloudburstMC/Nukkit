@@ -7,7 +7,8 @@ import cn.nukkit.item.ItemIds;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
@@ -99,7 +100,7 @@ public class BlockBed extends BlockTransparent implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         Block down = this.down();
         if (!down.isTransparent()) {
             Block next = this.getSide(player.getDirection());
@@ -156,11 +157,11 @@ public class BlockBed extends BlockTransparent implements Faceable {
         return true;
     }
 
-    private void createBlockEntity(Vector3 pos, int color) {
+    private void createBlockEntity(Vector3i pos, int color) {
         CompoundTag nbt = BlockEntity.getDefaultCompound(pos, BlockEntity.BED);
         nbt.putByte("color", color);
 
-        BlockEntity.createBlockEntity(BlockEntity.BED, this.level.getChunk(pos.getFloorX() >> 4, pos.getFloorZ() >> 4), nbt);
+        BlockEntity.createBlockEntity(BlockEntity.BED, this.level.getChunk(pos.getChunkX(), pos.getChunkZ()), nbt);
     }
 
     @Override

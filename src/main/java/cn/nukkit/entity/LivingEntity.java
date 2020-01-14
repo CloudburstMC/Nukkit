@@ -16,8 +16,8 @@ import cn.nukkit.level.Position;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.math.BlockRayTrace;
-import cn.nukkit.math.BlockVector3;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.network.protocol.AnimatePacket;
@@ -169,7 +169,7 @@ public abstract class LivingEntity extends Entity implements EntityDamageable {
 
         f = 1 / f;
 
-        Vector3 motion = new Vector3(this.motionX, this.motionY, this.motionZ);
+        Vector3f motion = new Vector3f(this.motionX, this.motionY, this.motionZ);
 
         motion.x /= 2d;
         motion.y /= 2d;
@@ -321,7 +321,7 @@ public abstract class LivingEntity extends Entity implements EntityDamageable {
 
         Position position = getPosition();
         position.y += getEyeHeight();
-        for (BlockVector3 pos : BlockRayTrace.of(position, getDirectionVector(), maxDistance)) {
+        for (Vector3i pos : BlockRayTrace.of(position, getDirectionVector(), maxDistance)) {
             Block block = this.level.getLoadedBlock(pos.x, pos.y, pos.z);
             if (block == null) {
                 break;

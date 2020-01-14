@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.Rail;
 
@@ -23,7 +23,7 @@ public class BlockRailActivator extends BlockRail {
         if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE || type == Level.BLOCK_UPDATE_SCHEDULED) {
             super.onUpdate(type);
             boolean wasPowered = isActive();
-            boolean isPowered = level.isBlockPowered(this.getLocation())
+            boolean isPowered = level.isBlockPowered(this.asVector3i())
                     || checkSurrounding(this, true, 0)
                     || checkSurrounding(this, false, 0);
             boolean hasUpdate = false;
@@ -52,16 +52,16 @@ public class BlockRailActivator extends BlockRail {
      * @param power    The count of the rail that had been counted
      * @return Boolean of the surrounding area. Where the powered rail on!
      */
-    protected boolean checkSurrounding(Vector3 pos, boolean relative, int power) {
+    protected boolean checkSurrounding(Vector3i pos, boolean relative, int power) {
         if (power >= 8) {
             return false;
         }
-        int dx = pos.getFloorX();
-        int dy = pos.getFloorY();
-        int dz = pos.getFloorZ();
+        int dx = pos.getX();
+        int dy = pos.getY();
+        int dz = pos.getZ();
 
         BlockRail block;
-        Block block2 = level.getBlock(new Vector3(dx, dy, dz));
+        Block block2 = level.getBlock(dx, dy, dz);
 
         if (Rail.isRailBlock(block2)) {
             block = (BlockRail) block2;
@@ -131,11 +131,11 @@ public class BlockRailActivator extends BlockRail {
                 return false;
         }
 
-        return canPowered(new Vector3(dx, dy, dz), base, power, relative)
-                || onStraight && canPowered(new Vector3(dx, dy - 1, dz), base, power, relative);
+        return canPowered(new Vector3i(dx, dy, dz), base, power, relative)
+                || onStraight && canPowered(new Vector3i(dx, dy - 1, dz), base, power, relative);
     }
 
-    protected boolean canPowered(Vector3 pos, Rail.Orientation state, int power, boolean relative) {
+    protected boolean canPowered(Vector3i pos, Rail.Orientation state, int power, boolean relative) {
         Block block = level.getBlock(pos);
 
         if (!(block instanceof BlockRailActivator)) {

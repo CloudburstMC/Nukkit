@@ -1,6 +1,6 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.math.BlockVector3;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.utils.Binary;
 import io.netty.buffer.ByteBuf;
 import lombok.ToString;
@@ -23,7 +23,7 @@ public class BlockPickRequestPacket extends DataPacket {
 
     @Override
     protected void decode(ByteBuf buffer) {
-        BlockVector3 v = Binary.readSignedBlockPosition(buffer);
+        Vector3i v = Binary.readSignedBlockPosition(buffer);
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;

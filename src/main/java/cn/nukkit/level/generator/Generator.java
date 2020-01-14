@@ -3,7 +3,7 @@ package cn.nukkit.level.generator;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitRandom;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -88,7 +88,7 @@ public abstract class Generator {
 
     public abstract String getName();
 
-    public abstract Vector3 getSpawn();
+    public abstract Vector3f getSpawn();
 
     public abstract ChunkManager getChunkManager();
 }

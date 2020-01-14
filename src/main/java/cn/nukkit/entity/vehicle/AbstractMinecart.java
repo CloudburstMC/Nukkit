@@ -22,7 +22,7 @@ import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.player.Player;
 import cn.nukkit.registry.BlockRegistry;
@@ -172,7 +172,7 @@ public abstract class AbstractMinecart<T extends AbstractMinecart<?>> extends Ve
                 --dy;
             }
 
-            Block block = level.getBlock(new Vector3(dx, dy, dz));
+            Block block = level.getBlock(dx, dy, dz);
 
             // Ensure that the block is a rail
             if (Rail.isRailBlock(block)) {
@@ -285,7 +285,7 @@ public abstract class AbstractMinecart<T extends AbstractMinecart<?>> extends Ve
     }
 
     @Override
-    public boolean onInteract(Player p, Item item, Vector3 clickedPos) {
+    public boolean onInteract(Player p, Item item, Vector3f clickedPos) {
         if (!passengers.isEmpty() && isRideable()) {
             return false;
         }
@@ -337,8 +337,8 @@ public abstract class AbstractMinecart<T extends AbstractMinecart<?>> extends Ve
                     AbstractMinecart<?> mine = (AbstractMinecart<?>) entity;
                     double desinityX = mine.x - x;
                     double desinityZ = mine.z - z;
-                    Vector3 vector = new Vector3(desinityX, 0, desinityZ).normalize();
-                    Vector3 vec = new Vector3(MathHelper.cos((float) yaw * 0.017453292F), 0, MathHelper.sin((float) yaw * 0.017453292F)).normalize();
+                    Vector3f vector = new Vector3f(desinityX, 0, desinityZ).normalize();
+                    Vector3f vec = new Vector3f(MathHelper.cos((float) yaw * 0.017453292F), 0, MathHelper.sin((float) yaw * 0.017453292F)).normalize();
                     double desinityXZ = Math.abs(vector.dot(vec));
 
                     if (desinityXZ < 0.800000011920929D) {
@@ -427,7 +427,7 @@ public abstract class AbstractMinecart<T extends AbstractMinecart<?>> extends Ve
 
     private void processMovement(int dx, int dy, int dz, BlockRail block) {
         fallDistance = 0.0F;
-        Vector3 vector = getNextRail(x, y, z);
+        Vector3f vector = getNextRail(x, y, z);
 
         y = dy;
         boolean isPowered = false;
@@ -537,7 +537,7 @@ public abstract class AbstractMinecart<T extends AbstractMinecart<?>> extends Ve
 
         x = playerYawNeg + facing1 * expectedSpeed;
         z = playerYawPos + facing2 * expectedSpeed;
-        setPosition(new Vector3(x, y, z)); // Hehe, my minstake :3
+        setPosition(new Vector3f(x, y, z)); // Hehe, my minstake :3
 
         motX = motionX;
         motZ = motionZ;
@@ -550,13 +550,13 @@ public abstract class AbstractMinecart<T extends AbstractMinecart<?>> extends Ve
 
         move(motX, 0, motZ);
         if (facing[0][1] != 0 && MathHelper.floor(x) - dx == facing[0][0] && MathHelper.floor(z) - dz == facing[0][2]) {
-            setPosition(new Vector3(x, y + (double) facing[0][1], z));
+            setPosition(new Vector3f(x, y + (double) facing[0][1], z));
         } else if (facing[1][1] != 0 && MathHelper.floor(x) - dx == facing[1][0] && MathHelper.floor(z) - dz == facing[1][2]) {
-            setPosition(new Vector3(x, y + (double) facing[1][1], z));
+            setPosition(new Vector3f(x, y + (double) facing[1][1], z));
         }
 
         applyDrag();
-        Vector3 vector1 = getNextRail(x, y, z);
+        Vector3f vector1 = getNextRail(x, y, z);
 
         if (vector1 != null && vector != null) {
             double d14 = (vector.y - vector1.y) * 0.05D;
@@ -567,7 +567,7 @@ public abstract class AbstractMinecart<T extends AbstractMinecart<?>> extends Ve
                 motionZ = motionZ / squareOfFame * (squareOfFame + d14);
             }
 
-            setPosition(new Vector3(x, vector1.y, z));
+            setPosition(new Vector3f(x, vector1.y, z));
         }
 
         int floorX = MathHelper.floor(x);
@@ -588,15 +588,15 @@ public abstract class AbstractMinecart<T extends AbstractMinecart<?>> extends Ve
                 motionX += motionX / newMovie * nextMovie;
                 motionZ += motionZ / newMovie * nextMovie;
             } else if (block.getOrientation() == Orientation.STRAIGHT_NORTH_SOUTH) {
-                if (level.getBlock(new Vector3(dx - 1, dy, dz)).isNormalBlock()) {
+                if (level.getBlock(dx - 1, dy, dz).isNormalBlock()) {
                     motionX = 0.02D;
-                } else if (level.getBlock(new Vector3(dx + 1, dy, dz)).isNormalBlock()) {
+                } else if (level.getBlock(dx + 1, dy, dz).isNormalBlock()) {
                     motionX = -0.02D;
                 }
             } else if (block.getOrientation() == Orientation.STRAIGHT_EAST_WEST) {
-                if (level.getBlock(new Vector3(dx, dy, dz - 1)).isNormalBlock()) {
+                if (level.getBlock(dx, dy, dz - 1).isNormalBlock()) {
                     motionZ = 0.02D;
-                } else if (level.getBlock(new Vector3(dx, dy, dz + 1)).isNormalBlock()) {
+                } else if (level.getBlock(dx, dy, dz + 1).isNormalBlock()) {
                     motionZ = -0.02D;
                 }
             }
@@ -616,7 +616,7 @@ public abstract class AbstractMinecart<T extends AbstractMinecart<?>> extends Ve
         }
     }
 
-    private Vector3 getNextRail(double dx, double dy, double dz) {
+    private Vector3f getNextRail(double dx, double dy, double dz) {
         int checkX = MathHelper.floor(dx);
         int checkY = MathHelper.floor(dy);
         int checkZ = MathHelper.floor(dz);
@@ -625,7 +625,7 @@ public abstract class AbstractMinecart<T extends AbstractMinecart<?>> extends Ve
             --checkY;
         }
 
-        Block block = level.getBlock(new Vector3(checkX, checkY, checkZ));
+        Block block = level.getBlock(checkX, checkY, checkZ);
 
         if (Rail.isRailBlock(block)) {
             int[][] facing = matrix[((BlockRail) block).getRealMeta()];
@@ -663,7 +663,7 @@ public abstract class AbstractMinecart<T extends AbstractMinecart<?>> extends Ve
                 dy += 0.5D;
             }
 
-            return new Vector3(dx, dy, dz);
+            return new Vector3f(dx, dy, dz);
         } else {
             return null;
         }
@@ -813,22 +813,22 @@ public abstract class AbstractMinecart<T extends AbstractMinecart<?>> extends Ve
         slowWhenEmpty = slow;
     }
 
-    public Vector3 getFlyingVelocityMod() {
-        return new Vector3(flyingX, flyingY, flyingZ);
+    public Vector3f getFlyingVelocityMod() {
+        return new Vector3f(flyingX, flyingY, flyingZ);
     }
 
-    public void setFlyingVelocityMod(Vector3 flying) {
+    public void setFlyingVelocityMod(Vector3f flying) {
         Objects.requireNonNull(flying, "Flying velocity modifiers cannot be null");
         flyingX = flying.getX();
         flyingY = flying.getY();
         flyingZ = flying.getZ();
     }
 
-    public Vector3 getDerailedVelocityMod() {
-        return new Vector3(derailedX, derailedY, derailedZ);
+    public Vector3f getDerailedVelocityMod() {
+        return new Vector3f(derailedX, derailedY, derailedZ);
     }
 
-    public void setDerailedVelocityMod(Vector3 derailed) {
+    public void setDerailedVelocityMod(Vector3f derailed) {
         Objects.requireNonNull(derailed, "Derailed velocity modifiers cannot be null");
         derailedX = derailed.getX();
         derailedY = derailed.getY();

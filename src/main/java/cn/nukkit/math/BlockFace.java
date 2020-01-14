@@ -7,12 +7,12 @@ import java.util.Random;
 import java.util.function.Predicate;
 
 public enum BlockFace {
-    DOWN(0, 1, -1, "down", AxisDirection.NEGATIVE, new Vector3(0, -1, 0)),
-    UP(1, 0, -1, "up", AxisDirection.POSITIVE, new Vector3(0, 1, 0)),
-    NORTH(2, 3, 2, "north", AxisDirection.NEGATIVE, new Vector3(0, 0, -1)),
-    SOUTH(3, 2, 0, "south", AxisDirection.POSITIVE, new Vector3(0, 0, 1)),
-    WEST(4, 5, 1, "west", AxisDirection.NEGATIVE, new Vector3(-1, 0, 0)),
-    EAST(5, 4, 3, "east", AxisDirection.POSITIVE, new Vector3(1, 0, 0));
+    DOWN(0, 1, -1, "down", AxisDirection.NEGATIVE, new Vector3f(0, -1, 0)),
+    UP(1, 0, -1, "up", AxisDirection.POSITIVE, new Vector3f(0, 1, 0)),
+    NORTH(2, 3, 2, "north", AxisDirection.NEGATIVE, new Vector3f(0, 0, -1)),
+    SOUTH(3, 2, 0, "south", AxisDirection.POSITIVE, new Vector3f(0, 0, 1)),
+    WEST(4, 5, 1, "west", AxisDirection.NEGATIVE, new Vector3f(-1, 0, 0)),
+    EAST(5, 4, 3, "east", AxisDirection.POSITIVE, new Vector3f(1, 0, 0));
 
     /**
      * All faces in D-U-N-S-W-E order
@@ -69,9 +69,9 @@ public enum BlockFace {
     /**
      * Normalized vector that points in the direction of this BlockFace
      */
-    private final Vector3 unitVector;
+    private final Vector3f unitVector;
 
-    BlockFace(int index, int opposite, int horizontalIndex, String name, AxisDirection axisDirection, Vector3 unitVector) {
+    BlockFace(int index, int opposite, int horizontalIndex, String name, AxisDirection axisDirection, Vector3f unitVector) {
         this.index = index;
         this.opposite = opposite;
         this.horizontalIndex = horizontalIndex;
@@ -189,7 +189,7 @@ public enum BlockFace {
      *
      * @return vector
      */
-    public Vector3 getUnitVector() {
+    public Vector3f getUnitVector() {
         return unitVector;
     }
 

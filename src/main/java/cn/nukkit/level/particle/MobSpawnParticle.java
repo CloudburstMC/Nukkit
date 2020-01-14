@@ -1,6 +1,6 @@
 package cn.nukkit.level.particle;
 
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.LevelEventPacket;
 
@@ -13,7 +13,7 @@ public class MobSpawnParticle extends Particle {
     protected final int width;
     protected final int height;
 
-    public MobSpawnParticle(Vector3 pos, float width, float height) {
+    public MobSpawnParticle(Vector3f pos, float width, float height) {
         super(pos.x, pos.y, pos.z);
         this.width = (int) width;
         this.height = (int) height;

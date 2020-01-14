@@ -170,7 +170,7 @@ public interface AxisAlignedBB extends Cloneable {
         return false;
     }
 
-    default boolean isVectorInside(Vector3 vector) {
+    default boolean isVectorInside(Vector3f vector) {
         return vector.x >= this.getMinX() && vector.x <= this.getMaxX() && vector.y >= this.getMinY() && vector.y <= this.getMaxY() && vector.z >= this.getMinZ() && vector.z <= this.getMaxZ();
 
     }
@@ -179,25 +179,25 @@ public interface AxisAlignedBB extends Cloneable {
         return (this.getMaxX() - this.getMinX() + this.getMaxY() - this.getMinY() + this.getMaxZ() - this.getMinZ()) / 3;
     }
 
-    default boolean isVectorInYZ(Vector3 vector) {
+    default boolean isVectorInYZ(Vector3f vector) {
         return vector.y >= this.getMinY() && vector.y <= this.getMaxY() && vector.z >= this.getMinZ() && vector.z <= this.getMaxZ();
     }
 
-    default boolean isVectorInXZ(Vector3 vector) {
+    default boolean isVectorInXZ(Vector3f vector) {
         return vector.x >= this.getMinX() && vector.x <= this.getMaxX() && vector.z >= this.getMinZ() && vector.z <= this.getMaxZ();
     }
 
-    default boolean isVectorInXY(Vector3 vector) {
+    default boolean isVectorInXY(Vector3f vector) {
         return vector.x >= this.getMinX() && vector.x <= this.getMaxX() && vector.y >= this.getMinY() && vector.y <= this.getMaxY();
     }
 
-    default MovingObjectPosition calculateIntercept(Vector3 pos1, Vector3 pos2) {
-        Vector3 v1 = pos1.getIntermediateWithXValue(pos2, this.getMinX());
-        Vector3 v2 = pos1.getIntermediateWithXValue(pos2, this.getMaxX());
-        Vector3 v3 = pos1.getIntermediateWithYValue(pos2, this.getMinY());
-        Vector3 v4 = pos1.getIntermediateWithYValue(pos2, this.getMaxY());
-        Vector3 v5 = pos1.getIntermediateWithZValue(pos2, this.getMinZ());
-        Vector3 v6 = pos1.getIntermediateWithZValue(pos2, this.getMaxZ());
+    default MovingObjectPosition calculateIntercept(Vector3f pos1, Vector3f pos2) {
+        Vector3f v1 = pos1.getIntermediateWithXValue(pos2, this.getMinX());
+        Vector3f v2 = pos1.getIntermediateWithXValue(pos2, this.getMaxX());
+        Vector3f v3 = pos1.getIntermediateWithYValue(pos2, this.getMinY());
+        Vector3f v4 = pos1.getIntermediateWithYValue(pos2, this.getMaxY());
+        Vector3f v5 = pos1.getIntermediateWithZValue(pos2, this.getMinZ());
+        Vector3f v6 = pos1.getIntermediateWithZValue(pos2, this.getMaxZ());
 
         if (v1 != null && !this.isVectorInYZ(v1)) {
             v1 = null;
@@ -223,7 +223,7 @@ public interface AxisAlignedBB extends Cloneable {
             v6 = null;
         }
 
-        Vector3 vector = null;
+        Vector3f vector = null;
 
         //if (v1 != null && (vector == null || pos1.distanceSquared(v1) < pos1.distanceSquared(vector))) {
         if (v1 != null) {

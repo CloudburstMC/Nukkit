@@ -118,18 +118,18 @@ public class BedrockRandom {
         return this.nextFloat() - this.nextFloat();
     }
 
-    public Vector3 nextVector3() {
+    public Vector3f nextVector3() {
         float x = this.nextFloat();
         float y = this.nextFloat();
         float z = this.nextFloat();
-        return new Vector3(x, y, z);
+        return new Vector3f(x, y, z);
     }
 
-    public Vector3 nextGaussianVector3() {
+    public Vector3f nextGaussianVector3() {
         float x = (float) nextGaussian();
         float y = (float) nextGaussian();
         float z = (float) nextGaussian();
-        return new Vector3(x, y, z);
+        return new Vector3f(x, y, z);
     }
 
     private void initGenRand(int initialValue) {

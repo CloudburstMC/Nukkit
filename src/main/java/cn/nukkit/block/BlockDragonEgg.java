@@ -52,16 +52,16 @@ public class BlockDragonEgg extends BlockFallable {
         for (int i = 0; i < 1000; ++i) {
             Block t = this.getLevel().getBlock(this.add(ThreadLocalRandom.current().nextInt(-16, 16), ThreadLocalRandom.current().nextInt(-16, 16), ThreadLocalRandom.current().nextInt(-16, 16)));
             if (t.getId() == AIR) {
-                int diffX = this.getFloorX() - t.getFloorX();
-                int diffY = this.getFloorY() - t.getFloorY();
-                int diffZ = this.getFloorZ() - t.getFloorZ();
+                int diffX = this.getX() - t.getX();
+                int diffY = this.getY() - t.getY();
+                int diffZ = this.getZ() - t.getZ();
                 LevelEventPacket pk = new LevelEventPacket();
                 pk.evid = LevelEventPacket.EVENT_PARTICLE_DRAGON_EGG_TELEPORT;
                 pk.data = (((((Math.abs(diffX) << 16) | (Math.abs(diffY) << 8)) | Math.abs(diffZ)) | ((diffX < 0 ? 1 : 0) << 24)) | ((diffY < 0 ? 1 : 0) << 25)) | ((diffZ < 0 ? 1 : 0) << 26);
-                pk.x = this.getFloorX();
-                pk.y = this.getFloorY();
-                pk.z = this.getFloorZ();
-                this.getLevel().addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, pk);
+                pk.x = this.getX();
+                pk.y = this.getY();
+                pk.z = this.getZ();
+                this.getLevel().addChunkPacket(this.getChunkX(), this.getChunkZ(), pk);
                 this.getLevel().setBlock(this, get(AIR), true);
                 this.getLevel().setBlock(t, this, true);
                 return;

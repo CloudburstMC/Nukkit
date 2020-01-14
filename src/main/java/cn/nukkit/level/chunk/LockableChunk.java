@@ -252,13 +252,8 @@ public final class LockableChunk implements IChunk, Lock {
     }
 
     @Override
-    public boolean setDirty() {
-        return this.unsafe.setDirty();
-    }
-
-    @Override
-    public boolean setDirty(boolean dirty) {
-        return this.unsafe.setDirty(dirty);
+    public void setDirty(boolean dirty) {
+        this.unsafe.setDirty(dirty);
     }
 
     @Override

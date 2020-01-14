@@ -2,7 +2,7 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.ContainerClosePacket;
 import cn.nukkit.network.protocol.ContainerOpenPacket;
 import cn.nukkit.player.Player;
@@ -39,10 +39,10 @@ public abstract class ContainerInventory extends BaseInventory {
         pk.windowId = who.getWindowId(this);
         pk.type = this.getType().getNetworkType();
         InventoryHolder holder = this.getHolder();
-        if (holder instanceof Vector3) {
-            pk.x = (int) ((Vector3) holder).getX();
-            pk.y = (int) ((Vector3) holder).getY();
-            pk.z = (int) ((Vector3) holder).getZ();
+        if (holder instanceof Vector3f) {
+            pk.x = (int) ((Vector3f) holder).getX();
+            pk.y = (int) ((Vector3f) holder).getY();
+            pk.z = (int) ((Vector3f) holder).getZ();
         } else {
             pk.x = pk.y = pk.z = 0;
         }

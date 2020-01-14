@@ -15,7 +15,7 @@ import cn.nukkit.level.generator.populator.impl.PopulatorLava;
 import cn.nukkit.level.generator.populator.impl.PopulatorOre;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 
 import java.util.*;
 
@@ -157,13 +157,13 @@ public class Nether extends Generator {
         biome.populateChunk(this.level, chunkX, chunkZ, this.nukkitRandom);
     }
 
-    public Vector3 getSpawn() {
-        return new Vector3(0, 64, 0);
+    public Vector3f getSpawn() {
+        return new Vector3f(0, 64, 0);
     }
 
-    public float getNoise(int x, int y, int z)  {
+    public float getNoise(int x, int y, int z) {
         float val = 0f;
-        for (int i = 0; i < noiseGen.length; i++)   {
+        for (int i = 0; i < noiseGen.length; i++) {
             val += noiseGen[i].noise3D(x >> i, y, z >> i, true);
         }
         return val;

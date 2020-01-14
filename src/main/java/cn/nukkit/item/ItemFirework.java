@@ -5,7 +5,7 @@ import cn.nukkit.entity.EntityTypes;
 import cn.nukkit.entity.misc.FireworksRocket;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
@@ -54,9 +54,9 @@ public class ItemFirework extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, Vector3f clickPos) {
         if (block.canPassThrough()) {
-            this.spawnFirework(level, block);
+            this.spawnFirework(level, block.add(0.5, 0.5, 0.5));
 
             if (!player.isCreative()) {
                 player.getInventory().decreaseCount(player.getInventory().getHeldItemIndex());
@@ -69,11 +69,11 @@ public class ItemFirework extends Item {
     }
 
     @Override
-    public boolean onClickAir(Player player, Vector3 directionVector) {
+    public boolean onClickAir(Player player, Vector3f directionVector) {
         if (player.getInventory().getChestplate() instanceof ItemElytra && player.isGliding()) {
             this.spawnFirework(player.getLevel(), player);
 
-            player.setMotion(new Vector3(
+            player.setMotion(new Vector3f(
                     -Math.sin(Math.toRadians(player.yaw)) * Math.cos(Math.toRadians(player.pitch)) * 2,
                     -Math.sin(Math.toRadians(player.pitch)) * 2,
                     Math.cos(Math.toRadians(player.yaw)) * Math.cos(Math.toRadians(player.pitch)) * 2));
@@ -120,12 +120,12 @@ public class ItemFirework extends Item {
         this.getNamedTag().getCompound("Fireworks").putList(new ListTag<CompoundTag>("Explosions"));
     }
 
-    private void spawnFirework(Level level, Vector3 pos) {
+    private void spawnFirework(Level level, Vector3f pos) {
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
-                        .add(new DoubleTag("", pos.x + 0.5))
-                        .add(new DoubleTag("", pos.y + 0.5))
-                        .add(new DoubleTag("", pos.z + 0.5)))
+                        .add(new DoubleTag("", pos.x))
+                        .add(new DoubleTag("", pos.y))
+                        .add(new DoubleTag("", pos.z)))
                 .putList(new ListTag<DoubleTag>("Motion")
                         .add(new DoubleTag("", 0))
                         .add(new DoubleTag("", 0))
@@ -136,7 +136,7 @@ public class ItemFirework extends Item {
                 .putCompound("FireworkItem", NBTIO.putItemHelper(this));
 
         FireworksRocket entity = EntityRegistry.get().newEntity(EntityTypes.FIREWORKS_ROCKET,
-                level.getChunk(pos.getFloorX() >> 4, pos.getFloorZ() >> 4), nbt);
+                level.getChunk(pos.getChunkX(), pos.getChunkZ()), nbt);
         entity.spawnToAll();
     }
 

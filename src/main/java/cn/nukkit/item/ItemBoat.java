@@ -6,6 +6,7 @@ import cn.nukkit.entity.EntityTypes;
 import cn.nukkit.entity.vehicle.Boat;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
@@ -29,10 +30,10 @@ public class ItemBoat extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, Vector3f clickPos) {
         if (face != BlockFace.UP) return false;
         Boat boat = EntityRegistry.get().newEntity(EntityTypes.BOAT,
-                level.getChunk(block.getFloorX() >> 4, block.getFloorZ() >> 4), new CompoundTag("")
+                level.getChunk(block.getChunkX(), block.getChunkZ()), new CompoundTag("")
                         .putList(new ListTag<DoubleTag>("Pos")
                                 .add(new DoubleTag("", block.getX() + 0.5))
                                 .add(new DoubleTag("", block.getY() - (target instanceof BlockWater ? 0.0625 : 0)))
@@ -42,7 +43,7 @@ public class ItemBoat extends Item {
                                 .add(new DoubleTag("", 0))
                                 .add(new DoubleTag("", 0)))
                         .putList(new ListTag<FloatTag>("Rotation")
-                        .add(new FloatTag("", (float) ((player.yaw + 90f) % 360)))
+                                .add(new FloatTag("", (float) ((player.yaw + 90f) % 360)))
                         .add(new FloatTag("", 0)))
                 .putByte("woodID", this.getDamage())
         );

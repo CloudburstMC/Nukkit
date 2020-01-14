@@ -7,6 +7,7 @@ import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
@@ -54,16 +55,16 @@ public class BlockItemFrame extends BlockTransparent {
             }
             itemOnFrame.setCount(1);
             itemFrame.setItem(itemOnFrame);
-            this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_ADD_ITEM);
+            this.getLevel().addSound(this.asVector3f(), Sound.BLOCK_ITEMFRAME_ADD_ITEM);
         } else {
             itemFrame.setItemRotation((itemFrame.getItemRotation() + 1) % 8);
-            this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_ROTATE_ITEM);
+            this.getLevel().addSound(this.asVector3f(), Sound.BLOCK_ITEMFRAME_ROTATE_ITEM);
         }
         return true;
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (!target.isTransparent() && face.getIndex() > 1 && !block.isSolid()) {
             switch (face) {
                 case NORTH:
@@ -84,9 +85,9 @@ public class BlockItemFrame extends BlockTransparent {
             this.getLevel().setBlock(block, this, true, true);
             CompoundTag nbt = new CompoundTag()
                     .putString("id", BlockEntity.ITEM_FRAME)
-                    .putInt("x", (int) block.x)
-                    .putInt("y", (int) block.y)
-                    .putInt("z", (int) block.z)
+                    .putInt("x", block.x)
+                    .putInt("y", block.y)
+                    .putInt("z", block.z)
                     .putByte("ItemRotation", 0)
                     .putFloat("ItemDropChance", 1.0f);
             if (item.hasCustomBlockData()) {
@@ -94,8 +95,8 @@ public class BlockItemFrame extends BlockTransparent {
                     nbt.put(aTag.getName(), aTag);
                 }
             }
-            new BlockEntityItemFrame(this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
-            this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_PLACE);
+            new BlockEntityItemFrame(this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+            this.getLevel().addSound(this.asVector3f(), Sound.BLOCK_ITEMFRAME_PLACE);
             return true;
         }
         return false;
@@ -104,7 +105,7 @@ public class BlockItemFrame extends BlockTransparent {
     @Override
     public boolean onBreak(Item item) {
         this.getLevel().setBlock(this, Block.get(AIR), true, true);
-        this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_REMOVE_ITEM);
+        this.getLevel().addSound(this.asVector3f(), Sound.BLOCK_ITEMFRAME_REMOVE_ITEM);
         return true;
     }
 

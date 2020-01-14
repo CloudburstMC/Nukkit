@@ -5,7 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
@@ -30,7 +30,7 @@ public abstract class BlockButton extends FloodableBlock implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (target.isTransparent()) {
             return false;
         }
@@ -56,10 +56,9 @@ public abstract class BlockButton extends FloodableBlock implements Faceable {
         this.level.setBlock(this, this, true, false);
         this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_CLICK);
         this.level.scheduleUpdate(this, 30);
-        Vector3 pos = getLocation();
 
-        level.updateAroundRedstone(pos, null);
-        level.updateAroundRedstone(pos.getSide(getFacing().getOpposite()), null);
+        level.updateAroundRedstone(this, null);
+        level.updateAroundRedstone(this.getSide(getFacing().getOpposite()), null);
         return true;
     }
 
@@ -78,9 +77,8 @@ public abstract class BlockButton extends FloodableBlock implements Faceable {
                 this.level.setBlock(this, this, true, false);
                 this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_CLICK);
 
-                Vector3 pos = getLocation();
-                level.updateAroundRedstone(pos, null);
-                level.updateAroundRedstone(pos.getSide(getFacing().getOpposite()), null);
+                level.updateAroundRedstone(this, null);
+                level.updateAroundRedstone(this.getSide(getFacing().getOpposite()), null);
             }
 
             return Level.BLOCK_UPDATE_SCHEDULED;

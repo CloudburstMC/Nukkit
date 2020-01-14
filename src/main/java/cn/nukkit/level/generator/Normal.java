@@ -18,7 +18,7 @@ import cn.nukkit.level.generator.populator.impl.PopulatorOre;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.NukkitRandom;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collections;
@@ -405,7 +405,7 @@ public class Normal extends Generator {
     }
 
     @Override
-    public Vector3 getSpawn() {
-        return new Vector3(0.5, 256, 0.5);
+    public Vector3f getSpawn() {
+        return new Vector3f(0.5, 256, 0.5);
     }
 }

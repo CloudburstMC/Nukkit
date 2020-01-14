@@ -1,7 +1,7 @@
 package cn.nukkit.entity.data;
 
-import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3f;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.EnumMap;
@@ -86,15 +86,15 @@ public class EntityDataMap {
         return put(key, value);
     }
 
-    public BlockVector3 getPos(EntityData key) {
-        return getPos(key, new BlockVector3());
+    public Vector3i getPos(EntityData key) {
+        return getPos(key, new Vector3i());
     }
 
-    public BlockVector3 getPos(EntityData key, BlockVector3 defaultValue) {
+    public Vector3i getPos(EntityData key, Vector3i defaultValue) {
         return get(key, defaultValue);
     }
 
-    public EntityDataMap putPos(EntityData key, BlockVector3 value) {
+    public EntityDataMap putPos(EntityData key, Vector3i value) {
         return put(key, value);
     }
 

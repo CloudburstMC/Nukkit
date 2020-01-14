@@ -1,6 +1,6 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.math.BlockVector3;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.utils.Binary;
 import io.netty.buffer.ByteBuf;
 import lombok.ToString;
@@ -8,7 +8,7 @@ import lombok.ToString;
 @ToString
 public class NetworkChunkPublisherUpdatePacket extends DataPacket {
 
-    public BlockVector3 position;
+    public Vector3i position;
     public int radius;
 
     @Override

@@ -23,7 +23,7 @@ public class BlockEntityComparator extends BlockEntity {
 
     @Override
     public boolean isBlockEntityValid() {
-        return this.getLevelBlock() instanceof BlockRedstoneComparator;
+        return this.getBlock() instanceof BlockRedstoneComparator;
     }
 
     public int getOutputSignal() {

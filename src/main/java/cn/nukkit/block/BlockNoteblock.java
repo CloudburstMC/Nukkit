@@ -7,6 +7,7 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.BlockEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
@@ -170,7 +171,7 @@ public class BlockNoteblock extends BlockSolid {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         this.getLevel().setBlock(block, this, true);
         this.createBlockEntity();
         return true;
@@ -197,15 +198,15 @@ public class BlockNoteblock extends BlockSolid {
 
         Instrument instrument = this.getInstrument();
 
-        this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_NOTE, instrument.ordinal() << 8 | this.getStrength());
+        this.level.addLevelSoundEvent(this.asVector3f(), LevelSoundEventPacket.SOUND_NOTE, instrument.ordinal() << 8 | this.getStrength());
 
         BlockEventPacket pk = new BlockEventPacket();
-        pk.x = this.getFloorX();
-        pk.y = this.getFloorY();
-        pk.z = this.getFloorZ();
+        pk.x = this.getX();
+        pk.y = this.getY();
+        pk.z = this.getZ();
         pk.case1 = instrument.ordinal();
         pk.case2 = this.getStrength();
-        this.getLevel().addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, pk);
+        this.getLevel().addChunkPacket(this.getChunkX(), this.getChunkZ(), pk);
     }
 
     @Override
@@ -242,8 +243,8 @@ public class BlockNoteblock extends BlockSolid {
     }
 
     private BlockEntityMusic createBlockEntity() {
-        return new BlockEntityMusic(this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
-                                        BlockEntity.getDefaultCompound(this, BlockEntity.MUSIC));
+        return new BlockEntityMusic(this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()),
+                BlockEntity.getDefaultCompound(this, BlockEntity.MUSIC));
     }
 
     public enum Instrument {

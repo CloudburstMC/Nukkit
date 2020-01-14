@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.Rail;
 
@@ -34,7 +34,7 @@ public class BlockRailPowered extends BlockRail {
                 return 0; // Already broken
             }
             boolean wasPowered = isActive();
-            boolean isPowered = level.isBlockPowered(this.getLocation())
+            boolean isPowered = level.isBlockPowered(this.asVector3i())
                     || checkSurrounding(this, true, 0)
                     || checkSurrounding(this, false, 0);
 
@@ -59,18 +59,18 @@ public class BlockRailPowered extends BlockRail {
      * @param power    The count of the rail that had been counted
      * @return Boolean of the surrounding area. Where the powered rail on!
      */
-    protected boolean checkSurrounding(Vector3 pos, boolean relative, int power) {
+    protected boolean checkSurrounding(Vector3i pos, boolean relative, int power) {
         // The powered rail can power up to 8 blocks only
         if (power >= 8) {
             return false;
         }
         // The position of the floor numbers
-        int dx = pos.getFloorX();
-        int dy = pos.getFloorY();
-        int dz = pos.getFloorZ();
+        int dx = pos.getX();
+        int dy = pos.getY();
+        int dz = pos.getZ();
         // First: get the base block
         BlockRail block;
-        Block block2 = level.getBlock(new Vector3(dx, dy, dz));
+        Block block2 = level.getBlock(dx, dy, dz);
 
         // Second: check if the rail is Powered rail
         if (Rail.isRailBlock(block2)) {
@@ -144,11 +144,11 @@ public class BlockRailPowered extends BlockRail {
                 return false;
         }
         // Next check the if rail is on power state
-        return canPowered(new Vector3(dx, dy, dz), base, power, relative)
-                || onStraight && canPowered(new Vector3(dx, dy - 1, dz), base, power, relative);
+        return canPowered(new Vector3i(dx, dy, dz), base, power, relative)
+                || onStraight && canPowered(new Vector3i(dx, dy - 1, dz), base, power, relative);
     }
 
-    protected boolean canPowered(Vector3 pos, Rail.Orientation state, int power, boolean relative) {
+    protected boolean canPowered(Vector3i pos, Rail.Orientation state, int power, boolean relative) {
         Block block = level.getBlock(pos);
         // What! My block is air??!! Impossible! XD
         if (!(block instanceof BlockRailPowered)) {

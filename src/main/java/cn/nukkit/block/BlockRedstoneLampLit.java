@@ -28,7 +28,7 @@ public class BlockRedstoneLampLit extends BlockRedstoneLamp {
 
     @Override
     public int onUpdate(int type) {
-        if ((type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) && !this.level.isBlockPowered(this.getLocation())) {
+        if ((type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) && !this.level.isBlockPowered(this.asVector3i())) {
             // Redstone event
             RedstoneUpdateEvent ev = new RedstoneUpdateEvent(this);
             getLevel().getServer().getPluginManager().callEvent(ev);
@@ -39,7 +39,7 @@ public class BlockRedstoneLampLit extends BlockRedstoneLamp {
             return 1;
         }
 
-        if (type == Level.BLOCK_UPDATE_SCHEDULED && !this.level.isBlockPowered(this.getLocation())) {
+        if (type == Level.BLOCK_UPDATE_SCHEDULED && !this.level.isBlockPowered(this.asVector3i())) {
             this.level.setBlock(this, Block.get(REDSTONE_LAMP), false, false);
         }
         return 0;

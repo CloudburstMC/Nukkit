@@ -7,7 +7,7 @@ import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.utils.SerializedImage;
 import com.google.common.base.Strings;
@@ -46,15 +46,15 @@ public class FloatingTextParticle extends Particle {
         this(location.getLevel(), location, title, text);
     }
 
-    public FloatingTextParticle(Vector3 pos, String title) {
+    public FloatingTextParticle(Vector3f pos, String title) {
         this(pos, title, null);
     }
 
-    public FloatingTextParticle(Vector3 pos, String title, String text) {
+    public FloatingTextParticle(Vector3f pos, String title, String text) {
         this(null, pos, title, text);
     }
 
-    private FloatingTextParticle(Level level, Vector3 pos, String title, String text) {
+    private FloatingTextParticle(Level level, Vector3f pos, String title, String text) {
         super(pos.x, pos.y, pos.z);
         this.level = level;
 

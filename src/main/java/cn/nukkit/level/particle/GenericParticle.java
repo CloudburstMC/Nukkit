@@ -1,6 +1,6 @@
 package cn.nukkit.level.particle;
 
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.LevelEventPacket;
 
@@ -14,11 +14,11 @@ public class GenericParticle extends Particle {
 
     protected final int data;
 
-    public GenericParticle(Vector3 pos, int id) {
+    public GenericParticle(Vector3f pos, int id) {
         this(pos, id, 0);
     }
 
-    public GenericParticle(Vector3 pos, int id, int data) {
+    public GenericParticle(Vector3f pos, int id, int data) {
         super(pos.x, pos.y, pos.z);
         this.id = id;
         this.data = data;

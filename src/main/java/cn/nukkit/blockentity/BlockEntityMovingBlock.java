@@ -2,7 +2,7 @@ package cn.nukkit.blockentity;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.math.BlockVector3;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.registry.BlockRegistry;
 
@@ -13,7 +13,7 @@ public class BlockEntityMovingBlock extends BlockEntitySpawnable {
 
     public Block block;
 
-    public BlockVector3 piston;
+    public Vector3i piston;
     public int progress;
 
     public BlockEntityMovingBlock(Chunk chunk, CompoundTag nbt) {
@@ -29,7 +29,7 @@ public class BlockEntityMovingBlock extends BlockEntitySpawnable {
         }
 
         if (namedTag.contains("pistonPosX") && namedTag.contains("pistonPosY") && namedTag.contains("pistonPosZ")) {
-            this.piston = new BlockVector3(namedTag.getInt("pistonPosX"), namedTag.getInt("pistonPosY"), namedTag.getInt("pistonPosZ"));
+            this.piston = new Vector3i(namedTag.getInt("pistonPosX"), namedTag.getInt("pistonPosY"), namedTag.getInt("pistonPosZ"));
         } else {
             this.close();
         }

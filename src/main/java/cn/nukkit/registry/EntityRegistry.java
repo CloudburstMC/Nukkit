@@ -170,7 +170,7 @@ public class EntityRegistry implements Registry {
      * @return entity ID
      */
     public long newEntityId() {
-        return this.entityIdAllocator.getAndIncrement();
+        return this.entityIdAllocator.incrementAndGet();
     }
 
     public Identifier getIdentifier(String legacyName) {

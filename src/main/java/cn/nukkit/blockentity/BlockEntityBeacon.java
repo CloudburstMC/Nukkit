@@ -151,9 +151,9 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
     private static final int POWER_LEVEL_MAX = 4;
 
     private boolean hasSkyAccess() {
-        int tileX = getFloorX();
-        int tileY = getFloorY();
-        int tileZ = getFloorZ();
+        int tileX = getX();
+        int tileY = getY();
+        int tileZ = getZ();
 
         //Check every block from our y coord to the top of the world
         for (int y = tileY + 1; y <= 255; y++) {
@@ -168,9 +168,9 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
     }
 
     private int calculatePowerLevel() {
-        int tileX = getFloorX();
-        int tileY = getFloorY();
-        int tileZ = getFloorZ();
+        int tileX = getX();
+        int tileY = getY();
+        int tileZ = getZ();
 
         //The power level that we're testing for
         for (int powerLevel = 1; powerLevel <= POWER_LEVEL_MAX; powerLevel++) {
@@ -180,15 +180,10 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
                 for (int queryZ = tileZ - powerLevel; queryZ <= tileZ + powerLevel; queryZ++) {
 
                     Identifier testBlockId = level.getBlockIdAt(queryX, queryY, queryZ);
-                    if (
-                            testBlockId != IRON_BLOCK &&
-                                    testBlockId != GOLD_BLOCK &&
-                                    testBlockId != EMERALD_BLOCK &&
-                                    testBlockId != DIAMOND_BLOCK
-                    ) {
+                    if (testBlockId != IRON_BLOCK && testBlockId != GOLD_BLOCK && testBlockId != EMERALD_BLOCK &&
+                            testBlockId != DIAMOND_BLOCK) {
                         return powerLevel - 1;
                     }
-
                 }
             }
         }

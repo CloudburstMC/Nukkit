@@ -4,12 +4,14 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.level.BlockPosition;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.player.Player;
@@ -31,13 +33,27 @@ import static cn.nukkit.block.BlockIds.*;
  * Nukkit Project
  */
 @Log4j2
-public abstract class Block extends Position implements Metadatable, Cloneable, AxisAlignedBB {
+public abstract class Block extends BlockPosition implements Metadatable, Cloneable, AxisAlignedBB {
 
     protected final Identifier id;
     protected int meta;
 
     public Block(Identifier id) {
         this.id = id;
+    }
+
+    public static long key(int x, int y, int z) {
+        if (y < 0 || y >= 256) {
+            throw new IllegalArgumentException("Y coordinate y is out of range!");
+        }
+        return (((long) x & (long) 0xFFFFFFF) << 36) | (((long) y & (long) 0xFF) << 28) | ((long) z & (long) 0xFFFFFFF);
+    }
+
+    public static Vector3i fromKey(long key) {
+        int x = (int) ((key >>> 36) & 0xFFFFFFF);
+        int y = (int) ((key >> 27) & 0xFF);
+        int z = (int) (key & 0xFFFFFFF);
+        return new Vector3i(x, y, z);
     }
 
     public static Block get(Identifier identifier) {
@@ -48,17 +64,22 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return get(identifier, meta, null, 0, 0, 0);
     }
 
-    public static Block get(Identifier identifier, int meta, Position pos) {
-        return pos != null ? get(identifier, meta, pos.level, (int) pos.x, (int) pos.y, (int) pos.z) :
-                get(identifier, meta, null, 0, 0, 0);
+    public static Block get(Identifier identifier, int meta, BlockPosition pos) {
+        return pos != null ? get(identifier, meta, pos.level, pos.x, pos.y, pos.z, pos.layer) :
+                get(identifier, meta, null, 0, 0, 0, 0);
     }
 
     public static Block get(Identifier identifier, int meta, Level level, int x, int y, int z) {
+        return get(identifier, meta, level, x, y, z, 0);
+    }
+
+    public static Block get(Identifier identifier, int meta, Level level, int x, int y, int z, int layer) {
         Block block = BlockRegistry.get().getBlock(identifier, meta).clone();
         block.x = x;
         block.y = y;
         block.z = z;
         block.level = level;
+        block.layer = layer;
         return block;
     }
 
@@ -88,7 +109,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return block;
     }
 
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         return this.getLevel().setBlock(this, this, true, true);
     }
 
@@ -233,7 +254,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return id;
     }
 
-    public void addVelocityToEntity(Entity entity, Vector3 vector) {
+    public void addVelocityToEntity(Entity entity, Vector3f vector) {
 
     }
 
@@ -245,11 +266,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         this.meta = meta;
     }
 
-    public final void position(Position v) {
-        this.x = (int) v.x;
-        this.y = (int) v.y;
-        this.z = (int) v.z;
+    public final void position(BlockPosition v) {
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
         this.level = v.level;
+        this.layer = v.layer;
     }
 
     public String getDescriptionId() {
@@ -477,9 +499,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     @Override
     public String toString() {
-        return "Block(id=" + this.getId() + ", data=" + this.getDamage() +
-                ", min=(" + getMinX() + ", " + getMinY() + ", " + getMinZ() + ")" +
-                ", max=(" + getMaxX() + ", " + getMaxY() + ", " + getMaxZ() + ")";
+        return String.format("Block(id=%s, data=%s, position=(%d, %d, %d))", this.id, this.meta, this.x, this.y, this.z);
     }
 
     public boolean collidesWithBB(AxisAlignedBB bb) {
@@ -541,18 +561,18 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return getBoundingBox();
     }
 
-    public MovingObjectPosition calculateIntercept(Vector3 pos1, Vector3 pos2) {
+    public MovingObjectPosition calculateIntercept(Vector3f pos1, Vector3f pos2) {
         AxisAlignedBB bb = this.getBoundingBox();
         if (bb == null) {
             return null;
         }
 
-        Vector3 v1 = pos1.getIntermediateWithXValue(pos2, bb.getMinX());
-        Vector3 v2 = pos1.getIntermediateWithXValue(pos2, bb.getMaxX());
-        Vector3 v3 = pos1.getIntermediateWithYValue(pos2, bb.getMinY());
-        Vector3 v4 = pos1.getIntermediateWithYValue(pos2, bb.getMaxY());
-        Vector3 v5 = pos1.getIntermediateWithZValue(pos2, bb.getMinZ());
-        Vector3 v6 = pos1.getIntermediateWithZValue(pos2, bb.getMaxZ());
+        Vector3f v1 = pos1.getIntermediateWithXValue(pos2, bb.getMinX());
+        Vector3f v2 = pos1.getIntermediateWithXValue(pos2, bb.getMaxX());
+        Vector3f v3 = pos1.getIntermediateWithYValue(pos2, bb.getMinY());
+        Vector3f v4 = pos1.getIntermediateWithYValue(pos2, bb.getMaxY());
+        Vector3f v5 = pos1.getIntermediateWithZValue(pos2, bb.getMinZ());
+        Vector3f v6 = pos1.getIntermediateWithZValue(pos2, bb.getMaxZ());
 
         if (v1 != null && !bb.isVectorInYZ(v1)) {
             v1 = null;
@@ -578,7 +598,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             v6 = null;
         }
 
-        Vector3 vector = v1;
+        Vector3f vector = v1;
 
         if (v2 != null && (vector == null || pos1.distanceSquared(v2) < pos1.distanceSquared(vector))) {
             vector = v2;
@@ -673,7 +693,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public String getLocationHash() {
-        return this.getFloorX() + ":" + this.getFloorY() + ":" + this.getFloorZ();
+        return this.getX() + ":" + this.getY() + ":" + this.getZ() + ":" + this.getLayer();
     }
 
     public int getDropExp() {

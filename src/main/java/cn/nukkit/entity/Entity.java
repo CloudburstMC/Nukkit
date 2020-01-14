@@ -53,7 +53,7 @@ import static cn.nukkit.network.protocol.SetEntityLinkPacket.*;
 @Log4j2
 public abstract class Entity extends Location implements Metadatable {
 
-    protected static final ThreadLocal<Vector3> temporalVector = ThreadLocal.withInitial(Vector3::new);
+    protected static final ThreadLocal<Vector3f> temporalVector = ThreadLocal.withInitial(Vector3f::new);
 
     protected final Set<Player> hasSpawned = ConcurrentHashMap.newKeySet();
 
@@ -448,6 +448,35 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
+    public static CompoundTag getDefaultNBT(Vector3f pos) {
+        return getDefaultNBT(pos, null);
+    }
+
+    public static CompoundTag getDefaultNBT(Vector3f pos, Vector3f motion) {
+        Location loc = pos instanceof Location ? (Location) pos : null;
+
+        if (loc != null) {
+            return getDefaultNBT(pos, motion, (float) loc.getYaw(), (float) loc.getPitch());
+        }
+
+        return getDefaultNBT(pos, motion, 0, 0);
+    }
+
+    public static CompoundTag getDefaultNBT(Vector3f pos, Vector3f motion, float yaw, float pitch) {
+        return new CompoundTag()
+                .putList(new ListTag<DoubleTag>("Pos")
+                        .add(new DoubleTag("", pos.x))
+                        .add(new DoubleTag("", pos.y))
+                        .add(new DoubleTag("", pos.z)))
+                .putList(new ListTag<DoubleTag>("Motion")
+                        .add(new DoubleTag("", motion != null ? motion.x : 0))
+                        .add(new DoubleTag("", motion != null ? motion.y : 0))
+                        .add(new DoubleTag("", motion != null ? motion.z : 0)))
+                .putList(new ListTag<FloatTag>("Rotation")
+                        .add(new FloatTag("", yaw))
+                        .add(new FloatTag("", pitch)));
+    }
+
     protected final void init(Chunk chunk, CompoundTag nbt) {
         if (chunk == null) {
             throw new ChunkException("Invalid garbage Chunk given to Entity");
@@ -523,7 +552,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.scale = this.namedTag.getFloat("Scale");
         this.setFloatData(SCALE, scale);
 
-        this.chunk.addEntity(this);
+        chunk.addEntity(this);
         this.level.addEntity(this);
 
         this.initEntity();
@@ -532,35 +561,6 @@ public abstract class Entity extends Location implements Metadatable {
         this.server.getPluginManager().callEvent(new EntitySpawnEvent(this));
 
         this.scheduleUpdate();
-    }
-
-    public static CompoundTag getDefaultNBT(Vector3 pos) {
-        return getDefaultNBT(pos, null);
-    }
-
-    public static CompoundTag getDefaultNBT(Vector3 pos, Vector3 motion) {
-        Location loc = pos instanceof Location ? (Location) pos : null;
-
-        if (loc != null) {
-            return getDefaultNBT(pos, motion, (float) loc.getYaw(), (float) loc.getPitch());
-        }
-
-        return getDefaultNBT(pos, motion, 0, 0);
-    }
-
-    public static CompoundTag getDefaultNBT(Vector3 pos, Vector3 motion, float yaw, float pitch) {
-        return new CompoundTag()
-                .putList(new ListTag<DoubleTag>("Pos")
-                        .add(new DoubleTag("", pos.x))
-                        .add(new DoubleTag("", pos.y))
-                        .add(new DoubleTag("", pos.z)))
-                .putList(new ListTag<DoubleTag>("Motion")
-                        .add(new DoubleTag("", motion != null ? motion.x : 0))
-                        .add(new DoubleTag("", motion != null ? motion.y : 0))
-                        .add(new DoubleTag("", motion != null ? motion.z : 0)))
-                .putList(new ListTag<FloatTag>("Rotation")
-                        .add(new FloatTag("", yaw))
-                        .add(new FloatTag("", pitch)));
     }
 
     public void saveNBT() {
@@ -629,11 +629,12 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void spawnTo(Player player) {
-        player.dataPacket(createAddEntityPacket());
-
-        if (!this.hasSpawned.contains(player) && player.isChunkInView(this.chunk.getX(), this.chunk.getZ())) {
-            this.hasSpawned.add(player);
+        if (!player.isChunkInView(this.chunk.getX(), this.chunk.getZ()) || !this.hasSpawned.add(player)) {
+            // out of range or already spawned
+            return;
         }
+
+        player.dataPacket(createAddEntityPacket());
 
         if (this.riding != null) {
             this.riding.spawnTo(player);
@@ -1013,7 +1014,7 @@ public abstract class Entity extends Location implements Metadatable {
                         List<CompletableFuture<Chunk>> chunksToLoad = new ArrayList<>();
                         for (int x = -1; x < 2; x++) {
                             for (int z = -1; z < 2; z++) {
-                                int chunkX = (newPos.getFloorX() >> 4) + x, chunkZ = (newPos.getFloorZ() >> 4) + z;
+                                int chunkX = (newPos.getChunkX()) + x, chunkZ = (newPos.getChunkZ()) + z;
                                 chunksToLoad.add(newPos.level.getChunkFuture(chunkX, chunkZ));
                             }
                         }
@@ -1077,8 +1078,8 @@ public abstract class Entity extends Location implements Metadatable {
         Server.broadcastPacket(this.hasSpawned, pk);
     }
 
-    public Vector3 getDirectionVector() {
-        Vector3 vector = super.getDirectionVector();
+    public Vector3f getDirectionVector() {
+        Vector3f vector = super.getDirectionVector();
         return temporalVector.get().setComponents(vector.x, vector.y, vector.z);
     }
 
@@ -1209,7 +1210,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     protected void updatePassengerPosition(Entity passenger) {
-        passenger.setPosition(this.add(passenger.getSeatPosition().asVector3()));
+        passenger.setPosition(this.add(passenger.getSeatPosition()));
     }
 
     public Vector3f getSeatPosition() {
@@ -1307,7 +1308,7 @@ public abstract class Entity extends Location implements Metadatable {
         }
 
         if (fallDistance > 0.75) {
-            Block down = this.level.getBlock(this.floor().down());
+            Block down = this.level.getBlock(this.asBlockPosition().down());
 
             if (down.getId() == FARMLAND) {
                 Event ev;
@@ -1391,7 +1392,7 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
+    public boolean onInteract(Player player, Item item, Vector3f clickedPos) {
         return onInteract(player, item);
     }
 
@@ -1435,8 +1436,8 @@ public abstract class Entity extends Location implements Metadatable {
 
     public boolean isInsideOfWater() {
         double y = this.y + this.getEyeHeight();
-        Block block = this.level.getLoadedBlock(temporalVector.get().setComponents(NukkitMath.floorDouble(this.x)
-                , NukkitMath.floorDouble(y), NukkitMath.floorDouble(this.z)));
+        Block block = this.level.getLoadedBlock(NukkitMath.floorDouble(this.x), NukkitMath.floorDouble(y),
+                NukkitMath.floorDouble(this.z));
 
         if (block instanceof BlockWater) {
             double f = (block.y + 1) - (((BlockWater) block).getFluidHeightPercent() - 0.1111111);
@@ -1651,12 +1652,7 @@ public abstract class Entity extends Location implements Metadatable {
             for (int z = minZ; z <= maxZ; ++z) {
                 for (int x = minX; x <= maxX; ++x) {
                     for (int y = minY; y <= maxY; ++y) {
-                        Block block = this.level.getLoadedBlock(temporalVector.get().setComponents(x, y, z));
-                        if (block != null) {
-                            this.blocksAround.add(block);
-                        } else {
-                            log.warn("Could not load block around player");
-                        }
+                        this.blocksAround.add(this.level.getBlock(x, y, z));
                     }
                 }
             }
@@ -1689,7 +1685,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     protected void checkBlockCollision() {
-        Vector3 vector = new Vector3(0, 0, 0);
+        Vector3f vector = new Vector3f(0, 0, 0);
         boolean portal = false;
 
         for (Block block : this.getCollisionBlocks()) {
@@ -1721,7 +1717,7 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    public boolean setPositionAndRotation(Vector3 pos, double yaw, double pitch) {
+    public boolean setPositionAndRotation(Vector3f pos, double yaw, double pitch) {
         if (this.setPosition(pos)) {
             this.setRotation(yaw, pitch);
             return true;
@@ -1751,7 +1747,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     protected void checkChunks() {
-        if (this.chunk == null || (this.chunk.getX() != ((int) this.x >> 4)) || this.chunk.getZ() != ((int) this.z >> 4)) {
+        if (this.chunk == null || (this.chunk.getX() != this.getChunkX() || this.chunk.getZ() != this.getChunkZ())) {
             if (this.chunk != null) {
                 this.chunk.removeEntity(this);
             }
@@ -1780,7 +1776,7 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    public boolean setPosition(Vector3 pos) {
+    public boolean setPosition(Vector3f pos) {
         if (this.closed) {
             return false;
         }
@@ -1805,11 +1801,11 @@ public abstract class Entity extends Location implements Metadatable {
         return true;
     }
 
-    public Vector3 getMotion() {
-        return new Vector3(this.motionX, this.motionY, this.motionZ);
+    public Vector3f getMotion() {
+        return new Vector3f(this.motionX, this.motionY, this.motionZ);
     }
 
-    public boolean setMotion(Vector3 motion) {
+    public boolean setMotion(Vector3f motion) {
         if (!this.justCreated) {
             EntityMotionEvent ev = new EntityMotionEvent(this, motion);
             this.server.getPluginManager().callEvent(ev);
@@ -1842,11 +1838,11 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    public boolean teleport(Vector3 pos) {
+    public boolean teleport(Vector3f pos) {
         return this.teleport(pos, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
-    public boolean teleport(Vector3 pos, PlayerTeleportEvent.TeleportCause cause) {
+    public boolean teleport(Vector3f pos, PlayerTeleportEvent.TeleportCause cause) {
         return this.teleport(Location.fromObject(pos, this.level, this.yaw, this.pitch), cause);
     }
 
@@ -2047,12 +2043,12 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    public BlockVector3 getPosData(EntityData data) {
+    public Vector3i getPosData(EntityData data) {
         return this.data.getPos(data);
     }
 
-    public void setPosData(EntityData data, BlockVector3 value) {
-        BlockVector3 oldValue = getPosData(data);
+    public void setPosData(EntityData data, Vector3i value) {
+        Vector3i oldValue = getPosData(data);
         if (!Objects.equals(oldValue, value)) {
             this.data.putPos(data, value);
             this.dataChangeSet.putPos(data, value);

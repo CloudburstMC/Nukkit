@@ -18,7 +18,6 @@ import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AnimatePacket;
@@ -162,7 +161,7 @@ public class Boat extends Vehicle {
             double friction = 1 - this.getDrag();
 
             if (this.onGround && (Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionZ) > 0.00001)) {
-                friction *= this.getLevel().getBlock(temporalVector.get().setComponents((int) Math.floor(this.x), (int) Math.floor(this.y - 1), (int) Math.floor(this.z) - 1)).getFrictionFactor();
+                friction *= this.getLevel().getBlock((int) Math.floor(this.x), (int) Math.floor(this.y - 1), (int) Math.floor(this.z) - 1).getFrictionFactor();
             }
 
             this.motionX *= friction;
@@ -273,7 +272,7 @@ public class Boat extends Vehicle {
 
             @Override
             public void accept(int x, int y, int z) {
-                Block block = Boat.this.level.getBlock(temporalVector.get().setComponents(x, y, z));
+                Block block = Boat.this.level.getBlock(x, y, z);
 
                 if (block instanceof BlockWater) {
                     double level = block.getMaxY();
@@ -341,7 +340,7 @@ public class Boat extends Vehicle {
     }
 
     @Override
-    public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
+    public boolean onInteract(Player player, Item item, Vector3f clickedPos) {
         if (this.passengers.size() >= 2) {
             return false;
         }

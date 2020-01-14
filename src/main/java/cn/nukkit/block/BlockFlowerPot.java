@@ -6,6 +6,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
@@ -40,7 +41,7 @@ public class BlockFlowerPot extends FloodableBlock {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (face != BlockFace.UP) return false;
         CompoundTag nbt = new CompoundTag()
                 .putString("id", BlockEntity.FLOWER_POT)
@@ -54,7 +55,7 @@ public class BlockFlowerPot extends FloodableBlock {
                 nbt.put(aTag.getName(), aTag);
             }
         }
-        new BlockEntityFlowerPot(getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
+        new BlockEntityFlowerPot(getLevel().getChunk(block.getChunkX(), block.getChunkZ()), nbt);
 
         this.getLevel().setBlock(block, this, true, true);
         return true;

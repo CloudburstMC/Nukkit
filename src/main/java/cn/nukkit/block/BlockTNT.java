@@ -79,14 +79,14 @@ public class BlockTNT extends BlockSolid {
                         .add(new FloatTag("", 0)))
                 .putShort("Fuse", fuse);
         Entity tnt = new Tnt(EntityTypes.TNT,
-                this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), nbt, source);
+                this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt, source);
         tnt.spawnToAll();
-        this.level.addSound(this, Sound.RANDOM_FUSE);
+        this.level.addSound(this.asVector3f(), Sound.RANDOM_FUSE);
     }
 
     @Override
     public int onUpdate(int type) {
-        if ((type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) && this.level.isBlockPowered(this.getLocation())) {
+        if ((type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) && this.level.isBlockPowered(this.asVector3i())) {
             this.prime();
         }
 

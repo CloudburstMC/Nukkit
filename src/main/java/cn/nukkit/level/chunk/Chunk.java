@@ -4,10 +4,12 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.level.BlockPosition;
 import cn.nukkit.level.BlockUpdate;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.chunk.bitarray.BitArrayVersion;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.network.protocol.LevelChunkPacket;
 import cn.nukkit.player.Player;
@@ -447,22 +449,8 @@ public final class Chunk implements IChunk, Closeable {
         return unsafe.isDirty();
     }
 
-    @Override
-    public boolean setDirty() {
-        boolean changed = unsafe.setDirty();
-        if (changed) {
-            clearCache();
-        }
-        return changed;
-    }
-
-    @Override
-    public boolean setDirty(boolean dirty) {
-        boolean changed = unsafe.setDirty(dirty);
-        if (changed) {
-            clearCache();
-        }
-        return changed;
+    public static short blockKey(Vector3i vector) {
+        return blockKey(vector.x, vector.y, vector.z);
     }
 
     @Synchronized("loaders")
@@ -483,83 +471,8 @@ public final class Chunk implements IChunk, Closeable {
         }
     }
 
-    @Nonnull
-    public synchronized LevelChunkPacket createChunkPacket() {
-        if (this.cached != null) {
-            LevelChunkPacket packet = this.cached.get();
-            if (packet != null) {
-                return packet.copy();
-            } else {
-                this.cached = null;
-            }
-        }
-
-        LevelChunkPacket packet = new LevelChunkPacket();
-        packet.chunkX = this.getX();
-        packet.chunkZ = this.getZ();
-
-        this.lock.readLock().lock();
-        try {
-            ChunkSection[] sections = unsafe.getSections();
-
-            int subChunkCount = SECTION_COUNT - 1; // index
-            while (subChunkCount >= 0 && (sections[subChunkCount] == null || sections[subChunkCount].isEmpty())) {
-                subChunkCount--;
-            }
-            subChunkCount++; // length
-
-            ChunkSection[] networkSections = Arrays.copyOf(sections, subChunkCount);
-            for (int i = 0; i < subChunkCount; i++) {
-                if (networkSections[i] == null) {
-                    networkSections[i] = EMPTY;
-                }
-            }
-
-            packet.subChunkCount = subChunkCount;
-
-            ByteBuf buffer = Unpooled.buffer();
-            try {
-                for (int i = 0; i < subChunkCount; i++) {
-                    networkSections[i].writeToNetwork(buffer);
-                }
-
-                buffer.writeBytes(unsafe.getBiomeArray()); // Biomes - 256 bytes
-                buffer.writeByte(0); // Border blocks size - Education Edition only
-
-                // Extra Data length. Replaced by second block layer.
-                Binary.writeUnsignedVarInt(buffer, 0);
-
-                Collection<BlockEntity> tiles = unsafe.getBlockEntities();
-                // Block entities
-                if (!tiles.isEmpty()) {
-                    try (ByteBufOutputStream stream = new ByteBufOutputStream(buffer)) {
-                        tiles.forEach(blockEntity -> {
-                            if (blockEntity instanceof BlockEntitySpawnable) {
-                                try {
-                                    NBTIO.write(((BlockEntitySpawnable) blockEntity).getSpawnCompound(), stream,
-                                            ByteOrder.LITTLE_ENDIAN, true);
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
-                        });
-                    }
-                }
-
-                packet.data = buffer.asReadOnly(); // Stop any accidental corruption
-
-                this.cached = new CacheSoftReference(packet, Utils.REFERENCE_QUEUE);
-
-                return packet.copy();
-            } catch (IOException e) {
-                buffer.release();
-                log.error("Error whilst encoding chunk", e);
-                this.cached = null;
-                throw new ChunkException("Unable to create chunk packet", e);
-            }
-        } finally {
-            this.lock.readLock().unlock();
-        }
+    public static short blockKey(int x, int y, int z) {
+        return (short) ((x & 0xf) | ((z & 0xf) << 4) | ((y & 0xff) << 9));
     }
 
     @Nonnull
@@ -634,6 +547,124 @@ public final class Chunk implements IChunk, Closeable {
         @Override
         public void finalizeReferent() {
             this.hardRef.release();
+        }
+    }
+
+    public static int blockKey(int x, int y, int z, int layer) {
+        return (layer & 0x1) | ((x & 0xf) << 1) | ((z & 0xf) << 5) | ((y & 0xff) << 9);
+    }
+
+    public static Vector3i fromKey(long chunkKey, short blockKey) {
+        int x = (blockKey & 0xf) | (fromKeyX(chunkKey) << 4);
+        int z = ((blockKey >>> 4) & 0xf) | (fromKeyZ(chunkKey) << 4);
+        int y = (blockKey >>> 8) & 0xff;
+        return new Vector3i(x, y, z);
+    }
+
+    public static BlockPosition fromKey(long chunkKey, int blockKey) {
+        int layer = blockKey & 0x1;
+        int x = ((blockKey >>> 1) & 0xf) | (fromKeyX(chunkKey) << 4);
+        int z = ((blockKey >>> 5) & 0xf) | (fromKeyZ(chunkKey) << 4);
+        int y = (blockKey >>> 9) & 0xff;
+        return new BlockPosition(x, y, z, null, layer);
+    }
+
+    public static long key(int x, int z) {
+        return (((long) x) << 32) | (z & 0xffffffffL);
+    }
+
+    public static int fromKeyX(long key) {
+        return (int) (key >> 32);
+    }
+
+    public static int fromKeyZ(long key) {
+        return (int) key;
+    }
+
+    @Override
+    public void setDirty(boolean dirty) {
+        unsafe.setDirty(dirty);
+    }
+
+    @Nonnull
+    public synchronized LevelChunkPacket createChunkPacket() {
+        if (UnsafeChunk.CLEAR_CACHE_FIELD.compareAndSet(unsafe, 1, 0)) {
+            this.clearCache();
+        }
+        if (this.cached != null) {
+            LevelChunkPacket packet = this.cached.get();
+            if (packet != null) {
+                return packet.copy();
+            } else {
+                this.cached = null;
+            }
+        }
+
+        LevelChunkPacket packet = new LevelChunkPacket();
+        packet.chunkX = this.getX();
+        packet.chunkZ = this.getZ();
+
+        this.lock.readLock().lock();
+        try {
+            ChunkSection[] sections = unsafe.getSections();
+
+            int subChunkCount = SECTION_COUNT - 1; // index
+            while (subChunkCount >= 0 && (sections[subChunkCount] == null || sections[subChunkCount].isEmpty())) {
+                subChunkCount--;
+            }
+            subChunkCount++; // length
+
+            ChunkSection[] networkSections = Arrays.copyOf(sections, subChunkCount);
+            for (int i = 0; i < subChunkCount; i++) {
+                if (networkSections[i] == null) {
+                    networkSections[i] = EMPTY;
+                }
+            }
+
+            packet.subChunkCount = subChunkCount;
+
+            ByteBuf buffer = Unpooled.buffer();
+            try {
+                for (int i = 0; i < subChunkCount; i++) {
+                    networkSections[i].writeToNetwork(buffer);
+                }
+
+                buffer.writeBytes(unsafe.getBiomeArray()); // Biomes - 256 bytes
+                buffer.writeByte(0); // Border blocks size - Education Edition only
+
+                // Extra Data length. Replaced by second block layer.
+                Binary.writeUnsignedVarInt(buffer, 0);
+
+                Collection<BlockEntity> tiles = unsafe.getBlockEntities();
+                // Block entities
+                if (!tiles.isEmpty()) {
+                    try (ByteBufOutputStream stream = new ByteBufOutputStream(buffer)) {
+                        tiles.forEach(blockEntity -> {
+                            if (blockEntity instanceof BlockEntitySpawnable) {
+                                try {
+                                    NBTIO.write(((BlockEntitySpawnable) blockEntity).getSpawnCompound(), stream,
+                                            ByteOrder.LITTLE_ENDIAN, true);
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                        });
+                    }
+                }
+
+                packet.data = buffer.asReadOnly(); // Stop any accidental corruption
+
+                this.cached = new CacheSoftReference(packet, Utils.REFERENCE_QUEUE);
+
+                return packet.copy();
+            } catch (IOException e) {
+                buffer.release();
+                log.error("Error whilst encoding chunk", e);
+                this.cached = null;
+                throw new ChunkException("Unable to create chunk packet", e);
+            }
+        } finally {
+            this.lock.readLock().unlock();
         }
     }
 }

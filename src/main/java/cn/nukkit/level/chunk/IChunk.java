@@ -232,18 +232,17 @@ public interface IChunk {
 
     /**
      * Sets the chunk's dirty status.
-     *
-     * @return state changed
      */
-    boolean setDirty();
+    default void setDirty() {
+        this.setDirty(true);
+    }
 
     /**
      * Sets the chunk's dirty status.
      *
      * @param dirty true if chunk is dirty
-     * @return state changed
      */
-    boolean setDirty(boolean dirty);
+    void setDirty(boolean dirty);
 
     /**
      * Clear chunk to a state as if it was not generated.

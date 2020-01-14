@@ -6,7 +6,7 @@ import cn.nukkit.entity.misc.Painting;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
@@ -38,8 +38,8 @@ public class ItemPainting extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
-        Chunk chunk = level.getChunk((int) block.getX() >> 4, (int) block.getZ() >> 4);
+    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, Vector3f clickPos) {
+        Chunk chunk = level.getChunk(block.getChunkX(), block.getChunkZ());
 
         if (chunk == null || target.isTransparent() || face.getHorizontalIndex() == -1 || block.isSolid()) {
             return false;
@@ -66,7 +66,7 @@ public class ItemPainting extends Item {
         int direction = DIRECTION[face.getIndex() - 2];
         Painting.Motive motive = validMotives.get(ThreadLocalRandom.current().nextInt(validMotives.size()));
 
-        Vector3 position = new Vector3(target.x + 0.5, target.y + 0.5, target.z + 0.5);
+        Vector3f position = new Vector3f(target.x + 0.5, target.y + 0.5, target.z + 0.5);
         double widthOffset = offset(motive.width);
 
         switch (face.getHorizontalIndex()) {

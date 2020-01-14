@@ -7,7 +7,8 @@ import cn.nukkit.block.BlockSolid;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
@@ -38,13 +39,13 @@ public class ItemFlintSteel extends ItemTool {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, Vector3f clickPos) {
         if (block.getId() == AIR && target instanceof BlockSolid) {
             PORTAL:
             if (target.getId() == OBSIDIAN) {
-                final int targX = target.getFloorX();
-                final int targY = target.getFloorY();
-                final int targZ = target.getFloorZ();
+                final int targX = target.getX();
+                final int targY = target.getY();
+                final int targZ = target.getZ();
                 //check if there's air above (at least 3 blocks)
                 for (int i = 1; i < 4; i++) {
                     if (level.getBlockIdAt(targX, targY + i, targZ) != AIR) {
@@ -159,11 +160,11 @@ public class ItemFlintSteel extends ItemTool {
 
                     for (int height = 0; height < innerHeight; height++)    {
                         for (int width = 0; width < innerWidth; width++)    {
-                            level.setBlock(new Vector3(scanX - width, scanY + height, scanZ), Block.get(BlockIds.PORTAL));
+                            level.setBlock(new Vector3i(scanX - width, scanY + height, scanZ), Block.get(BlockIds.PORTAL));
                         }
                     }
 
-                    level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_IGNITE);
+                    level.addLevelSoundEvent(block.asVector3f(), LevelSoundEventPacket.SOUND_IGNITE);
                     return true;
                 } else if (sizeZ >= 2 && sizeZ <= MAX_PORTAL_SIZE) {
                     //start scan from 1 block above base
@@ -238,11 +239,11 @@ public class ItemFlintSteel extends ItemTool {
 
                     for (int height = 0; height < innerHeight; height++)    {
                         for (int width = 0; width < innerWidth; width++)    {
-                            level.setBlock(new Vector3(scanX, scanY + height, scanZ - width), Block.get(BlockIds.PORTAL));
+                            level.setBlock(new Vector3i(scanX, scanY + height, scanZ - width), Block.get(BlockIds.PORTAL));
                         }
                     }
 
-                    level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_IGNITE);
+                    level.addLevelSoundEvent(block.asVector3f(), LevelSoundEventPacket.SOUND_IGNITE);
                     return true;
                 }
             }
@@ -258,7 +259,7 @@ public class ItemFlintSteel extends ItemTool {
 
                 if (!e.isCancelled()) {
                     level.setBlock(fire, fire, true);
-                    level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_IGNITE);
+                    level.addLevelSoundEvent(block.asVector3f(), LevelSoundEventPacket.SOUND_IGNITE);
                     level.scheduleUpdate(fire, fire.tickRate() + ThreadLocalRandom.current().nextInt(10));
                 }
                 return true;

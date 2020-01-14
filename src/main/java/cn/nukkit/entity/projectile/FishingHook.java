@@ -16,13 +16,12 @@ import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.particle.BubbleParticle;
 import cn.nukkit.level.particle.WaterParticle;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.player.Player;
 import cn.nukkit.registry.EntityRegistry;
@@ -31,7 +30,6 @@ import cn.nukkit.utils.Identifier;
 import java.util.Random;
 
 import static cn.nukkit.block.BlockIds.AIR;
-import static cn.nukkit.entity.data.EntityData.OWNER_EID;
 
 
 /**
@@ -49,7 +47,7 @@ public class FishingHook extends Projectile {
     public boolean caught = false;
     public int coughtTimer = 0;
 
-    public Vector3 fish = null;
+    public Vector3f fish = null;
 
     public Item rod = null;
 
@@ -182,7 +180,7 @@ public class FishingHook extends Projectile {
 
     public void spawnFish() {
         Random random = new Random();
-        this.fish = new Vector3(
+        this.fish = new Vector3f(
                 this.x + (random.nextDouble() * 1.2 + 1) * (random.nextBoolean() ? -1 : 1),
                 this.getWaterHeight(),
                 this.z + (random.nextDouble() * 1.2 + 1) * (random.nextBoolean() ? -1 : 1)
@@ -210,20 +208,20 @@ public class FishingHook extends Projectile {
         if (this.shootingEntity instanceof Player && this.caught) {
             Item item = Fishing.getFishingResult(this.rod);
             int experience = new Random().nextInt((3 - 1) + 1) + 1;
-            Vector3 motion;
+            Vector3f motion;
 
             if (this.shootingEntity != null) {
                 motion = this.shootingEntity.subtract(this).multiply(0.1);
                 motion.y += Math.sqrt(this.shootingEntity.distance(this)) * 0.08;
             } else {
-                motion = new Vector3();
+                motion = new Vector3f();
             }
 
             CompoundTag itemTag = NBTIO.putItemHelper(item);
             itemTag.setName("Item");
 
             DroppedItem itemEntity = EntityRegistry.get().newEntity(EntityTypes.ITEM,
-                    this.level.getChunk((int) this.x >> 4, (int) this.z >> 4),
+                    this.level.getChunk(this.getChunkX(), this.getChunkZ()),
                     new CompoundTag()
                             .putList(new ListTag<DoubleTag>("Pos")
                                     .add(new DoubleTag("", this.getX()))
@@ -258,30 +256,6 @@ public class FishingHook extends Projectile {
             this.kill();
             this.close();
         }
-    }
-
-    @Override
-    public void spawnTo(Player player) {
-        AddEntityPacket pk = new AddEntityPacket();
-        pk.entityRuntimeId = this.getUniqueId();
-        pk.entityUniqueId = this.getUniqueId();
-        pk.type = this.getType().getIdentifier();
-        pk.x = (float) this.x;
-        pk.y = (float) this.y;
-        pk.z = (float) this.z;
-        pk.speedX = (float) this.motionX;
-        pk.speedY = (float) this.motionY;
-        pk.speedZ = (float) this.motionZ;
-        pk.yaw = (float) this.yaw;
-        pk.pitch = (float) this.pitch;
-
-        long ownerId = -1;
-        if (this.shootingEntity != null) {
-            ownerId = this.shootingEntity.getUniqueId();
-        }
-        pk.dataMap.putAll(this.getData().putLong(OWNER_EID, ownerId));
-        player.dataPacket(pk);
-        super.spawnTo(player);
     }
 
     @Override

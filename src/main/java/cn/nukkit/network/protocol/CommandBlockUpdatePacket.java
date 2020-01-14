@@ -1,6 +1,6 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.math.BlockVector3;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.utils.Binary;
 import io.netty.buffer.ByteBuf;
 import lombok.ToString;
@@ -30,7 +30,7 @@ public class CommandBlockUpdatePacket extends DataPacket {
     protected void decode(ByteBuf buffer) {
         this.isBlock = buffer.readBoolean();
         if (this.isBlock) {
-            BlockVector3 v = Binary.readBlockVector3(buffer);
+            Vector3i v = Binary.readBlockVector3(buffer);
             this.x = v.x;
             this.y = v.y;
             this.z = v.z;

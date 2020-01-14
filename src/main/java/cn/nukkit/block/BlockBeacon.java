@@ -6,6 +6,7 @@ import cn.nukkit.inventory.BeaconInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
@@ -58,7 +59,7 @@ public class BlockBeacon extends BlockTransparent {
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
-                beacon = new BlockEntityBeacon(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+                beacon = new BlockEntityBeacon(this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
             }
 
             player.addWindow(new BeaconInventory(player.getUIInventory(), this), Player.BEACON_WINDOW_ID);
@@ -67,8 +68,8 @@ public class BlockBeacon extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        boolean blockSuccess = super.place(item, block, target, face, fx, fy, fz, player);
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        boolean blockSuccess = super.place(item, block, target, face, clickPos, player);
 
         if (blockSuccess) {
             CompoundTag nbt = new CompoundTag("")
@@ -76,7 +77,7 @@ public class BlockBeacon extends BlockTransparent {
                     .putInt("x", (int) this.x)
                     .putInt("y", (int) this.y)
                     .putInt("z", (int) this.z);
-            new BlockEntityBeacon(this.level.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+            new BlockEntityBeacon(this.level.getChunk(this.getChunkX(), this.getChunkZ()), nbt);
         }
 
         return blockSuccess;

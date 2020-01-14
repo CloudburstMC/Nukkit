@@ -1,7 +1,7 @@
 package cn.nukkit.level.particle;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.registry.ItemRegistry;
 
 /**
@@ -9,7 +9,7 @@ import cn.nukkit.registry.ItemRegistry;
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class ItemBreakParticle extends GenericParticle {
-    public ItemBreakParticle(Vector3 pos, Item item) {
+    public ItemBreakParticle(Vector3f pos, Item item) {
         super(pos, Particle.TYPE_ITEM_BREAK, (ItemRegistry.get().getRuntimeId(item.getId()) << 16) | item.getDamage());
     }
 }

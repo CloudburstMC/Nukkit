@@ -8,6 +8,7 @@ import cn.nukkit.entity.misc.EnderCrystal;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
@@ -30,9 +31,9 @@ public class ItemEndCrystal extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, Vector3f clickPos) {
         if (!(target instanceof BlockBedrock) && !(target instanceof BlockObsidian)) return false;
-        Chunk chunk = level.getChunk((int) block.getX() >> 4, (int) block.getZ() >> 4);
+        Chunk chunk = level.getChunk(block.getChunkX(), block.getChunkZ());
 
         if (chunk == null) {
             return false;

@@ -10,7 +10,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.gamerule.GameRules;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.registry.BlockRegistry;
 
@@ -128,7 +129,7 @@ public class FallingBlock extends Entity {
             motionY *= 1 - getDrag();
             motionZ *= friction;
 
-            Vector3 pos = (new Vector3(x - 0.5, y, z - 0.5)).round();
+            Vector3i pos = (new Vector3f(x - 0.5, y, z - 0.5)).round().asVector3i();
 
             if (onGround) {
                 close();
@@ -144,7 +145,7 @@ public class FallingBlock extends Entity {
                         getLevel().setBlock(pos, event.getTo(), true);
 
                         if (event.getTo().getId() == ANVIL) {
-                            getLevel().addSound(pos, Sound.RANDOM_ANVIL_LAND);
+                            getLevel().addSound(pos.asVector3f(), Sound.RANDOM_ANVIL_LAND);
                         }
                     }
                 }

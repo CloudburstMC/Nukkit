@@ -13,7 +13,7 @@ public class SimpleAxisAlignedBB implements AxisAlignedBB {
     private double maxY;
     private double maxZ;
 
-    public SimpleAxisAlignedBB(Vector3 pos1, Vector3 pos2) {
+    public SimpleAxisAlignedBB(Vector3f pos1, Vector3f pos2) {
         this.minX = Math.min(pos1.x, pos2.x);
         this.minY = Math.min(pos1.y, pos2.y);
         this.minZ = Math.min(pos1.z, pos2.z);

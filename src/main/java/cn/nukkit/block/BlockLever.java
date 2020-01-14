@@ -5,6 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
@@ -55,12 +56,12 @@ public class BlockLever extends FloodableBlock implements Faceable {
         this.setDamage(this.getDamage() ^ 0x08);
 
         this.getLevel().setBlock(this, this, false, true);
-        this.getLevel().addSound(this, Sound.RANDOM_CLICK); //TODO: correct pitch
+        this.getLevel().addSound(this.asVector3f(), Sound.RANDOM_CLICK); //TODO: correct pitch
 
         LeverOrientation orientation = LeverOrientation.byMetadata(this.isPowerOn() ? this.getDamage() ^ 0x08 : this.getDamage());
         BlockFace face = orientation.getFacing();
         //this.level.updateAroundRedstone(this, null);
-        this.level.updateAroundRedstone(this.getLocation().getSide(face.getOpposite()), isPowerOn() ? face : null);
+        this.level.updateAroundRedstone(this.asVector3i().getSide(face.getOpposite()), isPowerOn() ? face : null);
         return true;
     }
 
@@ -77,7 +78,7 @@ public class BlockLever extends FloodableBlock implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (target.isNormalBlock()) {
             this.setDamage(LeverOrientation.forFacings(face, player.getHorizontalFacing()).getMetadata());
             this.getLevel().setBlock(block, this, true, true);
@@ -92,7 +93,7 @@ public class BlockLever extends FloodableBlock implements Faceable {
 
         if (isPowerOn()) {
             BlockFace face = LeverOrientation.byMetadata(this.isPowerOn() ? this.getDamage() ^ 0x08 : this.getDamage()).getFacing();
-            this.level.updateAround(this.getLocation().getSide(face.getOpposite()));
+            this.level.updateAround(this.asVector3i().getSide(face.getOpposite()));
         }
         return true;
     }

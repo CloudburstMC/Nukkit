@@ -1,6 +1,6 @@
 package cn.nukkit.level;
 
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.utils.LevelException;
 
 /**
@@ -49,19 +49,19 @@ public class Location extends Position {
         this.level = level;
     }
 
-    public static Location fromObject(Vector3 pos) {
+    public static Location fromObject(Vector3f pos) {
         return fromObject(pos, null, 0.0f, 0.0f);
     }
 
-    public static Location fromObject(Vector3 pos, Level level) {
+    public static Location fromObject(Vector3f pos, Level level) {
         return fromObject(pos, level, 0.0f, 0.0f);
     }
 
-    public static Location fromObject(Vector3 pos, Level level, double yaw) {
+    public static Location fromObject(Vector3f pos, Level level, double yaw) {
         return fromObject(pos, level, yaw, 0.0f);
     }
 
-    public static Location fromObject(Vector3 pos, Level level, double yaw, double pitch) {
+    public static Location fromObject(Vector3f pos, Level level, double yaw, double pitch) {
         return new Location(pos.x, pos.y, pos.z, yaw, pitch, (level == null) ? ((pos instanceof Position) ? ((Position) pos).level : null) : level);
     }
 
@@ -100,7 +100,7 @@ public class Location extends Position {
     }
 
     @Override
-    public Location add(Vector3 x) {
+    public Location add(Vector3f x) {
         return new Location(this.x + x.getX(), this.y + x.getY(), this.z + x.getZ(), this.yaw, this.pitch, this.level);
     }
 
@@ -125,7 +125,7 @@ public class Location extends Position {
     }
 
     @Override
-    public Location subtract(Vector3 x) {
+    public Location subtract(Vector3f x) {
         return this.add(-x.getX(), -x.getY(), -x.getZ());
     }
 
@@ -159,13 +159,13 @@ public class Location extends Position {
         return new Location((int) Math.abs(this.x), (int) Math.abs(this.y), (int) Math.abs(this.z), this.yaw, this.pitch, this.level);
     }
 
-    public Vector3 getDirectionVector() {
+    public Vector3f getDirectionVector() {
         double pitch = ((getPitch() + 90) * Math.PI) / 180;
         double yaw = ((getYaw() + 90) * Math.PI) / 180;
         double x = Math.sin(pitch) * Math.cos(yaw);
         double z = Math.sin(pitch) * Math.sin(yaw);
         double y = Math.cos(pitch);
-        return new Vector3(x, y, z).normalize();
+        return new Vector3f(x, y, z).normalize();
     }
 
     @Override

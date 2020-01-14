@@ -59,8 +59,7 @@ public class EnderCrystal extends Entity implements EntityExplosive {
         close();
 
         if (this.level.getGameRules().get(GameRules.MOB_GRIEFING)) {
-            explode.explodeA();
-            explode.explodeB();
+            explode.explode();
         }
     }
 

@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
@@ -42,13 +42,13 @@ public class BlockFarmland extends BlockTransparent {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_RANDOM) {
-            Vector3 v = new Vector3();
+            Vector3f v = new Vector3f();
 
-            if (this.level.getBlock(v.setComponents(x, this.y + 1, z)) instanceof BlockCrops) {
+            if (this.level.getBlock(x, this.y + 1, z) instanceof BlockCrops) {
                 return 0;
             }
 
-            if (this.level.getBlock(v.setComponents(x, this.y + 1, z)).isSolid()) {
+            if (this.level.getBlock(x, this.y + 1, z).isSolid()) {
                 this.level.setBlock(this, Block.get(DIRT), false, true);
 
                 return Level.BLOCK_UPDATE_RANDOM;
@@ -59,15 +59,14 @@ public class BlockFarmland extends BlockTransparent {
             if (this.level.isRaining()) {
                 found = true;
             } else {
-                for (int x = (int) this.x - 4; x <= this.x + 4; x++) {
-                    for (int z = (int) this.z - 4; z <= this.z + 4; z++) {
-                        for (int y = (int) this.y; y <= this.y + 1; y++) {
+                for (int x = this.x - 4; x <= this.x + 4; x++) {
+                    for (int z = this.z - 4; z <= this.z + 4; z++) {
+                        for (int y = this.y; y <= this.y + 1; y++) {
                             if (z == this.z && x == this.x && y == this.y) {
                                 continue;
                             }
 
-                            v.setComponents(x, y, z);
-                            Identifier block = this.level.getBlockIdAt(v.getFloorX(), v.getFloorY(), v.getFloorZ());
+                            Identifier block = this.level.getBlockIdAt(x, y, z);
 
                             if (block == FLOWING_WATER || block == WATER) {
                                 found = true;
@@ -78,7 +77,7 @@ public class BlockFarmland extends BlockTransparent {
                 }
             }
 
-            Block block = this.level.getBlock(v.setComponents(x, y - 1, z));
+            Block block = this.level.getBlock(x, y - 1, z);
             if (found || block instanceof BlockWater) {
                 if (this.getDamage() < 7) {
                     this.setDamage(7);

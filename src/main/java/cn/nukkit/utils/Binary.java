@@ -6,8 +6,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDurable;
 import cn.nukkit.level.gamerule.GameRuleMap;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3f;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -400,21 +400,21 @@ public class Binary {
         VarInt.writeUnsignedVarLong(buffer, v);
     }
 
-    public static BlockVector3 readBlockVector3(ByteBuf buffer) {
-        return new BlockVector3(readVarInt(buffer), (int) readUnsignedVarInt(buffer), readVarInt(buffer));
+    public static Vector3i readBlockVector3(ByteBuf buffer) {
+        return new Vector3i(readVarInt(buffer), (int) readUnsignedVarInt(buffer), readVarInt(buffer));
     }
 
-    public static BlockVector3 readSignedBlockPosition(ByteBuf buffer) {
-        return new BlockVector3(readVarInt(buffer), readVarInt(buffer), readVarInt(buffer));
+    public static Vector3i readSignedBlockPosition(ByteBuf buffer) {
+        return new Vector3i(readVarInt(buffer), readVarInt(buffer), readVarInt(buffer));
     }
 
-    public static void writeSignedBlockPosition(ByteBuf buffer, BlockVector3 v) {
+    public static void writeSignedBlockPosition(ByteBuf buffer, Vector3i v) {
         writeVarInt(buffer, v.x);
         writeVarInt(buffer, v.y);
         writeVarInt(buffer, v.z);
     }
 
-    public static void writeBlockVector3(ByteBuf buffer, BlockVector3 v) {
+    public static void writeBlockVector3(ByteBuf buffer, Vector3i v) {
         writeBlockVector3(buffer, v.x, v.y, v.z);
     }
 
@@ -429,7 +429,7 @@ public class Binary {
     }
 
     public static void writeVector3f(ByteBuf buffer, Vector3f v) {
-        writeVector3f(buffer, v.x, v.y, v.z);
+        writeVector3f(buffer, (float) v.x, (float) v.y, (float) v.z);
     }
 
     public static void writeVector3f(ByteBuf buffer, float x, float y, float z) {
@@ -549,7 +549,7 @@ public class Binary {
                     }
                     break;
                 case POS:
-                    writeSignedBlockPosition(buffer, (BlockVector3) value);
+                    writeSignedBlockPosition(buffer, (Vector3i) value);
                     break;
                 case LONG:
                     writeVarLong(buffer, (long) value);

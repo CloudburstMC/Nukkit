@@ -29,7 +29,7 @@ public class BlockEntityBed extends BlockEntitySpawnable {
 
     @Override
     public boolean isBlockEntityValid() {
-        return this.level.getBlockIdAt(this.getFloorX(), this.getFloorY(), this.getFloorZ()) == BlockIds.BED;
+        return this.level.getBlockIdAt(this.getX(), this.getY(), this.getZ()) == BlockIds.BED;
     }
 
     @Override

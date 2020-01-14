@@ -5,6 +5,7 @@ import cn.nukkit.blockentity.BlockEntityEnderChest;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
@@ -78,7 +79,7 @@ public class BlockEnderChest extends BlockTransparent implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         int[] faces = {2, 5, 3, 4};
         this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
 
@@ -100,7 +101,7 @@ public class BlockEnderChest extends BlockTransparent implements Faceable {
             }
         }
 
-        new BlockEntityEnderChest(this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+        new BlockEntityEnderChest(this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
         return true;
     }
 
@@ -122,7 +123,7 @@ public class BlockEnderChest extends BlockTransparent implements Faceable {
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
-                chest = new BlockEntityEnderChest(this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+                chest = new BlockEntityEnderChest(this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
             }
 
             if (chest.namedTag.contains("Lock") && chest.namedTag.get("Lock") instanceof StringTag) {

@@ -8,6 +8,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
@@ -50,7 +51,7 @@ public class BlockBrewingStand extends BlockSolid {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (!block.down().isTransparent()) {
             getLevel().setBlock(block, this, true, true);
 
@@ -72,7 +73,7 @@ public class BlockBrewingStand extends BlockSolid {
                 }
             }
 
-            new BlockEntityBrewingStand(getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+            new BlockEntityBrewingStand(getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
 
             return true;
         }
@@ -93,7 +94,7 @@ public class BlockBrewingStand extends BlockSolid {
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
-                brewing = new BlockEntityBrewingStand(this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+                brewing = new BlockEntityBrewingStand(this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
             }
 
             if (brewing.namedTag.contains("Lock") && brewing.namedTag.get("Lock") instanceof StringTag) {

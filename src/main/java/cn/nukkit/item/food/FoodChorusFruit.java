@@ -6,7 +6,7 @@ import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.NukkitRandom;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 
 /**
@@ -41,13 +41,13 @@ public class FoodChorusFruit extends FoodNormal {
 
             if (y < 0) continue;
 
-            while (y >= 0 && !level.getBlock(new Vector3(x, y + 1, z)).isSolid()) {
+            while (y >= 0 && !level.getBlock(x, y + 1, z).isSolid()) {
                 y--;
             }
             y++; // Back up to non solid
 
-            Block blockUp = level.getBlock(new Vector3(x, y + 1, z));
-            Block blockUp2 = level.getBlock(new Vector3(x, y + 2, z));
+            Block blockUp = level.getBlock(x, y + 1, z);
+            Block blockUp2 = level.getBlock(x, y + 2, z);
 
             if (blockUp.isSolid() || blockUp instanceof BlockLiquid ||
                     blockUp2.isSolid() || blockUp2 instanceof BlockLiquid) {
@@ -55,9 +55,9 @@ public class FoodChorusFruit extends FoodNormal {
             }
 
             // Sounds are broadcast at both source and destination
-            level.addSound(player.asBlockVector3().asVector3(), Sound.MOB_ENDERMEN_PORTAL);
-            player.teleport(new Vector3(x + 0.5, y + 1, z + 0.5));
-            level.addSound(player.asBlockVector3().asVector3(), Sound.MOB_ENDERMEN_PORTAL);
+            level.addSound(player, Sound.MOB_ENDERMEN_PORTAL);
+            player.teleport(new Vector3f(x + 0.5, y + 1, z + 0.5));
+            level.addSound(player, Sound.MOB_ENDERMEN_PORTAL);
 
             break;
         }

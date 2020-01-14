@@ -1,10 +1,11 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.level.BlockPosition;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
@@ -34,7 +35,7 @@ public class BlockFlower extends FloodableBlock {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         Block down = this.down();
         if (down.getId() == GRASS || down.getId() == DIRT || down.getId() == FARMLAND || down.getId() == PODZOL) {
             this.getLevel().setBlock(block, this, true);
@@ -77,7 +78,7 @@ public class BlockFlower extends FloodableBlock {
             this.level.addParticle(new BoneMealParticle(this));
 
             for (int i = 0; i < 8; i++) {
-                Vector3 vec = this.add(
+                BlockPosition vec = this.add(
                         ThreadLocalRandom.current().nextInt(-3, 4),
                         ThreadLocalRandom.current().nextInt(-1, 2),
                         ThreadLocalRandom.current().nextInt(-3, 4));

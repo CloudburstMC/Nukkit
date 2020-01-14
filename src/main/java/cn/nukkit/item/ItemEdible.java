@@ -2,7 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
 import cn.nukkit.item.food.Food;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
 
@@ -17,7 +17,7 @@ public abstract class ItemEdible extends Item {
     }
 
     @Override
-    public boolean onClickAir(Player player, Vector3 directionVector) {
+    public boolean onClickAir(Player player, Vector3f directionVector) {
         if (player.getFoodData().getLevel() < player.getFoodData().getMaxLevel() || player.isCreative()) {
             return true;
         }

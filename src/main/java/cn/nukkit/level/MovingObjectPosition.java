@@ -1,7 +1,7 @@
 package cn.nukkit.level;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 
 /**
  * author: MagicDroidX
@@ -24,17 +24,17 @@ public class MovingObjectPosition {
      */
     public int sideHit;
 
-    public Vector3 hitVector;
+    public Vector3f hitVector;
 
     public Entity entityHit;
 
-    public static MovingObjectPosition fromBlock(int x, int y, int z, int side, Vector3 hitVector) {
+    public static MovingObjectPosition fromBlock(int x, int y, int z, int side, Vector3f hitVector) {
         MovingObjectPosition objectPosition = new MovingObjectPosition();
         objectPosition.typeOfHit = 0;
         objectPosition.blockX = x;
         objectPosition.blockY = y;
         objectPosition.blockZ = z;
-        objectPosition.hitVector = new Vector3(hitVector.x, hitVector.y, hitVector.z);
+        objectPosition.hitVector = new Vector3f(hitVector.x, hitVector.y, hitVector.z);
         return objectPosition;
     }
 
@@ -42,7 +42,7 @@ public class MovingObjectPosition {
         MovingObjectPosition objectPosition = new MovingObjectPosition();
         objectPosition.typeOfHit = 1;
         objectPosition.entityHit = entity;
-        objectPosition.hitVector = new Vector3(entity.x, entity.y, entity.z);
+        objectPosition.hitVector = new Vector3f(entity.x, entity.y, entity.z);
         return objectPosition;
     }
 }

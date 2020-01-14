@@ -1,7 +1,7 @@
 package cn.nukkit.entity.data;
 
-import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3f;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.nbt.tag.CompoundTag;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -15,7 +15,7 @@ public enum EntityDataType {
     FLOAT(Float.class),
     STRING(String.class),
     NBT(CompoundTag.class),
-    POS(BlockVector3.class),
+    POS(Vector3i.class),
     LONG(Long.class),
     VECTOR3F(Vector3f.class);
 

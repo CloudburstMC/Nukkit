@@ -2,7 +2,7 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.level.Position;
+import cn.nukkit.level.BlockPosition;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
 
@@ -21,7 +21,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
     public static final int SACRIFICE = 1;
     public static final int RESULT = 50;
 
-    public AnvilInventory(PlayerUIInventory playerUI, Position position) {
+    public AnvilInventory(PlayerUIInventory playerUI, BlockPosition position) {
         super(playerUI, InventoryType.ANVIL, 1, position);
     }
 

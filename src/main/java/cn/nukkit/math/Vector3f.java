@@ -1,88 +1,96 @@
 package cn.nukkit.math;
 
-public class Vector3f implements Cloneable {
-    public static final int SIDE_DOWN = 0;
-    public static final int SIDE_UP = 1;
-    public static final int SIDE_NORTH = 2;
-    public static final int SIDE_SOUTH = 3;
-    public static final int SIDE_WEST = 4;
-    public static final int SIDE_EAST = 5;
+import cn.nukkit.level.BlockPosition;
 
-    public float x;
-    public float y;
-    public float z;
+/**
+ * author: MagicDroidX
+ * Nukkit Project
+ */
+public class Vector3f implements Cloneable {
+
+    public double x;
+    public double y;
+    public double z;
 
     public Vector3f() {
         this(0, 0, 0);
     }
 
-    public Vector3f(float x) {
+    public Vector3f(double x) {
         this(x, 0, 0);
     }
 
-    public Vector3f(float x, float y) {
+    public Vector3f(double x, double y) {
         this(x, y, 0);
     }
 
-    public Vector3f(float x, float y, float z) {
+    public Vector3f(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    public float getX() {
+    public double getX() {
         return this.x;
     }
 
-    public float getY() {
+    public double getY() {
         return this.y;
     }
 
-    public float getZ() {
+    public double getZ() {
         return this.z;
     }
 
     public int getFloorX() {
-        return NukkitMath.floorFloat(this.x);
+        return (int) Math.floor(this.x);
     }
 
     public int getFloorY() {
-        return NukkitMath.floorFloat(this.y);
+        return (int) Math.floor(this.y);
     }
 
     public int getFloorZ() {
-        return NukkitMath.floorFloat(this.z);
+        return (int) Math.floor(this.z);
     }
 
-    public float getRight() {
+    public int getChunkX() {
+        return getFloorX() >> 4;
+    }
+
+    public int getChunkZ() {
+        return getFloorZ() >> 4;
+    }
+
+    public double getRight() {
         return this.x;
     }
 
-    public float getUp() {
+    public double getUp() {
         return this.y;
     }
 
-    public float getForward() {
+    public double getForward() {
         return this.z;
     }
 
-    public float getSouth() {
+    public double getSouth() {
         return this.x;
     }
 
-    public float getWest() {
+    public double getWest() {
         return this.z;
     }
 
-    public Vector3f add(float x) {
+    public Vector3f add(double x) {
         return this.add(x, 0, 0);
     }
 
-    public Vector3f add(float x, float y) {
+    public Vector3f add(double x, double y) {
         return this.add(x, y, 0);
     }
 
-    public Vector3f add(float x, float y, float z) {
+    public Vector3f add(double x, double y, double z) {
         return new Vector3f(this.x + x, this.y + y, this.z + z);
     }
 
@@ -94,15 +102,15 @@ public class Vector3f implements Cloneable {
         return this.subtract(0, 0, 0);
     }
 
-    public Vector3f subtract(float x) {
+    public Vector3f subtract(double x) {
         return this.subtract(x, 0, 0);
     }
 
-    public Vector3f subtract(float x, float y) {
+    public Vector3f subtract(double x, double y) {
         return this.subtract(x, y, 0);
     }
 
-    public Vector3f subtract(float x, float y, float z) {
+    public Vector3f subtract(double x, double y, double z) {
         return this.add(-x, -y, -z);
     }
 
@@ -110,11 +118,11 @@ public class Vector3f implements Cloneable {
         return this.add(-x.getX(), -x.getY(), -x.getZ());
     }
 
-    public Vector3f multiply(float number) {
+    public Vector3f multiply(double number) {
         return new Vector3f(this.x * number, this.y * number, this.z * number);
     }
 
-    public Vector3f divide(float number) {
+    public Vector3f divide(double number) {
         return new Vector3f(this.x / number, this.y / number, this.z / number);
     }
 
@@ -134,46 +142,64 @@ public class Vector3f implements Cloneable {
         return new Vector3f((int) Math.abs(this.x), (int) Math.abs(this.y), (int) Math.abs(this.z));
     }
 
-    public Vector3f getSide(int side) {
-        return this.getSide(side, 1);
+    public Vector3f getSide(BlockFace face) {
+        return this.getSide(face, 1);
     }
 
-    public Vector3f getSide(int side, int step) {
-        switch (side) {
-            case Vector3f.SIDE_DOWN:
-                return new Vector3f(this.x, this.y - step, this.z);
-            case Vector3f.SIDE_UP:
-                return new Vector3f(this.x, this.y + step, this.z);
-            case Vector3f.SIDE_NORTH:
-                return new Vector3f(this.x, this.y, this.z - step);
-            case Vector3f.SIDE_SOUTH:
-                return new Vector3f(this.x, this.y, this.z + step);
-            case Vector3f.SIDE_WEST:
-                return new Vector3f(this.x - step, this.y, this.z);
-            case Vector3f.SIDE_EAST:
-                return new Vector3f(this.x + step, this.y, this.z);
-            default:
-                return this;
-        }
+    public Vector3f getSide(BlockFace face, int step) {
+        return new Vector3f(this.getX() + face.getXOffset() * step, this.getY() + face.getYOffset() * step, this.getZ() + face.getZOffset() * step);
     }
 
-    public static int getOppositeSide(int side) {
-        switch (side) {
-            case Vector3f.SIDE_DOWN:
-                return Vector3f.SIDE_UP;
-            case Vector3f.SIDE_UP:
-                return Vector3f.SIDE_DOWN;
-            case Vector3f.SIDE_NORTH:
-                return Vector3f.SIDE_SOUTH;
-            case Vector3f.SIDE_SOUTH:
-                return Vector3f.SIDE_NORTH;
-            case Vector3f.SIDE_WEST:
-                return Vector3f.SIDE_EAST;
-            case Vector3f.SIDE_EAST:
-                return Vector3f.SIDE_WEST;
-            default:
-                return -1;
-        }
+    public Vector3f up() {
+        return up(1);
+    }
+
+    public Vector3f up(int step) {
+        return getSide(BlockFace.UP, step);
+    }
+
+    public Vector3f down() {
+        return down(1);
+    }
+
+    public Vector3f down(int step) {
+        return getSide(BlockFace.DOWN, step);
+    }
+
+    public Vector3f north() {
+        return north(1);
+    }
+
+    public Vector3f north(int step) {
+        return getSide(BlockFace.NORTH, step);
+    }
+
+    public Vector3f south() {
+        return south(1);
+    }
+
+    public Vector3f south(int step) {
+        return getSide(BlockFace.SOUTH, step);
+    }
+
+    public Vector3f east() {
+        return east(1);
+    }
+
+    public Vector3f east(int step) {
+        return getSide(BlockFace.EAST, step);
+    }
+
+    public Vector3f west() {
+        return west(1);
+    }
+
+    public Vector3f west(int step) {
+        return getSide(BlockFace.WEST, step);
+    }
+
+    public double distance(Vector3i pos) {
+        return Math.sqrt(this.distanceSquared(pos));
     }
 
     public double distance(Vector3f pos) {
@@ -184,23 +210,27 @@ public class Vector3f implements Cloneable {
         return Math.pow(this.x - pos.x, 2) + Math.pow(this.y - pos.y, 2) + Math.pow(this.z - pos.z, 2);
     }
 
-    public float maxPlainDistance() {
+    public double distanceSquared(Vector3i pos) {
+        return Math.pow(this.x - pos.x, 2) + Math.pow(this.y - pos.y, 2) + Math.pow(this.z - pos.z, 2);
+    }
+
+    public double maxPlainDistance() {
         return this.maxPlainDistance(0, 0);
     }
 
-    public float maxPlainDistance(float x) {
+    public double maxPlainDistance(double x) {
         return this.maxPlainDistance(x, 0);
     }
 
-    public float maxPlainDistance(float x, float z) {
+    public double maxPlainDistance(double x, double z) {
         return Math.max(Math.abs(this.x - x), Math.abs(this.z - z));
     }
 
-    public float maxPlainDistance(Vector2f vector) {
+    public double maxPlainDistance(Vector2 vector) {
         return this.maxPlainDistance(vector.x, vector.y);
     }
 
-    public float maxPlainDistance(Vector3f x) {
+    public double maxPlainDistance(Vector3f x) {
         return this.maxPlainDistance(x.x, x.z);
     }
 
@@ -208,19 +238,19 @@ public class Vector3f implements Cloneable {
         return Math.sqrt(this.lengthSquared());
     }
 
-    public float lengthSquared() {
+    public double lengthSquared() {
         return this.x * this.x + this.y * this.y + this.z * this.z;
     }
 
     public Vector3f normalize() {
-        float len = this.lengthSquared();
+        double len = this.lengthSquared();
         if (len > 0) {
-            return this.divide((float) Math.sqrt(len));
+            return this.divide(Math.sqrt(len));
         }
         return new Vector3f(0, 0, 0);
     }
 
-    public float dot(Vector3f v) {
+    public double dot(Vector3f v) {
         return this.x * v.x + this.y * v.y + this.z * v.z;
     }
 
@@ -232,18 +262,22 @@ public class Vector3f implements Cloneable {
         );
     }
 
-    /*
+    /**
      * Returns a new vector with x value equal to the second parameter, along the line between this vector and the
      * passed in vector, or null if not possible.
+     *
+     * @param v vector
+     * @param x x value
+     * @return intermediate vector
      */
-    public Vector3f getIntermediateWithXValue(Vector3f v, float x) {
-        float xDiff = v.x - this.x;
-        float yDiff = v.y - this.y;
-        float zDiff = v.z - this.z;
+    public Vector3f getIntermediateWithXValue(Vector3f v, double x) {
+        double xDiff = v.x - this.x;
+        double yDiff = v.y - this.y;
+        double zDiff = v.z - this.z;
         if (xDiff * xDiff < 0.0000001) {
             return null;
         }
-        float f = (x - this.x) / xDiff;
+        double f = (x - this.x) / xDiff;
         if (f < 0 || f > 1) {
             return null;
         } else {
@@ -251,18 +285,22 @@ public class Vector3f implements Cloneable {
         }
     }
 
-    /*
+    /**
      * Returns a new vector with y value equal to the second parameter, along the line between this vector and the
      * passed in vector, or null if not possible.
+     *
+     * @param v vector
+     * @param y y value
+     * @return intermediate vector
      */
-    public Vector3f getIntermediateWithYValue(Vector3f v, float y) {
-        float xDiff = v.x - this.x;
-        float yDiff = v.y - this.y;
-        float zDiff = v.z - this.z;
+    public Vector3f getIntermediateWithYValue(Vector3f v, double y) {
+        double xDiff = v.x - this.x;
+        double yDiff = v.y - this.y;
+        double zDiff = v.z - this.z;
         if (yDiff * yDiff < 0.0000001) {
             return null;
         }
-        float f = (y - this.y) / yDiff;
+        double f = (y - this.y) / yDiff;
         if (f < 0 || f > 1) {
             return null;
         } else {
@@ -270,18 +308,22 @@ public class Vector3f implements Cloneable {
         }
     }
 
-    /*
+    /**
      * Returns a new vector with z value equal to the second parameter, along the line between this vector and the
      * passed in vector, or null if not possible.
+     *
+     * @param v vector
+     * @param z z value
+     * @return intermediate vector
      */
-    public Vector3f getIntermediateWithZValue(Vector3f v, float z) {
-        float xDiff = v.x - this.x;
-        float yDiff = v.y - this.y;
-        float zDiff = v.z - this.z;
+    public Vector3f getIntermediateWithZValue(Vector3f v, double z) {
+        double xDiff = v.x - this.x;
+        double yDiff = v.y - this.y;
+        double zDiff = v.z - this.z;
         if (zDiff * zDiff < 0.0000001) {
             return null;
         }
-        float f = (z - this.z) / zDiff;
+        double f = (z - this.z) / zDiff;
         if (f < 0 || f > 1) {
             return null;
         } else {
@@ -289,7 +331,7 @@ public class Vector3f implements Cloneable {
         }
     }
 
-    public Vector3f setComponents(float x, float y, float z) {
+    public Vector3f setComponents(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -298,7 +340,7 @@ public class Vector3f implements Cloneable {
 
     @Override
     public String toString() {
-        return "Vector3(x=" + this.x + ",y=" + this.y + ",z=" + this.z + ")";
+        return "Vector3(x=" + this.x + ", y=" + this.y + ", z=" + this.z + ")";
     }
 
     @Override
@@ -310,6 +352,11 @@ public class Vector3f implements Cloneable {
         Vector3f other = (Vector3f) obj;
 
         return this.x == other.x && this.y == other.y && this.z == other.z;
+    }
+
+    @Override
+    public int hashCode() {
+        return ((int) x ^ ((int) z << 12)) ^ ((int) y << 24);
     }
 
     public int rawHashCode() {
@@ -325,11 +372,15 @@ public class Vector3f implements Cloneable {
         }
     }
 
-    public Vector3 asVector3() {
-        return new Vector3(this.x, this.y, this.z);
+    public Vector3f asVector3f() {
+        return new Vector3f((float) this.x, (float) this.y, (float) this.z);
     }
 
-    public BlockVector3 asBlockVector3() {
-        return new BlockVector3(getFloorX(), getFloorY(), getFloorZ());
+    public Vector3i asVector3i() {
+        return new Vector3i(this.getFloorX(), this.getFloorY(), this.getFloorZ());
+    }
+
+    public BlockPosition asBlockPosition() {
+        return new BlockPosition(this.getFloorX(), this.getFloorY(), this.getFloorZ());
     }
 }

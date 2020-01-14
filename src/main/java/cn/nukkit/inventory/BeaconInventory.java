@@ -1,6 +1,6 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.level.Position;
+import cn.nukkit.level.BlockPosition;
 import cn.nukkit.player.Player;
 
 /**
@@ -8,7 +8,7 @@ import cn.nukkit.player.Player;
  */
 public class BeaconInventory extends FakeBlockUIComponent {
 
-    public BeaconInventory(PlayerUIInventory playerUI, Position position) {
+    public BeaconInventory(PlayerUIInventory playerUI, BlockPosition position) {
         super(playerUI, InventoryType.BEACON, 27, position);
     }
 

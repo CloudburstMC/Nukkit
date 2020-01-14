@@ -10,7 +10,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
@@ -99,7 +99,7 @@ public class BlockCactus extends BlockTransparent {
             if (down().getId() != CACTUS) {
                 if (this.getDamage() == 0x0F) {
                     for (int y = 1; y < 3; ++y) {
-                        Block b = this.getLevel().getBlock(new Vector3(this.x, this.y + y, this.z));
+                        Block b = this.getLevel().getBlock(this.x, this.y + y, this.z);
                         if (b.getId() == AIR) {
                             BlockGrowEvent event = new BlockGrowEvent(b, Block.get(CACTUS));
                             Server.getInstance().getPluginManager().callEvent(event);
@@ -121,7 +121,7 @@ public class BlockCactus extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         Block down = this.down();
         if (down.getId() == SAND || down.getId() == CACTUS) {
             Block block0 = north();

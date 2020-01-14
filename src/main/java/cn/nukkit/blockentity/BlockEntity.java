@@ -1,10 +1,9 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.Server;
-import cn.nukkit.block.Block;
-import cn.nukkit.level.Position;
+import cn.nukkit.level.BlockPosition;
 import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.ChunkException;
 import co.aikar.timings.Timing;
@@ -19,7 +18,7 @@ import java.lang.reflect.Constructor;
  * @author MagicDroidX
  */
 @Log4j2
-public abstract class BlockEntity extends Position {
+public abstract class BlockEntity extends BlockPosition {
     //WARNING: DO NOT CHANGE ANY NAME HERE, OR THE CLIENT WILL CRASH
     public static final String CHEST = "Chest";
     public static final String ENDER_CHEST = "EnderChest";
@@ -167,10 +166,6 @@ public abstract class BlockEntity extends Position {
         }
     }
 
-    public Block getBlock() {
-        return this.getLevelBlock();
-    }
-
     public abstract boolean isBlockEntityValid();
 
     public boolean onUpdate() {
@@ -210,11 +205,11 @@ public abstract class BlockEntity extends Position {
         return movable;
     }
 
-    public static CompoundTag getDefaultCompound(Vector3 pos, String id) {
+    public static CompoundTag getDefaultCompound(Vector3i pos, String id) {
         return new CompoundTag("")
                 .putString("id", id)
-                .putInt("x", pos.getFloorX())
-                .putInt("y", pos.getFloorY())
-                .putInt("z", pos.getFloorZ());
+                .putInt("x", pos.getX())
+                .putInt("y", pos.getY())
+                .putInt("z", pos.getZ());
     }
 }

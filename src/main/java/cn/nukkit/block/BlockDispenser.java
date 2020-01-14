@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
 
@@ -60,12 +60,12 @@ public class BlockDispenser extends BlockSolid implements Faceable {
         return false;
     }
 
-    public Vector3 getDispensePosition() {
+    public Vector3f getDispensePosition() {
         BlockFace facing = getFacing();
         double x = this.getX() + 0.7 * facing.getXOffset();
         double y = this.getY() + 0.7 * facing.getYOffset();
         double z = this.getZ() + 0.7 * facing.getZOffset();
-        return new Vector3(x, y, z);
+        return new Vector3f(x, y, z);
     }
 
     @Override

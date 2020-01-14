@@ -6,7 +6,7 @@ import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 
 import java.text.DecimalFormat;
@@ -31,7 +31,7 @@ public class SetWorldSpawnCommand extends VanillaCommand {
             return true;
         }
         Level level;
-        Vector3 pos;
+        Vector3f pos;
         if (args.length == 0) {
             if (sender instanceof Player) {
                 level = ((Player) sender).getLevel();
@@ -43,7 +43,7 @@ public class SetWorldSpawnCommand extends VanillaCommand {
         } else if (args.length == 3) {
             level = sender.getServer().getDefaultLevel();
             try {
-                pos = new Vector3(Integer.parseInt(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2]));
+                pos = new Vector3f(Integer.parseInt(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2]));
             } catch (NumberFormatException e1) {
                 sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                 return true;

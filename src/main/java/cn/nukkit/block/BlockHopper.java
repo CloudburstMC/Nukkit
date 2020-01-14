@@ -8,6 +8,7 @@ import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
@@ -34,7 +35,7 @@ public class BlockHopper extends BlockTransparent implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         BlockFace facing = face.getOpposite();
 
         if (facing == BlockFace.UP) {
@@ -43,7 +44,7 @@ public class BlockHopper extends BlockTransparent implements Faceable {
 
         this.setDamage(facing.getIndex());
 
-        boolean powered = this.level.isBlockPowered(this.getLocation());
+        boolean powered = this.level.isBlockPowered(this.asVector3i());
 
         if (powered == this.isEnabled()) {
             this.setEnabled(!powered);
@@ -58,7 +59,7 @@ public class BlockHopper extends BlockTransparent implements Faceable {
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
 
-        new BlockEntityHopper(this.level.getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), nbt);
+        new BlockEntityHopper(this.level.getChunk(this.getChunkX(), this.getChunkZ()), nbt);
         return true;
     }
 
@@ -110,7 +111,7 @@ public class BlockHopper extends BlockTransparent implements Faceable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            boolean powered = this.level.isBlockPowered(this.getLocation());
+            boolean powered = this.level.isBlockPowered(this.asVector3i());
 
             if (powered == this.isEnabled()) {
                 this.setEnabled(!powered);

@@ -38,7 +38,7 @@ public class ChestInventory extends ContainerInventory {
             Level level = this.getHolder().getLevel();
             if (level != null) {
                 level.addLevelSoundEvent(this.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_CHEST_OPEN);
-                level.addChunkPacket((int) this.getHolder().getX() >> 4, (int) this.getHolder().getZ() >> 4, pk);
+                level.addChunkPacket(this.getHolder().getChunkX(), this.getHolder().getChunkZ(), pk);
             }
         }
     }
@@ -56,7 +56,7 @@ public class ChestInventory extends ContainerInventory {
             Level level = this.getHolder().getLevel();
             if (level != null) {
                 level.addLevelSoundEvent(this.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_CHEST_CLOSED);
-                level.addChunkPacket((int) this.getHolder().getX() >> 4, (int) this.getHolder().getZ() >> 4, pk);
+                level.addChunkPacket(this.getHolder().getChunkX(), this.getHolder().getChunkZ(), pk);
             }
         }
 

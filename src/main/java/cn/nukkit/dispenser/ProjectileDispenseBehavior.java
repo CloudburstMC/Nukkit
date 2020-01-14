@@ -6,7 +6,7 @@ import cn.nukkit.entity.EntityType;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.registry.EntityRegistry;
 
@@ -38,7 +38,7 @@ public class ProjectileDispenseBehavior implements DispenseBehavior {
             return;
         }
 
-        projectile.setMotion(new Vector3(face.getXOffset(), face.getYOffset() + 0.1f, face.getZOffset()).multiply(6));
+        projectile.setMotion(new Vector3f(face.getXOffset(), face.getYOffset() + 0.1f, face.getZOffset()).multiply(6));
         projectile.spawnToAll();
     }
 

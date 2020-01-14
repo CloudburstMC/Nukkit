@@ -8,6 +8,7 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
@@ -47,7 +48,7 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (face != BlockFace.DOWN) {
             CompoundTag nbt = new CompoundTag()
                     .putString("id", BlockEntity.SIGN)
@@ -77,7 +78,7 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
                 }
             }
 
-            new BlockEntitySign(getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
+            new BlockEntitySign(getLevel().getChunk(block.getChunkX(), block.getChunkZ()), nbt);
 
             return true;
         }

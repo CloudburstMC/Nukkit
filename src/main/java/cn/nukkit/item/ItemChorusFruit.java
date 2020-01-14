@@ -1,6 +1,6 @@
 package cn.nukkit.item;
 
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
 
@@ -14,7 +14,7 @@ public class ItemChorusFruit extends ItemEdible {
     }
 
     @Override
-    public boolean onClickAir(Player player, Vector3 directionVector) {
+    public boolean onClickAir(Player player, Vector3f directionVector) {
         return player.getServer().getTick() - player.getLastChorusFruitTeleport() >= 20;
     }
 

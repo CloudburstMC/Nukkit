@@ -14,7 +14,6 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
@@ -161,7 +160,7 @@ public class BlockFire extends FloodableBlock {
                                         k += (y - (this.y + 1)) * 100;
                                     }
 
-                                    Block block = this.getLevel().getBlock(new Vector3(x, y, z));
+                                    Block block = this.getLevel().getBlock(x, y, z);
                                     int chance = this.getChanceOfNeighborsEncouragingFire(block);
 
                                     if (chance > 0) {

@@ -303,7 +303,7 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
     }
 
     public void updateBlock() {
-        Block block = this.getLevelBlock();
+        Block block = this.getBlock();
 
         if (!(block instanceof BlockBrewingStand)) {
             return;

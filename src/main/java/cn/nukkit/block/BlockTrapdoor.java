@@ -9,6 +9,7 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
@@ -153,11 +154,11 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_REDSTONE) {
-            if ((!isOpen() && this.level.isBlockPowered(this.getLocation())) || (isOpen() && !this.level.isBlockPowered(this.getLocation()))) {
+            if ((!isOpen() && this.level.isBlockPowered(this)) || (isOpen() && !this.level.isBlockPowered(this))) {
                 this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isOpen() ? 15 : 0, isOpen() ? 0 : 15));
                 this.setDamage(this.getDamage() ^ 0x04);
                 this.level.setBlock(this, this, true);
-                this.level.addSound(this, isOpen() ? Sound.RANDOM_DOOR_OPEN : Sound.RANDOM_DOOR_CLOSE);
+                this.level.addSound(this.asVector3f(), isOpen() ? Sound.RANDOM_DOOR_OPEN : Sound.RANDOM_DOOR_CLOSE);
                 return type;
             }
         }
@@ -166,14 +167,14 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         BlockFace facing;
         boolean top;
         int meta = 0;
 
         if (face.getAxis().isHorizontal() || player == null) {
             facing = face;
-            top = fy > 0.5;
+            top = clickPos.getY() > 0.5;
         } else {
             facing = player.getDirection().getOpposite();
             top = face != BlockFace.UP;
@@ -199,7 +200,7 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
     @Override
     public boolean onActivate(Item item, Player player) {
         if(toggle(player)) {
-            this.level.addSound(this, isOpen() ? Sound.RANDOM_DOOR_OPEN : Sound.RANDOM_DOOR_CLOSE);
+            this.level.addSound(this.asVector3f(), isOpen() ? Sound.RANDOM_DOOR_OPEN : Sound.RANDOM_DOOR_CLOSE);
             return true;
         }
         return false;

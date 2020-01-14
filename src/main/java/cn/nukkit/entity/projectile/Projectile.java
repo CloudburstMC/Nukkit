@@ -11,7 +11,7 @@ import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.Set;
@@ -127,7 +127,7 @@ public abstract class Projectile extends Entity {
                 this.motionY -= this.getGravity();
             }
 
-            Vector3 moveVector = new Vector3(this.x + this.motionX, this.y + this.motionY, this.z + this.motionZ);
+            Vector3f moveVector = new Vector3f(this.x + this.motionX, this.y + this.motionY, this.z + this.motionZ);
 
             Set<Entity> collidingEntities = this.getLevel().getCollidingEntities(
                     this.boundingBox.addCoord(this.motionX, this.motionY, this.motionZ).expand(1, 1, 1),

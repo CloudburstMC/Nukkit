@@ -1,13 +1,13 @@
 package cn.nukkit.level.particle;
 
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 
 /**
  * Created on 2015/11/21 by xtypr.
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class WaterParticle extends GenericParticle {
-    public WaterParticle(Vector3 pos) {
+    public WaterParticle(Vector3f pos) {
         super(pos, Particle.TYPE_WATER_WAKE);
     }
 }

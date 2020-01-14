@@ -6,6 +6,7 @@ import cn.nukkit.entity.EntityTypes;
 import cn.nukkit.entity.vehicle.HopperMinecart;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
@@ -27,7 +28,7 @@ public class ItemMinecartHopper extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, Vector3f clickPos) {
         if (Rail.isRailBlock(target)) {
             Rail.Orientation type = ((BlockRail) target).getOrientation();
             double adjacent = 0.0D;
@@ -35,7 +36,7 @@ public class ItemMinecartHopper extends Item {
                 adjacent = 0.5D;
             }
             HopperMinecart minecart = EntityRegistry.get().newEntity(EntityTypes.HOPPER_MINECART,
-                    level.getChunk(target.getFloorX() >> 4, target.getFloorZ() >> 4), new CompoundTag("")
+                    level.getChunk(target.getChunkX(), target.getChunkZ()), new CompoundTag("")
                             .putList(new ListTag<>("Pos")
                                     .add(new DoubleTag("", target.getX() + 0.5))
                                     .add(new DoubleTag("", target.getY() + 0.0625D + adjacent))
@@ -45,7 +46,7 @@ public class ItemMinecartHopper extends Item {
                                     .add(new DoubleTag("", 0))
                                     .add(new DoubleTag("", 0)))
                             .putList(new ListTag<>("Rotation")
-                            .add(new FloatTag("", 0))
+                                    .add(new FloatTag("", 0))
                             .add(new FloatTag("", 0)))
             );
             minecart.spawnToAll();

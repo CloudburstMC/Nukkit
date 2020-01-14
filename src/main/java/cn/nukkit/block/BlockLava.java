@@ -8,10 +8,11 @@ import cn.nukkit.event.entity.EntityCombustByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.BlockPosition;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
@@ -59,7 +60,7 @@ public class BlockLava extends BlockLiquid {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         boolean ret = this.getLevel().setBlock(this, this, true, false);
         this.getLevel().scheduleUpdate(this, this.tickRate());
 
@@ -77,7 +78,7 @@ public class BlockLava extends BlockLiquid {
 
             if (i > 0) {
                 for (int k = 0; k < i; ++k) {
-                    Vector3 v = this.add(random.nextInt(3) - 1, 1, random.nextInt(3) - 1);
+                    BlockPosition v = this.add(random.nextInt(3) - 1, 1, random.nextInt(3) - 1);
                     Block block = this.getLevel().getBlock(v);
 
                     if (block.getId() == AIR) {
@@ -100,7 +101,7 @@ public class BlockLava extends BlockLiquid {
                 }
             } else {
                 for (int k = 0; k < 3; ++k) {
-                    Vector3 v = this.add(random.nextInt(3) - 1, 0, random.nextInt(3) - 1);
+                    BlockPosition v = this.add(random.nextInt(3) - 1, 0, random.nextInt(3) - 1);
                     Block block = this.getLevel().getBlock(v);
 
                     if (block.up().getId() == AIR && block.getBurnChance() > 0) {
@@ -182,7 +183,7 @@ public class BlockLava extends BlockLiquid {
     }
 
     @Override
-    public void addVelocityToEntity(Entity entity, Vector3 vector) {
+    public void addVelocityToEntity(Entity entity, Vector3f vector) {
         if (!(entity instanceof Tnt)) {
             super.addVelocityToEntity(entity, vector);
         }

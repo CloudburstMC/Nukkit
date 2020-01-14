@@ -1,7 +1,7 @@
 package cn.nukkit.level.particle;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.registry.BlockRegistry;
 
 /**
@@ -9,7 +9,7 @@ import cn.nukkit.registry.BlockRegistry;
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class TerrainParticle extends GenericParticle {
-    public TerrainParticle(Vector3 pos, Block block) {
+    public TerrainParticle(Vector3f pos, Block block) {
         super(pos, Particle.TYPE_TERRAIN, BlockRegistry.get().getRuntimeId(block.getId(), block.getDamage()));
     }
 }

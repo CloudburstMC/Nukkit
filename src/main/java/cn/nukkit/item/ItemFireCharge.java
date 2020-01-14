@@ -7,6 +7,7 @@ import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
 
@@ -30,7 +31,7 @@ public class ItemFireCharge extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, Vector3f clickPos) {
         if (block.getId() == AIR && (target instanceof BlockSolid)) {
             BlockFire fire = (BlockFire) Block.get(FIRE);
             fire.x = block.x;
@@ -44,7 +45,7 @@ public class ItemFireCharge extends Item {
 
                 if (!e.isCancelled()) {
                     level.setBlock(fire, fire, true);
-                    level.addSound(block, Sound.MOB_GHAST_FIREBALL);
+                    level.addSound(block.asVector3f(), Sound.MOB_GHAST_FIREBALL);
                     level.scheduleUpdate(fire, fire.tickRate() + ThreadLocalRandom.current().nextInt(10));
                 }
                 if (player.isSurvival()) {

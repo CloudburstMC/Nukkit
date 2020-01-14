@@ -59,7 +59,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
 
     @Override
     public boolean isBlockEntityValid() {
-        return this.level.getBlockIdAt(this.getFloorX(), this.getFloorY(), this.getFloorZ()) == BlockIds.HOPPER;
+        return this.level.getBlockIdAt(this.getX(), this.getY(), this.getZ()) == BlockIds.HOPPER;
     }
 
     @Override
@@ -324,7 +324,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
             return false;
         }
 
-        BlockEntity be = this.level.getBlockEntity(this.getSide(BlockFace.fromIndex(this.level.getBlockDataAt(this.getFloorX(), this.getFloorY(), this.getFloorZ()))));
+        BlockEntity be = this.level.getBlockEntity(this.getSide(BlockFace.fromIndex(this.level.getBlockDataAt(this.getX(), this.getY(), this.getZ()))));
 
         if (be instanceof BlockEntityHopper && this.getBlock().getDamage() == 0 || !(be instanceof InventoryHolder))
             return false;

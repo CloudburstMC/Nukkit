@@ -53,7 +53,7 @@ public class PlayerEnderChestInventory extends BaseInventory {
             Level level = this.getHolder().getLevel();
             if (level != null) {
                 level.addLevelSoundEvent(this.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_ENDERCHEST_OPEN);
-                level.addChunkPacket((int) this.getHolder().getX() >> 4, (int) this.getHolder().getZ() >> 4, blockEventPacket);
+                level.addChunkPacket(this.getHolder().getChunkX(), this.getHolder().getChunkZ(), blockEventPacket);
             }
         }
     }
@@ -77,7 +77,7 @@ public class PlayerEnderChestInventory extends BaseInventory {
             Level level = this.getHolder().getLevel();
             if (level != null) {
                 level.addLevelSoundEvent(this.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_ENDERCHEST_CLOSED);
-                level.addChunkPacket((int) this.getHolder().getX() >> 4, (int) this.getHolder().getZ() >> 4, blockEventPacket);
+                level.addChunkPacket(this.getHolder().getChunkX(), this.getHolder().getChunkZ(), blockEventPacket);
             }
 
             who.setViewingEnderChest(null);

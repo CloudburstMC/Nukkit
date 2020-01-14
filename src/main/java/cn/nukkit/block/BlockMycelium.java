@@ -6,7 +6,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitRandom;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
@@ -49,10 +48,10 @@ public class BlockMycelium extends BlockSolid {
         if (type == Level.BLOCK_UPDATE_RANDOM) {
             //TODO: light levels
             NukkitRandom random = new NukkitRandom();
-            x = random.nextRange((int) x - 1, (int) x + 1);
-            y = random.nextRange((int) y - 1, (int) y + 1);
-            z = random.nextRange((int) z - 1, (int) z + 1);
-            Block block = this.getLevel().getBlock(new Vector3(x, y, z));
+            x = random.nextRange(x - 1, x + 1);
+            y = random.nextRange(y - 1, y + 1);
+            z = random.nextRange(z - 1, z + 1);
+            Block block = this.getLevel().getBlock(x, y, z);
             if (block.getId() == DIRT) {
                 if (block.up().isTransparent()) {
                     BlockSpreadEvent ev = new BlockSpreadEvent(block, this, Block.get(MYCELIUM));

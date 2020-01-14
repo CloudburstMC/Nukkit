@@ -11,7 +11,7 @@ import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Explosion;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.gamerule.GameRules;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
@@ -133,7 +133,7 @@ public class TntMinecart extends AbstractMinecart<TntMinecart> implements Entity
     }
 
     @Override
-    public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
+    public boolean onInteract(Player player, Item item, Vector3f clickedPos) {
         boolean interact = super.onInteract(player, item, clickedPos);
         if (item.getId() == ItemIds.FLINT_AND_STEEL || item.getId() == ItemIds.FIREBALL) {
             level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_IGNITE);

@@ -132,7 +132,7 @@ public class BlockRegistry implements Registry {
         int fullId = getFullId(id, meta);
         int runtimeId = this.stateRuntimeMap.get(fullId);
         if (runtimeId == -1) {
-            throw new NoSuchElementException("No runtime ID for block " + id + ":" + meta);
+            throw new RegistryException("No runtime ID for block " + id + ":" + meta);
         }
         return runtimeId;
     }

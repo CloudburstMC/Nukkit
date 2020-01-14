@@ -1,13 +1,13 @@
 package cn.nukkit.level.particle;
 
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.DataPacket;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Particle extends Vector3 {
+public abstract class Particle extends Vector3f {
 
     public static final int TYPE_BUBBLE = 1;
     // 2 same as 1

@@ -5,7 +5,7 @@ import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.IntTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -24,7 +24,7 @@ public class BlockEntityPistonArm extends BlockEntity {
     public boolean sticky = false;
     public byte state = 1;
     public byte newState = 1;
-    public Vector3 attachedBlock = null;
+    public Vector3f attachedBlock = null;
     public boolean isMovable = true;
     public boolean powered = false;
 
@@ -57,7 +57,7 @@ public class BlockEntityPistonArm extends BlockEntity {
         if (namedTag.contains("AttachedBlocks")) {
             ListTag blocks = namedTag.getList("AttachedBlocks", IntTag.class);
             if (blocks != null && blocks.size() > 0) {
-                this.attachedBlock = new Vector3((double) ((IntTag) blocks.get(0)).getData(), (double) ((IntTag) blocks.get(1)).getData(), (double) ((IntTag) blocks.get(2)).getData());
+                this.attachedBlock = new Vector3f((double) ((IntTag) blocks.get(0)).getData(), (double) ((IntTag) blocks.get(1)).getData(), (double) ((IntTag) blocks.get(2)).getData());
             }
         } else {
             namedTag.putList(new ListTag<>("AttachedBlocks"));

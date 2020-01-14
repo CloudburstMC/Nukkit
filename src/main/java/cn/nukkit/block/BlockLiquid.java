@@ -9,7 +9,7 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.Identifier;
 import it.unimi.dsi.fastutil.longs.Long2ByteMap;
@@ -29,7 +29,7 @@ public abstract class BlockLiquid extends BlockTransparent {
     private final byte CAN_FLOW = 0;
     private final byte BLOCKED = -1;
     public int adjacentSources = 0;
-    protected Vector3 flowVector = null;
+    protected Vector3f flowVector = null;
     private Long2ByteMap flowCostVisited = new Long2ByteOpenHashMap();
 
     public BlockLiquid(Identifier id) {
@@ -121,11 +121,11 @@ public abstract class BlockLiquid extends BlockTransparent {
         this.flowCostVisited.clear();
     }
 
-    public Vector3 getFlowVector() {
+    public Vector3f getFlowVector() {
         if (this.flowVector != null) {
             return this.flowVector;
         }
-        Vector3 vector = new Vector3(0, 0, 0);
+        Vector3f vector = new Vector3f(0, 0, 0);
         int decay = this.getEffectiveFlowDecay(this);
         for (BlockFace face : BlockFace.Plane.HORIZONTAL) {
             Block sideBlock = this.getSide(face);
@@ -135,7 +135,7 @@ public abstract class BlockLiquid extends BlockTransparent {
                 if (!sideBlock.canBeFlooded()) {
                     continue;
                 }
-                blockDecay = this.getEffectiveFlowDecay(this.level.getBlock(sideBlock.getFloorX(), sideBlock.getFloorY() - 1, sideBlock.getFloorZ()));
+                blockDecay = this.getEffectiveFlowDecay(this.level.getBlock(sideBlock.getX(), sideBlock.getY() - 1, sideBlock.getZ()));
                 if (blockDecay >= 0) {
                     int realDecay = blockDecay - (decay - 8);
                     vector.x += (sideBlock.x - this.x) * realDecay;
@@ -165,9 +165,9 @@ public abstract class BlockLiquid extends BlockTransparent {
     }
 
     @Override
-    public void addVelocityToEntity(Entity entity, Vector3 vector) {
+    public void addVelocityToEntity(Entity entity, Vector3f vector) {
         if (entity.canBeMovedByCurrents()) {
-            Vector3 flow = this.getFlowVector();
+            Vector3f flow = this.getFlowVector();
             vector.x += flow.x;
             vector.y += flow.y;
             vector.z += flow.z;
@@ -293,7 +293,7 @@ public abstract class BlockLiquid extends BlockTransparent {
             } else if (j == 3) {
                 ++z;
             }
-            long hash = Level.blockHash(x, y, z);
+            long hash = Block.key(x, y, z);
             if (!this.flowCostVisited.containsKey(hash)) {
                 Block blockSide = this.level.getBlock(x, y, z);
                 if (!this.canFlowInto(blockSide)) {
@@ -354,12 +354,12 @@ public abstract class BlockLiquid extends BlockTransparent {
             }
             Block block = this.level.getBlock(x, y, z);
             if (!this.canFlowInto(block)) {
-                this.flowCostVisited.put(Level.blockHash(x, y, z), BLOCKED);
+                this.flowCostVisited.put(Block.key(x, y, z), BLOCKED);
             } else if (this.level.getBlock(x, y - 1, z).canBeFlooded()) {
-                this.flowCostVisited.put(Level.blockHash(x, y, z), CAN_FLOW_DOWN);
+                this.flowCostVisited.put(Block.key(x, y, z), CAN_FLOW_DOWN);
                 flowCost[j] = maxCost = 0;
             } else if (maxCost > 0) {
-                this.flowCostVisited.put(Level.blockHash(x, y, z), CAN_FLOW);
+                this.flowCostVisited.put(Block.key(x, y, z), CAN_FLOW);
                 flowCost[j] = this.calculateFlowCost(x, y, z, 1, maxCost, j ^ 0x01, j ^ 0x01);
                 maxCost = Math.min(maxCost, flowCost[j]);
             }
@@ -394,7 +394,7 @@ public abstract class BlockLiquid extends BlockTransparent {
     protected void checkForHarden() {
     }
 
-    protected void triggerLavaMixEffects(Vector3 pos) {
+    protected void triggerLavaMixEffects(Vector3f pos) {
         this.getLevel().addSound(pos.add(0.5, 0.5, 0.5), Sound.RANDOM_FIZZ, 1, 2.6F + (ThreadLocalRandom.current().nextFloat() - ThreadLocalRandom.current().nextFloat()) * 0.8F);
 
         for (int i = 0; i < 8; ++i) {

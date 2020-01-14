@@ -2,9 +2,8 @@ package cn.nukkit.inventory.transaction.data;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.BlockVector3;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.math.Vector3f;
+import cn.nukkit.math.Vector3i;
 import lombok.ToString;
 
 /**
@@ -14,11 +13,11 @@ import lombok.ToString;
 public class UseItemData implements TransactionData {
 
     public int actionType;
-    public BlockVector3 blockPos;
+    public Vector3i blockPos;
     public BlockFace face;
     public int hotbarSlot;
     public Item itemInHand;
-    public Vector3 playerPos;
+    public Vector3f playerPos;
     public Vector3f clickPos;
     public int blockRuntimeId;
 }

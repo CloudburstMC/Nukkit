@@ -22,9 +22,9 @@ public class LevelSoundEventPacketV2 extends LevelSoundEventPacket {
     protected void decode(ByteBuf buffer) {
         this.sound = buffer.readByte();
         Vector3f v = Binary.readVector3f(buffer);
-        this.x = v.x;
-        this.y = v.y;
-        this.z = v.z;
+        this.x = (float) v.x;
+        this.y = (float) v.y;
+        this.z = (float) v.z;
         this.extraData = Binary.readVarInt(buffer);
         this.entityIdentifier = Binary.readString(buffer);
         this.isBabyMob = buffer.readBoolean();

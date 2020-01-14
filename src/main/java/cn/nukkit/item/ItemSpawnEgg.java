@@ -6,8 +6,10 @@ import cn.nukkit.entity.EntityType;
 import cn.nukkit.event.entity.CreatureSpawnEvent;
 import cn.nukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
@@ -34,8 +36,8 @@ public class ItemSpawnEgg extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
-        Chunk chunk = level.getChunk((int) block.getX() >> 4, (int) block.getZ() >> 4);
+    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, Vector3f clickPos) {
+        Chunk chunk = level.getChunk(block.getChunkX(), block.getChunkZ());
 
         if (chunk == null) {
             return false;
@@ -58,7 +60,8 @@ public class ItemSpawnEgg extends Item {
             nbt.putString("CustomName", this.getCustomName());
         }
 
-        CreatureSpawnEvent ev = new CreatureSpawnEvent(this.getDamage(), block, nbt, SpawnReason.SPAWN_EGG);
+        CreatureSpawnEvent ev = new CreatureSpawnEvent(this.getDamage(),
+                new Position(block.x, block.y, block.z, block.level), nbt, SpawnReason.SPAWN_EGG);
         level.getServer().getPluginManager().callEvent(ev);
 
         if (ev.isCancelled()) {

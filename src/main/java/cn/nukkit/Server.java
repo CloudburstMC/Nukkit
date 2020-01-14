@@ -37,7 +37,6 @@ import cn.nukkit.network.CompressBatchedTask;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
-import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.PlayerListPacket;
 import cn.nukkit.network.protocol.ProtocolInfo;
@@ -239,17 +238,11 @@ public class Server {
     }
 
     public static void broadcastPackets(Player[] players, DataPacket[] packets) {
-        for (Player player : players) {
-            for (DataPacket packet : packets) {
-                broadcastPacket(players, packet);
-            }
-        }
+        Server.getInstance().batchPackets(players, packets);
     }
 
     public static void broadcastPacket(Player[] players, DataPacket packet) {
-        for (Player player : players) {
-            player.dataPacket(packet);
-        }
+        Server.getInstance().batchPackets(players, new DataPacket[]{packet});
     }
 
     public int broadcastMessage(String message) {
@@ -676,27 +669,15 @@ public class Server {
                 }
             }
 
-            CompressBatchedTask compressBatchedTask = new CompressBatchedTask(this, Arrays.asList(packets), targets,
+            CompressBatchedTask compressBatchedTask = new CompressBatchedTask(Arrays.asList(packets), targets,
                     this.networkCompressionLevel);
 
             if (!forceSync && this.networkCompressionAsync) {
-                this.getScheduler().scheduleTask(compressBatchedTask, true);
+                this.getScheduler().scheduleAsyncTask(compressBatchedTask);
             } else {
-                compressBatchedTask.run();
+                compressBatchedTask.onRun();
+                compressBatchedTask.onCompletion(this);
             }
-        }
-    }
-
-    public void broadcastPacketsCallback(ByteBuf payload, List<Player> targets) {
-        BatchPacket packet = new BatchPacket();
-        packet.payload = payload;
-
-        try {
-            for (Player target : targets) {
-                target.directDataPacket(packet);
-            }
-        } finally {
-            packet.release();
         }
     }
 
@@ -1040,7 +1021,7 @@ public class Server {
             String message = "TPS: " + NukkitMath.round(getTicksPerSecondAverage(), 4);
 
             for (Player player : new ArrayList<>(this.players.values())) {
-                player.sendTip(message + ", block: " + player.getLevel().getBlock(player));
+                player.sendTip(message + ", Chunk: (" + player.getChunkX() + ", " + player.getChunkZ() + ")");
                 player.checkNetwork();
             }
 

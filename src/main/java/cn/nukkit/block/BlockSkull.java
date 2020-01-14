@@ -10,6 +10,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
@@ -38,7 +39,7 @@ public class BlockSkull extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         switch (face) {
             case NORTH:
             case SOUTH:
@@ -56,16 +57,16 @@ public class BlockSkull extends BlockTransparent {
         CompoundTag nbt = new CompoundTag()
                 .putString("id", BlockEntity.SKULL)
                 .putByte("SkullType", item.getDamage())
-                .putInt("x", block.getFloorX())
-                .putInt("y", block.getFloorY())
-                .putInt("z", block.getFloorZ())
+                .putInt("x", block.getX())
+                .putInt("y", block.getY())
+                .putInt("z", block.getZ())
                 .putByte("Rot", (int) Math.floor((player.yaw * 16 / 360) + 0.5) & 0x0f);
         if (item.hasCustomBlockData()) {
             for (Tag aTag : item.getCustomBlockData().getAllTags()) {
                 nbt.put(aTag.getName(), aTag);
             }
         }
-        new BlockEntitySkull(getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
+        new BlockEntitySkull(getLevel().getChunk(block.getChunkX(), block.getChunkZ()), nbt);
 
         // TODO: 2016/2/3 SPAWN WITHER
 

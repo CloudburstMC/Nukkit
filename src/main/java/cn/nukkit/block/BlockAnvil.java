@@ -5,6 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
@@ -52,7 +53,7 @@ public class BlockAnvil extends BlockFallable implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (!target.isTransparent() || target.getId() == SNOW_LAYER) {
             int meta = this.getDamage();
             int[] faces = {1, 2, 3, 0};
@@ -63,7 +64,7 @@ public class BlockAnvil extends BlockFallable implements Faceable {
                 this.setDamage(this.getDamage() | 0x08);
             }
             this.getLevel().setBlock(block, this, true);
-            this.getLevel().addSound(this, Sound.RANDOM_ANVIL_LAND, 1, 0.8F);
+            this.getLevel().addSound(this.asVector3f(), Sound.RANDOM_ANVIL_LAND, 1, 0.8F);
             return true;
         }
         return false;

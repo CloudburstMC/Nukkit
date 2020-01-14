@@ -1,11 +1,10 @@
 package cn.nukkit.level.generator.object.mushroom;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.object.BasicGenerator;
 import cn.nukkit.math.NukkitRandom;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
 
@@ -41,13 +40,13 @@ public class BigMushroom extends BasicGenerator {
         this.mushroomType = -1;
     }
 
-    public boolean generate(ChunkManager level, NukkitRandom rand, Vector3 position) {
+    public boolean generate(ChunkManager level, NukkitRandom rand, Vector3i position) {
         int block = this.mushroomType;
         if (block < 0) {
             block = rand.nextBoolean() ? RED : BROWN;
         }
 
-        Block mushroom = block == 0 ? Block.get(BlockIds.BROWN_MUSHROOM_BLOCK) : Block.get(BlockIds.RED_MUSHROOM_BLOCK);
+        Block mushroom = block == 0 ? Block.get(BROWN_MUSHROOM_BLOCK) : Block.get(RED_MUSHROOM_BLOCK);
 
         int i = rand.nextBoundedInt(3) + 4;
 
@@ -58,20 +57,20 @@ public class BigMushroom extends BasicGenerator {
         boolean flag = true;
 
         if (position.getY() >= 1 && position.getY() + i + 1 < 256) {
-            for (int j = position.getFloorY(); j <= position.getY() + 1 + i; ++j) {
+            for (int j = position.getY(); j <= position.getY() + 1 + i; ++j) {
                 int k = 3;
 
                 if (j <= position.getY() + 3) {
                     k = 0;
                 }
 
-                Vector3 pos = new Vector3();
+                Vector3i pos = new Vector3i();
 
-                for (int l = position.getFloorX() - k; l <= position.getX() + k && flag; ++l) {
-                    for (int i1 = position.getFloorZ() - k; i1 <= position.getZ() + k && flag; ++i1) {
+                for (int l = position.getX() - k; l <= position.getX() + k && flag; ++l) {
+                    for (int i1 = position.getZ() - k; i1 <= position.getZ() + k && flag; ++i1) {
                         if (j >= 0 && j < 256) {
                             pos.setComponents(l, j, i1);
-                            Identifier material = level.getBlockIdAt(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
+                            Identifier material = level.getBlockIdAt(pos.getX(), pos.getY(), pos.getZ());
 
                             if (material != AIR && material != LEAVES) {
                                 flag = false;
@@ -86,16 +85,16 @@ public class BigMushroom extends BasicGenerator {
             if (!flag) {
                 return false;
             } else {
-                Vector3 pos2 = position.down();
-                Identifier block1 = level.getBlockIdAt(pos2.getFloorX(), pos2.getFloorY(), pos2.getFloorZ());
+                Vector3i pos2 = position.down();
+                Identifier block1 = level.getBlockIdAt(pos2.getX(), pos2.getY(), pos2.getZ());
 
                 if (block1 != DIRT && block1 != GRASS && block1 != MYCELIUM) {
                     return false;
                 } else {
-                    int k2 = position.getFloorY() + i;
+                    int k2 = position.getY() + i;
 
                     if (block == RED) {
-                        k2 = position.getFloorY() + i - 3;
+                        k2 = position.getY() + i - 3;
                     }
 
                     for (int l2 = k2; l2 <= position.getY() + i; ++l2) {
@@ -109,10 +108,10 @@ public class BigMushroom extends BasicGenerator {
                             j3 = 3;
                         }
 
-                        int k3 = position.getFloorX() - j3;
-                        int l3 = position.getFloorX() + j3;
-                        int j1 = position.getFloorZ() - j3;
-                        int k1 = position.getFloorZ() + j3;
+                        int k3 = position.getX() - j3;
+                        int l3 = position.getX() + j3;
+                        int j1 = position.getZ() - j3;
+                        int k1 = position.getZ() + j3;
 
                         for (int l1 = k3; l1 <= l3; ++l1) {
                             for (int i2 = j1; i2 <= k1; ++i2) {
@@ -175,12 +174,12 @@ public class BigMushroom extends BasicGenerator {
                                 }
 
                                 if (position.getY() >= position.getY() + i - 1 || meta != ALL_INSIDE) {
-                                    Vector3 blockPos = new Vector3(l1, l2, i2);
+                                    Vector3i blockPos = new Vector3i(l1, l2, i2);
 
                                     if (!BlockRegistry.get().getBlock(level.getBlockIdAt(
-                                            blockPos.getFloorX(), blockPos.getFloorY(), blockPos.getFloorZ()), 0).isSolid()) {
+                                            blockPos.getX(), blockPos.getY(), blockPos.getZ()), 0).isSolid()) {
                                         mushroom.setDamage(meta);
-                                        this.setBlockAndNotifyAdequately(level, blockPos, mushroom);
+                                        level.setBlockAt(blockPos.getX(), blockPos.getY(), blockPos.getZ(), mushroom);
                                     }
                                 }
                             }
@@ -188,12 +187,12 @@ public class BigMushroom extends BasicGenerator {
                     }
 
                     for (int i3 = 0; i3 < i; ++i3) {
-                        Vector3 pos = position.up(i3);
-                        Identifier id = level.getBlockIdAt(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
+                        Vector3i pos = position.up(i3);
+                        Identifier id = level.getBlockIdAt(pos.getX(), pos.getY(), pos.getZ());
 
                         if (!BlockRegistry.get().getBlock(id, 0).isSolid()) {
                             mushroom.setDamage(STEM);
-                            this.setBlockAndNotifyAdequately(level, pos, mushroom);
+                            level.setBlockAt(pos.getX(), pos.getY(), pos.getZ(), mushroom);
                         }
                     }
 

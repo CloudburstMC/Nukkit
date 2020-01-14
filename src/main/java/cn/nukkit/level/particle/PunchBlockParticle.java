@@ -2,7 +2,7 @@ package cn.nukkit.level.particle;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.registry.BlockRegistry;
@@ -12,11 +12,11 @@ public class PunchBlockParticle extends Particle {
 
     protected final int data;
 
-    public PunchBlockParticle(Vector3 pos, Block block, BlockFace face) {
+    public PunchBlockParticle(Vector3f pos, Block block, BlockFace face) {
         this(pos, block.getId(), block.getDamage(), face);
     }
 
-    public PunchBlockParticle(Vector3 pos, Identifier blockId, int blockDamage, BlockFace face) {
+    public PunchBlockParticle(Vector3f pos, Identifier blockId, int blockDamage, BlockFace face) {
         super(pos.x, pos.y, pos.z);
         this.data = BlockRegistry.get().getRuntimeId(blockId, blockDamage) | (face.getIndex() << 24);
     }

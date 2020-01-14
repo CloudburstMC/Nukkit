@@ -5,6 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
 
@@ -36,8 +37,8 @@ public class BlockRedstoneLamp extends BlockSolid {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (this.level.isBlockPowered(this.getLocation())) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        if (this.level.isBlockPowered(this)) {
             this.level.setBlock(this, Block.get(LIT_REDSTONE_LAMP), false, true);
         } else {
             this.level.setBlock(this, this, false, true);
@@ -54,7 +55,7 @@ public class BlockRedstoneLamp extends BlockSolid {
             if (ev.isCancelled()) {
                 return 0;
             }
-            if (this.level.isBlockPowered(this.getLocation())) {
+            if (this.level.isBlockPowered(this)) {
                 this.level.setBlock(this, Block.get(LIT_REDSTONE_LAMP), false, false);
                 return 1;
             }

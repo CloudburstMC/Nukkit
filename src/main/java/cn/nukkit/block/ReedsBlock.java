@@ -7,7 +7,7 @@ import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
@@ -40,7 +40,7 @@ public class ReedsBlock extends FloodableBlock {
             int count = 1;
 
             for (int i = 1; i <= 2; i++) {
-                Identifier id = this.level.getBlockIdAt(this.getFloorX(), this.getFloorY() - i, this.getFloorZ());
+                Identifier id = this.level.getBlockIdAt(this.getX(), this.getY() - i, this.getZ());
 
                 if (id == REEDS) {
                     count++;
@@ -92,7 +92,7 @@ public class ReedsBlock extends FloodableBlock {
             if (this.down().getId() != REEDS) {
                 if (this.getDamage() == 0x0F) {
                     for (int y = 1; y < 3; ++y) {
-                        Block b = this.getLevel().getBlock(new Vector3(this.x, this.y + y, this.z));
+                        Block b = this.getLevel().getBlock(this.x, this.y + y, this.z);
                         if (b.getId() == AIR) {
                             this.getLevel().setBlock(b, Block.get(REEDS), false);
                             break;
@@ -111,7 +111,7 @@ public class ReedsBlock extends FloodableBlock {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (block.getId() != AIR) {
             return false;
         }

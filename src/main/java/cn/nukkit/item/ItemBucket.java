@@ -10,7 +10,7 @@ import cn.nukkit.event.player.PlayerItemConsumeEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.network.protocol.UpdateBlockPacket;
 import cn.nukkit.player.Player;
@@ -87,7 +87,7 @@ public class ItemBucket extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, Vector3f clickPos) {
         Block targetBlock = Block.get(getBlockIdFromDamage(this.getDamage()));
 
         if (targetBlock instanceof BlockAir) {
@@ -115,9 +115,9 @@ public class ItemBucket extends Item {
                     }
 
                     if (target instanceof BlockLava) {
-                        level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_FILL_LAVA);
+                        level.addLevelSoundEvent(block.asVector3f(), LevelSoundEventPacket.SOUND_BUCKET_FILL_LAVA);
                     } else {
-                        level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_FILL_WATER);
+                        level.addLevelSoundEvent(block.asVector3f(), LevelSoundEventPacket.SOUND_BUCKET_FILL_WATER);
                     }
 
                     return true;
@@ -145,14 +145,14 @@ public class ItemBucket extends Item {
                 }
 
                 if (this.getDamage() == 10) {
-                    level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_EMPTY_LAVA);
+                    level.addLevelSoundEvent(block.asVector3f(), LevelSoundEventPacket.SOUND_BUCKET_EMPTY_LAVA);
                 } else {
-                    level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_EMPTY_WATER);
+                    level.addLevelSoundEvent(block.asVector3f(), LevelSoundEventPacket.SOUND_BUCKET_EMPTY_WATER);
                 }
 
                 return true;
             } else {
-                player.getLevel().sendBlocks(new Player[]{player}, new Block[]{Block.get(AIR, 0, block)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
+                player.getLevel().sendBlocks(new Player[]{player}, new Block[]{Block.get(AIR, 0, block)}, UpdateBlockPacket.FLAG_ALL_PRIORITY);
                 player.getInventory().sendContents(player);
             }
         }
@@ -161,7 +161,7 @@ public class ItemBucket extends Item {
     }
 
     @Override
-    public boolean onClickAir(Player player, Vector3 directionVector) {
+    public boolean onClickAir(Player player, Vector3f directionVector) {
         return this.getDamage() == 1; // Milk
     }
 

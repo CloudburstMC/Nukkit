@@ -1,6 +1,6 @@
 package cn.nukkit.item;
 
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.ByteTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
@@ -35,7 +35,7 @@ abstract public class ItemArmor extends Item implements ItemDurable {
     }
 
     @Override
-    public boolean onClickAir(Player player, Vector3 directionVector) {
+    public boolean onClickAir(Player player, Vector3f directionVector) {
         boolean equip = false;
         if (this.isHelmet() && player.getInventory().getHelmet().isNull()) {
             if (player.getInventory().setHelmet(this)) {

@@ -8,7 +8,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.particle.*;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
@@ -116,7 +116,7 @@ public class ParticleCommand extends VanillaCommand {
         return true;
     }
 
-    private Particle getParticle(String name, Vector3 pos, int data) {
+    private Particle getParticle(String name, Vector3f pos, int data) {
         switch (name) {
             case "explode":
                 return new ExplodeParticle(pos);

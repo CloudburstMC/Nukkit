@@ -7,6 +7,7 @@ import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
@@ -118,7 +119,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
             this.setDamage(this.getDamage() + 4);
         }
 
-        this.level.addSound(this, Sound.RANDOM_CLICK, 1, getMode() == Mode.SUBTRACT ? 0.55F : 0.5F);
+        this.level.addSound(this.asVector3f(), Sound.RANDOM_CLICK, 1, getMode() == Mode.SUBTRACT ? 0.55F : 0.5F);
         this.level.setBlock(this, this, true, false);
         //bug?
 
@@ -162,15 +163,15 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (super.place(item, block, target, face, fx, fy, fz, player)) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        if (super.place(item, block, target, face, clickPos, player)) {
             CompoundTag nbt = new CompoundTag()
                     .putList(new ListTag<>("Items"))
                     .putString("id", BlockEntity.COMPARATOR)
                     .putInt("x", (int) this.x)
                     .putInt("y", (int) this.y)
                     .putInt("z", (int) this.z);
-            new BlockEntityComparator(this.level.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+            new BlockEntityComparator(this.level.getChunk(this.getChunkX(), this.getChunkZ()), nbt);
 
             onUpdate(Level.BLOCK_UPDATE_REDSTONE);
             return true;

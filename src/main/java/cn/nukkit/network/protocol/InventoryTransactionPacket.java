@@ -120,7 +120,7 @@ public class InventoryTransactionPacket extends DataPacket {
                 itemData.face = Binary.readBlockFace(buffer);
                 itemData.hotbarSlot = Binary.readVarInt(buffer);
                 itemData.itemInHand = Binary.readItem(buffer);
-                itemData.playerPos = Binary.readVector3f(buffer).asVector3();
+                itemData.playerPos = Binary.readVector3f(buffer);
                 itemData.clickPos = Binary.readVector3f(buffer);
                 itemData.blockRuntimeId = (int) Binary.readUnsignedVarInt(buffer);
 
@@ -133,8 +133,8 @@ public class InventoryTransactionPacket extends DataPacket {
                 useItemOnEntityData.actionType = (int) Binary.readUnsignedVarInt(buffer);
                 useItemOnEntityData.hotbarSlot = Binary.readVarInt(buffer);
                 useItemOnEntityData.itemInHand = Binary.readItem(buffer);
-                useItemOnEntityData.playerPos = Binary.readVector3f(buffer).asVector3();
-                useItemOnEntityData.clickPos = Binary.readVector3f(buffer).asVector3();
+                useItemOnEntityData.playerPos = Binary.readVector3f(buffer);
+                useItemOnEntityData.clickPos = Binary.readVector3f(buffer);
 
                 this.transactionData = useItemOnEntityData;
                 break;
@@ -144,7 +144,7 @@ public class InventoryTransactionPacket extends DataPacket {
                 releaseItemData.actionType = (int) Binary.readUnsignedVarInt(buffer);
                 releaseItemData.hotbarSlot = Binary.readVarInt(buffer);
                 releaseItemData.itemInHand = Binary.readItem(buffer);
-                releaseItemData.headRot = Binary.readVector3f(buffer).asVector3();
+                releaseItemData.headRot = Binary.readVector3f(buffer);
 
                 this.transactionData = releaseItemData;
                 break;

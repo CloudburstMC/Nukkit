@@ -8,10 +8,11 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.Sound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.math.Vector3f;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
 
@@ -97,7 +98,7 @@ public abstract class BlockPressurePlateBase extends FloodableBlock {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (block.down().isTransparent()) {
             return false;
         }
@@ -142,7 +143,7 @@ public abstract class BlockPressurePlateBase extends FloodableBlock {
             this.level.setBlock(this, this, false, false);
 
             this.level.updateAroundRedstone(this, null);
-            this.level.updateAroundRedstone(this.getLocation().down(), null);
+            this.level.updateAroundRedstone(this.asVector3i().down(), null);
 
             if (!isPowered && wasPowered) {
                 this.playOffSound();
@@ -164,7 +165,7 @@ public abstract class BlockPressurePlateBase extends FloodableBlock {
 
         if (this.getRedstonePower() > 0) {
             this.level.updateAroundRedstone(this, null);
-            this.level.updateAroundRedstone(this.getLocation().down(), null);
+            this.level.updateAroundRedstone(this.asVector3i().down(), null);
         }
 
         return true;
@@ -189,11 +190,11 @@ public abstract class BlockPressurePlateBase extends FloodableBlock {
     }
 
     protected void playOnSound() {
-        this.level.addSound(this, Sound.RANDOM_CLICK, 0.6f, onPitch);
+        this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_POWER_ON);
     }
 
     protected void playOffSound() {
-        this.level.addSound(this, Sound.RANDOM_CLICK, 0.6f, offPitch);
+        this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_POWER_OFF);
     }
 
     protected abstract int computeRedstoneStrength();

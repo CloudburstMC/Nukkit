@@ -9,8 +9,8 @@ import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
+import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,6 +35,8 @@ public final class UnsafeChunk implements IChunk, Closeable {
             .newUpdater(UnsafeChunk.class, "populated");
     private static final AtomicIntegerFieldUpdater<UnsafeChunk> CLOSED_FIELD = AtomicIntegerFieldUpdater
             .newUpdater(UnsafeChunk.class, "closed");
+    static final AtomicIntegerFieldUpdater<UnsafeChunk> CLEAR_CACHE_FIELD = AtomicIntegerFieldUpdater
+            .newUpdater(UnsafeChunk.class, "clearCache");
 
     private final int x;
 
@@ -48,7 +50,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
 
     private final Set<Entity> entities = Collections.newSetFromMap(new IdentityHashMap<>());
 
-    private final TIntObjectMap<BlockEntity> tiles = new TIntObjectHashMap<>();
+    private final Short2ObjectMap<BlockEntity> tiles = new Short2ObjectOpenHashMap<>();
 
     private final byte[] biomes;
 
@@ -63,6 +65,8 @@ public final class UnsafeChunk implements IChunk, Closeable {
     private volatile int populated;
 
     private volatile int closed;
+
+    private volatile int clearCache;
 
     public UnsafeChunk(int x, int z, Level level) {
         this.x = x;
@@ -297,7 +301,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
     @Override
     public void addBlockEntity(BlockEntity blockEntity) {
         Preconditions.checkNotNull(blockEntity, "blockEntity");
-        int hash = Level.chunkBlockKey(blockEntity.getFloorX() & 0xf, blockEntity.getFloorY(), blockEntity.getFloorZ() & 0xf);
+        short hash = Chunk.blockKey(blockEntity);
         if (this.tiles.put(hash, blockEntity) != blockEntity && this.initialized == 1) {
             this.setDirty();
         }
@@ -306,7 +310,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
     @Override
     public void removeBlockEntity(BlockEntity blockEntity) {
         Preconditions.checkNotNull(blockEntity, "blockEntity");
-        int hash = Level.chunkBlockKey(blockEntity.getFloorX() & 0xf, blockEntity.getFloorY(), blockEntity.getFloorZ() & 0xf);
+        short hash = Chunk.blockKey(blockEntity);
         if (this.tiles.remove(hash) == blockEntity && this.initialized == 1) {
             this.setDirty();
         }
@@ -316,7 +320,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
     @Override
     public BlockEntity getBlockEntity(int x, int y, int z) {
         checkBounds(x, y, z);
-        return this.tiles.get(Level.chunkBlockKey(x, y, z));
+        return this.tiles.get(Chunk.blockKey(x, y, z));
     }
 
     @Override
@@ -378,7 +382,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
     @Nonnull
     @Override
     public Collection<BlockEntity> getBlockEntities() {
-        return this.tiles.valueCollection();
+        return this.tiles.values();
     }
 
     public boolean isGenerated() {
@@ -418,15 +422,14 @@ public final class UnsafeChunk implements IChunk, Closeable {
         return dirty == 1;
     }
 
-    public boolean setDirty() {
-        return setDirty(true);
-    }
-
     /**
      * Sets the chunk's dirty status.
      */
-    public boolean setDirty(boolean dirty) {
-        return DIRTY_FIELD.compareAndSet(this, dirty ? 0 : 1, dirty ? 1 : 0) && dirty;
+    public void setDirty(boolean dirty) {
+        if (dirty) {
+            CLEAR_CACHE_FIELD.set(this, 1);
+        }
+        DIRTY_FIELD.set(this, dirty ? 1 : 0);
     }
 
     /**
@@ -445,17 +448,16 @@ public final class UnsafeChunk implements IChunk, Closeable {
 
     @Override
     public synchronized void close() {
-        for (Entity entity : ImmutableList.copyOf(this.entities)) {
-            if (entity instanceof Player) {
-                continue;
+        if (CLOSED_FIELD.compareAndSet(this, 0, 1)) {
+            for (Entity entity : ImmutableList.copyOf(this.entities)) {
+                if (entity instanceof Player) {
+                    continue;
+                }
+                entity.close();
             }
-            entity.close();
-        }
 
-        this.tiles.forEachValue(blockEntity -> {
-            blockEntity.close();
-            return false;
-        });
-        clear();
+            this.tiles.values().forEach(BlockEntity::close);
+            clear();
+        }
     }
 }

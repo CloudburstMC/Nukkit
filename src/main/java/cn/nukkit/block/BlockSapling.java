@@ -7,7 +7,8 @@ import cn.nukkit.level.generator.object.tree.*;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitRandom;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
@@ -38,7 +39,7 @@ public class BlockSapling extends FloodableBlock {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         Block down = this.down();
         if (down.getId() == GRASS || down.getId() == DIRT || down.getId() == FARMLAND || down.getId() == PODZOL) {
             this.getLevel().setBlock(block, this, true, true);
@@ -141,7 +142,7 @@ public class BlockSapling extends FloodableBlock {
                 break;
             //TODO: big spruce
             default:
-                ObjectTree.growTree(this.level, this.getFloorX(), this.getFloorY(), this.getFloorZ(), new NukkitRandom(), this.getDamage() & 0x07);
+                ObjectTree.growTree(this.level, this.getX(), this.getY(), this.getZ(), new NukkitRandom(), this.getDamage() & 0x07);
                 return;
         }
 
@@ -154,7 +155,7 @@ public class BlockSapling extends FloodableBlock {
             this.level.setBlock(this, get(AIR), true, false);
         }
 
-        if (!generator.generate(this.level, new NukkitRandom(), this.add(x, 0, z))) {
+        if (!generator.generate(this.level, new NukkitRandom(), this.add(x, 0, z).asVector3i())) {
             if (bigTree) {
                 this.level.setBlock(this.add(x, 0, z), this, true, false);
                 this.level.setBlock(this.add(x + 1, 0, z), this, true, false);
@@ -170,7 +171,7 @@ public class BlockSapling extends FloodableBlock {
         return this.isSameType(this.add(x, 0, z), type) && this.isSameType(this.add(x + 1, 0, z), type) && this.isSameType(this.add(x, 0, z + 1), type) && this.isSameType(this.add(x + 1, 0, z + 1), type);
     }
 
-    public boolean isSameType(Vector3 pos, int type) {
+    public boolean isSameType(Vector3i pos, int type) {
         Block block = this.level.getBlock(pos);
         return block.getId() == this.getId() && (block.getDamage() & 0x07) == (type & 0x07);
     }

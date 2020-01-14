@@ -5,6 +5,7 @@ import cn.nukkit.blockentity.BlockEntityJukebox;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.RecordItem;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
@@ -52,8 +53,8 @@ public class BlockJukebox extends BlockSolid implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (super.place(item, block, target, face, fx, fy, fz, player)) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        if (super.place(item, block, target, face, clickPos, player)) {
             createBlockEntity();
             return true;
         }
@@ -79,11 +80,11 @@ public class BlockJukebox extends BlockSolid implements Faceable {
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<>("Items"))
                 .putString("id", BlockEntity.JUKEBOX)
-                .putInt("x", getFloorX())
-                .putInt("y", getFloorY())
-                .putInt("z", getFloorZ());
+                .putInt("x", getX())
+                .putInt("y", getY())
+                .putInt("z", getZ());
 
-        return BlockEntity.createBlockEntity(BlockEntity.JUKEBOX, this.level.getChunk(getFloorX() >> 4, getFloorZ() >> 4), nbt);
+        return BlockEntity.createBlockEntity(BlockEntity.JUKEBOX, this.level.getChunk(getChunkX(), getChunkZ()), nbt);
     }
 
     @Override

@@ -1,10 +1,8 @@
 package cn.nukkit.level.generator.object.tree;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.BlockVector3;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
@@ -22,19 +20,19 @@ public abstract class TreeGenerator extends cn.nukkit.level.generator.object.Bas
                 id == SAPLING || id == VINE;
     }
 
-    public void generateSaplings(Level level, Random random, Vector3 pos) {
+    public void generateSaplings(Level level, Random random, Vector3i pos) {
     }
 
-    protected void setDirtAt(ChunkManager level, BlockVector3 pos) {
-        setDirtAt(level, new Vector3(pos.x, pos.y, pos.z));
+    protected void setDirtAt(ChunkManager level, Vector3i pos) {
+        setDirtAt(level, pos.x, pos.y, pos.z);
     }
 
     /*
      * sets dirt at a specific location if it isn't already dirt
      */
-    protected void setDirtAt(ChunkManager level, Vector3 pos) {
-        if (level.getBlockIdAt((int) pos.x, (int) pos.y, (int) pos.z) != DIRT) {
-            this.setBlockAndNotifyAdequately(level, pos, Block.get(DIRT));
+    protected void setDirtAt(ChunkManager level, int x, int y, int z) {
+        if (level.getBlockIdAt(x, y, z) != DIRT) {
+            level.setBlockIdAt(x, y, z, DIRT);
         }
     }
 }

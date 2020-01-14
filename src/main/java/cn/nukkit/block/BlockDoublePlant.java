@@ -5,6 +5,7 @@ import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
@@ -57,7 +58,7 @@ public class BlockDoublePlant extends FloodableBlock {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         Block down = down();
         Block up = up();
 
@@ -141,7 +142,7 @@ public class BlockDoublePlant extends FloodableBlock {
                         item.decrementCount();
                     }
                     this.level.addParticle(new BoneMealParticle(this));
-                    this.level.dropItem(this, this.toItem());
+                    this.level.dropItem(this.asVector3f(), this.toItem());
             }
 
             return true;

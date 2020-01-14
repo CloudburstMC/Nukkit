@@ -1,7 +1,7 @@
 package cn.nukkit.level.particle;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.registry.BlockRegistry;
@@ -14,7 +14,7 @@ public class DestroyBlockParticle extends Particle {
 
     protected final int data;
 
-    public DestroyBlockParticle(Vector3 pos, Block block) {
+    public DestroyBlockParticle(Vector3f pos, Block block) {
         super(pos.x, pos.y, pos.z);
         this.data = BlockRegistry.get().getRuntimeId(block.getId(), block.getDamage());
     }

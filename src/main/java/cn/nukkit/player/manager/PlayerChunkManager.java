@@ -1,7 +1,6 @@
 package cn.nukkit.player.manager;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.level.Level;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.network.protocol.ChunkRadiusUpdatedPacket;
@@ -39,6 +38,9 @@ public class PlayerChunkManager {
             Chunk chunk = this.player.getLevel().getLoadedChunk(chunkKey);
             if (chunk != null) {
                 chunk.removeLoader(this.player);
+                for (Entity entity : chunk.getEntities()) {
+                    entity.despawnFrom(this.player);
+                }
             }
         };
     }
@@ -121,7 +123,7 @@ public class PlayerChunkManager {
                 int cx = chunkX + x;
                 int cz = chunkZ + z;
 
-                final long key = Level.chunkKey(cx, cz);
+                final long key = Chunk.key(cx, cz);
 
                 chunksForRadius.add(key);
                 if (this.loadedChunks.add(key)) {
@@ -133,7 +135,7 @@ public class PlayerChunkManager {
         boolean loadedChunksChanged = this.loadedChunks.retainAll(chunksForRadius);
         if (loadedChunksChanged || !chunksToLoad.isEmpty()) {
             NetworkChunkPublisherUpdatePacket packet = new NetworkChunkPublisherUpdatePacket();
-            packet.position = this.player.asBlockVector3();
+            packet.position = this.player.asVector3i();
             packet.radius = this.radius;
             this.player.dataPacket(packet);
         }
@@ -142,8 +144,8 @@ public class PlayerChunkManager {
         chunksToLoad.sort(this.comparator);
 
         for (final long key : chunksToLoad.toLongArray()) {
-            final int cx = Level.getHashX(key);
-            final int cz = Level.getHashZ(key);
+            final int cx = Chunk.fromKeyX(key);
+            final int cz = Chunk.fromKeyZ(key);
 
             if (this.sendQueue.putIfAbsent(key, null) == null) {
                 this.player.getLevel().getChunkFuture(cx, cz).thenApplyAsync(Chunk::createChunkPacket, this.player.getServer().getScheduler().getAsyncPool())
@@ -197,7 +199,7 @@ public class PlayerChunkManager {
     }
 
     public boolean isChunkInView(int x, int z) {
-        return this.isChunkInView(Level.chunkKey(x, z));
+        return this.isChunkInView(Chunk.key(x, z));
     }
 
     public synchronized boolean isChunkInView(long key) {
@@ -210,6 +212,12 @@ public class PlayerChunkManager {
 
     public LongSet getLoadedChunks() {
         return LongSets.unmodifiable(this.loadedChunks);
+    }
+
+    public synchronized void resendChunk(int chunkX, int chunkZ) {
+        long chunkKey = Chunk.key(chunkX, chunkZ);
+        this.loadedChunks.remove(chunkKey);
+        removeChunkLoader.accept(chunkKey);
     }
 
     public void prepareRegion(int chunkX, int chunkZ) {
@@ -242,10 +250,10 @@ public class PlayerChunkManager {
 
         @Override
         public int compare(long o1, long o2) {
-            int x1 = Level.getHashX(o1);
-            int z1 = Level.getHashZ(o1);
-            int x2 = Level.getHashX(o2);
-            int z2 = Level.getHashZ(o2);
+            int x1 = Chunk.fromKeyX(o1);
+            int z1 = Chunk.fromKeyZ(o1);
+            int x2 = Chunk.fromKeyX(o2);
+            int z2 = Chunk.fromKeyZ(o2);
             int spawnX = this.player.getChunkX();
             int spawnZ = this.player.getChunkZ();
 
