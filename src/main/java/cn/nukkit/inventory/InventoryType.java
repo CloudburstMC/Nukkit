@@ -19,8 +19,6 @@ public enum InventoryType {
     DROPPER(9, "Dropper", 7), //9 CONTAINER
     HOPPER(5, "Hopper", 8), //5 CONTAINER
     //CAULDRON typeId:9
-    //MINECART_CHEST typeId:10
-    //MINECART_HOPPER typeId:11
     //MINECART_COMMAND_BLOCK typeId:16
     //HORSE typeId:12
     //JUKEBOX typeId:17
