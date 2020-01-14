@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityDaylightDetector;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
@@ -10,7 +9,6 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -66,8 +64,7 @@ public class BlockDaylightDetector extends BlockTransparentMeta {
         if(super.place(item, block, target, face, fx, fy, fz, player)) {
             if (getLevel().getDimension() == Level.DIMENSION_OVERWORLD) {
                 updatePower();
-                CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.DAYLIGHT_DETECTOR);
-                new BlockEntityDaylightDetector(getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+                BlockEntity.createBlockEntity(BlockEntity.DAYLIGHT_DETECTOR, this);
             }
             return true;
         } else return false;

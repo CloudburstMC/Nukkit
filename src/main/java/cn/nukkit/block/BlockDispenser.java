@@ -125,8 +125,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
     }
 
     protected void createBlockEntity() {
-        new BlockEntityDispenser(this.level.getChunk(getChunkX(), getChunkZ()),
-                BlockEntity.getDefaultCompound(this, BlockEntity.DISPENSER));
+        BlockEntity.createBlockEntity(BlockEntity.DISPENSER, this);
     }
 
     protected InventoryHolder getBlockEntity() {

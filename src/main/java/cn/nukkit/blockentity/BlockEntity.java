@@ -105,6 +105,10 @@ public abstract class BlockEntity extends Position {
 
     }
 
+    public static BlockEntity createBlockEntity(String type, Position position, Object... args) {
+        return createBlockEntity(type, position, BlockEntity.getDefaultCompound(position, type), args);
+    }
+
     public static BlockEntity createBlockEntity(String type, Position pos, CompoundTag nbt, Object... args) {
         return createBlockEntity(type, pos.getLevel().getChunk(pos.getFloorX() >> 4, pos.getFloorZ() >> 4), nbt, args);
     }

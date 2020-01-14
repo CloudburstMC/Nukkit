@@ -5,7 +5,6 @@ import cn.nukkit.block.BlockDispenser;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockShulkerBox;
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityShulkerBox;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -37,7 +36,7 @@ public class ShulkerBoxDispenseBehavior extends DefaultDispenseBehavior {
                 }
             }
 
-            new BlockEntityShulkerBox(block.level.getChunk(target.getChunkX(), target.getChunkZ()), nbt);
+            BlockEntity.createBlockEntity(BlockEntity.SHULKER_BOX, target, nbt);
             block.level.updateComparatorOutputLevel(target);
         }
 

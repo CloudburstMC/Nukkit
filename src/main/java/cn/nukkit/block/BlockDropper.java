@@ -34,8 +34,7 @@ public class BlockDropper extends BlockDispenser {
 
     @Override
     protected void createBlockEntity() {
-        new BlockEntityDropper(this.level.getChunk(getChunkX(), getChunkZ()),
-                BlockEntity.getDefaultCompound(this, BlockEntity.DROPPER));
+        BlockEntity.createBlockEntity(BlockEntity.DROPPER, this);
     }
 
     @Override
