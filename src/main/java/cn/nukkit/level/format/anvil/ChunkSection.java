@@ -507,7 +507,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     @Override
     public CompoundTag toNBT() {
         // For simplicity, not using the actual palette format to save in the disk
-        CompoundTag s = new CompoundTag(null);
+        CompoundTag s = new CompoundTag();
         s.putByte("Y", (getY()));
         s.putByte("Version", STORAGE_VERSION);
         ListTag<CompoundTag> storageList = new ListTag<>("Storage");
