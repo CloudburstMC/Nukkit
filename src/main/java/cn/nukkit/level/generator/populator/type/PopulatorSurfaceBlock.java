@@ -4,7 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.populator.helper.PopulatorHelpers;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 
 /**
  * @author DaPorkchop_
@@ -13,9 +13,9 @@ import cn.nukkit.math.NukkitRandom;
  */
 public abstract class PopulatorSurfaceBlock extends PopulatorCount {
     @Override
-    protected void populateCount(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, IChunk chunk) {
-        int x = random.nextBoundedInt(16);
-        int z = random.nextBoundedInt(16);
+    protected void populateCount(ChunkManager level, int chunkX, int chunkZ, BedrockRandom random, IChunk chunk) {
+        int x = random.nextInt(16);
+        int z = random.nextInt(16);
         int y = getHighestWorkableBlock(level, x, z, chunk);
         if (y > 0 && canStay(x, y, z, chunk, level)) {
             placeBlock(x, y, z, getBlock(x, z, random, chunk), chunk, random);
@@ -24,7 +24,7 @@ public abstract class PopulatorSurfaceBlock extends PopulatorCount {
 
     protected abstract boolean canStay(int x, int y, int z, IChunk chunk, ChunkManager level);
 
-    protected abstract Block getBlock(int x, int z, NukkitRandom random, IChunk chunk);
+    protected abstract Block getBlock(int x, int z, BedrockRandom random, IChunk chunk);
 
     @Override
     protected int getHighestWorkableBlock(ChunkManager level, int x, int z, IChunk chunk) {
@@ -39,7 +39,7 @@ public abstract class PopulatorSurfaceBlock extends PopulatorCount {
         return y == 0 ? -1 : ++y;
     }
 
-    protected void placeBlock(int x, int y, int z, Block block, IChunk chunk, NukkitRandom random) {
+    protected void placeBlock(int x, int y, int z, Block block, IChunk chunk, BedrockRandom random) {
         chunk.setBlock(x, y, z, block);
     }
 }

@@ -1,6 +1,6 @@
 package cn.nukkit.level.generator.noise.vanilla.d;
 
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 
 public class NoiseGeneratorSimplexD {
     public static final double SQRT_3 = Math.sqrt(3.0D);
@@ -13,10 +13,10 @@ public class NoiseGeneratorSimplexD {
     public double zo;
 
     public NoiseGeneratorSimplexD() {
-        this(new NukkitRandom(System.currentTimeMillis()));
+        this(new BedrockRandom());
     }
 
-    public NoiseGeneratorSimplexD(NukkitRandom p_i45471_1_) {
+    public NoiseGeneratorSimplexD(BedrockRandom p_i45471_1_) {
         this.p = new int[512];
         this.xo = p_i45471_1_.nextDouble() * 256.0D;
         this.yo = p_i45471_1_.nextDouble() * 256.0D;
@@ -28,7 +28,7 @@ public class NoiseGeneratorSimplexD {
         }
 
         for (int l = 0; l < 256; ++l) {
-            int j = p_i45471_1_.nextBoundedInt(256 - l) + l;
+            int j = p_i45471_1_.nextInt(256 - l) + l;
             int k = this.p[l];
             this.p[l] = this.p[j];
             this.p[j] = k;

@@ -3,7 +3,7 @@ package cn.nukkit.level.generator.populator.impl;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.populator.type.Populator;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
 
@@ -12,7 +12,6 @@ import static cn.nukkit.block.BlockIds.*;
 public class PopulatorLava extends Populator {
     private int randomAmount;
     private int baseAmount;
-    private NukkitRandom random;
 
     public void setRandomAmount(int amount) {
         this.randomAmount = amount;
@@ -23,22 +22,21 @@ public class PopulatorLava extends Populator {
     }
 
     @Override
-    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, IChunk chunk) {
-        this.random = random;
-        if (random.nextRange(0, 100) < 5) {
-            int amount = random.nextRange(0, this.randomAmount + 1) + this.baseAmount;
+    public void populate(ChunkManager level, int chunkX, int chunkZ, BedrockRandom random, IChunk chunk) {
+        if (random.nextInt(0, 100) < 5) {
+            int amount = random.nextInt(this.randomAmount + 1) + this.baseAmount;
             int bx = chunkX << 4;
             int bz = chunkZ << 4;
             int tx = bx + 15;
             int tz = bz + 15;
             for (int i = 0; i < amount; ++i) {
-                int x = random.nextRange(0, 15);
-                int z = random.nextRange(0, 15);
+                int x = random.nextInt(0, 15);
+                int z = random.nextInt(0, 15);
                 int y = this.getHighestWorkableBlock(chunk, x, z);
                 if (y != -1 && chunk.getBlockId(x, y, z) == AIR) {
                     chunk.setBlockId(x, y, z, 0, FLOWING_LAVA);
                     chunk.setBlockLight(x, y, z, BlockRegistry.get().getBlock(FLOWING_LAVA, 0).getLightLevel());
-                    this.lavaSpread(level, bx + x, y, bz + z);
+                    this.lavaSpread(level, random, bx + x, y, bz + z);
                 }
             }
         }
@@ -52,7 +50,7 @@ public class PopulatorLava extends Populator {
         }
     }
 
-    private void lavaSpread(ChunkManager level, int x, int y, int z) {
+    private void lavaSpread(ChunkManager level, BedrockRandom random, int x, int y, int z) {
         if (level.getChunk(x >> 4, z >> 4) == null) {
             return;
         }
@@ -76,7 +74,7 @@ public class PopulatorLava extends Populator {
                     k = topFlowDecay | 0x08;
                 }
             }
-            if (decay < 8 && k < 8 && k > 1 && random.nextRange(0, 4) != 0) {
+            if (decay < 8 && k < 8 && k > 1 && random.nextInt(0, 4) != 0) {
                 k = decay;
             }
             if (k != decay) {
@@ -85,16 +83,16 @@ public class PopulatorLava extends Populator {
                     level.setBlockIdAt(x, y, z, AIR);
                 } else {
                     level.setBlockAt(x, y, z, FLOWING_LAVA, decay);
-                    this.lavaSpread(level, x, y, z);
+                    this.lavaSpread(level, random, x, y, z);
                     return;
                 }
             }
         }
         if (this.canFlowInto(level, x, y - 1, z)) {
             if (decay >= 8) {
-                this.flowIntoBlock(level, x, y - 1, z, decay);
+                this.flowIntoBlock(level, random, x, y - 1, z, decay);
             } else {
-                this.flowIntoBlock(level, x, y - 1, z, decay | 0x08);
+                this.flowIntoBlock(level, random, x, y - 1, z, decay | 0x08);
             }
         } else if (decay >= 0 && (decay == 0 || !this.canFlowInto(level, x, y - 1, z))) {
             boolean[] flags = this.getOptimalFlowDirections(level, x, y, z);
@@ -106,24 +104,24 @@ public class PopulatorLava extends Populator {
                 return;
             }
             if (flags[0]) {
-                this.flowIntoBlock(level, x - 1, y, z, l);
+                this.flowIntoBlock(level, random, x - 1, y, z, l);
             }
             if (flags[1]) {
-                this.flowIntoBlock(level, x + 1, y, z, l);
+                this.flowIntoBlock(level, random, x + 1, y, z, l);
             }
             if (flags[2]) {
-                this.flowIntoBlock(level, x, y, z - 1, l);
+                this.flowIntoBlock(level, random, x, y, z - 1, l);
             }
             if (flags[3]) {
-                this.flowIntoBlock(level, x, y, z + 1, l);
+                this.flowIntoBlock(level, random, x, y, z + 1, l);
             }
         }
     }
 
-    private void flowIntoBlock(ChunkManager level, int x, int y, int z, int newFlowDecay) {
+    private void flowIntoBlock(ChunkManager level, BedrockRandom random, int x, int y, int z, int newFlowDecay) {
         if (level.getBlockIdAt(x, y, z) == AIR) {
             level.setBlockAt(x, y, z, FLOWING_LAVA, newFlowDecay);
-            this.lavaSpread(level, x, y, z);
+            this.lavaSpread(level, random, x, y, z);
         }
     }
 

@@ -4,6 +4,7 @@ package cn.nukkit.level;
 import cn.nukkit.level.gamerule.GameRuleMap;
 import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.math.Vector3f;
+import cn.nukkit.utils.Identifier;
 import lombok.ToString;
 
 import java.util.HashMap;
@@ -21,7 +22,7 @@ public class LevelData {
     private volatile long currentTick;
     private long seed = ThreadLocalRandom.current().nextLong();
     private int dimension;
-    private int generator;
+    private Identifier generator;
     private String name = "World";
     private int time;
     private Vector3f spawn = new Vector3f(0, 128, 0);
@@ -117,11 +118,11 @@ public class LevelData {
         this.dimension = dimension;
     }
 
-    public int getGenerator() {
+    public Identifier getGenerator() {
         return this.generator;
     }
 
-    public void setGenerator(int generator) {
+    public void setGenerator(Identifier generator) {
         this.generator = generator;
     }
 

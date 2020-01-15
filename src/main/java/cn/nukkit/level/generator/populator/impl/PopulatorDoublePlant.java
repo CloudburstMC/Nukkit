@@ -7,7 +7,7 @@ import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.populator.helper.EnsureCover;
 import cn.nukkit.level.generator.populator.helper.EnsureGrassBelow;
 import cn.nukkit.level.generator.populator.type.PopulatorSurfaceBlock;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 
 /**
  * author: DaPorkchop_
@@ -26,12 +26,12 @@ public class PopulatorDoublePlant extends PopulatorSurfaceBlock {
     }
 
     @Override
-    protected Block getBlock(int x, int z, NukkitRandom random, IChunk chunk) {
+    protected Block getBlock(int x, int z, BedrockRandom random, IChunk chunk) {
         return block;
     }
 
     @Override
-    protected void placeBlock(int x, int y, int z, Block block, IChunk chunk, NukkitRandom random) {
+    protected void placeBlock(int x, int y, int z, Block block, IChunk chunk, BedrockRandom random) {
         super.placeBlock(x, y, z, block, chunk, random);
         chunk.setBlock(x, y + 1, z, Block.get(block.getId(), block.getDamage() | 8));
     }

@@ -7,7 +7,7 @@ import cn.nukkit.level.biome.type.CoveredBiome;
 import cn.nukkit.level.generator.noise.nukkit.f.SimplexF;
 import cn.nukkit.level.generator.populator.impl.PopulatorCactus;
 import cn.nukkit.level.generator.populator.impl.PopulatorDeadBush;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -22,8 +22,8 @@ public class MesaBiome extends CoveredBiome {
     private static final Block RED_SANDSTONE = Block.get(BlockIds.RED_SANDSTONE);
     private static final Block RED_SAND = Block.get(BlockIds.SAND, BlockSand.RED);
     private static final Block[] TERRACOTTA_COLORS = new Block[16];
-    static final SimplexF redSandNoise = new SimplexF(new NukkitRandom(937478913), 2f, 1 / 4f, 1 / 4f);
-    static final SimplexF colorNoise = new SimplexF(new NukkitRandom(193759875), 2f, 1 / 4f, 1 / 32f);
+    static final SimplexF redSandNoise = new SimplexF(new BedrockRandom(937478913), 2f, 1 / 4f, 1 / 4f);
+    static final SimplexF colorNoise = new SimplexF(new BedrockRandom(193759875), 2f, 1 / 4f, 1 / 32f);
 
     static {
         for (int i = 0; i < 16; i++) {
@@ -60,7 +60,7 @@ public class MesaBiome extends CoveredBiome {
         }
     }
 
-    private SimplexF moundNoise = new SimplexF(new NukkitRandom(347228794), 2f, 1 / 4f, getMoundFrequency());
+    private SimplexF moundNoise = new SimplexF(new BedrockRandom(347228794), 2f, 1 / 4f, getMoundFrequency());
     protected int moundHeight;
 
     public MesaBiome() {

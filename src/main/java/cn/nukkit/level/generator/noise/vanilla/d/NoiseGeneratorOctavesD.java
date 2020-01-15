@@ -1,7 +1,7 @@
 package cn.nukkit.level.generator.noise.vanilla.d;
 
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.MathHelper;
-import cn.nukkit.math.NukkitRandom;
 
 public class NoiseGeneratorOctavesD {
     /**
@@ -10,7 +10,7 @@ public class NoiseGeneratorOctavesD {
     private final NoiseGeneratorImprovedD[] generatorCollection;
     private final int octaves;
 
-    public NoiseGeneratorOctavesD(NukkitRandom seed, int octavesIn) {
+    public NoiseGeneratorOctavesD(BedrockRandom seed, int octavesIn) {
         this.octaves = octavesIn;
         this.generatorCollection = new NoiseGeneratorImprovedD[octavesIn];
 

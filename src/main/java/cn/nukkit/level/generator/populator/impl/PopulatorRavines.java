@@ -3,8 +3,8 @@ package cn.nukkit.level.generator.populator.impl;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.populator.type.Populator;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.MathHelper;
-import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
@@ -32,7 +32,7 @@ public class PopulatorRavines extends Populator {
     private float[] a = new float[1024];
 
     @Override
-    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, IChunk chunk) {
+    public void populate(ChunkManager level, int chunkX, int chunkZ, BedrockRandom random, IChunk chunk) {
         this.random = new Random();
         this.random.setSeed(level.getSeed());
         worldLong1 = this.random.nextLong();

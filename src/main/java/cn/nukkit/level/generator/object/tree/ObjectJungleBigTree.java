@@ -3,8 +3,8 @@ package cn.nukkit.level.generator.object.tree;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.MathHelper;
-import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3i;
 
 import static cn.nukkit.block.BlockIds.AIR;
@@ -14,7 +14,7 @@ public class ObjectJungleBigTree extends HugeTreesGenerator {
         super(baseHeightIn, extraRandomHeight, woodMetadata, leavesMetadata);
     }
 
-    public boolean generate(ChunkManager level, NukkitRandom rand, Vector3i position) {
+    public boolean generate(ChunkManager level, BedrockRandom rand, Vector3i position) {
         int height = this.getHeight(rand);
 
         if (!this.ensureGrowable(level, rand, position, height)) {
@@ -22,7 +22,7 @@ public class ObjectJungleBigTree extends HugeTreesGenerator {
         } else {
             this.createCrown(level, position.up(height), 2);
 
-            for (int j = (int) position.getY() + height - 2 - rand.nextBoundedInt(4); j > position.getY() + height / 2; j -= 2 + rand.nextBoundedInt(4)) {
+            for (int j = (int) position.getY() + height - 2 - rand.nextInt(4); j > position.getY() + height / 2; j -= 2 + rand.nextInt(4)) {
                 float f = rand.nextFloat() * ((float) Math.PI * 2F);
                 int k = (int) (position.getX() + (0.5F + MathHelper.cos(f) * 4.0F));
                 int l = (int) (position.getZ() + (0.5F + MathHelper.sin(f) * 4.0F));
@@ -33,7 +33,7 @@ public class ObjectJungleBigTree extends HugeTreesGenerator {
                     level.setBlockAt(k, j - 3 + i1 / 2, l, this.woodMetadata);
                 }
 
-                int j2 = 1 + rand.nextBoundedInt(2);
+                int j2 = 1 + rand.nextInt(2);
 
                 for (int k1 = j - j2; k1 <= j; ++k1) {
                     int l1 = k1 - j;
@@ -93,8 +93,8 @@ public class ObjectJungleBigTree extends HugeTreesGenerator {
         }
     }
 
-    private void placeVine(ChunkManager level, NukkitRandom random, Vector3i pos, int meta) {
-        if (random.nextBoundedInt(3) > 0 && level.getBlockIdAt(pos.x, pos.y, pos.z) == AIR) {
+    private void placeVine(ChunkManager level, BedrockRandom random, Vector3i pos, int meta) {
+        if (random.nextInt(3) > 0 && level.getBlockIdAt(pos.x, pos.y, pos.z) == AIR) {
             level.setBlockAt(pos.x, pos.y, pos.z, Block.get(BlockIds.VINE, meta));
         }
     }

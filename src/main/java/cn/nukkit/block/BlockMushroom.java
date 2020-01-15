@@ -4,8 +4,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.generator.object.mushroom.BigMushroom;
 import cn.nukkit.level.particle.BoneMealParticle;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
@@ -71,7 +71,7 @@ public abstract class BlockMushroom extends FloodableBlock {
 
         BigMushroom generator = new BigMushroom(getType());
 
-        if (generator.generate(this.level, new NukkitRandom(), this.asVector3i())) {
+        if (generator.generate(this.level, new BedrockRandom(), this.asVector3i())) {
             return true;
         } else {
             this.level.setBlock(this, this, true, false);

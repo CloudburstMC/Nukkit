@@ -5,8 +5,8 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.generator.object.BasicGenerator;
 import cn.nukkit.level.generator.object.tree.*;
 import cn.nukkit.level.particle.BoneMealParticle;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.math.Vector3i;
 import cn.nukkit.player.Player;
@@ -142,7 +142,7 @@ public class BlockSapling extends FloodableBlock {
                 break;
             //TODO: big spruce
             default:
-                ObjectTree.growTree(this.level, this.getX(), this.getY(), this.getZ(), new NukkitRandom(), this.getDamage() & 0x07);
+                ObjectTree.growTree(this.level, this.getX(), this.getY(), this.getZ(), new BedrockRandom(), this.getDamage() & 0x07);
                 return;
         }
 
@@ -155,7 +155,7 @@ public class BlockSapling extends FloodableBlock {
             this.level.setBlock(this, get(AIR), true, false);
         }
 
-        if (!generator.generate(this.level, new NukkitRandom(), this.add(x, 0, z).asVector3i())) {
+        if (!generator.generate(this.level, new BedrockRandom(), this.add(x, 0, z).asVector3i())) {
             if (bigTree) {
                 this.level.setBlock(this.add(x, 0, z), this, true, false);
                 this.level.setBlock(this.add(x + 1, 0, z), this, true, false);

@@ -18,12 +18,8 @@ import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.*;
 import cn.nukkit.level.biome.EnumBiome;
-import cn.nukkit.level.generator.Flat;
-import cn.nukkit.level.generator.Generator;
-import cn.nukkit.level.generator.Nether;
-import cn.nukkit.level.generator.Normal;
-import cn.nukkit.level.storage.StorageType;
-import cn.nukkit.level.storage.StorageTypes;
+import cn.nukkit.level.generator.GeneratorIds;
+import cn.nukkit.level.storage.StorageIds;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
@@ -197,6 +193,7 @@ public class Server {
     private Config config;
 
     private final GameRuleRegistry gameRuleRegistry = GameRuleRegistry.get();
+    private final GeneratorRegistry generatorRegistry = GeneratorRegistry.get();
     private final StorageRegistry storageRegistry = StorageRegistry.get();
     private final BlockRegistry blockRegistry = BlockRegistry.get();
     private final ItemRegistry itemRegistry = ItemRegistry.get();
@@ -220,7 +217,7 @@ public class Server {
 
     private PlayerDataSerializer playerDataSerializer = new DefaultPlayerDataSerializer(this);
     private Properties properties;
-    private volatile StorageType defaultStorageType;
+    private volatile Identifier defaultStorageId;
 
     private Set<String> ignoredPackets = new HashSet<>();
 
@@ -296,6 +293,7 @@ public class Server {
     }
 
     public int broadcast(TextContainer message, String permissions) {
+        Random
         Set<CommandSender> recipients = new HashSet<>();
 
         for (String permission : permissions.split(";")) {
@@ -550,19 +548,20 @@ public class Server {
             this.itemRegistry.close();
             this.entityRegistry.close();
             this.gameRuleRegistry.close();
+            this.generatorRegistry.close();
             this.storageRegistry.close();
             this.packManager.closeRegistration();
         } catch (RegistryException e) {
             throw new IllegalStateException("Unable to close registries", e);
         }
 
-        Optional<StorageType> storageType = this.storageRegistry.fromIdentifier(this.getConfig().get(
+        Identifier storageId = Identifier.fromString(this.getConfig().get(
                 "level-settings.default-format", "minecraft:anvil"));
-        if (!storageType.isPresent()) {
-            log.warn("Unknown default storage type. Reverting to 'minecraft:leveldb' instead");
-            this.defaultStorageType = StorageTypes.LEVELDB;
+        if (storageRegistry.isRegistered(storageId)) {
+            this.defaultStorageId = storageId;
         } else {
-            this.defaultStorageType = storageType.get();
+            log.warn("Unknown default storage type. Reverting to 'minecraft:leveldb' instead");
+            this.defaultStorageId = StorageIds.LEVELDB;
         }
 
         List<CompletableFuture<Level>> levelFutures = new ArrayList<>();
@@ -575,19 +574,23 @@ public class Server {
                 seed = System.currentTimeMillis();
             }
 
-            LevelBuilder levelBuilder = this.loadLevel().id(name).seed(seed).storageType(defaultStorageType);
+            LevelBuilder levelBuilder = this.loadLevel().id(name).seed(seed).storage(defaultStorageId);
 
-            String[] opts = (this.getConfig("worlds." + name + ".generator", Generator.getGenerator("default").getSimpleName())).split(":");
-            Class<? extends Generator> generator = Generator.getGenerator(opts[0]);
+            String[] opts = this.getConfig("worlds." + name + ".generator", generatorRegistry.getFallback().toString())
+                    .split(",");
+            Identifier generatorId = Identifier.fromString(opts[0]);
+            Map<String, Object> options = new HashMap<>();
             if (opts.length > 1) {
-                String preset = "";
+                StringBuilder preset = new StringBuilder();
                 for (int i = 1; i < opts.length; i++) {
-                    preset += opts[i] + ":";
+                    preset.append(opts[i]).append(":");
                 }
-                preset = preset.substring(0, preset.length() - 1);
+                preset = new StringBuilder(preset.substring(0, preset.length() - 1));
 
-                //options.put("preset", preset);
+                options.put("preset", preset.toString());
             }
+            levelBuilder.generator(generatorId);
+            levelBuilder.options(options);
 
             levelFutures.add(levelBuilder.load());
         }
@@ -616,7 +619,11 @@ public class Server {
                 } else {
                     seed = System.currentTimeMillis();
                 }
-                defaultLevel = this.loadLevel().id(defaultName).seed(seed).storageType(defaultStorageType).load().join();
+                defaultLevel = this.loadLevel().id(defaultName)
+                        .seed(seed)
+                        .storage(defaultStorageId)
+                        .generator(GeneratorIds.NORMAL)
+                        .load().join();
             }
             this.levelManager.setDefaultLevel(defaultLevel);
         }
@@ -1973,12 +1980,6 @@ public class Server {
     private void registerVanillaComponents() {
         this.registerBlockEntities();
 
-        // Generators
-        Generator.addGenerator(Flat.class, "flat", Generator.TYPE_FLAT);
-        Generator.addGenerator(Normal.class, "normal", Generator.TYPE_INFINITE);
-        Generator.addGenerator(Normal.class, "default", Generator.TYPE_INFINITE);
-        Generator.addGenerator(Nether.class, "nether", Generator.TYPE_NETHER);
-
         Enchantment.init();
         EnumBiome.values(); //load class, this also registers biomes
         Item.initCreativeItems();
@@ -2030,8 +2031,8 @@ public class Server {
         return defaultLevelData;
     }
 
-    public StorageType getDefaultStorageType() {
-        return defaultStorageType;
+    public Identifier getDefaultStorageId() {
+        return defaultStorageId;
     }
 
     public StorageRegistry getStorageRegistry() {

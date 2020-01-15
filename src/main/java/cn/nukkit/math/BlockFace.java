@@ -350,8 +350,8 @@ public enum BlockFace {
 
         private BlockFace[] faces;
 
-        public BlockFace random(NukkitRandom rand) { //todo Default Random?
-            return faces[rand.nextBoundedInt(faces.length)];
+        public BlockFace random(BedrockRandom rand) { //todo Default Random?
+            return faces[rand.nextInt(faces.length)];
         }
 
         public boolean test(BlockFace face) {

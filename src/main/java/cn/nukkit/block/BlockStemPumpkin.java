@@ -5,6 +5,7 @@ import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
 import cn.nukkit.math.NukkitRandom;
@@ -29,8 +30,8 @@ public class BlockStemPumpkin extends BlockCrops {
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
-            NukkitRandom random = new NukkitRandom();
-            if (random.nextRange(1, 2) == 1) {
+            BedrockRandom random = new BedrockRandom();
+            if (random.nextBoolean()) {
                 if (this.getDamage() < 0x07) {
                     Block block = this.clone();
                     block.setDamage(block.getDamage() + 1);

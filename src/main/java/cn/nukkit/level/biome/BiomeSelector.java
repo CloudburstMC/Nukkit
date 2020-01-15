@@ -1,7 +1,7 @@
 package cn.nukkit.level.biome;
 
 import cn.nukkit.level.generator.noise.nukkit.f.SimplexF;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 
 /**
  * author: DaPorkchop_
@@ -16,7 +16,7 @@ public class BiomeSelector {
     private final SimplexF ocean;
     private final SimplexF hills;
 
-    public BiomeSelector(NukkitRandom random) {
+    public BiomeSelector(BedrockRandom random) {
         this.temperature = new SimplexF(random, 2F, 1F / 8F, 1F / 2048f);
         this.rainfall = new SimplexF(random, 2F, 1F / 8F, 1F / 2048f);
         this.river = new SimplexF(random, 6f, 2 / 4f, 1 / 1024f);

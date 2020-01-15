@@ -5,7 +5,7 @@ import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.populator.type.Populator;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 
 import static cn.nukkit.block.BlockIds.PACKED_ICE;
 
@@ -45,12 +45,12 @@ public class IcePlainsSpikesBiome extends IcePlainsBiome {
     private static class PopulatorIceSpikes extends Populator {
 
         @Override
-        public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, IChunk chunk) {
+        public void populate(ChunkManager level, int chunkX, int chunkZ, BedrockRandom random, IChunk chunk) {
             for (int i = 0; i < 8; i++) {
-                int x = (chunkX << 4) + random.nextBoundedInt(16);
-                int z = (chunkZ << 4) + random.nextBoundedInt(16);
-                boolean isTall = random.nextBoundedInt(16) == 0;
-                int height = 10 + random.nextBoundedInt(16) + (isTall ? random.nextBoundedInt(31) : 0);
+                int x = (chunkX << 4) + random.nextInt(16);
+                int z = (chunkZ << 4) + random.nextInt(16);
+                boolean isTall = random.nextInt(16) == 0;
+                int height = 10 + random.nextInt(16) + (isTall ? random.nextInt(31) : 0);
                 int startY = getHighestWorkableBlock(x, z, chunk);
                 int maxY = startY + height;
                 if (isTall) {
@@ -86,7 +86,7 @@ public class IcePlainsSpikesBiome extends IcePlainsBiome {
                     }
                 } else {
                     //the maximum possible radius in blocks
-                    int baseWidth = random.nextBoundedInt(1) + 4;
+                    int baseWidth = random.nextInt(1) + 4;
                     float shrinkFactor = baseWidth / (float) height;
                     float currWidth = baseWidth;
                     for (int y = startY; y < maxY; y++) {

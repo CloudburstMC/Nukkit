@@ -3,28 +3,31 @@ package cn.nukkit.level;
 import cn.nukkit.Server;
 import cn.nukkit.level.provider.LevelProvider;
 import cn.nukkit.level.provider.LevelProviderFactory;
-import cn.nukkit.level.storage.StorageType;
+import cn.nukkit.utils.Identifier;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.NotThreadSafe;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 @Log4j2
+@NotThreadSafe
 public class LevelBuilder {
     private final Server server;
     private final LevelData levelData;
     private String id;
-    private StorageType storageType;
+    private Identifier storageId;
     //private PlayerDataProvider playerDataProvider;
 
     public LevelBuilder(Server server) {
         this.server = server;
         this.levelData = new LevelData(server.getDefaultLevelData());
-        this.storageType = server.getDefaultStorageType();
+        this.storageId = server.getDefaultStorageId();
     }
 
     public LevelBuilder id(String id) {
@@ -38,9 +41,21 @@ public class LevelBuilder {
         return this;
     }
 
-    public LevelBuilder storageType(StorageType storageType) {
-        Preconditions.checkNotNull(storageType, "storageType");
-        this.storageType = storageType;
+    public LevelBuilder storage(Identifier storageId) {
+        Preconditions.checkNotNull(storageId, "storageType");
+        this.storageId = storageId;
+        return this;
+    }
+
+    public LevelBuilder generator(Identifier generatorId) {
+        Preconditions.checkNotNull(generatorId, "generatorId");
+        levelData.setGenerator(generatorId);
+        return this;
+    }
+
+    public LevelBuilder options(Map<String, Object> options) {
+        Preconditions.checkNotNull(options, "options");
+        levelData.getGeneratorOptions().putAll(options);
         return this;
     }
 
@@ -55,7 +70,7 @@ public class LevelBuilder {
 
         // Load chunk provider
         CompletableFuture<LevelProvider> providerFuture = CompletableFuture.supplyAsync(() -> {
-            LevelProviderFactory factory = this.server.getStorageRegistry().getLevelProviderFactory(storageType);
+            LevelProviderFactory factory = this.server.getStorageRegistry().getLevelProviderFactory(storageId);
             if (factory == null) {
                 throw new IllegalArgumentException("Unregistered storageType");
             }
@@ -73,7 +88,7 @@ public class LevelBuilder {
 
         // Combine futures
         return providerFuture.thenApply(levelProvider -> {
-            Level level = new Level(this.server, id, storageType, levelProvider, levelData);
+            Level level = new Level(this.server, id, levelProvider, levelData);
             this.server.getLevelManager().register(level);
             level.init();
             level.setTickRate(this.server.getBaseTickRate());

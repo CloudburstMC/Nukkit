@@ -6,7 +6,7 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.populator.helper.PopulatorHelpers;
 import cn.nukkit.level.generator.populator.type.PopulatorSurfaceBlock;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 
 /**
  * author: DaPorkchop_
@@ -21,7 +21,7 @@ public class PopulatorGrass extends PopulatorSurfaceBlock {
     }
 
     @Override
-    protected Block getBlock(int x, int z, NukkitRandom random, IChunk chunk) {
+    protected Block getBlock(int x, int z, BedrockRandom random, IChunk chunk) {
         return TALL_GRASS;
     }
 }

@@ -5,8 +5,8 @@ import cn.nukkit.block.BlockIds;
 import cn.nukkit.block.BlockLeaves2;
 import cn.nukkit.block.BlockLog2;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3i;
 import cn.nukkit.utils.Identifier;
 
@@ -20,8 +20,8 @@ public class ObjectDarkOakTree extends TreeGenerator {
     private static final Block DARK_OAK_LEAVES = Block.get(BlockIds.LEAVES2, BlockLeaves2.DARK_OAK);
 
     @Override
-    public boolean generate(ChunkManager level, NukkitRandom rand, Vector3i position) {
-        int i = rand.nextBoundedInt(3) + rand.nextBoundedInt(2) + 6;
+    public boolean generate(ChunkManager level, BedrockRandom rand, Vector3i position) {
+        int i = rand.nextInt(3) + rand.nextInt(2) + 6;
         int x = position.getX();
         int y = position.getY();
         int z = position.getZ();
@@ -40,8 +40,8 @@ public class ObjectDarkOakTree extends TreeGenerator {
                 this.setDirtAt(level, blockpos.south());
                 this.setDirtAt(level, blockpos.south().east());
                 BlockFace enumfacing = BlockFace.Plane.HORIZONTAL.random(rand);
-                int i1 = i - rand.nextBoundedInt(4);
-                int j1 = 2 - rand.nextBoundedInt(3);
+                int i1 = i - rand.nextInt(4);
+                int j1 = 2 - rand.nextInt(3);
                 int k1 = x;
                 int l1 = z;
                 int i2 = y + i - 1;
@@ -99,8 +99,8 @@ public class ObjectDarkOakTree extends TreeGenerator {
 
                 for (int k3 = -1; k3 <= 2; ++k3) {
                     for (int j4 = -1; j4 <= 2; ++j4) {
-                        if ((k3 < 0 || k3 > 1 || j4 < 0 || j4 > 1) && rand.nextBoundedInt(3) <= 0) {
-                            int l4 = rand.nextBoundedInt(3) + 2;
+                        if ((k3 < 0 || k3 > 1 || j4 < 0 || j4 > 1) && rand.nextInt(3) <= 0) {
+                            int l4 = rand.nextInt(3) + 2;
 
                             for (int i5 = 0; i5 < l4; ++i5) {
                                 this.placeLogAt(level, x + k3, i2 - i5 - 1, z + j4);

@@ -4,7 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.chunk.IChunk;
-import cn.nukkit.level.generator.Normal;
+import cn.nukkit.level.generator.NormalGenerator;
 
 import static cn.nukkit.block.BlockIds.STONE;
 
@@ -47,7 +47,7 @@ public abstract class CoveredBiome extends Biome {
             if (chunk.getBlockId(x, y, z) == STONE) {
                 COVER:
                 if (!hasCovered) {
-                    if (y >= Normal.seaHeight) {
+                    if (y >= NormalGenerator.seaHeight) {
                         chunk.setBlock(x, y + 1, z, coverBlock);
                         int surfaceDepth = this.getSurfaceDepth(fullX, y, fullZ);
                         for (int i = 0; i < surfaceDepth; i++) {

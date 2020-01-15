@@ -3,7 +3,7 @@ package cn.nukkit.level.generator.object.mushroom;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.object.BasicGenerator;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.Vector3i;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
@@ -40,7 +40,7 @@ public class BigMushroom extends BasicGenerator {
         this.mushroomType = -1;
     }
 
-    public boolean generate(ChunkManager level, NukkitRandom rand, Vector3i position) {
+    public boolean generate(ChunkManager level, BedrockRandom rand, Vector3i position) {
         int block = this.mushroomType;
         if (block < 0) {
             block = rand.nextBoolean() ? RED : BROWN;
@@ -48,9 +48,9 @@ public class BigMushroom extends BasicGenerator {
 
         Block mushroom = block == 0 ? Block.get(BROWN_MUSHROOM_BLOCK) : Block.get(RED_MUSHROOM_BLOCK);
 
-        int i = rand.nextBoundedInt(3) + 4;
+        int i = rand.nextInt(3) + 4;
 
-        if (rand.nextBoundedInt(12) == 0) {
+        if (rand.nextInt(12) == 0) {
             i *= 2;
         }
 

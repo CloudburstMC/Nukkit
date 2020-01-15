@@ -3,21 +3,17 @@ package cn.nukkit.registry;
 import cn.nukkit.level.provider.LevelProviderFactory;
 import cn.nukkit.level.provider.anvil.AnvilProviderFactory;
 import cn.nukkit.level.provider.leveldb.LevelDBProviderFactory;
-import cn.nukkit.level.storage.StorageType;
-import cn.nukkit.level.storage.StorageTypes;
+import cn.nukkit.level.storage.StorageIds;
 import cn.nukkit.utils.Identifier;
 import com.google.common.base.Preconditions;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 public class StorageRegistry implements Registry {
     private static final StorageRegistry INSTANCE = new StorageRegistry();
-
-    private final Map<Identifier, StorageType> identifiers = new IdentityHashMap<>();
-    private final Map<StorageType, LevelProviderFactory> providers = new IdentityHashMap<>();
+    private final Map<Identifier, LevelProviderFactory> providers = new IdentityHashMap<>();
     private volatile boolean closed;
 
     private StorageRegistry() {
@@ -28,30 +24,23 @@ public class StorageRegistry implements Registry {
         return INSTANCE;
     }
 
-    public synchronized void register(StorageType type, LevelProviderFactory levelProviderFactory)
+    public synchronized void register(Identifier identifier, LevelProviderFactory levelProviderFactory)
             throws RegistryException {
-        Objects.requireNonNull(type, "type");
+        Objects.requireNonNull(identifier, "type");
         Objects.requireNonNull(levelProviderFactory, "levelProviderFactory");
 
-        Identifier identifier = type.getIdentifier();
-        Preconditions.checkArgument(!this.identifiers.containsKey(identifier));
-
-        this.identifiers.put(identifier, type);
-        this.providers.put(type, levelProviderFactory);
+        Preconditions.checkArgument(!this.providers.containsKey(identifier));
+        this.providers.put(identifier, levelProviderFactory);
     }
 
-    public Optional<StorageType> fromIdentifier(String identifier) {
-        return this.fromIdentifier(Identifier.fromString(identifier));
+    public LevelProviderFactory getLevelProviderFactory(Identifier identifier) {
+        Objects.requireNonNull(identifier, "identifier");
+
+        return this.providers.get(identifier);
     }
 
-    public Optional<StorageType> fromIdentifier(Identifier identifier) {
-        return Optional.ofNullable(this.identifiers.get(identifier));
-    }
-
-    public LevelProviderFactory getLevelProviderFactory(StorageType type) {
-        Objects.requireNonNull(type, "type");
-
-        return this.providers.get(type);
+    public boolean isRegistered(Identifier identifier) {
+        return this.providers.containsKey(identifier);
     }
 
     @Override
@@ -61,7 +50,7 @@ public class StorageRegistry implements Registry {
     }
 
     private void registerVanillaStorage() throws RegistryException {
-        this.register(StorageTypes.ANVIL, AnvilProviderFactory.INSTANCE);
-        this.register(StorageTypes.LEVELDB, LevelDBProviderFactory.INSTANCE);
+        this.register(StorageIds.ANVIL, AnvilProviderFactory.INSTANCE);
+        this.register(StorageIds.LEVELDB, LevelDBProviderFactory.INSTANCE);
     }
 }

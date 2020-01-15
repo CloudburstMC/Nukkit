@@ -4,7 +4,8 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.chunk.LockableChunk;
 import cn.nukkit.level.generator.Generator;
-import cn.nukkit.level.generator.SimpleChunkManager;
+import cn.nukkit.level.generator.PopChunkManager;
+import cn.nukkit.math.BedrockRandom;
 import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
 
@@ -15,6 +16,8 @@ import java.util.function.BiFunction;
 
 @Log4j2
 public class ChunkPopulateFunction implements BiFunction<Chunk, List<Chunk>, Chunk> {
+
+    private static final ThreadLocal<PopChunkManager> POP_CHUNK_MANAGER = ThreadLocal.withInitial(PopChunkManager::new);
 
     private final Level level;
 
@@ -33,7 +36,7 @@ public class ChunkPopulateFunction implements BiFunction<Chunk, List<Chunk>, Chu
             return chunk;
         }
 
-        SimpleChunkManager manager = (SimpleChunkManager) generator.getChunkManager();
+        PopChunkManager manager = POP_CHUNK_MANAGER.get();
 
         List<LockableChunk> lockableChunks = new ArrayList<>();
         lockableChunks.add(chunk.lockable());
@@ -46,11 +49,15 @@ public class ChunkPopulateFunction implements BiFunction<Chunk, List<Chunk>, Chu
             lockableChunks.add(aroundChunk.lockable());
         }
 
+        BedrockRandom random = BedrockRandom.getThreadLocal();
+        long seed = Generator.getChunkSeed(chunk.getX(), chunk.getZ(), this.level.getSeed());
+        random.setSeed((int) seed);
+
         manager.setSeed(this.level.getSeed());
         lockableChunks.forEach(manager::setChunk);
         lockableChunks.forEach(Lock::lock);
         try {
-            generator.populateChunk(chunk.getX(), chunk.getZ());
+            generator.populateChunk(manager, random, chunk.getX(), chunk.getZ());
 
             chunk.setPopulated();
             chunk.recalculateHeightMap();

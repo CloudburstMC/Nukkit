@@ -3,10 +3,10 @@ package cn.nukkit.level.generator;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.Level;
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.chunk.IChunk;
+import cn.nukkit.level.generator.feature.GeneratorFeature;
 import cn.nukkit.level.generator.noise.nukkit.f.SimplexF;
 import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.level.generator.populator.impl.PopulatorGlowStone;
@@ -14,76 +14,29 @@ import cn.nukkit.level.generator.populator.impl.PopulatorGroundFire;
 import cn.nukkit.level.generator.populator.impl.PopulatorLava;
 import cn.nukkit.level.generator.populator.impl.PopulatorOre;
 import cn.nukkit.level.generator.populator.type.Populator;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.Vector3f;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static cn.nukkit.block.BlockIds.*;
 
-public class Nether extends Generator {
-    private ChunkManager level;
-    /**
-     * @var Random
-     */
-    private NukkitRandom nukkitRandom;
-    private Random random;
-    private double lavaHeight = 32;
-    private double bedrockDepth = 5;
-    private SimplexF[] noiseGen = new SimplexF[3];
-    private final List<Populator> populators = new ArrayList<>();
-    private List<Populator> generationPopulators = new ArrayList<>();
+public class NetherGenerator implements Generator {
 
-    private long localSeed1;
-    private long localSeed2;
+    public static GeneratorFactory FACTORY = NetherGenerator::new;
+    protected final List<Populator> populators = new ArrayList<>();
+    protected double lavaHeight = 32;
+    protected double bedrockDepth = 5;
+    protected SimplexF[] noiseGen = new SimplexF[3];
+    protected List<GeneratorFeature> generatorFeatures = new ArrayList<>();
 
-    public Nether() {
-        this(new HashMap<>());
-    }
-
-    public Nether(Map<String, Object> options) {
-        //Nothing here. Just used for future update.
-    }
-
-    @Override
-    public int getId() {
-        return Generator.TYPE_NETHER;
-    }
-
-    @Override
-    public int getDimension() {
-        return Level.DIMENSION_NETHER;
-    }
-
-    @Override
-    public String getName() {
-        return "nether";
-    }
-
-    @Override
-    public Map<String, Object> getSettings() {
-        return new HashMap<>();
-    }
-
-    @Override
-    public ChunkManager getChunkManager() {
-        return level;
-    }
-
-    @Override
-    public void init(ChunkManager level, NukkitRandom random) {
-        this.level = level;
-        this.nukkitRandom = random;
-        this.random = new Random();
-        this.nukkitRandom.setSeed(this.level.getSeed());
-
+    private NetherGenerator(BedrockRandom random, Map<String, Object> options) {
         for (int i = 0; i < noiseGen.length; i++) {
-            noiseGen[i] = new SimplexF(nukkitRandom, 4, 1 / 4f, 1 / 64f);
+            noiseGen[i] = new SimplexF(random, 4, 1 / 4f, 1 / 64f);
         }
-
-        this.nukkitRandom.setSeed(this.level.getSeed());
-        this.localSeed1 = this.random.nextLong();
-        this.localSeed2 = this.random.nextLong();
 
         PopulatorOre ores = new PopulatorOre(NETHERRACK, new OreType[]{
                 new OreType(Block.get(BlockIds.QUARTZ_ORE), 20, 16, 0, 128),
@@ -113,12 +66,14 @@ public class Nether extends Generator {
     }
 
     @Override
-    public void generateChunk(int chunkX, int chunkZ) {
-        int baseX = chunkX << 4;
-        int baseZ = chunkZ << 4;
-        this.nukkitRandom.setSeed(chunkX * localSeed1 ^ chunkZ * localSeed2 ^ this.level.getSeed());
+    public Map<String, Object> getSettings() {
+        return new HashMap<>();
+    }
 
-        IChunk chunk = level.getChunk(chunkX, chunkZ);
+    @Override
+    public void generateChunk(BedrockRandom random, IChunk chunk) {
+        int baseX = chunk.getX() << 4;
+        int baseZ = chunk.getZ() << 4;
 
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
@@ -140,21 +95,21 @@ public class Nether extends Generator {
                 }
             }
         }
-        for (Populator populator : this.generationPopulators) {
-            populator.populate(this.level, chunkX, chunkZ, this.nukkitRandom, chunk);
+        for (GeneratorFeature feature : this.generatorFeatures) {
+            feature.generate(random, chunk);
         }
     }
 
     @Override
-    public void populateChunk(int chunkX, int chunkZ) {
+    public void populateChunk(ChunkManager level, BedrockRandom random, int chunkX, int chunkZ) {
         IChunk chunk = level.getChunk(chunkX, chunkZ);
-        this.nukkitRandom.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
+
         for (Populator populator : this.populators) {
-            populator.populate(this.level, chunkX, chunkZ, this.nukkitRandom, chunk);
+            populator.populate(level, chunkX, chunkZ, random, chunk);
         }
 
         Biome biome = EnumBiome.getBiome(chunk.getBiome(7, 7));
-        biome.populateChunk(this.level, chunkX, chunkZ, this.nukkitRandom);
+        biome.populateChunk(level, chunkX, chunkZ, random);
     }
 
     public Vector3f getSpawn() {

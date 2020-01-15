@@ -4,7 +4,7 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.object.mushroom.BigMushroom;
 import cn.nukkit.level.generator.populator.type.PopulatorCount;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.Vector3i;
 import cn.nukkit.utils.Identifier;
 
@@ -25,9 +25,9 @@ public class MushroomPopulator extends PopulatorCount {
     }
 
     @Override
-    public void populateCount(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, IChunk chunk) {
-        int x = (chunkX << 4) | random.nextBoundedInt(16);
-        int z = (chunkZ << 4) | random.nextBoundedInt(16);
+    public void populateCount(ChunkManager level, int chunkX, int chunkZ, BedrockRandom random, IChunk chunk) {
+        int x = (chunkX << 4) | random.nextInt(16);
+        int z = (chunkZ << 4) | random.nextInt(16);
         int y = this.getHighestWorkableBlock(level, x, z, chunk);
         if (y != -1) {
             new BigMushroom(type).generate(level, random, new Vector3i(x, y, z));

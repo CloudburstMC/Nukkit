@@ -2,7 +2,7 @@ package cn.nukkit.level.generator.object.tree;
 
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.utils.Identifier;
 
 /**
@@ -19,19 +19,19 @@ public class ObjectBigSpruceTree extends ObjectSpruceTree {
     }
 
     @Override
-    public void placeObject(ChunkManager level, int x, int y, int z, NukkitRandom random) {
-        this.treeHeight = random.nextBoundedInt(15) + 20;
+    public void placeObject(ChunkManager level, int x, int y, int z, BedrockRandom random) {
+        this.treeHeight = random.nextInt(15) + 20;
 
         int topSize = this.treeHeight - (int) (this.treeHeight * leafStartHeightMultiplier);
-        int lRadius = baseLeafRadius + random.nextBoundedInt(2);
+        int lRadius = baseLeafRadius + random.nextInt(2);
 
-        this.placeTrunk(level, x, y, z, random, this.getTreeHeight() - random.nextBoundedInt(3));
+        this.placeTrunk(level, x, y, z, random, this.getTreeHeight() - random.nextInt(3));
 
         this.placeLeaves(level, topSize, lRadius, x, y, z, random);
     }
 
     @Override
-    protected void placeTrunk(ChunkManager level, int x, int y, int z, NukkitRandom random, int trunkHeight) {
+    protected void placeTrunk(ChunkManager level, int x, int y, int z, BedrockRandom random, int trunkHeight) {
         // The base dirt block
         level.setBlockIdAt(x, y - 1, z, BlockIds.DIRT);
         int radius = 2;

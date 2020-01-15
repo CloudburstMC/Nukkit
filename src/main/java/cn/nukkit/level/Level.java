@@ -27,12 +27,11 @@ import cn.nukkit.level.chunk.ChunkSection;
 import cn.nukkit.level.gamerule.GameRuleMap;
 import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.level.generator.Generator;
-import cn.nukkit.level.generator.PopChunkManager;
+import cn.nukkit.level.generator.GeneratorFactory;
 import cn.nukkit.level.manager.LevelChunkManager;
 import cn.nukkit.level.particle.DestroyBlockParticle;
 import cn.nukkit.level.particle.Particle;
 import cn.nukkit.level.provider.LevelProvider;
-import cn.nukkit.level.storage.StorageType;
 import cn.nukkit.math.*;
 import cn.nukkit.math.BlockFace.Plane;
 import cn.nukkit.metadata.BlockMetadataStore;
@@ -46,6 +45,7 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.registry.EntityRegistry;
+import cn.nukkit.registry.GeneratorRegistry;
 import cn.nukkit.registry.RegistryException;
 import cn.nukkit.scheduler.BlockUpdateScheduler;
 import cn.nukkit.timings.LevelTimings;
@@ -208,41 +208,31 @@ public class Level implements ChunkManager, Metadatable {
     public int tickRateTime = 0;
     public int tickRateCounter = 0;
 
-    private Class<? extends Generator> generatorClass;
+    private GeneratorFactory generatorFactory;
     private final Long2ObjectOpenHashMap<Set<Player>> chunkPlayers = new Long2ObjectOpenHashMap<>();
     private final Cache<Long, ByteBuf> chunkCache = CacheBuilder.<Long, ByteBuf>newBuilder()
             .softValues()
             .removalListener(cacheRemover)
             .build();
-    private final StorageType storageType;
     private final LevelChunkManager chunkManager;
     private final LevelData levelData;
     private ThreadLocal<Generator> generators = new ThreadLocal<Generator>() {
         @Override
         protected Generator initialValue() {
             try {
-                Generator generator = generatorClass.getConstructor(Map.class).newInstance(levelData.getGeneratorOptions());
-                NukkitRandom rand = new NukkitRandom(getSeed());
-                if (Server.getInstance().isPrimaryThread()) {
-                    generator.init(Level.this, rand);
-                }
-                PopChunkManager manager = new PopChunkManager();
-                manager.setSeed(getSeed());
-                generator.init(manager, rand);
-                return generator;
+                BedrockRandom random = new BedrockRandom((int) getSeed());
+                return generatorFactory.create(random, levelData.getGeneratorOptions());
             } catch (Throwable e) {
-                e.printStackTrace();
-                return null;
+                throw new IllegalStateException("Unable to initialize generator", e);
             }
         }
     };
 
-    Level(Server server, String id, StorageType storageType, LevelProvider levelProvider, LevelData levelData) {
+    Level(Server server, String id, LevelProvider levelProvider, LevelData levelData) {
         this.id = id;
         this.blockMetadata = new BlockMetadataStore(this);
         this.server = server;
         this.autoSave = server.getAutoSave();
-        this.storageType = storageType;
         this.provider = levelProvider;
         this.levelData = levelData;
         this.timings = new LevelTimings(this);
@@ -279,7 +269,7 @@ public class Level implements ChunkManager, Metadatable {
         log.info(this.server.getLanguage().translateString("nukkit.level.preparing",
                 TextFormat.GREEN + getId() + TextFormat.WHITE));
 
-        this.generatorClass = Generator.getGenerator(this.levelData.getGenerator());
+        this.generatorFactory = GeneratorRegistry.get().getGeneratorFactory(this.levelData.getGenerator());
 
         if (this.levelData.getRainTime() <= 0) {
             setRainTime(ThreadLocalRandom.current().nextInt(168000) + 12000);

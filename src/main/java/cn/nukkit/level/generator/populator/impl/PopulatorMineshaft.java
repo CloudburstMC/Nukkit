@@ -3,7 +3,7 @@ package cn.nukkit.level.generator.populator.impl;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.populator.type.Populator;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 
 public class PopulatorMineshaft extends Populator {
 
@@ -17,7 +17,7 @@ public class PopulatorMineshaft extends Populator {
      */
 
     @Override
-    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, IChunk chunk) {
+    public void populate(ChunkManager level, int chunkX, int chunkZ, BedrockRandom random, IChunk chunk) {
         // TODO Auto-generated method stub
 
     }

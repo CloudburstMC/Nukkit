@@ -1,6 +1,6 @@
 package cn.nukkit.level.generator.noise.vanilla.f;
 
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 
 public class NoiseGeneratorSimplexF {
     public static final float SQRT_3 = (float) Math.sqrt(3.0f);
@@ -13,14 +13,14 @@ public class NoiseGeneratorSimplexF {
     public float zo;
 
     public NoiseGeneratorSimplexF() {
-        this(new NukkitRandom(System.currentTimeMillis()));
+        this(new BedrockRandom());
     }
 
-    public NoiseGeneratorSimplexF(NukkitRandom p_i45471_1_) {
+    public NoiseGeneratorSimplexF(BedrockRandom random) {
         this.p = new int[512];
-        this.xo = p_i45471_1_.nextFloat() * 256.0f;
-        this.yo = p_i45471_1_.nextFloat() * 256.0f;
-        this.zo = p_i45471_1_.nextFloat() * 256.0f;
+        this.xo = random.nextFloat() * 256.0f;
+        this.yo = random.nextFloat() * 256.0f;
+        this.zo = random.nextFloat() * 256.0f;
 
         int i = 0;
         while (i < 256) {
@@ -28,7 +28,7 @@ public class NoiseGeneratorSimplexF {
         }
 
         for (int l = 0; l < 256; ++l) {
-            int j = p_i45471_1_.nextBoundedInt(256 - l) + l;
+            int j = random.nextInt(256 - l) + l;
             int k = this.p[l];
             this.p[l] = this.p[j];
             this.p[j] = k;

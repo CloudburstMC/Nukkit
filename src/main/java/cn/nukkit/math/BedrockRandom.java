@@ -1,13 +1,15 @@
 package cn.nukkit.math;
 
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class BedrockRandom {
+
+    private static final AtomicLong seedUniquifier = new AtomicLong(8682522807148012L);
+    private static final ThreadLocal<BedrockRandom> THREAD_LOCAL = ThreadLocal.withInitial(BedrockRandom::new);
 
     private static final int UPPER_MASK = 0x80000000;
     private static final int LOWER_MASK = 0x7fffffff;
     private static final int N = 624;
-    private static final ThreadLocal<BedrockRandom> THREAD_LOCAL = ThreadLocal.withInitial(BedrockRandom::new);
     private static final int M = 397;
     private static final int[] MAGIC = {0, 0x9908b0df};
     private static final int MAGIC_FACTOR_1 = 1812433253;
@@ -16,6 +18,7 @@ public class BedrockRandom {
     private static final int DEFAULT_SEED = 5489;
     private static final double TWO_POW_M32 = 1.0 / (1L << 32);
     private static final int BOOLEAN_MASK = ~0b1;
+
     private final int[] mt = new int[N];
     private int seed;
     private int mtiFast;
@@ -24,11 +27,22 @@ public class BedrockRandom {
     private float futureGaussian;
 
     public BedrockRandom() {
-        this(ThreadLocalRandom.current().nextInt());
+        this((int) (seedUniquifier() ^ System.nanoTime()));
     }
 
     public BedrockRandom(int seed) {
         this.setSeed(seed);
+    }
+
+    private static long seedUniquifier() {
+        // L'Ecuyer, "Tables of Linear Congruential Generators of
+        // Different Sizes and Good Lattice Structure", 1999
+        for (; ; ) {
+            long current = seedUniquifier.get();
+            long next = current * 181783497276652981L;
+            if (seedUniquifier.compareAndSet(current, next))
+                return next;
+        }
     }
 
     public static BedrockRandom getThreadLocal() {

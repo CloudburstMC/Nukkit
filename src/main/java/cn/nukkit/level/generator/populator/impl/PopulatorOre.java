@@ -4,8 +4,7 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.level.generator.populator.type.Populator;
-import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.utils.Identifier;
 
 /**
@@ -21,16 +20,16 @@ public class PopulatorOre extends Populator {
     }
 
     @Override
-    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, IChunk chunk) {
+    public void populate(ChunkManager level, int chunkX, int chunkZ, BedrockRandom random, IChunk chunk) {
         int sx = chunkX << 4;
         int ex = sx + 15;
         int sz = chunkZ << 4;
         int ez = sz + 15;
         for (OreType type : this.oreTypes) {
             for (int i = 0; i < type.clusterCount; i++) {
-                int x = NukkitMath.randomRange(random, sx, ex);
-                int z = NukkitMath.randomRange(random, sz, ez);
-                int y = NukkitMath.randomRange(random, type.minHeight, type.maxHeight);
+                int x = random.nextInt(sx, ex);
+                int z = random.nextInt(sz, ez);
+                int y = random.nextInt(type.minHeight, type.maxHeight);
                 if (level.getBlockIdAt(x, y, z) != replaceId) {
                     continue;
                 }

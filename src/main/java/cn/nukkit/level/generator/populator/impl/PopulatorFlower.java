@@ -7,7 +7,7 @@ import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.populator.helper.EnsureCover;
 import cn.nukkit.level.generator.populator.helper.EnsureGrassBelow;
 import cn.nukkit.level.generator.populator.type.PopulatorSurfaceBlock;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class PopulatorFlower extends PopulatorSurfaceBlock {
     }
 
     @Override
-    protected void placeBlock(int x, int y, int z, Block block, IChunk chunk, NukkitRandom random) {
+    protected void placeBlock(int x, int y, int z, Block block, IChunk chunk, BedrockRandom random) {
         if (flowerTypes.size() != 0) {
             Block type = flowerTypes.get(ThreadLocalRandom.current().nextInt(flowerTypes.size()));
             chunk.setBlock(x, y, z, type);
@@ -51,7 +51,7 @@ public class PopulatorFlower extends PopulatorSurfaceBlock {
     }
 
     @Override
-    protected Block getBlock(int x, int z, NukkitRandom random, IChunk chunk) {
+    protected Block getBlock(int x, int z, BedrockRandom random, IChunk chunk) {
         return AIR;
     }
 }

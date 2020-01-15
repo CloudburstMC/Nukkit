@@ -5,8 +5,8 @@ import cn.nukkit.block.BlockIds;
 import cn.nukkit.block.BlockLeaves;
 import cn.nukkit.block.BlockLog;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3i;
 import cn.nukkit.utils.Identifier;
 
@@ -44,10 +44,10 @@ public class NewJungleTree extends TreeGenerator {
     }
 
     @Override
-    public boolean generate(ChunkManager worldIn, NukkitRandom rand, Vector3i vectorPosition) {
+    public boolean generate(ChunkManager worldIn, BedrockRandom random, Vector3i vectorPosition) {
         Vector3i position = new Vector3i(vectorPosition.getX(), vectorPosition.getY(), vectorPosition.getZ());
 
-        int i = rand.nextBoundedInt(maxTreeHeight) + this.minTreeHeight;
+        int i = random.nextInt(maxTreeHeight) + this.minTreeHeight;
         boolean flag = true;
 
         if (position.getY() >= 1 && position.getY() + i + 1 <= 256) {
@@ -99,7 +99,7 @@ public class NewJungleTree extends TreeGenerator {
                             for (int i2 = position.getZ() - j1; i2 <= position.getZ() + j1; ++i2) {
                                 int j2 = i2 - position.getZ();
 
-                                if (Math.abs(l1) != j1 || Math.abs(j2) != j1 || rand.nextBoundedInt(2) != 0 && i4 != 0) {
+                                if (Math.abs(l1) != j1 || Math.abs(j2) != j1 || random.nextInt(2) != 0 && i4 != 0) {
                                     Identifier id = worldIn.getBlockIdAt(k1, i3, i2);
 
                                     if (id == AIR || id == LEAVES || id == VINE) {
@@ -118,19 +118,19 @@ public class NewJungleTree extends TreeGenerator {
                             worldIn.setBlockAt(up.getX(), up.getY(), up.getZ(), this.metaWood);
 
                             if (j3 > 0) {
-                                if (rand.nextBoundedInt(3) > 0 && isAirBlock(worldIn, position.add(-1, j3, 0))) {
+                                if (random.nextInt(3) > 0 && isAirBlock(worldIn, position.add(-1, j3, 0))) {
                                     this.addVine(worldIn, position.add(-1, j3, 0), 8);
                                 }
 
-                                if (rand.nextBoundedInt(3) > 0 && isAirBlock(worldIn, position.add(1, j3, 0))) {
+                                if (random.nextInt(3) > 0 && isAirBlock(worldIn, position.add(1, j3, 0))) {
                                     this.addVine(worldIn, position.add(1, j3, 0), 2);
                                 }
 
-                                if (rand.nextBoundedInt(3) > 0 && isAirBlock(worldIn, position.add(0, j3, -1))) {
+                                if (random.nextInt(3) > 0 && isAirBlock(worldIn, position.add(0, j3, -1))) {
                                     this.addVine(worldIn, position.add(0, j3, -1), 1);
                                 }
 
-                                if (rand.nextBoundedInt(3) > 0 && isAirBlock(worldIn, position.add(0, j3, 1))) {
+                                if (random.nextInt(3) > 0 && isAirBlock(worldIn, position.add(0, j3, 1))) {
                                     this.addVine(worldIn, position.add(0, j3, 1), 4);
                                 }
                             }
@@ -152,19 +152,19 @@ public class NewJungleTree extends TreeGenerator {
                                     Vector3i blockpos4 = pos2.north();
                                     Vector3i blockpos1 = pos2.south();
 
-                                    if (rand.nextBoundedInt(4) == 0 && worldIn.getBlockIdAt(blockpos2.x, blockpos2.y, blockpos2.z) == AIR) {
+                                    if (random.nextInt(4) == 0 && worldIn.getBlockIdAt(blockpos2.x, blockpos2.y, blockpos2.z) == AIR) {
                                         this.addHangingVine(worldIn, blockpos2, 8);
                                     }
 
-                                    if (rand.nextBoundedInt(4) == 0 && worldIn.getBlockIdAt(blockpos3.x, blockpos3.y, blockpos3.z) == AIR) {
+                                    if (random.nextInt(4) == 0 && worldIn.getBlockIdAt(blockpos3.x, blockpos3.y, blockpos3.z) == AIR) {
                                         this.addHangingVine(worldIn, blockpos3, 2);
                                     }
 
-                                    if (rand.nextBoundedInt(4) == 0 && worldIn.getBlockIdAt(blockpos4.x, blockpos4.y, blockpos4.z) == AIR) {
+                                    if (random.nextInt(4) == 0 && worldIn.getBlockIdAt(blockpos4.x, blockpos4.y, blockpos4.z) == AIR) {
                                         this.addHangingVine(worldIn, blockpos4, 1);
                                     }
 
-                                    if (rand.nextBoundedInt(4) == 0 && worldIn.getBlockIdAt(blockpos1.x, blockpos1.y, blockpos1.z) == AIR) {
+                                    if (random.nextInt(4) == 0 && worldIn.getBlockIdAt(blockpos1.x, blockpos1.y, blockpos1.z) == AIR) {
                                         this.addHangingVine(worldIn, blockpos1, 4);
                                     }
                                 }
@@ -172,12 +172,12 @@ public class NewJungleTree extends TreeGenerator {
                         }
                     }
 
-                    if (rand.nextBoundedInt(5) == 0 && i > 5) {
+                    if (random.nextInt(5) == 0 && i > 5) {
                         for (int l3 = 0; l3 < 2; ++l3) {
                             for (BlockFace enumfacing : BlockFace.Plane.HORIZONTAL) {
-                                if (rand.nextBoundedInt(4 - l3) == 0) {
+                                if (random.nextInt(4 - l3) == 0) {
                                     BlockFace enumfacing1 = enumfacing.getOpposite();
-                                    this.placeCocoa(worldIn, rand.nextBoundedInt(3), position.add(enumfacing1.getXOffset(), i - 5 + l3, enumfacing1.getZOffset()), enumfacing);
+                                    this.placeCocoa(worldIn, random.nextInt(3), position.add(enumfacing1.getXOffset(), i - 5 + l3, enumfacing1.getZOffset()), enumfacing);
                                 }
                             }
                         }

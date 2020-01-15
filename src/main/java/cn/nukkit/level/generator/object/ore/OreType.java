@@ -2,8 +2,8 @@ package cn.nukkit.level.generator.object.ore;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.MathHelper;
-import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.Identifier;
 
 import static cn.nukkit.block.BlockIds.STONE;
@@ -34,21 +34,21 @@ public class OreType {
         this.replaceBlockId = replaceBlockId;
     }
 
-    public boolean spawn(ChunkManager level, NukkitRandom rand, Identifier replaceId, int x, int y, int z) {
-        float piScaled = rand.nextFloat() * (float) Math.PI;
+    public boolean spawn(ChunkManager level, BedrockRandom random, Identifier replaceId, int x, int y, int z) {
+        float piScaled = random.nextFloat() * (float) Math.PI;
         double scaleMaxX = (double) ((float) (x + 8) + MathHelper.sin(piScaled) * (float) clusterSize / 8.0F);
         double scaleMinX = (double) ((float) (x + 8) - MathHelper.sin(piScaled) * (float) clusterSize / 8.0F);
         double scaleMaxZ = (double) ((float) (z + 8) + MathHelper.cos(piScaled) * (float) clusterSize / 8.0F);
         double scaleMinZ = (double) ((float) (z + 8) - MathHelper.cos(piScaled) * (float) clusterSize / 8.0F);
-        double scaleMaxY = (double) (y + rand.nextBoundedInt(3) - 2);
-        double scaleMinY = (double) (y + rand.nextBoundedInt(3) - 2);
+        double scaleMaxY = (double) (y + random.nextInt(3) - 2);
+        double scaleMinY = (double) (y + random.nextInt(3) - 2);
 
         for (int i = 0; i < clusterSize; ++i) {
             float sizeIncr = (float) i / (float) clusterSize;
             double scaleX = scaleMaxX + (scaleMinX - scaleMaxX) * (double) sizeIncr;
             double scaleY = scaleMaxY + (scaleMinY - scaleMaxY) * (double) sizeIncr;
             double scaleZ = scaleMaxZ + (scaleMinZ - scaleMaxZ) * (double) sizeIncr;
-            double randSizeOffset = rand.nextDouble() * (double) clusterSize / 16.0D;
+            double randSizeOffset = random.nextDouble() * (double) clusterSize / 16.0D;
             double randVec1 = (double) (MathHelper.sin((float) Math.PI * sizeIncr) + 1.0F) * randSizeOffset + 1.0D;
             double randVec2 = (double) (MathHelper.sin((float) Math.PI * sizeIncr) + 1.0F) * randSizeOffset + 1.0D;
             int minX = MathHelper.floor(scaleX - randVec1 / 2.0D);

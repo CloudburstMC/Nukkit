@@ -5,8 +5,8 @@ import cn.nukkit.block.BlockIds;
 import cn.nukkit.block.BlockLeaves2;
 import cn.nukkit.block.BlockLog2;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3i;
 import cn.nukkit.utils.Identifier;
 
@@ -16,8 +16,8 @@ public class ObjectSavannaTree extends TreeGenerator {
     private static final Block TRUNK = Block.get(LOG2, BlockLog2.ACACIA);
     private static final Block LEAF = Block.get(BlockIds.LEAVES2, BlockLeaves2.ACACIA);
 
-    public boolean generate(ChunkManager level, NukkitRandom rand, Vector3i position) {
-        int i = rand.nextBoundedInt(3) + rand.nextBoundedInt(3) + 5;
+    public boolean generate(ChunkManager level, BedrockRandom rand, Vector3i position) {
+        int i = rand.nextInt(3) + rand.nextInt(3) + 5;
         boolean flag = true;
 
         if (position.getY() >= 1 && position.getY() + i + 1 <= 256) {
@@ -58,8 +58,8 @@ public class ObjectSavannaTree extends TreeGenerator {
                 if ((block == GRASS || block == DIRT) && position.getY() < 256 - i - 1) {
                     this.setDirtAt(level, position.down());
                     BlockFace face = BlockFace.Plane.HORIZONTAL.random(rand);
-                    int k2 = i - rand.nextBoundedInt(4) - 1;
-                    int l2 = 3 - rand.nextBoundedInt(3);
+                    int k2 = i - rand.nextInt(4) - 1;
+                    int l2 = 3 - rand.nextInt(3);
                     int i3 = position.getX();
                     int j1 = position.getZ();
                     int k1 = 0;
@@ -109,8 +109,8 @@ public class ObjectSavannaTree extends TreeGenerator {
                     BlockFace face1 = BlockFace.Plane.HORIZONTAL.random(rand);
 
                     if (face1 != face) {
-                        int l3 = k2 - rand.nextBoundedInt(2) - 1;
-                        int k4 = 1 + rand.nextBoundedInt(3);
+                        int l3 = k2 - rand.nextInt(2) - 1;
+                        int k4 = 1 + rand.nextInt(3);
                         k1 = 0;
 
                         for (int l4 = l3; l4 < i && k4 > 0; --k4) {

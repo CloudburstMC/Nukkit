@@ -7,7 +7,7 @@ import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.level.generator.populator.impl.PopulatorOre;
 import cn.nukkit.level.generator.populator.type.Populator;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.registry.BlockRegistry;
 import lombok.extern.log4j.Log4j2;
@@ -25,16 +25,9 @@ import static cn.nukkit.block.BlockIds.AIR;
  * Nukkit Project
  */
 @Log4j2
-public class Flat extends Generator {
+public class FlatGenerator implements Generator {
 
-    @Override
-    public int getId() {
-        return TYPE_FLAT;
-    }
-
-    private ChunkManager level;
-
-    private NukkitRandom random;
+    public static final GeneratorFactory FACTORY = FlatGenerator::new;
 
     private final List<Populator> populators = new ArrayList<>();
 
@@ -46,32 +39,16 @@ public class Flat extends Generator {
 
     private String preset;
 
-    private boolean init = false;
-
     private int biome;
-
-    @Override
-    public ChunkManager getChunkManager() {
-        return level;
-    }
 
     @Override
     public Map<String, Object> getSettings() {
         return this.options;
     }
 
-    @Override
-    public String getName() {
-        return "flat";
-    }
-
-    public Flat() {
-        this(new HashMap<>());
-    }
-
-    public Flat(Map<String, Object> options) {
-        this.preset = "2;7,2x3,2;1;";
+    private FlatGenerator(BedrockRandom random, Map<String, Object> options) {
         this.options = options;
+        this.preset = (String) this.options.getOrDefault("preset", "2;7,2x3,2;1;");
 
         if (this.options.containsKey("decoration")) {
             PopulatorOre ores = new PopulatorOre(BlockIds.STONE, new OreType[]{
@@ -86,15 +63,16 @@ public class Flat extends Generator {
             });
             this.populators.add(ores);
         }
+        parsePreset(preset);
     }
 
-    protected void parsePreset(String preset, int chunkX, int chunkZ) {
+    protected void parsePreset(String preset) {
         try {
             this.preset = preset;
             String[] presetArray = preset.split(";");
-            int version = Integer.valueOf(presetArray[0]);
+            int version = Integer.parseInt(presetArray[0]);
             String blocks = presetArray.length > 1 ? presetArray[1] : "";
-            this.biome = presetArray.length > 2 ? Integer.valueOf(presetArray[2]) : 1;
+            this.biome = presetArray.length > 2 ? Integer.parseInt(presetArray[2]) : 1;
             String options = presetArray.length > 3 ? presetArray[1] : "";
             this.structure = new Block[256];
             int y = 0;
@@ -103,16 +81,16 @@ public class Flat extends Generator {
                 if (Pattern.matches("^[0-9]{1,3}x[0-9]$", block)) {
                     //AxB
                     String[] s = block.split("x");
-                    cnt = Integer.valueOf(s[0]);
-                    id = Integer.valueOf(s[1]);
+                    cnt = Integer.parseInt(s[0]);
+                    id = Integer.parseInt(s[1]);
                 } else if (Pattern.matches("^[0-9]{1,3}:[0-9]{0,2}$", block)) {
                     //A:B
                     String[] s = block.split(":");
-                    id = Integer.valueOf(s[0]);
-                    meta = Integer.valueOf(s[1]);
+                    id = Integer.parseInt(s[0]);
+                    meta = Integer.parseInt(s[1]);
                 } else if (Pattern.matches("^[0-9]{1,3}$", block)) {
                     //A
-                    id = Integer.valueOf(block);
+                    id = Integer.parseInt(block);
                 } else {
                     continue;
                 }
@@ -150,27 +128,7 @@ public class Flat extends Generator {
     }
 
     @Override
-    public void init(ChunkManager level, NukkitRandom random) {
-        this.level = level;
-        this.random = random;
-    }
-
-    @Override
-    public void generateChunk(int chunkX, int chunkZ) {
-        if (!this.init) {
-            init = true;
-            if (this.options.containsKey("preset") && !"".equals(this.options.get("preset"))) {
-                this.parsePreset((String) this.options.get("preset"), chunkX, chunkZ);
-            } else {
-                this.parsePreset(this.preset, chunkX, chunkZ);
-            }
-        }
-        this.generateChunk(level.getChunk(chunkX, chunkZ));
-    }
-
-    private void generateChunk(IChunk chunk) {
-        chunk.setGenerated();
-
+    public void generateChunk(BedrockRandom random, IChunk chunk) {
         for (int Z = 0; Z < 16; ++Z) {
             for (int X = 0; X < 16; ++X) {
                 chunk.setBiome(X, Z, biome);
@@ -183,11 +141,10 @@ public class Flat extends Generator {
     }
 
     @Override
-    public void populateChunk(int chunkX, int chunkZ) {
+    public void populateChunk(ChunkManager level, BedrockRandom random, int chunkX, int chunkZ) {
         IChunk chunk = level.getChunk(chunkX, chunkZ);
-        this.random.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
         for (Populator populator : this.populators) {
-            populator.populate(this.level, chunkX, chunkZ, this.random, chunk);
+            populator.populate(level, chunkX, chunkZ, random, chunk);
         }
     }
 

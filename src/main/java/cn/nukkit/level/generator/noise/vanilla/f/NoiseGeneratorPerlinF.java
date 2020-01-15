@@ -1,17 +1,17 @@
 package cn.nukkit.level.generator.noise.vanilla.f;
 
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 
 public class NoiseGeneratorPerlinF {
     private final NoiseGeneratorSimplexF[] noiseLevels;
     private final int levels;
 
-    public NoiseGeneratorPerlinF(NukkitRandom p_i45470_1_, int p_i45470_2_) {
+    public NoiseGeneratorPerlinF(BedrockRandom random, int p_i45470_2_) {
         this.levels = p_i45470_2_;
         this.noiseLevels = new NoiseGeneratorSimplexF[p_i45470_2_];
 
         for (int i = 0; i < p_i45470_2_; ++i) {
-            this.noiseLevels[i] = new NoiseGeneratorSimplexF(p_i45470_1_);
+            this.noiseLevels[i] = new NoiseGeneratorSimplexF(random);
         }
     }
 

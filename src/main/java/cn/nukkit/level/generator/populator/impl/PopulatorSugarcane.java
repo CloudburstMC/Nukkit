@@ -8,7 +8,7 @@ import cn.nukkit.level.generator.populator.helper.EnsureBelow;
 import cn.nukkit.level.generator.populator.helper.EnsureCover;
 import cn.nukkit.level.generator.populator.helper.EnsureGrassBelow;
 import cn.nukkit.level.generator.populator.type.PopulatorSurfaceBlock;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.utils.Identifier;
 
 import static cn.nukkit.block.BlockIds.*;
@@ -46,7 +46,7 @@ public class PopulatorSugarcane extends PopulatorSurfaceBlock {
     }
 
     @Override
-    protected Block getBlock(int x, int z, NukkitRandom random, IChunk chunk) {
+    protected Block getBlock(int x, int z, BedrockRandom random, IChunk chunk) {
         return SUGARCANE_BLOCK;
     }
 }

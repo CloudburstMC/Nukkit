@@ -2,7 +2,7 @@ package cn.nukkit.level.generator.object.tree;
 
 import cn.nukkit.block.BlockLog;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.utils.Identifier;
 
 import static cn.nukkit.block.BlockIds.LEAVES;
@@ -36,8 +36,8 @@ public class ObjectBirchTree extends ObjectTree {
     }
 
     @Override
-    public void placeObject(ChunkManager level, int x, int y, int z, NukkitRandom random) {
-        this.treeHeight = random.nextBoundedInt(2) + 5;
+    public void placeObject(ChunkManager level, int x, int y, int z, BedrockRandom random) {
+        this.treeHeight = random.nextInt(2) + 5;
         super.placeObject(level, x, y, z, random);
     }
 }

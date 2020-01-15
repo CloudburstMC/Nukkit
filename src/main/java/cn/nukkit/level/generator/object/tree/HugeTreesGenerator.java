@@ -2,7 +2,7 @@ package cn.nukkit.level.generator.object.tree;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.Vector3i;
 import cn.nukkit.utils.Identifier;
 
@@ -35,11 +35,11 @@ public abstract class HugeTreesGenerator extends TreeGenerator {
     /*
      * Calculates the height based on this trees base height and its extra random height
      */
-    protected int getHeight(NukkitRandom rand) {
-        int i = rand.nextBoundedInt(3) + this.baseHeight;
+    protected int getHeight(BedrockRandom rand) {
+        int i = rand.nextInt(3) + this.baseHeight;
 
         if (this.extraRandomHeight > 1) {
-            i += rand.nextBoundedInt(this.extraRandomHeight);
+            i += rand.nextInt(this.extraRandomHeight);
         }
 
         return i;
@@ -100,7 +100,7 @@ public abstract class HugeTreesGenerator extends TreeGenerator {
      * returns whether or not a tree can grow at a specific position.
      * If it can, it generates surrounding dirt underneath.
      */
-    protected boolean ensureGrowable(ChunkManager worldIn, NukkitRandom rand, Vector3i treePos, int p_175929_4_) {
+    protected boolean ensureGrowable(ChunkManager worldIn, BedrockRandom rand, Vector3i treePos, int p_175929_4_) {
         return this.isSpaceAt(worldIn, treePos, p_175929_4_) && this.ensureDirtsUnderneath(treePos, worldIn);
     }
 

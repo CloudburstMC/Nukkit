@@ -3,7 +3,7 @@ package cn.nukkit.level.generator.object.tree;
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.block.BlockSapling;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
 
@@ -14,7 +14,7 @@ import static cn.nukkit.block.BlockIds.*;
  * Nukkit Project
  */
 public abstract class ObjectTree {
-    public static void growTree(ChunkManager level, int x, int y, int z, NukkitRandom random, int type) {
+    public static void growTree(ChunkManager level, int x, int y, int z, BedrockRandom random, int type) {
         ObjectTree tree;
         switch (type) {
             case BlockSapling.SPRUCE:
@@ -57,7 +57,7 @@ public abstract class ObjectTree {
         return 7;
     }
 
-    public static void growTree(ChunkManager level, int x, int y, int z, NukkitRandom random) {
+    public static void growTree(ChunkManager level, int x, int y, int z, BedrockRandom random) {
         growTree(level, x, y, z, random, 0);
     }
 
@@ -66,7 +66,7 @@ public abstract class ObjectTree {
     }
 
 
-    public boolean canPlaceObject(ChunkManager level, int x, int y, int z, NukkitRandom random) {
+    public boolean canPlaceObject(ChunkManager level, int x, int y, int z, BedrockRandom random) {
         int radiusToCheck = 0;
         for (int yy = 0; yy < this.getTreeHeight() + 3; ++yy) {
             if (yy == 1 || yy == this.getTreeHeight()) {
@@ -84,7 +84,7 @@ public abstract class ObjectTree {
         return true;
     }
 
-    public void placeObject(ChunkManager level, int x, int y, int z, NukkitRandom random) {
+    public void placeObject(ChunkManager level, int x, int y, int z, BedrockRandom random) {
 
         this.placeTrunk(level, x, y, z, random, this.getTreeHeight() - 1);
 
@@ -95,7 +95,7 @@ public abstract class ObjectTree {
                 int xOff = Math.abs(xx - x);
                 for (int zz = z - mid; zz <= z + mid; ++zz) {
                     int zOff = Math.abs(zz - z);
-                    if (xOff == mid && zOff == mid && (yOff == 0 || random.nextBoundedInt(2) == 0)) {
+                    if (xOff == mid && zOff == mid && (yOff == 0 || random.nextInt(2) == 0)) {
                         continue;
                     }
                     if (!BlockRegistry.get().getBlock(level.getBlockIdAt(xx, yy, zz), 0).isSolid()) {
@@ -106,7 +106,7 @@ public abstract class ObjectTree {
         }
     }
 
-    protected void placeTrunk(ChunkManager level, int x, int y, int z, NukkitRandom random, int trunkHeight) {
+    protected void placeTrunk(ChunkManager level, int x, int y, int z, BedrockRandom random, int trunkHeight) {
         // The base dirt block
         level.setBlockIdAt(x, y - 1, z, BlockIds.DIRT);
 

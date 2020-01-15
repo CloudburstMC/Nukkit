@@ -8,23 +8,23 @@ import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.biome.BiomeSelector;
 import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.chunk.IChunk;
+import cn.nukkit.level.generator.feature.GeneratorFeature;
+import cn.nukkit.level.generator.feature.generator.BedrockFeature;
+import cn.nukkit.level.generator.feature.generator.GroundCoverFeature;
 import cn.nukkit.level.generator.noise.vanilla.f.NoiseGeneratorOctavesF;
 import cn.nukkit.level.generator.noise.vanilla.f.NoiseGeneratorPerlinF;
 import cn.nukkit.level.generator.object.ore.OreType;
-import cn.nukkit.level.generator.populator.impl.PopulatorBedrock;
 import cn.nukkit.level.generator.populator.impl.PopulatorCaves;
-import cn.nukkit.level.generator.populator.impl.PopulatorGroundCover;
 import cn.nukkit.level.generator.populator.impl.PopulatorOre;
 import cn.nukkit.level.generator.populator.type.Populator;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.MathHelper;
-import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3f;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import static cn.nukkit.block.BlockIds.STONE;
 import static cn.nukkit.block.BlockIds.WATER;
@@ -111,7 +111,10 @@ import static cn.nukkit.block.BlockIds.WATER;
  * Nether.java
  * End.java
  */
-public class Normal extends Generator {
+public class NormalGenerator implements Generator {
+
+    public static GeneratorFactory FACTORY = NormalGenerator::new;
+
     private static final float[] biomeWeights = new float[25];
 
     static {
@@ -123,15 +126,10 @@ public class Normal extends Generator {
     }
 
     private List<Populator> populators = Collections.emptyList();
-    private List<Populator> generationPopulators = Collections.emptyList();
+    private List<GeneratorFeature> generationPopulators = Collections.emptyList();
     public static final int seaHeight = 64;
     public NoiseGeneratorOctavesF scaleNoise;
     public NoiseGeneratorOctavesF depthNoise;
-    private ChunkManager level;
-    private Random random;
-    private NukkitRandom nukkitRandom;
-    private long localSeed1;
-    private long localSeed2;
     private BiomeSelector selector;
     private ThreadLocal<Biome[]> biomes = ThreadLocal.withInitial(() -> new Biome[10 * 10]);
     private ThreadLocal<float[]> depthRegion = ThreadLocal.withInitial(() -> null);
@@ -144,48 +142,8 @@ public class Normal extends Generator {
     private NoiseGeneratorOctavesF mainPerlinNoise;
     private NoiseGeneratorPerlinF surfaceNoise;
 
-    public Normal() {
-        this(Collections.emptyMap());
-    }
-
-    public Normal(Map<String, Object> options) {
-        //Nothing here. Just used for future update.
-    }
-
-    @Override
-    public int getId() {
-        return TYPE_INFINITE;
-    }
-
-    @Override
-    public ChunkManager getChunkManager() {
-        return this.level;
-    }
-
-    @Override
-    public String getName() {
-        return "normal";
-    }
-
-    @Override
-    public Map<String, Object> getSettings() {
-        return Collections.emptyMap();
-    }
-
-    public Biome pickBiome(int x, int z) {
-        return this.selector.pickBiome(x, z);
-    }
-
-    @Override
-    public void init(ChunkManager level, NukkitRandom random) {
-        this.level = level;
-        this.nukkitRandom = random;
-        this.random = new Random();
-        this.nukkitRandom.setSeed(this.level.getSeed());
-        this.localSeed1 = this.random.nextLong();
-        this.localSeed2 = this.random.nextLong();
-        this.nukkitRandom.setSeed(this.level.getSeed());
-        this.selector = new BiomeSelector(this.nukkitRandom);
+    public NormalGenerator(BedrockRandom random, Map<String, Object> options) {
+        this.selector = new BiomeSelector(random);
 
         this.minLimitPerlinNoise = new NoiseGeneratorOctavesF(random, 16);
         this.maxLimitPerlinNoise = new NoiseGeneratorOctavesF(random, 16);
@@ -196,8 +154,8 @@ public class Normal extends Generator {
 
         //this should run before all other populators so that we don't do things like generate ground cover on bedrock or something
         this.generationPopulators = ImmutableList.of(
-                new PopulatorBedrock(),
-                new PopulatorGroundCover()
+                BedrockFeature.INSTANCE,
+                GroundCoverFeature.INSTANCE
         );
 
         this.populators = ImmutableList.of(
@@ -220,21 +178,27 @@ public class Normal extends Generator {
     }
 
     @Override
-    public void generateChunk(final int chunkX, final int chunkZ) {
-        int baseX = chunkX << 4;
-        int baseZ = chunkZ << 4;
-        this.nukkitRandom.setSeed(chunkX * this.localSeed1 ^ chunkZ * this.localSeed2 ^ this.level.getSeed());
+    public Map<String, Object> getSettings() {
+        return Collections.emptyMap();
+    }
 
-        IChunk chunk = this.level.getChunk(chunkX, chunkZ);
+    public Biome pickBiome(int x, int z) {
+        return this.selector.pickBiome(x, z);
+    }
+
+    @Override
+    public void generateChunk(BedrockRandom random, IChunk chunk) {
+        int baseX = chunk.getX() << 4;
+        int baseZ = chunk.getZ() << 4;
 
         //generate base noise values
-        float[] depthRegion = this.depthNoise.generateNoiseOctaves(this.depthRegion.get(), chunkX * 4, chunkZ * 4, 5, 5, 200f, 200f, 0.5f);
+        float[] depthRegion = this.depthNoise.generateNoiseOctaves(this.depthRegion.get(), chunk.getX() * 4, chunk.getZ() * 4, 5, 5, 200f, 200f, 0.5f);
         this.depthRegion.set(depthRegion);
-        float[] mainNoiseRegion = this.mainPerlinNoise.generateNoiseOctaves(this.mainNoiseRegion.get(), chunkX * 4, 0, chunkZ * 4, 5, 33, 5, 684.412f / 60f, 684.412f / 160f, 684.412f / 60f);
+        float[] mainNoiseRegion = this.mainPerlinNoise.generateNoiseOctaves(this.mainNoiseRegion.get(), chunk.getX() * 4, 0, chunk.getZ() * 4, 5, 33, 5, 684.412f / 60f, 684.412f / 160f, 684.412f / 60f);
         this.mainNoiseRegion.set(mainNoiseRegion);
-        float[] minLimitRegion = this.minLimitPerlinNoise.generateNoiseOctaves(this.minLimitRegion.get(), chunkX * 4, 0, chunkZ * 4, 5, 33, 5, 684.412f, 684.412f, 684.412f);
+        float[] minLimitRegion = this.minLimitPerlinNoise.generateNoiseOctaves(this.minLimitRegion.get(), chunk.getX() * 4, 0, chunk.getZ() * 4, 5, 33, 5, 684.412f, 684.412f, 684.412f);
         this.minLimitRegion.set(minLimitRegion);
-        float[] maxLimitRegion = this.maxLimitPerlinNoise.generateNoiseOctaves(this.maxLimitRegion.get(), chunkX * 4, 0, chunkZ * 4, 5, 33, 5, 684.412f, 684.412f, 684.412f);
+        float[] maxLimitRegion = this.maxLimitPerlinNoise.generateNoiseOctaves(this.maxLimitRegion.get(), chunk.getX() * 4, 0, chunk.getZ() * 4, 5, 33, 5, 684.412f, 684.412f, 684.412f);
         this.maxLimitRegion.set(maxLimitRegion);
         float[] heightMap = this.heightMap.get();
 
@@ -386,22 +350,21 @@ public class Normal extends Generator {
         }
 
         //populate chunk
-        for (Populator populator : this.generationPopulators) {
-            populator.populate(this.level, chunkX, chunkZ, this.nukkitRandom, chunk);
+        for (GeneratorFeature feature : this.generationPopulators) {
+            feature.generate(random, chunk);
         }
     }
 
     @Override
-    public void populateChunk(final int chunkX, final int chunkZ) {
-        IChunk chunk = this.level.getChunk(chunkX, chunkZ);
-        this.nukkitRandom.setSeed(0xdeadbeef ^ (chunkX << 8) ^ chunkZ ^ this.level.getSeed());
+    public void populateChunk(ChunkManager level, BedrockRandom random, int chunkX, int chunkZ) {
+        IChunk chunk = level.getChunk(chunkX, chunkZ);
         for (Populator populator : this.populators) {
-            populator.populate(this.level, chunkX, chunkZ, this.nukkitRandom, chunk);
+            populator.populate(level, chunkX, chunkZ, random, chunk);
         }
 
         @SuppressWarnings("deprecation")
         Biome biome = EnumBiome.getBiome(chunk.getBiome(7, 7));
-        biome.populateChunk(this.level, chunkX, chunkZ, this.nukkitRandom);
+        biome.populateChunk(level, chunkX, chunkZ, random);
     }
 
     @Override

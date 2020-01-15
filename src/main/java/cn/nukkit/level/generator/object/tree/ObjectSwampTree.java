@@ -5,7 +5,7 @@ import cn.nukkit.block.BlockIds;
 import cn.nukkit.block.BlockLeaves;
 import cn.nukkit.block.BlockLog;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.Vector3i;
 import cn.nukkit.utils.Identifier;
 
@@ -24,10 +24,10 @@ public class ObjectSwampTree extends TreeGenerator {
     private final Block metaLeaves = Block.get(BlockIds.LEAVES, BlockLeaves.OAK);
 
     @Override
-    public boolean generate(ChunkManager worldIn, NukkitRandom rand, Vector3i vectorPosition) {
+    public boolean generate(ChunkManager worldIn, BedrockRandom rand, Vector3i vectorPosition) {
         Vector3i position = new Vector3i(vectorPosition.getX(), vectorPosition.getY(), vectorPosition.getZ());
 
-        int i = rand.nextBoundedInt(4) + 5;
+        int i = rand.nextInt(4) + 5;
         boolean flag = true;
 
         if (position.getY() >= 1 && position.getY() + i + 1 <= 256) {
@@ -77,7 +77,7 @@ public class ObjectSwampTree extends TreeGenerator {
                             for (int i4 = position.getZ() - l2; i4 <= position.getZ() + l2; ++i4) {
                                 int j1 = i4 - position.getZ();
 
-                                if (Math.abs(k3) != l2 || Math.abs(j1) != l2 || rand.nextBoundedInt(2) != 0 && j2 != 0) {
+                                if (Math.abs(k3) != l2 || Math.abs(j1) != l2 || rand.nextInt(2) != 0 && j2 != 0) {
                                     Vector3i blockpos = new Vector3i(j3, k1, i4);
                                     Identifier id = worldIn.getBlockIdAt(blockpos.x, blockpos.y, blockpos.z);
 
@@ -113,19 +113,19 @@ public class ObjectSwampTree extends TreeGenerator {
                                     Vector3i blockpos4 = pos2.north();
                                     Vector3i blockpos1 = pos2.south();
 
-                                    if (rand.nextBoundedInt(4) == 0 && worldIn.getBlockIdAt(blockpos2.x, blockpos2.y, blockpos2.z) == AIR) {
+                                    if (rand.nextInt(4) == 0 && worldIn.getBlockIdAt(blockpos2.x, blockpos2.y, blockpos2.z) == AIR) {
                                         this.addHangingVine(worldIn, blockpos2, 8);
                                     }
 
-                                    if (rand.nextBoundedInt(4) == 0 && worldIn.getBlockIdAt(blockpos3.x, blockpos3.y, blockpos3.z) == AIR) {
+                                    if (rand.nextInt(4) == 0 && worldIn.getBlockIdAt(blockpos3.x, blockpos3.y, blockpos3.z) == AIR) {
                                         this.addHangingVine(worldIn, blockpos3, 2);
                                     }
 
-                                    if (rand.nextBoundedInt(4) == 0 && worldIn.getBlockIdAt(blockpos4.x, blockpos4.y, blockpos4.z) == AIR) {
+                                    if (rand.nextInt(4) == 0 && worldIn.getBlockIdAt(blockpos4.x, blockpos4.y, blockpos4.z) == AIR) {
                                         this.addHangingVine(worldIn, blockpos4, 1);
                                     }
 
-                                    if (rand.nextBoundedInt(4) == 0 && worldIn.getBlockIdAt(blockpos1.x, blockpos1.y, blockpos1.z) == AIR) {
+                                    if (rand.nextInt(4) == 0 && worldIn.getBlockIdAt(blockpos1.x, blockpos1.y, blockpos1.z) == AIR) {
                                         this.addHangingVine(worldIn, blockpos1, 4);
                                     }
                                 }

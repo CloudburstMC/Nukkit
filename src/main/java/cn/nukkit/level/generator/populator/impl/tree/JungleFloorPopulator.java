@@ -5,8 +5,7 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.object.tree.NewJungleTree;
 import cn.nukkit.level.generator.populator.type.Populator;
-import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.Vector3i;
 import cn.nukkit.utils.Identifier;
 
@@ -40,13 +39,13 @@ public class JungleFloorPopulator extends Populator {
     }
 
     @Override
-    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, IChunk chunk) {
-        int amount = random.nextBoundedInt(this.randomAmount + 1) + this.baseAmount;
+    public void populate(ChunkManager level, int chunkX, int chunkZ, BedrockRandom random, IChunk chunk) {
+        int amount = random.nextInt(this.randomAmount + 1) + this.baseAmount;
         Vector3i v = new Vector3i();
 
         for (int i = 0; i < amount; ++i) {
-            int x = NukkitMath.randomRange(random, chunkX << 4, (chunkX << 4) + 15);
-            int z = NukkitMath.randomRange(random, chunkZ << 4, (chunkZ << 4) + 15);
+            int x = random.nextInt(chunkX << 4, (chunkX << 4) + 15);
+            int z = random.nextInt(chunkZ << 4, (chunkZ << 4) + 15);
             int y = this.getHighestWorkableBlock(level, x, z);
             if (y == -1) {
                 continue;

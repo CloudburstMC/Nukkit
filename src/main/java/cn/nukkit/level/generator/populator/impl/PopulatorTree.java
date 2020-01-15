@@ -5,8 +5,7 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.object.tree.ObjectTree;
 import cn.nukkit.level.generator.populator.type.PopulatorCount;
-import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.utils.Identifier;
 import lombok.extern.log4j.Log4j2;
 
@@ -30,12 +29,12 @@ public class PopulatorTree extends PopulatorCount {
     }
 
     @Override
-    public void populateCount(ChunkManager level, final int chunkX, final int chunkZ, NukkitRandom random, IChunk chunk) {
+    public void populateCount(ChunkManager level, final int chunkX, final int chunkZ, BedrockRandom random, IChunk chunk) {
 
         int cX = chunkX << 4;
         int cZ = chunkZ << 4;
-        int x = NukkitMath.randomRange(random, cX, cX + 15);
-        int z = NukkitMath.randomRange(random, cZ, cZ + 15);
+        int x = random.nextInt(cX, cX + 15);
+        int z = random.nextInt(cZ, cZ + 15);
         level.getChunk(chunkX, chunkZ);
         int y;
         try {

@@ -1,17 +1,17 @@
 package cn.nukkit.level.generator.noise.nukkit.d;
 
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class PerlinD extends NoiseD {
-    public PerlinD(NukkitRandom random, double octaves, double persistence) {
+    public PerlinD(BedrockRandom random, double octaves, double persistence) {
         this(random, octaves, persistence, 1);
     }
 
-    public PerlinD(NukkitRandom random, double octaves, double persistence, double expansion) {
+    public PerlinD(BedrockRandom random, double octaves, double persistence, double expansion) {
         this.octaves = octaves;
         this.persistence = persistence;
         this.expansion = expansion;
@@ -20,10 +20,10 @@ public class PerlinD extends NoiseD {
         this.offsetZ = random.nextFloat() * 256;
         this.perm = new int[512];
         for (int i = 0; i < 256; ++i) {
-            this.perm[i] = random.nextBoundedInt(256);
+            this.perm[i] = random.nextInt(256);
         }
         for (int i = 0; i < 256; ++i) {
-            int pos = random.nextBoundedInt(256 - i) + i;
+            int pos = random.nextInt(256 - i) + i;
             int old = this.perm[i];
             this.perm[i] = this.perm[pos];
             this.perm[pos] = old;
