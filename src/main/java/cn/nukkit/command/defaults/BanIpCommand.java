@@ -13,6 +13,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -101,6 +103,10 @@ public class BanIpCommand extends VanillaCommand {
             }
         }
 
-        sender.getServer().getNetwork().blockAddress(ip, -1);
+        try {
+            sender.getServer().getNetwork().blockAddress(InetAddress.getByName(ip), -1);
+        } catch (UnknownHostException e) {
+            // ignore
+        }
     }
 }
