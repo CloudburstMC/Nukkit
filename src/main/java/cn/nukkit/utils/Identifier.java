@@ -48,7 +48,7 @@ public final class Identifier implements Comparable<Identifier> {
         String nameLower = name.toLowerCase();
 
         final String fullName = space + NAMESPACE_SEPARATOR + name;
-        Preconditions.checkArgument(PATTERN.matcher(fullName).matches(), "Identifier contains invalid characters");
+        Preconditions.checkArgument(PATTERN.matcher(fullName).matches(), "Identifier (%s) contains invalid characters", fullName);
 
         return VALUES.computeIfAbsent(fullName, s -> new Identifier(spaceLower, nameLower, fullName));
     }

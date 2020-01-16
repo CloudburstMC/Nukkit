@@ -293,7 +293,6 @@ public class Server {
     }
 
     public int broadcast(TextContainer message, String permissions) {
-        Random
         Set<CommandSender> recipients = new HashSet<>();
 
         for (String permission : permissions.split(";")) {
