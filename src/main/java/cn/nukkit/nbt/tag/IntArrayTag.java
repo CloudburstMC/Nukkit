@@ -35,6 +35,15 @@ public class IntArrayTag extends Tag {
         }
     }
 
+    public int[] getData() {
+        return data;
+    }
+
+    @Override
+    public int[] parseValue() {
+        return this.data;
+    }
+
     @Override
     public byte getId() {
         return TAG_Int_Array;

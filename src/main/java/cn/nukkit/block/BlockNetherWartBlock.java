@@ -37,6 +37,6 @@ public class BlockNetherWartBlock extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.NETHERRACK_BLOCK_COLOR;
+        return BlockColor.RED_BLOCK_COLOR;
     }
 }

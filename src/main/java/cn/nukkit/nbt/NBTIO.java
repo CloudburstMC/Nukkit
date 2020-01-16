@@ -92,6 +92,12 @@ public class NBTIO {
         }
     }
 
+    public static Tag readTag(InputStream inputStream, ByteOrder endianness, boolean network) throws IOException {
+        try (NBTInputStream stream = new NBTInputStream(inputStream, endianness, network)) {
+            return Tag.readNamedTag(stream);
+        }
+    }
+
     public static CompoundTag read(byte[] data) throws IOException {
         return read(data, ByteOrder.BIG_ENDIAN);
     }
@@ -145,6 +151,10 @@ public class NBTIO {
     }
 
     public static byte[] write(CompoundTag tag, ByteOrder endianness, boolean network) throws IOException {
+        return write((Tag) tag, endianness, network);
+    }
+
+    public static byte[] write(Tag tag, ByteOrder endianness, boolean network) throws IOException {
         FastByteArrayOutputStream baos = ThreadCache.fbaos.get().reset();
         try (NBTOutputStream stream = new NBTOutputStream(baos, endianness, network)) {
             Tag.writeNamedTag(tag, stream);
@@ -190,6 +200,14 @@ public class NBTIO {
         try (NBTOutputStream stream = new NBTOutputStream(outputStream, endianness, network)) {
             Tag.writeNamedTag(tag, stream);
         }
+    }
+
+    public static byte[] writeNetwork(Tag tag) throws IOException {
+        FastByteArrayOutputStream baos = ThreadCache.fbaos.get().reset();
+        try (NBTOutputStream stream = new NBTOutputStream(baos, ByteOrder.LITTLE_ENDIAN, true)) {
+            Tag.writeNamedTag(tag, stream);
+        }
+        return baos.toByteArray();
     }
 
     public static byte[] writeGZIPCompressed(CompoundTag tag) throws IOException {

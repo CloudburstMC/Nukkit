@@ -37,6 +37,7 @@ public class AddPlayerPacket extends DataPacket {
     public EntityMetadata metadata = new EntityMetadata();
     //public EntityLink links = new EntityLink[0];
     public String deviceId = "";
+    public int buildPlatform = -1;
 
     @Override
     public void decode() {
@@ -66,5 +67,6 @@ public class AddPlayerPacket extends DataPacket {
         this.putLLong(entityUniqueId);
         this.putUnsignedVarInt(0); //TODO: Entity links
         this.putString(deviceId);
+        this.putLInt(buildPlatform);
     }
 }

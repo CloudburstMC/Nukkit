@@ -65,15 +65,6 @@ public class FormWindowCustom extends FormWindow {
         this.icon = icon;
     }
 
-    public String getJSONData() {
-        String toModify = new Gson().toJson(this);
-        //We need to replace this due to Java not supporting declaring class field 'default'
-        return toModify.replace("defaultOptionIndex", "default")
-                .replace("defaultText", "default")
-                .replace("defaultValue", "default")
-                .replace("defaultStepIndex", "default");
-    }
-
     public FormResponseCustom getResponse() {
         return response;
     }

@@ -34,4 +34,8 @@ public class EndTag extends Tag {
         return new EndTag();
     }
 
+    @Override
+    public Object parseValue() {
+        return null;
+    }
 }

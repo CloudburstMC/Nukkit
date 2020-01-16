@@ -29,7 +29,7 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
     @Override
     public DataPacket reset() {
         super.reset();
-        this.putUnsignedVarInt(this.pid());
+        this.putUnsignedVarInt(this.pid() & 0xff);
         return this;
     }
 

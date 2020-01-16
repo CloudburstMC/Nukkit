@@ -70,6 +70,20 @@ public class BlockPlanks extends BlockSolidMeta {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.WOOD_BLOCK_COLOR;
+        switch(getDamage() & 0x07){
+            default:
+            case OAK:
+                return BlockColor.WOOD_BLOCK_COLOR;
+            case SPRUCE:
+                return BlockColor.SPRUCE_BLOCK_COLOR;
+            case BIRCH:
+                return BlockColor.SAND_BLOCK_COLOR;
+            case JUNGLE:
+                return BlockColor.DIRT_BLOCK_COLOR;
+            case ACACIA:
+                return BlockColor.ORANGE_BLOCK_COLOR;
+            case DARK_OAK:
+                return BlockColor.BROWN_BLOCK_COLOR;
+        }
     }
 }

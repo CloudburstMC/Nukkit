@@ -38,6 +38,11 @@ public class ShortTag extends NumberTag<Integer> {
     }
 
     @Override
+    public Integer parseValue() {
+        return this.data;
+    }
+
+    @Override
     public byte getId() {
         return TAG_Short;
     }

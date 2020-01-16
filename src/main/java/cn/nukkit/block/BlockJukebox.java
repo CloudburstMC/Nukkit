@@ -9,6 +9,7 @@ import cn.nukkit.item.ItemRecord;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created by CreeperFace on 7.8.2017.
@@ -90,5 +91,10 @@ public class BlockJukebox extends BlockSolid {
                 .putInt("z", getFloorZ());
 
         return BlockEntity.createBlockEntity(BlockEntity.JUKEBOX, this.level.getChunk(getFloorX() >> 4, getFloorZ() >> 4), nbt);
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.DIRT_BLOCK_COLOR;
     }
 }

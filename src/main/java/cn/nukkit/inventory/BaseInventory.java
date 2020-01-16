@@ -145,7 +145,7 @@ public abstract class BaseInventory implements Inventory {
         if (index < 0 || index >= this.size) {
             return false;
         } else if (item.getId() == 0 || item.getCount() <= 0) {
-            return this.clear(index);
+            return this.clear(index, send);
         }
 
         InventoryHolder holder = this.getHolder();

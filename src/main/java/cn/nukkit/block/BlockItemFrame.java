@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityItemFrame;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemItemFrame;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
@@ -106,7 +105,10 @@ public class BlockItemFrame extends BlockTransparentMeta {
                     nbt.put(aTag.getName(), aTag);
                 }
             }
-            new BlockEntityItemFrame(this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+            BlockEntityItemFrame frame = (BlockEntityItemFrame) BlockEntity.createBlockEntity(BlockEntity.ITEM_FRAME, this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+            if (frame == null) {
+                return false;
+            }
             this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_PLACE);
             return true;
         }
@@ -127,7 +129,7 @@ public class BlockItemFrame extends BlockTransparentMeta {
         int chance = new Random().nextInt(100) + 1;
         if (itemFrame != null && chance <= (itemFrame.getItemDropChance() * 100)) {
             return new Item[]{
-                    toItem(), Item.get(itemFrame.getItem().getId(), itemFrame.getItem().getDamage(), 1)
+                    toItem(), itemFrame.getItem().clone()
             };
         } else {
             return new Item[]{
@@ -163,7 +165,7 @@ public class BlockItemFrame extends BlockTransparentMeta {
     }
 
     public BlockFace getFacing() {
-        switch (this.getDamage() % 8) {
+        switch (this.getDamage() & 3) {
             case 0:
                 return BlockFace.WEST;
             case 1:
@@ -175,5 +177,10 @@ public class BlockItemFrame extends BlockTransparentMeta {
         }
 
         return null;
+    }
+
+    @Override
+    public double getHardness() {
+        return 0.25;
     }
 }

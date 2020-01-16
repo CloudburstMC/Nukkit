@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.inventory.BeaconInventory;
-import cn.nukkit.inventory.Inventory;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;

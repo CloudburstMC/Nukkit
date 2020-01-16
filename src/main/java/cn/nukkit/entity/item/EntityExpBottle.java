@@ -6,8 +6,9 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.EnchantParticle;
 import cn.nukkit.level.particle.Particle;
 import cn.nukkit.level.particle.SpellParticle;
-import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.nbt.tag.CompoundTag;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author xtypr
@@ -92,11 +93,6 @@ public class EntityExpBottle extends EntityProjectile {
         Particle particle2 = new SpellParticle(this, 0x00385dc6);
         this.getLevel().addParticle(particle2);
 
-        NukkitRandom random = new NukkitRandom();
-        int add = 1;
-        for (int ii = 1; ii <= random.nextRange(3, 11); ii += add) {
-            getLevel().dropExpOrb(this, add);
-            add = random.nextRange(1, 3);
-        }
+        this.getLevel().dropExpOrb(this, ThreadLocalRandom.current().nextInt(3, 12));
     }
 }

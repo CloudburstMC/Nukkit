@@ -1,7 +1,6 @@
 package cn.nukkit.form.window;
 
 import cn.nukkit.form.response.FormResponseModal;
-import com.google.gson.Gson;
 
 public class FormWindowModal extends FormWindow {
 
@@ -50,10 +49,6 @@ public class FormWindowModal extends FormWindow {
 
     public void setButton2(String button2) {
         this.button2 = button2;
-    }
-
-    public String getJSONData() {
-        return new Gson().toJson(this);
     }
 
     public FormResponseModal getResponse() {

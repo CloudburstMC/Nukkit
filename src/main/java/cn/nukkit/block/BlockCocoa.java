@@ -14,7 +14,7 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by CreeperFace on 27. 10. 2016.
@@ -155,7 +155,7 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if (new Random().nextInt(2) == 1) {
+            if (ThreadLocalRandom.current().nextInt(2) == 1) {
                 if (this.getDamage() / 4 < 2) {
                     BlockCocoa block = (BlockCocoa) this.clone();
                     block.setDamage(block.getDamage() + 4);
@@ -194,10 +194,13 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
                     return false;
                 }
                 this.getLevel().setBlock(this, ev.getNewState(), true, true);
+                this.level.addParticle(new BoneMealParticle(this));
+
+                if (player != null && (player.gamemode & 0x01) == 0) {
+                    item.count--;
+                }
             }
 
-            this.level.addParticle(new BoneMealParticle(this.add(0.5, 0.5, 0.5)));
-            item.count--;
             return true;
         }
 
