@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
 import static cn.nukkit.block.BlockIds.STONE_SLAB2;
@@ -49,5 +50,17 @@ public class BlockDoubleSlabRedSandstone extends BlockSolid {
     @Override
     public boolean canHarvestWithHand() {
         return false;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        switch (this.getDamage() & 0x07) {
+            case 0:
+                return BlockColor.ORANGE_BLOCK_COLOR;
+            case 1:
+                return BlockColor.PURPLE_BLOCK_COLOR;
+            default:
+                return BlockColor.STONE_BLOCK_COLOR;
+        }
     }
 }

@@ -30,7 +30,7 @@ public class BlockRegistry implements Registry {
         InputStream stream = RegistryUtils.getOrAssertResource("runtime_block_states.dat");
         try {
             //noinspection unchecked
-            VANILLA_PALETTE = ((ListTag<CompoundTag>) NBTIO.readNetwork(stream)).getAll();
+            VANILLA_PALETTE = ((ListTag<CompoundTag>) NBTIO.readTag(stream, ByteOrder.LITTLE_ENDIAN, false)).getAll();
         } catch (IOException e) {
             throw new AssertionError(e);
         }

@@ -73,9 +73,8 @@ public class BlockBrewingStand extends BlockSolid {
                 }
             }
 
-            new BlockEntityBrewingStand(getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
-
-            return true;
+            BlockEntityBrewingStand brewing = new BlockEntityBrewingStand(getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+            return brewing != null;
         }
         return false;
     }
@@ -95,6 +94,9 @@ public class BlockBrewingStand extends BlockSolid {
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
                 brewing = new BlockEntityBrewingStand(this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+                if (brewing == null) {
+                    return false;
+                }
             }
 
             if (brewing.namedTag.contains("Lock") && brewing.namedTag.get("Lock") instanceof StringTag) {

@@ -9,6 +9,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
 /**
@@ -48,7 +49,6 @@ public class BlockBeacon extends BlockTransparent {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-
             BlockEntity t = this.getLevel().getBlockEntity(this);
             BlockEntityBeacon beacon;
             if (t instanceof BlockEntityBeacon) {
@@ -59,7 +59,10 @@ public class BlockBeacon extends BlockTransparent {
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
-                beacon = new BlockEntityBeacon(this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+                beacon = (BlockEntityBeacon) BlockEntity.createBlockEntity(BlockEntity.BEACON, this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+                if (beacon == null) {
+                    return false;
+                }
             }
 
             player.addWindow(new BeaconInventory(player.getUIInventory(), this), Player.BEACON_WINDOW_ID);
@@ -77,7 +80,10 @@ public class BlockBeacon extends BlockTransparent {
                     .putInt("x", (int) this.x)
                     .putInt("y", (int) this.y)
                     .putInt("z", (int) this.z);
-            new BlockEntityBeacon(this.level.getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+            BlockEntityBeacon beacon = new BlockEntityBeacon(this.level.getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+            if (beacon == null) {
+                return false;
+            }
         }
 
         return blockSuccess;
@@ -86,5 +92,10 @@ public class BlockBeacon extends BlockTransparent {
     @Override
     public boolean canBePushed() {
         return false;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.DIAMOND_BLOCK_COLOR;
     }
 }

@@ -6,6 +6,7 @@ import cn.nukkit.item.ItemIds;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.CraftingDataPacket;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.ItemRegistry;
 import cn.nukkit.registry.RegistryException;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Identifier;
@@ -299,22 +300,41 @@ public class CraftingManager {
         map.put(hash, recipe);
     }
 
+    private static int getPotionHash(Identifier ingredientId, int potionType) {
+        int id = ItemRegistry.get().getRuntimeId(ingredientId);
+        return (id << 6) | potionType;
+    }
+
+    private static int getContainerHash(Identifier ingredientId, int containerId) {
+        int id = ItemRegistry.get().getRuntimeId(ingredientId);
+        return (id << 9) | containerId;
+    }
+
     public void registerBrewingRecipe(BrewingRecipe recipe) {
         Item input = recipe.getIngredient();
         Item potion = recipe.getInput();
 
-        this.brewingRecipes.put(getItemHash(input.getId(), potion.getDamage()), recipe);
+        this.brewingRecipes.put(getPotionHash(input.getId(), potion.getDamage()), recipe);
     }
 
     public void registerContainerRecipe(ContainerRecipe recipe) {
         Item input = recipe.getIngredient();
         Item potion = recipe.getInput();
 
-        this.containerRecipes.put(getItemHash(input.getId(), potion.getDamage()), recipe);
+        this.containerRecipes.put(getContainerHash(input.getId(), potion.getDamage()), recipe);
     }
 
     public BrewingRecipe matchBrewingRecipe(Item input, Item potion) {
-        return brewingRecipes.get(getItemHash(input.getId(), potion.getDamage()));
+        Identifier id = potion.getId();
+        if (id == ItemIds.POTION || id == ItemIds.SPLASH_POTION || id == ItemIds.LINGERING_POTION) {
+            return this.brewingRecipes.get(getPotionHash(input.getId(), potion.getDamage()));
+        }
+
+        return null;
+    }
+
+    public ContainerRecipe matchContainerRecipe(Item input, Item potion) {
+        return this.containerRecipes.get(getContainerHash(input.getId(), ItemRegistry.get().getRuntimeId(potion.getId())));
     }
 
     public CraftingRecipe matchRecipe(Item[][] inputMap, Item primaryOutput, Item[][] extraOutputMap) {

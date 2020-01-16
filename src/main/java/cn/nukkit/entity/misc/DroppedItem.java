@@ -18,7 +18,6 @@ import cn.nukkit.player.Player;
 
 import static cn.nukkit.block.BlockIds.FLOWING_WATER;
 import static cn.nukkit.block.BlockIds.WATER;
-import static cn.nukkit.entity.data.EntityFlag.IMMOBILE;
 
 /**
  * @author MagicDroidX
@@ -100,7 +99,6 @@ public class DroppedItem extends Entity {
         }
 
         this.item = NBTIO.getItemHelper(this.namedTag.getCompound("Item"));
-        this.setFlag(IMMOBILE, true);
 
         this.server.getPluginManager().callEvent(new ItemSpawnEvent(this));
     }

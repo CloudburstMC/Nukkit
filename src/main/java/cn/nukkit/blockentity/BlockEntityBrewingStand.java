@@ -8,6 +8,7 @@ import cn.nukkit.event.inventory.BrewEvent;
 import cn.nukkit.event.inventory.StartBrewEvent;
 import cn.nukkit.inventory.BrewingInventory;
 import cn.nukkit.inventory.BrewingRecipe;
+import cn.nukkit.inventory.ContainerRecipe;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.chunk.Chunk;
@@ -40,7 +41,8 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
 
     public static final List<Identifier> ingredients = new ArrayList<>(Arrays.asList(
             NETHER_WART, GOLD_NUGGET, GHAST_TEAR, GLOWSTONE_DUST, REDSTONE_WIRE, GUNPOWDER, MAGMA_CREAM, BLAZE_POWDER,
-            GOLDEN_CARROT, SPIDER_EYE, FERMENTED_SPIDER_EYE, SPECKLED_MELON, SUGAR, FISH
+            GOLDEN_CARROT, SPIDER_EYE, FERMENTED_SPIDER_EYE, SPECKLED_MELON, SUGAR, FISH, RABBIT_FOOT, PUFFERFISH,
+            TURTLE_SHELL_PIECE, PHANTOM_MEMBRANE, DRAGON_BREATH
     ));
 
     public BlockEntityBrewingStand(Chunk chunk, CompoundTag nbt) {
@@ -239,10 +241,17 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
                 if (!e.isCancelled()) {
                     for (int i = 1; i <= 3; i++) {
                         Item potion = this.inventory.getItem(i);
-                        BrewingRecipe recipe = Server.getInstance().getCraftingManager().matchBrewingRecipe(ingredient, potion);
 
-                        if (recipe != null) {
-                            this.inventory.setItem(i, recipe.getResult());
+                        ContainerRecipe containerRecipe = Server.getInstance().getCraftingManager().matchContainerRecipe(ingredient, potion);
+                        if (containerRecipe != null) {
+                            Item result = containerRecipe.getResult();
+                            result.setDamage(potion.getDamage());
+                            this.inventory.setItem(i, result);
+                        } else {
+                            BrewingRecipe recipe = Server.getInstance().getCraftingManager().matchBrewingRecipe(ingredient, potion);
+                            if (recipe != null) {
+                                this.inventory.setItem(i, recipe.getResult());
+                            }
                         }
                     }
                     this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_POTION_BREWED);
@@ -314,7 +323,8 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
         for (int i = 1; i <= 3; ++i) {
             Item potion = this.inventory.getItem(i);
 
-            if (potion.getId() == POTION && potion.getCount() > 0) {
+            Identifier id = potion.getId();
+            if ((id == POTION || id == SPLASH_POTION || id == LINGERING_POTION) && potion.getCount() > 0) {
                 meta |= 1 << (i - 1);
             }
         }

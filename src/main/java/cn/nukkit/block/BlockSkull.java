@@ -14,6 +14,7 @@ import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
 
@@ -66,7 +67,10 @@ public class BlockSkull extends BlockTransparent {
                 nbt.put(aTag.getName(), aTag);
             }
         }
-        new BlockEntitySkull(getLevel().getChunk(block.getChunkX(), block.getChunkZ()), nbt);
+        BlockEntitySkull skull = (BlockEntitySkull) BlockEntity.createBlockEntity(BlockEntity.SKULL, getLevel().getChunk(block.getChunkX(), block.getChunkZ()), nbt);
+        if (skull == null) {
+            return false;
+        }
 
         // TODO: 2016/2/3 SPAWN WITHER
 
@@ -84,8 +88,20 @@ public class BlockSkull extends BlockTransparent {
     }
 
     @Override
+    public Item toItem() {
+        BlockEntity blockEntity = getLevel().getBlockEntity(this);
+        int itemMeta = 0;
+        if (blockEntity != null) itemMeta = blockEntity.namedTag.getByte("SkullType");
+        return Item.get(ItemIds.SKULL, itemMeta);
+    }
+
+    @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }
 
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.AIR_BLOCK_COLOR;
+    }
 }

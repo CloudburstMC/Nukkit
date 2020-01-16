@@ -7,6 +7,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.math.Vector3i;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
 import static cn.nukkit.block.BlockIds.UNLIT_REDSTONE_TORCH;
@@ -134,5 +135,10 @@ public class BlockRedstoneTorch extends BlockTorch {
     @Override
     public boolean isPowerSource() {
         return true;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.AIR_BLOCK_COLOR;
     }
 }

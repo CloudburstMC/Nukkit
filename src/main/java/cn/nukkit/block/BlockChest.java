@@ -124,7 +124,11 @@ public class BlockChest extends BlockTransparent implements Faceable {
             }
         }
 
-        BlockEntityChest blockEntity = new BlockEntityChest(this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+        BlockEntityChest blockEntity = (BlockEntityChest) BlockEntity.createBlockEntity(BlockEntity.CHEST, this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+
+        if (blockEntity == null) {
+            return false;
+        }
 
         if (chest != null) {
             chest.pairWith(blockEntity);
@@ -164,7 +168,10 @@ public class BlockChest extends BlockTransparent implements Faceable {
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
-                chest = new BlockEntityChest(this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+                chest = (BlockEntityChest) BlockEntity.createBlockEntity(BlockEntity.CHEST, this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+                if (chest == null) {
+                    return false;
+                }
             }
 
             if (chest.namedTag.contains("Lock") && chest.namedTag.get("Lock") instanceof StringTag) {

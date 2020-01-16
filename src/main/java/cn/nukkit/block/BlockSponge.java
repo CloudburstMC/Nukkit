@@ -42,7 +42,7 @@ public class BlockSponge extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.CLOTH_BLOCK_COLOR;
+        return BlockColor.YELLOW_BLOCK_COLOR;
     }
 
     @Override

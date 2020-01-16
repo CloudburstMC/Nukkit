@@ -10,7 +10,7 @@ import cn.nukkit.level.Position;
 import cn.nukkit.level.particle.*;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
-import cn.nukkit.utils.TextFormat;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
 
@@ -96,7 +96,7 @@ public class ParticleCommand extends VanillaCommand {
         Particle particle = this.getParticle(name, position, data);
 
         if (particle == null) {
-            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.particle.notFound", name));
+            position.level.addParticleEffect(position.asVector3f(), Identifier.fromString(args[0]), -1, position.level.getDimension());
             return true;
         }
 

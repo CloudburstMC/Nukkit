@@ -67,7 +67,6 @@ public class BlockDoubleSlab extends BlockSolid {
                 return BlockColor.QUARTZ_BLOCK_COLOR;
             case BlockDoubleSlab.NETHER_BRICK:
                 return BlockColor.NETHERRACK_BLOCK_COLOR;
-
             default:
                 return BlockColor.STONE_BLOCK_COLOR;     //unreachable
         }

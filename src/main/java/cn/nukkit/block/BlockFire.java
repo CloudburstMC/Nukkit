@@ -287,7 +287,7 @@ public class BlockFire extends FloodableBlock {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.AIR_BLOCK_COLOR;
+        return BlockColor.LAVA_BLOCK_COLOR;
     }
 
     @Override

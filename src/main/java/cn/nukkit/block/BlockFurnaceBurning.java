@@ -78,9 +78,8 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
             }
         }
 
-        new BlockEntityFurnace(this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
-
-        return true;
+        BlockEntityFurnace furnace = (BlockEntityFurnace) BlockEntity.createBlockEntity(BlockEntity.FURNACE, this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+        return furnace != null;
     }
 
     @Override
@@ -103,7 +102,10 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
-                furnace = new BlockEntityFurnace(this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+                furnace = (BlockEntityFurnace) BlockEntity.createBlockEntity(BlockEntity.FURNACE, this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+                if (furnace == null) {
+                    return false;
+                }
             }
 
             if (furnace.namedTag.contains("Lock") && furnace.namedTag.get("Lock") instanceof StringTag) {

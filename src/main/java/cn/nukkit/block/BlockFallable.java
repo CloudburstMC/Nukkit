@@ -48,7 +48,9 @@ public abstract class BlockFallable extends BlockSolid {
                 FallingBlock fall = EntityRegistry.get().newEntity(EntityTypes.FALLING_BLOCK,
                         this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
 
-                fall.spawnToAll();
+                if (fall != null) {
+                    fall.spawnToAll();
+                }
             }
         }
         return type;

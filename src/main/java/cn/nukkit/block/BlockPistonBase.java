@@ -65,8 +65,9 @@ public abstract class BlockPistonBase extends BlockSolid implements Faceable {
                 .putInt("z", (int) this.z)
                 .putBoolean("Sticky", this.sticky);
 
-        BlockEntityPistonArm be = new BlockEntityPistonArm(this.level.getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+        BlockEntityPistonArm be = (BlockEntityPistonArm) BlockEntity.createBlockEntity(BlockEntity.PISTON_ARM, this.level.getChunk(this.getChunkX(), this.getChunkZ()), nbt);
 
+        if (be == null) return false;
         //this.checkState();
         return true;
     }

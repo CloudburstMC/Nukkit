@@ -116,21 +116,23 @@ public class CraftingDataPacket extends DataPacket {
             }
         }
 
+        ItemRegistry registry = ItemRegistry.get();
+
         Binary.writeVarInt(buffer, 0);
         Binary.writeVarInt(buffer, 0);
-//        Binary.writeVarInt(buffer, this.brewingEntries.size());
-//        for (BrewingRecipe recipe : brewingEntries) {
-//            Binary.writeVarInt(buffer, recipe.getInput().getDamage());
-//            Binary.writeVarInt(buffer, recipe.getIngredient().getId());
-//            Binary.writeVarInt(buffer, recipe.getResult().getDamage());
-//        }
-//
-//        Binary.writeVarInt(buffer, this.containerEntries.size());
-//        for (ContainerRecipe recipe : containerEntries) {
-//            Binary.writeVarInt(buffer, recipe.getInput().getId());
-//            Binary.writeVarInt(buffer, recipe.getIngredient().getId());
-//            Binary.writeVarInt(buffer, recipe.getResult().getId());
-//        }
+        Binary.writeVarInt(buffer, this.brewingEntries.size());
+        for (BrewingRecipe recipe : brewingEntries) {
+            Binary.writeVarInt(buffer, recipe.getInput().getDamage());
+            Binary.writeVarInt(buffer, registry.getRuntimeId(recipe.getIngredient().getId()));
+            Binary.writeVarInt(buffer, recipe.getResult().getDamage());
+        }
+
+        Binary.writeVarInt(buffer, this.containerEntries.size());
+        for (ContainerRecipe recipe : containerEntries) {
+            Binary.writeVarInt(buffer, registry.getRuntimeId(recipe.getInput().getId()));
+            Binary.writeVarInt(buffer, registry.getRuntimeId(recipe.getIngredient().getId()));
+            Binary.writeVarInt(buffer, registry.getRuntimeId(recipe.getResult().getId()));
+        }
 
         buffer.writeBoolean(cleanRecipes);
     }

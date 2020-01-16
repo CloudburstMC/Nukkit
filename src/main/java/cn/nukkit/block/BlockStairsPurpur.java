@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
 public class BlockStairsPurpur extends BlockStairs {
@@ -22,5 +23,10 @@ public class BlockStairsPurpur extends BlockStairs {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.MAGENTA_BLOCK_COLOR;
     }
 }

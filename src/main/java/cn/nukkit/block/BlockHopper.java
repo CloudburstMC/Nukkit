@@ -59,8 +59,8 @@ public class BlockHopper extends BlockTransparent implements Faceable {
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
 
-        new BlockEntityHopper(this.level.getChunk(this.getChunkX(), this.getChunkZ()), nbt);
-        return true;
+        BlockEntityHopper hopper = (BlockEntityHopper) BlockEntity.createBlockEntity(BlockEntity.HOPPER, this.level.getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+        return hopper != null;
     }
 
     @Override

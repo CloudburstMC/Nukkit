@@ -11,6 +11,7 @@ import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.BlockEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
 import java.util.IdentityHashMap;
@@ -173,8 +174,7 @@ public class BlockNoteblock extends BlockSolid {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         this.getLevel().setBlock(block, this, true);
-        this.createBlockEntity();
-        return true;
+        return this.createBlockEntity() != null;
     }
 
     public int getStrength() {
@@ -243,7 +243,7 @@ public class BlockNoteblock extends BlockSolid {
     }
 
     private BlockEntityMusic createBlockEntity() {
-        return new BlockEntityMusic(this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()),
+        return (BlockEntityMusic) BlockEntity.createBlockEntity(BlockEntity.MUSIC, this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()),
                 BlockEntity.getDefaultCompound(this, BlockEntity.MUSIC));
     }
 
@@ -274,5 +274,10 @@ public class BlockNoteblock extends BlockSolid {
         public Sound getSound() {
             return sound;
         }
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.WOOD_BLOCK_COLOR;
     }
 }

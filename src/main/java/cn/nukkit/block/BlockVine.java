@@ -9,6 +9,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
 /**
@@ -188,5 +189,10 @@ public class BlockVine extends BlockTransparent {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_SHEARS;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.FOLIAGE_BLOCK_COLOR;
     }
 }

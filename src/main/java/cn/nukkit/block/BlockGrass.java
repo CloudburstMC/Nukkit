@@ -65,7 +65,7 @@ public class BlockGrass extends BlockDirt {
             y = random.nextRange(y - 2, y + 2);
             z = random.nextRange(z - 1, z + 1);
             Block block = this.getLevel().getBlock(x, y, z);
-            if (block.getId() == DIRT) {
+            if (block.getId() == DIRT && block.getDamage() == 0) {
                 if (block.up() instanceof BlockAir) {
                     BlockSpreadEvent ev = new BlockSpreadEvent(block, this, Block.get(GRASS));
                     Server.getInstance().getPluginManager().callEvent(ev);

@@ -12,8 +12,11 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.IntTag;
+import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
 
@@ -72,6 +75,10 @@ public class BlockBanner extends BlockTransparent implements Faceable {
             if (type instanceof IntTag) {
                 nbt.put("Type", type);
             }
+            Tag patterns = item.getNamedTagEntry("Patterns");
+            if (patterns instanceof ListTag) {
+                nbt.put("Patterns", patterns);
+            }
 
             new BlockEntityBanner(this.getChunk(), nbt);
 
@@ -100,10 +107,17 @@ public class BlockBanner extends BlockTransparent implements Faceable {
         if (blockEntity instanceof BlockEntityBanner) {
             BlockEntityBanner banner = (BlockEntityBanner) blockEntity;
             item.setDamage(banner.getBaseColor() & 0xf);
+            item.setNamedTag((item.hasCompoundTag() ? item.getNamedTag() : new CompoundTag())
+                    .putInt("Base", banner.getBaseColor() & 0xf));
             int type = banner.namedTag.getInt("Type");
             if (type > 0) {
-                item.setNamedTag(new CompoundTag()
-                        .putInt("Type", banner.namedTag.getInt("Type")));
+                item.setNamedTag((item.hasCompoundTag() ? item.getNamedTag() : new CompoundTag())
+                        .putInt("Type", type));
+            }
+            ListTag<CompoundTag> patterns = banner.namedTag.getList("Patterns", CompoundTag.class);
+            if (patterns.size() > 0) {
+                item.setNamedTag((item.hasCompoundTag() ? item.getNamedTag() : new CompoundTag())
+                        .putList(patterns));
             }
         }
         return item;
@@ -112,5 +126,22 @@ public class BlockBanner extends BlockTransparent implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return this.getDyeColor().getColor();
+    }
+
+    public DyeColor getDyeColor() {
+        if (this.level != null) {
+            BlockEntity blockEntity = this.level.getBlockEntity(this);
+
+            if (blockEntity instanceof BlockEntityBanner) {
+                return ((BlockEntityBanner) blockEntity).getDyeColor();
+            }
+        }
+
+        return DyeColor.WHITE;
     }
 }

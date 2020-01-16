@@ -15,7 +15,6 @@ import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
 import cn.nukkit.registry.ItemRegistry;
-import cn.nukkit.registry.RegistryException;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.Utils;
@@ -61,16 +60,8 @@ public abstract class Item implements Cloneable {
         List<Map> list = config.getMapList("items");
 
         for (Map map : list) {
-            int id = -1;
             try {
-                id = (int) map.get("id");
-                int damage = (int) map.getOrDefault("damage", 0);
-                String hex = (String) map.get("nbt_hex");
-                byte[] nbt = hex != null ? Utils.parseHexBinary(hex) : new byte[0];
-
-                addCreativeItem(Item.get(id, damage, 1, nbt));
-            } catch (RegistryException e) {
-                log.debug("Could not register non-existent creative item ID: {}", id);
+                addCreativeItem(fromJson(map));
             } catch (Exception e) {
                 log.error("Error whilst adding creative item", e);
             }

@@ -95,7 +95,10 @@ public class BlockItemFrame extends BlockTransparent {
                     nbt.put(aTag.getName(), aTag);
                 }
             }
-            new BlockEntityItemFrame(this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+            BlockEntityItemFrame frame = (BlockEntityItemFrame) BlockEntity.createBlockEntity(BlockEntity.ITEM_FRAME, this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+            if (frame == null) {
+                return false;
+            }
             this.getLevel().addSound(this.asVector3f(), Sound.BLOCK_ITEMFRAME_PLACE);
             return true;
         }
@@ -116,7 +119,7 @@ public class BlockItemFrame extends BlockTransparent {
         int chance = new Random().nextInt(100) + 1;
         if (itemFrame != null && chance <= (itemFrame.getItemDropChance() * 100)) {
             return new Item[]{
-                    toItem(), Item.get(itemFrame.getItem().getId(), itemFrame.getItem().getDamage(), 1)
+                    toItem(), itemFrame.getItem().clone()
             };
         } else {
             return new Item[]{

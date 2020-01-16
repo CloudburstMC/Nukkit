@@ -3,8 +3,8 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Identifier;
+import cn.nukkit.utils.TerracottaColor;
 
 /**
  * Created on 2015/11/24 by xtypr.
@@ -43,10 +43,10 @@ public class BlockTerracotta extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        return DyeColor.getByWoolData(getDamage()).getColor();
+        return TerracottaColor.getByTerracottaData(getDamage()).getColor();
     }
 
-    public DyeColor getDyeColor() {
-        return DyeColor.getByWoolData(getDamage());
+    public TerracottaColor getDyeColor() {
+        return TerracottaColor.getByTerracottaData(getDamage());
     }
 }

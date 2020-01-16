@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
 import static cn.nukkit.block.BlockIds.DOUBLE_STONE_SLAB2;
@@ -42,5 +43,10 @@ public class BlockSlabRedSandstone extends BlockSlab {
     @Override
     protected Identifier getDoubleSlab() {
         return DOUBLE_STONE_SLAB2;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.ORANGE_BLOCK_COLOR;
     }
 }

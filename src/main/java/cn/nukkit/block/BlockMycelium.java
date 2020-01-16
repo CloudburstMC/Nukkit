@@ -52,7 +52,7 @@ public class BlockMycelium extends BlockSolid {
             y = random.nextRange(y - 1, y + 1);
             z = random.nextRange(z - 1, z + 1);
             Block block = this.getLevel().getBlock(x, y, z);
-            if (block.getId() == DIRT) {
+            if (block.getId() == DIRT && block.getDamage() == 0) {
                 if (block.up().isTransparent()) {
                     BlockSpreadEvent ev = new BlockSpreadEvent(block, this, Block.get(MYCELIUM));
                     Server.getInstance().getPluginManager().callEvent(ev);
@@ -67,7 +67,7 @@ public class BlockMycelium extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.GRASS_BLOCK_COLOR;
+        return BlockColor.PURPLE_BLOCK_COLOR;
     }
 
     @Override

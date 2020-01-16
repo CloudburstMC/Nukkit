@@ -78,9 +78,8 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
                 }
             }
 
-            new BlockEntitySign(getLevel().getChunk(block.getChunkX(), block.getChunkZ()), nbt);
-
-            return true;
+            BlockEntitySign sign = (BlockEntitySign) BlockEntity.createBlockEntity(BlockEntity.SIGN, getLevel().getChunk(block.getChunkX(), block.getChunkZ()), nbt);
+            return sign != null;
         }
 
         return false;

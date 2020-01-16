@@ -63,7 +63,7 @@ public class BlockMagma extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.BROWN_BLOCK_COLOR;
+        return BlockColor.NETHERRACK_BLOCK_COLOR;
     }
 
     @Override

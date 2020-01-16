@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
 /**
@@ -19,5 +20,10 @@ public class BlockSlime extends BlockSolid {
     @Override
     public double getResistance() {
         return 0;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.GRASS_BLOCK_COLOR;
     }
 }

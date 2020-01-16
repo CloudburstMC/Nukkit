@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
 /**
@@ -27,5 +28,10 @@ public class BlockPodzol extends BlockDirt {
     @Override
     public boolean onActivate(Item item, Player player) {
         return false;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.SPRUCE_BLOCK_COLOR;
     }
 }

@@ -12,6 +12,7 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
 import java.util.Map;
@@ -82,9 +83,8 @@ public class BlockEnchantingTable extends BlockTransparent {
             }
         }
 
-        BlockEntity.createBlockEntity(BlockEntity.ENCHANT_TABLE, getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
-
-        return true;
+        BlockEntityEnchantTable enchantTable = (BlockEntityEnchantTable) BlockEntity.createBlockEntity(BlockEntity.ENCHANT_TABLE, getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+        return enchantTable != null;
     }
 
     @Override
@@ -101,7 +101,10 @@ public class BlockEnchantingTable extends BlockTransparent {
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
-                enchantTable = new BlockEntityEnchantTable(this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+                enchantTable = (BlockEntityEnchantTable) BlockEntity.createBlockEntity(BlockEntity.ENCHANT_TABLE, this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+                if (enchantTable == null) {
+                    return false;
+                }
             }
 
             if (enchantTable.namedTag.contains("Lock") && enchantTable.namedTag.get("Lock") instanceof StringTag) {
@@ -119,5 +122,10 @@ public class BlockEnchantingTable extends BlockTransparent {
     @Override
     public boolean canHarvestWithHand() {
         return false;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.RED_BLOCK_COLOR;
     }
 }

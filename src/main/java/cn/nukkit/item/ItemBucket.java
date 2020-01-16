@@ -50,7 +50,7 @@ public class ItemBucket extends Item {
         }
     }
 
-    public Identifier getBlockIdFromDamage(int target) {
+    public static Identifier getBlockIdFromDamage(int target) {
         switch (target) {
             case 2:
             case 3:
@@ -127,13 +127,14 @@ public class ItemBucket extends Item {
             }
         } else if (targetBlock instanceof BlockLiquid) {
             Item result = Item.get(BUCKET, 0, 1);
-            PlayerBucketEmptyEvent ev;
-            player.getServer().getPluginManager().callEvent(ev = new PlayerBucketEmptyEvent(player, block, face, this, result));
+            PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, block, face, this, result);
             ev.setCancelled(!block.canBeFlooded());
 
-            if (player.getLevel().getName().equals("nether") && this.getDamage() != 10) {
+            if (player.getLevel().getDimension() == Level.DIMENSION_NETHER && this.getDamage() != 10) {
                 ev.setCancelled(true);
             }
+
+            player.getServer().getPluginManager().callEvent(ev);
 
             if (!ev.isCancelled()) {
                 player.getLevel().setBlock(block, targetBlock, true, true);

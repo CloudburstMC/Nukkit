@@ -93,8 +93,8 @@ public class NBTIO {
         }
     }
 
-    public static Tag readNetwork(InputStream inputStream) throws IOException {
-        try (NBTInputStream stream = new NBTInputStream(inputStream, ByteOrder.LITTLE_ENDIAN, true)) {
+    public static Tag readTag(InputStream inputStream, ByteOrder endianness, boolean network) throws IOException {
+        try (NBTInputStream stream = new NBTInputStream(inputStream, endianness, network)) {
             return Tag.readNamedTag(stream);
         }
     }

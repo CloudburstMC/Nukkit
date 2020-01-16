@@ -61,6 +61,7 @@ public class PlayerTeleportEvent extends PlayerEvent implements Cancellable {
         PLUGIN,        // Every plugin
         NETHER_PORTAL, // Teleport using Nether portal
         ENDER_PEARL,   // Teleport by ender pearl
+        CHORUS_FRUIT,  // Teleport by chorus fruit
         UNKNOWN        // Unknown cause
     }
 }

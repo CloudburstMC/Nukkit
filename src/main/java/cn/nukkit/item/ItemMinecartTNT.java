@@ -47,10 +47,16 @@ public class ItemMinecartTNT extends Item {
                                     .add(new DoubleTag("", 0)))
                             .putList(new ListTag<>("Rotation")
                                     .add(new FloatTag("", 0))
-                            .add(new FloatTag("", 0)))
+                                    .add(new FloatTag("", 0)))
             );
+
+            if (player.isSurvival()) {
+                Item item = player.getInventory().getItemInHand();
+                item.decrementCount();
+                player.getInventory().setItemInHand(item);
+            }
+
             minecart.spawnToAll();
-            decrementCount();
             return true;
         }
         return false;

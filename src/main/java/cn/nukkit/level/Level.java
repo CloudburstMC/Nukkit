@@ -21,6 +21,7 @@ import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.weather.LightningStrikeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBucket;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.chunk.ChunkSection;
@@ -430,6 +431,36 @@ public class Level implements ChunkManager, Metadatable {
 
     public void addParticle(Particle particle, Collection<Player> players) {
         this.addParticle(particle, players.toArray(new Player[0]));
+    }
+
+    public void addParticleEffect(Vector3f pos, Identifier identifier) {
+        this.addParticleEffect(pos, identifier, -1, this.levelData.getDimension(), (Player[]) null);
+    }
+
+    public void addParticleEffect(Vector3f pos, Identifier identifier, long uniqueEntityId) {
+        this.addParticleEffect(pos, identifier, uniqueEntityId, this.levelData.getDimension(), (Player[]) null);
+    }
+
+    public void addParticleEffect(Vector3f pos, Identifier identifier, long uniqueEntityId, int dimensionId) {
+        this.addParticleEffect(pos, identifier, uniqueEntityId, dimensionId, (Player[]) null);
+    }
+
+    public void addParticleEffect(Vector3f pos, Identifier identifier, long uniqueEntityId, int dimensionId, Collection<Player> players) {
+        this.addParticleEffect(pos, identifier, uniqueEntityId, dimensionId, players.toArray(new Player[0]));
+    }
+
+    public void addParticleEffect(Vector3f pos, Identifier identifier, long uniqueEntityId, int dimensionId, Player... players) {
+        SpawnParticleEffectPacket pk = new SpawnParticleEffectPacket();
+        pk.identifier = identifier.toString();
+        pk.uniqueEntityId = uniqueEntityId;
+        pk.dimensionId = dimensionId;
+        pk.position = pos;
+
+        if (players == null || players.length == 0) {
+            addChunkPacket(pos.getFloorX() >> 4, pos.getFloorZ() >> 4, pk);
+        } else {
+            Server.broadcastPacket(players, pk);
+        }
     }
 
     public boolean getAutoSave() {
@@ -1563,7 +1594,7 @@ public class Level implements ChunkManager, Metadatable {
                                     .add(new DoubleTag("", motion.y)).add(new DoubleTag("", motion.z)))
 
                             .putList(new ListTag<FloatTag>("Rotation")
-                                    .add(new FloatTag("", new java.util.Random().nextFloat() * 360))
+                                    .add(new FloatTag("", ThreadLocalRandom.current().nextFloat() * 360))
                                     .add(new FloatTag("", 0)))
 
                             .putShort("Health", 5).putCompound("Item", itemTag).putShort("PickupDelay", delay));
@@ -1594,6 +1625,8 @@ public class Level implements ChunkManager, Metadatable {
         }
         Block target = this.getBlock(pos);
         Item[] drops;
+        int dropExp = target.getDropExp();
+
         if (item == null) {
             item = Item.get(BlockIds.AIR, 0, 0);
         }
@@ -1675,6 +1708,7 @@ public class Level implements ChunkManager, Metadatable {
             player.lastBreak = System.currentTimeMillis();
 
             drops = ev.getDrops();
+            dropExp = ev.getDropExp();
         } else if (!target.isBreakable(item)) {
             return null;
         } else if (item.getEnchantment(Enchantment.ID_SILK_TOUCH) != null) {
@@ -1714,7 +1748,6 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (this.getGameRules().get(GameRules.DO_TILE_DROPS)) {
-            int dropExp = target.getDropExp();
             if (!isSilkTouch && player != null && player.isSurvival() && dropExp > 0 && drops.length != 0) {
                 this.dropExpOrb(pos.add(0.5, 0.5, 0.5), dropExp);
             }
@@ -1808,13 +1841,13 @@ public class Level implements ChunkManager, Metadatable {
                     }
                 }
             } else {
-                if (item instanceof ItemBucket && ((ItemBucket) item).getBlockIdFromDamage(item.getDamage()) == FLOWING_WATER) {
+                if (item.getId() == ItemIds.BUCKET && ItemBucket.getBlockIdFromDamage(item.getDamage()) == FLOWING_WATER) {
                     player.getLevel().sendBlocks(new Player[]{player}, new Block[]{Block.get(AIR, 0, block.setLayer(1))}, UpdateBlockPacket.FLAG_ALL_PRIORITY);
                 }
                 return null;
             }
 
-            if (item instanceof ItemBucket && ((ItemBucket) item).getBlockIdFromDamage(item.getDamage()) == FLOWING_WATER) {
+            if (item.getId() == ItemIds.BUCKET && ItemBucket.getBlockIdFromDamage(item.getDamage()) == FLOWING_WATER) {
                 player.getLevel().sendBlocks(new Player[]{player}, new Block[]{Block.get(AIR, 0, target.setLayer(1))}, UpdateBlockPacket.FLAG_ALL_PRIORITY);
             }
         } else if (target.canBeActivated() && target.onActivate(item, player)) {

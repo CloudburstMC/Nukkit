@@ -74,6 +74,7 @@ public class AddEntityPacket extends DataPacket {
 //            .put(DeprecatedVillager.NETWORK_ID, "minecraft:villager_v2")
 //            .put(DeprecatedZombieVillager.NETWORK_ID, "minecraft:zombie_villager_v2")
 //            .put(121, "minecraft:fox")
+//            .put(122, "minecraft:bee")
 //            .build();
 
     @Override

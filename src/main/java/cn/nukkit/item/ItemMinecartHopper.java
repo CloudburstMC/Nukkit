@@ -47,8 +47,15 @@ public class ItemMinecartHopper extends Item {
                                     .add(new DoubleTag("", 0)))
                             .putList(new ListTag<>("Rotation")
                                     .add(new FloatTag("", 0))
-                            .add(new FloatTag("", 0)))
+                                    .add(new FloatTag("", 0)))
             );
+
+            if (player.isSurvival()) {
+                Item item = player.getInventory().getItemInHand();
+                item.setCount(item.getCount() - 1);
+                player.getInventory().setItemInHand(item);
+            }
+
             minecart.spawnToAll();
             decrementCount();
             return true;

@@ -111,8 +111,8 @@ public class ItemPainting extends Item {
             item.setCount(item.getCount() - 1);
             player.getInventory().setItemInHand(item);
         }
-        entity.spawnToAll();
 
+        entity.spawnToAll();
         return true;
     }
 
