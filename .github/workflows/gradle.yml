@@ -17,8 +17,8 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/fileHashes.bin') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - if: always()
-        name: Set up JDK 1.8
+        continue-on-error: true
+      - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
