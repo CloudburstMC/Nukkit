@@ -14,7 +14,7 @@ jobs:
       - uses: actions/cache@v1
         with:
           path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/fileHashes.bin') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Set up JDK 1.8
