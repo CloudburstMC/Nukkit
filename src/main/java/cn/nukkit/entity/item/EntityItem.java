@@ -232,12 +232,6 @@ public class EntityItem extends Entity {
         return hasUpdate || !this.onGround || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001;
     }
 
-    /*@Override
-    protected void addMovement(double fromX, double fromY, double fromZ, double fromYaw, double fromPitch, double fromHeadYaw,
-                               double toX, double toY, double toZ, double toYaw, double toPitch, double toHeadYaw) {
-        this.level.addDeltaMovement(this, fromX, fromY, fromZ, 0, 0, 0, toX, toY, toZ, 0, 0, 0);
-    }*/
-
     @Override
     public void saveNBT() {
         super.saveNBT();
