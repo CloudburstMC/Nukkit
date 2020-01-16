@@ -8,21 +8,20 @@ FROM openjdk:8-jdk-slim AS build
 # Install packages required for build
 RUN apt update && apt install -y \
         build-essential \
-        git \
-        maven
+        git
 
 # Build from source and create artifact
 WORKDIR /src
 COPY ./ /src
 RUN git submodule update --init
-RUN mvn clean package
+RUN gradle clean assemble distZip
 
 # Use OpenJDK JRE image for runtime
 FROM openjdk:8-jre-slim AS run
 LABEL maintainer="Micheal Waltz <dockerfiles@ecliptik.com>"
 
 # Copy artifact from build image
-COPY --from=build /src/target/nukkit-1.0-SNAPSHOT.jar /app/nukkit.jar
+COPY --from=build /src/build/libs/nukkit-1.0-SNAPSHOT-all.jar /app/nukkit.jar
 
 # Create minecraft user
 RUN useradd --user-group \

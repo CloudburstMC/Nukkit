@@ -1,7 +1,6 @@
 pipeline {
     agent any
     tools {
-        maven 'Maven 3'
         jdk 'Java 8'
     }
     options {
@@ -10,11 +9,11 @@ pipeline {
     stages {
         stage ('Build') {
             steps {
-                sh 'mvn clean package'
+                sh './gradlew clean build test'
             }
             post {
                 success {
-                    junit 'target/surefire-reports/**/*.xml'
+                    junit 'build/test-results/**/*.xml'
                     archiveArtifacts artifacts: 'target/nukkit-*-SNAPSHOT.jar', fingerprint: true
                 }
             }
@@ -25,10 +24,8 @@ pipeline {
                 branch "master"
             }
             steps {
-                sh 'mvn javadoc:javadoc javadoc:jar source:jar deploy -DskipTests'
-                step([$class: 'JavadocArchiver',
-                        javadocDir: 'target/site/apidocs',
-                        keepAll: false])
+                sh './gradlew javadoc distZip deploy -DskipTests'
+                step([$class: 'JavadocArchiver', javadocDir: 'build/docs/javadoc', keepAll: false])
             }
         }
     }

@@ -4,4 +4,4 @@ jdk:
   - openjdk8
 
 install:
-  - mvn clean package
+  - gradle clean assemble distZip
