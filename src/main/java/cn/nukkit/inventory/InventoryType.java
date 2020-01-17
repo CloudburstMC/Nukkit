@@ -37,7 +37,8 @@ public enum InventoryType {
     BARREL(27, "Barrel", 0),
     CAMPFIRE(4, "Campfire", -9), // -9 = NONE
     MINECART_CHEST(27, "Minecart with Chest", 0),
-    MINECART_HOPPER(5, "Minecart with Hopper", 8);
+    MINECART_HOPPER(5, "Minecart with Hopper", 8),
+    OFFHAND(1, "Offhand", -1);
 
     private final int size;
     private final String title;
