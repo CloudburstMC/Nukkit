@@ -13,6 +13,15 @@ import cn.nukkit.utils.Faceable;
  */
 public class BlockBone extends BlockSolidMeta implements Faceable {
 
+    private static final int[] FACES = {
+            0,
+            0,
+            0b1000,
+            0b1000,
+            0b0100,
+            0b0100
+    };
+
     public BlockBone() {
         this(0);
     }
@@ -62,15 +71,7 @@ public class BlockBone extends BlockSolidMeta implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        int[] faces = {
-                0,
-                0,
-                0b1000,
-                0b1000,
-                0b0100,
-                0b0100
-        };
-        this.setDamage(((this.getDamage() & 0x3) | faces[face.getIndex()]));
+        this.setDamage(((this.getDamage() & 0x3) | FACES[face.getIndex()]));
         this.getLevel().setBlock(block, this, true);
         return true;
     }
