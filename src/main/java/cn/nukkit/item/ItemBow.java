@@ -17,6 +17,7 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 import java.util.Random;
+import java.util.stream.Stream;
 
 /**
  * author: MagicDroidX
@@ -48,7 +49,9 @@ public class ItemBow extends ItemTool {
 
     @Override
     public boolean onClickAir(Player player, Vector3 directionVector) {
-        return player.getInventory().contains(Item.get(ItemID.ARROW)) || player.isCreative();
+        return player.isCreative() ||
+                Stream.of(player.getInventory(), player.getOffhandInventory())
+                        .anyMatch(inv -> inv.contains(Item.get(ItemID.ARROW)));
     }
 
     @Override
