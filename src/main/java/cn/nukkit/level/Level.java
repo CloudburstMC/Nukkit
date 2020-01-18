@@ -2727,6 +2727,21 @@ public class Level implements ChunkManager, Metadatable {
         return Position.fromObject(this.provider.getSpawn(), this);
     }
 
+    public Position getFuzzySpawnLocation() {
+        Position spawn = getSpawnLocation();
+        int radius = gameRules.getInteger(GameRule.SPAWN_RADIUS);
+        if (radius > 0) {
+            ThreadLocalRandom random = ThreadLocalRandom.current();
+            int negativeFlags = random.nextInt(4);
+            spawn = spawn.add(
+                    radius * random.nextDouble() * ((negativeFlags & 1) > 0? -1 : 1),
+                    0,
+                    radius * random.nextDouble() * ((negativeFlags & 2) > 0? -1 : 1)
+            );
+        }
+        return spawn;
+    }
+
     public void setSpawnLocation(Vector3 pos) {
         Position previousSpawn = this.getSpawnLocation();
         this.provider.setSpawn(pos);
@@ -2736,7 +2751,9 @@ public class Level implements ChunkManager, Metadatable {
         pk.x = pos.getFloorX();
         pk.y = pos.getFloorY();
         pk.z = pos.getFloorZ();
-        for (Player p : getPlayers().values()) p.dataPacket(pk);
+        for (Player p : getPlayers().values()) {
+            p.dataPacket(pk);
+        }
     }
 
     public void requestChunk(int x, int z, Player player) {
@@ -3023,7 +3040,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public Position getSafeSpawn(Vector3 spawn) {
         if (spawn == null || spawn.y < 1) {
-            spawn = this.getSpawnLocation();
+            spawn = this.getFuzzySpawnLocation();
         }
 
         if (spawn != null) {
