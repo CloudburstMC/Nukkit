@@ -214,6 +214,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_IN_SCAFFOLDING = 68;
     public static final int DATA_FLAG_OVER_SCAFFOLDING = 69;
     public static final int DATA_FLAG_FALL_THROUGH_SCAFFOLDING = 70;
+    public static final int DATA_FLAG_BLOCKING = 71; //shield
 
     public static long entityCount = 1;
 
