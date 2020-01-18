@@ -298,7 +298,9 @@ public class BlockTurtleEgg extends BlockFlowable {
 
         this.setDamage(0);
         if (this.level.setBlock(this, this, true, true)) {
-            this.level.addParticle(new BoneMealParticle(this));
+            if (down().getId() == Block.SAND) {
+                this.level.addParticle(new BoneMealParticle(this));
+            }
             return true;
         } else {
             return false;
@@ -310,7 +312,7 @@ public class BlockTurtleEgg extends BlockFlowable {
             return (support.getDamage() & 0x4) == 0x4;
         } else if (support instanceof BlockSlab) {
             return (support.getDamage() & 0x8) == 0x8;
-        } else if (support instanceof BlockGlass || support instanceof BlockWall) {
+        } else if (support instanceof BlockGlass || support instanceof BlockIce || support instanceof BlockWall) {
             return true;
         } else if (support.getId() == BEACON || support.getId() == HOPPER_BLOCK) {
             return true;
