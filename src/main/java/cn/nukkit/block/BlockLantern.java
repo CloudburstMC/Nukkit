@@ -65,6 +65,10 @@ public class BlockLantern extends BlockFlowable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        if(this.getLevelBlock() instanceof BlockLiquid || this.getLevelBlockAtLayer(1) instanceof BlockLiquid) {
+            return false;
+        }
+
         boolean hanging = false;
         if (face == BlockFace.DOWN) {
             if (isBlockAboveValid()) {
