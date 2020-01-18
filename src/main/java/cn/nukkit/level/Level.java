@@ -2573,7 +2573,12 @@ public class Level implements ChunkManager, Metadatable {
         int radius = gameRules.getInteger(GameRule.SPAWN_RADIUS);
         if (radius > 0) {
             ThreadLocalRandom random = ThreadLocalRandom.current();
-            spawn.add(radius * random.nextDouble(), 0, radius * random.nextDouble());
+            int negativeFlags = random.nextInt(4);
+            spawn = spawn.add(
+                    radius * random.nextDouble() * ((negativeFlags & 1) > 0? -1 : 1),
+                    0,
+                    radius * random.nextDouble() * ((negativeFlags & 2) > 0? -1 : 1)
+            );
         }
         return spawn;
     }
