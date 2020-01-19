@@ -7,6 +7,7 @@ import lombok.ToString;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @author Nukkit Project Team
@@ -42,7 +43,7 @@ public class CraftingDataPacket extends DataPacket {
     }
     
     public void addCartographyRecipe(CartographyRecipe... recipe) {
-        Collections.addAll(entries, recipe);
+        Stream.of(recipe).filter(r -> r.getRecipeId() != null).forEachOrdered(r -> entries.add(r));
     }
 
     public void addFurnaceRecipe(FurnaceRecipe... recipe) {
@@ -102,19 +103,17 @@ public class CraftingDataPacket extends DataPacket {
                 case SHAPELESS:
                 case CARTOGRAPHY:
                     ShapelessRecipe shapeless = (ShapelessRecipe) recipe;
-                    if (shapeless.getRecipeId() != null) {
-                        this.putString(shapeless.getRecipeId());
-                        List<Item> ingredients = shapeless.getIngredientList();
-                        this.putUnsignedVarInt(ingredients.size());
-                        for (Item ingredient : ingredients) {
-                            this.putRecipeIngredient(ingredient);
-                        }
-                        this.putUnsignedVarInt(1);
-                        this.putSlot(shapeless.getResult());
-                        this.putUUID(shapeless.getId());
-                        this.putString(recipe.getType() == RecipeType.CARTOGRAPHY ? CRAFTING_TAG_CARTOGRAPHY_TABLE : CRAFTING_TAG_CRAFTING_TABLE);
-                        this.putVarInt(shapeless.getPriority());
+                    this.putString(shapeless.getRecipeId());
+                    List<Item> ingredients = shapeless.getIngredientList();
+                    this.putUnsignedVarInt(ingredients.size());
+                    for (Item ingredient : ingredients) {
+                        this.putRecipeIngredient(ingredient);
                     }
+                    this.putUnsignedVarInt(1);
+                    this.putSlot(shapeless.getResult());
+                    this.putUUID(shapeless.getId());
+                    this.putString(recipe.getType() == RecipeType.CARTOGRAPHY ? CRAFTING_TAG_CARTOGRAPHY_TABLE : CRAFTING_TAG_CRAFTING_TABLE);
+                    this.putVarInt(shapeless.getPriority());
                     break;
                 case SHAPED:
                     ShapedRecipe shaped = (ShapedRecipe) recipe;
