@@ -629,7 +629,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     
     protected BlockStorage getOrSetStorage(int layer) {
         Preconditions.checkArgument(layer >= 0, "Negative storage layer");
-        Preconditions.checkArgument(layer <= 1, "Only layer 0 and layer 1 are supported");
+        Preconditions.checkArgument(layer <= getMaximumLayer(), "Only layer 0 to %d are supported", getMaximumLayer());
         synchronized (storage) {
             BlockStorage blockStorage = layer < storage.size()? storage.get(layer) : null;
             if (blockStorage == null) {
@@ -650,14 +650,16 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     
     protected BlockStorage getStorageIfExists(int layer) {
         Preconditions.checkArgument(layer >= 0, "Negative storage layer");
-        Preconditions.checkArgument(layer <= 1, "Only layer 0 and layer 1 are supported");
+        if (layer > getMaximumLayer()) {
+            return null;
+        }
         synchronized (storage) {
             return layer < storage.size()? storage.get(layer) : null;
         }
     }
 
     public ChunkSection copy() {
-        BlockStorage[] storageCopy = new BlockStorage[this.storage.size()];
+        BlockStorage[] storageCopy = new BlockStorage[Math.min(this.storage.size(), getMaximumLayer() + 1)];
         for (int i = 0; i < storageCopy.length; i++) {
             BlockStorage blockStorage = this.getStorageIfExists(i);
             storageCopy[i] = blockStorage != null? blockStorage.copy() : null;
@@ -671,5 +673,10 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                 this.hasBlockLight,
                 this.hasSkyLight
         );
+    }
+    
+    @Override
+    public int getMaximumLayer() {
+        return 1;
     }
 }

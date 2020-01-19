@@ -1775,7 +1775,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public synchronized boolean setBlock(int x, int y, int z, int layer, Block block, boolean direct, boolean update) {
-        if (y < 0 || y >= 256 || layer < 0 || layer > 1) {
+        if (y < 0 || y >= 256 || layer < 0 || layer > this.provider.getMaximumLayer()) {
             return false;
         }
         BaseFullChunk chunk = this.getChunk(x >> 4, z >> 4, true);

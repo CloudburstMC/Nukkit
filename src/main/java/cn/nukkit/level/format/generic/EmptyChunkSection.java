@@ -212,7 +212,12 @@ public class EmptyChunkSection implements ChunkSection {
     public byte[] getBytes() {
         return new byte[6145];
     }
-
+    
+    @Override
+    public int getMaximumLayer() {
+        return 0;
+    }
+    
     @Override
     public CompoundTag toNBT() {
         return null;
