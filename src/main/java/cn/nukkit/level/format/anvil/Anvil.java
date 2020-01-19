@@ -282,4 +282,9 @@ public class Anvil extends BaseLevelProvider {
             return region;
         }
     }
+    
+    @Override
+    public int getMaximumLayer() {
+        return 1;
+    }
 }
