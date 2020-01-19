@@ -29,7 +29,7 @@ public class EmptyChunkSection implements ChunkSection {
     private static byte[] EMPTY_CHUNK_DATA;
     static {
         BinaryStream stream = new BinaryStream();
-        stream.putByte((byte) cn.nukkit.level.format.anvil.ChunkSection.STORAGE_VERSION);
+        stream.putByte((byte) cn.nukkit.level.format.anvil.ChunkSection.STREAM_STORAGE_VERSION);
         stream.putVarInt(0);
         EMPTY_CHUNK_DATA = stream.getBuffer();
     }
@@ -212,7 +212,12 @@ public class EmptyChunkSection implements ChunkSection {
     public byte[] getBytes() {
         return new byte[6145];
     }
-
+    
+    @Override
+    public int getMaximumLayer() {
+        return 0;
+    }
+    
     @Override
     public CompoundTag toNBT() {
         return null;

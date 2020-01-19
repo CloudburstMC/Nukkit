@@ -77,6 +77,8 @@ public interface ChunkSection {
     boolean isEmpty();
 
     byte[] getBytes();
+    
+    int getMaximumLayer();
 
     CompoundTag toNBT();
 

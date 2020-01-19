@@ -1815,7 +1815,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public synchronized boolean setBlock(int x, int y, int z, int layer, Block block, boolean direct, boolean update) {
-        if (y < 0 || y >= 256) {
+        if (y < 0 || y >= 256 || layer < 0 || layer > this.provider.getMaximumLayer()) {
             return false;
         }
         BaseFullChunk chunk = this.getChunk(x >> 4, z >> 4, true);
@@ -1955,12 +1955,20 @@ public class Level implements ChunkManager, Metadatable {
     public Item useBreakOn(Vector3 vector, BlockFace face, Item item, Player player, boolean createParticles) {
         return useBreakOn(vector, face, item, player, createParticles, false);
     }
-
+    
     public Item useBreakOn(Vector3 vector, BlockFace face, Item item, Player player, boolean createParticles, boolean setBlockDestroy) {
+        if (vector instanceof Block) {
+            return useBreakOn(vector, ((Block) vector).layer, face, item, player, createParticles, setBlockDestroy);
+        } else {
+            return useBreakOn(vector, 0, face, item, player, createParticles, setBlockDestroy);
+        }
+    }
+
+    public Item useBreakOn(Vector3 vector, int layer, BlockFace face, Item item, Player player, boolean createParticles, boolean setBlockDestroy) {
         if (player != null && player.getGamemode() > 2) {
             return null;
         }
-        Block target = this.getBlock(vector);
+        Block target = this.getBlock(vector, layer);
         Item[] drops;
         int dropExp = target.getDropExp();
 
@@ -2058,7 +2066,7 @@ public class Level implements ChunkManager, Metadatable {
             drops = target.getDrops(item);
         }
 
-        Block above = this.getBlock(new Vector3(target.x, target.y + 1, target.z));
+        Block above = this.getBlock(new Vector3(target.x, target.y + 1, target.z), 0);
         if (above != null) {
             if (above.getId() == Item.FIRE) {
                 this.setBlock(above, new BlockAir(), true);
@@ -2076,12 +2084,14 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         // Close BlockEntity before we check onBreak
-        BlockEntity blockEntity = this.getBlockEntity(target);
-        if (blockEntity != null) {
-            blockEntity.onBreak(isSilkTouch);
-            blockEntity.close();
-
-            this.updateComparatorOutputLevel(target);
+        if (layer == 0) {
+            BlockEntity blockEntity = this.getBlockEntity(target);
+            if (blockEntity != null) {
+                blockEntity.onBreak(isSilkTouch);
+                blockEntity.close();
+        
+                this.updateComparatorOutputLevel(target);
+            }
         }
 
         target.onBreak(item);

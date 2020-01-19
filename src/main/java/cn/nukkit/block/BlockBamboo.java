@@ -12,6 +12,7 @@ import cn.nukkit.math.MathHelper;
 import cn.nukkit.network.protocol.AnimatePacket;
 import cn.nukkit.utils.BlockColor;
 
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class BlockBamboo extends BlockTransparentMeta {
@@ -81,8 +82,10 @@ public class BlockBamboo extends BlockTransparentMeta {
 
     public int countHeight() {
         int count = 0;
+        Optional<Block> opt;
         Block down = this;
-        while ((down = down.down()).getId() == BAMBOO) {
+        while ((opt = down.down().firstInLayers(b-> b.getId() == BAMBOO)).isPresent()) {
+            down = opt.get();
             if (++count >= 16) {
                 break;
             }
@@ -180,13 +183,13 @@ public class BlockBamboo extends BlockTransparentMeta {
 
     @Override
     public boolean onBreak(Item item) {
-        Block down = down();
-        if (down instanceof BlockBamboo) {
-            BlockBamboo bambooDown = (BlockBamboo) down;
+        Optional<Block> down = down().firstInLayers(b-> b instanceof BlockBamboo);
+        if (down.isPresent()) {
+            BlockBamboo bambooDown = (BlockBamboo) down.get();
             int height = bambooDown.countHeight();
             if (height < 15 && (height < 11 || !(ThreadLocalRandom.current().nextFloat() < 0.25F))) {
                 bambooDown.setAge(0);
-                this.level.setBlock(bambooDown, bambooDown, false, true);
+                this.level.setBlock(bambooDown, bambooDown.layer, bambooDown, false, true);
             }
         }
         return super.onBreak(item);

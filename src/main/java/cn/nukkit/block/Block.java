@@ -23,6 +23,7 @@ import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * author: MagicDroidX
@@ -564,7 +565,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public boolean onBreak(Item item) {
-        return this.getLevel().setBlock(this, new BlockAir(), true, true);
+        return this.getLevel().setBlock(this, layer, new BlockAir(), true, true);
     }
 
     public int onUpdate(int type) {
@@ -1201,5 +1202,21 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     public boolean canSilkTouch() {
         return false;
+    }
+    
+    public Optional<Block> firstInLayers(Predicate<Block> condition) {
+        return firstInLayers(0, condition);
+    }
+    
+    public Optional<Block> firstInLayers(int startingLayer, Predicate<Block> condition) {
+        int maximumLayer = this.level.getProvider().getMaximumLayer();
+        for (int layer = startingLayer; layer <= maximumLayer; layer++) {
+            Block block = this.getLevelBlockAtLayer(layer);
+            if (condition.test(block)) {
+                return Optional.of(block);
+            }
+        }
+        
+        return Optional.empty();
     }
 }
