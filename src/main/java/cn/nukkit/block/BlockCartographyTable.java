@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
+import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -45,6 +47,19 @@ public class BlockCartographyTable extends BlockSolid {
 
     @Override
     public boolean canHarvestWithHand() {
+        return true;
+    }
+    
+    @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+    
+    @Override
+    public boolean onActivate(Item item, Player player) {
+        if (player != null) {
+            player.craftingType = Player.CRAFTING_CARTOGRAPHY;
+        }
         return true;
     }
 }

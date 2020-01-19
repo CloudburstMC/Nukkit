@@ -111,8 +111,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public static final int CRAFTING_ANVIL = 2;
     public static final int CRAFTING_ENCHANT = 3;
     public static final int CRAFTING_BEACON = 4;
-    public static final int CRAFTING_GRINDSTONE = 5; //TODO Should it really be 5?
-    public static final int CRAFTING_STONECUTTER = 6; //TODO Should it really be 6?
+    public static final int CRAFTING_GRINDSTONE = 5; 
+    public static final int CRAFTING_STONECUTTER = 6;
+    public static final int CRAFTING_CARTOGRAPHY = 7;
 
     public static final float DEFAULT_SPEED = 0.1f;
     public static final float MAXIMUM_SPEED = 0.5f;
@@ -2662,11 +2663,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (!this.spawned || !this.isAlive()) {
                         break;
                     }
-
-                    this.craftingType = CRAFTING_SMALL;
-                    //this.resetCraftingGridType();
-
+    
                     InteractPacket interactPacket = (InteractPacket) packet;
+                    
+                    if (interactPacket.action != InteractPacket.ACTION_MOUSEOVER || interactPacket.target != 0) {
+                        this.craftingType = CRAFTING_SMALL;
+                        //this.resetCraftingGridType();
+                    }
+
 
                     Entity targetEntity = this.level.getEntity(interactPacket.target);
 

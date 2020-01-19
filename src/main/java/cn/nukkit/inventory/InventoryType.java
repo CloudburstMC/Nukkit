@@ -25,6 +25,7 @@ public enum InventoryType {
     //HORSE typeId:12
     //JUKEBOX typeId:17
     UI(1, "UI", -1),
+    CURSOR(1, "Cursor", -1),
     SHULKER_BOX(27, "Shulker Box", 0),
     BEACON(1, "Beacon", 13),
     // 14 is something (crash)
@@ -35,7 +36,8 @@ public enum InventoryType {
     GRINDSTONE(2, "Grindstone", 26),
     BLAST_FURNACE(3, "Blast Furnace", 27),
     SMOKER(3, "Smoker", 28),
-    STONECUTTER(2, "Stonecutter", 29),
+    STONECUTTER(2, "Stonecutter", 29), // Should be 29 but it's totally driven by the client, so setting to -1 = UI 
+    CARTOGRAPHY(3, "Cartography Table", -1),
     BARREL(27, "Barrel", 0),
     CAMPFIRE(4, "Campfire", -9) // -9 = NONE
     ;

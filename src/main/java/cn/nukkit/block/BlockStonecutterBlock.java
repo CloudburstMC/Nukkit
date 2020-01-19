@@ -1,10 +1,12 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.inventory.StonecutterInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
@@ -56,8 +58,8 @@ public class BlockStonecutterBlock extends BlockTransparentMeta implements Facea
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
+            player.addWindow(new StonecutterInventory(player.getUIInventory(), this), ContainerIds.NONE);
             player.craftingType = Player.CRAFTING_STONECUTTER;
-            //TODO Stonecutter window isn't working
         }
         return true;
     }
