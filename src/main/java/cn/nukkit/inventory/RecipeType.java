@@ -15,7 +15,8 @@ public enum RecipeType {
     SMOKER_DATA(3),
     CAMPFIRE(2),
     CAMPFIRE_DATA(3),
-    STONECUTTER(0);
+    STONECUTTER(0),
+    CARTOGRAPHY(0);
 
     public final int networkType;
 

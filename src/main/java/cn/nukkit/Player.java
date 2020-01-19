@@ -112,8 +112,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public static final int CRAFTING_ANVIL = 2;
     public static final int CRAFTING_ENCHANT = 3;
     public static final int CRAFTING_BEACON = 4;
-    public static final int CRAFTING_GRINDSTONE = 5; //TODO Should it really be 5?
-    public static final int CRAFTING_STONECUTTER = 6; //TODO Should it really be 6?
+    public static final int CRAFTING_GRINDSTONE = 5; 
+    public static final int CRAFTING_STONECUTTER = 6;
+    public static final int CRAFTING_CARTOGRAPHY = 7;
 
     public static final float DEFAULT_SPEED = 0.1f;
     public static final float MAXIMUM_SPEED = 0.5f;
@@ -2685,11 +2686,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (!this.spawned || !this.isAlive()) {
                         break;
                     }
-
-                    this.craftingType = CRAFTING_SMALL;
-                    //this.resetCraftingGridType();
-
+    
                     InteractPacket interactPacket = (InteractPacket) packet;
+                    
+                    if (interactPacket.action != InteractPacket.ACTION_MOUSEOVER || interactPacket.target != 0) {
+                        this.craftingType = CRAFTING_SMALL;
+                        //this.resetCraftingGridType();
+                    }
+
 
                     Entity targetEntity = this.level.getEntity(interactPacket.target);
 
@@ -3056,6 +3060,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         if (craftingType == CRAFTING_STONECUTTER && craftingTransaction != null
                                 && networkInventoryAction.sourceType == NetworkInventoryAction.SOURCE_TODO) {
                             networkInventoryAction.windowId = NetworkInventoryAction.SOURCE_TYPE_CRAFTING_RESULT;
+                        } else if (craftingType == CRAFTING_CARTOGRAPHY && craftingTransaction != null 
+                                && transactionPacket.actions.length == 2 && transactionPacket.actions[1].windowId == ContainerIds.UI
+                                && networkInventoryAction.inventorySlot == 0) {
+                            int slot = transactionPacket.actions[1].inventorySlot;
+                            if (slot == 50) {
+                                networkInventoryAction.windowId = NetworkInventoryAction.SOURCE_TYPE_CRAFTING_RESULT;
+                            } else {
+                                networkInventoryAction.inventorySlot = slot - 12;
+                            }
                         }
                         InventoryAction a = networkInventoryAction.createInventoryAction(this);
 

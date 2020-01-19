@@ -145,6 +145,8 @@ public class CraftingTransaction extends InventoryTransaction {
         CraftingManager craftingManager = source.getServer().getCraftingManager();
         if (craftingType == Player.CRAFTING_STONECUTTER) {
             recipe = craftingManager.matchStonecutterRecipe(this.primaryOutput);
+        } else if (craftingType == Player.CRAFTING_CARTOGRAPHY) {
+            recipe = craftingManager.matchCartographyRecipe(inputs, this.primaryOutput, this.secondaryOutputs);
         } else {
             recipe = craftingManager.matchRecipe(inputs, this.primaryOutput, this.secondaryOutputs);
         }
