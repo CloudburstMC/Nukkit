@@ -1621,7 +1621,7 @@ public class Server {
         }
         CompoundTag nbt = null;
         if (create) {
-            if (this.shouldSavePlayerData() {
+            if (this.shouldSavePlayerData()) {
                 log.info(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
             }
             Position spawn = this.getDefaultLevel().getSafeSpawn();
