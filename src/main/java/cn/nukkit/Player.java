@@ -3037,6 +3037,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         if (craftingType == CRAFTING_STONECUTTER && craftingTransaction != null
                                 && networkInventoryAction.sourceType == NetworkInventoryAction.SOURCE_TODO) {
                             networkInventoryAction.windowId = NetworkInventoryAction.SOURCE_TYPE_CRAFTING_RESULT;
+                        } else if (craftingType == CRAFTING_CARTOGRAPHY && craftingTransaction != null 
+                                && transactionPacket.actions.length == 2 && transactionPacket.actions[1].windowId == ContainerIds.UI
+                                && networkInventoryAction.inventorySlot == 0) {
+                            int slot = transactionPacket.actions[1].inventorySlot;
+                            if (slot == 50) {
+                                networkInventoryAction.windowId = NetworkInventoryAction.SOURCE_TYPE_CRAFTING_RESULT;
+                            } else {
+                                networkInventoryAction.inventorySlot = slot - 12;
+                            }
                         }
                         InventoryAction a = networkInventoryAction.createInventoryAction(this);
 

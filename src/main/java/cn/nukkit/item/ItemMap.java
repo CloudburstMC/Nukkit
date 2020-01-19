@@ -29,7 +29,12 @@ public class ItemMap extends Item {
     }
 
     public ItemMap(Integer meta, int count) {
-        super(MAP, 0, count, "Map");
+        super(MAP, meta, count, "Map");
+        switch (meta) {
+            case 3: this.name = "Ocean Explorer Map"; break;
+            case 4: this.name = "Woodland Explorer Map"; break;
+            case 5: this.name = "Treasure Map"; break;
+        }
 
         if (!hasCompoundTag() || !getNamedTag().contains("map_uuid")) {
             CompoundTag tag = new CompoundTag();

@@ -42,6 +42,7 @@ public class CraftingManager {
 
     private static int RECIPE_COUNT = 0;
     protected final Map<Integer, Map<UUID, ShapelessRecipe>> shapelessRecipes = new Int2ObjectOpenHashMap<>();
+    protected final Map<Integer, Map<UUID, CartographyRecipe>> cartographyRecipes = new Int2ObjectOpenHashMap<>();
 
     public static final Comparator<Item> recipeComparator = (i1, i2) -> {
         if (i1.getId() > i2.getId()) {
@@ -86,8 +87,8 @@ public class CraftingManager {
                 switch (Utils.toInt(recipe.get("type"))) {
                     case 0:
                         String craftingBlock = (String) recipe.get("block");
-                        if (!"crafting_table".equals(craftingBlock) && !"stonecutter".equals(craftingBlock)) {
-                            // Ignore other recipes than crafting table and stonecutter
+                        if (!"crafting_table".equals(craftingBlock) && !"stonecutter".equals(craftingBlock) && !"cartography_table".equalsIgnoreCase(craftingBlock)) {
+                            // Ignore other recipes than crafting table, stonecutter and cartography table
                             continue;
                         }
                         // TODO: handle multiple result items
@@ -112,6 +113,9 @@ public class CraftingManager {
                                 break;
                             case "stonecutter":
                                 this.registerRecipe(new StonecutterRecipe(recipeId, priority, Item.fromJson(first), sorted.get(0)));
+                                break;
+                            case "cartography_table":
+                                this.registerRecipe(new CartographyRecipe(recipeId, priority, Item.fromJson(first), sorted));
                                 break;
                         }
                         break;
@@ -205,6 +209,14 @@ public class CraftingManager {
 
             registerContainerRecipe(new ContainerRecipe(Item.get(fromItemId), Item.get(ingredient), Item.get(toItemId)));
         }
+        
+        // Allow to rename without crafting 
+        registerCartographyRecipe(new CartographyRecipe(Item.get(ItemID.EMPTY_MAP), Collections.singletonList(Item.get(ItemID.EMPTY_MAP))));
+        registerCartographyRecipe(new CartographyRecipe(Item.get(ItemID.EMPTY_MAP, 2), Collections.singletonList(Item.get(ItemID.EMPTY_MAP, 2))));
+        registerCartographyRecipe(new CartographyRecipe(Item.get(ItemID.MAP), Collections.singletonList(Item.get(ItemID.MAP))));
+        registerCartographyRecipe(new CartographyRecipe(Item.get(ItemID.MAP, 3), Collections.singletonList(Item.get(ItemID.MAP, 3))));
+        registerCartographyRecipe(new CartographyRecipe(Item.get(ItemID.MAP, 4), Collections.singletonList(Item.get(ItemID.MAP, 4))));
+        registerCartographyRecipe(new CartographyRecipe(Item.get(ItemID.MAP, 5), Collections.singletonList(Item.get(ItemID.MAP, 5))));
     }
 
     public void rebuildPacket() {
@@ -216,6 +228,12 @@ public class CraftingManager {
                 pk.addShapedRecipe((ShapedRecipe) recipe);
             } else if (recipe instanceof ShapelessRecipe) {
                 pk.addShapelessRecipe((ShapelessRecipe) recipe);
+            }
+        }
+    
+        for (Map<UUID, CartographyRecipe> map : cartographyRecipes.values()) {
+            for (CartographyRecipe recipe : map.values()) {
+                pk.addCartographyRecipe(recipe);
             }
         }
 
@@ -369,7 +387,19 @@ public class CraftingManager {
 
         recipe.registerToCraftingManager(this);
     }
-
+    
+    public void registerCartographyRecipe(CartographyRecipe recipe) {
+        List<Item> list = recipe.getIngredientList();
+        list.sort(recipeComparator);
+        
+        UUID hash = getMultiItemHash(list);
+        
+        int resultHash = getItemHash(recipe.getResult());
+        Map<UUID, CartographyRecipe> map = cartographyRecipes.computeIfAbsent(resultHash, k -> new HashMap<>());
+        
+        map.put(hash, recipe);
+    }
+    
     public void registerShapelessRecipe(ShapelessRecipe recipe) {
         List<Item> list = recipe.getIngredientList();
         list.sort(recipeComparator);
@@ -419,6 +449,40 @@ public class CraftingManager {
 
     public StonecutterRecipe matchStonecutterRecipe(Item output) {
         return this.stonecutterRecipes.get(getItemHash(output));
+    }
+    
+    public CartographyRecipe matchCartographyRecipe(Item[][] inputMap, Item primaryOutput, Item[][] extraOutputMap) {
+        int outputHash = getItemHash(primaryOutput);
+    
+        if (cartographyRecipes.containsKey(outputHash)) {
+            List<Item> list = new ArrayList<>();
+            for (Item[] a : inputMap) {
+                list.addAll(Arrays.asList(a));
+            }
+            list.sort(recipeComparator);
+        
+            UUID inputHash = getMultiItemHash(list);
+        
+            Map<UUID, CartographyRecipe> recipes = cartographyRecipes.get(outputHash);
+        
+            if (recipes == null) {
+                return null;
+            }
+        
+            CartographyRecipe recipe = recipes.get(inputHash);
+        
+            if (recipe != null && recipe.matchItems(this.cloneItemMap(inputMap), this.cloneItemMap(extraOutputMap))) {
+                return recipe;
+            }
+        
+            for (CartographyRecipe cartographyRecipe : recipes.values()) {
+                if (cartographyRecipe.matchItems(this.cloneItemMap(inputMap), this.cloneItemMap(extraOutputMap))) {
+                    return cartographyRecipe;
+                }
+            }
+        }
+        
+        return null;
     }
 
     public CraftingRecipe matchRecipe(Item[][] inputMap, Item primaryOutput, Item[][] extraOutputMap) {
