@@ -3070,11 +3070,26 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         if (this.craftingTransaction.getPrimaryOutput() != null) {
                             //we get the actions for this in several packets, so we can't execute it until we get the result
 
-                            if (this.craftingTransaction.execute() && craftingType == CRAFTING_STONECUTTER) {
-                                Collection<Player> players = level.getChunkPlayers(getChunkX(), getChunkZ()).values();
-                                players.remove(this);
-                                if (!players.isEmpty()) {
-                                    level.addSound(this, Sound.BLOCK_STONECUTTER_USE, 1f, 1f, players);
+                            if (this.craftingTransaction.execute()) {
+                                Sound sound = null;
+                                switch (craftingType) {
+                                    case CRAFTING_STONECUTTER:
+                                        sound = Sound.BLOCK_STONECUTTER_USE;
+                                        break;
+                                    case CRAFTING_GRINDSTONE:
+                                        sound = Sound.BLOCK_GRINDSTONE_USE;
+                                        break;
+                                    case CRAFTING_CARTOGRAPHY:
+                                        sound = Sound.BLOCK_CARTOGRAPHY_TABLE_USE;
+                                        break;
+                                }
+                                
+                                if (sound != null) {
+                                    Collection<Player> players = level.getChunkPlayers(getChunkX(), getChunkZ()).values();
+                                    players.remove(this);
+                                    if (!players.isEmpty()) {
+                                        level.addSound(this, sound, 1f, 1f, players);
+                                    }
                                 }
                             }
                             this.craftingTransaction = null;

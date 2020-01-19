@@ -33,7 +33,7 @@ public enum InventoryType {
     //ELEMENT_CONSTRUCTOR typeId:21
     //MATERIAL_REDUCER typeId:22
     //LAB_TABLE typeId:23
-    GRINDSTONE(2, "Grindstone", 26),
+    GRINDSTONE(3, "Grindstone", 26),
     BLAST_FURNACE(3, "Blast Furnace", 27),
     SMOKER(3, "Smoker", 28),
     STONECUTTER(2, "Stonecutter", 29), // Should be 29 but it's totally driven by the client, so setting to -1 = UI 

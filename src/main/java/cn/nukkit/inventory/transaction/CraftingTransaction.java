@@ -2,9 +2,7 @@ package cn.nukkit.inventory.transaction;
 
 import cn.nukkit.Player;
 import cn.nukkit.event.inventory.CraftItemEvent;
-import cn.nukkit.inventory.BigCraftingGrid;
-import cn.nukkit.inventory.CraftingManager;
-import cn.nukkit.inventory.Recipe;
+import cn.nukkit.inventory.*;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.ContainerClosePacket;
@@ -147,6 +145,16 @@ public class CraftingTransaction extends InventoryTransaction {
             recipe = craftingManager.matchStonecutterRecipe(this.primaryOutput);
         } else if (craftingType == Player.CRAFTING_CARTOGRAPHY) {
             recipe = craftingManager.matchCartographyRecipe(inputs, this.primaryOutput, this.secondaryOutputs);
+        } else if (craftingType == Player.CRAFTING_GRINDSTONE) {
+            Inventory inventory = source.getWindowById(Player.GRINDSTONE_WINDOW_ID);
+            if (inventory instanceof GrindstoneInventory) {
+                GrindstoneInventory grindstone = (GrindstoneInventory) inventory;
+                addInventory(grindstone);
+                if (this.primaryOutput.equals(grindstone.getResult(), true, true)) {
+                    recipe = new RepairRecipe(InventoryType.GRINDSTONE, this.primaryOutput, Arrays.asList(inputs[0]));
+                    grindstone.setResult(Item.get(0), false);
+                }
+            }
         } else {
             recipe = craftingManager.matchRecipe(inputs, this.primaryOutput, this.secondaryOutputs);
         }
