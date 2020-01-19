@@ -479,6 +479,29 @@ public class Level implements ChunkManager, Metadatable {
             Server.broadcastPacket(players, packet);
         }
     }
+    
+    public void addLevelEvent(int type, int data) {
+        addLevelEvent(type, data, null);
+    }
+    
+    public void addLevelEvent(int type, int data, Vector3 pos) {
+        if (pos == null) {
+            addLevelEvent(type, data, 0, 0, 0);
+        } else {
+            addLevelEvent(type, data, (float) pos.x, (float) pos.y, (float) pos.z);
+        }
+    }
+    
+    public void addLevelEvent(int type, int data, float x, float y, float z) {
+        LevelEventPacket packet = new LevelEventPacket();
+        packet.evid = type;
+        packet.x = x;
+        packet.y = y;
+        packet.z = z;
+        packet.data = data;
+        
+        this.addChunkPacket(NukkitMath.floorFloat(x) >> 4, NukkitMath.floorFloat(z) >> 4, packet);
+    }
 
     public void addLevelSoundEvent(Vector3 pos, int type, int data, int entityType) {
         addLevelSoundEvent(pos, type, data, entityType, false, false);

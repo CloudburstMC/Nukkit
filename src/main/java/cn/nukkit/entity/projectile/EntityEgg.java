@@ -1,8 +1,12 @@
 package cn.nukkit.entity.projectile;
 
 import cn.nukkit.entity.Entity;
+import cn.nukkit.item.ItemEgg;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.particle.ItemBreakParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: MagicDroidX
@@ -63,5 +67,14 @@ public class EntityEgg extends EntityProjectile {
         }
 
         return hasUpdate;
+    }
+    
+    @Override
+    protected void addHitEffect() {
+        int particles = ThreadLocalRandom.current().nextInt(10) + 5;
+        ItemEgg egg = new ItemEgg();
+        for (int i = 0; i < particles; i++) {
+            level.addParticle(new ItemBreakParticle(this, egg));
+        }
     }
 }

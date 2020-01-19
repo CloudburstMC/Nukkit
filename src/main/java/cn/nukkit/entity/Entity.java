@@ -89,8 +89,8 @@ public abstract class Entity extends Location implements Metadatable {
     /* 27 (int) player "index"? */
     public static final int DATA_PLAYER_BED_POSITION = 28; //block coords
     public static final int DATA_FIREBALL_POWER_X = 29; //float
-    public static final int DATA_FIREBALL_POWER_Y = 30;
-    public static final int DATA_FIREBALL_POWER_Z = 31;
+    public static final int DATA_FIREBALL_POWER_Y = 30; //float
+    public static final int DATA_FIREBALL_POWER_Z = 31; //float
     /* 32 (unknown)
      * 33 (float) fishing bobber
      * 34 (float) fishing bobber
@@ -98,7 +98,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_POTION_AUX_VALUE = 36; //short
     public static final int DATA_LEAD_HOLDER_EID = 37; //long
     public static final int DATA_SCALE = 38; //float
-    public static final int DATA_INTERACTIVE_TAG = 39; //string (button text)
+    public static final int DATA_HAS_NPC_COMPONENT = 39; //byte
     public static final int DATA_NPC_SKIN_ID = 40; //string
     public static final int DATA_URL_TAG = 41; //string
     public static final int DATA_MAX_AIR = 42; //short
@@ -128,15 +128,15 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_SHULKER_ATTACH_POS = 66; //block coords
     public static final int DATA_TRADING_PLAYER_EID = 67; //long
 
-    /* 69 (byte) command-block */
+    public static final int DATA_COMMAND_BLOCK_ENABLED = 69; //byte
     public static final int DATA_COMMAND_BLOCK_COMMAND = 70; //string
     public static final int DATA_COMMAND_BLOCK_LAST_OUTPUT = 71; //string
     public static final int DATA_COMMAND_BLOCK_TRACK_OUTPUT = 72; //byte
     public static final int DATA_CONTROLLING_RIDER_SEAT_NUMBER = 73; //byte
     public static final int DATA_STRENGTH = 74; //int
     public static final int DATA_MAX_STRENGTH = 75; //int
-    // 76 (int)
-    public static final int DATA_LIMITED_LIFE = 77;
+    public static final int DATA_EVOKER_SPELL_COLOR = 76; // int
+    public static final int DATA_LIMITED_LIFE = 77; // int
     public static final int DATA_ARMOR_STAND_POSE_INDEX = 78; // int
     public static final int DATA_ENDER_CRYSTAL_TIME_OFFSET = 79; // int
     public static final int DATA_ALWAYS_SHOW_NAMETAG = 80; // byte
@@ -145,10 +145,29 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_SCORE_TAG = 83; //String
     public static final int DATA_BALLOON_ATTACHED_ENTITY = 84; // long
     public static final int DATA_PUFFERFISH_SIZE = 85;
+    public static final int DATA_BOAT_BUBBLE_TIME = 86;
+    public static final int DATA_AGENT_ID = 87;
 
+    public static final int DATA_EAT_COUNTER = 90;
     public static final int DATA_FLAGS_EXTENDED = 91;
 
-    public static final int DATA_SKIN_ID = 103; // int ???
+    public static final int DATA_AREA_EFFECT_CLOUD_DURATION = 94; // int
+    public static final int DATA_AREA_EFFECT_CLOUD_SPAWN_TIME = 95; // long
+    public static final int DATA_AREA_EFFECT_CLOUD_RADIUS_PER_TICK = 96; // float
+    public static final int DATA_AREA_EFFECT_CLOUD_RADIUS_CHANGE_ON_PICKUP = 97; // float
+    public static final int DATA_AREA_EFFECT_CLOUD_PICKUP_COUNT = 98; // int
+    public static final int DATA_INTERACTIVE_TAG = 99; // string (button text)
+    public static final int DATA_TRADE_TIER = 100; // int
+    public static final int DATA_MAX_TRADE_TIER = 101; // int
+    public static final int DATA_TRADE_XP = 102; // int
+    public static final int DATA_SKIN_ID = 103; // int
+    // 105 (int) unknown
+    // 106 (byte) unknown
+    // 107 (float) unknown
+    // 108 (float) unknown
+    // 109 (string) unknown
+    // 110 (float) unknown
+    // 112 (byte) unknwon
 
     // Flags
     public static final int DATA_FLAG_ONFIRE = 0;
@@ -211,10 +230,19 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_BRIBED = 57; //dolphins have this set when they go to find treasure for the player
     public static final int DATA_FLAG_PREGNANT = 58;
     public static final int DATA_FLAG_LAYING_EGG = 59;
+    public static final int DATA_FLAG_RIDER_CAN_PICKUP = 60;
+    public static final int DATA_FLAG_TRANSITION_SITTING = 61;
+    public static final int DATA_FLAG_EATING = 62;
+    public static final int DATA_FLAG_LAYING_DOWN = 63;
+    public static final int DATA_FLAG_SNEEZING = 64;
+    public static final int DATA_FLAG_TRUSTING = 65;
+    public static final int DATA_FLAG_ROLLING = 66;
+    public static final int DATA_FLAG_SCARED = 67;
     public static final int DATA_FLAG_IN_SCAFFOLDING = 68;
     public static final int DATA_FLAG_OVER_SCAFFOLDING = 69;
     public static final int DATA_FLAG_FALL_THROUGH_SCAFFOLDING = 70;
     public static final int DATA_FLAG_BLOCKING = 71; //shield
+    public static final int DATA_FLAG_DISABLED_BLOCKING = 72;
 
     public static long entityCount = 1;
 

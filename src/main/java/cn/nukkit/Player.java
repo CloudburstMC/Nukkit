@@ -252,6 +252,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected double lastRightClickTime = 0.0;
     protected Vector3 lastRightClickPos = null;
+    
+    protected int lastPlayerdLevelUpSoundTime = 0; 
 
     public int getStartActionTick() {
         return startAction;
@@ -4044,8 +4046,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public int getExperienceLevel() {
         return this.expLevel;
     }
-
+    
     public void addExperience(int add) {
+        addExperience(add, false);
+    }
+    
+    public void addExperience(int add, boolean playLevelUpSound) {
         if (add == 0) return;
         int now = this.getExperience();
         int added = now + add;
@@ -4056,7 +4062,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             level++;
             most = calculateRequireExperience(level);
         }
-        this.setExperience(added, level);
+        this.setExperience(added, level, playLevelUpSound);
     }
 
     public static int calculateRequireExperience(int level) {
@@ -4072,15 +4078,24 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public void setExperience(int exp) {
         setExperience(exp, this.getExperienceLevel());
     }
+    
+    public void setExperience(int exp, int level) {
+        setExperience(exp, level, false);
+    }
 
     //todo something on performance, lots of exp orbs then lots of packets, could crash client
-
-    public void setExperience(int exp, int level) {
+    
+    public void setExperience(int exp, int level, boolean playLevelUpSound) {
+        int levelBefore = this.expLevel;
         this.exp = exp;
         this.expLevel = level;
 
         this.sendExperienceLevel(level);
         this.sendExperience(exp);
+        if (playLevelUpSound && levelBefore / 5 != level / 5 && this.lastPlayerdLevelUpSoundTime < this.age - 100) {
+            this.lastPlayerdLevelUpSoundTime = this.age;
+            this.level.addSound(this, Sound.RANDOM_LEVELUP, 1F, 1F, this);
+        }
     }
 
     public void sendExperience() {
@@ -4935,7 +4950,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             if (xpOrb.getPickupDelay() <= 0) {
                 int exp = xpOrb.getExp();
                 entity.kill();
-                this.getLevel().addSound(this, Sound.RANDOM_ORB);
+                this.getLevel().addLevelEvent(LevelEventPacket.EVENT_SOUND_EXPERIENCE_ORB, 0, this);
                 pickedXPOrb = tick;
 
                 //Mending
@@ -4964,7 +4979,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                 }
 
-                this.addExperience(exp);
+                this.addExperience(exp, true);
                 return true;
             }
         }
