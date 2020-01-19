@@ -7,6 +7,7 @@ import cn.nukkit.level.particle.EnchantParticle;
 import cn.nukkit.level.particle.Particle;
 import cn.nukkit.level.particle.SpellParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -94,5 +95,10 @@ public class EntityExpBottle extends EntityProjectile {
         this.getLevel().addParticle(particle2);
 
         this.getLevel().dropExpOrb(this, ThreadLocalRandom.current().nextInt(3, 12));
+    }
+    
+    @Override
+    protected void addHitEffect() {
+        this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_GLASS);
     }
 }

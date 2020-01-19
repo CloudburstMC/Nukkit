@@ -135,7 +135,7 @@ public class EntityArrow extends EntityProjectile {
     }
 
     @Override
-    protected void addHitSound() {
+    protected void addHitEffect() {
         this.level.addSound(this, Sound.RANDOM_BOWHIT);
     }
 

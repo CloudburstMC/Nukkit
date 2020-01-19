@@ -75,7 +75,7 @@ public abstract class EntityProjectile extends Entity {
             ev = new EntityDamageByChildEntityEvent(this.shootingEntity, this, entity, DamageCause.PROJECTILE, damage);
         }
         entity.attack(ev);
-        addHitSound();
+        addHitEffect();
         this.hadCollision = true;
 
         if (this.fireTicks > 0) {
@@ -185,7 +185,7 @@ public abstract class EntityProjectile extends Entity {
 
                 this.server.getPluginManager().callEvent(new ProjectileHitEvent(this, MovingObjectPosition.fromBlock(this.getFloorX(), this.getFloorY(), this.getFloorZ(), -1, this)));
                 onCollideWithBlock();
-                addHitSound();
+                addHitEffect();
                 return false;
             } else if (!this.isCollided && this.hadCollision) {
                 this.hadCollision = false;
@@ -219,7 +219,7 @@ public abstract class EntityProjectile extends Entity {
         return false;
     }
 
-    protected void addHitSound() {
+    protected void addHitEffect() {
 
     }
 }

@@ -78,13 +78,11 @@ public class BlockSponge extends BlockSolidMeta {
                 level.setBlock(block, Block.get(BlockID.SPONGE, WET));
 
                 for (int i = 0; i < 4; i++) {
-                    LevelEventPacket packet = new LevelEventPacket();
-                    packet.evid = 2001;
-                    packet.x = (float) block.getX();
-                    packet.y = (float) block.getY();
-                    packet.z = (float) block.getZ();
-                    packet.data = GlobalBlockPalette.getOrCreateRuntimeId(BlockID.WATER, 0);
-                    level.addChunkPacket(getChunkX(), getChunkZ(), packet);
+                    level.addLevelEvent(
+                            LevelEventPacket.EVENT_PARTICLE_DESTROY, 
+                            GlobalBlockPalette.getOrCreateRuntimeId(BlockID.WATER, 0),
+                            block 
+                    );
                 }
             }
         }
