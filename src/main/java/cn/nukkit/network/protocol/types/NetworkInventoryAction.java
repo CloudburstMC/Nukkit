@@ -89,6 +89,10 @@ public class NetworkInventoryAction {
                 switch (this.windowId) {
                     case SOURCE_TYPE_CRAFTING_RESULT:
                     case SOURCE_TYPE_CRAFTING_USE_INGREDIENT:
+                    case SOURCE_TYPE_ANVIL_INPUT:
+                    case SOURCE_TYPE_ANVIL_MATERIAL:
+                    case SOURCE_TYPE_ANVIL_OUTPUT:
+                    case SOURCE_TYPE_ANVIL_RESULT:
                         packet.isCraftingPart = true;
                         break;
                 }
@@ -193,55 +197,34 @@ public class NetworkInventoryAction {
 
                         switch (this.windowId) {
                             case SOURCE_TYPE_ANVIL_INPUT:
-                                //System.out.println("action input");
                                 this.inventorySlot = 0;
-                                //anvil.setItem(0, this.oldItem);
-                                return new SlotChangeAction(anvil, this.inventorySlot, this.oldItem, this.newItem);
+                                return new CraftingTransferMaterialAction(this.oldItem, this.newItem, this.inventorySlot);
                             case SOURCE_TYPE_ANVIL_MATERIAL:
-                                //System.out.println("material");
                                 this.inventorySlot = 1;
-                                //anvil.setItem(1, this.oldItem);
-                                return new SlotChangeAction(anvil, this.inventorySlot, this.oldItem, this.newItem);
+                                return new CraftingTransferMaterialAction(this.oldItem, this.newItem, this.inventorySlot);
                             case SOURCE_TYPE_ANVIL_OUTPUT:
                                 //System.out.println("action output");
                                 break;
                             case SOURCE_TYPE_ANVIL_RESULT:
                                 this.inventorySlot = 2;
-                                anvil.clear(0);
-                                //Item material = anvil.getItem(1);
-                                //if (!material.isNull()) {
-                                //    material.setCount(material.getCount() - 1);
-                                //    anvil.setItem(1, material);
-                                //}
-                                anvil.setItem(2, this.oldItem);
-                                //System.out.println("action result");
-                                return new SlotChangeAction(anvil, this.inventorySlot, this.oldItem, this.newItem);
+                                anvil.setNewItemName(this.oldItem.getCustomName());
+                                anvil.updateResult();
+                                return new CraftingTakeResultAction(this.oldItem, this.newItem);
                         }
                     } else if (inv instanceof GrindstoneInventory) {
-                        GrindstoneInventory grindstone = (GrindstoneInventory) inv;
-
                         switch (this.windowId) {
                             case SOURCE_TYPE_ANVIL_INPUT:
-                                //System.out.println("action input");
                                 this.inventorySlot = 0;
-                                grindstone.setItem(0, this.oldItem);
-                                return new SlotChangeAction(grindstone, this.inventorySlot, this.oldItem, this.newItem);
+                                return new CraftingTransferMaterialAction(this.oldItem, this.newItem, this.inventorySlot);
                             case SOURCE_TYPE_ANVIL_MATERIAL:
-                                //System.out.println("material");
-                                grindstone.setItem(1, this.oldItem);
                                 this.inventorySlot = 1;
-                                return new SlotChangeAction(grindstone, this.inventorySlot, this.oldItem, this.newItem);
+                                return new CraftingTransferMaterialAction(this.oldItem, this.newItem, this.inventorySlot);
                             case SOURCE_TYPE_ANVIL_OUTPUT:
                                 //System.out.println("action output");
                                 break;
                             case SOURCE_TYPE_ANVIL_RESULT:
                                 this.inventorySlot = 2;
-                                //grindstone.clear(0);
-                                //grindstone.clear(1);
-                                grindstone.setItem(2, this.oldItem);
-                                //player.getCursorInventory().setItem(0, this.newItem);
-                                //System.out.println("action result");
-                                return new SlotChangeAction(grindstone, this.inventorySlot, this.oldItem, this.newItem);
+                                return new CraftingTakeResultAction(this.oldItem, this.newItem);
                         }
                     } else {
                         player.getServer().getLogger().debug("Player " + player.getName() + " has no open anvil or grindstone inventory");
