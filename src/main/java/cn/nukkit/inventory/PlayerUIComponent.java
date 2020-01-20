@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class PlayerUIComponent extends BaseInventory {
-    private final PlayerUIInventory playerUI;
+    protected final PlayerUIInventory playerUI;
     private final int offset;
     private final int size;
 

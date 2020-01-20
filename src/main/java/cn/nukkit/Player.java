@@ -2818,14 +2818,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     EntityEventPacket entityEventPacket = (EntityEventPacket) packet;
 
                     switch (entityEventPacket.event) {
-                        case EntityEventPacket.ENCHANT:
-                            if (entityEventPacket.eid != this.id) {
-                                break;
-                            }
-
-                            setExperience(getExperience(), getExperienceLevel() + entityEventPacket.data);
-
-                            break;
                         case EntityEventPacket.EATING_ITEM:
                             if (entityEventPacket.data == 0 || entityEventPacket.eid != this.id) {
                                 break;
