@@ -87,6 +87,7 @@ public class BlockEntityBeehive extends BlockEntity {
         Block block = getBlock();
         if (block instanceof BlockBeehive) {
             ((BlockBeehive) block).setHoneyLevel(honeyLevel);
+            block.getLevel().setBlock(block, block, true, true);
         }
     }
 
