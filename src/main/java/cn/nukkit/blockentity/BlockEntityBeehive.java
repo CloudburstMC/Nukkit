@@ -44,8 +44,18 @@ public class BlockEntityBeehive extends BlockEntity {
             }
         }
         
+        // Backward compatibility
         if (this.namedTag.contains("HoneyLevel")) {
-            setHoneyLevel(this.namedTag.getByte("HoneyLevel"));
+            int faceHorizontalIndex = 0;
+            Block block = getBlock();
+            if (block instanceof BlockBeehive) {
+                faceHorizontalIndex = block.getDamage() & 0b11;
+                int honeyLevel = this.namedTag.getByte("HoneyLevel");
+                BlockBeehive beehive = (BlockBeehive) block;
+                beehive.setBlockFace(BlockFace.fromHorizontalIndex(faceHorizontalIndex));
+                beehive.setHoneyLevel(honeyLevel);
+                beehive.getLevel().setBlock(beehive, beehive, true, true);
+            }
             this.namedTag.remove("HoneyLevel");
         }
 

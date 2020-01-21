@@ -168,11 +168,6 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
         return new Item[]{ new ItemBlock(new BlockBeehive()) };
     }
     
-    @Override
-    public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(getDamage() & 0b11);
-    }
-    
     public BlockEntityBeehive getOrCreateEntity() {
         BlockEntity blockEntity = getLevel().getBlockEntity(this);
         if (blockEntity instanceof BlockEntityBeehive) {
@@ -181,7 +176,7 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
             return createEntity(null);
         }
     }
-
+    
     private BlockEntityBeehive createEntity(CompoundTag customNbt) {
         CompoundTag nbt = customNbt != null? customNbt.copy() : new CompoundTag();
         nbt.setName("");
@@ -193,30 +188,31 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
         
         return (BlockEntityBeehive) BlockEntity.createBlockEntity(BlockEntity.BEEHIVE, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
     }
-
+    
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromIndex(getDamage() & 0b111);
+    }
+    
     public void setBlockFace(BlockFace face) {
-        int horizontalIndex = face.getHorizontalIndex();
-        if (horizontalIndex >= 0) {
-            setDamage((getDamage() & (DATA_MASK ^ 0b11)) | (horizontalIndex & 0b11));
-            level.setBlock(this, this, true, true);
-        }
+        setDamage((getDamage() & (DATA_MASK ^ 0b111)) | (face.getIndex() & 0b111));
     }
 
     public void setHoneyLevel(int honeyLevel) {
         honeyLevel = NukkitMath.clamp(honeyLevel, 0, 5);
-        setDamage(getDamage() & (DATA_MASK ^ 0b11100) | honeyLevel << 2);
+        setDamage(getDamage() & (DATA_MASK ^ 0b111000) | honeyLevel << 3);
     }
 
     public int getHoneyLevel() {
-        return getDamage() >> 2 & 0b111;
+        return getDamage() >> 3 & 0b111;
     }
 
     public boolean isEmpty() {
-        return (getDamage() & 0b11100) == 0;
+        return (getDamage() & 0b111000) == 0;
     }
 
     public boolean isFull() {
-        return (getDamage() & 0b11100) == 0b11100;
+        return (getDamage() & 0b111000) == 0b111000;
     }
     
     @Override
