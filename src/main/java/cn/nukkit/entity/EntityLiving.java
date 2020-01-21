@@ -103,7 +103,9 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
     @Override
     public boolean attack(EntityDamageEvent source) {
-        if (this.attackTime > 0 || this.noDamageTicks > 0) {
+        if (this.noDamageTicks > 0) {
+            return false;
+        } else if (this.attackTime > 0) {
             EntityDamageEvent lastCause = this.getLastDamageCause();
             if (lastCause != null && lastCause.getDamage() >= source.getDamage()) {
                 return false;
@@ -234,7 +236,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
                 this.resetFallDistance();
             }
 
-            if (!this.hasEffect(Effect.WATER_BREATHING) && this.isInsideOfWater()) {
+            if (!this.hasEffect(Effect.WATER_BREATHING) && !this.hasEffect(Effect.CONDUIT_POWER) && this.isInsideOfWater()) {
                 if (this instanceof EntityWaterAnimal || (this instanceof Player && (((Player) this).isCreative() || ((Player) this).isSpectator()))) {
                     this.setAirTicks(400);
                 } else {

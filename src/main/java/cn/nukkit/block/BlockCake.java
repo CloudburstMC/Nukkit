@@ -47,6 +47,11 @@ public class BlockCake extends BlockTransparentMeta {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public double getMinX() {
         return this.x + (1 + getDamage() * 2) / 16;
     }
@@ -135,5 +140,15 @@ public class BlockCake extends BlockTransparentMeta {
 
     public boolean hasComparatorInputOverride() {
         return true;
+    }
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
     }
 }

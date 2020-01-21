@@ -1,6 +1,7 @@
 package cn.nukkit.level.format.anvil.palette;
 
 import cn.nukkit.Server;
+import cn.nukkit.block.Block;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.utils.ThreadCache;
 import com.google.common.base.Preconditions;
@@ -71,11 +72,11 @@ public final class BlockDataPalette implements Cloneable {
     }
 
     public int getBlockId(int x, int y, int z) {
-        return getFullBlock(x, y, z) >> 4;
+        return getFullBlock(x, y, z) >> Block.DATA_BITS;
     }
 
     public void setBlockId(int x, int y, int z, int id) {
-        setFullBlock(x, y, z, (char) (id << 4));
+        setFullBlock(x, y, z, (char) (id << Block.DATA_BITS));
     }
 
     public synchronized void setBlockData(int x, int y, int z, int data) {
@@ -84,11 +85,11 @@ public final class BlockDataPalette implements Cloneable {
 
         if (raw != null) {
             int fullId = raw[index];
-            raw[index] = (char) ((fullId & 0xFFF0) | data);
+            raw[index] = (char) ((fullId & (0xFFF << Block.DATA_BITS)) | data);
         } if (palette != null && encodedData != null) {
             char fullId = palette.getKey(encodedData.getAt(index));
-            if ((fullId & 0xF) != data) {
-                setPaletteFullBlock(index, (char) ((fullId & 0xFFF0) | data));
+            if ((fullId & Block.DATA_MASK) != data) {
+                setPaletteFullBlock(index, (char) ((fullId & (0xFFF << Block.DATA_BITS)) | data));
             }
         } else {
             throw new IllegalStateException("Raw data and pallete was null");

@@ -59,7 +59,8 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     public Item(int id, Integer meta, int count, String name) {
-        this.id = id & 0xffff;
+        //this.id = id & 0xffff;
+        this.id = id;
         if (meta != null && meta >= 0) {
             this.meta = meta & 0xffff;
         } else {
@@ -162,6 +163,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[SNOWBALL] = ItemSnowball.class; //332
             list[BOAT] = ItemBoat.class; //333
             list[LEATHER] = ItemLeather.class; //334
+            list[KELP] = ItemKelp.class; //335
 
             list[BRICK] = ItemBrick.class; //336
             list[CLAY] = ItemClay.class; //337
@@ -222,7 +224,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[POTATO] = ItemPotato.class; //392
             list[BAKED_POTATO] = ItemPotatoBaked.class; //393
             list[POISONOUS_POTATO] = ItemPotatoPoisonous.class; //394
-            //TODO: list[EMPTY_MAP] = ItemEmptyMap.class; //395
+            list[EMPTY_MAP] = ItemEmptyMap.class; //395
             list[GOLDEN_CARROT] = ItemCarrotGolden.class; //396
             list[SKULL] = ItemSkull.class; //397
             list[CARROT_ON_A_STICK] = ItemCarrotOnAStick.class; //398
@@ -248,7 +250,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[GOLD_HORSE_ARMOR] = ItemHorseArmorGold.class; //418
             list[DIAMOND_HORSE_ARMOR] = ItemHorseArmorDiamond.class; //419
             //TODO: list[LEAD] = ItemLead.class; //420
-            //TODO: list[NAME_TAG] = ItemNameTag.class; //421
+            list[NAME_TAG] = ItemNameTag.class; //421
             list[PRISMARINE_CRYSTALS] = ItemPrismarineCrystals.class; //422
             list[RAW_MUTTON] = ItemMuttonRaw.class; //423
             list[COOKED_MUTTON] = ItemMuttonCooked.class; //424
@@ -269,8 +271,10 @@ public class Item implements Cloneable, BlockID, ItemID {
 
             list[ELYTRA] = ItemElytra.class; //444
 
-            //TODO: list[SHULKER_SHELL] = ItemShulkerShell.class; //445
+            list[SHULKER_SHELL] = ItemShulkerShell.class; //445
             list[BANNER] = ItemBanner.class; //446
+            
+            list[TOTEM] = ItemTotem.class; //450
             
             list[TRIDENT] = ItemTrident.class; //455
 
@@ -287,6 +291,11 @@ public class Item implements Cloneable, BlockID, ItemID {
             
             list[TURTLE_SHELL] = ItemTurtleShell.class; //469
 
+            list[SPRUCE_SIGN] = ItemSpruceSign.class; //472
+            list[BIRCH_SIGN] = ItemBirchSign.class; //473
+            list[JUNGLE_SIGN] = ItemJungleSign.class; //474
+            list[ACACIA_SIGN] = ItemAcaciaSign.class; //475
+            list[DARKOAK_SIGN] = ItemDarkOakSign.class; //476
             list[SWEET_BERRIES] = ItemSweetBerries.class; //477
 
             list[RECORD_11] = ItemRecord11.class;
@@ -303,6 +312,13 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[RECORD_WAIT] = ItemRecordWait.class;
 
             list[SHIELD] = ItemShield.class; //513
+
+            list[CAMPFIRE] = ItemCampfire.class; //720
+
+            list[SUSPICIOUS_STEW] = ItemSuspiciousStew.class; //734
+    
+            list[HONEYCOMB] = ItemHoneycomb.class; //736
+            list[HONEY_BOTTLE] = ItemHoneyBottle.class; //737
 
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {
@@ -374,6 +390,25 @@ public class Item implements Cloneable, BlockID, ItemID {
         return -1;
     }
 
+    public static Item getBlock(int id) {
+        return getBlock(id, 0);
+    }
+
+    public static Item getBlock(int id, Integer meta) {
+        return getBlock(id, meta, 1);
+    }
+
+    public static Item getBlock(int id, Integer meta, int count) {
+        return getBlock(id, meta, count, new byte[0]);
+    }
+
+    public static Item getBlock(int id, Integer meta, int count, byte[] tags) {
+        if (id > 255) {
+            id = 255 - id;
+        }
+        return get(id, meta, count, tags);
+    }
+
     public static Item get(int id) {
         return get(id, 0);
     }
@@ -388,7 +423,13 @@ public class Item implements Cloneable, BlockID, ItemID {
 
     public static Item get(int id, Integer meta, int count, byte[] tags) {
         try {
-            Class c = list[id];
+            Class c = null;
+            if (id < 0) {
+                int blockId = 255 - id;
+                c = Block.list[blockId];
+            } else {
+                c = list[id];
+            }
             Item item;
 
             if (c == null) {
@@ -419,17 +460,25 @@ public class Item implements Cloneable, BlockID, ItemID {
         int id = 0;
         int meta = 0;
 
-        Pattern integerPattern = Pattern.compile("^[1-9]\\d*$");
+        Pattern integerPattern = Pattern.compile("^-?[1-9]\\d*$");
         if (integerPattern.matcher(b[0]).matches()) {
             id = Integer.valueOf(b[0]);
         } else {
             try {
-                id = Item.class.getField(b[0].toUpperCase()).getInt(null);
-            } catch (Exception ignore) {
+                id = BlockID.class.getField(b[0].toUpperCase()).getInt(null);
+                if (id > 255) {
+                    id = 255 - id;
+                }
+            } catch (Exception ignore1) {
+                try {
+                    id = ItemID.class.getField(b[0].toUpperCase()).getInt(null);
+                } catch (Exception ignore2) {
+
+                }
             }
         }
 
-        id = id & 0xFFFF;
+        //id = id & 0xFFFF;
         if (b.length != 1) meta = Integer.valueOf(b[1]) & 0xFFFF;
 
         return get(id, meta);

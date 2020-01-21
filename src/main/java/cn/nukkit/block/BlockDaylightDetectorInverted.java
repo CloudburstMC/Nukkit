@@ -10,8 +10,7 @@ import cn.nukkit.item.ItemBlock;
  */
 public class BlockDaylightDetectorInverted extends BlockDaylightDetector {
 
-    public BlockDaylightDetectorInverted() {
-    }
+    public BlockDaylightDetectorInverted() {}
 
     @Override
     public int getId() {
@@ -28,7 +27,16 @@ public class BlockDaylightDetectorInverted extends BlockDaylightDetector {
         return new ItemBlock(new BlockDaylightDetector(), 0);
     }
 
-    protected boolean invertDetect() {
+    @Override
+    public boolean onActivate(Item item, Player player) {
+        BlockDaylightDetector block = new BlockDaylightDetector();
+        getLevel().setBlock(this, block, true, true);
+        block.updatePower();
+        return true;
+    }
+
+    @Override
+    public boolean isInverted() {
         return true;
     }
 

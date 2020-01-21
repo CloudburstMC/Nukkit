@@ -1,17 +1,27 @@
 package cn.nukkit.entity.projectile;
 
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockBell;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.LongEntityData;
 import cn.nukkit.entity.item.EntityEndCrystal;
-import cn.nukkit.event.entity.*;
+import cn.nukkit.event.block.BellRingEvent;
+import cn.nukkit.event.entity.EntityCombustByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
+import cn.nukkit.event.entity.ProjectileHitEvent;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: MagicDroidX
@@ -68,6 +78,7 @@ public abstract class EntityProjectile extends Entity {
             ev = new EntityDamageByChildEntityEvent(this.shootingEntity, this, entity, DamageCause.PROJECTILE, damage);
         }
         entity.attack(ev);
+        addHitEffect();
         this.hadCollision = true;
 
         if (this.fireTicks > 0) {
@@ -124,6 +135,8 @@ public abstract class EntityProjectile extends Entity {
 
             if (!this.isCollided) {
                 this.motionY -= this.getGravity();
+                this.motionX *= 1 - this.getDrag();
+                this.motionZ *= 1 - this.getDrag();
             }
 
             Vector3 moveVector = new Vector3(this.x + this.motionX, this.y + this.motionY, this.z + this.motionZ);
@@ -136,7 +149,7 @@ public abstract class EntityProjectile extends Entity {
             for (Entity entity : list) {
                 if (/*!entity.canCollideWith(this) or */
                         (entity == this.shootingEntity && this.ticksLived < 5)
-                        ) {
+                ) {
                     continue;
                 }
 
@@ -176,15 +189,15 @@ public abstract class EntityProjectile extends Entity {
                 this.motionZ = 0;
 
                 this.server.getPluginManager().callEvent(new ProjectileHitEvent(this, MovingObjectPosition.fromBlock(this.getFloorX(), this.getFloorY(), this.getFloorZ(), -1, this)));
+                onCollideWithBlock();
+                addHitEffect();
                 return false;
             } else if (!this.isCollided && this.hadCollision) {
                 this.hadCollision = false;
             }
 
             if (!this.hadCollision || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001) {
-                double f = Math.sqrt((this.motionX * this.motionX) + (this.motionZ * this.motionZ));
-                this.yaw = Math.atan2(this.motionX, this.motionZ) * 180 / Math.PI;
-                this.pitch = Math.atan2(this.motionY, f) * 180 / Math.PI;
+                updateRotation();
                 hasUpdate = true;
             }
 
@@ -193,5 +206,37 @@ public abstract class EntityProjectile extends Entity {
         }
 
         return hasUpdate;
+    }
+
+    public void updateRotation() {
+        double f = Math.sqrt((this.motionX * this.motionX) + (this.motionZ * this.motionZ));
+        this.yaw = Math.atan2(this.motionX, this.motionZ) * 180 / Math.PI;
+        this.pitch = Math.atan2(this.motionY, f) * 180 / Math.PI;
+    }
+
+    public void inaccurate(float modifier) {
+        Random rand = ThreadLocalRandom.current();
+
+        this.motionX += rand.nextGaussian() * 0.007499999832361937 * modifier;
+        this.motionY += rand.nextGaussian() * 0.007499999832361937 * modifier;
+        this.motionZ += rand.nextGaussian() * 0.007499999832361937 * modifier;
+    }
+
+    protected void onCollideWithBlock() {
+        for (Block collisionBlock : level.getCollisionBlocks(getBoundingBox().grow(0.1, 0.1, 0.1))) {
+            onCollideWithBlock(collisionBlock);
+        }
+    }
+
+    protected boolean onCollideWithBlock(Block collisionBlock) {
+        if (collisionBlock instanceof BlockBell) {
+            ((BlockBell) collisionBlock).ring(this, BellRingEvent.RingCause.PROJECTILE);
+            return true;
+        }
+        return false;
+    }
+
+    protected void addHitEffect() {
+
     }
 }

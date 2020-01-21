@@ -36,6 +36,8 @@ public abstract class BaseInventory implements Inventory {
 
     protected InventoryHolder holder;
 
+    private List<InventoryListener> listeners;
+
     public BaseInventory(InventoryHolder holder, InventoryType type) {
         this(holder, type, new HashMap<>());
     }
@@ -257,11 +259,11 @@ public abstract class BaseInventory implements Inventory {
             Item slot = this.getItem(i);
             if (item.equals(slot, checkDamage, checkTag)) {
                 int diff;
-                if ((diff = slot.getMaxStackSize() - slot.getCount()) > 0) {
+                if ((diff = Math.min(slot.getMaxStackSize(), this.getMaxStackSize()) - slot.getCount()) > 0) {
                     item.setCount(item.getCount() - diff);
                 }
             } else if (slot.getId() == Item.AIR) {
-                item.setCount(item.getCount() - this.getMaxStackSize());
+                item.setCount(item.getCount() - Math.min(slot.getMaxStackSize(), this.getMaxStackSize()));
             }
 
             if (item.getCount() <= 0) {
@@ -290,15 +292,18 @@ public abstract class BaseInventory implements Inventory {
             }
 
             for (Item slot : new ArrayList<>(itemSlots)) {
-                if (slot.equals(item) && item.getCount() < item.getMaxStackSize()) {
-                    int amount = Math.min(item.getMaxStackSize() - item.getCount(), slot.getCount());
-                    amount = Math.min(amount, this.getMaxStackSize());
-                    if (amount > 0) {
-                        slot.setCount(slot.getCount() - amount);
-                        item.setCount(item.getCount() + amount);
-                        this.setItem(i, item);
-                        if (slot.getCount() <= 0) {
-                            itemSlots.remove(slot);
+                if (slot.equals(item)) {
+                    int maxStackSize = Math.min(this.getMaxStackSize() ,item.getMaxStackSize());
+                    if (item.getCount() < maxStackSize) {
+                        int amount = Math.min(maxStackSize - item.getCount(), slot.getCount());
+                        amount = Math.min(amount, this.getMaxStackSize());
+                        if (amount > 0) {
+                            slot.setCount(slot.getCount() - amount);
+                            item.setCount(item.getCount() + amount);
+                            this.setItem(i, item);
+                            if (slot.getCount() <= 0) {
+                                itemSlots.remove(slot);
+                            }
                         }
                     }
                 }
@@ -312,7 +317,8 @@ public abstract class BaseInventory implements Inventory {
             for (int slotIndex : emptySlots) {
                 if (!itemSlots.isEmpty()) {
                     Item slot = itemSlots.get(0);
-                    int amount = Math.min(slot.getMaxStackSize(), slot.getCount());
+                    int maxStackSize = Math.min(slot.getMaxStackSize(), this.getMaxStackSize());
+                    int amount = Math.min(maxStackSize, slot.getCount());
                     amount = Math.min(amount, this.getMaxStackSize());
                     slot.setCount(slot.getCount() - amount);
                     Item item = slot.clone();
@@ -378,9 +384,6 @@ public abstract class BaseInventory implements Inventory {
                     return false;
                 }
                 item = ev.getNewItem();
-            }
-            if (holder instanceof BlockEntity) {
-                ((BlockEntity) holder).setDirty();
             }
 
             if (item.getId() != Item.AIR) {
@@ -448,6 +451,16 @@ public abstract class BaseInventory implements Inventory {
     public void onSlotChange(int index, Item before, boolean send) {
         if (send) {
             this.sendSlot(index, this.getViewers());
+        }
+
+        if (holder instanceof BlockEntity) {
+            ((BlockEntity) holder).setDirty();
+        }
+
+        if (this.listeners != null) {
+            for (InventoryListener listener : listeners) {
+                listener.onInventoryChanged(this, before, index);
+            }
         }
     }
 
@@ -553,6 +566,22 @@ public abstract class BaseInventory implements Inventory {
     @Override
     public void sendSlot(int index, Collection<Player> players) {
         this.sendSlot(index, players.toArray(new Player[0]));
+    }
+
+    @Override
+    public void addListener(InventoryListener listener) {
+        if (this.listeners == null) {
+            this.listeners = new ArrayList<>();
+        }
+
+        this.listeners.add(listener);
+    }
+
+    @Override
+    public void removeListener(InventoryListener listener) {
+        if (this.listeners != null) {
+            this.listeners.remove(listener);
+        }
     }
 
     @Override

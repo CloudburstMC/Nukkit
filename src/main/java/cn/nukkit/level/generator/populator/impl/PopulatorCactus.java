@@ -22,6 +22,6 @@ public class PopulatorCactus extends PopulatorSurfaceBlock {
 
     @Override
     protected int getBlockId(int x, int z, NukkitRandom random, FullChunk chunk) {
-        return (CACTUS << 4) | 1;
+        return (CACTUS << Block.DATA_BITS) | 1;
     }
 }

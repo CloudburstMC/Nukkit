@@ -32,6 +32,11 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public boolean isSolid() {
         return false;
     }
@@ -210,6 +215,10 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         }
 
         if (type == Level.BLOCK_UPDATE_REDSTONE) {
+            if (!this.level.getServer().isRedstoneEnabled()) {
+                return 0;
+            }
+
             if ((!isOpen() && this.level.isBlockPowered(this.getLocation())) || (isOpen() && !this.level.isBlockPowered(this.getLocation()))) {
                 this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isOpen() ? 15 : 0, isOpen() ? 0 : 15));
 
@@ -241,12 +250,17 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
 
             this.setDamage(direction);
             this.getLevel().setBlock(block, this, true, false); //Bottom
+            if (blockUp instanceof BlockLiquid && ((BlockLiquid) blockUp).usesWaterLogging()) {
+                this.getLevel().setBlock(blockUp, 1, blockUp, true, false);
+            }
             this.getLevel().setBlock(blockUp, Block.get(this.getId(), metaUp), true, true); //Top
 
-            if (!this.isOpen() && this.level.isBlockPowered(this.getLocation())) {
-                this.toggle(null);
-                metaUp |= DOOR_POWERED_BIT;
-                this.getLevel().setBlockDataAt(blockUp.getFloorX(), blockUp.getFloorY(), blockUp.getFloorZ(), metaUp);
+            if (this.level.getServer().isRedstoneEnabled()) {
+                if (!this.isOpen() && this.level.isBlockPowered(this.getLocation())) {
+                    this.toggle(null);
+                    metaUp |= DOOR_POWERED_BIT;
+                    this.getLevel().setBlockDataAt(blockUp.getFloorX(), blockUp.getFloorY(), blockUp.getFloorZ(), metaUp);
+                }
             }
 
             return true;
@@ -328,13 +342,23 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
 
     public boolean isRightHinged() {
         if (isTop()) {
-            return (this.getDamage() & DOOR_HINGE_BIT ) >0;
+            return (this.getDamage() & DOOR_HINGE_BIT) > 0;
         }
-        return (this.up().getDamage() & DOOR_HINGE_BIT) >0;
+        return (this.up().getDamage() & DOOR_HINGE_BIT) > 0;
     }
 
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+    }
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
     }
 }

@@ -65,6 +65,16 @@ public class BlockVine extends BlockTransparentMeta {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
+    public boolean canBeFlowedInto() {
+        return true;
+    }
+
+    @Override
     public void onEntityCollide(Entity entity) {
         entity.resetFallDistance();
         entity.onGround = true;
@@ -207,5 +217,15 @@ public class BlockVine extends BlockTransparentMeta {
     @Override
     public BlockColor getColor() {
         return BlockColor.FOLIAGE_BLOCK_COLOR;
+    }
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
     }
 }

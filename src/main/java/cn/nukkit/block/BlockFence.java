@@ -39,6 +39,11 @@ public class BlockFence extends BlockTransparentMeta {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public double getResistance() {
         return 15;
     }
@@ -99,7 +104,7 @@ public class BlockFence extends BlockTransparentMeta {
 
     @Override
     public BlockColor getColor() {
-        switch(this.getDamage() & 0x07){
+        switch (this.getDamage() & 0x07) {
             default:
             case 1: //OAK
                 return BlockColor.WOOD_BLOCK_COLOR;

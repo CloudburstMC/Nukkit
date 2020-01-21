@@ -1,7 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.entity.Entity;
+import cn.nukkit.event.block.BlockFormEvent;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Level;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -51,6 +53,23 @@ public class BlockSoulSand extends BlockSolid {
     public void onEntityCollide(Entity entity) {
         entity.motionX *= 0.4d;
         entity.motionZ *= 0.4d;
+    }
+
+    @Override
+    public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
+            Block up = up();
+            if (up instanceof BlockWater && (up.getDamage() == 0 || up.getDamage() == 8)) {
+                BlockFormEvent event = new BlockFormEvent(up, new BlockBubbleColumn(0));
+                if (!event.isCancelled()) {
+                    if (event.getNewState().getWaterloggingLevel() > 0) {
+                        this.getLevel().setBlock(up, 1, new BlockWater(), true, false);
+                    }
+                    this.getLevel().setBlock(up, 0, event.getNewState(), true, true);
+                }
+            }
+        }
+        return 0;
     }
 
     @Override

@@ -62,7 +62,14 @@ public class IntArrayTag extends Tag {
         }
         return false;
     }
-
+    
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + Arrays.hashCode(data);
+        return result;
+    }
+    
     @Override
     public Tag copy() {
         int[] cp = new int[data.length];

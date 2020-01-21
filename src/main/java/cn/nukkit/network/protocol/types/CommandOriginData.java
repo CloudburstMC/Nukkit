@@ -1,6 +1,5 @@
 package cn.nukkit.network.protocol.types;
 
-
 import lombok.ToString;
 
 import java.util.OptionalLong;

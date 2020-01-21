@@ -28,7 +28,7 @@ public class NBTIO {
     }
 
     public static CompoundTag putItemHelper(Item item, Integer slot) {
-        CompoundTag tag = new CompoundTag(null)
+        CompoundTag tag = new CompoundTag((String) null)
                 .putShort("id", item.getId())
                 .putByte("Count", item.getCount())
                 .putShort("Damage", item.getDamage());
@@ -50,7 +50,7 @@ public class NBTIO {
 
         Item item;
         try {
-            item = Item.get(tag.getShort("id"), !tag.contains("Damage") ? 0 : tag.getShort("Damage"), tag.getByte("Count"));
+            item = Item.get((short) tag.getShort("id"), !tag.contains("Damage") ? 0 : tag.getShort("Damage"), tag.getByte("Count"));
         } catch (Exception e) {
             item = Item.fromString(tag.getString("id"));
             item.setDamage(!tag.contains("Damage") ? 0 : tag.getShort("Damage"));

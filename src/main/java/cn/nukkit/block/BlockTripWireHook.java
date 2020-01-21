@@ -12,7 +12,7 @@ import cn.nukkit.network.protocol.LevelSoundEventPacket;
 /**
  * @author CreeperFace
  */
-public class BlockTripWireHook extends BlockFlowable {
+public class BlockTripWireHook extends BlockTransparentMeta {
 
     public BlockTripWireHook() {
         this(0);
@@ -89,6 +89,10 @@ public class BlockTripWireHook extends BlockFlowable {
     }
 
     public void calculateState(boolean onBreak, boolean updateAround, int pos, Block block) {
+        if (!this.level.getServer().isRedstoneEnabled()) {
+            return;
+        }
+
         BlockFace facing = getFacing();
         Vector3 v = this.getLocation();
         boolean attached = isAttached();
@@ -228,6 +232,16 @@ public class BlockTripWireHook extends BlockFlowable {
     @Override
     public int getStrongPower(BlockFace side) {
         return !isPowered() ? 0 : getFacing() == side ? 15 : 0;
+    }
+
+    @Override
+    public int getWaterloggingLevel() {
+        return 2;
+    }
+
+    @Override
+    public boolean canBeFlowedInto() {
+        return false;
     }
 
     @Override

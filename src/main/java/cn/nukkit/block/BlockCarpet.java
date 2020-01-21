@@ -56,6 +56,11 @@ public class BlockCarpet extends BlockFlowable {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     protected AxisAlignedBB recalculateBoundingBox() {
         return this;
     }

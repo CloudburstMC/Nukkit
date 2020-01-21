@@ -35,6 +35,10 @@ public class BlockRedstoneLampLit extends BlockRedstoneLamp {
 
     @Override
     public int onUpdate(int type) {
+        if (!this.level.getServer().isRedstoneEnabled()) {
+            return 0;
+        }
+
         if ((type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) && !this.level.isBlockPowered(this.getLocation())) {
             // Redstone event
             RedstoneUpdateEvent ev = new RedstoneUpdateEvent(this);

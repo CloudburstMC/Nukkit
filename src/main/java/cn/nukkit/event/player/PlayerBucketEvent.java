@@ -12,15 +12,18 @@ abstract class PlayerBucketEvent extends PlayerEvent implements Cancellable {
 
     private final BlockFace blockFace;
 
+    private final Block liquid;
+
     private final Item bucket;
 
     private Item item;
 
 
-    public PlayerBucketEvent(Player who, Block blockClicked, BlockFace blockFace, Item bucket, Item itemInHand) {
+    public PlayerBucketEvent(Player who, Block blockClicked, BlockFace blockFace, Block liquid, Item bucket, Item itemInHand) {
         this.player = who;
         this.blockClicked = blockClicked;
         this.blockFace = blockFace;
+        this.liquid = liquid;
         this.item = itemInHand;
         this.bucket = bucket;
     }

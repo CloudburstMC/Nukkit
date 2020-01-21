@@ -48,6 +48,11 @@ public class BlockBrewingStand extends BlockSolidMeta {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }

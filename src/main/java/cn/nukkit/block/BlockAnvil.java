@@ -42,7 +42,7 @@ public class BlockAnvil extends BlockFallable implements Faceable {
 
     @Override
     public int getFullId() {
-        return (getId() << 4) + getDamage();
+        return (getId() << DATA_BITS) + getDamage();
     }
 
     @Override
@@ -63,6 +63,11 @@ public class BlockAnvil extends BlockFallable implements Faceable {
     @Override
     public boolean canBeActivated() {
         return true;
+    }
+
+    @Override
+    public int getWaterloggingLevel() {
+        return 1;
     }
 
     @Override

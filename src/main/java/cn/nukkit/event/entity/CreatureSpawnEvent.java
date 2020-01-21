@@ -1,5 +1,6 @@
 package cn.nukkit.event.entity;
 
+import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
@@ -24,6 +25,13 @@ public class CreatureSpawnEvent extends Event implements Cancellable {
         this.entityNetworkId = networkId;
         this.position = position;
         this.compoundTag = nbt;
+    }
+
+    public CreatureSpawnEvent(int networkId, Position position, SpawnReason reason) {
+        this.reason = reason;
+        this.entityNetworkId = networkId;
+        this.position = position;
+        this.compoundTag = Entity.getDefaultNBT(position);
     }
 
     public SpawnReason getReason() {
@@ -161,6 +169,10 @@ public class CreatureSpawnEvent extends Event implements Cancellable {
         /**
          * When an entity is missing a SpawnReason
          */
-        DEFAULT
+        DEFAULT,
+        /**
+         * When turtles hatches from turtle eggs
+         */
+        TURTLE_EGG
     }
 }

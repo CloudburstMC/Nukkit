@@ -1,5 +1,8 @@
 package cn.nukkit.block;
 
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
+
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -34,10 +37,29 @@ public class BlockWood2 extends BlockWood {
     public String getName() {
         return NAMES[this.getDamage() > 2 ? 0 : this.getDamage()];
     }
+    
+    @Override
+    protected int getStrippedId() {
+        int typeId = getDamage() & 0x3;
+        if (typeId == 0) {
+            return STRIPPED_ACACIA_LOG;
+        } else {
+            return STRIPPED_DARK_OAK_LOG;
+        }
+    }
+    
+    @Override
+    public Item toItem() {
+        if ((getDamage() & 0b1100) == 0b1100) {
+            return new ItemBlock(new BlockWoodBark(), (this.getDamage() & 0x3) + 4);
+        } else {
+            return new ItemBlock(this, this.getDamage() & 0x03);
+        }
+    }
 
     @Override
     public BlockColor getColor() {
-        switch(getDamage() & 0x07){
+        switch (getDamage() & 0x07) {
             case ACACIA:
                 return BlockColor.ORANGE_BLOCK_COLOR;
             case DARK_OAK:

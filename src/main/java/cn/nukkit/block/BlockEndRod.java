@@ -48,11 +48,6 @@ public class BlockEndRod extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean canBePushed() {
-        return true;
-    }
-
-    @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }
@@ -75,6 +70,16 @@ public class BlockEndRod extends BlockTransparentMeta implements Faceable {
     @Override
     public double getMaxZ() {
         return this.z + 0.6;
+    }
+
+    @Override
+    public int getWaterloggingLevel() {
+        return 2;
+    }
+
+    @Override
+    public boolean canBeFlowedInto() {
+        return false;
     }
 
     @Override

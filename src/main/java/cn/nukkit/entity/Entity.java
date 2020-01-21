@@ -3,6 +3,7 @@ package cn.nukkit.entity;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.*;
+import cn.nukkit.blockentity.BlockEntityPistonArm;
 import cn.nukkit.entity.data.*;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.entity.*;
@@ -39,6 +40,7 @@ import com.google.common.collect.Iterables;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static cn.nukkit.network.protocol.SetEntityLinkPacket.*;
 
@@ -87,8 +89,8 @@ public abstract class Entity extends Location implements Metadatable {
     /* 27 (int) player "index"? */
     public static final int DATA_PLAYER_BED_POSITION = 28; //block coords
     public static final int DATA_FIREBALL_POWER_X = 29; //float
-    public static final int DATA_FIREBALL_POWER_Y = 30;
-    public static final int DATA_FIREBALL_POWER_Z = 31;
+    public static final int DATA_FIREBALL_POWER_Y = 30; //float
+    public static final int DATA_FIREBALL_POWER_Z = 31; //float
     /* 32 (unknown)
      * 33 (float) fishing bobber
      * 34 (float) fishing bobber
@@ -96,7 +98,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_POTION_AUX_VALUE = 36; //short
     public static final int DATA_LEAD_HOLDER_EID = 37; //long
     public static final int DATA_SCALE = 38; //float
-    public static final int DATA_INTERACTIVE_TAG = 39; //string (button text)
+    public static final int DATA_HAS_NPC_COMPONENT = 39; //byte
     public static final int DATA_NPC_SKIN_ID = 40; //string
     public static final int DATA_URL_TAG = 41; //string
     public static final int DATA_MAX_AIR = 42; //short
@@ -126,15 +128,15 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_SHULKER_ATTACH_POS = 66; //block coords
     public static final int DATA_TRADING_PLAYER_EID = 67; //long
 
-    /* 69 (byte) command-block */
+    public static final int DATA_COMMAND_BLOCK_ENABLED = 69; //byte
     public static final int DATA_COMMAND_BLOCK_COMMAND = 70; //string
     public static final int DATA_COMMAND_BLOCK_LAST_OUTPUT = 71; //string
     public static final int DATA_COMMAND_BLOCK_TRACK_OUTPUT = 72; //byte
     public static final int DATA_CONTROLLING_RIDER_SEAT_NUMBER = 73; //byte
     public static final int DATA_STRENGTH = 74; //int
     public static final int DATA_MAX_STRENGTH = 75; //int
-    // 76 (int)
-    public static final int DATA_LIMITED_LIFE = 77;
+    public static final int DATA_EVOKER_SPELL_COLOR = 76; // int
+    public static final int DATA_LIMITED_LIFE = 77; // int
     public static final int DATA_ARMOR_STAND_POSE_INDEX = 78; // int
     public static final int DATA_ENDER_CRYSTAL_TIME_OFFSET = 79; // int
     public static final int DATA_ALWAYS_SHOW_NAMETAG = 80; // byte
@@ -143,10 +145,29 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_SCORE_TAG = 83; //String
     public static final int DATA_BALLOON_ATTACHED_ENTITY = 84; // long
     public static final int DATA_PUFFERFISH_SIZE = 85;
+    public static final int DATA_BOAT_BUBBLE_TIME = 86;
+    public static final int DATA_AGENT_ID = 87;
 
+    public static final int DATA_EAT_COUNTER = 90;
     public static final int DATA_FLAGS_EXTENDED = 91;
 
-    public static final int DATA_SKIN_ID = 103; // int ???
+    public static final int DATA_AREA_EFFECT_CLOUD_DURATION = 94; // int
+    public static final int DATA_AREA_EFFECT_CLOUD_SPAWN_TIME = 95; // long
+    public static final int DATA_AREA_EFFECT_CLOUD_RADIUS_PER_TICK = 96; // float
+    public static final int DATA_AREA_EFFECT_CLOUD_RADIUS_CHANGE_ON_PICKUP = 97; // float
+    public static final int DATA_AREA_EFFECT_CLOUD_PICKUP_COUNT = 98; // int
+    public static final int DATA_INTERACTIVE_TAG = 99; // string (button text)
+    public static final int DATA_TRADE_TIER = 100; // int
+    public static final int DATA_MAX_TRADE_TIER = 101; // int
+    public static final int DATA_TRADE_XP = 102; // int
+    public static final int DATA_SKIN_ID = 103; // int
+    // 105 (int) unknown
+    // 106 (byte) unknown
+    // 107 (float) unknown
+    // 108 (float) unknown
+    // 109 (string) unknown
+    // 110 (float) unknown
+    // 112 (byte) unknwon
 
     // Flags
     public static final int DATA_FLAG_ONFIRE = 0;
@@ -209,6 +230,19 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_BRIBED = 57; //dolphins have this set when they go to find treasure for the player
     public static final int DATA_FLAG_PREGNANT = 58;
     public static final int DATA_FLAG_LAYING_EGG = 59;
+    public static final int DATA_FLAG_RIDER_CAN_PICKUP = 60;
+    public static final int DATA_FLAG_TRANSITION_SITTING = 61;
+    public static final int DATA_FLAG_EATING = 62;
+    public static final int DATA_FLAG_LAYING_DOWN = 63;
+    public static final int DATA_FLAG_SNEEZING = 64;
+    public static final int DATA_FLAG_TRUSTING = 65;
+    public static final int DATA_FLAG_ROLLING = 66;
+    public static final int DATA_FLAG_SCARED = 67;
+    public static final int DATA_FLAG_IN_SCAFFOLDING = 68;
+    public static final int DATA_FLAG_OVER_SCAFFOLDING = 69;
+    public static final int DATA_FLAG_FALL_THROUGH_SCAFFOLDING = 70;
+    public static final int DATA_FLAG_BLOCKING = 71; //shield
+    public static final int DATA_FLAG_DISABLED_BLOCKING = 72;
 
     public static long entityCount = 1;
 
@@ -1323,6 +1357,9 @@ public abstract class Entity extends Location implements Metadatable {
             this.lastPitch = this.pitch;
 
             this.addMovement(this.x, this.y + this.getBaseOffset(), this.z, this.yaw, this.pitch, this.yaw);
+            this.positionChanged = true;
+        } else {
+            this.positionChanged = false;
         }
 
         if (diffMotion > 0.0025 || (diffMotion > 0.0001 && this.getMotion().lengthSquared() <= 0.0001)) { //0.05 ** 2
@@ -1520,6 +1557,10 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
+    public boolean canBePushed() {
+        return true;
+    }
+
     public BlockFace getDirection() {
         double rotation = this.yaw % 360;
         if (rotation < 0) {
@@ -1570,30 +1611,56 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void fall(float fallDistance) {
-        float damage = (float) Math.floor(fallDistance - 3 - (this.hasEffect(Effect.JUMP) ? this.getEffect(Effect.JUMP).getAmplifier() + 1 : 0));
+        float damage;
+        if (this.hasEffect(Effect.SLOW_FALLING)) {
+            damage = 0;
+        }
+        else {
+            damage = (float) Math.floor(fallDistance - 3 - (this.hasEffect(Effect.JUMP) ? this.getEffect(Effect.JUMP).getAmplifier() + 1 : 0));
+        }
+        Location floorLocation = this.floor();
+        Block down = this.level.getBlock(floorLocation.down());
         if (damage > 0) {
+            if (down.getId() == BlockID.HONEY_BLOCK) {
+                damage *= 0.2F;
+            }
             this.attack(new EntityDamageEvent(this, DamageCause.FALL, damage));
         }
 
         if (fallDistance > 0.75) {
-            Block down = this.level.getBlock(this.floor().down());
 
-            if (down.getId() == Item.FARMLAND) {
-                Event ev;
-
-                if (this instanceof Player) {
-                    ev = new PlayerInteractEvent((Player) this, null, down, null, Action.PHYSICAL);
-                } else {
-                    ev = new EntityInteractEvent(this, down);
-                }
-
-                this.server.getPluginManager().callEvent(ev);
-                if (ev.isCancelled()) {
+            if (down.getId() == Block.FARMLAND) {
+                if (onPhysicalInteraction(down, false)) {
                     return;
                 }
                 this.level.setBlock(down, new BlockDirt(), false, true);
+                return;
+            }
+
+            Block floor = this.level.getBlock(floorLocation);
+
+            if (floor instanceof BlockTurtleEgg) {
+                if (onPhysicalInteraction(floor, ThreadLocalRandom.current().nextInt(10) >= 3)) {
+                    return;
+                }
+                this.level.useBreakOn(this, null, null, true);
             }
         }
+    }
+
+    private boolean onPhysicalInteraction(Block block, boolean cancelled) {
+        Event ev;
+
+        if (this instanceof Player) {
+            ev = new PlayerInteractEvent((Player) this, null, block, null, Action.PHYSICAL);
+        } else {
+            ev = new EntityInteractEvent(this, block);
+        }
+
+        ev.setCancelled(cancelled);
+
+        this.server.getPluginManager().callEvent(ev);
+        return ev.isCancelled();
     }
 
     public void handleLavaMovement() {
@@ -1660,6 +1727,10 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
+    public void onPushByPiston(BlockEntityPistonArm piston) {
+
+    }
+
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
         return onInteract(player, item);
     }
@@ -1702,12 +1773,24 @@ public abstract class Entity extends Location implements Metadatable {
         return new Location(this.x, this.y, this.z, this.yaw, this.pitch, this.level);
     }
 
+    public boolean isTouchingWater() {
+        return hasWaterAt(0) || hasWaterAt(this.getEyeHeight());
+    }
+
     public boolean isInsideOfWater() {
-        double y = this.y + this.getEyeHeight();
+        return hasWaterAt(this.getEyeHeight());
+    }
+
+    private boolean hasWaterAt(float height) {
+        double y = this.y + height;
         Block block = this.level.getBlock(this.temporalVector.setComponents(NukkitMath.floorDouble(this.x), NukkitMath.floorDouble(y), NukkitMath.floorDouble(this.z)));
 
-        if (block instanceof BlockWater) {
-            double f = (block.y + 1) - (((BlockWater) block).getFluidHeightPercent() - 0.1111111);
+        boolean layer1 = false;
+        if (!(block instanceof BlockBubbleColumn) && (
+                block instanceof BlockWater
+                        || (layer1 = block.getLevelBlockAtLayer(1) instanceof BlockWater))) {
+            BlockWater water = (BlockWater) (layer1? block.getLevelBlockAtLayer(1) : block);
+            double f = (block.y + 1) - (water.getFluidHeightPercent() - 0.1111111);
             return y < f;
         }
 
@@ -1798,7 +1881,7 @@ public abstract class Entity extends Location implements Metadatable {
 
             AxisAlignedBB axisalignedbb = this.boundingBox.clone();
 
-            AxisAlignedBB[] list = this.level.getCollisionCubes(this, this.level.getTickRate() > 1 ? this.boundingBox.getOffsetBoundingBox(dx, dy, dz) : this.boundingBox.addCoord(dx, dy, dz), false, true);
+            AxisAlignedBB[] list = this.level.getCollisionCubes(this, this.boundingBox.addCoord(dx, dy, dz), false);
 
             for (AxisAlignedBB bb : list) {
                 dy = bb.calculateYOffset(this.boundingBox, dy);
@@ -1949,16 +2032,27 @@ public abstract class Entity extends Location implements Metadatable {
     protected void checkBlockCollision() {
         Vector3 vector = new Vector3(0, 0, 0);
         boolean portal = false;
+        boolean scaffolding = false;
+        boolean overScaffolding = false;
 
         for (Block block : this.getCollisionBlocks()) {
             if (block.getId() == Block.NETHER_PORTAL) {
                 portal = true;
-                continue;
+            } else if (block.getId() == Block.SCAFFOLDING) {
+                scaffolding = true;
+            }
+
+            if (block.getFloorY() == getFloorY() && block.down().getId() == BlockID.SCAFFOLDING) {
+                overScaffolding = true;
             }
 
             block.onEntityCollide(this);
+            block.getLevelBlockAtLayer(1).onEntityCollide(this);
             block.addVelocityToEntity(this, vector);
         }
+
+        setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_IN_SCAFFOLDING, scaffolding);
+        setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_OVER_SCAFFOLDING, overScaffolding);
 
         if (portal) {
             if (this.inPortalTicks < 80) {

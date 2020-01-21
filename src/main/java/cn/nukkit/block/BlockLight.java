@@ -1,0 +1,79 @@
+package cn.nukkit.block;
+
+import cn.nukkit.item.Item;
+import cn.nukkit.math.AxisAlignedBB;
+
+public class BlockLight extends BlockTransparentMeta {
+    public BlockLight() {
+        this(0);
+    }
+
+    public BlockLight(int meta) {
+        super(meta & 0xF);
+    }
+
+    @Override
+    public String getName() {
+        return "Light Block";
+    }
+
+    @Override
+    public int getId() {
+        return LIGHT_BLOCK;
+    }
+
+    @Override
+    public void setDamage(int meta) {
+        super.setDamage(meta & 0xF);
+    }
+
+    @Override
+    public int getLightLevel() {
+        return getDamage() & 0xF;
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox() {
+        return null;
+    }
+
+    @Override
+    public int getWaterloggingLevel() {
+        return 2;
+    }
+
+    @Override
+    public boolean canBeFlowedInto() {
+        return true;
+    }
+
+    @Override
+    public boolean canBeReplaced() {
+        return true;
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
+    }
+
+    @Override
+    public double getHardness() {
+        return 0;
+    }
+
+    @Override
+    public double getResistance() {
+        return 0;
+    }
+
+    @Override
+    public boolean canPassThrough() {
+        return true;
+    }
+
+    @Override
+    public Item toItem() {
+        return Item.get(Item.AIR);
+    }
+}

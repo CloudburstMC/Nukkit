@@ -16,22 +16,31 @@ It has a few key advantages over other server software:
 
 Nukkit is **under improvement** yet, we welcome contributions. 
 
+**PowerNukkit** is a modified version of Nukkit which adds support to a huge amount of features like water-logging, all new blocks, more plugin events, offhand slot, bug fixes and many more.
+
+Please note that PowerNukkit is not handled by NukkitX's staff and is provided with love but without warranty. If you find any issue while running PowerNukkit you should [create a new issue](https://github.com/GameModsBR/PowerNukkit/issues) in this repository first.
+
+It's also advisable to have a backup schedule set up. PowerNukkit is highly experimental and things may break, so make backups and stay safe.
+
 Links
 --------------------
 
-* __[News](https://nukkitx.com)__
-* __[Forums](https://nukkitx.com/forums)__
-* __[Discord](https://discord.gg/5PzMkyK)__
-* __[Download](https://ci.nukkitx.com/job/NukkitX/job/Nukkit/job/master)__
+* __[Download PowerNukkit](https://github.com/GameModsBR/PowerNukkit/releases)__
 * __[Plugins](https://nukkitx.com/resources/categories/nukkit-plugins.1)__
 * __[Wiki](https://nukkitx.com/wiki/nukkit)__
+* __[NukkitX](https://github.com/NukkitX/Nukkit)__
+* __[NukkitX News](https://nukkitx.com)__
+* __[NukkitX Forums](https://nukkitx.com/forums)__
+* __[NukkitX Discord](https://discord.gg/5PzMkyK)__
 
-*Thank you for visiting our official sites. Our official websites are provided free of charge, and we do not like to place ads on the home page affecting your reading. If you like this project, please [donate to us](https://nukkitx.com/donate). All the donations will only be used for Nukkit websites and services.*
+Message from the official NukkitX's staff:
+
+> *Thank you for visiting our official sites. Our official websites are provided free of charge, and we do not like to place ads on the home page affecting your reading. If you like this project, please [donate to us](https://nukkitx.com/donate). All the donations will only be used for Nukkit websites and services.*
 
 Build JAR file
 -------------
-- `git clone https://github.com/NukkitX/Nukkit`
-- `cd Nukkit`
+- `git clone https://github.com/GameModsBr/PowerNukkit`
+- `cd PowerNukkit`
 - `git submodule update --init`
 - `./mvnw clean package`
 
@@ -39,11 +48,11 @@ The compiled JAR can be found in the `target/` directory.
 
 Running
 -------------
-Simply run `java -jar nukkit-1.0-SNAPSHOT.jar`.
+Simply run `java -jar powernukkit-<version>.jar`.
 
 Plugin API
 -------------
-Information on Nukkit's API can be found at the [wiki](https://nukkitx.com/wiki/nukkit/).
+Information on Nukkit's API can be found at the [wiki](https://nukkitx.com/wiki/index/).
 
 Docker
 -------------

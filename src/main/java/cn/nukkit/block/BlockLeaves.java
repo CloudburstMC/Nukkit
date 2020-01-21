@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.LeavesDecayEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
@@ -65,6 +64,11 @@ public class BlockLeaves extends BlockTransparentMeta {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public int getBurnAbility() {
         return 60;
     }
@@ -78,7 +82,7 @@ public class BlockLeaves extends BlockTransparentMeta {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, this.getDamage() & 0x3, 1);
+        return Item.get(BlockID.LEAVES, this.getDamage() & 0x3);
     }
 
     @Override
@@ -230,5 +234,21 @@ public class BlockLeaves extends BlockTransparentMeta {
 
     protected Item getSapling() {
         return Item.get(BlockID.SAPLING, this.getDamage() & 0x03);
+    }
+
+    @Override
+    public boolean diffusesSkyLight() {
+        return true;
+    }
+
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
     }
 }

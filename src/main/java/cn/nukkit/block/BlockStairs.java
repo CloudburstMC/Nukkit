@@ -6,7 +6,6 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
-import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
 /**
@@ -135,6 +134,11 @@ public abstract class BlockStairs extends BlockTransparentMeta implements Faceab
         }
 
         return false;
+    }
+
+    @Override
+    public int getWaterloggingLevel() {
+        return 1;
     }
 
     @Override

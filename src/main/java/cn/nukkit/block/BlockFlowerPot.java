@@ -35,11 +35,18 @@ public class BlockFlowerPot extends BlockFlowable {
             case BROWN_MUSHROOM:
             case CACTUS:
             case SUGARCANE_BLOCK:
+            case WITHER_ROSE:
+            case BAMBOO:
                 // TODO: 2016/2/4 case NETHER_WART:
                 return true;
             default:
                 return false;
         }
+    }
+
+    @Override
+    public int getWaterloggingLevel() {
+        return 1;
     }
 
     @Override
@@ -99,19 +106,19 @@ public class BlockFlowerPot extends BlockFlowable {
         BlockEntity blockEntity = getLevel().getBlockEntity(this);
         if (!(blockEntity instanceof BlockEntityFlowerPot)) return false;
         if (blockEntity.namedTag.getShort("item") != 0 || blockEntity.namedTag.getInt("mData") != 0) return false;
-        int itemID;
+        int blockId;
         int itemMeta;
         if (!canPlaceIntoFlowerPot(item.getId())) {
             if (!canPlaceIntoFlowerPot(item.getBlock().getId())) {
                 return true;
             }
-            itemID = item.getBlock().getId();
+            blockId = item.getBlock().getId();
             itemMeta = item.getDamage();
         } else {
-            itemID = item.getId();
+            blockId = item.getId();
             itemMeta = item.getDamage();
         }
-        blockEntity.namedTag.putShort("item", itemID);
+        blockEntity.namedTag.putShort("item", blockId);
         blockEntity.namedTag.putInt("data", itemMeta);
 
         this.setDamage(1);
@@ -140,7 +147,7 @@ public class BlockFlowerPot extends BlockFlowable {
         if (dropInside) {
             return new Item[]{
                     new ItemFlowerPot(),
-                    Item.get(insideID, insideMeta, 1)
+                    Block.get(insideID, insideMeta).toItem()
             };
         } else {
             return new Item[]{
