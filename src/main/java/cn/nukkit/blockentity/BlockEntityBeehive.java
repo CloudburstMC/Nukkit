@@ -11,7 +11,6 @@ import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.MathHelper;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
@@ -24,7 +23,6 @@ public class BlockEntityBeehive extends BlockEntity {
     private static final Random RANDOM = new Random();
 
     private List<Occupant> occupants;
-    private int honeyLevel;
 
     public BlockEntityBeehive(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -45,8 +43,11 @@ public class BlockEntityBeehive extends BlockEntity {
                 this.occupants.add(new Occupant(occupantsTag.get(i)));
             }
         }
-
-        this.honeyLevel = MathHelper.clamp(this.namedTag.getByte("HoneyLevel"), 0, 5);
+        
+        if (this.namedTag.contains("HoneyLevel")) {
+            setHoneyLevel(this.namedTag.getByte("HoneyLevel"));
+            this.namedTag.remove("HoneyLevel");
+        }
 
         if (!isEmpty()) {
             scheduleUpdate();
@@ -61,19 +62,21 @@ public class BlockEntityBeehive extends BlockEntity {
             occupantsTag.add(occupant.saveNBT());
         }
         this.namedTag.putList(occupantsTag);
-        this.namedTag.putByte("HoneyLevel", honeyLevel);
     }
 
     public int getHoneyLevel() {
-        return honeyLevel;
+        Block block = getBlock();
+        if (block instanceof BlockBeehive) {
+            return ((BlockBeehive) block).getHoneyLevel();
+        } else {
+            return 0;
+        }
     }
 
     public void setHoneyLevel(int honeyLevel) {
-        honeyLevel = MathHelper.clamp(honeyLevel, 0, 5);
-        this.honeyLevel = honeyLevel;
         Block block = getBlock();
         if (block instanceof BlockBeehive) {
-            ((BlockBeehive) block).setDisplayedHoneyLevel(honeyLevel);
+            ((BlockBeehive) block).setHoneyLevel(honeyLevel);
         }
     }
 
@@ -130,11 +133,11 @@ public class BlockEntityBeehive extends BlockEntity {
     }
 
     public boolean isHoneyEmpty() {
-        return honeyLevel == 0;
+        return getHoneyLevel() == 0;
     }
 
     public boolean isHoneyFull() {
-        return honeyLevel == 5;
+        return getHoneyLevel() == 5;
     }
 
     public boolean isEmpty() {
