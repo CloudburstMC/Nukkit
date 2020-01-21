@@ -16,8 +16,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Properties;
 
 /*
@@ -42,6 +41,7 @@ public class Nukkit {
 
     public final static Properties GIT_INFO = getGitInfo();
     public final static String VERSION = getVersion();
+    public final static String GIT_COMMIT = getGitCommit();
     public final static String API_VERSION = "1.0.10";
     public final static String CODENAME = "PowerNukkit";
     @Deprecated
@@ -164,8 +164,27 @@ public class Nukkit {
         }
         return properties;
     }
-
+    
     private static String getVersion() {
+        InputStream resourceAsStream = Nukkit.class.getClassLoader().getResourceAsStream("VERSION.txt");
+        if (resourceAsStream == null) {
+            return "Unknown-PN-SNAPSHOT";
+        }
+        try (InputStream is = resourceAsStream;
+             InputStreamReader reader = new InputStreamReader(is);
+             BufferedReader buffered = new BufferedReader(reader)) {
+            String line = buffered.readLine().trim();
+            if ("${project.version}".equalsIgnoreCase(line)) {
+                return "Unknown-PN-SNAPSHOT";
+            } else {
+                return line;
+            }
+        } catch (IOException e) {
+            return "Unknown-PN-SNAPSHOT";
+        }
+    }
+
+    private static String getGitCommit() {
         StringBuilder version = new StringBuilder();
         version.append("git-");
         String commitId;

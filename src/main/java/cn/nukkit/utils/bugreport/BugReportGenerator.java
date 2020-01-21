@@ -84,6 +84,7 @@ public class BugReportGenerator extends Thread {
         String cpuType = System.getenv("PROCESSOR_IDENTIFIER");
         OperatingSystemMXBean osMXBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
         content = content.replace("${NUKKIT_VERSION}", Nukkit.VERSION);
+        content = content.replace("${NUKKIT_COMMIT}", Nukkit.GIT_COMMIT);
         content = content.replace("${JAVA_VERSION}", System.getProperty("java.vm.name") + " (" + System.getProperty("java.runtime.version") + ")");
         content = content.replace("${HOSTOS}", osMXBean.getName() + "-" + osMXBean.getArch() + " [" + osMXBean.getVersion() + "]");
         content = content.replace("${MEMORY}", getCount(osMXBean.getTotalPhysicalMemorySize(), true));

@@ -15,7 +15,7 @@ pipeline {
             post {
                 success {
                     junit 'target/surefire-reports/**/*.xml'
-                    archiveArtifacts artifacts: 'target/nukkit-*-SNAPSHOT.jar', fingerprint: true
+                    archiveArtifacts artifacts: 'target/powernukkit-*.jar', fingerprint: true
                 }
             }
         }

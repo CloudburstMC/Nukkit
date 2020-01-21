@@ -32,7 +32,7 @@ public class VersionCommand extends VanillaCommand {
         }
         if (args.length == 0) {
             sender.sendMessage(new TranslationContainer("nukkit.server.info.extended", sender.getServer().getName(),
-                    sender.getServer().getNukkitVersion(),
+                    sender.getServer().getNukkitVersion() + " ("+sender.getServer().getGitCommit()+")",
                     sender.getServer().getCodename(),
                     sender.getServer().getApiVersion(),
                     sender.getServer().getVersion(),

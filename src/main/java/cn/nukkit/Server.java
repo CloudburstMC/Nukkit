@@ -446,7 +446,7 @@ public class Server {
         this.network.setName(this.getMotd());
         this.network.setSubName(this.getSubMotd());
 
-        log.info(this.getLanguage().translateString("nukkit.server.info", this.getName(), TextFormat.YELLOW + this.getNukkitVersion() + TextFormat.WHITE, TextFormat.AQUA + this.getCodename() + TextFormat.WHITE, this.getApiVersion()));
+        log.info(this.getLanguage().translateString("nukkit.server.info", this.getName(), TextFormat.YELLOW + this.getNukkitVersion() + " (" + this.getGitCommit() + ")" + TextFormat.WHITE, TextFormat.AQUA + this.getCodename() + TextFormat.WHITE, this.getApiVersion()));
         log.info(this.getLanguage().translateString("nukkit.server.license", this.getName()));
 
         this.consoleSender = new ConsoleCommandSender();
@@ -1247,6 +1247,7 @@ public class Server {
         String usage = Math.round(used / max * 100) + "%";
         String title = (char) 0x1b + "]0;" + this.getName() + " "
                 + this.getNukkitVersion()
+                + " | " + this.getGitCommit()
                 + " | Online " + this.players.size() + "/" + this.getMaxPlayers()
                 + " | Memory " + usage;
         if (!Nukkit.shortTitle) {
@@ -1273,6 +1274,10 @@ public class Server {
 
     public String getNukkitVersion() {
         return Nukkit.VERSION;
+    }
+    
+    public String getGitCommit() {
+        return Nukkit.GIT_COMMIT;
     }
 
     public String getCodename() {
