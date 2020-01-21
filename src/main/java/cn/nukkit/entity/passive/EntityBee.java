@@ -57,7 +57,7 @@ public class EntityBee extends EntityAnimal {
         if (--beehiveTimer <= 0) {
             BlockEntityBeehive closestBeehive = null;
             double closestDistance = Double.MAX_VALUE;
-            Optional<Block> flower = Arrays.stream(level.getCollisionBlocks(getBoundingBox().grow(4, 4, 4)))
+            Optional<Block> flower = Arrays.stream(level.getCollisionBlocks(getBoundingBox().grow(4, 4, 4), false, true))
                     .filter(block -> block instanceof BlockFlower)
                     .findFirst();
             

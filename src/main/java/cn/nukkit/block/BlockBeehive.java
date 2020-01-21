@@ -9,7 +9,7 @@ import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.MathHelper;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
@@ -22,12 +22,12 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
     }
 
     protected BlockBeehive(int meta) {
-        super(meta & 0xF);
+        super(meta);
     }
 
     @Override
     public void setDamage(int meta) {
-        super.setDamage(meta & 0xF);
+        super.setDamage(meta);
     }
 
     @Override
@@ -77,8 +77,11 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
         } else {
             setDamage(player.getDirection().getOpposite().getHorizontalIndex());
         }
-        int honeyLevel = item.hasCustomBlockData()? item.getCustomBlockData().getByte("HoneyLevel") : 0;
-        setDisplayedHoneyLevel(honeyLevel);
+    
+        int honeyLevel = item.hasCustomBlockData() ? item.getCustomBlockData().getByte("HoneyLevel") : 0;
+        setHoneyLevel(honeyLevel);
+        this.level.setBlock(this, this, true, true);
+        
         BlockEntityBeehive beehive = createEntity(item.getCustomBlockData());
         if (beehive == null) {
             return false;
@@ -141,7 +144,9 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
                 BlockEntityBeehive beehive = (BlockEntityBeehive) entity;
                 entity.saveNBT();
                 if (!beehive.isHoneyEmpty() || !beehive.isEmpty()) {
-                    item.setCustomBlockData(entity.namedTag);
+                    CompoundTag copy = entity.namedTag.copy();
+                    copy.putByte("HoneyLevel", getHoneyLevel());
+                    item.setCustomBlockData(copy);
                 }
             }
         }
@@ -163,11 +168,6 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
         return new Item[]{ new ItemBlock(new BlockBeehive()) };
     }
     
-    @Override
-    public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(getDamage() & 0b11);
-    }
-    
     public BlockEntityBeehive getOrCreateEntity() {
         BlockEntity blockEntity = getLevel().getBlockEntity(this);
         if (blockEntity instanceof BlockEntityBeehive) {
@@ -176,7 +176,7 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
             return createEntity(null);
         }
     }
-
+    
     private BlockEntityBeehive createEntity(CompoundTag customNbt) {
         CompoundTag nbt = customNbt != null? customNbt.copy() : new CompoundTag();
         nbt.setName("");
@@ -186,84 +186,33 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
         
-        if (!nbt.contains("HoneyLevel")) {
-            nbt.putByte("HoneyLevel", getDisplayedHoneyLevel());
-        }
-
         return (BlockEntityBeehive) BlockEntity.createBlockEntity(BlockEntity.BEEHIVE, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
     }
-
+    
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromIndex(getDamage() & 0b111);
+    }
+    
     public void setBlockFace(BlockFace face) {
-        int horizontalIndex = face.getHorizontalIndex();
-        if (horizontalIndex >= 0) {
-            setDamage((getDamage() & 0b1100) | (horizontalIndex & 0b0011));
-            level.setBlock(this, this, true, true);
-        }
+        setDamage((getDamage() & (DATA_MASK ^ 0b111)) | (face.getIndex() & 0b111));
     }
 
     public void setHoneyLevel(int honeyLevel) {
-        BlockEntityBeehive entityBeehive = getOrCreateEntity();
-        if (entityBeehive != null) {
-            entityBeehive.setHoneyLevel(honeyLevel);
-        }
+        honeyLevel = NukkitMath.clamp(honeyLevel, 0, 5);
+        setDamage(getDamage() & (DATA_MASK ^ 0b111000) | honeyLevel << 3);
     }
 
     public int getHoneyLevel() {
-        BlockEntity blockEntity = level.getBlockEntity(this);
-        if (blockEntity instanceof BlockEntityBeehive) {
-            return ((BlockEntityBeehive) blockEntity).getHoneyLevel();
-        } else {
-            return getDisplayedHoneyLevel();
-        }
-    }
-
-    public void setDisplayedHoneyLevel(int honeyLevel) {
-        honeyLevel = MathHelper.clamp(honeyLevel, 0, 5);
-
-        int honeyBits;
-        switch (honeyLevel) {
-            case 0:
-                honeyBits = 0;
-                break;
-            case 1:
-            case 2:
-                honeyBits = 1;
-                break;
-            case 3:
-            case 4:
-                honeyBits = 2;
-                break;
-            case 5:
-            default:
-                honeyBits = 3;
-                break;
-        }
-
-        setDamage(getDamage() & 0b0011 | honeyBits << 2);
-        level.setBlock(this, this, true, true);
-    }
-
-    public int getDisplayedHoneyLevel() {
-        int honeyLevel = getDamage() >> 2;
-        switch (honeyLevel) {
-            case 1:
-                return 1;
-            case 2:
-                return 3;
-            case 3:
-                return 5;
-            case 0:
-            default:
-                return 0;
-        }
+        return getDamage() >> 3 & 0b111;
     }
 
     public boolean isEmpty() {
-        return (getDamage() & 0b1100) == 0;
+        return (getDamage() & 0b111000) == 0;
     }
 
     public boolean isFull() {
-        return (getDamage() & 0b1100) == 0b1100;
+        return (getDamage() & 0b111000) == 0b111000;
     }
     
     @Override

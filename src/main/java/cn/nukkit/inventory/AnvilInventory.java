@@ -108,16 +108,16 @@ public class AnvilInventory extends FakeBlockUIComponent {
                 }
         
                 Enchantment[] sacrificeEnchantments = sacrifice.getEnchantments();
-                boolean f1 = false;
-                boolean f2 = false;
+                boolean compatibleFlag = false;
+                boolean incompatibleFlag = false;
                 Iterator<Enchantment> sacrificeEnchIter = Arrays.stream(sacrificeEnchantments).iterator();
         
                 iter:
                 while(true) {
-                    Enchantment enchantment;
+                    Enchantment sacrificeEnchantment;
                     do {
                         if (!sacrificeEnchIter.hasNext()) {
-                            if (f2 && !f1) {
+                            if (incompatibleFlag && !compatibleFlag) {
                                 setResult(Item.get(0));
                                 setLevelCost(0);
                                 return;
@@ -125,39 +125,39 @@ public class AnvilInventory extends FakeBlockUIComponent {
                             break iter;
                         }
                 
-                        enchantment = sacrificeEnchIter.next();
-                    } while(enchantment == null);
+                        sacrificeEnchantment = sacrificeEnchIter.next();
+                    } while(sacrificeEnchantment == null);
 
-                    Enchantment targetEnchantment = result.getEnchantment(enchantment.id);
-                    int t = targetEnchantment != null? targetEnchantment.getLevel() : 0;
-                    int u = enchantment.getLevel();
-                    u = t == u ? u + 1 : Math.max(u, t);
-                    boolean incompatible = enchantment.canEnchant(target);
+                    Enchantment resultEnchantment = result.getEnchantment(sacrificeEnchantment.id);
+                    int targetLevel = resultEnchantment != null? resultEnchantment.getLevel() : 0;
+                    int resultLevel = sacrificeEnchantment.getLevel();
+                    resultLevel = targetLevel == resultLevel ? resultLevel + 1 : Math.max(resultLevel, targetLevel);
+                    boolean compatible = sacrificeEnchantment.canEnchant(target);
                     if (playerUI.getHolder().isCreative() || target.getId() == Item.ENCHANTED_BOOK) {
-                        incompatible = true;
+                        compatible = true;
                     }
             
                     Iterator<Enchantment> targetEnchIter = Stream.of(target.getEnchantments()).iterator();
             
                     while(targetEnchIter.hasNext()) {
-                        Enchantment enchantment2 = targetEnchIter.next();
-                        if (enchantment2 != enchantment && enchantment.isCompatibleWith(enchantment2) && enchantment2.isCompatibleWith(enchantment)) {
-                            incompatible = false;
+                        Enchantment targetEnchantment = targetEnchIter.next();
+                        if (targetEnchantment != sacrificeEnchantment && (!sacrificeEnchantment.isCompatibleWith(targetEnchantment) || !targetEnchantment.isCompatibleWith(sacrificeEnchantment))) {
+                            compatible = false;
                             ++extraCost;
                         }
                     }
             
-                    if (!incompatible) {
-                        f2 = true;
+                    if (!compatible) {
+                        incompatibleFlag = true;
                     } else {
-                        f1 = true;
-                        if (u > enchantment.getMaxLevel()) {
-                            u = enchantment.getMaxLevel();
+                        compatibleFlag = true;
+                        if (resultLevel > sacrificeEnchantment.getMaxLevel()) {
+                            resultLevel = sacrificeEnchantment.getMaxLevel();
                         }
                         
-                        enchantmentMap.put(enchantment.getId(), Enchantment.get(enchantment.getId()).setLevel(u));
+                        enchantmentMap.put(sacrificeEnchantment.getId(), Enchantment.get(sacrificeEnchantment.getId()).setLevel(resultLevel));
                         int rarity = 0;
-                        int weight = enchantment.getWeight();
+                        int weight = sacrificeEnchantment.getWeight();
                         if (weight >= 10) {
                             rarity = 1;
                         } else if (weight >= 5) {
@@ -172,7 +172,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
                             rarity = Math.max(1, rarity / 2);
                         }
                 
-                        extraCost += rarity * u;
+                        extraCost += rarity * resultLevel;
                         if (target.getCount() > 1) {
                             extraCost = 40;
                         }
