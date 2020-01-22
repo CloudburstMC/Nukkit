@@ -18,6 +18,7 @@ import cn.nukkit.utils.Identifier;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -202,6 +203,10 @@ public class EntityRegistry implements Registry {
 
     public byte[] getCachedEntityIdentifiers() {
         return cachedEntityIdentifiers;
+    }
+
+    public ImmutableSet<EntityType<?>> getEntityTypes() {
+        return ImmutableSet.copyOf(this.identifierTypeMap.values());
     }
 
     @SuppressWarnings("unchecked")
