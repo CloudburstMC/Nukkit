@@ -423,11 +423,12 @@ public class Server {
             this.setPropertyInt("difficulty", 3);
         }
 
-        Nukkit.DEBUG = Math.max(this.getConfig("debug.level", 1), 1);
+        Nukkit.DEBUG = NukkitMath.clamp(this.getConfig("debug.level", 1), 1, 3);
 
         int logLevel = (Nukkit.DEBUG + 3) * 100;
+        org.apache.logging.log4j.Level currentLevel = Nukkit.getLogLevel();
         for (org.apache.logging.log4j.Level level : org.apache.logging.log4j.Level.values()) {
-            if (level.intLevel() == logLevel) {
+            if (level.intLevel() == logLevel && level.intLevel() > currentLevel.intLevel()) {
                 Nukkit.setLogLevel(level);
                 break;
             }
@@ -1642,7 +1643,9 @@ public class Server {
         }
         CompoundTag nbt = null;
         if (create) {
-            log.info(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
+            if (this.shouldSavePlayerData()) {
+                log.info(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
+            }
             Position spawn = this.getDefaultLevel().getSafeSpawn();
             nbt = new CompoundTag()
                     .putLong("firstPlayed", System.currentTimeMillis() / 1000)
