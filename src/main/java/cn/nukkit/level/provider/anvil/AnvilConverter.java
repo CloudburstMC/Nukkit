@@ -63,7 +63,8 @@ public class AnvilConverter {
                         for (int blockY = 0; blockY < 16; blockY++) {
                             int anvilIndex = getAnvilIndex(blockX, blockY, blockZ);
                             int nukkitIndex = ChunkSection.blockIndex(blockX, blockY, blockZ);
-                            blockStorage.setBlock(nukkitIndex, BlockRegistry.get().getBlock(blocks[anvilIndex], data.get(anvilIndex)));
+                            blockStorage.setBlock(nukkitIndex, BlockRegistry.get().getBlock(blocks[anvilIndex] & 0xff,
+                                    data.get(anvilIndex)));
                         }
                     }
                 }
