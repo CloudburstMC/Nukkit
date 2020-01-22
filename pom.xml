@@ -5,7 +5,7 @@
     <name>PowerNukkit</name>
     <groupId>br.com.gamemods</groupId>
     <artifactId>powernukkit</artifactId>
-    <version>1.1.0-PN</version>
+    <version>1.1.1-PN-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
