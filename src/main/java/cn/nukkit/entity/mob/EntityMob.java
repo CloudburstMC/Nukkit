@@ -23,7 +23,7 @@ public abstract class EntityMob extends EntityCreature {
             if (item.hasCustomName()) {
                 this.setNameTag(item.getCustomName());
                 this.setNameTagVisible(true);
-                player.getInventory().removeItem(item);
+                if(player.isSurvival()) { player.getInventory().removeItem(item); }
                 return true;
             }
         }

@@ -13,6 +13,7 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemNameTag;
 import cn.nukkit.level.EnumLevel;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;

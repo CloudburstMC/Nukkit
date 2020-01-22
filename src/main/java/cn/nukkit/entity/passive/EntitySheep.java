@@ -85,6 +85,14 @@ public class EntitySheep extends EntityAnimal {
             this.setColor(((ItemDye) item).getDyeColor().getWoolData());
             return true;
         }
+        if (item.getId() == Item.NAME_TAG) {
+            if (item.hasCustomName()) {
+                this.setNameTag(item.getCustomName());
+                this.setNameTagVisible(true);
+                if(player.isSurvival()) { player.getInventory().removeItem(item); }
+                return true;
+            }
+        }
 
         return item.getId() == Item.SHEARS && shear();
     }

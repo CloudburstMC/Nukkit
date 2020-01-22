@@ -33,7 +33,7 @@ public abstract class EntityAnimal extends EntityCreature implements EntityAgeab
             if (item.hasCustomName()) {
                 this.setNameTag(item.getCustomName());
                 this.setNameTagVisible(true);
-                player.getInventory().removeItem(item);
+                if(player.isSurvival()) { player.getInventory().removeItem(item); }
                 return true;
             }
         }

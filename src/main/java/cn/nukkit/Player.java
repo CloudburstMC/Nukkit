@@ -3307,6 +3307,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                                         this.inventory.setItemInHand(item);
                                     }
+                                    //TODO : Trigger useOn in creative mode.
                                     break;
                                 case InventoryTransactionPacket.USE_ITEM_ON_ENTITY_ACTION_ATTACK:
                                     float itemDamage = item.getAttackDamage();
