@@ -29,5 +29,5 @@ jobs:
         uses: actions/upload-artifact@v1
         if: success()
         with:
-          name: Nukkit
+          name: PowerNukkit
           path: target/powernukkit.jar
