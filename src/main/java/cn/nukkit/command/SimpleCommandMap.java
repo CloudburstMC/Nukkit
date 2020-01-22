@@ -5,6 +5,7 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.command.defaults.*;
 import cn.nukkit.command.simple.*;
 import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Utils;
 import lombok.extern.log4j.Log4j2;
@@ -78,19 +79,15 @@ public class SimpleCommandMap implements CommandMap {
     }
 
     @Override
-    public void registerAll(String fallbackPrefix, List<? extends Command> commands) {
-        for (Command command : commands) {
-            this.register(fallbackPrefix, command);
-        }
+    public boolean register(Plugin plugin, Command command, String label) {
+        return register(plugin.getName().toLowerCase(), command, label);
     }
 
-    @Override
-    public boolean register(String fallbackPrefix, Command command) {
-        return this.register(fallbackPrefix, command, null);
+    private boolean register(String fallbackPrefix, Command command) {
+        return register(fallbackPrefix, command, null);
     }
 
-    @Override
-    public boolean register(String fallbackPrefix, Command command, String label) {
+    private boolean register(String fallbackPrefix, Command command, String label) {
         if (label == null) {
             label = command.getName();
         }

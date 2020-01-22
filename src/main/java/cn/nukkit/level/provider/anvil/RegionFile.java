@@ -124,11 +124,10 @@ public class RegionFile implements Closeable {
                     default:
                         throw new IllegalArgumentException("Unknown compression type: " + type);
                 }
-                return uncompressed.retain();
+                return uncompressed.asReadOnly();
             } catch (DataFormatException e) {
-                throw new IOException("Unable to decompress chunk", e);
-            } finally {
                 uncompressed.release();
+                throw new IOException("Unable to decompress chunk", e);
             }
         } finally {
             buffer.release();

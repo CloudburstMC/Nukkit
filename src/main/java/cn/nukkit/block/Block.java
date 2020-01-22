@@ -413,7 +413,7 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
 
     public Block getSide(BlockFace face, boolean load) {
         if (this.isValid()) {
-            return this.getLevel().getBlock((int) x + face.getXOffset(), (int) y + face.getYOffset(), (int) z + face.getZOffset());
+            return this.getLevel().getBlock(x + face.getXOffset(), y + face.getYOffset(), z + face.getZOffset());
         }
         return this.getSide(face, 1, load);
     }
@@ -426,26 +426,26 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
         if (this.isValid()) {
             if (step == 1) {
                 if (load) {
-                    return this.getLevel().getBlock((int) x + face.getXOffset(), (int) y + face.getYOffset(),
-                            (int) z + face.getZOffset());
+                    return this.getLevel().getBlock(x + face.getXOffset(), y + face.getYOffset(),
+                            z + face.getZOffset());
                 } else {
-                    return this.getLevel().getLoadedBlock((int) x + face.getXOffset(), (int) y + face.getYOffset(),
-                            (int) z + face.getZOffset());
+                    return this.getLevel().getLoadedBlock(x + face.getXOffset(), y + face.getYOffset(),
+                            z + face.getZOffset());
                 }
             } else {
                 if (load) {
-                    return this.getLevel().getBlock((int) x + face.getXOffset() * step,
-                            (int) y + face.getYOffset() * step, (int) z + face.getZOffset() * step);
+                    return this.getLevel().getBlock(x + face.getXOffset() * step,
+                            y + face.getYOffset() * step, z + face.getZOffset() * step);
                 } else {
-                    return this.getLevel().getLoadedBlock((int) x + face.getXOffset() * step,
-                            (int) y + face.getYOffset() * step, (int) z + face.getZOffset() * step);
+                    return this.getLevel().getLoadedBlock(x + face.getXOffset() * step,
+                            y + face.getYOffset() * step, z + face.getZOffset() * step);
                 }
             }
         }
         Block block = Block.get(AIR, 0);
-        block.x = (int) x + face.getXOffset() * step;
-        block.y = (int) y + face.getYOffset() * step;
-        block.z = (int) z + face.getZOffset() * step;
+        block.x = x + face.getXOffset() * step;
+        block.y = y + face.getYOffset() * step;
+        block.z = z + face.getZOffset() * step;
         return block;
     }
 
@@ -640,7 +640,7 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
             f = 3;
         }
 
-        return MovingObjectPosition.fromBlock((int) this.x, (int) this.y, (int) this.z, f, vector.add(this.x, this.y, this.z));
+        return MovingObjectPosition.fromBlock(this.x, this.y, this.z, f, vector.add(this.x, this.y, this.z));
     }
 
     public String getSaveId() {

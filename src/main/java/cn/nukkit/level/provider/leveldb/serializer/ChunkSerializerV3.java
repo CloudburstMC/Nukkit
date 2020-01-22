@@ -14,17 +14,16 @@ import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.Unpooled;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.iq80.leveldb.DB;
+import org.iq80.leveldb.WriteBatch;
 
-@Log4j2
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 class ChunkSerializerV3 extends ChunkSerializerV1 {
 
     static ChunkSerializer INSTANCE = new ChunkSerializerV3();
 
     @Override
-    public void serialize(DB db, Chunk chunk) {
+    public void serialize(WriteBatch db, Chunk chunk) {
         // Write chunk sections
         for (int ySection = 0; ySection < Chunk.SECTION_COUNT; ySection++) {
             ChunkSection section = chunk.getSection(ySection);
@@ -32,7 +31,7 @@ class ChunkSerializerV3 extends ChunkSerializerV1 {
                 continue;
             }
 
-            ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer();
+            ByteBuf buffer = ByteBufAllocator.DEFAULT.ioBuffer();
             try {
                 buffer.writeByte(ChunkSection.CHUNK_SECTION_VERSION);
                 ChunkSectionSerializers.serialize(buffer, section.getBlockStorageArray(), ChunkSection.CHUNK_SECTION_VERSION);
@@ -45,19 +44,6 @@ class ChunkSerializerV3 extends ChunkSerializerV1 {
                 buffer.release();
             }
         }
-
-        // Write height map and biomes.
-        byte[] data2d = new byte[768];
-        ByteBuf buffer = Unpooled.wrappedBuffer(data2d);
-        buffer.writerIndex(0);
-        int[] heightMap = chunk.getHeightMapArray();
-        byte[] biomes = chunk.getBiomeArray();
-        for (int height : heightMap) {
-            buffer.writeShortLE(height);
-        }
-        buffer.writeBytes(biomes);
-
-        db.put(LevelDBKey.DATA_2D.getKey(chunk.getX(), chunk.getZ()), data2d);
     }
 
     @Override
@@ -121,24 +107,6 @@ class ChunkSerializerV3 extends ChunkSerializerV1 {
         }
 
         chunkBuilder.sections(sections);
-
-        // Height map & Biomes
-
-        byte[] data2d = db.get(LevelDBKey.DATA_2D.getKey(chunkX, chunkZ));
-        int[] heightMap = new int[512];
-        byte[] biomes = new byte[256];
-
-        if (data2d != null) {
-            ByteBuf buffer = Unpooled.wrappedBuffer(data2d);
-
-            for (int i = 0; i < 256; i++) {
-                heightMap[i] = buffer.readUnsignedShortLE();
-            }
-            buffer.readBytes(biomes);
-        }
-
-        chunkBuilder.heightMap(heightMap);
-        chunkBuilder.biomes(biomes);
 
         chunkBuilder.generated();
         chunkBuilder.populated();

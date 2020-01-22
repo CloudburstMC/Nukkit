@@ -1,6 +1,6 @@
 package cn.nukkit.event.entity;
 
-import cn.nukkit.entity.projectile.Projectile;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
@@ -12,11 +12,11 @@ public class ProjectileLaunchEvent extends EntityEvent implements Cancellable {
         return handlers;
     }
 
-    public ProjectileLaunchEvent(Projectile entity) {
+    public ProjectileLaunchEvent(Entity entity) {
         this.entity = entity;
     }
 
-    public Projectile getEntity() {
-        return (Projectile) this.entity;
+    public Entity getEntity() {
+        return this.entity;
     }
 }

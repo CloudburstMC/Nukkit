@@ -4,6 +4,7 @@ package cn.nukkit.level;
 import cn.nukkit.level.gamerule.GameRuleMap;
 import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.math.Vector3f;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.utils.Identifier;
 import lombok.ToString;
 
@@ -20,12 +21,12 @@ public class LevelData {
     private final Map<String, Object> generatorOptions = new HashMap<>();
     private final GameRuleMap gameRules = new GameRuleMap();
     private volatile long currentTick;
-    private long seed = ThreadLocalRandom.current().nextLong();
+    private long randomSeed = ThreadLocalRandom.current().nextLong();
     private int dimension;
     private Identifier generator;
     private String name = "World";
-    private int time;
-    private Vector3f spawn = new Vector3f(0, 128, 0);
+    private long time;
+    private Vector3i spawn = new Vector3i(0, 128, 0);
     private int serverChunkTickRange;
     private int spawnRadius;
     private int rainTime;
@@ -41,6 +42,7 @@ public class LevelData {
     private int platform;
     private long worldStartCount;
     private long lastPlayed;
+    private boolean hardcore;
 
     private boolean bonusChestEnabled;
     private boolean bonusChestSpawned;
@@ -102,12 +104,12 @@ public class LevelData {
         this.currentTick = currentTick;
     }
 
-    public long getSeed() {
-        return this.seed;
+    public long getRandomSeed() {
+        return this.randomSeed;
     }
 
-    public void setSeed(long seed) {
-        this.seed = seed;
+    public void setRandomSeed(long randomSeed) {
+        this.randomSeed = randomSeed;
     }
 
     public int getDimension() {
@@ -134,19 +136,19 @@ public class LevelData {
         this.name = name;
     }
 
-    public int getTime() {
+    public long getTime() {
         return this.time;
     }
 
-    public void setTime(int time) {
+    public void setTime(long time) {
         this.time = time;
     }
 
-    public Vector3f getSpawn() {
+    public Vector3i getSpawn() {
         return this.spawn;
     }
 
-    public void setSpawn(Vector3f spawn) {
+    public void setSpawn(Vector3i spawn) {
         this.spawn = spawn;
     }
 
@@ -348,5 +350,13 @@ public class LevelData {
 
     public void setTexturePacksRequired(boolean texturePacksRequired) {
         this.texturePacksRequired = texturePacksRequired;
+    }
+
+    public boolean isHardcore() {
+        return this.hardcore;
+    }
+
+    public void setHardcore(boolean hardcore) {
+        this.hardcore = hardcore;
     }
 }

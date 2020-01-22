@@ -2,6 +2,13 @@ package cn.nukkit.nbt.tag;
 
 import cn.nukkit.nbt.stream.NBTInputStream;
 import cn.nukkit.nbt.stream.NBTOutputStream;
+import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
+import it.unimi.dsi.fastutil.bytes.ByteConsumer;
+import it.unimi.dsi.fastutil.doubles.DoubleConsumer;
+import it.unimi.dsi.fastutil.floats.FloatConsumer;
+import it.unimi.dsi.fastutil.ints.IntConsumer;
+import it.unimi.dsi.fastutil.longs.LongConsumer;
+import it.unimi.dsi.fastutil.shorts.ShortConsumer;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -10,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
+import java.util.function.Consumer;
 
 public class CompoundTag extends Tag implements Cloneable {
     private final Map<String, Tag> tags = new HashMap<>();
@@ -132,10 +140,14 @@ public class CompoundTag extends Tag implements Cloneable {
         return (T) tags.remove(name);
     }
 
-
     public int getByte(String name) {
         if (!tags.containsKey(name)) return (byte) 0;
         return ((NumberTag) tags.get(name)).getData().byteValue();
+    }
+
+    public void listenByte(String name, ByteConsumer consumer) {
+        if (!tags.containsKey(name)) return;
+        consumer.accept(((NumberTag) tags.get(name)).getData().byteValue());
     }
 
     public int getShort(String name) {
@@ -143,9 +155,19 @@ public class CompoundTag extends Tag implements Cloneable {
         return ((NumberTag) tags.get(name)).getData().shortValue();
     }
 
+    public void listenShort(String name, ShortConsumer consumer) {
+        if (!tags.containsKey(name)) return;
+        consumer.accept(((NumberTag) tags.get(name)).getData().shortValue());
+    }
+
     public int getInt(String name) {
         if (!tags.containsKey(name)) return 0;
         return ((NumberTag) tags.get(name)).getData().intValue();
+    }
+
+    public void listenInt(String name, IntConsumer consumer) {
+        if (!tags.containsKey(name)) return;
+        consumer.accept(((NumberTag) tags.get(name)).getData().intValue());
     }
 
     public long getLong(String name) {
@@ -153,14 +175,29 @@ public class CompoundTag extends Tag implements Cloneable {
         return ((NumberTag) tags.get(name)).getData().longValue();
     }
 
+    public void listenLong(String name, LongConsumer consumer) {
+        if (!tags.containsKey(name)) return;
+        consumer.accept(((NumberTag) tags.get(name)).getData().longValue());
+    }
+
     public float getFloat(String name) {
         if (!tags.containsKey(name)) return (float) 0;
         return ((NumberTag) tags.get(name)).getData().floatValue();
     }
 
+    public void listenFloat(String name, FloatConsumer consumer) {
+        if (!tags.containsKey(name)) return;
+        consumer.accept(((NumberTag) tags.get(name)).getData().byteValue());
+    }
+
     public double getDouble(String name) {
         if (!tags.containsKey(name)) return (double) 0;
         return ((NumberTag) tags.get(name)).getData().doubleValue();
+    }
+
+    public void listenDouble(String name, DoubleConsumer consumer) {
+        if (!tags.containsKey(name)) return;
+        consumer.accept(((NumberTag) tags.get(name)).getData().doubleValue());
     }
 
     public String getString(String name) {
@@ -172,9 +209,24 @@ public class CompoundTag extends Tag implements Cloneable {
         return ((StringTag) tag).data;
     }
 
+    public void listenString(String name, Consumer<String> consumer) {
+        if (!tags.containsKey(name)) return;
+        Tag tag = tags.get(name);
+        if (tag instanceof NumberTag) {
+            consumer.accept(String.valueOf(((NumberTag) tag).getData()));
+        } else {
+            consumer.accept(((StringTag) tag).data);
+        }
+    }
+
     public byte[] getByteArray(String name) {
         if (!tags.containsKey(name)) return new byte[0];
         return ((ByteArrayTag) tags.get(name)).data;
+    }
+
+    public void listenByteArray(String name, Consumer<byte[]> consumer) {
+        if (!tags.containsKey(name)) return;
+        consumer.accept(((ByteArrayTag) tags.get(name)).data);
     }
 
     public int[] getIntArray(String name) {
@@ -182,15 +234,30 @@ public class CompoundTag extends Tag implements Cloneable {
         return ((IntArrayTag) tags.get(name)).data;
     }
 
+    public void listenIntArray(String name, Consumer<int[]> consumer) {
+        if (!tags.containsKey(name)) return;
+        consumer.accept(((IntArrayTag) tags.get(name)).data);
+    }
+
     public CompoundTag getCompound(String name) {
         if (!tags.containsKey(name)) return new CompoundTag(name);
         return (CompoundTag) tags.get(name);
     }
 
-    @SuppressWarnings("unchecked")
+    public void listenCompound(String name, Consumer<CompoundTag> consumer) {
+        if (!tags.containsKey(name)) return;
+        consumer.accept((CompoundTag) tags.get(name));
+    }
+
     public ListTag<? extends Tag> getList(String name) {
         if (!tags.containsKey(name)) return new ListTag<>(name);
         return (ListTag<? extends Tag>) tags.get(name);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Tag> void listenList(String name, Consumer<ListTag<T>> consumer) {
+        if (!tags.containsKey(name)) return;
+        consumer.accept((ListTag<T>) tags.get(name));
     }
 
     @SuppressWarnings("unchecked")
@@ -218,6 +285,11 @@ public class CompoundTag extends Tag implements Cloneable {
 
     public boolean getBoolean(String name) {
         return getByte(name) != 0;
+    }
+
+    public void listenBoolean(String name, BooleanConsumer consumer) {
+        if (!tags.containsKey(name)) return;
+        consumer.accept(((NumberTag) tags.get(name)).getData().byteValue() != 0);
     }
 
     public String toString() {

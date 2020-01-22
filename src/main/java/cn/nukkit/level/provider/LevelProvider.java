@@ -45,7 +45,7 @@ public interface LevelProvider extends PlayerDataProvider, Closeable {
      * @param consumer
      * @throws UnsupportedOperationException if the provider does not support chunk iteration.
      */
-    void forEachChunk(BiConsumer<Chunk, Throwable> consumer);
+    CompletableFuture<Void> forEachChunk(ChunkBuilder.Factory factory, BiConsumer<Chunk, Throwable> consumer);
 
     /**
      * Load level data into given {@link LevelData} object

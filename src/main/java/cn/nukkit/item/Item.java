@@ -15,6 +15,7 @@ import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
 import cn.nukkit.registry.ItemRegistry;
+import cn.nukkit.registry.RegistryException;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.Utils;
@@ -62,6 +63,8 @@ public abstract class Item implements Cloneable {
         for (Map map : list) {
             try {
                 addCreativeItem(fromJson(map));
+            } catch (RegistryException e) {
+                // ignore
             } catch (Exception e) {
                 log.error("Error whilst adding creative item", e);
             }

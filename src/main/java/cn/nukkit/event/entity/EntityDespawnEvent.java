@@ -1,12 +1,12 @@
 package cn.nukkit.event.entity;
 
-import cn.nukkit.entity.Creature;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
-import cn.nukkit.entity.Human;
+import cn.nukkit.entity.impl.EntityCreature;
+import cn.nukkit.entity.impl.Human;
+import cn.nukkit.entity.impl.projectile.EntityProjectile;
+import cn.nukkit.entity.impl.vehicle.EntityVehicle;
 import cn.nukkit.entity.misc.DroppedItem;
-import cn.nukkit.entity.projectile.Projectile;
-import cn.nukkit.entity.vehicle.Vehicle;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.Position;
 
@@ -26,7 +26,7 @@ public class EntityDespawnEvent extends EntityEvent {
     }
 
     public Position getPosition() {
-        return this.entity.getPosition();
+        return this.entity.getLocation();
     }
 
     public EntityType<?> getType() {
@@ -34,7 +34,7 @@ public class EntityDespawnEvent extends EntityEvent {
     }
 
     public boolean isCreature() {
-        return this.entity instanceof Creature;
+        return this.entity instanceof EntityCreature;
     }
 
     public boolean isHuman() {
@@ -42,11 +42,11 @@ public class EntityDespawnEvent extends EntityEvent {
     }
 
     public boolean isProjectile() {
-        return this.entity instanceof Projectile;
+        return this.entity instanceof EntityProjectile;
     }
 
     public boolean isVehicle() {
-        return this.entity instanceof Vehicle;
+        return this.entity instanceof EntityVehicle;
     }
 
     public boolean isItem() {

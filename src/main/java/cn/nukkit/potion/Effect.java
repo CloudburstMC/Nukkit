@@ -1,6 +1,6 @@
 package cn.nukkit.potion;
 
-import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.impl.BaseEntity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
@@ -199,7 +199,7 @@ public class Effect implements Cloneable {
         return false;
     }
 
-    public void applyEffect(Entity entity) {
+    public void applyEffect(BaseEntity entity) {
         switch (this.id) {
             case Effect.POISON: //POISON
                 if (entity.getHealth() > 1) {
@@ -225,7 +225,7 @@ public class Effect implements Cloneable {
         this.color = ((r & 0xff) << 16) + ((g & 0xff) << 8) + (b & 0xff);
     }
 
-    public void add(Entity entity) {
+    public void add(BaseEntity entity) {
         Effect oldEffect = entity.getEffect(getId());
         if (oldEffect != null && (Math.abs(this.getAmplifier()) < Math.abs(oldEffect.getAmplifier()) ||
                 Math.abs(this.getAmplifier()) == Math.abs(oldEffect.getAmplifier())
@@ -275,7 +275,7 @@ public class Effect implements Cloneable {
         }
     }
 
-    public void remove(Entity entity) {
+    public void remove(BaseEntity entity) {
         if (entity instanceof Player) {
             MobEffectPacket pk = new MobEffectPacket();
             pk.eid = entity.getUniqueId();

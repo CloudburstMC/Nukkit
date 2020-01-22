@@ -1,6 +1,5 @@
 package cn.nukkit.utils;
 
-import cn.nukkit.api.API;
 import cn.nukkit.block.Block;
 import cn.nukkit.math.BlockFace;
 
@@ -20,7 +19,6 @@ import static cn.nukkit.utils.Rail.Orientation.State.*;
  * By lmlstarqaq http://snake1999.com/
  * Creation time: 2017/7/1 17:42.
  */
-@API(usage = API.Usage.BLEEDING, definition = API.Definition.INTERNAL)
 public final class Rail {
 
     public static boolean isRailBlock(Block block) {

@@ -50,7 +50,7 @@ public class BlockPressurePlateWood extends BlockPressurePlateBase {
         AxisAlignedBB bb = getCollisionBoundingBox();
 
         for (Entity entity : this.level.getCollidingEntities(bb)) {
-            if (entity.doesTriggerPressurePlate()) {
+            if (entity.canTriggerPressurePlate()) {
                 return 15;
             }
         }

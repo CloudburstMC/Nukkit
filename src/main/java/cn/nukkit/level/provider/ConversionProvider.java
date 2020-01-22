@@ -48,7 +48,7 @@ public class ConversionProvider implements LevelProvider {
     }
 
     @Override
-    public void forEachChunk(BiConsumer<Chunk, Throwable> consumer) {
+    public CompletableFuture<Void> forEachChunk(ChunkBuilder.Factory factory, BiConsumer<Chunk, Throwable> consumer) {
         throw new UnsupportedOperationException();
     }
 

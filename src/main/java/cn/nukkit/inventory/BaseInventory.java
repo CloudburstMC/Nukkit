@@ -2,7 +2,7 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Server;
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.impl.BaseEntity;
 import cn.nukkit.event.entity.EntityInventoryChangeEvent;
 import cn.nukkit.event.inventory.InventoryOpenEvent;
 import cn.nukkit.item.Item;
@@ -149,8 +149,8 @@ public abstract class BaseInventory implements Inventory {
         }
 
         InventoryHolder holder = this.getHolder();
-        if (holder instanceof Entity) {
-            EntityInventoryChangeEvent ev = new EntityInventoryChangeEvent((Entity) holder, this.getItem(index), item, index);
+        if (holder instanceof BaseEntity) {
+            EntityInventoryChangeEvent ev = new EntityInventoryChangeEvent((BaseEntity) holder, this.getItem(index), item, index);
             Server.getInstance().getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {
                 this.sendSlot(index, this.getViewers());
@@ -370,8 +370,8 @@ public abstract class BaseInventory implements Inventory {
             Item item = Item.get(AIR, 0, 0);
             Item old = this.slots.get(index);
             InventoryHolder holder = this.getHolder();
-            if (holder instanceof Entity) {
-                EntityInventoryChangeEvent ev = new EntityInventoryChangeEvent((Entity) holder, old, item, index);
+            if (holder instanceof BaseEntity) {
+                EntityInventoryChangeEvent ev = new EntityInventoryChangeEvent((BaseEntity) holder, old, item, index);
                 Server.getInstance().getPluginManager().callEvent(ev);
                 if (ev.isCancelled()) {
                     this.sendSlot(index, this.getViewers());

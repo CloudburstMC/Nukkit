@@ -1,8 +1,8 @@
 package cn.nukkit.item;
 
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
-import cn.nukkit.entity.projectile.EnderPearl;
-import cn.nukkit.entity.projectile.Projectile;
+import cn.nukkit.entity.impl.projectile.EntityEnderPearl;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -23,7 +23,7 @@ public abstract class ProjectileItem extends Item {
         super(id);
     }
 
-    abstract public EntityType<? extends Projectile> getProjectileEntityType();
+    abstract public EntityType<?> getProjectileEntityType();
 
     abstract public float getThrowForce();
 
@@ -43,9 +43,9 @@ public abstract class ProjectileItem extends Item {
 
         this.correctNBT(nbt);
 
-        Projectile projectile = EntityRegistry.get().newEntity(this.getProjectileEntityType(), player.getLevel().getChunk(player.getChunkX(), player.getChunkZ()), nbt);
-        projectile.shootingEntity = player;
-        if (projectile instanceof EnderPearl) {
+        Entity projectile = EntityRegistry.get().newEntity(this.getProjectileEntityType(), player.getLevel().getChunk(player.getChunkX(), player.getChunkZ()), nbt);
+        projectile.setOwner(player);
+        if (projectile instanceof EntityEnderPearl) {
             if (player.getServer().getTick() - player.getLastEnderPearlThrowingTick() < 20) {
                 projectile.kill();
                 return false;
@@ -54,7 +54,7 @@ public abstract class ProjectileItem extends Item {
 
         projectile.setMotion(projectile.getMotion().multiply(this.getThrowForce()));
 
-        ProjectileLaunchEvent ev = new ProjectileLaunchEvent((Projectile) projectile);
+        ProjectileLaunchEvent ev = new ProjectileLaunchEvent(projectile);
 
         player.getServer().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
@@ -63,7 +63,7 @@ public abstract class ProjectileItem extends Item {
             if (!player.isCreative()) {
                 this.decrementCount();
             }
-            if (projectile instanceof EnderPearl) {
+            if (projectile instanceof EntityEnderPearl) {
                 player.onThrowEnderPearl();
             }
             projectile.spawnToAll();

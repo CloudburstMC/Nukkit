@@ -2,7 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.Server;
 import cn.nukkit.entity.EntityTypes;
-import cn.nukkit.entity.projectile.Projectile;
+import cn.nukkit.entity.impl.projectile.EntityProjectile;
 import cn.nukkit.entity.projectile.ThrownTrident;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
@@ -66,9 +66,9 @@ public class ItemTrident extends ItemTool {
 
         double f = Math.min((p * p + p * 2) / 3, 1) * 2;
         ThrownTrident trident = EntityRegistry.get().newEntity(EntityTypes.THROWN_TRIDENT, player.chunk, nbt);
-        trident.shootingEntity = player;
+        trident.setShooter(player);
         trident.setCritical(f == 2);
-        trident.setItem(this);
+        trident.setTrident(this);
 
         EntityShootBowEvent entityShootBowEvent = new EntityShootBowEvent(player, this, trident, f);
 
@@ -81,7 +81,7 @@ public class ItemTrident extends ItemTool {
             entityShootBowEvent.getProjectile().kill();
         } else {
             entityShootBowEvent.getProjectile().setMotion(entityShootBowEvent.getProjectile().getMotion().multiply(entityShootBowEvent.getForce()));
-            if (entityShootBowEvent.getProjectile() instanceof Projectile) {
+            if (entityShootBowEvent.getProjectile() instanceof EntityProjectile) {
                 ProjectileLaunchEvent ev = new ProjectileLaunchEvent(entityShootBowEvent.getProjectile());
                 Server.getInstance().getPluginManager().callEvent(ev);
                 if (ev.isCancelled()) {

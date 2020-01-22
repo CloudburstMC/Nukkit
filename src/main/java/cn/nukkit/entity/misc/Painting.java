@@ -1,89 +1,18 @@
 package cn.nukkit.entity.misc;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.EntityType;
-import cn.nukkit.entity.HangingEntity;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemIds;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.level.gamerule.GameRules;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.AddPaintingPacket;
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.player.Player;
+import lombok.RequiredArgsConstructor;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class Painting extends HangingEntity {
+import static com.google.common.base.Preconditions.checkNotNull;
 
-    public final static Motive[] motives = Motive.values();
-    private Motive motive;
+public interface Painting extends Entity {
 
-    public Painting(EntityType<Painting> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
-    }
-
-    public static Motive getMotive(String name) {
-        return Motive.BY_NAME.getOrDefault(name, Motive.KEBAB);
-    }
-
-    @Override
-    protected void initEntity() {
-        super.initEntity();
-        this.motive = getMotive(this.namedTag.getString("Motive"));
-    }
-
-    @Override
-    public DataPacket createAddEntityPacket() {
-        AddPaintingPacket addPainting = new AddPaintingPacket();
-        addPainting.entityUniqueId = this.getUniqueId();
-        addPainting.entityRuntimeId = this.getUniqueId();
-        addPainting.x = (float) this.x;
-        addPainting.y = (float) this.y;
-        addPainting.z = (float) this.z;
-        addPainting.direction = this.getDirection().getHorizontalIndex();
-        addPainting.title = this.namedTag.getString("Motive");
-        return addPainting;
-    }
-
-    @Override
-    public boolean attack(EntityDamageEvent source) {
-        if (super.attack(source)) {
-            if (source instanceof EntityDamageByEntityEvent) {
-                Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
-                if (damager instanceof Player && ((Player) damager).isSurvival() && this.level.getGameRules().get(GameRules.DO_ENTITY_DROPS)) {
-                    this.level.dropItem(this, Item.get(ItemIds.PAINTING));
-                }
-            }
-            this.close();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public void saveNBT() {
-        super.saveNBT();
-        this.namedTag.putString("Motive", this.motive.title);
-    }
-
-    public Motive getArt() {
-        return getMotive();
-    }
-
-    public Motive getMotive() {
-        return Motive.BY_NAME.get(namedTag.getString("Motive"));
-    }
-
-    public enum Motive {
+    @RequiredArgsConstructor
+    enum Motive {
         KEBAB("Kebab", 1, 1),
         AZTEC("Aztec", 1, 1),
         ALBAN("Alban", 1, 1),
@@ -123,10 +52,26 @@ public class Painting extends HangingEntity {
             }
         }
 
-        Motive(String title, int width, int height) {
-            this.title = title;
-            this.width = width;
-            this.height = height;
+        @Nullable
+        public static Motive from(String name) {
+            return from(name, null);
+        }
+
+        public static Motive from(String name, Motive defaultValue) {
+            checkNotNull(name, "name");
+            return BY_NAME.getOrDefault(name, defaultValue);
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public int getWidth() {
+            return width;
+        }
+
+        public String getTitle() {
+            return title;
         }
     }
 }

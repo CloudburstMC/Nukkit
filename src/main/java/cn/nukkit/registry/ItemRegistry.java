@@ -28,7 +28,7 @@ import static cn.nukkit.item.ItemIds.*;
 @Log4j2
 public class ItemRegistry implements Registry {
     private static final ItemRegistry INSTANCE;
-    private static final List<ItemData> VANILLA_STATES;
+    private static final List<ItemData> VANILLA_ITEMS;
 
     static {
         InputStream stream = RegistryUtils.getOrAssertResource("runtime_item_ids.json");
@@ -37,14 +37,14 @@ public class ItemRegistry implements Registry {
         Gson gson = new Gson();
         Type collectionType = new TypeToken<List<ItemData>>() {
         }.getType();
-        VANILLA_STATES = gson.fromJson(reader, collectionType);
+        VANILLA_ITEMS = gson.fromJson(reader, collectionType);
 
         INSTANCE = new ItemRegistry(BlockRegistry.get()); // Needs to be initialized afterwards
     }
 
     private final Map<Identifier, ItemFactory> factoryMap = new IdentityHashMap<>();
     private final BiMap<Integer, Identifier> runtimeIdMap = HashBiMap.create();
-    private final AtomicInteger runtimeIdAllocator = new AtomicInteger(VANILLA_STATES.size());
+    private final AtomicInteger runtimeIdAllocator = new AtomicInteger(VANILLA_ITEMS.size());
     private final BlockRegistry blockRegistry;
     private ByteBuf cachedRuntimeItems;
     private volatile boolean closed;
@@ -55,6 +55,18 @@ public class ItemRegistry implements Registry {
             this.registerVanillaItems();
         } catch (RegistryException e) {
             throw new IllegalStateException("Unable to register vanilla items", e);
+        }
+
+        // register missing vanilla items.
+        for (ItemData item : VANILLA_ITEMS) {
+            if (item.id < 256) {
+                continue;
+            }
+            Identifier identifier = Identifier.fromString(item.name);
+            if (!this.factoryMap.containsKey(identifier)) {
+                log.debug("Non-implemented item found {}", identifier);
+                registerVanilla(identifier, SimpleItem::new, item.id);
+            }
         }
     }
 
@@ -78,6 +90,7 @@ public class ItemRegistry implements Registry {
         checkClosed();
         this.factoryMap.put(identifier, itemFactory);
         this.runtimeIdMap.put(legacyId, identifier);
+        this.runtimeIdAllocator.updateAndGet(prev -> prev <= legacyId ? legacyId + 1 : prev);
     }
 
     public Item getItem(Identifier identifier) throws RegistryException {
@@ -142,9 +155,9 @@ public class ItemRegistry implements Registry {
 
         List<Identifier> customBlocks = this.blockRegistry.getCustomBlocks();
 
-        Binary.writeUnsignedVarInt(buffer, VANILLA_STATES.size() + customBlocks.size());
+        Binary.writeUnsignedVarInt(buffer, VANILLA_ITEMS.size() + customBlocks.size());
 
-        for (ItemData data : VANILLA_STATES) {
+        for (ItemData data : VANILLA_ITEMS) {
             Binary.writeString(buffer, data.name);
             buffer.writeShortLE(data.id);
         }
@@ -296,7 +309,7 @@ public class ItemRegistry implements Registry {
         registerVanilla(SPAWN_EGG, ItemSpawnEgg::new, 383);
         registerVanilla(EXPERIENCE_BOTTLE, ItemExpBottle::new, 384);
         registerVanilla(FIREBALL, ItemFireCharge::new, 385);
-        //TODO: registerVanilla(BOOK_AND_QUILL, ItemBookAndQuill::new, 386);
+        //TODO: registerVanilla(WRITABLE_BOOK, ItemBookAndQuill::new, 386);
         registerVanilla(WRITTEN_BOOK, ItemBookWritten::new, 387);
         registerVanilla(EMERALD, SimpleItem::new, 388);
         registerVanilla(FRAME, PlaceableItem.factory(BlockIds.FRAME), 389);
@@ -337,6 +350,7 @@ public class ItemRegistry implements Registry {
         registerVanilla(MUTTON_COOKED, ItemMuttonCooked::new, 424);
 
         registerVanilla(END_CRYSTAL, ItemEndCrystal::new, 426);
+        registerVanilla(ARMOR_STAND, SimpleItem::new, 425);
         registerVanilla(SPRUCE_DOOR, PlaceableItem.factory(BlockIds.SPRUCE_DOOR), 427);
         registerVanilla(BIRCH_DOOR, PlaceableItem.factory(BlockIds.BIRCH_DOOR), 428);
         registerVanilla(JUNGLE_DOOR, PlaceableItem.factory(BlockIds.JUNGLE_DOOR), 429);
@@ -355,6 +369,7 @@ public class ItemRegistry implements Registry {
         //TODO: registerVanilla(SHULKER_SHELL, ItemShulkerShell::new, 445);
         registerVanilla(BANNER, ItemBanner::new, 446);
 
+        registerVanilla(IRON_NUGGET, SimpleItem::new, 452);
         registerVanilla(TRIDENT, ItemTrident::new, 455);
 
         registerVanilla(BEETROOT, ItemBeetroot::new, 457);

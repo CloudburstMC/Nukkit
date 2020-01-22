@@ -279,7 +279,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
     }
 
     @Override
-    public void addEntity(Entity entity) {
+    public void addEntity(@Nonnull Entity entity) {
         Preconditions.checkNotNull(entity, "entity");
         if (entity instanceof Player) {
             this.players.add((Player) entity);

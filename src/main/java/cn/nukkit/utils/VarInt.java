@@ -1,14 +1,11 @@
 package cn.nukkit.utils;
 
-import cn.nukkit.api.API;
 import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static cn.nukkit.api.API.Definition.UNIVERSAL;
-import static cn.nukkit.api.API.Usage.EXPERIMENTAL;
 
 /**
  * Tool class for VarInt or VarLong operations.
@@ -18,7 +15,6 @@ import static cn.nukkit.api.API.Usage.EXPERIMENTAL;
  * @author MagicDroidX
  * @author lmlstarqaq
  */
-@API(usage = EXPERIMENTAL, definition = UNIVERSAL)
 public final class VarInt {
 
     private VarInt() {

@@ -145,8 +145,8 @@ public class Position extends Vector3f {
     }
 
     @Override
-    public Position multiply(double number) {
-        return new Position(this.x * number, this.y * number, this.z * number, this.level);
+    public Position multiply(double val) {
+        return new Position(this.x * val, this.y * val, this.z * val, this.level);
     }
 
     @Override

@@ -12,16 +12,22 @@ import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandDataVersions;
-import cn.nukkit.entity.*;
+import cn.nukkit.entity.Attribute;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityInteractable;
+import cn.nukkit.entity.EntityTypes;
 import cn.nukkit.entity.data.EntityData;
 import cn.nukkit.entity.data.Skin;
+import cn.nukkit.entity.impl.EntityLiving;
+import cn.nukkit.entity.impl.Human;
+import cn.nukkit.entity.impl.projectile.EntityArrow;
+import cn.nukkit.entity.impl.vehicle.EntityAbstractMinecart;
+import cn.nukkit.entity.impl.vehicle.EntityBoat;
 import cn.nukkit.entity.misc.DroppedItem;
 import cn.nukkit.entity.misc.XpOrb;
 import cn.nukkit.entity.projectile.Arrow;
 import cn.nukkit.entity.projectile.FishingHook;
 import cn.nukkit.entity.projectile.ThrownTrident;
-import cn.nukkit.entity.vehicle.AbstractMinecart;
-import cn.nukkit.entity.vehicle.Boat;
 import cn.nukkit.event.block.ItemFrameDropItemEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -69,6 +75,7 @@ import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.player.manager.PlayerChunkManager;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
+import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.*;
 import co.aikar.timings.Timing;
@@ -802,7 +809,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             int chunkX = Chunk.fromKeyX(chunkKey);
             int chunkZ = Chunk.fromKeyZ(chunkKey);
             for (Entity entity : this.level.getLoadedChunkEntities(chunkX, chunkZ)) {
-                if (this != entity && !entity.closed && entity.isAlive()) {
+                if (this != entity && !entity.isClosed() && entity.isAlive()) {
                     entity.spawnTo(this);
                 }
             }
@@ -1070,7 +1077,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     protected void checkNearEntities() {
         for (Entity entity : this.level.getNearbyEntities(this.boundingBox.grow(1, 0.5, 1), this)) {
-            entity.scheduleUpdate();
+            level.scheduleEntityUpdate(entity);
 
             if (!entity.isAlive() || !this.isAlive()) {
                 continue;
@@ -1290,7 +1297,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 if (this.checkMovement && !server.getAllowFlight() && (this.isSurvival() || this.isAdventure())) {
                     // Some say: I cant move my head when riding because the server
                     // blocked my movement
-                    if (!this.isSleeping() && this.riding == null && !this.hasEffect(Effect.LEVITATION)) {
+                    if (!this.isSleeping() && this.vehicle == null && !this.hasEffect(Effect.LEVITATION)) {
                         double diffHorizontalSqr = (diffX * diffX + diffZ * diffZ) / ((double) (tickDiff * tickDiff));
                         if (diffHorizontalSqr > 0.5) {
                             PlayerInvalidMoveEvent ev;
@@ -1435,7 +1442,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         try (Timing ignored = this.timing.startTiming()) {
             if (this.fishing != null) {
-                if (this.distance(fishing) > 80) {
+                if (this.distance(fishing.getPosition()) > 80) {
                     this.stopFishing(false);
                 }
             }
@@ -1488,7 +1495,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         this.inAirTicks = 0;
                         this.highestPosition = this.y;
                     } else {
-                        if (this.checkMovement && !this.isGliding() && !server.getAllowFlight() && !this.getAdventureSettings().get(Type.ALLOW_FLIGHT) && this.inAirTicks > 20 && !this.isSleeping() && !this.isImmobile() && !this.isSwimming() && this.riding == null && !this.hasEffect(Effect.LEVITATION)) {
+                        if (this.checkMovement && !this.isGliding() && !server.getAllowFlight() && !this.getAdventureSettings().get(Type.ALLOW_FLIGHT) && this.inAirTicks > 20 && !this.isSleeping() && !this.isImmobile() && !this.isSwimming() && this.vehicle == null && !this.hasEffect(Effect.LEVITATION)) {
                             double expectedVelocity = (-this.getGravity()) / ((double) this.getDrag()) - ((-this.getGravity()) / ((double) this.getDrag())) * Math.exp(-((double) this.getDrag()) * ((double) (this.inAirTicks - this.startAirTicks)));
                             double diff = (this.speed.y - expectedVelocity) * (this.speed.y - expectedVelocity);
 
@@ -1577,16 +1584,17 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             return false;
         }
 
-        Vector2 dV = this.getDirectionPlane();
-        double dot = dV.dot(new Vector2(this.x, this.z));
-        double dot1 = dV.dot(new Vector2(pos.x, pos.z));
+        Vector2f dV = this.getDirectionPlane();
+        double dot = dV.dot(new Vector2f(this.x, this.z));
+        double dot1 = dV.dot(new Vector2f(pos.x, pos.z));
         return (dot1 - dot) >= -maxDiff;
     }
 
     private EntityInteractable getEntityAtPosition(Set<Entity> nearbyEntities, int x, int y, int z) {
         try (Timing ignored = Timings.playerEntityAtPositionTimer.startTiming()) {
             for (Entity nearestEntity : nearbyEntities) {
-                if (nearestEntity.getFloorX() == x && nearestEntity.getFloorY() == y && nearestEntity.getFloorZ() == z
+                Vector3f position = nearestEntity.getPosition();
+                if (position.getFloorX() == x && position.getFloorY() == y && position.getFloorZ() == z
                         && nearestEntity instanceof EntityInteractable
                         && ((EntityInteractable) nearestEntity).canDoInteraction()) {
                     return (EntityInteractable) nearestEntity;
@@ -2142,8 +2150,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         break;
                     }
                     PlayerInputPacket ipk = (PlayerInputPacket) packet;
-                    if (riding instanceof AbstractMinecart) {
-                        ((AbstractMinecart) riding).setCurrentSpeed(ipk.motionY);
+                    if (vehicle instanceof EntityAbstractMinecart) {
+                        ((EntityAbstractMinecart) vehicle).setCurrentSpeed(ipk.motionY);
                     }
                     break;
                 case ProtocolInfo.MOVE_PLAYER_PACKET:
@@ -2187,9 +2195,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     }
 
 
-                    if (riding != null) {
-                        if (riding instanceof Boat) {
-                            riding.setPositionAndRotation(temporalVector.get().setComponents(movePlayerPacket.x, movePlayerPacket.y - 1, movePlayerPacket.z), (movePlayerPacket.headYaw + 90) % 360, 0);
+                    if (vehicle != null) {
+                        if (vehicle instanceof EntityBoat) {
+                            vehicle.setPositionAndRotation(temporalVector.get().setComponents(movePlayerPacket.x, movePlayerPacket.y - 1, movePlayerPacket.z), (movePlayerPacket.headYaw + 90) % 360, 0);
                         }
                     }
 
@@ -2444,6 +2452,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                             }
                             break;
                     }
+                    this.updateData();
 
                     this.setUsingItem(false);
                     break;
@@ -2493,7 +2502,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         break;
                     }
 
-                    if (targetEntity instanceof DroppedItem || targetEntity instanceof Arrow || targetEntity instanceof XpOrb) {
+                    if (targetEntity instanceof DroppedItem || targetEntity instanceof EntityArrow || targetEntity instanceof XpOrb) {
                         this.kick(PlayerKickEvent.Reason.INVALID_PVE, "Attempting to interact with an invalid entity");
                         log.warn(this.getServer().getLanguage().translateString("nukkit.player.invalidEntity", this.getName()));
                         break;
@@ -2509,11 +2518,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                             this.getServer().getPluginManager().callEvent(new PlayerMouseOverEntityEvent(this, targetEntity));
                             break;
                         case InteractPacket.ACTION_VEHICLE_EXIT:
-                            if (!(targetEntity instanceof EntityRideable) || this.riding == null) {
+                            if (this.vehicle == null) {
                                 break;
                             }
-
-                            ((EntityRideable) riding).mountEntity(this);
+                            this.dismount(this.vehicle);
                             break;
                     }
                     break;
@@ -2606,8 +2614,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     switch (animation) {
                         case ROW_RIGHT:
                         case ROW_LEFT:
-                            if (this.riding instanceof Boat) {
-                                ((Boat) this.riding).onPaddle(animation, ((AnimatePacket) packet).rowingTime);
+                            if (this.vehicle instanceof EntityBoat) {
+                                ((EntityBoat) this.vehicle).onPaddle(animation, ((AnimatePacket) packet).rowingTime);
                             }
                             break;
                     }
@@ -3044,7 +3052,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                     Map<DamageModifier, Float> damage = new EnumMap<>(DamageModifier.class);
                                     damage.put(DamageModifier.BASE, itemDamage);
 
-                                    if (!this.canInteract(target, isCreative() ? 8 : 5)) {
+                                    if (!this.canInteract(target.getPosition(), isCreative() ? 8 : 5)) {
                                         break;
                                     } else if (target instanceof Player) {
                                         if ((((Player) target).getGamemode() & 0x01) > 0) {
@@ -3413,11 +3421,12 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.hasSpawned.clear();
             this.spawnPosition = null;
 
-            if (this.riding instanceof EntityRideable) {
-                this.riding.passengers.remove(this);
+            if (!passengers.isEmpty()) {
+                passengers.forEach(entity -> entity.dismount(this));
             }
-
-            this.riding = null;
+            if (this.vehicle != null) {
+                this.dismount(vehicle);
+            }
         }
 
         if (this.perm != null) {
@@ -3722,7 +3731,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                             message = "death.attack.player";
                             params.add(((Player) e).getDisplayName());
                             break;
-                        } else if (e instanceof LivingEntity) {
+                        } else if (e instanceof EntityLiving) {
                             message = "death.attack.mob";
                             params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : e.getName());
                             break;
@@ -3738,7 +3747,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         if (e instanceof Player) {
                             message = "death.attack.arrow";
                             params.add(((Player) e).getDisplayName());
-                        } else if (e instanceof LivingEntity) {
+                        } else if (e instanceof EntityLiving) {
                             message = "death.attack.arrow";
                             params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : e.getName());
                             break;
@@ -3804,7 +3813,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         if (e instanceof Player) {
                             message = "death.attack.explosion.player";
                             params.add(((Player) e).getDisplayName());
-                        } else if (e instanceof LivingEntity) {
+                        } else if (e instanceof EntityLiving) {
                             message = "death.attack.explosion.player";
                             params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : e.getName());
                             break;
@@ -4471,7 +4480,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         .add(new FloatTag("", (float) yaw))
                         .add(new FloatTag("", (float) pitch)));
         double f = 1;
-        FishingHook fishingHook = new FishingHook(EntityTypes.FISHING_HOOK, chunk, nbt, this);
+        FishingHook fishingHook = EntityRegistry.get().newEntity(EntityTypes.FISHING_HOOK, chunk, nbt);
+        fishingHook.setOwner(this);
         fishingHook.setMotion(new Vector3f(-Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * f * f, -Math.sin(Math.toRadians(pitch)) * f * f,
                 Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * f * f));
         ProjectileLaunchEvent ev = new ProjectileLaunchEvent(fishingHook);
@@ -4481,7 +4491,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         } else {
             fishingHook.spawnToAll();
             this.fishing = fishingHook;
-            fishingHook.rod = fishingRod;
+            fishingHook.setRod(fishingRod);
         }
     }
 
@@ -4529,16 +4539,16 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         if (near) {
-            if (entity instanceof Arrow && ((Arrow) entity).hadCollision) {
+            if (entity instanceof Arrow && entity.getMotion().lengthSquared() == 0) {
                 Item item = Item.get(ItemIds.ARROW);
                 if (this.isSurvival() && !this.inventory.canAddItem(item)) {
                     return false;
                 }
 
-                InventoryPickupArrowEvent ev = new InventoryPickupArrowEvent(this.inventory, (Arrow) entity);
+                InventoryPickupArrowEvent ev = new InventoryPickupArrowEvent(this.inventory, (EntityArrow) entity);
 
-                int pickupMode = ((Arrow) entity).getPickupMode();
-                if (pickupMode == Arrow.PICKUP_NONE || pickupMode == Arrow.PICKUP_CREATIVE && !this.isCreative()) {
+                int pickupMode = ((EntityArrow) entity).getPickupMode();
+                if (pickupMode == EntityArrow.PICKUP_NONE || pickupMode == EntityArrow.PICKUP_CREATIVE && !this.isCreative()) {
                     ev.setCancelled();
                 }
 
@@ -4558,8 +4568,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 }
                 entity.close();
                 return true;
-            } else if (entity instanceof ThrownTrident && ((ThrownTrident) entity).hadCollision) {
-                Item item = ((ThrownTrident) entity).getItem();
+            } else if (entity instanceof ThrownTrident && entity.getMotion().lengthSquared() == 0) {
+                Item item = ((ThrownTrident) entity).getTrident();
                 if (this.isSurvival() && !this.inventory.canAddItem(item)) {
                     return false;
                 }
@@ -4611,10 +4621,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         int tick = this.getServer().getTick();
-        if (pickedXPOrb < tick && entity instanceof XpOrb && this.boundingBox.isVectorInside(entity)) {
+        if (pickedXPOrb < tick && entity instanceof XpOrb && this.boundingBox.isVectorInside(entity.getPosition())) {
             XpOrb xpOrb = (XpOrb) entity;
             if (xpOrb.getPickupDelay() <= 0) {
-                int exp = xpOrb.getExp();
+                int exp = xpOrb.getExperience();
                 entity.kill();
                 this.getLevel().addSound(this, Sound.RANDOM_ORB);
                 pickedXPOrb = tick;

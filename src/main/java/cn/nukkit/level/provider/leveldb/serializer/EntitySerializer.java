@@ -16,6 +16,7 @@ import cn.nukkit.utils.Identifier;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.iq80.leveldb.DB;
+import org.iq80.leveldb.WriteBatch;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -48,7 +49,7 @@ public class EntitySerializer {
         builder.dataLoader(new DataLoader(entityTags));
     }
 
-    public static void saveEntities(DB db, Chunk chunk) {
+    public static void saveEntities(WriteBatch db, Chunk chunk) {
         byte[] key = LevelDBKey.ENTITIES.getKey(chunk.getX(), chunk.getZ());
         Set<Entity> entities = chunk.getEntities();
         if (entities.isEmpty()) {
@@ -60,7 +61,7 @@ public class EntitySerializer {
         try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
             for (Entity entity : entities) {
                 entity.saveNBT();
-                NBTIO.write(entity.namedTag, stream, ByteOrder.LITTLE_ENDIAN);
+                NBTIO.write(entity.getTag(), stream, ByteOrder.LITTLE_ENDIAN);
             }
             value = stream.toByteArray();
         } catch (IOException e) {

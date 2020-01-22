@@ -2,6 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.EntityTypes;
+import cn.nukkit.entity.impl.misc.EntityPainting;
 import cn.nukkit.entity.misc.Painting;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.chunk.Chunk;
@@ -45,8 +46,8 @@ public class ItemPainting extends Item {
             return false;
         }
 
-        List<Painting.Motive> validMotives = new ArrayList<>();
-        for (Painting.Motive motive : Painting.motives) {
+        List<EntityPainting.Motive> validMotives = new ArrayList<>();
+        for (EntityPainting.Motive motive : EntityPainting.motives) {
             boolean valid = true;
             for (int x = 0; x < motive.width && valid; x++) {
                 for (int z = 0; z < motive.height && valid; z++) {
@@ -64,7 +65,7 @@ public class ItemPainting extends Item {
             }
         }
         int direction = DIRECTION[face.getIndex() - 2];
-        Painting.Motive motive = validMotives.get(ThreadLocalRandom.current().nextInt(validMotives.size()));
+        EntityPainting.Motive motive = validMotives.get(ThreadLocalRandom.current().nextInt(validMotives.size()));
 
         Vector3f position = new Vector3f(target.x + 0.5, target.y + 0.5, target.z + 0.5);
         double widthOffset = offset(motive.width);

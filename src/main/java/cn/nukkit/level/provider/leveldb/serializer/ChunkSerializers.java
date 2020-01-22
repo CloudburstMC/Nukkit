@@ -5,6 +5,7 @@ import cn.nukkit.level.chunk.ChunkBuilder;
 import io.netty.util.collection.IntObjectHashMap;
 import io.netty.util.collection.IntObjectMap;
 import org.iq80.leveldb.DB;
+import org.iq80.leveldb.WriteBatch;
 
 public class ChunkSerializers {
 
@@ -35,7 +36,7 @@ public class ChunkSerializers {
         return chunkSerializer;
     }
 
-    public static void serializeChunk(DB db, Chunk chunk, int version) {
+    public static void serializeChunk(WriteBatch db, Chunk chunk, int version) {
         getChunkSerializer(version).serialize(db, chunk);
     }
 

@@ -41,8 +41,7 @@ public class BlockSoulSand extends BlockSolid {
 
     @Override
     public void onEntityCollide(Entity entity) {
-        entity.motionX *= 0.4d;
-        entity.motionZ *= 0.4d;
+        entity.setMotion(entity.getMotion().multiply(0.4, 1, 0.4));
     }
 
     @Override

@@ -80,7 +80,7 @@ public class BlockTripWire extends FloodableBlock {
 
     @Override
     public void onEntityCollide(Entity entity) {
-        if (!entity.doesTriggerPressurePlate()) {
+        if (!entity.canTriggerPressurePlate()) {
             return;
         }
 
@@ -129,7 +129,7 @@ public class BlockTripWire extends FloodableBlock {
 
             boolean found = false;
             for (Entity entity : this.level.getCollidingEntities(this.getCollisionBoundingBox())) {
-                if (!entity.doesTriggerPressurePlate()) {
+                if (!entity.canTriggerPressurePlate()) {
                     continue;
                 }
 

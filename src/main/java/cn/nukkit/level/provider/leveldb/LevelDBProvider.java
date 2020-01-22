@@ -4,24 +4,15 @@ import cn.nukkit.level.LevelData;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.chunk.ChunkBuilder;
 import cn.nukkit.level.provider.LevelProvider;
-import cn.nukkit.level.provider.leveldb.serializer.BlockEntitySerializer;
-import cn.nukkit.level.provider.leveldb.serializer.ChunkSerializers;
-import cn.nukkit.level.provider.leveldb.serializer.EntitySerializer;
-import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.provider.leveldb.serializer.*;
 import cn.nukkit.utils.LoadState;
 import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
-import org.iq80.leveldb.CompressionType;
-import org.iq80.leveldb.DB;
-import org.iq80.leveldb.DBIterator;
-import org.iq80.leveldb.Options;
+import org.iq80.leveldb.*;
 import org.iq80.leveldb.impl.Iq80DBFactory;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
@@ -77,6 +68,7 @@ class LevelDBProvider implements LevelProvider {
             }
 
             ChunkSerializers.deserializeChunk(this.db, chunkBuilder, chunkVersion);
+            Data2dSerializer.deserialize(this.db, chunkBuilder);
 
             BlockEntitySerializer.loadBlockEntities(this.db, chunkBuilder);
             EntitySerializer.loadEntities(this.db, chunkBuilder);
@@ -91,66 +83,55 @@ class LevelDBProvider implements LevelProvider {
         final int z = chunk.getZ();
 
         return CompletableFuture.supplyAsync(() -> {
+            WriteBatch batch = this.db.createWriteBatch();
 
-            ChunkSerializers.serializeChunk(this.db, chunk, 7);
+            ChunkSerializers.serializeChunk(batch, chunk, 7);
+            Data2dSerializer.serialize(batch, chunk);
 
-            this.db.put(LevelDBKey.VERSION.getKey(x, z), new byte[]{7});
+            batch.put(LevelDBKey.VERSION.getKey(x, z), new byte[]{7});
 
-            BlockEntitySerializer.saveBlockEntities(this.db, chunk);
-            EntitySerializer.saveEntities(this.db, chunk);
+            BlockEntitySerializer.saveBlockEntities(batch, chunk);
+            EntitySerializer.saveEntities(batch, chunk);
 
+            this.db.write(batch);
             return null;
         }, this.executor);
     }
 
     @Override
-    public void forEachChunk(BiConsumer<Chunk, Throwable> consumer) {
-        executor.execute(() -> {
+    public CompletableFuture<Void> forEachChunk(ChunkBuilder.Factory factory, BiConsumer<Chunk, Throwable> consumer) {
+        return CompletableFuture.runAsync(() -> {
             DBIterator iterator = this.db.iterator();
             while (iterator.hasNext()) {
                 Map.Entry<byte[], byte[]> entry = iterator.next();
                 // TODO: 06/01/2020 Add support for iterating chunks
             }
-        });
+        }, this.executor);
     }
 
     @Override
     public CompletableFuture<LoadState> loadLevelData(LevelData levelData) {
         checkForClosed();
-        CompletableFuture<LoadState> loadedFuture = new CompletableFuture<>();
 
-        this.executor.execute(() -> {
+        return CompletableFuture.supplyAsync(() -> {
             try {
-                Path dataPath = this.path.resolve("level.dat");
-
-                if (Files.notExists(dataPath)) {
-                    loadedFuture.complete(null);
-                    return;
-                }
-
-                CompoundTag tag;
-                try (InputStream stream = Files.newInputStream(dataPath)) {
-                    if (stream.skip(8) != 8) {
-                        throw new IOException("Corrupt level.dat size");
-                    }
-                    tag = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN, true);
-                }
-
-                loadedFuture.complete(LoadState.LOADED);
+                return LevelDBDataSerializer.INSTANCE.load(levelData, path, levelId);
             } catch (Exception e) {
-                loadedFuture.completeExceptionally(e);
+                throw new RuntimeException(e);
             }
-        });
-
-        return loadedFuture;
+        }, this.executor);
     }
 
     @Override
     public CompletableFuture<Void> saveLevelData(LevelData levelData) {
         checkForClosed();
-        CompletableFuture<Void> savedFuture = new CompletableFuture<>();
-        savedFuture.complete(null);
-        return savedFuture;
+        return CompletableFuture.runAsync(() -> {
+            try {
+                LevelDBDataSerializer.INSTANCE.save(levelData, path, levelId);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Override

@@ -1,7 +1,7 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Server;
-import cn.nukkit.entity.Human;
+import cn.nukkit.entity.impl.Human;
 import cn.nukkit.event.entity.EntityArmorChangeEvent;
 import cn.nukkit.event.entity.EntityInventoryChangeEvent;
 import cn.nukkit.event.player.PlayerItemHeldEvent;
@@ -73,7 +73,7 @@ public class PlayerInventory extends BaseInventory {
             }
 
             if (player.fishing != null) {
-                if (!(this.getItem(slot).equals(player.fishing.rod))) {
+                if (!(this.getItem(slot).equals(player.fishing.getRod()))) {
                     player.stopFishing(false);
                 }
             }

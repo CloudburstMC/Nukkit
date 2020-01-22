@@ -42,7 +42,7 @@ public class BlockWater extends BlockLiquid {
     public void onEntityCollide(Entity entity) {
         super.onEntityCollide(entity);
 
-        if (entity.fireTicks > 0) {
+        if (entity.isOnFire()) {
             entity.extinguish();
         }
     }

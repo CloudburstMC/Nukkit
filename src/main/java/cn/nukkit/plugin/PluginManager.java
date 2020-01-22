@@ -101,7 +101,7 @@ public class PluginManager {
                                 List<PluginCommand> pluginCommands = this.parseYamlCommands(plugin);
 
                                 if (!pluginCommands.isEmpty()) {
-                                    this.commandMap.registerAll(plugin.getDescription().getName(), pluginCommands);
+                                    this.commandMap.registerAll(plugin, pluginCommands);
                                 }
 
                                 return plugin;

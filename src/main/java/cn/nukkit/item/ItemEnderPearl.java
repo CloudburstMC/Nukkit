@@ -2,7 +2,6 @@ package cn.nukkit.item;
 
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.EntityTypes;
-import cn.nukkit.entity.projectile.Projectile;
 import cn.nukkit.utils.Identifier;
 
 public class ItemEnderPearl extends ProjectileItem {
@@ -17,7 +16,7 @@ public class ItemEnderPearl extends ProjectileItem {
     }
 
     @Override
-    public EntityType<? extends Projectile> getProjectileEntityType() {
+    public EntityType<?> getProjectileEntityType() {
         return EntityTypes.ENDER_PEARL;
     }
 

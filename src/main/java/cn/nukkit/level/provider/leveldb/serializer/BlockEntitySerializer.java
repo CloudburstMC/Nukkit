@@ -9,6 +9,7 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import lombok.RequiredArgsConstructor;
 import org.iq80.leveldb.DB;
+import org.iq80.leveldb.WriteBatch;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,7 +41,7 @@ public class BlockEntitySerializer {
         builder.dataLoader(new BlockEntityLoader(blockEntityTags));
     }
 
-    public static void saveBlockEntities(DB db, Chunk chunk) {
+    public static void saveBlockEntities(WriteBatch db, Chunk chunk) {
         byte[] key = LevelDBKey.BLOCK_ENTITIES.getKey(chunk.getX(), chunk.getZ());
         if (chunk.getBlockEntities().isEmpty()) {
             db.delete(key);

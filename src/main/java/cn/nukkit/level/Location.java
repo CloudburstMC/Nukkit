@@ -130,8 +130,8 @@ public class Location extends Position {
     }
 
     @Override
-    public Location multiply(double number) {
-        return new Location(this.x * number, this.y * number, this.z * number, this.yaw, this.pitch, this.level);
+    public Location multiply(double val) {
+        return new Location(this.x * val, this.y * val, this.z * val, this.yaw, this.pitch, this.level);
     }
 
     @Override

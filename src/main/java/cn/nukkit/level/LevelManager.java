@@ -15,9 +15,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Log4j2
 public class LevelManager implements Closeable {
+    private final ExecutorService chunkExecutor = Executors.newWorkStealingPool();
     private final Server server;
     private final Set<Level> levels = new HashSet<>();
     private final Map<String, Level> levelIds = new HashMap<>();
@@ -134,5 +137,9 @@ public class LevelManager implements Closeable {
                         new String[]{level.getId(), Utils.getExceptionMessage(e)}));
             }
         }
+    }
+
+    public ExecutorService getChunkExecutor() {
+        return chunkExecutor;
     }
 }

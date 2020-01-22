@@ -3,6 +3,7 @@ package cn.nukkit.level;
 import cn.nukkit.Server;
 import cn.nukkit.level.provider.LevelProvider;
 import cn.nukkit.level.provider.LevelProviderFactory;
+import cn.nukkit.registry.StorageRegistry;
 import cn.nukkit.utils.Identifier;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -10,6 +11,7 @@ import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -27,7 +29,6 @@ public class LevelBuilder {
     public LevelBuilder(Server server) {
         this.server = server;
         this.levelData = new LevelData(server.getDefaultLevelData());
-        this.storageId = server.getDefaultStorageId();
     }
 
     public LevelBuilder id(String id) {
@@ -37,7 +38,7 @@ public class LevelBuilder {
     }
 
     public LevelBuilder seed(long seed) {
-        this.levelData.setSeed(seed);
+        this.levelData.setRandomSeed(seed);
         return this;
     }
 
@@ -65,8 +66,17 @@ public class LevelBuilder {
         if (loadedLevel != null) {
             return CompletableFuture.completedFuture(loadedLevel);
         }
+        final Path worldsPath = Paths.get(server.getDataPath()).resolve("worlds");
 
-        final Executor executor = this.server.getScheduler().getAsyncPool();
+        // If storageId isn't set detect or set default.
+        if (storageId == null) {
+            storageId = StorageRegistry.get().detectStorage(id, worldsPath);
+            if (storageId == null) {
+                storageId = server.getDefaultStorageId();
+            }
+        }
+
+        final Executor executor = this.server.getLevelManager().getChunkExecutor();
 
         // Load chunk provider
         CompletableFuture<LevelProvider> providerFuture = CompletableFuture.supplyAsync(() -> {
@@ -76,8 +86,7 @@ public class LevelBuilder {
             }
             log.debug("Loading level provider: {}", id);
             try {
-                LevelProvider provider = factory.create(id, Paths.get(server.getDataPath()).resolve("worlds"),
-                        executor);
+                LevelProvider provider = factory.create(id, worldsPath, executor);
                 // Load level data
                 provider.loadLevelData(levelData);
                 return provider;

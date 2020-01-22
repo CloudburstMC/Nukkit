@@ -8,7 +8,6 @@ import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Utils;
-import com.google.common.base.Strings;
 import com.nukkitx.network.raknet.*;
 import com.nukkitx.network.util.DisconnectReason;
 import io.netty.buffer.ByteBuf;
@@ -26,6 +25,7 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Queue;
 import java.util.StringJoiner;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -46,13 +46,20 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
     private byte[] advertisement;
 
-    public RakNetInterface(Server server) {
+    public RakNetInterface(Server server) throws Exception {
         this.server = server;
 
-        InetSocketAddress bindAddress = new InetSocketAddress(Strings.isNullOrEmpty(this.server.getIp()) ? "0.0.0.0" : this.server.getIp(), this.server.getPort());
+        InetSocketAddress bindAddress = new InetSocketAddress(this.server.getIp(), this.server.getPort());
 
         this.raknet = new RakNetServer(bindAddress, Runtime.getRuntime().availableProcessors());
-        this.raknet.bind().join();
+        try {
+            this.raknet.bind().join();
+        } catch (CompletionException e) {
+            if (e.getCause() instanceof Exception) {
+                throw (Exception) e.getCause();
+            }
+            throw e;
+        }
         this.raknet.setListener(this);
     }
 

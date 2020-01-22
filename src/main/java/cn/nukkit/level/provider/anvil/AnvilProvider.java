@@ -13,19 +13,18 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufOutputStream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteOrder;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,6 +33,7 @@ import java.util.regex.Pattern;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 @ParametersAreNonnullByDefault
 class AnvilProvider implements LevelProvider {
 
@@ -42,7 +42,7 @@ class AnvilProvider implements LevelProvider {
 
     private final String levelId;
 
-    private final Path dataPath;
+    private final Path levelPath;
 
     private final Path regionsPath;
 
@@ -55,9 +55,8 @@ class AnvilProvider implements LevelProvider {
     AnvilProvider(String levelId, Path levelsPath, Executor executor) throws IOException {
         this.levelId = levelId;
         this.executor = executor;
-        Path levelPath = levelsPath.resolve(levelId);
-        this.dataPath = levelPath.resolve("level.dat");
-        this.regionsPath = levelPath.resolve("region");
+        this.levelPath = levelsPath.resolve(levelId);
+        this.regionsPath = this.levelPath.resolve("region");
 
         // Check for valid files
         Files.createDirectories(regionsPath);
@@ -157,41 +156,75 @@ class AnvilProvider implements LevelProvider {
     }
 
     @Override
-    public void forEachChunk(BiConsumer<Chunk, Throwable> consumer) {
+    public CompletableFuture<Void> forEachChunk(ChunkBuilder.Factory factory, BiConsumer<Chunk, Throwable> consumer) {
         checkForClosed();
 
-        this.executor.execute(() -> {
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(this.regionsPath, "*.mca")) {
-                for (Path path : stream) {
-                    RegionPosition position = RegionPosition.fromPath(path);
-                    if (position == null) {
-                        continue;
-                    }
+        int workers = 1;
+        if (this.executor instanceof ForkJoinPool) {
+            workers = ((ForkJoinPool) this.executor).getParallelism();
+        }
 
-                    RegionFile regionFile = new RegionFile(path);
+        log.info("Using {} workers to convert", workers);
 
-                    for (int x = 0; x < 32; x++) {
-                        for (int z = 0; z < 32; z++) {
-                            if (!regionFile.hasChunk(x, z)) {
-                                continue;
+        //noinspection unchecked
+        List<Path>[] paths = new List[workers];
+
+        for (int i = 0; i < workers; i++) {
+            paths[i] = new ArrayList<>();
+        }
+
+        int counter = 0;
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(this.regionsPath, "*.mca")) {
+            for (Path path : stream) {
+                paths[counter++ % workers].add(path);
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+
+        CompletableFuture<?>[] futures = new CompletableFuture[workers];
+
+        for (int i = 0; i < workers; i++) {
+            final List<Path> pathList = paths[i];
+
+            futures[i] = CompletableFuture.runAsync(() -> {
+                try {
+                    for (Path path : pathList) {
+                        RegionPosition regionPos = RegionPosition.fromPath(path);
+                        if (regionPos == null) {
+                            continue;
+                        }
+
+                        RegionFile regionFile = new RegionFile(path);
+
+                        for (int x = 0; x < 32; x++) {
+                            for (int z = 0; z < 32; z++) {
+                                if (!regionFile.hasChunk(x, z)) {
+                                    continue;
+                                }
+                                int chunkX = regionPos.x << 5 | x;
+                                int chunkZ = regionPos.z << 5 | z;
+                                ChunkBuilder builder = factory.create(chunkX, chunkZ);
+                                ByteBuf buffer = regionFile.readChunk(x, z);
+                                try {
+                                    AnvilConverter.convertToNukkit(builder, buffer);
+                                } catch (Exception e) {
+                                    consumer.accept(null, e);
+                                    continue;
+                                } finally {
+                                    buffer.release();
+                                }
+                                consumer.accept(builder.build(), null);
                             }
-                            int chunkX = position.x << 5 | x;
-                            int chunkZ = position.z << 5 | z;
-                            ChunkBuilder builder = new ChunkBuilder(chunkX, chunkZ);
-                            try {
-                                AnvilConverter.convertToNukkit(builder, regionFile.readChunk(x, z));
-                            } catch (Exception e) {
-                                consumer.accept(null, e);
-                                continue;
-                            }
-                            consumer.accept(builder.build(), null);
                         }
                     }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+            }, this.executor);
+        }
+
+        return CompletableFuture.allOf(futures);
     }
 
     @Override
@@ -200,16 +233,7 @@ class AnvilProvider implements LevelProvider {
 
         return CompletableFuture.supplyAsync(() -> {
             try {
-                if (Files.notExists(this.dataPath)) {
-                    return LoadState.NOT_FOUND;
-                }
-
-                CompoundTag tag;
-                try (InputStream stream = Files.newInputStream(this.dataPath)) {
-                    tag = NBTIO.readCompressed(stream, ByteOrder.BIG_ENDIAN);
-                }
-
-                return LoadState.LOADED;
+                return AnvilDataSerializer.INSTANCE.load(levelData, this.levelPath, this.levelId);
             } catch (IOException e) {
                 throw new CompletionException(e);
             }
@@ -219,10 +243,13 @@ class AnvilProvider implements LevelProvider {
     @Override
     public CompletableFuture<Void> saveLevelData(LevelData levelData) {
         checkForClosed();
-        CompletableFuture<Void> savedFuture = new CompletableFuture<>();
-        savedFuture.complete(null);
-
-        return savedFuture;
+        return CompletableFuture.runAsync(() -> {
+            try {
+                AnvilDataSerializer.INSTANCE.save(levelData, this.levelPath, this.levelId);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Override
@@ -249,12 +276,12 @@ class AnvilProvider implements LevelProvider {
         @Nullable
         static RegionPosition fromPath(Path regionPath) {
             Matcher matcher = PATTERN.matcher(regionPath.getFileName().toString());
-            if (!matcher.find()) {
+            if (!matcher.matches()) {
                 return null;
             }
             int x = Integer.parseInt(matcher.group(1));
             int z = Integer.parseInt(matcher.group(2));
-            return fromChunk(x, z);
+            return new RegionPosition(x, z);
         }
 
         String getFileName() {

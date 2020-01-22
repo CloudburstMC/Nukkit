@@ -500,7 +500,7 @@ public class Server {
         this.network.setName(this.getMotd());
         this.network.setSubName(this.getSubMotd());
 
-        log.info(this.getLanguage().translateString("nukkit.server.info", this.getName(), TextFormat.YELLOW + this.getNukkitVersion() + TextFormat.WHITE, TextFormat.AQUA + this.getCodename() + TextFormat.WHITE, this.getApiVersion()));
+        log.info(this.getLanguage().translateString("nukkit.server.info", this.getName(), TextFormat.YELLOW + this.getNukkitVersion() + TextFormat.WHITE, TextFormat.AQUA + "" + TextFormat.WHITE, this.getApiVersion()));
         log.info(this.getLanguage().translateString("nukkit.server.license", this.getName()));
 
         this.consoleSender = new ConsoleCommandSender();
@@ -528,7 +528,13 @@ public class Server {
 
         this.queryRegenerateEvent = new QueryRegenerateEvent(this, 5);
 
-        this.network.registerInterface(new RakNetInterface(this));
+        try {
+            this.network.registerInterface(new RakNetInterface(this));
+        } catch (Exception e) {
+            log.fatal("**** FAILED TO BIND TO " + getIp() + ":" + getPort() + "!");
+            log.fatal("Perhaps a server is already running on that port?");
+            this.forceShutdown();
+        }
 
         this.pluginManager.loadPlugins(this.pluginPath);
 
@@ -554,14 +560,16 @@ public class Server {
             throw new IllegalStateException("Unable to close registries", e);
         }
 
-        Identifier storageId = Identifier.fromString(this.getConfig().get(
-                "level-settings.default-format", "minecraft:anvil"));
-        if (storageRegistry.isRegistered(storageId)) {
-            this.defaultStorageId = storageId;
+        Identifier defaultStorageId = Identifier.fromString(this.getConfig().get(
+                "level-settings.default-format", "minecraft:leveldb"));
+        if (storageRegistry.isRegistered(defaultStorageId)) {
+            this.defaultStorageId = defaultStorageId;
         } else {
             log.warn("Unknown default storage type. Reverting to 'minecraft:leveldb' instead");
             this.defaultStorageId = StorageIds.LEVELDB;
         }
+
+        Path worldsPath = Paths.get(getDataPath()).resolve("worlds");
 
         List<CompletableFuture<Level>> levelFutures = new ArrayList<>();
         Set<String> worldNames = this.getConfig("worlds", Collections.<String, Object>emptyMap()).keySet();
@@ -573,7 +581,7 @@ public class Server {
                 seed = System.currentTimeMillis();
             }
 
-            LevelBuilder levelBuilder = this.loadLevel().id(name).seed(seed).storage(defaultStorageId);
+            LevelBuilder levelBuilder = this.loadLevel().id(name).seed(seed);
 
             String[] opts = this.getConfig("worlds." + name + ".generator", generatorRegistry.getFallback().toString())
                     .split(",");
@@ -618,9 +626,9 @@ public class Server {
                 } else {
                     seed = System.currentTimeMillis();
                 }
+
                 defaultLevel = this.loadLevel().id(defaultName)
                         .seed(seed)
-                        .storage(defaultStorageId)
                         .generator(GeneratorIds.NORMAL)
                         .load().join();
             }
@@ -1134,10 +1142,6 @@ public class Server {
 
     public String getNukkitVersion() {
         return Nukkit.VERSION;
-    }
-
-    public String getCodename() {
-        return Nukkit.CODENAME;
     }
 
     public String getVersion() {
@@ -1827,7 +1831,7 @@ public class Server {
 
         try (InputStream stream = new FileInputStream(propertiesFile)) {
             this.properties.load(stream);
-        } catch (NoSuchFileException e) {
+        } catch (FileNotFoundException | NoSuchFileException e) {
             this.saveProperties();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -2071,6 +2075,10 @@ public class Server {
     }
 
     private class ConsoleThread extends Thread implements InterruptibleThread {
+
+        private ConsoleThread() {
+            super("Console Thread");
+        }
 
         @Override
         public void run() {

@@ -22,7 +22,7 @@ public class GameruleCommand extends VanillaCommand {
         this.setPermission("nukkit.command.gamerule");
         this.commandParameters.clear();
         this.commandParameters.put("byString", new CommandParameter[]{
-                new CommandParameter("gamerule", true, this.registry.getRules().toArray(new String[0])),
+                new CommandParameter("gamerule", true, this.registry.getRuleNames().toArray(new String[0])),
                 new CommandParameter("value", CommandParamType.STRING, true)
         });
     }
@@ -42,7 +42,7 @@ public class GameruleCommand extends VanillaCommand {
         switch (args.length) {
             case 0:
                 StringJoiner rulesJoiner = new StringJoiner(", ");
-                for (String rule : this.registry.getRules()) {
+                for (String rule : this.registry.getRuleNames()) {
                     rulesJoiner.add(rule.toLowerCase());
                 }
                 sender.sendMessage(rulesJoiner.toString());

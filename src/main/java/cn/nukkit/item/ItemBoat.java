@@ -48,10 +48,6 @@ public class ItemBoat extends Item {
                         .putByte("woodID", this.getDamage())
         );
 
-        if (boat == null) {
-            return false;
-        }
-
         if (player.isSurvival()) {
             Item item = player.getInventory().getItemInHand();
             item.setCount(item.getCount() - 1);

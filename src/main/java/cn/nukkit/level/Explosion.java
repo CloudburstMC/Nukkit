@@ -145,10 +145,10 @@ public class Explosion {
 
         Set<Entity> entities = this.level.getNearbyEntities(explosionBB, this.what instanceof Entity ? (Entity) this.what : null);
         for (Entity entity : entities) {
-            double distance = entity.distance(this.source) / explosionSize;
+            double distance = entity.getPosition().distance(this.source) / explosionSize;
 
             if (distance <= 1) {
-                Vector3f motion = entity.subtract(this.source).normalize();
+                Vector3f motion = entity.getPosition().subtract(this.source).normalize();
                 int exposure = 1;
                 double impact = (1 - distance) * exposure;
                 int damage = (int) (((impact * impact + impact) / 2) * 8 * explosionSize + 1);

@@ -1,8 +1,9 @@
 package cn.nukkit.dispenser;
 
 import cn.nukkit.block.BlockDispenser;
-import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
+import cn.nukkit.entity.Projectile;
+import cn.nukkit.entity.impl.BaseEntity;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.BlockFace;
@@ -15,25 +16,25 @@ import cn.nukkit.registry.EntityRegistry;
  */
 public class ProjectileDispenseBehavior implements DispenseBehavior {
 
-    private EntityType<?> entityType;
+    private EntityType<? extends Projectile> entityType;
 
     public ProjectileDispenseBehavior() {
 
     }
 
-    public ProjectileDispenseBehavior(EntityType<?> entity) {
+    public ProjectileDispenseBehavior(EntityType<? extends Projectile> entity) {
         this.entityType = entity;
     }
 
     @Override
     public void dispense(BlockDispenser source, Item item) {
         Position dispensePos = Position.fromObject(source.getDispensePosition(), source.getLevel());
-        CompoundTag nbt = Entity.getDefaultNBT(dispensePos);
+        CompoundTag nbt = BaseEntity.getDefaultNBT(dispensePos);
         this.correctNBT(nbt);
 
         BlockFace face = source.getFacing();
 
-        Entity projectile = EntityRegistry.get().newEntity(getEntityType(), dispensePos.getLevel().getChunk(dispensePos.getFloorX(), dispensePos.getFloorZ()), nbt);
+        Projectile projectile = EntityRegistry.get().newEntity(entityType, dispensePos.getLevel().getChunk(dispensePos.getFloorX(), dispensePos.getFloorZ()), nbt);
         if (projectile == null) {
             return;
         }

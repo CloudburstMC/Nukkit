@@ -2,11 +2,13 @@ package cn.nukkit.registry;
 
 import cn.nukkit.level.gamerule.*;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,7 +52,11 @@ public class GameRuleRegistry implements Registry {
         return gameRules;
     }
 
-    public Set<String> getRules() {
+    public List<GameRule<?>> getRules() {
+        return ImmutableList.copyOf(this.registered.values());
+    }
+
+    public Set<String> getRuleNames() {
         return ImmutableSet.copyOf(this.registered.keySet());
     }
 

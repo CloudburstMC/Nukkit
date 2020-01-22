@@ -37,6 +37,7 @@ public class AnvilConverter {
             if (!nbt.contains("Level") || !(nbt.get("Level") instanceof CompoundTag)) {
                 throw new IllegalArgumentException("No level tag found in chunk data");
             }
+            nbt = nbt.getCompound("Level");
         }
 
         ChunkSection[] sections = new ChunkSection[Chunk.SECTION_COUNT];

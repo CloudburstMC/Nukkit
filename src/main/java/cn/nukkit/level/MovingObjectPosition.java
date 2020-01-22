@@ -42,7 +42,7 @@ public class MovingObjectPosition {
         MovingObjectPosition objectPosition = new MovingObjectPosition();
         objectPosition.typeOfHit = 1;
         objectPosition.entityHit = entity;
-        objectPosition.hitVector = new Vector3f(entity.x, entity.y, entity.z);
+        objectPosition.hitVector = new Vector3f(entity.getX(), entity.getY(), entity.getZ());
         return objectPosition;
     }
 }

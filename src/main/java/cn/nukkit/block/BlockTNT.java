@@ -12,6 +12,7 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
@@ -78,8 +79,8 @@ public class BlockTNT extends BlockSolid {
                         .add(new FloatTag("", 0))
                         .add(new FloatTag("", 0)))
                 .putShort("Fuse", fuse);
-        Entity tnt = new Tnt(EntityTypes.TNT,
-                this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt, source);
+        Tnt tnt = EntityRegistry.get().newEntity(EntityTypes.TNT, this.getChunk(), nbt);
+        tnt.setSource(source);
         tnt.spawnToAll();
         this.level.addSound(this.asVector3f(), Sound.RANDOM_FUSE);
     }

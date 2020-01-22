@@ -88,7 +88,7 @@ public class PlayerChunkManager {
                 chunk.addLoader(this.player);
                 // Spawn entities
                 for (Entity entity : chunk.getEntities()) {
-                    if (this.player != entity && !entity.closed && entity.isAlive()) {
+                    if (entity != this.player && !entity.isClosed() && entity.isAlive()) {
                         entity.spawnTo(this.player);
                     }
                 }

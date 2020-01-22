@@ -83,7 +83,7 @@ public class BlockRegistry implements Registry {
         // generate runtime ID
         int runtimeId = this.runtimeIdAllocator.getAndIncrement();
         if (this.factoryMap.putIfAbsent(id, UNKNOWN_FACTORY) == null) {
-            log.debug("No factory found for {}", id);
+            log.debug("Non-implemented block found {}", id);
         }
         Block block = this.factoryMap.get(id).create(id);
         block.setDamage(meta);

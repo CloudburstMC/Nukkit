@@ -9,6 +9,7 @@ import io.netty.buffer.Unpooled;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.iq80.leveldb.DB;
+import org.iq80.leveldb.WriteBatch;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 class ChunkSerializerV1 implements ChunkSerializer {
@@ -16,7 +17,7 @@ class ChunkSerializerV1 implements ChunkSerializer {
     static final ChunkSerializer INSTANCE = new ChunkSerializerV1();
 
     @Override
-    public void serialize(DB db, Chunk chunk) {
+    public void serialize(WriteBatch db, Chunk chunk) {
         throw new UnsupportedOperationException();
     }
 

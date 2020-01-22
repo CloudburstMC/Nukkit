@@ -13,14 +13,14 @@ public class EntityExitVehicleEvent extends VehicleEvent implements Cancellable 
         return handlers;
     }
 
-    private final cn.nukkit.entity.Entity riding;
+    private final Entity riding;
 
-    public EntityExitVehicleEvent(cn.nukkit.entity.Entity riding, Entity vehicle) {
+    public EntityExitVehicleEvent(Entity riding, Entity vehicle) {
         super(vehicle);
         this.riding = riding;
     }
 
-    public cn.nukkit.entity.Entity getEntity() {
+    public Entity getEntity() {
         return riding;
     }
 

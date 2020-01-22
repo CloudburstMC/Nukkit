@@ -30,12 +30,6 @@ public class ChunkBuilder {
         this.level = Preconditions.checkNotNull(level, "level");
     }
 
-    public ChunkBuilder(int x, int z) {
-        this.x = x;
-        this.z = z;
-        this.level = null;
-    }
-
     public int getX() {
         return x;
     }
@@ -101,5 +95,10 @@ public class ChunkBuilder {
         chunk.setPopulated(this.populated);
         chunk.setDirty(this.dirty);
         return chunk;
+    }
+
+    public interface Factory {
+
+        ChunkBuilder create(int x, int z);
     }
 }

@@ -118,8 +118,12 @@ public class Vector3f implements Cloneable {
         return this.add(-x.getX(), -x.getY(), -x.getZ());
     }
 
-    public Vector3f multiply(double number) {
-        return new Vector3f(this.x * number, this.y * number, this.z * number);
+    public Vector3f multiply(double val) {
+        return new Vector3f(this.x * val, this.y * val, this.z * val);
+    }
+
+    public Vector3f multiply(double x, double y, double z) {
+        return new Vector3f(this.x * x, this.y * y, this.z * z);
     }
 
     public Vector3f divide(double number) {
@@ -226,7 +230,7 @@ public class Vector3f implements Cloneable {
         return Math.max(Math.abs(this.x - x), Math.abs(this.z - z));
     }
 
-    public double maxPlainDistance(Vector2 vector) {
+    public double maxPlainDistance(Vector2f vector) {
         return this.maxPlainDistance(vector.x, vector.y);
     }
 

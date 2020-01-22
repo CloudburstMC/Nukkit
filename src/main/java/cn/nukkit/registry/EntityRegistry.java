@@ -3,29 +3,27 @@ package cn.nukkit.registry;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityFactory;
 import cn.nukkit.entity.EntityType;
-import cn.nukkit.entity.Human;
-import cn.nukkit.entity.hostile.*;
-import cn.nukkit.entity.misc.*;
-import cn.nukkit.entity.passive.*;
-import cn.nukkit.entity.projectile.*;
-import cn.nukkit.entity.vehicle.*;
+import cn.nukkit.entity.impl.Human;
+import cn.nukkit.entity.impl.hostile.*;
+import cn.nukkit.entity.impl.misc.*;
+import cn.nukkit.entity.impl.passive.*;
+import cn.nukkit.entity.impl.projectile.*;
+import cn.nukkit.entity.impl.vehicle.*;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.Identifier;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.nukkitx.network.raknet.util.FastBinaryMinHeap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,7 +77,7 @@ public class EntityRegistry implements Registry {
 
     private final BiMap<Identifier, EntityType<?>> identifierTypeMap = HashBiMap.create();
     private final AtomicLong entityIdAllocator = new AtomicLong();
-    private final Map<EntityType<?>, EntityData> dataMap = new IdentityHashMap<>();
+    private final Map<EntityType<?>, EntityData<?>> dataMap = new IdentityHashMap<>();
     private final Int2ObjectMap<EntityType<?>> runtimeTypeMap = new Int2ObjectOpenHashMap<>();
     private final Object2IntMap<EntityType<?>> typeToRuntimeMap = new Object2IntLinkedOpenHashMap<>();
     private final int customEntityStart;
@@ -96,24 +94,24 @@ public class EntityRegistry implements Registry {
         return INSTANCE;
     }
 
-    public synchronized <T extends Entity> void register(EntityType<T> type, EntityFactory<T> factory, int weight,
-                                                         boolean hasSpawnEgg) {
-        this.registerInternal(type, factory, this.runtimeTypeAllocator++, weight, hasSpawnEgg);
+    public synchronized <T extends Entity> void register(Plugin plugin, EntityType<T> type, EntityFactory<T> factory,
+                                                         int priority, boolean hasSpawnEgg) {
+        this.registerInternal(plugin, type, factory, this.runtimeTypeAllocator++, priority, hasSpawnEgg);
     }
 
     private <T extends Entity> void registerVanilla(EntityType<T> type, EntityFactory<T> factory, int legacyId) {
-        this.registerInternal(type, factory, legacyId, 100, false); // Vanilla NBT decides
+        this.registerInternal(null, type, factory, legacyId, 1000, false); // Vanilla NBT decides
     }
 
-    private synchronized <T extends Entity> void registerInternal(EntityType<T> type, EntityFactory<T> factory,
-                                                                  int runtimeType, int weight, boolean hasSpawnEgg)
+    private synchronized <T extends Entity> void registerInternal(Plugin plugin, EntityType<T> type, EntityFactory<T> factory,
+                                                                  int runtimeType, int priority, boolean hasSpawnEgg)
             throws RegistryException {
         checkClosed();
         checkNotNull(type, "type");
         checkNotNull(factory, "factory");
         EntityType<?> existingType = this.identifierTypeMap.get(type.getIdentifier());
 
-        if (existingType == null) { // new
+        if (existingType == null) { // new entity
             if (runtimeType >= this.runtimeTypeAllocator) {
                 this.runtimeTypeAllocator = runtimeType + 1;
             }
@@ -121,12 +119,14 @@ public class EntityRegistry implements Registry {
             this.runtimeTypeMap.put(runtimeType, type);
             this.typeToRuntimeMap.put(type, runtimeType);
             this.identifierTypeMap.put(type.getIdentifier(), type);
-            EntityData entityData = new EntityData(hasSpawnEgg);
-            entityData.factories.insert(weight, factory);
+
+            EntityData<T> entityData = new EntityData<>(hasSpawnEgg, new RegistryProvider<>(factory, plugin, priority));
             this.dataMap.put(type, entityData);
-        } else if (existingType == type) { // existing
-            this.dataMap.get(type).factories.insert(weight, factory);
-        } else { // invalid
+        } else if (existingType == type) { // existing - add plugin's factory if one does not exist
+            RegistryProvider<EntityFactory<T>> provider = new RegistryProvider<>(factory, plugin, priority);
+            //noinspection unchecked
+            ((EntityData<T>) this.dataMap.get(type)).serviceProvider.add(provider);
+        } else { // invalid - registering EntityType with used identifier.
             throw new RegistryException(type.getIdentifier() + " is already registered");
         }
     }
@@ -153,15 +153,34 @@ public class EntityRegistry implements Registry {
      * @return new entity
      */
     public <T extends Entity> T newEntity(EntityType<T> type, Chunk chunk, CompoundTag tag) {
+        checkState(closed, "Cannot create entity till registry is closed");
         checkNotNull(type, "type");
         checkNotNull(chunk, "chunk");
         checkNotNull(tag, "tag");
-        FastBinaryMinHeap<EntityFactory<?>> factories = this.dataMap.get(type).factories;
-        if (factories == null) {
-            throw new RegistryException(type.getIdentifier() + " is not a registered entity");
+        EntityFactory<T> factory = getServiceProvider(type).getProvider().getValue();
+        return factory.create(type, chunk, tag);
+    }
+
+    /**
+     * Creates new entity of given type from specific plugin factory
+     *
+     * @param type  entity type
+     * @param chunk chunk entity is in
+     * @param tag   compound tag with entity data
+     * @param <T>   entity class type
+     * @return new entity
+     */
+    public <T extends Entity> T newEntity(EntityType<T> type, Plugin plugin, Chunk chunk, CompoundTag tag) {
+        checkState(closed, "Cannot create entity till registry is closed");
+        checkNotNull(type, "type");
+        checkNotNull(plugin, "plugin");
+        checkNotNull(chunk, "chunk");
+        checkNotNull(tag, "tag");
+        RegistryProvider<EntityFactory<T>> provider = getServiceProvider(type).getProvider(plugin);
+        if (provider == null) {
+            throw new RegistryException("Plugin has no registered provider for " + type.getIdentifier());
         }
-        //noinspection unchecked
-        return ((EntityFactory<T>) factories.peek()).create(type, chunk, tag);
+        return provider.getValue().create(type, chunk, tag);
     }
 
     /**
@@ -185,10 +204,21 @@ public class EntityRegistry implements Registry {
         return cachedEntityIdentifiers;
     }
 
+    @SuppressWarnings("unchecked")
+    private <T extends Entity> RegistryServiceProvider<EntityFactory<T>> getServiceProvider(EntityType<T> type) {
+        EntityData<T> entityData = (EntityData<T>) this.dataMap.get(type);
+        if (entityData == null) {
+            throw new RegistryException(type.getIdentifier() + " is not a registered entity");
+        }
+        return entityData.serviceProvider;
+    }
+
     @Override
     public synchronized void close() throws RegistryException {
         checkClosed();
-        this.closed = true;
+
+        // Bake registry providers
+        this.dataMap.values().forEach(entityData -> entityData.serviceProvider.bake());
 
         // generate cache
 
@@ -196,7 +226,7 @@ public class EntityRegistry implements Registry {
 
         for (int id = customEntityStart; id < runtimeTypeAllocator; id++) {
             EntityType<?> type = this.runtimeTypeMap.get(id);
-            EntityData data = this.dataMap.get(type);
+            EntityData<?> data = this.dataMap.get(type);
 
             entityIdentifiers.add(new CompoundTag()
                     .putBoolean("summonable", true) // TODO: 07/01/2020 This affects the summon command auto completion
@@ -216,6 +246,7 @@ public class EntityRegistry implements Registry {
         } catch (IOException e) {
             throw new RegistryException("Unable to create entity identifiers cache");
         }
+        this.closed = true;
     }
 
     private void checkClosed() {
@@ -223,93 +254,97 @@ public class EntityRegistry implements Registry {
     }
 
     private void registerVanillaEntities() {
-        registerVanilla(CHICKEN, Chicken::new, 10);
-        registerVanilla(COW, Cow::new, 11);
-        registerVanilla(PIG, Pig::new, 12);
-        registerVanilla(SHEEP, Sheep::new, 13);
-        registerVanilla(WOLF, Wolf::new, 14);
-        registerVanilla(DEPRECATED_VILLAGER, DeprecatedVillager::new, 15);
-        registerVanilla(MOOSHROOM, Mooshroom::new, 16);
-        registerVanilla(SQUID, Squid::new, 17);
-        registerVanilla(RABBIT, Rabbit::new, 18);
-        registerVanilla(BAT, Bat::new, 19);
-        registerVanilla(OCELOT, Ocelot::new, 22);
-        registerVanilla(HORSE, Horse::new, 23);
-        registerVanilla(DONKEY, Donkey::new, 24);
-        registerVanilla(MULE, Mule::new, 25);
-        registerVanilla(SKELETON_HORSE, SkeletonHorse::new, 26);
-        registerVanilla(ZOMBIE_HORSE, ZombieHorse::new, 27);
-        registerVanilla(POLAR_BEAR, PolarBear::new, 28);
-        registerVanilla(LLAMA, Llama::new, 29);
-        registerVanilla(PARROT, Parrot::new, 30);
-        registerVanilla(DOLPHIN, Dolphin::new, 31);
-        registerVanilla(ZOMBIE, Zombie::new, 32);
-        registerVanilla(CREEPER, Creeper::new, 33);
-        registerVanilla(SKELETON, Skeleton::new, 34);
-        registerVanilla(SPIDER, Spider::new, 35);
-        registerVanilla(ZOMBIE_PIGMAN, ZombiePigman::new, 36);
-        registerVanilla(SLIME, Slime::new, 37);
-        registerVanilla(ENDERMAN, Enderman::new, 38);
-        registerVanilla(SILVERFISH, Silverfish::new, 39);
-        registerVanilla(CAVE_SPIDER, CaveSpider::new, 40);
-        registerVanilla(GHAST, Ghast::new, 41);
-        registerVanilla(MAGMA_CUBE, MagmaCube::new, 42);
-        registerVanilla(BLAZE, Blaze::new, 43);
-        registerVanilla(DEPRECATED_ZOMBIE_VILLAGER, DeprecatedZombieVillager::new, 44);
-        registerVanilla(WITCH, Witch::new, 45);
-        registerVanilla(STRAY, Stray::new, 46);
-        registerVanilla(HUSK, Husk::new, 47);
-        registerVanilla(WITHER_SKELETON, WitherSkeleton::new, 48);
-        registerVanilla(GUARDIAN, Guardian::new, 49);
-        registerVanilla(ELDER_GUARDIAN, ElderGuardian::new, 50);
-        registerVanilla(WITHER, Wither::new, 52);
-        registerVanilla(ENDER_DRAGON, EnderDragon::new, 53);
-        registerVanilla(SHULKER, Shulker::new, 54);
-        registerVanilla(ENDERMITE, Endermite::new, 55);
-        registerVanilla(VINDICATOR, Vindicator::new, 57);
-        registerVanilla(PHANTOM, Phantom::new, 58);
-        registerVanilla(RAVAGER, Ravager::new, 59);
+        registerVanilla(CHICKEN, EntityChicken::new, 10);
+        registerVanilla(COW, EntityCow::new, 11);
+        registerVanilla(PIG, EntityPig::new, 12);
+        registerVanilla(SHEEP, EntitySheep::new, 13);
+        registerVanilla(WOLF, EntityWolf::new, 14);
+        registerVanilla(DEPRECATED_VILLAGER, EntityDeprecatedVillager::new, 15);
+        registerVanilla(MOOSHROOM, EntityMooshroom::new, 16);
+        registerVanilla(SQUID, EntitySquid::new, 17);
+        registerVanilla(RABBIT, EntityRabbit::new, 18);
+        registerVanilla(BAT, EntityBat::new, 19);
+        registerVanilla(OCELOT, EntityOcelot::new, 22);
+        registerVanilla(HORSE, EntityHorse::new, 23);
+        registerVanilla(DONKEY, EntityDonkey::new, 24);
+        registerVanilla(MULE, EntityMule::new, 25);
+        registerVanilla(SKELETON_HORSE, EntitySkeletonHorse::new, 26);
+        registerVanilla(ZOMBIE_HORSE, EntityZombieHorse::new, 27);
+        registerVanilla(POLAR_BEAR, EntityPolarBear::new, 28);
+        registerVanilla(LLAMA, EntityLlama::new, 29);
+        registerVanilla(PARROT, EntityParrot::new, 30);
+        registerVanilla(DOLPHIN, EntityDolphin::new, 31);
+        registerVanilla(ZOMBIE, EntityZombie::new, 32);
+        registerVanilla(CREEPER, EntityCreeper::new, 33);
+        registerVanilla(SKELETON, EntitySkeleton::new, 34);
+        registerVanilla(SPIDER, EntitySpider::new, 35);
+        registerVanilla(ZOMBIE_PIGMAN, EntityZombiePigman::new, 36);
+        registerVanilla(SLIME, EntitySlime::new, 37);
+        registerVanilla(ENDERMAN, EntityEnderman::new, 38);
+        registerVanilla(SILVERFISH, EntitySilverfish::new, 39);
+        registerVanilla(CAVE_SPIDER, EntityCaveSpider::new, 40);
+        registerVanilla(GHAST, EntityGhast::new, 41);
+        registerVanilla(MAGMA_CUBE, EntityMagmaCube::new, 42);
+        registerVanilla(BLAZE, EntityBlaze::new, 43);
+        registerVanilla(DEPRECATED_ZOMBIE_VILLAGER, EntityDeprecatedZombieVillager::new, 44);
+        registerVanilla(WITCH, EntityWitch::new, 45);
+        registerVanilla(STRAY, EntityStray::new, 46);
+        registerVanilla(HUSK, EntityHusk::new, 47);
+        registerVanilla(WITHER_SKELETON, EntityWitherSkeleton::new, 48);
+        registerVanilla(GUARDIAN, EntityGuardian::new, 49);
+        registerVanilla(ELDER_GUARDIAN, EntityElderGuardian::new, 50);
+        registerVanilla(WITHER, EntityWither::new, 52);
+        registerVanilla(ENDER_DRAGON, EntityEnderDragon::new, 53);
+        registerVanilla(SHULKER, EntityShulker::new, 54);
+        registerVanilla(ENDERMITE, EntityEndermite::new, 55);
+        registerVanilla(VINDICATOR, EntityVindicator::new, 57);
+        registerVanilla(PHANTOM, EntityPhantom::new, 58);
+        registerVanilla(RAVAGER, EntityRavager::new, 59);
         registerVanilla(PLAYER, Human::new, 63);
-        registerVanilla(ITEM, DroppedItem::new, 64);
-        registerVanilla(TNT, Tnt::new, 65);
-        registerVanilla(FALLING_BLOCK, FallingBlock::new, 66);
-        registerVanilla(XP_BOTTLE, XpBottle::new, 68);
-        registerVanilla(XP_ORB, XpOrb::new, 69);
-        registerVanilla(ENDER_CRYSTAL, EnderCrystal::new, 71);
-        registerVanilla(FIREWORKS_ROCKET, FireworksRocket::new, 72);
-        registerVanilla(THROWN_TRIDENT, ThrownTrident::new, 73);
-        registerVanilla(TURTLE, Turtle::new, 74);
-        registerVanilla(CAT, Cat::new, 75);
-        registerVanilla(FISHING_HOOK, FishingHook::new, 77);
-        registerVanilla(ARROW, Arrow::new, 80);
-        registerVanilla(SNOWBALL, Snowball::new, 81);
-        registerVanilla(EGG, Egg::new, 82);
-        registerVanilla(PAINTING, Painting::new, 83);
-        registerVanilla(MINECART, Minecart::new, 84);
-        registerVanilla(SPLASH_POTION, SplashPotion::new, 86);
-        registerVanilla(ENDER_PEARL, EnderPearl::new, 87);
-        registerVanilla(BOAT, Boat::new, 90);
-        registerVanilla(LIGHTNING_BOLT, LightningBolt::new, 93);
-        registerVanilla(HOPPER_MINECART, HopperMinecart::new, 96);
-        registerVanilla(TNT_MINECART, TntMinecart::new, 97);
-        registerVanilla(CHEST_MINECART, ChestMinecart::new, 98);
-        registerVanilla(EVOCATION_ILLAGER, EvocationIllager::new, 104);
-        registerVanilla(VEX, Vex::new, 105);
-        registerVanilla(PUFFERFISH, Pufferfish::new, 108);
-        registerVanilla(SALMON, Salmon::new, 109);
-        registerVanilla(DROWNED, Drowned::new, 110);
-        registerVanilla(TROPICALFISH, TropicalFish::new, 111);
-        registerVanilla(COD, Cod::new, 112);
-        registerVanilla(PANDA, Panda::new, 113);
-        registerVanilla(PILLAGER, Pillager::new, 114);
-        registerVanilla(VILLAGER, Villager::new, 115);
-        registerVanilla(ZOMBIE_VILLAGER, ZombieVillager::new, 116);
-        registerVanilla(WANDERING_TRADER, WanderingTrader::new, 118);
+        registerVanilla(ITEM, EntityDroppedItem::new, 64);
+        registerVanilla(TNT, EntityTnt::new, 65);
+        registerVanilla(FALLING_BLOCK, EntityFallingBlock::new, 66);
+        registerVanilla(XP_BOTTLE, EntityXpBottle::new, 68);
+        registerVanilla(XP_ORB, EntityXpOrb::new, 69);
+        registerVanilla(ENDER_CRYSTAL, EntityEnderCrystal::new, 71);
+        registerVanilla(FIREWORKS_ROCKET, EntityFireworksRocket::new, 72);
+        registerVanilla(THROWN_TRIDENT, EntityThrownTrident::new, 73);
+        registerVanilla(TURTLE, EntityTurtle::new, 74);
+        registerVanilla(CAT, EntityCat::new, 75);
+        registerVanilla(FISHING_HOOK, EntityFishingHook::new, 77);
+        registerVanilla(ARROW, EntityArrow::new, 80);
+        registerVanilla(SNOWBALL, EntitySnowball::new, 81);
+        registerVanilla(EGG, EntityEgg::new, 82);
+        registerVanilla(PAINTING, EntityPainting::new, 83);
+        registerVanilla(MINECART, EntityMinecart::new, 84);
+        registerVanilla(SPLASH_POTION, EntitySplashPotion::new, 86);
+        registerVanilla(ENDER_PEARL, EntityEnderPearl::new, 87);
+        registerVanilla(BOAT, EntityBoat::new, 90);
+        registerVanilla(LIGHTNING_BOLT, EntityLightningBolt::new, 93);
+        registerVanilla(HOPPER_MINECART, EntityHopperMinecart::new, 96);
+        registerVanilla(TNT_MINECART, EntityTntMinecart::new, 97);
+        registerVanilla(CHEST_MINECART, EntityChestMinecart::new, 98);
+        registerVanilla(EVOCATION_ILLAGER, EntityEvocationIllager::new, 104);
+        registerVanilla(VEX, EntityVex::new, 105);
+        registerVanilla(PUFFERFISH, EntityPufferfish::new, 108);
+        registerVanilla(SALMON, EntitySalmon::new, 109);
+        registerVanilla(DROWNED, EntityDrowned::new, 110);
+        registerVanilla(TROPICALFISH, EntityTropicalFish::new, 111);
+        registerVanilla(COD, EntityCod::new, 112);
+        registerVanilla(PANDA, EntityPanda::new, 113);
+        registerVanilla(PILLAGER, EntityPillager::new, 114);
+        registerVanilla(VILLAGER, EntityVillager::new, 115);
+        registerVanilla(ZOMBIE_VILLAGER, EntityZombieVillager::new, 116);
+        registerVanilla(WANDERING_TRADER, EntityWanderingTrader::new, 118);
     }
 
-    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-    private static class EntityData {
+    private static class EntityData<T extends Entity> {
         private final boolean hasSpawnEgg;
-        private final FastBinaryMinHeap<EntityFactory<?>> factories = new FastBinaryMinHeap<>();
+        private final RegistryServiceProvider<EntityFactory<T>> serviceProvider;
+
+        private EntityData(boolean hasSpawnEgg, RegistryProvider<EntityFactory<T>> provider) {
+            this.hasSpawnEgg = hasSpawnEgg;
+            this.serviceProvider = new RegistryServiceProvider<>(provider);
+        }
     }
 }

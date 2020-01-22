@@ -1,7 +1,7 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.block.BlockEnderChest;
-import cn.nukkit.entity.Human;
+import cn.nukkit.entity.impl.Human;
 import cn.nukkit.level.Level;
 import cn.nukkit.network.protocol.BlockEventPacket;
 import cn.nukkit.network.protocol.ContainerClosePacket;

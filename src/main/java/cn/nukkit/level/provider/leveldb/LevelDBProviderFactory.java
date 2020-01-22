@@ -4,12 +4,14 @@ import cn.nukkit.level.provider.LevelProvider;
 import cn.nukkit.level.provider.LevelProviderFactory;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.concurrent.Executor;
 
+@Log4j2
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LevelDBProviderFactory implements LevelProviderFactory {
 
@@ -24,11 +26,11 @@ public class LevelDBProviderFactory implements LevelProviderFactory {
     public boolean isCompatible(String levelId, Path levelsPath) {
         Path levelPath = levelsPath.resolve(levelId);
         if (Files.isDirectory(levelPath)) {
-            Path regionPath = levelPath.resolve("region");
-            if (Files.isDirectory(regionPath)) {
+            Path dbPath = levelPath.resolve("db");
+            if (Files.isDirectory(dbPath)) {
                 Visitor visitor = new Visitor();
                 try {
-                    Files.walkFileTree(regionPath, visitor);
+                    Files.walkFileTree(dbPath, visitor);
                     return visitor.found;
                 } catch (IOException e) {
                     // ignore
@@ -39,13 +41,13 @@ public class LevelDBProviderFactory implements LevelProviderFactory {
     }
 
     private static class Visitor extends SimpleFileVisitor<Path> {
-        private static final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.ldb");
+        private static final PathMatcher PATH_MATCHER = FileSystems.getDefault().getPathMatcher("glob:**.ldb");
 
         private boolean found;
 
         @Override
         public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
-            if (matcher.matches(path)) {
+            if (PATH_MATCHER.matches(path)) {
                 found = true;
                 return FileVisitResult.TERMINATE;
             }

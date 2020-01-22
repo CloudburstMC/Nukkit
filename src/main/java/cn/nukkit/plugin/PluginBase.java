@@ -3,6 +3,7 @@ package cn.nukkit.plugin;
 import cn.nukkit.Server;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.PluginCommand;
 import cn.nukkit.command.PluginIdentifiableCommand;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
@@ -158,14 +159,15 @@ abstract public class PluginBase implements Plugin {
     /**
      * TODO: FINISH JAVADOC
      */
-    public PluginIdentifiableCommand getCommand(String name) {
+    public <T extends Plugin> PluginCommand<T> getCommand(String name) {
         PluginIdentifiableCommand command = this.getServer().getPluginCommand(name);
         if (command == null || !command.getPlugin().equals(this)) {
             command = this.getServer().getPluginCommand(this.description.getName().toLowerCase() + ":" + name);
         }
 
-        if (command != null && command.getPlugin().equals(this)) {
-            return command;
+        if (command instanceof PluginCommand && command.getPlugin().equals(this)) {
+            //noinspection unchecked
+            return (PluginCommand<T>) command;
         } else {
             return null;
         }
