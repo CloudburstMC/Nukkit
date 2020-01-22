@@ -174,7 +174,7 @@ class AnvilProvider implements LevelProvider {
         }
 
         int counter = 0;
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(this.regionsPath, "*.mca")) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(this.regionsPath, "**.mca")) {
             for (Path path : stream) {
                 paths[counter++ % workers].add(path);
             }
@@ -264,7 +264,7 @@ class AnvilProvider implements LevelProvider {
 
     @RequiredArgsConstructor
     private static class RegionPosition {
-        private static final Pattern PATTERN = Pattern.compile("^r\\.([0-9]+)\\.([0-9]+)\\.mca$");
+        private static final Pattern PATTERN = Pattern.compile("^r\\.(-?[0-9]+)\\.(-?[0-9]+)\\.mca$");
 
         private final int x;
         private final int z;
