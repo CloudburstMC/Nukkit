@@ -493,13 +493,6 @@ public class Server {
             ExceptionHandler.registerExceptionHandler();
         }
 
-        log.info(this.getLanguage().translateString("nukkit.server.networkStart", new String[]{this.getIp().equals("") ? "*" : this.getIp(), String.valueOf(this.getPort())}));
-        this.serverID = UUID.randomUUID();
-
-        this.network = new Network(this);
-        this.network.setName(this.getMotd());
-        this.network.setSubName(this.getSubMotd());
-
         log.info(this.getLanguage().translateString("nukkit.server.info", this.getName(), TextFormat.YELLOW + this.getNukkitVersion() + TextFormat.WHITE, TextFormat.AQUA + "" + TextFormat.WHITE, this.getApiVersion()));
         log.info(this.getLanguage().translateString("nukkit.server.license", this.getName()));
 
@@ -527,14 +520,6 @@ public class Server {
         this.pluginManager.registerInterface(JavaPluginLoader.class);
 
         this.queryRegenerateEvent = new QueryRegenerateEvent(this, 5);
-
-        try {
-            this.network.registerInterface(new RakNetInterface(this));
-        } catch (Exception e) {
-            log.fatal("**** FAILED TO BIND TO " + getIp() + ":" + getPort() + "!");
-            log.fatal("Perhaps a server is already running on that port?");
-            this.forceShutdown();
-        }
 
         this.pluginManager.loadPlugins(this.pluginPath);
 
@@ -647,6 +632,21 @@ public class Server {
         }
 
         this.enablePlugins(PluginLoadOrder.POSTWORLD);
+
+        log.info(this.getLanguage().translateString("nukkit.server.networkStart", new String[]{this.getIp().equals("") ? "*" : this.getIp(), String.valueOf(this.getPort())}));
+        this.serverID = UUID.randomUUID();
+
+        this.network = new Network(this);
+        this.network.setName(this.getMotd());
+        this.network.setSubName(this.getSubMotd());
+
+        try {
+            this.network.registerInterface(new RakNetInterface(this));
+        } catch (Exception e) {
+            log.fatal("**** FAILED TO BIND TO " + getIp() + ":" + getPort() + "!");
+            log.fatal("Perhaps a server is already running on that port?");
+            this.forceShutdown();
+        }
 
         if (Nukkit.DEBUG < 2) {
             this.watchdog = new Watchdog(this, 60000);
