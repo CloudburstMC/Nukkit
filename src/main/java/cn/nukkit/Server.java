@@ -543,10 +543,6 @@ public class Server {
         // load packs before registry closes to register new blocks and after plugins to register block factories.
         this.loadPacks();
 
-        Identifier nukkitId = Identifier.fromString("nukkit:logo");
-        this.blockRegistry.registerBlock(nukkitId, BlockRegistry.UNKNOWN_FACTORY);
-        //Item.addCreativeItem(this.itemRegistry.getItem(nukkitId));
-
         // Close registries
         try {
             this.blockRegistry.close();
