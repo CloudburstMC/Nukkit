@@ -670,7 +670,6 @@ public class Level implements ChunkManager, Metadatable {
                                 int chunkZ = Chunk.fromKeyZ(chunkKey);
                                 if (blocks.size() > MAX_BLOCK_CACHE) {
                                     Chunk chunk = this.getLoadedChunk(chunkX, chunkZ);
-                                    log.debug("Sending chunk change");
                                     if (chunk != null) {
                                         for (Player p : this.getChunkPlayers(chunkX, chunkZ)) {
                                             p.onChunkChanged(chunk);

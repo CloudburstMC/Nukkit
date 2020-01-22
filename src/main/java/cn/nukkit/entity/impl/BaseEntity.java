@@ -468,7 +468,7 @@ public abstract class BaseEntity extends Location implements Entity, Metadatable
         }
         this.initialized = true;
 
-        this.timing = Timings.getEntityTiming(this);
+        this.timing = Timings.getEntityTiming(this.getType());
 
         this.isPlayer = this instanceof Player;
 

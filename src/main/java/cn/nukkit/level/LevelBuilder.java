@@ -84,7 +84,6 @@ public class LevelBuilder {
             if (factory == null) {
                 throw new IllegalArgumentException("Unregistered storageType");
             }
-            log.debug("Loading level provider: {}", id);
             try {
                 LevelProvider provider = factory.create(id, worldsPath, executor);
                 // Load level data

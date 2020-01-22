@@ -1257,7 +1257,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         boolean revert = false;
         if ((distanceSquared / ((double) (tickDiff * tickDiff))) > 100 && (newPosition.y - this.y) > -5) {
             log.debug("{} moved too fast!", this.getName());
-            log.debug("Old Position {}, New Position {}", this.getPosition(), newPosition);
             revert = true;
         } else {
             if (this.chunk == null) {
@@ -1301,7 +1300,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         double diffHorizontalSqr = (diffX * diffX + diffZ * diffZ) / ((double) (tickDiff * tickDiff));
                         if (diffHorizontalSqr > 0.5) {
                             PlayerInvalidMoveEvent ev;
-                            log.debug("Invalid movement");
                             this.getServer().getPluginManager().callEvent(ev = new PlayerInvalidMoveEvent(this, true));
                             if (!ev.isCancelled()) {
                                 revert = ev.isRevert();

@@ -52,7 +52,6 @@ public final class LevelChunkManager {
     public LevelChunkManager(Level level, LevelProvider provider) {
         this.level = level;
         this.executor = this.level.getServer().getScheduler().getAsyncPool();
-        log.debug("Level Provider: {}", provider.getClass().getSimpleName());
         this.provider = provider;
         this.chunkGenerateFunction = new ChunkGenerateFunction(this.level);
         this.chunkPopulateFunction = new ChunkPopulateFunction(this.level);

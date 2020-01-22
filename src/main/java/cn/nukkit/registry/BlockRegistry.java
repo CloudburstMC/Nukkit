@@ -207,7 +207,6 @@ public class BlockRegistry implements Registry {
         // add custom blocks
         for (int i = startId; i < size; i++) {
             Block block = this.runtimeStateMap.get(i);
-            log.debug("Block {} runtime {}", block, i);
 
             //noinspection ConstantConditions
             CompoundTag tag = new CompoundTag()
