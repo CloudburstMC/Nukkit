@@ -1828,7 +1828,20 @@ public abstract class Entity extends Location implements Metadatable {
 
         return b.getId() == Block.LADDER;
     }
-
+    public boolean applyNametag(Player player, Item item)
+    {
+        if(item.hasCustomName())
+        {
+            this.setNameTag(item.getCustomName());
+            this.setNameTagVisible(true);
+            if(player.isSurvival()) { player.getInventory().removeItem(item); }
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     public boolean fastMove(double dx, double dy, double dz) {
         if (dx == 0 && dy == 0 && dz == 0) {
             return true;

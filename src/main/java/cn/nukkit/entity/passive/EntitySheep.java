@@ -86,12 +86,7 @@ public class EntitySheep extends EntityAnimal {
             return true;
         }
         if (item.getId() == Item.NAME_TAG) {
-            if (item.hasCustomName()) {
-                this.setNameTag(item.getCustomName());
-                this.setNameTagVisible(true);
-                if(player.isSurvival()) { player.getInventory().removeItem(item); }
-                return true;
-            }
+            applyNametag(player,item);
         }
 
         return item.getId() == Item.SHEARS && shear();

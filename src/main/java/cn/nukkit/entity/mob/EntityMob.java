@@ -20,12 +20,7 @@ public abstract class EntityMob extends EntityCreature {
     @Override
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
         if (item.getId() == Item.NAME_TAG) {
-            if (item.hasCustomName()) {
-                this.setNameTag(item.getCustomName());
-                this.setNameTagVisible(true);
-                if(player.isSurvival()) { player.getInventory().removeItem(item); }
-                return true;
-            }
+            applyNametag(player, item);
         }
         return false;
     }
