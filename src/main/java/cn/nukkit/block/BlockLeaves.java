@@ -132,13 +132,15 @@ public class BlockLeaves extends BlockTransparentMeta {
     }
 
     private Boolean findLog(Block pos, Integer distance) {
-        for (Block collisionBlock : this.getLevel().getCollisionBlocks(new SimpleAxisAlignedBB(
-                pos.getX() - distance, pos.getY() - distance, pos.getZ() - distance,
-                pos.getX() + distance, pos.getY() + distance, pos.getZ() + distance), false, true)) {
-            if (collisionBlock.getId() == WOOD || collisionBlock.getId() == WOOD2)
-                return true;
-        }
-        return false;
+        Block[] woodBlocks = this.getLevel().getCollisionBlocks(
+                new SimpleAxisAlignedBB(
+                        pos.getX() - distance, pos.getY() - distance, pos.getZ() - distance,
+                        pos.getX() + distance, pos.getY() + distance, pos.getZ() + distance
+                ), true, true,
+                block -> block.getId() == WOOD || block.getId() == WOOD2
+        );
+        
+        return woodBlocks.length > 0;
     }
 
     public boolean isCheckDecay() {
