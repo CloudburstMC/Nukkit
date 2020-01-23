@@ -5,6 +5,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.event.entity.EntityMoveByPistonEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
@@ -114,7 +115,12 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
             return;
         }
 
-        //TODO: event
+        EntityMoveByPistonEvent event = new EntityMoveByPistonEvent(entity, entity.getPosition());
+        this.level.getServer().getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) {
+            return;
+        }
 
         if (entity instanceof Player) {
             return;
