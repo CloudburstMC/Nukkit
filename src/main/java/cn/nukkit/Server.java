@@ -1028,10 +1028,7 @@ public class Server {
 
             this.levelManager.tick(this.tickCounter);
 
-            String message = "TPS: " + NukkitMath.round(getTicksPerSecondAverage(), 4);
-
             for (Player player : new ArrayList<>(this.players.values())) {
-                player.sendTip(message + ", Chunk: (" + player.getChunkX() + ", " + player.getChunkZ() + ")");
                 player.checkNetwork();
             }
 
