@@ -51,12 +51,18 @@ public class PlayerChunkManager {
         // Remove chunks which are out of range
         while (sendQueueIterator.hasNext()) {
             Long2ObjectMap.Entry<LevelChunkPacket> entry = sendQueueIterator.next();
-            if (!this.loadedChunks.contains(entry.getLongKey())) {
+            long key = entry.getLongKey();
+            if (!this.loadedChunks.contains(key)) {
                 LevelChunkPacket packet = entry.getValue();
                 if (packet != null) {
                     packet.release();
                 }
                 sendQueueIterator.remove();
+
+                Chunk chunk = this.player.getLevel().getLoadedChunk(key);
+                if (chunk != null) {
+                    chunk.removeLoader(this.player);
+                }
             }
         }
 
@@ -83,9 +89,9 @@ public class PlayerChunkManager {
                 this.player.dataPacket(packet);
 
                 Chunk chunk = this.player.getLevel().getLoadedChunk(key);
-                checkArgument(chunk != null, "Unloaded chunk sent to %s", this.player.getName());
+                checkArgument(chunk != null, "Attempted to send unloaded chunk (%s, %s) to %s",
+                        Chunk.fromKeyX(key), Chunk.fromKeyZ(key), this.player.getName());
 
-                chunk.addLoader(this.player);
                 // Spawn entities
                 for (Entity entity : chunk.getEntities()) {
                     if (entity != this.player && !entity.isClosed() && entity.isAlive()) {
@@ -148,7 +154,10 @@ public class PlayerChunkManager {
             final int cz = Chunk.fromKeyZ(key);
 
             if (this.sendQueue.putIfAbsent(key, null) == null) {
-                this.player.getLevel().getChunkFuture(cx, cz).thenApplyAsync(Chunk::createChunkPacket, this.player.getServer().getScheduler().getAsyncPool())
+                this.player.getLevel().getChunkFuture(cx, cz).thenApply(chunk -> {
+                    chunk.addLoader(this.player);
+                    return chunk;
+                }).thenApplyAsync(Chunk::createChunkPacket, this.player.getServer().getScheduler().getAsyncPool())
                         .whenComplete((packet, throwable) -> {
                             synchronized (PlayerChunkManager.this) {
                                 if (throwable != null) {

@@ -17,6 +17,7 @@ import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
+import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 
@@ -343,6 +344,7 @@ public final class LevelChunkManager {
         }
     }
 
+    @ToString
     private class LoadingChunk {
         private final int x;
         private final int z;
@@ -394,7 +396,7 @@ public final class LevelChunkManager {
         private void generate() {
             if (generated) {
                 Chunk chunk = getChunk();
-                if (chunk == null || !chunk.isGenerated()) {
+                if (chunk == null || chunk.isGenerated()) {
                     return;
                 }
             }
@@ -404,9 +406,11 @@ public final class LevelChunkManager {
         }
 
         private void populate() {
+            this.generate(); // Generation has to happen before population
+
             if (populated) {
                 Chunk chunk = getChunk();
-                if (chunk == null || !chunk.isPopulated()) {
+                if (chunk == null || chunk.isPopulated()) {
                     return;
                 }
             }
