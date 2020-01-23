@@ -28,8 +28,6 @@ import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.chunk.ChunkSection;
 import cn.nukkit.level.gamerule.GameRuleMap;
 import cn.nukkit.level.gamerule.GameRules;
-import cn.nukkit.level.generator.Generator;
-import cn.nukkit.level.generator.GeneratorFactory;
 import cn.nukkit.level.manager.LevelChunkManager;
 import cn.nukkit.level.particle.DestroyBlockParticle;
 import cn.nukkit.level.particle.Particle;
@@ -212,7 +210,6 @@ public class Level implements ChunkManager, Metadatable {
     public int tickRateTime = 0;
     public int tickRateCounter = 0;
 
-    private GeneratorFactory generatorFactory;
     private final Long2ObjectOpenHashMap<Set<Player>> chunkPlayers = new Long2ObjectOpenHashMap<>();
     private final Cache<Long, ByteBuf> chunkCache = CacheBuilder.<Long, ByteBuf>newBuilder()
             .softValues()
@@ -220,17 +217,6 @@ public class Level implements ChunkManager, Metadatable {
             .build();
     private final LevelChunkManager chunkManager;
     private final LevelData levelData;
-    private ThreadLocal<Generator> generators = new ThreadLocal<Generator>() {
-        @Override
-        protected Generator initialValue() {
-            try {
-                BedrockRandom random = new BedrockRandom((int) getSeed());
-                return generatorFactory.create(random, levelData.getGeneratorOptions());
-            } catch (Throwable e) {
-                throw new IllegalStateException("Unable to initialize generator", e);
-            }
-        }
-    };
 
     Level(Server server, String id, LevelProvider levelProvider, LevelData levelData) {
         this.id = id;
@@ -273,7 +259,7 @@ public class Level implements ChunkManager, Metadatable {
         log.info(this.server.getLanguage().translateString("nukkit.level.preparing",
                 TextFormat.GREEN + getId() + TextFormat.WHITE));
 
-        this.generatorFactory = GeneratorRegistry.get().getGeneratorFactory(this.levelData.getGenerator());
+        //TODO: this.generatorFactory = GeneratorRegistry.get().getGeneratorFactory(this.levelData.getGenerator());
 
         if (this.levelData.getRainTime() <= 0) {
             setRainTime(ThreadLocalRandom.current().nextInt(168000) + 12000);
@@ -310,12 +296,13 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void init() {
-        Generator generator = generators.get();
+        //TODO: Generator generator = generators.get();
     }
 
-    public Generator getGenerator() {
+    //TODO:
+    /*public Generator getGenerator() {
         return generators.get();
-    }
+    }*/
 
     public BlockMetadataStore getBlockMetadata() {
         return this.blockMetadata;

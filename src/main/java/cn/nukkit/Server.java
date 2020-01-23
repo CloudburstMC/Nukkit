@@ -17,8 +17,6 @@ import cn.nukkit.lang.BaseLang;
 import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.*;
-import cn.nukkit.level.biome.EnumBiome;
-import cn.nukkit.level.generator.GeneratorIds;
 import cn.nukkit.level.storage.StorageIds;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.metadata.EntityMetadataStore;
@@ -610,7 +608,7 @@ public class Server {
 
                 defaultLevel = this.loadLevel().id(defaultName)
                         .seed(seed)
-                        .generator(GeneratorIds.NORMAL)
+                        //TODO: .generator(GeneratorIds.NORMAL)
                         .load().join();
             }
             this.levelManager.setDefaultLevel(defaultLevel);
@@ -1977,7 +1975,7 @@ public class Server {
         this.registerBlockEntities();
 
         Enchantment.init();
-        EnumBiome.values(); //load class, this also registers biomes
+        //TODO: EnumBiome.values(); //load class, this also registers biomes
         Item.initCreativeItems();
         Effect.init();
         Potion.init();
