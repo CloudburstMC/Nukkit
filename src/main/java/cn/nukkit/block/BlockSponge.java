@@ -5,6 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
+import cn.nukkit.level.particle.CloudParticle;
 import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.network.protocol.LevelEventPacket;
@@ -71,8 +72,8 @@ public class BlockSponge extends BlockSolidMeta {
 
                 for (int i = 0; i < 8; ++i) {
                     this.getLevel().addParticle(
-                        //TODO: Use correct smoke particle
-                        new SmokeParticle(block.getLocation().add(Math.random(), 1, Math.random())));
+                            new CloudParticle(block.getLocation().add(Math.random(), 1, Math.random()))
+                    );
                 }
             } else if (this.getDamage() == DRY && performWaterAbsorb(block)) {
                 level.setBlock(block, Block.get(BlockID.SPONGE, WET));
