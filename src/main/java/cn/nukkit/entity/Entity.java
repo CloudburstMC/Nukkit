@@ -1834,7 +1834,10 @@ public abstract class Entity extends Location implements Metadatable {
         {
             this.setNameTag(item.getCustomName());
             this.setNameTagVisible(true);
-            if(player.isSurvival()) { player.getInventory().removeItem(item); }
+            if(player.isSurvival()) {
+                item.setCount(item.getCount() -1);
+                player.getInventory().setItemInHand(item);
+            }
             return true;
         }
         else
