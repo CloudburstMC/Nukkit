@@ -10,6 +10,7 @@ import cn.nukkit.utils.Identifier;
  * Nukkit Project
  */
 public class BlockAir extends BlockTransparent {
+    private static final Item[] EMPTY = new Item[0];
 
 
     public BlockAir(Identifier id) {
@@ -69,5 +70,10 @@ public class BlockAir extends BlockTransparent {
     @Override
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
+    }
+
+    @Override
+    public Item[] getDrops(Item item) {
+        return EMPTY;
     }
 }
