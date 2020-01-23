@@ -42,6 +42,8 @@ import cn.nukkit.event.player.*;
 import cn.nukkit.event.player.PlayerAsyncPreLoginEvent.LoginResult;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import cn.nukkit.event.server.DataPacketReceiveEvent;
+import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.form.window.FormWindow;
 import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.inventory.*;
@@ -992,6 +994,12 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             return this.directDataPacket(packet);
         }
 
+        DataPacketSendEvent event = new DataPacketSendEvent(this, packet);
+        this.server.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return false;
+        }
+
         if (log.isTraceEnabled() && !server.isIgnoredPacket(packet.getClass())) {
             log.trace("Outbound {}: {}", this.getName(), packet);
         }
@@ -1043,6 +1051,14 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public boolean directDataPacket(DataPacket packet) {
         if (!this.connected) {
             return false;
+        }
+
+        if (packet.pid() != ProtocolInfo.BATCH_PACKET) {
+            DataPacketSendEvent event = new DataPacketSendEvent(this, packet);
+            this.server.getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                return false;
+            }
         }
 
         try (Timing ignored = Timings.getSendDataPacketTiming(packet).startTiming()) {
@@ -1945,6 +1961,12 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         try (Timing ignored = Timings.getReceiveDataPacketTiming(packet).startTiming()) {
             if (log.isTraceEnabled() && !server.isIgnoredPacket(packet.getClass())) {
                 log.trace("Inbound {}: {}", this.getName(), packet);
+            }
+
+            DataPacketReceiveEvent receiveEvent = new DataPacketReceiveEvent(this, packet);
+            this.server.getPluginManager().callEvent(receiveEvent);
+            if (receiveEvent.isCancelled()) {
+                return;
             }
 
             packetswitch:
