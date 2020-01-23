@@ -10,6 +10,7 @@ import cn.nukkit.utils.Utils;
 import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
+import org.slf4j.Logger;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -44,8 +45,7 @@ abstract public class PluginBase implements Plugin {
     private Config config;
     private File configFile;
     private File file;
-    private PluginLogger logger;
-
+    private Logger logger;
 
     public void onLoad() {
 
@@ -141,7 +141,7 @@ abstract public class PluginBase implements Plugin {
         }
     }
 
-    public PluginLogger getLogger() {
+    public Logger getLogger() {
         return logger;
     }
 
@@ -228,7 +228,7 @@ abstract public class PluginBase implements Plugin {
     @Override
     public void saveConfig() {
         if (!this.getConfig().save()) {
-            this.getLogger().critical("Could not save config to " + this.configFile.toString());
+            this.getLogger().error("Could not save config to " + this.configFile.toString());
         }
     }
 
