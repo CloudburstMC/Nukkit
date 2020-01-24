@@ -9,34 +9,43 @@ import cn.nukkit.nbt.tag.ListTag;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockEntityCampfire extends BlockEntity {
+public class BlockEntityCampfire extends BlockEntitySpawnable {
     private List<Item> itemsInFire;
     private int[] cookingTimes;
     private int[] cookingTotalTimes;
 
     public BlockEntityCampfire(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+    }
 
+    @Override
+    protected void initBlockEntity() {
         itemsInFire = new ArrayList<>();
-        if (nbt.contains("Items")) {
-            ListTag<CompoundTag> items = nbt.getList("Items", CompoundTag.class);
+        if (namedTag.contains("Items")) {
+            ListTag<CompoundTag> items = namedTag.getList("Items", CompoundTag.class);
             for (CompoundTag tag : items.getAll()) {
                 Item i = NBTIO.getItemHelper(tag);
                 itemsInFire.add(tag.getByte("Slot"), i);
             }
         }
 
-        if (nbt.contains("CookingTimes")) {
-            cookingTimes = nbt.getIntArray("CookingTimes");
+        if (namedTag.contains("CookingTimes")) {
+            cookingTimes = namedTag.getIntArray("CookingTimes");
         } else {
             cookingTimes = new int[]{0, 0, 0, 0};
         }
 
-        if (nbt.contains("CookingTotalTimes")) {
-            cookingTotalTimes = nbt.getIntArray("CookingTotalTimes");
+        if (namedTag.contains("CookingTotalTimes")) {
+            cookingTotalTimes = namedTag.getIntArray("CookingTotalTimes");
         } else {
             cookingTotalTimes = new int[]{0, 0, 0, 0};
         }
+        super.initBlockEntity();
+    }
+
+    @Override
+    public CompoundTag getSpawnCompound() {
+        return null;
     }
 
     @Override
