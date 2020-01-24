@@ -1,7 +1,12 @@
 package cn.nukkit.block;
 
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
 
@@ -25,6 +30,11 @@ public class BlockCampfire extends BlockSolid implements Faceable {
     }
 
     @Override
+    public double getResistance() {
+        return 10.0;
+    }
+
+    @Override
     public int getToolType() {
         return ItemTool.TYPE_AXE;
     }
@@ -36,5 +46,20 @@ public class BlockCampfire extends BlockSolid implements Faceable {
 
     public boolean isLit() {
         return (this.getDamage() & CAMPFIRE_LIT_MASK) > 0;
+    }
+
+    @Override
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        if (target.isTransparent() || face != BlockFace.UP) return false;
+        if (super.place(item, block, target, face, clickPos, player)) {
+            CompoundTag tag = new CompoundTag()
+                    .putString("id", BlockEntity.CAMPFIRE)
+                    .putInt("x", this.x)
+                    .putInt("y", this.y)
+                    .putInt("z", this.z);
+            BlockEntity campfire = BlockEntity.createBlockEntity(BlockEntity.CAMPFIRE, this.getChunk(), tag);
+            return campfire != null;
+        }
+        return false;
     }
 }
