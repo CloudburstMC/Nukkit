@@ -403,7 +403,7 @@ public class ItemRegistry implements Registry {
 
         registerVanilla(SHIELD, ItemShield::new, 513);
 
-        registerVanilla(CAMPFIRE, ItemCampfire::new, 720);
+        registerVanilla(CAMPFIRE, BlockItem::new, 720);
     }
 
     private static class ItemData {
