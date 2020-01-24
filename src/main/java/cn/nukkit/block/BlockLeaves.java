@@ -6,13 +6,11 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.Hash;
 import cn.nukkit.utils.Identifier;
-import it.unimi.dsi.fastutil.longs.LongArraySet;
-import it.unimi.dsi.fastutil.longs.LongSet;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -100,12 +98,11 @@ public class BlockLeaves extends BlockTransparent {
             getLevel().setBlock(this, this, false, false);
         } else if (type == Level.BLOCK_UPDATE_RANDOM && isCheckDecay() && !isPersistent()) {
             setDamage(getDamage() & 0x03);
-            int check = 0;
 
             LeavesDecayEvent ev = new LeavesDecayEvent(this);
 
             Server.getInstance().getPluginManager().callEvent(ev);
-            if (ev.isCancelled() || findLog(this, new LongArraySet(), 0, check)) {
+            if (ev.isCancelled() || findLog(this, 7)) {
                 getLevel().setBlock(this, this, false, false);
             } else {
                 getLevel().useBreakOn(this);
@@ -115,61 +112,12 @@ public class BlockLeaves extends BlockTransparent {
         return 0;
     }
 
-    private Boolean findLog(Block pos, LongSet visited, Integer distance, Integer check) {
-        return findLog(pos, visited, distance, check, null);
-    }
-
-    private Boolean findLog(Block pos, LongSet visited, Integer distance, Integer check, BlockFace fromSide) {
-        ++check;
-        long index = Hash.hashBlock((int) pos.x, (int) pos.y, (int) pos.z);
-        if (visited.contains(index)) return false;
-        if (pos.getId() == LOG || pos.getId() == LOG2) return true;
-        if ((pos.getId() == LEAVES || pos.getId() == LEAVES2) && distance <= 4) {
-            visited.add(index);
-            Identifier down = pos.down().getId();
-            if (down == LOG || down == LOG2) {
+    private Boolean findLog(Block pos, Integer distance) {
+        for (Block collisionBlock : this.getLevel().getCollisionBlocks(new SimpleAxisAlignedBB(
+                pos.getX() - distance, pos.getY() - distance, pos.getZ() - distance,
+                pos.getX() + distance, pos.getY() + distance, pos.getZ() + distance))) {
+            if (collisionBlock.getId() == LOG || collisionBlock.getId() == LOG2) {
                 return true;
-            }
-            if (fromSide == null) {
-                //North, East, South, West
-                for (int side = 2; side <= 5; ++side) {
-                    if (this.findLog(pos.getSide(BlockFace.fromIndex(side)), visited, distance + 1, check, BlockFace.fromIndex(side)))
-                        return true;
-                }
-            } else { //No more loops
-                switch (fromSide) {
-                    case NORTH:
-                        if (this.findLog(pos.getSide(BlockFace.NORTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.WEST), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.EAST), visited, distance + 1, check, fromSide))
-                            return true;
-                        break;
-                    case SOUTH:
-                        if (this.findLog(pos.getSide(BlockFace.SOUTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.WEST), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.EAST), visited, distance + 1, check, fromSide))
-                            return true;
-                        break;
-                    case WEST:
-                        if (this.findLog(pos.getSide(BlockFace.NORTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.SOUTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.WEST), visited, distance + 1, check, fromSide))
-                            return true;
-                    case EAST:
-                        if (this.findLog(pos.getSide(BlockFace.NORTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.SOUTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.EAST), visited, distance + 1, check, fromSide))
-                            return true;
-                        break;
-                }
             }
         }
         return false;
