@@ -1,6 +1,7 @@
 package cn.nukkit.pack;
 
 import cn.nukkit.Server;
+import cn.nukkit.event.server.RegistriesClosedEvent;
 import cn.nukkit.network.protocol.ResourcePackDataInfoPacket;
 import cn.nukkit.network.protocol.ResourcePackStackPacket;
 import cn.nukkit.network.protocol.ResourcePacksInfoPacket;
@@ -211,6 +212,8 @@ public class PackManager implements Closeable {
                 packStack.resourcePackStack.add(pack);
             }
         }
+
+        Server.getInstance().getPluginManager().callEvent(new RegistriesClosedEvent(this));
     }
 
     private void checkRegistrationClosed() {
