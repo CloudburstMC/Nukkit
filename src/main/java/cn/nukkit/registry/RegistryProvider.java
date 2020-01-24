@@ -20,7 +20,7 @@ public class RegistryProvider<T> implements Comparable<RegistryProvider<T>> {
         return value;
     }
 
-    //@Nonnull
+    @Nonnull
     public Plugin getPlugin() {
         return plugin;
     }
