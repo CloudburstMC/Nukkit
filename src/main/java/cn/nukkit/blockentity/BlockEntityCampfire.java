@@ -1,5 +1,6 @@
 package cn.nukkit.blockentity;
 
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.NBTIO;
@@ -45,12 +46,12 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
 
     @Override
     public CompoundTag getSpawnCompound() {
-        return null;
+        return new CompoundTag().putString("id", BlockEntity.CAMPFIRE).putInt("x", this.x).putInt("y", this.y).putInt("z", this.z);
     }
 
     @Override
     public boolean isBlockEntityValid() {
-        return false;
+        return getBlock().getId() == BlockIds.CAMPFIRE;
     }
 
     @Override
