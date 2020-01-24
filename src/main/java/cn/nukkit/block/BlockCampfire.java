@@ -33,4 +33,8 @@ public class BlockCampfire extends BlockSolid implements Faceable {
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & CAMPFIRE_FACING_MASK);
     }
+
+    public boolean isLit() {
+        return (this.getDamage() & CAMPFIRE_LIT_MASK) > 0;
+    }
 }
