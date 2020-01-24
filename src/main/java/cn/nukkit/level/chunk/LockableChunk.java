@@ -89,8 +89,8 @@ public final class LockableChunk implements IChunk, Lock {
     }
 
     @Override
-    public int getBlockRuntimeId(int x, int y, int z, int layer) {
-        return this.unsafe.getBlockRuntimeId(x, y, z, layer);
+    public int getBlockRuntimeIdUnsafe(int x, int y, int z, int layer) {
+        return this.unsafe.getBlockRuntimeIdUnsafe(x, y, z, layer);
     }
 
     @Override

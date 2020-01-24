@@ -156,10 +156,10 @@ public final class Chunk implements IChunk, Closeable {
     }
 
     @Override
-    public int getBlockRuntimeId(int x, int y, int z, int layer) {
+    public int getBlockRuntimeIdUnsafe(int x, int y, int z, int layer) {
         this.lock.readLock().lock();
         try {
-            return unsafe.getBlockRuntimeId(x, y, z, layer);
+            return unsafe.getBlockRuntimeIdUnsafe(x, y, z, layer);
         } finally {
             this.lock.readLock().unlock();
         }

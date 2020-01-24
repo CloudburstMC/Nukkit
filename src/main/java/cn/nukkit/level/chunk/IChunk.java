@@ -41,11 +41,11 @@ public interface IChunk {
     @Nonnull
     Identifier getBlockId(int x, int y, int z, @Nonnegative int layer);
 
-    default int getBlockRuntimeId(int x, int y, int z)  {
-        return this.getBlockRuntimeId(x, y, z, 0);
+    default int getBlockRuntimeIdUnsafe(int x, int y, int z)  {
+        return this.getBlockRuntimeIdUnsafe(x, y, z, 0);
     }
 
-    int getBlockRuntimeId(int x, int y, int z, @Nonnegative int layer);
+    int getBlockRuntimeIdUnsafe(int x, int y, int z, @Nonnegative int layer);
 
     default int getBlockData(int x, int y, int z) {
         return this.getBlockData(x, y, z, 0);

@@ -22,6 +22,18 @@ public interface ChunkManager {
 
     void setBlockIdAt(int x, int y, int z, int layer, Identifier id);
 
+    default int getBlockRuntimeIdUnsafe(int x, int y, int z)    {
+        return this.getBlockRuntimeIdUnsafe(x, y, z, 0);
+    }
+
+    int getBlockRuntimeIdUnsafe(int x, int y, int z, int layer);
+
+    default void setBlockRuntimeIdUnsafe(int x, int y, int z, int runtimeId) {
+        this.setBlockRuntimeIdUnsafe(x, y, z, 0, runtimeId);
+    }
+
+    void setBlockRuntimeIdUnsafe(int x, int y, int z, int layer, int runtimeId);
+
     default int getBlockDataAt(int x, int y, int z) {
         return this.getBlockDataAt(x, y, z, 0);
     }

@@ -166,7 +166,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
     }
 
     @Override
-    public int getBlockRuntimeId(int x, int y, int z, int layer) {
+    public int getBlockRuntimeIdUnsafe(int x, int y, int z, int layer) {
         checkBounds(x, y, z);
         ChunkSection section = this.getSection(y >> 4);
         if (section == null) {
