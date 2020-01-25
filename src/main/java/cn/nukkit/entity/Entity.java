@@ -499,6 +499,7 @@ public abstract class Entity extends Location implements Metadatable {
         }
         this.scale = this.namedTag.getFloat("Scale");
         this.setDataProperty(new FloatEntityData(DATA_SCALE, scale), false);
+        this.setDataProperty(new ByteEntityData(DATA_COLOR, 0), false);
 
         this.chunk.addEntity(this);
         this.level.addEntity(this);
