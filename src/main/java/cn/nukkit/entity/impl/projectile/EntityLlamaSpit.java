@@ -10,4 +10,14 @@ public class EntityLlamaSpit extends BaseEntity implements LlamaSpit {
     public EntityLlamaSpit(EntityType<?> type, Chunk chunk, CompoundTag nbt) {
         super(type, chunk, nbt);
     }
+
+    @Override
+    public boolean isCritical() {
+        return false;
+    }
+
+    @Override
+    public void setCritical(boolean critical) {
+
+    }
 }

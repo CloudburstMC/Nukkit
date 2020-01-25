@@ -55,4 +55,14 @@ public class EntityEgg extends EntityProjectile implements Egg {
 
         return hasUpdate;
     }
+
+    @Override
+    public boolean isCritical() {
+        return false;
+    }
+
+    @Override
+    public void setCritical(boolean critical) {
+
+    }
 }

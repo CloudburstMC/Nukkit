@@ -84,4 +84,14 @@ public class EntityEnderPearl extends EntityProjectile implements EnderPearl {
         }
         this.level.addSound(this, Sound.MOB_ENDERMEN_PORTAL);
     }
+
+    @Override
+    public boolean isCritical() {
+        return false;
+    }
+
+    @Override
+    public void setCritical(boolean critical) {
+
+    }
 }

@@ -59,4 +59,14 @@ public class EntitySnowball extends EntityProjectile implements Snowball {
 
         return hasUpdate;
     }
+
+    @Override
+    public boolean isCritical() {
+        return false;
+    }
+
+    @Override
+    public void setCritical(boolean critical) {
+
+    }
 }

@@ -10,4 +10,14 @@ public class EntitySmallFireball extends BaseEntity implements SmallFireball {
     public EntitySmallFireball(EntityType<?> type, Chunk chunk, CompoundTag nbt) {
         super(type, chunk, nbt);
     }
+
+    @Override
+    public boolean isCritical() {
+        return false;
+    }
+
+    @Override
+    public void setCritical(boolean critical) {
+
+    }
 }

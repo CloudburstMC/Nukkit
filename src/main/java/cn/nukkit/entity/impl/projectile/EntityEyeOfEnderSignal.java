@@ -11,4 +11,14 @@ public class EntityEyeOfEnderSignal extends BaseEntity implements EyeOfEnderSign
     public EntityEyeOfEnderSignal(EntityType<?> type, Chunk chunk, CompoundTag nbt) {
         super(type, chunk, nbt);
     }
+
+    @Override
+    public boolean isCritical() {
+        return false;
+    }
+
+    @Override
+    public void setCritical(boolean critical) {
+
+    }
 }

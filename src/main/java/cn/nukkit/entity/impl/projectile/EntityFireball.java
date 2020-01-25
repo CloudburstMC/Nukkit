@@ -10,4 +10,14 @@ public class EntityFireball extends BaseEntity implements Fireball {
     public EntityFireball(EntityType<?> type, Chunk chunk, CompoundTag nbt) {
         super(type, chunk, nbt);
     }
+
+    @Override
+    public boolean isCritical() {
+        return false;
+    }
+
+    @Override
+    public void setCritical(boolean critical) {
+
+    }
 }
