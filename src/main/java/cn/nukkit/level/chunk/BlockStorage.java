@@ -75,6 +75,19 @@ public class BlockStorage {
         }
     }
 
+    public int getBlockRuntimeIdUnsafe(int index)    {
+        return this.palette.getInt(this.bitArray.get(index));
+    }
+
+    public void setBlockRuntimeIdUnsafe(int index, int runtimeId)    {
+        try {
+            BlockRegistry.get().getBlock(runtimeId); //this will throw RegistryException if the runtimeId is not registered
+            this.bitArray.set(index, this.idFor(runtimeId));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Unable to set block runtime ID: " + runtimeId + ", palette: " + palette, e);
+        }
+    }
+
     public int getBlockData(int index) {
         return this.blockFor(this.bitArray.get(index)).getDamage();
     }

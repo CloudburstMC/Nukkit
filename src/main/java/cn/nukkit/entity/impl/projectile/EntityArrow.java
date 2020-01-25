@@ -7,8 +7,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import static cn.nukkit.entity.data.EntityFlag.CRITICAL;
-
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -58,18 +56,6 @@ public class EntityArrow extends EntityProjectile implements Arrow {
 
         this.damage = namedTag.contains("damage") ? namedTag.getDouble("damage") : 2;
         this.pickupMode = namedTag.contains("pickup") ? namedTag.getByte("pickup") : PICKUP_ANY;
-    }
-
-    public void setCritical() {
-        this.setCritical(true);
-    }
-
-    public boolean isCritical() {
-        return this.getFlag(CRITICAL);
-    }
-
-    public void setCritical(boolean value) {
-        this.setFlag(CRITICAL, value);
     }
 
     @Override

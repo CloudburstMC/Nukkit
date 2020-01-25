@@ -9,6 +9,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.server.BatchPacketsEvent;
 import cn.nukkit.event.server.PlayerDataSerializeEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
+import cn.nukkit.event.server.RegistriesClosedEvent;
 import cn.nukkit.inventory.CraftingManager;
 import cn.nukkit.inventory.Recipe;
 import cn.nukkit.item.Item;
@@ -539,6 +540,8 @@ public class Server {
             this.packManager.closeRegistration();
         } catch (RegistryException e) {
             throw new IllegalStateException("Unable to close registries", e);
+        } finally {
+            this.pluginManager.callEvent(new RegistriesClosedEvent(this.packManager));
         }
 
         Identifier defaultStorageId = Identifier.fromString(this.getConfig().get(

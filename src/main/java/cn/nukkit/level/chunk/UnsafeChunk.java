@@ -166,6 +166,17 @@ public final class UnsafeChunk implements IChunk, Closeable {
     }
 
     @Override
+    public int getBlockRuntimeIdUnsafe(int x, int y, int z, int layer) {
+        checkBounds(x, y, z);
+        ChunkSection section = this.getSection(y >> 4);
+        if (section == null) {
+            return BlockRegistry.get().getRuntimeId(AIR, 0); //will probably always evaluate to 0, but oh well
+            //TODO: constant fields for runtime ids of default block states
+        }
+        return section.getBlockRuntimeIdUnsafe(x, y, z, layer);
+    }
+
+    @Override
     public int getBlockData(int x, int y, int z, int layer) {
         checkBounds(x, y, z);
         ChunkSection section = this.getSection(y >> 4);
@@ -202,6 +213,22 @@ public final class UnsafeChunk implements IChunk, Closeable {
     @Override
     public void setBlockId(int x, int y, int z, int layer, Identifier id) {
         this.setBlock(x, y, z, layer, BlockRegistry.get().getBlock(id, 0));
+    }
+
+    @Override
+    public void setBlockRuntimeIdUnsafe(int x, int y, int z, int layer, int runtimeId) {
+        checkBounds(x, y, z);
+        ChunkSection section = this.getSection(y >> 4);
+        if (section == null) {
+            if (runtimeId == BlockRegistry.get().getRuntimeId(AIR, 0)) { //will probably always evaluate to 0, but oh well
+                // Setting air in an empty section.
+                return;
+            }
+            section = this.getOrCreateSection(y >> 4);
+        }
+
+        section.setBlockRuntimeIdUnsafe(x, y & 0xf, z, layer, runtimeId);
+        this.setDirty();
     }
 
     @Override

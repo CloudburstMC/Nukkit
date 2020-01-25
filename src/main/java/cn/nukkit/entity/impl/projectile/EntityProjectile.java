@@ -16,6 +16,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.Set;
 
+import static cn.nukkit.entity.data.EntityFlag.CRITICAL;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -186,5 +188,17 @@ public abstract class EntityProjectile extends BaseEntity {
         }
 
         return hasUpdate;
+    }
+
+    public void setCritical() {
+        this.setCritical(true);
+    }
+
+    public boolean isCritical() {
+        return this.getFlag(CRITICAL);
+    }
+
+    public void setCritical(boolean value) {
+        this.setFlag(CRITICAL, value);
     }
 }
