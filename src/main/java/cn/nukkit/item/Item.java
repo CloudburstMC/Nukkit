@@ -134,7 +134,6 @@ public abstract class Item implements Cloneable {
         Item item = Server.getInstance().getItemRegistry().getItem(id);
         item.setDamage(meta);
         item.setCount(count);
-        item.correctNBT();
         if (tags.length != 0) {
             item.setCompoundTag(tags);
         }
@@ -226,10 +225,6 @@ public abstract class Item implements Cloneable {
         this.tags = tags;
         this.cachedNBT = null;
         return this;
-    }
-
-    public void correctNBT() {
-
     }
 
     public byte[] getCompoundTag() {
@@ -616,6 +611,11 @@ public abstract class Item implements Cloneable {
 
     public void setDamage(int meta) {
         this.meta = meta & 0xffff;
+        this.onDamageChange(this.meta);
+    }
+
+    protected void onDamageChange(int newDamage) {
+
     }
 
     public int getMaxStackSize() {
