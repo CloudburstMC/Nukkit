@@ -608,7 +608,7 @@ public class Server {
                     seed = System.currentTimeMillis();
                 }
 
-                String type = this.getLevelType().toLowerCase().replace("default", "normal"); // Old level type to new one
+                String type = (type = this.getLevelType().toLowerCase()).equals("default") ? "normal" : type;
                 Identifier typeIdentifier = type.contains(":") ? Identifier.fromString(type) : Identifier.from("minecraft", type);
 
                 defaultLevel = this.loadLevel().id(defaultName)
