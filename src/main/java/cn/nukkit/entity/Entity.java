@@ -13,7 +13,6 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemNameTag;
 import cn.nukkit.level.EnumLevel;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
@@ -1828,23 +1827,7 @@ public abstract class Entity extends Location implements Metadatable {
 
         return b.getId() == Block.LADDER;
     }
-    public boolean applyNametag(Player player, Item item)
-    {
-        if(item.hasCustomName())
-        {
-            this.setNameTag(item.getCustomName());
-            this.setNameTagVisible(true);
-            if(player.isSurvival()) {
-                item.setCount(item.getCount() -1);
-                player.getInventory().setItemInHand(item);
-            }
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
+
     public boolean fastMove(double dx, double dy, double dz) {
         if (dx == 0 && dy == 0 && dz == 0) {
             return true;

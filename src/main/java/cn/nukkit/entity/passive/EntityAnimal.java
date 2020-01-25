@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityAgeable;
 import cn.nukkit.entity.EntityCreature;
+import cn.nukkit.entity.EntityNameable;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
@@ -13,7 +14,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class EntityAnimal extends EntityCreature implements EntityAgeable {
+public abstract class EntityAnimal extends EntityCreature implements EntityAgeable, EntityNameable {
     public EntityAnimal(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
@@ -30,9 +31,7 @@ public abstract class EntityAnimal extends EntityCreature implements EntityAgeab
 
     @Override
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
-        if (item.getId() == Item.NAME_TAG) {
-            applyNametag(player,item);
-        }
-        return false;
+        return EntityNameable.super.onInteract(player, item, clickedPos)
+                || EntityAnimal.super.onInteract(player, item, clickedPos);
     }
 }
