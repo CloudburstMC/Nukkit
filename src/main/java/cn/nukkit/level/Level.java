@@ -2114,15 +2114,28 @@ public class Level implements ChunkManager, Metadatable {
         addBlockChange(x, y, z, layer);
     }
 
+    @Override
     public Block getBlockAt(int x, int y, int z, int layer) {
         Chunk chunk = this.getChunk(x >> 4, z >> 4);
         return chunk.getBlock(x, y, z, layer);
     }
 
+    @Override
     public void setBlockAt(int x, int y, int z, int layer, Block block) {
         Chunk chunk = this.getChunk(x >> 4, z >> 4);
         chunk.setBlock(x & 0x0f, y & 0xff, z & 0x0f, layer, block);
         addBlockChange(x, y, z, layer);
+    }
+
+    @Override
+    public int getBlockRuntimeIdUnsafe(int x, int y, int z, int layer) {
+        return this.getChunk(x >> 4, z >> 4).getBlockRuntimeIdUnsafe(x & 0xF, y & 0xFF, z & 0xF, layer);
+    }
+
+    @Override
+    public void setBlockRuntimeIdUnsafe(int x, int y, int z, int layer, int runtimeId) {
+        this.getChunk(x >> 4, z >> 4).setBlockRuntimeIdUnsafe(x & 0xF, y & 0xFF, z & 0xF, layer, runtimeId);
+        this.addBlockChange(x, y, z, layer);
     }
 
     @Override
