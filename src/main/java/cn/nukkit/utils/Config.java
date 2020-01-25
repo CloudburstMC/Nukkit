@@ -1,10 +1,9 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.scheduler.FileWriteTask;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
 import org.yaml.snakeyaml.DumperOptions;
@@ -33,6 +32,8 @@ public class Config {
     //public static final int SERIALIZED = 4; // .sl
     public static final int ENUM = 5; // .txt, .list, .enum
     public static final int ENUMERATION = Config.ENUM;
+
+    private static final TypeReference<ConfigSection> CONFIG_TYPE_REFERENCE = new TypeReference<ConfigSection>() {};
 
     //private LinkedHashMap<String, Object> config = new LinkedHashMap<>();
     private ConfigSection config = new ConfigSection();
@@ -225,7 +226,11 @@ public class Config {
                     content = this.writeProperties();
                     break;
                 case Config.JSON:
-                    content = new GsonBuilder().setPrettyPrinting().create().toJson(this.config);
+                    try {
+                        content = Nukkit.JSON_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.config);
+                    } catch (IOException e) {
+                        throw new IllegalStateException(e);
+                    }
                     break;
                 case Config.YAML:
                     DumperOptions dumperOptions = new DumperOptions();
@@ -545,10 +550,11 @@ public class Config {
                 this.parseProperties(content);
                 break;
             case Config.JSON:
-                GsonBuilder builder = new GsonBuilder();
-                Gson gson = builder.create();
-                this.config = new ConfigSection(gson.fromJson(content, new TypeToken<LinkedHashMap<String, Object>>() {
-                }.getType()));
+                try {
+                    this.config = Nukkit.JSON_MAPPER.readValue(content, CONFIG_TYPE_REFERENCE);
+                } catch (IOException e) {
+                    throw new IllegalStateException(e);
+                }
                 break;
             case Config.YAML:
                 DumperOptions dumperOptions = new DumperOptions();
