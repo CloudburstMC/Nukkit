@@ -366,7 +366,7 @@ public class ItemRegistry implements Registry {
 
         registerVanilla(ELYTRA, ItemElytra::new, 444);
 
-        //TODO: registerVanilla(SHULKER_SHELL, ItemShulkerShell::new, 445);
+        registerVanilla(SHULKER_SHELL, ItemShulkerShell::new, 445);
         registerVanilla(BANNER, ItemBanner::new, 446);
 
         registerVanilla(IRON_NUGGET, SimpleItem::new, 452);

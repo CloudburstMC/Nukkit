@@ -38,9 +38,14 @@ public class BlockCobweb extends FloodableBlock {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isShears() || item.isSword()) {
+        if (item.isSword()) {
             return new Item[]{
                     Item.get(ItemIds.STRING)
+            };
+
+        } else if(item.isShears()) {
+            return new Item[] {
+                    Item.get(BlockIds.WEB)
             };
         } else {
             return new Item[0];

@@ -18,6 +18,5 @@ public class EntityWitherSkull extends BaseEntity implements WitherSkull {
 
     @Override
     public void setCritical(boolean critical) {
-
     }
 }

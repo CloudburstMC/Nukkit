@@ -40,7 +40,7 @@ import java.util.Properties;
  * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
 @Log4j2
-public class Nukkit {
+public class  Nukkit {
 
     public final static Properties GIT_INFO = getGitInfo();
     public final static String VERSION = getVersion();
