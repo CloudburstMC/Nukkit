@@ -16,7 +16,6 @@ public class ItemBanner extends Item {
 
     public ItemBanner(Identifier id) {
         super(id);
-        this.correctNBT();
     }
 
     @Override
@@ -78,6 +77,7 @@ public class ItemBanner extends Item {
         return (this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag()).getList("Patterns").size();
     }
 
+    @Override
     public void correctNBT() {
         CompoundTag tag = this.getNamedTag() != null ? this.getNamedTag() : new CompoundTag();
         if (!tag.contains("Base") || !(tag.get("Base") instanceof IntTag)) {
