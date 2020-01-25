@@ -609,7 +609,7 @@ public class Server {
                 }
 
                 String type = (type = this.getLevelType().toLowerCase()).equals("default") ? "normal" : type;
-                Identifier typeIdentifier = type.contains(":") ? Identifier.fromString(type) : Identifier.from("minecraft", type);
+                Identifier typeIdentifier = Identifier.fromString(type);
 
                 defaultLevel = this.loadLevel().id(defaultName)
                         .seed(seed == 0 ? System.currentTimeMillis() : seed)
