@@ -4,7 +4,6 @@ import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockSpreadEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.generator.object.ObjectTallGrass;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.NukkitRandom;
@@ -42,7 +41,9 @@ public class BlockGrass extends BlockDirt {
                 item.decrementCount();
             }
             this.level.addParticle(new BoneMealParticle(this));
-            ObjectTallGrass.growGrass(this.getLevel(), this, new BedrockRandom());
+
+            //porktodo: fix this
+            //ObjectTallGrass.growGrass(this.getLevel(), this, new BedrockRandom());
             return true;
         } else if (item.isHoe()) {
             item.useOn(this);

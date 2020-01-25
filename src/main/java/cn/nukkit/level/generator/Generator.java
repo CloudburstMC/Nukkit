@@ -1,7 +1,6 @@
 package cn.nukkit.level.generator;
 
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.chunk.ChunkPrimer;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.math.ChunkPos;
 
@@ -19,11 +18,11 @@ public interface Generator {
      * Generates a given chunk.
      *
      * @param random an instance of {@link Random} for generating random numbers
-     * @param chunk  the a {@link ChunkPrimer} that the output block data should be written to
-     * @param chunkX      the chunk's X coordinate
-     * @param chunkZ      the chunk's Z coordinate
+     * @param chunk  the chunk to generate
+     * @param chunkX the chunk's X coordinate
+     * @param chunkZ the chunk's Z coordinate
      */
-    void generate(Random random, ChunkPrimer chunk, int chunkX, int chunkZ);
+    void generate(Random random, IChunk chunk, int chunkX, int chunkZ);
 
     /**
      * Populates a given chunk.

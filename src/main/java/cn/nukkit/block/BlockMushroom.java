@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.generator.object.mushroom.BigMushroom;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.BlockFace;
@@ -67,7 +66,8 @@ public abstract class BlockMushroom extends FloodableBlock {
     }
 
     public boolean grow() {
-        this.level.setBlock(this, Block.get(AIR), true, false);
+        //porktodo: fix this
+        /*this.level.setBlock(this, Block.get(AIR), true, false);
 
         BigMushroom generator = new BigMushroom(getType());
 
@@ -76,7 +76,8 @@ public abstract class BlockMushroom extends FloodableBlock {
         } else {
             this.level.setBlock(this, this, true, false);
             return false;
-        }
+        }*/
+        return false;
     }
 
     public boolean canStay() {

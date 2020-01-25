@@ -2,8 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.generator.object.BasicGenerator;
-import cn.nukkit.level.generator.object.tree.*;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.BlockFace;
@@ -95,6 +93,8 @@ public class BlockSapling extends FloodableBlock {
     }
 
     private void grow() {
+        //porktodo: fix this
+        /*
         BasicGenerator generator = null;
         boolean bigTree = false;
 
@@ -164,7 +164,7 @@ public class BlockSapling extends FloodableBlock {
             } else {
                 this.level.setBlock(this, this, true, false);
             }
-        }
+        }*/
     }
 
     private boolean findSaplings(int x, int z, int type) {

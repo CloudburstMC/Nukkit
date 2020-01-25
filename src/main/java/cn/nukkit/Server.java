@@ -1,7 +1,30 @@
 package cn.nukkit;
 
-import cn.nukkit.blockentity.*;
-import cn.nukkit.command.*;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityBanner;
+import cn.nukkit.blockentity.BlockEntityBeacon;
+import cn.nukkit.blockentity.BlockEntityBed;
+import cn.nukkit.blockentity.BlockEntityBrewingStand;
+import cn.nukkit.blockentity.BlockEntityCauldron;
+import cn.nukkit.blockentity.BlockEntityChest;
+import cn.nukkit.blockentity.BlockEntityComparator;
+import cn.nukkit.blockentity.BlockEntityEnchantTable;
+import cn.nukkit.blockentity.BlockEntityEnderChest;
+import cn.nukkit.blockentity.BlockEntityFlowerPot;
+import cn.nukkit.blockentity.BlockEntityFurnace;
+import cn.nukkit.blockentity.BlockEntityHopper;
+import cn.nukkit.blockentity.BlockEntityItemFrame;
+import cn.nukkit.blockentity.BlockEntityJukebox;
+import cn.nukkit.blockentity.BlockEntityMusic;
+import cn.nukkit.blockentity.BlockEntityPistonArm;
+import cn.nukkit.blockentity.BlockEntityShulkerBox;
+import cn.nukkit.blockentity.BlockEntitySign;
+import cn.nukkit.blockentity.BlockEntitySkull;
+import cn.nukkit.command.Command;
+import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.ConsoleCommandSender;
+import cn.nukkit.command.PluginIdentifiableCommand;
+import cn.nukkit.command.SimpleCommandMap;
 import cn.nukkit.console.NukkitConsole;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.data.Skin;
@@ -16,7 +39,12 @@ import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.lang.BaseLang;
 import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
-import cn.nukkit.level.*;
+import cn.nukkit.level.EnumLevel;
+import cn.nukkit.level.Level;
+import cn.nukkit.level.LevelBuilder;
+import cn.nukkit.level.LevelData;
+import cn.nukkit.level.LevelManager;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.storage.StorageIds;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.metadata.EntityMetadataStore;
@@ -52,10 +80,23 @@ import cn.nukkit.plugin.service.NKServiceManager;
 import cn.nukkit.plugin.service.ServiceManager;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
-import cn.nukkit.registry.*;
+import cn.nukkit.registry.BlockRegistry;
+import cn.nukkit.registry.EntityRegistry;
+import cn.nukkit.registry.GameRuleRegistry;
+import cn.nukkit.registry.GeneratorRegistry;
+import cn.nukkit.registry.ItemRegistry;
+import cn.nukkit.registry.RegistryException;
+import cn.nukkit.registry.StorageRegistry;
 import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.scheduler.Task;
-import cn.nukkit.utils.*;
+import cn.nukkit.utils.Config;
+import cn.nukkit.utils.DefaultPlayerDataSerializer;
+import cn.nukkit.utils.Identifier;
+import cn.nukkit.utils.PlayerDataSerializer;
+import cn.nukkit.utils.ServerException;
+import cn.nukkit.utils.TextFormat;
+import cn.nukkit.utils.Utils;
+import cn.nukkit.utils.Watchdog;
 import cn.nukkit.utils.bugreport.ExceptionHandler;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
@@ -69,7 +110,13 @@ import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
 import org.iq80.leveldb.impl.Iq80DBFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
@@ -80,8 +127,22 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
@@ -403,10 +464,7 @@ public class Server {
         this.properties.setProperty("hardcore", "false");
         this.properties.setProperty("pvp", "true");
         this.properties.setProperty("difficulty", "1");
-        this.properties.setProperty("generator-settings", "");
-        this.properties.setProperty("level-name", "world");
-        this.properties.setProperty("level-seed", "");
-        this.properties.setProperty("level-type", "DEFAULT");
+        this.properties.setProperty("default-level", "world");
         this.properties.setProperty("allow-nether", "true");
         this.properties.setProperty("enable-query", "true");
         this.properties.setProperty("enable-rcon", "false");
@@ -548,68 +606,47 @@ public class Server {
             this.defaultStorageId = StorageIds.LEVELDB;
         }
 
-        Path worldsPath = Paths.get(getDataPath()).resolve("worlds");
-
-        List<CompletableFuture<Level>> levelFutures = new ArrayList<>();
-        Set<String> worldNames = this.getConfig("worlds", Collections.<String, Object>emptyMap()).keySet();
-        for (String name : worldNames) {
+        Map<String, Object> worldNames = this.getConfig("worlds", Collections.emptyMap());
+        if (worldNames.isEmpty())   {
+            throw new IllegalStateException("No worlds configured! Add a world to nukkit.yml and try again!");
+        }
+        List<CompletableFuture<Level>> levelFutures = new ArrayList<>(worldNames.size());
+        for (String name : worldNames.keySet()) {
+            Object seedObj = this.getConfig("worlds." + name + ".seed", levelFutures); //fallback to some random object that will never be returned
             long seed;
-            try {
-                seed = ((Integer) this.getConfig("worlds." + name + ".seed")).longValue();
-            } catch (Exception e) {
-                seed = System.currentTimeMillis();
+            if (seedObj == levelFutures)    {
+                log.warn("World \"" + name + "\" does not have a seed! Using a default one...");
+                this.config.set("worlds." + name + ".seed", seed = ThreadLocalRandom.current().nextLong());
+            } else if (seedObj instanceof Number)   {
+                seed = ((Number) seedObj).longValue();
+            } else if (seedObj instanceof String)   {
+                //this internally generates an MD5 hash of the seed string
+                UUID uuid = UUID.nameUUIDFromBytes(((String) seedObj).getBytes(StandardCharsets.UTF_8));
+                seed = uuid.getMostSignificantBits() ^ uuid.getLeastSignificantBits();
+            } else {
+                throw new IllegalStateException("Seed for world \"" + name + "\" is invalid: " + (seedObj == null ? "null" : seedObj.getClass().getCanonicalName()));
             }
 
-            LevelBuilder levelBuilder = this.loadLevel().id(name).seed(seed);
-
-            String[] opts = this.getConfig("worlds." + name + ".generator", generatorRegistry.getFallback().toString())
-                    .split(",");
-            Identifier generatorId = Identifier.fromString(opts[0]);
-            Map<String, Object> options = new HashMap<>();
-            if (opts.length > 1) {
-                StringBuilder preset = new StringBuilder();
-                for (int i = 1; i < opts.length; i++) {
-                    preset.append(opts[i]).append(":");
-                }
-                preset = new StringBuilder(preset.substring(0, preset.length() - 1));
-
-                options.put("preset", preset.toString());
-            }
-            levelBuilder.generator(generatorId);
-            levelBuilder.options(options);
-
-            levelFutures.add(levelBuilder.load());
+            levelFutures.add(this.loadLevel().id(name).seed(seed)
+                    .generator(Identifier.fromString(
+                            this.getConfig("worlds." + name + ".generator", this.generatorRegistry.getFallback().toString())))
+                    .generatorOptions(this.getConfig("worlds." + name + ".options", ""))
+                    .load());
         }
 
         // Wait for levels to load.
         CompletableFutures.allAsList(levelFutures).join();
 
         if (this.getDefaultLevel() == null) {
-            String defaultName = this.getProperty("level-name", "world");
+            String defaultName = this.getProperty("default-level");
             if (defaultName == null || defaultName.trim().isEmpty()) {
-                log.warn("level-name cannot be null, using default");
-                defaultName = "world";
-                this.setProperty("level-name", defaultName);
+                this.setProperty("default-level", defaultName = worldNames.keySet().iterator().next());
+                log.warn("default-level is unset or empty, falling back to \"" + defaultName + '"');
             }
 
             Level defaultLevel = this.levelManager.getLevel(defaultName);
-            if (defaultLevel == null) {
-                long seed;
-                String seedString = this.getProperty("level-seed", null);
-                if (seedString != null) {
-                    try {
-                        seed = Long.parseLong(seedString);
-                    } catch (NumberFormatException e) {
-                        seed = seedString.hashCode();
-                    }
-                } else {
-                    seed = System.currentTimeMillis();
-                }
-
-                defaultLevel = this.loadLevel().id(defaultName)
-                        .seed(seed)
-                        //TODO: .generator(GeneratorIds.NORMAL)
-                        .load().join();
+            if (defaultLevel == null)   {
+                throw new IllegalArgumentException("default-level refers to unknown level: \"" + defaultName + '"');
             }
             this.levelManager.setDefaultLevel(defaultLevel);
         }
@@ -1188,10 +1225,6 @@ public class Server {
         for (Level level : this.levelManager.getLevels()) {
             level.setAutoSave(this.autoSave);
         }
-    }
-
-    public String getLevelType() {
-        return this.getProperty("level-type", "DEFAULT");
     }
 
     public boolean getGenerateStructures() {

@@ -28,6 +28,7 @@ import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.chunk.ChunkSection;
 import cn.nukkit.level.gamerule.GameRuleMap;
 import cn.nukkit.level.gamerule.GameRules;
+import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.manager.LevelChunkManager;
 import cn.nukkit.level.particle.DestroyBlockParticle;
 import cn.nukkit.level.particle.Particle;
@@ -218,6 +219,8 @@ public class Level implements ChunkManager, Metadatable {
     private final LevelChunkManager chunkManager;
     private final LevelData levelData;
 
+    private final Generator generator;
+
     Level(Server server, String id, LevelProvider levelProvider, LevelData levelData) {
         this.id = id;
         this.blockMetadata = new BlockMetadataStore(this);
@@ -259,7 +262,8 @@ public class Level implements ChunkManager, Metadatable {
         log.info(this.server.getLanguage().translateString("nukkit.level.preparing",
                 TextFormat.GREEN + getId() + TextFormat.WHITE));
 
-        //TODO: this.generatorFactory = GeneratorRegistry.get().getGeneratorFactory(this.levelData.getGenerator());
+        //porktodo:
+        this.generator = GeneratorRegistry.get().getGeneratorFactory(this.levelData.getGenerator()).create(this.getSeed(), this.levelData.getGeneratorOptions());
 
         if (this.levelData.getRainTime() <= 0) {
             setRainTime(ThreadLocalRandom.current().nextInt(168000) + 12000);
@@ -2684,6 +2688,10 @@ public class Level implements ChunkManager, Metadatable {
 
     public int getUpdateLCG() {
         return (this.updateLCG = (this.updateLCG * 3) ^ LCG_CONSTANT);
+    }
+
+    public Generator getGenerator() {
+        return this.generator;
     }
 
     @Override

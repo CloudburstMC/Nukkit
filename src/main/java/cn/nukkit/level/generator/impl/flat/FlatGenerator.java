@@ -1,11 +1,10 @@
 package cn.nukkit.level.generator.impl.flat;
 
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.chunk.ChunkPrimer;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.math.ChunkPos;
-import cn.nukkit.registry.BlockRegistry;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Collections;
 import java.util.Random;
@@ -18,9 +17,18 @@ import static cn.nukkit.block.BlockIds.*;
  * @author DaPorkchop_
  */
 public final class FlatGenerator implements Generator {
+    public static final Identifier ID = Identifier.from("nukkitx", "flat");
+
+    public FlatGenerator(long seed, String options) {
+        options.hashCode();
+        //porktodo: parse generator options
+    }
+
     @Override
-    public void generate(Random random, ChunkPrimer chunk, int chunkX, int chunkZ) {
-        final int bedrockId = BlockRegistry.get().getRuntimeId(BEDROCK, 0);
+    public void generate(Random random, IChunk chunk, int chunkX, int chunkZ) {
+        //porktodo: change when #1081 is merged
+
+        /*final int bedrockId = BlockRegistry.get().getRuntimeId(BEDROCK, 0);
         final int dirtId = BlockRegistry.get().getRuntimeId(DIRT, 0);
         final int grassId = BlockRegistry.get().getRuntimeId(GRASS, 0);
 
@@ -31,6 +39,16 @@ public final class FlatGenerator implements Generator {
                     chunk.setBlockRuntimeIdUnsafe(x, y, z, dirtId);
                 }
                 chunk.setBlockRuntimeIdUnsafe(x, 4, z, grassId);
+            }
+        }*/
+
+        for (int x = 15; x >= 0; x--) {
+            for (int z = 15; z >= 0; z--) {
+                chunk.setBlockId(x, 0, z, BEDROCK);
+                for (int y = 1; y < 4; y++) {
+                    chunk.setBlockId(x, y, z, DIRT);
+                }
+                chunk.setBlockId(x, 4, z, GRASS);
             }
         }
     }

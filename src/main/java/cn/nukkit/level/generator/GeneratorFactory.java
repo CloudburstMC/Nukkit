@@ -1,7 +1,5 @@
 package cn.nukkit.level.generator;
 
-import lombok.NonNull;
-
 /**
  * Creates {@link Generator} instances.
  *
@@ -18,5 +16,5 @@ public interface GeneratorFactory {
      * @param options the options string for the generator, as configured in nukkit.yml
      * @return a newly created {@link Generator}
      */
-    Generator create(long seed, @NonNull String options);
+    Generator create(long seed, String options);
 }

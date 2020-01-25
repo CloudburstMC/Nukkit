@@ -50,13 +50,13 @@ public class LevelBuilder {
 
     public LevelBuilder generator(Identifier generatorId) {
         Preconditions.checkNotNull(generatorId, "generatorId");
-        levelData.setGenerator(generatorId);
+        this.levelData.setGenerator(generatorId);
         return this;
     }
 
-    public LevelBuilder options(Map<String, Object> options) {
-        Preconditions.checkNotNull(options, "options");
-        levelData.getGeneratorOptions().putAll(options);
+    public LevelBuilder generatorOptions(String generatorOptions) {
+        Preconditions.checkNotNull(generatorOptions, "generatorOptions");
+        this.levelData.setGeneratorOptions(generatorOptions);
         return this;
     }
 

@@ -4,14 +4,11 @@ import cn.nukkit.event.level.ChunkUnloadEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.chunk.ChunkBuilder;
-import cn.nukkit.level.generator.function.ChunkGenerateFunction;
-import cn.nukkit.level.generator.function.ChunkPopulateFunction;
 import cn.nukkit.level.provider.LevelProvider;
 import cn.nukkit.utils.Config;
 import co.aikar.timings.Timing;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-import com.spotify.futures.CompletableFutures;
 import it.unimi.dsi.fastutil.longs.Long2LongMap;
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
@@ -28,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 @Log4j2
@@ -41,8 +39,8 @@ public final class LevelChunkManager {
     private final Long2ObjectMap<LoadingChunk> chunks = new Long2ObjectOpenHashMap<>();
     private final Long2LongMap chunkLoadedTimes = new Long2LongOpenHashMap();
     private final Long2LongMap chunkLastAccessTimes = new Long2LongOpenHashMap();
-    private final ChunkGenerateFunction chunkGenerateFunction;
-    private final ChunkPopulateFunction chunkPopulateFunction;
+    //private final ChunkGenerateFunction chunkGenerateFunction;
+    //private final ChunkPopulateFunction chunkPopulateFunction;
     private final Executor executor;
 
     public LevelChunkManager(Level level) {
@@ -53,8 +51,8 @@ public final class LevelChunkManager {
         this.level = level;
         this.executor = this.level.getServer().getScheduler().getAsyncPool();
         this.provider = provider;
-        this.chunkGenerateFunction = new ChunkGenerateFunction(this.level);
-        this.chunkPopulateFunction = new ChunkPopulateFunction(this.level);
+        //this.chunkGenerateFunction = new ChunkGenerateFunction(this.level);
+        //this.chunkPopulateFunction = new ChunkPopulateFunction(this.level);
     }
 
     private static long chunkKey(int x, int z) {
@@ -392,28 +390,40 @@ public final class LevelChunkManager {
         }
 
         private void generate() {
-            if (generated) {
-                Chunk chunk = getChunk();
+            if (this.generated) {
+                Chunk chunk = this.getChunk();
                 if (chunk == null || !chunk.isGenerated()) {
                     return;
                 }
             }
-            generated = true;
+            this.generated = true;
 
-            future = future.thenApplyAsync(LevelChunkManager.this.chunkGenerateFunction, LevelChunkManager.this.executor);
+            //porktodo: implement this
+            this.future = this.future.thenApplyAsync(chunk -> {
+                LevelChunkManager.this.level.getGenerator().generate(ThreadLocalRandom.current(), chunk, chunk.getX(), chunk.getZ());
+                return chunk;
+            }, LevelChunkManager.this.executor);
+
+            //this.future = this.future.thenApplyAsync(LevelChunkManager.this.chunkGenerateFunction, LevelChunkManager.this.executor);
         }
 
         private void populate() {
-            if (populated) {
-                Chunk chunk = getChunk();
+            if (this.populated) {
+                Chunk chunk = this.getChunk();
                 if (chunk == null || !chunk.isPopulated()) {
                     return;
                 }
             }
-            populated = true;
+            this.populated = true;
+
+            //porktodo: implement this
+            this.future = this.future.thenApplyAsync(chunk -> {
+                chunk.setPopulated(true);
+                return chunk;
+            }, LevelChunkManager.this.executor);
 
             // Load and generate chunks around the chunk to be populated.
-            List<CompletableFuture<Chunk>> chunksToLoad = new ArrayList<>(8);
+            /*List<CompletableFuture<Chunk>> chunksToLoad = new ArrayList<>(8);
             for (int z = this.z - 1, maxZ = this.z + 1; z <= maxZ; z++) {
                 for (int x = this.x - 1, maxX = this.x + 1; x <= maxX; x++) {
                     if (x == this.x && z == this.z) continue;
@@ -423,7 +433,7 @@ public final class LevelChunkManager {
             CompletableFuture<List<Chunk>> aroundFuture = CompletableFutures.allAsList(chunksToLoad);
 
             future = future.thenCombineAsync(aroundFuture, LevelChunkManager.this.chunkPopulateFunction,
-                    LevelChunkManager.this.executor);
+                    LevelChunkManager.this.executor);*/
         }
 
         private void clear() {
