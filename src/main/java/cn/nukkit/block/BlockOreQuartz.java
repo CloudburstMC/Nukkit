@@ -59,7 +59,7 @@ public class BlockOreQuartz extends BlockSolid {
 
     @Override
     public int getDropExp() {
-        return new NukkitRandom().nextRange(1, 5);
+        return ThreadLocalRandom.current().nextInt(1, 6);
     }
 
     @Override

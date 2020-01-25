@@ -6,6 +6,8 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import static cn.nukkit.block.BlockIds.RED_MUSHROOM;
 
 /**
@@ -34,7 +36,7 @@ public class BlockHugeMushroomRed extends BlockSolid {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (new NukkitRandom().nextRange(1, 20) == 0) {
+        if (ThreadLocalRandom.current().nextInt(0, 20) == 0) {
             return new Item[]{
                     Item.get(RED_MUSHROOM)
             };

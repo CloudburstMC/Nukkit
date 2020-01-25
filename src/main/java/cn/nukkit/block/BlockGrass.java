@@ -11,6 +11,8 @@ import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import static cn.nukkit.block.BlockIds.*;
 import static cn.nukkit.item.ItemIds.DYE;
 
@@ -61,10 +63,9 @@ public class BlockGrass extends BlockDirt {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_RANDOM) {
-            NukkitRandom random = new NukkitRandom();
-            x = random.nextRange(x - 1, x + 1);
-            y = random.nextRange(y - 2, y + 2);
-            z = random.nextRange(z - 1, z + 1);
+            this.x = ThreadLocalRandom.current().nextInt(this.x - 1, this.x + 2);
+            this.y = ThreadLocalRandom.current().nextInt(this.y - 1, this.y + 2);
+            this.z = ThreadLocalRandom.current().nextInt(this.z - 1, this.z + 2);
             Block block = this.getLevel().getBlock(x, y, z);
             if (block.getId() == DIRT && block.getDamage() == 0) {
                 if (block.up() instanceof BlockAir) {

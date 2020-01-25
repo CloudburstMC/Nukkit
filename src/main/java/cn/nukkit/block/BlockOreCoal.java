@@ -60,7 +60,7 @@ public class BlockOreCoal extends BlockSolid {
 
     @Override
     public int getDropExp() {
-        return new NukkitRandom().nextRange(0, 2);
+        return ThreadLocalRandom.current().nextInt(0, 2);
     }
 
     @Override

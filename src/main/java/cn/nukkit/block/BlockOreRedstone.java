@@ -9,6 +9,7 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static cn.nukkit.block.BlockIds.LIT_REDSTONE_ORE;
 
@@ -68,7 +69,7 @@ public class BlockOreRedstone extends BlockSolid {
 
     @Override
     public int getDropExp() {
-        return new NukkitRandom().nextRange(1, 5);
+        return ThreadLocalRandom.current().nextInt(1, 6);
     }
 
     @Override

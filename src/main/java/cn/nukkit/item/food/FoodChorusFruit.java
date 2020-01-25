@@ -10,6 +10,8 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * Created by Leonidius20 on 20.08.18.
  */
@@ -34,11 +36,10 @@ public class FoodChorusFruit extends FoodNormal {
         Level level = player.getLevel();
         if (level == null) return false;
 
-        NukkitRandom random = new NukkitRandom();
         for (int attempts = 0; attempts < 128; attempts++) {
-            int x = random.nextRange(minX, maxX);
-            int y = random.nextRange(minY, maxY);
-            int z = random.nextRange(minZ, maxZ);
+            int x = ThreadLocalRandom.current().nextInt(minX, maxX);
+            int y = ThreadLocalRandom.current().nextInt(minY, maxY);
+            int z = ThreadLocalRandom.current().nextInt(minZ, maxZ);
 
             if (y < 0) continue;
 

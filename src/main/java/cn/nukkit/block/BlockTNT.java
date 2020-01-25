@@ -16,6 +16,8 @@ import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import static cn.nukkit.block.BlockIds.AIR;
 import static cn.nukkit.item.ItemIds.FIREBALL;
 import static cn.nukkit.item.ItemIds.FLINT_AND_STEEL;
@@ -65,7 +67,7 @@ public class BlockTNT extends BlockSolid {
 
     public void prime(int fuse, Entity source) {
         this.getLevel().setBlock(this, Block.get(AIR), true);
-        double mot = (new NukkitRandom()).nextSignedFloat() * Math.PI * 2;
+        double mot = ThreadLocalRandom.current().nextFloat() * Math.PI * 2;
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", this.x + 0.5))

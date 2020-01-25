@@ -11,6 +11,8 @@ import cn.nukkit.math.BlockFace.Plane;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.Identifier;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import static cn.nukkit.block.BlockIds.*;
 
 /**
@@ -71,9 +73,8 @@ public class BlockStemPumpkin extends BlockCrops {
 
     @Override
     public Item[] getDrops(Item item) {
-        NukkitRandom random = new NukkitRandom();
         return new Item[]{
-                Item.get(ItemIds.PUMPKIN_SEEDS, 0, random.nextRange(0, 3))
+                Item.get(ItemIds.PUMPKIN_SEEDS, 0, ThreadLocalRandom.current().nextInt(0, 4))
         };
     }
 }

@@ -60,7 +60,7 @@ public class BlockOreDiamond extends BlockSolid {
 
     @Override
     public int getDropExp() {
-        return new NukkitRandom().nextRange(3, 7);
+        return ThreadLocalRandom.current().nextInt(3, 8);
     }
 
     @Override

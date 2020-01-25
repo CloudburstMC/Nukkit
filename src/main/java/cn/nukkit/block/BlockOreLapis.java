@@ -61,7 +61,7 @@ public class BlockOreLapis extends BlockSolid {
 
     @Override
     public int getDropExp() {
-        return new NukkitRandom().nextRange(2, 5);
+        return ThreadLocalRandom.current().nextInt(2, 6);
     }
 
     @Override
