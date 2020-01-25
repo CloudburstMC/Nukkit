@@ -4,10 +4,9 @@ import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.scheduler.FileWriteTask;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.IOException;
@@ -220,30 +219,34 @@ public class Config {
     public boolean save(Boolean async) {
         if (this.file == null) throw new IllegalStateException("Failed to save Config. File object is undefined.");
         if (this.correct) {
-            String content = "";
-            switch (this.type) {
-                case Config.PROPERTIES:
-                    content = this.writeProperties();
-                    break;
-                case Config.JSON:
-                    try {
-                        content = Nukkit.JSON_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.config);
-                    } catch (IOException e) {
-                        throw new IllegalStateException(e);
-                    }
-                    break;
-                case Config.YAML:
-                    DumperOptions dumperOptions = new DumperOptions();
-                    dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-                    Yaml yaml = new Yaml(dumperOptions);
-                    content = yaml.dump(this.config);
-                    break;
-                case Config.ENUM:
-                    for (Object o : this.config.entrySet()) {
-                        Map.Entry entry = (Map.Entry) o;
-                        content += entry.getKey() + "\r\n";
-                    }
-                    break;
+            String content;
+            if (this.type == ENUM) {
+                StringBuilder builder = new StringBuilder();
+                for (Object o : this.config.entrySet()) {
+                    Map.Entry<?, ?> entry = (Map.Entry<?, ?>) o;
+                    builder.append(entry.getKey()).append("\r\n");
+                }
+                content = builder.toString();
+            } else {
+                ObjectMapper mapper;
+                switch (this.type) {
+                    case PROPERTIES:
+                        mapper = Nukkit.JAVA_PROPS_MAPPER;
+                        break;
+                    case JSON:
+                        mapper = Nukkit.JSON_MAPPER;
+                        break;
+                    case YAML:
+                        mapper = Nukkit.YAML_MAPPER;
+                        break;
+                    default:
+                        throw new UnsupportedOperationException("Invalid config type " + type);
+                }
+                try {
+                    content = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.config);
+                } catch (IOException e) {
+                    throw new IllegalStateException(e);
+                }
             }
             if (async) {
                 Server.getInstance().getScheduler().scheduleAsyncTask(new FileWriteTask(this.file, content));
@@ -269,7 +272,6 @@ public class Config {
         return this.get(key, null);
     }
 
-    @SuppressWarnings("unchecked")
     public <T> T get(String key, T defaultValue) {
         return this.correct ? this.config.get(key, defaultValue) : defaultValue;
     }
@@ -545,29 +547,29 @@ public class Config {
     }
 
     private void parseContent(String content) {
-        switch (this.type) {
-            case Config.PROPERTIES:
-                this.parseProperties(content);
-                break;
-            case Config.JSON:
-                try {
-                    this.config = Nukkit.JSON_MAPPER.readValue(content, CONFIG_TYPE_REFERENCE);
-                } catch (IOException e) {
-                    throw new IllegalStateException(e);
-                }
-                break;
-            case Config.YAML:
-                DumperOptions dumperOptions = new DumperOptions();
-                dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-                Yaml yaml = new Yaml(dumperOptions);
-                this.config = new ConfigSection(yaml.loadAs(content, LinkedHashMap.class));
-                break;
-            // case Config.SERIALIZED
-            case Config.ENUM:
-                this.parseList(content);
-                break;
-            default:
-                this.correct = false;
+        if (type == ENUM) {
+            this.parseList(content);
+        } else {
+            ObjectMapper mapper;
+            switch (this.type) {
+                case Config.PROPERTIES:
+                    mapper = Nukkit.JAVA_PROPS_MAPPER;
+                    break;
+                case Config.JSON:
+                    mapper = Nukkit.JSON_MAPPER;
+                    break;
+                case Config.YAML:
+                    mapper = Nukkit.YAML_MAPPER;
+                    break;
+                default:
+                    this.correct = false;
+                    return;
+            }
+            try {
+                this.config = mapper.readValue(content, CONFIG_TYPE_REFERENCE);
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
         }
     }
 
