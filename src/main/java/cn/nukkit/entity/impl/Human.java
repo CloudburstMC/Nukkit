@@ -9,7 +9,9 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.PlayerEnderChestInventory;
 import cn.nukkit.inventory.PlayerInventory;
+import cn.nukkit.inventory.PlayerOffhandInventory;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.NukkitMath;
@@ -22,11 +24,13 @@ import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.network.protocol.SetEntityLinkPacket;
 import cn.nukkit.player.Player;
 import cn.nukkit.player.PlayerFlag;
+import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.SerializedImage;
 import cn.nukkit.utils.SkinAnimation;
 import cn.nukkit.utils.Utils;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -46,6 +50,7 @@ public class Human extends EntityCreature implements InventoryHolder {
 
     protected PlayerInventory inventory;
     protected PlayerEnderChestInventory enderChestInventory;
+    protected PlayerOffhandInventory offhandInventory;
 
     public Human(EntityType<Human> type, Chunk chunk, CompoundTag tag) {
         super(type, chunk, tag);
@@ -95,6 +100,10 @@ public class Human extends EntityCreature implements InventoryHolder {
 
     public PlayerEnderChestInventory getEnderChestInventory() {
         return enderChestInventory;
+    }
+
+    public PlayerOffhandInventory getOffhandInventory() {
+        return offhandInventory;
     }
 
     @Override
@@ -179,6 +188,7 @@ public class Human extends EntityCreature implements InventoryHolder {
         }
 
         this.inventory = new PlayerInventory(this);
+        this.offhandInventory = new PlayerOffhandInventory(this);
 
         if (this.namedTag.contains("Inventory") && this.namedTag.get("Inventory") instanceof ListTag) {
             ListTag<CompoundTag> inventoryList = this.namedTag.getList("Inventory", CompoundTag.class);
@@ -189,6 +199,8 @@ public class Human extends EntityCreature implements InventoryHolder {
                     inventoryList.remove(item);
                 } else if (slot >= 100 && slot < 104) {
                     this.inventory.setItem(this.inventory.getSize() + slot - 100, NBTIO.getItemHelper(item));
+                } else if (slot == -106) {
+                    this.offhandInventory.setItem(0, NBTIO.getItemHelper(item));
                 } else {
                     this.inventory.setItem(slot - 9, NBTIO.getItemHelper(item));
                 }
@@ -216,8 +228,9 @@ public class Human extends EntityCreature implements InventoryHolder {
     public void saveNBT() {
         super.saveNBT();
 
+        ListTag<CompoundTag> inventoryTag = null;
         if (this.inventory != null) {
-            ListTag<CompoundTag> inventoryTag = new ListTag<>("Inventory");
+            inventoryTag = new ListTag<>("Inventory");
             this.namedTag.putList(inventoryTag);
 
             for (int slot = 0; slot < 9; ++slot) {
@@ -241,6 +254,17 @@ public class Human extends EntityCreature implements InventoryHolder {
                 if (item != null && item.getId() != AIR) {
                     inventoryTag.add(NBTIO.putItemHelper(item, slot));
                 }
+            }
+        }
+
+        if (this.offhandInventory != null) {
+            Item item = this.offhandInventory.getItem(0);
+            if (item.getId() != Identifier.EMPTY) {
+                if (inventoryTag == null) {
+                    inventoryTag = new ListTag<>("Inventory");
+                    this.namedTag.putList(inventoryTag);
+                }
+                inventoryTag.add(NBTIO.putItemHelper(item, -106));
             }
         }
 
@@ -304,6 +328,7 @@ public class Human extends EntityCreature implements InventoryHolder {
             player.dataPacket(createAddEntityPacket());
 
             this.inventory.sendArmorContents(player);
+            this.offhandInventory.sendContents(player);
 
             if (this.vehicle != null) {
                 SetEntityLinkPacket pkk = new SetEntityLinkPacket();
@@ -467,7 +492,9 @@ public class Human extends EntityCreature implements InventoryHolder {
     @Override
     public Item[] getDrops() {
         if (this.inventory != null) {
-            return this.inventory.getContents().values().toArray(new Item[0]);
+            List<Item> drops = new ArrayList<>(this.inventory.getContents().values());
+            drops.addAll(this.offhandInventory.getContents().values());
+            return drops.toArray(new Item[0]);
         }
         return new Item[0];
     }
