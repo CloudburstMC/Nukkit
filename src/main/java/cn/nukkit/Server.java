@@ -1,30 +1,7 @@
 package cn.nukkit;
 
-import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityBanner;
-import cn.nukkit.blockentity.BlockEntityBeacon;
-import cn.nukkit.blockentity.BlockEntityBed;
-import cn.nukkit.blockentity.BlockEntityBrewingStand;
-import cn.nukkit.blockentity.BlockEntityCauldron;
-import cn.nukkit.blockentity.BlockEntityChest;
-import cn.nukkit.blockentity.BlockEntityComparator;
-import cn.nukkit.blockentity.BlockEntityEnchantTable;
-import cn.nukkit.blockentity.BlockEntityEnderChest;
-import cn.nukkit.blockentity.BlockEntityFlowerPot;
-import cn.nukkit.blockentity.BlockEntityFurnace;
-import cn.nukkit.blockentity.BlockEntityHopper;
-import cn.nukkit.blockentity.BlockEntityItemFrame;
-import cn.nukkit.blockentity.BlockEntityJukebox;
-import cn.nukkit.blockentity.BlockEntityMusic;
-import cn.nukkit.blockentity.BlockEntityPistonArm;
-import cn.nukkit.blockentity.BlockEntityShulkerBox;
-import cn.nukkit.blockentity.BlockEntitySign;
-import cn.nukkit.blockentity.BlockEntitySkull;
-import cn.nukkit.command.Command;
-import cn.nukkit.command.CommandSender;
-import cn.nukkit.command.ConsoleCommandSender;
-import cn.nukkit.command.PluginIdentifiableCommand;
-import cn.nukkit.command.SimpleCommandMap;
+import cn.nukkit.blockentity.*;
+import cn.nukkit.command.*;
 import cn.nukkit.console.NukkitConsole;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.data.Skin;
@@ -32,6 +9,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.server.BatchPacketsEvent;
 import cn.nukkit.event.server.PlayerDataSerializeEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
+import cn.nukkit.event.server.RegistriesClosedEvent;
 import cn.nukkit.inventory.CraftingManager;
 import cn.nukkit.inventory.Recipe;
 import cn.nukkit.item.Item;
@@ -80,23 +58,10 @@ import cn.nukkit.plugin.service.NKServiceManager;
 import cn.nukkit.plugin.service.ServiceManager;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
-import cn.nukkit.registry.BlockRegistry;
-import cn.nukkit.registry.EntityRegistry;
-import cn.nukkit.registry.GameRuleRegistry;
-import cn.nukkit.registry.GeneratorRegistry;
-import cn.nukkit.registry.ItemRegistry;
-import cn.nukkit.registry.RegistryException;
-import cn.nukkit.registry.StorageRegistry;
+import cn.nukkit.registry.*;
 import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.scheduler.Task;
-import cn.nukkit.utils.Config;
-import cn.nukkit.utils.DefaultPlayerDataSerializer;
-import cn.nukkit.utils.Identifier;
-import cn.nukkit.utils.PlayerDataSerializer;
-import cn.nukkit.utils.ServerException;
-import cn.nukkit.utils.TextFormat;
-import cn.nukkit.utils.Utils;
-import cn.nukkit.utils.Watchdog;
+import cn.nukkit.utils.*;
 import cn.nukkit.utils.bugreport.ExceptionHandler;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
@@ -110,13 +75,7 @@ import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
 import org.iq80.leveldb.impl.Iq80DBFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
@@ -127,20 +86,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -595,6 +541,8 @@ public class Server {
             this.packManager.closeRegistration();
         } catch (RegistryException e) {
             throw new IllegalStateException("Unable to close registries", e);
+        } finally {
+            this.pluginManager.callEvent(new RegistriesClosedEvent(this.packManager));
         }
 
         Identifier defaultStorageId = Identifier.fromString(this.getConfig().get(
@@ -2008,7 +1956,7 @@ public class Server {
         this.registerBlockEntities();
 
         Enchantment.init();
-        //TODO: EnumBiome.values(); //load class, this also registers biomes
+        //porktodo: EnumBiome.values(); //load class, this also registers biomes
         Item.initCreativeItems();
         Effect.init();
         Potion.init();

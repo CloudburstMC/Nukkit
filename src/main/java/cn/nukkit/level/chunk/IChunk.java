@@ -17,7 +17,6 @@ import java.util.Collection;
 import static cn.nukkit.block.BlockIds.*;
 
 public interface IChunk {
-
     @Nonnull
     ChunkSection getOrCreateSection(@Nonnegative int y);
 
@@ -29,7 +28,7 @@ public interface IChunk {
 
     @Nonnull
     default Block getBlock(int x, int y, int z) {
-        return getBlock(x, y, z, 0);
+        return this.getBlock(x, y, z, 0);
     }
 
     @Nonnull
@@ -37,38 +36,50 @@ public interface IChunk {
 
     @Nonnull
     default Identifier getBlockId(int x, int y, int z) {
-        return getBlockId(x, y, z, 0);
+        return this.getBlockId(x, y, z, 0);
     }
 
     @Nonnull
     Identifier getBlockId(int x, int y, int z, @Nonnegative int layer);
 
+    default int getBlockRuntimeIdUnsafe(int x, int y, int z)  {
+        return this.getBlockRuntimeIdUnsafe(x, y, z, 0);
+    }
+
+    int getBlockRuntimeIdUnsafe(int x, int y, int z, @Nonnegative int layer);
+
     default int getBlockData(int x, int y, int z) {
-        return getBlockData(x, y, z, 0);
+        return this.getBlockData(x, y, z, 0);
     }
 
     int getBlockData(int x, int y, int z, @Nonnegative int layer);
 
     default Block getAndSetBlock(int x, int y, int z, Block block) {
-        return getAndSetBlock(x, y, z, 0, block);
+        return this.getAndSetBlock(x, y, z, 0, block);
     }
 
     Block getAndSetBlock(int x, int y, int z, @Nonnegative int layer, Block block);
 
     default void setBlock(int x, int y, int z, Block block) {
-        setBlock(x, y, z, 0, block);
+        this.setBlock(x, y, z, 0, block);
     }
 
     void setBlock(int x, int y, int z, @Nonnegative int layer, Block block);
 
     default void setBlockId(int x, int y, int z, Identifier id) {
-        setBlockId(x, y, z, 0, id);
+        this.setBlockId(x, y, z, 0, id);
     }
 
     void setBlockId(int x, int y, int z, @Nonnegative int layer, Identifier id);
 
+    default void setBlockRuntimeIdUnsafe(int x, int y, int z, int runtimeId) {
+        this.setBlockRuntimeIdUnsafe(x, y, z, 0, runtimeId);
+    }
+
+    void setBlockRuntimeIdUnsafe(int x, int y, int z, @Nonnegative int layer, int runtimeId);
+
     default void setBlockData(int x, int y, int z, int data) {
-        setBlockData(x, y, z, 0, data);
+        this.setBlockData(x, y, z, 0, data);
     }
 
     void setBlockData(int x, int y, int z, @Nonnegative int layer, int data);

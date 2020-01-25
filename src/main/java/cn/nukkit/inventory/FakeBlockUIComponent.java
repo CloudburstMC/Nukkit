@@ -2,7 +2,7 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.event.inventory.InventoryOpenEvent;
 import cn.nukkit.level.BlockPosition;
-import cn.nukkit.math.Vector3f;
+import cn.nukkit.math.Vector3i;
 import cn.nukkit.network.protocol.ContainerClosePacket;
 import cn.nukkit.network.protocol.ContainerOpenPacket;
 import cn.nukkit.player.Player;
@@ -42,9 +42,9 @@ public class FakeBlockUIComponent extends PlayerUIComponent {
         pk.type = type.getNetworkType();
         InventoryHolder holder = this.getHolder();
         if (holder != null) {
-            pk.x = (int) ((Vector3f) holder).getX();
-            pk.y = (int) ((Vector3f) holder).getY();
-            pk.z = (int) ((Vector3f) holder).getZ();
+            pk.x = ((Vector3i) holder).getX();
+            pk.y = ((Vector3i) holder).getY();
+            pk.z = ((Vector3i) holder).getZ();
         } else {
             pk.x = pk.y = pk.z = 0;
         }

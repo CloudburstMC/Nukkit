@@ -3,6 +3,7 @@ package cn.nukkit.plugin;
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandExecutor;
 import cn.nukkit.utils.Config;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.InputStream;
@@ -266,7 +267,7 @@ public interface Plugin extends CommandExecutor {
      * @see cn.nukkit.plugin.PluginLogger
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
-    PluginLogger getLogger();
+    Logger getLogger();
 
     /**
      * 返回这个插件的加载器为{@link cn.nukkit.plugin.PluginLoader}对象。<br>

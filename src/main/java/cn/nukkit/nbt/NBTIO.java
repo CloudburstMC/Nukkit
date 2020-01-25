@@ -1,5 +1,6 @@
 package cn.nukkit.nbt;
 
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.item.Item;
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import cn.nukkit.nbt.stream.NBTInputStream;
@@ -8,6 +9,7 @@ import cn.nukkit.nbt.stream.PGZIPOutputStream;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.registry.ItemRegistry;
+import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.ThreadCache;
 
 import java.io.*;
@@ -30,7 +32,7 @@ public class NBTIO {
 
     public static CompoundTag putItemHelper(Item item, Integer slot) {
         CompoundTag tag = new CompoundTag(null)
-                .putShort("id", ItemRegistry.get().getRuntimeId(item.getId()))
+                .putString("Name", item.getId().toString())
                 .putByte("Count", item.getCount())
                 .putShort("Damage", item.getDamage());
         if (slot != null) {
@@ -45,13 +47,19 @@ public class NBTIO {
     }
 
     public static Item getItemHelper(CompoundTag tag) {
-        if (!tag.contains("id") || !tag.contains("Count")) {
-            return Item.get(0);
+        if (!(tag.contains("Name") || tag.contains("id")) && !tag.contains("Count")) {
+            return Item.get(BlockIds.AIR);
         }
 
         Item item;
         try {
-            item = Item.get(tag.getShort("id"), !tag.contains("Damage") ? 0 : tag.getShort("Damage"), tag.getByte("Count"));
+            Identifier identifier;
+            if (tag.contains("Name")) {
+                identifier = Identifier.fromString(tag.getString("Name"));
+            } else {
+                identifier = ItemRegistry.get().fromLegacy(tag.getShort("id"));
+            }
+            item = Item.get(identifier, !tag.contains("Damage") ? 0 : tag.getShort("Damage"), tag.getByte("Count"));
         } catch (Exception e) {
             item = Item.fromString(tag.getString("id"));
             item.setDamage(!tag.contains("Damage") ? 0 : tag.getShort("Damage"));

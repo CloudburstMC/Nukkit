@@ -2,7 +2,6 @@ package cn.nukkit.entity.impl.projectile;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
-import cn.nukkit.entity.data.EntityData;
 import cn.nukkit.entity.impl.BaseEntity;
 import cn.nukkit.entity.impl.EntityLiving;
 import cn.nukkit.entity.misc.EnderCrystal;
@@ -17,13 +16,13 @@ import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.Set;
 
+import static cn.nukkit.entity.data.EntityFlag.CRITICAL;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public abstract class EntityProjectile extends BaseEntity {
-
-    public BaseEntity shootingEntity;
 
     protected double getDamage() {
         return namedTag.contains("damage") ? namedTag.getDouble("damage") : getBaseDamage();
@@ -40,15 +39,7 @@ public abstract class EntityProjectile extends BaseEntity {
     protected double damage = 0;
 
     public EntityProjectile(EntityType<?> type, Chunk chunk, CompoundTag nbt) {
-        this(type, chunk, nbt, null);
-    }
-
-    public EntityProjectile(EntityType<?> type, Chunk chunk, CompoundTag nbt, BaseEntity shootingEntity) {
         super(type, chunk, nbt);
-        this.shootingEntity = shootingEntity;
-        if (shootingEntity != null) {
-            this.setLongData(EntityData.OWNER_EID, shootingEntity.getUniqueId());
-        }
     }
 
     public int getResultDamage() {
@@ -64,10 +55,10 @@ public abstract class EntityProjectile extends BaseEntity {
         float damage = this.getResultDamage();
 
         EntityDamageEvent ev;
-        if (this.shootingEntity == null) {
+        if (this.getOwner() == null) {
             ev = new EntityDamageByEntityEvent(this, entity, DamageCause.PROJECTILE, damage);
         } else {
-            ev = new EntityDamageByChildEntityEvent(this.shootingEntity, this, entity, DamageCause.PROJECTILE, damage);
+            ev = new EntityDamageByChildEntityEvent(this.getOwner(), this, entity, DamageCause.PROJECTILE, damage);
         }
         entity.attack(ev);
         this.hadCollision = true;
@@ -139,7 +130,7 @@ public abstract class EntityProjectile extends BaseEntity {
 
             for (Entity entity : collidingEntities) {
                 if (/*!entity.canCollideWith(this) or */
-                        (entity == this.shootingEntity && this.ticksLived < 5)
+                        (entity == this.getOwner() && this.ticksLived < 5)
                         ) {
                     continue;
                 }
@@ -197,5 +188,17 @@ public abstract class EntityProjectile extends BaseEntity {
         }
 
         return hasUpdate;
+    }
+
+    public void setCritical() {
+        this.setCritical(true);
+    }
+
+    public boolean isCritical() {
+        return this.getFlag(CRITICAL);
+    }
+
+    public void setCritical(boolean value) {
+        this.setFlag(CRITICAL, value);
     }
 }

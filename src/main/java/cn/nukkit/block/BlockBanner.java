@@ -80,7 +80,7 @@ public class BlockBanner extends BlockTransparent implements Faceable {
                 nbt.put("Patterns", patterns);
             }
 
-            new BlockEntityBanner(this.getChunk(), nbt);
+            BlockEntity.createBlockEntity(BlockEntity.BANNER, this.getChunk(), nbt);
 
             return true;
         }

@@ -1,7 +1,6 @@
 package cn.nukkit.entity.impl.projectile;
 
 import cn.nukkit.entity.EntityType;
-import cn.nukkit.entity.impl.BaseEntity;
 import cn.nukkit.entity.projectile.Egg;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -13,11 +12,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 public class EntityEgg extends EntityProjectile implements Egg {
 
     public EntityEgg(EntityType<Egg> type, Chunk chunk, CompoundTag nbt) {
-        this(type, chunk, nbt, null);
-    }
-
-    public EntityEgg(EntityType<Egg> type, Chunk chunk, CompoundTag nbt, BaseEntity shootingEntity) {
-        super(type, chunk, nbt, shootingEntity);
+        super(type, chunk, nbt);
     }
 
     @Override

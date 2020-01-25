@@ -82,6 +82,18 @@ public class ChunkSection {
         this.storage[layer].setBlockId(blockIndex(x, y, z), id);
     }
 
+    public int getBlockRuntimeIdUnsafe(int x, int y, int z, int layer)    {
+        checkBounds(x, y, z);
+        this.checkLayer(layer);
+        return this.storage[layer].getBlockRuntimeIdUnsafe(blockIndex(x, y, z));
+    }
+
+    public void setBlockRuntimeIdUnsafe(int x, int y, int z, int layer, int runtimeId)    {
+        checkBounds(x, y, z);
+        this.checkLayer(layer);
+        this.storage[layer].setBlockRuntimeIdUnsafe(blockIndex(x, y, z), runtimeId);
+    }
+
     public int getBlockData(int x, int y, int z, int layer) {
         checkBounds(x, y, z);
         checkLayer(layer);

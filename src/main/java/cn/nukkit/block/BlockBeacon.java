@@ -80,10 +80,7 @@ public class BlockBeacon extends BlockTransparent {
                     .putInt("x", (int) this.x)
                     .putInt("y", (int) this.y)
                     .putInt("z", (int) this.z);
-            BlockEntityBeacon beacon = new BlockEntityBeacon(this.level.getChunk(this.getChunkX(), this.getChunkZ()), nbt);
-            if (beacon == null) {
-                return false;
-            }
+            BlockEntity.createBlockEntity(BlockEntity.BEACON, this.level.getChunk(this.getChunkX(), this.getChunkZ()), nbt);
         }
 
         return blockSuccess;

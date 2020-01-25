@@ -22,7 +22,10 @@ pipeline {
 
         stage ('Deploy') {
             when {
-                branch "master"
+                anyOf {
+                    branch 'master';
+                    branch '2.0'
+                }
             }
             steps {
                 sh 'mvn javadoc:javadoc javadoc:jar source:jar deploy -DskipTests'

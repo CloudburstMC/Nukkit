@@ -709,7 +709,7 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
     }
 
     public Item toItem() {
-        return Item.get(this.id);
+        return Item.get(this.id, this.meta);
     }
 
     public boolean canSilkTouch() {
