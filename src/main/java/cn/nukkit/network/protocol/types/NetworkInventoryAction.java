@@ -6,6 +6,7 @@ import cn.nukkit.inventory.EnchantInventory;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.transaction.action.*;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBookEnchanted;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.network.protocol.InventoryTransactionPacket;
 import cn.nukkit.player.Player;
@@ -210,13 +211,28 @@ public class NetworkInventoryAction {
                             break;
                         case SOURCE_TYPE_ANVIL_RESULT:
                             this.inventorySlot = 2;
+
+                            Item input = anvil.getItem(0);
+                            Item sacrifice = anvil.getItem(1);
+
                             anvil.clear(0);
-                            Item material = anvil.getItem(1);
-                            if (!material.isNull()) {
-                                material.setCount(material.getCount() - 1);
-                                anvil.setItem(1, material);
+                            if (!sacrifice.isNull()) {
+                                sacrifice.setCount(sacrifice.getCount() - 1);
+                                anvil.setItem(1, sacrifice);
                             }
+
+                            if(!sacrifice.isNull()) {
+                                if(sacrifice instanceof ItemBookEnchanted) {
+                                    anvil.getItem(2).addEnchantment(sacrifice.getEnchantments());
+                                }
+                            }
+
                             anvil.setItem(2, this.oldItem);
+
+                            player.getInventory().addItem(anvil.getItem(2));
+                            anvil.setItem(0, Item.get(0));
+
+
                             //System.out.println("action result");
                             return new SlotChangeAction(anvil, this.inventorySlot, this.oldItem, this.newItem);
                     }
