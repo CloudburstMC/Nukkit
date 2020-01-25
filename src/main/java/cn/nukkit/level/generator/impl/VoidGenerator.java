@@ -23,13 +23,15 @@ public final class VoidGenerator implements Generator {
     }
 
     @Override
-    public void generate(Random random, IChunk chunk, int chunkX, int chunkZ) {
+    public boolean generate(Random random, IChunk chunk, int chunkX, int chunkZ) {
         //no-op
+        return false;
     }
 
     @Override
-    public void populate(Random random, IChunk chunk, ChunkManager level) {
+    public boolean populate(Random random, IChunk chunk, ChunkManager level) {
         //no-op
+        return false;
     }
 
     @Override

@@ -3,6 +3,7 @@ package cn.nukkit.level.generator;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.math.ChunkPos;
+import cn.nukkit.math.NukkitRandom;
 
 import java.util.Collection;
 import java.util.Random;
@@ -18,21 +19,23 @@ public interface Generator {
     /**
      * Generates a given chunk.
      *
-     * @param random an instance of {@link Random} for generating random numbers
+     * @param random an instance of {@link Random} for generating random numbers, initialized with a seed based on chunk's position
      * @param chunk  the chunk to generate
      * @param chunkX the chunk's X coordinate
      * @param chunkZ the chunk's Z coordinate
+     * @return whether or not the chunk's dirty flag should be left as-is. Generally this should always be {@code false}, unless a very specific need is present for the chunk to never be generated more than once
      */
-    void generate(Random random, IChunk chunk, int chunkX, int chunkZ);
+    boolean generate(Random random, IChunk chunk, int chunkX, int chunkZ);
 
     /**
      * Populates a given chunk.
      *
-     * @param random an instance of {@link Random} for generating random numbers
+     * @param random an instance of {@link Random} for generating random numbers, initialized with a seed based on chunk's position
      * @param chunk  the chunk to populate
      * @param level  a {@link ChunkManager} containing only the chunks at the relative positions specified by {@link #populationChunks(ChunkPos, int, int)}
+     * @return whether or not that the chunk's dirty flag, and that of all the population chunks, should be left as-is. Generally this should always be {@code false}, unless a very specific need is present for the chunk to never be populated more than once
      */
-    void populate(Random random, IChunk chunk, ChunkManager level);
+    boolean populate(Random random, IChunk chunk, ChunkManager level);
 
     /**
      * Gets a list of absolute chunk positions. The chunks at these positions will be loaded/generated if needed, and will be the only chunks present in

@@ -25,14 +25,17 @@ public final class GenerationTask implements Function<Chunk, Chunk> {
             return chunk;
         }
 
+        boolean retainDirty = false;
         LockableChunk lockable = chunk.lockable();
 
         lockable.lock();
         try {
-            this.generator.generate(ThreadLocalRandom.current(), lockable, chunk.getX(), chunk.getZ());
+            retainDirty = this.generator.generate(ThreadLocalRandom.current(), lockable, chunk.getX(), chunk.getZ());
             chunk.setGenerated();
         } finally {
-            chunk.setDirty(false);
+            if (!retainDirty)   {
+                chunk.setDirty(false);
+            }
             lockable.unlock();
         }
         return chunk;

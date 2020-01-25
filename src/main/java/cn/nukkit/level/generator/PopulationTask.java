@@ -29,6 +29,7 @@ public final class PopulationTask implements BiFunction<Chunk, List<Chunk>, Chun
             throw new IllegalStateException("Cannot populate chunk before it is generated! x=" + chunk.getX() + ",z=" + chunk.getZ());
         }
 
+        boolean retainDirty = false;
         List<LockableChunk> lockable = new ArrayList<>(populationChunks.size() + 1);
         lockable.add(chunk.lockable());
         for (Chunk populationChunk : populationChunks)    {
@@ -43,11 +44,12 @@ public final class PopulationTask implements BiFunction<Chunk, List<Chunk>, Chun
         try {
             //porktodo: population ChunkManager instance
             //porktodo: prevent overwriting already populated chunk contents
-            this.generator.populate(ThreadLocalRandom.current(), lockable.get(0), chunk.getLevel());
+            retainDirty = this.generator.populate(ThreadLocalRandom.current(), lockable.get(0), chunk.getLevel());
             chunk.setPopulated(true);
         } finally {
-            //porktodo: provide a way for the generator to say it wants to make chunks retain their dirty state
-            lockable.forEach(LockableChunk::setNotDirty);
+            if (!retainDirty)   {
+                lockable.forEach(LockableChunk::setNotDirty);
+            }
             lockable.forEach(LockableChunk::unlock);
         }
         return chunk;

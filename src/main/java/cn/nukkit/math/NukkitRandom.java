@@ -24,13 +24,13 @@ public final class NukkitRandom extends Random {
 
     private static final AtomicLong BASE_SEED = new AtomicLong(mix64(System.currentTimeMillis()) ^ mix64(System.nanoTime()));
 
-    private static long mix64(long z) {
+    public static long mix64(long z) {
         z = (z ^ (z >>> 30)) * 0xbf58476d1ce4e5b9L;
         z = (z ^ (z >>> 27)) * 0x94d049bb133111ebL;
         return z ^ (z >>> 31);
     }
 
-    private static int mix32(long z) {
+    public static int mix32(long z) {
         z = (z ^ (z >>> 33)) * 0x62a9d9ed799705f5L;
         return (int) (((z ^ (z >>> 28)) * 0xcb24d0a5c88c35b3L) >>> 32);
     }
