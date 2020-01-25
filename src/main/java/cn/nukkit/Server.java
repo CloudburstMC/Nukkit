@@ -408,7 +408,7 @@ public class Server {
         this.properties.setProperty("generator-settings", "");
         this.properties.setProperty("level-name", "world");
         this.properties.setProperty("level-seed", "");
-        this.properties.setProperty("level-type", "DEFAULT");
+        this.properties.setProperty("level-type", "NORMAL");
         this.properties.setProperty("allow-nether", "true");
         this.properties.setProperty("enable-query", "true");
         this.properties.setProperty("enable-rcon", "false");
@@ -597,8 +597,8 @@ public class Server {
             Level defaultLevel = this.levelManager.getLevel(defaultName);
             if (defaultLevel == null) {
                 long seed;
-                String seedString = this.getProperty("level-seed", null);
-                if (seedString != null) {
+                String seedString = this.getProperty("level-seed", "");
+                if (!seedString.isEmpty()) {
                     try {
                         seed = Long.parseLong(seedString);
                     } catch (NumberFormatException e) {
@@ -608,9 +608,12 @@ public class Server {
                     seed = System.currentTimeMillis();
                 }
 
+                String type = (type = this.getLevelType().toLowerCase()).equals("default") ? "normal" : type;
+                Identifier typeIdentifier = Identifier.fromString(type);
+
                 defaultLevel = this.loadLevel().id(defaultName)
                         .seed(seed)
-                        .generator(GeneratorIds.NORMAL)
+                        .generator(this.generatorRegistry.isRegistered(typeIdentifier) ? typeIdentifier : this.generatorRegistry.getFallback())
                         .load().join();
             }
             this.levelManager.setDefaultLevel(defaultLevel);
@@ -1193,7 +1196,7 @@ public class Server {
     }
 
     public String getLevelType() {
-        return this.getProperty("level-type", "DEFAULT");
+        return this.getProperty("level-type", "NORMAL");
     }
 
     public boolean getGenerateStructures() {
