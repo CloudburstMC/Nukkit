@@ -32,6 +32,7 @@ public class GeneratorRegistry implements Registry {
         checkArgument(!this.generators.containsKey(identifier));
         this.generators.put(identifier, factory);
         this.fallback.add(new WeightedIdentifier(identifier, fallbackWeight));
+        this.fallback.sort(null);
     }
 
     public GeneratorFactory getGeneratorFactory(Identifier identifier) {
