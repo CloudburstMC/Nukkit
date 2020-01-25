@@ -1,5 +1,6 @@
 package cn.nukkit.nbt;
 
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.item.Item;
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import cn.nukkit.nbt.stream.NBTInputStream;
@@ -46,8 +47,8 @@ public class NBTIO {
     }
 
     public static Item getItemHelper(CompoundTag tag) {
-        if (!tag.contains("Name") || !tag.contains("id") || !tag.contains("Count")) {
-            return Item.get(0);
+        if (!(tag.contains("Name") || tag.contains("id")) && !tag.contains("Count")) {
+            return Item.get(BlockIds.AIR);
         }
 
         Item item;
