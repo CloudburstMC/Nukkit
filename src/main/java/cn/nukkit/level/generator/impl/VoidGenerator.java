@@ -6,6 +6,7 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.math.ChunkPos;
 import cn.nukkit.utils.Identifier;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Random;
 
@@ -18,7 +19,6 @@ public final class VoidGenerator implements Generator {
     public static final Identifier ID = Identifier.from("nukkitx", "void");
 
     public VoidGenerator(long seed, String options) {
-        options.hashCode();
         //no-op
     }
 
@@ -33,7 +33,7 @@ public final class VoidGenerator implements Generator {
     }
 
     @Override
-    public Iterable<ChunkPos> populationChunks(IChunk chunk) {
+    public Collection<ChunkPos> populationChunks(ChunkPos pos, int chunkX, int chunkZ) {
         return Collections.emptyList();
     }
 }

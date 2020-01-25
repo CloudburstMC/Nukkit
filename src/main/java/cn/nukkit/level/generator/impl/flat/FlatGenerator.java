@@ -6,6 +6,7 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.math.ChunkPos;
 import cn.nukkit.utils.Identifier;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Random;
 
@@ -20,7 +21,6 @@ public final class FlatGenerator implements Generator {
     public static final Identifier ID = Identifier.from("nukkitx", "flat");
 
     public FlatGenerator(long seed, String options) {
-        options.hashCode();
         //porktodo: parse generator options
     }
 
@@ -59,7 +59,7 @@ public final class FlatGenerator implements Generator {
     }
 
     @Override
-    public Iterable<ChunkPos> populationChunks(IChunk chunk) {
+    public Collection<ChunkPos> populationChunks(ChunkPos pos, int chunkX, int chunkZ) {
         return Collections.emptyList();
     }
 }

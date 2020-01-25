@@ -4,6 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
+import cn.nukkit.math.ChunkPos;
 import cn.nukkit.player.Player;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
@@ -13,7 +14,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 
-import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.block.BlockIds.*;
 
 public interface IChunk {
 
@@ -160,6 +161,15 @@ public interface IChunk {
     int getZ();
 
     /**
+     * Gets the chunk's position in the level it was loaded.
+     *
+     * @return chunk position
+     */
+    default ChunkPos getPosition() {
+        return new ChunkPos(this.getX(), this.getZ());
+    }
+
+    /**
      * Get the level the chunk was loaded in.
      *
      * @return chunk level
@@ -235,6 +245,13 @@ public interface IChunk {
      */
     default void setDirty() {
         this.setDirty(true);
+    }
+
+    /**
+     * Clears the chunk's dirty status.
+     */
+    default void setNotDirty() {
+        this.setDirty(false);
     }
 
     /**

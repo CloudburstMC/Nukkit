@@ -4,11 +4,17 @@ import cn.nukkit.event.level.ChunkUnloadEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.chunk.ChunkBuilder;
+import cn.nukkit.level.generator.GenerationTask;
+import cn.nukkit.level.generator.Generator;
+import cn.nukkit.level.generator.PopulationTask;
 import cn.nukkit.level.provider.LevelProvider;
+import cn.nukkit.math.ChunkPos;
 import cn.nukkit.utils.Config;
 import co.aikar.timings.Timing;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
+import com.spotify.futures.CompletableFutures;
 import it.unimi.dsi.fastutil.longs.Long2LongMap;
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
@@ -21,17 +27,22 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Log4j2
 @ParametersAreNonnullByDefault
 public final class LevelChunkManager {
-
     private static final CompletableFuture<Void> COMPLETED_VOID_FUTURE = CompletableFuture.completedFuture(null);
 
     private final Level level;
@@ -39,8 +50,8 @@ public final class LevelChunkManager {
     private final Long2ObjectMap<LoadingChunk> chunks = new Long2ObjectOpenHashMap<>();
     private final Long2LongMap chunkLoadedTimes = new Long2LongOpenHashMap();
     private final Long2LongMap chunkLastAccessTimes = new Long2LongOpenHashMap();
-    //private final ChunkGenerateFunction chunkGenerateFunction;
-    //private final ChunkPopulateFunction chunkPopulateFunction;
+    private final Function<Chunk, Chunk> chunkGenerateFunction;
+    private final BiFunction<Chunk, List<Chunk>, Chunk> chunkPopulateFunction;
     private final Executor executor;
 
     public LevelChunkManager(Level level) {
@@ -51,8 +62,8 @@ public final class LevelChunkManager {
         this.level = level;
         this.executor = this.level.getServer().getScheduler().getAsyncPool();
         this.provider = provider;
-        //this.chunkGenerateFunction = new ChunkGenerateFunction(this.level);
-        //this.chunkPopulateFunction = new ChunkPopulateFunction(this.level);
+        this.chunkGenerateFunction = new GenerationTask(this.level.getGenerator());
+        this.chunkPopulateFunction = new PopulationTask(this.level.getGenerator());
     }
 
     private static long chunkKey(int x, int z) {
@@ -341,7 +352,7 @@ public final class LevelChunkManager {
         }
     }
 
-    private class LoadingChunk {
+    private class LoadingChunk implements Predicate<ChunkPos>, Function<ChunkPos, CompletableFuture<Chunk>> {
         private final int x;
         private final int z;
         private CompletableFuture<Chunk> future;
@@ -398,13 +409,7 @@ public final class LevelChunkManager {
             }
             this.generated = true;
 
-            //porktodo: implement this
-            this.future = this.future.thenApplyAsync(chunk -> {
-                LevelChunkManager.this.level.getGenerator().generate(ThreadLocalRandom.current(), chunk, chunk.getX(), chunk.getZ());
-                return chunk;
-            }, LevelChunkManager.this.executor);
-
-            //this.future = this.future.thenApplyAsync(LevelChunkManager.this.chunkGenerateFunction, LevelChunkManager.this.executor);
+            this.future = this.future.thenApplyAsync(LevelChunkManager.this.chunkGenerateFunction, LevelChunkManager.this.executor);
         }
 
         private void populate() {
@@ -416,24 +421,25 @@ public final class LevelChunkManager {
             }
             this.populated = true;
 
-            //porktodo: implement this
-            this.future = this.future.thenApplyAsync(chunk -> {
-                chunk.setPopulated(true);
-                return chunk;
-            }, LevelChunkManager.this.executor);
+            List<CompletableFuture<Chunk>> populationChunkFutures = LevelChunkManager.this.level.getGenerator()
+                    .populationChunks(new ChunkPos(this.x, this.z), this.x, this.z).stream().distinct()
+                    .filter(this).map(this) //see Predicate and Function implementations below
+                    .collect(Collectors.toList());
 
-            // Load and generate chunks around the chunk to be populated.
-            /*List<CompletableFuture<Chunk>> chunksToLoad = new ArrayList<>(8);
-            for (int z = this.z - 1, maxZ = this.z + 1; z <= maxZ; z++) {
-                for (int x = this.x - 1, maxX = this.x + 1; x <= maxX; x++) {
-                    if (x == this.x && z == this.z) continue;
-                    chunksToLoad.add(LevelChunkManager.this.getChunkFuture(x, z, true, false));
-                }
-            }
-            CompletableFuture<List<Chunk>> aroundFuture = CompletableFutures.allAsList(chunksToLoad);
+            this.future = this.future.thenCombineAsync(
+                    CompletableFutures.allAsList(populationChunkFutures),
+                    LevelChunkManager.this.chunkPopulateFunction,
+                    LevelChunkManager.this.executor);
+        }
 
-            future = future.thenCombineAsync(aroundFuture, LevelChunkManager.this.chunkPopulateFunction,
-                    LevelChunkManager.this.executor);*/
+        @Override
+        public boolean test(ChunkPos pos) {
+            return !pos.equals(this.x, this.z);
+        }
+
+        @Override
+        public CompletableFuture<Chunk> apply(ChunkPos pos) {
+            return LevelChunkManager.this.getChunkFuture(pos.x, pos.z, true, false);
         }
 
         private void clear() {
