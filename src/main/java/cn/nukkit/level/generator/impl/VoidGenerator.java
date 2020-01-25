@@ -29,7 +29,7 @@ public final class VoidGenerator implements Generator {
     }
 
     @Override
-    public boolean populate(Random random, IChunk chunk, ChunkManager level) {
+    public boolean populate(Random random, ChunkManager level, int chunkX, int chunkZ) {
         //no-op
         return false;
     }

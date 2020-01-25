@@ -2,6 +2,7 @@ package cn.nukkit.level.generator;
 
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.chunk.LockableChunk;
+import cn.nukkit.level.manager.PopulationChunkManager;
 import com.google.common.base.Preconditions;
 
 import java.util.ArrayList;
@@ -31,20 +32,18 @@ public final class PopulationTask implements BiFunction<Chunk, List<Chunk>, Chun
 
         boolean retainDirty = false;
         List<LockableChunk> lockable = new ArrayList<>(populationChunks.size() + 1);
-        lockable.add(chunk.lockable());
+        lockable.add(chunk.writeLockable());
         for (Chunk populationChunk : populationChunks)    {
             if (!Preconditions.checkNotNull(populationChunk, "populationChunk").isGenerated()) {
                 throw new IllegalStateException("Population chunk for x=" + chunk.getX() + ",z=" + chunk.getZ()
                         + " is not generated! x=" + populationChunk.getX() + ",z=" + populationChunk.getZ());
             }
-            lockable.add(populationChunk.lockable());
+            lockable.add(populationChunk.writeLockable());
         }
 
         lockable.forEach(LockableChunk::lock);
         try {
-            //porktodo: population ChunkManager instance
-            //porktodo: prevent overwriting already populated chunk contents
-            retainDirty = this.generator.populate(ThreadLocalRandom.current(), lockable.get(0), chunk.getLevel());
+            retainDirty = this.generator.populate(ThreadLocalRandom.current(), new PopulationChunkManager(chunk, populationChunks), chunk.getX(), chunk.getZ());
             chunk.setPopulated(true);
         } finally {
             if (!retainDirty)   {

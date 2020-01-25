@@ -26,7 +26,7 @@ public final class GenerationTask implements Function<Chunk, Chunk> {
         }
 
         boolean retainDirty = false;
-        LockableChunk lockable = chunk.lockable();
+        LockableChunk lockable = chunk.writeLockable();
 
         lockable.lock();
         try {

@@ -4,7 +4,9 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.math.ChunkPos;
+import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
+import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -26,9 +28,7 @@ public final class FlatGenerator implements Generator {
 
     @Override
     public boolean generate(Random random, IChunk chunk, int chunkX, int chunkZ) {
-        //porktodo: change when #1081 is merged
-
-        /*final int bedrockId = BlockRegistry.get().getRuntimeId(BEDROCK, 0);
+        final int bedrockId = BlockRegistry.get().getRuntimeId(BEDROCK, 0);
         final int dirtId = BlockRegistry.get().getRuntimeId(DIRT, 0);
         final int grassId = BlockRegistry.get().getRuntimeId(GRASS, 0);
 
@@ -40,29 +40,42 @@ public final class FlatGenerator implements Generator {
                 }
                 chunk.setBlockRuntimeIdUnsafe(x, 4, z, grassId);
             }
-        }*/
-
-        for (int x = 15; x >= 0; x--) {
-            for (int z = 15; z >= 0; z--) {
-                chunk.setBlockId(x, 0, z, BEDROCK);
-                for (int y = 1; y < 4; y++) {
-                    chunk.setBlockId(x, y, z, DIRT);
-                }
-                chunk.setBlockId(x, 4, z, GRASS);
-            }
         }
+
+        chunk.setBlockRuntimeIdUnsafe(0, 5, 0, bedrockId);
+        chunk.setBlockRuntimeIdUnsafe(15, 5, 0, bedrockId);
+        chunk.setBlockRuntimeIdUnsafe(0, 5, 15, bedrockId);
+        chunk.setBlockRuntimeIdUnsafe(15, 5, 15, bedrockId);
 
         return false;
     }
 
     @Override
-    public boolean populate(Random random, IChunk chunk, ChunkManager level) {
+    public boolean populate(Random random, ChunkManager level, int chunkX, int chunkZ) {
+        //debug stuff
+        if (true)   {
+            int blockX = chunkX << 4;
+            int blockZ = chunkZ << 4;
+
+            for (int x = 16 - 3; x <= 16 + 3; x++)  {
+                level.setBlockIdAt(blockX + x, 5, blockZ + 16 - 3, BRICK_BLOCK);
+            }
+            for (int z = 16 - 3; z <= 16 + 3; z++)  {
+                level.setBlockIdAt(blockX + 16 - 3, 5, blockZ + z, BRICK_BLOCK);
+            }
+        }
+
         //no-op
         return false;
     }
 
     @Override
     public Collection<ChunkPos> populationChunks(ChunkPos pos, int chunkX, int chunkZ) {
+        //debug stuff
+        if (true)   {
+            return ImmutableList.of(pos.add(1, 0), pos.add(0, 1));
+        }
+
         return Collections.emptyList();
     }
 }

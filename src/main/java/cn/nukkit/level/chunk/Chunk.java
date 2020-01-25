@@ -523,8 +523,12 @@ public final class Chunk implements IChunk, Closeable {
         //todo
     }
 
-    public LockableChunk lockable() {
-        return new LockableChunk(unsafe, lock.writeLock());
+    public LockableChunk writeLockable() {
+        return new LockableChunk(this.unsafe, this.lock.writeLock());
+    }
+
+    public LockableChunk readLockable() {
+        return new LockableChunk(this.unsafe, this.lock.readLock());
     }
 
     public void clear() {
