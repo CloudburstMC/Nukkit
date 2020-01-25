@@ -229,7 +229,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     }
 
     @Override
-    public boolean setBlock(int x, int y, int z, int blockId, int meta) {                  
+    public boolean setBlock(int x, int y, int z, int blockId, int meta) {
         return setBlockAtLayer(x, y, z, 0, blockId, meta);
     }
 
@@ -517,7 +517,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     @Override
     public CompoundTag toNBT() {
-        CompoundTag s = new CompoundTag(null);
+        CompoundTag s = new CompoundTag();
         synchronized (storage) {
             compressStorageLayers();
             // For simplicity, not using the actual palette format to save in the disk

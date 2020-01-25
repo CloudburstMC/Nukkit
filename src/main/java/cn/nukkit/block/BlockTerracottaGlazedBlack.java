@@ -1,6 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 
 /**

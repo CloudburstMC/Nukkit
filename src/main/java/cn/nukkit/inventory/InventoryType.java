@@ -15,12 +15,10 @@ public enum InventoryType {
     BREWING_STAND(5, "Brewing", 4), //1 INPUT, 3 POTION, 1 fuel
     ANVIL(3, "Anvil", 5), //2 INPUT, 1 OUTPUT
     ENCHANT_TABLE(2, "Enchant", 3), //1 INPUT/OUTPUT, 1 LAPIS
-    DISPENSER(0, "Dispenser", 6), //9 CONTAINER
+    DISPENSER(9, "Dispenser", 6), //9 CONTAINER
     DROPPER(9, "Dropper", 7), //9 CONTAINER
     HOPPER(5, "Hopper", 8), //5 CONTAINER
     //CAULDRON typeId:9
-    //MINECART_CHEST typeId:10
-    //MINECART_HOPPER typeId:11
     //MINECART_COMMAND_BLOCK typeId:16
     //HORSE typeId:12
     //JUKEBOX typeId:17
@@ -39,9 +37,10 @@ public enum InventoryType {
     STONECUTTER(2, "Stonecutter", 29), // Should be 29 but it's totally driven by the client, so setting to -1 = UI 
     CARTOGRAPHY(3, "Cartography Table", -1),
     BARREL(27, "Barrel", 0),
-    CAMPFIRE(4, "Campfire", -9) // -9 = NONE
-    ;
-
+    CAMPFIRE(4, "Campfire", -9), // -9 = NONE
+    MINECART_CHEST(27, "Minecart with Chest", 0),
+    MINECART_HOPPER(5, "Minecart with Hopper", 8),
+    OFFHAND(1, "Offhand", -1);
 
     private final int size;
     private final String title;

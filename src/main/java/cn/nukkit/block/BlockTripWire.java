@@ -11,7 +11,7 @@ import cn.nukkit.math.BlockFace;
 /**
  * @author CreeperFace
  */
-public class BlockTripWire extends BlockFlowable {
+public class BlockTripWire extends BlockTransparentMeta {
 
     public BlockTripWire(int meta) {
         super(meta);
@@ -98,6 +98,10 @@ public class BlockTripWire extends BlockFlowable {
 
     @Override
     public void onEntityCollide(Entity entity) {
+        if (!this.level.getServer().isRedstoneEnabled()) {
+            return;
+        }
+
         if (!entity.doesTriggerPressurePlate()) {
             return;
         }
@@ -113,7 +117,11 @@ public class BlockTripWire extends BlockFlowable {
         }
     }
 
-    public void updateHook(boolean scheduleUpdate) {
+    private void updateHook(boolean scheduleUpdate) {
+        if (!this.level.getServer().isRedstoneEnabled()) {
+            return;
+        }
+
         for (BlockFace side : new BlockFace[]{BlockFace.SOUTH, BlockFace.WEST}) {
             for (int i = 1; i < 42; ++i) {
                 Block block = this.getSide(side, i);
@@ -140,6 +148,10 @@ public class BlockTripWire extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
+        if (!this.level.getServer().isRedstoneEnabled()) {
+            return 0;
+        }
+
         if (type == Level.BLOCK_UPDATE_SCHEDULED) {
             if (!isPowered()) {
                 return type;

@@ -43,6 +43,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public static boolean[] solid = null;
     public static double[] hardness = null;
     public static boolean[] transparent = null;
+    public static boolean[] diffusesSkyLight = null;
     /**
      * if a block has can have variants
      */
@@ -63,6 +64,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             solid = new boolean[MAX_BLOCK_ID];
             hardness = new double[MAX_BLOCK_ID];
             transparent = new boolean[MAX_BLOCK_ID];
+            diffusesSkyLight = new boolean[MAX_BLOCK_ID];
             hasMeta = new boolean[MAX_BLOCK_ID];
 
             list[AIR] = BlockAir.class; //0
@@ -189,7 +191,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[DRAGON_EGG] = BlockDragonEgg.class; //122
             list[REDSTONE_LAMP] = BlockRedstoneLamp.class; //123
             list[LIT_REDSTONE_LAMP] = BlockRedstoneLampLit.class; //124
-            //TODO: list[DROPPER] = BlockDropper.class; //125
+            list[DROPPER] = BlockDropper.class; //125
             list[ACTIVATOR_RAIL] = BlockRailActivator.class; //126
             list[COCOA] = BlockCocoa.class; //127
             list[SANDSTONE_STAIRS] = BlockStairsSandstone.class; //128
@@ -268,7 +270,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             
             list[UNDYED_SHULKER_BOX] = BlockUndyedShulkerBox.class; //205
             list[END_BRICKS] = BlockBricksEndStone.class; //206
-
+            list[ICE_FROSTED] = BlockIceFrosted.class; //207
             list[END_ROD] = BlockEndRod.class; //208
             list[END_GATEWAY] = BlockEndGateway.class; //209
 
@@ -306,8 +308,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[GLOWING_OBSIDIAN] = BlockObsidianGlowing.class; //246
             //list[NETHER_REACTOR] = BlockNetherReactor.class; //247 Should not be removed
 
-            //TODO: list[PISTON_EXTENSION] = BlockPistonExtension.class; //250
-
+            list[MOVING_BLOCK] = BlockMoving.class; //250
             list[OBSERVER] = BlockObserver.class; //251
 
             list[PRISMARINE_STAIRS] = BlockStairsPrismarine.class; //257
@@ -455,6 +456,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
                     solid[id] = block.isSolid();
                     transparent[id] = block.isTransparent();
+                    diffusesSkyLight[id] = block.diffusesSkyLight();
                     hardness[id] = block.getHardness();
                     light[id] = block.getLightLevel();
 
@@ -622,6 +624,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return true;
     }
 
+    // https://minecraft.gamepedia.com/Opacity#Lighting
+    public boolean diffusesSkyLight() {
+        return false;
+    }
+
     public boolean canBeFlowedInto() {
         return false;
     }
@@ -647,6 +654,18 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public boolean canBePushed() {
+        return true;
+    }
+
+    public boolean canBePulled() {
+        return true;
+    }
+
+    public boolean breaksWhenMoved() {
+        return false;
+    }
+
+    public boolean sticksToPiston() {
         return true;
     }
 

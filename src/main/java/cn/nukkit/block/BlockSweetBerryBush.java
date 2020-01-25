@@ -135,7 +135,7 @@ public class BlockSweetBerryBush extends BlockFlowable {
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             if (getDamage() < 3 && ThreadLocalRandom.current().nextInt(5) == 0
-                    && getLevel().getFullLight(add(0, 1, 0)) >= 6) {
+                    && getLevel().getFullLight(add(0, 1, 0)) >= BlockCrops.MINIMUM_LIGHT_LEVEL) {
                 BlockGrowEvent event = new BlockGrowEvent(this, Block.get(getId(), getDamage() + 1));
                 if (!event.isCancelled()) {
                     getLevel().setBlock(this, event.getNewState(), true, true);

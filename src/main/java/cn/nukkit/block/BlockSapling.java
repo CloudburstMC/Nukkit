@@ -98,7 +98,7 @@ public class BlockSapling extends BlockFlowable {
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) { //Growth
-            if (ThreadLocalRandom.current().nextInt(1, 8) == 1) {
+            if (ThreadLocalRandom.current().nextInt(1, 8) == 1 && getLevel().getFullLight(add(0, 1, 0)) >= BlockCrops.MINIMUM_LIGHT_LEVEL) {
                 if ((this.getDamage() & 0x08) == 0x08) {
                     this.grow();
                 } else {

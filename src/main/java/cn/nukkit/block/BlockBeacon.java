@@ -110,4 +110,9 @@ public class BlockBeacon extends BlockTransparent {
     public BlockColor getColor() {
         return BlockColor.DIAMOND_BLOCK_COLOR;
     }
+
+    @Override
+    public boolean canBePulled() {
+        return false;
+    }
 }

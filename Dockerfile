@@ -22,7 +22,7 @@ FROM openjdk:8-jre-slim AS run
 LABEL maintainer="Micheal Waltz <dockerfiles@ecliptik.com>"
 
 # Copy artifact from build image
-COPY --from=build /src/target/nukkit-1.0-SNAPSHOT.jar /app/nukkit.jar
+COPY --from=build /src/target/powernukkit-*.jar /app/nukkit.jar
 
 # Create minecraft user
 RUN useradd --user-group \
@@ -48,4 +48,4 @@ WORKDIR /data
 
 # Run app
 ENTRYPOINT ["java"]
-CMD [ "-jar", "/app/nukkit.jar" ]
+CMD [ "-jar", "/app/powernukkit.jar" ]

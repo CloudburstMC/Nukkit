@@ -58,6 +58,11 @@ public class BlockBedrockInvisible extends BlockSolid {
     }
 
     @Override
+    public boolean canBePulled() {
+        return false;
+    }
+
+    @Override
     public Item toItem() {
         return new ItemBlock(new BlockAir());
     }

@@ -6,8 +6,8 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.generator.object.ore.OreType;
-import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.level.generator.populator.impl.PopulatorOre;
+import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 
@@ -70,8 +70,7 @@ public class Flat extends Generator {
         this.options = options;
 
         if (this.options.containsKey("decoration")) {
-            PopulatorOre ores = new PopulatorOre();
-            ores.setOreTypes(new OreType[]{
+            PopulatorOre ores = new PopulatorOre(BlockID.STONE, new OreType[]{
                     new OreType(new BlockOreCoal(), 20, 16, 0, 128),
                     new OreType(new BlockOreIron(), 20, 8, 0, 64),
                     new OreType(new BlockOreRedstone(), 8, 7, 0, 16),

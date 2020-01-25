@@ -337,7 +337,7 @@ public class BlockCauldron extends BlockSolidMeta {
             }
         }
 
-        new BlockEntityCauldron(this.level.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+        BlockEntity.createBlockEntity(BlockEntity.CAULDRON, this, nbt);
         this.getLevel().setBlock(block, this, true, true);
         return true;
     }

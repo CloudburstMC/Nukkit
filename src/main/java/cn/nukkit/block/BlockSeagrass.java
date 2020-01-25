@@ -57,7 +57,8 @@ public class BlockSeagrass extends BlockFlowable {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             Block blockLayer1 = getLevelBlockAtLayer(1);
             int damage;
-            if (!(blockLayer1 instanceof BlockWater) || ((damage = blockLayer1.getDamage()) != 0 && damage != 8)) {
+            if (!(blockLayer1 instanceof BlockIceFrosted)
+                    && (!(blockLayer1 instanceof BlockWater) || ((damage = blockLayer1.getDamage()) != 0 && damage != 8))) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }

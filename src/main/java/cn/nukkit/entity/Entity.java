@@ -3,6 +3,7 @@ package cn.nukkit.entity;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.*;
+import cn.nukkit.blockentity.BlockEntityPistonArm;
 import cn.nukkit.entity.data.*;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.entity.*;
@@ -248,7 +249,7 @@ public abstract class Entity extends Location implements Metadatable {
     private static final Map<String, Class<? extends Entity>> knownEntities = new HashMap<>();
     private static final Map<String, String> shortNames = new HashMap<>();
 
-    protected final Map<Integer, Player> hasSpawned = new HashMap<>();
+    protected final Map<Integer, Player> hasSpawned = new ConcurrentHashMap<>();
 
     protected final Map<Integer, Effect> effects = new ConcurrentHashMap<>();
 
@@ -1556,6 +1557,10 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
+    public boolean canBePushed() {
+        return true;
+    }
+
     public BlockFace getDirection() {
         double rotation = this.yaw % 360;
         if (rotation < 0) {
@@ -1606,7 +1611,13 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void fall(float fallDistance) {
-        float damage = (float) Math.floor(fallDistance - 3 - (this.hasEffect(Effect.JUMP) ? this.getEffect(Effect.JUMP).getAmplifier() + 1 : 0));
+        float damage;
+        if (this.hasEffect(Effect.SLOW_FALLING)) {
+            damage = 0;
+        }
+        else {
+            damage = (float) Math.floor(fallDistance - 3 - (this.hasEffect(Effect.JUMP) ? this.getEffect(Effect.JUMP).getAmplifier() + 1 : 0));
+        }
         Location floorLocation = this.floor();
         Block down = this.level.getBlock(floorLocation.down());
         if (damage > 0) {
@@ -1716,6 +1727,10 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
+    public void onPushByPiston(BlockEntityPistonArm piston) {
+
+    }
+
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
         return onInteract(player, item);
     }
@@ -1769,7 +1784,7 @@ public abstract class Entity extends Location implements Metadatable {
     private boolean hasWaterAt(float height) {
         double y = this.y + height;
         Block block = this.level.getBlock(this.temporalVector.setComponents(NukkitMath.floorDouble(this.x), NukkitMath.floorDouble(y), NukkitMath.floorDouble(this.z)));
-        
+
         boolean layer1 = false;
         if (!(block instanceof BlockBubbleColumn) && (
                 block instanceof BlockWater
@@ -1866,7 +1881,7 @@ public abstract class Entity extends Location implements Metadatable {
 
             AxisAlignedBB axisalignedbb = this.boundingBox.clone();
 
-            AxisAlignedBB[] list = this.level.getCollisionCubes(this, this.level.getTickRate() > 1 ? this.boundingBox.getOffsetBoundingBox(dx, dy, dz) : this.boundingBox.addCoord(dx, dy, dz), false, true);
+            AxisAlignedBB[] list = this.level.getCollisionCubes(this, this.boundingBox.addCoord(dx, dy, dz), false);
 
             for (AxisAlignedBB bb : list) {
                 dy = bb.calculateYOffset(this.boundingBox, dy);

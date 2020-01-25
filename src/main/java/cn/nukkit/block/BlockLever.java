@@ -72,8 +72,14 @@ public class BlockLever extends BlockFlowable implements Faceable {
 
         LeverOrientation orientation = LeverOrientation.byMetadata(this.isPowerOn() ? this.getDamage() ^ 0x08 : this.getDamage());
         BlockFace face = orientation.getFacing();
-        //this.level.updateAroundRedstone(this, null);
-        this.level.updateAroundRedstone(this.getLocation().getSide(face.getOpposite()), isPowerOn() ? face : null);
+
+        if (redstone) {
+            Block target = this.getSide(face.getOpposite());
+            target.onUpdate(Level.BLOCK_UPDATE_REDSTONE);
+
+            this.level.updateAroundRedstone(this.getLocation(), isPowerOn() ? face.getOpposite() : null);
+            this.level.updateAroundRedstone(target.getLocation(), isPowerOn() ? face : null);
+        }
         return true;
     }
 

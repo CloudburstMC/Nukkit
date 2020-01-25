@@ -10,7 +10,6 @@ import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.particle.*;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.utils.TextFormat;
 
 import java.util.Random;
 
@@ -61,9 +60,9 @@ public class ParticleCommand extends VanillaCommand {
         double z;
 
         try {
-            x = getDouble(args[1], defaultPosition.getX());
-            y = getDouble(args[2], defaultPosition.getY());
-            z = getDouble(args[3], defaultPosition.getZ());
+            x = parseTilde(args[1], defaultPosition.getX());
+            y = parseTilde(args[2], defaultPosition.getY());
+            z = parseTilde(args[3], defaultPosition.getZ());
         } catch (Exception e) {
             return false;
         }
@@ -200,15 +199,5 @@ public class ParticleCommand extends VanillaCommand {
 
         return null;
     }
-
-    private static double getDouble(String arg, double defaultValue) throws Exception {
-        if (arg.startsWith("~")) {
-            String relativePos = arg.substring(1);
-            if (relativePos.isEmpty()) {
-                return defaultValue;
-            }
-            return defaultValue + Double.parseDouble(relativePos);
-        }
-        return Double.parseDouble(arg);
-    }
+    
 }
