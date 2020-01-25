@@ -1,7 +1,6 @@
 package cn.nukkit.entity.impl.projectile;
 
 import cn.nukkit.entity.EntityType;
-import cn.nukkit.entity.impl.BaseEntity;
 import cn.nukkit.entity.projectile.Arrow;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -25,16 +24,7 @@ public class EntityArrow extends EntityProjectile implements Arrow {
     protected float drag = 0.01f;
 
     public EntityArrow(EntityType<Arrow> type, Chunk chunk, CompoundTag nbt) {
-        this(type, chunk, nbt, null);
-    }
-
-    public EntityArrow(EntityType<Arrow> type, Chunk chunk, CompoundTag nbt, BaseEntity shootingEntity) {
-        this(type, chunk, nbt, shootingEntity, false);
-    }
-
-    public EntityArrow(EntityType<Arrow> type, Chunk chunk, CompoundTag nbt, BaseEntity shootingEntity, boolean critical) {
-        super(type, chunk, nbt, shootingEntity);
-        this.setCritical(critical);
+        super(type, chunk, nbt);
     }
 
     @Override

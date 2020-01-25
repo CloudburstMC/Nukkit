@@ -2,7 +2,6 @@ package cn.nukkit.entity.impl.projectile;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
-import cn.nukkit.entity.impl.BaseEntity;
 import cn.nukkit.entity.projectile.XpBottle;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.particle.EnchantParticle;
@@ -18,11 +17,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class EntityXpBottle extends EntityProjectile implements XpBottle {
 
     public EntityXpBottle(EntityType<XpBottle> type, Chunk chunk, CompoundTag nbt) {
-        this(type, chunk, nbt, null);
-    }
-
-    public EntityXpBottle(EntityType<XpBottle> type, Chunk chunk, CompoundTag nbt, BaseEntity shootingEntity) {
-        super(type, chunk, nbt, shootingEntity);
+        super(type, chunk, nbt);
     }
 
     @Override

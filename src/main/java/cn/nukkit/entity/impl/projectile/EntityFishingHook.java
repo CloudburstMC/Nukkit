@@ -4,7 +4,6 @@ import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.EntityTypes;
-import cn.nukkit.entity.impl.BaseEntity;
 import cn.nukkit.entity.misc.DroppedItem;
 import cn.nukkit.entity.projectile.FishingHook;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
@@ -21,9 +20,6 @@ import cn.nukkit.level.particle.WaterParticle;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.player.Player;
 import cn.nukkit.registry.EntityRegistry;
@@ -31,6 +27,7 @@ import cn.nukkit.utils.Identifier;
 
 import javax.annotation.Nullable;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static cn.nukkit.block.BlockIds.AIR;
 
@@ -55,11 +52,7 @@ public class EntityFishingHook extends EntityProjectile implements FishingHook {
     private Item rod;
 
     public EntityFishingHook(EntityType<FishingHook> type, Chunk chunk, CompoundTag nbt) {
-        this(type, chunk, nbt, null);
-    }
-
-    public EntityFishingHook(EntityType<FishingHook> type, Chunk chunk, CompoundTag nbt, BaseEntity shootingEntity) {
-        super(type, chunk, nbt, shootingEntity);
+        super(type, chunk, nbt);
     }
 
     @Override
@@ -217,14 +210,15 @@ public class EntityFishingHook extends EntityProjectile implements FishingHook {
     }
 
     public void reelLine() {
-        if (this.shootingEntity instanceof Player && this.caught) {
+        Entity owner = this.getOwner();
+        if (owner instanceof Player && this.caught) {
             Item item = Fishing.getFishingResult(this.rod);
             int experience = new Random().nextInt((3 - 1) + 1) + 1;
             Vector3f motion;
 
-            if (this.shootingEntity != null) {
-                motion = this.shootingEntity.subtract(this).multiply(0.1);
-                motion.y += Math.sqrt(this.shootingEntity.distance(this)) * 0.08;
+            if (owner != null) {
+                motion = owner.getPosition().subtract(this).multiply(0.1);
+                motion.y += Math.sqrt(owner.getPosition().distance(this)) * 0.08;
             } else {
                 motion = new Vector3f();
             }
@@ -234,31 +228,22 @@ public class EntityFishingHook extends EntityProjectile implements FishingHook {
 
             DroppedItem itemEntity = EntityRegistry.get().newEntity(EntityTypes.ITEM,
                     this.level.getChunk(this.getChunkX(), this.getChunkZ()),
-                    new CompoundTag()
-                            .putList(new ListTag<DoubleTag>("Pos")
-                                    .add(new DoubleTag("", this.getX()))
-                                    .add(new DoubleTag("", this.getWaterHeight()))
-                                    .add(new DoubleTag("", this.getZ())))
-                            .putList(new ListTag<DoubleTag>("Motion")
-                                    .add(new DoubleTag("", motion.x))
-                                    .add(new DoubleTag("", motion.y))
-                                    .add(new DoubleTag("", motion.z)))
-                            .putList(new ListTag<FloatTag>("Rotation")
-                                    .add(new FloatTag("", new Random().nextFloat() * 360))
-                                    .add(new FloatTag("", 0)))
-                            .putShort("Health", 5).putCompound("Item", itemTag).putShort("PickupDelay", 1));
+                    Entity.getDefaultNBT(this, this.getMotion(), ThreadLocalRandom.current().nextFloat() * 300, 0)
+                            .putShort("Health", 5)
+                            .putCompound("Item", itemTag)
+                            .putShort("PickupDelay", 1));
 
-            if (this.shootingEntity != null && this.shootingEntity instanceof Player) {
-                itemEntity.setOwner(this.shootingEntity);
+            if (owner != null && owner instanceof Player) {
+                itemEntity.setOwner(owner);
             }
             itemEntity.spawnToAll();
 
-            Player player = (Player) this.shootingEntity;
+            Player player = (Player) owner;
             if (experience > 0) {
                 player.addExperience(experience);
             }
         }
-        if (this.shootingEntity instanceof Player) {
+        if (owner instanceof Player) {
             EntityEventPacket pk = new EntityEventPacket();
             pk.entityRuntimeId = this.getUniqueId();
             pk.event = EntityEventPacket.FISH_HOOK_TEASE;
@@ -275,11 +260,13 @@ public class EntityFishingHook extends EntityProjectile implements FishingHook {
         this.server.getPluginManager().callEvent(new ProjectileHitEvent(this, MovingObjectPosition.fromEntity(entity)));
         float damage = this.getResultDamage();
 
+        Entity owner = this.getOwner();
+
         EntityDamageEvent ev;
-        if (this.shootingEntity == null) {
+        if (owner == null) {
             ev = new EntityDamageByEntityEvent(this, entity, DamageCause.PROJECTILE, damage);
         } else {
-            ev = new EntityDamageByChildEntityEvent(this.shootingEntity, this, entity, DamageCause.PROJECTILE, damage);
+            ev = new EntityDamageByChildEntityEvent(owner, this, entity, DamageCause.PROJECTILE, damage);
         }
 
         entity.attack(ev);

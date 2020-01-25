@@ -15,6 +15,7 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
@@ -82,8 +83,12 @@ public class ItemBow extends ItemTool {
 
         double p = (double) ticksUsed / 20;
         double f = Math.min((p * p + p * 2) / 3, 1) * 2;
-        EntityShootBowEvent entityShootBowEvent = new EntityShootBowEvent(player, this,
-                new EntityArrow(EntityTypes.ARROW, player.chunk, nbt, player, f == 2), f);
+
+        Arrow arrow = EntityRegistry.get().newEntity(EntityTypes.ARROW, player.chunk, nbt);
+        arrow.setCritical(f == 2);
+        arrow.setOwner(player);
+
+        EntityShootBowEvent entityShootBowEvent = new EntityShootBowEvent(player, this, arrow, f);
 
         if (f < 0.1 || ticksUsed < 3) {
             entityShootBowEvent.setCancelled();

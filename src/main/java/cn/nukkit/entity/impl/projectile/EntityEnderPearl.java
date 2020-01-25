@@ -2,7 +2,6 @@ package cn.nukkit.entity.impl.projectile;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
-import cn.nukkit.entity.impl.BaseEntity;
 import cn.nukkit.entity.projectile.EnderPearl;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -17,11 +16,7 @@ import cn.nukkit.player.Player;
 public class EntityEnderPearl extends EntityProjectile implements EnderPearl {
 
     public EntityEnderPearl(EntityType<EnderPearl> type, Chunk chunk, CompoundTag nbt) {
-        this(type, chunk, nbt, null);
-    }
-
-    public EntityEnderPearl(EntityType<EnderPearl> type, Chunk chunk, CompoundTag nbt, BaseEntity shootingEntity) {
-        super(type, chunk, nbt, shootingEntity);
+        super(type, chunk, nbt);
     }
 
     @Override
@@ -59,7 +54,7 @@ public class EntityEnderPearl extends EntityProjectile implements EnderPearl {
 
         boolean hasUpdate = super.onUpdate(currentTick);
 
-        if (this.isCollided && this.shootingEntity instanceof Player) {
+        if (this.isCollided && this.getOwner() instanceof Player) {
             teleport();
         }
 
@@ -75,16 +70,17 @@ public class EntityEnderPearl extends EntityProjectile implements EnderPearl {
 
     @Override
     public void onCollideWithEntity(Entity entity) {
-        if (this.shootingEntity instanceof Player) {
+        if (this.getOwner() instanceof Player) {
             teleport();
         }
         super.onCollideWithEntity(entity);
     }
 
     private void teleport() {
-        this.shootingEntity.teleport(new Vector3f(NukkitMath.floorDouble(this.x) + 0.5, this.y, NukkitMath.floorDouble(this.z) + 0.5), TeleportCause.ENDER_PEARL);
-        if ((((Player) this.shootingEntity).getGamemode() & 0x01) == 0) {
-            this.shootingEntity.attack(new EntityDamageByEntityEvent(this, shootingEntity, EntityDamageEvent.DamageCause.PROJECTILE, 5f, 0f));
+        Entity owner = this.getOwner();
+        owner.teleport(new Vector3f(NukkitMath.floorDouble(this.x) + 0.5, this.y, NukkitMath.floorDouble(this.z) + 0.5), TeleportCause.ENDER_PEARL);
+        if ((((Player) owner).getGamemode() & 0x01) == 0) {
+            owner.attack(new EntityDamageByEntityEvent(this, owner, EntityDamageEvent.DamageCause.PROJECTILE, 5f, 0f));
         }
         this.level.addSound(this, Sound.MOB_ENDERMEN_PORTAL);
     }

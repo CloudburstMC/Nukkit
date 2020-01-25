@@ -1789,7 +1789,7 @@ public class Level implements ChunkManager, Metadatable {
     public void dropExpOrb(Vector3f source, int exp, Vector3f motion, int delay) {
         Random rand = ThreadLocalRandom.current();
         for (int split : XpOrb.splitIntoOrbSizes(exp)) {
-            CompoundTag nbt = BaseEntity.getDefaultNBT(source, motion == null ? new Vector3f(
+            CompoundTag nbt = Entity.getDefaultNBT(source, motion == null ? new Vector3f(
                             (rand.nextDouble() * 0.2 - 0.1) * 2,
                             rand.nextDouble() * 0.4,
                             (rand.nextDouble() * 0.2 - 0.1) * 2) : motion,

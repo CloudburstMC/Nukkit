@@ -2,7 +2,6 @@ package cn.nukkit.entity.impl.projectile;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
-import cn.nukkit.entity.impl.BaseEntity;
 import cn.nukkit.entity.projectile.SplashPotion;
 import cn.nukkit.event.potion.PotionCollideEvent;
 import cn.nukkit.level.chunk.Chunk;
@@ -28,10 +27,6 @@ public class EntitySplashPotion extends EntityProjectile implements SplashPotion
 
     public EntitySplashPotion(EntityType<SplashPotion> type, Chunk chunk, CompoundTag nbt) {
         super(type, chunk, nbt);
-    }
-
-    public EntitySplashPotion(EntityType<SplashPotion> type, Chunk chunk, CompoundTag nbt, BaseEntity shootingEntity) {
-        super(type, chunk, nbt, shootingEntity);
     }
 
     @Override

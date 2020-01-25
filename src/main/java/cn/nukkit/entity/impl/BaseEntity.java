@@ -21,7 +21,10 @@ import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.*;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
-import cn.nukkit.nbt.tag.*;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.FloatTag;
+import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.nbt.tag.NumberTag;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.network.protocol.types.EntityLink;
 import cn.nukkit.player.Player;
@@ -137,35 +140,6 @@ public abstract class BaseEntity extends Location implements Entity, Metadatable
         }
 
         this.init(chunk, tag);
-    }
-
-    public static CompoundTag getDefaultNBT(Vector3f pos) {
-        return getDefaultNBT(pos, null);
-    }
-
-    public static CompoundTag getDefaultNBT(Vector3f pos, Vector3f motion) {
-        Location loc = pos instanceof Location ? (Location) pos : null;
-
-        if (loc != null) {
-            return getDefaultNBT(pos, motion, (float) loc.getYaw(), (float) loc.getPitch());
-        }
-
-        return getDefaultNBT(pos, motion, 0, 0);
-    }
-
-    public static CompoundTag getDefaultNBT(Vector3f pos, Vector3f motion, float yaw, float pitch) {
-        return new CompoundTag()
-                .putList(new ListTag<DoubleTag>("Pos")
-                        .add(new DoubleTag("", pos.x))
-                        .add(new DoubleTag("", pos.y))
-                        .add(new DoubleTag("", pos.z)))
-                .putList(new ListTag<DoubleTag>("Motion")
-                        .add(new DoubleTag("", motion != null ? motion.x : 0))
-                        .add(new DoubleTag("", motion != null ? motion.y : 0))
-                        .add(new DoubleTag("", motion != null ? motion.z : 0)))
-                .putList(new ListTag<FloatTag>("Rotation")
-                        .add(new FloatTag("", yaw))
-                        .add(new FloatTag("", pitch)));
     }
 
     public float getHeight() {
@@ -1956,7 +1930,7 @@ public abstract class BaseEntity extends Location implements Entity, Metadatable
         if (id == -1) {
             return null;
         }
-        throw new UnsupportedOperationException(); // FIXME: 17/01/2020 Needs to return entity
+        return this.level.getEntity(id);
     }
 
     @Override
