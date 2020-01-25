@@ -1,6 +1,6 @@
 package cn.nukkit.entity.projectile;
 
-import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.Projectile;
 
-public interface LingeringPotion extends Entity {
+public interface LingeringPotion extends Projectile {
 }
