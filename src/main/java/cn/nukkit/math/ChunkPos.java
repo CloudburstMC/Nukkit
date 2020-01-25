@@ -9,14 +9,17 @@ import lombok.ToString;
  *
  * @author DaPorkchop_
  */
-@RequiredArgsConstructor
-@Getter
 @ToString
 public final class ChunkPos {
     public static final ChunkPos ZERO = new ChunkPos(0, 0);
 
-    private final int x;
-    private final int z;
+    public final int x;
+    public final int z;
+
+    public ChunkPos(int x, int z)   {
+        this.x = x;
+        this.z = z;
+    }
 
     @Override
     public int hashCode() {

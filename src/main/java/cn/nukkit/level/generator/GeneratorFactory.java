@@ -15,8 +15,8 @@ public interface GeneratorFactory {
      * The returned {@link Generator} must be ready to use before being returned.
      *
      * @param seed    the seed of the world being generated
-     * @param options an instance of {@link GeneratorOptions} containing the configured options for the generator
+     * @param options the options string for the generator, as configured in nukkit.yml
      * @return a newly created {@link Generator}
      */
-    Generator create(long seed, @NonNull GeneratorOptions options);
+    Generator create(long seed, @NonNull String options);
 }
