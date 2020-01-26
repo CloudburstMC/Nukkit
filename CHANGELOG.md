@@ -22,7 +22,7 @@ Click the link above to see the future.
 
 ### Changed
 - Make BlockLectern implements Faceable
-- The versioning convention now follows this pattern: upstream.major.minor.patch-PN. [Click here for details.](https://github.com/GameModsBR/PowerNukkit/blob/7912aa4be68e94a52762361c2d5189b7bbc58d2a/pom.xml#L8-L14)
+- The versioning convention now follows this pattern:<br>`upstream.major.minor.patch-PN`<br>[Click here for details.](https://github.com/GameModsBR/PowerNukkit/blob/7912aa4be68e94a52762361c2d5189b7bbc58d2a/pom.xml#L8-L14)
 
 ## [1.1.1.0-PN] - 2020-01-21
 ### Fixes
