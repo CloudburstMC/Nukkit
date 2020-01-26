@@ -357,7 +357,7 @@ public class ItemRegistry implements Registry {
         registerVanilla(ACACIA_DOOR, PlaceableItem.factory(BlockIds.ACACIA_DOOR), 430);
         registerVanilla(DARK_OAK_DOOR, PlaceableItem.factory(BlockIds.DARK_OAK_DOOR), 431);
         registerVanilla(CHORUS_FRUIT, ItemChorusFruit::new, 432);
-        //TODO: registerVanilla(POPPED_CHORUS_FRUIT, ItemChorusFruitPopped::new, 433);
+        registerVanilla(POPPED_CHORUS_FRUIT, ItemChorusFruitPopped::new, 433);
 
         //TODO: registerVanilla(DRAGON_BREATH, ItemDragonBreath::new, 437);
         registerVanilla(SPLASH_POTION, ItemPotionSplash::new, 438);

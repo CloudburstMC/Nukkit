@@ -238,4 +238,5 @@ public final class ItemIds {
     public static final Identifier SUSPICIOUS_STEW = Identifier.fromString("suspicious_stew");
     public static final Identifier HONEYCOMB = Identifier.fromString("honeycomb");
     public static final Identifier HONEY_BOTTLE = Identifier.fromString("honey_bottle");
+    public static final Identifier POPPED_CHORUS_FRUIT = Identifier.fromString("chorus_fruit_popped");
 }
