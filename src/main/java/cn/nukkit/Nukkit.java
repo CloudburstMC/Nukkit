@@ -44,6 +44,7 @@ public class  Nukkit {
 
     public final static Properties GIT_INFO = getGitInfo();
     public final static String VERSION = getVersion();
+    private final static boolean IS_STABLE = false;
     public final static String API_VERSION = "2.0.0";
     @Deprecated
     public final static String MINECRAFT_VERSION = ProtocolInfo.MINECRAFT_VERSION;
@@ -186,12 +187,17 @@ public class  Nukkit {
 
     private static String getVersion() {
         StringBuilder version = new StringBuilder();
-        version.append("git-");
-        String commitId;
-        if (GIT_INFO == null || (commitId = GIT_INFO.getProperty("git.commit.id.abbrev")) == null) {
-            return version.append("null").toString();
+        if(IS_RELEASE){
+            version.append("git-");
+            String commitId;
+            if (GIT_INFO == null || (commitId = GIT_INFO.getProperty("git.commit.id.abbrev")) == null) {
+                return version.append("null").toString();
+            }
+            return version.append(commitId).toString();
+        }else{
+            version.append("stable-");
+            return version.append("1.0.0").toString();
         }
-        return version.append(commitId).toString();
     }
 
     public static void setLogLevel(Level level) {
