@@ -47,17 +47,15 @@ public class BlockCampfire extends BlockSolid implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        log.debug("Campfire place(): face: {}\nblock: {}\ntarget: {}", face.toString(), block.toString(), target.toString());
-//        if (block.isTransparent() || face != BlockFace.UP || !target.canBeReplaced()) return false;
+        if (!block.canBeReplaced()) return false;
         this.setDamage(CAMPFIRE_LIT_MASK + (player.getHorizontalFacing().getHorizontalIndex() & CAMPFIRE_FACING_MASK));
-        if (super.place(item, block, target, face, clickPos, player)) {
+        if (getLevel().setBlock(block, this, true, true)) {
             CompoundTag tag = new CompoundTag()
                     .putString("id", BlockEntity.CAMPFIRE)
-                    .putInt("x", this.x)
-                    .putInt("y", this.y)
-                    .putInt("z", this.z);
+                    .putInt("x", block.x)
+                    .putInt("y", block.y)
+                    .putInt("z", block.z);
             BlockEntity campfire = BlockEntity.createBlockEntity(BlockEntity.CAMPFIRE, this.getChunk(), tag);
-            log.debug("returning: {}", campfire != null);
             return campfire != null;
         }
         return false;
