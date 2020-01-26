@@ -3184,7 +3184,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         entityDamageByEntityEvent.setCancelled();
                                     }
 
-                                    if (!target.attack(entityDamageByEntityEvent)) {
+                                    if (!target.attack(entityDamageByEntityEvent) || entityDamageByEntityEvent.isCancelled()) {
                                         if (item.isTool() && this.isSurvival()) {
                                             this.inventory.sendContents(this);
                                         }
