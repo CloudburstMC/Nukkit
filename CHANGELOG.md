@@ -19,6 +19,7 @@ Click the link above to see the future.
 - [#46] checked if ProjectileHitEvent is cancelled before the action execution
 - [#108] Lever sounds
 - [#108] Incorrect sponge particles
+- [#12] Wrong redstone signal from levers
 
 ### Changed
 - Make BlockLectern implements Faceable
@@ -137,6 +138,7 @@ Click the link above to see the future.
 
 [NukkitX]: https://github.com/NukkitX/Nukkit
 
+[#12]: https://github.com/GameModsBR/PowerNukkit/issues/12
 [#46]: https://github.com/GameModsBR/PowerNukkit/issues/87
 [#49]: https://github.com/GameModsBR/PowerNukkit/pull/49
 [#50]: https://github.com/GameModsBR/PowerNukkit/pull/50
