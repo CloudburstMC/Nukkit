@@ -369,6 +369,8 @@ public class ItemRegistry implements Registry {
         registerVanilla(SHULKER_SHELL, ItemShulkerShell::new, 445);
         registerVanilla(BANNER, ItemBanner::new, 446);
 
+        registerVanilla(TOTEM, ItemTotem::new, 450);
+
         registerVanilla(IRON_NUGGET, SimpleItem::new, 452);
         registerVanilla(TRIDENT, ItemTrident::new, 455);
 
