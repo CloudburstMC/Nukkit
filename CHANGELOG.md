@@ -11,14 +11,14 @@ Click the link above to see the future.
 
 ### Added
 - This change log file
-- EntityMoveByPistonEvent
+- [#108] EntityMoveByPistonEvent
 
 ### Fixes
 - [#102] Leaves decay calculation
 - [#87] Arrows in offhand are black in the first person view
 - [#46] checked if ProjectileHitEvent is cancelled before the action execution
-- Lever sounds
-- Incorrect sponge particles
+- [#108] Lever sounds
+- [#108] Incorrect sponge particles
 
 ### Changed
 - Make BlockLectern implements Faceable
@@ -149,3 +149,4 @@ Click the link above to see the future.
 [#80]: https://github.com/GameModsBR/PowerNukkit/pull/80
 [#87]: https://github.com/GameModsBR/PowerNukkit/issues/87
 [#102]: https://github.com/GameModsBR/PowerNukkit/pull/102
+[#108]: https://github.com/GameModsBR/PowerNukkit/pull/108
