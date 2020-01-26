@@ -3,6 +3,7 @@ package cn.nukkit.level.generator;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
+import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
 
 import static cn.nukkit.block.BlockIds.AIR;
@@ -50,6 +51,23 @@ public abstract class SimpleChunkManager implements ChunkManager {
         IChunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
             chunk.setBlock(x & 0xf, y & 0xff, z & 0xf, layer, block);
+        }
+    }
+
+    @Override
+    public int getBlockRuntimeIdUnsafe(int x, int y, int z, int layer) {
+        IChunk chunk = this.getChunk(x >> 4, z >> 4);
+        if (chunk != null) {
+            return chunk.getBlockRuntimeIdUnsafe(x & 0xf, y & 0xff, z & 0xf, layer);
+        }
+        return BlockRegistry.get().getRuntimeId(AIR, 0);
+    }
+
+    @Override
+    public void setBlockRuntimeIdUnsafe(int x, int y, int z, int layer, int runtimeId) {
+        IChunk chunk = this.getChunk(x >> 4, z >> 4);
+        if (chunk != null) {
+            chunk.setBlockRuntimeIdUnsafe(x & 0xF, y & 0xFF, z & 0xF, layer, runtimeId);
         }
     }
 

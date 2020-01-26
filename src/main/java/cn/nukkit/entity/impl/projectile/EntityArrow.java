@@ -1,14 +1,11 @@
 package cn.nukkit.entity.impl.projectile;
 
 import cn.nukkit.entity.EntityType;
-import cn.nukkit.entity.impl.BaseEntity;
 import cn.nukkit.entity.projectile.Arrow;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.concurrent.ThreadLocalRandom;
-
-import static cn.nukkit.entity.data.EntityFlag.CRITICAL;
 
 /**
  * author: MagicDroidX
@@ -25,16 +22,7 @@ public class EntityArrow extends EntityProjectile implements Arrow {
     protected float drag = 0.01f;
 
     public EntityArrow(EntityType<Arrow> type, Chunk chunk, CompoundTag nbt) {
-        this(type, chunk, nbt, null);
-    }
-
-    public EntityArrow(EntityType<Arrow> type, Chunk chunk, CompoundTag nbt, BaseEntity shootingEntity) {
-        this(type, chunk, nbt, shootingEntity, false);
-    }
-
-    public EntityArrow(EntityType<Arrow> type, Chunk chunk, CompoundTag nbt, BaseEntity shootingEntity, boolean critical) {
-        super(type, chunk, nbt, shootingEntity);
-        this.setCritical(critical);
+        super(type, chunk, nbt);
     }
 
     @Override
@@ -68,18 +56,6 @@ public class EntityArrow extends EntityProjectile implements Arrow {
 
         this.damage = namedTag.contains("damage") ? namedTag.getDouble("damage") : 2;
         this.pickupMode = namedTag.contains("pickup") ? namedTag.getByte("pickup") : PICKUP_ANY;
-    }
-
-    public void setCritical() {
-        this.setCritical(true);
-    }
-
-    public boolean isCritical() {
-        return this.getFlag(CRITICAL);
-    }
-
-    public void setCritical(boolean value) {
-        this.setFlag(CRITICAL, value);
     }
 
     @Override

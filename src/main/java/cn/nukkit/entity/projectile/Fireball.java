@@ -1,6 +1,6 @@
 package cn.nukkit.entity.projectile;
 
-import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.Projectile;
 
-public interface Fireball extends Entity {
+public interface Fireball extends Projectile {
 }

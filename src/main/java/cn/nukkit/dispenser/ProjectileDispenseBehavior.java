@@ -1,9 +1,9 @@
 package cn.nukkit.dispenser;
 
 import cn.nukkit.block.BlockDispenser;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.Projectile;
-import cn.nukkit.entity.impl.BaseEntity;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.BlockFace;
@@ -29,7 +29,7 @@ public class ProjectileDispenseBehavior implements DispenseBehavior {
     @Override
     public void dispense(BlockDispenser source, Item item) {
         Position dispensePos = Position.fromObject(source.getDispensePosition(), source.getLevel());
-        CompoundTag nbt = BaseEntity.getDefaultNBT(dispensePos);
+        CompoundTag nbt = Entity.getDefaultNBT(dispensePos);
         this.correctNBT(nbt);
 
         BlockFace face = source.getFacing();

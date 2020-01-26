@@ -20,6 +20,7 @@ import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.Vector3f;
+import cn.nukkit.registry.BlockRegistry;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collections;
@@ -289,6 +290,9 @@ public class NormalGenerator implements Generator {
             }
         }
 
+        final int stoneId = BlockRegistry.get().getRuntimeId(STONE, 0);
+        final int waterId = BlockRegistry.get().getRuntimeId(WATER, 0);
+
         //place blocks
         for (int xSeg = 0; xSeg < 4; ++xSeg) {
             int xScale = xSeg * 5;
@@ -322,9 +326,9 @@ public class NormalGenerator implements Generator {
 
                             for (int xIn = 0; xIn < 4; ++xIn) {
                                 if ((scaleZ2 += scaleZ) > 0.0f) {
-                                    chunk.setBlockId(xSeg * 4 + zIn, ySeg * 8 + yIn, zSeg * 4 + xIn, STONE);
+                                    chunk.setBlockRuntimeIdUnsafe(xSeg * 4 + zIn, ySeg * 8 + yIn, zSeg * 4 + xIn, stoneId);
                                 } else if (ySeg * 8 + yIn <= seaHeight) {
-                                    chunk.setBlockId(xSeg * 4 + zIn, ySeg * 8 + yIn, zSeg * 4 + xIn, WATER);
+                                    chunk.setBlockRuntimeIdUnsafe(xSeg * 4 + zIn, ySeg * 8 + yIn, zSeg * 4 + xIn, waterId);
                                 }
                             }
 
