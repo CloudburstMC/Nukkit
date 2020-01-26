@@ -55,7 +55,7 @@ public class ChunkPopulateFunction implements BiFunction<Chunk, List<Chunk>, Chu
 
         manager.setSeed(this.level.getSeed());
         lockableChunks.forEach(manager::setChunk);
-        lockableChunks.forEach(Lock::lock);
+        //lockableChunks.forEach(Lock::lock);
         try {
             generator.populateChunk(manager, random, chunk.getX(), chunk.getZ());
 
@@ -68,7 +68,7 @@ public class ChunkPopulateFunction implements BiFunction<Chunk, List<Chunk>, Chu
         } finally {
             manager.clean();
             for (LockableChunk lockableChunk : lockableChunks) {
-                lockableChunk.unlock();
+                //lockableChunk.unlock();
                 lockableChunk.setDirty(false);
             }
         }
