@@ -27,5 +27,5 @@ jobs:
         uses: actions/upload-artifact@v1
         if: success()
         with:
-          name: Nukkit
-          path: target/Nukkit.jar
+          name: ReNukkit
+          path: target/ReNukkit.jar
