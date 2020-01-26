@@ -22,6 +22,7 @@ Click the link above to see the future.
 
 ### Changed
 - Make BlockLectern implements Faceable
+- The versioning convention now follows this pattern: upstream.major.minor.patch-PN. [Click here for details.](https://github.com/GameModsBR/PowerNukkit/blob/7912aa4be68e94a52762361c2d5189b7bbc58d2a/pom.xml#L8-L14)
 
 ## [1.1.1.0-PN] - 2020-01-21
 ### Fixes
@@ -121,7 +122,7 @@ Click the link above to see the future.
     - Bamboo
 
 [Unreleased]: https://github.com/GameModsBR/PowerNukkit/compare/v1.1.1.0-PN...HEAD
-[1.1.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/1ac6d50d36f07b6f1a02df299d9591d78c379db9...v1.1.1.0-PN
+[1.1.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/1ac6d50d36f07b6f1a02df299d9591d78c379db9...v1.1.1.0-PN#files_bucket
 
 [a8247360]: https://github.com/GameModsBR/PowerNukkit/commit/a8247360
 
