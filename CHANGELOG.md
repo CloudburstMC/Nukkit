@@ -14,6 +14,7 @@ Click the link above to see the future.
 ### Fixes
 - [#102] Leaves decay calculation
 - [#87] Arrows in offhand are black in the first person view
+- [#46] checked if ProjectileHitEvent is cancelled before the action execution
 - Lever sounds
 - Incorrect sponge particles
 
@@ -127,3 +128,4 @@ Click the link above to see the future.
 
 [#102]: https://github.com/GameModsBR/PowerNukkit/pull/102
 [#87]: https://github.com/GameModsBR/PowerNukkit/issues/87
+[#46]: https://github.com/GameModsBR/PowerNukkit/issues/87
