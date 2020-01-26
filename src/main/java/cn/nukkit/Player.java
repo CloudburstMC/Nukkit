@@ -3184,12 +3184,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         entityDamageByEntityEvent.setCancelled();
                                     }
 
-                                    if (!target.attack(entityDamageByEntityEvent) || entityDamageByEntityEvent.isCancelled()) {
+                                    if (!target.attack(entityDamageByEntityEvent)) {
                                         if (item.isTool() && this.isSurvival()) {
                                             this.inventory.sendContents(this);
                                         }
                                         break;
                                     }
+                                    // Should only reach here if event is not cancelled, as attack() returns false if event is cancelled
+                                    log.debug("target.attack returned true");
 
                                     for (Enchantment enchantment : item.getEnchantments()) {
                                         enchantment.doPostAttack(this, target);
