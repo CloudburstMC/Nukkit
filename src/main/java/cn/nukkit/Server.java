@@ -485,7 +485,9 @@ public class Server {
         int logLevel = (Nukkit.DEBUG + 3) * 100;
         for (org.apache.logging.log4j.Level level : org.apache.logging.log4j.Level.values()) {
             if (level.intLevel() == logLevel) {
-                Nukkit.setLogLevel(level);
+                if (level.intLevel() > Nukkit.getLogLevel().intLevel()) {
+                    Nukkit.setLogLevel(level);
+                }
                 break;
             }
         }

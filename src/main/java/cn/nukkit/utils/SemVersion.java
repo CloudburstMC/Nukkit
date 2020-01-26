@@ -15,7 +15,7 @@ import java.io.IOException;
 @JsonSerialize(using = SemVersion.Serializer.class)
 @JsonDeserialize(using = SemVersion.Deserializer.class)
 public final class SemVersion {
-    private int[] version;
+    private final int[] version;
 
     public SemVersion(int major, int minor, int patch) {
         this.version = new int[]{major, minor, patch};
@@ -40,8 +40,8 @@ public final class SemVersion {
 
     static class Serializer extends StdSerializer<SemVersion> {
 
-        protected Serializer(Class<SemVersion> t) {
-            super(t);
+        protected Serializer() {
+            super(SemVersion.class);
         }
 
         @Override
@@ -52,8 +52,8 @@ public final class SemVersion {
 
     static class Deserializer extends StdDeserializer<SemVersion> {
 
-        protected Deserializer(Class<?> vc) {
-            super(vc);
+        protected Deserializer() {
+            super(SemVersion.class);
         }
 
         @Override

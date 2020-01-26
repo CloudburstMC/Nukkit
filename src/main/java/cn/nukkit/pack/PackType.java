@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
-
 import java.io.IOException;
 
 @JsonSerialize(using = PackType.Serializer.class)
@@ -26,8 +25,8 @@ public enum PackType {
 
     static class Serializer extends StdSerializer<PackType> {
 
-        protected Serializer(Class<PackType> t) {
-            super(t);
+        protected Serializer() {
+            super(PackType.class);
         }
 
         @Override
@@ -38,8 +37,8 @@ public enum PackType {
 
     static class Deserializer extends StdDeserializer<PackType> {
 
-        protected Deserializer(Class<?> vc) {
-            super(vc);
+        protected Deserializer() {
+            super(PackType.class);
         }
 
         @Override
