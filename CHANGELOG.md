@@ -42,6 +42,12 @@ Click the link above to see the future.
 - [a8247360] Crops, grass, leaves, tallgrass growth and population
 - Fixes fuzzy spawn radius calculation
 
+### Changed
+- Unregistered block states will be shown as 248:0 (minecraft:info_update) now
+- Makes ServerStopEvent not cancellable
+- Improves the UI inventories
+- The codename to PowerNukkit to distinct from [NukkitX]'s implementation
+
 ### Added 
 - Waterlogging support
 - Support with blocks ID higher then 255 to the Anvil save format
@@ -111,13 +117,6 @@ Click the link above to see the future.
     - Stonecutter
     - Loom
     - Bamboo
-    
-### Changed
-- Unregistered block states will be shown as 248:0 (minecraft:info_update) now
-- Makes ServerStopEvent not cancellable
-- Improves the UI inventories
-- The codename to PowerNukkit to distinct from [NukkitX]'s implementation
- 
 
 [Unreleased]: https://github.com/GameModsBR/PowerNukkit/compare/v1.1.0-PN...HEAD
 [1.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/1ac6d50d36f07b6f1a02df299d9591d78c379db9...v1.1.0-PN
