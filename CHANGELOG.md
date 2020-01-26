@@ -2,7 +2,9 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) 
+with an added upstream's major version number in front of the major version so we have an better distinction from
+Nukkit 1.X and 2.X.
 
 ## [Unreleased]
 Click the link above to see the future.
@@ -21,7 +23,7 @@ Click the link above to see the future.
 ### Changed
 - Make BlockLectern implements Faceable
 
-## [1.1.0-PN] - 2020-01-21
+## [1.1.1.0-PN] - 2020-01-21
 ### Fixes
 - Piston heads not rendering
 - Cauldron implementation, should be closer to vanilla now
@@ -118,8 +120,8 @@ Click the link above to see the future.
     - Loom
     - Bamboo
 
-[Unreleased]: https://github.com/GameModsBR/PowerNukkit/compare/v1.1.0-PN...HEAD
-[1.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/1ac6d50d36f07b6f1a02df299d9591d78c379db9...v1.1.0-PN
+[Unreleased]: https://github.com/GameModsBR/PowerNukkit/compare/v1.1.1.0-PN...HEAD
+[1.1.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/1ac6d50d36f07b6f1a02df299d9591d78c379db9...v1.1.1.0-PN
 
 [a8247360]: https://github.com/GameModsBR/PowerNukkit/commit/a8247360
 
