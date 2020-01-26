@@ -55,7 +55,6 @@ public class  Nukkit {
     public final static String DATA_PATH = System.getProperty("user.dir") + "/";
     public final static String PLUGIN_PATH = DATA_PATH + "plugins";
     public static final long START_TIME = System.currentTimeMillis();
-    private static final boolean IS_RELEASE = false;
     public static boolean ANSI = true;
     public static boolean TITLE = false;
     public static boolean shortTitle = requiresShortTitle();
@@ -188,7 +187,7 @@ public class  Nukkit {
 
     private static String getVersion() {
         StringBuilder version = new StringBuilder();
-        if(IS_RELEASE){
+        if(IS_STABLE){
             version.append("git-");
             String commitId;
             if (GIT_INFO == null || (commitId = GIT_INFO.getProperty("git.commit.id.abbrev")) == null) {
