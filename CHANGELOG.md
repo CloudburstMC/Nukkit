@@ -44,18 +44,26 @@ Click the link above to see the future.
 - Fishing Hook drag and gravity values
 - [a8247360] Crops, grass, leaves, tallgrass growth and population
 - Fixes fuzzy spawn radius calculation
+- [#49] noDamageTicks should make the entity completely invulnerable while active
+- [#54] Fixes movement issues on heavy server load
+- [#57] Fixes block placement of Bone Block, End Portal Frame, Jukebox and Observer
 
 ### Changed
 - Unregistered block states will be shown as 248:0 (minecraft:info_update) now
-- Makes ServerStopEvent not cancellable
 - Improves the UI inventories
 - The codename to PowerNukkit to distinct from [NukkitX]'s implementation
+- [#50] The kick message is now more descriptive
+- [#80] Merged the "New RakNet Implementation" pull request which greatly improves the server performance and connections
 
 ### Added 
 - Waterlogging support
 - Support with blocks ID higher then 255 to the Anvil save format
 - Support for blocks with 6 bits data value (used to support only 4 bits)
-- Support for the offhand slot
+- [#51] Support for the offhand slot
+- [#52] Merge the "More redstone components" pull request which fixes and implements many redstone related blocks
+- [#53] Merge the "Vehicle event fix" pull request which add new events and fixes damage issues related to vehicles
+- [#55] Minecart (chest and hopper) inventories
+- [#56] ServerStopEvent
 - Shield block animation (without damage calculation)
 - New gamerules
 - The /setblock command
@@ -74,6 +82,7 @@ Click the link above to see the future.
     - Name Tags
     - Shulker Shell
 - Implementation for the blocks:
+    - [#58] Daylight Sensor
     - Lectern
     - Smoker
     - Blast Furnace
@@ -128,6 +137,15 @@ Click the link above to see the future.
 
 [NukkitX]: https://github.com/NukkitX/Nukkit
 
-[#102]: https://github.com/GameModsBR/PowerNukkit/pull/102
-[#87]: https://github.com/GameModsBR/PowerNukkit/issues/87
 [#46]: https://github.com/GameModsBR/PowerNukkit/issues/87
+[#49]: https://github.com/GameModsBR/PowerNukkit/pull/49
+[#50]: https://github.com/GameModsBR/PowerNukkit/pull/50
+[#51]: https://github.com/GameModsBR/PowerNukkit/pull/51
+[#53]: https://github.com/GameModsBR/PowerNukkit/pull/53
+[#54]: https://github.com/GameModsBR/PowerNukkit/pull/54
+[#55]: https://github.com/GameModsBR/PowerNukkit/pull/55
+[#56]: https://github.com/GameModsBR/PowerNukkit/pull/56
+[#57]: https://github.com/GameModsBR/PowerNukkit/pull/57
+[#80]: https://github.com/GameModsBR/PowerNukkit/pull/80
+[#87]: https://github.com/GameModsBR/PowerNukkit/issues/87
+[#102]: https://github.com/GameModsBR/PowerNukkit/pull/102
