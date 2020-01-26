@@ -141,6 +141,7 @@ Click the link above to see the future.
 [#49]: https://github.com/GameModsBR/PowerNukkit/pull/49
 [#50]: https://github.com/GameModsBR/PowerNukkit/pull/50
 [#51]: https://github.com/GameModsBR/PowerNukkit/pull/51
+[#52]: https://github.com/GameModsBR/PowerNukkit/pull/52
 [#53]: https://github.com/GameModsBR/PowerNukkit/pull/53
 [#54]: https://github.com/GameModsBR/PowerNukkit/pull/54
 [#55]: https://github.com/GameModsBR/PowerNukkit/pull/55
