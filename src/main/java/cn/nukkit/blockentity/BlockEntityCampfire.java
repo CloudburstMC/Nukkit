@@ -6,10 +6,12 @@ import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class BlockEntityCampfire extends BlockEntitySpawnable {
     private List<Item> itemsInFire;
     private int[] cookingTimes;
@@ -46,12 +48,12 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
 
     @Override
     public CompoundTag getSpawnCompound() {
-        return new CompoundTag().putString("id", BlockEntity.CAMPFIRE).putInt("x", this.x).putInt("y", this.y).putInt("z", this.z);
+        return new CompoundTag().putString("id", BlockEntity.CAMPFIRE).putInt("x", getBlock().x).putInt("y", getBlock().y).putInt("z", getBlock().z);
     }
 
     @Override
     public boolean isBlockEntityValid() {
-        return getBlock().getId() == BlockIds.CAMPFIRE;
+        return getLevel().getBlockAt(this.getX(), this.getY(), this.getZ()).getId() == BlockIds.CAMPFIRE;
     }
 
     @Override
