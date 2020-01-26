@@ -63,6 +63,11 @@ public final class FlatGenerator implements Generator {
             for (int z = 16 - 3; z <= 16 + 3; z++)  {
                 level.setBlockIdAt(blockX + 16 - 3, 5, blockZ + z, BRICK_BLOCK);
             }
+
+            level.setBlockIdAt(blockX + 15, 6, blockZ + 15, GLOWSTONE);
+            level.setBlockIdAt(blockX + 16, 6, blockZ + 15, GLOWSTONE);
+            level.setBlockIdAt(blockX + 15, 6, blockZ + 16, GLOWSTONE);
+            level.setBlockIdAt(blockX + 16, 6, blockZ + 16, GLOWSTONE);
         }
 
         //no-op
@@ -73,7 +78,8 @@ public final class FlatGenerator implements Generator {
     public Collection<ChunkPos> populationChunks(ChunkPos pos, int chunkX, int chunkZ) {
         //debug stuff
         if (true)   {
-            return ImmutableList.of(pos.add(1, 0), pos.add(0, 1));
+            return ImmutableList.of(pos.add(1, 0), pos.add(0, 1), pos.add(1, 1));
+            //return ImmutableList.of(pos.add(1, 0), pos.add(0, 1), pos.sub(1, 0), pos.sub(0, 1));
         }
 
         return Collections.emptyList();
