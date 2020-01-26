@@ -498,6 +498,8 @@ public class BlockRegistry implements Registry {
 
         this.factoryMap.put(OBSERVER, BlockObserver::new); //251
 
+        this.factoryMap.put(BLUE_ICE, BlockBlueIce::new); //266
+
         this.factoryMap.put(SPRUCE_STANDING_SIGN, BlockSignPost::new);
     }
 }
