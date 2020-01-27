@@ -66,4 +66,29 @@ public class BlockCampfire extends BlockSolid implements Faceable {
         }
         return false;
     }
+
+    @Override
+    public int getLightLevel() {
+        return isLit() ? 15 : 0;
+    }
+
+    @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+
+    @Override
+    public boolean onActivate(Item item) {
+        return this.onActivate(item, null);
+    }
+
+    @Override
+    public boolean onActivate(Item item, Player player) {
+        if (item.getId() == ItemIds.FLINT_AND_STEEL) {
+            if (!(this.isLit())) {
+                this.lightFire();
+            }
+        }
+        return false;
+    }
 }
