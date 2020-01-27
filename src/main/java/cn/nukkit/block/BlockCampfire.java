@@ -98,7 +98,8 @@ public class BlockCampfire extends BlockSolid implements Faceable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.getId() == ItemIds.FLINT_AND_STEEL) {
+        if (item.getId() == ItemIds.FLINT_AND_STEEL
+                || (item.getEnchantment(Enchantment.ID_FIRE_ASPECT) != null)) {
             if (!(this.isLit())) {
                 this.toggleFire();
             }
