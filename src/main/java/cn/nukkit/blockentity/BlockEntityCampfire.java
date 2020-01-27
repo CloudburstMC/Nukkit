@@ -38,7 +38,7 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
         }
 
         if (namedTag.contains("isMovable")) {
-            isMovable = namedTag.getByte("isMovable") == 1;
+            movable = namedTag.getByte("isMovable") == 1;
         }
     }
 
@@ -60,7 +60,7 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
                 namedTag.put("Item" + i, NBTIO.putItemHelper(itemsInFire[i - 1]));
                 namedTag.putInt("ItemTime" + i, cookingTimes[i - 1]);
             }
-            namedTag.putByte("isMovable", isMovable ? 1 : 0);
+            namedTag.putByte("isMovable", movable ? 1 : 0);
         }
     }
 
