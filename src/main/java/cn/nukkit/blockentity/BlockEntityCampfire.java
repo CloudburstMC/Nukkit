@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 public class BlockEntityCampfire extends BlockEntitySpawnable {
     private Item[] itemsInFire;
     private int[] cookingTimes;
-    private boolean isMovable;
 
     public BlockEntityCampfire(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -63,5 +62,25 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
             }
             namedTag.putByte("isMovable", isMovable ? 1 : 0);
         }
+    }
+
+    @Override
+    public boolean onUpdate() {
+        boolean haveUpdate = false;
+        for (int i = 0; i < 4; i++) {
+            if (itemsInFire[i] != null) {
+                if (++cookingTimes[i] >= 600) {
+                    Item output = getLevel().getServer().getCraftingManager().matchFurnaceRecipe(itemsInFire[i]).getResult();
+                    getLevel().dropItem(this, output);
+
+                    itemsInFire[i] = null;
+                    cookingTimes[i] = 0;
+                    haveUpdate = true;
+                }
+            }
+        }
+
+        this.lastUpdate = System.currentTimeMillis();
+        return haveUpdate;
     }
 }
