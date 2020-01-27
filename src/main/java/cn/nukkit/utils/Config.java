@@ -1,10 +1,12 @@
 package cn.nukkit.utils;
 
-import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.scheduler.FileWriteTask;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
 
@@ -32,7 +34,17 @@ public class Config {
     public static final int ENUM = 5; // .txt, .list, .enum
     public static final int ENUMERATION = Config.ENUM;
 
-    private static final TypeReference<ConfigSection> CONFIG_TYPE_REFERENCE = new TypeReference<ConfigSection>() {};
+    private static final JsonMapper JSON_MAPPER = new JsonMapper();
+    private static final YAMLMapper YAML_MAPPER = new YAMLMapper();
+    private static final JavaPropsMapper JAVA_PROPS_MAPPER = new JavaPropsMapper();
+
+    static {
+        SimpleModule module = new SimpleModule();
+        module.addAbstractTypeMapping(Map.class, ConfigSection.class);
+        JSON_MAPPER.registerModule(module);
+        YAML_MAPPER.registerModule(module);
+        JAVA_PROPS_MAPPER.registerModule(module);
+    }
 
     //private LinkedHashMap<String, Object> config = new LinkedHashMap<>();
     private ConfigSection config = new ConfigSection();
@@ -231,13 +243,13 @@ public class Config {
                 ObjectMapper mapper;
                 switch (this.type) {
                     case PROPERTIES:
-                        mapper = Nukkit.JAVA_PROPS_MAPPER;
+                        mapper = JAVA_PROPS_MAPPER;
                         break;
                     case JSON:
-                        mapper = Nukkit.JSON_MAPPER;
+                        mapper = JSON_MAPPER;
                         break;
                     case YAML:
-                        mapper = Nukkit.YAML_MAPPER;
+                        mapper = YAML_MAPPER;
                         break;
                     default:
                         throw new UnsupportedOperationException("Invalid config type " + type);
@@ -553,20 +565,20 @@ public class Config {
             ObjectMapper mapper;
             switch (this.type) {
                 case Config.PROPERTIES:
-                    mapper = Nukkit.JAVA_PROPS_MAPPER;
+                    mapper = JAVA_PROPS_MAPPER;
                     break;
                 case Config.JSON:
-                    mapper = Nukkit.JSON_MAPPER;
+                    mapper = JSON_MAPPER;
                     break;
                 case Config.YAML:
-                    mapper = Nukkit.YAML_MAPPER;
+                    mapper = YAML_MAPPER;
                     break;
                 default:
                     this.correct = false;
                     return;
             }
             try {
-                this.config = mapper.readValue(content, CONFIG_TYPE_REFERENCE);
+                this.config = mapper.readValue(content, ConfigSection.class);
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }
