@@ -33,7 +33,7 @@ public class NetherGenerator implements Generator {
     protected SimplexF[] noiseGen = new SimplexF[3];
     protected List<GeneratorFeature> generatorFeatures = new ArrayList<>();
 
-    private NetherGenerator(BedrockRandom random, Map<String, Object> options) {
+    private NetherGenerator(BedrockRandom random, String options) {
         for (int i = 0; i < noiseGen.length; i++) {
             noiseGen[i] = new SimplexF(random, 4, 1 / 4f, 1 / 64f);
         }
@@ -66,8 +66,8 @@ public class NetherGenerator implements Generator {
     }
 
     @Override
-    public Map<String, Object> getSettings() {
-        return new HashMap<>();
+    public String getSettings() {
+        return "";
     }
 
     @Override

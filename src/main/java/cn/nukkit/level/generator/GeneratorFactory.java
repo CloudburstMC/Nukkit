@@ -7,5 +7,5 @@ import java.util.Map;
 @FunctionalInterface
 public interface GeneratorFactory {
 
-    Generator create(BedrockRandom random, Map<String, Object> options);
+    Generator create(BedrockRandom random, String options);
 }

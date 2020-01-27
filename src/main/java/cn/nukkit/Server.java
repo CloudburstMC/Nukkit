@@ -406,10 +406,7 @@ public class Server {
         this.properties.setProperty("hardcore", "false");
         this.properties.setProperty("pvp", "true");
         this.properties.setProperty("difficulty", "1");
-        this.properties.setProperty("generator-settings", "");
-        this.properties.setProperty("level-name", "world");
-        this.properties.setProperty("level-seed", "");
-        this.properties.setProperty("level-type", "NORMAL");
+        this.properties.setProperty("default-level", "world");
         this.properties.setProperty("allow-nether", "true");
         this.properties.setProperty("enable-query", "true");
         this.properties.setProperty("enable-rcon", "false");
@@ -553,71 +550,50 @@ public class Server {
             this.defaultStorageId = StorageIds.LEVELDB;
         }
 
-        Path worldsPath = Paths.get(getDataPath()).resolve("worlds");
-
-        List<CompletableFuture<Level>> levelFutures = new ArrayList<>();
-        Set<String> worldNames = this.getConfig("worlds", Collections.<String, Object>emptyMap()).keySet();
-        for (String name : worldNames) {
+        Map<String, Object> worldNames = this.getConfig("worlds", Collections.emptyMap());
+        if (worldNames.isEmpty())   {
+            throw new IllegalStateException("No worlds configured! Add a world to nukkit.yml and try again!");
+        }
+        List<CompletableFuture<Level>> levelFutures = new ArrayList<>(worldNames.size());
+        for (String name : worldNames.keySet()) {
+            //fallback to level name if no seed is set
+            Object seedObj = this.getConfig("worlds." + name + ".seed", name);
             long seed;
-            try {
-                seed = ((Integer) this.getConfig("worlds." + name + ".seed")).longValue();
-            } catch (Exception e) {
-                seed = System.currentTimeMillis();
-            }
-
-            LevelBuilder levelBuilder = this.loadLevel().id(name).seed(seed);
-
-            String[] opts = this.getConfig("worlds." + name + ".generator", generatorRegistry.getFallback().toString())
-                    .split(",");
-            Identifier generatorId = Identifier.fromString(opts[0]);
-            Map<String, Object> options = new HashMap<>();
-            if (opts.length > 1) {
-                StringBuilder preset = new StringBuilder();
-                for (int i = 1; i < opts.length; i++) {
-                    preset.append(opts[i]).append(":");
+            if (seedObj instanceof Number)   {
+                seed = ((Number) seedObj).longValue();
+            } else if (seedObj instanceof String)   {
+                if (seedObj == name)    {
+                    log.warn("World \"{}\" does not have a seed! Using a the name as the seed", name);
                 }
-                preset = new StringBuilder(preset.substring(0, preset.length() - 1));
 
-                options.put("preset", preset.toString());
+                //this internally generates an MD5 hash of the seed string
+                UUID uuid = UUID.nameUUIDFromBytes(((String) seedObj).getBytes(StandardCharsets.UTF_8));
+                seed = uuid.getMostSignificantBits() ^ uuid.getLeastSignificantBits();
+            } else {
+                throw new IllegalStateException("Seed for world \"" + name + "\" is invalid: " + (seedObj == null ? "null" : seedObj.getClass().getCanonicalName()));
             }
-            levelBuilder.generator(generatorId);
-            levelBuilder.options(options);
 
-            levelFutures.add(levelBuilder.load());
+            levelFutures.add(this.loadLevel().id(name).seed(seed)
+                    .generator(Identifier.fromString(this.getConfig(
+                            "worlds." + name + ".generator",
+                            this.generatorRegistry.getFallback().toString())))
+                    .generatorOptions(this.getConfig("worlds." + name + ".options", ""))
+                    .load());
         }
 
         // Wait for levels to load.
         CompletableFutures.allAsList(levelFutures).join();
 
         if (this.getDefaultLevel() == null) {
-            String defaultName = this.getProperty("level-name", "world");
+            String defaultName = this.getProperty("default-level");
             if (defaultName == null || defaultName.trim().isEmpty()) {
-                log.warn("level-name cannot be null, using default");
-                defaultName = "world";
-                this.setProperty("level-name", defaultName);
+                this.setProperty("default-level", defaultName = worldNames.keySet().iterator().next());
+                log.warn("default-level is unset or empty, falling back to \"" + defaultName + '"');
             }
 
             Level defaultLevel = this.levelManager.getLevel(defaultName);
-            if (defaultLevel == null) {
-                long seed;
-                String seedString = this.getProperty("level-seed", "");
-                if (!seedString.isEmpty()) {
-                    try {
-                        seed = Long.parseLong(seedString);
-                    } catch (NumberFormatException e) {
-                        seed = seedString.hashCode();
-                    }
-                } else {
-                    seed = System.currentTimeMillis();
-                }
-
-                String type = (type = this.getLevelType().toLowerCase()).equals("default") ? "normal" : type;
-                Identifier typeIdentifier = Identifier.fromString(type);
-
-                defaultLevel = this.loadLevel().id(defaultName)
-                        .seed(seed)
-                        .generator(this.generatorRegistry.isRegistered(typeIdentifier) ? typeIdentifier : this.generatorRegistry.getFallback())
-                        .load().join();
+            if (defaultLevel == null)   {
+                throw new IllegalArgumentException("default-level refers to unknown level: \"" + defaultName + '"');
             }
             this.levelManager.setDefaultLevel(defaultLevel);
         }
@@ -1196,10 +1172,6 @@ public class Server {
         for (Level level : this.levelManager.getLevels()) {
             level.setAutoSave(this.autoSave);
         }
-    }
-
-    public String getLevelType() {
-        return this.getProperty("level-type", "NORMAL");
     }
 
     public boolean getGenerateStructures() {
