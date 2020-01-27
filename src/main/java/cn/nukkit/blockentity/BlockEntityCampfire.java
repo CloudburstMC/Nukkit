@@ -70,7 +70,7 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
         if (this.closed) {
             return false;
         }
-        if (((BlockCampfire) getBlock()).isLit()) {
+        if (!((BlockCampfire) getBlock()).isLit()) {
             return false;
         }
 
@@ -116,6 +116,7 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
                 Item food = item.clone();
                 if (food.getCount() != 1) food.setCount(1);
                 itemsInFire[i] = food;
+                cookingTimes[i] = 0;
                 spawnToAll();
                 this.scheduleUpdate();
                 return true;
