@@ -17,9 +17,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class BlockCampfire extends BlockSolid implements Faceable {
 
     private static final int CAMPFIRE_LIT_MASK = 0x04; // Bit is 1 when fire is extinguished

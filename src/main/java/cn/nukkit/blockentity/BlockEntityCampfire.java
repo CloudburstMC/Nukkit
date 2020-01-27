@@ -7,9 +7,7 @@ import cn.nukkit.item.ItemEdible;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class BlockEntityCampfire extends BlockEntitySpawnable {
     private Item[] itemsInFire;
     private int[] cookingTimes;
