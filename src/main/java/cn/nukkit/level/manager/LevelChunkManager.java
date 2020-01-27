@@ -405,6 +405,28 @@ public final class LevelChunkManager {
                         long currentTime = System.currentTimeMillis();
                         synchronized (LevelChunkManager.this) {
                             LevelChunkManager.this.chunkLoadedTimes.put(key, currentTime);
+
+                            if (chunk.isPopulated()) {
+                                for (int z = this.z - 1, maxZ = this.z + 1; z <= maxZ; z++) {
+                                    for (int x = this.x - 1, maxX = this.x + 1; x <= maxX; x++) {
+                                        if (x == this.x && z == this.z) continue;
+                                        LoadingChunk ldng = LevelChunkManager.this.chunks.get(Chunk.key(x, z));
+                                        if (ldng == null)   {
+                                            continue;
+                                        }
+                                        Chunk neighbor = ldng.load().getNow(null);
+                                        if (neighbor == null) {
+                                            ldng.load().whenComplete((chunk1, throwable1) -> {
+                                                if (throwable1 == null) {
+                                                    chunk1.onChunkPopulated(this.x, this.z);
+                                                }
+                                            });
+                                        } else {
+                                            neighbor.onChunkPopulated(this.x, this.z);
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 });
