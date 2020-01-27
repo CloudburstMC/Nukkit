@@ -9,19 +9,27 @@ import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import it.unimi.dsi.fastutil.longs.LongArraySet;
+import it.unimi.dsi.fastutil.longs.LongSet;
+import it.unimi.dsi.fastutil.longs.LongSets;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Closeable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
-import static cn.nukkit.block.BlockIds.AIR;
-import static cn.nukkit.level.chunk.Chunk.ARRAY_SIZE;
-import static cn.nukkit.level.chunk.Chunk.SECTION_COUNT;
-import static com.google.common.base.Preconditions.checkElementIndex;
+import static cn.nukkit.block.BlockIds.*;
+import static cn.nukkit.level.chunk.Chunk.*;
+import static com.google.common.base.Preconditions.*;
 
 public final class UnsafeChunk implements IChunk, Closeable {
 
@@ -33,6 +41,8 @@ public final class UnsafeChunk implements IChunk, Closeable {
             .newUpdater(UnsafeChunk.class, "generated");
     private static final AtomicIntegerFieldUpdater<UnsafeChunk> POPULATED_FIELD = AtomicIntegerFieldUpdater
             .newUpdater(UnsafeChunk.class, "populated");
+    private static final AtomicIntegerFieldUpdater<UnsafeChunk> POPULATED_AROUND_FIELD = AtomicIntegerFieldUpdater
+            .newUpdater(UnsafeChunk.class, "populatedAround");
     private static final AtomicIntegerFieldUpdater<UnsafeChunk> CLOSED_FIELD = AtomicIntegerFieldUpdater
             .newUpdater(UnsafeChunk.class, "closed");
     static final AtomicIntegerFieldUpdater<UnsafeChunk> CLEAR_CACHE_FIELD = AtomicIntegerFieldUpdater
@@ -52,6 +62,8 @@ public final class UnsafeChunk implements IChunk, Closeable {
 
     private final Short2ObjectMap<BlockEntity> tiles = new Short2ObjectOpenHashMap<>();
 
+    private final LongSet waitingPopulationChunks;
+
     private final byte[] biomes;
 
     private final int[] heightMap;
@@ -64,9 +76,13 @@ public final class UnsafeChunk implements IChunk, Closeable {
 
     private volatile int populated;
 
+    private volatile int populatedAround;
+
     private volatile int closed;
 
     private volatile int clearCache;
+
+    private final boolean fromDisk;
 
     public UnsafeChunk(int x, int z, Level level) {
         this.x = x;
@@ -75,6 +91,23 @@ public final class UnsafeChunk implements IChunk, Closeable {
         this.sections = new ChunkSection[SECTION_COUNT];
         this.biomes = new byte[ARRAY_SIZE];
         this.heightMap = new int[ARRAY_SIZE];
+
+        this.fromDisk = false;
+        //porktodo: replace this with Generator#getPopulationChunks on dev/generator-api-rewrite
+        LongSet waitingPopulationChunks = new LongArraySet(8);
+        for (int deltaX = -1; deltaX <= 1; deltaX++)    {
+            for (int deltaZ = -1; deltaZ <= 1; deltaZ++)    {
+                if (deltaX != 0 || deltaZ != 0) {
+                    Chunk chunk = level.getLoadedChunk(x + deltaX, z + deltaZ);
+                    if (chunk != null && chunk.isPopulated()) { //don't add to the waiting list if the chunk is already populated
+                        continue;
+                    }
+                }
+                waitingPopulationChunks.add(Chunk.key(x + deltaX, z + deltaZ));
+            }
+        }
+
+        this.waitingPopulationChunks = LongSets.synchronize(waitingPopulationChunks);
     }
 
     UnsafeChunk(int x, int z, Level level, ChunkSection[] sections, byte[] biomes, int[] heightMap) {
@@ -87,6 +120,9 @@ public final class UnsafeChunk implements IChunk, Closeable {
         this.biomes = Arrays.copyOf(biomes, ARRAY_SIZE);
         Preconditions.checkNotNull(heightMap, "heightMap");
         this.heightMap = Arrays.copyOf(heightMap, ARRAY_SIZE);
+
+        this.fromDisk = true;
+        this.waitingPopulationChunks = LongSets.EMPTY_SET; //chunks cannot be stored to disk unless they were already populatedAround
     }
 
     static void checkBounds(int x, int y, int z) {
@@ -412,32 +448,57 @@ public final class UnsafeChunk implements IChunk, Closeable {
         return this.tiles.values();
     }
 
+    @Override
     public boolean isGenerated() {
-        return generated == 1;
+        return this.generated == 1;
     }
 
-    public void setGenerated(boolean generated) {
-        if (GENERATED_FIELD.compareAndSet(this, generated ? 0 : 1, generated ? 1 : 0)) {
-            setDirty();
-        }
-    }
-
+    @Override
     public void setGenerated() {
-        this.setGenerated(true);
+        GENERATED_FIELD.compareAndSet(this, 0, 1);
     }
 
+    @Override
     public boolean isPopulated() {
-        return populated == 1;
+        return this.populated == 1;
     }
 
-    public void setPopulated(boolean populated) {
-        if (POPULATED_FIELD.compareAndSet(this, populated ? 0 : 1, populated ? 1 : 0)) {
-            setDirty();
+    @Override
+    public void setPopulated() {
+        if (POPULATED_FIELD.compareAndSet(this, 0, 1))  {
+            this.onChunkPopulated(this.x, this.z);
+
+            //notify neighboring chunks that this chunk was populated
+            for (int deltaX = -1; deltaX <= 1; deltaX++)    {
+                for (int deltaZ = -1; deltaZ <= 1; deltaZ++)    {
+                    if (deltaX == 0 && deltaZ == 0) {
+                        continue;
+                    }
+
+                    Chunk chunk = this.level.getLoadedChunkFutureUnsafe(this.x + deltaX, this.z + deltaZ).getNow(null);
+                    if (chunk != null) {
+                        chunk.onChunkPopulated(this.x, this.z);
+                    }
+                }
+            }
         }
     }
 
-    public void setPopulated() {
-        this.setPopulated(true);
+    @Override
+    public boolean isPopulatedAround() {
+        return this.populatedAround == 1;
+    }
+
+    @Override
+    public void onChunkPopulated(int chunkX, int chunkZ) {
+        if (this.waitingPopulationChunks.remove(Chunk.key(chunkX, chunkZ)) && this.waitingPopulationChunks.isEmpty()) {
+            POPULATED_AROUND_FIELD.compareAndSet(this, 0, 1);
+        }
+    }
+
+    @Override
+    public boolean isFromDisk() {
+        return false;
     }
 
     /**
@@ -446,7 +507,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
      * @return dirty
      */
     public boolean isDirty() {
-        return dirty == 1;
+        return this.populatedAround == 1 && this.dirty == 1;
     }
 
     /**
