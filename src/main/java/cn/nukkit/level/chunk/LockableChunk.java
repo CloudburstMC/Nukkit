@@ -18,7 +18,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
 @NotThreadSafe
-public final class LockableChunk implements IChunk, Lock {
+public final class LockableChunk implements IChunk, Lock, Comparable<LockableChunk> {
     private final UnsafeChunk unsafe;
     private final Lock lock;
 
@@ -284,5 +284,11 @@ public final class LockableChunk implements IChunk, Lock {
     @Override
     public void clear() {
         this.unsafe.clear();
+    }
+
+    @Override
+    public int compareTo(LockableChunk o) {
+        int i = Integer.compare(this.getX(), o.getX());
+        return i == 0 ? Integer.compare(this.getZ(), o.getZ()) : i;
     }
 }
