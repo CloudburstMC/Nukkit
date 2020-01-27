@@ -18,7 +18,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
 @NotThreadSafe
-public final class LockableChunk implements IChunk, Lock {
+public final class LockableChunk implements IChunk, Lock, Comparable<LockableChunk> {
     private final UnsafeChunk unsafe;
     private final Lock lock;
 
@@ -238,22 +238,37 @@ public final class LockableChunk implements IChunk, Lock {
 
     @Override
     public boolean isGenerated() {
-        return unsafe.isGenerated();
+        return this.unsafe.isGenerated();
     }
 
     @Override
-    public void setGenerated(boolean generated) {
-        unsafe.setGenerated(generated);
+    public void setGenerated() {
+        this.unsafe.setGenerated();
     }
 
     @Override
     public boolean isPopulated() {
-        return unsafe.isPopulated();
+        return this.unsafe.isPopulated();
     }
 
     @Override
-    public void setPopulated(boolean populated) {
-        unsafe.setPopulated(populated);
+    public void setPopulated() {
+        this.unsafe.setPopulated();
+    }
+
+    @Override
+    public boolean isPopulatedAround() {
+        return this.unsafe.isPopulatedAround();
+    }
+
+    @Override
+    public void onChunkPopulated(int chunkX, int chunkZ) {
+        this.unsafe.onChunkPopulated(chunkX, chunkZ);
+    }
+
+    @Override
+    public boolean isFromDisk() {
+        return this.unsafe.isFromDisk();
     }
 
     @Override
@@ -269,5 +284,11 @@ public final class LockableChunk implements IChunk, Lock {
     @Override
     public void clear() {
         this.unsafe.clear();
+    }
+
+    @Override
+    public int compareTo(LockableChunk o) {
+        int i = Integer.compare(this.getX(), o.getX());
+        return i == 0 ? Integer.compare(this.getZ(), o.getZ()) : i;
     }
 }
