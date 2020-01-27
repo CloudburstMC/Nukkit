@@ -42,7 +42,7 @@ public abstract class BlockEntity extends BlockPosition {
     public static final String JUKEBOX = "Jukebox";
     public static final String SHULKER_BOX = "ShulkerBox";
     public static final String BANNER = "Banner";
-    public static final String CAMPFIRE = "campfire"; // According to wiki, this is lowercase for the entity ID ?
+    public static final String CAMPFIRE = "Campfire";
 
 
     public static long count = 1;
