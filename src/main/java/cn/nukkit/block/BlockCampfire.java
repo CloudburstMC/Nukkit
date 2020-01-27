@@ -14,8 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BlockCampfire extends BlockSolid implements Faceable {
 
-    private static final int CAMPFIRE_LIT_MASK = 0x08;
-    private static final int CAMPFIRE_FACING_MASK = 0x07;
+    private static final int CAMPFIRE_LIT_MASK = 0x04;
+    private static final int CAMPFIRE_FACING_MASK = 0x03;
 
     public BlockCampfire(Identifier id) {
         super(id);
