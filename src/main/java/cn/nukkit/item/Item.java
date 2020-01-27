@@ -204,7 +204,10 @@ public abstract class Item implements Cloneable {
             }
         }
 
-        return get(Utils.toInt(data.get("id")), Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), nbtBytes);
+        int meta = Utils.toInt(data.getOrDefault("damage", 0));
+        if (meta < 0) meta = 0; // fix for recipes.json having "damage": -1 on the input items
+
+        return get(Utils.toInt(data.get("id")), meta, Utils.toInt(data.getOrDefault("count", 1)), nbtBytes);
     }
 
     public static Item[] fromStringMultiple(String str) {

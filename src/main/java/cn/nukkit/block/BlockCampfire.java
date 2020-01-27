@@ -1,9 +1,15 @@
 package cn.nukkit.block;
 
 import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityCampfire;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.event.entity.EntityDamageByBlockEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemEdible;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -82,6 +88,15 @@ public class BlockCampfire extends BlockSolid implements Faceable {
     }
 
     @Override
+    public Item[] getDrops(Item item) {
+        if (item.getEnchantment(Enchantment.ID_SILK_TOUCH) != null) {
+            return super.getDrops(item);
+        } else {
+            return new Item[0];
+        }
+    }
+
+    @Override
     public boolean onActivate(Item item, Player player) {
         if (item.getId() == ItemIds.FLINT_AND_STEEL) {
             if (!(this.isLit())) {
@@ -93,7 +108,28 @@ public class BlockCampfire extends BlockSolid implements Faceable {
                 this.toggleFire();
             }
             return true;
+        } else if (item instanceof ItemEdible) {
+            if (getLevel().getServer().getCraftingManager().matchFurnaceRecipe(item) != null) {
+                BlockEntityCampfire fire = (BlockEntityCampfire) getLevel().getBlockEntity(this);
+                if (fire.putItemInFire(item)) {
+                    if (player != null && player.isSurvival()) {
+                        item.decrementCount();
+                        if (item.getCount() <= 0) {
+                            item = Item.get(BlockIds.AIR);
+                        }
+                        player.getInventory().setItemInHand(item);
+                    }
+                    return true;
+                }
+            }
         }
         return false;
+    }
+
+    @Override
+    public void onEntityCollide(Entity entity) {
+        if (this.isLit()) {
+            entity.attack(new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.DamageCause.FIRE_TICK, 1.0f));
+        }
     }
 }
