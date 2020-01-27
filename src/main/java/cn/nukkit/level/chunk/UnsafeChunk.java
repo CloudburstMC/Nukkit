@@ -491,11 +491,8 @@ public final class UnsafeChunk implements IChunk, Closeable {
 
     @Override
     public void onChunkPopulated(int chunkX, int chunkZ) {
-        if (this.waitingPopulationChunks.remove(Chunk.key(chunkX, chunkZ))
-                && this.waitingPopulationChunks.isEmpty()
-                && POPULATED_AROUND_FIELD.compareAndSet(this, 0, 1)) {
-            System.out.printf("Chunk %d,%d is fully populatedAround!\n", this.x, this.z);
-            System.out.flush();
+        if (this.waitingPopulationChunks.remove(Chunk.key(chunkX, chunkZ)) && this.waitingPopulationChunks.isEmpty()) {
+            POPULATED_AROUND_FIELD.compareAndSet(this, 0, 1);
         }
     }
 
