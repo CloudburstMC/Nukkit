@@ -5,17 +5,13 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 public class BlockEntityCampfire extends BlockEntitySpawnable {
-    private List<Item> itemsInFire;
+    private Item[] itemsInFire;
     private int[] cookingTimes;
-    private int[] cookingTotalTimes;
+    private boolean isMovable;
 
     public BlockEntityCampfire(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -23,27 +19,28 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
 
     @Override
     protected void initBlockEntity() {
-        itemsInFire = new ArrayList<>();
-        if (namedTag.contains("Items")) {
-            ListTag<CompoundTag> items = namedTag.getList("Items", CompoundTag.class);
-            for (CompoundTag tag : items.getAll()) {
-                Item i = NBTIO.getItemHelper(tag);
-                itemsInFire.add(tag.getByte("Slot"), i);
+        super.initBlockEntity();
+        itemsInFire = new Item[4];
+        cookingTimes = new int[4];
+
+        for (int i = 1; i <= 4; i++) {
+            if (namedTag.contains(("Item" + i))) {
+                Item item = NBTIO.getItemHelper(namedTag.getCompound("Item" + i));
+                itemsInFire[i - 1] = item;
+            } else {
+                itemsInFire[i - 1] = null;
+            }
+
+            if (namedTag.contains("ItemTime" + i)) {
+                cookingTimes[i - 1] = namedTag.getInt("ItemTime" + i);
+            } else {
+                cookingTimes[i - 1] = 0;
             }
         }
 
-        if (namedTag.contains("CookingTimes")) {
-            cookingTimes = namedTag.getIntArray("CookingTimes");
-        } else {
-            cookingTimes = new int[]{0, 0, 0, 0};
+        if (namedTag.contains("isMovable")) {
+            isMovable = namedTag.getByte("isMovable") == 1;
         }
-
-        if (namedTag.contains("CookingTotalTimes")) {
-            cookingTotalTimes = namedTag.getIntArray("CookingTotalTimes");
-        } else {
-            cookingTotalTimes = new int[]{0, 0, 0, 0};
-        }
-        super.initBlockEntity();
     }
 
     @Override
@@ -59,14 +56,12 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
     @Override
     public void saveNBT() {
         super.saveNBT();
-        namedTag.putIntArray("CookingTotalTimes", this.cookingTotalTimes);
-        namedTag.putIntArray("CookingTimes", this.cookingTimes);
-        if (!itemsInFire.isEmpty()) {
-            ListTag<CompoundTag> items = new ListTag<>("Items");
-            for (Item item : itemsInFire) {
-                items.add(NBTIO.putItemHelper(item, itemsInFire.indexOf(item)));
+        for (int i = 1; i <= 4; i++) {
+            if (itemsInFire[i - 1] != null) {
+                namedTag.put("Item" + i, NBTIO.putItemHelper(itemsInFire[i - 1]));
+                namedTag.putInt("ItemTime" + i, cookingTimes[i - 1]);
             }
-            namedTag.putList(items);
+            namedTag.putByte("isMovable", isMovable ? 1 : 0);
         }
     }
 }
