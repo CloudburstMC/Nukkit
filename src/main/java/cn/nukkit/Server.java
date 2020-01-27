@@ -550,53 +550,7 @@ public class Server {
             this.defaultStorageId = StorageIds.LEVELDB;
         }
 
-        Map<String, Object> worldNames = this.getConfig("worlds", Collections.emptyMap());
-        if (worldNames.isEmpty())   {
-            throw new IllegalStateException("No worlds configured! Add a world to nukkit.yml and try again!");
-        }
-        List<CompletableFuture<Level>> levelFutures = new ArrayList<>(worldNames.size());
-        for (String name : worldNames.keySet()) {
-            //fallback to level name if no seed is set
-            Object seedObj = this.getConfig("worlds." + name + ".seed", name);
-            long seed;
-            if (seedObj instanceof Number)   {
-                seed = ((Number) seedObj).longValue();
-            } else if (seedObj instanceof String)   {
-                if (seedObj == name)    {
-                    log.warn("World \"{}\" does not have a seed! Using a the name as the seed", name);
-                }
-
-                //this internally generates an MD5 hash of the seed string
-                UUID uuid = UUID.nameUUIDFromBytes(((String) seedObj).getBytes(StandardCharsets.UTF_8));
-                seed = uuid.getMostSignificantBits() ^ uuid.getLeastSignificantBits();
-            } else {
-                throw new IllegalStateException("Seed for world \"" + name + "\" is invalid: " + (seedObj == null ? "null" : seedObj.getClass().getCanonicalName()));
-            }
-
-            levelFutures.add(this.loadLevel().id(name).seed(seed)
-                    .generator(Identifier.fromString(this.getConfig(
-                            "worlds." + name + ".generator",
-                            this.generatorRegistry.getFallback().toString())))
-                    .generatorOptions(this.getConfig("worlds." + name + ".options", ""))
-                    .load());
-        }
-
-        // Wait for levels to load.
-        CompletableFutures.allAsList(levelFutures).join();
-
-        if (this.getDefaultLevel() == null) {
-            String defaultName = this.getProperty("default-level");
-            if (defaultName == null || defaultName.trim().isEmpty()) {
-                this.setProperty("default-level", defaultName = worldNames.keySet().iterator().next());
-                log.warn("default-level is unset or empty, falling back to \"" + defaultName + '"');
-            }
-
-            Level defaultLevel = this.levelManager.getLevel(defaultName);
-            if (defaultLevel == null)   {
-                throw new IllegalArgumentException("default-level refers to unknown level: \"" + defaultName + '"');
-            }
-            this.levelManager.setDefaultLevel(defaultLevel);
-        }
+        this.loadLevels();
 
         this.saveProperties();
 
@@ -1983,6 +1937,58 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.SHULKER_BOX, BlockEntityShulkerBox.class);
         BlockEntity.registerBlockEntity(BlockEntity.BANNER, BlockEntityBanner.class);
         BlockEntity.registerBlockEntity(BlockEntity.MUSIC, BlockEntityMusic.class);
+    }
+
+    private void loadLevels()   {
+        Map<String, Object> worldNames = this.getConfig("worlds", Collections.emptyMap());
+        if (worldNames.isEmpty())   {
+            throw new IllegalStateException("No worlds configured! Add a world to nukkit.yml and try again!");
+        }
+        List<CompletableFuture<Level>> levelFutures = new ArrayList<>(worldNames.size());
+
+        for (String name : worldNames.keySet()) {
+            //fallback to level name if no seed is set
+            Object seedObj = this.getConfig("worlds." + name + ".seed", name);
+            long seed;
+            if (seedObj instanceof Number)   {
+                seed = ((Number) seedObj).longValue();
+            } else if (seedObj instanceof String)   {
+                if (seedObj == name)    {
+                    log.warn("World \"{}\" does not have a seed! Using a the name as the seed", name);
+                }
+
+                //this internally generates an MD5 hash of the seed string
+                UUID uuid = UUID.nameUUIDFromBytes(((String) seedObj).getBytes(StandardCharsets.UTF_8));
+                seed = uuid.getMostSignificantBits() ^ uuid.getLeastSignificantBits();
+            } else {
+                throw new IllegalStateException("Seed for world \"" + name + "\" is invalid: " + (seedObj == null ? "null" : seedObj.getClass().getCanonicalName()));
+            }
+
+            levelFutures.add(this.loadLevel().id(name).seed(seed)
+                    .generator(Identifier.fromString(this.getConfig(
+                            "worlds." + name + ".generator",
+                            this.generatorRegistry.getFallback().toString())))
+                    .generatorOptions(this.getConfig("worlds." + name + ".options", ""))
+                    .load());
+        }
+
+        // Wait for levels to load.
+        CompletableFutures.allAsList(levelFutures).join();
+
+        //set default level
+        if (this.getDefaultLevel() == null) {
+            String defaultName = this.getProperty("default-level");
+            if (defaultName == null || defaultName.trim().isEmpty()) {
+                this.setProperty("default-level", defaultName = worldNames.keySet().iterator().next());
+                log.warn("default-level is unset or empty, falling back to \"" + defaultName + '"');
+            }
+
+            Level defaultLevel = this.levelManager.getLevel(defaultName);
+            if (defaultLevel == null)   {
+                throw new IllegalArgumentException("default-level refers to unknown level: \"" + defaultName + '"');
+            }
+            this.levelManager.setDefaultLevel(defaultLevel);
+        }
     }
 
     public boolean isNetherAllowed() {
