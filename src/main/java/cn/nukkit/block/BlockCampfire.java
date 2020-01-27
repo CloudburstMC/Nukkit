@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityCampfire;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.impl.EntityLiving;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
@@ -54,6 +55,7 @@ public class BlockCampfire extends BlockSolid implements Faceable {
 
     public void toggleFire() {
         this.setDamage(this.getDamage() ^ CAMPFIRE_LIT_MASK);
+        getLevel().setBlockDataAt(this.x, this.y, this.z, this.getDamage());
         getLevel().getBlockEntity(this).scheduleUpdate();
     }
 
@@ -130,9 +132,9 @@ public class BlockCampfire extends BlockSolid implements Faceable {
 
     @Override
     public void onEntityCollide(Entity entity) {
-        if (this.isLit()) {
+        if (this.isLit() && entity instanceof EntityLiving) {
             entity.attack(new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.DamageCause.FIRE_TICK, 1.0f));
-        } else if (entity.isOnFire()) {
+        } else if (!this.isLit() && entity.isOnFire()) {
             this.toggleFire();
         }
     }
