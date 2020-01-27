@@ -45,8 +45,18 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
 
     @Override
     public CompoundTag getSpawnCompound() {
-        this.saveNBT();
-        return this.namedTag.clone();
+        CompoundTag tag = new CompoundTag()
+                .putString("id", BlockEntity.CAMPFIRE)
+                .putInt("x", this.x)
+                .putInt("y", this.y)
+                .putInt("z", this.z);
+        for (int i = 1; i <= itemsInFire.length; i++) {
+            if (itemsInFire[i - 1] != null) {
+                tag.put("Item" + i, NBTIO.putItemHelper(itemsInFire[i - 1]));
+            }
+            tag.putInt("ItemTime" + i, cookingTimes[i - 1]);
+        }
+        return tag;
     }
 
     @Override
@@ -75,6 +85,7 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
         }
 
         boolean haveUpdate = false;
+        boolean itemChange = false;
         for (int i = 0; i < itemsInFire.length; i++) {
             if (itemsInFire[i] != null) {
                 if (++cookingTimes[i] >= 600) {
@@ -82,13 +93,14 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
                     getLevel().dropItem(this.add(0.5, 0.5, 0.5), output, null, true, 5);
                     itemsInFire[i] = null;
                     cookingTimes[i] = 0;
-                    spawnToAll();
+                    itemChange = true;
                 }
                 haveUpdate = true;
             }
         }
 
         this.lastUpdate = System.currentTimeMillis();
+        if (itemChange) spawnToAll();
         return haveUpdate;
     }
 
@@ -96,7 +108,7 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
     public void onBreak() {
         for (int i = 0; i < itemsInFire.length; i++) {
             if (itemsInFire[i] != null) {
-                getLevel().dropItem(this.add(0.5, 0.5, 0.5), itemsInFire[i], null, true, 5);
+                getLevel().dropItem(this, itemsInFire[i]);
             }
         }
     }
