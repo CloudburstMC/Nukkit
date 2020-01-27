@@ -209,6 +209,8 @@ public class CraftingManager {
                         Item inputItem;
                         Map<String, Object> inputMap = (Map) recipe.get("input");
                         inputItem = Item.fromJson(inputMap);
+                        // Temp fix for furnace crafting
+                        if (inputItem.getDamage() == -1) inputItem.setDamage(0);
                         this.registerRecipe(new FurnaceRecipe(resultItem, inputItem));
                         break;
                     default:
