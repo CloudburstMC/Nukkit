@@ -606,7 +606,7 @@ public abstract class Item implements Cloneable {
     }
 
     public int getDamage() {
-        return meta;
+        return meta == 0xffff ? 0 : meta;
     }
 
     public void setDamage(int meta) {
