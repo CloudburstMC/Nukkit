@@ -46,9 +46,8 @@ public class BlockCampfire extends BlockSolid implements Faceable {
         return (this.getDamage() & CAMPFIRE_LIT_MASK) == 0;
     }
 
-    public void lightFire() {
-        log.debug("lighting fire");
-        this.setDamage(this.getDamage() | CAMPFIRE_LIT_MASK);
+    public void toggleFire() {
+        this.setDamage(this.getDamage() ^ CAMPFIRE_LIT_MASK);
     }
 
     @Override
@@ -86,8 +85,14 @@ public class BlockCampfire extends BlockSolid implements Faceable {
     public boolean onActivate(Item item, Player player) {
         if (item.getId() == ItemIds.FLINT_AND_STEEL) {
             if (!(this.isLit())) {
-                this.lightFire();
+                this.toggleFire();
             }
+            return true;
+        } else if (item.isShovel()) {
+            if (this.isLit()) {
+                this.toggleFire();
+            }
+            return true;
         }
         return false;
     }
