@@ -1,5 +1,6 @@
 package cn.nukkit.blockentity;
 
+import cn.nukkit.block.BlockCampfire;
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemEdible;
@@ -69,10 +70,13 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
         if (this.closed) {
             return false;
         }
+        if (((BlockCampfire) getBlock()).isLit()) {
+            return false;
+        }
+
         boolean haveUpdate = false;
         for (int i = 0; i < itemsInFire.length; i++) {
             if (itemsInFire[i] != null) {
-                log.debug("Cooking item: {}, been {} ticks", itemsInFire[i], cookingTimes[i]);
                 if (++cookingTimes[i] >= 600) {
                     Item output = getLevel().getServer().getCraftingManager().matchFurnaceRecipe(itemsInFire[i]).getResult();
                     getLevel().dropItem(this.add(0.5, 0.5, 0.5), output, null, true, 5);
@@ -146,5 +150,4 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
         }
         return addedFood;
     }
-
 }

@@ -54,6 +54,7 @@ public class BlockCampfire extends BlockSolid implements Faceable {
 
     public void toggleFire() {
         this.setDamage(this.getDamage() ^ CAMPFIRE_LIT_MASK);
+        getLevel().getBlockEntity(this).scheduleUpdate();
     }
 
     @Override
