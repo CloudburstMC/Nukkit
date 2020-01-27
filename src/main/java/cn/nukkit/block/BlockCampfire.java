@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3f;
@@ -14,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BlockCampfire extends BlockSolid implements Faceable {
 
-    private static final int CAMPFIRE_LIT_MASK = 0x04;
+    private static final int CAMPFIRE_LIT_MASK = 0x04; // Bit is 1 when fire is extinguished
     private static final int CAMPFIRE_FACING_MASK = 0x03;
 
     public BlockCampfire(Identifier id) {
@@ -42,13 +43,18 @@ public class BlockCampfire extends BlockSolid implements Faceable {
     }
 
     public boolean isLit() {
-        return (this.getDamage() & CAMPFIRE_LIT_MASK) > 0;
+        return (this.getDamage() & CAMPFIRE_LIT_MASK) == 0;
+    }
+
+    public void lightFire() {
+        log.debug("lighting fire");
+        this.setDamage(this.getDamage() | CAMPFIRE_LIT_MASK);
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (!block.canBeReplaced()) return false;
-        this.setDamage(CAMPFIRE_LIT_MASK + (player.getHorizontalFacing().getHorizontalIndex() & CAMPFIRE_FACING_MASK));
+        this.setDamage(player.getHorizontalFacing().getHorizontalIndex() & CAMPFIRE_FACING_MASK);
         if (getLevel().setBlock(block, this, true, true)) {
             CompoundTag tag = new CompoundTag()
                     .putString("id", BlockEntity.CAMPFIRE)
