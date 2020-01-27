@@ -60,7 +60,7 @@ public class BlockCampfire extends BlockSolid implements Faceable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (!block.canBeReplaced()) return false;
-        this.setDamage(player.getHorizontalFacing().getHorizontalIndex() & CAMPFIRE_FACING_MASK);
+        this.setDamage(player.getHorizontalFacing().getOpposite().getHorizontalIndex() & CAMPFIRE_FACING_MASK);
         if (getLevel().setBlock(block, this, true, true)) {
             CompoundTag tag = new CompoundTag()
                     .putString("id", BlockEntity.CAMPFIRE)
@@ -100,7 +100,7 @@ public class BlockCampfire extends BlockSolid implements Faceable {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (item.getId() == ItemIds.FLINT_AND_STEEL
-                || (item.getEnchantment(Enchantment.ID_FIRE_ASPECT) != null)) {
+                || item.getEnchantment(Enchantment.ID_FIRE_ASPECT) != null) {
             if (!(this.isLit())) {
                 this.toggleFire();
             }
@@ -121,8 +121,8 @@ public class BlockCampfire extends BlockSolid implements Faceable {
                         }
                         player.getInventory().setItemInHand(item);
                     }
-                    return true;
                 }
+                return true;
             }
         }
         return false;
@@ -132,6 +132,8 @@ public class BlockCampfire extends BlockSolid implements Faceable {
     public void onEntityCollide(Entity entity) {
         if (this.isLit()) {
             entity.attack(new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.DamageCause.FIRE_TICK, 1.0f));
+        } else if (entity.isOnFire()) {
+            this.toggleFire();
         }
     }
 }
