@@ -1964,11 +1964,12 @@ public class Server {
                 throw new IllegalStateException("Seed for world \"" + name + "\" is invalid: " + (seedObj == null ? "null" : seedObj.getClass().getCanonicalName()));
             }
 
+            Identifier generator = Identifier.fromString(this.getConfig("worlds." + name + ".generator"));
+            String options = this.getConfig("worlds." + name + ".options", "");
+
             levelFutures.add(this.loadLevel().id(name).seed(seed)
-                    .generator(Identifier.fromString(this.getConfig(
-                            "worlds." + name + ".generator",
-                            this.generatorRegistry.getFallback().toString())))
-                    .generatorOptions(this.getConfig("worlds." + name + ".options", ""))
+                    .generator(generator == null ? this.generatorRegistry.getFallback() : generator)
+                    .generatorOptions(options)
                     .load());
         }
 
