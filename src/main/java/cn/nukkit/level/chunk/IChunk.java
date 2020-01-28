@@ -220,20 +220,19 @@ public interface IChunk {
 
     boolean isGenerated();
 
-    void setGenerated();
+    void setGenerated(boolean generated);
+
+    default void setGenerated() {
+        this.setGenerated(true);
+    }
 
     boolean isPopulated();
 
-    void setPopulated();
+    void setPopulated(boolean populated);
 
-    boolean isPopulatedAround();
-
-    void onChunkPopulated(int chunkX, int chunkZ);
-
-    /**
-     * @return whether or not the chunk was loaded from disk
-     */
-    boolean isFromDisk();
+    default void setPopulated() {
+        this.setPopulated(true);
+    }
 
     /**
      * Whether the chunk has changed since it was last loaded or saved.
