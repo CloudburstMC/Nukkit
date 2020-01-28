@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 import static cn.nukkit.block.BlockIds.*;
 import static cn.nukkit.level.chunk.Chunk.*;
@@ -121,7 +123,6 @@ public final class UnsafeChunk implements IChunk, Closeable {
 
         this.fromDisk = true;
         this.waitingPopulationChunks = LongSets.EMPTY_SET; //chunks cannot be stored to disk unless they were already populatedAround
-        this.populatedAround = 1;
     }
 
     static void checkBounds(int x, int y, int z) {
@@ -449,7 +450,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
 
     @Override
     public boolean isGenerated() {
-        return this.fromDisk || this.generated == 1;
+        return this.generated == 1;
     }
 
     @Override
@@ -459,7 +460,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
 
     @Override
     public boolean isPopulated() {
-        return this.fromDisk || this.populated == 1;
+        return this.populated == 1;
     }
 
     @Override
@@ -485,22 +486,19 @@ public final class UnsafeChunk implements IChunk, Closeable {
 
     @Override
     public boolean isPopulatedAround() {
-        return this.fromDisk || this.populatedAround == 1;
+        return this.populatedAround == 1;
     }
 
     @Override
     public void onChunkPopulated(int chunkX, int chunkZ) {
-        long key = Chunk.key(chunkX, chunkZ);
-        if (this.waitingPopulationChunks.contains(key)
-                && this.waitingPopulationChunks.remove(key)
-                && this.waitingPopulationChunks.isEmpty()) {
+        if (this.waitingPopulationChunks.remove(Chunk.key(chunkX, chunkZ)) && this.waitingPopulationChunks.isEmpty()) {
             POPULATED_AROUND_FIELD.compareAndSet(this, 0, 1);
         }
     }
 
     @Override
     public boolean isFromDisk() {
-        return this.fromDisk;
+        return false;
     }
 
     /**

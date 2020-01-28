@@ -34,7 +34,6 @@ public class LevelBuilder {
     public LevelBuilder id(String id) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "id is null or empty");
         this.id = id;
-        this.levelData.setName(id);
         return this;
     }
 
