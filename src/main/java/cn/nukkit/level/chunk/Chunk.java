@@ -446,37 +446,22 @@ public final class Chunk implements IChunk, Closeable {
 
     @Override
     public boolean isGenerated() {
-        return this.unsafe.isGenerated();
+        return unsafe.isGenerated();
     }
 
     @Override
-    public void setGenerated() {
-        this.unsafe.setGenerated();
+    public void setGenerated(boolean generated) {
+        unsafe.setGenerated(generated);
     }
 
     @Override
     public boolean isPopulated() {
-        return this.unsafe.isPopulated();
+        return unsafe.isPopulated();
     }
 
     @Override
-    public void setPopulated() {
-        this.unsafe.setPopulated();
-    }
-
-    @Override
-    public boolean isPopulatedAround() {
-        return this.unsafe.isPopulatedAround();
-    }
-
-    @Override
-    public void onChunkPopulated(int chunkX, int chunkZ) {
-        this.unsafe.onChunkPopulated(chunkX, chunkZ);
-    }
-
-    @Override
-    public boolean isFromDisk() {
-        return this.unsafe.isFromDisk();
+    public void setPopulated(boolean populated) {
+        unsafe.setPopulated(populated);
     }
 
     @Override

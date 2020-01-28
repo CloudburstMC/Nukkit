@@ -2215,27 +2215,6 @@ public class Level implements ChunkManager, Metadatable {
         return this.chunkManager.getChunkFuture(chunkX, chunkZ);
     }
 
-    /**
-     * @see LevelChunkManager#getLoadedChunkFutureUnsafe(int, int)
-     */
-    public CompletableFuture<Chunk> getLoadedChunkFutureUnsafe(int x, int z) {
-        return this.chunkManager.getLoadedChunkFutureUnsafe(x, z);
-    }
-
-    /**
-     * @see LevelChunkManager#getGeneratedChunkFutureUnsafe(int, int)
-     */
-    public CompletableFuture<Chunk> getGeneratedChunkFutureUnsafe(int x, int z) {
-        return this.chunkManager.getGeneratedChunkFutureUnsafe(x, z);
-    }
-
-    /**
-     * @see LevelChunkManager#getPopulatedChunkFutureUnsafe(int, int)
-     */
-    public CompletableFuture<Chunk> getPopulatedChunkFutureUnsafe(int x, int z) {
-        return this.chunkManager.getPopulatedChunkFutureUnsafe(x, z);
-    }
-
     public int getHighestBlockAt(int x, int z) {
         return this.getChunk(x >> 4, z >> 4).getHighestBlock(x & 0x0f, z & 0x0f);
     }
