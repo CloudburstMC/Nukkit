@@ -12,6 +12,9 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
     private Item[] itemsInFire;
     private int[] cookingTimes;
 
+    private static final String[] ITEM_TAGS = {"Item1", "Item2", "Item3", "Item4"};
+    private static final String[] TIME_TAGS = {"ItemTime1", "ItemTime2", "ItemTime3", "ItemTime4"};
+
     public BlockEntityCampfire(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
@@ -22,19 +25,19 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
         cookingTimes = new int[4];
 
         boolean hasItems = false;
-        for (int i = 1; i <= itemsInFire.length; i++) {
-            if (namedTag.contains(("Item" + i))) {
-                Item item = NBTIO.getItemHelper(namedTag.getCompound("Item" + i));
-                itemsInFire[i - 1] = item;
+        for (int i = 0; i < itemsInFire.length; i++) {
+            if (namedTag.contains(ITEM_TAGS[i])) {
+                Item item = NBTIO.getItemHelper(namedTag.getCompound(ITEM_TAGS[i]));
+                itemsInFire[i] = item;
                 hasItems = true;
             } else {
-                itemsInFire[i - 1] = null;
+                itemsInFire[i] = null;
             }
 
-            if (namedTag.contains("ItemTime" + i)) {
-                cookingTimes[i - 1] = namedTag.getInt("ItemTime" + i);
+            if (namedTag.contains(TIME_TAGS[i])) {
+                cookingTimes[i] = namedTag.getInt(TIME_TAGS[i]);
             } else {
-                cookingTimes[i - 1] = 0;
+                cookingTimes[i] = 0;
             }
         }
         if (hasItems) this.scheduleUpdate();
@@ -48,11 +51,11 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
                 .putInt("x", this.x)
                 .putInt("y", this.y)
                 .putInt("z", this.z);
-        for (int i = 1; i <= itemsInFire.length; i++) {
-            if (itemsInFire[i - 1] != null) {
-                tag.put("Item" + i, NBTIO.putItemHelper(itemsInFire[i - 1]));
+        for (int i = 0; i < itemsInFire.length; i++) {
+            if (itemsInFire[i] != null) {
+                tag.put(ITEM_TAGS[i], NBTIO.putItemHelper(itemsInFire[i]));
             }
-            tag.putInt("ItemTime" + i, cookingTimes[i - 1]);
+            tag.putInt(TIME_TAGS[i], cookingTimes[i]);
         }
         return tag;
     }
@@ -65,10 +68,10 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
     @Override
     public void saveNBT() {
         super.saveNBT();
-        for (int i = 1; i <= itemsInFire.length; i++) {
-            if (itemsInFire[i - 1] != null) {
-                namedTag.put("Item" + i, NBTIO.putItemHelper(itemsInFire[i - 1]));
-                namedTag.putInt("ItemTime" + i, cookingTimes[i - 1]);
+        for (int i = 0; i < itemsInFire.length; i++) {
+            if (itemsInFire[i] != null) {
+                namedTag.put(ITEM_TAGS[i], NBTIO.putItemHelper(itemsInFire[i]));
+                namedTag.putInt(TIME_TAGS[i], cookingTimes[i]);
             }
         }
     }
