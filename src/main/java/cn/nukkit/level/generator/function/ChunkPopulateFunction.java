@@ -2,7 +2,6 @@ package cn.nukkit.level.generator.function;
 
 import cn.nukkit.level.Level;
 import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.chunk.LockableChunk;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.PopChunkManager;
@@ -11,7 +10,6 @@ import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.function.BiFunction;
@@ -40,7 +38,7 @@ public class ChunkPopulateFunction implements BiFunction<Chunk, List<Chunk>, Chu
 
         PopChunkManager manager = POP_CHUNK_MANAGER.get();
 
-        List<LockableChunk> lockableChunks = new ArrayList<>(chunks.size());
+        List<LockableChunk> lockableChunks = new ArrayList<>();
         lockableChunks.add(chunk.lockable());
 
         for (Chunk aroundChunk : chunks) {
@@ -57,11 +55,6 @@ public class ChunkPopulateFunction implements BiFunction<Chunk, List<Chunk>, Chu
 
         manager.setSeed(this.level.getSeed());
         lockableChunks.forEach(manager::setChunk);
-
-        //sort chunks so that locks are always obtained in the same order
-        //this prevents deadlocking when populating neighboring chunks
-        lockableChunks.sort(Comparator.naturalOrder());
-
         lockableChunks.forEach(Lock::lock);
         try {
             generator.populateChunk(manager, random, chunk.getX(), chunk.getZ());
