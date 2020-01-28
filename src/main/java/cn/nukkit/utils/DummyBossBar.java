@@ -139,7 +139,6 @@ public class DummyBossBar {
         pkAdd.speedZ = 0;
         pkAdd.dataMap = new EntityDataMap()
                 // Default Metadata tags
-                .putLong(FLAGS, 0)
                 .putShort(AIR, 400)
                 .putShort(MAX_AIR, 400)
                 .putLong(LEAD_HOLDER_EID, -1)
