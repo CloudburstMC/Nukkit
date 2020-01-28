@@ -70,7 +70,7 @@ public abstract class EntityProjectile extends Entity {
         } else {
             ev = new EntityDamageByChildEntityEvent(this.shootingEntity, this, entity, DamageCause.PROJECTILE, damage);
         }
-        if (entity.attack(ev)) { // !ev.isCancelled()
+        if (entity.attack(ev)) {
             this.hadCollision = true;
 
             if (this.fireTicks > 0) {
