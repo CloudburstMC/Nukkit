@@ -8,6 +8,9 @@ import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 
+/**
+ * @author Sleepybear
+ */
 public class BlockEntityCampfire extends BlockEntitySpawnable {
     private Item[] itemsInFire;
     private int[] cookingTimes;
