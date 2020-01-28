@@ -6,14 +6,20 @@
 FROM openjdk:8-jdk-slim AS build
 
 # Install packages required for build
-RUN apt update && apt install -y \
-        build-essential \
-        git \
-        maven
+RUN apt-get -y update 
+RUN apt-get install -y build-essential
+RUN apt-get install -y git
+RUN mkdir -p /usr/share/man/man1
+RUN apt-get install -y maven
 
 # Build from source and create artifact
 WORKDIR /src
-COPY ./ /src
+
+COPY mvn* pom.xml /src/
+COPY src /src/src
+COPY .git /src/.git
+COPY .mvn /src/.mvn
+
 RUN git submodule update --init
 RUN mvn clean package
 
@@ -31,17 +37,17 @@ RUN useradd --user-group \
             --shell /usr/sbin/nologin \
             minecraft
 
-# Volumes
-VOLUME /data /home/minecraft
-
 # Ports
 EXPOSE 19132
 
-# Make app owned by minecraft user
-RUN chown -R minecraft:minecraft /app
+RUN mkdir /data && mkdir /home/minecraft
+RUN chown -R minecraft:minecraft /app /data /home/minecraft
 
 # User and group to run as
 USER minecraft:minecraft
+
+# Volumes
+VOLUME /data /home/minecraft
 
 # Set runtime workdir
 WORKDIR /data
