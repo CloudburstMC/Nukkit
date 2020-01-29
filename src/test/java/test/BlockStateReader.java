@@ -53,7 +53,7 @@ public class BlockStateReader {
             for (CompoundTag state : tags.getAll()) {
                 //fos.write(state.toString() + '\n');
             CompoundTag block = state.getCompound("block");
-            if (block.getString("name").toLowerCase().contains("bell")) {
+            if (block.getString("name").toLowerCase().contains("piston")) {
                 StringBuilder builder = new StringBuilder(block.getString("name"));
                 for (Tag tag : block.getCompound("states").getAllTags()) {
                     builder.append(';').append(tag.getName()).append('=').append(tag.parseValue());
