@@ -148,6 +148,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     public boolean playedBefore;
     public boolean spawned = false;
+    public boolean initialized = false;
     public boolean loggedIn = false;
     public int gamemode;
     public long lastBreak;
@@ -780,8 +781,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             respawnPacket.z = (float) pos.z;
             this.dataPacket(respawnPacket);
         }
-
-        this.sendPlayStatus(PlayStatusPacket.PLAYER_SPAWN);
 
         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(this,
                 new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.joined", new String[]{
@@ -1718,7 +1717,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.getChunkManager().sendQueued();
 
         if (this.getChunkManager().getChunksSent() >= this.spawnThreshold && !this.spawned && this.teleportPosition == null) {
-            this.doFirstSpawn();
+            this.sendPlayStatus(PlayStatusPacket.PLAYER_SPAWN);
         }
     }
 
@@ -2147,6 +2146,13 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     dataPacket.data = resourcePack.getChunk(1048576 * requestPacket.chunkIndex, 1048576);
                     dataPacket.progress = 1048576 * requestPacket.chunkIndex;
                     this.dataPacket(dataPacket);
+                    break;
+                case ProtocolInfo.SET_LOCAL_PLAYER_AS_INITIALIZED_PACKET:
+                    if (this.initialized) {
+                        break;
+                    }
+                    this.initialized = true;
+                    this.doFirstSpawn();
                     break;
                 case ProtocolInfo.PLAYER_SKIN_PACKET:
                     PlayerSkinPacket skinPacket = (PlayerSkinPacket) packet;
