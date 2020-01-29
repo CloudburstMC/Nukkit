@@ -2,13 +2,13 @@ package cn.nukkit.utils;
 
 import cn.nukkit.Server;
 import cn.nukkit.scheduler.FileWriteTask;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +33,18 @@ public class Config {
     //public static final int SERIALIZED = 4; // .sl
     public static final int ENUM = 5; // .txt, .list, .enum
     public static final int ENUMERATION = Config.ENUM;
+
+    private static final JsonMapper JSON_MAPPER = new JsonMapper();
+    private static final YAMLMapper YAML_MAPPER = new YAMLMapper();
+    private static final JavaPropsMapper JAVA_PROPS_MAPPER = new JavaPropsMapper();
+
+    static {
+        SimpleModule module = new SimpleModule();
+        module.addAbstractTypeMapping(Map.class, ConfigSection.class);
+        JSON_MAPPER.registerModule(module);
+        YAML_MAPPER.registerModule(module);
+        JAVA_PROPS_MAPPER.registerModule(module);
+    }
 
     //private LinkedHashMap<String, Object> config = new LinkedHashMap<>();
     private ConfigSection config = new ConfigSection();
@@ -219,26 +231,34 @@ public class Config {
     public boolean save(Boolean async) {
         if (this.file == null) throw new IllegalStateException("Failed to save Config. File object is undefined.");
         if (this.correct) {
-            String content = "";
-            switch (this.type) {
-                case Config.PROPERTIES:
-                    content = this.writeProperties();
-                    break;
-                case Config.JSON:
-                    content = new GsonBuilder().setPrettyPrinting().create().toJson(this.config);
-                    break;
-                case Config.YAML:
-                    DumperOptions dumperOptions = new DumperOptions();
-                    dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-                    Yaml yaml = new Yaml(dumperOptions);
-                    content = yaml.dump(this.config);
-                    break;
-                case Config.ENUM:
-                    for (Object o : this.config.entrySet()) {
-                        Map.Entry entry = (Map.Entry) o;
-                        content += entry.getKey() + "\r\n";
-                    }
-                    break;
+            String content;
+            if (this.type == ENUM) {
+                StringBuilder builder = new StringBuilder();
+                for (Object o : this.config.entrySet()) {
+                    Map.Entry<?, ?> entry = (Map.Entry<?, ?>) o;
+                    builder.append(entry.getKey()).append("\r\n");
+                }
+                content = builder.toString();
+            } else {
+                ObjectMapper mapper;
+                switch (this.type) {
+                    case PROPERTIES:
+                        mapper = JAVA_PROPS_MAPPER;
+                        break;
+                    case JSON:
+                        mapper = JSON_MAPPER;
+                        break;
+                    case YAML:
+                        mapper = YAML_MAPPER;
+                        break;
+                    default:
+                        throw new UnsupportedOperationException("Invalid config type " + type);
+                }
+                try {
+                    content = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.config);
+                } catch (IOException e) {
+                    throw new IllegalStateException(e);
+                }
             }
             if (async) {
                 Server.getInstance().getScheduler().scheduleAsyncTask(new FileWriteTask(this.file, content));
@@ -264,7 +284,6 @@ public class Config {
         return this.get(key, null);
     }
 
-    @SuppressWarnings("unchecked")
     public <T> T get(String key, T defaultValue) {
         return this.correct ? this.config.get(key, defaultValue) : defaultValue;
     }
@@ -540,28 +559,29 @@ public class Config {
     }
 
     private void parseContent(String content) {
-        switch (this.type) {
-            case Config.PROPERTIES:
-                this.parseProperties(content);
-                break;
-            case Config.JSON:
-                GsonBuilder builder = new GsonBuilder();
-                Gson gson = builder.create();
-                this.config = new ConfigSection(gson.fromJson(content, new TypeToken<LinkedHashMap<String, Object>>() {
-                }.getType()));
-                break;
-            case Config.YAML:
-                DumperOptions dumperOptions = new DumperOptions();
-                dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-                Yaml yaml = new Yaml(dumperOptions);
-                this.config = new ConfigSection(yaml.loadAs(content, LinkedHashMap.class));
-                break;
-            // case Config.SERIALIZED
-            case Config.ENUM:
-                this.parseList(content);
-                break;
-            default:
-                this.correct = false;
+        if (type == ENUM) {
+            this.parseList(content);
+        } else {
+            ObjectMapper mapper;
+            switch (this.type) {
+                case Config.PROPERTIES:
+                    mapper = JAVA_PROPS_MAPPER;
+                    break;
+                case Config.JSON:
+                    mapper = JSON_MAPPER;
+                    break;
+                case Config.YAML:
+                    mapper = YAML_MAPPER;
+                    break;
+                default:
+                    this.correct = false;
+                    return;
+            }
+            try {
+                this.config = mapper.readValue(content, ConfigSection.class);
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
         }
     }
 

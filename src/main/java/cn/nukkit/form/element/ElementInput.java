@@ -1,13 +1,13 @@
 package cn.nukkit.form.element;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ElementInput extends Element {
 
     private final String type = "input"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
     private String text = "";
     private String placeholder = "";
-    @SerializedName("default")
+    @JsonProperty("default")
     private String defaultText = "";
 
     public ElementInput(String text) {
