@@ -847,6 +847,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.setEnableClientCommand(true);
 
         this.getAdventureSettings().update();
+        this.sendAttributes();
 
         this.sendPotionEffects(this);
         this.sendData(this);
