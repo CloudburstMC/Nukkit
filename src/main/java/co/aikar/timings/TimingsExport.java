@@ -23,6 +23,7 @@
  */
 package co.aikar.timings;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.ConsoleCommandSender;
@@ -31,9 +32,8 @@ import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.nbt.stream.PGZIPOutputStream;
 import cn.nukkit.timings.JsonUtil;
 import cn.nukkit.utils.TextFormat;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
 
@@ -46,6 +46,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.zip.Deflater;
 
 import static co.aikar.timings.TimingsManager.HISTORY;
@@ -53,10 +55,10 @@ import static co.aikar.timings.TimingsManager.HISTORY;
 @Log4j2
 public class TimingsExport extends Thread {
     private final CommandSender sender;
-    private final JsonObject out;
+    private final ObjectNode out;
     private final TimingsHistory[] history;
 
-    private TimingsExport(CommandSender sender, JsonObject out, TimingsHistory[] history) {
+    private TimingsExport(CommandSender sender, ObjectNode out, TimingsHistory[] history) {
         super("Timings paste thread");
         this.sender = sender;
         this.out = out;
@@ -69,83 +71,84 @@ public class TimingsExport extends Thread {
      * @param sender Sender that issued the command
      */
     public static void reportTimings(CommandSender sender) {
-        JsonObject out = new JsonObject();
-        out.addProperty("version", Server.getInstance().getVersion());
-        out.addProperty("maxplayers", Server.getInstance().getMaxPlayers());
-        out.addProperty("start", TimingsManager.timingStart / 1000);
-        out.addProperty("end", System.currentTimeMillis() / 1000);
-        out.addProperty("sampletime", (System.currentTimeMillis() - TimingsManager.timingStart) / 1000);
+        ObjectNode out = Nukkit.JSON_MAPPER.createObjectNode();
+        out.put("version", Server.getInstance().getVersion());
+        out.put("maxplayers", Server.getInstance().getMaxPlayers());
+        out.put("start", TimingsManager.timingStart / 1000);
+        out.put("end", System.currentTimeMillis() / 1000);
+        out.put("sampletime", (System.currentTimeMillis() - TimingsManager.timingStart) / 1000);
 
         if (!Timings.isPrivacy()) {
-            out.addProperty("server", Server.getInstance().getName());
-            out.addProperty("motd", Server.getInstance().getMotd());
-            out.addProperty("online-mode", false); //In MCPE we have permanent offline mode.
-            out.addProperty("icon", ""); //"data:image/png;base64,"
+            out.put("server", Server.getInstance().getName());
+            out.put("motd", Server.getInstance().getMotd());
+            out.put("online-mode", Server.getInstance().getPropertyBoolean("xbox-auth", true));
+            out.put("icon", ""); //"data:image/png;base64,"
         }
 
         final Runtime runtime = Runtime.getRuntime();
         RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
 
-        JsonObject system = new JsonObject();
-        system.addProperty("timingcost", getCost());
-        system.addProperty("name", System.getProperty("os.name"));
-        system.addProperty("version", System.getProperty("os.version"));
-        system.addProperty("jvmversion", System.getProperty("java.version"));
-        system.addProperty("arch", System.getProperty("os.arch"));
-        system.addProperty("maxmem", runtime.maxMemory());
-        system.addProperty("cpu", runtime.availableProcessors());
-        system.addProperty("runtime", ManagementFactory.getRuntimeMXBean().getUptime());
-        system.addProperty("flags", String.join(" ", runtimeBean.getInputArguments()));
-        system.add("gc", JsonUtil.mapToObject(ManagementFactory.getGarbageCollectorMXBeans(), (input) ->
+        ObjectNode system = Nukkit.JSON_MAPPER.createObjectNode();
+        system.put("timingcost", getCost());
+        system.put("name", System.getProperty("os.name"));
+        system.put("version", System.getProperty("os.version"));
+        system.put("jvmversion", System.getProperty("java.version"));
+        system.put("arch", System.getProperty("os.arch"));
+        system.put("maxmem", runtime.maxMemory());
+        system.put("cpu", runtime.availableProcessors());
+        system.put("runtime", ManagementFactory.getRuntimeMXBean().getUptime());
+        system.put("flags", String.join(" ", runtimeBean.getInputArguments()));
+        system.set("gc", JsonUtil.mapToObject(ManagementFactory.getGarbageCollectorMXBeans(), (input) ->
                 new JsonUtil.JSONPair(input.getName(), JsonUtil.toArray(input.getCollectionCount(), input.getCollectionTime()))));
-        out.add("system", system);
+        out.set("system", system);
 
         TimingsHistory[] history = HISTORY.toArray(new TimingsHistory[HISTORY.size() + 1]);
         history[HISTORY.size()] = new TimingsHistory(); //Current snapshot
 
-        JsonObject timings = new JsonObject();
+        ObjectNode timings = Nukkit.JSON_MAPPER.createObjectNode();
         for (TimingIdentifier.TimingGroup group : TimingIdentifier.GROUP_MAP.values()) {
             for (Timing id : group.timings) {
                 if (!id.timed && !id.isSpecial()) {
                     continue;
                 }
 
-                timings.add(String.valueOf(id.id), JsonUtil.toArray(group.id, id.name));
+                timings.set(String.valueOf(id.id), JsonUtil.toArray(group.id, id.name));
             }
         }
 
-        JsonObject idmap = new JsonObject();
-        idmap.add("groups", JsonUtil.mapToObject(TimingIdentifier.GROUP_MAP.values(), (group) ->
+        ObjectNode idmap = Nukkit.JSON_MAPPER.createObjectNode();
+        idmap.set("groups", JsonUtil.mapToObject(TimingIdentifier.GROUP_MAP.values(), (group) ->
                 new JsonUtil.JSONPair(group.id, group.name)));
-        idmap.add("handlers", timings);
-        idmap.add("worlds", JsonUtil.mapToObject(TimingsHistory.levelMap.entrySet(), (entry) ->
+        idmap.set("handlers", timings);
+        idmap.set("worlds", JsonUtil.mapToObject(TimingsHistory.levelMap.entrySet(), (entry) ->
                 new JsonUtil.JSONPair(entry.getValue(), entry.getKey())));
-        idmap.add("tileentity", JsonUtil.mapToObject(TimingsHistory.blockEntityMap.entrySet(), (entry) ->
+        idmap.set("tileentity", JsonUtil.mapToObject(TimingsHistory.blockEntityMap.entrySet(), (entry) ->
                 new JsonUtil.JSONPair(entry.getKey().toString(), entry.getValue())));
-        idmap.add("entity", JsonUtil.mapToObject(TimingsHistory.entityMap.entrySet(), (entry) ->
+        idmap.set("entity", JsonUtil.mapToObject(TimingsHistory.entityMap.entrySet(), (entry) ->
                 new JsonUtil.JSONPair(entry.getKey().toString(), entry.getValue())));
-        out.add("idmap", idmap);
+        out.set("idmap", idmap);
 
         //Information about loaded plugins
-        out.add("plugins", JsonUtil.mapToObject(Server.getInstance().getPluginManager().getPlugins().values(), (plugin) -> {
-            JsonObject jsonPlugin = new JsonObject();
-            jsonPlugin.addProperty("version", plugin.getDescription().getVersion());
-            jsonPlugin.addProperty("description", plugin.getDescription().getDescription());// Sounds legit
-            jsonPlugin.addProperty("website", plugin.getDescription().getWebsite());
-            jsonPlugin.addProperty("authors", String.join(", ", plugin.getDescription().getAuthors()));
+        out.set("plugins", JsonUtil.mapToObject(Server.getInstance().getPluginManager().getPlugins().values(), (plugin) -> {
+            ObjectNode jsonPlugin = Nukkit.JSON_MAPPER.createObjectNode();
+            jsonPlugin.put("version", plugin.getDescription().getVersion());
+            jsonPlugin.put("description", plugin.getDescription().getDescription());// Sounds legit
+            jsonPlugin.put("website", plugin.getDescription().getWebsite());
+            jsonPlugin.putPOJO("authors", String.join(", ", plugin.getDescription().getAuthors()));
             return new JsonUtil.JSONPair(plugin.getName(), jsonPlugin);
         }));
 
         //Information on the users Config
-        JsonObject config = new JsonObject();
+        ObjectNode config = Nukkit.JSON_MAPPER.createObjectNode();
         if (!Timings.getIgnoredConfigSections().contains("all")) {
-            JsonObject nukkit = JsonUtil.toObject(Server.getInstance().getConfig().getRootSection());
-            Timings.getIgnoredConfigSections().forEach(nukkit::remove);
-            config.add("nukkit", nukkit);
+            Map<String, Object> section = new LinkedHashMap<>(Server.getInstance().getConfig().getRootSection());
+            Timings.getIgnoredConfigSections().forEach(section::remove);
+            JsonNode nukkit = JsonUtil.toObject(section);
+            config.set("nukkit", nukkit);
         } else {
-            config.add("nukkit", null);
+            config.set("nukkit", null);
         }
-        out.add("config", config);
+        out.set("config", config);
 
         new TimingsExport(sender, out, history).start();
     }
@@ -200,7 +203,7 @@ public class TimingsExport extends Thread {
     @Override
     public void run() {
         this.sender.sendMessage(new TranslationContainer("nukkit.command.timings.uploadStart"));
-        this.out.add("data", JsonUtil.mapToArray(this.history, TimingsHistory::export));
+        this.out.set("data", JsonUtil.mapToArray(this.history, TimingsHistory::export));
 
         String response = null;
         try {
@@ -213,7 +216,7 @@ public class TimingsExport extends Thread {
             PGZIPOutputStream request = new PGZIPOutputStream(con.getOutputStream());
             request.setLevel(Deflater.BEST_COMPRESSION);
 
-            request.write(new Gson().toJson(this.out).getBytes(StandardCharsets.UTF_8));
+            request.write(Nukkit.JSON_MAPPER.writeValueAsBytes(this.out));
             request.close();
 
             response = getResponse(con);
@@ -242,7 +245,7 @@ public class TimingsExport extends Thread {
 
             FileWriter writer = new FileWriter(fileName);
             writer.write(Server.getInstance().getLanguage().translateString("nukkit.command.timings.timingsLocation", location) + "\n\n");
-            writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(this.out));
+            writer.write(Nukkit.JSON_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.out));
             writer.close();
 
             log.info(Server.getInstance().getLanguage().translateString("nukkit.command.timings.timingsWrite", fileName));

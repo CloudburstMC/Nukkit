@@ -1,12 +1,12 @@
 package cn.nukkit.permission;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.utils.Utils;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -18,6 +18,9 @@ import java.util.*;
  */
 @Log4j2
 public class BanList {
+
+    private static final TypeReference<LinkedList<TreeMap<String, String>>> BANLIST_TYPE_REFERENCE =
+            new TypeReference<LinkedList<TreeMap<String, String>>>() {};
 
     private LinkedHashMap<String, BanEntry> list = new LinkedHashMap<>();
 
@@ -107,8 +110,9 @@ public class BanList {
                 this.save();
             } else {
 
-                LinkedList<TreeMap<String, String>> list = new Gson().fromJson(Utils.readFile(this.file), new TypeToken<LinkedList<TreeMap<String, String>>>() {
-                }.getType());
+                LinkedList<TreeMap<String, String>> list = Nukkit.JSON_MAPPER.readValue(Utils.readFile(this.file),
+                        BANLIST_TYPE_REFERENCE);
+
                 for (TreeMap<String, String> map : list) {
                     BanEntry entry = BanEntry.fromMap(map);
                     this.list.put(entry.getName(), entry);
@@ -133,7 +137,10 @@ public class BanList {
             for (BanEntry entry : this.list.values()) {
                 list.add(entry.getMap());
             }
-            Utils.writeFile(this.file, new ByteArrayInputStream(new GsonBuilder().setPrettyPrinting().create().toJson(list).getBytes(StandardCharsets.UTF_8)));
+            try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
+                Nukkit.JSON_MAPPER.writerWithDefaultPrettyPrinter().writeValue(stream, list);
+                Utils.writeFile(this.file, new ByteArrayInputStream(stream.toByteArray()));
+            }
         } catch (IOException e) {
             log.error("Could not save ban list", e);
         }

@@ -485,7 +485,9 @@ public class Server {
         int logLevel = (Nukkit.DEBUG + 3) * 100;
         for (org.apache.logging.log4j.Level level : org.apache.logging.log4j.Level.values()) {
             if (level.intLevel() == logLevel) {
-                Nukkit.setLogLevel(level);
+                if (level.intLevel() > Nukkit.getLogLevel().intLevel()) {
+                    Nukkit.setLogLevel(level);
+                }
                 break;
             }
         }
@@ -2011,6 +2013,7 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.SHULKER_BOX, BlockEntityShulkerBox.class);
         BlockEntity.registerBlockEntity(BlockEntity.BANNER, BlockEntityBanner.class);
         BlockEntity.registerBlockEntity(BlockEntity.MUSIC, BlockEntityMusic.class);
+        BlockEntity.registerBlockEntity(BlockEntity.CAMPFIRE, BlockEntityCampfire.class);
     }
 
     public boolean isNetherAllowed() {

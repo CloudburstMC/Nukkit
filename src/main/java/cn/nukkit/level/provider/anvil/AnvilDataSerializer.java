@@ -1,5 +1,6 @@
 package cn.nukkit.level.provider.anvil;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.level.LevelData;
 import cn.nukkit.level.gamerule.GameRule;
 import cn.nukkit.level.gamerule.GameRuleMap;
@@ -10,8 +11,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.registry.GameRuleRegistry;
 import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.LoadState;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,9 +25,7 @@ import java.util.Map;
 public class AnvilDataSerializer implements LevelDataSerializer {
     public static final LevelDataSerializer INSTANCE = new AnvilDataSerializer();
 
-    private static final Type OPTIONS_TYPE = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    private static final Gson GSON = new Gson();
+    private static final TypeReference<Map<String, Object>> OPTIONS_TYPE = new TypeReference<Map<String, Object>>() {};
     private static final int VERSION = 8;
 
     @Override
@@ -63,7 +61,7 @@ public class AnvilDataSerializer implements LevelDataSerializer {
     private void saveData(LevelData data, Path levelDatPath) throws IOException {
         CompoundTag tag = new CompoundTag()
                 .putString("LevelName", data.getName())
-                .putString("generatorOptions", GSON.toJson(data.getGeneratorOptions()))
+                .putString("generatorOptions", Nukkit.JSON_MAPPER.writeValueAsString(data.getGeneratorOptions()))
                 .putString("generatorName", data.getGenerator().toString())
                 .putInt("thunderTime", data.getLightningTime())
                 .putInt("Difficulty", data.getDifficulty())
@@ -109,7 +107,10 @@ public class AnvilDataSerializer implements LevelDataSerializer {
         }
 
         tag.listenString("LevelName", data::setName);
-        tag.listenString("generatorOptions", s -> GSON.fromJson(s, OPTIONS_TYPE));
+        if (tag.contains("generatorOptions")) {
+            data.getGeneratorOptions()
+                    .putAll(Nukkit.JSON_MAPPER.readValue(tag.getString("generatorOptions"), OPTIONS_TYPE));
+        }
         tag.listenString("generatorName", s -> data.setGenerator(Identifier.fromString(s)));
         tag.listenInt("thunderTime", data::setLightningTime);
         tag.listenInt("Difficulty", data::setDifficulty);

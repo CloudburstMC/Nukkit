@@ -209,6 +209,7 @@ public class CraftingManager {
                         Item inputItem;
                         Map<String, Object> inputMap = (Map) recipe.get("input");
                         inputItem = Item.fromJson(inputMap);
+
                         this.registerRecipe(new FurnaceRecipe(resultItem, inputItem));
                         break;
                     default:
