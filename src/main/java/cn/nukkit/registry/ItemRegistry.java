@@ -402,6 +402,8 @@ public class ItemRegistry implements Registry {
         registerVanilla(RECORD_WAIT, RecordItem.factory("record.wait"), 511);
 
         registerVanilla(SHIELD, ItemShield::new, 513);
+
+        registerVanilla(CAMPFIRE, PlaceableItem.factory(BlockIds.CAMPFIRE), 720);
     }
 
     private static class ItemData {

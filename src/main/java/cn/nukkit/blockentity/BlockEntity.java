@@ -42,6 +42,7 @@ public abstract class BlockEntity extends BlockPosition {
     public static final String JUKEBOX = "Jukebox";
     public static final String SHULKER_BOX = "ShulkerBox";
     public static final String BANNER = "Banner";
+    public static final String CAMPFIRE = "Campfire";
 
 
     public static long count = 1;
@@ -149,9 +150,9 @@ public abstract class BlockEntity extends BlockPosition {
 
     public void saveNBT() {
         this.namedTag.putString("id", this.getSaveId());
-        this.namedTag.putInt("x", (int) this.getX());
-        this.namedTag.putInt("y", (int) this.getY());
-        this.namedTag.putInt("z", (int) this.getZ());
+        this.namedTag.putInt("x", this.getX());
+        this.namedTag.putInt("y", this.getY());
+        this.namedTag.putInt("z", this.getZ());
         this.namedTag.putBoolean("isMovable", this.movable);
     }
 
