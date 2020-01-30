@@ -16,12 +16,14 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -33,18 +35,19 @@ import java.util.regex.Pattern;
 public class Item implements Cloneable, BlockID, ItemID {
     //Normal Item IDs
 
-    protected static String UNKNOWN_STR = "Unknown";
+    private static final ArrayList<Item> creative = new ArrayList<>();
     public static Class[] list = null;
-
-    protected Block block = null;
+    public static ArrayList<Constructor> customblocklist = new ArrayList<>();
+    protected static String UNKNOWN_STR = "Unknown";
     protected final int id;
+    public int count;
+    protected Block block = null;
     protected int meta;
     protected boolean hasMeta = true;
-    private byte[] tags = new byte[0];
-    private CompoundTag cachedNBT = null;
-    public int count;
     protected int durability = 0;
     protected String name;
+    private byte[] tags = new byte[0];
+    private CompoundTag cachedNBT = null;
 
     public Item(int id) {
         this(id, 0, 1, UNKNOWN_STR);
@@ -73,17 +76,10 @@ public class Item implements Cloneable, BlockID, ItemID {
         }*/
     }
 
-    public boolean hasMeta() {
-        return hasMeta;
-    }
-
-    public boolean canBeActivated() {
-        return false;
-    }
-
     public static void init() {
         if (list == null) {
             list = new Class[65535];
+//            customblocklist = new Class[765];
             list[IRON_SHOVEL] = ItemShovelIron.class; //256
             list[IRON_PICKAXE] = ItemPickaxeIron.class; //257
             list[IRON_AXE] = ItemAxeIron.class; //258
@@ -271,7 +267,7 @@ public class Item implements Cloneable, BlockID, ItemID {
 
             //TODO: list[SHULKER_SHELL] = ItemShulkerShell.class; //445
             list[BANNER] = ItemBanner.class; //446
-            
+
             list[TRIDENT] = ItemTrident.class; //455
 
             list[BEETROOT] = ItemBeetroot.class; //457
@@ -284,7 +280,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[DRIED_KELP] = ItemDriedKelp.class; //464
 
             list[GOLDEN_APPLE_ENCHANTED] = ItemAppleGoldEnchanted.class; //466
-            
+
             list[TURTLE_SHELL] = ItemTurtleShell.class; //469
 
             list[SWEET_BERRIES] = ItemSweetBerries.class; //477
@@ -314,7 +310,25 @@ public class Item implements Cloneable, BlockID, ItemID {
         initCreativeItems();
     }
 
-    private static final ArrayList<Item> creative = new ArrayList<>();
+    public static void registerCustomItemBlock(Integer key, Class i, PluginBase p) {
+        if (key == null || i == null || !i.isInstance(ItemBlock.class)) {
+            MainLogger.getLogger().error("Error registering CustomItemBlock from Plugin " + p.getName() + " with ID: " + key);
+            return;
+        }
+        if (p.getDescription().getCustomitemblock().contains(key)) {
+            if (!customblocklist.contains(key)) {
+                try {
+                    customblocklist.set(key,  i.getConstructor(Block.class, Integer.class, int.class));
+//                    list[key] = i; // 2nd Option Or Method that DaMatrix Suggested.
+                }catch (Exception e){
+                    MainLogger.getLogger().logException(e);
+                }
+            } else
+                MainLogger.getLogger().error("Error! Plugin " + p.getName() + " is trying to write over an existing CustomItemBlock: " + key);
+        } else {
+            MainLogger.getLogger().error("Error! Plugin " + p.getName() + " has not registered their use of CustomItemBlock: " + key);
+        }
+    }
 
     @SuppressWarnings("unchecked")
     private static void initCreativeItems() {
@@ -394,10 +408,22 @@ public class Item implements Cloneable, BlockID, ItemID {
             if (c == null) {
                 item = new Item(id, meta, count);
             } else if (id < 256) {
-                if (meta >= 0) {
-                    item = new ItemBlock(Block.get(id, meta), meta, count);
+                if (!customblocklist.contains(id)) {
+                    if (meta >= 0) {
+                        item = new ItemBlock(Block.get(id, meta), meta, count);
+                    } else {
+                        item = new ItemBlock(Block.get(id), meta, count);
+                    }
                 } else {
-                    item = new ItemBlock(Block.get(id), meta, count);
+                    try {
+                        item = ((ItemBlock) customblocklist.get(id).newInstance(Block.get(id, meta), meta, count));
+                    } catch (Exception e) {
+                        if (meta >= 0) {
+                            item = new ItemBlock(Block.get(id, meta), meta, count);
+                        } else {
+                            item = new ItemBlock(Block.get(id), meta, count);
+                        }
+                    }
                 }
             } else {
                 item = ((Item) c.getConstructor(Integer.class, int.class).newInstance(meta, count));
@@ -461,6 +487,26 @@ public class Item implements Cloneable, BlockID, ItemID {
         return items;
     }
 
+    public static CompoundTag parseCompoundTag(byte[] tag) {
+        try {
+            return NBTIO.read(tag, ByteOrder.LITTLE_ENDIAN);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean hasMeta() {
+        return hasMeta;
+    }
+
+    public boolean canBeActivated() {
+        return false;
+    }
+
+    public byte[] getCompoundTag() {
+        return tags;
+    }
+
     public Item setCompoundTag(CompoundTag tag) {
         this.setNamedTag(tag);
         return this;
@@ -470,10 +516,6 @@ public class Item implements Cloneable, BlockID, ItemID {
         this.tags = tags;
         this.cachedNBT = null;
         return this;
-    }
-
-    public byte[] getCompoundTag() {
-        return tags;
     }
 
     public boolean hasCompoundTag() {
@@ -504,23 +546,6 @@ public class Item implements Cloneable, BlockID, ItemID {
         return this;
     }
 
-    public Item setCustomBlockData(CompoundTag compoundTag) {
-        CompoundTag tags = compoundTag.copy();
-        tags.setName("BlockEntityTag");
-
-        CompoundTag tag;
-        if (!this.hasCompoundTag()) {
-            tag = new CompoundTag();
-        } else {
-            tag = this.getNamedTag();
-        }
-
-        tag.putCompound("BlockEntityTag", tags);
-        this.setNamedTag(tag);
-
-        return this;
-    }
-
     public CompoundTag getCustomBlockData() {
         if (!this.hasCompoundTag()) {
             return null;
@@ -536,6 +561,23 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
 
         return null;
+    }
+
+    public Item setCustomBlockData(CompoundTag compoundTag) {
+        CompoundTag tags = compoundTag.copy();
+        tags.setName("BlockEntityTag");
+
+        CompoundTag tag;
+        if (!this.hasCompoundTag()) {
+            tag = new CompoundTag();
+        } else {
+            tag = this.getNamedTag();
+        }
+
+        tag.putCompound("BlockEntityTag", tags);
+        this.setNamedTag(tag);
+
+        return this;
     }
 
     public boolean hasEnchantments() {
@@ -789,14 +831,6 @@ public class Item implements Cloneable, BlockID, ItemID {
         return this.setCompoundTag(new byte[0]);
     }
 
-    public static CompoundTag parseCompoundTag(byte[] tag) {
-        try {
-            return NBTIO.read(tag, ByteOrder.LITTLE_ENDIAN);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public byte[] writeCompoundTag(CompoundTag tag) {
         try {
             tag.setName("");
@@ -973,7 +1007,7 @@ public class Item implements Cloneable, BlockID, ItemID {
      * Called when a player uses the item on air, for example throwing a projectile.
      * Returns whether the item was changed, for example count decrease or durability change.
      *
-     * @param player player
+     * @param player          player
      * @param directionVector direction
      * @return item changed
      */
