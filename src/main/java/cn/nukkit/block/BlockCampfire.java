@@ -87,6 +87,21 @@ public class BlockCampfire extends BlockSolid implements Faceable {
     }
 
     @Override
+    public boolean canSilkTouch() {
+        return true;
+    }
+
+    @Override
+    public boolean canWaterlog() {
+        return true;
+    }
+
+    @Override
+    public boolean canBeFlooded() {
+        return true;
+    }
+
+    @Override
     public boolean onActivate(Item item) {
         return this.onActivate(item, null);
     }

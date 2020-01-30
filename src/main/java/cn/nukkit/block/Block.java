@@ -715,4 +715,8 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
     public boolean canSilkTouch() {
         return false;
     }
+
+    public boolean canWaterlog() {
+        return false;
+    }
 }
