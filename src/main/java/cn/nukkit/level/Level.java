@@ -214,7 +214,7 @@ public class Level implements ChunkManager, Metadatable {
 
     private GeneratorFactory generatorFactory;
     private final Long2ObjectOpenHashMap<Set<Player>> chunkPlayers = new Long2ObjectOpenHashMap<>();
-    private final Cache<Long, ByteBuf> chunkCache = CacheBuilder.<Long, ByteBuf>newBuilder()
+    private final Cache<Long, ByteBuf> chunkCache = CacheBuilder.newBuilder()
             .softValues()
             .removalListener(cacheRemover)
             .build();
@@ -1501,22 +1501,22 @@ public class Level implements ChunkManager, Metadatable {
             return false;
         }
         Chunk chunk = this.getChunk(x >> 4, z >> 4);
-        Block blockPrevious;
-        blockPrevious = chunk.getAndSetBlock(x & 0xF, y, z & 0xF, block);
+        Block blockPrevious = chunk.getAndSetBlock(x & 0xF, y, z & 0xF, layer, block);
         if (Block.equals(blockPrevious, block, true)) {
             return false;
         }
         block.x = x;
         block.y = y;
         block.z = z;
-        block.level = this;
+        block.setLevel(this);
+        block.setLayer(layer);
         int cx = x >> 4;
         int cz = z >> 4;
         long index = Chunk.key(cx, cz);
         if (direct) {
             this.sendBlocks(this.getChunkPlayers(cx, cz).toArray(new Player[0]), new Block[]{block}, UpdateBlockPacket.FLAG_ALL_PRIORITY);
         } else {
-            addBlockChange(index, x, y, z, 0);
+            addBlockChange(index, x, y, z, layer);
         }
 
         if (update) {
