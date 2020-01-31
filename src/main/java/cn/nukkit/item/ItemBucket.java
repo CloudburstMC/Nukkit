@@ -1,17 +1,16 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Player;
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockAir;
-import cn.nukkit.block.BlockLava;
-import cn.nukkit.block.BlockLiquid;
-import cn.nukkit.block.BlockWater;
+import cn.nukkit.block.*;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
+import cn.nukkit.event.player.PlayerItemConsumeEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.UpdateBlockPacket;
 
 /**
  * author: MagicDroidX
@@ -52,7 +51,7 @@ public class ItemBucket extends Item {
         }
     }
 
-    protected int getDamageByTarget(int target) {
+    public static int getDamageByTarget(int target) {
         switch (target) {
             case 2:
             case 3:
@@ -85,7 +84,7 @@ public class ItemBucket extends Item {
 
         if (targetBlock instanceof BlockAir) {
             if (target instanceof BlockLiquid && target.getDamage() == 0) {
-                Item result = Item.get(BUCKET, this.getDamageByTarget(target.getId()), 1);
+                Item result = Item.get(BUCKET, getDamageByTarget(target.getId()), 1);
                 PlayerBucketFillEvent ev;
                 player.getServer().getPluginManager().callEvent(ev = new PlayerBucketFillEvent(player, block, face, this, result));
                 if (!ev.isCancelled()) {
@@ -120,12 +119,14 @@ public class ItemBucket extends Item {
             }
         } else if (targetBlock instanceof BlockLiquid) {
             Item result = Item.get(BUCKET, 0, 1);
-            PlayerBucketEmptyEvent ev;
-            player.getServer().getPluginManager().callEvent(ev = new PlayerBucketEmptyEvent(player, block, face, this, result));
+            PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, block, face, this, result);
+            ev.setCancelled(!block.canBeFlowedInto());
 
-            if (player.getLevel().getName().equals("nether") && this.getDamage() != 10) {
+            if (player.getLevel().getDimension() == Level.DIMENSION_NETHER && this.getDamage() != 10) {
                 ev.setCancelled(true);
             }
+
+            player.getServer().getPluginManager().callEvent(ev);
 
             if (!ev.isCancelled()) {
                 player.getLevel().setBlock(block, targetBlock, true, true);
@@ -144,10 +145,36 @@ public class ItemBucket extends Item {
 
                 return true;
             } else {
+                player.getLevel().sendBlocks(new Player[]{player}, new Block[]{Block.get(Block.AIR, 0, block)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
                 player.getInventory().sendContents(player);
             }
         }
 
         return false;
+    }
+
+    @Override
+    public boolean onClickAir(Player player, Vector3 directionVector) {
+        return this.getDamage() == 1; // Milk
+    }
+
+    @Override
+    public boolean onUse(Player player, int ticksUsed) {
+        PlayerItemConsumeEvent consumeEvent = new PlayerItemConsumeEvent(player, this);
+
+        player.getServer().getPluginManager().callEvent(consumeEvent);
+        if (consumeEvent.isCancelled()) {
+            player.getInventory().sendContents(player);
+            return false;
+        }
+
+        if (player.isSurvival()) {
+            this.count--;
+            player.getInventory().setItemInHand(this);
+            player.getInventory().addItem(new ItemBucket());
+        }
+
+        player.removeAllEffects();
+        return true;
     }
 }

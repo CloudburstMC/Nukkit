@@ -36,6 +36,8 @@ public class EntityEventPacket extends DataPacket {
 
     public static final byte UNKNOWN1 = 66;
 
+    public static final byte MERGE_ITEMS = 69;
+
     @Override
     public byte pid() {
         return NETWORK_ID;
@@ -57,6 +59,6 @@ public class EntityEventPacket extends DataPacket {
         this.reset();
         this.putEntityRuntimeId(this.eid);
         this.putByte((byte) this.event);
-        this.putVarInt((byte) this.data);
+        this.putVarInt(this.data);
     }
 }

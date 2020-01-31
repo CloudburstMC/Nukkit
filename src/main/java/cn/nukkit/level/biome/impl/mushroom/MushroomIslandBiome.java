@@ -20,7 +20,7 @@ public class MushroomIslandBiome extends GrassyBiome {
     }
 
     @Override
-    public int getSurfaceBlock(int y) {
-        return Block.MYCELIUM;
+    public int getSurfaceId(int x, int y, int z) {
+        return MYCELIUM << 4;
     }
 }

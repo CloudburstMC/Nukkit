@@ -12,6 +12,7 @@ import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.mob.*;
 import cn.nukkit.entity.passive.*;
 import cn.nukkit.entity.projectile.*;
+import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
@@ -78,6 +79,7 @@ import cn.nukkit.utils.bugreport.ExceptionHandler;
 import co.aikar.timings.Timings;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import io.netty.buffer.ByteBuf;
 import lombok.extern.log4j.Log4j2;
 import org.iq80.leveldb.CompressionType;
 import org.iq80.leveldb.DB;
@@ -88,6 +90,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
@@ -200,11 +205,9 @@ public class Server {
     private Config properties;
     private Config config;
 
-    private final Map<String, Player> players = new HashMap<>();
+    private final Map<InetSocketAddress, Player> players = new HashMap<>();
 
     private final Map<UUID, Player> playerList = new HashMap<>();
-
-    private final Map<Integer, String> identifier = new HashMap<>();
 
     private final Map<Integer, Level> levels = new HashMap<Integer, Level>() {
         public Level put(Integer key, Level value) {
@@ -322,7 +325,7 @@ public class Server {
         log.info("Loading {} ...", TextFormat.GREEN + "nukkit.yml" + TextFormat.WHITE);
         this.config = new Config(this.dataPath + "nukkit.yml", Config.YAML);
 
-        log.info("Loading {} ...", TextFormat.GREEN + "server properties" + TextFormat.WHITE);
+        log.info("Loading {} ...", TextFormat.GREEN + "server.properties" + TextFormat.WHITE);
         this.properties = new Config(this.dataPath + "server.properties", Config.PROPERTIES, new ConfigSection() {
             {
                 put("motd", "A Nukkit Powered Server");
@@ -364,7 +367,7 @@ public class Server {
         this.forceLanguage = this.getConfig("settings.force-language", false);
         this.baseLang = new BaseLang(this.getConfig("settings.language", BaseLang.FALLBACK_LANGUAGE));
         log.info(this.getLanguage().translateString("language.selected", new String[]{getLanguage().getName(), getLanguage().getLang()}));
-        log.info(getLanguage().translateString("nukkit.server.start", TextFormat.AQUA + this.getVersion() + TextFormat.WHITE));
+        log.info(getLanguage().translateString("nukkit.server.start", TextFormat.AQUA + this.getVersion() + TextFormat.RESET));
 
         Object poolSize = this.getConfig("settings.async-workers", (Object) "auto");
         if (!(poolSize instanceof Integer)) {
@@ -648,10 +651,6 @@ public class Server {
         } else {
             getInstance().batchPackets(players, new DataPacket[]{packet}, true);
         }
-
-        if (packet.encapsulatedPacket != null) {
-            packet.encapsulatedPacket = null;
-        }
     }
 
     public void batchPackets(Player[] players, DataPacket[] packets) {
@@ -685,10 +684,10 @@ public class Server {
             size += payload[i * 2 + 1].length;
         }
 
-        List<String> targets = new ArrayList<>();
+        List<InetSocketAddress> targets = new ArrayList<>();
         for (Player p : players) {
             if (p.isConnected()) {
-                targets.add(this.identifier.get(p.rawHashCode()));
+                targets.add(p.getSocketAddress());
             }
         }
 
@@ -705,11 +704,11 @@ public class Server {
         Timings.playerNetworkSendTimer.stopTiming();
     }
 
-    public void broadcastPacketsCallback(byte[] data, List<String> identifiers) {
+    public void broadcastPacketsCallback(byte[] data, List<InetSocketAddress> targets) {
         BatchPacket pk = new BatchPacket();
         pk.payload = data;
 
-        for (String i : identifiers) {
+        for (InetSocketAddress i : targets) {
             if (this.players.containsKey(i)) {
                 this.players.get(i).dataPacket(pk);
             }
@@ -789,7 +788,11 @@ public class Server {
         this.operators.reload();
 
         for (BanEntry entry : this.getIPBans().getEntires().values()) {
-            this.getNetwork().blockAddress(entry.getName(), -1);
+            try {
+                this.getNetwork().blockAddress(InetAddress.getByName(entry.getName()), -1);
+            } catch (UnknownHostException e) {
+                // ignore
+            }
         }
 
         this.pluginManager.registerInterface(JavaPluginLoader.class);
@@ -867,7 +870,11 @@ public class Server {
         }
 
         for (BanEntry entry : this.getIPBans().getEntires().values()) {
-            this.network.blockAddress(entry.getName(), -1);
+            try {
+                this.network.blockAddress(InetAddress.getByName(entry.getName()), -1);
+            } catch (UnknownHostException e) {
+                // ignore
+            }
         }
 
         //todo send usage setting
@@ -881,15 +888,24 @@ public class Server {
         this.forceShutdown();
     }
 
-    public void handlePacket(String address, int port, byte[] payload) {
+    public void handlePacket(InetSocketAddress address, ByteBuf payload) {
         try {
-            if (payload.length > 2 && Arrays.equals(Binary.subBytes(payload, 0, 2), new byte[]{(byte) 0xfe, (byte) 0xfd}) && this.queryHandler != null) {
-                this.queryHandler.handle(address, port, payload);
+            if (!payload.isReadable(3)) {
+                return;
+            }
+            byte[] prefix = new byte[2];
+            payload.readBytes(prefix);
+
+            if (!Arrays.equals(prefix, new byte[]{(byte) 0xfe, (byte) 0xfd})) {
+                return;
+            }
+            if (this.queryHandler != null) {
+                this.queryHandler.handle(address, payload);
             }
         } catch (Exception e) {
             log.error("Error whilst handling packet", e);
 
-            this.getNetwork().blockAddress(address, 600);
+            this.network.blockAddress(address.getAddress(), -1);
         }
     }
 
@@ -946,9 +962,8 @@ public class Server {
         }
     }
 
-    public void addPlayer(String identifier, Player player) {
-        this.players.put(identifier, player);
-        this.identifier.put(player.rawHashCode(), identifier);
+    public void addPlayer(InetSocketAddress socketAddress, Player player) {
+        this.players.put(socketAddress, player);
     }
 
     public void addOnlinePlayer(Player player) {
@@ -1318,7 +1333,11 @@ public class Server {
     }
 
     public int getGamemode() {
-        return this.getPropertyInt("gamemode", 0) & 0b11;
+        try {
+            return this.getPropertyInt("gamemode", 0) & 0b11;
+        } catch (NumberFormatException exception) {
+            return getGamemodeFromString(this.getPropertyString("gamemode")) & 0b11;
+        }
     }
 
     public boolean getForceGamemode() {
@@ -1423,7 +1442,7 @@ public class Server {
 
     public int getDefaultGamemode() {
         if (this.defaultGamemode == Integer.MAX_VALUE) {
-            this.defaultGamemode = this.getPropertyInt("gamemode", 0);
+            this.defaultGamemode = this.getGamemode();
         }
         return this.defaultGamemode;
     }
@@ -1569,16 +1588,25 @@ public class Server {
     }
 
     public CompoundTag getOfflinePlayerData(UUID uuid) {
-        return getOfflinePlayerDataInternal(uuid.toString(), true);
+        return getOfflinePlayerData(uuid, false);
+    }
+
+    public CompoundTag getOfflinePlayerData(UUID uuid, boolean create) {
+        return getOfflinePlayerDataInternal(uuid.toString(), true, create);
     }
 
     @Deprecated
     public CompoundTag getOfflinePlayerData(String name) {
-        Optional<UUID> uuid = lookupName(name);
-        return getOfflinePlayerDataInternal(uuid.map(UUID::toString).orElse(name), true);
+        return getOfflinePlayerData(name, false);
     }
 
-    private CompoundTag getOfflinePlayerDataInternal(String name, boolean runEvent) {
+    @Deprecated
+    public CompoundTag getOfflinePlayerData(String name, boolean create) {
+        Optional<UUID> uuid = lookupName(name);
+        return getOfflinePlayerDataInternal(uuid.map(UUID::toString).orElse(name), true, create);
+    }
+
+    private CompoundTag getOfflinePlayerDataInternal(String name, boolean runEvent, boolean create) {
         Preconditions.checkNotNull(name, "name");
 
         PlayerDataSerializeEvent event = new PlayerDataSerializeEvent(name, playerDataSerializer);
@@ -1591,8 +1619,6 @@ public class Server {
             dataStream = event.getSerializer().read(name, event.getUuid().orElse(null));
             if (dataStream.isPresent()) {
                 return NBTIO.readCompressed(dataStream.get());
-            } else {
-                log.warn(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
             }
         } catch (IOException e) {
             log.warn(this.getLanguage().translateString("nukkit.data.playerCorrupted", name));
@@ -1606,33 +1632,36 @@ public class Server {
                 }
             }
         }
+        CompoundTag nbt = null;
+        if (create) {
+            log.info(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
+            Position spawn = this.getDefaultLevel().getSafeSpawn();
+            nbt = new CompoundTag()
+                    .putLong("firstPlayed", System.currentTimeMillis() / 1000)
+                    .putLong("lastPlayed", System.currentTimeMillis() / 1000)
+                    .putList(new ListTag<DoubleTag>("Pos")
+                            .add(new DoubleTag("0", spawn.x))
+                            .add(new DoubleTag("1", spawn.y))
+                            .add(new DoubleTag("2", spawn.z)))
+                    .putString("Level", this.getDefaultLevel().getName())
+                    .putList(new ListTag<>("Inventory"))
+                    .putCompound("Achievements", new CompoundTag())
+                    .putInt("playerGameType", this.getGamemode())
+                    .putList(new ListTag<DoubleTag>("Motion")
+                            .add(new DoubleTag("0", 0))
+                            .add(new DoubleTag("1", 0))
+                            .add(new DoubleTag("2", 0)))
+                    .putList(new ListTag<FloatTag>("Rotation")
+                            .add(new FloatTag("0", 0))
+                            .add(new FloatTag("1", 0)))
+                    .putFloat("FallDistance", 0)
+                    .putShort("Fire", 0)
+                    .putShort("Air", 300)
+                    .putBoolean("OnGround", true)
+                    .putBoolean("Invulnerable", false);
 
-        Position spawn = this.getDefaultLevel().getSafeSpawn();
-        CompoundTag nbt = new CompoundTag()
-                .putLong("firstPlayed", System.currentTimeMillis() / 1000)
-                .putLong("lastPlayed", System.currentTimeMillis() / 1000)
-                .putList(new ListTag<DoubleTag>("Pos")
-                        .add(new DoubleTag("0", spawn.x))
-                        .add(new DoubleTag("1", spawn.y))
-                        .add(new DoubleTag("2", spawn.z)))
-                .putString("Level", this.getDefaultLevel().getName())
-                .putList(new ListTag<>("Inventory"))
-                .putCompound("Achievements", new CompoundTag())
-                .putInt("playerGameType", this.getGamemode())
-                .putList(new ListTag<DoubleTag>("Motion")
-                        .add(new DoubleTag("0", 0))
-                        .add(new DoubleTag("1", 0))
-                        .add(new DoubleTag("2", 0)))
-                .putList(new ListTag<FloatTag>("Rotation")
-                        .add(new FloatTag("0", 0))
-                        .add(new FloatTag("1", 0)))
-                .putFloat("FallDistance", 0)
-                .putShort("Fire", 0)
-                .putShort("Air", 300)
-                .putBoolean("OnGround", true)
-                .putBoolean("Invulnerable", false);
-
-        this.saveOfflinePlayerData(name, nbt, true, runEvent);
+            this.saveOfflinePlayerData(name, nbt, true, runEvent);
+        }
         return nbt;
     }
 
@@ -1709,7 +1738,7 @@ public class Server {
 
             log.debug("Attempting legacy player data conversion for {}", name);
 
-            CompoundTag tag = getOfflinePlayerDataInternal(name, false);
+            CompoundTag tag = getOfflinePlayerDataInternal(name, false, false);
 
             if (tag == null || !tag.contains("UUIDLeast") || !tag.contains("UUIDMost")) {
                 // No UUID so we cannot convert. Wait until player logs in.
@@ -1784,18 +1813,15 @@ public class Server {
     }
 
     public void removePlayer(Player player) {
-        if (this.identifier.containsKey(player.rawHashCode())) {
-            String identifier = this.identifier.get(player.rawHashCode());
-            this.players.remove(identifier);
-            this.identifier.remove(player.rawHashCode());
+        Player toRemove = this.players.remove(player.getSocketAddress());
+        if (toRemove != null) {
             return;
         }
 
-        for (String identifier : new ArrayList<>(this.players.keySet())) {
-            Player p = this.players.get(identifier);
+        for (InetSocketAddress socketAddress : new ArrayList<>(this.players.keySet())) {
+            Player p = this.players.get(socketAddress);
             if (player == p) {
-                this.players.remove(identifier);
-                this.identifier.remove(player.rawHashCode());
+                this.players.remove(socketAddress);
                 break;
             }
         }
@@ -1828,7 +1854,7 @@ public class Server {
 
     public Level getLevelByName(String name) {
         for (Level level : this.levelArray) {
-            if (level.getFolderName().equals(name)) {
+            if (level.getFolderName().equalsIgnoreCase(name)) {
                 return level;
             }
         }
@@ -1947,7 +1973,7 @@ public class Server {
             level.initLevel();
             level.setTickRate(this.baseTickRate);
         } catch (Exception e) {
-            log.error(this.getLanguage().translateString("nukkit.level.generationError", new String[]{name, e.getMessage()}));
+            log.error(this.getLanguage().translateString("nukkit.level.generationError", new String[]{name, Utils.getExceptionMessage(e)}));
             return false;
         }
 
@@ -2185,6 +2211,10 @@ public class Server {
         return this.getConfig("player.save-player-data", true);
     }
 
+    public int getPlayerSkinChangeCooldown() {
+        return this.getConfig("player.skin-change-cooldown", 30);
+    }
+
     /**
      * Checks the current thread against the expected primary thread for the
      * server.
@@ -2206,6 +2236,7 @@ public class Server {
     }
 
     private void registerEntities() {
+        Entity.registerEntity("Lightning", EntityLightning.class);
         Entity.registerEntity("Arrow", EntityArrow.class);
         Entity.registerEntity("EnderPearl", EntityEnderPearl.class);
         Entity.registerEntity("FallingSand", EntityFallingBlock.class);

@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
+import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
@@ -60,16 +62,39 @@ public class BlockConcretePowder extends BlockFallable {
     
     @Override
     public int onUpdate(int type) {
-        super.onUpdate(Level.BLOCK_UPDATE_NORMAL); //#BlockFallable
-        if(type == Level.BLOCK_UPDATE_NORMAL){
-            for(int side = 1; side <= 5; side++){
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
+            super.onUpdate(Level.BLOCK_UPDATE_NORMAL);
+
+            for (int side = 1; side <= 5; side++) {
                 Block block = this.getSide(BlockFace.fromIndex(side));
-                if(block.getId() == Block.WATER || block.getId() == Block.STILL_WATER){
-                    this.level.setBlock(this, Block.get(Block.CONCRETE, this.meta));
+                if (block.getId() == Block.WATER || block.getId() == Block.STILL_WATER || block.getId() == Block.LAVA || block.getId() == Block.STILL_LAVA) {
+                    this.level.setBlock(this, Block.get(Block.CONCRETE, this.meta), true, true);
                 }
             }
+
             return Level.BLOCK_UPDATE_NORMAL;
         }
         return 0;
+    }
+
+    @Override
+    public boolean place(Item item, Block b, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        boolean concrete = false;
+
+        for (int side = 1; side <= 5; side++) {
+            Block block = this.getSide(BlockFace.fromIndex(side));
+            if (block.getId() == Block.WATER || block.getId() == Block.STILL_WATER || block.getId() == Block.LAVA || block.getId() == Block.STILL_LAVA) {
+                concrete = true;
+                break;
+            }
+        }
+
+        if (concrete) {
+            this.level.setBlock(this, Block.get(Block.CONCRETE, this.getDamage()), true, true);
+        } else {
+            this.level.setBlock(this, this, true, true);
+        }
+
+        return true;
     }
 }

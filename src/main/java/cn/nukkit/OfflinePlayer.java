@@ -17,8 +17,6 @@ import java.util.UUID;
  * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
 public class OfflinePlayer implements IPlayer {
-    private final String name;
-    private final UUID uuid;
     private final Server server;
     private final CompoundTag namedTag;
 
@@ -43,25 +41,24 @@ public class OfflinePlayer implements IPlayer {
     public OfflinePlayer(Server server, UUID uuid, String name) {
         this.server = server;
 
-
+        CompoundTag nbt;
         if (uuid != null) {
-            this.namedTag = this.server.getOfflinePlayerData(uuid);
-            if (name == null) {
-                name = getName();
-            }
-            this.namedTag.putLong("UUIDMost", uuid.getMostSignificantBits());
-            this.namedTag.putLong("UUIDLeast", uuid.getLeastSignificantBits());
+            nbt = this.server.getOfflinePlayerData(uuid, false);
         } else if (name != null) {
-            this.namedTag = this.server.getOfflinePlayerData(name);
-            uuid = getUniqueId();
+            nbt = this.server.getOfflinePlayerData(name, false);
         } else {
             throw new IllegalArgumentException("Name and UUID cannot both be null");
         }
-        this.uuid = uuid;
-        this.name = name;
+        if (nbt == null) {
+            nbt = new CompoundTag();
+        }
+        this.namedTag = nbt;
 
-        if (name != null) {
-            namedTag.putString("NameTag", name);
+        if (uuid != null) {
+            this.namedTag.putLong("UUIDMost", uuid.getMostSignificantBits());
+            this.namedTag.putLong("UUIDLeast", uuid.getLeastSignificantBits());
+        } else {
+            this.namedTag.putString("NameTag", name);
         }
     }
 

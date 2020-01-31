@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.BlockColor;
 
 public class BlockBricksRedNether extends BlockNetherBrick {
 
@@ -29,4 +30,8 @@ public class BlockBricksRedNether extends BlockNetherBrick {
         }
     }
 
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.NETHERRACK_BLOCK_COLOR;
+    }
 }
