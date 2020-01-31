@@ -223,6 +223,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected final EntityMetadata dataProperties = new EntityMetadata()
             .putLong(DATA_FLAGS, 0)
+            .putByte(DATA_COLOR, 0)
             .putShort(DATA_AIR, 400)
             .putShort(DATA_MAX_AIR, 400)
             .putString(DATA_NAMETAG, "")
