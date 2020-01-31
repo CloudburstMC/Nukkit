@@ -4,7 +4,6 @@ import cn.nukkit.utils.Identifier;
 
 /**
  * @author Erik Miller | EinBexiii | Bex
- * @version 1.0
  */
 public class BlockStairsRedNetherBrick extends BlockStairsNetherBrick {
 
