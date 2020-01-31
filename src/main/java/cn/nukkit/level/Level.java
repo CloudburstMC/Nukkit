@@ -866,7 +866,7 @@ public class Level implements ChunkManager, Metadatable {
             updateBlockPacket.flags = first ? flags : UpdateBlockPacket.FLAG_NONE;
             updateBlockPacket.dataLayer = position.getLayer();
 
-            Block block = position instanceof Block ? (Block) position : getBlock(position.x, position.y, position.z);
+            Block block = position instanceof Block ? (Block) position : getBlock(position.x, position.y, position.z, position.getLayer());
 
             try {
                 updateBlockPacket.blockRuntimeId = BlockRegistry.get().getRuntimeId(block);
