@@ -128,8 +128,9 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
 
     public boolean onBreak(Item item) {
         if (this.isWaterlogged()) {
+            Block water = getLevel().getBlock(getX(), getY(), getZ(), 1);
             getLevel().setBlock(getX(), getY(), getZ(), 1, Block.get(AIR), true, true); // clear the liquid layer
-            return getLevel().setBlock(this, Block.get(WATER), true, true); // Replace with the water from liquid layer
+            return getLevel().setBlock(this, water, true, true); // Replace with the water from liquid layer
         }
         return this.getLevel().setBlock(this, Block.get(AIR), true, true);
     }
