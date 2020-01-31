@@ -55,6 +55,7 @@ public class BlockCampfire extends BlockSolid implements Faceable {
     }
 
     public void toggleFire() {
+        if (!this.isLit() && isWaterlogged()) return;
         this.setDamage(this.getDamage() ^ CAMPFIRE_LIT_MASK);
         getLevel().setBlockDataAt(this.x, this.y, this.z, this.getDamage());
         getLevel().getBlockEntity(this).scheduleUpdate();
@@ -99,6 +100,14 @@ public class BlockCampfire extends BlockSolid implements Faceable {
     @Override
     public boolean canBeFlooded() {
         return true;
+    }
+
+    @Override
+    public void onWaterlog() {
+        if (this.isLit()) {
+            this.toggleFire();
+        }
+        ((BlockEntityCampfire) getLevel().getBlockEntity(this)).clearItems();
     }
 
     @Override
