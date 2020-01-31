@@ -1,15 +1,21 @@
 package cn.nukkit.utils;
 
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 import java.io.IOException;
 
-@JsonAdapter(SemVersion.Adapter.class)
+@JsonSerialize(using = SemVersion.Serializer.class)
+@JsonDeserialize(using = SemVersion.Deserializer.class)
 public final class SemVersion {
-    private int[] version;
+    private final int[] version;
 
     public SemVersion(int major, int minor, int patch) {
         this.version = new int[]{major, minor, patch};
@@ -32,23 +38,28 @@ public final class SemVersion {
         return String.format("%d.%d.%d", version[0], version[1], version[2]);
     }
 
-    public static class Adapter extends TypeAdapter<SemVersion> {
+    static class Serializer extends StdSerializer<SemVersion> {
 
-        @Override
-        public void write(JsonWriter out, SemVersion value) throws IOException {
-            int[] version = value.version;
-            out.beginArray().value(version[0]).value(version[1]).value(version[2]).endArray();
+        protected Serializer() {
+            super(SemVersion.class);
         }
 
         @Override
-        public SemVersion read(JsonReader in) throws IOException {
-            in.beginArray();
-            int major = in.nextInt();
-            int minor = in.nextInt();
-            int patch = in.nextInt();
-            in.endArray();
+        public void serialize(SemVersion value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+            gen.writeArray(value.version, 0, 3);
+        }
+    }
 
-            return new SemVersion(major, minor, patch);
+    static class Deserializer extends StdDeserializer<SemVersion> {
+
+        protected Deserializer() {
+            super(SemVersion.class);
+        }
+
+        @Override
+        public SemVersion deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+            int[] version = p.readValueAs(int[].class);
+            return new SemVersion(version[0], version[1], version[2]);
         }
     }
 }

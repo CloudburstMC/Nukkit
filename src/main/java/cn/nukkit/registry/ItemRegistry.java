@@ -1,26 +1,25 @@
 package cn.nukkit.registry;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.item.*;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Identifier;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import lombok.*;
 import lombok.extern.log4j.Log4j2;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static cn.nukkit.item.ItemIds.*;
@@ -32,12 +31,12 @@ public class ItemRegistry implements Registry {
 
     static {
         InputStream stream = RegistryUtils.getOrAssertResource("runtime_item_ids.json");
-        Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
 
-        Gson gson = new Gson();
-        Type collectionType = new TypeToken<List<ItemData>>() {
-        }.getType();
-        VANILLA_ITEMS = gson.fromJson(reader, collectionType);
+        try {
+            VANILLA_ITEMS = Nukkit.JSON_MAPPER.readValue(stream, new TypeReference<List<ItemData>>() {});
+        } catch (IOException e) {
+            throw new AssertionError("Unable to load vanilla items", e);
+        }
 
         INSTANCE = new ItemRegistry(BlockRegistry.get()); // Needs to be initialized afterwards
     }
@@ -406,6 +405,7 @@ public class ItemRegistry implements Registry {
         registerVanilla(CAMPFIRE, PlaceableItem.factory(BlockIds.CAMPFIRE), 720);
     }
 
+    @Getter
     private static class ItemData {
         private String name;
         private int id;

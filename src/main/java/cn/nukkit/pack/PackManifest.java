@@ -1,21 +1,20 @@
 package cn.nukkit.pack;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.utils.SemVersion;
-import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 @Data
 public final class PackManifest {
-    private static final Gson GSON = new Gson();
 
-    @SerializedName("format_version")
+    @JsonProperty("format_version")
     private String formatVersion;
 
     private Header header;
@@ -26,8 +25,8 @@ public final class PackManifest {
 
     private List<Dependency> dependencies = Collections.emptyList();
 
-    public static PackManifest load(InputStream stream) {
-        return GSON.fromJson(new InputStreamReader(stream), PackManifest.class);
+    public static PackManifest load(InputStream stream) throws IOException {
+        return Nukkit.JSON_MAPPER.readValue(stream, PackManifest.class);
     }
 
     public boolean isValid() {
@@ -46,10 +45,10 @@ public final class PackManifest {
         private String name;
         private String description;
         private UUID uuid;
-        @SerializedName("platform_locked")
+        @JsonProperty("platform_locked")
         private boolean platformLocked;
         private SemVersion version;
-        @SerializedName("min_engine_version")
+        @JsonProperty("min_engine_version")
         private SemVersion minEngineVersion;
     }
 
