@@ -15,6 +15,7 @@ import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.Identifier;
 import it.unimi.dsi.fastutil.longs.Long2ByteMap;
 import it.unimi.dsi.fastutil.longs.Long2ByteOpenHashMap;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -24,6 +25,7 @@ import static cn.nukkit.block.BlockIds.AIR;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Slf4j
 public abstract class BlockLiquid extends BlockTransparent {
 
     private final byte CAN_FLOW_DOWN = 1;
@@ -223,7 +225,7 @@ public abstract class BlockLiquid extends BlockTransparent {
                     BlockFromToEvent event = new BlockFromToEvent(this, to);
                     level.getServer().getPluginManager().callEvent(event);
                     if (!event.isCancelled()) {
-                        this.level.setBlock(this, to, true, true);
+                        this.level.setBlock(this.getX(), this.getY(), this.getZ(), this.getLayer(), to, true, true);
                         if (!decayed) {
                             this.level.scheduleUpdate(this, this.tickRate());
                         }
@@ -268,18 +270,18 @@ public abstract class BlockLiquid extends BlockTransparent {
             getLevel().getServer().getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
                 Block newBlock = getBlock(newFlowDecay);
+                BlockPosition pos = new BlockPosition(block.getX(), block.getY(), block.getZ(), block.getLevel());
                 if (this instanceof BlockWater && block.canWaterlog()) {
                     block.onWaterlog();
-                    // need to set the liquid in the water layer
-                    BlockPosition pos = new BlockPosition(block.getX(), block.getY(), block.getZ(), block.getLevel(), 1);
-                    this.getLevel().setBlock(pos, newBlock, true, true);
+                    pos.setLayer(1);
                 } else {
                     if (block.getId() != AIR) {
                         this.getLevel().useBreakOn(block);
                     }
-                    this.getLevel().setBlock(block, newBlock, true, true);
+                    pos.setLayer(0);
                 }
-                this.getLevel().scheduleUpdate(newBlock, this.tickRate());
+                this.getLevel().setBlock(pos, newBlock, true, true);
+                this.getLevel().scheduleUpdate(newBlock, pos, this.tickRate());
             }
         }
     }
