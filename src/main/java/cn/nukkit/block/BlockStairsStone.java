@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;

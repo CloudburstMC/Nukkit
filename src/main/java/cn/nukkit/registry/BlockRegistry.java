@@ -511,18 +511,18 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(GRANITE_STAIRS, BlockStairsGranite::new); //424
         this.factoryMap.put(DIORITE_STAIRS, BlockStairsDiorite::new); //425
         this.factoryMap.put(ANDESITE_STAIRS, BlockStairsAndesite::new); //426
-        this.factoryMap.put(POLISHED_GRANITE_STAIRS, BlockStairsPolishedGranite::new); //427
-        this.factoryMap.put(POLISHED_DIORITE_STAIRS, BlockStairsPolishedDiorite::new); //428
-        this.factoryMap.put(POLISHED_ANDESITE_STAIRS, BlockStairsPolishedAndesite::new); //429
-        this.factoryMap.put(MOSSY_STONE_BRICK_STAIRS, BlockStairsMossyStoneBrick::new); //430
+        this.factoryMap.put(POLISHED_GRANITE_STAIRS, BlockStairsGranite::new); //427
+        this.factoryMap.put(POLISHED_DIORITE_STAIRS, BlockStairsDiorite::new); //428
+        this.factoryMap.put(POLISHED_ANDESITE_STAIRS, BlockStairsAndesite::new); //429
+        this.factoryMap.put(MOSSY_STONE_BRICK_STAIRS, BlockStairsStoneBrick::new); //430
         this.factoryMap.put(SMOOTH_RED_SANDSTONE_STAIRS, BlockStairsSmoothRedSandstone::new); //431
         this.factoryMap.put(SMOOTH_SANDSTONE_STAIRS, BlockStairsSmoothSandstone::new); //432
         this.factoryMap.put(END_BRICK_STAIRS, BlockStairsEndStoneBrick::new); //433
-        this.factoryMap.put(MOSSY_COBBLESTONE_STAIRS, BlockStairsMossyCobblestone::new); //434
+        this.factoryMap.put(MOSSY_COBBLESTONE_STAIRS, BlockStairsCobblestone::new); //434
         this.factoryMap.put(NORMAL_STONE_STAIRS, BlockStairsStone::new); //435
 
-        this.factoryMap.put(RED_NETHER_BRICK_STAIRS, BlockStairsRedNetherBrick::new); //439
+        this.factoryMap.put(RED_NETHER_BRICK_STAIRS, BlockStairsNetherBrick::new); //439
 
-        this.factoryMap.put(SMOOTH_QUARTZ_STAIRS, BlockStairsSmoothQuartz::new); //440
+        this.factoryMap.put(SMOOTH_QUARTZ_STAIRS, BlockStairsQuartz::new); //440
     }
 }
