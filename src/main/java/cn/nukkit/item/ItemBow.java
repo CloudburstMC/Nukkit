@@ -2,12 +2,14 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
@@ -44,7 +46,13 @@ public class ItemBow extends ItemTool {
         return 1;
     }
 
-    public boolean onReleaseUsing(Player player) {
+    @Override
+    public boolean onClickAir(Player player, Vector3 directionVector) {
+        return player.getInventory().contains(Item.get(ItemID.ARROW)) || player.isCreative();
+    }
+
+    @Override
+    public boolean onRelease(Player player, int ticksUsed) {
         Item itemArrow = Item.get(Item.ARROW, 0, 1);
 
         Inventory inventory = player.getOffhandInventory();
@@ -80,13 +88,18 @@ public class ItemBow extends ItemTool {
                 .putShort("Fire", flame ? 45 * 60 : 0)
                 .putDouble("damage", damage);
 
-        int diff = (Server.getInstance().getTick() - player.getStartActionTick());
-        double p = (double) diff / 20;
-
+        double p = (double) ticksUsed / 20;
         double f = Math.min((p * p + p * 2) / 3, 1) * 2;
-        EntityShootBowEvent entityShootBowEvent = new EntityShootBowEvent(player, this, new EntityArrow(player.chunk, nbt, player, f == 2), f);
 
-        if (f < 0.1 || diff < 5) {
+        EntityArrow arrow = (EntityArrow) Entity.createEntity("Arrow", player.chunk, nbt, player, f == 2);
+
+        if (arrow == null) {
+            return false;
+        }
+
+        EntityShootBowEvent entityShootBowEvent = new EntityShootBowEvent(player, this, arrow, f);
+
+        if (f < 0.1 || ticksUsed < 3) {
             entityShootBowEvent.setCancelled();
         }
 
@@ -114,10 +127,11 @@ public class ItemBow extends ItemTool {
                         if (this.getDamage() >= getMaxDurability()) {
                             this.count--;
                         }
+                        player.getInventory().setItemInHand(this);
                     }
                 }
             }
-            if (entityShootBowEvent.getProjectile() instanceof EntityProjectile) {
+            if (entityShootBowEvent.getProjectile() != null) {
                 ProjectileLaunchEvent projectev = new ProjectileLaunchEvent(entityShootBowEvent.getProjectile());
                 Server.getInstance().getPluginManager().callEvent(projectev);
                 if (projectev.isCancelled()) {
@@ -126,8 +140,6 @@ public class ItemBow extends ItemTool {
                     entityShootBowEvent.getProjectile().spawnToAll();
                     player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BOW);
                 }
-            } else {
-                entityShootBowEvent.getProjectile().spawnToAll();
             }
         }
 

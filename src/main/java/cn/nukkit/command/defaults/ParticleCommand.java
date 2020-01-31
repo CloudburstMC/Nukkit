@@ -93,7 +93,7 @@ public class ParticleCommand extends VanillaCommand {
         Particle particle = this.getParticle(name, position, data);
 
         if (particle == null) {
-            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.particle.notFound", name));
+            position.level.addParticleEffect(position.asVector3f(), args[0], -1, position.level.getDimension());
             return true;
         }
 

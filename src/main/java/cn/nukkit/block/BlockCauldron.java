@@ -83,14 +83,13 @@ public class BlockCauldron extends BlockSolidMeta {
                     }
 
                     ItemBucket bucket = (ItemBucket) item.clone();
+                    bucket.setCount(1);
                     bucket.setDamage(8);//water bucket
 
                     PlayerBucketFillEvent ev = new PlayerBucketFillEvent(player, this, null, item, bucket);
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
-                        if (player.isSurvival()) {
-                            player.getInventory().setItemInHand(ev.getItem());
-                        }
+                        replaceBucket(item, player, ev.getItem());
                         this.setDamage(0);//empty
                         this.level.setBlock(this, this, true);
                         cauldron.clearCustomColor();
@@ -103,14 +102,13 @@ public class BlockCauldron extends BlockSolidMeta {
                     }
 
                     ItemBucket bucket = (ItemBucket) item.clone();
+                    bucket.setCount(1);
                     bucket.setDamage(0);//empty bucket
 
                     PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, this, null, item, bucket);
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
-                        if (player.isSurvival()) {
-                            player.getInventory().setItemInHand(ev.getItem());
-                        }
+                        replaceBucket(item, player, ev.getItem());
                         if (cauldron.hasPotion()) {//if has potion
                             this.setDamage(0);//empty
                             cauldron.setPotionId(0xffff);//reset potion
@@ -191,7 +189,22 @@ public class BlockCauldron extends BlockSolidMeta {
         this.level.updateComparatorOutputLevel(this);
         return true;
     }
-
+    
+    protected void replaceBucket(Item oldBucket, Player player, Item newBucket) {
+        if (player.isSurvival() || player.isAdventure()) {
+            if (oldBucket.getCount() == 1) {
+                player.getInventory().setItemInHand(newBucket);
+            } else {
+                oldBucket.setCount(oldBucket.getCount() - 1);
+                if (player.getInventory().canAddItem(newBucket)) {
+                    player.getInventory().addItem(newBucket);
+                } else {
+                    player.getLevel().dropItem(player.add(0, 1.3, 0), newBucket, player.getDirectionVector().multiply(0.4));
+                }
+            }
+        }
+    }
+    
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         CompoundTag nbt = new CompoundTag("")
@@ -209,7 +222,10 @@ public class BlockCauldron extends BlockSolidMeta {
             }
         }
 
-        new BlockEntityCauldron(this.level.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+        BlockEntityCauldron cauldron = (BlockEntityCauldron) BlockEntity.createBlockEntity(BlockEntity.CAULDRON, this.level.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+        if (cauldron == null) {
+            return false;
+        }
         this.getLevel().setBlock(block, this, true, true);
         return true;
     }

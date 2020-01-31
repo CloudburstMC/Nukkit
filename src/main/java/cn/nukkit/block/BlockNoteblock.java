@@ -9,6 +9,8 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.network.protocol.BlockEventPacket;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * Created by Snake1999 on 2016/1/17.
@@ -53,8 +55,7 @@ public class BlockNoteblock extends BlockSolid {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         this.getLevel().setBlock(block, this, true);
-        this.createBlockEntity();
-        return true;
+        return this.createBlockEntity() != null;
     }
 
     public int getStrength() {
@@ -71,6 +72,28 @@ public class BlockNoteblock extends BlockSolid {
 
     public Instrument getInstrument() {
         switch (this.down().getId()) {
+            case GOLD_BLOCK:
+                return Instrument.GLOCKENSPIEL;
+            case CLAY_BLOCK:
+                return Instrument.FLUTE;
+            case PACKED_ICE:
+                return Instrument.CHIME;
+            case WOOL:
+                return Instrument.GUITAR;
+            case BONE_BLOCK:
+                return Instrument.XYLOPHONE;
+            case IRON_BLOCK:
+                return Instrument.VIBRAPHONE;
+            case SOUL_SAND:
+                return Instrument.COW_BELL;
+            case PUMPKIN:
+                return Instrument.DIDGERIDOO;
+            case EMERALD_BLOCK:
+                return Instrument.SQUARE_WAVE;
+            case HAY_BALE:
+                return Instrument.BANJO;
+            case GLOWSTONE_BLOCK:
+                return Instrument.ELECTRIC_PIANO;
             case LOG:
             case LOG2:
             case PLANKS:
@@ -113,7 +136,6 @@ public class BlockNoteblock extends BlockSolid {
             case WALL_BANNER:
                 return Instrument.BASS;
             case SAND:
-            case SOUL_SAND:
             case GRAVEL:
             case CONCRETE_POWDER:
                 return Instrument.DRUM;
@@ -121,7 +143,6 @@ public class BlockNoteblock extends BlockSolid {
             case GLASS_PANEL:
             case STAINED_GLASS_PANE:
             case STAINED_GLASS:
-            case GLOWSTONE_BLOCK:
             case BEACON:
             case SEA_LANTERN:
                 return Instrument.STICKS;
@@ -179,7 +200,6 @@ public class BlockNoteblock extends BlockSolid {
             case COAL_BLOCK:
             case PURPUR_BLOCK:
             case MAGMA:
-            case BONE_BLOCK:
             case CONCRETE:
             case STONECUTTER:
             case OBSERVER:
@@ -194,6 +214,8 @@ public class BlockNoteblock extends BlockSolid {
 
         Instrument instrument = this.getInstrument();
 
+        this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_NOTE, instrument.ordinal() << 8 | this.getStrength());
+
         BlockEventPacket pk = new BlockEventPacket();
         pk.x = this.getFloorX();
         pk.y = this.getFloorY();
@@ -201,8 +223,6 @@ public class BlockNoteblock extends BlockSolid {
         pk.case1 = instrument.ordinal();
         pk.case2 = this.getStrength();
         this.getLevel().addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, pk);
-
-        this.getLevel().addSound(this, instrument.getSound(), 1, (float) Math.pow(2d, (this.getStrength() - 12d) / 12d));
     }
 
     @Override
@@ -239,16 +259,27 @@ public class BlockNoteblock extends BlockSolid {
     }
 
     private BlockEntityMusic createBlockEntity() {
-        return new BlockEntityMusic(this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
+        return (BlockEntityMusic) BlockEntity.createBlockEntity(BlockEntity.MUSIC, this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
                                         BlockEntity.getDefaultCompound(this, BlockEntity.MUSIC));
     }
 
     public enum Instrument {
         PIANO(Sound.NOTE_HARP),
         BASS_DRUM(Sound.NOTE_BD),
-        STICKS(Sound.NOTE_HAT),
         DRUM(Sound.NOTE_SNARE),
-        BASS(Sound.NOTE_BASS);
+        STICKS(Sound.NOTE_HAT),
+        BASS(Sound.NOTE_BASS),
+        GLOCKENSPIEL(Sound.NOTE_BELL),
+        FLUTE(Sound.NOTE_FLUTE),
+        CHIME(Sound.NOTE_CHIME),
+        GUITAR(Sound.NOTE_GUITAR),
+        XYLOPHONE(Sound.NOTE_XYLOPHONE),
+        VIBRAPHONE(Sound.NOTE_IRON_XYLOPHONE),
+        COW_BELL(Sound.NOTE_COW_BELL),
+        DIDGERIDOO(Sound.NOTE_DIDGERIDOO),
+        SQUARE_WAVE(Sound.NOTE_BIT),
+        BANJO(Sound.NOTE_BANJO),
+        ELECTRIC_PIANO(Sound.NOTE_PLING);
 
         private final Sound sound;
 
@@ -259,5 +290,10 @@ public class BlockNoteblock extends BlockSolid {
         public Sound getSound() {
             return sound;
         }
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.WOOD_BLOCK_COLOR;
     }
 }
