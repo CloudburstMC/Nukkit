@@ -3855,22 +3855,27 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         if (!ev.isCancelled()) {
             if (cause != null && cause.getCause() != DamageCause.VOID) {
-                Inventory inventory = this.getOffhandInventory();
-                Item totem = Item.get(Item.TOTEM, 0, 1);
-                if (inventory.contains(totem) || ((PlayerInventory) (inventory = this.getInventory())).getItemInHand() instanceof ItemTotem) {
-                    inventory.removeItem(totem);
+                PlayerOffhandInventory offhandInventory = this.getOffhandInventory();
+                PlayerInventory playerInventory = this.getInventory();
+                if (offhandInventory.getItem(0).getId() == Item.TOTEM || playerInventory.getItemInHand().getId() == Item.TOTEM) {
                     this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_TOTEM);
                     this.extinguish();
                     this.setHealth(1);
 
-                    this.addEffect(Effect.getEffect(Effect.REGENERATION).setDuration(800).setAmplifier(2));
-                    this.addEffect(Effect.getEffect(Effect.ABSORPTION).setDuration(100).setAmplifier(2));
+                    this.addEffect(Effect.getEffect(Effect.REGENERATION).setDuration(800).setAmplifier(1));
+                    this.addEffect(Effect.getEffect(Effect.FIRE_RESISTANCE).setDuration(800).setAmplifier(1));
+                    this.addEffect(Effect.getEffect(Effect.ABSORPTION).setDuration(100).setAmplifier(1));
 
                     EntityEventPacket pk = new EntityEventPacket();
                     pk.eid = this.getId();
                     pk.event = EntityEventPacket.CONSUME_TOTEM;
                     this.dataPacket(pk);
 
+                    if (offhandInventory.getItem(0).getId() == Item.TOTEM) {
+                        offhandInventory.clear(0);
+                    } else {
+                        playerInventory.clear(playerInventory.getHeldItemIndex());
+                    }
                     ev.setCancelled(true);
                     return;
                 }
