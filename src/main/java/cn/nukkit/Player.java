@@ -3871,7 +3871,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     pk.event = EntityEventPacket.CONSUME_TOTEM;
                     this.dataPacket(pk);
 
-                    if(offhandInventory.getItem(0).getId() == Item.TOTEM) {
+                    if (offhandInventory.getItem(0).getId() == Item.TOTEM) {
                         offhandInventory.clear(0);
                     } else {
                         playerInventory.clear(playerInventory.getHeldItemIndex());
