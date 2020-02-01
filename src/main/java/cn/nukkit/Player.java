@@ -2056,7 +2056,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.level.sendTime(this);
 
-        this.setMovementSpeed(DEFAULT_SPEED);
         this.sendAttributes();
         this.setNameTagVisible(true);
         this.setNameTagAlwaysVisible(true);
