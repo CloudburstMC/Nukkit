@@ -3855,9 +3855,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         if (!ev.isCancelled()) {
             if (cause != null && cause.getCause() != DamageCause.VOID) {
-                Inventory inventory = this.getOffhandInventory();
-                int slot = 0;
-                if (inventory.getItem(slot).getId() == Item.TOTEM || (inventory = this.getInventory()).getItem(slot = ((PlayerInventory) inventory).getHeldItemIndex()).getId() == Item.TOTEM) {
+                PlayerOffhandInventory offhandInventory = this.getOffhandInventory();
+                PlayerInventory playerInventory = this.getInventory();
+                if (offhandInventory.getItem(0).getId() == Item.TOTEM || playerInventory.getItemInHand().getId() == Item.TOTEM) {
                     this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_TOTEM);
                     this.extinguish();
                     this.setHealth(1);
@@ -3871,7 +3871,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     pk.event = EntityEventPacket.CONSUME_TOTEM;
                     this.dataPacket(pk);
 
-                    inventory.clear(slot);
+                    if(offhandInventory.getItem(0).getId() == Item.TOTEM) {
+                        offhandInventory.clear(0);
+                    } else {
+                        playerInventory.clear(playerInventory.getHeldItemIndex());
+                    }
                     ev.setCancelled(true);
                     return;
                 }
