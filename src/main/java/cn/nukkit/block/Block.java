@@ -20,7 +20,6 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,7 +31,7 @@ import static cn.nukkit.block.BlockIds.*;
  * author: MagicDroidX
  * Nukkit Project
  */
-@Slf4j
+
 public abstract class Block extends BlockPosition implements Metadatable, Cloneable, AxisAlignedBB {
 
     protected final Identifier id;

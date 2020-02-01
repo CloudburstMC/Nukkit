@@ -15,7 +15,6 @@ import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.Identifier;
 import it.unimi.dsi.fastutil.longs.Long2ByteMap;
 import it.unimi.dsi.fastutil.longs.Long2ByteOpenHashMap;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
@@ -26,7 +25,7 @@ import static cn.nukkit.block.BlockIds.AIR;
  * author: MagicDroidX
  * Nukkit Project
  */
-@Slf4j
+
 public abstract class BlockLiquid extends BlockTransparent {
 
     private final byte CAN_FLOW_DOWN = 1;
