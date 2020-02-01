@@ -837,11 +837,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.setEnableClientCommand(true);
 
         this.getAdventureSettings().update();
+        this.sendAttributes();
 
         this.sendPotionEffects(this);
         this.sendData(this);
         this.inventory.sendContents(this);
         this.inventory.sendArmorContents(this);
+        this.offhandInventory.sendContents(this);
 
         SetTimePacket setTimePacket = new SetTimePacket();
         setTimePacket.time = this.level.getTime();
@@ -1287,6 +1289,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.inventory.sendContents(this);
         this.inventory.sendContents(this.getViewers().values());
         this.inventory.sendHeldItem(this.hasSpawned.values());
+        this.offhandInventory.sendContents(this);
+        this.offhandInventory.sendContents(this.getViewers().values());
 
         this.inventory.sendCreativeContents();
         return true;
@@ -1315,7 +1319,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     public Item[] getDrops() {
-        if (!this.isCreative()) {
+        if (!this.isCreative() && !this.isSpectator()) {
             return super.getDrops();
         }
 
@@ -2347,15 +2351,24 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     MobEquipmentPacket mobEquipmentPacket = (MobEquipmentPacket) packet;
 
-                    Item item = this.inventory.getItem(mobEquipmentPacket.hotbarSlot);
+                    Inventory inv = this.getWindowById(mobEquipmentPacket.windowId);
 
-                    if (!item.equals(mobEquipmentPacket.item)) {
-                        this.server.getLogger().debug("Tried to equip " + mobEquipmentPacket.item + " but have " + item + " in target slot");
-                        this.inventory.sendContents(this);
+                    if (inv == null) {
+                        this.server.getLogger().debug("Player " + this.getName() + " has no open container with window ID " + mobEquipmentPacket.windowId);
                         return;
                     }
 
-                    this.inventory.equipItem(mobEquipmentPacket.hotbarSlot);
+                    Item item = inv.getItem(mobEquipmentPacket.hotbarSlot);
+
+                    if (!item.equals(mobEquipmentPacket.item)) {
+                        this.server.getLogger().debug("Tried to equip " + mobEquipmentPacket.item + " but have " + item + " in target slot");
+                        inv.sendContents(this);
+                        return;
+                    }
+
+                    if (inv instanceof PlayerInventory) {
+                        ((PlayerInventory) inv).equipItem(mobEquipmentPacket.hotbarSlot);
+                    }
 
                     this.setDataFlag(Player.DATA_FLAGS, Player.DATA_FLAG_ACTION, false);
 
@@ -2476,6 +2489,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.getAdventureSettings().update();
                             this.inventory.sendContents(this);
                             this.inventory.sendArmorContents(this);
+                            this.offhandInventory.sendContents(this);
 
                             this.spawnToAll();
                             this.scheduleUpdate();
@@ -3692,13 +3706,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         boolean showMessages = this.level.getGameRules().getBoolean(GameRule.SHOW_DEATH_MESSAGE);
-        String message = "death.attack.generic";
-
+        String message = "";
         List<String> params = new ArrayList<>();
-        params.add(this.getDisplayName());
-        if (showMessages) {
+        EntityDamageEvent cause = this.getLastDamageCause();
 
-            EntityDamageEvent cause = this.getLastDamageCause();
+        if (showMessages) {
+            params.add(this.getDisplayName());
 
             switch (cause == null ? DamageCause.CUSTOM : cause.getCause()) {
                 case ENTITY_ATTACK:
@@ -3734,18 +3747,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
                     break;
-                case SUICIDE:
-                    message = "death.attack.generic";
-                    break;
                 case VOID:
                     message = "death.attack.outOfWorld";
                     break;
                 case FALL:
-                    if (cause != null) {
-                        if (cause.getFinalDamage() > 2) {
-                            message = "death.fell.accident.generic";
-                            break;
-                        }
+                    if (cause.getFinalDamage() > 2) {
+                        message = "death.fell.accident.generic";
+                        break;
                     }
                     message = "death.attack.fall";
                     break;
@@ -3795,85 +3803,101 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             message = "death.attack.explosion.player";
                             params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : e.getName());
                             break;
+                        } else {
+                            message = "death.attack.explosion";
                         }
                     } else {
                         message = "death.attack.explosion";
                     }
                     break;
-
                 case MAGIC:
                     message = "death.attack.magic";
                     break;
-
+                case LIGHTNING:
+                    message = "death.attack.lightningBolt";
+                    break;
                 case HUNGER:
                     message = "death.attack.starve";
                     break;
-
-                case CUSTOM:
-                    break;
-
                 default:
+                    message = "death.attack.generic";
                     break;
-
             }
-        } else {
-            message = "";
-            params.clear();
         }
 
-        if (this.fishing != null) {
-            this.stopFishing(false);
-        }
-        
-        this.health = 0;
-        this.scheduleUpdate();
-
-        PlayerDeathEvent ev = new PlayerDeathEvent(this, this.getDrops(), new TranslationContainer(message, params.toArray(new String[0])), this.getExperienceLevel());
-
+        PlayerDeathEvent ev = new PlayerDeathEvent(this, this.getDrops(), new TranslationContainer(message, params.toArray(new String[0])), this.expLevel);
         ev.setKeepExperience(this.level.gameRules.getBoolean(GameRule.KEEP_INVENTORY));
         ev.setKeepInventory(ev.getKeepExperience());
         this.server.getPluginManager().callEvent(ev);
 
-        if (!ev.getKeepInventory() && this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
-            for (Item item : ev.getDrops()) {
-                this.level.dropItem(this, item, null, true, 40);
+        if (!ev.isCancelled()) {
+            if (cause != null && cause.getCause() != DamageCause.VOID) {
+                Inventory inventory = this.getOffhandInventory();
+                Item totem = Item.get(Item.TOTEM, 0, 1);
+                if (inventory.contains(totem) || ((PlayerInventory) (inventory = this.getInventory())).getItemInHand() instanceof ItemTotem) {
+                    inventory.removeItem(totem);
+                    this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_TOTEM);
+                    this.extinguish();
+                    this.setHealth(1);
+
+                    this.addEffect(Effect.getEffect(Effect.REGENERATION).setDuration(800).setAmplifier(2));
+                    this.addEffect(Effect.getEffect(Effect.ABSORPTION).setDuration(100).setAmplifier(2));
+
+                    EntityEventPacket pk = new EntityEventPacket();
+                    pk.eid = this.getId();
+                    pk.event = EntityEventPacket.CONSUME_TOTEM;
+                    this.dataPacket(pk);
+
+                    ev.setCancelled(true);
+                    return;
+                }
             }
 
-            if (this.inventory != null) {
-                this.inventory.clearAll();
+            if (this.fishing != null) {
+                this.stopFishing(false);
             }
-        }
 
-        if (!ev.getKeepExperience() && this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
-            if (this.isSurvival() || this.isAdventure()) {
-                int exp = ev.getExperience() * 7;
-                if (exp > 100) exp = 100;
-                this.getLevel().dropExpOrb(this, exp);
+            this.health = 0;
+            this.extinguish();
+            this.scheduleUpdate();
+
+            if (!ev.getKeepInventory() && this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
+                for (Item item : ev.getDrops()) {
+                    this.level.dropItem(this, item, null, true, 40);
+                }
+
+                if (this.inventory != null) {
+                    this.inventory.clearAll();
+                }
+                if (this.offhandInventory != null) {
+                    this.offhandInventory.clearAll();
+                }
             }
-            this.setExperience(0, 0);
+
+            if (!ev.getKeepExperience() && this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
+                if (this.isSurvival() || this.isAdventure()) {
+                    int exp = ev.getExperience() * 7;
+                    if (exp > 100) exp = 100;
+                    this.getLevel().dropExpOrb(this, exp);
+                }
+                this.setExperience(0, 0);
+            }
+
+            if (showMessages && !ev.getDeathMessage().toString().isEmpty()) {
+                this.server.broadcast(ev.getDeathMessage(), Server.BROADCAST_CHANNEL_USERS);
+            }
+
+            RespawnPacket pk = new RespawnPacket();
+            Position pos = this.getSpawn();
+            pk.x = (float) pos.x;
+            pk.y = (float) pos.y;
+            pk.z = (float) pos.z;
+            pk.respawnState = RespawnPacket.STATE_SEARCHING_FOR_SPAWN;
+
+            this.teleport(pos, null);
+
+            this.dataPacket(pk);
         }
-
-        if (showMessages && !ev.getDeathMessage().toString().isEmpty()) {
-            this.server.broadcast(ev.getDeathMessage(), Server.BROADCAST_CHANNEL_USERS);
-        }
-
-
-        RespawnPacket pk = new RespawnPacket();
-        Position pos = this.getSpawn();
-        pk.x = (float) pos.x;
-        pk.y = (float) pos.y;
-        pk.z = (float) pos.z;
-        pk.respawnState = RespawnPacket.STATE_SEARCHING_FOR_SPAWN;
-
-        //this is a dirty hack to prevent dying in a different level than the respawn point from breaking everything
-        if (this.level != pos.level)   {
-            this.teleport(new Location(pos.x, -100, pos.z, pos.level), null);
-            this.teleport(new Location(pos.x, pos.y, pos.z, pos.level), null);
-        }
-
-        this.extinguish();
-
-        this.dataPacket(pk);
     }
 
     @Override
@@ -4460,6 +4484,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.playerUIInventory = new PlayerUIInventory(this);
         this.addWindow(this.playerUIInventory, ContainerIds.UI, true);
+        this.addWindow(this.offhandInventory, ContainerIds.OFFHAND, true);
 
         this.craftingGrid = this.playerUIInventory.getCraftingGrid();
         this.addWindow(this.craftingGrid, ContainerIds.NONE);
@@ -4693,7 +4718,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         pk.port = port;
         this.dataPacket(pk);
         String message = "Transferred to " + hostName + ":" + port;
-        this.close(message, message, false);
+        this.close("", message, false);
     }
 
     public LoginChainData getLoginChainData() {
