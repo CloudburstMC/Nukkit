@@ -17,6 +17,7 @@ import it.unimi.dsi.fastutil.longs.Long2ByteMap;
 import it.unimi.dsi.fastutil.longs.Long2ByteOpenHashMap;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static cn.nukkit.block.BlockIds.AIR;
@@ -104,7 +105,7 @@ public abstract class BlockLiquid extends BlockTransparent {
     protected int getFlowDecay(Block block) {
         if (block.getId() != this.getId()) {
             if (block.isWaterlogged()) {
-                return block.getLevel().getBlock(block.getX(), block.getY(), block.getZ(), 1).getDamage();
+                return getFlowDecay(this.getLiquidBlock(block));
             }
             return -1;
         }
@@ -141,7 +142,7 @@ public abstract class BlockLiquid extends BlockTransparent {
                 if (!sideBlock.canBeFlooded()) {
                     continue;
                 }
-                blockDecay = this.getEffectiveFlowDecay(this.level.getBlock(sideBlock.getX(), sideBlock.getY() - 1, sideBlock.getZ()));
+                blockDecay = this.getEffectiveFlowDecay(this.getLiquidBlock(sideBlock.getX(), sideBlock.getY() - 1, sideBlock.getZ()));
                 if (blockDecay >= 0) {
                     int realDecay = blockDecay - (decay - 8);
                     vector.x += (sideBlock.x - this.x) * realDecay;
@@ -191,25 +192,27 @@ public abstract class BlockLiquid extends BlockTransparent {
             this.level.scheduleUpdate(this, this.tickRate());
             return 0;
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+            if (this.layer == 1)
+                log.debug("Updating liquid layer block: {}, {}, {}", this.getX(), this.getY(), this.getZ());
             int decay = this.getFlowDecay(this);
             int multiplier = this.getFlowDecayPerBlock();
             if (decay > 0) {
                 int smallestFlowDecay = -100;
                 this.adjacentSources = 0;
-                smallestFlowDecay = this.getSmallestFlowDecay(this.level.getBlock(this.x, this.y, this.z - 1), smallestFlowDecay);
-                smallestFlowDecay = this.getSmallestFlowDecay(this.level.getBlock(this.x, this.y, this.z + 1), smallestFlowDecay);
-                smallestFlowDecay = this.getSmallestFlowDecay(this.level.getBlock(this.x - 1, this.y, this.z), smallestFlowDecay);
-                smallestFlowDecay = this.getSmallestFlowDecay(this.level.getBlock(this.x + 1, this.y, this.z), smallestFlowDecay);
+                smallestFlowDecay = this.getSmallestFlowDecay(this.getLiquidBlock(this.x, this.y, this.z - 1), smallestFlowDecay);
+                smallestFlowDecay = this.getSmallestFlowDecay(this.getLiquidBlock(this.x, this.y, this.z + 1), smallestFlowDecay);
+                smallestFlowDecay = this.getSmallestFlowDecay(this.getLiquidBlock(this.x - 1, this.y, this.z), smallestFlowDecay);
+                smallestFlowDecay = this.getSmallestFlowDecay(this.getLiquidBlock(this.x + 1, this.y, this.z), smallestFlowDecay);
                 int newDecay = smallestFlowDecay + multiplier;
                 if (newDecay >= 8 || smallestFlowDecay < 0) {
                     newDecay = -1;
                 }
-                int topFlowDecay = this.getFlowDecay(this.level.getBlock(this.x, this.y + 1, this.z));
+                int topFlowDecay = this.getFlowDecay(this.getLiquidBlock(this.x, this.y + 1, this.z));
                 if (topFlowDecay >= 0) {
                     newDecay = topFlowDecay | 0x08;
                 }
                 if (this.adjacentSources >= 2 && this instanceof BlockWater) {
-                    Block bottomBlock = this.level.getBlock(this.x, this.y - 1, this.z);
+                    Block bottomBlock = this.getLiquidBlock(this.x, this.y - 1, this.z);
                     if (bottomBlock.isSolid()) {
                         newDecay = 0;
                     } else if (bottomBlock instanceof BlockWater && bottomBlock.getDamage() == 0) {
@@ -236,7 +239,7 @@ public abstract class BlockLiquid extends BlockTransparent {
                 }
             }
             if (decay >= 0) {
-                Block bottomBlock = this.level.getBlock(this.x, this.y - 1, this.z);
+                Block bottomBlock = this.getLevel().getBlock(this.x, this.y - 1, this.z);
                 this.flowIntoBlock(bottomBlock, decay | 0x08);
                 if (decay == 0 || !bottomBlock.canBeFlooded()) {
                     int adjacentDecay;
@@ -417,6 +420,21 @@ public abstract class BlockLiquid extends BlockTransparent {
     }
 
     public abstract Block getBlock(int meta);
+
+    @Nonnull
+    public Block getLiquidBlock(int x, int y, int z) {
+        Block b = getLevel().getBlock(x, y, z);
+        if (b.isWaterlogged()) {
+            return getLevel().getBlock(x, y, z, 1);
+        }
+        return b;
+    }
+
+    @Nonnull
+    public Block getLiquidBlock(BlockPosition pos) {
+        if (pos.getLayer() == 1) return getLevel().getBlock(pos);
+        return getLiquidBlock(pos.getX(), pos.getY(), pos.getZ());
+    }
 
     @Override
     public boolean canPassThrough() {

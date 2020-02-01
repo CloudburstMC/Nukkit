@@ -20,7 +20,7 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,7 +32,7 @@ import static cn.nukkit.block.BlockIds.*;
  * author: MagicDroidX
  * Nukkit Project
  */
-@Log4j2
+@Slf4j
 public abstract class Block extends BlockPosition implements Metadatable, Cloneable, AxisAlignedBB {
 
     protected final Identifier id;
@@ -730,6 +730,8 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
     }
 
     public boolean isWaterlogged() {
-        return getLevel().getBlock(this.getX(), this.getY(), this.getZ(), 1) instanceof BlockWater;
+        Block b = getLevel().getBlock(this.getX(), this.getY(), this.getZ(), 1);
+        return (b.getId() == WATER || b.getId() == FLOWING_WATER);
     }
+
 }

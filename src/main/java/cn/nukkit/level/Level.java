@@ -1066,6 +1066,43 @@ public class Level implements ChunkManager, Metadatable {
         if (!ev.isCancelled()) {
             normalUpdateQueue.add(ev.getBlock());
         }
+
+        // Liquid Layer //
+        this.server.getPluginManager().callEvent(
+                ev = new BlockUpdateEvent(this.getBlock(x, y - 1, z, 1)));
+        if (!ev.isCancelled()) {
+            normalUpdateQueue.add(ev.getBlock());
+        }
+
+        this.server.getPluginManager().callEvent(
+                ev = new BlockUpdateEvent(this.getBlock(x, y + 1, z, 1)));
+        if (!ev.isCancelled()) {
+            normalUpdateQueue.add(ev.getBlock());
+        }
+
+        this.server.getPluginManager().callEvent(
+                ev = new BlockUpdateEvent(this.getBlock(x - 1, y, z, 1)));
+        if (!ev.isCancelled()) {
+            normalUpdateQueue.add(ev.getBlock());
+        }
+
+        this.server.getPluginManager().callEvent(
+                ev = new BlockUpdateEvent(this.getBlock(x + 1, y, z, 1)));
+        if (!ev.isCancelled()) {
+            normalUpdateQueue.add(ev.getBlock());
+        }
+
+        this.server.getPluginManager().callEvent(
+                ev = new BlockUpdateEvent(this.getBlock(x, y, z - 1, 1)));
+        if (!ev.isCancelled()) {
+            normalUpdateQueue.add(ev.getBlock());
+        }
+
+        this.server.getPluginManager().callEvent(
+                ev = new BlockUpdateEvent(this.getBlock(x, y, z + 1, 1)));
+        if (!ev.isCancelled()) {
+            normalUpdateQueue.add(ev.getBlock());
+        }
     }
 
     public void scheduleUpdate(Block pos, int delay) {

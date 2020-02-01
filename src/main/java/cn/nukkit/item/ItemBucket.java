@@ -91,6 +91,9 @@ public class ItemBucket extends Item {
         Block targetBlock = Block.get(getBlockIdFromDamage(this.getDamage()));
 
         if (targetBlock instanceof BlockAir) {
+            if (target.isWaterlogged()) {
+                target = player.getLevel().getBlock(target.getX(), target.getY(), target.getZ(), 1);
+            }
             if (target instanceof BlockLiquid && target.getDamage() == 0) {
                 Item result = Item.get(BUCKET, this.getDamageFromIdentifier(target.getId()), 1);
                 PlayerBucketFillEvent ev;
@@ -102,6 +105,9 @@ public class ItemBucket extends Item {
                     // replaced with water that can flow.
                     for (BlockFace side : Plane.HORIZONTAL) {
                         Block b = target.getSide(side);
+                        if (b.isWaterlogged()) {
+                            b = player.getLevel().getBlock(b.getX(), b.getY(), b.getZ(), 1);
+                        }
                         if (b.getId() == WATER) {
                             level.setBlock(b, Block.get(FLOWING_WATER));
                         }
