@@ -225,7 +225,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
         Item fuel = this.inventory.getFuel();
         Item raw = this.inventory.getSmelting();
         Item product = this.inventory.getResult();
-        FurnaceRecipe smelt = this.server.getCraftingManager().matchFurnaceRecipe(raw);
+        FurnaceRecipe smelt = this.server.getCraftingManager().matchFurnaceRecipe(raw, BlockIds.FURNACE);
         boolean canSmelt = (smelt != null && raw.getCount() > 0 && ((smelt.getResult().equals(product, true)
                 && product.getCount() < product.getMaxStackSize()) || product.getId() == AIR));
 
@@ -301,9 +301,9 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
     public CompoundTag getSpawnCompound() {
         CompoundTag c = new CompoundTag()
                 .putString("id", BlockEntity.FURNACE)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z)
+                .putInt("x", this.x)
+                .putInt("y", this.y)
+                .putInt("z", this.z)
                 .putShort("BurnDuration", burnDuration)
                 .putShort("BurnTime", burnTime)
                 .putShort("CookTime", cookTime);
