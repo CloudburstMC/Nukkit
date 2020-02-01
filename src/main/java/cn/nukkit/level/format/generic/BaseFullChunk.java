@@ -395,7 +395,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public boolean unload() throws Exception {
-        return this.unload(true, true);
+        return this.unload(provider.getLevel().getAutoSave(), true);
     }
 
     @Override

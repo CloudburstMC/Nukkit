@@ -83,7 +83,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
     public void unloadChunks() {
         ObjectIterator<BaseFullChunk> iter = chunks.values().iterator();
         while (iter.hasNext()) {
-            iter.next().unload(true, false);
+            iter.next().unload(level.getAutoSave(), false);
             iter.remove();
         }
     }
