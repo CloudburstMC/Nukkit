@@ -192,8 +192,6 @@ public abstract class BlockLiquid extends BlockTransparent {
             this.level.scheduleUpdate(this, this.tickRate());
             return 0;
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
-            if (this.layer == 1)
-                log.debug("Updating liquid layer block: {}, {}, {}", this.getX(), this.getY(), this.getZ());
             int decay = this.getFlowDecay(this);
             int multiplier = this.getFlowDecayPerBlock();
             if (decay > 0) {
