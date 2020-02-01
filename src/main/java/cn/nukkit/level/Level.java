@@ -1029,15 +1029,20 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
-    public void updateAround(int posX, int posY, int posZ) {
+    public void updateAround(int x, int y, int z) {
+        updateAround(x, y, z, 0);
+    }
+
+    public void updateAround(int posX, int posY, int posZ, int layer) {
         BlockUpdateEvent ev;
         Block block;
 
         for (int x = posX - 1; x <= posX + 1; x++) {
             for (int y = posY - 1; y <= posY + 1; y++) {
                 for (int z = posZ - 1; z <= posZ + 1; z++) {
-                    for (int layer = 0; layer < 2; layer++) {
-                        block = this.getBlock(x, y, z, layer);
+                    for (int l = 0; l < 2; l++) {
+                        if (x == posX && y == posY && z == posZ && l == layer) continue;
+                        block = this.getBlock(x, y, z, l);
                         if (block.getId() != AIR) {
                             this.getServer().getPluginManager().callEvent(
                                     ev = new BlockUpdateEvent(block));
