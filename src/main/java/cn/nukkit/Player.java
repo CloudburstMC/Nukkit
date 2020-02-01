@@ -3856,9 +3856,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (!ev.isCancelled()) {
             if (cause != null && cause.getCause() != DamageCause.VOID) {
                 Inventory inventory = this.getOffhandInventory();
-                Item totem;
                 int slot = 0;
-                if ((totem = inventory.getItem(slot)).getId() == Item.TOTEM || (totem = (inventory = this.getInventory()).getItem(slot = ((PlayerInventory) inventory).getHeldItemIndex())).getId() == Item.TOTEM) {
+                if (inventory.getItem(slot).getId() == Item.TOTEM || (inventory = this.getInventory()).getItem(slot = ((PlayerInventory) inventory).getHeldItemIndex()).getId() == Item.TOTEM) {
                     this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_TOTEM);
                     this.extinguish();
                     this.setHealth(1);
@@ -3872,8 +3871,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     pk.event = EntityEventPacket.CONSUME_TOTEM;
                     this.dataPacket(pk);
 
-                    totem.setCount(totem.getCount() - 1); // plugins can give player totem with counts over max stack
-                    inventory.setItem(slot, totem);
+                    inventory.clear(slot);
                     ev.setCancelled(true);
                     return;
                 }
