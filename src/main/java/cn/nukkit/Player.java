@@ -867,16 +867,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         pos = respawnEvent.getRespawnPosition();
 
-        if (this.getHealth() <= 0) {
-            pos = this.getSpawn();
-
-            RespawnPacket respawnPacket = new RespawnPacket();
-            respawnPacket.x = (float) pos.x;
-            respawnPacket.y = (float) pos.y;
-            respawnPacket.z = (float) pos.z;
-            this.dataPacket(respawnPacket);
-        }
-
         this.sendPlayStatus(PlayStatusPacket.PLAYER_SPAWN);
 
         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(this,
@@ -942,6 +932,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (food.getLevel() != food.getMaxLevel()) {
             food.sendFoodLevel();
         }
+
+        if (this.getHealth() <= 0) {
+            this.respawn();
+        }
+
     }
 
     protected boolean orderChunks() {
@@ -1930,13 +1925,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.playedBefore = (nbt.getLong("lastPlayed") - nbt.getLong("firstPlayed")) > 1;
 
-        boolean alive = true;
 
         nbt.putString("NameTag", this.username);
-
-        if (0 >= nbt.getShort("Health")) {
-            alive = false;
-        }
 
         int exp = nbt.getInt("EXP");
         int expLevel = nbt.getInt("expLevel");
@@ -1956,7 +1946,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 .set(Type.NO_CLIP, isSpectator());
 
         Level level;
-        if ((level = this.server.getLevelByName(nbt.getString("Level"))) == null || !alive) {
+        if ((level = this.server.getLevelByName(nbt.getString("Level"))) == null) {
             this.setLevel(this.server.getDefaultLevel());
             nbt.putString("Level", this.level.getName());
             nbt.getList("Pos", DoubleTag.class)
@@ -2488,43 +2478,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 break;
                             }
 
-                            if (this.server.isHardcore()) {
-                                this.setBanned(true);
-                                break;
-                            }
-
-                            this.craftingType = CRAFTING_SMALL;
-                            this.resetCraftingGridType();
-
-                            PlayerRespawnEvent playerRespawnEvent = new PlayerRespawnEvent(this, this.getSpawn());
-                            this.server.getPluginManager().callEvent(playerRespawnEvent);
-
-                            Position respawnPos = playerRespawnEvent.getRespawnPosition();
-
-                            this.teleport(respawnPos, null);
-
-                            this.setSprinting(false);
-                            this.setSneaking(false);
-
-                            this.setDataProperty(new ShortEntityData(Player.DATA_AIR, 400), false);
-                            this.deadTicks = 0;
-                            this.noDamageTicks = 60;
-
-                            this.removeAllEffects();
-                            this.setHealth(this.getMaxHealth());
-                            this.getFoodData().setLevel(20, 20);
-
-                            this.sendData(this);
-
-                            this.setMovementSpeed(DEFAULT_SPEED);
-
-                            this.getAdventureSettings().update();
-                            this.inventory.sendContents(this);
-                            this.inventory.sendArmorContents(this);
-                            this.offhandInventory.sendContents(this);
-
-                            this.spawnToAll();
-                            this.scheduleUpdate();
+                            this.respawn();
                             break;
                         case PlayerActionPacket.ACTION_JUMP:
                             break packetswitch;
@@ -3926,10 +3880,48 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             pk.z = (float) pos.z;
             pk.respawnState = RespawnPacket.STATE_SEARCHING_FOR_SPAWN;
 
-            this.teleport(pos, null);
-
             this.dataPacket(pk);
         }
+    }
+
+    protected void respawn() {
+        if (this.server.isHardcore()) {
+            this.setBanned(true);
+            return;
+        }
+
+        this.craftingType = CRAFTING_SMALL;
+        this.resetCraftingGridType();
+
+        PlayerRespawnEvent playerRespawnEvent = new PlayerRespawnEvent(this, this.getSpawn());
+        this.server.getPluginManager().callEvent(playerRespawnEvent);
+
+        Position respawnPos = playerRespawnEvent.getRespawnPosition();
+
+
+        this.setSprinting(false);
+        this.setSneaking(false);
+
+        this.setDataProperty(new ShortEntityData(Player.DATA_AIR, 400), false);
+        this.deadTicks = 0;
+        this.noDamageTicks = 60;
+
+        this.removeAllEffects();
+        this.setHealth(this.getMaxHealth());
+        this.getFoodData().setLevel(20, 20);
+
+        this.sendData(this);
+
+        this.setMovementSpeed(DEFAULT_SPEED);
+
+        this.getAdventureSettings().update();
+        this.inventory.sendContents(this);
+        this.inventory.sendArmorContents(this);
+        this.offhandInventory.sendContents(this);
+
+        this.teleport(respawnPos, null);
+        this.spawnToAll();
+        this.scheduleUpdate();
     }
 
     @Override
