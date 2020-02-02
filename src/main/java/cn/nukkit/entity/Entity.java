@@ -906,10 +906,10 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void spawnTo(Player player) {
-        player.dataPacket(createAddEntityPacket());
 
-        if (!this.hasSpawned.containsKey(player.getLoaderId()) && player.usedChunks.containsKey(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()))) {
+        if (!this.hasSpawned.containsKey(player.getLoaderId()) && this.chunk != null && player.usedChunks.containsKey(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()))) {
             this.hasSpawned.put(player.getLoaderId(), player);
+            player.dataPacket(createAddEntityPacket());
         }
 
         if (this.riding != null) {
@@ -1063,6 +1063,7 @@ public abstract class Entity extends Location implements Metadatable {
 
         if (health < 1) {
             if (this.isAlive()) {
+                this.health = 0;
                 this.kill();
             }
         } else if (health <= this.getMaxHealth() || health < this.health) {
