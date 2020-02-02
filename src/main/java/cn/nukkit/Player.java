@@ -3859,6 +3859,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 if (offhandInventory.getItem(0).getId() == Item.TOTEM || playerInventory.getItemInHand().getId() == Item.TOTEM) {
                     this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_TOTEM);
                     this.extinguish();
+                    this.removeAllEffects();
                     this.setHealth(1);
 
                     this.addEffect(Effect.getEffect(Effect.REGENERATION).setDuration(800).setAmplifier(1));
