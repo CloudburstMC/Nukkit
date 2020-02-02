@@ -59,7 +59,7 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     public Item(int id, Integer meta, int count, String name) {
-        this.id = id & 0xffff;
+        this.id = id;
         if (meta != null && meta >= 0) {
             this.meta = meta & 0xffff;
         } else {
@@ -431,8 +431,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             }
         }
 
-        id = id & 0xFFFF;
-        if (b.length != 1) meta = Integer.valueOf(b[1]) & 0xFFFF;
+        if (b.length != 1) meta = Integer.valueOf(b[1]);
 
         return get(id, meta);
     }
