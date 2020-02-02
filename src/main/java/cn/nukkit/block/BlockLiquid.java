@@ -272,19 +272,11 @@ public abstract class BlockLiquid extends BlockTransparent {
             LiquidFlowEvent event = new LiquidFlowEvent(block, this, newFlowDecay);
             getLevel().getServer().getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
-                Block newBlock = getBlock(newFlowDecay);
-                BlockPosition pos = new BlockPosition(block.getX(), block.getY(), block.getZ(), block.getLevel());
-                if (this instanceof BlockWater && block.canWaterlog()) {
-                    block.onWaterlog();
-                    pos.setLayer(1);
-                } else {
-                    if (block.getId() != AIR) {
-                        this.getLevel().useBreakOn(block);
-                    }
-                    pos.setLayer(0);
+                if (block.getId() != AIR) {
+                    this.level.useBreakOn(block);
                 }
-                this.getLevel().setBlock(pos, newBlock, true, true);
-                this.getLevel().scheduleUpdate(newBlock, pos, this.tickRate());
+                this.level.setBlock(block, getBlock(newFlowDecay), true, true);
+                this.level.scheduleUpdate(block, this.tickRate());
             }
         }
     }

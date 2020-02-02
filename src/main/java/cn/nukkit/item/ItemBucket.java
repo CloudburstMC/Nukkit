@@ -88,9 +88,9 @@ public class ItemBucket extends Item {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, Vector3f clickPos) {
-        Block targetBlock = Block.get(getBlockIdFromDamage(this.getDamage()));
+        Block bucketContents = Block.get(getBlockIdFromDamage(this.getDamage()));
 
-        if (targetBlock instanceof BlockAir) {
+        if (bucketContents instanceof BlockAir) {
             if (target.isWaterlogged()) {
                 target = player.getLevel().getBlock(target.getX(), target.getY(), target.getZ(), 1);
             }
@@ -131,10 +131,10 @@ public class ItemBucket extends Item {
                     player.getInventory().sendContents(player);
                 }
             }
-        } else if (targetBlock instanceof BlockLiquid) {
+        } else if (bucketContents instanceof BlockLiquid) {
             Item result = Item.get(BUCKET, 0, 1);
             PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, block, face, this, result);
-            ev.setCancelled(!block.canBeFlooded());
+            ev.setCancelled(!block.canBeFlooded() && !block.canWaterlog());
 
             if (player.getLevel().getDimension() == Level.DIMENSION_NETHER && this.getDamage() != 10) {
                 ev.setCancelled(true);
@@ -143,7 +143,7 @@ public class ItemBucket extends Item {
             player.getServer().getPluginManager().callEvent(ev);
 
             if (!ev.isCancelled()) {
-                player.getLevel().setBlock(block, targetBlock, true, true);
+                bucketContents.place(this, block, target, face, clickPos, player);
                 if (player.isSurvival()) {
                     Item clone = this.clone();
                     clone.setCount(this.getCount() - 1);

@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.BlockPosition;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
@@ -22,10 +23,16 @@ public class BlockWater extends BlockLiquid {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        boolean ret = this.getLevel().setBlock(this, this, true, false);
-        this.getLevel().scheduleUpdate(this, this.tickRate());
+        BlockPosition pos = BlockPosition.from(block);
+        if (target.canWaterlog()) {
+            pos = BlockPosition.from(target);
+            pos.setLayer(1);
+            target.onWaterlog();
+        }
+        boolean success = target.getLevel().setBlock(pos, this, true, false);
+        if (success) this.getLevel().scheduleUpdate(this, this.tickRate());
 
-        return ret;
+        return success;
     }
 
     @Override

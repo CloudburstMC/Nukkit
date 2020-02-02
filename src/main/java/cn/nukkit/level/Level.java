@@ -1519,7 +1519,7 @@ public class Level implements ChunkManager, Metadatable {
                 }
                 block = ev.getBlock();
                 block.onUpdate(BLOCK_UPDATE_NORMAL);
-                this.updateAround(x, y, z);
+                this.updateAround(x, y, z, layer);
             }
         }
         return true;

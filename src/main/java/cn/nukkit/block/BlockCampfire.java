@@ -65,6 +65,11 @@ public class BlockCampfire extends BlockSolid implements Faceable {
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (!block.canBeReplaced()) return false;
         this.setDamage(player.getHorizontalFacing().getOpposite().getHorizontalIndex() & CAMPFIRE_FACING_MASK);
+        if ((block.getId() == BlockIds.WATER || block.getId() == BlockIds.FLOWING_WATER)
+                && block.getDamage() == 0) {
+            this.setDamage(this.getDamage() + CAMPFIRE_LIT_MASK);
+            getLevel().setBlock(block.getX(), block.getY(), block.getZ(), 1, block.clone(), true, false);
+        }
         if (getLevel().setBlock(block, this, true, true)) {
             CompoundTag tag = new CompoundTag()
                     .putString("id", BlockEntity.CAMPFIRE)
@@ -99,7 +104,7 @@ public class BlockCampfire extends BlockSolid implements Faceable {
 
     @Override
     public boolean canBeFlooded() {
-        return true;
+        return false;
     }
 
     @Override
@@ -162,5 +167,16 @@ public class BlockCampfire extends BlockSolid implements Faceable {
         } else if (!this.isLit() && entity.isOnFire()) {
             this.toggleFire();
         }
+    }
+
+    @Override
+    public int onUpdate(int type) {
+        if (this.isLit()
+                && (this.up().getId() == BlockIds.WATER
+                || this.up().getId() == BlockIds.FLOWING_WATER
+                || this.isWaterlogged())) {
+            this.toggleFire();
+        }
+        return super.onUpdate(type);
     }
 }
