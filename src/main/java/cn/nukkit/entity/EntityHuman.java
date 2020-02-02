@@ -33,6 +33,7 @@ public class EntityHuman extends EntityHumanType {
 
     protected UUID uuid;
     protected byte[] rawUUID;
+    protected float lastHeight = 1.8f;
 
     @Override
     public float getWidth() {
@@ -46,7 +47,13 @@ public class EntityHuman extends EntityHumanType {
 
     @Override
     public float getHeight() {
-        return 1.8f;
+        float height = this.isSwimming() || this.isGliding() ? 0.6f : 1.8f;
+        if(height != this.lastHeight) {
+            this.lastHeight = height;
+            this.dataProperties.putFloat(DATA_BOUNDING_BOX_HEIGHT, height);
+            this.sendData(this.getViewers().values().toArray(new Player[0]));
+        }
+        return height;
     }
 
     @Override
