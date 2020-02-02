@@ -3,6 +3,7 @@ package cn.nukkit.form.window;
 import cn.nukkit.form.element.ElementButton;
 import cn.nukkit.form.response.FormResponseSimple;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,8 @@ import java.util.List;
 public class FormWindowSimple extends FormWindow {
 
     @JsonInclude
-    private final String type = "form"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
+    @JsonProperty
+    protected final String type = "form"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
     private String title = "";
     private String content = "";
     private List<ElementButton> buttons;
