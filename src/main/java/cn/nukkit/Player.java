@@ -112,7 +112,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public static final int CRAFTING_ANVIL = 2;
     public static final int CRAFTING_ENCHANT = 3;
     public static final int CRAFTING_BEACON = 4;
-    public static final int CRAFTING_GRINDSTONE = 5; 
+    public static final int CRAFTING_GRINDSTONE = 5;
     public static final int CRAFTING_STONECUTTER = 6;
     public static final int CRAFTING_CARTOGRAPHY = 7;
 
@@ -253,8 +253,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected double lastRightClickTime = 0.0;
     protected Vector3 lastRightClickPos = null;
-    
-    protected int lastPlayerdLevelUpSoundTime = 0; 
+
+    protected int lastPlayerdLevelUpSoundTime = 0;
 
     public int getStartActionTick() {
         return startAction;
@@ -419,7 +419,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     public void spawnTo(Player player) {
-        if (this.spawned && player.spawned && this.isAlive() && player.isAlive() && player.getLevel() == this.level && player.canSee(this) && !this.isSpectator()) {
+        if (this.spawned && player.spawned && this.isAlive() && player.getLevel() == this.level && player.canSee(this) && !this.isSpectator()) {
             super.spawnTo(player);
         }
     }
@@ -847,6 +847,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.setEnableClientCommand(true);
 
         this.getAdventureSettings().update();
+        this.sendAttributes();
 
         this.sendPotionEffects(this);
         this.sendData(this);
@@ -865,16 +866,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.server.getPluginManager().callEvent(respawnEvent);
 
         pos = respawnEvent.getRespawnPosition();
-
-        if (this.getHealth() <= 0) {
-            pos = this.getSpawn();
-
-            RespawnPacket respawnPacket = new RespawnPacket();
-            respawnPacket.x = (float) pos.x;
-            respawnPacket.y = (float) pos.y;
-            respawnPacket.z = (float) pos.z;
-            this.dataPacket(respawnPacket);
-        }
 
         this.sendPlayStatus(PlayStatusPacket.PLAYER_SPAWN);
 
@@ -941,6 +932,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (food.getLevel() != food.getMaxLevel()) {
             food.sendFoodLevel();
         }
+
+        if (this.getHealth() <= 0) {
+            this.respawn();
+        }
+
     }
 
     protected boolean orderChunks() {
@@ -1959,13 +1955,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.playedBefore = (nbt.getLong("lastPlayed") - nbt.getLong("firstPlayed")) > 1;
 
-        boolean alive = true;
 
         nbt.putString("NameTag", this.username);
-
-        if (0 >= nbt.getShort("Health")) {
-            alive = false;
-        }
 
         int exp = nbt.getInt("EXP");
         int expLevel = nbt.getInt("expLevel");
@@ -1985,7 +1976,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 .set(Type.NO_CLIP, isSpectator());
 
         Level level;
-        if ((level = this.server.getLevelByName(nbt.getString("Level"))) == null || !alive) {
+        if ((level = this.server.getLevelByName(nbt.getString("Level"))) == null) {
             this.setLevel(this.server.getDefaultLevel());
             nbt.putString("Level", this.level.getName());
             Position spawnLocation = this.level.getSafeSpawn();
@@ -2052,6 +2043,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return;
         }
 
+        Level level = this.server.getLevelByName(this.namedTag.getString("SpawnLevel"));
+        if(level != null){
+            this.spawnPosition = new Position(this.namedTag.getInt("SpawnX"), this.namedTag.getInt("SpawnY"), this.namedTag.getInt("SpawnZ"), level);
+        }else{
+            this.spawnPosition = this.level.getSafeSpawn();
+        }
+
+        spawnPosition = this.getSpawn();
+
         StartGamePacket startGamePacket = new StartGamePacket();
         startGamePacket.entityUniqueId = this.id;
         startGamePacket.entityRuntimeId = this.id;
@@ -2065,9 +2065,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         startGamePacket.dimension = /*(byte) (this.level.getDimension() & 0xff)*/0;
         startGamePacket.worldGamemode = getClientFriendlyGamemode(this.gamemode);
         startGamePacket.difficulty = this.server.getDifficulty();
-        startGamePacket.spawnX = (int) this.x;
-        startGamePacket.spawnY = (int) this.y;
-        startGamePacket.spawnZ = (int) this.z;
+        startGamePacket.spawnX = spawnPosition.getFloorX();
+        startGamePacket.spawnY = spawnPosition.getFloorY();
+        startGamePacket.spawnZ = spawnPosition.getFloorZ();
         startGamePacket.hasAchievementsDisabled = true;
         startGamePacket.dayCycleStopTime = -1;
         startGamePacket.rainLevel = 0;
@@ -2086,7 +2086,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.level.sendTime(this);
 
-        this.setMovementSpeed(DEFAULT_SPEED);
         this.sendAttributes();
         this.setNameTagVisible(true);
         this.setNameTagAlwaysVisible(true);
@@ -2525,43 +2524,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 break;
                             }
 
-                            if (this.server.isHardcore()) {
-                                this.setBanned(true);
-                                break;
-                            }
-
-                            this.craftingType = CRAFTING_SMALL;
-                            this.resetCraftingGridType();
-
-                            PlayerRespawnEvent playerRespawnEvent = new PlayerRespawnEvent(this, this.getSpawn());
-                            this.server.getPluginManager().callEvent(playerRespawnEvent);
-
-                            Position respawnPos = playerRespawnEvent.getRespawnPosition();
-
-                            this.teleport(respawnPos, null);
-
-                            this.setSprinting(false);
-                            this.setSneaking(false);
-
-                            this.setDataProperty(new ShortEntityData(Player.DATA_AIR, 400), false);
-                            this.deadTicks = 0;
-                            this.noDamageTicks = 60;
-
-                            this.removeAllEffects();
-                            this.setHealth(this.getMaxHealth());
-                            this.getFoodData().setLevel(20, 20);
-
-                            this.sendData(this);
-
-                            this.setMovementSpeed(DEFAULT_SPEED);
-
-                            this.getAdventureSettings().update();
-                            this.inventory.sendContents(this);
-                            this.inventory.sendArmorContents(this);
-                            this.offhandInventory.sendContents(this);
-
-                            this.spawnToAll();
-                            this.scheduleUpdate();
+                            this.respawn();
                             break;
                         case PlayerActionPacket.ACTION_JUMP:
                             break packetswitch;
@@ -2686,9 +2649,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (!this.spawned || !this.isAlive()) {
                         break;
                     }
-    
+
                     InteractPacket interactPacket = (InteractPacket) packet;
-                    
+
                     if (interactPacket.action != InteractPacket.ACTION_MOUSEOVER || interactPacket.target != 0) {
                         this.craftingType = CRAFTING_SMALL;
                         //this.resetCraftingGridType();
@@ -3052,7 +3015,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         if (craftingType == CRAFTING_STONECUTTER && craftingTransaction != null
                                 && networkInventoryAction.sourceType == NetworkInventoryAction.SOURCE_TODO) {
                             networkInventoryAction.windowId = NetworkInventoryAction.SOURCE_TYPE_CRAFTING_RESULT;
-                        } else if (craftingType == CRAFTING_CARTOGRAPHY && craftingTransaction != null 
+                        } else if (craftingType == CRAFTING_CARTOGRAPHY && craftingTransaction != null
                                 && transactionPacket.actions.length == 2 && transactionPacket.actions[1].windowId == ContainerIds.UI
                                 && networkInventoryAction.inventorySlot == 0) {
                             int slot = transactionPacket.actions[1].inventorySlot;
@@ -3098,7 +3061,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         sound = Sound.BLOCK_CARTOGRAPHY_TABLE_USE;
                                         break;
                                 }
-                                
+
                                 if (sound != null) {
                                     Collection<Player> players = level.getChunkPlayers(getChunkX(), getChunkZ()).values();
                                     players.remove(this);
@@ -3842,13 +3805,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         boolean showMessages = this.level.getGameRules().getBoolean(GameRule.SHOW_DEATH_MESSAGE);
-        String message = "death.attack.generic";
-
+        String message = "";
         List<String> params = new ArrayList<>();
-        params.add(this.getDisplayName());
-        if (showMessages) {
+        EntityDamageEvent cause = this.getLastDamageCause();
 
-            EntityDamageEvent cause = this.getLastDamageCause();
+        if (showMessages) {
+            params.add(this.getDisplayName());
 
             switch (cause == null ? DamageCause.CUSTOM : cause.getCause()) {
                 case ENTITY_ATTACK:
@@ -3884,18 +3846,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
                     break;
-                case SUICIDE:
-                    message = "death.attack.generic";
-                    break;
                 case VOID:
                     message = "death.attack.outOfWorld";
                     break;
                 case FALL:
-                    if (cause != null) {
-                        if (cause.getFinalDamage() > 2) {
-                            message = "death.fell.accident.generic";
-                            break;
-                        }
+                    if (cause.getFinalDamage() > 2) {
+                        message = "death.fell.accident.generic";
+                        break;
                     }
                     message = "death.attack.fall";
                     break;
@@ -3945,88 +3902,145 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             message = "death.attack.explosion.player";
                             params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : e.getName());
                             break;
+                        } else {
+                            message = "death.attack.explosion";
                         }
                     } else {
                         message = "death.attack.explosion";
                     }
                     break;
-
                 case MAGIC:
                     message = "death.attack.magic";
                     break;
-
+                case LIGHTNING:
+                    message = "death.attack.lightningBolt";
+                    break;
                 case HUNGER:
                     message = "death.attack.starve";
                     break;
-
-                case CUSTOM:
-                    break;
-
                 default:
+                    message = "death.attack.generic";
                     break;
-
             }
-        } else {
-            message = "";
-            params.clear();
         }
 
-        if (this.fishing != null) {
-            this.stopFishing(false);
-        }
-        
-        this.health = 0;
-        this.scheduleUpdate();
-
-        PlayerDeathEvent ev = new PlayerDeathEvent(this, this.getDrops(), new TranslationContainer(message, params.toArray(new String[0])), this.getExperienceLevel());
-
+        PlayerDeathEvent ev = new PlayerDeathEvent(this, this.getDrops(), new TranslationContainer(message, params.toArray(new String[0])), this.expLevel);
         ev.setKeepExperience(this.level.gameRules.getBoolean(GameRule.KEEP_INVENTORY));
         ev.setKeepInventory(ev.getKeepExperience());
         this.server.getPluginManager().callEvent(ev);
 
-        if (!ev.getKeepInventory() && this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
-            for (Item item : ev.getDrops()) {
-                this.level.dropItem(this, item, null, true, 40);
+        if (!ev.isCancelled()) {
+            if (cause != null && cause.getCause() != DamageCause.VOID) {
+                PlayerOffhandInventory offhandInventory = this.getOffhandInventory();
+                PlayerInventory playerInventory = this.getInventory();
+                if (offhandInventory.getItem(0).getId() == Item.TOTEM || playerInventory.getItemInHand().getId() == Item.TOTEM) {
+                    this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_TOTEM);
+                    this.extinguish();
+                    this.removeAllEffects();
+                    this.setHealth(1);
+
+                    this.addEffect(Effect.getEffect(Effect.REGENERATION).setDuration(800).setAmplifier(1));
+                    this.addEffect(Effect.getEffect(Effect.FIRE_RESISTANCE).setDuration(800).setAmplifier(1));
+                    this.addEffect(Effect.getEffect(Effect.ABSORPTION).setDuration(100).setAmplifier(1));
+
+                    EntityEventPacket pk = new EntityEventPacket();
+                    pk.eid = this.getId();
+                    pk.event = EntityEventPacket.CONSUME_TOTEM;
+                    this.dataPacket(pk);
+
+                    if (offhandInventory.getItem(0).getId() == Item.TOTEM) {
+                        offhandInventory.clear(0);
+                    } else {
+                        playerInventory.clear(playerInventory.getHeldItemIndex());
+                    }
+                    ev.setCancelled(true);
+                    return;
+                }
             }
 
-            if (this.inventory != null) {
-                this.inventory.clearAll();
+            if (this.fishing != null) {
+                this.stopFishing(false);
             }
-            if (this.offhandInventory != null) {
-                this.offhandInventory.clearAll();
+
+            this.health = 0;
+            this.extinguish();
+            this.scheduleUpdate();
+
+            if (!ev.getKeepInventory() && this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
+                for (Item item : ev.getDrops()) {
+                    this.level.dropItem(this, item, null, true, 40);
+                }
+
+                if (this.inventory != null) {
+                    this.inventory.clearAll();
+                }
+                if (this.offhandInventory != null) {
+                    this.offhandInventory.clearAll();
+                }
             }
-        }
 
-        if (!ev.getKeepExperience() && this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
-            if (this.isSurvival() || this.isAdventure()) {
-                int exp = ev.getExperience() * 7;
-                if (exp > 100) exp = 100;
-                this.getLevel().dropExpOrb(this, exp);
+            if (!ev.getKeepExperience() && this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
+                if (this.isSurvival() || this.isAdventure()) {
+                    int exp = ev.getExperience() * 7;
+                    if (exp > 100) exp = 100;
+                    this.getLevel().dropExpOrb(this, exp);
+                }
+                this.setExperience(0, 0);
             }
-            this.setExperience(0, 0);
+
+            if (showMessages && !ev.getDeathMessage().toString().isEmpty()) {
+                this.server.broadcast(ev.getDeathMessage(), Server.BROADCAST_CHANNEL_USERS);
+            }
+
+            RespawnPacket pk = new RespawnPacket();
+            Position pos = this.getSpawn();
+            pk.x = (float) pos.x;
+            pk.y = (float) pos.y;
+            pk.z = (float) pos.z;
+            pk.respawnState = RespawnPacket.STATE_SEARCHING_FOR_SPAWN;
+
+            this.dataPacket(pk);
+        }
+    }
+
+    protected void respawn() {
+        if (this.server.isHardcore()) {
+            this.setBanned(true);
+            return;
         }
 
-        if (showMessages && !ev.getDeathMessage().toString().isEmpty()) {
-            this.server.broadcast(ev.getDeathMessage(), Server.BROADCAST_CHANNEL_USERS);
-        }
+        this.craftingType = CRAFTING_SMALL;
+        this.resetCraftingGridType();
+
+        PlayerRespawnEvent playerRespawnEvent = new PlayerRespawnEvent(this, this.getSpawn());
+        this.server.getPluginManager().callEvent(playerRespawnEvent);
+
+        Position respawnPos = playerRespawnEvent.getRespawnPosition();
 
 
-        RespawnPacket pk = new RespawnPacket();
-        Position pos = this.getSpawn();
-        pk.x = (float) pos.x;
-        pk.y = (float) pos.y;
-        pk.z = (float) pos.z;
-        pk.respawnState = RespawnPacket.STATE_SEARCHING_FOR_SPAWN;
+        this.setSprinting(false);
+        this.setSneaking(false);
 
-        //this is a dirty hack to prevent dying in a different level than the respawn point from breaking everything
-        if (this.level != pos.level)   {
-            this.teleport(new Location(pos.x, -100, pos.z, pos.level), null);
-            this.teleport(new Location(pos.x, pos.y, pos.z, pos.level), null);
-        }
+        this.setDataProperty(new ShortEntityData(Player.DATA_AIR, 400), false);
+        this.deadTicks = 0;
+        this.noDamageTicks = 60;
 
-        this.extinguish();
+        this.removeAllEffects();
+        this.setHealth(this.getMaxHealth());
+        this.getFoodData().setLevel(20, 20);
 
-        this.dataPacket(pk);
+        this.sendData(this);
+
+        this.setMovementSpeed(DEFAULT_SPEED);
+
+        this.getAdventureSettings().update();
+        this.inventory.sendContents(this);
+        this.inventory.sendArmorContents(this);
+        this.offhandInventory.sendContents(this);
+
+        this.teleport(respawnPos, null);
+        this.spawnToAll();
+        this.scheduleUpdate();
     }
 
     @Override
@@ -4066,11 +4080,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public int getExperienceLevel() {
         return this.expLevel;
     }
-    
+
     public void addExperience(int add) {
         addExperience(add, false);
     }
-    
+
     public void addExperience(int add, boolean playLevelUpSound) {
         if (add == 0) return;
         int now = this.getExperience();
@@ -4098,13 +4112,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public void setExperience(int exp) {
         setExperience(exp, this.getExperienceLevel());
     }
-    
+
     public void setExperience(int exp, int level) {
         setExperience(exp, level, false);
     }
 
     //todo something on performance, lots of exp orbs then lots of packets, could crash client
-    
+
     public void setExperience(int exp, int level, boolean playLevelUpSound) {
         int levelBefore = this.expLevel;
         this.exp = exp;
