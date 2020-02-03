@@ -25,7 +25,7 @@ public class EntitySplashPotion extends EntityProjectile implements SplashPotion
 
     public int potionId;
 
-    public EntitySplashPotion(EntityType<SplashPotion> type, Chunk chunk, CompoundTag nbt) {
+    public EntitySplashPotion(EntityType<?> type, Chunk chunk, CompoundTag nbt) {
         super(type, chunk, nbt);
     }
 
@@ -82,7 +82,7 @@ public class EntitySplashPotion extends EntityProjectile implements SplashPotion
         this.splash(entity);
     }
 
-    private void splash(Entity collidedWith) {
+    protected void splash(Entity collidedWith) {
         Potion potion = Potion.getPotion(this.potionId);
         PotionCollideEvent event = new PotionCollideEvent(potion, this);
         this.server.getPluginManager().callEvent(event);
