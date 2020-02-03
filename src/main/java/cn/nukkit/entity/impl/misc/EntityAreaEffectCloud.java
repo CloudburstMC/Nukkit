@@ -1,4 +1,4 @@
-package cn.nukkit.entity.item;
+package cn.nukkit.entity.impl.misc;
 
 import java.util.ArrayList;
 import java.util.List;

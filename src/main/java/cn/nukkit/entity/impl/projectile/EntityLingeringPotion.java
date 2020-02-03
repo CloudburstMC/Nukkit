@@ -1,6 +1,7 @@
-package cn.nukkit.entity.item;
+package cn.nukkit.entity.impl.projectile;
 
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.impl.misc.EntityAreaEffectCloud;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
