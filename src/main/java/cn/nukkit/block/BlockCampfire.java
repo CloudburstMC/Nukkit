@@ -78,6 +78,10 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        if (down().getId() == CAMPFIRE_BLOCK) {
+            return false;
+        }
+
         this.setDamage(player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0);
         Block layer1 = block.getLevelBlockAtLayer(1);
         if (block instanceof BlockWater || block instanceof BlockIceFrosted || layer1 instanceof BlockWater || layer1 instanceof BlockIceFrosted) {
