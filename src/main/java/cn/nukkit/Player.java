@@ -1388,7 +1388,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected void checkBlockCollision() {
         boolean portal = false;
         boolean scaffolding = false;
-        boolean overScaffolding = false;
         for (Block block : this.getCollisionBlocks()) {
             if (block.getId() == Block.NETHER_PORTAL) {
                 portal = true;
@@ -1396,16 +1395,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 scaffolding = true;
             }
 
-            if (block.getFloorY() == getFloorY() && block.down().getId() == BlockID.SCAFFOLDING) {
-                overScaffolding = true;
-            }
-
             block.onEntityCollide(this);
             block.getLevelBlockAtLayer(1).onEntityCollide(this);
         }
 
         setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_IN_SCAFFOLDING, scaffolding);
-        setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_OVER_SCAFFOLDING, overScaffolding);
+        setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_OVER_SCAFFOLDING, getLevelBlock().down().getId() == BlockID.SCAFFOLDING);
 
         if (portal) {
             if (this.isCreative() && this.inPortalTicks < 80) {
