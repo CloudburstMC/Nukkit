@@ -9,15 +9,15 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 
-public class EntityPotionLingering extends EntityPotion {
+public class EntityLingeringPotion extends EntityPotion {
     
     public static final int NETWORK_ID = 101;
     
-    public EntityPotionLingering(FullChunk chunk, CompoundTag nbt) {
+    public EntityLingeringPotion(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
     
-    public EntityPotionLingering(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+    public EntityLingeringPotion(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
         super(chunk, nbt, shootingEntity);
     }
 
