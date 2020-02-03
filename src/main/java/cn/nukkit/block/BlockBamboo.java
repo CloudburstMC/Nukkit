@@ -98,7 +98,7 @@ public class BlockBamboo extends BlockTransparentMeta {
         Block down = down();
         int downId = down.getId();
         if (downId != BAMBOO && downId != BAMBOO_SAPLING) {
-            BlockBambooSampling sampling = new BlockBambooSampling();
+            BlockBambooSapling sampling = new BlockBambooSapling();
             sampling.x = x;
             sampling.y = y;
             sampling.z = z;
