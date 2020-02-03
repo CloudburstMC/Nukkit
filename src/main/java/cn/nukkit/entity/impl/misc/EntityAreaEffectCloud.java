@@ -301,7 +301,7 @@ public class EntityAreaEffectCloud extends BaseEntity implements AreaEffectCloud
             radius += getRadiusPerTick() * tickDiff;
             if ((nextApply -= tickDiff) <= 0) {
                 nextApply = reapplicationDelay + 10;
-                Set<Entity> collidingEntities = level.getCollidingEntities(getBoundingBox());
+                Set<Entity> collidingEntities = level.getCollidingEntities(getBoundingBox(), this);
                 if (collidingEntities.size() > 1) {
                     radius += radiusOnUse;
                     radiusOnUse /= 2;
@@ -347,7 +347,12 @@ public class EntityAreaEffectCloud extends BaseEntity implements AreaEffectCloud
         
         return true;
     }
-    
+
+    @Override
+    public boolean canCollideWith(Entity entity) {
+        return entity instanceof EntityLiving;
+    }
+
     @Override
     public float getHeight() {
         return 0.3F + (getRadius() / 2F);
