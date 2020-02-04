@@ -308,24 +308,31 @@ public class EntityAreaEffectCloud extends BaseEntity implements AreaEffectCloud
                     setDuration(getDuration() + durationOnUse);
 
                     for (Entity collidingEntity : collidingEntities) {
-                        if (collidingEntity == this || !(collidingEntity instanceof EntityLiving)) continue;
+                        if (collidingEntity == this || !(collidingEntity instanceof EntityLiving)) {
+                            continue;
+                        }
 
-                            for (Effect effect : cloudEffects) {
-                                if (effect instanceof InstantEffect) {
-                                    boolean damage = false;
-                                    if (effect.getId() == Effect.HARMING) damage = true;
-                                    if (collidingEntity.isUndead()) damage = !damage; // invert effect if undead
-
-                                    if (damage)
-                                        collidingEntity.attack(new EntityDamageByEntityEvent(this, collidingEntity, EntityDamageEvent.DamageCause.MAGIC, (float) (0.5 * (double) (6 << (effect.getAmplifier() + 1)))));
-                                    else
-                                        collidingEntity.heal(new EntityRegainHealthEvent(collidingEntity, (float) (0.5 * (double) (4 << (effect.getAmplifier() + 1))), EntityRegainHealthEvent.CAUSE_MAGIC));
-
-                                    continue;
+                        for (Effect effect : cloudEffects) {
+                            if (effect instanceof InstantEffect) {
+                                boolean damage = false;
+                                if (effect.getId() == Effect.HARMING){
+                                    damage = true;
+                                }
+                                if (collidingEntity.isUndead()){
+                                    damage = !damage; // invert effect if undead
                                 }
 
-                                collidingEntity.addEffect(effect);
+                                if (damage) {
+                                    collidingEntity.attack(new EntityDamageByEntityEvent(this, collidingEntity, EntityDamageEvent.DamageCause.MAGIC, (float) (0.5 * (double) (6 << (effect.getAmplifier() + 1)))));
+                                } else {
+                                    collidingEntity.heal(new EntityRegainHealthEvent(collidingEntity, (float) (0.5 * (double) (4 << (effect.getAmplifier() + 1))), EntityRegainHealthEvent.CAUSE_MAGIC));
+                                }
+
+                                continue;
                             }
+
+                            collidingEntity.addEffect(effect);
+                        }
                     }
                 }
             }
