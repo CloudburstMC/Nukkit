@@ -34,4 +34,10 @@ public class EntityWitherSkeleton extends EntityHostile implements WitherSkeleto
     public String getName() {
         return "WitherSkeleton";
     }
+
+    @Override
+    public boolean isUndead() {
+        return true;
+    }
+
 }

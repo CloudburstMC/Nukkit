@@ -286,8 +286,6 @@ public class EntityAreaEffectCloud extends BaseEntity implements AreaEffectCloud
         this.timing.startTiming();
         
         super.onUpdate(currentTick);
-        
-        boolean sendRadius = age % 10 == 0;
     
         int age = this.age;
         float radius = getRadius();
@@ -301,28 +299,39 @@ public class EntityAreaEffectCloud extends BaseEntity implements AreaEffectCloud
             radius += getRadiusPerTick() * tickDiff;
             if ((nextApply -= tickDiff) <= 0) {
                 nextApply = reapplicationDelay + 10;
+
                 Set<Entity> collidingEntities = level.getCollidingEntities(getBoundingBox());
-                if (collidingEntities.size() > 1) {
+                if (!collidingEntities.isEmpty()) {
                     radius += radiusOnUse;
                     radiusOnUse /= 2;
-                    sendRadius = true;
+
                     setDuration(getDuration() + durationOnUse);
+
                     for (Entity collidingEntity : collidingEntities) {
-                        if (collidingEntity != this && collidingEntity instanceof EntityLiving) {
-                            for (Effect effect : cloudEffects) {
-                                if (effect instanceof InstantEffect) {
-                                    switch (effect.getId()) {
-                                        case Effect.HEALING:
-                                            collidingEntity.heal(new EntityRegainHealthEvent(collidingEntity, (float) (0.5 * (double) (4 << (effect.getAmplifier() + 1))), EntityRegainHealthEvent.CAUSE_MAGIC));
-                                            break;
-                                        case Effect.HARMING:
-                                            collidingEntity.attack(new EntityDamageByEntityEvent(this, collidingEntity, EntityDamageEvent.DamageCause.MAGIC, (float) (0.5 * (double) (6 << (effect.getAmplifier() + 1)))));
-                                            break;
-                                    }
-                                } else {
-                                    collidingEntity.addEffect(effect.clone());
+                        if (collidingEntity == this || !(collidingEntity instanceof EntityLiving)) {
+                            continue;
+                        }
+
+                        for (Effect effect : cloudEffects) {
+                            if (effect instanceof InstantEffect) {
+                                boolean damage = false;
+                                if (effect.getId() == Effect.HARMING){
+                                    damage = true;
                                 }
+                                if (collidingEntity.isUndead()){
+                                    damage = !damage; // invert effect if undead
+                                }
+
+                                if (damage) {
+                                    collidingEntity.attack(new EntityDamageByEntityEvent(this, collidingEntity, EntityDamageEvent.DamageCause.MAGIC, (float) (0.5 * (double) (6 << (effect.getAmplifier() + 1)))));
+                                } else {
+                                    collidingEntity.heal(new EntityRegainHealthEvent(collidingEntity, (float) (0.5 * (double) (4 << (effect.getAmplifier() + 1))), EntityRegainHealthEvent.CAUSE_MAGIC));
+                                }
+
+                                continue;
                             }
+
+                            collidingEntity.addEffect(effect);
                         }
                     }
                 }
