@@ -1,4 +1,4 @@
-name: Java CI
+name: PowerNukkit v1.X
 
 on: [push,pull_request]
 
