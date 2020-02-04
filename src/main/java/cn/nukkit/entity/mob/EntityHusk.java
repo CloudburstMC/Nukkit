@@ -40,4 +40,9 @@ public class EntityHusk extends EntityMob implements EntitySmite {
     public String getName() {
         return "Husk";
     }
+
+    @Override
+    public boolean isUndead() {
+        return true;
+    }
 }

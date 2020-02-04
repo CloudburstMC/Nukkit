@@ -40,4 +40,9 @@ public class EntityWither extends EntityMob implements EntitySmite {
     public String getName() {
         return "Wither";
     }
+
+    @Override
+    public boolean isUndead() {
+        return true;
+    }
 }

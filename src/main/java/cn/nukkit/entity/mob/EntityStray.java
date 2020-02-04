@@ -46,4 +46,9 @@ public class EntityStray extends EntityMob implements EntitySmite {
     public Item[] getDrops() {
         return new Item[]{Item.get(Item.BONE, Item.ARROW)};
     }
+
+    @Override
+    public boolean isUndead() {
+        return true;
+    }
 }

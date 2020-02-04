@@ -46,4 +46,9 @@ public class EntityPhantom extends EntityMob implements EntitySmite {
     public Item[] getDrops() {
         return new Item[]{Item.get(470)};
     }
+
+    @Override
+    public boolean isUndead() {
+        return true;
+    }
 }
