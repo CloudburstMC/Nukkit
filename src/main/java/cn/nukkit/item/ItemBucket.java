@@ -144,12 +144,11 @@ public class ItemBucket extends Item {
             player.getServer().getPluginManager().callEvent(ev);
 
             if (!ev.isCancelled()) {
-                BlockPosition pos = BlockPosition.from(target);
+                BlockPosition pos = BlockPosition.from(block);
                 if ((bucketContents.getId() == FLOWING_WATER || bucketContents.getId() == WATER)
                         && target.canWaterlog()) {
+                    pos = BlockPosition.from(target);
                     pos.setLayer(1);
-                } else {
-                    pos = BlockPosition.from(block);
                 }
                 target.getLevel().setBlock(pos, bucketContents, true, false);
                 bucketContents.getLevel().scheduleUpdate(bucketContents, bucketContents.tickRate());

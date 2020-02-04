@@ -58,7 +58,8 @@ public class BlockCampfire extends BlockSolid implements Faceable {
         if (!this.isLit() && isWaterlogged()) return;
         this.setDamage(this.getDamage() ^ CAMPFIRE_LIT_MASK);
         getLevel().setBlockDataAt(this.x, this.y, this.z, this.getDamage());
-        getLevel().getBlockEntity(this).scheduleUpdate();
+        BlockEntityCampfire cf = (BlockEntityCampfire) getLevel().getBlockEntity(this);
+        if (cf != null) getLevel().getBlockEntity(this).scheduleUpdate();
     }
 
     @Override
@@ -70,6 +71,7 @@ public class BlockCampfire extends BlockSolid implements Faceable {
             this.setDamage(this.getDamage() + CAMPFIRE_LIT_MASK);
             getLevel().setBlock(block.getX(), block.getY(), block.getZ(), 1, block.clone(), true, false);
         }
+
         if (getLevel().setBlock(block, this, true, true)) {
             CompoundTag tag = new CompoundTag()
                     .putString("id", BlockEntity.CAMPFIRE)
@@ -112,7 +114,6 @@ public class BlockCampfire extends BlockSolid implements Faceable {
         if (this.isLit()) {
             this.toggleFire();
         }
-        ((BlockEntityCampfire) getLevel().getBlockEntity(this)).clearItems();
     }
 
     @Override
