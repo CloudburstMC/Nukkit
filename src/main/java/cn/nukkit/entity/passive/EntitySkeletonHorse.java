@@ -41,4 +41,9 @@ public class EntitySkeletonHorse extends EntityAnimal implements EntitySmite {
     public Item[] getDrops() {
         return new Item[]{Item.get(Item.BONE)};
     }
+
+    @Override
+    public boolean isUndead() {
+        return true;
+    }
 }

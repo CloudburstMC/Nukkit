@@ -2403,6 +2403,10 @@ public abstract class Entity extends Location implements Metadatable {
         return server;
     }
 
+    public boolean isUndead() {
+        return false;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

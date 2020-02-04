@@ -39,4 +39,9 @@ public class EntityWitherSkeleton extends EntityMob implements EntitySmite {
     public String getName() {
         return "WitherSkeleton";
     }
+
+    @Override
+    public boolean isUndead() {
+        return true;
+    }
 }

@@ -12,6 +12,7 @@ Click the link above to see the future.
 ### Added
 - This change log file
 - [#108] EntityMoveByPistonEvent
+- [#140] `isUndead()` method to the entities
 
 ### Fixes
 - [#129] A typo in the BlockBambooSapling class name **(breaking change)**
@@ -25,6 +26,8 @@ Click the link above to see the future.
 - [#129] Fixes a turtle_egg placement validation
 - [#129] Campfire can no longer be placed over an other campfire directly
 - [#129] The sound that campfire does when it extinguishes
+- [#140] Instant damage and instant health are now inverted when applied to undead entities
+- [#140] A collision detection issue on Area Effect Cloud which could make it wears off way quicker than it should
 
 ### Changed
 - Make BlockLectern implements Faceable
@@ -160,3 +163,4 @@ Click the link above to see the future.
 [#102]: https://github.com/GameModsBR/PowerNukkit/pull/102
 [#108]: https://github.com/GameModsBR/PowerNukkit/pull/108
 [#129]: https://github.com/GameModsBR/PowerNukkit/pull/108
+[#140]: https://github.com/GameModsBR/PowerNukkit/pull/108
