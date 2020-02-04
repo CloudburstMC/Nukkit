@@ -292,7 +292,7 @@ public class BlockTurtleEgg extends BlockFlowable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (!isValidSupport(block.down())) {
+        if (!isValidSupport(block.down(1, 0))) {
             return false;
         }
 

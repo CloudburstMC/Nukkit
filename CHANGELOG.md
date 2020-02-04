@@ -14,12 +14,17 @@ Click the link above to see the future.
 - [#108] EntityMoveByPistonEvent
 
 ### Fixes
+- [#129] A typo in the BlockBambooSapling class name **(breaking change)**
 - [#102] Leaves decay calculation
 - [#87] Arrows in offhand are black in the first person view
 - [#46] checked if ProjectileHitEvent is cancelled before the action execution
 - [#108] Lever sounds
 - [#108] Incorrect sponge particles
 - [#12] Wrong redstone signal from levers
+- [#129] You can now shift to climb down while you are in the edges of a scaffold
+- [#129] Fixes a turtle_egg placement validation
+- [#129] Campfire can no longer be placed over an other campfire directly
+- [#129] The sound that campfire does when it extinguishes
 
 ### Changed
 - Make BlockLectern implements Faceable
@@ -154,3 +159,4 @@ Click the link above to see the future.
 [#87]: https://github.com/GameModsBR/PowerNukkit/issues/87
 [#102]: https://github.com/GameModsBR/PowerNukkit/pull/102
 [#108]: https://github.com/GameModsBR/PowerNukkit/pull/108
+[#129]: https://github.com/GameModsBR/PowerNukkit/pull/108

@@ -12,13 +12,13 @@ import cn.nukkit.utils.BlockColor;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class BlockBambooSampling extends BlockFlowable {
+public class BlockBambooSapling extends BlockFlowable {
 
-    public BlockBambooSampling() {
+    public BlockBambooSapling() {
         this(0);
     }
 
-    public BlockBambooSampling(int meta) {
+    public BlockBambooSapling(int meta) {
         super(meta);
     }
 
@@ -29,7 +29,7 @@ public class BlockBambooSampling extends BlockFlowable {
 
     @Override
     public String getName() {
-        return "Bamboo Sampling";
+        return "Bamboo Sapling";
     }
 
     @Override
@@ -71,6 +71,10 @@ public class BlockBambooSampling extends BlockFlowable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (isSupportInvalid()) {
+            return false;
+        }
+
+        if(this.getLevelBlock() instanceof BlockLiquid || this.getLevelBlockAtLayer(1) instanceof BlockLiquid) {
             return false;
         }
 
