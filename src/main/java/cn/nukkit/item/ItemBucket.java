@@ -134,8 +134,14 @@ public class ItemBucket extends Item {
             }
         } else if (bucketContents instanceof BlockLiquid) {
             Item result = Item.get(BUCKET, 0, 1);
-            PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, block, face, this, result);
-            ev.setCancelled(!block.canBeFlooded() && !block.canWaterlog());
+            Block emptyTarget = block;
+            if (target.canWaterlog() && bucketContents.getId() == FLOWING_WATER) {
+                emptyTarget = target;
+            }
+            PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, emptyTarget, face, this, result);
+            if (!emptyTarget.canBeFlooded() && !emptyTarget.canWaterlog()) {
+                ev.setCancelled(true);
+            }
 
             if (player.getLevel().getDimension() == Level.DIMENSION_NETHER && this.getDamage() != 10) {
                 ev.setCancelled(true);
@@ -144,13 +150,11 @@ public class ItemBucket extends Item {
             player.getServer().getPluginManager().callEvent(ev);
 
             if (!ev.isCancelled()) {
-                BlockPosition pos = BlockPosition.from(block);
-                if ((bucketContents.getId() == FLOWING_WATER || bucketContents.getId() == WATER)
-                        && target.canWaterlog()) {
-                    pos = BlockPosition.from(target);
+                BlockPosition pos = BlockPosition.from(emptyTarget);
+                if (emptyTarget.canWaterlog()) {
                     pos.setLayer(1);
                 }
-                target.getLevel().setBlock(pos, bucketContents, true, false);
+                target.getLevel().setBlock(pos, bucketContents, false, false);
                 bucketContents.getLevel().scheduleUpdate(bucketContents, bucketContents.tickRate());
                 if (player.isSurvival()) {
                     Item clone = this.clone();
