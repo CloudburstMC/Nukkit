@@ -7,6 +7,7 @@ import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
+import cn.nukkit.level.BlockPosition;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
@@ -143,7 +144,15 @@ public class ItemBucket extends Item {
             player.getServer().getPluginManager().callEvent(ev);
 
             if (!ev.isCancelled()) {
-                bucketContents.place(this, block, target, face, clickPos, player);
+                BlockPosition pos = BlockPosition.from(target);
+                if ((bucketContents.getId() == FLOWING_WATER || bucketContents.getId() == WATER)
+                        && target.canWaterlog()) {
+                    pos.setLayer(1);
+                } else {
+                    pos = BlockPosition.from(block);
+                }
+                target.getLevel().setBlock(pos, bucketContents, true, false);
+                bucketContents.getLevel().scheduleUpdate(bucketContents, bucketContents.tickRate());
                 if (player.isSurvival()) {
                     Item clone = this.clone();
                     clone.setCount(this.getCount() - 1);
