@@ -35,4 +35,10 @@ public class EntityWither extends EntityHostile implements Wither, Smiteable {
     public String getName() {
         return "Wither";
     }
+
+    @Override
+    public boolean isUndead() {
+        return true;
+    }
+
 }
