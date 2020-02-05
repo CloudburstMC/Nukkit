@@ -24,7 +24,12 @@ public class BlockBlueIce extends BlockIcePacked {
     public double getHardness() {
         return 2.8;
     }
-    
+
+    @Override
+    public double getResistance() {
+        return 14;
+    }
+
     @Override
     public boolean isTransparent() {
         return false;
