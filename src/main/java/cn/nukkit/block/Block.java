@@ -130,6 +130,10 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
         return this.getLevel().setBlock(this, Block.get(AIR), true, true);
     }
 
+    public boolean onBreak(Item item, Player player) {
+        return onBreak(item);
+    }
+
     public int onUpdate(int type) {
         return 0;
     }
