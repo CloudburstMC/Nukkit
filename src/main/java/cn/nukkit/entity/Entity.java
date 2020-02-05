@@ -241,6 +241,10 @@ public interface Entity extends Metadatable {
 
     void setOnGround(boolean onGround);
 
+    default boolean isUndead() {
+        return false;
+    }
+
     void kill();
 
     default boolean teleport(Vector3f pos) {
