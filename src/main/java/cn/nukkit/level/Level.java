@@ -145,6 +145,8 @@ public class Level implements ChunkManager, Metadatable {
 
     private final Server server;
 
+    private int sendTimeTicker = 0;
+    
     private final int levelId;
 
     private LevelProvider provider;
@@ -726,12 +728,6 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void sendTime(Player... players) {
-        /*if (this.stopTime) { //TODO
-            SetTimePacket pk0 = new SetTimePacket();
-            pk0.time = (int) this.time;
-            player.dataPacket(pk0);
-        }*/
-
         SetTimePacket pk = new SetTimePacket();
         pk.time = (int) this.time;
 
@@ -752,8 +748,9 @@ public class Level implements ChunkManager, Metadatable {
         updateBlockLight(lightQueue);
         this.checkTime();
 
-        if (stopTime) {
+        if(++this.sendTimeTicker == 200){
             this.sendTime();
+            this.sendTimeTicker = 0;
         }
 
         // Tick Weather
