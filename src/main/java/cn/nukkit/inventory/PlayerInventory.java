@@ -328,6 +328,7 @@ public class PlayerInventory extends BaseInventory {
         for (int index = 0; index < limit; ++index) {
             this.clear(index);
         }
+        getHolder().getOffhandInventory().clearAll();
     }
 
     public void sendArmorContents(Player player) {
