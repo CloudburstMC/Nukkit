@@ -508,6 +508,12 @@ public class BlockRegistry implements Registry {
 
         this.factoryMap.put(CAMPFIRE, BlockCampfire::new);
 
+        this.factoryMap.put(ACACIA_TRAPDOOR, BlockTrapdoorAcacia::new); //400
+        this.factoryMap.put(BIRCH_TRAPDOOR, BlockTrapdoorBirch::new); //401
+        this.factoryMap.put(DARK_OAK_TRAPDOOR, BlockTrapdooDarkOak::new); //402
+        this.factoryMap.put(JUNGLE_TRAPDOOR, BlockTrapdoorJungle::new); //403
+        this.factoryMap.put(SPRUCE_TRAPDOOR, BlockTrapdoorSpruce::new); //404
+
         this.factoryMap.put(GRANITE_STAIRS, BlockStairsGranite::new); //424
         this.factoryMap.put(DIORITE_STAIRS, BlockStairsDiorite::new); //425
         this.factoryMap.put(ANDESITE_STAIRS, BlockStairsAndesite::new); //426
