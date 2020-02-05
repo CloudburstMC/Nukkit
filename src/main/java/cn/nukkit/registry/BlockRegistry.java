@@ -503,7 +503,7 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(DARK_PRISMARINE_STAIRS, BlockStairsDarkPrismarine::new); //258
 
         this.factoryMap.put(PRISMARINE_BRICKS_STAIRS, BlockStairsPrismarineBricks::new); //259
-
+        this.factoryMap.put(DRIED_KELP_BLOCK,BlockDriedKelp::new); //UNK
         this.factoryMap.put(SPRUCE_STANDING_SIGN, BlockSignPost::new);
 
         this.factoryMap.put(SMOOTH_STONE, BlockSmoothStone::new); // 437
