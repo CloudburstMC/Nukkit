@@ -144,8 +144,6 @@ public class Level implements ChunkManager, Metadatable {
     private boolean cacheChunks = false;
 
     private final Server server;
-
-    private int sendTimeTicker = 0;
     
     private final int levelId;
 
@@ -748,9 +746,8 @@ public class Level implements ChunkManager, Metadatable {
         updateBlockLight(lightQueue);
         this.checkTime();
 
-        if(++this.sendTimeTicker == 200){
+        if(currentTick % 20 == 0){
             this.sendTime();
-            this.sendTimeTicker = 0;
         }
 
         // Tick Weather
