@@ -39,7 +39,7 @@ public class BlockBlueIce extends BlockIce {
 
     @Override
     public boolean canHarvestWithHand() {
-        return false;
+        return true;
     }
 
     @Override
