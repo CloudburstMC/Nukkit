@@ -53,6 +53,7 @@ public class BlockEntitySerializer {
         byte[] value;
         try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
             for (BlockEntity entity : entities) {
+                entity.saveNBT();
                 NBTIO.write(entity.namedTag, stream, ByteOrder.LITTLE_ENDIAN);
             }
             value = stream.toByteArray();
