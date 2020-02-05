@@ -2,28 +2,13 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
 public class BlockWood extends BlockSolid {
 
-    public BlockWood(Identifier identifier) { super(identifier); }
-
-    @Override
-    public Item toItem() {
-        return Item.get(id, this.getDamage() & 0xF);
-    }
-
-    @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        this.setDamage(this.getDamage() & 0xF);
-        this.getLevel().setBlock(block, this, true, true);
-
-        return true;
-    }
+    public BlockWood(Identifier id) { super(id); }
 
     @Override
     public double getHardness() {
@@ -51,6 +36,20 @@ public class BlockWood extends BlockSolid {
     }
 
     @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+
+    @Override
+    public boolean onActivate(Item item, Player player) {
+        if (!item.isAxe()) return false;
+
+        Block replace = Block.get(getId(), getDamage() & 0x03); // adds the offset for stripped woods
+        level.setBlock(x, y, z, layer, replace, true, true);
+        return true;
+    }
+
+    @Override
     public BlockColor getColor() {
         switch (this.getDamage() & 0x07) {
             default:
@@ -68,4 +67,5 @@ public class BlockWood extends BlockSolid {
                 return BlockColor.BROWN_BLOCK_COLOR;
         }
     }
+
 }
