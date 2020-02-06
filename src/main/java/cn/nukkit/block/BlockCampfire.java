@@ -65,6 +65,9 @@ public class BlockCampfire extends BlockSolid implements Faceable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (!block.canBeReplaced()) return false;
+        if (block.down().getId() == BlockIds.CAMPFIRE) {
+            return false;
+        }
         this.setDamage(player.getHorizontalFacing().getOpposite().getHorizontalIndex() & CAMPFIRE_FACING_MASK);
         if ((block.getId() == BlockIds.WATER || block.getId() == BlockIds.FLOWING_WATER)
                 && block.getDamage() == 0) {
