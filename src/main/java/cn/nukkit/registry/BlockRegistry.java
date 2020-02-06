@@ -517,7 +517,7 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(CAMPFIRE, BlockCampfire::new);
 
         this.factoryMap.put(BARREL, BlockBarrel::new); // 457
-
+      
         this.factoryMap.put(BLUE_ICE, BlockBlueIce::new); //266
 
         this.factoryMap.put(GRANITE_STAIRS, BlockStairsGranite::new); //424
