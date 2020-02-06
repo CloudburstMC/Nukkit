@@ -23,8 +23,15 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
     public static final int TRAPDOOR_OPEN_BIT = 0x08;
     public static final int TRAPDOOR_TOP_BIT = 0x04;
 
+    protected BlockColor blockColor;
+
     public BlockTrapdoor(Identifier id) {
+        this(id, BlockColor.WOOD_BLOCK_COLOR);
+    }
+
+    public BlockTrapdoor(Identifier id, BlockColor blockColor) {
         super(id);
+        this.blockColor = blockColor;
     }
 
     @Override
@@ -219,7 +226,7 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.WOOD_BLOCK_COLOR;
+        return this.blockColor;
     }
 
     public boolean isOpen() {
@@ -233,5 +240,9 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+    }
+
+    public static BlockFactory factory(BlockColor blockColor) {
+        return identifier -> new BlockTrapdoor(identifier, blockColor);
     }
 }
