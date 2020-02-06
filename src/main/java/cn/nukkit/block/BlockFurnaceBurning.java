@@ -17,8 +17,7 @@ import cn.nukkit.utils.Identifier;
 
 import java.util.Map;
 
-import static cn.nukkit.block.BlockIds.AIR;
-import static cn.nukkit.block.BlockIds.FURNACE;
+import static cn.nukkit.block.BlockIds.*;
 
 /**
  * author: Angelic47
@@ -83,7 +82,13 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
     }
 
     protected String getBlockEntityID() {
-        return BlockEntity.FURNACE;
+        if (getId() == BLAST_FURNACE || getId() == LIT_BLAST_FURNACE) {
+            return BlockEntity.BLAST_FURNACE;
+        } else if (getId() == SMOKER || getId() == LIT_SMOKER) {
+            return BlockEntity.SMOKER;
+        } else {
+            return BlockEntity.FURNACE;
+        }
     }
 
     @Override
@@ -102,11 +107,11 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
             } else {
                 CompoundTag nbt = new CompoundTag()
                         .putList(new ListTag<>("Items"))
-                        .putString("id", BlockEntity.FURNACE)
+                        .putString("id", getBlockEntityID())
                         .putInt("x", this.x)
                         .putInt("y", this.y)
                         .putInt("z", this.z);
-                furnace = (BlockEntityFurnace) BlockEntity.createBlockEntity(BlockEntity.FURNACE, this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+                furnace = (BlockEntityFurnace) BlockEntity.createBlockEntity(getBlockEntityID(), this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
                 if (furnace == null) {
                     return false;
                 }
