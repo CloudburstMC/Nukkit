@@ -7,13 +7,9 @@ import cn.nukkit.utils.Identifier;
 
 import static cn.nukkit.block.BlockIds.AIR;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class BlockIcePacked extends BlockIce {
+public class BlockBlueIce extends BlockIce {
 
-    public BlockIcePacked(Identifier id) {
+    public BlockBlueIce(Identifier id) {
         super(id);
     }
 
@@ -23,18 +19,34 @@ public class BlockIcePacked extends BlockIce {
     }
 
     @Override
-    public int onUpdate(int type) {
-        return 0; //not being melted
+    public double getHardness() {
+        return 2.8;
+    }
+
+    @Override
+    public double getResistance() {
+        return 14;
+    }
+
+    @Override
+    public double getFrictionFactor() {
+        return 0.989;
+    }
+
+    @Override
+    public int onUpdate(int type){
+        return 0;
     }
 
     @Override
     public boolean canHarvestWithHand() {
-        return false;
+        return true;
     }
-    
+
     @Override
     public boolean onBreak(Item item) {
-        return this.getLevel().setBlock(this, Block.get(AIR), true); //no water
+        this.getLevel().setBlock(this, Block.get(AIR), true);
+        return true;
     }
 
     @Override
@@ -45,5 +57,16 @@ public class BlockIcePacked extends BlockIce {
     @Override
     public boolean canSilkTouch() {
         return true;
+    }
+
+    @Override
+    public boolean isTransparent() {
+        return false;
+    }
+
+
+    @Override
+    public int getLightLevel() {
+        return 4;
     }
 }
