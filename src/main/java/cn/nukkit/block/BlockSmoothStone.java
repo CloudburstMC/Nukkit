@@ -4,13 +4,20 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.Identifier;
 
-/**
- * Created by CreeperFace on 27. 11. 2016.
- */
-public class BlockButtonStone extends BlockButton {
+public class BlockSmoothStone extends BlockSolid {
 
-    public BlockButtonStone(Identifier id) {
+    public BlockSmoothStone(Identifier id) {
         super(id);
+    }
+
+    @Override
+    public double getHardness() {
+        return 1.5;
+    }
+
+    @Override
+    public double getResistance() {
+        return 10;
     }
 
     @Override
@@ -26,9 +33,10 @@ public class BlockButtonStone extends BlockButton {
     @Override
     public Item[] getDrops(Item item) {
         if (item.isPickaxe()) {
-            return super.getDrops(item);
+            return new Item[]{ toItem() };
         } else {
             return new Item[0];
         }
     }
+
 }

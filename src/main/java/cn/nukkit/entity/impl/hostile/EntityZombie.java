@@ -35,4 +35,10 @@ public class EntityZombie extends EntityHostile implements Zombie, Smiteable {
     public String getName() {
         return "Zombie";
     }
+
+    @Override
+    public boolean isUndead() {
+        return true;
+    }
+
 }

@@ -20,7 +20,8 @@ public enum InventoryType {
     HOPPER(5, "Hopper", 8), //5 CONTAINER
     UI(1, "UI", -1),
     SHULKER_BOX(27, "Shulker Box", 0),
-    BEACON(1, "Beacon", 13);
+    BEACON(1, "Beacon", 13),
+    BARREL(27, "Barrel", 0);
 
     private final int size;
     private final String title;
