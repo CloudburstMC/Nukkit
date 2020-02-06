@@ -35,4 +35,10 @@ public class EntityHusk extends EntityHostile implements Husk, Smiteable {
     public String getName() {
         return "Husk";
     }
+
+    @Override
+    public boolean isUndead() {
+        return true;
+    }
+
 }

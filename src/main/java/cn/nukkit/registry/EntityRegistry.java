@@ -322,9 +322,11 @@ public class EntityRegistry implements Registry {
         registerVanilla(ENDER_PEARL, EntityEnderPearl::new, 87);
         registerVanilla(BOAT, EntityBoat::new, 90);
         registerVanilla(LIGHTNING_BOLT, EntityLightningBolt::new, 93);
+        registerVanilla(AREA_EFFECT_CLOUD, EntityAreaEffectCloud::new, 95);
         registerVanilla(HOPPER_MINECART, EntityHopperMinecart::new, 96);
         registerVanilla(TNT_MINECART, EntityTntMinecart::new, 97);
         registerVanilla(CHEST_MINECART, EntityChestMinecart::new, 98);
+        registerVanilla(LINGERING_POTION, EntityLingeringPotion::new, 101);
         registerVanilla(EVOCATION_ILLAGER, EntityEvocationIllager::new, 104);
         registerVanilla(VEX, EntityVex::new, 105);
         registerVanilla(PUFFERFISH, EntityPufferfish::new, 108);

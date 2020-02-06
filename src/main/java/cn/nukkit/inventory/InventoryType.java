@@ -22,8 +22,8 @@ public enum InventoryType {
     SHULKER_BOX(27, "Shulker Box", 0),
     BEACON(1, "Beacon", 13),
     BLAST_FURNACE(3, "Blast Furnace", 27),
-    SMOKER(3, "Smoker", 28);
-
+    SMOKER(3, "Smoker", 28),
+    BARREL(27, "Barrel", 0);
 
     private final int size;
     private final String title;

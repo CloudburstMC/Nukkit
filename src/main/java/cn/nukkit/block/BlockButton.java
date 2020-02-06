@@ -120,7 +120,7 @@ public abstract class BlockButton extends FloodableBlock implements Faceable {
 
     @Override
     public Item toItem() {
-        return Item.get(this.getId(), 5);
+        return Item.get(this.getId(), 0);
     }
 
     @Override
