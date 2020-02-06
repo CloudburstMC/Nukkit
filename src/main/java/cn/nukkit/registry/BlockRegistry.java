@@ -506,6 +506,11 @@ public class BlockRegistry implements Registry {
 
         this.factoryMap.put(SPRUCE_STANDING_SIGN, BlockSignPost::new);
 
+        this.factoryMap.put(ACACIA_BUTTON,BlockButtonWooden::new);//395
+        this.factoryMap.put(BIRCH_BUTTON, BlockButtonWooden::new);//396
+        this.factoryMap.put(DARK_OAK_BUTTON, BlockButtonWooden::new);//397
+        this.factoryMap.put(JUNGLE_BUTTON, BlockButtonWooden::new);//398
+        this.factoryMap.put(SPRUCE_BUTTON, BlockButtonWooden::new);//399
         this.factoryMap.put(SMOOTH_STONE, BlockSmoothStone::new); // 437
 
         this.factoryMap.put(CAMPFIRE, BlockCampfire::new);
