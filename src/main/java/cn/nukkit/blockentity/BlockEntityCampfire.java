@@ -167,4 +167,15 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
         }
         return addedFood;
     }
+
+    /**
+     * Method is used to clear all of the items cooking in the fire, without dropping any into the world.
+     */
+    public void clearItems() {
+        for (int i = 0; i < itemsInFire.length; i++) {
+            itemsInFire[i] = null;
+            cookingTimes[i] = 0;
+        }
+        spawnToAll();
+    }
 }
