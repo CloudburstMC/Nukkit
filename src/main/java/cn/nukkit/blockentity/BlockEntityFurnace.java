@@ -7,6 +7,7 @@ import cn.nukkit.event.inventory.FurnaceSmeltEvent;
 import cn.nukkit.inventory.FurnaceInventory;
 import cn.nukkit.inventory.FurnaceRecipe;
 import cn.nukkit.inventory.InventoryHolder;
+import cn.nukkit.inventory.InventoryType;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.NBTIO;
@@ -39,7 +40,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
 
     @Override
     protected void initBlockEntity() {
-        this.inventory = new FurnaceInventory(this);
+        this.inventory = new FurnaceInventory(this, this.getInventoryType());
 
         if (!this.namedTag.contains("Items") || !(this.namedTag.get("Items") instanceof ListTag)) {
             this.namedTag.putList(new ListTag<CompoundTag>("Items"));
@@ -78,6 +79,10 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
         }
 
         super.initBlockEntity();
+    }
+
+    public InventoryType getInventoryType() {
+        return InventoryType.FURNACE;
     }
 
     @Override
@@ -119,6 +124,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
 
     @Override
     public void saveNBT() {
+        super.saveNBT();
         this.namedTag.putList(new ListTag<CompoundTag>("Items"));
         for (int index = 0; index < this.getSize(); index++) {
             this.setItem(index, this.inventory.getItem(index));
@@ -300,7 +306,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
     @Override
     public CompoundTag getSpawnCompound() {
         CompoundTag c = new CompoundTag()
-                .putString("id", BlockEntity.FURNACE)
+                .putString("id", getSaveId())
                 .putInt("x", this.x)
                 .putInt("y", this.y)
                 .putInt("z", this.z)

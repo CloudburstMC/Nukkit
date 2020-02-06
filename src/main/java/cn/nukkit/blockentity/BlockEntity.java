@@ -23,6 +23,8 @@ public abstract class BlockEntity extends BlockPosition {
     public static final String CHEST = "Chest";
     public static final String ENDER_CHEST = "EnderChest";
     public static final String FURNACE = "Furnace";
+    public static final String BLAST_FURNACE = "BlastFurnace";
+    public static final String SMOKER = "Smoker";
     public static final String SIGN = "Sign";
     public static final String MOB_SPAWNER = "MobSpawner";
     public static final String ENCHANT_TABLE = "EnchantTable";

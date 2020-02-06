@@ -524,5 +524,12 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(RED_NETHER_BRICK_STAIRS, BlockStairsNetherBrick::new); //439
 
         this.factoryMap.put(SMOOTH_QUARTZ_STAIRS, BlockStairsQuartz::new); //440
+
+        this.factoryMap.put(BLAST_FURNACE, BlockBlastFurnace::new); // 450
+        //TODO 451 - Stonecutter
+        this.factoryMap.put(SMOKER, BlockSmoker::new); //452
+        this.factoryMap.put(LIT_SMOKER, BlockSmokerBurning::new); //453
+
+        this.factoryMap.put(LIT_BLAST_FURNACE, BlockBlastFurnaceBurning::new); //467
     }
 }

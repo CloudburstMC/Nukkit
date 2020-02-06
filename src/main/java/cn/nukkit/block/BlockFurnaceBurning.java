@@ -62,10 +62,10 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
         this.getLevel().setBlock(block, this, true, true);
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<>("Items"))
-                .putString("id", BlockEntity.FURNACE)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z);
+                .putString("id", getBlockEntityID())
+                .putInt("x", this.x)
+                .putInt("y", this.y)
+                .putInt("z", this.z);
 
         if (item.hasCustomName()) {
             nbt.putString("CustomName", item.getCustomName());
@@ -78,8 +78,12 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
             }
         }
 
-        BlockEntityFurnace furnace = (BlockEntityFurnace) BlockEntity.createBlockEntity(BlockEntity.FURNACE, this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+        BlockEntityFurnace furnace = (BlockEntityFurnace) BlockEntity.createBlockEntity(getBlockEntityID(), this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
         return furnace != null;
+    }
+
+    protected String getBlockEntityID() {
+        return BlockEntity.FURNACE;
     }
 
     @Override
@@ -99,9 +103,9 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
                 CompoundTag nbt = new CompoundTag()
                         .putList(new ListTag<>("Items"))
                         .putString("id", BlockEntity.FURNACE)
-                        .putInt("x", (int) this.x)
-                        .putInt("y", (int) this.y)
-                        .putInt("z", (int) this.z);
+                        .putInt("x", this.x)
+                        .putInt("y", this.y)
+                        .putInt("z", this.z);
                 furnace = (BlockEntityFurnace) BlockEntity.createBlockEntity(BlockEntity.FURNACE, this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
                 if (furnace == null) {
                     return false;
