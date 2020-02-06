@@ -9,7 +9,6 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
@@ -117,12 +116,6 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
                 }
             }
 
-            if (furnace.namedTag.contains("Lock") && furnace.namedTag.get("Lock") instanceof StringTag) {
-                if (!furnace.namedTag.getString("Lock").equals(item.getCustomName())) {
-                    return true;
-                }
-            }
-
             player.addWindow(furnace.getInventory());
         }
 
@@ -131,7 +124,7 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
 
     @Override
     public Item toItem() {
-        return Item.get(FURNACE);
+        return Item.get(getId(), 0);
     }
 
     @Override
