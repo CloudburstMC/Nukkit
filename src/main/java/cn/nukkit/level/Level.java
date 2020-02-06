@@ -1501,8 +1501,7 @@ public class Level implements ChunkManager, Metadatable {
             return false;
         }
         Chunk chunk = this.getChunk(x >> 4, z >> 4);
-        Block blockPrevious;
-        blockPrevious = chunk.getAndSetBlock(x & 0xF, y, z & 0xF, block);
+        Block blockPrevious = chunk.getAndSetBlock(x & 0xF, y, z & 0xF, block);
         if (Block.equals(blockPrevious, block, true)) {
             return false;
         }
@@ -1754,7 +1753,7 @@ public class Level implements ChunkManager, Metadatable {
             this.updateComparatorOutputLevel(target);
         }
 
-        target.onBreak(item);
+        target.onBreak(item, player);
 
         item.useOn(target);
         if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
