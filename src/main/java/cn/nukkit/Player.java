@@ -923,7 +923,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             food.sendFoodLevel();
         }
 
-        if (this.getHealth() <= 0) {
+        if (this.getHealth() < 1) {
             this.respawn();
         }
 
