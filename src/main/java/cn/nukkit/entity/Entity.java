@@ -1063,9 +1063,6 @@ public abstract class Entity extends Location implements Metadatable {
 
         if (health < 1) {
             this.preKill();
-            if (this.isAlive()) {
-                this.kill();
-            }
         } else if (health <= this.getMaxHealth() || health < this.health) {
             this.health = health;
         } else {
@@ -2091,7 +2088,9 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void preKill() {
-
+        if (this.isAlive()) {
+            this.kill();
+        }
     }
 
     public void kill() {
