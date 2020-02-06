@@ -13,6 +13,7 @@ public class BlockTrapdoorIron extends BlockTrapdoor {
 
     public BlockTrapdoorIron(Identifier id) {
         super(id);
+        this.blockColor = BlockColor.IRON_BLOCK_COLOR;
     }
 
     @Override
@@ -28,11 +29,6 @@ public class BlockTrapdoorIron extends BlockTrapdoor {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
-    }
-
-    @Override
-    public BlockColor getColor() {
-        return BlockColor.IRON_BLOCK_COLOR;
     }
 
     @Override
