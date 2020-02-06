@@ -109,6 +109,8 @@ public class EntityTnt extends BaseEntity implements Tnt, EntityExplosive {
 
         if (fuse % 5 == 0) {
             this.setIntData(FUSE_LENGTH, fuse);
+
+            updateData();
         }
 
         lastUpdate = currentTick;
