@@ -154,11 +154,14 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_REDSTONE) {
-            this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isOpen() ? 15 : 0, isOpen() ? 0 : 15));
-            this.setDamage(this.getDamage() ^ TRAPDOOR_OPEN_BIT);
-            this.level.setBlock(this, this, true);
-            this.level.addSound(this.asVector3f(), isOpen() ? Sound.RANDOM_DOOR_OPEN : Sound.RANDOM_DOOR_CLOSE);
-            return type;
+            if ((!this.isOpen() && this.level.isBlockPowered(this)) || (this.isOpen() && !this.level.isBlockPowered(this))) {
+                this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isOpen() ? 15 : 0, isOpen() ? 0 : 15));
+                this.setDamage(this.getDamage() ^ TRAPDOOR_OPEN_BIT);
+                this.level.setBlock(this, this, true);
+                this.level.addSound(this.asVector3f(), isOpen() ? Sound.RANDOM_DOOR_OPEN : Sound.RANDOM_DOOR_CLOSE);
+
+                return type;
+            }
         }
 
         return 0;
