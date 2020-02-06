@@ -65,6 +65,9 @@ public class BlockCampfire extends BlockSolid implements Faceable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (!block.canBeReplaced()) return false;
+        if (block.down().getId() == BlockIds.CAMPFIRE) {
+            return false;
+        }
         this.setDamage(player.getHorizontalFacing().getOpposite().getHorizontalIndex() & CAMPFIRE_FACING_MASK);
         if ((block.getId() == BlockIds.WATER || block.getId() == BlockIds.FLOWING_WATER)
                 && block.getDamage() == 0) {
@@ -144,19 +147,17 @@ public class BlockCampfire extends BlockSolid implements Faceable {
             }
             return true;
         } else if (item instanceof ItemEdible) {
-            if (getLevel().getServer().getCraftingManager().matchFurnaceRecipe(item) != null) {
-                BlockEntityCampfire fire = (BlockEntityCampfire) getLevel().getBlockEntity(this);
-                if (fire.putItemInFire(item)) {
-                    if (player != null && player.isSurvival()) {
-                        item.decrementCount();
-                        if (item.getCount() <= 0) {
-                            item = Item.get(BlockIds.AIR);
-                        }
-                        player.getInventory().setItemInHand(item);
+            BlockEntityCampfire fire = (BlockEntityCampfire) getLevel().getBlockEntity(this);
+            if (fire.putItemInFire(item)) {
+                if (player != null && player.isSurvival()) {
+                    item.decrementCount();
+                    if (item.getCount() <= 0) {
+                        item = Item.get(BlockIds.AIR);
                     }
+                    player.getInventory().setItemInHand(item);
                 }
-                return true;
             }
+            return true;
         }
         return false;
     }

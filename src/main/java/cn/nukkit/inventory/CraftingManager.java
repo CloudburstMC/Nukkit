@@ -1,6 +1,7 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Server;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.network.protocol.BatchPacket;
@@ -20,6 +21,8 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.zip.Deflater;
+
+import static cn.nukkit.block.BlockIds.LIT_BLAST_FURNACE;
 
 /**
  * author: MagicDroidX
@@ -108,9 +111,17 @@ public class CraftingManager {
         return furnaceRecipes;
     }
 
-    public FurnaceRecipe matchFurnaceRecipe(Item input) {
-        FurnaceRecipe recipe = this.furnaceRecipes.get(getItemHash(input));
-        if (recipe == null) recipe = this.furnaceRecipes.get(getItemHash(input.getId(), 0));
+    public FurnaceRecipe matchFurnaceRecipe(Item input, Identifier craftingBlock) {
+        if (craftingBlock == BlockIds.LIT_SMOKER) {
+            craftingBlock = BlockIds.SMOKER;
+        } else if (craftingBlock == LIT_BLAST_FURNACE) {
+            craftingBlock = BlockIds.BLAST_FURNACE;
+        } else if (craftingBlock == BlockIds.LIT_FURNACE) {
+            craftingBlock = BlockIds.FURNACE;
+        }
+        FurnaceRecipe recipe = this.furnaceRecipes.get(Objects.hash(getItemHash(input), craftingBlock.toString()));
+        if (recipe == null)
+            recipe = this.furnaceRecipes.get(Objects.hash(getItemHash(input.getId(), 0), craftingBlock.toString()));
         return recipe;
     }
 
@@ -127,7 +138,8 @@ public class CraftingManager {
 
     public void registerFurnaceRecipe(FurnaceRecipe recipe) {
         Item input = recipe.getInput();
-        this.furnaceRecipes.put(getItemHash(input), recipe);
+        Identifier block = recipe.getCraftingBlock();
+        this.furnaceRecipes.put(Objects.hash(getItemHash(input), block.toString()), recipe);
     }
 
     private static int getItemHash(Item item) {
@@ -140,10 +152,10 @@ public class CraftingManager {
         log.info("Loading recipes...");
         for (Map<String, Object> recipe : recipes) {
             try {
+                Identifier craftingBlock = Identifier.fromString((String) recipe.get("block"));
                 switch (Utils.toInt(recipe.get("type"))) {
                     case 0:
-                        String craftingBlock = (String) recipe.get("block");
-                        if (!"crafting_table".equals(craftingBlock)) {
+                        if (craftingBlock != BlockIds.CRAFTING_TABLE) {
                             // Ignore other recipes than crafting table ones
                             continue;
                         }
@@ -168,8 +180,7 @@ public class CraftingManager {
                         this.registerRecipe(result);
                         break;
                     case 1:
-                        craftingBlock = (String) recipe.get("block");
-                        if (!"crafting_table".equals(craftingBlock)) {
+                        if (craftingBlock != BlockIds.CRAFTING_TABLE) {
                             // Ignore other recipes than crafting table ones
                             continue;
                         }
@@ -199,8 +210,10 @@ public class CraftingManager {
                         break;
                     case 2:
                     case 3:
-                        craftingBlock = (String) recipe.get("block");
-                        if (!"furnace".equals(craftingBlock)) {
+                        if (craftingBlock != BlockIds.FURNACE
+                                && craftingBlock != BlockIds.BLAST_FURNACE
+                                && craftingBlock != BlockIds.SMOKER
+                                && craftingBlock != BlockIds.CAMPFIRE) {
                             // Ignore other recipes than furnaces
                             continue;
                         }
@@ -210,7 +223,7 @@ public class CraftingManager {
                         Map<String, Object> inputMap = (Map) recipe.get("input");
                         inputItem = Item.fromJson(inputMap);
 
-                        this.registerRecipe(new FurnaceRecipe(resultItem, inputItem));
+                        this.registerRecipe(new FurnaceRecipe(resultItem, inputItem, craftingBlock));
                         break;
                     default:
                         break;
