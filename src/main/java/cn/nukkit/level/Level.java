@@ -1742,7 +1742,7 @@ public class Level implements ChunkManager, Metadatable {
             this.updateComparatorOutputLevel(target);
         }
 
-        target.onBreak(item);
+        target.onBreak(item, player);
 
         item.useOn(target);
         if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
