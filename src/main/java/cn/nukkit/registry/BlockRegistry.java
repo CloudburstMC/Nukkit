@@ -4,6 +4,7 @@ import cn.nukkit.block.*;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 import com.google.common.collect.HashBiMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
@@ -537,11 +538,11 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(DARK_OAK_BUTTON, BlockButtonWooden::new);//397
         this.factoryMap.put(JUNGLE_BUTTON, BlockButtonWooden::new);//398
         this.factoryMap.put(SPRUCE_BUTTON, BlockButtonWooden::new);//399
-        //400: acacia_trapdoor
-        //401: birch_trapdoor
-        //402: dark_oak_trapdoor
-        //403: jungle_trapdoor
-        //404: spruce_trapdoor
+        this.factoryMap.put(ACACIA_TRAPDOOR, BlockTrapdoor.factory(BlockColor.ORANGE_BLOCK_COLOR)); //400
+        this.factoryMap.put(BIRCH_TRAPDOOR, BlockTrapdoor.factory(BlockColor.SAND_BLOCK_COLOR)); //401
+        this.factoryMap.put(DARK_OAK_TRAPDOOR, BlockTrapdoor.factory(BlockColor.BROWN_BLOCK_COLOR)); //402
+        this.factoryMap.put(JUNGLE_TRAPDOOR, BlockTrapdoor.factory(BlockColor.DIRT_BLOCK_COLOR)); //403
+        this.factoryMap.put(SPRUCE_TRAPDOOR, BlockTrapdoor.factory(BlockColor.SPRUCE_BLOCK_COLOR)); //404
         //405: acacia_pressure_plate
         //406: birch_pressure_plate
         //407: dark_oak_pressure_plate
