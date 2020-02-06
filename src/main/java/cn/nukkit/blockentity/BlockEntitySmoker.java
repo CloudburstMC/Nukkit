@@ -1,5 +1,6 @@
 package cn.nukkit.blockentity;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.inventory.InventoryType;
 import cn.nukkit.level.chunk.Chunk;
@@ -25,5 +26,20 @@ public class BlockEntitySmoker extends BlockEntityFurnace {
     public boolean isBlockEntityValid() {
         Identifier id = getBlock().getId();
         return id == BlockIds.SMOKER || id == BlockIds.LIT_SMOKER;
+    }
+
+    @Override
+    public float getBurnRate() {
+        return 2.0f;
+    }
+
+    @Override
+    protected void extinguishFurnace() {
+        this.getLevel().setBlock(this, Block.get(BlockIds.SMOKER, this.getBlock().getDamage()), true);
+    }
+
+    @Override
+    protected void lightFurnace() {
+        this.getLevel().setBlock(this, Block.get(BlockIds.LIT_SMOKER, this.getBlock().getDamage()), true);
     }
 }

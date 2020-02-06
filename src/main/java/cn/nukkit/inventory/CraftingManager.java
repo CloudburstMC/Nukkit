@@ -22,6 +22,8 @@ import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.zip.Deflater;
 
+import static cn.nukkit.block.BlockIds.LIT_BLAST_FURNACE;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -110,6 +112,13 @@ public class CraftingManager {
     }
 
     public FurnaceRecipe matchFurnaceRecipe(Item input, Identifier craftingBlock) {
+        if (craftingBlock == BlockIds.LIT_SMOKER) {
+            craftingBlock = BlockIds.SMOKER;
+        } else if (craftingBlock == LIT_BLAST_FURNACE) {
+            craftingBlock = BlockIds.BLAST_FURNACE;
+        } else if (craftingBlock == BlockIds.LIT_FURNACE) {
+            craftingBlock = BlockIds.FURNACE;
+        }
         FurnaceRecipe recipe = this.furnaceRecipes.get(Objects.hash(getItemHash(input), craftingBlock.toString()));
         if (recipe == null)
             recipe = this.furnaceRecipes.get(Objects.hash(getItemHash(input.getId(), 0), craftingBlock.toString()));
