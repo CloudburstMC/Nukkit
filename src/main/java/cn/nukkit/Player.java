@@ -3685,6 +3685,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     @Override
+    public void preKill() {
+        this.health = 0;
+        this.kill();
+    }
+
+    @Override
     public void kill() {
         if (!this.spawned) {
             return;

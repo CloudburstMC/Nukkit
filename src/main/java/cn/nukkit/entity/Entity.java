@@ -1062,7 +1062,7 @@ public abstract class Entity extends Location implements Metadatable {
         }
 
         if (health < 1) {
-            this.health = health;
+            this.preKill();
             if (this.isAlive()) {
                 this.kill();
             }
@@ -2088,6 +2088,10 @@ public abstract class Entity extends Location implements Metadatable {
 
     public boolean isOnGround() {
         return onGround;
+    }
+
+    public void preKill() {
+
     }
 
     public void kill() {
