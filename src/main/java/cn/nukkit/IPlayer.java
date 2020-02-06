@@ -111,7 +111,7 @@ public interface IPlayer extends ServerOperator, Metadatable {
      * 得到这个玩家第一次游戏的时间。<br>
      * Returns the time this player first played in this server.
      *
-     * @return 这个玩家第一次游戏的时间。<br>The time this player first played in this server.
+     * @return Unix时间（以秒为单位。<br>Unix time in seconds.
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     Long getFirstPlayed();
@@ -120,7 +120,7 @@ public interface IPlayer extends ServerOperator, Metadatable {
      * 得到这个玩家上次加入游戏的时间。<br>
      * Returns the time this player last joined in this server.
      *
-     * @return 这个玩家上次游戏的时间。<br>The time this player last joined in this server.
+     * @return Unix时间（以秒为单位。<br>Unix time in seconds.
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     Long getLastPlayed();

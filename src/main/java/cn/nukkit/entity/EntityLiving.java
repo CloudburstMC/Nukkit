@@ -71,7 +71,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
             this.namedTag.putFloat("Health", this.getMaxHealth());
         }
 
-        this.setHealth(this.namedTag.getFloat("Health"));
+        this.health = this.namedTag.getFloat("Health");
     }
 
     @Override
