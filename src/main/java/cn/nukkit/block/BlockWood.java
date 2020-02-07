@@ -11,14 +11,10 @@ public class BlockWood extends BlockSolid {
     public BlockWood(Identifier id) { super(id); }
 
     @Override
-    public double getHardness() {
-        return 2;
-    }
+    public double getHardness() { return 2; }
 
     @Override
-    public double getResistance() {
-        return 15;
-    }
+    public double getResistance() { return 15; }
 
     @Override
     public int getBurnChance() {
@@ -36,15 +32,21 @@ public class BlockWood extends BlockSolid {
     }
 
     @Override
+    public Item toItem() {
+        return Item.get(id, this.getDamage() & 0xD);
+    }
+
+
+    @Override
     public boolean canBeActivated() {
-        return true;
+        return getDamage() <= 5;
     }
 
     @Override
     public boolean onActivate(Item item, Player player) {
         if (!item.isAxe()) return false;
 
-        Block replace = Block.get(getId(), getDamage() & 0x03); // adds the offset for stripped woods
+        Block replace = Block.get(getId(), getDamage() + 8); // adds the offset for stripped woods
         level.setBlock(x, y, z, layer, replace, true, true);
         return true;
     }
