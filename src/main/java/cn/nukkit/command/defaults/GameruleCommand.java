@@ -1,6 +1,5 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
@@ -16,9 +15,9 @@ import java.util.StringJoiner;
 public class GameruleCommand extends VanillaCommand {
     private final GameRuleRegistry registry;
 
-    public GameruleCommand(String name, Server server) {
+    public GameruleCommand(String name) {
         super(name, "%nukkit.command.gamerule.description", "%nukkit.command.gamerule.usage");
-        this.registry = server.getGameRuleRegistry();
+        this.registry = GameRuleRegistry.get();
         this.setPermission("nukkit.command.gamerule");
         this.commandParameters.clear();
         this.commandParameters.put("byString", new CommandParameter[]{
