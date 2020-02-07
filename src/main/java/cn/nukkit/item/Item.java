@@ -841,7 +841,7 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     public int getDamage() {
-        return meta;
+        return meta == 0xffff ? 0 : meta;
     }
 
     public void setDamage(Integer meta) {
