@@ -746,7 +746,7 @@ public class Level implements ChunkManager, Metadatable {
         updateBlockLight(lightQueue);
         this.checkTime();
 
-        if(currentTick % 20 == 0){
+        if (currentTick % 1200 == 0) { // Send time to client every 60 seconds to make sure it stay in sync
             this.sendTime();
         }
 
