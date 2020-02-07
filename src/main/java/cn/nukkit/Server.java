@@ -428,7 +428,7 @@ public class Server {
             }
         }
 
-        if (this.getConfig().getBoolean("bug-report", true)) {
+        if (this.getPropertyBoolean("bug-report", true)) {
             ExceptionHandler.registerExceptionHandler();
         }
 
