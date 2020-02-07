@@ -224,6 +224,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected final EntityMetadata dataProperties = new EntityMetadata()
             .putLong(DATA_FLAGS, 0)
+            .putByte(DATA_COLOR, 0)
             .putShort(DATA_AIR, 400)
             .putShort(DATA_MAX_AIR, 400)
             .putString(DATA_NAMETAG, "")
@@ -906,10 +907,10 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void spawnTo(Player player) {
-        player.dataPacket(createAddEntityPacket());
 
-        if (!this.hasSpawned.containsKey(player.getLoaderId()) && player.usedChunks.containsKey(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()))) {
+        if (!this.hasSpawned.containsKey(player.getLoaderId()) && this.chunk != null && player.usedChunks.containsKey(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()))) {
             this.hasSpawned.put(player.getLoaderId(), player);
+            player.dataPacket(createAddEntityPacket());
         }
 
         if (this.riding != null) {

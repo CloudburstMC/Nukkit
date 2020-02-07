@@ -68,7 +68,7 @@ public class BlockColor  {
     public static final BlockColor BROWN_TERRACOTA_BLOCK_COLOR = new BlockColor(0x4c, 0x32, 0x23);
     public static final BlockColor GREEN_TERRACOTA_BLOCK_COLOR = new BlockColor(0x4c, 0x52, 0x2a);
     public static final BlockColor RED_TERRACOTA_BLOCK_COLOR = new BlockColor(0x8e, 0x3c, 0x2e);
-    public static final BlockColor BLACK_TERRACOTA_BLOCK_COLOR = new BlockColor(0x25, 0xb16, 0x10);
+    public static final BlockColor BLACK_TERRACOTA_BLOCK_COLOR = new BlockColor(0x25, 0x16, 0x10);
 
 
     private int red;

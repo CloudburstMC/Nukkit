@@ -71,7 +71,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
             this.namedTag.putFloat("Health", this.getMaxHealth());
         }
 
-        this.setHealth(this.namedTag.getFloat("Health"));
+        this.health = this.namedTag.getFloat("Health");
     }
 
     @Override
@@ -103,7 +103,9 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
     @Override
     public boolean attack(EntityDamageEvent source) {
-        if (this.attackTime > 0 || this.noDamageTicks > 0) {
+        if (this.noDamageTicks > 0) {
+            return false;
+        } else if (this.attackTime > 0) {
             EntityDamageEvent lastCause = this.getLastDamageCause();
             if (lastCause != null && lastCause.getDamage() >= source.getDamage()) {
                 return false;
