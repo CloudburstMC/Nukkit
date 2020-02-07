@@ -152,7 +152,10 @@ public class CraftingManager {
         log.info("Loading recipes...");
         for (Map<String, Object> recipe : recipes) {
             try {
-                Identifier craftingBlock = Identifier.fromString((String) recipe.get("block"));
+                Identifier craftingBlock = BlockIds.AIR;
+                if (recipe.get("block") != null) {
+                    craftingBlock = Identifier.fromString((String) recipe.get("block"));
+                }
                 switch (Utils.toInt(recipe.get("type"))) {
                     case 0:
                         if (craftingBlock != BlockIds.CRAFTING_TABLE) {
