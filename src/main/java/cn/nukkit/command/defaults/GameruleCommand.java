@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.StringJoiner;
 
 public class GameruleCommand extends VanillaCommand {
-    private final static GameRuleRegistry registry = GameRuleRegistry.get();
+    private static final GameRuleRegistry registry = GameRuleRegistry.get();
 
     public GameruleCommand(String name) {
         super(name, "%nukkit.command.gamerule.description", "%nukkit.command.gamerule.usage");
