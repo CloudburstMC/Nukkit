@@ -2,6 +2,8 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
@@ -33,22 +35,39 @@ public class BlockWood extends BlockSolid {
 
     @Override
     public Item toItem() {
-        return Item.get(id, this.getDamage() & 0xD);
+        return Item.get(id, this.getDamage() & 0xF);
     }
 
 
     @Override
     public boolean canBeActivated() {
-        return getDamage() <= 5;
+        return ( 0x8 & getDamage() ) == 0;
     }
 
     @Override
     public boolean onActivate(Item item, Player player) {
         if (!item.isAxe()) return false;
 
-        Block replace = Block.get(getId(), getDamage() + 8); // adds the offset for stripped woods
+        if ((this.getDamage() & 0b1000) == 0b1000 ) {
+            this.setDamage( ( this.getDamage() ^ 0b1000 ) | 0b1101 );
+        }
+        Block replace = Block.get(getId(), this.getDamage() | 0x8); // adds the offset for stripped woods
         level.setBlock(x, y, z, layer, replace, true, true);
         return true;
+    }
+
+    @Override
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        short[] faces = new short[]{
+                0,    //y
+                0,    //y
+                0x20, //z
+                0x20, //z
+                0x10, //x
+                0x10  //x
+        };
+        this.setDamage(this.getDamage() | faces[face.getIndex()]);
+        return super.place(item, block, target, face, clickPos, player);
     }
 
     @Override
