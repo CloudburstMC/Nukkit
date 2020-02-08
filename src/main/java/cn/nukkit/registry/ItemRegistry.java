@@ -384,7 +384,10 @@ public class ItemRegistry implements Registry {
 
         registerVanilla(TURTLE_HELMET, ItemTurtleShell::new, 469);
         registerVanilla(SPRUCE_SIGN, PlaceableItem.factory(BlockIds.SPRUCE_STANDING_SIGN), 472);
-
+        registerVanilla(BIRCH_SIGN, PlaceableItem.factory(BlockIds.BIRCH_STANDING_SIGN),473);
+        registerVanilla(JUNGLE_SIGN, PlaceableItem.factory(BlockIds.JUNGLE_STANDING_SIGN),474);
+        registerVanilla(ACACIA_SIGN, PlaceableItem.factory(BlockIds.ACACIA_STANDING_SIGN),475);
+        registerVanilla(DARK_OAK_SIGN, PlaceableItem.factory(BlockIds.DARK_OAK_STANDING_SIGN), 476);
         registerVanilla(SWEET_BERRIES, ItemSweetBerries::new, 477);
 
         registerVanilla(RECORD_CAT, RecordItem.factory("record.cat"), 500);
