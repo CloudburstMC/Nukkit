@@ -60,6 +60,31 @@ public class BlockLog extends BlockSolid {
         return true;
     }
 
+    private Identifier[] strippedIds = new Identifier[] {
+            BlockIds.STRIPPED_OAK_LOG,
+            BlockIds.STRIPPED_SPRUCE_LOG,
+            BlockIds.STRIPPED_BIRCH_LOG,
+            BlockIds.STRIPPED_JUNGLE_LOG,
+            BlockIds.STRIPPED_ACACIA_LOG,
+            BlockIds.STRIPPED_DARK_OAK_LOG
+    };
+
+    @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+
+    @Override
+    public boolean onActivate(Item item, Player player) {
+        if (!item.isAxe()) return false;
+
+        int log2Damage = this instanceof BlockLog2 ? 4 : 0;
+        int damage = ( ( this.getDamage() >> 2 ) << 2 ) ^ this.getDamage();
+        Block strippedBlock = Block.get(strippedIds[damage + log2Damage], ( this.getDamage() >> 2 ) );
+        this.getLevel().setBlock(this.asVector3i(), strippedBlock, true, true);
+        return true;
+    }
+
     @Override
     public Item toItem() {
         return Item.get(id, this.getDamage() & 0x03);
