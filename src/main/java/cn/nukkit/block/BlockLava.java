@@ -139,7 +139,7 @@ public class BlockLava extends BlockLiquid {
 
     @Override
     public Block getBlock(int meta) {
-        return Block.get(LAVA, meta);
+        return Block.get(FLOWING_LAVA, meta);
     }
 
     @Override
