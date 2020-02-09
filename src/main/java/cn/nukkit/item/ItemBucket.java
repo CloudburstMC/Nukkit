@@ -7,6 +7,7 @@ import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
+import cn.nukkit.level.BlockPosition;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
@@ -88,9 +89,12 @@ public class ItemBucket extends Item {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, Vector3f clickPos) {
-        Block targetBlock = Block.get(getBlockIdFromDamage(this.getDamage()));
+        Block bucketContents = Block.get(getBlockIdFromDamage(this.getDamage()));
 
-        if (targetBlock instanceof BlockAir) {
+        if (bucketContents instanceof BlockAir) {
+            if (target.isWaterlogged()) {
+                target = player.getLevel().getBlock(target.getX(), target.getY(), target.getZ(), 1);
+            }
             if (target instanceof BlockLiquid && target.getDamage() == 0) {
                 Item result = Item.get(BUCKET, this.getDamageFromIdentifier(target.getId()), 1);
                 PlayerBucketFillEvent ev;
@@ -102,6 +106,9 @@ public class ItemBucket extends Item {
                     // replaced with water that can flow.
                     for (BlockFace side : Plane.HORIZONTAL) {
                         Block b = target.getSide(side);
+                        if (b.isWaterlogged()) {
+                            b = player.getLevel().getBlock(b.getX(), b.getY(), b.getZ(), 1);
+                        }
                         if (b.getId() == WATER) {
                             level.setBlock(b, Block.get(FLOWING_WATER));
                         }
@@ -125,10 +132,16 @@ public class ItemBucket extends Item {
                     player.getInventory().sendContents(player);
                 }
             }
-        } else if (targetBlock instanceof BlockLiquid) {
+        } else if (bucketContents instanceof BlockLiquid) {
             Item result = Item.get(BUCKET, 0, 1);
-            PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, block, face, this, result);
-            ev.setCancelled(!block.canBeFlooded());
+            Block emptyTarget = block;
+            if (target.canWaterlog() && bucketContents.getId() == FLOWING_WATER) {
+                emptyTarget = target;
+            }
+            PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, emptyTarget, face, this, result);
+            if (!emptyTarget.canBeFlooded() && !emptyTarget.canWaterlog()) {
+                ev.setCancelled(true);
+            }
 
             if (player.getLevel().getDimension() == Level.DIMENSION_NETHER && this.getDamage() != 10) {
                 ev.setCancelled(true);
@@ -137,7 +150,12 @@ public class ItemBucket extends Item {
             player.getServer().getPluginManager().callEvent(ev);
 
             if (!ev.isCancelled()) {
-                player.getLevel().setBlock(block, targetBlock, true, true);
+                BlockPosition pos = BlockPosition.from(emptyTarget);
+                if (emptyTarget.canWaterlog()) {
+                    pos.setLayer(1);
+                }
+                target.getLevel().setBlock(pos, bucketContents, false, false);
+                bucketContents.getLevel().scheduleUpdate(bucketContents, bucketContents.tickRate());
                 if (player.isSurvival()) {
                     Item clone = this.clone();
                     clone.setCount(this.getCount() - 1);

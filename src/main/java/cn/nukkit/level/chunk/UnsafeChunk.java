@@ -151,6 +151,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
         block.x = this.x << 4 | x & 0xf;
         block.y = y;
         block.z = this.z << 4 | z & 0xf;
+        block.layer = layer;
         return block;
     }
 

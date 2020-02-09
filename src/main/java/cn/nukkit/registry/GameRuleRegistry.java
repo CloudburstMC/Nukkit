@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.IdentityHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,7 +15,7 @@ import java.util.Set;
 public class GameRuleRegistry implements Registry {
     private static final GameRuleRegistry INSTANCE = new GameRuleRegistry();
 
-    private final Map<String, GameRule<?>> registered = new IdentityHashMap<>();
+    private final Map<String, GameRule<?>> registered = new HashMap<>();
     private volatile boolean closed;
 
     private GameRuleRegistry() {
