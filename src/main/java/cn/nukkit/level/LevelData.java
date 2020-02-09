@@ -18,12 +18,12 @@ public class LevelData {
     private static final AtomicLongFieldUpdater<LevelData> currentTickUpdater = AtomicLongFieldUpdater.newUpdater(
             LevelData.class, "currentTick");
 
-    private final Map<String, Object> generatorOptions = new HashMap<>();
     private final GameRuleMap gameRules = new GameRuleMap();
     private volatile long currentTick;
     private long randomSeed = ThreadLocalRandom.current().nextLong();
     private int dimension;
     private Identifier generator;
+    private String generatorOptions;
     private String name = "World";
     private long time;
     private Vector3i spawn = new Vector3i(0, 128, 0);
@@ -60,9 +60,9 @@ public class LevelData {
     }
 
     public LevelData(LevelData levelData) {
-        this.generatorOptions.putAll(levelData.generatorOptions);
         this.gameRules.putAll(levelData.gameRules);
         this.generator = levelData.generator;
+        this.generatorOptions = levelData.generatorOptions;
         this.name = levelData.name;
         this.spawn = levelData.spawn;
         this.serverChunkTickRange = levelData.serverChunkTickRange;
@@ -90,10 +90,6 @@ public class LevelData {
 
     public void addTime(int time) {
         this.time += time;
-    }
-
-    public Map<String, Object> getGeneratorOptions() {
-        return this.generatorOptions;
     }
 
     public long getCurrentTick() {
@@ -126,6 +122,14 @@ public class LevelData {
 
     public void setGenerator(Identifier generator) {
         this.generator = generator;
+    }
+
+    public String getGeneratorOptions() {
+        return this.generatorOptions;
+    }
+
+    public void setGeneratorOptions(String generatorOptions) {
+        this.generatorOptions = generatorOptions;
     }
 
     public String getName() {
