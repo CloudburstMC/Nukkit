@@ -66,7 +66,7 @@ public class BlockCauldron extends BlockSolid {
                 if (this.getDamage() != 6) {
                     this.setDamage(6);
                     this.level.setBlock(this, this, true);
-                    this.getLevel().addSound(this.add(0.5, 1, 0.5), Sound.CAULDRON_TAKEWATER);
+                    this.level.addSound(this.add(0.5, 1, 0.5), Sound.CAULDRON_TAKEWATER);
                 }
                 BlockEntity be = this.level.getBlockEntity(this);
                 if (be instanceof BlockEntityCauldron) {
