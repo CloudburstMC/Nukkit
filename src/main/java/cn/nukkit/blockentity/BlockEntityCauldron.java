@@ -29,7 +29,7 @@ public class BlockEntityCauldron extends BlockEntitySpawnable {
     }
 
     public int getPotionId() {
-        return namedTag.getShort("PotionId");
+        return namedTag.getShort("PotionId") & 0xffff;
     }
 
     public void setPotionId(int potionId) {
