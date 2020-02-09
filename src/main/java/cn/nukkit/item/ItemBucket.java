@@ -154,7 +154,7 @@ public class ItemBucket extends Item {
                 if (emptyTarget.canWaterlogSource()) {
                     pos.setLayer(1);
                 }
-                target.getLevel().setBlock(pos, bucketContents, false, false);
+                target.getLevel().setBlock(pos, bucketContents, false, true);
                 bucketContents.getLevel().scheduleUpdate(bucketContents, bucketContents.tickRate());
                 if (player.isSurvival()) {
                     Item clone = this.clone();
