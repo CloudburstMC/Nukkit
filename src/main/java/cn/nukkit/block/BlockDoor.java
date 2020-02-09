@@ -235,7 +235,7 @@ public abstract class BlockDoor extends BlockTransparent implements Faceable {
             this.setDamage(direction);
             this.getLevel().setBlock(block, this, true, false); //Bottom
             if (blockUp instanceof BlockLiquid && ((BlockLiquid) blockUp).usesWaterLogging()) {
-                this.getLevel().setBlock(blockUp.layer(1), blockUp, true, false);
+                this.getLevel().setBlock(blockUp.layer(1), blockUp.clone(), true, false);
             }
             this.getLevel().setBlock(blockUp, Block.get(this.getId(), metaUp), true, true); //Top
 
