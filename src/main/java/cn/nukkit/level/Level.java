@@ -1946,15 +1946,15 @@ public class Level implements ChunkManager, Metadatable {
         try {
             if (!hand.place(item, block, target, face, clickPos, player)) {
                 if (layer0 != null) {
-                    this.setBlock(layer0, block, false, false);
-                    this.setBlock(layer1, Block.get(BlockIds.AIR), false, false);
+                    this.setBlock(layer0, liquid, false, false);
+                    this.setBlock(layer1, air, false, false);
                 }
                 return null;
             }
         } catch (Exception e) {
             if (layer0 != null) {
-                this.setBlock(layer0, block, false, false);
-                this.setBlock(layer1, Block.get(BlockIds.AIR), false, false);
+                this.setBlock(layer0, liquid, false, false);
+                this.setBlock(layer1, air, false, false);
             }
             throw e;
         }
