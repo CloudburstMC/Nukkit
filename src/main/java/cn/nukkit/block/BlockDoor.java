@@ -256,15 +256,16 @@ public abstract class BlockDoor extends BlockTransparent implements Faceable {
         if (isTop(this.getDamage())) {
             Block down = this.down();
             if (down.getId() == this.getId()) {
-                this.getLevel().setBlock(down, Block.get(AIR), true);
+                down.removeBlock(true);
             }
         } else {
             Block up = this.up();
             if (up.getId() == this.getId()) {
-                this.getLevel().setBlock(up, Block.get(AIR), true);
+                up.removeBlock(true);
             }
         }
-        this.getLevel().setBlock(this, Block.get(AIR), true);
+
+        super.onBreak(item);
 
         return true;
     }

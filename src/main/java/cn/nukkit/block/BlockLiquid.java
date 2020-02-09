@@ -188,11 +188,12 @@ public abstract class BlockLiquid extends BlockTransparent {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             this.checkForHarden();
+            // This check exists because if water is at layer1 with air at layer0, the water gets invisible
             if (usesWaterLogging() && layer > 0) {
                 Block mainBlock = this.level.getBlock(layer(0));
                 if (mainBlock.getId() == AIR) {
-                    this.level.setBlock(layer(1), mainBlock, false, false);
-                    this.level.setBlock(layer(0), this, false, false);
+                    this.level.setBlock(layer(1), mainBlock, true, false);
+                    this.level.setBlock(layer(0), this, true, false);
                 } else if (!mainBlock.canWaterlogSource() || !mainBlock.canWaterlogFlowing() && getDamage() > 0) {
                     this.level.setBlock(layer(1), Block.get(AIR), true, true);
                     return type;

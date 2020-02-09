@@ -107,7 +107,7 @@ public class BlockItemFrame extends BlockTransparent {
 
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, Block.get(AIR), true, true);
+        super.onBreak(item);
         this.getLevel().addSound(this.asVector3f(), Sound.BLOCK_ITEMFRAME_REMOVE_ITEM);
         return true;
     }

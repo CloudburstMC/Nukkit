@@ -1933,7 +1933,9 @@ public class Level implements ChunkManager, Metadatable {
         Block air = block.getBlockAtLayer(1);
         BlockPosition layer0 = null;
         BlockPosition layer1 = null;
-        if (air.getId() == BlockIds.AIR && (liquid instanceof BlockLiquid) && ((BlockLiquid) liquid).usesWaterLogging()) {
+        if (air.getId() == BlockIds.AIR && (liquid instanceof BlockLiquid) && ((BlockLiquid) liquid).usesWaterLogging()
+                && (liquid.getDamage() == 0 || liquid.getDamage() == 8) // Remove this line when MCPE-33345 is resolved
+        ) {
             layer0 = liquid.layer(0);
             layer1 = air.layer(1);
 

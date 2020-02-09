@@ -32,7 +32,7 @@ public class BlockPistonHead extends BlockTransparent {
 
     @Override
     public boolean onBreak(Item item) {
-        this.level.setBlock(this, Block.get(AIR), true, true);
+        super.onBreak(item);
         Block piston = getSide(getFacing().getOpposite());
 
         if (piston instanceof BlockPistonBase && ((BlockPistonBase) piston).getFacing() == this.getFacing()) {

@@ -27,7 +27,7 @@ public abstract class BlockRedstoneDiode extends FloodableBlock implements Facea
     @Override
     public boolean onBreak(Item item) {
         Vector3i pos = asVector3i();
-        this.level.setBlock(this, Block.get(AIR), true, true);
+        super.onBreak(item);
 
         for (BlockFace face : BlockFace.values()) {
             this.level.updateAroundRedstone(pos.getSide(face), null);

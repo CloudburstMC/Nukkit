@@ -126,12 +126,16 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
     }
 
     public boolean onBreak(Item item) {
+        return removeBlock(true);
+    }
+
+    final protected boolean removeBlock(boolean update) {
         if (this.isWaterlogged()) {
             Block water = getLevel().getBlock(getX(), getY(), getZ(), 1);
-            getLevel().setBlock(getX(), getY(), getZ(), 1, Block.get(AIR), true, false);
-            return getLevel().setBlock(this, water, true, true);
+            getLevel().setBlock(this, water, true, false);
+            return getLevel().setBlock(getX(), getY(), getZ(), 1, Block.get(AIR), true, update);
         }
-        return this.getLevel().setBlock(this, Block.get(AIR), true, true);
+        return this.getLevel().setBlock(this, Block.get(AIR), true, update);
     }
 
     public boolean onBreak(Item item, Player player) {

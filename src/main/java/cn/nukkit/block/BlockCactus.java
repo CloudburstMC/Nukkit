@@ -123,7 +123,7 @@ public class BlockCactus extends BlockTransparent {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         Block down = this.down();
-        if (down.getId() == SAND || down.getId() == CACTUS) {
+        if (!block.isWaterlogged() && (down.getId() == SAND || down.getId() == CACTUS)) {
             Block block0 = north();
             Block block1 = south();
             Block block2 = west();
