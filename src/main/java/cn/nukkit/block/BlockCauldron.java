@@ -71,7 +71,7 @@ public class BlockCauldron extends BlockSolid {
                 BlockEntity be = this.level.getBlockEntity(this);
                 if (be instanceof BlockEntityCauldron) {
                     BlockEntityCauldron cauldron = (BlockEntityCauldron) be;
-                    if (cauldron.getPotionId() != 0xffff) {
+                    if (cauldron.hasPotion()) {
                         cauldron.setPotionId(0xffff);
                     }
                     if (cauldron.isCustomColor()) {
