@@ -190,4 +190,9 @@ public class BlockBed extends BlockTransparent implements Faceable {
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
     }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

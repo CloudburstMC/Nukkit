@@ -24,4 +24,8 @@ public class BlockDaylightDetectorInverted extends BlockDaylightDetector {
         return true;
     }
 
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

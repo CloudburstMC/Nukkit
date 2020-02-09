@@ -83,4 +83,13 @@ public class BlockEndRod extends BlockTransparent implements Faceable {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
     }
 
+    @Override
+    public boolean canWaterlogFlowing() {
+        return true;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

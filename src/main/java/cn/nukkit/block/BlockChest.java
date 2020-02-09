@@ -31,7 +31,7 @@ public class BlockChest extends BlockTransparent implements Faceable {
     }
 
     @Override
-    public boolean canWaterlog() {
+    public boolean canWaterlogSource() {
         return true;
     }
 

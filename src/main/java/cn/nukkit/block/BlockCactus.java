@@ -148,4 +148,9 @@ public class BlockCactus extends BlockTransparent {
                 Item.get(CACTUS, 0, 1)
         };
     }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

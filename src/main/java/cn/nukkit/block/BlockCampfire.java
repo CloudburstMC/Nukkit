@@ -104,7 +104,7 @@ public class BlockCampfire extends BlockSolid implements Faceable {
     }
 
     @Override
-    public boolean canWaterlog() {
+    public boolean canWaterlogSource() {
         return true;
     }
 

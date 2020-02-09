@@ -11,7 +11,7 @@ public class BlockBarrier extends BlockSolid {
     }
 
     @Override
-    public boolean canWaterlog() {
+    public boolean canWaterlogSource() {
         return true;
     }
 

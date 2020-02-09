@@ -173,4 +173,9 @@ public class BlockItemFrame extends BlockTransparent {
     public double getHardness() {
         return 0.25;
     }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

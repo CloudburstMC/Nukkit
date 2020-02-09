@@ -148,4 +148,9 @@ public class BlockBrewingStand extends BlockSolid {
     public boolean canHarvestWithHand() {
         return false;
     }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

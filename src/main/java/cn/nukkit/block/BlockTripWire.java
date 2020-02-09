@@ -182,4 +182,14 @@ public class BlockTripWire extends FloodableBlock {
     protected AxisAlignedBB recalculateCollisionBoundingBox() {
         return this;
     }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
+
+    @Override
+    public boolean canWaterlogFlowing() {
+        return true;
+    }
 }

@@ -8,6 +8,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBucket;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3f;
@@ -55,6 +56,26 @@ public class BlockCauldron extends BlockSolid {
 
     public boolean isEmpty() {
         return this.getDamage() == 0x00;
+    }
+
+    @Override
+    public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
+            if (isWaterlogged()) {
+                if (this.getDamage() != 6) {
+                    this.setDamage(6);
+                    this.getLevel().setBlock(this, this, true);
+                }
+                BlockEntity be = this.level.getBlockEntity(this);
+                if (be instanceof BlockEntityCauldron) {
+                    BlockEntityCauldron cauldron = (BlockEntityCauldron) be;
+                    cauldron.clearCustomColor();
+                }
+            }
+            return type;
+        }
+
+        return 0;
     }
 
     @Override
@@ -244,5 +265,10 @@ public class BlockCauldron extends BlockSolid {
     @Override
     public boolean canHarvestWithHand() {
         return false;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

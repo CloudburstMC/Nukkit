@@ -724,7 +724,11 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
         return false;
     }
 
-    public boolean canWaterlog() {
+    public boolean canWaterlogSource() {
+        return false;
+    }
+
+    public boolean canWaterlogFlowing() {
         return false;
     }
 

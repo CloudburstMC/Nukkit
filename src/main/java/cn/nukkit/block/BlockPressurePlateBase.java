@@ -203,4 +203,9 @@ public abstract class BlockPressurePlateBase extends FloodableBlock {
     public Item toItem() {
         return Item.get(AIR, 0, 0);
     }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

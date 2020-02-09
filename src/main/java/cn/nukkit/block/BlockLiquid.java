@@ -193,7 +193,7 @@ public abstract class BlockLiquid extends BlockTransparent {
                 if (mainBlock.getId() == AIR) {
                     this.level.setBlock(layer(1), mainBlock, false, false);
                     this.level.setBlock(layer(0), this, false, false);
-                } else if (!mainBlock.canWaterlog() /*|| TODO: flowing-waterlogging support mainBlock.getWaterloggingLevel() == 1 && getDamage() > 0*/) {
+                } else if (!mainBlock.canWaterlogSource() || !mainBlock.canWaterlogFlowing() && getDamage() > 0) {
                     this.level.setBlock(layer(1), Block.get(AIR), true, true);
                     return type;
                 }
