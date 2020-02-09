@@ -110,6 +110,9 @@ public class BlockBed extends BlockTransparent implements Faceable {
                 int meta = player.getDirection().getHorizontalIndex();
 
                 this.getLevel().setBlock(block, Block.get(this.getId(), meta), true, true);
+                if (next instanceof BlockLiquid && ((BlockLiquid) next).usesWaterLogging()) {
+                    this.getLevel().setBlock(next.layer(1), next, true, false);
+                }
                 this.getLevel().setBlock(next, Block.get(this.getId(), meta | 0x08), true, true);
 
                 createBlockEntity(this, item.getDamage());
