@@ -22,7 +22,7 @@ public class GameRules {
     public static final BooleanGameRule TNT_EXPLODES = BooleanGameRule.of("tntexplodes", true);
     public static final BooleanGameRule SEND_COMMAND_FEEDBACK = BooleanGameRule.of("sendcommandfeedback", true);
     public static final BooleanGameRule EXPERIMENTAL_GAME_PLAY = BooleanGameRule.of("experimentalgameplay", false);
-    public static final IntegerGameRule MAX_COMMAND_CHAIN_LENGTH = IntegerGameRule.of("", 131070);
+    public static final IntegerGameRule MAX_COMMAND_CHAIN_LENGTH = IntegerGameRule.of("maxcommandchainlength", 131070);
     public static final BooleanGameRule DO_INSOMNIA = BooleanGameRule.of("doinsomnia", true);
     public static final BooleanGameRule COMMAND_BLOCKS_ENABLED = BooleanGameRule.of("commandblocksenabled", true);
     public static final IntegerGameRule RANDOM_TICK_SPEED = IntegerGameRule.of("randomtickspeed", 2);

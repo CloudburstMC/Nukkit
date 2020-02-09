@@ -93,7 +93,7 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
         for (int i = 0; i < itemsInFire.length; i++) {
             if (itemsInFire[i] != null) {
                 if (++cookingTimes[i] >= 600) {
-                    Item output = getLevel().getServer().getCraftingManager().matchFurnaceRecipe(itemsInFire[i]).getResult();
+                    Item output = getLevel().getServer().getCraftingManager().matchFurnaceRecipe(itemsInFire[i], BlockIds.CAMPFIRE).getResult();
                     getLevel().dropItem(this.add(0.5, 0.5, 0.5), output, null, true, 5);
                     itemsInFire[i] = null;
                     cookingTimes[i] = 0;
@@ -126,16 +126,17 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
 
     public boolean putItemInFire(Item item) {
         if (!(item instanceof ItemEdible)) return false;
-
-        for (int i = 0; i < itemsInFire.length; i++) {
-            if (itemsInFire[i] == null) {
-                Item food = item.clone();
-                if (food.getCount() != 1) food.setCount(1);
-                itemsInFire[i] = food;
-                cookingTimes[i] = 0;
-                spawnToAll();
-                this.scheduleUpdate();
-                return true;
+        if (getLevel().getServer().getCraftingManager().matchFurnaceRecipe(item, BlockIds.CAMPFIRE) != null) {
+            for (int i = 0; i < itemsInFire.length; i++) {
+                if (itemsInFire[i] == null) {
+                    Item food = item.clone();
+                    if (food.getCount() != 1) food.setCount(1);
+                    itemsInFire[i] = food;
+                    cookingTimes[i] = 0;
+                    spawnToAll();
+                    this.scheduleUpdate();
+                    return true;
+                }
             }
         }
         return false;
@@ -146,8 +147,11 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
     }
 
     public boolean putItemInFire(Item item, int index, boolean overwrite) {
-        if (index < 0 || index >= itemsInFire.length) return false;
-        if (!(item instanceof ItemEdible)) return false;
+        if ((index < 0 || index >= itemsInFire.length)
+                || (!(item instanceof ItemEdible))
+                || (getLevel().getServer().getCraftingManager().matchFurnaceRecipe(item, BlockIds.CAMPFIRE) == null)) {
+            return false;
+        }
 
         Item food = item.clone();
         if (food.getCount() != 1) food.setCount(1);
@@ -166,5 +170,16 @@ public class BlockEntityCampfire extends BlockEntitySpawnable {
             this.scheduleUpdate();
         }
         return addedFood;
+    }
+
+    /**
+     * Method is used to clear all of the items cooking in the fire, without dropping any into the world.
+     */
+    public void clearItems() {
+        for (int i = 0; i < itemsInFire.length; i++) {
+            itemsInFire[i] = null;
+            cookingTimes[i] = 0;
+        }
+        spawnToAll();
     }
 }

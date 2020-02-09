@@ -55,15 +55,26 @@ public class BlockCampfire extends BlockSolid implements Faceable {
     }
 
     public void toggleFire() {
+        if (!this.isLit() && isWaterlogged()) return;
         this.setDamage(this.getDamage() ^ CAMPFIRE_LIT_MASK);
         getLevel().setBlockDataAt(this.x, this.y, this.z, this.getDamage());
-        getLevel().getBlockEntity(this).scheduleUpdate();
+        BlockEntityCampfire cf = (BlockEntityCampfire) getLevel().getBlockEntity(this);
+        if (cf != null) getLevel().getBlockEntity(this).scheduleUpdate();
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (!block.canBeReplaced()) return false;
+        if (block.down().getId() == BlockIds.CAMPFIRE) {
+            return false;
+        }
         this.setDamage(player.getHorizontalFacing().getOpposite().getHorizontalIndex() & CAMPFIRE_FACING_MASK);
+        if ((block.getId() == BlockIds.WATER || block.getId() == BlockIds.FLOWING_WATER)
+                && block.getDamage() == 0) {
+            this.setDamage(this.getDamage() + CAMPFIRE_LIT_MASK);
+            getLevel().setBlock(block.getX(), block.getY(), block.getZ(), 1, block.clone(), true, false);
+        }
+
         if (getLevel().setBlock(block, this, true, true)) {
             CompoundTag tag = new CompoundTag()
                     .putString("id", BlockEntity.CAMPFIRE)
@@ -84,6 +95,28 @@ public class BlockCampfire extends BlockSolid implements Faceable {
     @Override
     public boolean canBeActivated() {
         return true;
+    }
+
+    @Override
+    public boolean canSilkTouch() {
+        return true;
+    }
+
+    @Override
+    public boolean canWaterlog() {
+        return true;
+    }
+
+    @Override
+    public boolean canBeFlooded() {
+        return false;
+    }
+
+    @Override
+    public void onWaterlog() {
+        if (this.isLit()) {
+            this.toggleFire();
+        }
     }
 
     @Override
@@ -114,19 +147,17 @@ public class BlockCampfire extends BlockSolid implements Faceable {
             }
             return true;
         } else if (item instanceof ItemEdible) {
-            if (getLevel().getServer().getCraftingManager().matchFurnaceRecipe(item) != null) {
-                BlockEntityCampfire fire = (BlockEntityCampfire) getLevel().getBlockEntity(this);
-                if (fire.putItemInFire(item)) {
-                    if (player != null && player.isSurvival()) {
-                        item.decrementCount();
-                        if (item.getCount() <= 0) {
-                            item = Item.get(BlockIds.AIR);
-                        }
-                        player.getInventory().setItemInHand(item);
+            BlockEntityCampfire fire = (BlockEntityCampfire) getLevel().getBlockEntity(this);
+            if (fire.putItemInFire(item)) {
+                if (player != null && player.isSurvival()) {
+                    item.decrementCount();
+                    if (item.getCount() <= 0) {
+                        item = Item.get(BlockIds.AIR);
                     }
+                    player.getInventory().setItemInHand(item);
                 }
-                return true;
             }
+            return true;
         }
         return false;
     }
@@ -138,5 +169,16 @@ public class BlockCampfire extends BlockSolid implements Faceable {
         } else if (!this.isLit() && entity.isOnFire()) {
             this.toggleFire();
         }
+    }
+
+    @Override
+    public int onUpdate(int type) {
+        if (this.isLit()
+                && (this.up().getId() == BlockIds.WATER
+                || this.up().getId() == BlockIds.FLOWING_WATER
+                || this.isWaterlogged())) {
+            this.toggleFire();
+        }
+        return super.onUpdate(type);
     }
 }

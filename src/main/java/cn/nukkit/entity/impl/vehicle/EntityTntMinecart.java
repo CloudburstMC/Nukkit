@@ -66,8 +66,10 @@ public class EntityTntMinecart extends EntityAbstractMinecart implements TntMine
 
             lastUpdate = currentTick;
 
-            if (fuse % 5 == 0) {
+            if (fuse <= 5 || fuse % 5 == 0) {
                 setIntData(FUSE_LENGTH, fuse);
+
+                updateData();
             }
 
             fuse -= tickDiff;
@@ -83,7 +85,7 @@ public class EntityTntMinecart extends EntityAbstractMinecart implements TntMine
 
         this.timing.stopTiming();
 
-        return super.onUpdate(currentTick);
+        return super.onUpdate(currentTick) || fuse < 80;
     }
 
     @Override

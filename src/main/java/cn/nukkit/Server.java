@@ -19,7 +19,6 @@ import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.*;
 import cn.nukkit.level.biome.EnumBiome;
-import cn.nukkit.level.generator.GeneratorIds;
 import cn.nukkit.level.storage.StorageIds;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.metadata.EntityMetadataStore;
@@ -1995,6 +1994,8 @@ public class Server {
 
     private void registerBlockEntities() {
         BlockEntity.registerBlockEntity(BlockEntity.FURNACE, BlockEntityFurnace.class);
+        BlockEntity.registerBlockEntity(BlockEntity.BLAST_FURNACE, BlockEntityBlastFurnace.class);
+        BlockEntity.registerBlockEntity(BlockEntity.SMOKER, BlockEntitySmoker.class);
         BlockEntity.registerBlockEntity(BlockEntity.CHEST, BlockEntityChest.class);
         BlockEntity.registerBlockEntity(BlockEntity.SIGN, BlockEntitySign.class);
         BlockEntity.registerBlockEntity(BlockEntity.ENCHANT_TABLE, BlockEntityEnchantTable.class);
@@ -2014,6 +2015,7 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.BANNER, BlockEntityBanner.class);
         BlockEntity.registerBlockEntity(BlockEntity.MUSIC, BlockEntityMusic.class);
         BlockEntity.registerBlockEntity(BlockEntity.CAMPFIRE, BlockEntityCampfire.class);
+        BlockEntity.registerBlockEntity(BlockEntity.BARREL, BlockEntityBarrel.class);
     }
 
     public boolean isNetherAllowed() {

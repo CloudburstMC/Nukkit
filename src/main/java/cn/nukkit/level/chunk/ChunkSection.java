@@ -61,7 +61,7 @@ public class ChunkSection {
     public Block getBlock(int x, int y, int z, int layer) {
         checkBounds(x, y, z);
         checkLayer(layer);
-        return this.storage[layer].getBlock(blockIndex(x, y, z)).clone();
+        return this.storage[layer].getBlock(blockIndex(x, y, z));
     }
 
     public void setBlock(int x, int y, int z, int layer, Block block) {
