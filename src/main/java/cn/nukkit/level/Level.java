@@ -3,6 +3,7 @@ package cn.nukkit.level;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockIds;
+import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.block.BlockRedstoneDiode;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
@@ -1928,8 +1929,34 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
-        if (!hand.place(item, block, target, face, clickPos, player)) {
-            return null;
+        Block liquid = block;
+        Block air = block.getBlockAtLayer(1);
+        BlockPosition layer0 = null;
+        BlockPosition layer1 = null;
+        if (air.getId() == BlockIds.AIR && (liquid instanceof BlockLiquid) && ((BlockLiquid) liquid).usesWaterLogging()) {
+            layer0 = liquid.layer(0);
+            layer1 = air.layer(1);
+
+            this.setBlock(layer1, liquid, false, false);
+            this.setBlock(layer0, air, false, false);
+            block = air;
+            this.scheduleUpdate(block, 1);
+        }
+
+        try {
+            if (!hand.place(item, block, target, face, clickPos, player)) {
+                if (layer0 != null) {
+                    this.setBlock(layer0, block, false, false);
+                    this.setBlock(layer1, Block.get(BlockIds.AIR), false, false);
+                }
+                return null;
+            }
+        } catch (Exception e) {
+            if (layer0 != null) {
+                this.setBlock(layer0, block, false, false);
+                this.setBlock(layer1, Block.get(BlockIds.AIR), false, false);
+            }
+            throw e;
         }
 
         if (player != null) {

@@ -503,7 +503,7 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
 
     @Override
     public String toString() {
-        return String.format("Block(id=%s, data=%s, position=(%d, %d, %d))", this.id, this.meta, this.x, this.y, this.z);
+        return String.format("Block(id=%s, data=%s, position=(%d, %d, %d, %d))", this.id, this.meta, this.x, this.y, this.z, this.layer);
     }
 
     public boolean collidesWithBB(AxisAlignedBB bb) {
@@ -726,10 +726,6 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
 
     public boolean canWaterlog() {
         return false;
-    }
-
-    public void onWaterlog() {
-
     }
 
     public boolean isWaterlogged() {

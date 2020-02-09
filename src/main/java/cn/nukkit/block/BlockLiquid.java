@@ -188,8 +188,18 @@ public abstract class BlockLiquid extends BlockTransparent {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             this.checkForHarden();
+            if (usesWaterLogging() && layer > 0) {
+                Block mainBlock = this.level.getBlock(layer(0));
+                if (mainBlock.getId() == AIR) {
+                    this.level.setBlock(layer(1), mainBlock, false, false);
+                    this.level.setBlock(layer(0), this, false, false);
+                } else if (!mainBlock.canWaterlog() /*|| TODO: flowing-waterlogging support mainBlock.getWaterloggingLevel() == 1 && getDamage() > 0*/) {
+                    this.level.setBlock(layer(1), Block.get(AIR), true, true);
+                    return type;
+                }
+            }
             this.level.scheduleUpdate(this, this.tickRate());
-            return 0;
+            return type;
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
             int decay = this.getFlowDecay(this);
             int multiplier = this.getFlowDecayPerBlock();
@@ -263,6 +273,7 @@ public abstract class BlockLiquid extends BlockTransparent {
                 }
                 this.checkForHarden();
             }
+            return type;
         }
         return 0;
     }
@@ -453,5 +464,9 @@ public abstract class BlockLiquid extends BlockTransparent {
     @Override
     public Item toItem() {
         return Item.get(AIR, 0, 0);
+    }
+
+    public boolean usesWaterLogging() {
+        return false;
     }
 }

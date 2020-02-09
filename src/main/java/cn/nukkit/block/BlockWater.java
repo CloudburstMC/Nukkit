@@ -51,4 +51,9 @@ public class BlockWater extends BlockLiquid {
     public int tickRate() {
         return 5;
     }
+
+    @Override
+    public boolean usesWaterLogging() {
+        return true;
+    }
 }
