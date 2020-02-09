@@ -66,7 +66,7 @@ public class EntityTntMinecart extends EntityAbstractMinecart implements TntMine
 
             lastUpdate = currentTick;
 
-            if (fuse % 5 == 0) {
+            if (fuse <= 5 || fuse % 5 == 0) {
                 setIntData(FUSE_LENGTH, fuse);
 
                 updateData();
