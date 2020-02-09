@@ -160,7 +160,8 @@ public class BlockLava extends BlockLiquid {
         Block colliding = null;
         for(int side = 1; side < 6; ++side){ //don't check downwards side
             Block blockSide = this.getSide(BlockFace.fromIndex(side));
-            if(blockSide instanceof BlockWater){
+            if(blockSide instanceof BlockWater
+                    || (blockSide = blockSide.getBlockAtLayer(1)) instanceof BlockWater){
                 colliding = blockSide;
                 break;
             }
