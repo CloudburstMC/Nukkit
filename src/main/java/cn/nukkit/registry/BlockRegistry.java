@@ -586,7 +586,7 @@ public class BlockRegistry implements Registry {
         //445: acacia_wall_sign
         //446: darkoak_standing_sign
         //447: darkoak_wall_sign
-        //448: lectern
+        this.factoryMap.put(LECTERN, BlockLectern::new); //448
         //449: grindstone
         //450: blast_furnace
         //451: stonecutter_block
