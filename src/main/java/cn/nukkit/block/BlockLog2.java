@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.item.Item;
 import cn.nukkit.utils.Identifier;
 
 /**
@@ -13,5 +14,14 @@ public class BlockLog2 extends BlockLog {
 
     public BlockLog2(Identifier id) {
         super(id);
+    }
+
+    @Override
+    public Item toItem() {
+        if ((getDamage() & 0b1100) == 0b1100) {
+            return Item.get(BlockIds.WOOD, this.getDamage() & 0x3 + 4);
+        } else {
+            return Item.get(id, this.getDamage() & 0x03);
+        }
     }
 }
