@@ -11,8 +11,8 @@ import static cn.nukkit.block.BlockIds.AIR;
  */
 public class BlockWallSign extends BlockSignPost {
 
-    public BlockWallSign(Identifier id) {
-        super(id);
+    public BlockWallSign(Identifier id, Identifier signStandingId, Identifier signItemId) {
+        super(id, signStandingId, id, signItemId);
     }
 
     @Override
@@ -32,5 +32,9 @@ public class BlockWallSign extends BlockSignPost {
             }
         }
         return 0;
+    }
+
+    public static BlockFactory factory(Identifier signStandingId, Identifier signItemId) {
+        return signWallId -> new BlockWallSign(signWallId, signStandingId, signItemId);
     }
 }
