@@ -211,6 +211,10 @@ public class BlockPosition extends Vector3i {
         return getSide(BlockFace.WEST, step);
     }
 
+    public BlockPosition layer(int layer) {
+        return new BlockPosition(this.x, this.y, this.z, this.level, layer);
+    }
+
     public Level getLevel() {
         return level;
     }
@@ -231,6 +235,11 @@ public class BlockPosition extends Vector3i {
 
     public Block getBlock() {
         if (this.isValid()) return this.level.getBlock(this);
+        else throw new LevelException("Undefined Level reference");
+    }
+
+    public Block getBlockAtLayer(int layer) {
+        if (this.isValid()) return this.level.getBlock(this.x, this.y, this.z, layer);
         else throw new LevelException("Undefined Level reference");
     }
 

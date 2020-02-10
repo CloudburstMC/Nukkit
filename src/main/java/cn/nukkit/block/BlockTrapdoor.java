@@ -246,4 +246,9 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
     public static BlockFactory factory(BlockColor blockColor) {
         return identifier -> new BlockTrapdoor(identifier, blockColor);
     }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

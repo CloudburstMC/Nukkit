@@ -135,11 +135,11 @@ public class ItemBucket extends Item {
         } else if (bucketContents instanceof BlockLiquid) {
             Item result = Item.get(BUCKET, 0, 1);
             Block emptyTarget = block;
-            if (target.canWaterlog() && bucketContents.getId() == FLOWING_WATER) {
+            if (target.canWaterlogSource() && bucketContents.getId() == FLOWING_WATER) {
                 emptyTarget = target;
             }
             PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, emptyTarget, face, this, result);
-            if (!emptyTarget.canBeFlooded() && !emptyTarget.canWaterlog()) {
+            if (!emptyTarget.canBeFlooded() && !emptyTarget.canWaterlogSource()) {
                 ev.setCancelled(true);
             }
 
@@ -151,10 +151,10 @@ public class ItemBucket extends Item {
 
             if (!ev.isCancelled()) {
                 BlockPosition pos = BlockPosition.from(emptyTarget);
-                if (emptyTarget.canWaterlog()) {
+                if (emptyTarget.canWaterlogSource()) {
                     pos.setLayer(1);
                 }
-                target.getLevel().setBlock(pos, bucketContents, false, false);
+                target.getLevel().setBlock(pos, bucketContents, true, true);
                 bucketContents.getLevel().scheduleUpdate(bucketContents, bucketContents.tickRate());
                 if (player.isSurvival()) {
                     Item clone = this.clone();

@@ -1656,6 +1656,10 @@ public abstract class BaseEntity extends Location implements Entity, Metadatable
                 if (b.collidesWithBB(this.getBoundingBox(), true)) {
                     this.collisionBlocks.add(b);
                 }
+                Block layer1 = b.getBlockAtLayer(1);
+                if (layer1.collidesWithBB(this.getBoundingBox(), true)) {
+                    this.collisionBlocks.add(layer1);
+                }
             }
         }
 

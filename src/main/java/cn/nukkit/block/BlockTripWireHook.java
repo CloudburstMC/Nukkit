@@ -223,4 +223,14 @@ public class BlockTripWireHook extends FloodableBlock {
     public Item toItem() {
         return Item.get(id, 0);
     }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
+
+    @Override
+    public boolean canWaterlogFlowing() {
+        return true;
+    }
 }

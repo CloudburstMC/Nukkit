@@ -163,10 +163,10 @@ public class BlockTripWire extends FloodableBlock {
             this.setDisarmed(true);
             this.level.setBlock(this, this, true, false);
             this.updateHook(false);
-            this.getLevel().setBlock(this, Block.get(AIR), true, true);
+            super.onBreak(item);
         } else {
             this.setPowered(true);
-            this.getLevel().setBlock(this, Block.get(AIR), true, true);
+            super.onBreak(item);
             this.updateHook(true);
         }
 
@@ -181,5 +181,15 @@ public class BlockTripWire extends FloodableBlock {
     @Override
     protected AxisAlignedBB recalculateCollisionBoundingBox() {
         return this;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
+
+    @Override
+    public boolean canWaterlogFlowing() {
+        return true;
     }
 }
