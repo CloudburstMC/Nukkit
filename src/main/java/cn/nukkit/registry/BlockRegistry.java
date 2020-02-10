@@ -613,6 +613,6 @@ public class BlockRegistry implements Registry {
         //471: bee_nest
         //472: beehive
         //473: honey_block
-        //474: honeycomb_block
+        this.factoryMap.put(HONEYCOMB_BLOCK, BlockHoneycombBlock::new); //474
     }
 }
