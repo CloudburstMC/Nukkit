@@ -25,8 +25,19 @@ import static cn.nukkit.block.BlockIds.*;
  */
 public class BlockSignPost extends BlockTransparent implements Faceable {
 
-    public BlockSignPost(Identifier id) {
+    protected final Identifier signItemId;
+    protected final Identifier signWallId;
+    protected final Identifier signPostId;
+
+    protected BlockSignPost(Identifier id, Identifier signPostId, Identifier signWallId, Identifier signItemId) {
         super(id);
+        this.signItemId = signItemId;
+        this.signWallId = signWallId;
+        this.signPostId = signPostId;
+    }
+
+    public BlockSignPost(Identifier id, Identifier signWallId, Identifier signItemId) {
+        this(id, id, signWallId, signItemId);
     }
 
     @Override
@@ -49,19 +60,14 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
         return null;
     }
 
-    private Identifier toWall(Identifier standingSign)
-    {
-        return Identifier.fromString(standingSign.toString().replaceFirst("standing","wall"));
-    }
-
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (face != BlockFace.DOWN) {
             CompoundTag nbt = new CompoundTag()
                     .putString("id", BlockEntity.SIGN)
-                    .putInt("x", (int) block.x)
-                    .putInt("y", (int) block.y)
-                    .putInt("z", (int) block.z)
+                    .putInt("x", block.x)
+                    .putInt("y", block.y)
+                    .putInt("z", block.z)
                     .putString("Text1", "")
                     .putString("Text2", "")
                     .putString("Text3", "")
@@ -69,10 +75,10 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
 
             if (face == BlockFace.UP) {
                 setDamage((int) Math.floor(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f);
-                getLevel().setBlock(block, Block.get(item.getBlock().getId(), getDamage()), true);
+                getLevel().setBlock(block, Block.get(signPostId, getDamage()), true);
             } else {
                 setDamage(face.getIndex());
-                getLevel().setBlock(block, Block.get(toWall(item.getBlock().getId()), getDamage()), true);
+                getLevel().setBlock(block, Block.get(signWallId, getDamage()), true);
             }
 
             if (player != null) {
@@ -107,19 +113,7 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
 
     @Override
     public Item toItem() {
-        if (SPRUCE_WALL_SIGN.equals(this.getId()) || SPRUCE_STANDING_SIGN.equals(this.getId())) {
-            return Item.get(ItemIds.SPRUCE_SIGN);
-        } else if (ACACIA_WALL_SIGN.equals(this.getId()) || ACACIA_STANDING_SIGN.equals(this.getId())) {
-            return Item.get(ItemIds.ACACIA_SIGN);
-        } else if (BIRCH_WALL_SIGN.equals(this.getId()) || BIRCH_STANDING_SIGN.equals(this.getId())) {
-            return Item.get(ItemIds.BIRCH_SIGN);
-        } else if (JUNGLE_WALL_SIGN.equals(this.getId()) || JUNGLE_STANDING_SIGN.equals(this.getId())) {
-            return Item.get(ItemIds.JUNGLE_SIGN);
-        } else if (DARK_OAK_WALL_SIGN.equals(this.getId()) || DARK_OAK_STANDING_SIGN.equals(this.getId())) {
-            return Item.get(ItemIds.DARK_OAK_SIGN);
-        } else {
-            return Item.get(ItemIds.SIGN);
-        }
+        return Item.get(signItemId);
     }
 
     @Override
@@ -135,5 +129,9 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromIndex(this.getDamage() & 0x07);
+    }
+
+    public static BlockFactory factory(Identifier signWallId, Identifier signItemId) {
+        return signPostId -> new BlockSignPost(signPostId, signWallId, signItemId);
     }
 }
