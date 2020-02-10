@@ -587,7 +587,7 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(ACACIA_WALL_SIGN, BlockWallSign.factory(ACACIA_STANDING_SIGN, ItemIds.ACACIA_SIGN)); //445
         this.factoryMap.put(DARK_OAK_STANDING_SIGN, BlockSignPost.factory(DARK_OAK_WALL_SIGN, ItemIds.DARK_OAK_SIGN)); //446
         this.factoryMap.put(DARK_OAK_WALL_SIGN, BlockWallSign.factory(DARK_OAK_STANDING_SIGN, ItemIds.DARK_OAK_SIGN)); //447
-        //448: lectern
+        this.factoryMap.put(LECTERN, BlockLectern::new); //448
         //449: grindstone
         this.factoryMap.put(BLAST_FURNACE, BlockFurnace::new); // 450
         //451: stonecutter_block

@@ -8,6 +8,7 @@ import cn.nukkit.Server;
 import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityItemFrame;
+import cn.nukkit.blockentity.BlockEntityLectern;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
@@ -29,6 +30,7 @@ import cn.nukkit.entity.projectile.Arrow;
 import cn.nukkit.entity.projectile.FishingHook;
 import cn.nukkit.entity.projectile.ThrownTrident;
 import cn.nukkit.event.block.ItemFrameDropItemEvent;
+import cn.nukkit.event.block.LecternPageChangeEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -3186,6 +3188,33 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         respawn1.respawnState = RespawnPacket.STATE_READY_TO_SPAWN;
                         this.dataPacket(respawn1);
                     }
+                case ProtocolInfo.LECTERN_UPDATE_PACKET:
+                    LecternUpdatePacket lecternUpdatePacket = (LecternUpdatePacket) packet;
+                    Vector3i blockPosition = lecternUpdatePacket.blockPosition;
+                    temporalVector.set(blockPosition.asVector3f());
+
+                    if (lecternUpdatePacket.dropBook) {
+                        Block blockLectern = this.getLevel().getBlock(temporalVector.get().asVector3i());
+                        if (blockLectern instanceof BlockLectern) {
+                            ((BlockLectern) blockLectern).dropBook(this);
+                        }
+                    } else {
+                        BlockEntity blockEntityLectern = this.level.getBlockEntity(temporalVector.get().asVector3i());
+                        if (blockEntityLectern instanceof BlockEntityLectern) {
+                            BlockEntityLectern lectern = (BlockEntityLectern) blockEntityLectern;
+                            LecternPageChangeEvent lecternPageChangeEvent = new LecternPageChangeEvent(this, lectern, lecternUpdatePacket.page);
+                            this.server.getPluginManager().callEvent(lecternPageChangeEvent);
+                            if (!lecternPageChangeEvent.isCancelled()) {
+                                lectern.setRawPage(lecternPageChangeEvent.getNewRawPage());
+                                lectern.spawnToAll();
+                                Block blockLectern = lectern.getBlock();
+                                if (blockLectern instanceof BlockLectern) {
+                                    ((BlockLectern) blockLectern).executeRedstonePulse();
+                                }
+                            }
+                        }
+                    }
+                    break;
                 default:
                     break;
             }
