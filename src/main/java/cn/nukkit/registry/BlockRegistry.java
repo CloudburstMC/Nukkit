@@ -588,10 +588,10 @@ public class BlockRegistry implements Registry {
         //447: darkoak_wall_sign
         //448: lectern
         //449: grindstone
-        //450: blast_furnace
+        this.factoryMap.put(BLAST_FURNACE, BlockFurnace::new); // 450
         //451: stonecutter_block
-        //452: smoker
-        //453: lit_smoker
+        this.factoryMap.put(SMOKER, BlockFurnace::new); //452
+        this.factoryMap.put(LIT_SMOKER, BlockFurnaceBurning::new); //453
         //454: cartography_table
         //455: fletching_table
         //456: smithing_table
@@ -605,7 +605,7 @@ public class BlockRegistry implements Registry {
         //464: jigsaw
         //465: wood
         //466: composter
-        //467: lit_blast_furnace
+        this.factoryMap.put(LIT_BLAST_FURNACE, BlockFurnaceBurning::new); //467
         //468: light_block
         //469: wither_rose
         //470: stickypistonarmcollision
