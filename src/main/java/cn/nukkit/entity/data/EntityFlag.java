@@ -63,7 +63,8 @@ public enum EntityFlag {
     SWIMMING(56),
     BRIBED(57), //dolphins have this set when they go to find treasure for the player
     PREGNANT(58),
-    LAYING_EGG(59);
+    LAYING_EGG(59),
+    BLOCKING(71);
 
     private static final Int2ObjectMap<EntityFlag> ID_MAP = new Int2ObjectOpenHashMap<>();
 

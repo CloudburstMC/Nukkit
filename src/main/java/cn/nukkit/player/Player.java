@@ -17,6 +17,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityInteractable;
 import cn.nukkit.entity.EntityTypes;
 import cn.nukkit.entity.data.EntityData;
+import cn.nukkit.entity.data.EntityFlag;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.impl.EntityLiving;
 import cn.nukkit.entity.impl.Human;
@@ -1553,6 +1554,12 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
             this.updateData();
         }
+
+        setFlag(
+                EntityFlag.BLOCKING,
+                this.isSneaking() && this.getInventory().getItemInHand().getId() == ItemIds.SHIELD // Add support to off hand
+        );
+        updateData();
 
         return true;
     }
