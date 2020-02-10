@@ -21,7 +21,7 @@ public class BlockHoneycombBlock extends BlockSolid {
 
     @Override
     public int getToolType() {
-        return ItemTool.TYPE_NONE;
+        return ItemTool.TYPE_HANDS_ONLY;
     }
 
     @Override
