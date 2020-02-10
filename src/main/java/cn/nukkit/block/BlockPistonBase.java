@@ -74,7 +74,7 @@ public abstract class BlockPistonBase extends BlockSolid implements Faceable {
 
     @Override
     public boolean onBreak(Item item) {
-        this.level.setBlock(this, Block.get(AIR), true, true);
+        super.onBreak(item);
 
         Block block = this.getSide(getFacing());
 
@@ -402,5 +402,10 @@ public abstract class BlockPistonBase extends BlockSolid implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

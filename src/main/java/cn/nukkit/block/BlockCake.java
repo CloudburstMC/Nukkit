@@ -126,4 +126,9 @@ public class BlockCake extends BlockTransparent {
     public boolean hasComparatorInputOverride() {
         return true;
     }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

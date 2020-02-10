@@ -38,4 +38,9 @@ public class BlockGlassPane extends BlockThin {
     public boolean canSilkTouch() {
         return true;
     }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

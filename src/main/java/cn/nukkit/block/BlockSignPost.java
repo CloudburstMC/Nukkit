@@ -140,6 +140,11 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
         return signStandingId;
     }
 
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
+
     public static BlockFactory factory(Identifier signWallId, Identifier signItemId) {
         return signStandingId -> new BlockSignPost(signStandingId, signWallId, signItemId);
     }

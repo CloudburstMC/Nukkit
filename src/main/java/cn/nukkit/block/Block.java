@@ -126,12 +126,16 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
     }
 
     public boolean onBreak(Item item) {
+        return removeBlock(true);
+    }
+
+    final protected boolean removeBlock(boolean update) {
         if (this.isWaterlogged()) {
             Block water = getLevel().getBlock(getX(), getY(), getZ(), 1);
-            getLevel().setBlock(getX(), getY(), getZ(), 1, Block.get(AIR), true, false);
-            return getLevel().setBlock(this, water, true, true);
+            getLevel().setBlock(this, water, true, false);
+            return getLevel().setBlock(getX(), getY(), getZ(), 1, Block.get(AIR), true, update);
         }
-        return this.getLevel().setBlock(this, Block.get(AIR), true, true);
+        return this.getLevel().setBlock(this, Block.get(AIR), true, update);
     }
 
     public boolean onBreak(Item item, Player player) {
@@ -503,7 +507,7 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
 
     @Override
     public String toString() {
-        return String.format("Block(id=%s, data=%s, position=(%d, %d, %d))", this.id, this.meta, this.x, this.y, this.z);
+        return String.format("Block(id=%s, data=%s, position=(%d, %d, %d, %d))", this.id, this.meta, this.x, this.y, this.z, this.layer);
     }
 
     public boolean collidesWithBB(AxisAlignedBB bb) {
@@ -724,12 +728,12 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
         return false;
     }
 
-    public boolean canWaterlog() {
+    public boolean canWaterlogSource() {
         return false;
     }
 
-    public void onWaterlog() {
-
+    public boolean canWaterlogFlowing() {
+        return false;
     }
 
     public boolean isWaterlogged() {

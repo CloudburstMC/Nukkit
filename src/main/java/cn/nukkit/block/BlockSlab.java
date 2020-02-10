@@ -88,4 +88,9 @@ public abstract class BlockSlab extends BlockTransparent {
     }
 
     protected abstract Identifier getDoubleSlab();
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

@@ -10,16 +10,10 @@ public class BlockBarrier extends BlockSolid {
         super(id);
     }
 
-    // Waiting for waterlogging be implemented.
-    /*@Override
-    public int getWaterloggingLevel() {
-        return 1;
-    }
-
     @Override
-    public boolean canBeFlowedInto() {
-        return false;
-    }*/
+    public boolean canWaterlogSource() {
+        return true;
+    }
 
     @Override
     public double getHardness() {
