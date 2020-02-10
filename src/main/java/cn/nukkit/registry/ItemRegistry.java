@@ -383,8 +383,11 @@ public class ItemRegistry implements Registry {
         registerVanilla(APPLE_ENCHANTED, ItemAppleGoldEnchanted::new, 466);
 
         registerVanilla(TURTLE_HELMET, ItemTurtleShell::new, 469);
-        registerVanilla(SPRUCE_SIGN, PlaceableItem.factory(BlockIds.SPRUCE_STANDING_SIGN), 472);
-
+        registerVanilla(SPRUCE_SIGN, SignItem.factory(BlockIds.SPRUCE_STANDING_SIGN), 472);
+        registerVanilla(BIRCH_SIGN, SignItem.factory(BlockIds.BIRCH_STANDING_SIGN),473);
+        registerVanilla(JUNGLE_SIGN, SignItem.factory(BlockIds.JUNGLE_STANDING_SIGN),474);
+        registerVanilla(ACACIA_SIGN, SignItem.factory(BlockIds.ACACIA_STANDING_SIGN),475);
+        registerVanilla(DARK_OAK_SIGN, SignItem.factory(BlockIds.DARK_OAK_STANDING_SIGN), 476);
         registerVanilla(SWEET_BERRIES, ItemSweetBerries::new, 477);
 
         registerVanilla(RECORD_CAT, RecordItem.factory("record.cat"), 500);

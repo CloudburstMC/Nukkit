@@ -1,6 +1,7 @@
 package cn.nukkit.registry;
 
 import cn.nukkit.block.*;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -316,12 +317,12 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(FARMLAND, BlockFarmland::new); //60
         this.factoryMap.put(FURNACE, BlockFurnace::new); //61
         this.factoryMap.put(LIT_FURNACE, BlockFurnaceBurning::new); //62
-        this.factoryMap.put(STANDING_SIGN, BlockSignPost::new); //63
+        this.factoryMap.put(STANDING_SIGN, BlockSignPost.factory(WALL_SIGN, ItemIds.SIGN)); //63
         this.factoryMap.put(WOODEN_DOOR, BlockDoorWood::new); //64
         this.factoryMap.put(LADDER, BlockLadder::new); //65
         this.factoryMap.put(RAIL, BlockRail::new); //66
         this.factoryMap.put(STONE_STAIRS, BlockStairsCobblestone::new); //67
-        this.factoryMap.put(WALL_SIGN, BlockWallSign::new); //68
+        this.factoryMap.put(WALL_SIGN, BlockWallSign.factory(STANDING_SIGN, ItemIds.SIGN)); //68
         this.factoryMap.put(LEVER, BlockLever::new); //69
         this.factoryMap.put(STONE_PRESSURE_PLATE, BlockPressurePlateStone::new); //70
         this.factoryMap.put(IRON_DOOR, BlockDoorIron::new); //71
@@ -573,19 +574,19 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(END_BRICK_STAIRS, BlockStairsEndStoneBrick::new); //432
         this.factoryMap.put(MOSSY_COBBLESTONE_STAIRS, BlockStairsCobblestone::new); //433
         this.factoryMap.put(NORMAL_STONE_STAIRS, BlockStairsStone::new); //434
-        this.factoryMap.put(SPRUCE_STANDING_SIGN, BlockSignPost::new); //435
-        //436: spruce_wall_sign
+        this.factoryMap.put(SPRUCE_STANDING_SIGN, BlockSignPost.factory(SPRUCE_WALL_SIGN, ItemIds.SPRUCE_SIGN)); //435
+        this.factoryMap.put(SPRUCE_WALL_SIGN, BlockWallSign.factory(SPRUCE_STANDING_SIGN, ItemIds.SPRUCE_SIGN)); // 436
         this.factoryMap.put(SMOOTH_STONE, BlockSmoothStone::new); // 437
         this.factoryMap.put(RED_NETHER_BRICK_STAIRS, BlockStairsNetherBrick::new); //438
         this.factoryMap.put(SMOOTH_QUARTZ_STAIRS, BlockStairsQuartz::new); //439
-        //440: birch_standing_sign
-        //441: birch_wall_sign
-        //442: jungle_standing_sign
-        //443: jungle_wall_sign
-        //444: acacia_standing_sign
-        //445: acacia_wall_sign
-        //446: darkoak_standing_sign
-        //447: darkoak_wall_sign
+        this.factoryMap.put(BIRCH_STANDING_SIGN, BlockSignPost.factory(BIRCH_WALL_SIGN, ItemIds.BIRCH_SIGN)); //440
+        this.factoryMap.put(BIRCH_WALL_SIGN, BlockWallSign.factory(BIRCH_STANDING_SIGN, ItemIds.BIRCH_SIGN)); //441
+        this.factoryMap.put(JUNGLE_STANDING_SIGN, BlockSignPost.factory(JUNGLE_WALL_SIGN, ItemIds.JUNGLE_SIGN)); //442
+        this.factoryMap.put(JUNGLE_WALL_SIGN, BlockWallSign.factory(JUNGLE_STANDING_SIGN, ItemIds.JUNGLE_SIGN)); //443
+        this.factoryMap.put(ACACIA_STANDING_SIGN, BlockSignPost.factory(ACACIA_WALL_SIGN, ItemIds.ACACIA_SIGN)); //444
+        this.factoryMap.put(ACACIA_WALL_SIGN, BlockWallSign.factory(ACACIA_STANDING_SIGN, ItemIds.ACACIA_SIGN)); //445
+        this.factoryMap.put(DARK_OAK_STANDING_SIGN, BlockSignPost.factory(DARK_OAK_WALL_SIGN, ItemIds.DARK_OAK_SIGN)); //446
+        this.factoryMap.put(DARK_OAK_WALL_SIGN, BlockWallSign.factory(DARK_OAK_STANDING_SIGN, ItemIds.DARK_OAK_SIGN)); //447
         //448: lectern
         //449: grindstone
         this.factoryMap.put(BLAST_FURNACE, BlockFurnace::new); // 450
