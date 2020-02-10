@@ -12,9 +12,11 @@ import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.ItemRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
+import com.google.common.base.Preconditions;
 
 import static cn.nukkit.block.BlockIds.*;
 
@@ -47,6 +49,11 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
         return null;
     }
 
+    private Identifier toWall(Identifier standingSign)
+    {
+        return Identifier.fromString(standingSign.toString().replaceFirst("standing","wall"));
+    }
+
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (face != BlockFace.DOWN) {
@@ -62,10 +69,10 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
 
             if (face == BlockFace.UP) {
                 setDamage((int) Math.floor(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f);
-                getLevel().setBlock(block, Block.get(STANDING_SIGN, getDamage()), true);
+                getLevel().setBlock(block, Block.get(item.getBlock().getId(), getDamage()), true);
             } else {
                 setDamage(face.getIndex());
-                getLevel().setBlock(block, Block.get(WALL_SIGN, getDamage()), true);
+                getLevel().setBlock(block, Block.get(toWall(item.getBlock().getId()), getDamage()), true);
             }
 
             if (player != null) {
@@ -100,7 +107,19 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
 
     @Override
     public Item toItem() {
-        return Item.get(ItemIds.SIGN);
+        if (SPRUCE_WALL_SIGN.equals(this.getId()) || SPRUCE_STANDING_SIGN.equals(this.getId())) {
+            return Item.get(ItemIds.SPRUCE_SIGN);
+        } else if (ACACIA_WALL_SIGN.equals(this.getId()) || ACACIA_STANDING_SIGN.equals(this.getId())) {
+            return Item.get(ItemIds.ACACIA_SIGN);
+        } else if (BIRCH_WALL_SIGN.equals(this.getId()) || BIRCH_STANDING_SIGN.equals(this.getId())) {
+            return Item.get(ItemIds.BIRCH_SIGN);
+        } else if (JUNGLE_WALL_SIGN.equals(this.getId()) || JUNGLE_STANDING_SIGN.equals(this.getId())) {
+            return Item.get(ItemIds.JUNGLE_SIGN);
+        } else if (DARK_OAK_WALL_SIGN.equals(this.getId()) || DARK_OAK_STANDING_SIGN.equals(this.getId())) {
+            return Item.get(ItemIds.DARK_OAK_SIGN);
+        } else {
+            return Item.get(ItemIds.SIGN);
+        }
     }
 
     @Override
