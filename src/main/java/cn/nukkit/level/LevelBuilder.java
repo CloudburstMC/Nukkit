@@ -54,9 +54,9 @@ public class LevelBuilder {
         return this;
     }
 
-    public LevelBuilder options(Map<String, Object> options) {
-        Preconditions.checkNotNull(options, "options");
-        levelData.getGeneratorOptions().putAll(options);
+    public LevelBuilder generatorOptions(String generatorOptions) {
+        Preconditions.checkNotNull(generatorOptions, "generatorOptions");
+        levelData.setGeneratorOptions(generatorOptions);
         return this;
     }
 
