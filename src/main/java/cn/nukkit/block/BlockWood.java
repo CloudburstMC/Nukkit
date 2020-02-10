@@ -9,14 +9,28 @@ import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
 public class BlockWood extends BlockSolid {
+    private static final short[] FACES = new short[]{
+            0,    //y
+            0,    //y
+            0x20, //z
+            0x20, //z
+            0x10, //x
+            0x10  //x
+    };
 
-    public BlockWood(Identifier id) { super(id); }
+    public BlockWood(Identifier id) {
+        super(id);
+    }
 
     @Override
-    public double getHardness() { return 2; }
+    public double getHardness() {
+        return 2;
+    }
 
     @Override
-    public double getResistance() { return 15; }
+    public double getResistance() {
+        return 15;
+    }
 
     @Override
     public int getBurnChance() {
@@ -41,15 +55,15 @@ public class BlockWood extends BlockSolid {
 
     @Override
     public boolean canBeActivated() {
-        return ( 0x8 & getDamage() ) == 0;
+        return (0x8 & getDamage()) == 0;
     }
 
     @Override
     public boolean onActivate(Item item, Player player) {
         if (!item.isAxe()) return false;
 
-        if ((this.getDamage() & 0b1000) == 0b1000 ) {
-            this.setDamage( ( this.getDamage() ^ 0b1000 ) | 0b1101 );
+        if ((this.getDamage() & 0b1000) == 0b1000) {
+            this.setDamage((this.getDamage() ^ 0b1000) | 0b1101);
         }
         Block replace = Block.get(getId(), this.getDamage() | 0x8); // adds the offset for stripped woods
         level.setBlock(x, y, z, layer, replace, true, true);
@@ -58,15 +72,7 @@ public class BlockWood extends BlockSolid {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        short[] faces = new short[]{
-                0,    //y
-                0,    //y
-                0x20, //z
-                0x20, //z
-                0x10, //x
-                0x10  //x
-        };
-        this.setDamage(this.getDamage() | faces[face.getIndex()]);
+        this.setDamage(this.getDamage() | FACES[face.getIndex()]);
         return super.place(item, block, target, face, clickPos, player);
     }
 
