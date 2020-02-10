@@ -159,6 +159,11 @@ public class OfflinePlayer implements IPlayer {
         return this.namedTag != null;
     }
 
+    @Override
+    public boolean isBlocking() {
+        return false;
+    }
+
     public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
         this.server.getPlayerMetadata().setMetadata(this, metadataKey, newMetadataValue);
     }
