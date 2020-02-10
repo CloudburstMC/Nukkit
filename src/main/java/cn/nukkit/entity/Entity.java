@@ -1571,30 +1571,32 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void fall(float fallDistance) {
-        if (!this.hasEffect(Effect.SLOW_FALLING)) {
-            float damage = (float) Math.floor(fallDistance - 3 - (this.hasEffect(Effect.JUMP) ? this.getEffect(Effect.JUMP).getAmplifier() + 1 : 0));
-            if (damage > 0) {
-                this.attack(new EntityDamageEvent(this, DamageCause.FALL, damage));
-            }
+        if (this.hasEffect(Effect.SLOW_FALLING)) {
+            return;
+        }
 
-            if (fallDistance > 0.75) {
-                Block down = this.level.getBlock(this.floor().down());
+        float damage = (float) Math.floor(fallDistance - 3 - (this.hasEffect(Effect.JUMP) ? this.getEffect(Effect.JUMP).getAmplifier() + 1 : 0));
+        if (damage > 0) {
+            this.attack(new EntityDamageEvent(this, DamageCause.FALL, damage));
+        }
 
-                if (down.getId() == Item.FARMLAND) {
-                    Event ev;
+        if (fallDistance > 0.75) {
+            Block down = this.level.getBlock(this.floor().down());
 
-                    if (this instanceof Player) {
-                        ev = new PlayerInteractEvent((Player) this, null, down, null, Action.PHYSICAL);
-                    } else {
-                        ev = new EntityInteractEvent(this, down);
-                    }
+            if (down.getId() == Item.FARMLAND) {
+                Event ev;
 
-                    this.server.getPluginManager().callEvent(ev);
-                    if (ev.isCancelled()) {
-                        return;
-                    }
-                    this.level.setBlock(down, new BlockDirt(), false, true);
+                if (this instanceof Player) {
+                    ev = new PlayerInteractEvent((Player) this, null, down, null, Action.PHYSICAL);
+                } else {
+                    ev = new EntityInteractEvent(this, down);
                 }
+
+                this.server.getPluginManager().callEvent(ev);
+                if (ev.isCancelled()) {
+                    return;
+                }
+                this.level.setBlock(down, new BlockDirt(), false, true);
             }
         }
     }
