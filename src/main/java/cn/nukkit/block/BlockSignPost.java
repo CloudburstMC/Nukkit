@@ -3,7 +3,6 @@ package cn.nukkit.block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySign;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
@@ -12,11 +11,9 @@ import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
-import cn.nukkit.registry.ItemRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
-import com.google.common.base.Preconditions;
 
 import static cn.nukkit.block.BlockIds.*;
 
