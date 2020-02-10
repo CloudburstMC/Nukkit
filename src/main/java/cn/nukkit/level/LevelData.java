@@ -23,7 +23,7 @@ public class LevelData {
     private long randomSeed = ThreadLocalRandom.current().nextLong();
     private int dimension;
     private Identifier generator;
-    private String generatorOptions;
+    private String generatorOptions = "";
     private String name = "World";
     private long time;
     private Vector3i spawn = new Vector3i(0, 128, 0);
@@ -129,7 +129,11 @@ public class LevelData {
     }
 
     public void setGeneratorOptions(String generatorOptions) {
-        this.generatorOptions = generatorOptions;
+        if (generatorOptions == null) {
+            this.generatorOptions = "";
+        } else {
+            this.generatorOptions = generatorOptions;
+        }
     }
 
     public String getName() {
