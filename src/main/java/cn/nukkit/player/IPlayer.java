@@ -140,4 +140,9 @@ public interface IPlayer extends ServerOperator, Metadatable {
      */
     boolean hasPlayedBefore();
 
+    /**
+     * @return if the player is blocking.
+     */
+    boolean isBlocking();
+
 }

@@ -371,6 +371,11 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         return this.playedBefore;
     }
 
+    @Override
+    public boolean isBlocking() {
+        return getFlag(EntityFlag.BLOCKING);
+    }
+
     public AdventureSettings getAdventureSettings() {
         return adventureSettings;
     }
@@ -1552,14 +1557,13 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 this.dummyBossBars.values().forEach(DummyBossBar::updateBossEntityPosition);
             }
 
+            setFlag(
+                    EntityFlag.BLOCKING,
+                    this.isSneaking() && this.getInventory().getItemInHand().getId() == ItemIds.SHIELD // Add support to off hand
+            );
+
             this.updateData();
         }
-
-        setFlag(
-                EntityFlag.BLOCKING,
-                this.isSneaking() && this.getInventory().getItemInHand().getId() == ItemIds.SHIELD // Add support to off hand
-        );
-        updateData();
 
         return true;
     }
