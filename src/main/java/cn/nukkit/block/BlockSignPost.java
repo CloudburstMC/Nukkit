@@ -24,13 +24,13 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
 
     protected final Identifier signItemId;
     protected final Identifier signWallId;
-    protected final Identifier signPostId;
+    protected final Identifier signStandingId;
 
-    protected BlockSignPost(Identifier id, Identifier signPostId, Identifier signWallId, Identifier signItemId) {
+    protected BlockSignPost(Identifier id, Identifier signStandingId, Identifier signWallId, Identifier signItemId) {
         super(id);
         this.signItemId = signItemId;
         this.signWallId = signWallId;
-        this.signPostId = signPostId;
+        this.signStandingId = signStandingId;
     }
 
     public BlockSignPost(Identifier id, Identifier signWallId, Identifier signItemId) {
@@ -72,7 +72,7 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
 
             if (face == BlockFace.UP) {
                 setDamage((int) Math.floor(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f);
-                getLevel().setBlock(block, Block.get(signPostId, getDamage()), true);
+                getLevel().setBlock(block, Block.get(signStandingId, getDamage()), true);
             } else {
                 setDamage(face.getIndex());
                 getLevel().setBlock(block, Block.get(signWallId, getDamage()), true);
@@ -128,7 +128,19 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
         return BlockFace.fromIndex(this.getDamage() & 0x07);
     }
 
+    public Identifier getSignItemId() {
+        return signItemId;
+    }
+
+    public Identifier getSignWallId() {
+        return signWallId;
+    }
+
+    public Identifier getSignStandingId() {
+        return signStandingId;
+    }
+
     public static BlockFactory factory(Identifier signWallId, Identifier signItemId) {
-        return signPostId -> new BlockSignPost(signPostId, signWallId, signItemId);
+        return signStandingId -> new BlockSignPost(signStandingId, signWallId, signItemId);
     }
 }
