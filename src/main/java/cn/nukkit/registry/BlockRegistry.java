@@ -574,19 +574,19 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(END_BRICK_STAIRS, BlockStairsEndStoneBrick::new); //432
         this.factoryMap.put(MOSSY_COBBLESTONE_STAIRS, BlockStairsCobblestone::new); //433
         this.factoryMap.put(NORMAL_STONE_STAIRS, BlockStairsStone::new); //434
-        this.factoryMap.put(SPRUCE_STANDING_SIGN, BlockSignPost.factory(SPRUCE_WALL_SIGN, ItemIds.SIGN)); //435
-        this.factoryMap.put(SPRUCE_WALL_SIGN, BlockWallSign.factory(SPRUCE_STANDING_SIGN, ItemIds.SIGN)); // 436
+        this.factoryMap.put(SPRUCE_STANDING_SIGN, BlockSignPost.factory(SPRUCE_WALL_SIGN, ItemIds.SPRUCE_SIGN)); //435
+        this.factoryMap.put(SPRUCE_WALL_SIGN, BlockWallSign.factory(SPRUCE_STANDING_SIGN, ItemIds.SPRUCE_SIGN)); // 436
         this.factoryMap.put(SMOOTH_STONE, BlockSmoothStone::new); // 437
         this.factoryMap.put(RED_NETHER_BRICK_STAIRS, BlockStairsNetherBrick::new); //438
         this.factoryMap.put(SMOOTH_QUARTZ_STAIRS, BlockStairsQuartz::new); //439
-        this.factoryMap.put(BIRCH_STANDING_SIGN, BlockSignPost.factory(BIRCH_WALL_SIGN, ItemIds.SIGN)); //440
-        this.factoryMap.put(BIRCH_WALL_SIGN, BlockWallSign.factory(BIRCH_STANDING_SIGN, ItemIds.SIGN)); //441
-        this.factoryMap.put(JUNGLE_STANDING_SIGN, BlockSignPost.factory(JUNGLE_WALL_SIGN, ItemIds.SIGN)); //442
-        this.factoryMap.put(JUNGLE_WALL_SIGN, BlockWallSign.factory(JUNGLE_STANDING_SIGN, ItemIds.SIGN)); //443
-        this.factoryMap.put(ACACIA_STANDING_SIGN, BlockSignPost.factory(ACACIA_WALL_SIGN, ItemIds.SIGN)); //444
-        this.factoryMap.put(ACACIA_WALL_SIGN, BlockWallSign.factory(ACACIA_STANDING_SIGN, ItemIds.SIGN)); //445
-        this.factoryMap.put(DARK_OAK_STANDING_SIGN, BlockSignPost.factory(DARK_OAK_WALL_SIGN, ItemIds.SIGN)); //446
-        this.factoryMap.put(DARK_OAK_WALL_SIGN, BlockWallSign.factory(DARK_OAK_STANDING_SIGN, ItemIds.SIGN)); //447
+        this.factoryMap.put(BIRCH_STANDING_SIGN, BlockSignPost.factory(BIRCH_WALL_SIGN, ItemIds.BIRCH_SIGN)); //440
+        this.factoryMap.put(BIRCH_WALL_SIGN, BlockWallSign.factory(BIRCH_STANDING_SIGN, ItemIds.BIRCH_SIGN)); //441
+        this.factoryMap.put(JUNGLE_STANDING_SIGN, BlockSignPost.factory(JUNGLE_WALL_SIGN, ItemIds.JUNGLE_SIGN)); //442
+        this.factoryMap.put(JUNGLE_WALL_SIGN, BlockWallSign.factory(JUNGLE_STANDING_SIGN, ItemIds.JUNGLE_SIGN)); //443
+        this.factoryMap.put(ACACIA_STANDING_SIGN, BlockSignPost.factory(ACACIA_WALL_SIGN, ItemIds.ACACIA_SIGN)); //444
+        this.factoryMap.put(ACACIA_WALL_SIGN, BlockWallSign.factory(ACACIA_STANDING_SIGN, ItemIds.ACACIA_SIGN)); //445
+        this.factoryMap.put(DARK_OAK_STANDING_SIGN, BlockSignPost.factory(DARK_OAK_WALL_SIGN, ItemIds.DARK_OAK_SIGN)); //446
+        this.factoryMap.put(DARK_OAK_WALL_SIGN, BlockWallSign.factory(DARK_OAK_STANDING_SIGN, ItemIds.DARK_OAK_SIGN)); //447
         //448: lectern
         //449: grindstone
         this.factoryMap.put(BLAST_FURNACE, BlockFurnace::new); // 450
