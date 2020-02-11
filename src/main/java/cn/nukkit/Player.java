@@ -1547,7 +1547,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (!to.equals(ev.getTo())) { //If plugins modify the destination
                         this.teleport(ev.getTo(), null);
                     } else {
-                        this.addMovement(this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
+                        this.sendPosition(new Vector3(this.x, this.y, this.z), this.yaw, this.pitch, MovePlayerPacket.MODE_NORMAL, this.getViewers().values().toArray(new Player[0]));
                     }
                     //Biome biome = Biome.biomes[level.getBiomeId(this.getFloorX(), this.getFloorZ())];
                     //sendTip(biome.getName() + " (" + biome.doesOverhang() + " " + biome.getBaseHeight() + "-" + biome.getHeightVariation() + ")");
