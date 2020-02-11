@@ -3216,8 +3216,9 @@ public class Level implements ChunkManager, Metadatable {
 
         if (raining) {
             pk.evid = LevelEventPacket.EVENT_START_RAIN;
-            pk.data = ThreadLocalRandom.current().nextInt(50000) + 10000;
-            setRainTime(ThreadLocalRandom.current().nextInt(12000) + 12000);
+            int time = ThreadLocalRandom.current().nextInt(12000) + 12000;
+            pk.data = time;
+            setRainTime(time);
         } else {
             pk.evid = LevelEventPacket.EVENT_STOP_RAIN;
             setRainTime(ThreadLocalRandom.current().nextInt(168000) + 12000);
@@ -3258,8 +3259,9 @@ public class Level implements ChunkManager, Metadatable {
         // These numbers are from Minecraft
         if (thundering) {
             pk.evid = LevelEventPacket.EVENT_START_THUNDER;
-            pk.data = ThreadLocalRandom.current().nextInt(50000) + 10000;
-            setThunderTime(ThreadLocalRandom.current().nextInt(12000) + 3600);
+            int time = ThreadLocalRandom.current().nextInt(12000) + 3600;
+            pk.data = time;
+            setThunderTime(time);
         } else {
             pk.evid = LevelEventPacket.EVENT_STOP_THUNDER;
             setThunderTime(ThreadLocalRandom.current().nextInt(168000) + 12000);
@@ -3287,7 +3289,7 @@ public class Level implements ChunkManager, Metadatable {
 
         if (this.isRaining()) {
             pk.evid = LevelEventPacket.EVENT_START_RAIN;
-            pk.data = ThreadLocalRandom.current().nextInt(50000) + 10000;
+            pk.data = this.rainTime;
         } else {
             pk.evid = LevelEventPacket.EVENT_STOP_RAIN;
         }
@@ -3296,7 +3298,7 @@ public class Level implements ChunkManager, Metadatable {
 
         if (this.isThundering()) {
             pk.evid = LevelEventPacket.EVENT_START_THUNDER;
-            pk.data = ThreadLocalRandom.current().nextInt(50000) + 10000;
+            pk.data = this.thunderTime;
         } else {
             pk.evid = LevelEventPacket.EVENT_STOP_THUNDER;
         }
