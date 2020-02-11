@@ -45,7 +45,7 @@ public class ItemRegistry implements Registry {
     private final BiMap<Integer, Identifier> runtimeIdMap = HashBiMap.create();
     private final AtomicInteger runtimeIdAllocator = new AtomicInteger(VANILLA_ITEMS.size());
     private final BlockRegistry blockRegistry;
-    private ByteBuf cachedRuntimeItems;
+    private byte[] cachedRuntimeItems;
     private volatile boolean closed;
 
     private ItemRegistry(BlockRegistry blockRegistry) {
@@ -165,7 +165,9 @@ public class ItemRegistry implements Registry {
             Binary.writeString(buffer, blockId.toString());
             buffer.writeShortLE(this.getRuntimeId(blockId));
         }
-        this.cachedRuntimeItems = buffer;
+
+        this.cachedRuntimeItems = new byte[buffer.readableBytes()];
+        buffer.readBytes(this.cachedRuntimeItems);
     }
 
     private void checkClosed() throws RegistryException {
@@ -174,7 +176,7 @@ public class ItemRegistry implements Registry {
         }
     }
 
-    public ByteBuf getCachedRuntimeItems() {
+    public byte[] getCachedRuntimeItems() {
         return cachedRuntimeItems;
     }
 
