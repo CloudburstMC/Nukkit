@@ -1524,7 +1524,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (!to.equals(ev.getTo())) { //If plugins modify the destination
                         this.teleport(ev.getTo(), null);
                     } else {
-                        this.addMovement(this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
+                        this.addMovement(this.x, this.y, this.z, this.yaw, this.pitch, this.yaw);
                     }
                     //Biome biome = Biome.biomes[level.getBiomeId(this.getFloorX(), this.getFloorZ())];
                     //sendTip(biome.getName() + " (" + biome.doesOverhang() + " " + biome.getBaseHeight() + "-" + biome.getHeightVariation() + ")");
@@ -1585,6 +1585,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.newPosition = null;
+    }
+
+    @Override
+    public void addMovement(double x, double y, double z, double yaw, double pitch, double headYaw) {
+        this.sendPosition(new Vector3(x, y, z), yaw, pitch, MovePlayerPacket.MODE_NORMAL, this.getViewers().values().toArray(new Player[0]));
     }
 
     @Override
