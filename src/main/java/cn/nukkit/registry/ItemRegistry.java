@@ -175,7 +175,7 @@ public class ItemRegistry implements Registry {
     }
 
     public ByteBuf getCachedRuntimeItems() {
-        return cachedRuntimeItems;
+        return cachedRuntimeItems.slice();
     }
 
     private void registerVanillaItems() throws RegistryException {
