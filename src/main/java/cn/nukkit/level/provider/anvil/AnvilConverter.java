@@ -42,6 +42,9 @@ public class AnvilConverter {
 
         ChunkSection[] sections = new ChunkSection[Chunk.SECTION_COUNT];
 
+        // Reusable array for performance
+        final int[] blockState = new int[2];
+
         // Chunk sections
         for (Tag tag : nbt.getList("Sections").getAll()) {
             if (tag instanceof CompoundTag) {
@@ -63,8 +66,10 @@ public class AnvilConverter {
                         for (int blockY = 0; blockY < 16; blockY++) {
                             int anvilIndex = getAnvilIndex(blockX, blockY, blockZ);
                             int nukkitIndex = ChunkSection.blockIndex(blockX, blockY, blockZ);
-                            blockStorage.setBlock(nukkitIndex, BlockRegistry.get().getBlock(blocks[anvilIndex] & 0xff,
-                                    data.get(anvilIndex)));
+                            blockState[0] = blocks[anvilIndex] & 0xff;
+                            blockState[1] = data.get(anvilIndex);
+                            convertBlockState(blockState);
+                            blockStorage.setBlock(nukkitIndex, BlockRegistry.get().getBlock(blockState[0], blockState[1]));
                         }
                     }
                 }
@@ -157,6 +162,20 @@ public class AnvilConverter {
         }
         if (nbt.getBoolean("TerrainPopulated")) {
             chunkBuilder.populated();
+        }
+    }
+
+    private static void convertBlockState(final int[] blockState) {
+        if (blockState[0] == 17) { // minecraft:log
+            if ((blockState[1] & 0b1100) == 0b1100) { // old full bark texture
+                blockState[0] = 465; // minecraft:wood
+                blockState[1] = blockState[1] & 0x03; // gets only the log type and set pillar to y
+            }
+        } else if (blockState[0] == 162) { // minecraft:log2
+            if ((blockState[1] & 0b1100) == 0b1100) { // old full bark texture
+                blockState[0] = 465; // minecraft:wood
+                blockState[1] = (blockState[1] & 0x03) + 4; // gets only the log type and set pillar to y
+            }
         }
     }
 
