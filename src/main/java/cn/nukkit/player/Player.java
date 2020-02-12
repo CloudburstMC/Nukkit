@@ -881,10 +881,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.sleeping = pos.clone();
         this.teleport(new Location(pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, this.yaw, this.pitch, this.level), null);
 
-        this.setPosData(PLAYER_BED_POSITION, pos);
+        this.setPosData(PLAYER_BED_POSITION, pos.asVector3i());
         this.setPlayerFlag(SLEEP, true);
-
-        this.setSpawn(pos.asVector3f());
 
         this.level.sleepTicks = 60;
 

@@ -56,14 +56,6 @@ public class BlockBed extends BlockTransparent implements Faceable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        int time = this.getLevel().getTime() % Level.TIME_FULL;
-
-        boolean isNight = (time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE);
-
-        if (player != null && !isNight) {
-            player.sendMessage(new TranslationContainer("tile.bed.noSleep"));
-            return true;
-        }
 
         Block blockNorth = this.north();
         Block blockSouth = this.south();
@@ -89,6 +81,20 @@ public class BlockBed extends BlockTransparent implements Faceable {
 
                 return true;
             }
+        }
+
+        if (player != null && !player.getSpawn().asVector3f().equals(b.asVector3f())) {
+            player.setSpawn(b.asVector3f());
+            player.sendMessage(new TranslationContainer("tile.bed.respawnSet"));
+        }
+
+        int time = this.getLevel().getTime() % Level.TIME_FULL;
+
+        boolean isNight = (time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE);
+
+        if (player != null && !isNight) {
+            player.sendMessage(new TranslationContainer("tile.bed.noSleep"));
+            return true;
         }
 
         if (player != null && !player.sleepOn(b)) {
