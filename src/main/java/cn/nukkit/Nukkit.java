@@ -176,4 +176,11 @@ public class Nukkit {
         loggerConfig.setLevel(level);
         ctx.updateLoggers();
     }
+
+    public static Level getLogLevel() {
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        Configuration log4jConfig = ctx.getConfiguration();
+        LoggerConfig loggerConfig = log4jConfig.getLoggerConfig(org.apache.logging.log4j.LogManager.ROOT_LOGGER_NAME);
+        return loggerConfig.getLevel();
+    }
 }
