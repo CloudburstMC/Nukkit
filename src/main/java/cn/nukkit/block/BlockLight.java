@@ -31,6 +31,11 @@ public class BlockLight extends BlockTransparent {
     }
 
     @Override
+    public boolean canWaterlogFlowing() {
+        return true;
+    }
+
+    @Override
     public boolean canBeReplaced() {
         return true;
     }
