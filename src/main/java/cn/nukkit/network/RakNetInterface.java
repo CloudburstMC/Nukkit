@@ -166,7 +166,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
         ByteBuf buffer;
         if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
-            buffer = ((BatchPacket) packet).payload;
+            buffer = ((BatchPacket) packet).payload.slice();
             if (buffer == null) {
                 return null;
             }

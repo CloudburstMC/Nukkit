@@ -11,6 +11,7 @@ import cn.nukkit.item.ItemEdible;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -103,20 +104,13 @@ public class BlockCampfire extends BlockSolid implements Faceable {
     }
 
     @Override
-    public boolean canWaterlog() {
+    public boolean canWaterlogSource() {
         return true;
     }
 
     @Override
     public boolean canBeFlooded() {
         return false;
-    }
-
-    @Override
-    public void onWaterlog() {
-        if (this.isLit()) {
-            this.toggleFire();
-        }
     }
 
     @Override
@@ -173,12 +167,22 @@ public class BlockCampfire extends BlockSolid implements Faceable {
 
     @Override
     public int onUpdate(int type) {
-        if (this.isLit()
-                && (this.up().getId() == BlockIds.WATER
-                || this.up().getId() == BlockIds.FLOWING_WATER
-                || this.isWaterlogged())) {
-            this.toggleFire();
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
+            if (this.isLit()) {
+                if (this.isWaterlogged()) {
+                    this.toggleFire();
+                    return type;
+                }
+
+                Block up = this.up();
+                if (up.getId() == BlockIds.WATER || up.getId() == BlockIds.FLOWING_WATER) {
+                    this.toggleFire();
+                    return type;
+                }
+            }
+            return type;
         }
-        return super.onUpdate(type);
+
+        return 0;
     }
 }

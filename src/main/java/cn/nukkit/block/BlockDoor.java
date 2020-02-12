@@ -234,6 +234,9 @@ public abstract class BlockDoor extends BlockTransparent implements Faceable {
 
             this.setDamage(direction);
             this.getLevel().setBlock(block, this, true, false); //Bottom
+            if (blockUp instanceof BlockLiquid && ((BlockLiquid) blockUp).usesWaterLogging()) {
+                this.getLevel().setBlock(blockUp.layer(1), blockUp.clone(), true, false);
+            }
             this.getLevel().setBlock(blockUp, Block.get(this.getId(), metaUp), true, true); //Top
 
             if (!this.isOpen() && this.level.isBlockPowered(this.asVector3i())) {
@@ -253,15 +256,16 @@ public abstract class BlockDoor extends BlockTransparent implements Faceable {
         if (isTop(this.getDamage())) {
             Block down = this.down();
             if (down.getId() == this.getId()) {
-                this.getLevel().setBlock(down, Block.get(AIR), true);
+                down.removeBlock(true);
             }
         } else {
             Block up = this.up();
             if (up.getId() == this.getId()) {
-                this.getLevel().setBlock(up, Block.get(AIR), true);
+                up.removeBlock(true);
             }
         }
-        this.getLevel().setBlock(this, Block.get(AIR), true);
+
+        super.onBreak(item);
 
         return true;
     }
@@ -329,5 +333,10 @@ public abstract class BlockDoor extends BlockTransparent implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

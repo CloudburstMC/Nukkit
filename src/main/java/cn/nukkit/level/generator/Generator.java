@@ -20,7 +20,7 @@ public interface Generator {
 
     void populateChunk(ChunkManager level, BedrockRandom random, int chunkX, int chunkZ);
 
-    Map<String, Object> getSettings();
+    String getSettings();
 
     Vector3f getSpawn();
 }

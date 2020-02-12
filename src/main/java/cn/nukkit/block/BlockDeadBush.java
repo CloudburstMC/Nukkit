@@ -68,4 +68,9 @@ public class BlockDeadBush extends FloodableBlock {
     public BlockColor getColor() {
         return BlockColor.FOLIAGE_BLOCK_COLOR;
     }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

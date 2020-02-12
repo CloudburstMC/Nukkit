@@ -56,4 +56,9 @@ public class BlockCobweb extends FloodableBlock {
     public boolean canHarvestWithHand() {
         return false;
     }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

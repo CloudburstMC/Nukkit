@@ -93,4 +93,9 @@ public class BlockEndPortalFrame extends BlockTransparent implements Faceable {
     public BlockColor getColor() {
         return BlockColor.GREEN_BLOCK_COLOR;
     }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

@@ -144,4 +144,9 @@ public class BlockBanner extends BlockTransparent implements Faceable {
 
         return DyeColor.WHITE;
     }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }
