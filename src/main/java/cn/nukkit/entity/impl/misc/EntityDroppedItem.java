@@ -110,10 +110,12 @@ public class EntityDroppedItem extends BaseEntity implements DroppedItem {
     @Override
     public boolean attack(EntityDamageEvent source) {
         return (source.getCause() == DamageCause.VOID ||
+                source.getCause() == DamageCause.CONTACT ||
                 source.getCause() == DamageCause.FIRE_TICK ||
-                source.getCause() == DamageCause.ENTITY_EXPLOSION ||
-                source.getCause() == DamageCause.BLOCK_EXPLOSION)
-                && super.attack(source);
+                (source.getCause() == DamageCause.ENTITY_EXPLOSION ||
+                source.getCause() == DamageCause.BLOCK_EXPLOSION) &&
+                !this.isInsideOfWater() && (this.item == null ||
+                this.item.getId() != Item.NETHER_STAR)) && super.attack(source);
     }
 
     @Override
