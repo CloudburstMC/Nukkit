@@ -1,6 +1,7 @@
 package cn.nukkit.level.provider.anvil;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
@@ -168,12 +169,12 @@ public class AnvilConverter {
     private static void convertBlockState(final int[] blockState) {
         if (blockState[0] == 17) { // minecraft:log
             if ((blockState[1] & 0b1100) == 0b1100) { // old full bark texture
-                blockState[0] = 465; // minecraft:wood
+                blockState[0] = BlockRegistry.get().getLegacyId(BlockIds.WOOD);
                 blockState[1] = blockState[1] & 0x03; // gets only the log type and set pillar to y
             }
         } else if (blockState[0] == 162) { // minecraft:log2
             if ((blockState[1] & 0b1100) == 0b1100) { // old full bark texture
-                blockState[0] = 465; // minecraft:wood
+                blockState[0] = BlockRegistry.get().getLegacyId(BlockIds.WOOD);
                 blockState[1] = (blockState[1] & 0x03) + 4; // gets only the log type and set pillar to y
             }
         }
