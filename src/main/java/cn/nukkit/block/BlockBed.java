@@ -6,6 +6,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Position;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.math.Vector3i;
@@ -83,8 +84,9 @@ public class BlockBed extends BlockTransparent implements Faceable {
             }
         }
 
-        if (player != null && !player.getSpawn().asVector3f().equals(b.asVector3f())) {
-            player.setSpawn(b.asVector3f());
+        Position spawn = new Position(b.getX() + 0.5, b.getY() + 0.5, b.getZ() + 0.5, this.level);
+        if (player != null && !player.getSpawn().equals(spawn)) {
+            player.setSpawn(spawn);
             player.sendMessage(new TranslationContainer("tile.bed.respawnSet"));
         }
 
