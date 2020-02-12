@@ -72,6 +72,9 @@ public class BlockWood extends BlockSolid {
          * bit 0 - 2: Determines the wood_type
          * bit 3: Determines if the wood is stripped Except when is a dark oak wood: 0b1000 Dark Oak Wood > 0b1101 Dark Oak Wood
          * bit 4 - 5: Determines the pillar_axis
+         *
+         * Block state information:
+         * https://hastebin.com/emuvawasoj.js
          */
         if ((this.getDamage() & STRIPPED_BIT) == STRIPPED_BIT) {
             this.setDamage((this.getDamage() ^ STRIPPED_BIT) | 0b1101);
