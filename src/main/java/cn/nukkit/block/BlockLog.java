@@ -45,6 +45,12 @@ public class BlockLog extends BlockSolid {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        // Convert the old log bark to the new wood block
+        if ((this.getDamage() & 0b1100) == 0b1100) {
+            Block woodBlock = Block.get(BlockIds.WOOD, this.getDamage() & 0x03, this);
+            return woodBlock.place(item, block, target, face, clickPos, player);
+        }
+
         short[] faces = new short[]{
                 0,
                 0,
