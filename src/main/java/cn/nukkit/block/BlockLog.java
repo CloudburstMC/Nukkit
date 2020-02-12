@@ -94,7 +94,11 @@ public class BlockLog extends BlockSolid {
 
     @Override
     public Item toItem() {
-        return Item.get(id, this.getDamage() & 0x03);
+        if ((getDamage() & 0b1100) == 0b1100) {
+            return Item.get(BlockIds.WOOD, this.getDamage() & 0x3);
+        } else {
+            return Item.get(id, this.getDamage() & 0x03);
+        }
     }
 
     @Override

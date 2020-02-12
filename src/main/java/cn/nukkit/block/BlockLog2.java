@@ -20,6 +20,15 @@ public class BlockLog2 extends BlockLog {
     }
 
     @Override
+    public Item toItem() {
+        if ((getDamage() & 0b1100) == 0b1100) {
+            return Item.get(BlockIds.WOOD, this.getDamage() & 0x3 + 4);
+        } else {
+            return Item.get(id, this.getDamage() & 0x03);
+        }
+    }
+
+    @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         // Convert the old log bark to the new wood block
         if ((this.getDamage() & 0b1100) == 0b1100) {
