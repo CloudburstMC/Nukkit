@@ -532,7 +532,7 @@ public class BlockRegistry implements Registry {
         //390: coral_fan_hang
         //391: coral_fan_hang2
         //392: coral_fan_hang3
-        //393: kelp
+        this.factoryMap.put(KELP, BlockKelp::new);//393
         this.factoryMap.put(DRIED_KELP_BLOCK, BlockDriedKelp::new); //394
         this.factoryMap.put(ACACIA_BUTTON,BlockButtonWooden::new);//395
         this.factoryMap.put(BIRCH_BUTTON, BlockButtonWooden::new);//396
