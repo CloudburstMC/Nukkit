@@ -3,8 +3,8 @@ package cn.nukkit.level;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockTNT;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.item.EntityItem;
-import cn.nukkit.entity.item.EntityXPOrb;
+import cn.nukkit.entity.misc.DroppedItem;
+import cn.nukkit.entity.misc.XpOrb;
 import cn.nukkit.event.block.BlockUpdateEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -163,7 +163,7 @@ public class Explosion {
                     entity.attack(new EntityDamageEvent(entity, DamageCause.BLOCK_EXPLOSION, damage));
                 }
 
-                if (!(entity instanceof EntityItem || entity instanceof EntityXPOrb)) {
+                if (!(entity instanceof DroppedItem || entity instanceof XpOrb)) {
                     entity.setMotion(motion.multiply(impact));
                 }
             }
