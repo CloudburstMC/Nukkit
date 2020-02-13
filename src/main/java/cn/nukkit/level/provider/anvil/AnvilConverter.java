@@ -9,6 +9,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.level.BlockUpdate;
 import cn.nukkit.level.chunk.*;
+import cn.nukkit.level.provider.LegacyBlockConverter;
 import cn.nukkit.level.provider.anvil.palette.BiomePalette;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.*;
@@ -47,6 +48,8 @@ public class AnvilConverter {
 
         // Reusable array for performance
         final int[] blockState = new int[2];
+        BlockRegistry blockRegistry = BlockRegistry.get();
+        LegacyBlockConverter legacyBlockConverter = LegacyBlockConverter.get();
 
         // Chunk sections
         for (Tag tag : nbt.getList("Sections").getAll()) {
@@ -71,8 +74,8 @@ public class AnvilConverter {
                             int nukkitIndex = ChunkSection.blockIndex(blockX, blockY, blockZ);
                             blockState[0] = blocks[anvilIndex] & 0xff;
                             blockState[1] = data.get(anvilIndex);
-                            convertBlockState(blockState);
-                            blockStorage.setBlock(nukkitIndex, BlockRegistry.get().getBlock(blockState[0], blockState[1]));
+                            legacyBlockConverter.convertBlockState(blockState);
+                            blockStorage.setBlock(nukkitIndex, blockRegistry.getBlock(blockState[0], blockState[1]));
                         }
                     }
                 }
@@ -165,14 +168,6 @@ public class AnvilConverter {
         }
         if (nbt.getBoolean("TerrainPopulated")) {
             chunkBuilder.populated();
-        }
-    }
-
-    private static void convertBlockState(final int[] blockState) {
-        if (blockState[0] == 17) { // minecraft:log
-            BlockLog.upgradeLegacyBlock(blockState);
-        } else if (blockState[0] == 162) { // minecraft:log2
-            BlockLog2.upgradeLegacyBlock(blockState);
         }
     }
 
