@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3f;
@@ -22,6 +23,12 @@ public class BlockKelp extends Block {
     @Override
     public boolean canWaterlogSource() {
         return true;
+    }
+
+    @Override
+    public Item toItem()
+    {
+        return Item.get(ItemIds.KELP);
     }
 
     @Override
