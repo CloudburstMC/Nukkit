@@ -5,6 +5,7 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
@@ -118,6 +119,13 @@ public class BlockLog extends BlockSolid {
                 return BlockColor.SAND_BLOCK_COLOR;
             case JUNGLE:
                 return BlockColor.DIRT_BLOCK_COLOR;
+        }
+    }
+
+    public static void upgradeLegacyBlock(int[] blockState) {
+        if ((blockState[1] & 0b1100) == 0b1100) { // old full bark texture
+            blockState[0] = BlockRegistry.get().getLegacyId(BlockIds.WOOD);
+            blockState[1] = blockState[1] & 0x03; // gets only the log type and set pillar to y
         }
     }
 }

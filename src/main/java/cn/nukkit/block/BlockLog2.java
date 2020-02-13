@@ -4,6 +4,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
 
 /**
@@ -37,5 +38,12 @@ public class BlockLog2 extends BlockLog {
         }
 
         return super.place(item, block, target, face, clickPos, player);
+    }
+
+    public static void upgradeLegacyBlock(int[] blockState) {
+        if ((blockState[1] & 0b1100) == 0b1100) { // old full bark texture
+            blockState[0] = BlockRegistry.get().getLegacyId(BlockIds.WOOD);
+            blockState[1] = (blockState[1] & 0x03) + 4; // gets only the log type and set pillar to y
+        }
     }
 }
