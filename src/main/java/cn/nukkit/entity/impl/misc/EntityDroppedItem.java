@@ -10,6 +10,7 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.ItemDespawnEvent;
 import cn.nukkit.event.entity.ItemSpawnEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -115,7 +116,7 @@ public class EntityDroppedItem extends BaseEntity implements DroppedItem {
                 (source.getCause() == DamageCause.ENTITY_EXPLOSION ||
                 source.getCause() == DamageCause.BLOCK_EXPLOSION) &&
                 !this.isInsideOfWater() && (this.item == null ||
-                this.item.getId() != Item.NETHER_STAR)) && super.attack(source);
+                this.item.getId() != ItemIds.NETHER_STAR)) && super.attack(source);
     }
 
     @Override
