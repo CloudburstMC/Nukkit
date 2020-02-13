@@ -1847,10 +1847,6 @@ public class Level implements ChunkManager, Metadatable {
                 }
                 return null;
             }
-
-            if (item.getId() == ItemIds.BUCKET && ItemBucket.getBlockIdFromDamage(item.getDamage()) == FLOWING_WATER) {
-                player.getLevel().sendBlocks(new Player[]{player}, new Block[]{Block.get(AIR, 0, target.setLayer(1))}, UpdateBlockPacket.FLAG_ALL_PRIORITY);
-            }
         } else if (target.canBeActivated() && target.onActivate(item, player)) {
             if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
                 item = Item.get(BlockIds.AIR, 0, 0);
