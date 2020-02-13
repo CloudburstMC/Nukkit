@@ -62,7 +62,7 @@ public class BlockWood extends BlockSolid {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (!item.isAxe()) {
+        if (!item.isAxe() || !item.useOn(this)) {
             return false;
         }
 
