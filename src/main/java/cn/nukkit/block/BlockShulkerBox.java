@@ -19,6 +19,6 @@ public class BlockShulkerBox extends BlockUndyedShulkerBox {
     }
 
     public DyeColor getDyeColor() {
-        return DyeColor.getByWoolData(this.getDamage());
+        return DyeColor.getByWoolData(this.getMeta());
     }
 }

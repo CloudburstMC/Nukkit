@@ -1,8 +1,8 @@
 package cn.nukkit.item;
 
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * Created by Snake1999 on 2016/1/14.
@@ -30,7 +30,7 @@ public class ItemFishingRod extends ItemTool {
             player.stopFishing(true);
         } else {
             player.startFishing(this);
-            this.setDamage(this.getDamage() + 1);
+            this.setMeta(this.getMeta() + 1);
         }
         return true;
     }

@@ -5,10 +5,10 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * Created by CreeperFace on 27. 11. 2016.
@@ -20,13 +20,13 @@ public abstract class BlockButton extends FloodableBlock implements Faceable {
     }
 
     @Override
-    public double getResistance() {
-        return 2.5;
+    public float getResistance() {
+        return 2.5f;
     }
 
     @Override
-    public double getHardness() {
-        return 0.5;
+    public float getHardness() {
+        return 0.5f;
     }
 
     @Override
@@ -36,7 +36,7 @@ public abstract class BlockButton extends FloodableBlock implements Faceable {
         }
 
         this.setDamage(face.getIndex());
-        this.level.setBlock(block, this, true, true);
+        this.level.setBlock(block.getPosition(), this, true, true);
         return true;
     }
 
@@ -52,13 +52,13 @@ public abstract class BlockButton extends FloodableBlock implements Faceable {
         }
 
         this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
-        this.setDamage(this.getDamage() ^ 0x08);
-        this.level.setBlock(this, this, true, false);
-        this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_CLICK);
+        this.setDamage(this.getMeta() ^ 0x08);
+        this.level.setBlock(this.getPosition(), this, true, false);
+        this.level.addSound(this.getPosition(), Sound.RANDOM_CLICK);
         this.level.scheduleUpdate(this, 30);
 
-        level.updateAroundRedstone(this, null);
-        level.updateAroundRedstone(this.getSide(getFacing().getOpposite()), null);
+        level.updateAroundRedstone(this.getPosition(), null);
+        level.updateAroundRedstone(this.getFacing().getOpposite().getOffset(this.getPosition()), null);
         return true;
     }
 
@@ -66,19 +66,19 @@ public abstract class BlockButton extends FloodableBlock implements Faceable {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (this.getSide(getFacing().getOpposite()).isTransparent()) {
-                this.level.useBreakOn(this);
+                this.level.useBreakOn(this.getPosition());
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
             if (this.isActivated()) {
                 this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
 
-                this.setDamage(this.getDamage() ^ 0x08);
-                this.level.setBlock(this, this, true, false);
-                this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_CLICK);
+                this.setDamage(this.getMeta() ^ 0x08);
+                this.level.setBlock(this.getPosition(), this, true, false);
+                this.level.addSound(this.getPosition(), Sound.RANDOM_CLICK);
 
-                level.updateAroundRedstone(this, null);
-                level.updateAroundRedstone(this.getSide(getFacing().getOpposite()), null);
+                level.updateAroundRedstone(this.getPosition(), null);
+                level.updateAroundRedstone(this.getFacing().getOpposite().getOffset(this.getPosition()), null);
             }
 
             return Level.BLOCK_UPDATE_SCHEDULED;
@@ -88,7 +88,7 @@ public abstract class BlockButton extends FloodableBlock implements Faceable {
     }
 
     public boolean isActivated() {
-        return ((this.getDamage() & 0x08) == 0x08);
+        return ((this.getMeta() & 0x08) == 0x08);
     }
 
     @Override
@@ -105,7 +105,7 @@ public abstract class BlockButton extends FloodableBlock implements Faceable {
     }
 
     public BlockFace getFacing() {
-        int side = isActivated() ? getDamage() ^ 0x08 : getDamage();
+        int side = isActivated() ? getMeta() ^ 0x08 : getMeta();
         return BlockFace.fromIndex(side);
     }
 
@@ -125,6 +125,6 @@ public abstract class BlockButton extends FloodableBlock implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x7);
     }
 }

@@ -2,13 +2,13 @@ package cn.nukkit.event.server;
 
 import cn.nukkit.Server;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import cn.nukkit.player.Player;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginDescription;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -141,9 +141,8 @@ public class QueryRegenerateEvent extends ServerEvent {
         this.extraData = extraData;
     }
 
-    public byte[] getLongQuery(byte[] buffer) {
-        if (buffer == null) buffer = new byte[Character.MAX_VALUE];
-        FastByteArrayOutputStream query = new FastByteArrayOutputStream(buffer);
+    public byte[] getLongQuery() {
+        ByteArrayOutputStream query = new ByteArrayOutputStream();
         try {
             String plist = this.server_engine;
             if (this.plugins.length > 0 && this.listPlugins) {

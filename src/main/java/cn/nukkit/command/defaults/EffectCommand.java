@@ -20,14 +20,14 @@ public class EffectCommand extends Command {
         super(name, "%nukkit.command.effect.description", "%commands.effect.usage");
         this.setPermission("nukkit.command.effect");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
                 new CommandParameter("effect", CommandParamType.STRING, false), //Do not use Enum here because of buggy behavior
                 new CommandParameter("seconds", CommandParamType.INT, true),
                 new CommandParameter("amplifier", true),
                 new CommandParameter("hideParticle", true, new String[]{"true", "false"})
         });
-        this.commandParameters.put("clear", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
                 new CommandParameter("clear", new String[]{"clear"})
         });

@@ -3,10 +3,10 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * author: MagicDroidX
@@ -24,12 +24,12 @@ public class BlockLog extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 2;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 10;
     }
 
@@ -54,15 +54,15 @@ public class BlockLog extends BlockSolid {
                 0b0100
         };
 
-        this.setDamage(((this.getDamage() & 0x03) | faces[face.getIndex()]));
-        this.getLevel().setBlock(block, this, true, true);
+        this.setDamage(((this.getMeta() & 0x03) | faces[face.getIndex()]));
+        this.getLevel().setBlock(block.getPosition(), this, true, true);
 
         return true;
     }
 
     @Override
     public Item toItem() {
-        return Item.get(id, this.getDamage() & 0x03);
+        return Item.get(id, this.getMeta() & 0x03);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class BlockLog extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        switch (getDamage() & 0x07) {
+        switch (getMeta() & 0x07) {
             default:
             case OAK:
                 return BlockColor.WOOD_BLOCK_COLOR;

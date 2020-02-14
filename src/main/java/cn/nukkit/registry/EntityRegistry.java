@@ -10,10 +10,7 @@ import cn.nukkit.entity.impl.misc.*;
 import cn.nukkit.entity.impl.passive.*;
 import cn.nukkit.entity.impl.projectile.*;
 import cn.nukkit.entity.impl.vehicle.*;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.level.Location;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -21,6 +18,10 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableSet;
+import com.nukkitx.nbt.NbtUtils;
+import com.nukkitx.nbt.stream.NBTInputStream;
+import com.nukkitx.nbt.tag.CompoundTag;
+import com.nukkitx.nbt.tag.ListTag;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
@@ -28,11 +29,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.lang.reflect.Type;
-import java.nio.ByteOrder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -51,7 +47,8 @@ public class EntityRegistry implements Registry {
 
     static {
         try (InputStream stream = RegistryUtils.getOrAssertResource("legacy/entity_names.json")) {
-            Map<String, String> legacyNames = Nukkit.JSON_MAPPER.readValue(stream, new TypeReference<Map<String, String>>() {});
+            Map<String, String> legacyNames = Nukkit.JSON_MAPPER.readValue(stream, new TypeReference<Map<String, String>>() {
+            });
 
             ImmutableBiMap.Builder<String, Identifier> mapBuilder = ImmutableBiMap.builder();
 
@@ -61,10 +58,10 @@ public class EntityRegistry implements Registry {
             throw new AssertionError("Unable to load legacy entity names", e);
         }
 
-        try (InputStream stream = RegistryUtils.getOrAssertResource("entity_identifiers.dat")) {
-            CompoundTag tag = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN, true);
-            ListTag<CompoundTag> vanillaEntities = tag.getList("idlist", CompoundTag.class);
-            VANILLA_ENTITIES = vanillaEntities.getAll();
+        try (InputStream stream = RegistryUtils.getOrAssertResource("entity_identifiers.dat");
+             NBTInputStream nbtInputStream = NbtUtils.createNetworkReader(stream)) {
+            CompoundTag tag = (CompoundTag) nbtInputStream.readTag();
+            VANILLA_ENTITIES = tag.getList("idlist", CompoundTag.class);
         } catch (IOException e) {
             throw new AssertionError("Unable to close resource stream", e);
         }
@@ -80,7 +77,7 @@ public class EntityRegistry implements Registry {
     private final int customEntityStart;
     private int runtimeTypeAllocator;
     private volatile boolean closed;
-    private byte[] cachedEntityIdentifiers;
+    private ListTag<CompoundTag> entityIdentifiersPalette;
 
     private EntityRegistry() {
         this.registerVanillaEntities();
@@ -143,41 +140,37 @@ public class EntityRegistry implements Registry {
     /**
      * Creates new entity of given type
      *
-     * @param type  entity type
-     * @param chunk chunk entity is in
-     * @param tag   compound tag with entity data
-     * @param <T>   entity class type
+     * @param type     entity type
+     * @param location location to spawn entity
+     * @param <T>      entity class type
      * @return new entity
      */
-    public <T extends Entity> T newEntity(EntityType<T> type, Chunk chunk, CompoundTag tag) {
+    public <T extends Entity> T newEntity(EntityType<T> type, Location location) {
         checkState(closed, "Cannot create entity till registry is closed");
         checkNotNull(type, "type");
-        checkNotNull(chunk, "chunk");
-        checkNotNull(tag, "tag");
+        checkNotNull(location, "location");
         EntityFactory<T> factory = getServiceProvider(type).getProvider().getValue();
-        return factory.create(type, chunk, tag);
+        return factory.create(type, location);
     }
 
     /**
      * Creates new entity of given type from specific plugin factory
      *
-     * @param type  entity type
-     * @param chunk chunk entity is in
-     * @param tag   compound tag with entity data
-     * @param <T>   entity class type
+     * @param type     entity type
+     * @param location location to spawn entity
+     * @param <T>      entity class type
      * @return new entity
      */
-    public <T extends Entity> T newEntity(EntityType<T> type, Plugin plugin, Chunk chunk, CompoundTag tag) {
+    public <T extends Entity> T newEntity(EntityType<T> type, Plugin plugin, Location location) {
         checkState(closed, "Cannot create entity till registry is closed");
         checkNotNull(type, "type");
         checkNotNull(plugin, "plugin");
-        checkNotNull(chunk, "chunk");
-        checkNotNull(tag, "tag");
+        checkNotNull(location, "location");
         RegistryProvider<EntityFactory<T>> provider = getServiceProvider(type).getProvider(plugin);
         if (provider == null) {
             throw new RegistryException("Plugin has no registered provider for " + type.getIdentifier());
         }
-        return provider.getValue().create(type, chunk, tag);
+        return provider.getValue().create(type, location);
     }
 
     /**
@@ -197,8 +190,8 @@ public class EntityRegistry implements Registry {
         return LEGACY_NAMES.inverse().get(identifier);
     }
 
-    public byte[] getCachedEntityIdentifiers() {
-        return cachedEntityIdentifiers;
+    public ListTag<CompoundTag> getEntityIdentifiersPalette() {
+        return entityIdentifiersPalette;
     }
 
     public ImmutableSet<EntityType<?>> getEntityTypes() {
@@ -229,24 +222,18 @@ public class EntityRegistry implements Registry {
             EntityType<?> type = this.runtimeTypeMap.get(id);
             EntityData<?> data = this.dataMap.get(type);
 
-            entityIdentifiers.add(new CompoundTag()
-                    .putBoolean("summonable", true) // TODO: 07/01/2020 This affects the summon command auto completion
-                    .putBoolean("hasSpawnEgg", data.hasSpawnEgg)
-                    .putBoolean("experimental", true) // If there are experimental features, we may as well enable them
-                    .putString("id", type.getIdentifier().toString())
-                    .putString("bid", "") // ???
-                    .putInt("rid", id)
+            entityIdentifiers.add(CompoundTag.builder()
+                    .booleanTag("summonable", true) // TODO: 07/01/2020 This affects the summon command auto completion
+                    .booleanTag("hasSpawnEgg", data.hasSpawnEgg)
+                    .booleanTag("experimental", true) // If there are experimental features, we may as well enable them
+                    .stringTag("id", type.getIdentifier().toString())
+                    .stringTag("bid", "") // ???
+                    .intTag("rid", id)
+                    .buildRootTag()
             );
         }
 
-        ListTag<CompoundTag> idList = new ListTag<>("idlist");
-        idList.setAll(entityIdentifiers);
-
-        try {
-            this.cachedEntityIdentifiers = NBTIO.write(new CompoundTag().putList(idList), ByteOrder.LITTLE_ENDIAN, true);
-        } catch (IOException e) {
-            throw new RegistryException("Unable to create entity identifiers cache");
-        }
+        this.entityIdentifiersPalette = new ListTag<>("idlist", CompoundTag.class, entityIdentifiers);
         this.closed = true;
     }
 
@@ -303,10 +290,10 @@ public class EntityRegistry implements Registry {
         registerVanilla(RAVAGER, EntityRavager::new, 59);
         registerVanilla(PLAYER, Human::new, 63);
         registerVanilla(ITEM, EntityDroppedItem::new, 64);
-        registerVanilla(TNT, EntityTnt::new, 65);
+        registerVanilla(TNT, EntityPrimedTnt::new, 65);
         registerVanilla(FALLING_BLOCK, EntityFallingBlock::new, 66);
         registerVanilla(XP_BOTTLE, EntityXpBottle::new, 68);
-        registerVanilla(XP_ORB, EntityXpOrb::new, 69);
+        registerVanilla(XP_ORB, EntityExperienceOrb::new, 69);
         registerVanilla(ENDER_CRYSTAL, EntityEnderCrystal::new, 71);
         registerVanilla(FIREWORKS_ROCKET, EntityFireworksRocket::new, 72);
         registerVanilla(THROWN_TRIDENT, EntityThrownTrident::new, 73);

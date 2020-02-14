@@ -10,10 +10,10 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import static cn.nukkit.block.BlockIds.*;
 
@@ -27,12 +27,12 @@ public class BlockCactus extends BlockTransparent {
     }
 
     @Override
-    public double getHardness() {
-        return 0.4;
+    public float getHardness() {
+        return 0.4f;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 2;
     }
 
@@ -42,38 +42,38 @@ public class BlockCactus extends BlockTransparent {
     }
 
     @Override
-    public double getMinX() {
-        return this.x + 0.0625;
+    public float getMinX() {
+        return this.getX() + 0.0625f;
     }
 
     @Override
-    public double getMinY() {
-        return this.y;
+    public float getMinY() {
+        return this.getY();
     }
 
     @Override
-    public double getMinZ() {
-        return this.z + 0.0625;
+    public float getMinZ() {
+        return this.getZ() + 0.0625f;
     }
 
     @Override
-    public double getMaxX() {
-        return this.x + 0.9375;
+    public float getMaxX() {
+        return this.getX() + 0.9375f;
     }
 
     @Override
-    public double getMaxY() {
-        return this.y + 0.9375;
+    public float getMaxY() {
+        return this.getY() + 0.9375f;
     }
 
     @Override
-    public double getMaxZ() {
-        return this.z + 0.9375;
+    public float getMaxZ() {
+        return this.getZ() + 0.9375f;
     }
 
     @Override
     protected AxisAlignedBB recalculateCollisionBoundingBox() {
-        return new SimpleAxisAlignedBB(this.x, this.y, this.z, this.x + 1, this.y + 1, this.z + 1);
+        return new SimpleAxisAlignedBB(this.getX(), this.getY(), this.getZ(), this.getX() + 1, this.getY() + 1, this.getZ() + 1);
     }
 
     @Override
@@ -86,33 +86,33 @@ public class BlockCactus extends BlockTransparent {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             Block down = down();
             if (down.getId() != SAND && down.getId() != CACTUS) {
-                this.getLevel().useBreakOn(this);
+                this.getLevel().useBreakOn(this.getPosition());
             } else {
                 for (int side = 2; side <= 5; ++side) {
                     Block block = getSide(BlockFace.fromIndex(side));
                     if (!block.canBeFlooded()) {
-                        this.getLevel().useBreakOn(this);
+                        this.getLevel().useBreakOn(this.getPosition());
                     }
                 }
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             if (down().getId() != CACTUS) {
-                if (this.getDamage() == 0x0F) {
+                if (this.getMeta() == 0x0F) {
                     for (int y = 1; y < 3; ++y) {
-                        Block b = this.getLevel().getBlock(this.x, this.y + y, this.z);
+                        Block b = this.getLevel().getBlock(this.getX(), this.getY() + y, this.getZ());
                         if (b.getId() == AIR) {
                             BlockGrowEvent event = new BlockGrowEvent(b, Block.get(CACTUS));
                             Server.getInstance().getPluginManager().callEvent(event);
                             if (!event.isCancelled()) {
-                                this.getLevel().setBlock(b, event.getNewState(), true);
+                                this.getLevel().setBlock(b.getPosition(), event.getNewState(), true);
                             }
                         }
                     }
                     this.setDamage(0);
-                    this.getLevel().setBlock(this, this);
+                    this.getLevel().setBlock(this.getPosition(), this);
                 } else {
-                    this.setDamage(this.getDamage() + 1);
-                    this.getLevel().setBlock(this, this);
+                    this.setDamage(this.getMeta() + 1);
+                    this.getLevel().setBlock(this.getPosition(), this);
                 }
             }
         }
@@ -129,7 +129,7 @@ public class BlockCactus extends BlockTransparent {
             Block block2 = west();
             Block block3 = east();
             if (block0.canBeFlooded() && block1.canBeFlooded() && block2.canBeFlooded() && block3.canBeFlooded()) {
-                this.getLevel().setBlock(this, this, true);
+                this.getLevel().setBlock(this.getPosition(), this, true);
 
                 return true;
             }

@@ -49,7 +49,7 @@ public class QueryHandler {
 
     public void regenerateInfo() {
         QueryRegenerateEvent ev = this.server.getQueryInformation();
-        this.longData = ev.getLongQuery(this.longData);
+        this.longData = ev.getLongQuery();
         this.shortData = ev.getShortQuery();
         this.timeout = System.currentTimeMillis() + ev.getTimeout();
     }
@@ -90,7 +90,7 @@ public class QueryHandler {
                 reply.writeBytes(getTokenString(this.token, address.getAddress()));
                 reply.writeByte(0);
 
-                this.server.getNetwork().sendPacket(address, reply);
+                this.server.getNetwork().sendRawPacket(address, reply);
                 break;
             case STATISTICS:
                 byte[] token = new byte[4];
@@ -113,7 +113,7 @@ public class QueryHandler {
                     reply.writeBytes(this.shortData);
                 }
 
-                this.server.getNetwork().sendPacket(address, reply);
+                this.server.getNetwork().sendRawPacket(address, reply);
                 break;
         }
     }

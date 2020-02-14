@@ -7,20 +7,17 @@ import cn.nukkit.entity.impl.BaseEntity;
 import cn.nukkit.entity.misc.EnderCrystal;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.Explosion;
-import cn.nukkit.level.Position;
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.gamerule.GameRules;
-import cn.nukkit.nbt.tag.CompoundTag;
-
-import static cn.nukkit.entity.data.EntityFlag.SHOWBASE;
+import com.nukkitx.protocol.bedrock.data.EntityFlag;
 
 /**
  * Created by PetteriM1
  */
 public class EntityEnderCrystal extends BaseEntity implements EnderCrystal, EntityExplosive {
 
-    public EntityEnderCrystal(EntityType<EnderCrystal> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityEnderCrystal(EntityType<EnderCrystal> type, Location location) {
+        super(type, location);
     }
 
     @Override
@@ -55,10 +52,9 @@ public class EntityEnderCrystal extends BaseEntity implements EnderCrystal, Enti
 
     @Override
     public void explode() {
-        Position pos = this.getPosition();
-        Explosion explode = new Explosion(pos, 6, this);
+        Explosion explode = new Explosion(this.getLevel(), this.getPosition(), 6, this);
 
-        close();
+        this.close();
 
         if (this.level.getGameRules().get(GameRules.MOB_GRIEFING)) {
             explode.explode();
@@ -71,10 +67,10 @@ public class EntityEnderCrystal extends BaseEntity implements EnderCrystal, Enti
     }
 
     public boolean showBase() {
-        return this.getFlag(SHOWBASE);
+        return this.data.getFlag(EntityFlag.SHOW_BOTTOM);
     }
 
     public void setShowBase(boolean value) {
-        this.setFlag(SHOWBASE, value);
+        this.data.setFlag(EntityFlag.SHOW_BOTTOM, value);
     }
 }

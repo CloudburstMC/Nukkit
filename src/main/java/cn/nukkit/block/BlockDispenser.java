@@ -2,9 +2,9 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * Created by CreeperFace on 15.4.2017.
@@ -27,7 +27,7 @@ public class BlockDispenser extends BlockSolid implements Faceable {
 
     @Override
     public int getComparatorInputOverride() {
-        /*BlockEntity blockEntity = this.level.getBlockEntity(this);
+        /*BlockEntity blockEntity = this.level.getBlockEntity(this.getPosition());
 
         if(blockEntity instanceof BlockEntityDispenser) {
             //return ContainerInventory.calculateRedstone(((BlockEntityDispenser) blockEntity).getInventory()); TODO: dispenser
@@ -37,11 +37,11 @@ public class BlockDispenser extends BlockSolid implements Faceable {
     }
 
     public BlockFace getFacing() {
-        return BlockFace.fromIndex(this.getDamage() & 7);
+        return BlockFace.fromIndex(this.getMeta() & 7);
     }
 
     public boolean isTriggered() {
-        return (this.getDamage() & 8) > 0;
+        return (this.getMeta() & 8) > 0;
     }
 
     public void setTriggered(boolean value) {
@@ -62,14 +62,15 @@ public class BlockDispenser extends BlockSolid implements Faceable {
 
     public Vector3f getDispensePosition() {
         BlockFace facing = getFacing();
-        double x = this.getX() + 0.7 * facing.getXOffset();
-        double y = this.getY() + 0.7 * facing.getYOffset();
-        double z = this.getZ() + 0.7 * facing.getZOffset();
-        return new Vector3f(x, y, z);
+        float x = this.getX() + 0.7f * facing.getXOffset();
+        float y = this.getY() + 0.7f * facing.getYOffset();
+        float z = this.getZ() + 0.7f * facing.getZOffset();
+
+        return Vector3f.from(x, y, z);
     }
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
     }
 }

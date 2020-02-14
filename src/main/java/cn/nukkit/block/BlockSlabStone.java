@@ -37,7 +37,7 @@ public class BlockSlabStone extends BlockSlab {
 
     @Override
     public Item toItem() {
-        return Item.get(id, this.getDamage() & 0x07);
+        return Item.get(id, this.getMeta() & 0x07);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class BlockSlabStone extends BlockSlab {
 
     @Override
     public BlockColor getColor() {
-        switch (this.getDamage() & 0x07) {
+        switch (this.getMeta() & 0x07) {
             case NETHER_BRICK:
                 return BlockColor.NETHERRACK_BLOCK_COLOR;
             default:

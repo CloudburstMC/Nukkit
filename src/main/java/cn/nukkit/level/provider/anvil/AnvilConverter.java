@@ -2,17 +2,24 @@ package cn.nukkit.level.provider.anvil;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityType;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.level.BlockUpdate;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.chunk.*;
 import cn.nukkit.level.provider.anvil.palette.BiomePalette;
-import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.*;
+import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.NibbleArray;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.math.vector.Vector3i;
+import com.nukkitx.nbt.NbtUtils;
+import com.nukkitx.nbt.stream.NBTInputStream;
+import com.nukkitx.nbt.tag.CompoundTag;
+import com.nukkitx.nbt.tag.NumberTag;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.Unpooled;
@@ -21,74 +28,72 @@ import lombok.RequiredArgsConstructor;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 public class AnvilConverter {
 
     public static void convertToNukkit(ChunkBuilder chunkBuilder, ByteBuf chunkBuf) throws IOException {
 
-        CompoundTag nbt;
+        CompoundTag tag;
 
-        try (ByteBufInputStream stream = new ByteBufInputStream(chunkBuf)) {
-            nbt = NBTIO.read(stream, ByteOrder.BIG_ENDIAN);
+        try (ByteBufInputStream stream = new ByteBufInputStream(chunkBuf);
+             NBTInputStream nbtInputStream = NbtUtils.createReader(stream)) {
+            tag = (CompoundTag) nbtInputStream.readTag();
 
-            if (!nbt.contains("Level") || !(nbt.get("Level") instanceof CompoundTag)) {
+            if (!tag.contains("Level") || !(tag.get("Level") instanceof CompoundTag)) {
                 throw new IllegalArgumentException("No level tag found in chunk data");
             }
-            nbt = nbt.getCompound("Level");
+            tag = tag.getCompound("Level");
         }
 
         ChunkSection[] sections = new ChunkSection[Chunk.SECTION_COUNT];
 
         // Chunk sections
-        for (Tag tag : nbt.getList("Sections").getAll()) {
-            if (tag instanceof CompoundTag) {
-                CompoundTag sectionTag = (CompoundTag) tag;
-                int y = sectionTag.getByte("Y");
-                if (y >= 16) {
-                    continue;
-                }
+        for (CompoundTag sectionTag : tag.getList("Sections", CompoundTag.class)) {
+            int y = sectionTag.getByte("Y");
+            if (y >= 16) {
+                continue;
+            }
 
-                byte[] blocks = sectionTag.getByteArray("Blocks");
-                NibbleArray data = new NibbleArray(sectionTag.getByteArray("Data"));
-                byte[] blockLight = sectionTag.getByteArray("BlockLight");
-                byte[] skyLight = sectionTag.getByteArray("SkyLight");
+            byte[] blocks = sectionTag.getByteArray("Blocks");
+            NibbleArray data = new NibbleArray(sectionTag.getByteArray("Data"));
+            byte[] blockLight = sectionTag.getByteArray("BlockLight");
+            byte[] skyLight = sectionTag.getByteArray("SkyLight");
 
-                BlockStorage blockStorage = new BlockStorage();
-                // Convert YZX to XZY
-                for (int blockX = 0; blockX < 16; blockX++) {
-                    for (int blockZ = 0; blockZ < 16; blockZ++) {
-                        for (int blockY = 0; blockY < 16; blockY++) {
-                            int anvilIndex = getAnvilIndex(blockX, blockY, blockZ);
-                            int nukkitIndex = ChunkSection.blockIndex(blockX, blockY, blockZ);
-                            blockStorage.setBlock(nukkitIndex, BlockRegistry.get().getBlock(blocks[anvilIndex] & 0xff,
-                                    data.get(anvilIndex)));
-                        }
+            BlockStorage blockStorage = new BlockStorage();
+            // Convert YZX to XZY
+            for (int blockX = 0; blockX < 16; blockX++) {
+                for (int blockZ = 0; blockZ < 16; blockZ++) {
+                    for (int blockY = 0; blockY < 16; blockY++) {
+                        int anvilIndex = getAnvilIndex(blockX, blockY, blockZ);
+                        int nukkitIndex = ChunkSection.blockIndex(blockX, blockY, blockZ);
+                        blockStorage.setBlock(nukkitIndex, BlockRegistry.get().getBlock(blocks[anvilIndex] & 0xff,
+                                data.get(anvilIndex)));
                     }
                 }
-
-                sections[y] = new ChunkSection(new BlockStorage[]{blockStorage, new BlockStorage()}, blockLight, skyLight);
             }
+
+            sections[y] = new ChunkSection(new BlockStorage[]{blockStorage, new BlockStorage()}, blockLight, skyLight);
         }
         chunkBuilder.sections(sections);
 
         // Extra data
-        Tag extra = nbt.get("ExtraData");
-        if (extra instanceof ByteArrayTag) {
-            ByteBuf buffer = Unpooled.wrappedBuffer(((ByteArrayTag) extra).data);
-            for (int i = 0; i < buffer.readInt(); i++) {
-                int index = buffer.readInt();
-                short data = buffer.readShort();
-                chunkBuilder.extraData(index, data);
+        byte[] extra = tag.getByteArray("ExtraData");
+        ByteBuf buffer = Unpooled.wrappedBuffer(extra);
+        int length = buffer.readInt();
+        for (int i = 0; i < length; i++) {
+            int index = buffer.readInt();
+            short data = buffer.readShort();
+            chunkBuilder.extraData(index, data);
 
-            }
         }
 
         byte[] biomes;
-        if (nbt.contains("BiomeColors")) {
-            int[] biomeColors = nbt.getIntArray("BiomeColors");
+        if (tag.contains("BiomeColors")) {
+            int[] biomeColors = tag.getIntArray("BiomeColors");
             biomes = new byte[256];
             if (biomeColors != null && biomeColors.length == 256) {
                 BiomePalette palette = new BiomePalette(biomeColors);
@@ -97,11 +102,11 @@ public class AnvilConverter {
                 }
             }
         } else {
-            biomes = nbt.getByteArray("Biomes");
+            biomes = tag.getByteArray("Biomes");
         }
         chunkBuilder.biomes(biomes);
 
-        int[] anvilHeightMap = nbt.getIntArray("HeightMap");
+        int[] anvilHeightMap = tag.getIntArray("HeightMap");
         int[] heightMap = new int[256];
         if (anvilHeightMap.length != 256) {
             Arrays.fill(heightMap, (byte) 255);
@@ -113,59 +118,71 @@ public class AnvilConverter {
         chunkBuilder.heightMap(heightMap);
 
 
-        chunkBuilder.dataLoader(new DataLoader(nbt.getList("Entities", CompoundTag.class).getAll()));
-        chunkBuilder.dataLoader(new TileLoader(nbt.getList("TileEntities", CompoundTag.class).getAll()));
+        chunkBuilder.dataLoader(new DataLoader(tag.getList("Entities", CompoundTag.class)));
+        chunkBuilder.dataLoader(new TileLoader(tag.getList("TileEntities", CompoundTag.class)));
 
-        ListTag<CompoundTag> updateEntries = nbt.getList("TileTicks", CompoundTag.class);
+        List<CompoundTag> updateEntries = tag.getList("TileTicks", CompoundTag.class);
 
         if (updateEntries != null && updateEntries.size() > 0) {
-            for (CompoundTag entryTag : updateEntries.getAll()) {
-                Block block = null;
+            for (CompoundTag entryTag : updateEntries) {
+                Block block;
 
                 try {
-                    Tag tag = entryTag.get("i");
-                    if (tag instanceof StringTag) {
-                        String name = ((StringTag) tag).data;
+                    String name = entryTag.getString("i");
 
-                        @SuppressWarnings("unchecked")
-                        Class<? extends Block> clazz = (Class<? extends Block>) Class.forName("cn.nukkit.block." + name);
 
-                        Constructor constructor = clazz.getDeclaredConstructor();
-                        constructor.setAccessible(true);
-                        block = (Block) constructor.newInstance();
-                    }
+                    @SuppressWarnings("unchecked")
+                    Class<? extends Block> clazz = (Class<? extends Block>) Class.forName("cn.nukkit.block." + name);
+
+                    Constructor<? extends Block> constructor = clazz.getDeclaredConstructor();
+                    constructor.setAccessible(true);
+                    block = constructor.newInstance();
                 } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException |
                         IllegalAccessException | InvocationTargetException e) {
                     continue;
                 }
 
-                if (block == null) {
-                    continue;
-                }
+                block.setPosition(Vector3i.from(
+                        entryTag.getInt("x"),
+                        entryTag.getInt("y"),
+                        entryTag.getInt("z")
+                ));
 
-                block.x = entryTag.getInt("x");
-                block.y = entryTag.getInt("y");
-                block.z = entryTag.getInt("z");
-
-                chunkBuilder.blockUpdate(BlockUpdate.of(block, block, entryTag.getInt("t"), entryTag.getInt("p"),
-                        false));
+                chunkBuilder.blockUpdate(BlockUpdate.of(block, block.getPosition(), entryTag.getInt("t"),
+                        entryTag.getInt("p"), false));
             }
         }
 
-        if (nbt.getBoolean("TerrainGenerated")) {
+        if (tag.getBoolean("TerrainGenerated")) {
             chunkBuilder.generated();
         }
-        if (nbt.getBoolean("TerrainPopulated")) {
+        if (tag.getBoolean("TerrainPopulated")) {
             chunkBuilder.populated();
         }
     }
 
     public static CompoundTag convertToAnvil(Chunk chunk) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     private static int getAnvilIndex(int x, int y, int z) {
         return (y << 8) + (z << 4) + x;
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static Location getLocation(CompoundTag tag, Chunk chunk) {
+        List<NumberTag<?>> pos = (List) tag.getList("Pos", NumberTag.class);
+        Vector3f position = Vector3f.from(pos.get(0).getValue().floatValue(), pos.get(1).getValue().floatValue(),
+                pos.get(2).getValue().floatValue());
+
+        List<NumberTag<?>> rotation = (List) tag.getList("Rotation", NumberTag.class);
+        float yaw = rotation.get(0).getValue().floatValue();
+        float pitch = rotation.get(1).getValue().floatValue();
+
+        checkArgument(position.getFloorX() >> 4 == chunk.getX() && position.getFloorZ() >> 4 == chunk.getZ(),
+                "Entity is not in chunk of origin");
+
+        return Location.from(position, yaw, pitch, chunk.getLevel());
     }
 
     @RequiredArgsConstructor
@@ -174,29 +191,27 @@ public class AnvilConverter {
 
         @Override
         public boolean load(Chunk chunk) {
+            EntityRegistry registry = EntityRegistry.get();
             boolean dirty = false;
             for (CompoundTag entityTag : entityTags) {
                 if (!entityTag.contains("id")) {
                     dirty = true;
                     continue;
                 }
-                ListTag pos = entityTag.getList("Pos");
-                if ((((NumberTag) pos.get(0)).getData().intValue() >> 4) != chunk.getX() ||
-                        ((((NumberTag) pos.get(2)).getData().intValue() >> 4) != chunk.getZ())) {
+                Location location = getLocation(entityTag, chunk);
+                Vector3f position = location.getPosition();
+                if ((position.getFloorX() >> 4) != chunk.getX() || ((position.getFloorZ() >> 4) != chunk.getZ())) {
                     dirty = true;
                     continue;
                 }
-                EntityRegistry registry = EntityRegistry.get();
                 Identifier identifier = registry.getIdentifier(entityTag.getString("id"));
                 if (identifier == null) {
                     dirty = true;
                     continue;
                 }
                 EntityType<?> type = registry.getEntityType(identifier);
-                Entity entity = registry.newEntity(type, chunk, entityTag);
-                if (entity != null) {
-                    dirty = true;
-                }
+                Entity entity = registry.newEntity(type, location);
+                entity.loadAdditionalData(entityTag);
             }
             return dirty;
         }
@@ -204,6 +219,7 @@ public class AnvilConverter {
 
     @RequiredArgsConstructor
     private static class TileLoader implements ChunkDataLoader {
+        private static final BlockEntityRegistry REGISTRY = BlockEntityRegistry.get();
         private final List<CompoundTag> tileTags;
 
         @Override
@@ -215,11 +231,14 @@ public class AnvilConverter {
                         dirty = true;
                         continue;
                     }
-                    if ((tag.getInt("x") >> 4) != chunk.getX() || ((tag.getInt("z") >> 4) != chunk.getZ())) {
+                    Vector3i position = Vector3i.from(tag.getInt("x"), tag.getInt("y"), tag.getInt("y"));
+                    if ((position.getX() >> 4) != chunk.getX() || ((position.getZ() >> 4) != chunk.getZ())) {
                         dirty = true;
                         continue;
                     }
-                    BlockEntity blockEntity = BlockEntity.createBlockEntity(tag.getString("id"), chunk, tag);
+                    BlockEntityType<?> type = REGISTRY.getBlockEntityType(tag.getString("id"));
+
+                    BlockEntity blockEntity = REGISTRY.newEntity(type, chunk, position);
                     if (blockEntity == null) {
                         dirty = true;
                     }

@@ -2,16 +2,15 @@ package cn.nukkit.entity.impl.hostile;
 
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.hostile.EnderDragon;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 /**
  * @author PikyCZ
  */
 public class EntityEnderDragon extends EntityHostile implements EnderDragon {
 
-    public EntityEnderDragon(EntityType<EnderDragon> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityEnderDragon(EntityType<EnderDragon> type, Location location) {
+        super(type, location);
     }
 
     @Override

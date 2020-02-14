@@ -4,11 +4,11 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import static cn.nukkit.block.BlockIds.AIR;
 
@@ -22,13 +22,13 @@ public class BlockCarpet extends FloodableBlock {
     }
 
     @Override
-    public double getHardness() {
-        return 0.1;
+    public float getHardness() {
+        return 0.1f;
     }
 
     @Override
-    public double getResistance() {
-        return 0.5;
+    public float getResistance() {
+        return 0.5f;
     }
 
     @Override
@@ -47,15 +47,15 @@ public class BlockCarpet extends FloodableBlock {
     }
 
     @Override
-    public double getMaxY() {
-        return this.y + 0.0625;
+    public float getMaxY() {
+        return this.getY() + 0.0625f;
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         Block down = this.down();
         if (down.getId() != AIR) {
-            this.getLevel().setBlock(block, this, true, true);
+            this.getLevel().setBlock(block.getPosition(), this, true, true);
             return true;
         }
         return false;
@@ -65,7 +65,7 @@ public class BlockCarpet extends FloodableBlock {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (this.down().getId() == AIR) {
-                this.getLevel().useBreakOn(this);
+                this.getLevel().useBreakOn(this.getPosition());
 
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -76,11 +76,11 @@ public class BlockCarpet extends FloodableBlock {
 
     @Override
     public BlockColor getColor() {
-        return DyeColor.getByWoolData(getDamage()).getColor();
+        return DyeColor.getByWoolData(getMeta()).getColor();
     }
 
     public DyeColor getDyeColor() {
-        return DyeColor.getByWoolData(getDamage());
+        return DyeColor.getByWoolData(getMeta());
     }
 
 }

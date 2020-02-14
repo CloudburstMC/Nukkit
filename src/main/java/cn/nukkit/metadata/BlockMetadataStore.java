@@ -3,6 +3,7 @@ package cn.nukkit.metadata;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.Plugin;
+import com.nukkitx.math.vector.Vector3i;
 
 import java.util.List;
 
@@ -22,7 +23,8 @@ public class BlockMetadataStore extends MetadataStore {
         if (!(block instanceof Block)) {
             throw new IllegalArgumentException("Argument must be a Block instance");
         }
-        return ((Block) block).x + ":" + ((Block) block).y + ":" + ((Block) block).z + ":" + metadataKey;
+        Vector3i pos = ((Block) block).getPosition();
+        return pos.getX() + ":" + pos.getY() + ":" + pos.getZ() + ":" + metadataKey;
     }
 
     @Override

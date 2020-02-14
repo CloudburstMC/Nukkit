@@ -51,7 +51,7 @@ public class PopulatorTree extends PopulatorCount {
     private int getHighestWorkableBlock(ChunkManager level, int x, int z) {
         int y;
         for (y = 254; y > 0; --y) {
-            Identifier b = level.getBlockIdAt(x, y, z);
+            Identifier b = level.getBlockId(x, y, z);
             if (b == DIRT || b == GRASS) {
                 break;
             } else if (b != AIR && b != SNOW_LAYER) {

@@ -10,13 +10,16 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.ItemDespawnEvent;
 import cn.nukkit.event.entity.ItemSpawnEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.AddItemEntityPacket;
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.EntityEventPacket;
+import cn.nukkit.item.ItemUtils;
+import cn.nukkit.level.Location;
 import cn.nukkit.player.Player;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.tag.CompoundTag;
+import com.nukkitx.protocol.bedrock.BedrockPacket;
+import com.nukkitx.protocol.bedrock.data.EntityEventType;
+import com.nukkitx.protocol.bedrock.packet.AddItemEntityPacket;
+import com.nukkitx.protocol.bedrock.packet.EntityEventPacket;
 
 import javax.annotation.Nonnull;
 
@@ -24,19 +27,18 @@ import static cn.nukkit.block.BlockIds.FLOWING_WATER;
 import static cn.nukkit.block.BlockIds.WATER;
 import static com.nukkitx.network.util.Preconditions.checkArgument;
 import static com.nukkitx.network.util.Preconditions.checkNotNull;
+import static com.nukkitx.protocol.bedrock.data.EntityData.OWNER_EID;
 
 /**
  * @author MagicDroidX
  */
 public class EntityDroppedItem extends BaseEntity implements DroppedItem {
 
-    protected String owner;
-    protected String thrower;
     protected Item item;
     protected int pickupDelay;
 
-    public EntityDroppedItem(EntityType<DroppedItem> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityDroppedItem(EntityType<DroppedItem> type, Location location) {
+        super(type, location);
     }
 
     @Override
@@ -79,32 +81,30 @@ public class EntityDroppedItem extends BaseEntity implements DroppedItem {
         super.initEntity();
 
         this.setMaxHealth(5);
-        this.setHealth(this.namedTag.getShort("Health"));
-
-        if (this.namedTag.contains("Age")) {
-            this.age = this.namedTag.getShort("Age");
-        }
-
-        if (this.namedTag.contains("PickupDelay")) {
-            this.pickupDelay = this.namedTag.getShort("PickupDelay");
-        }
-
-        if (this.namedTag.contains("Owner")) {
-            this.owner = this.namedTag.getString("Owner");
-        }
-
-        if (this.namedTag.contains("Thrower")) {
-            this.thrower = this.namedTag.getString("Thrower");
-        }
-
-        if (!this.namedTag.contains("Item")) {
-            this.close();
-            return;
-        }
-
-        this.item = NBTIO.getItemHelper(this.namedTag.getCompound("Item"));
 
         this.server.getPluginManager().callEvent(new ItemSpawnEvent(this));
+    }
+
+    @Override
+    public void loadAdditionalData(CompoundTag tag) {
+        super.loadAdditionalData(tag);
+
+        tag.listenForShort("Health", this::setHealth);
+        tag.listenForShort("PickupDelay", this::setPickupDelay);
+        tag.listenForShort("Age", v -> this.age = v);
+        tag.listenForLong("OwnerID", v -> this.data.setLong(OWNER_EID, v));
+        tag.listenForCompound("Item", itemTag -> this.item = ItemUtils.deserializeItem(itemTag));
+    }
+
+    @Override
+    public void saveAdditionalData(CompoundTagBuilder tag) {
+        super.saveAdditionalData(tag);
+
+        tag.shortTag("Health", (short) this.getHealth());
+        tag.shortTag("PickupDelay", (short) this.pickupDelay);
+        tag.shortTag("Age", (short) this.age);
+        tag.longTag("OwnerID", this.data.getLong(OWNER_EID));
+        tag.tag(ItemUtils.serializeItem(this.item).toBuilder().build("Item"));
     }
 
     @Override
@@ -153,9 +153,9 @@ public class EntityDroppedItem extends BaseEntity implements DroppedItem {
                         entity.close();
                         this.getItem().setCount(newAmount);
                         EntityEventPacket packet = new EntityEventPacket();
-                        packet.entityRuntimeId = getUniqueId();
-                        packet.data = newAmount;
-                        packet.event = EntityEventPacket.MERGE_ITEMS;
+                        packet.setRuntimeEntityId(this.getRuntimeId());
+                        packet.setType(EntityEventType.MERGE_ITEMS);
+                        packet.setData(newAmount);
                         Server.broadcastPacket(this.getLevel().getPlayers().values(), packet);
                     }
                 }
@@ -175,7 +175,7 @@ public class EntityDroppedItem extends BaseEntity implements DroppedItem {
                     this.pickupDelay = 0;
                 }
             } else {
-                for (Entity entity : this.level.getNearbyEntities(this.boundingBox.grow(1, 0.5, 1), this)) {
+                for (Entity entity : this.level.getNearbyEntities(this.boundingBox.grow(1, 0.5f, 1), this)) {
                     if (entity instanceof Player) {
                         if (((Player) entity).pickupEntity(this, true)) {
                             return true;
@@ -184,33 +184,33 @@ public class EntityDroppedItem extends BaseEntity implements DroppedItem {
                 }
             }
 
-            if (this.level.getBlockIdAt((int) this.x, (int) this.boundingBox.getMaxY(), (int) this.z) == FLOWING_WATER ||
-                    this.level.getBlockIdAt((int) this.x, (int) this.boundingBox.getMaxY(), (int) this.z) == WATER) { //item is fully in water or in still water
-                this.motionY -= this.getGravity() * -0.015;
+            Vector3f pos = this.getPosition();
+
+            if (this.level.getBlockId(pos.getFloorX(), (int) this.boundingBox.getMaxY(), pos.getFloorZ()) == FLOWING_WATER ||
+                    this.level.getBlockId(pos.getFloorX(), (int) this.boundingBox.getMaxY(), pos.getFloorZ()) == WATER) { //item is fully in water or in still water
+                this.motion = this.motion.sub(0, this.getGravity() * -0.015, 0);
             } else if (this.isInsideOfWater()) {
-                this.motionY = this.getGravity() - 0.06; //item is going up in water, don't let it go back down too fast
+                this.motion = Vector3f.from(this.motion.getX(), this.getGravity() - 0.06, this.motion.getZ()); //item is going up in water, don't let it go back down too fast
             } else {
-                this.motionY -= this.getGravity(); //item is not in water
+                this.motion = this.motion.sub(0, this.getGravity(), 0); //item is not in water
             }
 
-            if (this.checkObstruction(this.x, this.y, this.z)) {
+            if (this.checkObstruction(pos)) {
                 hasUpdate = true;
             }
 
-            this.move(this.motionX, this.motionY, this.motionZ);
+            this.move(this.motion);
 
             double friction = 1 - this.getDrag();
 
-            if (this.onGround && (Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionZ) > 0.00001)) {
-                friction *= this.getLevel().getBlock(asVector3i().add(0, -1, -1)).getFrictionFactor();
+            if (this.onGround && (Math.abs(this.motion.getX()) > 0.00001 || Math.abs(this.motion.getZ()) > 0.00001)) {
+                friction *= this.getLevel().getBlock(pos.add(0, -1, -1)).getFrictionFactor();
             }
 
-            this.motionX *= friction;
-            this.motionY *= 1 - this.getDrag();
-            this.motionZ *= friction;
+            this.motion = this.motion.mul(friction, 1 - this.getDrag(), friction);
 
             if (this.onGround) {
-                this.motionY *= -0.5;
+                this.motion = this.motion.mul(1, -0.5, 1);
             }
 
             this.updateMovement();
@@ -229,30 +229,12 @@ public class EntityDroppedItem extends BaseEntity implements DroppedItem {
 
         this.timing.stopTiming();
 
-        return hasUpdate || !this.onGround || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001;
-    }
-
-    @Override
-    public void saveNBT() {
-        super.saveNBT();
-        if (this.item != null) { // Yes, a item can be null... I don't know what causes this, but it can happen.
-            this.namedTag.putCompound("Item", NBTIO.putItemHelper(this.item, -1));
-            this.namedTag.putShort("Health", (int) this.getHealth());
-            this.namedTag.putShort("Age", this.age);
-            this.namedTag.putShort("PickupDelay", this.pickupDelay);
-            if (this.owner != null) {
-                this.namedTag.putString("Owner", this.owner);
-            }
-
-            if (this.thrower != null) {
-                this.namedTag.putString("Thrower", this.thrower);
-            }
-        }
+        return hasUpdate || !this.onGround || this.motion.length() > 0.00001;
     }
 
     @Override
     public String getName() {
-        return this.hasCustomName() ? this.getNameTag() : (this.item.hasCustomName() ? this.item.getCustomName() : this.item.getName());
+        return this.hasCustomName() ? this.getCustomName() : (this.item.hasCustomName() ? this.item.getCustomName() : this.item.getName());
     }
 
     public Item getItem() {
@@ -280,18 +262,14 @@ public class EntityDroppedItem extends BaseEntity implements DroppedItem {
     }
 
     @Override
-    public DataPacket createAddEntityPacket() {
+    public BedrockPacket createAddEntityPacket() {
         AddItemEntityPacket addEntity = new AddItemEntityPacket();
-        addEntity.entityUniqueId = this.getUniqueId();
-        addEntity.entityRuntimeId = this.getUniqueId();
-        addEntity.x = (float) this.x;
-        addEntity.y = (float) this.y;
-        addEntity.z = (float) this.z;
-        addEntity.speedX = (float) this.motionX;
-        addEntity.speedY = (float) this.motionY;
-        addEntity.speedZ = (float) this.motionZ;
-        addEntity.dataMap.putAll(this.getData());
-        addEntity.item = this.getItem();
+        addEntity.setUniqueEntityId(this.getUniqueId());
+        addEntity.setRuntimeEntityId(this.getRuntimeId());
+        addEntity.setPosition(this.getPosition());
+        addEntity.setMotion(this.getMotion());
+        this.data.putAllIn(addEntity.getMetadata());
+        addEntity.setItemInHand(this.getItem().toNetwork());
         return addEntity;
     }
 

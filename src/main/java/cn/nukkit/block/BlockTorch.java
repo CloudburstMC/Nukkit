@@ -3,11 +3,11 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import static cn.nukkit.block.BlockIds.COBBLESTONE_WALL;
 
@@ -30,7 +30,7 @@ public class BlockTorch extends FloodableBlock implements Faceable {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             Block below = this.down();
-            int side = this.getDamage();
+            int side = this.getMeta();
             int[] faces = new int[]{
                     0, //0
                     4, //1
@@ -42,7 +42,7 @@ public class BlockTorch extends FloodableBlock implements Faceable {
             };
 
             if (this.getSide(BlockFace.fromIndex(faces[side])).isTransparent() && !(side == 0 && (below instanceof BlockFence || below.getId() == COBBLESTONE_WALL))) {
-                this.getLevel().useBreakOn(this);
+                this.getLevel().useBreakOn(this.getPosition());
 
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -65,12 +65,12 @@ public class BlockTorch extends FloodableBlock implements Faceable {
                     1, //5
             };
             this.setDamage(faces[face.getIndex()]);
-            this.getLevel().setBlock(block, this, true, true);
+            this.getLevel().setBlock(block.getPosition(), this, true, true);
 
             return true;
         } else if (!below.isTransparent() || below instanceof BlockFence || below.getId() == COBBLESTONE_WALL) {
             this.setDamage(0);
-            this.getLevel().setBlock(block, this, true, true);
+            this.getLevel().setBlock(block.getPosition(), this, true, true);
 
             return true;
         }
@@ -89,7 +89,7 @@ public class BlockTorch extends FloodableBlock implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return getBlockFace(this.getDamage() & 0x07);
+        return getBlockFace(this.getMeta() & 0x07);
     }
 
     public BlockFace getBlockFace(int meta) {

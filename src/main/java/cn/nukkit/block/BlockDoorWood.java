@@ -15,12 +15,12 @@ public class BlockDoorWood extends BlockDoor {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 3;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 15;
     }
 

@@ -3,15 +3,15 @@ package cn.nukkit.inventory;
 import cn.nukkit.Server;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
-import cn.nukkit.network.protocol.BatchPacket;
-import cn.nukkit.network.protocol.CraftingDataPacket;
 import cn.nukkit.player.Player;
 import cn.nukkit.registry.ItemRegistry;
 import cn.nukkit.registry.RegistryException;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.Utils;
+import com.nukkitx.protocol.bedrock.packet.CraftingDataPacket;
 import io.netty.util.collection.CharObjectHashMap;
+import io.netty.util.collection.CharObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.extern.log4j.Log4j2;
 
@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.*;
-import java.util.zip.Deflater;
 
 /**
  * author: MagicDroidX
@@ -30,7 +29,8 @@ public class CraftingManager {
 
     public final Collection<Recipe> recipes = new ArrayDeque<>();
 
-    private BatchPacket packet = null;
+    public static final Comparator<Item> recipeComparator = Comparator.comparing(Item::getId)
+            .thenComparingInt(Item::getMeta).thenComparingInt(Item::getCount);
     protected final Map<Integer, Map<UUID, ShapedRecipe>> shapedRecipes = new Int2ObjectOpenHashMap<>();
 
     public final Map<Integer, FurnaceRecipe> furnaceRecipes = new Int2ObjectOpenHashMap<>();
@@ -40,9 +40,7 @@ public class CraftingManager {
 
     private int RECIPE_COUNT = 0;
     protected final Map<Integer, Map<UUID, ShapelessRecipe>> shapelessRecipes = new Int2ObjectOpenHashMap<>();
-
-    public static final Comparator<Item> recipeComparator = Comparator.comparing(Item::getId)
-            .thenComparingInt(Item::getDamage).thenComparingInt(Item::getCount);
+    private CraftingDataPacket packet = null;
 
     public CraftingManager() {
         InputStream recipesStream = Server.class.getClassLoader().getResourceAsStream("recipes.json");
@@ -67,7 +65,7 @@ public class CraftingManager {
     }
 
     private static int getFullItemHash(Item item) {
-        return Objects.hash(System.identityHashCode(item.getId()), item.getDamage(), item.getCount());
+        return Objects.hash(System.identityHashCode(item.getId()), item.getMeta(), item.getCount());
     }
 
     private static UUID getMultiItemHash(Collection<Item> items) {
@@ -82,22 +80,8 @@ public class CraftingManager {
         rebuildPacket(true);
     }
 
-    public void rebuildPacket(boolean cleanRecipes) {
-        if (packet != null) {
-            packet.release();
-            packet = null;
-        }
-        CraftingDataPacket pk = new CraftingDataPacket();
-        pk.cleanRecipes = true;
-
-        pk.addRecipes(this.getRecipes());
-
-        pk.addRecipes(this.getFurnaceRecipes().values());
-
-        pk.addBrewingRecipes(brewingRecipes.values());
-        pk.addContainerRecipes(containerRecipes.values());
-
-        packet = pk.compress(Deflater.BEST_COMPRESSION);
+    private static int getItemHash(Item item) {
+        return getItemHash(item.getId(), item.getMeta());
     }
 
     public Collection<Recipe> getRecipes() {
@@ -114,11 +98,25 @@ public class CraftingManager {
         return recipe;
     }
 
-    public void sendRecipesTo(Player player) {
-        if (packet == null) {
-            rebuildPacket();
+    public void rebuildPacket(boolean cleanRecipes) {
+        CraftingDataPacket packet = new CraftingDataPacket();
+        packet.setCleanRecipes(cleanRecipes);
+
+        for (Recipe recipe : this.getRecipes()) {
+            packet.getCraftingData().add(recipe.toNetwork());
         }
-        player.dataPacket(packet.copy());
+        for (Recipe recipe : this.getFurnaceRecipes().values()) {
+            packet.getCraftingData().add(recipe.toNetwork());
+        }
+
+        for (BrewingRecipe recipe : brewingRecipes.values()) {
+            packet.getPotionMixData().add(recipe.toData());
+        }
+        for (ContainerRecipe recipe : containerRecipes.values()) {
+            packet.getContainerMixData().add(recipe.toData());
+        }
+
+        this.packet = packet;
     }
 
     private static int getItemHash(Identifier id, int meta) {
@@ -130,8 +128,11 @@ public class CraftingManager {
         this.furnaceRecipes.put(getItemHash(input), recipe);
     }
 
-    private static int getItemHash(Item item) {
-        return getItemHash(item.getId(), item.getDamage());
+    public void sendRecipesTo(Player player) {
+        if (packet == null) {
+            rebuildPacket();
+        }
+        player.sendPacket(packet);
     }
 
     @SuppressWarnings("unchecked")
@@ -140,13 +141,10 @@ public class CraftingManager {
         log.info("Loading recipes...");
         for (Map<String, Object> recipe : recipes) {
             try {
+                String blockId = (String) recipe.get("block");
+                Identifier block = blockId == null ? null : Identifier.fromString(blockId);
                 switch (Utils.toInt(recipe.get("type"))) {
                     case 0:
-                        String craftingBlock = (String) recipe.get("block");
-                        if (!"crafting_table".equals(craftingBlock)) {
-                            // Ignore other recipes than crafting table ones
-                            continue;
-                        }
                         // TODO: handle multiple result items
                         List<Map> outputs = ((List<Map>) recipe.get("output"));
                         if (outputs.size() > 1) {
@@ -163,21 +161,16 @@ public class CraftingManager {
                         String recipeId = (String) recipe.get("id");
                         int priority = Utils.toInt(recipe.get("priority"));
 
-                        ShapelessRecipe result = new ShapelessRecipe(recipeId, priority, Item.fromJson(first), sorted);
+                        ShapelessRecipe result = new ShapelessRecipe(recipeId, priority, Item.fromJson(first), sorted, block);
 
                         this.registerRecipe(result);
                         break;
                     case 1:
-                        craftingBlock = (String) recipe.get("block");
-                        if (!"crafting_table".equals(craftingBlock)) {
-                            // Ignore other recipes than crafting table ones
-                            continue;
-                        }
                         outputs = (List<Map>) recipe.get("output");
 
                         first = outputs.remove(0);
                         String[] shape = ((List<String>) recipe.get("shape")).toArray(new String[0]);
-                        Map<Character, Item> ingredients = new CharObjectHashMap<>();
+                        CharObjectMap<Item> ingredients = new CharObjectHashMap<>();
                         List<Item> extraResults = new ArrayList<>();
 
                         Map<String, Map<String, Object>> input = (Map) recipe.get("input");
@@ -195,22 +188,17 @@ public class CraftingManager {
                         recipeId = (String) recipe.get("id");
                         priority = Utils.toInt(recipe.get("priority"));
 
-                        this.registerRecipe(new ShapedRecipe(recipeId, priority, Item.fromJson(first), shape, ingredients, extraResults));
+                        this.registerRecipe(new ShapedRecipe(recipeId, priority, Item.fromJson(first), shape, ingredients, extraResults, block));
                         break;
                     case 2:
                     case 3:
-                        craftingBlock = (String) recipe.get("block");
-                        if (!"furnace".equals(craftingBlock)) {
-                            // Ignore other recipes than furnaces
-                            continue;
-                        }
                         Map<String, Object> resultMap = (Map) recipe.get("output");
                         Item resultItem = Item.fromJson(resultMap);
                         Item inputItem;
                         Map<String, Object> inputMap = (Map) recipe.get("input");
                         inputItem = Item.fromJson(inputMap);
 
-                        this.registerRecipe(new FurnaceRecipe(resultItem, inputItem));
+                        this.registerRecipe(new FurnaceRecipe(resultItem, inputItem, block));
                         break;
                     default:
                         break;
@@ -280,7 +268,10 @@ public class CraftingManager {
 
     public void registerRecipe(Recipe recipe) {
         if (recipe instanceof CraftingRecipe) {
-            UUID id = Utils.dataToUUID(String.valueOf(++RECIPE_COUNT), String.valueOf(recipe.getResult().getId()), String.valueOf(recipe.getResult().getDamage()), String.valueOf(recipe.getResult().getCount()), Arrays.toString(recipe.getResult().getCompoundTag()));
+            UUID id = Utils.dataToUUID(String.valueOf(++RECIPE_COUNT), String.valueOf(recipe.getResult().getId()),
+                    String.valueOf(recipe.getResult().getMeta()),
+                    String.valueOf(recipe.getResult().getCount()),
+                    String.valueOf(recipe.getResult().getTag()));
 
             ((CraftingRecipe) recipe).setId(id);
             this.recipes.add(recipe);
@@ -315,20 +306,20 @@ public class CraftingManager {
         Item input = recipe.getIngredient();
         Item potion = recipe.getInput();
 
-        this.brewingRecipes.put(getPotionHash(input.getId(), potion.getDamage()), recipe);
+        this.brewingRecipes.put(getPotionHash(input.getId(), potion.getMeta()), recipe);
     }
 
     public void registerContainerRecipe(ContainerRecipe recipe) {
         Item input = recipe.getIngredient();
         Item potion = recipe.getInput();
 
-        this.containerRecipes.put(getContainerHash(input.getId(), potion.getDamage()), recipe);
+        this.containerRecipes.put(getContainerHash(input.getId(), potion.getMeta()), recipe);
     }
 
     public BrewingRecipe matchBrewingRecipe(Item input, Item potion) {
         Identifier id = potion.getId();
         if (id == ItemIds.POTION || id == ItemIds.SPLASH_POTION || id == ItemIds.LINGERING_POTION) {
-            return this.brewingRecipes.get(getPotionHash(input.getId(), potion.getDamage()));
+            return this.brewingRecipes.get(getPotionHash(input.getId(), potion.getMeta()));
         }
 
         return null;

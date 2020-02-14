@@ -35,7 +35,7 @@ public class BlockOreRedstoneGlowing extends BlockOreRedstone {
             BlockFadeEvent event = new BlockFadeEvent(this, get(REDSTONE_ORE));
             level.getServer().getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
-                level.setBlock(this, event.getNewState(), false, false);
+                level.setBlock(this.getPosition(), event.getNewState(), false, false);
             }
 
             return Level.BLOCK_UPDATE_WEAK;

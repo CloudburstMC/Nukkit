@@ -4,7 +4,7 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.math.BedrockRandom;
-import cn.nukkit.math.Vector3f;
+import com.nukkitx.math.vector.Vector3i;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.Map;
@@ -22,5 +22,5 @@ public interface Generator {
 
     Map<String, Object> getSettings();
 
-    Vector3f getSpawn();
+    Vector3i getSpawn();
 }

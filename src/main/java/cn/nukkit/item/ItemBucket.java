@@ -10,11 +10,11 @@ import cn.nukkit.event.player.PlayerItemConsumeEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
-import cn.nukkit.network.protocol.UpdateBlockPacket;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
+import com.nukkitx.protocol.bedrock.packet.UpdateBlockPacket;
 
 import static cn.nukkit.block.BlockIds.*;
 import static cn.nukkit.item.ItemIds.BUCKET;
@@ -78,7 +78,7 @@ public class ItemBucket extends Item {
 
     @Override
     public int getMaxStackSize() {
-        return this.getDamage() == 0 ? 16 : 1;
+        return this.getMeta() == 0 ? 16 : 1;
     }
 
     @Override
@@ -88,22 +88,22 @@ public class ItemBucket extends Item {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, Vector3f clickPos) {
-        Block targetBlock = Block.get(getBlockIdFromDamage(this.getDamage()));
+        Block targetBlock = Block.get(getBlockIdFromDamage(this.getMeta()));
 
         if (targetBlock instanceof BlockAir) {
-            if (target instanceof BlockLiquid && target.getDamage() == 0) {
+            if (target instanceof BlockLiquid && target.getMeta() == 0) {
                 Item result = Item.get(BUCKET, this.getDamageFromIdentifier(target.getId()), 1);
                 PlayerBucketFillEvent ev;
                 player.getServer().getPluginManager().callEvent(ev = new PlayerBucketFillEvent(player, block, face, this, result));
                 if (!ev.isCancelled()) {
-                    player.getLevel().setBlock(target, Block.get(AIR), true, true);
+                    player.getLevel().setBlock(target.getPosition(), Block.get(AIR), true, true);
 
                     // When water is removed ensure any adjacent still water is
                     // replaced with water that can flow.
                     for (BlockFace side : Plane.HORIZONTAL) {
                         Block b = target.getSide(side);
                         if (b.getId() == WATER) {
-                            level.setBlock(b, Block.get(FLOWING_WATER));
+                            level.setBlock(b.getPosition(), Block.get(FLOWING_WATER));
                         }
                     }
 
@@ -115,9 +115,9 @@ public class ItemBucket extends Item {
                     }
 
                     if (target instanceof BlockLava) {
-                        level.addLevelSoundEvent(block.asVector3f(), LevelSoundEventPacket.SOUND_BUCKET_FILL_LAVA);
+                        level.addLevelSoundEvent(block.getPosition(), SoundEvent.BUCKET_FILL_LAVA);
                     } else {
-                        level.addLevelSoundEvent(block.asVector3f(), LevelSoundEventPacket.SOUND_BUCKET_FILL_WATER);
+                        level.addLevelSoundEvent(block.getPosition(), SoundEvent.BUCKET_FILL_WATER);
                     }
 
                     return true;
@@ -130,14 +130,14 @@ public class ItemBucket extends Item {
             PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, block, face, this, result);
             ev.setCancelled(!block.canBeFlooded());
 
-            if (player.getLevel().getDimension() == Level.DIMENSION_NETHER && this.getDamage() != 10) {
+            if (player.getLevel().getDimension() == Level.DIMENSION_NETHER && this.getMeta() != 10) {
                 ev.setCancelled(true);
             }
 
             player.getServer().getPluginManager().callEvent(ev);
 
             if (!ev.isCancelled()) {
-                player.getLevel().setBlock(block, targetBlock, true, true);
+                player.getLevel().setBlock(block.getPosition(), targetBlock, true, true);
                 if (player.isSurvival()) {
                     Item clone = this.clone();
                     clone.setCount(this.getCount() - 1);
@@ -145,15 +145,15 @@ public class ItemBucket extends Item {
                     player.getInventory().addItem(ev.getItem());
                 }
 
-                if (this.getDamage() == 10) {
-                    level.addLevelSoundEvent(block.asVector3f(), LevelSoundEventPacket.SOUND_BUCKET_EMPTY_LAVA);
+                if (this.getMeta() == 10) {
+                    level.addLevelSoundEvent(block.getPosition(), SoundEvent.BUCKET_EMPTY_LAVA);
                 } else {
-                    level.addLevelSoundEvent(block.asVector3f(), LevelSoundEventPacket.SOUND_BUCKET_EMPTY_WATER);
+                    level.addLevelSoundEvent(block.getPosition(), SoundEvent.BUCKET_EMPTY_WATER);
                 }
 
                 return true;
             } else {
-                player.getLevel().sendBlocks(new Player[]{player}, new Block[]{Block.get(AIR, 0, block)}, UpdateBlockPacket.FLAG_ALL_PRIORITY);
+                player.getLevel().sendBlocks(new Player[]{player}, new Block[]{Block.get(AIR, 0, block.getPosition(), 1)}, UpdateBlockPacket.FLAG_ALL_PRIORITY);
                 player.getInventory().sendContents(player);
             }
         }
@@ -163,7 +163,7 @@ public class ItemBucket extends Item {
 
     @Override
     public boolean onClickAir(Player player, Vector3f directionVector) {
-        return this.getDamage() == 1; // Milk
+        return this.getMeta() == 1; // Milk
     }
 
     @Override

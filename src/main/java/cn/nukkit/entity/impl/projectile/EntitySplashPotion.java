@@ -4,17 +4,16 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.projectile.SplashPotion;
 import cn.nukkit.event.potion.PotionCollideEvent;
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.particle.Particle;
 import cn.nukkit.level.particle.SpellParticle;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
 
 import java.util.Set;
 
-import static cn.nukkit.entity.data.EntityData.POTION_AUX_VALUE;
+import static com.nukkitx.protocol.bedrock.data.EntityData.POTION_AUX_VALUE;
 
 /**
  * @author xtypr
@@ -25,17 +24,15 @@ public class EntitySplashPotion extends EntityProjectile implements SplashPotion
 
     public int potionId;
 
-    public EntitySplashPotion(EntityType<SplashPotion> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntitySplashPotion(EntityType<SplashPotion> type, Location location) {
+        super(type, location);
     }
 
     @Override
     protected void initEntity() {
         super.initEntity();
 
-        potionId = this.namedTag.getShort("PotionId");
-
-        this.setShortData(POTION_AUX_VALUE, this.potionId);
+        this.data.setShort(POTION_AUX_VALUE, this.potionId);
 
         /*Effect effect = Potion.getEffect(potionId, true); TODO: potion color
 
@@ -118,14 +115,14 @@ public class EntitySplashPotion extends EntityProjectile implements SplashPotion
             b = colors[2];
         }
 
-        particle = new SpellParticle(this, r, g, b);
+        particle = new SpellParticle(this.getPosition(), r, g, b);
 
         this.getLevel().addParticle(particle);
-        this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_GLASS);
+        this.getLevel().addLevelSoundEvent(this.getPosition(), SoundEvent.GLASS);
 
-        Set<Entity> entities = this.getLevel().getNearbyEntities(this.getBoundingBox().grow(4.125, 2.125, 4.125));
+        Set<Entity> entities = this.getLevel().getNearbyEntities(this.getBoundingBox().grow(4.125f, 2.125f, 4.125f));
         for (Entity anEntity : entities) {
-            double distance = anEntity.getPosition().distanceSquared(this);
+            double distance = anEntity.getPosition().distanceSquared(this.getPosition());
             if (distance < 16) {
                 double d = anEntity.equals(collidedWith) ? 1 : 1 - Math.sqrt(distance) / 4;
                 potion.applyPotion(anEntity, d);

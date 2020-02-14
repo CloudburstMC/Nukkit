@@ -4,7 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.Position;
+import com.nukkitx.math.vector.Vector3f;
 
 import java.util.List;
 
@@ -20,18 +20,18 @@ public class EntityExplodeEvent extends EntityEvent implements Cancellable {
         return handlers;
     }
 
-    protected final Position position;
+    protected final Vector3f position;
     protected List<Block> blocks;
     protected double yield;
 
-    public EntityExplodeEvent(Entity entity, Position position, List<Block> blocks, double yield) {
+    public EntityExplodeEvent(Entity entity, Vector3f position, List<Block> blocks, double yield) {
         this.entity = entity;
         this.position = position;
         this.blocks = blocks;
         this.yield = yield;
     }
 
-    public Position getPosition() {
+    public Vector3f getPosition() {
         return this.position;
     }
 

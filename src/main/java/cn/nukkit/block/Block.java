@@ -4,14 +4,12 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.level.BlockPosition;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.MovingObjectPosition;
-import cn.nukkit.level.Position;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.math.Vector3i;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.player.Player;
@@ -20,6 +18,9 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.math.vector.Vector3i;
+import com.nukkitx.math.vector.Vector4i;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
@@ -33,13 +34,20 @@ import static cn.nukkit.block.BlockIds.*;
  * Nukkit Project
  */
 @Log4j2
-public abstract class Block extends BlockPosition implements Metadatable, Cloneable, AxisAlignedBB {
+public abstract class Block implements Metadatable, Cloneable, AxisAlignedBB {
 
     protected final Identifier id;
     protected int meta;
+    protected Vector3i position;
+    protected int layer;
+    protected Level level;
 
     public Block(Identifier id) {
         this.id = id;
+    }
+
+    public static long key(Vector3i position) {
+        return key(position.getX(), position.getY(), position.getZ());
     }
 
     public static long key(int x, int y, int z) {
@@ -53,64 +61,132 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
         int x = (int) ((key >>> 36) & 0xFFFFFFF);
         int y = (int) ((key >> 27) & 0xFF);
         int z = (int) (key & 0xFFFFFFF);
-        return new Vector3i(x, y, z);
+        return Vector3i.from(x, y, z);
     }
 
     public static Block get(Identifier identifier) {
-        return get(identifier, 0, null, 0, 0, 0);
+        return get(identifier, 0, 0, 0, 0, null);
     }
 
     public static Block get(Identifier identifier, int meta) {
-        return get(identifier, meta, null, 0, 0, 0);
+        return get(identifier, meta, 0, 0, 0, null);
     }
 
-    public static Block get(Identifier identifier, int meta, BlockPosition pos) {
-        return pos != null ? get(identifier, meta, pos.level, pos.x, pos.y, pos.z, pos.layer) :
-                get(identifier, meta, null, 0, 0, 0, 0);
+    public static Block get(Identifier identifier, int meta, Vector3i pos) {
+        return pos != null ? get(identifier, meta, pos.getX(), pos.getY(), pos.getZ(), null) :
+                get(identifier, meta, 0, 0, 0, 0, null);
     }
 
-    public static Block get(Identifier identifier, int meta, Level level, int x, int y, int z) {
-        return get(identifier, meta, level, x, y, z, 0);
+    public static Block get(Identifier identifier, int meta, Vector3i pos, int layer) {
+        return pos != null ? get(identifier, meta, pos.getX(), pos.getY(), pos.getZ(), layer, null) :
+                get(identifier, meta, 0, 0, 0, 0, null);
     }
 
-    public static Block get(Identifier identifier, int meta, Level level, int x, int y, int z, int layer) {
+    public static Block get(Identifier identifier, int meta, int x, int y, int z, Level level) {
+        return get(identifier, meta, x, y, z, 0, level);
+    }
+
+    public static Block get(Identifier identifier, int meta, int x, int y, int z, int layer, Level level) {
         Block block = BlockRegistry.get().getBlock(identifier, meta).clone();
-        block.x = x;
-        block.y = y;
-        block.z = z;
-        block.level = level;
+        block.position = Vector3i.from(x, y, z);
         block.layer = layer;
+        block.level = level;
         return block;
     }
 
     @Deprecated
     public static Block get(int id) {
-        return get(id, 0, null, 0, 0, 0);
+        return get(id, 0, 0, 0, 0, null);
     }
 
     @Deprecated
     public static Block get(int id, int meta) {
-        return get(id, meta, null, 0, 0, 0);
+        return get(id, meta, 0, 0, 0, null);
     }
 
     @Deprecated
-    public static Block get(int id, int meta, Position pos) {
-        return pos != null ? get(id, meta, pos.level, (int) pos.x, (int) pos.y, (int) pos.z) :
-                get(id, meta, null, 0, 0, 0);
+    public static Block get(int id, int meta, Vector4i pos) {
+        return pos != null ? get(id, meta, pos.getX(), pos.getY(), pos.getZ(), pos.getW(), null) :
+                get(id, meta, 0, 0, 0, null);
     }
 
     @Deprecated
-    public static Block get(int id, int meta, Level level, int x, int y, int z) {
+    public static Block get(int id, int meta, int x, int y, int z, Level level) {
+        return get(id, meta, x, y, z, 0, level);
+    }
+
+    @Deprecated
+    public static Block get(int id, int meta, int x, int y, int z, int layer, Level level) {
         Block block = BlockRegistry.get().getBlock(id, meta).clone();
-        block.x = x;
-        block.y = y;
-        block.z = z;
+        block.position = Vector3i.from(x, y, z);
+        block.layer = layer;
         block.level = level;
         return block;
     }
 
-    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        return this.getLevel().setBlock(this, this, true, true);
+    //http://minecraft.gamepedia.com/Breaking
+    private static float breakTime0(float blockHardness, boolean correctTool, boolean canHarvestWithHand,
+                                    Identifier id, int toolType, int toolTier, int efficiencyLoreLevel, int hasteEffectLevel,
+                                    boolean insideOfWaterWithoutAquaAffinity, boolean outOfWaterButNotOnGround) {
+        float baseTime = ((correctTool || canHarvestWithHand) ? 1.5f : 5.0f) * blockHardness;
+        float speed = 1.0f / baseTime;
+        boolean isWoolBlock = id == WOOL, isCobweb = id == WEB;
+        if (correctTool) speed *= toolBreakTimeBonus0(toolType, toolTier, isWoolBlock, isCobweb);
+        speed += speedBonusByEfficiencyLore0(efficiencyLoreLevel);
+        speed *= speedRateByHasteLore0(hasteEffectLevel);
+        if (insideOfWaterWithoutAquaAffinity) speed *= 0.2f;
+        if (outOfWaterButNotOnGround) speed *= 0.2f;
+        return 1.0f / speed;
+    }
+
+    private static float toolBreakTimeBonus0(
+            int toolType, int toolTier, boolean isWoolBlock, boolean isCobweb) {
+        if (toolType == ItemTool.TYPE_SWORD) return isCobweb ? 15.0f : 1.0f;
+        if (toolType == ItemTool.TYPE_SHEARS) return isWoolBlock ? 5.0f : 15.0f;
+        if (toolType == ItemTool.TYPE_NONE) return 1.0f;
+        switch (toolTier) {
+            case ItemTool.TIER_WOODEN:
+                return 2.0f;
+            case ItemTool.TIER_STONE:
+                return 4.0f;
+            case ItemTool.TIER_IRON:
+                return 6.0f;
+            case ItemTool.TIER_DIAMOND:
+                return 8.0f;
+            case ItemTool.TIER_GOLD:
+                return 12.0f;
+            default:
+                return 1.0f;
+        }
+    }
+
+    private static float speedBonusByEfficiencyLore0(int efficiencyLoreLevel) {
+        if (efficiencyLoreLevel == 0) return 0;
+        return efficiencyLoreLevel * efficiencyLoreLevel + 1;
+    }
+
+    private static float speedRateByHasteLore0(int hasteLoreLevel) {
+        return 1.0f + (0.2f * hasteLoreLevel);
+    }
+
+    public static boolean equals(Block b1, Block b2, boolean checkDamage) {
+        return b1 != null && b2 != null && b1.getId() == b2.getId() && (!checkDamage || b1.getMeta() == b2.getMeta());
+    }
+
+    public Vector3i getPosition() {
+        return position;
+    }
+
+    public final void setPosition(Vector3i v) {
+        this.position = v;
+    }
+
+    public int getLayer() {
+        return layer;
+    }
+
+    public final void setLayer(int layer) {
+        this.layer = layer;
     }
 
     //http://minecraft.gamepedia.com/Breaking
@@ -126,8 +202,8 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
         return 10;
     }
 
-    public boolean onBreak(Item item) {
-        return this.getLevel().setBlock(this, Block.get(AIR), true, true);
+    public Level getLevel() {
+        return level;
     }
 
     public int onUpdate(int type) {
@@ -142,12 +218,12 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
         return false;
     }
 
-    public double getHardness() {
-        return 10;
+    public final void setLevel(Level level) {
+        this.level = level;
     }
 
-    public double getResistance() {
-        return 1;
+    public Chunk getChunk() {
+        return level.getChunk(this.position);
     }
 
     public int getBurnChance() {
@@ -162,27 +238,16 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
         return ItemTool.TYPE_NONE;
     }
 
-    public double getFrictionFactor() {
-        return 0.6;
+    public int getX() {
+        return this.position.getX();
     }
 
     public int getLightLevel() {
         return 0;
     }
 
-    //http://minecraft.gamepedia.com/Breaking
-    private static double breakTime0(double blockHardness, boolean correctTool, boolean canHarvestWithHand,
-                                     Identifier id, int toolType, int toolTier, int efficiencyLoreLevel, int hasteEffectLevel,
-                                     boolean insideOfWaterWithoutAquaAffinity, boolean outOfWaterButNotOnGround) {
-        double baseTime = ((correctTool || canHarvestWithHand) ? 1.5 : 5.0) * blockHardness;
-        double speed = 1.0 / baseTime;
-        boolean isWoolBlock = id == WOOL, isCobweb = id == WEB;
-        if (correctTool) speed *= toolBreakTimeBonus0(toolType, toolTier, isWoolBlock, isCobweb);
-        speed += speedBonusByEfficiencyLore0(efficiencyLoreLevel);
-        speed *= speedRateByHasteLore0(hasteEffectLevel);
-        if (insideOfWaterWithoutAquaAffinity) speed *= 0.2;
-        if (outOfWaterButNotOnGround) speed *= 0.2;
-        return 1.0 / speed;
+    public int getY() {
+        return this.position.getY();
     }
 
     public boolean canBePlaced() {
@@ -254,58 +319,44 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
         return id;
     }
 
-    public void addVelocityToEntity(Entity entity, Vector3f vector) {
-
+    public int getZ() {
+        return this.position.getZ();
     }
 
-    public final int getDamage() {
-        return meta;
+    public boolean isValid() {
+        return level != null && position != null;
     }
 
     public void setDamage(int meta) {
         this.meta = meta;
     }
 
-    public final void position(BlockPosition v) {
-        this.x = v.x;
-        this.y = v.y;
-        this.z = v.z;
-        this.level = v.level;
-        this.layer = v.layer;
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        return this.getLevel().setBlock(this.getPosition(), this, true, true);
+    }
+
+    public boolean onBreak(Item item) {
+        return this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true, true);
+    }
+
+    public float getHardness() {
+        return 10;
     }
 
     public String getDescriptionId() {
         return "tile." + id.getName() + ".name";
     }
 
-    private static double toolBreakTimeBonus0(
-            int toolType, int toolTier, boolean isWoolBlock, boolean isCobweb) {
-        if (toolType == ItemTool.TYPE_SWORD) return isCobweb ? 15.0 : 1.0;
-        if (toolType == ItemTool.TYPE_SHEARS) return isWoolBlock ? 5.0 : 15.0;
-        if (toolType == ItemTool.TYPE_NONE) return 1.0;
-        switch (toolTier) {
-            case ItemTool.TIER_WOODEN:
-                return 2.0;
-            case ItemTool.TIER_STONE:
-                return 4.0;
-            case ItemTool.TIER_IRON:
-                return 6.0;
-            case ItemTool.TIER_DIAMOND:
-                return 8.0;
-            case ItemTool.TIER_GOLD:
-                return 12.0;
-            default:
-                return 1.0;
-        }
+    public float getResistance() {
+        return 1;
     }
 
-    private static double speedBonusByEfficiencyLore0(int efficiencyLoreLevel) {
-        if (efficiencyLoreLevel == 0) return 0;
-        return efficiencyLoreLevel * efficiencyLoreLevel + 1;
+    public float getFrictionFactor() {
+        return 0.6f;
     }
 
-    private static double speedRateByHasteLore0(int hasteLoreLevel) {
-        return 1.0 + (0.2 * hasteLoreLevel);
+    public Vector3f addVelocityToEntity(Entity entity, Vector3f vector) {
+        return vector;
     }
 
     private static int toolType0(Item item) {
@@ -332,10 +383,14 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
         };
     }
 
-    public double getBreakTime(Item item, Player player) {
+    public final int getMeta() {
+        return meta;
+    }
+
+    public float getBreakTime(Item item, Player player) {
         Objects.requireNonNull(item, "getBreakTime: Item can not be null");
         Objects.requireNonNull(player, "getBreakTime: Player can not be null");
-        double blockHardness = getHardness();
+        float blockHardness = getHardness();
         boolean correctTool = correctTool0(getToolType(), item);
         boolean canHarvestWithHand = canHarvestWithHand();
         Identifier id = getId();
@@ -353,14 +408,22 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
                 efficiencyLoreLevel, hasteEffectLevel, insideOfWaterWithoutAquaAffinity, outOfWaterButNotOnGround);
     }
 
+    public boolean canBeBrokenWith(Item item) {
+        return this.getHardness() != -1;
+    }
+
+    public Block getSide(BlockFace face) {
+        return this.getSide(face, true);
+    }
+
     /**
-     * @deprecated This function is lack of Player class and is not accurate enough, use #getBreakTime(Item, Player)
      * @param item item used
      * @return break time
+     * @deprecated This function is lack of Player class and is not accurate enough, use #getBreakTime(Item, Player)
      */
     @Deprecated
-    public double getBreakTime(Item item) {
-        double base = this.getHardness() * 1.5;
+    public float getBreakTime(Item item) {
+        float base = this.getHardness() * 1.5f;
         if (this.canBeBrokenWith(item)) {
             if (this.getToolType() == ItemTool.TYPE_SHEARS && item.isShears()) {
                 base /= 15;
@@ -368,7 +431,7 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
                     (this.getToolType() == ItemTool.TYPE_PICKAXE && item.isPickaxe()) ||
                             (this.getToolType() == ItemTool.TYPE_AXE && item.isAxe()) ||
                             (this.getToolType() == ItemTool.TYPE_SHOVEL && item.isShovel())
-                    ) {
+            ) {
                 int tier = item.getTier();
                 switch (tier) {
                     case ItemTool.TIER_WOODEN:
@@ -389,60 +452,25 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
                 }
             }
         } else {
-            base *= 3.33;
+            base *= 3.33f;
         }
 
         if (item.isSword()) {
-            base *= 0.5;
+            base *= 0.5f;
         }
 
         return base;
-    }
-
-    public boolean canBeBrokenWith(Item item) {
-        return this.getHardness() != -1;
-    }
-
-    public Block getSide(BlockFace face) {
-        return this.getSide(face, true);
-    }
-
-    public Block getSide(BlockFace face, boolean load) {
-        if (this.isValid()) {
-            return this.getLevel().getBlock(x + face.getXOffset(), y + face.getYOffset(), z + face.getZOffset());
-        }
-        return this.getSide(face, 1, load);
     }
 
     public Block getSide(BlockFace face, int step) {
         return this.getSide(face, step, true);
     }
 
-    public Block getSide(BlockFace face, int step, boolean load) {
+    public Block getSide(BlockFace face, boolean load) {
         if (this.isValid()) {
-            if (step == 1) {
-                if (load) {
-                    return this.getLevel().getBlock(x + face.getXOffset(), y + face.getYOffset(),
-                            z + face.getZOffset());
-                } else {
-                    return this.getLevel().getLoadedBlock(x + face.getXOffset(), y + face.getYOffset(),
-                            z + face.getZOffset());
-                }
-            } else {
-                if (load) {
-                    return this.getLevel().getBlock(x + face.getXOffset() * step,
-                            y + face.getYOffset() * step, z + face.getZOffset() * step);
-                } else {
-                    return this.getLevel().getLoadedBlock(x + face.getXOffset() * step,
-                            y + face.getYOffset() * step, z + face.getZOffset() * step);
-                }
-            }
+            return this.getLevel().getBlock(this.getX() + face.getXOffset(), this.getY() + face.getYOffset(), this.getZ() + face.getZOffset());
         }
-        Block block = Block.get(AIR, 0);
-        block.x = x + face.getXOffset() * step;
-        block.y = y + face.getYOffset() * step;
-        block.z = z + face.getZOffset() * step;
-        return block;
+        return this.getSide(face, 1, load);
     }
 
     public Block up() {
@@ -493,9 +521,29 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
         return getSide(BlockFace.WEST, step);
     }
 
-    @Override
-    public String toString() {
-        return String.format("Block(id=%s, data=%s, position=(%d, %d, %d))", this.id, this.meta, this.x, this.y, this.z);
+    public Block getSide(BlockFace face, int step, boolean load) {
+        if (this.isValid()) {
+            if (step == 1) {
+                if (load) {
+                    return this.getLevel().getBlock(this.getX() + face.getXOffset(), this.getY() + face.getYOffset(),
+                            this.getZ() + face.getZOffset());
+                } else {
+                    return this.getLevel().getLoadedBlock(this.getX() + face.getXOffset(), this.getY() + face.getYOffset(),
+                            this.getZ() + face.getZOffset());
+                }
+            } else {
+                if (load) {
+                    return this.getLevel().getBlock(this.getX() + face.getXOffset() * step,
+                            this.getY() + face.getYOffset() * step, this.getZ() + face.getZOffset() * step);
+                } else {
+                    return this.getLevel().getLoadedBlock(this.getX() + face.getXOffset() * step,
+                            this.getY() + face.getYOffset() * step, this.getZ() + face.getZOffset() * step);
+                }
+            }
+        }
+        Block block = Block.get(AIR, 0);
+        block.position = this.position.add(face.getUnitVector().mul(step));
+        return block;
     }
 
     public boolean collidesWithBB(AxisAlignedBB bb) {
@@ -524,37 +572,75 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
     }
 
     @Override
-    public double getMinX() {
-        return this.x;
+    public String toString() {
+        return String.format("Block(id=%s, data=%s, position=%s)", this.id, this.meta, this.position);
     }
 
     @Override
-    public double getMinY() {
-        return this.y;
+    public float getMinX() {
+        return this.position.getX();
     }
 
     @Override
-    public double getMinZ() {
-        return this.z;
+    public float getMinY() {
+        return this.position.getY();
     }
 
     @Override
-    public double getMaxX() {
-        return this.x + 1;
+    public float getMinZ() {
+        return this.position.getZ();
     }
 
     @Override
-    public double getMaxY() {
-        return this.y + 1;
+    public float getMaxX() {
+        return this.position.getX() + 1;
     }
 
     @Override
-    public double getMaxZ() {
-        return this.z + 1;
+    public float getMaxY() {
+        return this.position.getY() + 1;
     }
 
     protected AxisAlignedBB recalculateCollisionBoundingBox() {
         return getBoundingBox();
+    }
+
+    @Override
+    public float getMaxZ() {
+        return this.position.getZ() + 1;
+    }
+
+    public String getSaveId() {
+        String name = getClass().getName();
+        return name.substring(16);
+    }
+
+    @Override
+    public void setMetadata(String metadataKey, MetadataValue newMetadataValue) throws Exception {
+        if (this.getLevel() != null) {
+            this.getLevel().getBlockMetadata().setMetadata(this, metadataKey, newMetadataValue);
+        }
+    }
+
+    @Override
+    public List<MetadataValue> getMetadata(String metadataKey) throws Exception {
+        if (this.getLevel() != null) {
+            return this.getLevel().getBlockMetadata().getMetadata(this, metadataKey);
+
+        }
+        return null;
+    }
+
+    @Override
+    public boolean hasMetadata(String metadataKey) throws Exception {
+        return this.getLevel() != null && this.getLevel().getBlockMetadata().hasMetadata(this, metadataKey);
+    }
+
+    @Override
+    public void removeMetadata(String metadataKey, Plugin owningPlugin) throws Exception {
+        if (this.getLevel() != null) {
+            this.getLevel().getBlockMetadata().removeMetadata(this, metadataKey, owningPlugin);
+        }
     }
 
     public MovingObjectPosition calculateIntercept(Vector3f pos1, Vector3f pos2) {
@@ -563,12 +649,12 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
             return null;
         }
 
-        Vector3f v1 = pos1.getIntermediateWithXValue(pos2, bb.getMinX());
-        Vector3f v2 = pos1.getIntermediateWithXValue(pos2, bb.getMaxX());
-        Vector3f v3 = pos1.getIntermediateWithYValue(pos2, bb.getMinY());
-        Vector3f v4 = pos1.getIntermediateWithYValue(pos2, bb.getMaxY());
-        Vector3f v5 = pos1.getIntermediateWithZValue(pos2, bb.getMinZ());
-        Vector3f v6 = pos1.getIntermediateWithZValue(pos2, bb.getMaxZ());
+        Vector3f v1 = NukkitMath.getIntermediateWithXValue(pos1, pos2, bb.getMinX());
+        Vector3f v2 = NukkitMath.getIntermediateWithXValue(pos1, pos2, bb.getMaxX());
+        Vector3f v3 = NukkitMath.getIntermediateWithYValue(pos1, pos2, bb.getMinY());
+        Vector3f v4 = NukkitMath.getIntermediateWithYValue(pos1, pos2, bb.getMaxY());
+        Vector3f v5 = NukkitMath.getIntermediateWithZValue(pos1, pos2, bb.getMinZ());
+        Vector3f v6 = NukkitMath.getIntermediateWithZValue(pos1, pos2, bb.getMaxZ());
 
         if (v1 != null && !bb.isVectorInYZ(v1)) {
             v1 = null;
@@ -636,44 +722,7 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
             f = 3;
         }
 
-        return MovingObjectPosition.fromBlock(this.x, this.y, this.z, f, vector.add(this.x, this.y, this.z));
-    }
-
-    public String getSaveId() {
-        String name = getClass().getName();
-        return name.substring(16);
-    }
-
-    @Override
-    public void setMetadata(String metadataKey, MetadataValue newMetadataValue) throws Exception {
-        if (this.getLevel() != null) {
-            this.getLevel().getBlockMetadata().setMetadata(this, metadataKey, newMetadataValue);
-        }
-    }
-
-    @Override
-    public List<MetadataValue> getMetadata(String metadataKey) throws Exception {
-        if (this.getLevel() != null) {
-            return this.getLevel().getBlockMetadata().getMetadata(this, metadataKey);
-
-        }
-        return null;
-    }
-
-    @Override
-    public boolean hasMetadata(String metadataKey) throws Exception {
-        return this.getLevel() != null && this.getLevel().getBlockMetadata().hasMetadata(this, metadataKey);
-    }
-
-    @Override
-    public void removeMetadata(String metadataKey, Plugin owningPlugin) throws Exception {
-        if (this.getLevel() != null) {
-            this.getLevel().getBlockMetadata().removeMetadata(this, metadataKey, owningPlugin);
-        }
-    }
-
-    public Block clone() {
-        return (Block) super.clone();
+        return MovingObjectPosition.fromBlock(this.position, f, vector.add(this.position.toFloat()));
     }
 
     public int getWeakPower(BlockFace face) {
@@ -704,8 +753,12 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
         return equals(b1, b2, true);
     }
 
-    public static boolean equals(Block b1, Block b2, boolean checkDamage) {
-        return b1 != null && b2 != null && b1.getId() == b2.getId() && (!checkDamage || b1.getDamage() == b2.getDamage());
+    public Block clone() {
+        try {
+            return (Block) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public Item toItem() {

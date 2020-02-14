@@ -32,7 +32,7 @@ public class BlockSlabRedSandstone extends BlockSlab {
 
     @Override
     public Item toItem() {
-        return Item.get(id, this.getDamage() & 0x07);
+        return Item.get(id, this.getMeta() & 0x07);
     }
 
     @Override

@@ -5,11 +5,6 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
-
-/*
- * Created on 2015/12/11 by Pub4Game.
- * Package cn.nukkit.block in project Nukkit .
- */
 public class BlockRedstone extends BlockSolid {
 
     public BlockRedstone(Identifier id) {
@@ -17,12 +12,12 @@ public class BlockRedstone extends BlockSolid {
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 10;
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 5;
     }
 

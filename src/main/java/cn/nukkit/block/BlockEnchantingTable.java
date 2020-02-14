@@ -1,21 +1,18 @@
 package cn.nukkit.block;
 
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityEnchantTable;
+import cn.nukkit.blockentity.EnchantingTable;
 import cn.nukkit.inventory.EnchantInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.nbt.tag.StringTag;
-import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
-import java.util.Map;
+import static cn.nukkit.blockentity.BlockEntityTypes.ENCHANTING_TABLE;
 
 /**
  * Created on 2015/11/22 by CreeperFace.
@@ -32,12 +29,12 @@ public class BlockEnchantingTable extends BlockTransparent {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 5;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 6000;
     }
 
@@ -64,53 +61,22 @@ public class BlockEnchantingTable extends BlockTransparent {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        this.getLevel().setBlock(block, this, true, true);
+        this.getLevel().setBlock(block.getPosition(), this, true, true);
 
-        CompoundTag nbt = new CompoundTag()
-                .putString("id", BlockEntity.ENCHANT_TABLE)
-                .putInt("x", this.x)
-                .putInt("y", this.y)
-                .putInt("z", this.z);
-
+        EnchantingTable enchantingTable = BlockEntityRegistry.get().newEntity(ENCHANTING_TABLE, this.getChunk(), this.getPosition());
+        enchantingTable.loadAdditionalData(item.getTag());
         if (item.hasCustomName()) {
-            nbt.putString("CustomName", item.getCustomName());
+            enchantingTable.setCustomName(item.getCustomName());
         }
-
-        if (item.hasCustomBlockData()) {
-            Map<String, Tag> customData = item.getCustomBlockData().getTags();
-            for (Map.Entry<String, Tag> tag : customData.entrySet()) {
-                nbt.put(tag.getKey(), tag.getValue());
-            }
-        }
-
-        BlockEntityEnchantTable enchantTable = (BlockEntityEnchantTable) BlockEntity.createBlockEntity(BlockEntity.ENCHANT_TABLE, getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
-        return enchantTable != null;
+        return true;
     }
 
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            BlockEntity t = this.getLevel().getBlockEntity(this);
-            BlockEntityEnchantTable enchantTable;
-            if (t instanceof BlockEntityEnchantTable) {
-                enchantTable = (BlockEntityEnchantTable) t;
-            } else {
-                CompoundTag nbt = new CompoundTag()
-                        .putList(new ListTag<>("Items"))
-                        .putString("id", BlockEntity.ENCHANT_TABLE)
-                        .putInt("x", (int) this.x)
-                        .putInt("y", (int) this.y)
-                        .putInt("z", (int) this.z);
-                enchantTable = (BlockEntityEnchantTable) BlockEntity.createBlockEntity(BlockEntity.ENCHANT_TABLE, this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
-                if (enchantTable == null) {
-                    return false;
-                }
-            }
-
-            if (enchantTable.namedTag.contains("Lock") && enchantTable.namedTag.get("Lock") instanceof StringTag) {
-                if (!enchantTable.namedTag.getString("Lock").equals(item.getCustomName())) {
-                    return true;
-                }
+            BlockEntity blockEntity = this.getLevel().getBlockEntity(this.getPosition());
+            if (!(blockEntity instanceof EnchantingTable)) {
+                BlockEntityRegistry.get().newEntity(ENCHANTING_TABLE, this.getChunk(), this.getPosition());
             }
 
             player.addWindow(new EnchantInventory(player.getUIInventory(), this), Player.ENCHANT_WINDOW_ID);

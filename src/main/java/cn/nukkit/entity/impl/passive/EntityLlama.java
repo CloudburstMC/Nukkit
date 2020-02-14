@@ -2,16 +2,15 @@ package cn.nukkit.entity.impl.passive;
 
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.passive.Llama;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 /**
  * @author PikyCZ
  */
 public class EntityLlama extends Animal implements Llama {
 
-    public EntityLlama(EntityType<Llama> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityLlama(EntityType<Llama> type, Location location) {
+        super(type, location);
     }
 
     @Override

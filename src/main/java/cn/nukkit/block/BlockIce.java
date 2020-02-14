@@ -20,18 +20,18 @@ public class BlockIce extends BlockTransparent {
     }
 
     @Override
-    public double getResistance() {
-        return 2.5;
+    public float getResistance() {
+        return 2.5f;
     }
 
     @Override
-    public double getHardness() {
-        return 0.5;
+    public float getHardness() {
+        return 0.5f;
     }
 
     @Override
-    public double getFrictionFactor() {
-        return 0.98;
+    public float getFrictionFactor() {
+        return 0.98f;
     }
 
     @Override
@@ -41,18 +41,18 @@ public class BlockIce extends BlockTransparent {
 
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, Block.get(WATER), true);
+        this.getLevel().setBlock(this.getPosition(), Block.get(WATER), true);
         return true;
     }
 
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if (this.getLevel().getBlockLightAt((int) this.x, (int) this.y, (int) this.z) >= 12) {
+            if (this.getLevel().getBlockLightAt((int) this.getX(), (int) this.getY(), (int) this.getZ()) >= 12) {
                 BlockFadeEvent event = new BlockFadeEvent(this, get(WATER));
                 level.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    level.setBlock(this, event.getNewState(), true);
+                    level.setBlock(this.getPosition(), event.getNewState(), true);
                 }
                 return Level.BLOCK_UPDATE_NORMAL;
             }

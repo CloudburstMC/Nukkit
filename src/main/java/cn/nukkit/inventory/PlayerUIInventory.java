@@ -1,10 +1,10 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.item.Item;
-import cn.nukkit.network.protocol.InventoryContentPacket;
-import cn.nukkit.network.protocol.InventorySlotPacket;
 import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.player.Player;
+import com.nukkitx.protocol.bedrock.data.ItemData;
+import com.nukkitx.protocol.bedrock.packet.InventoryContentPacket;
+import com.nukkitx.protocol.bedrock.packet.InventorySlotPacket;
 
 import java.util.HashMap;
 
@@ -43,14 +43,14 @@ public class PlayerUIInventory extends BaseInventory {
 
     @Override
     public void sendSlot(int index, Player... target) {
-        InventorySlotPacket pk = new InventorySlotPacket();
-        pk.slot = index;
-        pk.item = this.getItem(index);
+        InventorySlotPacket packet = new InventorySlotPacket();
+        packet.setSlot(index);
+        packet.setItem(this.getItem(index).toNetwork());
 
         for (Player p : target) {
             if (p == this.getHolder()) {
-                pk.inventoryId = ContainerIds.UI;
-                p.dataPacket(pk);
+                packet.setContainerId(ContainerIds.UI);
+                p.sendPacket(packet);
             } else {
                 int id;
 
@@ -58,24 +58,24 @@ public class PlayerUIInventory extends BaseInventory {
                     this.close(p);
                     continue;
                 }
-                pk.inventoryId = id;
-                p.dataPacket(pk);
+                packet.setContainerId(id);
+                p.sendPacket(packet);
             }
         }
     }
 
     @Override
     public void sendContents(Player... target) {
-        InventoryContentPacket pk = new InventoryContentPacket();
-        pk.slots = new Item[this.getSize()];
+        InventoryContentPacket packet = new InventoryContentPacket();
+        packet.setContents(new ItemData[this.getSize()]);
         for (int i = 0; i < this.getSize(); ++i) {
-            pk.slots[i] = this.getItem(i);
+            packet.getContents()[i] = this.getItem(i).toNetwork();
         }
 
         for (Player p : target) {
             if (p == this.getHolder()) {
-                pk.inventoryId = ContainerIds.UI;
-                p.dataPacket(pk);
+                packet.setContainerId(ContainerIds.UI);
+                p.sendPacket(packet);
             } else {
                 int id;
 
@@ -83,8 +83,8 @@ public class PlayerUIInventory extends BaseInventory {
                     this.close(p);
                     continue;
                 }
-                pk.inventoryId = id;
-                p.dataPacket(pk);
+                packet.setContainerId(id);
+                p.sendPacket(packet);
             }
         }
     }

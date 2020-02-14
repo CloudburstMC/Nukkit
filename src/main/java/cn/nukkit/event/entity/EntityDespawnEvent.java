@@ -8,7 +8,7 @@ import cn.nukkit.entity.impl.projectile.EntityProjectile;
 import cn.nukkit.entity.impl.vehicle.EntityVehicle;
 import cn.nukkit.entity.misc.DroppedItem;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.Position;
+import cn.nukkit.level.Location;
 
 /**
  * author: MagicDroidX
@@ -25,7 +25,7 @@ public class EntityDespawnEvent extends EntityEvent {
         this.entity = entity;
     }
 
-    public Position getPosition() {
+    public Location getLocation() {
         return this.entity.getLocation();
     }
 

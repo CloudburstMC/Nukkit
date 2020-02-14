@@ -29,7 +29,6 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.command.RemoteConsoleCommandSender;
 import cn.nukkit.lang.TranslationContainer;
-import cn.nukkit.nbt.stream.PGZIPOutputStream;
 import cn.nukkit.timings.JsonUtil;
 import cn.nukkit.utils.TextFormat;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -43,12 +42,11 @@ import java.lang.management.RuntimeMXBean;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.zip.Deflater;
+import java.util.zip.GZIPOutputStream;
 
 import static co.aikar.timings.TimingsManager.HISTORY;
 
@@ -213,11 +211,9 @@ public class TimingsExport extends Thread {
             con.setRequestMethod("POST");
             con.setInstanceFollowRedirects(false);
 
-            PGZIPOutputStream request = new PGZIPOutputStream(con.getOutputStream());
-            request.setLevel(Deflater.BEST_COMPRESSION);
-
-            request.write(Nukkit.JSON_MAPPER.writeValueAsBytes(this.out));
-            request.close();
+            try (GZIPOutputStream outputStream = new GZIPOutputStream(con.getOutputStream())) {
+                outputStream.write(Nukkit.JSON_MAPPER.writeValueAsBytes(this.out));
+            }
 
             response = getResponse(con);
 

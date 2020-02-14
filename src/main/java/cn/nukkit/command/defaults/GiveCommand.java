@@ -22,20 +22,20 @@ public class GiveCommand extends VanillaCommand {
         super(name, "%nukkit.command.give.description", "%nukkit.command.give.usage");
         this.setPermission("nukkit.command.give");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
                 new CommandParameter("item", false, CommandParameter.ENUM_TYPE_ITEM_LIST),
                 new CommandParameter("amount", CommandParamType.INT, true),
                 new CommandParameter("meta", CommandParamType.INT, true),
                 new CommandParameter("tags...", CommandParamType.RAWTEXT, true)
         });
-        this.commandParameters.put("toPlayerById", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
                 new CommandParameter("item ID", CommandParamType.INT, false),
                 new CommandParameter("amount", CommandParamType.INT, true),
                 new CommandParameter("tags...", CommandParamType.RAWTEXT, true)
         });
-        this.commandParameters.put("toPlayerByIdMeta", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
                 new CommandParameter("item ID:meta", CommandParamType.RAWTEXT, false),
                 new CommandParameter("amount", CommandParamType.INT, true),
@@ -85,7 +85,7 @@ public class GiveCommand extends VanillaCommand {
         }
         Command.broadcastCommandMessage(sender, new TranslationContainer(
                 "%commands.give.success",
-                item.getName() + " (" + item.getId() + ":" + item.getDamage() + ")",
+                item.getName() + " (" + item.getId() + ":" + item.getMeta() + ")",
                 String.valueOf(item.getCount()),
                 player.getName()));
         return true;

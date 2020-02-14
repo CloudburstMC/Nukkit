@@ -21,7 +21,7 @@ public class GameruleCommand extends VanillaCommand {
         this.registry = server.getGameRuleRegistry();
         this.setPermission("nukkit.command.gamerule");
         this.commandParameters.clear();
-        this.commandParameters.put("byString", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("gamerule", true, this.registry.getRuleNames().toArray(new String[0])),
                 new CommandParameter("value", CommandParamType.STRING, true)
         });

@@ -2,9 +2,9 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.Vector3i;
 import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.Rail;
+import com.nukkitx.math.vector.Vector3i;
 
 import static cn.nukkit.block.BlockIds.ACTIVATOR_RAIL;
 
@@ -23,9 +23,9 @@ public class BlockRailActivator extends BlockRail {
         if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE || type == Level.BLOCK_UPDATE_SCHEDULED) {
             super.onUpdate(type);
             boolean wasPowered = isActive();
-            boolean isPowered = level.isBlockPowered(this.asVector3i())
-                    || checkSurrounding(this, true, 0)
-                    || checkSurrounding(this, false, 0);
+            boolean isPowered = level.isBlockPowered(this.getPosition())
+                    || checkSurrounding(this.getPosition(), true, 0)
+                    || checkSurrounding(this.getPosition(), false, 0);
             boolean hasUpdate = false;
 
             if (wasPowered != isPowered) {
@@ -34,9 +34,9 @@ public class BlockRailActivator extends BlockRail {
             }
 
             if (hasUpdate) {
-                level.updateAround(down());
+                level.updateAround(this.getPosition().down());
                 if (getOrientation().isAscending()) {
-                    level.updateAround(up());
+                    level.updateAround(this.getPosition().up());
                 }
             }
             return type;
@@ -131,8 +131,8 @@ public class BlockRailActivator extends BlockRail {
                 return false;
         }
 
-        return canPowered(new Vector3i(dx, dy, dz), base, power, relative)
-                || onStraight && canPowered(new Vector3i(dx, dy - 1, dz), base, power, relative);
+        return canPowered(Vector3i.from(dx, dy, dz), base, power, relative)
+                || onStraight && canPowered(Vector3i.from(dx, dy - 1, dz), base, power, relative);
     }
 
     protected boolean canPowered(Vector3i pos, Rail.Orientation state, int power, boolean relative) {

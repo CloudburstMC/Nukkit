@@ -2,16 +2,15 @@ package cn.nukkit.entity.impl.hostile;
 
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.hostile.Guardian;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 /**
  * @author PikyCZ
  */
 public class EntityGuardian extends EntityHostile implements Guardian {
 
-    public EntityGuardian(EntityType<Guardian> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityGuardian(EntityType<Guardian> type, Location location) {
+        super(type, location);
     }
 
     @Override

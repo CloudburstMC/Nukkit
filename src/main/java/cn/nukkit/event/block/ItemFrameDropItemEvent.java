@@ -1,7 +1,7 @@
 package cn.nukkit.event.block;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.blockentity.BlockEntityItemFrame;
+import cn.nukkit.blockentity.impl.ItemFrameBlockEntity;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.item.Item;
@@ -15,9 +15,9 @@ public class ItemFrameDropItemEvent extends BlockEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private final Player player;
     private final Item item;
-    private final BlockEntityItemFrame itemFrame;
+    private final ItemFrameBlockEntity itemFrame;
 
-    public ItemFrameDropItemEvent(Player player, Block block, BlockEntityItemFrame itemFrame, Item item) {
+    public ItemFrameDropItemEvent(Player player, Block block, ItemFrameBlockEntity itemFrame, Item item) {
         super(block);
         this.player = player;
         this.itemFrame = itemFrame;
@@ -32,7 +32,7 @@ public class ItemFrameDropItemEvent extends BlockEvent implements Cancellable {
         return player;
     }
 
-    public BlockEntityItemFrame getItemFrame() {
+    public ItemFrameBlockEntity getItemFrame() {
         return itemFrame;
     }
 

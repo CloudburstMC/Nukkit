@@ -3,22 +3,16 @@ package cn.nukkit.registry;
 import cn.nukkit.Nukkit;
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.item.*;
-import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import lombok.*;
+import com.nukkitx.protocol.bedrock.packet.StartGamePacket;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -33,7 +27,8 @@ public class ItemRegistry implements Registry {
         InputStream stream = RegistryUtils.getOrAssertResource("runtime_item_ids.json");
 
         try {
-            VANILLA_ITEMS = Nukkit.JSON_MAPPER.readValue(stream, new TypeReference<List<ItemData>>() {});
+            VANILLA_ITEMS = Nukkit.JSON_MAPPER.readValue(stream, new TypeReference<List<ItemData>>() {
+            });
         } catch (IOException e) {
             throw new AssertionError("Unable to load vanilla items", e);
         }
@@ -43,9 +38,10 @@ public class ItemRegistry implements Registry {
 
     private final Map<Identifier, ItemFactory> factoryMap = new IdentityHashMap<>();
     private final BiMap<Integer, Identifier> runtimeIdMap = HashBiMap.create();
-    private final AtomicInteger runtimeIdAllocator = new AtomicInteger(VANILLA_ITEMS.size());
+    private final AtomicInteger runtimeIdAllocator = new AtomicInteger();
+    private int lastLegacyId;
     private final BlockRegistry blockRegistry;
-    private ByteBuf cachedRuntimeItems;
+    private List<StartGamePacket.ItemEntry> itemEntries;
     private volatile boolean closed;
 
     private ItemRegistry(BlockRegistry blockRegistry) {
@@ -89,7 +85,10 @@ public class ItemRegistry implements Registry {
         checkClosed();
         this.factoryMap.put(identifier, itemFactory);
         this.runtimeIdMap.put(legacyId, identifier);
-        this.runtimeIdAllocator.updateAndGet(prev -> prev <= legacyId ? legacyId + 1 : prev);
+        if (this.lastLegacyId < legacyId) {
+            this.lastLegacyId = legacyId;
+            this.runtimeIdAllocator.set(this.lastLegacyId + 1);
+        }
     }
 
     public Item getItem(Identifier identifier) throws RegistryException {
@@ -150,22 +149,26 @@ public class ItemRegistry implements Registry {
         checkClosed();
         this.closed = true;
 
-        ByteBuf buffer = Unpooled.directBuffer();
-
         List<Identifier> customBlocks = this.blockRegistry.getCustomBlocks();
 
-        Binary.writeUnsignedVarInt(buffer, VANILLA_ITEMS.size() + customBlocks.size());
+        List<StartGamePacket.ItemEntry> itemEntries = new ArrayList<>();
 
         for (ItemData data : VANILLA_ITEMS) {
-            Binary.writeString(buffer, data.name);
-            buffer.writeShortLE(data.id);
+            itemEntries.add(new StartGamePacket.ItemEntry(data.name, (short) data.id));
         }
 
         for (Identifier blockId : customBlocks) {
-            Binary.writeString(buffer, blockId.toString());
-            buffer.writeShortLE(this.getRuntimeId(blockId));
+            itemEntries.add(new StartGamePacket.ItemEntry(blockId.toString(), (short) this.getRuntimeId(blockId)));
         }
-        this.cachedRuntimeItems = buffer;
+
+        int startId = this.lastLegacyId + 1;
+        int size = this.runtimeIdAllocator.get();
+        for (int id = startId; id < size; id++) {
+            Identifier identifier = this.getIdentifier(id);
+            itemEntries.add(new StartGamePacket.ItemEntry(identifier.toString(), (short) id));
+        }
+
+        this.itemEntries = Collections.unmodifiableList(itemEntries);
     }
 
     private void checkClosed() throws RegistryException {
@@ -174,8 +177,8 @@ public class ItemRegistry implements Registry {
         }
     }
 
-    public ByteBuf getCachedRuntimeItems() {
-        return cachedRuntimeItems;
+    public List<StartGamePacket.ItemEntry> getItemEntries() {
+        return itemEntries;
     }
 
     private void registerVanillaItems() throws RegistryException {

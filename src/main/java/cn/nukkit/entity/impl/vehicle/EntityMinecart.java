@@ -5,8 +5,7 @@ import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.impl.EntityLiving;
 import cn.nukkit.entity.impl.passive.EntityWaterAnimal;
 import cn.nukkit.entity.vehicle.Minecart;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.MinecartType;
 
@@ -16,8 +15,8 @@ import cn.nukkit.utils.MinecartType;
  */
 public class EntityMinecart extends EntityAbstractMinecart implements Minecart {
 
-    public EntityMinecart(EntityType<Minecart> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityMinecart(EntityType<Minecart> type, Location location) {
+        super(type, location);
     }
 
     @Override
@@ -46,7 +45,7 @@ public class EntityMinecart extends EntityAbstractMinecart implements Minecart {
         boolean update = super.onUpdate(currentTick);
 
         if (this.passengers.isEmpty()) {
-            for (Entity entity : this.level.getCollidingEntities(this.boundingBox.grow(0.20000000298023224, 0.0D, 0.20000000298023224), this)) {
+            for (Entity entity : this.getLevel().getCollidingEntities(this.boundingBox.grow(0.2f, 0, 0.2f), this)) {
                 if (entity.getVehicle() != null || !(entity instanceof EntityLiving) || entity instanceof Player || entity instanceof EntityWaterAnimal) {
                     continue;
                 }

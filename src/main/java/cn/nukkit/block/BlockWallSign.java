@@ -24,9 +24,9 @@ public class BlockWallSign extends BlockSignPost {
                 4,
         };
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.getDamage() >= 2 && this.getDamage() <= 5) {
-                if (this.getSide(BlockFace.fromIndex(faces[this.getDamage() - 2])).getId() == AIR) {
-                    this.getLevel().useBreakOn(this);
+            if (this.getMeta() >= 2 && this.getMeta() <= 5) {
+                if (this.getSide(BlockFace.fromIndex(faces[this.getMeta() - 2])).getId() == AIR) {
+                    this.getLevel().useBreakOn(this.getPosition());
                 }
                 return Level.BLOCK_UPDATE_NORMAL;
             }

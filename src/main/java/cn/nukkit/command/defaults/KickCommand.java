@@ -19,7 +19,7 @@ public class KickCommand extends VanillaCommand {
         super(name, "%nukkit.command.kick.description", "%commands.kick.usage");
         this.setPermission("nukkit.command.kick");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
                 new CommandParameter("reason", true)
         });

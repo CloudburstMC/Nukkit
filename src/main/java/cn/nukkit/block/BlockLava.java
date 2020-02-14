@@ -2,21 +2,21 @@ package cn.nukkit.block;
 
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.misc.Tnt;
+import cn.nukkit.entity.misc.PrimedTnt;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.event.entity.EntityCombustByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.BlockPosition;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.math.vector.Vector3i;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -40,8 +40,8 @@ public class BlockLava extends BlockLiquid {
 
     @Override
     public void onEntityCollide(Entity entity) {
-        double highestPos = entity.getHighestPosition();
-        entity.setHighestPosition(highestPos - (highestPos - entity.getY()) * 0.5);
+        float highestPos = entity.getHighestPosition();
+        entity.setHighestPosition(highestPos - (highestPos - entity.getY()) * 0.5f);
 
         // Always setting the duration to 15 seconds? TODO
         EntityCombustByBlockEvent ev = new EntityCombustByBlockEvent(this, entity, 15);
@@ -62,7 +62,7 @@ public class BlockLava extends BlockLiquid {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        boolean ret = this.getLevel().setBlock(this, this, true, false);
+        boolean ret = this.getLevel().setBlock(this.getPosition(), this, true, false);
         this.getLevel().scheduleUpdate(this, this.tickRate());
 
         return ret;
@@ -79,7 +79,7 @@ public class BlockLava extends BlockLiquid {
 
             if (i > 0) {
                 for (int k = 0; k < i; ++k) {
-                    BlockPosition v = this.add(random.nextInt(3) - 1, 1, random.nextInt(3) - 1);
+                    Vector3i v = this.getPosition().add(random.nextInt(3) - 1, 1, random.nextInt(3) - 1);
                     Block block = this.getLevel().getBlock(v);
 
                     if (block.getId() == AIR) {
@@ -102,7 +102,7 @@ public class BlockLava extends BlockLiquid {
                 }
             } else {
                 for (int k = 0; k < 3; ++k) {
-                    BlockPosition v = this.add(random.nextInt(3) - 1, 0, random.nextInt(3) - 1);
+                    Vector3i v = this.getPosition().add(random.nextInt(3) - 1, 0, random.nextInt(3) - 1);
                     Block block = this.getLevel().getBlock(v);
 
                     if (block.up().getId() == AIR && block.getBurnChance() > 0) {
@@ -166,9 +166,9 @@ public class BlockLava extends BlockLiquid {
             }
         }
         if(colliding != null){
-            if(this.getDamage() == 0){
+            if (this.getMeta() == 0) {
                 this.liquidCollide(colliding, Block.get(OBSIDIAN));
-            }else if(this.getDamage() <= 4){
+            } else if (this.getMeta() <= 4) {
                 this.liquidCollide(colliding, Block.get(COBBLESTONE));
             }
         }
@@ -184,9 +184,10 @@ public class BlockLava extends BlockLiquid {
     }
 
     @Override
-    public void addVelocityToEntity(Entity entity, Vector3f vector) {
-        if (!(entity instanceof Tnt)) {
-            super.addVelocityToEntity(entity, vector);
+    public Vector3f addVelocityToEntity(Entity entity, Vector3f vector) {
+        if (!(entity instanceof PrimedTnt)) {
+            return super.addVelocityToEntity(entity, vector);
         }
+        return vector;
     }
 }

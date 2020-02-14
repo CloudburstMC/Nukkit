@@ -1,11 +1,12 @@
 package cn.nukkit.inventory;
 
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.Vector3i;
-import cn.nukkit.network.protocol.ContainerClosePacket;
-import cn.nukkit.network.protocol.ContainerOpenPacket;
 import cn.nukkit.player.Player;
+import com.nukkitx.math.vector.Vector3i;
+import com.nukkitx.protocol.bedrock.packet.ContainerClosePacket;
+import com.nukkitx.protocol.bedrock.packet.ContainerOpenPacket;
 
 import java.util.Map;
 
@@ -35,28 +36,26 @@ public abstract class ContainerInventory extends BaseInventory {
     @Override
     public void onOpen(Player who) {
         super.onOpen(who);
-        ContainerOpenPacket pk = new ContainerOpenPacket();
-        pk.windowId = who.getWindowId(this);
-        pk.type = this.getType().getNetworkType();
+        ContainerOpenPacket packet = new ContainerOpenPacket();
+        packet.setWindowId((byte) who.getWindowId(this));
+        packet.setType((byte) this.getType().getNetworkType());
         InventoryHolder holder = this.getHolder();
-        if (holder instanceof Vector3i) {
-            pk.x = ((Vector3i) holder).getX();
-            pk.y = ((Vector3i) holder).getY();
-            pk.z = ((Vector3i) holder).getZ();
+        if (holder instanceof BlockEntity) {
+            packet.setBlockPosition(((BlockEntity) holder).getPosition());
         } else {
-            pk.x = pk.y = pk.z = 0;
+            packet.setBlockPosition(Vector3i.ZERO);
         }
 
-        who.dataPacket(pk);
+        who.sendPacket(packet);
 
         this.sendContents(who);
     }
 
     @Override
     public void onClose(Player who) {
-        ContainerClosePacket pk = new ContainerClosePacket();
-        pk.windowId = who.getWindowId(this);
-        who.dataPacket(pk);
+        ContainerClosePacket packet = new ContainerClosePacket();
+        packet.setWindowId((byte) who.getWindowId(this));
+        who.sendPacket(packet);
         super.onClose(who);
     }
 

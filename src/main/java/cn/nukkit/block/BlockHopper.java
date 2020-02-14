@@ -1,19 +1,20 @@
 package cn.nukkit.block;
 
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityHopper;
+import cn.nukkit.blockentity.Hopper;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+
+import static cn.nukkit.blockentity.BlockEntityTypes.HOPPER;
 
 /**
  * @author CreeperFace
@@ -25,12 +26,12 @@ public class BlockHopper extends BlockTransparent implements Faceable {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 3;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 24;
     }
 
@@ -44,31 +45,24 @@ public class BlockHopper extends BlockTransparent implements Faceable {
 
         this.setDamage(facing.getIndex());
 
-        boolean powered = this.level.isBlockPowered(this.asVector3i());
+        boolean powered = this.level.isBlockPowered(this.getPosition());
 
         if (powered == this.isEnabled()) {
             this.setEnabled(!powered);
         }
 
-        this.level.setBlock(this, this);
+        this.level.setBlock(this.getPosition(), this);
 
-        CompoundTag nbt = new CompoundTag()
-                .putList(new ListTag<>("Items"))
-                .putString("id", BlockEntity.HOPPER)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z);
-
-        BlockEntityHopper hopper = (BlockEntityHopper) BlockEntity.createBlockEntity(BlockEntity.HOPPER, this.level.getChunk(this.getChunkX(), this.getChunkZ()), nbt);
-        return hopper != null;
+        BlockEntityRegistry.get().newEntity(HOPPER, this.getChunk(), this.getPosition());
+        return true;
     }
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntity blockEntity = this.level.getBlockEntity(this.getPosition());
 
-        if (blockEntity instanceof BlockEntityHopper) {
-            return player.addWindow(((BlockEntityHopper) blockEntity).getInventory()) != -1;
+        if (blockEntity instanceof Hopper) {
+            return player.addWindow(((Hopper) blockEntity).getInventory()) != -1;
         }
 
         return false;
@@ -85,37 +79,37 @@ public class BlockHopper extends BlockTransparent implements Faceable {
 
     @Override
     public int getComparatorInputOverride() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntity blockEntity = this.level.getBlockEntity(this.getPosition());
 
-        if (blockEntity instanceof BlockEntityHopper) {
-            return ContainerInventory.calculateRedstone(((BlockEntityHopper) blockEntity).getInventory());
+        if (blockEntity instanceof Hopper) {
+            return ContainerInventory.calculateRedstone(((Hopper) blockEntity).getInventory());
         }
 
         return super.getComparatorInputOverride();
     }
 
     public BlockFace getFacing() {
-        return BlockFace.fromIndex(this.getDamage() & 7);
+        return BlockFace.fromIndex(this.getMeta() & 7);
     }
 
     public boolean isEnabled() {
-        return (this.getDamage() & 0x08) != 8;
+        return (this.getMeta() & 0x08) != 8;
     }
 
     public void setEnabled(boolean enabled) {
         if (isEnabled() != enabled) {
-            this.setDamage(this.getDamage() ^ 0x08);
+            this.setDamage(this.getMeta() ^ 0x08);
         }
     }
 
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            boolean powered = this.level.isBlockPowered(this.asVector3i());
+            boolean powered = this.level.isBlockPowered(this.getPosition());
 
             if (powered == this.isEnabled()) {
                 this.setEnabled(!powered);
-                this.level.setBlock(this, this, true, false);
+                this.level.setBlock(this.getPosition(), this, true, false);
             }
 
             return type;
@@ -150,6 +144,6 @@ public class BlockHopper extends BlockTransparent implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
     }
 }

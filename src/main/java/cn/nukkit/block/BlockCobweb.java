@@ -17,12 +17,12 @@ public class BlockCobweb extends FloodableBlock {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 4;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 20;
     }
 

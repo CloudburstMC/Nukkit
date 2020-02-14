@@ -1,13 +1,13 @@
 package cn.nukkit.pack;
 
 import cn.nukkit.Server;
-import cn.nukkit.network.protocol.ResourcePackDataInfoPacket;
-import cn.nukkit.network.protocol.ResourcePackStackPacket;
-import cn.nukkit.network.protocol.ResourcePacksInfoPacket;
 import cn.nukkit.pack.loader.DirectoryPackLoader;
 import cn.nukkit.pack.loader.PackLoader;
 import cn.nukkit.pack.loader.ZipPackLoader;
 import com.google.common.base.Preconditions;
+import com.nukkitx.protocol.bedrock.packet.ResourcePackDataInfoPacket;
+import com.nukkitx.protocol.bedrock.packet.ResourcePackStackPacket;
+import com.nukkitx.protocol.bedrock.packet.ResourcePacksInfoPacket;
 import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nullable;
@@ -197,18 +197,21 @@ public class PackManager implements Closeable {
         checkRegistrationClosed();
 
         boolean mustAccept = Server.getInstance().getForceResources();
-        packsInfos.mustAccept = mustAccept;
-        packStack.mustAccept = mustAccept;
+        packsInfos.setForcedToAccept(mustAccept);
+        packStack.setForcedToAccept(mustAccept);
 
-        packsInfos.behaviourPackEntries.clear();
-        packsInfos.resourcePackEntries.clear();
-        packStack.resourcePackStack.clear();
-        packStack.behaviourPackStack.clear();
-        packStack.isExperimental = true; // Needed for custom blocks, items and entities
+        packsInfos.getBehaviorPackInfos().clear();
+        packsInfos.getResourcePackInfos().clear();
+        packStack.getBehaviorPacks().clear();
+        packStack.getResourcePacks().clear();
+        packStack.setExperimental(true); // Needed for custom blocks, items and entities
+        packStack.setGameVersion("*");
         for (Pack pack : packs.values()) {
-            if (pack.getType() != ResourcePackDataInfoPacket.TYPE_BEHAVIOR) {
-                packsInfos.resourcePackEntries.add(pack);
-                packStack.resourcePackStack.add(pack);
+            if (pack.getType() != ResourcePackDataInfoPacket.Type.BEHAVIOR) {
+                packsInfos.getResourcePackInfos().add(new ResourcePacksInfoPacket.Entry(pack.getId().toString(),
+                        pack.getVersion().toString(), pack.getSize(), "", "", "", false));
+                packStack.getResourcePacks().add(new ResourcePackStackPacket.Entry(pack.getId().toString(),
+                        pack.getVersion().toString(), ""));
             }
         }
     }

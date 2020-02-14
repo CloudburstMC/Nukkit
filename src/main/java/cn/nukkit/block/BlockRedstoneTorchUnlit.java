@@ -4,8 +4,8 @@ import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3i;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3i;
 
 import static cn.nukkit.block.BlockIds.REDSTONE_TORCH;
 
@@ -61,17 +61,17 @@ public class BlockRedstoneTorchUnlit extends BlockTorch {
 
     protected boolean checkState() {
         BlockFace face = getBlockFace().getOpposite();
-        Vector3i pos = asVector3i();
+        Vector3i pos = this.getPosition();
 
-        if (!this.level.isSidePowered(pos.getSide(face), face)) {
-            this.level.setBlock(pos, Block.get(REDSTONE_TORCH, getDamage()), false, true);
+        if (!this.level.isSidePowered(face.getOffset(pos), face)) {
+            this.level.setBlock(pos, Block.get(REDSTONE_TORCH, getMeta()), false, true);
 
             for (BlockFace side : BlockFace.values()) {
                 if (side == face) {
                     continue;
                 }
 
-                this.level.updateAroundRedstone(pos.getSide(side), null);
+                this.level.updateAroundRedstone(side.getOffset(pos), null);
             }
             return true;
         }

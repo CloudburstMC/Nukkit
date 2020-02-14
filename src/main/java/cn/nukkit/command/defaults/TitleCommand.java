@@ -17,30 +17,36 @@ public class TitleCommand extends VanillaCommand {
         this.setPermission("nukkit.command.title");
 
         this.commandParameters.clear();
-        this.commandParameters.put("clear", new CommandParameter[]{
+        // clear
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
                 new CommandParameter("clear", new String[]{"clear"})
         });
-        this.commandParameters.put("reset", new CommandParameter[]{
+        // reset
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
                 new CommandParameter("reset", new String[]{"reset"})
         });
-        this.commandParameters.put("title", new CommandParameter[]{
+        // title
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
                 new CommandParameter("title", new String[]{"title"}),
                 new CommandParameter("titleText", CommandParamType.STRING, false)
         });
-        this.commandParameters.put("subtitle", new CommandParameter[]{
+        // subtitle
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
                 new CommandParameter("subtitle", new String[]{"subtitle"}),
                 new CommandParameter("titleText", CommandParamType.STRING, false)
         });
-        this.commandParameters.put("actionbar", new CommandParameter[]{
+        // actionbar
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
                 new CommandParameter("actionbar", new String[]{"actionbar"}),
                 new CommandParameter("titleText", CommandParamType.STRING, false)
         });
-        this.commandParameters.put("times", new CommandParameter[]{
+        // times
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
                 new CommandParameter("times", new String[]{"times"}),
                 new CommandParameter("fadeIn", CommandParamType.INT, false),

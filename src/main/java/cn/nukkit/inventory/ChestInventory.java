@@ -1,10 +1,10 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.blockentity.BlockEntityChest;
+import cn.nukkit.blockentity.impl.ChestBlockEntity;
 import cn.nukkit.level.Level;
-import cn.nukkit.network.protocol.BlockEventPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
+import com.nukkitx.protocol.bedrock.packet.BlockEventPacket;
 
 /**
  * author: MagicDroidX
@@ -14,13 +14,13 @@ public class ChestInventory extends ContainerInventory {
 
     protected DoubleChestInventory doubleInventory;
 
-    public ChestInventory(BlockEntityChest chest) {
+    public ChestInventory(ChestBlockEntity chest) {
         super(chest, InventoryType.CHEST);
     }
 
     @Override
-    public BlockEntityChest getHolder() {
-        return (BlockEntityChest) this.holder;
+    public ChestBlockEntity getHolder() {
+        return (ChestBlockEntity) this.holder;
     }
 
     @Override
@@ -28,17 +28,15 @@ public class ChestInventory extends ContainerInventory {
         super.onOpen(who);
 
         if (this.getViewers().size() == 1) {
-            BlockEventPacket pk = new BlockEventPacket();
-            pk.x = (int) this.getHolder().getX();
-            pk.y = (int) this.getHolder().getY();
-            pk.z = (int) this.getHolder().getZ();
-            pk.case1 = 1;
-            pk.case2 = 2;
+            BlockEventPacket packet = new BlockEventPacket();
+            packet.setBlockPosition(this.getHolder().getPosition());
+            packet.setEventType(1);
+            packet.setEventData(2);
 
             Level level = this.getHolder().getLevel();
             if (level != null) {
-                level.addLevelSoundEvent(this.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_CHEST_OPEN);
-                level.addChunkPacket(this.getHolder().getChunkX(), this.getHolder().getChunkZ(), pk);
+                level.addLevelSoundEvent(this.getHolder().getPosition(), SoundEvent.CHEST_OPEN);
+                level.addChunkPacket(this.getHolder().getPosition(), packet);
             }
         }
     }
@@ -46,17 +44,15 @@ public class ChestInventory extends ContainerInventory {
     @Override
     public void onClose(Player who) {
         if (this.getViewers().size() == 1) {
-            BlockEventPacket pk = new BlockEventPacket();
-            pk.x = (int) this.getHolder().getX();
-            pk.y = (int) this.getHolder().getY();
-            pk.z = (int) this.getHolder().getZ();
-            pk.case1 = 1;
-            pk.case2 = 0;
+            BlockEventPacket packet = new BlockEventPacket();
+            packet.setBlockPosition(this.getHolder().getPosition());
+            packet.setEventType(1);
+            packet.setEventData(0);
 
             Level level = this.getHolder().getLevel();
             if (level != null) {
-                level.addLevelSoundEvent(this.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_CHEST_CLOSED);
-                level.addChunkPacket(this.getHolder().getChunkX(), this.getHolder().getChunkZ(), pk);
+                level.addLevelSoundEvent(this.getHolder().getPosition(), SoundEvent.CHEST_CLOSED);
+                level.addChunkPacket(this.getHolder().getPosition(), packet);
             }
         }
 

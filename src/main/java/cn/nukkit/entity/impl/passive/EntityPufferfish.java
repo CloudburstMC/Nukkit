@@ -2,16 +2,15 @@ package cn.nukkit.entity.impl.passive;
 
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.passive.Pufferfish;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 /**
  * Created by PetteriM1
  */
 public class EntityPufferfish extends Animal implements Pufferfish {
 
-    public EntityPufferfish(EntityType<Pufferfish> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityPufferfish(EntityType<Pufferfish> type, Location location) {
+        super(type, location);
     }
 
     public String getName() {

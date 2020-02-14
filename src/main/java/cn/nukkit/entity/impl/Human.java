@@ -2,38 +2,36 @@ package cn.nukkit.entity.impl;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
-import cn.nukkit.entity.data.EntityData;
-import cn.nukkit.entity.data.Skin;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.PlayerEnderChestInventory;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemUtils;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.Location;
 import cn.nukkit.math.NukkitMath;
-import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.protocol.AddPlayerPacket;
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.RemoveEntityPacket;
-import cn.nukkit.network.protocol.SetEntityLinkPacket;
 import cn.nukkit.player.Player;
-import cn.nukkit.player.PlayerFlag;
-import cn.nukkit.utils.SerializedImage;
-import cn.nukkit.utils.SkinAnimation;
 import cn.nukkit.utils.Utils;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.tag.CompoundTag;
+import com.nukkitx.protocol.bedrock.BedrockPacket;
+import com.nukkitx.protocol.bedrock.data.*;
+import com.nukkitx.protocol.bedrock.packet.AddPlayerPacket;
+import com.nukkitx.protocol.bedrock.packet.RemoveEntityPacket;
+import com.nukkitx.protocol.bedrock.packet.SetEntityLinkPacket;
 
-import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static cn.nukkit.block.BlockIds.AIR;
-import static cn.nukkit.entity.data.EntityFlag.*;
+import static com.nukkitx.protocol.bedrock.data.EntityFlag.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * author: MagicDroidX
@@ -42,13 +40,13 @@ import static cn.nukkit.entity.data.EntityFlag.*;
 public class Human extends EntityCreature implements InventoryHolder {
 
     protected UUID identity;
-    protected Skin skin;
+    private final PlayerInventory inventory = new PlayerInventory(this);
+    private final PlayerEnderChestInventory enderChestInventory = new PlayerEnderChestInventory(this);
+    ;
+    protected SerializedSkin skin;
 
-    protected PlayerInventory inventory;
-    protected PlayerEnderChestInventory enderChestInventory;
-
-    public Human(EntityType<Human> type, Chunk chunk, CompoundTag tag) {
-        super(type, chunk, tag);
+    public Human(EntityType<Human> type, Location location) {
+        super(type, location);
     }
 
     @Override
@@ -76,7 +74,7 @@ public class Human extends EntityCreature implements InventoryHolder {
         return this.getEyeHeight();
     }
 
-    public Skin getSkin() {
+    public SerializedSkin getSkin() {
         return skin;
     }
 
@@ -84,7 +82,7 @@ public class Human extends EntityCreature implements InventoryHolder {
         return identity;
     }
 
-    public void setSkin(Skin skin) {
+    public void setSkin(SerializedSkin skin) {
         this.skin = skin;
     }
 
@@ -99,192 +97,161 @@ public class Human extends EntityCreature implements InventoryHolder {
 
     @Override
     protected void initEntity() {
-        this.setPlayerFlag(PlayerFlag.SLEEP, false);
-        this.setFlag(GRAVITY, true);
-
-        if (!(this instanceof Player)) {
-            if (this.namedTag.contains("NameTag")) {
-                this.setNameTag(this.namedTag.getString("NameTag"));
-            }
-
-            if (this.namedTag.contains("Skin") && this.namedTag.get("Skin") instanceof CompoundTag) {
-                CompoundTag skinTag = this.namedTag.getCompound("Skin");
-                if (!skinTag.contains("Transparent")) {
-                    skinTag.putBoolean("Transparent", false);
-                }
-                Skin newSkin = new Skin();
-                if (skinTag.contains("ModelId")) {
-                    newSkin.setSkinId(skinTag.getString("ModelId"));
-                }
-                if (skinTag.contains("Data")) {
-                    byte[] data = skinTag.getByteArray("Data");
-                    if (skinTag.contains("SkinImageWidth") && skinTag.contains("SkinImageHeight")) {
-                        int width = skinTag.getInt("SkinImageWidth");
-                        int height = skinTag.getInt("SkinImageHeight");
-                        newSkin.setSkinData(new SerializedImage(width, height, data));
-                    } else {
-                        newSkin.setSkinData(data);
-                    }
-                }
-                if (skinTag.contains("CapeId")) {
-                    newSkin.setCapeId(skinTag.getString("CapeId"));
-                }
-                if (skinTag.contains("CapeData")) {
-                    byte[] data = skinTag.getByteArray("CapeData");
-                    if (skinTag.contains("CapeImageWidth") && skinTag.contains("CapeImageHeight")) {
-                        int width = skinTag.getInt("CapeImageWidth");
-                        int height = skinTag.getInt("CapeImageHeight");
-                        newSkin.setCapeData(new SerializedImage(width, height, data));
-                    } else {
-                        newSkin.setCapeData(data);
-                    }
-                }
-                if (skinTag.contains("GeometryName")) {
-                    newSkin.setGeometryName(skinTag.getString("GeometryName"));
-                }
-                if (skinTag.contains("SkinResourcePatch")) {
-                    newSkin.setSkinResourcePatch(new String(skinTag.getByteArray("SkinResourcePatch"), StandardCharsets.UTF_8));
-                }
-                if (skinTag.contains("GeometryData")) {
-                    newSkin.setGeometryData(new String(skinTag.getByteArray("GeometryData"), StandardCharsets.UTF_8));
-                }
-                if (skinTag.contains("AnimationData")) {
-                    newSkin.setAnimationData(new String(skinTag.getByteArray("AnimationData"), StandardCharsets.UTF_8));
-                }
-                if (skinTag.contains("PremiumSkin")) {
-                    newSkin.setPremium(skinTag.getBoolean("PremiumSkin"));
-                }
-                if (skinTag.contains("PersonaSkin")) {
-                    newSkin.setPersona(skinTag.getBoolean("PersonaSkin"));
-                }
-                if (skinTag.contains("CapeOnClassicSkin")) {
-                    newSkin.setCapeOnClassic(skinTag.getBoolean("CapeOnClassicSkin"));
-                }
-                if (skinTag.contains("AnimatedImageData")) {
-                    ListTag<CompoundTag> list = skinTag.getList("AnimatedImageData", CompoundTag.class);
-                    for (CompoundTag animationTag : list.getAll()) {
-                        float frames = animationTag.getFloat("Frames");
-                        int type = animationTag.getInt("Type");
-                        byte[] image = animationTag.getByteArray("Image");
-                        int width = animationTag.getInt("ImageWidth");
-                        int height = animationTag.getInt("ImageHeight");
-                        skin.getAnimations().add(new SkinAnimation(new SerializedImage(width, height, image), type, frames));
-                    }
-                }
-                this.setSkin(newSkin);
-            }
-
-            this.identity = Utils.dataToUUID(String.valueOf(this.getUniqueId()).getBytes(StandardCharsets.UTF_8), this.getSkin()
-                    .getSkinData().data, this.getNameTag().getBytes(StandardCharsets.UTF_8));
-        }
-
-        this.inventory = new PlayerInventory(this);
-
-        if (this.namedTag.contains("Inventory") && this.namedTag.get("Inventory") instanceof ListTag) {
-            ListTag<CompoundTag> inventoryList = this.namedTag.getList("Inventory", CompoundTag.class);
-            for (CompoundTag item : inventoryList.getAll()) {
-                int slot = item.getByte("Slot");
-                if (slot >= 0 && slot < 9) { //hotbar
-                    //Old hotbar saving stuff, remove it (useless now)
-                    inventoryList.remove(item);
-                } else if (slot >= 100 && slot < 104) {
-                    this.inventory.setItem(this.inventory.getSize() + slot - 100, NBTIO.getItemHelper(item));
-                } else {
-                    this.inventory.setItem(slot - 9, NBTIO.getItemHelper(item));
-                }
-            }
-        }
-
-        this.enderChestInventory = new PlayerEnderChestInventory(this);
-
-        if (this.namedTag.contains("EnderItems") && this.namedTag.get("EnderItems") instanceof ListTag) {
-            ListTag<CompoundTag> inventoryList = this.namedTag.getList("EnderItems", CompoundTag.class);
-            for (CompoundTag item : inventoryList.getAll()) {
-                this.enderChestInventory.setItem(item.getByte("Slot"), NBTIO.getItemHelper(item));
-            }
-        }
+        this.data.setBoolean(EntityData.CAN_START_SLEEP, false);
+        this.data.setFlag(HAS_GRAVITY, true);
 
         super.initEntity();
     }
 
     @Override
-    public String getName() {
-        return this.getNameTag();
+    public void loadAdditionalData(CompoundTag tag) {
+        super.loadAdditionalData(tag);
+
+        if (!(this instanceof Player)) {
+            tag.listenForString("NameTag", this::setNameTag);
+
+
+            if (tag.contains("Skin") && tag.get("Skin") instanceof CompoundTag) {
+                CompoundTag skinTag = tag.getCompound("Skin");
+
+                SerializedSkin.Builder skin = SerializedSkin.builder();
+
+                skinTag.listenForString("ModelId", skin::skinId);
+                if (skinTag.contains("Data")) {
+                    byte[] data = skinTag.getByteArray("Data");
+                    if (skinTag.contains("SkinImageWidth") && skinTag.contains("SkinImageHeight")) {
+                        int width = skinTag.getInt("SkinImageWidth");
+                        int height = skinTag.getInt("SkinImageHeight");
+                        skin.skinData(ImageData.of(width, height, data));
+                    } else {
+                        skin.skinData(ImageData.of(data));
+                    }
+                }
+
+                skinTag.listenForString("CapeId", skin::capeId);
+                if (skinTag.contains("CapeData")) {
+                    byte[] data = skinTag.getByteArray("CapeData");
+                    if (skinTag.contains("CapeImageWidth") && skinTag.contains("CapeImageHeight")) {
+                        int width = skinTag.getInt("CapeImageWidth");
+                        int height = skinTag.getInt("CapeImageHeight");
+                        skin.capeData(ImageData.of(width, height, data));
+                    } else {
+                        skin.capeData(ImageData.of(data));
+                    }
+                }
+                skinTag.listenForString("GeometryName", skin::geometryName);
+                skinTag.listenForString("SkinResourcePatch", skin::skinResourcePatch);
+                skinTag.listenForByteArray("GeometryData", bytes -> skin.geometryData(new String(bytes, UTF_8)));
+                skinTag.listenForByteArray("AnimationData", bytes -> skin.animationData(new String(bytes, UTF_8)));
+                skinTag.listenForBoolean("PremiumSkin", skin::premium);
+                skinTag.listenForBoolean("PersonaSkin", skin::persona);
+                skinTag.listenForBoolean("CapeOnClassicSkin", skin::capeOnClassic);
+                if (skinTag.contains("AnimatedImageData")) {
+                    List<CompoundTag> list = skinTag.getList("AnimatedImageData", CompoundTag.class);
+                    List<AnimationData> animations = new ArrayList<>();
+                    for (CompoundTag animationTag : list) {
+                        float frames = animationTag.getFloat("Frames");
+                        int type = animationTag.getInt("Type");
+                        byte[] image = animationTag.getByteArray("Image");
+                        int width = animationTag.getInt("ImageWidth");
+                        int height = animationTag.getInt("ImageHeight");
+                        animations.add(new AnimationData(ImageData.of(width, height, image), type, frames));
+                    }
+                    skin.animations(animations);
+                }
+                this.setSkin(skin.build());
+            }
+
+            this.identity = Utils.dataToUUID(String.valueOf(this.getUniqueId()).getBytes(UTF_8), this.getSkin()
+                    .getSkinData().getImage(), this.getCustomName().getBytes(UTF_8));
+        }
+
+        tag.listenForList("Inventory", CompoundTag.class, items -> {
+            for (CompoundTag itemTag : items) {
+                int slot = itemTag.getByte("Slot");
+                if (slot >= 0 && slot < 9) { //hotbar
+                    //Old hotbar saving stuff, useless now
+                } else if (slot >= 100 && slot < 104) {
+                    this.inventory.setItem(this.inventory.getSize() + slot - 100, ItemUtils.deserializeItem(itemTag));
+                } else {
+                    this.inventory.setItem(slot - 9, ItemUtils.deserializeItem(itemTag));
+                }
+            }
+        });
+
+        tag.listenForList("EnderItems", CompoundTag.class, items -> {
+            for (CompoundTag itemTag : items) {
+                this.enderChestInventory.setItem(itemTag.getByte("Slot"), ItemUtils.deserializeItem(itemTag));
+            }
+        });
     }
 
     @Override
-    public void saveNBT() {
-        super.saveNBT();
+    public void saveAdditionalData(CompoundTagBuilder tag) {
+        super.saveAdditionalData(tag);
 
-        if (this.inventory != null) {
-            ListTag<CompoundTag> inventoryTag = new ListTag<>("Inventory");
-            this.namedTag.putList(inventoryTag);
+        List<CompoundTag> inventoryItems = new ArrayList<>();
+        int slotCount = Player.SURVIVAL_SLOTS + 9;
+        for (int slot = 9; slot < slotCount; ++slot) {
+            Item item = this.inventory.getItem(slot - 9);
+            inventoryItems.add(ItemUtils.serializeItem(item, slot));
+        }
 
-            for (int slot = 0; slot < 9; ++slot) {
-                inventoryTag.add(new CompoundTag()
-                        .putByte("Count", 0)
-                        .putShort("Damage", 0)
-                        .putByte("Slot", slot)
-                        .putByte("TrueSlot", -1)
-                        .putShort("id", 0)
-                );
-            }
-
-            int slotCount = Player.SURVIVAL_SLOTS + 9;
-            for (int slot = 9; slot < slotCount; ++slot) {
-                Item item = this.inventory.getItem(slot - 9);
-                inventoryTag.add(NBTIO.putItemHelper(item, slot));
-            }
-
-            for (int slot = 100; slot < 104; ++slot) {
-                Item item = this.inventory.getItem(this.inventory.getSize() + slot - 100);
-                if (item != null && item.getId() != AIR) {
-                    inventoryTag.add(NBTIO.putItemHelper(item, slot));
-                }
+        for (int slot = 100; slot < 104; ++slot) {
+            Item item = this.inventory.getItem(this.inventory.getSize() + slot - 100);
+            if (item != null && item.getId() != AIR) {
+                inventoryItems.add(ItemUtils.serializeItem(item, slot));
             }
         }
 
-        this.namedTag.putList(new ListTag<CompoundTag>("EnderItems"));
-        if (this.enderChestInventory != null) {
-            for (int slot = 0; slot < 27; ++slot) {
-                Item item = this.enderChestInventory.getItem(slot);
-                if (item != null && item.getId() != AIR) {
-                    this.namedTag.getList("EnderItems", CompoundTag.class).add(NBTIO.putItemHelper(item, slot));
-                }
+        tag.listTag("Inventory", CompoundTag.class, inventoryItems);
+
+        List<CompoundTag> enderItems = new ArrayList<>();
+        for (int slot = 0; slot < 27; ++slot) {
+            Item item = this.enderChestInventory.getItem(slot);
+            if (item != null && !item.isNull()) {
+                enderItems.add(ItemUtils.serializeItem(item, slot));
             }
         }
+        tag.listTag("EnderItems", CompoundTag.class, enderItems);
 
         if (skin != null) {
-            CompoundTag skinTag = new CompoundTag()
-                    .putByteArray("Data", this.getSkin().getSkinData().data)
-                    .putInt("SkinImageWidth", this.getSkin().getSkinData().width)
-                    .putInt("SkinImageHeight", this.getSkin().getSkinData().height)
-                    .putString("ModelId", this.getSkin().getSkinId())
-                    .putString("CapeId", this.getSkin().getCapeId())
-                    .putByteArray("CapeData", this.getSkin().getCapeData().data)
-                    .putInt("CapeImageWidth", this.getSkin().getCapeData().width)
-                    .putInt("CapeImageHeight", this.getSkin().getCapeData().height)
-                    .putByteArray("SkinResourcePatch", this.getSkin().getSkinResourcePatch().getBytes(StandardCharsets.UTF_8))
-                    .putByteArray("GeometryData", this.getSkin().getGeometryData().getBytes(StandardCharsets.UTF_8))
-                    .putByteArray("AnimationData", this.getSkin().getAnimationData().getBytes(StandardCharsets.UTF_8))
-                    .putBoolean("PremiumSkin", this.getSkin().isPremium())
-                    .putBoolean("PersonaSkin", this.getSkin().isPersona())
-                    .putBoolean("CapeOnClassicSkin", this.getSkin().isCapeOnClassic());
-            List<SkinAnimation> animations = this.getSkin().getAnimations();
+            CompoundTagBuilder skinTag = CompoundTag.builder()
+                    .byteArrayTag("Data", this.getSkin().getSkinData().getImage())
+                    .intTag("SkinImageWidth", this.getSkin().getSkinData().getWidth())
+                    .intTag("SkinImageHeight", this.getSkin().getSkinData().getHeight())
+                    .stringTag("ModelId", this.getSkin().getSkinId())
+                    .stringTag("CapeId", this.getSkin().getCapeId())
+                    .byteArrayTag("CapeData", this.getSkin().getCapeData().getImage())
+                    .intTag("CapeImageWidth", this.getSkin().getCapeData().getWidth())
+                    .intTag("CapeImageHeight", this.getSkin().getCapeData().getHeight())
+                    .byteArrayTag("SkinResourcePatch", this.getSkin().getSkinResourcePatch().getBytes(UTF_8))
+                    .byteArrayTag("GeometryData", this.getSkin().getGeometryData().getBytes(UTF_8))
+                    .byteArrayTag("AnimationData", this.getSkin().getAnimationData().getBytes(UTF_8))
+                    .booleanTag("PremiumSkin", this.getSkin().isPremium())
+                    .booleanTag("PersonaSkin", this.getSkin().isPersona())
+                    .booleanTag("CapeOnClassicSkin", this.getSkin().isCapeOnClassic());
+            List<AnimationData> animations = this.getSkin().getAnimations();
             if (!animations.isEmpty()) {
-                ListTag<CompoundTag> animationsTag = new ListTag<>("AnimationImageData");
-                for (SkinAnimation animation : animations) {
-                    animationsTag.add(new CompoundTag()
-                            .putFloat("Frames", animation.frames)
-                            .putInt("Type", animation.type)
-                            .putInt("ImageWidth", animation.image.width)
-                            .putInt("ImageHeight", animation.image.height)
-                            .putByteArray("Image", animation.image.data));
+                List<CompoundTag> animationsTag = new ArrayList<>();
+                for (AnimationData animation : animations) {
+                    animationsTag.add(CompoundTag.builder()
+                            .floatTag("Frames", animation.getFrames())
+                            .intTag("Type", animation.getType())
+                            .intTag("ImageWidth", animation.getImage().getWidth())
+                            .intTag("ImageHeight", animation.getImage().getHeight())
+                            .byteArrayTag("Image", animation.getImage().getImage())
+                            .buildRootTag());
                 }
-                skinTag.putList(animationsTag);
+                skinTag.listTag("AnimationImageData", CompoundTag.class, animationsTag);
             }
-            this.namedTag.putCompound("Skin", skinTag);
+            tag.tag(skinTag.build("Skin"));
         }
+    }
+
+    @Override
+    public String getName() {
+        return this.getCustomName();
     }
 
     @Override
@@ -301,18 +268,16 @@ public class Human extends EntityCreature implements InventoryHolder {
             else
                 this.server.updatePlayerListData(this.getServerId(), this.getUniqueId(), this.getName(), this.skin, new Player[]{player});
 
-            player.dataPacket(createAddEntityPacket());
+            player.sendPacket(createAddEntityPacket());
 
             this.inventory.sendArmorContents(player);
 
             if (this.vehicle != null) {
-                SetEntityLinkPacket pkk = new SetEntityLinkPacket();
-                pkk.vehicleUniqueId = this.vehicle.getUniqueId();
-                pkk.riderUniqueId = this.getUniqueId();
-                pkk.type = 1;
-                pkk.immediate = 1;
+                SetEntityLinkPacket packet = new SetEntityLinkPacket();
+                EntityLink link = new EntityLink(this.vehicle.getUniqueId(), this.getUniqueId(), EntityLink.Type.RIDER, true);
+                packet.setEntityLink(link);
 
-                player.dataPacket(pkk);
+                player.sendPacket(packet);
             }
 
             if (!(this instanceof Player)) {
@@ -322,32 +287,26 @@ public class Human extends EntityCreature implements InventoryHolder {
     }
 
     @Override
-    protected DataPacket createAddEntityPacket() {
+    protected BedrockPacket createAddEntityPacket() {
         AddPlayerPacket packet = new AddPlayerPacket();
-        packet.uuid = this.getServerId();
-        packet.username = this.getName();
-        packet.entityUniqueId = this.getUniqueId();
-        packet.entityRuntimeId = this.getUniqueId();
-        packet.x = (float) this.x;
-        packet.y = (float) this.y;
-        packet.z = (float) this.z;
-        packet.speedX = (float) this.motionX;
-        packet.speedY = (float) this.motionY;
-        packet.speedZ = (float) this.motionZ;
-        packet.yaw = (float) this.yaw;
-        packet.pitch = (float) this.pitch;
-        packet.item = this.getInventory().getItemInHand();
-        packet.dataMap.putAll(this.getData());
+        packet.setUuid(this.getServerId());
+        packet.setUsername(this.getName());
+        packet.setUniqueEntityId(this.getUniqueId());
+        packet.setRuntimeEntityId(this.getRuntimeId());
+        packet.setPosition(this.getPosition());
+        packet.setMotion(this.getMotion());
+        packet.setRotation(Vector3f.from(this.getYaw(), this.getPitch(), this.getYaw()));
+        packet.setHand(this.getInventory().getItemInHand().toNetwork());
+        this.getData().putAllIn(packet.getMetadata());
         return packet;
     }
 
     @Override
     public void despawnFrom(Player player) {
         if (this.hasSpawned.contains(player)) {
-
-            RemoveEntityPacket pk = new RemoveEntityPacket();
-            pk.entityUniqueId = this.getUniqueId();
-            player.dataPacket(pk);
+            RemoveEntityPacket packet = new RemoveEntityPacket();
+            packet.setUniqueEntityId(this.getUniqueId());
+            player.sendPacket(packet);
             this.hasSpawned.remove(player);
         }
     }
@@ -355,7 +314,7 @@ public class Human extends EntityCreature implements InventoryHolder {
     @Override
     public void close() {
         if (!this.closed) {
-            if (inventory != null && (!(this instanceof Player) || ((Player) this).loggedIn)) {
+            if (!(this instanceof Player) || ((Player) this).loggedIn) {
                 for (Player viewer : this.inventory.getViewers()) {
                     viewer.removeWindow(this.inventory);
                 }
@@ -418,9 +377,9 @@ public class Human extends EntityCreature implements InventoryHolder {
                     continue;
                 }
 
-                armor.setDamage(armor.getDamage() + 1);
+                armor.setMeta(armor.getMeta() + 1);
 
-                if (armor.getDamage() >= armor.getMaxDurability()) {
+                if (armor.getMeta() >= armor.getMaxDurability()) {
                     inventory.setArmorItem(slot, Item.get(AIR, 0, 0));
                 } else {
                     inventory.setArmorItem(slot, armor, true);
@@ -472,28 +431,12 @@ public class Human extends EntityCreature implements InventoryHolder {
         return new Item[0];
     }
 
-    public boolean getPlayerFlag(PlayerFlag flag) {
-        byte bitSet = this.getByteData(EntityData.PLAYER_FLAGS);
-        return (bitSet & (1 << flag.getId())) != 0;
-    }
-
-    public void setPlayerFlag(PlayerFlag flag, boolean value) {
-        byte bitSet = this.getByteData(EntityData.PLAYER_FLAGS);
-        int mask = 1 << flag.getId();
-        if (value) {
-            bitSet |= mask;
-        } else {
-            bitSet &= ~mask;
-        }
-        setByteData(EntityData.PLAYER_FLAGS, bitSet);
-    }
-
     public boolean isSneaking() {
-        return getFlag(SNEAKING);
+        return this.data.getFlag(SNEAKING);
     }
 
     public void setSneaking(boolean value) {
-        this.setFlag(SNEAKING, value);
+        this.data.setFlag(SNEAKING, value);
     }
 
     public void setSneaking() {
@@ -501,11 +444,11 @@ public class Human extends EntityCreature implements InventoryHolder {
     }
 
     public boolean isSwimming() {
-        return this.getFlag(SWIMMING);
+        return this.data.getFlag(SWIMMING);
     }
 
     public void setSwimming(boolean value) {
-        this.setFlag(SWIMMING, value);
+        this.data.setFlag(SWIMMING, value);
     }
 
     public void setSwimming() {
@@ -513,11 +456,11 @@ public class Human extends EntityCreature implements InventoryHolder {
     }
 
     public boolean isSprinting() {
-        return this.getFlag(SPRINTING);
+        return this.data.getFlag(SPRINTING);
     }
 
     public void setSprinting(boolean value) {
-        this.setFlag(SPRINTING, value);
+        this.data.setFlag(SPRINTING, value);
     }
 
     public void setSprinting() {
@@ -525,11 +468,11 @@ public class Human extends EntityCreature implements InventoryHolder {
     }
 
     public boolean isGliding() {
-        return this.getFlag(GLIDING);
+        return this.data.getFlag(GLIDING);
     }
 
     public void setGliding(boolean value) {
-        this.setFlag(GLIDING, value);
+        this.data.setFlag(GLIDING, value);
     }
 
     public void setGliding() {

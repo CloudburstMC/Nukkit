@@ -7,10 +7,10 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -33,8 +33,8 @@ public class BlockLeaves extends BlockTransparent {
     }
 
     @Override
-    public double getHardness() {
-        return 0.2;
+    public float getHardness() {
+        return 0.2f;
     }
 
     @Override
@@ -55,13 +55,13 @@ public class BlockLeaves extends BlockTransparent {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         this.setPersistent(true);
-        this.getLevel().setBlock(this, this, true);
+        this.getLevel().setBlock(this.getPosition(), this, true);
         return true;
     }
 
     @Override
     public Item toItem() {
-        return Item.get(id, this.getDamage() & 0x3, 1);
+        return Item.get(id, this.getMeta() & 0x3, 1);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class BlockLeaves extends BlockTransparent {
                     return new Item[]{
                             Item.get(STICK, 0, ThreadLocalRandom.current().nextInt(1, 2))
                     };
-                } else if ((this.getDamage() & 0x03) != JUNGLE || ThreadLocalRandom.current().nextInt(20) == 0) {
+                } else if ((this.getMeta() & 0x03) != JUNGLE || ThreadLocalRandom.current().nextInt(20) == 0) {
                     return new Item[]{
                             this.getSapling()
                     };
@@ -95,17 +95,17 @@ public class BlockLeaves extends BlockTransparent {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_RANDOM && !isPersistent() && !isCheckDecay()) {
             setCheckDecay(true);
-            getLevel().setBlock(this, this, false, false);
+            getLevel().setBlock(this.getPosition(), this, false, false);
         } else if (type == Level.BLOCK_UPDATE_RANDOM && isCheckDecay() && !isPersistent()) {
-            setDamage(getDamage() & 0x03);
+            setDamage(getMeta() & 0x03);
 
             LeavesDecayEvent ev = new LeavesDecayEvent(this);
 
             Server.getInstance().getPluginManager().callEvent(ev);
             if (ev.isCancelled() || findLog(this, 7)) {
-                getLevel().setBlock(this, this, false, false);
+                getLevel().setBlock(this.getPosition(), this, false, false);
             } else {
-                getLevel().useBreakOn(this);
+                getLevel().useBreakOn(this.getPosition());
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         }
@@ -124,26 +124,26 @@ public class BlockLeaves extends BlockTransparent {
     }
 
     public boolean isCheckDecay() {
-        return (this.getDamage() & 0x08) != 0;
+        return (this.getMeta() & 0x08) != 0;
     }
 
     public void setCheckDecay(boolean checkDecay) {
         if (checkDecay) {
-            this.setDamage(this.getDamage() | 0x08);
+            this.setDamage(this.getMeta() | 0x08);
         } else {
-            this.setDamage(this.getDamage() & ~0x08);
+            this.setDamage(this.getMeta() & ~0x08);
         }
     }
 
     public boolean isPersistent() {
-        return (this.getDamage() & 0x04) != 0;
+        return (this.getMeta() & 0x04) != 0;
     }
 
     public void setPersistent(boolean persistent) {
         if (persistent) {
-            this.setDamage(this.getDamage() | 0x04);
+            this.setDamage(this.getMeta() | 0x04);
         } else {
-            this.setDamage(this.getDamage() & ~0x04);
+            this.setDamage(this.getMeta() & ~0x04);
         }
     }
 
@@ -158,10 +158,10 @@ public class BlockLeaves extends BlockTransparent {
     }
 
     protected boolean canDropApple() {
-        return (this.getDamage() & 0x03) == OAK;
+        return (this.getMeta() & 0x03) == OAK;
     }
 
     protected Item getSapling() {
-        return Item.get(SAPLING, this.getDamage() & 0x03);
+        return Item.get(SAPLING, this.getMeta() & 0x03);
     }
 }

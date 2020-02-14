@@ -4,11 +4,11 @@ import cn.nukkit.entity.impl.BaseEntity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
-import cn.nukkit.network.protocol.MobEffectPacket;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.ServerException;
+import com.nukkitx.protocol.bedrock.packet.MobEffectPacket;
 
-import static cn.nukkit.entity.data.EntityFlag.INVISIBLE;
+import static com.nukkitx.protocol.bedrock.data.EntityFlag.INVISIBLE;
 
 /**
  * author: MagicDroidX
@@ -235,19 +235,19 @@ public class Effect implements Cloneable {
         if (entity instanceof Player) {
             Player player = (Player) entity;
 
-            MobEffectPacket pk = new MobEffectPacket();
-            pk.eid = entity.getUniqueId();
-            pk.effectId = this.getId();
-            pk.amplifier = this.getAmplifier();
-            pk.particles = this.isVisible();
-            pk.duration = this.getDuration();
+            MobEffectPacket packet = new MobEffectPacket();
+            packet.setRuntimeEntityId(entity.getRuntimeId());
+            packet.setEffectId(this.getId());
+            packet.setAmplifier(this.getAmplifier());
+            packet.setParticles(this.isVisible());
+            packet.setDuration(this.getDuration());
             if (oldEffect != null) {
-                pk.eventId = MobEffectPacket.EVENT_MODIFY;
+                packet.setEvent(MobEffectPacket.Event.MODIFY);
             } else {
-                pk.eventId = MobEffectPacket.EVENT_ADD;
+                packet.setEvent(MobEffectPacket.Event.ADD);
             }
 
-            player.dataPacket(pk);
+            player.sendPacket(packet);
 
             if (this.id == Effect.SPEED) {
                 if (oldEffect != null) {
@@ -265,7 +265,7 @@ public class Effect implements Cloneable {
         }
 
         if (this.id == Effect.INVISIBILITY) {
-            entity.setFlag(INVISIBLE, true);
+            entity.getData().setFlag(INVISIBLE, true);
             entity.setNameTagVisible(false);
         }
 
@@ -277,12 +277,12 @@ public class Effect implements Cloneable {
 
     public void remove(BaseEntity entity) {
         if (entity instanceof Player) {
-            MobEffectPacket pk = new MobEffectPacket();
-            pk.eid = entity.getUniqueId();
-            pk.effectId = this.getId();
-            pk.eventId = MobEffectPacket.EVENT_REMOVE;
+            MobEffectPacket packet = new MobEffectPacket();
+            packet.setRuntimeEntityId(entity.getRuntimeId());
+            packet.setEffectId(this.getId());
+            packet.setEvent(MobEffectPacket.Event.REMOVE);
 
-            ((Player) entity).dataPacket(pk);
+            ((Player) entity).sendPacket(packet);
 
             if (this.id == Effect.SPEED) {
                 ((Player) entity).setMovementSpeed(((Player) entity).getMovementSpeed() / (1 + 0.2f * (this.amplifier + 1)));
@@ -293,7 +293,7 @@ public class Effect implements Cloneable {
         }
 
         if (this.id == Effect.INVISIBILITY) {
-            entity.setFlag(INVISIBLE, false);
+            entity.getData().setFlag(INVISIBLE, false);
             entity.setNameTagVisible(true);
         }
 

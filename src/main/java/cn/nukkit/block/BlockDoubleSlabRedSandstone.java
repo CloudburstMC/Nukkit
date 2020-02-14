@@ -17,12 +17,12 @@ public class BlockDoubleSlabRedSandstone extends BlockSolid {
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 30;
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 2;
     }
 
@@ -33,14 +33,14 @@ public class BlockDoubleSlabRedSandstone extends BlockSolid {
 
     @Override
     public Item toItem() {
-        return Item.get(STONE_SLAB2, this.getDamage() & 0x07);
+        return Item.get(STONE_SLAB2, this.getMeta() & 0x07);
     }
 
     @Override
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
-                    Item.get(STONE_SLAB2, this.getDamage() & 0x07, 2)
+                    Item.get(STONE_SLAB2, this.getMeta() & 0x07, 2)
             };
         } else {
             return new Item[0];
@@ -54,7 +54,7 @@ public class BlockDoubleSlabRedSandstone extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        switch (this.getDamage() & 0x07) {
+        switch (this.getMeta() & 0x07) {
             case 0:
                 return BlockColor.ORANGE_BLOCK_COLOR;
             case 1:

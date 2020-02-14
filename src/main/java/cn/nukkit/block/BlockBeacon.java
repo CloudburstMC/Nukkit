@@ -1,16 +1,18 @@
 package cn.nukkit.block;
 
+import cn.nukkit.blockentity.Beacon;
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityBeacon;
 import cn.nukkit.inventory.BeaconInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+
+import static cn.nukkit.blockentity.BlockEntityTypes.BEACON;
 
 /**
  * author: Angelic47 Nukkit Project
@@ -22,12 +24,12 @@ public class BlockBeacon extends BlockTransparent {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 3;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 15;
     }
 
@@ -49,20 +51,11 @@ public class BlockBeacon extends BlockTransparent {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            BlockEntity t = this.getLevel().getBlockEntity(this);
-            BlockEntityBeacon beacon;
-            if (t instanceof BlockEntityBeacon) {
-                beacon = (BlockEntityBeacon) t;
+            BlockEntity t = this.getLevel().getBlockEntity(this.getPosition());
+            if (t instanceof Beacon) {
+                t.close();
             } else {
-                CompoundTag nbt = new CompoundTag("")
-                        .putString("id", BlockEntity.BEACON)
-                        .putInt("x", (int) this.x)
-                        .putInt("y", (int) this.y)
-                        .putInt("z", (int) this.z);
-                beacon = (BlockEntityBeacon) BlockEntity.createBlockEntity(BlockEntity.BEACON, this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
-                if (beacon == null) {
-                    return false;
-                }
+                BlockEntityRegistry.get().newEntity(BEACON, this.getChunk(), this.getPosition());
             }
 
             player.addWindow(new BeaconInventory(player.getUIInventory(), this), Player.BEACON_WINDOW_ID);
@@ -75,12 +68,7 @@ public class BlockBeacon extends BlockTransparent {
         boolean blockSuccess = super.place(item, block, target, face, clickPos, player);
 
         if (blockSuccess) {
-            CompoundTag nbt = new CompoundTag("")
-                    .putString("id", BlockEntity.BEACON)
-                    .putInt("x", (int) this.x)
-                    .putInt("y", (int) this.y)
-                    .putInt("z", (int) this.z);
-            BlockEntity.createBlockEntity(BlockEntity.BEACON, this.level.getChunk(this.getChunkX(), this.getChunkZ()), nbt);
+            BlockEntityRegistry.get().newEntity(BEACON, this.getChunk(), this.getPosition());
         }
 
         return blockSuccess;

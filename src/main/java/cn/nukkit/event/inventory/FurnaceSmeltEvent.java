@@ -1,6 +1,6 @@
 package cn.nukkit.event.inventory;
 
-import cn.nukkit.blockentity.BlockEntityFurnace;
+import cn.nukkit.blockentity.impl.FurnaceBlockEntity;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.block.BlockEvent;
@@ -18,11 +18,11 @@ public class FurnaceSmeltEvent extends BlockEvent implements Cancellable {
         return handlers;
     }
 
-    private final BlockEntityFurnace furnace;
+    private final FurnaceBlockEntity furnace;
     private final Item source;
     private Item result;
 
-    public FurnaceSmeltEvent(BlockEntityFurnace furnace, Item source, Item result) {
+    public FurnaceSmeltEvent(FurnaceBlockEntity furnace, Item source, Item result) {
         super(furnace.getBlock());
         this.source = source.clone();
         this.source.setCount(1);
@@ -30,7 +30,7 @@ public class FurnaceSmeltEvent extends BlockEvent implements Cancellable {
         this.furnace = furnace;
     }
 
-    public BlockEntityFurnace getFurnace() {
+    public FurnaceBlockEntity getFurnace() {
         return furnace;
     }
 

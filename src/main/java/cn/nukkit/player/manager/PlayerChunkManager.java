@@ -3,12 +3,13 @@ package cn.nukkit.player.manager;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.NukkitMath;
-import cn.nukkit.network.protocol.ChunkRadiusUpdatedPacket;
-import cn.nukkit.network.protocol.LevelChunkPacket;
-import cn.nukkit.network.protocol.NetworkChunkPublisherUpdatePacket;
 import cn.nukkit.player.Player;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.protocol.bedrock.packet.ChunkRadiusUpdatedPacket;
+import com.nukkitx.protocol.bedrock.packet.LevelChunkPacket;
+import com.nukkitx.protocol.bedrock.packet.NetworkChunkPublisherUpdatePacket;
 import it.unimi.dsi.fastutil.longs.*;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import lombok.AccessLevel;
@@ -53,10 +54,10 @@ public class PlayerChunkManager {
             Long2ObjectMap.Entry<LevelChunkPacket> entry = sendQueueIterator.next();
             long key = entry.getLongKey();
             if (!this.loadedChunks.contains(key)) {
-                LevelChunkPacket packet = entry.getValue();
-                if (packet != null) {
-                    packet.release();
-                }
+//                LevelChunkPacket packet = entry.getValue();
+//                if (packet != null) {
+//                    packet.release();
+//                }
                 sendQueueIterator.remove();
 
                 Chunk chunk = this.player.getLevel().getLoadedChunk(key);
@@ -86,7 +87,7 @@ public class PlayerChunkManager {
                 }
 
                 this.sendQueue.remove(key);
-                this.player.dataPacket(packet);
+                this.player.sendPacket(packet);
 
                 Chunk chunk = this.player.getLevel().getLoadedChunk(key);
                 checkArgument(chunk != null, "Attempted to send unloaded chunk (%s, %s) to %s",
@@ -106,7 +107,11 @@ public class PlayerChunkManager {
     }
 
     public void queueNewChunks() {
-        this.queueNewChunks(this.player.getChunkX(), this.player.getChunkZ());
+        this.queueNewChunks(this.player.getPosition());
+    }
+
+    public void queueNewChunks(Vector3f pos) {
+        this.queueNewChunks(pos.getFloorX() >> 4, pos.getFloorZ() >> 4);
     }
 
     public synchronized void queueNewChunks(int chunkX, int chunkZ) {
@@ -141,9 +146,9 @@ public class PlayerChunkManager {
         boolean loadedChunksChanged = this.loadedChunks.retainAll(chunksForRadius);
         if (loadedChunksChanged || !chunksToLoad.isEmpty()) {
             NetworkChunkPublisherUpdatePacket packet = new NetworkChunkPublisherUpdatePacket();
-            packet.position = this.player.asVector3i();
-            packet.radius = this.radius;
-            this.player.dataPacket(packet);
+            packet.setPosition(this.player.getPosition().toInt());
+            packet.setRadius(this.radius);
+            this.player.sendPacket(packet);
         }
 
         // Order chunks for smoother loading
@@ -171,7 +176,7 @@ public class PlayerChunkManager {
                                         log.warn("Chunk ({},{}) already loaded for {}, value {}", cx, cz,
                                                 this.player.getName(), this.sendQueue.get(key));
                                     }
-                                    packet.release();
+//                                    packet.release();
                                 }
                             }
                         });
@@ -191,8 +196,8 @@ public class PlayerChunkManager {
         if (this.radius != radius) {
             this.radius = radius;
             ChunkRadiusUpdatedPacket chunkRadiusUpdatePacket = new ChunkRadiusUpdatedPacket();
-            chunkRadiusUpdatePacket.radius = radius >> 4;
-            this.player.dataPacket(chunkRadiusUpdatePacket);
+            chunkRadiusUpdatePacket.setRadius(radius >> 4);
+            this.player.sendPacket(chunkRadiusUpdatePacket);
             this.queueNewChunks();
         }
     }
@@ -229,6 +234,10 @@ public class PlayerChunkManager {
         removeChunkLoader.accept(chunkKey);
     }
 
+    public void prepareRegion(Vector3f pos) {
+        this.prepareRegion(pos.getFloorX() >> 4, pos.getFloorZ() >> 4);
+    }
+
     public void prepareRegion(int chunkX, int chunkZ) {
         this.clear();
         this.queueNewChunks(chunkX, chunkZ);
@@ -236,11 +245,11 @@ public class PlayerChunkManager {
 
     public synchronized void clear() {
         // Release all chunks that are loading.
-        this.sendQueue.values().forEach(levelChunkPacket -> {
-            if (levelChunkPacket != null) {
-                levelChunkPacket.release();
-            }
-        });
+//        this.sendQueue.values().forEach(levelChunkPacket -> {
+//            if (levelChunkPacket != null) {
+//                levelChunkPacket.release();
+//            }
+//        });
         this.sendQueue.clear();
 
         this.loadedChunks.forEach(this.removeChunkLoader);
@@ -263,8 +272,8 @@ public class PlayerChunkManager {
             int z1 = Chunk.fromKeyZ(o1);
             int x2 = Chunk.fromKeyX(o2);
             int z2 = Chunk.fromKeyZ(o2);
-            int spawnX = this.player.getChunkX();
-            int spawnZ = this.player.getChunkZ();
+            int spawnX = this.player.getPosition().getFloorX() >> 4;
+            int spawnZ = this.player.getPosition().getFloorZ() >> 4;
 
             return Integer.compare(distance(spawnX, spawnZ, x1, z1), distance(spawnX, spawnZ, x2, z2));
         }

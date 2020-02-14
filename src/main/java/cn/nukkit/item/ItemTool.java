@@ -3,9 +3,9 @@ package cn.nukkit.item;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.nbt.tag.ByteTag;
-import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.tag.CompoundTag;
 
 import java.util.Random;
 
@@ -42,8 +42,24 @@ public abstract class ItemTool extends Item implements ItemDurable {
     public static final int DURABILITY_TRIDENT = 251;
     public static final int DURABILITY_FISHING_ROD = 65;
 
+    private boolean unbreakable;
+
     public ItemTool(Identifier id) {
         super(id);
+    }
+
+    @Override
+    public void loadAdditionalData(CompoundTag tag) {
+        super.loadAdditionalData(tag);
+
+        tag.listenForBoolean("Unbreakable", this::setUnbreakable);
+    }
+
+    @Override
+    public void saveAdditionalData(CompoundTagBuilder tag) {
+        super.saveAdditionalData(tag);
+
+        if (this.unbreakable) tag.booleanTag("Unbreakable", true);
     }
 
     @Override
@@ -63,15 +79,15 @@ public abstract class ItemTool extends Item implements ItemDurable {
                 block.getToolType() == ItemTool.TYPE_SWORD && this.isSword() ||
                 block.getToolType() == ItemTool.TYPE_SHEARS && this.isShears()
                 ) {
-            this.setDamage(getDamage() + 1);
+            this.setMeta(getMeta() + 1);
         } else if (!this.isShears() && block.getBreakTime(this) > 0) {
-            this.setDamage(getDamage() + 2);
+            this.setMeta(getMeta() + 2);
         } else if (this.isHoe()) {
             if (block.getId() == GRASS || block.getId() == DIRT) {
-                this.setDamage(getDamage() + 1);
+                this.setMeta(getMeta() + 1);
             }
         } else {
-            this.setDamage(getDamage() + 1);
+            this.setMeta(getMeta() + 1);
         }
         return true;
     }
@@ -83,9 +99,9 @@ public abstract class ItemTool extends Item implements ItemDurable {
         }
 
         if ((entity != null) && !this.isSword()) {
-            this.setDamage(getDamage() + 2);
+            this.setMeta(getMeta() + 2);
         } else {
-            this.setDamage(getDamage() + 1);
+            this.setMeta(getMeta() + 1);
         }
 
         return true;
@@ -102,8 +118,11 @@ public abstract class ItemTool extends Item implements ItemDurable {
 
     @Override
     public boolean isUnbreakable() {
-        Tag tag = this.getNamedTagEntry("Unbreakable");
-        return tag instanceof ByteTag && ((ByteTag) tag).data > 0;
+        return unbreakable;
+    }
+
+    public void setUnbreakable(boolean unbreakable) {
+        this.unbreakable = unbreakable;
     }
 
     @Override

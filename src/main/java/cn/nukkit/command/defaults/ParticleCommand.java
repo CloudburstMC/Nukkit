@@ -6,11 +6,11 @@ import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
 import cn.nukkit.lang.TranslationContainer;
-import cn.nukkit.level.Position;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.particle.*;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import java.util.Random;
 
@@ -30,12 +30,23 @@ public class ParticleCommand extends VanillaCommand {
         super(name, "%nukkit.command.particle.description", "%nukkit.command.particle.usage");
         this.setPermission("nukkit.command.particle");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("name", false, ENUM_VALUES),
                 new CommandParameter("position", CommandParamType.POSITION, false),
                 new CommandParameter("count", CommandParamType.INT, true),
                 new CommandParameter("data", true)
         });
+    }
+
+    private static float getFloat(String arg, float defaultValue) throws Exception {
+        if (arg.startsWith("~")) {
+            String relativePos = arg.substring(1);
+            if (relativePos.isEmpty()) {
+                return defaultValue;
+            }
+            return defaultValue + Float.parseFloat(relativePos);
+        }
+        return Float.parseFloat(arg);
     }
 
     @Override
@@ -50,27 +61,27 @@ public class ParticleCommand extends VanillaCommand {
             return true;
         }
 
-        Position defaultPosition;
+        Location defaultLocation;
         if (sender instanceof Player) {
-            defaultPosition = ((Player) sender).getPosition();
+            defaultLocation = ((Player) sender).getLocation();
         } else {
-            defaultPosition = new Position(0, 0, 0, sender.getServer().getDefaultLevel());
+            defaultLocation = Location.from(Vector3f.ZERO, sender.getServer().getDefaultLevel());
         }
 
         String name = args[0].toLowerCase();
 
-        double x;
-        double y;
-        double z;
+        float x;
+        float y;
+        float z;
 
         try {
-            x = getDouble(args[1], defaultPosition.getX());
-            y = getDouble(args[2], defaultPosition.getY());
-            z = getDouble(args[3], defaultPosition.getZ());
+            x = getFloat(args[1], defaultLocation.getX());
+            y = getFloat(args[2], defaultLocation.getY());
+            z = getFloat(args[3], defaultLocation.getZ());
         } catch (Exception e) {
             return false;
         }
-        Position position = new Position(x, y, z, defaultPosition.getLevel());
+        Location location = Location.from(Vector3f.from(x, y, z), defaultLocation.getLevel());
 
         int count = 1;
         if (args.length > 4) {
@@ -93,10 +104,10 @@ public class ParticleCommand extends VanillaCommand {
             }
         }
 
-        Particle particle = this.getParticle(name, position, data);
+        Particle particle = this.getParticle(name, location, data);
 
         if (particle == null) {
-            position.level.addParticleEffect(position.asVector3f(), Identifier.fromString(args[0]), -1, position.level.getDimension());
+            location.getLevel().addParticleEffect(location.getPosition(), Identifier.fromString(args[0]), -1, location.getLevel().getDimension());
             return true;
         }
 
@@ -105,18 +116,16 @@ public class ParticleCommand extends VanillaCommand {
         Random random = new Random(System.currentTimeMillis());
 
         for (int i = 0; i < count; i++) {
-            particle.setComponents(
-                    position.x + (random.nextFloat() * 2 - 1),
-                    position.y + (random.nextFloat() * 2 - 1),
-                    position.z + (random.nextFloat() * 2 - 1)
-            );
-            position.getLevel().addParticle(particle);
+            particle.setPosition(location.getPosition()
+                    .add(random.nextFloat() * 2 - 1, random.nextFloat() * 2 - 1, random.nextFloat() * 2 - 1));
+            location.getLevel().addParticle(particle);
         }
 
         return true;
     }
 
-    private Particle getParticle(String name, Vector3f pos, int data) {
+    private Particle getParticle(String name, Location loc, int data) {
+        Vector3f pos = loc.getPosition();
         switch (name) {
             case "explode":
                 return new ExplodeParticle(pos);
@@ -202,16 +211,5 @@ public class ParticleCommand extends VanillaCommand {
         }
 
         return null;
-    }
-
-    private static double getDouble(String arg, double defaultValue) throws Exception {
-        if (arg.startsWith("~")) {
-            String relativePos = arg.substring(1);
-            if (relativePos.isEmpty()) {
-                return defaultValue;
-            }
-            return defaultValue + Double.parseDouble(relativePos);
-        }
-        return Double.parseDouble(arg);
     }
 }

@@ -5,10 +5,10 @@ import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -34,22 +34,22 @@ public class BlockDoublePlant extends FloodableBlock {
 
     @Override
     public boolean canBeReplaced() {
-        return this.getDamage() == TALL_GRASS || this.getDamage() == LARGE_FERN;
+        return this.getMeta() == TALL_GRASS || this.getMeta() == LARGE_FERN;
     }
 
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if ((this.getDamage() & TOP_HALF_BITMASK) == TOP_HALF_BITMASK) {
+            if ((this.getMeta() & TOP_HALF_BITMASK) == TOP_HALF_BITMASK) {
                 // Top
                 if (!(this.down().getId() == DOUBLE_PLANT)) {
-                    this.getLevel().setBlock(this, Block.get(AIR), false, true);
+                    this.getLevel().setBlock(this.getPosition(), Block.get(AIR), false, true);
                     return Level.BLOCK_UPDATE_NORMAL;
                 }
             } else {
                 // Bottom
                 if (this.down().isTransparent() || !(this.up().getId() == DOUBLE_PLANT)) {
-                    this.getLevel().useBreakOn(this);
+                    this.getLevel().useBreakOn(this.getPosition());
                     return Level.BLOCK_UPDATE_NORMAL;
                 }
             }
@@ -63,8 +63,8 @@ public class BlockDoublePlant extends FloodableBlock {
         Block up = up();
 
         if (up.getId() == AIR && (down.getId() == GRASS || down.getId() == DIRT)) {
-            this.getLevel().setBlock(block, this, true, false); // If we update the bottom half, it will drop the item because there isn't a flower block above
-            this.getLevel().setBlock(up, Block.get(DOUBLE_PLANT, getDamage() ^ TOP_HALF_BITMASK), true, true);
+            this.getLevel().setBlock(block.getPosition(), this, true, false); // If we update the bottom half, it will drop the item because there isn't a flower block above
+            this.getLevel().setBlock(up.getPosition(), Block.get(DOUBLE_PLANT, getMeta() ^ TOP_HALF_BITMASK), true, true);
             return true;
         }
 
@@ -75,10 +75,10 @@ public class BlockDoublePlant extends FloodableBlock {
     public boolean onBreak(Item item) {
         Block down = down();
 
-        if ((this.getDamage() & TOP_HALF_BITMASK) == TOP_HALF_BITMASK) { // Top half
-            this.getLevel().useBreakOn(down);
+        if ((this.getMeta() & TOP_HALF_BITMASK) == TOP_HALF_BITMASK) { // Top half
+            this.getLevel().useBreakOn(down.getPosition());
         } else {
-            this.getLevel().setBlock(this, Block.get(AIR), true, true);
+            this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true, true);
         }
 
         return true;
@@ -86,8 +86,8 @@ public class BlockDoublePlant extends FloodableBlock {
 
     @Override
     public Item[] getDrops(Item item) {
-        if ((this.getDamage() & TOP_HALF_BITMASK) != TOP_HALF_BITMASK) {
-            switch (this.getDamage() & 0x07) {
+        if ((this.getMeta() & TOP_HALF_BITMASK) != TOP_HALF_BITMASK) {
+            switch (this.getMeta() & 0x07) {
                 case TALL_GRASS:
                 case LARGE_FERN:
                     boolean dropSeeds = ThreadLocalRandom.current().nextInt(10) == 0;
@@ -132,17 +132,17 @@ public class BlockDoublePlant extends FloodableBlock {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.getId() == DYE && item.getDamage() == 0x0f) { //Bone meal
-            switch (this.getDamage() & 0x07) {
+        if (item.getId() == DYE && item.getMeta() == 0x0f) { //Bone meal
+            switch (this.getMeta() & 0x07) {
                 case SUNFLOWER:
                 case LILAC:
                 case ROSE_BUSH:
                 case PEONY:
-                    if (player != null && (player.gamemode & 0x01) == 0) {
+                    if (player != null && (player.getGamemode() & 0x01) == 0) {
                         item.decrementCount();
                     }
-                    this.level.addParticle(new BoneMealParticle(this));
-                    this.level.dropItem(this.asVector3f(), this.toItem());
+                    this.level.addParticle(new BoneMealParticle(this.getPosition()));
+                    this.level.dropItem(this.getPosition(), this.toItem());
             }
 
             return true;

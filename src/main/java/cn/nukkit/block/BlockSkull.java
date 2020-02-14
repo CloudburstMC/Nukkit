@@ -4,19 +4,18 @@ package cn.nukkit.block;
  * author: Justin
  */
 
-import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntitySkull;
+import cn.nukkit.blockentity.Skull;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
+import static cn.nukkit.blockentity.BlockEntityTypes.SKULL;
 
 public class BlockSkull extends BlockTransparent {
 
@@ -25,12 +24,12 @@ public class BlockSkull extends BlockTransparent {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 1;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 5;
     }
 
@@ -53,24 +52,12 @@ public class BlockSkull extends BlockTransparent {
             default:
                 return false;
         }
-        this.getLevel().setBlock(block, this, true, true);
+        this.getLevel().setBlock(block.getPosition(), this, true, true);
 
-        CompoundTag nbt = new CompoundTag()
-                .putString("id", BlockEntity.SKULL)
-                .putByte("SkullType", item.getDamage())
-                .putInt("x", block.getX())
-                .putInt("y", block.getY())
-                .putInt("z", block.getZ())
-                .putByte("Rot", (int) Math.floor((player.yaw * 16 / 360) + 0.5) & 0x0f);
-        if (item.hasCustomBlockData()) {
-            for (Tag aTag : item.getCustomBlockData().getAllTags()) {
-                nbt.put(aTag.getName(), aTag);
-            }
-        }
-        BlockEntitySkull skull = (BlockEntitySkull) BlockEntity.createBlockEntity(BlockEntity.SKULL, getLevel().getChunk(block.getChunkX(), block.getChunkZ()), nbt);
-        if (skull == null) {
-            return false;
-        }
+        Skull skull = BlockEntityRegistry.get().newEntity(SKULL, this.getChunk(), this.getPosition());
+        skull.loadAdditionalData(item.getTag());
+        skull.setSkullType(item.getMeta());
+        skull.setRotation((player.getYaw() * 16 / 360) + 0.5f);
 
         // TODO: 2016/2/3 SPAWN WITHER
 
@@ -78,21 +65,11 @@ public class BlockSkull extends BlockTransparent {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        BlockEntity blockEntity = getLevel().getBlockEntity(this);
-        int dropMeta = 0;
-        if (blockEntity != null) dropMeta = blockEntity.namedTag.getByte("SkullType");
-        return new Item[]{
-                Item.get(ItemIds.SKULL, dropMeta)
-        };
-    }
-
-    @Override
     public Item toItem() {
-        BlockEntity blockEntity = getLevel().getBlockEntity(this);
-        int itemMeta = 0;
-        if (blockEntity != null) itemMeta = blockEntity.namedTag.getByte("SkullType");
-        return Item.get(ItemIds.SKULL, itemMeta);
+        Skull blockEntity = (Skull) getLevel().getBlockEntity(this.getPosition());
+        int meta = 0;
+        if (blockEntity != null) meta = blockEntity.getSkullType();
+        return Item.get(ItemIds.SKULL, meta);
     }
 
     @Override

@@ -5,16 +5,15 @@ import cn.nukkit.entity.Smiteable;
 import cn.nukkit.entity.hostile.Skeleton;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 /**
  * @author PikyCZ
  */
 public class EntitySkeleton extends EntityHostile implements Skeleton, Smiteable {
 
-    public EntitySkeleton(EntityType<Skeleton> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntitySkeleton(EntityType<Skeleton> type, Location location) {
+        super(type, location);
     }
 
     @Override

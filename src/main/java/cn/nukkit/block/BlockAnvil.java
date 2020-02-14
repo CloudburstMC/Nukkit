@@ -5,11 +5,11 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import static cn.nukkit.block.BlockIds.SNOW_LAYER;
 
@@ -38,12 +38,12 @@ public class BlockAnvil extends BlockFallable implements Faceable {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 5;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 6000;
     }
 
@@ -55,16 +55,16 @@ public class BlockAnvil extends BlockFallable implements Faceable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (!target.isTransparent() || target.getId() == SNOW_LAYER) {
-            int meta = this.getDamage();
+            int meta = this.getMeta();
             int[] faces = {1, 2, 3, 0};
             this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
             if (meta >= 4 && meta <= 7) {
-                this.setDamage(this.getDamage() | 0x04);
+                this.setDamage(this.getMeta() | 0x04);
             } else if (meta >= 8 && meta <= 11) {
-                this.setDamage(this.getDamage() | 0x08);
+                this.setDamage(this.getMeta() | 0x08);
             }
-            this.getLevel().setBlock(block, this, true);
-            this.getLevel().addSound(this.asVector3f(), Sound.RANDOM_ANVIL_LAND, 1, 0.8F);
+            this.getLevel().setBlock(block.getPosition(), this, true);
+            this.getLevel().addSound(this.getPosition().toFloat(), Sound.RANDOM_ANVIL_LAND, 1, 0.8F);
             return true;
         }
         return false;
@@ -80,11 +80,11 @@ public class BlockAnvil extends BlockFallable implements Faceable {
 
     @Override
     public Item toItem() {
-        int meta = this.getDamage();
+        int meta = this.getMeta();
         if (meta >= 4 && meta <= 7) {
-            return Item.get(id, this.getDamage() & 0x04);
+            return Item.get(id, this.getMeta() & 0x04);
         } else if (meta >= 8 && meta <= 11) {
-            return Item.get(id, this.getDamage() & 0x08);
+            return Item.get(id, this.getMeta() & 0x08);
         } else {
             return Item.get(id);
         }
@@ -112,6 +112,6 @@ public class BlockAnvil extends BlockFallable implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x7);
     }
 }

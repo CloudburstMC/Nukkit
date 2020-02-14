@@ -1,7 +1,7 @@
 package cn.nukkit.level.chunk;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.impl.BaseBlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
 import cn.nukkit.player.Player;
@@ -9,6 +9,7 @@ import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.nukkitx.math.vector.Vector3i;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
 
@@ -50,7 +51,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
 
     private final Set<Entity> entities = Collections.newSetFromMap(new IdentityHashMap<>());
 
-    private final Short2ObjectMap<BlockEntity> tiles = new Short2ObjectOpenHashMap<>();
+    private final Short2ObjectMap<BaseBlockEntity> tiles = new Short2ObjectOpenHashMap<>();
 
     private final byte[] biomes;
 
@@ -147,10 +148,9 @@ public final class UnsafeChunk implements IChunk, Closeable {
         } else {
             block = section.getBlock(x, y & 0xf, z, layer);
         }
-        block.level = this.level;
-        block.x = this.x << 4 | x & 0xf;
-        block.y = y;
-        block.z = this.z << 4 | z & 0xf;
+        block.setLevel(this.level);
+        block.setPosition(Vector3i.from(this.x << 4 | x & 0xf, y, this.z << 4 | z & 0xf));
+        block.setLayer(layer);
         return block;
     }
 
@@ -326,18 +326,18 @@ public final class UnsafeChunk implements IChunk, Closeable {
     }
 
     @Override
-    public void addBlockEntity(BlockEntity blockEntity) {
+    public void addBlockEntity(BaseBlockEntity blockEntity) {
         Preconditions.checkNotNull(blockEntity, "blockEntity");
-        short hash = Chunk.blockKey(blockEntity);
+        short hash = Chunk.blockKey(blockEntity.getPosition());
         if (this.tiles.put(hash, blockEntity) != blockEntity && this.initialized == 1) {
             this.setDirty();
         }
     }
 
     @Override
-    public void removeBlockEntity(BlockEntity blockEntity) {
+    public void removeBlockEntity(BaseBlockEntity blockEntity) {
         Preconditions.checkNotNull(blockEntity, "blockEntity");
-        short hash = Chunk.blockKey(blockEntity);
+        short hash = Chunk.blockKey(blockEntity.getPosition());
         if (this.tiles.remove(hash) == blockEntity && this.initialized == 1) {
             this.setDirty();
         }
@@ -345,7 +345,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
 
     @Nullable
     @Override
-    public BlockEntity getBlockEntity(int x, int y, int z) {
+    public BaseBlockEntity getBlockEntity(int x, int y, int z) {
         checkBounds(x, y, z);
         return this.tiles.get(Chunk.blockKey(x, y, z));
     }
@@ -408,7 +408,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
      */
     @Nonnull
     @Override
-    public Collection<BlockEntity> getBlockEntities() {
+    public Collection<BaseBlockEntity> getBlockEntities() {
         return this.tiles.values();
     }
 
@@ -483,7 +483,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
                 entity.close();
             }
 
-            this.tiles.values().forEach(BlockEntity::close);
+            this.tiles.values().forEach(BaseBlockEntity::close);
             clear();
         }
     }

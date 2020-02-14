@@ -16,13 +16,13 @@ public class BlockPistonHead extends BlockTransparent {
     }
 
     @Override
-    public double getResistance() {
-        return 2.5;
+    public float getResistance() {
+        return 2.5f;
     }
 
     @Override
-    public double getHardness() {
-        return 0.5;
+    public float getHardness() {
+        return 0.5f;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class BlockPistonHead extends BlockTransparent {
 
     @Override
     public boolean onBreak(Item item) {
-        this.level.setBlock(this, Block.get(AIR), true, true);
+        this.level.setBlock(this.getPosition(), Block.get(AIR), true, true);
         Block piston = getSide(getFacing().getOpposite());
 
         if (piston instanceof BlockPistonBase && ((BlockPistonBase) piston).getFacing() == this.getFacing()) {
@@ -42,7 +42,7 @@ public class BlockPistonHead extends BlockTransparent {
     }
 
     public BlockFace getFacing() {
-        return BlockFace.fromIndex(this.getDamage()).getOpposite();
+        return BlockFace.fromIndex(this.getMeta()).getOpposite();
     }
 
     @Override

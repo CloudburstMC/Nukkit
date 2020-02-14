@@ -6,11 +6,11 @@ import cn.nukkit.level.generator.object.mushroom.BigMushroom;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -27,7 +27,7 @@ public abstract class BlockMushroom extends FloodableBlock {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (!canStay()) {
-                getLevel().useBreakOn(this);
+                getLevel().useBreakOn(this.getPosition());
 
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -38,7 +38,7 @@ public abstract class BlockMushroom extends FloodableBlock {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (canStay()) {
-            getLevel().setBlock(block, this, true, true);
+            getLevel().setBlock(block.getPosition(), this, true, true);
             return true;
         }
         return false;
@@ -51,8 +51,8 @@ public abstract class BlockMushroom extends FloodableBlock {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.getId() == DYE && item.getDamage() == DyeColor.WHITE.getDyeData()) {
-            if (player != null && (player.gamemode & 0x01) == 0) {
+        if (item.getId() == DYE && item.getMeta() == DyeColor.WHITE.getDyeData()) {
+            if (player != null && (player.getGamemode() & 0x01) == 0) {
                 item.decrementCount();
             }
 
@@ -60,28 +60,29 @@ public abstract class BlockMushroom extends FloodableBlock {
                 this.grow();
             }
 
-            this.level.addParticle(new BoneMealParticle(this));
+            this.level.addParticle(new BoneMealParticle(this.getPosition()));
             return true;
         }
         return false;
     }
 
     public boolean grow() {
-        this.level.setBlock(this, Block.get(AIR), true, false);
+        this.level.setBlock(this.getPosition(), Block.get(AIR), true, false);
 
         BigMushroom generator = new BigMushroom(getType());
 
-        if (generator.generate(this.level, new BedrockRandom(), this.asVector3i())) {
+        if (generator.generate(this.level, new BedrockRandom(), this.getPosition())) {
             return true;
         } else {
-            this.level.setBlock(this, this, true, false);
+            this.level.setBlock(this.getPosition(), this, true, false);
             return false;
         }
     }
 
     public boolean canStay() {
         Block block = this.down();
-        return block.getId() == MYCELIUM || block.getId() == PODZOL || (!block.isTransparent() && this.level.getFullLight(this) < 13);
+        return block.getId() == MYCELIUM || block.getId() == PODZOL ||
+                (!block.isTransparent() && this.level.getFullLight(this.getPosition()) < 13);
     }
 
     @Override

@@ -1,12 +1,18 @@
 package cn.nukkit.level.provider.leveldb.serializer;
 
 import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityType;
+import cn.nukkit.blockentity.impl.BaseBlockEntity;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.chunk.ChunkBuilder;
 import cn.nukkit.level.chunk.ChunkDataLoader;
 import cn.nukkit.level.provider.leveldb.LevelDBKey;
-import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.registry.BlockEntityRegistry;
+import com.nukkitx.math.vector.Vector3i;
+import com.nukkitx.nbt.NbtUtils;
+import com.nukkitx.nbt.stream.NBTInputStream;
+import com.nukkitx.nbt.stream.NBTOutputStream;
+import com.nukkitx.nbt.tag.CompoundTag;
 import lombok.RequiredArgsConstructor;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.WriteBatch;
@@ -14,7 +20,6 @@ import org.iq80.leveldb.WriteBatch;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,9 +35,10 @@ public class BlockEntitySerializer {
         }
 
         List<CompoundTag> blockEntityTags = new ArrayList<>();
-        try (ByteArrayInputStream stream = new ByteArrayInputStream(value)) {
+        try (ByteArrayInputStream stream = new ByteArrayInputStream(value);
+             NBTInputStream nbtInputStream = NbtUtils.createReaderLE(stream)) {
             while (stream.available() > 0) {
-                blockEntityTags.add(NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN));
+                blockEntityTags.add((CompoundTag) nbtInputStream.readTag());
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -48,12 +54,13 @@ public class BlockEntitySerializer {
             return;
         }
 
-        Collection<BlockEntity> entities = chunk.getBlockEntities();
+        Collection<BaseBlockEntity> entities = chunk.getBlockEntities();
 
         byte[] value;
-        try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
-            for (BlockEntity entity : entities) {
-                NBTIO.write(entity.namedTag, stream, ByteOrder.LITTLE_ENDIAN);
+        try (ByteArrayOutputStream stream = new ByteArrayOutputStream();
+             NBTOutputStream nbtOutputStream = NbtUtils.createWriterLE(stream)) {
+            for (BaseBlockEntity entity : entities) {
+                nbtOutputStream.write(entity.getFullNBT());
             }
             value = stream.toByteArray();
         } catch (IOException e) {
@@ -64,6 +71,7 @@ public class BlockEntitySerializer {
 
     @RequiredArgsConstructor
     private static class BlockEntityLoader implements ChunkDataLoader {
+        private static final BlockEntityRegistry REGISTRY = BlockEntityRegistry.get();
         private final List<CompoundTag> blockEntityTags;
 
         @Override
@@ -75,11 +83,14 @@ public class BlockEntitySerializer {
                         dirty = true;
                         continue;
                     }
-                    if ((tag.getInt("x") >> 4) != chunk.getX() || ((tag.getInt("z") >> 4) != chunk.getZ())) {
+                    Vector3i position = Vector3i.from(tag.getInt("x"), tag.getInt("y"), tag.getInt("y"));
+                    if ((position.getX() >> 4) != chunk.getX() || ((position.getZ() >> 4) != chunk.getZ())) {
                         dirty = true;
                         continue;
                     }
-                    BlockEntity blockEntity = BlockEntity.createBlockEntity(tag.getString("id"), chunk, tag);
+                    BlockEntityType<?> type = REGISTRY.getBlockEntityType(tag.getString("id"));
+
+                    BlockEntity blockEntity = REGISTRY.newEntity(type, chunk, position);
                     if (blockEntity == null) {
                         dirty = true;
                     }

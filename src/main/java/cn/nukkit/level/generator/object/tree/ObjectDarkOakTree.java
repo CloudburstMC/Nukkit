@@ -7,8 +7,8 @@ import cn.nukkit.block.BlockLog2;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3i;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3i;
 
 import static cn.nukkit.block.BlockIds.*;
 
@@ -28,7 +28,7 @@ public class ObjectDarkOakTree extends TreeGenerator {
 
         if (y >= 1 && y + i + 1 < 256) {
             Vector3i blockpos = position.down();
-            Identifier block = level.getBlockIdAt(blockpos.getX(), blockpos.getY(), blockpos.getZ());
+            Identifier block = level.getBlockId(blockpos);
 
             if (block != GRASS && block != DIRT) {
                 return false;
@@ -54,7 +54,7 @@ public class ObjectDarkOakTree extends TreeGenerator {
                     }
 
                     int k2 = y + j2;
-                    Identifier material = level.getBlockIdAt(k1, k2, l1);
+                    Identifier material = level.getBlockId(k1, k2, l1);
 
                     if (material == AIR || material == LEAVES) {
                         this.placeLogAt(level, k1, k2, l1);
@@ -148,7 +148,7 @@ public class ObjectDarkOakTree extends TreeGenerator {
 
             for (int j1 = -i1; j1 <= i1; ++j1) {
                 for (int k1 = -i1; k1 <= i1; ++k1) {
-                    if (!this.canGrowInto(worldIn.getBlockIdAt(x + j1, y + l, z + k1))) {
+                    if (!this.canGrowInto(worldIn.getBlockId(x + j1, y + l, z + k1))) {
                         return false;
                     }
                 }
@@ -159,13 +159,13 @@ public class ObjectDarkOakTree extends TreeGenerator {
     }
 
     private void placeLogAt(ChunkManager worldIn, int x, int y, int z) {
-        if (this.canGrowInto(worldIn.getBlockIdAt(x, y, z))) {
+        if (this.canGrowInto(worldIn.getBlockId(x, y, z))) {
             worldIn.setBlockAt(x, y, z, DARK_OAK_LOG);
         }
     }
 
     private void placeLeafAt(ChunkManager worldIn, int x, int y, int z) {
-        Identifier material = worldIn.getBlockIdAt(x, y, z);
+        Identifier material = worldIn.getBlockId(x, y, z);
 
         if (material == AIR) {
             worldIn.setBlockAt(x, y, z, DARK_OAK_LEAVES);

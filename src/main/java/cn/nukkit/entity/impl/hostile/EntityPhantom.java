@@ -4,16 +4,15 @@ import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.Smiteable;
 import cn.nukkit.entity.hostile.Phantom;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 /**
  * Created by PetteriM1
  */
 public class EntityPhantom extends EntityHostile implements Phantom, Smiteable {
 
-    public EntityPhantom(EntityType<Phantom> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityPhantom(EntityType<Phantom> type, Location location) {
+        super(type, location);
     }
 
     @Override

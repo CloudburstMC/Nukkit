@@ -1,10 +1,8 @@
 package cn.nukkit;
 
-import cn.nukkit.blockentity.*;
 import cn.nukkit.command.*;
 import cn.nukkit.console.NukkitConsole;
 import cn.nukkit.entity.Attribute;
-import cn.nukkit.entity.data.Skin;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.server.BatchPacketsEvent;
 import cn.nukkit.event.server.PlayerDataSerializeEvent;
@@ -19,24 +17,15 @@ import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.*;
 import cn.nukkit.level.biome.EnumBiome;
-import cn.nukkit.level.generator.GeneratorIds;
 import cn.nukkit.level.storage.StorageIds;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
 import cn.nukkit.metadata.PlayerMetadataStore;
-import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.CompressBatchedTask;
+import cn.nukkit.network.BedrockInterface;
 import cn.nukkit.network.Network;
-import cn.nukkit.network.RakNetInterface;
+import cn.nukkit.network.ProtocolInfo;
 import cn.nukkit.network.SourceInterface;
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.PlayerListPacket;
-import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.network.query.QueryHandler;
 import cn.nukkit.network.rcon.RCON;
 import cn.nukkit.pack.PackManager;
@@ -64,6 +53,14 @@ import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.nukkitx.nbt.NbtUtils;
+import com.nukkitx.nbt.stream.NBTInputStream;
+import com.nukkitx.nbt.stream.NBTOutputStream;
+import com.nukkitx.nbt.tag.CompoundTag;
+import com.nukkitx.nbt.tag.FloatTag;
+import com.nukkitx.protocol.bedrock.BedrockPacket;
+import com.nukkitx.protocol.bedrock.data.SerializedSkin;
+import com.nukkitx.protocol.bedrock.packet.PlayerListPacket;
 import com.spotify.futures.CompletableFutures;
 import io.netty.buffer.ByteBuf;
 import lombok.extern.log4j.Log4j2;
@@ -77,7 +74,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -87,6 +83,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author MagicDroidX
@@ -197,6 +194,7 @@ public class Server {
     private final GeneratorRegistry generatorRegistry = GeneratorRegistry.get();
     private final StorageRegistry storageRegistry = StorageRegistry.get();
     private final BlockRegistry blockRegistry = BlockRegistry.get();
+    private final BlockEntityRegistry blockEntityRegistry = BlockEntityRegistry.get();
     private final ItemRegistry itemRegistry = ItemRegistry.get();
     private final EntityRegistry entityRegistry = EntityRegistry.get();
 
@@ -235,12 +233,12 @@ public class Server {
         this.consoleThread = new ConsoleThread();
     }
 
-    public static void broadcastPackets(Player[] players, DataPacket[] packets) {
+    public static void broadcastPackets(Player[] players, BedrockPacket[] packets) {
         Server.getInstance().batchPackets(players, packets);
     }
 
-    public static void broadcastPacket(Player[] players, DataPacket packet) {
-        Server.getInstance().batchPackets(players, new DataPacket[]{packet});
+    public static void broadcastPacket(Player[] players, BedrockPacket packet) {
+        Server.getInstance().batchPackets(players, new BedrockPacket[]{packet});
     }
 
     public int broadcastMessage(String message) {
@@ -311,7 +309,7 @@ public class Server {
         return recipients.size();
     }
 
-    public static void broadcastPacket(Collection<Player> players, DataPacket packet) {
+    public static void broadcastPacket(Collection<Player> players, BedrockPacket packet) {
         broadcastPacket(players.toArray(new Player[0]), packet);
     }
 
@@ -502,8 +500,6 @@ public class Server {
         this.consoleSender = new ConsoleCommandSender();
         this.commandMap = new SimpleCommandMap(this);
 
-        this.registerVanillaComponents();
-
         // Convert legacy data before plugins get the chance to mess with it.
         try {
             nameLookup = Iq80DBFactory.factory.open(new File(dataPath, "players"), new Options()
@@ -533,6 +529,7 @@ public class Server {
 
         // Close registries
         try {
+            this.blockEntityRegistry.close();
             this.blockRegistry.close();
             this.itemRegistry.close();
             this.entityRegistry.close();
@@ -545,6 +542,8 @@ public class Server {
         } finally {
             this.pluginManager.callEvent(new RegistriesClosedEvent(this.packManager));
         }
+
+        this.registerVanillaComponents();
 
         Identifier defaultStorageId = Identifier.fromString(this.getConfig().get(
                 "level-settings.default-format", "minecraft:leveldb"));
@@ -649,7 +648,7 @@ public class Server {
         this.network.setSubName(this.getSubMotd());
 
         try {
-            this.network.registerInterface(new RakNetInterface(this));
+            this.network.registerInterface(new BedrockInterface(this));
         } catch (Exception e) {
             log.fatal("**** FAILED TO BIND TO " + getIp() + ":" + getPort() + "!");
             log.fatal("Perhaps a server is already running on that port?");
@@ -664,11 +663,11 @@ public class Server {
         this.start();
     }
 
-    public void batchPackets(Player[] players, DataPacket[] packets) {
+    public void batchPackets(Player[] players, BedrockPacket[] packets) {
         this.batchPackets(players, packets, false);
     }
 
-    public void batchPackets(Player[] players, DataPacket[] packets, boolean forceSync) {
+    public void batchPackets(Player[] players, BedrockPacket[] packets, boolean forceSync) {
         if (players == null || packets == null || players.length == 0 || packets.length == 0) {
             return;
         }
@@ -683,18 +682,10 @@ public class Server {
             List<Player> targets = new ArrayList<>();
             for (Player p : players) {
                 if (p.isConnected()) {
-                    targets.add(p);
+                    for (BedrockPacket packet : packets) {
+                        p.sendPacket(packet);
+                    }
                 }
-            }
-
-            CompressBatchedTask compressBatchedTask = new CompressBatchedTask(Arrays.asList(packets), targets,
-                    this.networkCompressionLevel);
-
-            if (!forceSync && this.networkCompressionAsync) {
-                this.getScheduler().scheduleAsyncTask(compressBatchedTask);
-            } else {
-                compressBatchedTask.onRun();
-                compressBatchedTask.onCompletion(this);
             }
         }
     }
@@ -812,7 +803,7 @@ public class Server {
 
         for (BanEntry entry : this.getIPBans().getEntires().values()) {
             try {
-                this.network.blockAddress(InetAddress.getByName(entry.getName()), -1);
+                this.network.blockAddress(InetAddress.getByName(entry.getName()));
             } catch (UnknownHostException e) {
                 // ignore
             }
@@ -846,7 +837,7 @@ public class Server {
         } catch (Exception e) {
             log.error("Error whilst handling packet", e);
 
-            this.network.blockAddress(address.getAddress(), -1);
+            this.network.blockAddress(address.getAddress());
         }
     }
 
@@ -902,34 +893,40 @@ public class Server {
         if (this.playerList.containsKey(player.getServerId())) {
             this.playerList.remove(player.getServerId());
 
-            PlayerListPacket pk = new PlayerListPacket();
-            pk.type = PlayerListPacket.TYPE_REMOVE;
-            pk.entries = new PlayerListPacket.Entry[]{new PlayerListPacket.Entry(player.getServerId())};
+            PlayerListPacket packet = new PlayerListPacket();
+            packet.setAction(PlayerListPacket.Action.REMOVE);
+            packet.getEntries().add(new PlayerListPacket.Entry(player.getServerId()));
 
-            Server.broadcastPacket(this.playerList.values(), pk);
+            Server.broadcastPacket(this.playerList.values(), packet);
         }
     }
 
-    public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin) {
+    public void updatePlayerListData(UUID uuid, long entityId, String name, SerializedSkin skin) {
         this.updatePlayerListData(uuid, entityId, name, skin, "", this.playerList.values());
     }
 
-    public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin, String xboxUserId) {
+    public void updatePlayerListData(UUID uuid, long entityId, String name, SerializedSkin skin, String xboxUserId) {
         this.updatePlayerListData(uuid, entityId, name, skin, xboxUserId, this.playerList.values());
     }
 
-    public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin, Player[] players) {
+    public void updatePlayerListData(UUID uuid, long entityId, String name, SerializedSkin skin, Player[] players) {
         this.updatePlayerListData(uuid, entityId, name, skin, "", players);
     }
 
-    public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin, String xboxUserId, Player[] players) {
-        PlayerListPacket pk = new PlayerListPacket();
-        pk.type = PlayerListPacket.TYPE_ADD;
-        pk.entries = new PlayerListPacket.Entry[]{new PlayerListPacket.Entry(uuid, entityId, name, skin, xboxUserId)};
-        Server.broadcastPacket(players, pk);
+    public void updatePlayerListData(UUID uuid, long entityId, String name, SerializedSkin skin, String xboxUserId, Player[] players) {
+        PlayerListPacket packet = new PlayerListPacket();
+        packet.setAction(PlayerListPacket.Action.ADD);
+        PlayerListPacket.Entry entry = new PlayerListPacket.Entry(uuid);
+        entry.setEntityId(entityId);
+        entry.setName(name);
+        entry.setSkin(skin);
+        entry.setXuid(xboxUserId);
+        entry.setPlatformChatId("");
+        packet.getEntries().add(entry);
+        Server.broadcastPacket(players, packet);
     }
 
-    public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin, String xboxUserId, Collection<Player> players) {
+    public void updatePlayerListData(UUID uuid, long entityId, String name, SerializedSkin skin, String xboxUserId, Collection<Player> players) {
         this.updatePlayerListData(uuid, entityId, name, skin, xboxUserId,
                 players.stream()
                         .filter(p -> !p.getServerId().equals(uuid))
@@ -941,10 +938,10 @@ public class Server {
     }
 
     public void removePlayerListData(UUID uuid, Player[] players) {
-        PlayerListPacket pk = new PlayerListPacket();
-        pk.type = PlayerListPacket.TYPE_REMOVE;
-        pk.entries = new PlayerListPacket.Entry[]{new PlayerListPacket.Entry(uuid)};
-        Server.broadcastPacket(players, pk);
+        PlayerListPacket packet = new PlayerListPacket();
+        packet.setAction(PlayerListPacket.Action.REMOVE);
+        packet.getEntries().add(new PlayerListPacket.Entry(uuid));
+        Server.broadcastPacket(players, packet);
     }
 
     public void removePlayerListData(UUID uuid, Collection<Player> players) {
@@ -952,18 +949,20 @@ public class Server {
     }
 
     public void sendFullPlayerListData(Player player) {
-        PlayerListPacket pk = new PlayerListPacket();
-        pk.type = PlayerListPacket.TYPE_ADD;
-        pk.entries = this.playerList.values().stream()
-                .map(p -> new PlayerListPacket.Entry(
-                        p.getServerId(),
-                        p.getUniqueId(),
-                        p.getDisplayName(),
-                        p.getSkin(),
-                        p.getLoginChainData().getXUID()))
-                .toArray(PlayerListPacket.Entry[]::new);
+        PlayerListPacket packet = new PlayerListPacket();
+        packet.setAction(PlayerListPacket.Action.ADD);
+        packet.getEntries().addAll(this.playerList.values().stream()
+                .map(p -> {
+                    PlayerListPacket.Entry entry = new PlayerListPacket.Entry(p.getServerId());
+                    entry.setEntityId(p.getUniqueId());
+                    entry.setName(p.getDisplayName());
+                    entry.setSkin(p.getSkin());
+                    entry.setXuid(p.getLoginChainData().getXUID());
+                    entry.setPlatformChatId("");
+                    return entry;
+                }).collect(Collectors.toList()));
 
-        player.dataPacket(pk);
+        player.sendPacket(packet);
     }
 
     public void sendRecipeList(Player player) {
@@ -1146,7 +1145,7 @@ public class Server {
     }
 
     public String getVersion() {
-        return ProtocolInfo.MINECRAFT_VERSION;
+        return ProtocolInfo.getDefaultMinecraftVersion();
     }
 
     public String getApiVersion() {
@@ -1490,7 +1489,9 @@ public class Server {
         try {
             dataStream = event.getSerializer().read(name, event.getUuid().orElse(null));
             if (dataStream.isPresent()) {
-                return NBTIO.readCompressed(dataStream.get());
+                try (NBTInputStream stream = NbtUtils.createGZIPReader(dataStream.get())) {
+                    return (CompoundTag) stream.readTag();
+                }
             }
         } catch (IOException e) {
             log.warn(this.getLanguage().translateString("nukkit.data.playerCorrupted", name));
@@ -1507,30 +1508,22 @@ public class Server {
         CompoundTag nbt = null;
         if (create) {
             log.info(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
-            Position spawn = this.getDefaultLevel().getSafeSpawn();
-            nbt = new CompoundTag()
-                    .putLong("firstPlayed", System.currentTimeMillis() / 1000)
-                    .putLong("lastPlayed", System.currentTimeMillis() / 1000)
-                    .putList(new ListTag<DoubleTag>("Pos")
-                            .add(new DoubleTag("0", spawn.x))
-                            .add(new DoubleTag("1", spawn.y))
-                            .add(new DoubleTag("2", spawn.z)))
-                    .putString("Level", this.getDefaultLevel().getName())
-                    .putList(new ListTag<>("Inventory"))
-                    .putCompound("Achievements", new CompoundTag())
-                    .putInt("playerGameType", this.getGamemode())
-                    .putList(new ListTag<DoubleTag>("Motion")
-                            .add(new DoubleTag("0", 0))
-                            .add(new DoubleTag("1", 0))
-                            .add(new DoubleTag("2", 0)))
-                    .putList(new ListTag<FloatTag>("Rotation")
-                            .add(new FloatTag("0", 0))
-                            .add(new FloatTag("1", 0)))
-                    .putFloat("FallDistance", 0)
-                    .putShort("Fire", 0)
-                    .putShort("Air", 300)
-                    .putBoolean("OnGround", true)
-                    .putBoolean("Invulnerable", false);
+            Location spawn = this.getDefaultLevel().getSafeSpawn();
+            nbt = CompoundTag.builder()
+                    .longTag("firstPlayed", System.currentTimeMillis() / 1000)
+                    .longTag("lastPlayed", System.currentTimeMillis() / 1000)
+                    .listTag("Pos", FloatTag.class, Arrays.asList(
+                            new FloatTag("", spawn.getPosition().getX()),
+                            new FloatTag("", spawn.getPosition().getY()),
+                            new FloatTag("", spawn.getPosition().getZ())
+                    ))
+                    .stringTag("Level", this.getDefaultLevel().getName())
+                    .intTag("playerGameType", this.getGamemode())
+                    .listTag("Rotation", FloatTag.class, Arrays.asList(
+                            new FloatTag("", spawn.getYaw()),
+                            new FloatTag("", spawn.getPitch())
+                    ))
+                    .buildRootTag();
 
             this.saveOfflinePlayerData(name, nbt, true, runEvent);
         }
@@ -1583,8 +1576,9 @@ public class Server {
     }
 
     private void saveOfflinePlayerDataInternal(PlayerDataSerializer serializer, CompoundTag tag, String name, UUID uuid) {
-        try (OutputStream dataStream = serializer.write(name, uuid)) {
-            NBTIO.writeGZIPCompressed(tag, dataStream, ByteOrder.BIG_ENDIAN);
+        try (OutputStream dataStream = serializer.write(name, uuid);
+             NBTOutputStream stream = NbtUtils.createGZIPWriter(dataStream)) {
+            stream.write(tag);
         } catch (Exception e) {
             log.error(this.getLanguage().translateString("nukkit.data.saveError", name, e));
         }
@@ -1619,7 +1613,7 @@ public class Server {
 
             UUID uuid = new UUID(tag.getLong("UUIDMost"), tag.getLong("UUIDLeast"));
             if (!tag.contains("NameTag")) {
-                tag.putString("NameTag", name);
+                tag = tag.toBuilder().stringTag("NameTag", name).buildRootTag();
             }
 
             if (new File(getDataPath() + "players/" + uuid.toString() + ".dat").exists()) {
@@ -1982,8 +1976,6 @@ public class Server {
     }
 
     private void registerVanillaComponents() {
-        this.registerBlockEntities();
-
         Enchantment.init();
         EnumBiome.values(); //load class, this also registers biomes
         Item.initCreativeItems();
@@ -1991,29 +1983,6 @@ public class Server {
         Potion.init();
         Attribute.init();
         this.defaultLevelData.getGameRules().putAll(this.gameRuleRegistry.getDefaultRules());
-    }
-
-    private void registerBlockEntities() {
-        BlockEntity.registerBlockEntity(BlockEntity.FURNACE, BlockEntityFurnace.class);
-        BlockEntity.registerBlockEntity(BlockEntity.CHEST, BlockEntityChest.class);
-        BlockEntity.registerBlockEntity(BlockEntity.SIGN, BlockEntitySign.class);
-        BlockEntity.registerBlockEntity(BlockEntity.ENCHANT_TABLE, BlockEntityEnchantTable.class);
-        BlockEntity.registerBlockEntity(BlockEntity.SKULL, BlockEntitySkull.class);
-        BlockEntity.registerBlockEntity(BlockEntity.FLOWER_POT, BlockEntityFlowerPot.class);
-        BlockEntity.registerBlockEntity(BlockEntity.BREWING_STAND, BlockEntityBrewingStand.class);
-        BlockEntity.registerBlockEntity(BlockEntity.ITEM_FRAME, BlockEntityItemFrame.class);
-        BlockEntity.registerBlockEntity(BlockEntity.CAULDRON, BlockEntityCauldron.class);
-        BlockEntity.registerBlockEntity(BlockEntity.ENDER_CHEST, BlockEntityEnderChest.class);
-        BlockEntity.registerBlockEntity(BlockEntity.BEACON, BlockEntityBeacon.class);
-        BlockEntity.registerBlockEntity(BlockEntity.PISTON_ARM, BlockEntityPistonArm.class);
-        BlockEntity.registerBlockEntity(BlockEntity.COMPARATOR, BlockEntityComparator.class);
-        BlockEntity.registerBlockEntity(BlockEntity.HOPPER, BlockEntityHopper.class);
-        BlockEntity.registerBlockEntity(BlockEntity.BED, BlockEntityBed.class);
-        BlockEntity.registerBlockEntity(BlockEntity.JUKEBOX, BlockEntityJukebox.class);
-        BlockEntity.registerBlockEntity(BlockEntity.SHULKER_BOX, BlockEntityShulkerBox.class);
-        BlockEntity.registerBlockEntity(BlockEntity.BANNER, BlockEntityBanner.class);
-        BlockEntity.registerBlockEntity(BlockEntity.MUSIC, BlockEntityMusic.class);
-        BlockEntity.registerBlockEntity(BlockEntity.CAMPFIRE, BlockEntityCampfire.class);
     }
 
     public boolean isNetherAllowed() {
@@ -2072,7 +2041,7 @@ public class Server {
         return instance;
     }
 
-    public boolean isIgnoredPacket(Class<? extends DataPacket> clazz) {
+    public boolean isIgnoredPacket(Class<? extends BedrockPacket> clazz) {
         return this.ignoredPackets.contains(clazz.getSimpleName());
     }
 

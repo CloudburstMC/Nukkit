@@ -3,16 +3,15 @@ package cn.nukkit.entity.impl.hostile;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.Smiteable;
 import cn.nukkit.entity.hostile.WitherSkeleton;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 /**
  * @author PikyCZ
  */
 public class EntityWitherSkeleton extends EntityHostile implements WitherSkeleton, Smiteable {
 
-    public EntityWitherSkeleton(EntityType<WitherSkeleton> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityWitherSkeleton(EntityType<WitherSkeleton> type, Location location) {
+        super(type, location);
     }
 
     @Override

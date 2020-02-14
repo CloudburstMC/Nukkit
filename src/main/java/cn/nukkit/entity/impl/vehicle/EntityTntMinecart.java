@@ -11,18 +11,17 @@ import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Explosion;
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.gamerule.GameRules;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.MinecartType;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import static cn.nukkit.entity.data.EntityData.FUSE_LENGTH;
-import static cn.nukkit.entity.data.EntityFlag.CHARGED;
+import static com.nukkitx.protocol.bedrock.data.EntityData.FUSE_LENGTH;
+import static com.nukkitx.protocol.bedrock.data.EntityFlag.CHARGED;
 
 /**
  * Author: Adam Matthew [larryTheCoder]
@@ -31,13 +30,8 @@ import static cn.nukkit.entity.data.EntityFlag.CHARGED;
  */
 public class EntityTntMinecart extends EntityAbstractMinecart implements TntMinecart, EntityExplosive {
 
-    public static final int NETWORK_ID = 97;
-    private int fuse;
-    private boolean activated = false;
-
-    public EntityTntMinecart(EntityType<TntMinecart> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
-        super.setDisplayBlock(Block.get(BlockIds.TNT), false);
+    public EntityTntMinecart(EntityType<TntMinecart> type, Location location) {
+        super(type, location);
     }
 
     @Override
@@ -49,17 +43,17 @@ public class EntityTntMinecart extends EntityAbstractMinecart implements TntMine
     public void initEntity() {
         super.initEntity();
 
-        if (namedTag.contains("TNTFuse")) {
-            fuse = namedTag.getByte("TNTFuse");
-        } else {
-            fuse = 80;
-        }
-        this.setFlag(CHARGED, false);
+        this.setDisplayBlock(Block.get(BlockIds.TNT));
+        this.setDisplay(true);
+        this.data.setInt(FUSE_LENGTH, 80);
+        this.data.setFlag(CHARGED, false);
     }
 
     @Override
     public boolean onUpdate(int currentTick) {
         this.timing.startTiming();
+
+        int fuse = this.data.getInt(FUSE_LENGTH);
 
         if (fuse < 80) {
             int tickDiff = currentTick - lastUpdate;
@@ -67,13 +61,13 @@ public class EntityTntMinecart extends EntityAbstractMinecart implements TntMine
             lastUpdate = currentTick;
 
             if (fuse % 5 == 0) {
-                setIntData(FUSE_LENGTH, fuse);
+                data.setInt(FUSE_LENGTH, fuse);
             }
 
             fuse -= tickDiff;
 
             if (isAlive() && fuse <= 0) {
-                if (this.level.getGameRules().get(GameRules.TNT_EXPLODES)) {
+                if (this.getLevel().getGameRules().get(GameRules.TNT_EXPLODES)) {
                     this.explode(ThreadLocalRandom.current().nextInt(5));
                 }
                 this.close();
@@ -88,8 +82,8 @@ public class EntityTntMinecart extends EntityAbstractMinecart implements TntMine
 
     @Override
     public void activate(int x, int y, int z, boolean flag) {
-        level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_IGNITE);
-        this.fuse = 79;
+        this.getLevel().addLevelSoundEvent(this.getPosition(), SoundEvent.IGNITE);
+        this.data.setInt(FUSE_LENGTH, 79);
     }
 
     @Override
@@ -109,7 +103,7 @@ public class EntityTntMinecart extends EntityAbstractMinecart implements TntMine
         if (event.isCancelled()) {
             return;
         }
-        Explosion explosion = new Explosion(this, event.getForce(), this);
+        Explosion explosion = new Explosion(this.getLevel(), this.getPosition(), event.getForce(), this);
         if (event.isBlockBreaking()) {
             explosion.explodeA();
         }
@@ -119,7 +113,7 @@ public class EntityTntMinecart extends EntityAbstractMinecart implements TntMine
 
     @Override
     public void dropItem() {
-        level.dropItem(this, Item.get(ItemIds.TNT_MINECART));
+        this.getLevel().dropItem(this.getPosition(), Item.get(ItemIds.TNT_MINECART));
     }
 
     @Override
@@ -128,18 +122,11 @@ public class EntityTntMinecart extends EntityAbstractMinecart implements TntMine
     }
 
     @Override
-    public void saveNBT() {
-        super.saveNBT();
-
-        super.namedTag.putInt("TNTFuse", this.fuse);
-    }
-
-    @Override
     public boolean onInteract(Player player, Item item, Vector3f clickedPos) {
         boolean interact = super.onInteract(player, item, clickedPos);
         if (item.getId() == ItemIds.FLINT_AND_STEEL || item.getId() == ItemIds.FIREBALL) {
-            level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_IGNITE);
-            this.fuse = 79;
+            this.getLevel().addLevelSoundEvent(this.getPosition(), SoundEvent.IGNITE);
+            this.data.setInt(FUSE_LENGTH, 79);
             return true;
         }
 

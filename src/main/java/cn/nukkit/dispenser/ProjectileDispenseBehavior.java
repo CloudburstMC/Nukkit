@@ -1,15 +1,14 @@
 package cn.nukkit.dispenser;
 
 import cn.nukkit.block.BlockDispenser;
-import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.Projectile;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.Position;
+import cn.nukkit.level.Location;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.registry.EntityRegistry;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.nbt.tag.CompoundTag;
 
 /**
  * @author CreeperFace
@@ -28,18 +27,16 @@ public class ProjectileDispenseBehavior implements DispenseBehavior {
 
     @Override
     public void dispense(BlockDispenser source, Item item) {
-        Position dispensePos = Position.fromObject(source.getDispensePosition(), source.getLevel());
-        CompoundTag nbt = Entity.getDefaultNBT(dispensePos);
-        this.correctNBT(nbt);
+        Location dispensePos = Location.from(source.getDispensePosition(), source.getLevel());
 
         BlockFace face = source.getFacing();
 
-        Projectile projectile = EntityRegistry.get().newEntity(entityType, dispensePos.getLevel().getChunk(dispensePos.getFloorX(), dispensePos.getFloorZ()), nbt);
+        Projectile projectile = EntityRegistry.get().newEntity(entityType, dispensePos);
         if (projectile == null) {
             return;
         }
 
-        projectile.setMotion(new Vector3f(face.getXOffset(), face.getYOffset() + 0.1f, face.getZOffset()).multiply(6));
+        projectile.setMotion(Vector3f.from(face.getXOffset(), face.getYOffset() + 0.1f, face.getZOffset()).mul(6));
         projectile.spawnToAll();
     }
 

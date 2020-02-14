@@ -16,10 +16,10 @@ public class DefaultGamemodeCommand extends VanillaCommand {
         super(name, "%nukkit.command.defaultgamemode.description", "%commands.defaultgamemode.usage");
         this.setPermission("nukkit.command.defaultgamemode");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("mode", CommandParamType.INT, false)
         });
-        this.commandParameters.put("byString", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("mode", new String[]{"survival", "creative", "s", "c",
                         "adventure", "a", "spectator", "view", "v"})
         });

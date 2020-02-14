@@ -1,16 +1,18 @@
 package cn.nukkit.entity;
 
+import com.nukkitx.protocol.bedrock.data.EntityLink;
+
 public enum MountMode {
-    RIDER(1),
-    PASSENGER(2);
+    RIDER(EntityLink.Type.RIDER),
+    PASSENGER(EntityLink.Type.PASSENGER);
 
-    private final byte id;
+    private final EntityLink.Type type;
 
-    MountMode(int id) {
-        this.id = (byte) id;
+    MountMode(EntityLink.Type type) {
+        this.type = type;
     }
 
-    public byte getId() {
-        return id;
+    public EntityLink.Type getType() {
+        return type;
     }
 }

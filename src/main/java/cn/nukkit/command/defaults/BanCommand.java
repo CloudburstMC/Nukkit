@@ -18,7 +18,7 @@ public class BanCommand extends VanillaCommand {
         super(name, "%nukkit.command.ban.player.description", "%commands.ban.usage");
         this.setPermission("nukkit.command.ban.player");
         this.commandParameters.clear();
-        this.commandParameters.put("default",
+        this.commandParameters.add(
                 new CommandParameter[]{
                         new CommandParameter("player", CommandParamType.TARGET, false),
                         new CommandParameter("reason", CommandParamType.STRING, true)

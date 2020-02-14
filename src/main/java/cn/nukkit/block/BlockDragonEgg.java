@@ -1,9 +1,10 @@
 package cn.nukkit.block;
 
 import cn.nukkit.level.Level;
-import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.protocol.bedrock.data.LevelEventType;
+import com.nukkitx.protocol.bedrock.packet.LevelEventPacket;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -16,12 +17,12 @@ public class BlockDragonEgg extends BlockFallable {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 3;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 45;
     }
 
@@ -49,21 +50,22 @@ public class BlockDragonEgg extends BlockFallable {
     }
 
     public void teleport() {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
         for (int i = 0; i < 1000; ++i) {
-            Block t = this.getLevel().getBlock(this.add(ThreadLocalRandom.current().nextInt(-16, 16), ThreadLocalRandom.current().nextInt(-16, 16), ThreadLocalRandom.current().nextInt(-16, 16)));
+            Block t = this.getLevel().getBlock(this.getPosition().add(random.nextInt(-16, 16),
+                    random.nextInt(-16, 16), random.nextInt(-16, 16)));
             if (t.getId() == AIR) {
                 int diffX = this.getX() - t.getX();
                 int diffY = this.getY() - t.getY();
                 int diffZ = this.getZ() - t.getZ();
                 LevelEventPacket pk = new LevelEventPacket();
-                pk.evid = LevelEventPacket.EVENT_PARTICLE_DRAGON_EGG_TELEPORT;
-                pk.data = (((((Math.abs(diffX) << 16) | (Math.abs(diffY) << 8)) | Math.abs(diffZ)) | ((diffX < 0 ? 1 : 0) << 24)) | ((diffY < 0 ? 1 : 0) << 25)) | ((diffZ < 0 ? 1 : 0) << 26);
-                pk.x = this.getX();
-                pk.y = this.getY();
-                pk.z = this.getZ();
-                this.getLevel().addChunkPacket(this.getChunkX(), this.getChunkZ(), pk);
-                this.getLevel().setBlock(this, get(AIR), true);
-                this.getLevel().setBlock(t, this, true);
+                pk.setType(LevelEventType.DRAGON_EGG_TELEPORT);
+                pk.setData((((((Math.abs(diffX) << 16) | (Math.abs(diffY) << 8)) | Math.abs(diffZ)) |
+                        ((diffX < 0 ? 1 : 0) << 24)) | ((diffY < 0 ? 1 : 0) << 25)) | ((diffZ < 0 ? 1 : 0) << 26));
+                pk.setPosition(this.getPosition().toFloat().add(0.5, 0.5, 0.5));
+                this.getLevel().addChunkPacket(this.getPosition(), pk);
+                this.getLevel().setBlock(this.getPosition(), get(AIR), true);
+                this.getLevel().setBlock(t.getPosition(), this, true);
                 return;
             }
         }

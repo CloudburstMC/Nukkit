@@ -33,7 +33,7 @@ public class BlockIcePacked extends BlockIce {
     
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, Block.get(AIR), true); //no water
+        this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true); //no water
         return true;
     }
 

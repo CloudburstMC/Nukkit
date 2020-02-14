@@ -1,7 +1,7 @@
 package cn.nukkit.level.chunk;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.impl.BaseBlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
 import cn.nukkit.player.Player;
@@ -150,11 +150,11 @@ public interface IChunk {
 
     void removeEntity(Entity entity);
 
-    void addBlockEntity(BlockEntity blockEntity);
+    void addBlockEntity(BaseBlockEntity blockEntity);
 
-    void removeBlockEntity(BlockEntity blockEntity);
+    void removeBlockEntity(BaseBlockEntity blockEntity);
 
-    BlockEntity getBlockEntity(int x, int y, int z);
+    BaseBlockEntity getBlockEntity(int x, int y, int z);
 
     /**
      * Get the chunk's X coordinate in the level it was loaded.
@@ -216,7 +216,7 @@ public interface IChunk {
      * @return block entity collection
      */
     @Nonnull
-    Collection<BlockEntity> getBlockEntities();
+    Collection<BaseBlockEntity> getBlockEntities();
 
     boolean isGenerated();
 

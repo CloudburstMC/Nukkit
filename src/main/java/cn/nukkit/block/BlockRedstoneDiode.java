@@ -4,12 +4,12 @@ import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.math.Vector3i;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.math.vector.Vector3i;
 
 import static cn.nukkit.block.BlockIds.*;
 
@@ -26,11 +26,11 @@ public abstract class BlockRedstoneDiode extends FloodableBlock implements Facea
 
     @Override
     public boolean onBreak(Item item) {
-        Vector3i pos = asVector3i();
-        this.level.setBlock(this, Block.get(AIR), true, true);
+        Vector3i pos = this.getPosition();
+        this.level.setBlock(pos, Block.get(AIR), true, true);
 
         for (BlockFace face : BlockFace.values()) {
-            this.level.updateAroundRedstone(pos.getSide(face), null);
+            this.level.updateAroundRedstone(face.getOffset(pos), null);
         }
         return true;
     }
@@ -42,7 +42,7 @@ public abstract class BlockRedstoneDiode extends FloodableBlock implements Facea
         }
 
         this.setDamage(player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0);
-        this.level.setBlock(block, this, true, true);
+        this.level.setBlock(block.getPosition(), this, true, true);
 
         if (shouldBePowered()) {
             this.level.scheduleUpdate(this, 1);
@@ -54,20 +54,20 @@ public abstract class BlockRedstoneDiode extends FloodableBlock implements Facea
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_SCHEDULED) {
             if (!this.isLocked()) {
-                Vector3i pos = asVector3i();
+                Vector3i pos = this.getPosition();
                 boolean shouldBePowered = this.shouldBePowered();
 
                 if (this.isPowered && !shouldBePowered) {
                     this.level.setBlock(pos, this.getUnpowered(), true, true);
 
-                    this.level.updateAroundRedstone(this.asVector3i().getSide(getFacing().getOpposite()), null);
+                    this.level.updateAroundRedstone(this.getFacing().getOpposite().getOffset(pos), null);
                 } else if (!this.isPowered) {
                     this.level.setBlock(pos, this.getPowered(), true, true);
-                    this.level.updateAroundRedstone(this.asVector3i().getSide(getFacing().getOpposite()), null);
+                    this.level.updateAroundRedstone(this.getFacing().getOpposite().getOffset(pos), null);
 
                     if (!shouldBePowered) {
 //                        System.out.println("schedule update 2");
-                        level.scheduleUpdate(getPowered(), this, this.getDelay());
+                        level.scheduleUpdate(getPowered(), pos, this.getDelay());
                     }
                 }
             }
@@ -79,7 +79,7 @@ public abstract class BlockRedstoneDiode extends FloodableBlock implements Facea
                 return 0;
             }
             if (type == Level.BLOCK_UPDATE_NORMAL && this.getSide(BlockFace.DOWN).isTransparent()) {
-                this.level.useBreakOn(this);
+                this.level.useBreakOn(this.getPosition());
                 return Level.BLOCK_UPDATE_NORMAL;
             } else {
                 this.updateState();
@@ -93,7 +93,8 @@ public abstract class BlockRedstoneDiode extends FloodableBlock implements Facea
         if (!this.isLocked()) {
             boolean shouldPowered = this.shouldBePowered();
 
-            if ((this.isPowered && !shouldPowered || !this.isPowered && shouldPowered) && !this.level.isBlockTickPending(this, this)) {
+            if ((this.isPowered && !shouldPowered || !this.isPowered && shouldPowered) &&
+                    !this.level.isBlockTickPending(this.getPosition(), this)) {
                 /*int priority = -1;
 
                 if (this.isFacingTowardsRepeater()) {
@@ -102,7 +103,7 @@ public abstract class BlockRedstoneDiode extends FloodableBlock implements Facea
                     priority = -2;
                 }*/
 
-                this.level.scheduleUpdate(this, this, this.getDelay());
+                this.level.scheduleUpdate(this, this.getPosition(), this.getDelay());
             }
         }
     }
@@ -113,29 +114,29 @@ public abstract class BlockRedstoneDiode extends FloodableBlock implements Facea
 
     protected int calculateInputStrength() {
         BlockFace face = getFacing();
-        Vector3i pos = this.asVector3i().getSide(face);
+        Vector3i pos = face.getOffset(this.getPosition());
         int power = this.level.getRedstonePower(pos, face);
 
         if (power >= 15) {
             return power;
         } else {
             Block block = this.level.getBlock(pos);
-            return Math.max(power, block.getId() == REDSTONE_WIRE ? block.getDamage() : 0);
+            return Math.max(power, block.getId() == REDSTONE_WIRE ? block.getMeta() : 0);
         }
     }
 
     protected int getPowerOnSides() {
-        Vector3i pos = asVector3i();
+        Vector3i pos = this.getPosition();
 
         BlockFace face = getFacing();
         BlockFace face1 = face.rotateY();
         BlockFace face2 = face.rotateYCCW();
-        return Math.max(this.getPowerOnSide(pos.getSide(face1), face1), this.getPowerOnSide(pos.getSide(face2), face2));
+        return Math.max(this.getPowerOnSide(face1.getOffset(pos), face1), this.getPowerOnSide(face2.getOffset(pos), face2));
     }
 
     protected int getPowerOnSide(Vector3i pos, BlockFace side) {
         Block block = this.level.getBlock(pos);
-        return isAlternateInput(block) ? (block.getId() == REDSTONE_BLOCK ? 15 : (block.getId() == REDSTONE_WIRE ? block.getDamage() : this.level.getStrongPower(pos, side))) : 0;
+        return isAlternateInput(block) ? (block.getId() == REDSTONE_BLOCK ? 15 : (block.getId() == REDSTONE_WIRE ? block.getMeta() : this.level.getStrongPower(pos, side))) : 0;
     }
 
     @Override
@@ -156,8 +157,8 @@ public abstract class BlockRedstoneDiode extends FloodableBlock implements Facea
     protected abstract Block getPowered();
 
     @Override
-    public double getMaxY() {
-        return this.y + 0.125;
+    public float getMaxY() {
+        return this.getY() + 0.125f;
     }
 
     @Override
@@ -202,7 +203,7 @@ public abstract class BlockRedstoneDiode extends FloodableBlock implements Facea
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
     }
 
     @Override

@@ -8,8 +8,8 @@ import cn.nukkit.level.generator.object.ore.OreType;
 import cn.nukkit.level.generator.populator.impl.PopulatorOre;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.BedrockRandom;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.registry.BlockRegistry;
+import com.nukkitx.math.vector.Vector3i;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
@@ -149,7 +149,7 @@ public class FlatGenerator implements Generator {
     }
 
     @Override
-    public Vector3f getSpawn() {
-        return new Vector3f(128, this.floorLevel, 128);
+    public Vector3i getSpawn() {
+        return Vector3i.from(128, this.floorLevel, 128);
     }
 }

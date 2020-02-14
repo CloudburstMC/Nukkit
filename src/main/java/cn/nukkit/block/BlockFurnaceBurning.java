@@ -1,21 +1,17 @@
 package cn.nukkit.block;
 
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityFurnace;
+import cn.nukkit.blockentity.BlockEntityTypes;
+import cn.nukkit.blockentity.Furnace;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.nbt.tag.StringTag;
-import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
-
-import java.util.Map;
+import com.nukkitx.math.vector.Vector3f;
 
 import static cn.nukkit.block.BlockIds.AIR;
 import static cn.nukkit.block.BlockIds.FURNACE;
@@ -36,13 +32,13 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
     }
 
     @Override
-    public double getHardness() {
-        return 3.5;
+    public float getHardness() {
+        return 3.5f;
     }
 
     @Override
-    public double getResistance() {
-        return 17.5;
+    public float getResistance() {
+        return 17.5f;
     }
 
     @Override
@@ -59,59 +55,32 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         int[] faces = {2, 5, 3, 4};
         this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
-        this.getLevel().setBlock(block, this, true, true);
-        CompoundTag nbt = new CompoundTag()
-                .putList(new ListTag<>("Items"))
-                .putString("id", BlockEntity.FURNACE)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z);
+        this.getLevel().setBlock(block.getPosition(), this, true, true);
 
+        Furnace furnace = BlockEntityRegistry.get().newEntity(BlockEntityTypes.FURNACE, this.getChunk(), this.getPosition());
+        furnace.loadAdditionalData(item.getTag());
         if (item.hasCustomName()) {
-            nbt.putString("CustomName", item.getCustomName());
+            furnace.setCustomName(item.getCustomName());
         }
 
-        if (item.hasCustomBlockData()) {
-            Map<String, Tag> customData = item.getCustomBlockData().getTags();
-            for (Map.Entry<String, Tag> tag : customData.entrySet()) {
-                nbt.put(tag.getKey(), tag.getValue());
-            }
-        }
-
-        BlockEntityFurnace furnace = (BlockEntityFurnace) BlockEntity.createBlockEntity(BlockEntity.FURNACE, this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
-        return furnace != null;
+        return true;
     }
 
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, Block.get(AIR), true, true);
+        this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true, true);
         return true;
     }
 
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            BlockEntity t = this.getLevel().getBlockEntity(this);
-            BlockEntityFurnace furnace;
-            if (t instanceof BlockEntityFurnace) {
-                furnace = (BlockEntityFurnace) t;
+            BlockEntity blockEntity = this.getLevel().getBlockEntity(this.getPosition());
+            Furnace furnace;
+            if (blockEntity instanceof Furnace) {
+                furnace = (Furnace) blockEntity;
             } else {
-                CompoundTag nbt = new CompoundTag()
-                        .putList(new ListTag<>("Items"))
-                        .putString("id", BlockEntity.FURNACE)
-                        .putInt("x", (int) this.x)
-                        .putInt("y", (int) this.y)
-                        .putInt("z", (int) this.z);
-                furnace = (BlockEntityFurnace) BlockEntity.createBlockEntity(BlockEntity.FURNACE, this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
-                if (furnace == null) {
-                    return false;
-                }
-            }
-
-            if (furnace.namedTag.contains("Lock") && furnace.namedTag.get("Lock") instanceof StringTag) {
-                if (!furnace.namedTag.getString("Lock").equals(item.getCustomName())) {
-                    return true;
-                }
+                furnace = BlockEntityRegistry.get().newEntity(BlockEntityTypes.FURNACE, this.getChunk(), this.getPosition());
             }
 
             player.addWindow(furnace.getInventory());
@@ -142,10 +111,10 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
 
     @Override
     public int getComparatorInputOverride() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntity blockEntity = this.level.getBlockEntity(this.getPosition());
 
-        if (blockEntity instanceof BlockEntityFurnace) {
-            return ContainerInventory.calculateRedstone(((BlockEntityFurnace) blockEntity).getInventory());
+        if (blockEntity instanceof Furnace) {
+            return ContainerInventory.calculateRedstone(((Furnace) blockEntity).getInventory());
         }
 
         return super.getComparatorInputOverride();
@@ -158,6 +127,6 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x7);
     }
 }

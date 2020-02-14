@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
-import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityCampfire;
+import cn.nukkit.blockentity.Campfire;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.impl.EntityLiving;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
@@ -12,11 +11,13 @@ import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+
+import static cn.nukkit.blockentity.BlockEntityTypes.CAMPFIRE;
 
 /**
  * @author Sleepybear
@@ -31,13 +32,13 @@ public class BlockCampfire extends BlockSolid implements Faceable {
     }
 
     @Override
-    public double getHardness() {
-        return 2.0;
+    public float getHardness() {
+        return 2.0f;
     }
 
     @Override
-    public double getResistance() {
-        return 10.0;
+    public float getResistance() {
+        return 10.0f;
     }
 
     @Override
@@ -47,31 +48,26 @@ public class BlockCampfire extends BlockSolid implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & CAMPFIRE_FACING_MASK);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & CAMPFIRE_FACING_MASK);
     }
 
     public boolean isLit() {
-        return (this.getDamage() & CAMPFIRE_LIT_MASK) == 0;
+        return (this.getMeta() & CAMPFIRE_LIT_MASK) == 0;
     }
 
     public void toggleFire() {
-        this.setDamage(this.getDamage() ^ CAMPFIRE_LIT_MASK);
-        getLevel().setBlockDataAt(this.x, this.y, this.z, this.getDamage());
-        getLevel().getBlockEntity(this).scheduleUpdate();
+        this.setDamage(this.getMeta() ^ CAMPFIRE_LIT_MASK);
+        getLevel().setBlockDataAt(this.getX(), this.getY(), this.getZ(), this.getMeta());
+        getLevel().getBlockEntity(this.getPosition()).scheduleUpdate();
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (!block.canBeReplaced()) return false;
         this.setDamage(player.getHorizontalFacing().getOpposite().getHorizontalIndex() & CAMPFIRE_FACING_MASK);
-        if (getLevel().setBlock(block, this, true, true)) {
-            CompoundTag tag = new CompoundTag()
-                    .putString("id", BlockEntity.CAMPFIRE)
-                    .putInt("x", block.x)
-                    .putInt("y", block.y)
-                    .putInt("z", block.z);
-            BlockEntity campfire = BlockEntity.createBlockEntity(BlockEntity.CAMPFIRE, this.getChunk(), tag);
-            return campfire != null;
+        if (getLevel().setBlock(block.getPosition(), this, true, true)) {
+            BlockEntityRegistry.get().newEntity(CAMPFIRE, this.getChunk(), this.getPosition());
+            return true;
         }
         return false;
     }
@@ -115,7 +111,7 @@ public class BlockCampfire extends BlockSolid implements Faceable {
             return true;
         } else if (item instanceof ItemEdible) {
             if (getLevel().getServer().getCraftingManager().matchFurnaceRecipe(item) != null) {
-                BlockEntityCampfire fire = (BlockEntityCampfire) getLevel().getBlockEntity(this);
+                Campfire fire = (Campfire) getLevel().getBlockEntity(this.getPosition());
                 if (fire.putItemInFire(item)) {
                     if (player != null && player.isSurvival()) {
                         item.decrementCount();

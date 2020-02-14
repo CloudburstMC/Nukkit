@@ -5,11 +5,11 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import static cn.nukkit.block.BlockIds.LADDER;
 
@@ -39,25 +39,25 @@ public class BlockLadder extends BlockTransparent implements Faceable {
         return false;
     }
 
+    private float offMinX;
+    private float offMinZ;
+    private float offMaxX;
+    private float offMaxZ;
+
     @Override
-    public double getHardness() {
-        return 0.4;
+    public float getHardness() {
+        return 0.4f;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 2;
     }
 
-    private double offMinX;
-    private double offMinZ;
-    private double offMaxX;
-    private double offMaxZ;
-
     private void calculateOffsets() {
-        double f = 0.1875;
+        float f = 0.1875f;
 
-        switch (this.getDamage()) {
+        switch (this.getMeta()) {
             case 2:
                 this.offMinX = 0;
                 this.offMinZ = 1 - f;
@@ -98,23 +98,23 @@ public class BlockLadder extends BlockTransparent implements Faceable {
     }
 
     @Override
-    public double getMinX() {
-        return this.x + offMinX;
+    public float getMinX() {
+        return this.getX() + offMinX;
     }
 
     @Override
-    public double getMinZ() {
-        return this.z + offMinZ;
+    public float getMinZ() {
+        return this.getZ() + offMinZ;
     }
 
     @Override
-    public double getMaxX() {
-        return this.x + offMaxX;
+    public float getMaxX() {
+        return this.getX() + offMaxX;
     }
 
     @Override
-    public double getMaxZ() {
-        return this.z + offMaxZ;
+    public float getMaxZ() {
+        return this.getZ() + offMaxZ;
     }
 
     @Override
@@ -127,7 +127,7 @@ public class BlockLadder extends BlockTransparent implements Faceable {
         if (!target.isTransparent()) {
             if (face.getIndex() >= 2 && face.getIndex() <= 5) {
                 this.setDamage(face.getIndex());
-                this.getLevel().setBlock(block, this, true, true);
+                this.getLevel().setBlock(block.getPosition(), this, true, true);
                 return true;
             }
         }
@@ -145,8 +145,8 @@ public class BlockLadder extends BlockTransparent implements Faceable {
                     5,
                     4
             };
-            if (!this.getSide(BlockFace.fromIndex(faces[this.getDamage()])).isSolid()) {
-                this.getLevel().useBreakOn(this);
+            if (!this.getSide(BlockFace.fromIndex(faces[this.getMeta()])).isSolid()) {
+                this.getLevel().useBreakOn(this.getPosition());
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         }
@@ -172,6 +172,6 @@ public class BlockLadder extends BlockTransparent implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
     }
 }

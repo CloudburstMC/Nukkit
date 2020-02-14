@@ -1,12 +1,12 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.blockentity.BlockEntityChest;
+import cn.nukkit.blockentity.impl.ChestBlockEntity;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.network.protocol.BlockEventPacket;
-import cn.nukkit.network.protocol.InventorySlotPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
+import com.nukkitx.protocol.bedrock.packet.BlockEventPacket;
+import com.nukkitx.protocol.bedrock.packet.InventorySlotPacket;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
     private final ChestInventory left;
     private final ChestInventory right;
 
-    public DoubleChestInventory(BlockEntityChest left, BlockEntityChest right) {
+    public DoubleChestInventory(ChestBlockEntity left, ChestBlockEntity right) {
         super(null, InventoryType.DOUBLE_CHEST);
         this.holder = this;
 
@@ -53,7 +53,7 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
     }
 
     @Override
-    public BlockEntityChest getHolder() {
+    public ChestBlockEntity getHolder() {
         return this.left.getHolder();
     }
 
@@ -115,29 +115,14 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
         this.right.viewers.add(who);
 
         if (this.getViewers().size() == 1) {
-            BlockEventPacket pk1 = new BlockEventPacket();
-            pk1.x = (int) this.left.getHolder().getX();
-            pk1.y = (int) this.left.getHolder().getY();
-            pk1.z = (int) this.left.getHolder().getZ();
-            pk1.case1 = 1;
-            pk1.case2 = 2;
+            BlockEventPacket packet = new BlockEventPacket();
+            packet.setBlockPosition(this.left.getHolder().getPosition());
+            packet.setEventType(1);
+            packet.setEventData(2);
             Level level = this.left.getHolder().getLevel();
             if (level != null) {
-                level.addLevelSoundEvent(this.left.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_CHEST_OPEN);
-                level.addChunkPacket(left.getHolder().getChunkX(), left.getHolder().getChunkZ(), pk1);
-            }
-
-            BlockEventPacket pk2 = new BlockEventPacket();
-            pk2.x = (int) this.right.getHolder().getX();
-            pk2.y = (int) this.right.getHolder().getY();
-            pk2.z = (int) this.right.getHolder().getZ();
-            pk2.case1 = 1;
-            pk2.case2 = 2;
-
-            level = this.right.getHolder().getLevel();
-            if (level != null) {
-                level.addLevelSoundEvent(this.right.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_CHEST_OPEN);
-                level.addChunkPacket(right.getHolder().getChunkX(), right.getHolder().getChunkZ(), pk2);
+                level.addLevelSoundEvent(this.left.getHolder().getPosition(), SoundEvent.CHEST_OPEN);
+                level.addChunkPacket(left.getHolder().getPosition(), packet);
             }
         }
     }
@@ -145,30 +130,15 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
     @Override
     public void onClose(Player who) {
         if (this.getViewers().size() == 1) {
-            BlockEventPacket pk1 = new BlockEventPacket();
-            pk1.x = (int) this.right.getHolder().getX();
-            pk1.y = (int) this.right.getHolder().getY();
-            pk1.z = (int) this.right.getHolder().getZ();
-            pk1.case1 = 1;
-            pk1.case2 = 0;
+            BlockEventPacket packet = new BlockEventPacket();
+            packet.setBlockPosition(this.left.getHolder().getPosition());
+            packet.setEventType(1);
+            packet.setEventData(0);
 
             Level level = this.right.getHolder().getLevel();
             if (level != null) {
-                level.addLevelSoundEvent(this.right.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_CHEST_CLOSED);
-                level.addChunkPacket(right.getHolder().getChunkX(), right.getHolder().getChunkZ(), pk1);
-            }
-
-            BlockEventPacket pk2 = new BlockEventPacket();
-            pk2.x = (int) this.left.getHolder().getX();
-            pk2.y = (int) this.left.getHolder().getY();
-            pk2.z = (int) this.left.getHolder().getZ();
-            pk2.case1 = 1;
-            pk2.case2 = 0;
-
-            level = this.left.getHolder().getLevel();
-            if (level != null) {
-                level.addLevelSoundEvent(this.left.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_CHEST_CLOSED);
-                level.addChunkPacket(left.getHolder().getChunkX(), left.getHolder().getChunkZ(), pk2);
+                level.addLevelSoundEvent(this.right.getHolder().getPosition(), SoundEvent.CHEST_CLOSED);
+                level.addChunkPacket(right.getHolder().getPosition(), packet);
             }
         }
 
@@ -186,9 +156,6 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
     }
 
     public void sendSlot(Inventory inv, int index, Player... players) {
-        InventorySlotPacket pk = new InventorySlotPacket();
-        pk.slot = inv == this.right ? this.left.getSize() + index : index;
-        pk.item = inv.getItem(index).clone();
 
         for (Player player : players) {
             int id = player.getWindowId(this);
@@ -196,8 +163,11 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
                 this.close(player);
                 continue;
             }
-            pk.inventoryId = id;
-            player.dataPacket(pk);
+            InventorySlotPacket packet = new InventorySlotPacket();
+            packet.setSlot(inv == this.right ? this.left.getSize() + index : index);
+            packet.setItem(inv.getItem(index).toNetwork());
+            packet.setContainerId(id);
+            player.sendPacket(packet);
         }
     }
 }

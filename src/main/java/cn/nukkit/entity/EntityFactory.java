@@ -1,10 +1,9 @@
 package cn.nukkit.entity;
 
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 @FunctionalInterface
 public interface EntityFactory<T extends Entity> {
 
-    T create(EntityType<T> type, Chunk chunk, CompoundTag tag);
+    T create(EntityType<T> type, Location location);
 }

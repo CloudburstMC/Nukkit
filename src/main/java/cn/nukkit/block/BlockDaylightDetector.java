@@ -15,8 +15,8 @@ public class BlockDaylightDetector extends BlockTransparent {
     }
 
     @Override
-    public double getHardness() {
-        return 0.2;
+    public float getHardness() {
+        return 0.2f;
     }
 
     @Override

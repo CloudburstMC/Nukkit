@@ -1,9 +1,7 @@
 package cn.nukkit.entity;
 
 import cn.nukkit.Server;
-import cn.nukkit.entity.data.EntityData;
-import cn.nukkit.entity.data.EntityDataMap;
-import cn.nukkit.entity.data.EntityFlag;
+import cn.nukkit.entity.data.SyncedEntityData;
 import cn.nukkit.entity.misc.LightningBolt;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
@@ -11,15 +9,15 @@ import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
-import cn.nukkit.level.Position;
-import cn.nukkit.math.*;
+import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.metadata.Metadatable;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
 import cn.nukkit.potion.Effect;
+import com.nukkitx.math.vector.Vector2f;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.tag.CompoundTag;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nullable;
@@ -47,6 +45,10 @@ public interface Entity extends Metadatable {
 
     float getLength();
 
+    void loadAdditionalData(CompoundTag tag);
+
+    void saveAdditionalData(CompoundTagBuilder tag);
+
     boolean canCollide();
 
     void onEntityCollision(Entity entity);
@@ -55,15 +57,9 @@ public interface Entity extends Metadatable {
 
     float getDrag();
 
-    EntityDataMap getData();
-
-    boolean getFlag(EntityFlag flag);
-
-    void setFlag(EntityFlag flag, boolean value);
-
     boolean hasCustomName();
 
-    String getNameTag();
+    String getCustomName();
 
     void setNameTag(String name);
 
@@ -187,9 +183,9 @@ public interface Entity extends Metadatable {
 
     void setNoDamageTicks(int noDamageTicks);
 
-    double getHighestPosition();
+    float getHighestPosition();
 
-    void setHighestPosition(double highestPosition);
+    void setHighestPosition(float highestPosition);
 
     void resetFallDistance();
 
@@ -201,11 +197,11 @@ public interface Entity extends Metadatable {
 
     boolean onInteract(Player player, Item item, Vector3f clickedPos);
 
-    double getX();
+    float getX();
 
-    double getY();
+    float getY();
 
-    double getZ();
+    float getZ();
 
     Vector3f getPosition();
 
@@ -217,13 +213,13 @@ public interface Entity extends Metadatable {
 
     boolean setMotion(Vector3f motion);
 
-    void setRotation(double yaw, double pitch);
+    void setRotation(float yaw, float pitch);
 
-    boolean setPositionAndRotation(Vector3f pos, double yaw, double pitch);
+    boolean setPositionAndRotation(Vector3f pos, float yaw, float pitch);
 
-    double getPitch();
+    float getPitch();
 
-    double getYaw();
+    float getYaw();
 
     boolean canBeMovedByCurrents();
 
@@ -249,12 +245,6 @@ public interface Entity extends Metadatable {
 
     boolean teleport(Vector3f pos, PlayerTeleportEvent.TeleportCause cause);
 
-    default boolean teleport(Position pos) {
-        return this.teleport(pos, PlayerTeleportEvent.TeleportCause.PLUGIN);
-    }
-
-    boolean teleport(Position pos, PlayerTeleportEvent.TeleportCause cause);
-
     default boolean teleport(Location location) {
         return this.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
@@ -266,82 +256,11 @@ public interface Entity extends Metadatable {
 
     void setOwner(@Nullable Entity entity);
 
-    boolean hasData(EntityData data);
-
-    int getIntData(EntityData data);
-
-    void setIntData(EntityData data, int value);
-
-    short getShortData(EntityData data);
-
-    void setShortData(EntityData data, int value);
-
-    byte getByteData(EntityData data);
-
-    void setByteData(EntityData data, int value);
-
-    boolean getBooleanData(EntityData data);
-
-    void setBooleanData(EntityData data, boolean value);
-
-    long getLongData(EntityData data);
-
-    void setLongData(EntityData data, long value);
-
-    String getStringData(EntityData data);
-
-    void setStringData(EntityData data, String value);
-
-    float getFloatData(EntityData data);
-
-    void setFloatData(EntityData data, float value);
-
-    CompoundTag getTagData(EntityData data);
-
-    void setTagData(EntityData data, CompoundTag value);
-
-    Vector3i getPosData(EntityData data);
-
-    void setPosData(EntityData data, Vector3i value);
-
-    Vector3f getVector3fData(EntityData data);
-
-    void setVector3fData(EntityData data, Vector3f value);
-
-    void saveNBT();
+    SyncedEntityData getData();
 
     CompoundTag getTag();
 
     boolean isClosed();
 
     void close();
-
-    static CompoundTag getDefaultNBT(Vector3f pos) {
-        return getDefaultNBT(pos, null);
-    }
-
-    static CompoundTag getDefaultNBT(Vector3f pos, Vector3f motion) {
-        Location loc = pos instanceof Location ? (Location) pos : null;
-
-        if (loc != null) {
-            return getDefaultNBT(pos, motion, (float) loc.getYaw(), (float) loc.getPitch());
-        }
-
-        return getDefaultNBT(pos, motion, 0, 0);
-    }
-
-    static CompoundTag getDefaultNBT(Vector3f pos, Vector3f motion, float yaw, float pitch) {
-        return new CompoundTag()
-                .putList(new ListTag<DoubleTag>("Pos")
-                        .add(new DoubleTag("", pos.x))
-                        .add(new DoubleTag("", pos.y))
-                        .add(new DoubleTag("", pos.z)))
-                .putList(new ListTag<DoubleTag>("Motion")
-                        .add(new DoubleTag("", motion != null ? motion.x : 0))
-                        .add(new DoubleTag("", motion != null ? motion.y : 0))
-                        .add(new DoubleTag("", motion != null ? motion.z : 0)))
-                .putList(new ListTag<FloatTag>("Rotation")
-                        .add(new FloatTag("", yaw))
-                        .add(new FloatTag("", pitch)));
-    }
 }

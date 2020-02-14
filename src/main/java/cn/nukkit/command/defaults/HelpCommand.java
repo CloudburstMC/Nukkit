@@ -21,7 +21,7 @@ public class HelpCommand extends VanillaCommand {
         super(name, "%nukkit.command.help.description", "%commands.help.usage", new String[]{"?"});
         this.setPermission("nukkit.command.help");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("page", CommandParamType.INT, true)
         });
     }

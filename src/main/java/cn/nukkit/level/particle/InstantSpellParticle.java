@@ -1,7 +1,7 @@
 package cn.nukkit.level.particle;
 
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.utils.BlockColor;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * Created on 2016/1/4 by xtypr.

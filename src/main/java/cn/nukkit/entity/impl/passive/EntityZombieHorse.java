@@ -5,16 +5,15 @@ import cn.nukkit.entity.Smiteable;
 import cn.nukkit.entity.passive.ZombieHorse;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 /**
  * @author PikyCZ
  */
 public class EntityZombieHorse extends Animal implements ZombieHorse, Smiteable {
 
-    public EntityZombieHorse(EntityType<ZombieHorse> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityZombieHorse(EntityType<ZombieHorse> type, Location location) {
+        super(type, location);
     }
 
     @Override

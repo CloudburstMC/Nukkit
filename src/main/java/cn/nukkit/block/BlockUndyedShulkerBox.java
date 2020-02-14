@@ -6,20 +6,19 @@
 package cn.nukkit.block;
 
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityShulkerBox;
-import cn.nukkit.inventory.ShulkerBoxInventory;
+import cn.nukkit.blockentity.ShulkerBox;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.tag.CompoundTag;
 
-import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.blockentity.BlockEntityTypes.SHULKER_BOX;
 
 /**
  * @author Reece Mackie
@@ -31,12 +30,12 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 2;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 10;
     }
 
@@ -52,60 +51,29 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
 
     @Override
     public Item toItem() {
-        Item item = Item.get(id);
 
-        BlockEntityShulkerBox t = (BlockEntityShulkerBox) this.getLevel().getBlockEntity(this);
+        ShulkerBox shulkerBox = (ShulkerBox) this.getLevel().getBlockEntity(this.getPosition());
 
-        if (t != null) {
-            ShulkerBoxInventory i = t.getRealInventory();
-
-            if (!i.isEmpty()) {
-                CompoundTag nbt = item.getNamedTag();
-                if (nbt == null)
-                    nbt = new CompoundTag("");
-
-                ListTag<CompoundTag> items = new ListTag<>();
-
-                for (int it = 0; it < i.getSize(); it++) {
-                    if (i.getItem(it).getId() != AIR) {
-                        CompoundTag d = NBTIO.putItemHelper(i.getItem(it), it);
-                        items.add(d);
-                    }
-                }
-
-                nbt.put("Items", items);
-
-                item.setCompoundTag(nbt);
-            }
-
-            if (t.hasName()) {
-                item.setCustomName(t.getName());
-            }
+        CompoundTag tag = CompoundTag.EMPTY;
+        if (shulkerBox != null) {
+            CompoundTagBuilder tagBuilder = CompoundTag.builder();
+            shulkerBox.saveAdditionalData(tagBuilder);
+            tag = tagBuilder.buildRootTag();
         }
 
-        return item;
+        return Item.get(this.id, 0, 1, tag);
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        this.getLevel().setBlock(block, this, true);
-        CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.SHULKER_BOX)
-                .putByte("facing", face.getIndex());
+        this.getLevel().setBlock(block.getPosition(), this, true);
 
+        ShulkerBox shulkerBox = BlockEntityRegistry.get().newEntity(SHULKER_BOX, this.getChunk(), this.getPosition());
+        shulkerBox.loadAdditionalData(item.getTag());
         if (item.hasCustomName()) {
-            nbt.putString("CustomName", item.getCustomName());
+            shulkerBox.setCustomName(item.getCustomName());
         }
-
-        CompoundTag t = item.getNamedTag();
-
-        if (t != null) {
-            if (t.contains("Items")) {
-                nbt.putList(t.getList("Items"));
-            }
-        }
-
-        BlockEntityShulkerBox box = (BlockEntityShulkerBox) BlockEntity.createBlockEntity(BlockEntity.SHULKER_BOX, this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
-        return box != null;
+        return true;
     }
 
     @Override
@@ -116,21 +84,13 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            BlockEntity t = this.getLevel().getBlockEntity(this);
-            BlockEntityShulkerBox box;
-            if (t instanceof BlockEntityShulkerBox) {
-                box = (BlockEntityShulkerBox) t;
+            BlockEntity t = this.getLevel().getBlockEntity(this.getPosition());
+            ShulkerBox box;
+            if (t instanceof ShulkerBox) {
+                box = (ShulkerBox) t;
             } else {
-                CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.SHULKER_BOX);
-                box = (BlockEntityShulkerBox) BlockEntity.createBlockEntity(BlockEntity.SHULKER_BOX, this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
-                if (box == null) {
-                    return false;
-                }
-            }
 
-            Block block = this.getSide(BlockFace.fromIndex(box.namedTag.getByte("facing")));
-            if (!(block instanceof BlockAir) && !(block instanceof BlockLiquid) && !(block instanceof FloodableBlock)) {
-                return true;
+                box = BlockEntityRegistry.get().newEntity(SHULKER_BOX, this.getChunk(), this.getPosition());
             }
 
             player.addWindow(box.getInventory());

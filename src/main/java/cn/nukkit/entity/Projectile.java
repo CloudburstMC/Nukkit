@@ -20,4 +20,8 @@ public interface Projectile extends Entity {
     default void setCritical() {
         setCritical(true);
     }
+
+    float getDamage();
+
+    void setDamage(float damage);
 }

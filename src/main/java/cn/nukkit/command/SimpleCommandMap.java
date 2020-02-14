@@ -139,13 +139,13 @@ public class SimpleCommandMap implements CommandMap {
 
                 CommandParameters commandParameters = method.getAnnotation(CommandParameters.class);
                 if (commandParameters != null) {
-                    Map<String, CommandParameter[]> map = Arrays.stream(commandParameters.parameters())
+                    Collection<CommandParameter[]> map = Arrays.stream(commandParameters.parameters())
                             .collect(Collectors.toMap(Parameters::name, parameters -> Arrays.stream(parameters.parameters())
                                     .map(parameter -> new CommandParameter(parameter.name(), parameter.type(), parameter.optional()))
                                     .distinct()
-                                    .toArray(CommandParameter[]::new)));
+                                    .toArray(CommandParameter[]::new))).values();
 
-                    sc.commandParameters.putAll(map);
+                    sc.commandParameters.addAll(map);
                 }
 
                 this.register(def.name(), sc);

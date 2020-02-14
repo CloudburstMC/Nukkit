@@ -27,12 +27,12 @@ public class BlockWall extends BlockTransparent {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 2;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 30;
     }
 
@@ -44,26 +44,26 @@ public class BlockWall extends BlockTransparent {
         boolean west = this.canConnect(this.getSide(BlockFace.WEST));
         boolean east = this.canConnect(this.getSide(BlockFace.EAST));
 
-        double n = north ? 0 : 0.25;
-        double s = south ? 1 : 0.75;
-        double w = west ? 0 : 0.25;
-        double e = east ? 1 : 0.75;
+        float n = north ? 0 : 0.25f;
+        float s = south ? 1 : 0.75f;
+        float w = west ? 0 : 0.25f;
+        float e = east ? 1 : 0.75f;
 
         if (north && south && !west && !east) {
-            w = 0.3125;
-            e = 0.6875;
+            w = 0.3125f;
+            e = 0.6875f;
         } else if (!north && !south && west && east) {
-            n = 0.3125;
-            s = 0.6875;
+            n = 0.3125f;
+            s = 0.6875f;
         }
 
         return new SimpleAxisAlignedBB(
-                this.x + w,
-                this.y,
-                this.z + n,
-                this.x + e,
-                this.y + 1.5,
-                this.z + s
+                this.getX() + w,
+                this.getY(),
+                this.getZ() + n,
+                this.getX() + e,
+                this.getY() + 1.5f,
+                this.getZ() + s
         );
     }
 

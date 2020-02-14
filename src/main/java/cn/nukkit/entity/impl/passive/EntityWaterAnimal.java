@@ -3,22 +3,21 @@ package cn.nukkit.entity.impl.passive;
 import cn.nukkit.entity.EntityAgeable;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.impl.EntityCreature;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
-import static cn.nukkit.entity.data.EntityFlag.BABY;
+import static com.nukkitx.protocol.bedrock.data.EntityFlag.BABY;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public abstract class EntityWaterAnimal extends EntityCreature implements EntityAgeable {
-    public EntityWaterAnimal(EntityType<?> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityWaterAnimal(EntityType<?> type, Location location) {
+        super(type, location);
     }
 
     @Override
     public boolean isBaby() {
-        return this.getFlag(BABY);
+        return this.data.getFlag(BABY);
     }
 }

@@ -24,11 +24,11 @@ public class GamemodeCommand extends VanillaCommand {
                 "nukkit.command.gamemode.spectator;" +
                 "nukkit.command.gamemode.other");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("mode", CommandParamType.INT, false),
                 new CommandParameter("player", CommandParamType.TARGET, true)
         });
-        this.commandParameters.put("byString", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("mode", new String[]{"survival", "s", "creative", "c",
                         "adventure", "a", "spectator", "spc", "view", "v"}),
                 new CommandParameter("player", CommandParamType.TARGET, true)

@@ -17,7 +17,7 @@ public class BanListCommand extends VanillaCommand {
         super(name, "%nukkit.command.banlist.description", "%commands.banlist.usage");
         this.setPermission("nukkit.command.ban.list");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("ips|players", true)
         });
     }

@@ -6,8 +6,8 @@ import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.object.tree.ObjectSwampTree;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.BedrockRandom;
-import cn.nukkit.math.Vector3i;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3i;
 
 import static cn.nukkit.block.BlockIds.*;
 
@@ -36,7 +36,6 @@ public class SwampTreePopulator extends Populator {
     @Override
     public void populate(ChunkManager level, int chunkX, int chunkZ, BedrockRandom random, IChunk chunk) {
         int amount = random.nextInt(this.randomAmount + 1) + this.baseAmount;
-        Vector3i v = new Vector3i();
 
         for (int i = 0; i < amount; ++i) {
             int x = random.nextInt(chunkX << 4, (chunkX << 4) + 15);
@@ -45,14 +44,14 @@ public class SwampTreePopulator extends Populator {
             if (y == -1) {
                 continue;
             }
-            new ObjectSwampTree().generate(level, random, v.setComponents(x, y, z));
+            new ObjectSwampTree().generate(level, random, Vector3i.from(x, y, z));
         }
     }
 
     private int getHighestWorkableBlock(ChunkManager level, int x, int z) {
         int y;
         for (y = 127; y > 0; --y) {
-            Identifier b = level.getBlockIdAt(x, y, z);
+            Identifier b = level.getBlockId(x, y, z);
             if (b == DIRT || b == GRASS) {
                 break;
             } else if (b != AIR && b != SNOW_LAYER) {

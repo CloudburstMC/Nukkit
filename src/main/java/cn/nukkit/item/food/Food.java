@@ -101,12 +101,12 @@ public abstract class Food {
 
     public static Food getByRelative(Item item) {
         Objects.requireNonNull(item);
-        return getByRelative(item.getId(), item.getDamage());
+        return getByRelative(item.getId(), item.getMeta());
     }
 
     public static Food getByRelative(Block block) {
         Objects.requireNonNull(block);
-        return getByRelative(block.getId(), block.getDamage());
+        return getByRelative(block.getId(), block.getMeta());
     }
 
     public static Food getByRelative(Identifier relativeID, int meta) {

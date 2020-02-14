@@ -118,7 +118,7 @@ public class EntityTypes {
 
     public static final EntityType<DroppedItem> ITEM = EntityType.from("item", DroppedItem.class);
 
-    public static final EntityType<Tnt> TNT = EntityType.from("tnt", Tnt.class);
+    public static final EntityType<PrimedTnt> TNT = EntityType.from("tnt", PrimedTnt.class);
 
     public static final EntityType<FallingBlock> FALLING_BLOCK = EntityType.from("falling_block", FallingBlock.class);
 
@@ -126,7 +126,7 @@ public class EntityTypes {
 
     public static final EntityType<XpBottle> XP_BOTTLE = EntityType.from("xp_bottle", XpBottle.class);
 
-    public static final EntityType<XpOrb> XP_ORB = EntityType.from("xp_orb", XpOrb.class);
+    public static final EntityType<ExperienceOrb> XP_ORB = EntityType.from("xp_orb", ExperienceOrb.class);
 
     public static final EntityType<EyeOfEnderSignal> EYE_OF_ENDER_SIGNAL = EntityType.from("eye_of_ender_signal", EyeOfEnderSignal.class);
 

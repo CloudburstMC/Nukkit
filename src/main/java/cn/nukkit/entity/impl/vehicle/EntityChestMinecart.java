@@ -7,11 +7,10 @@ import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.vehicle.ChestMinecart;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.MinecartType;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * Created by Snake1999 on 2016/1/30.
@@ -19,9 +18,16 @@ import cn.nukkit.utils.MinecartType;
  */
 public class EntityChestMinecart extends EntityAbstractMinecart implements ChestMinecart {
 
-    public EntityChestMinecart(EntityType<ChestMinecart> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
-        super.setDisplayBlock(Block.get(BlockIds.CHEST), false);
+    public EntityChestMinecart(EntityType<ChestMinecart> type, Location location) {
+        super(type, location);
+    }
+
+    @Override
+    public void initEntity() {
+        super.initEntity();
+
+        this.setDisplayBlock(Block.get(BlockIds.CHEST));
+        this.setDisplay(true);
     }
 
     // TODO: 2016/1/30 inventory
@@ -38,7 +44,7 @@ public class EntityChestMinecart extends EntityAbstractMinecart implements Chest
 
     @Override
     public void dropItem() {
-        level.dropItem(this, Item.get(ItemIds.CHEST_MINECART));
+        this.getLevel().dropItem(this.getPosition(), Item.get(ItemIds.CHEST_MINECART));
     }
 
     @Override

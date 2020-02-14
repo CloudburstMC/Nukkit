@@ -2,6 +2,7 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.event.player.PlayerTeleportEvent;
@@ -10,6 +11,10 @@ import cn.nukkit.level.Location;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
+import com.nukkitx.math.vector.Vector3f;
+
+import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Created on 2015/11/12 by Pub4Game and milkice.
@@ -20,18 +25,18 @@ public class TeleportCommand extends VanillaCommand {
         super(name, "%nukkit.command.tp.description", "%commands.tp.usage");
         this.setPermission("nukkit.command.teleport");
         this.commandParameters.clear();
-        this.commandParameters.put("->Player", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
         });
-        this.commandParameters.put("Player->Player", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
                 new CommandParameter("target", CommandParamType.TARGET, false),
         });
-        this.commandParameters.put("Player->Pos", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
                 new CommandParameter("blockPos", CommandParamType.POSITION, false),
         });
-        this.commandParameters.put("->Pos", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("blockPos", CommandParamType.POSITION, false),
         });
     }
@@ -77,7 +82,7 @@ public class TeleportCommand extends VanillaCommand {
             }
         }
         if (args.length < 3) {
-            ((Player) origin).teleport((Player) target, PlayerTeleportEvent.TeleportCause.COMMAND);
+            ((Player) origin).teleport(((Player) target).getLocation(), PlayerTeleportEvent.TeleportCause.COMMAND);
             Command.broadcastCommandMessage(sender, new TranslationContainer("commands.tp.success", origin.getName(), target.getName()));
             return true;
         } else if (((Player) target).getLevel() != null) {
@@ -87,29 +92,24 @@ public class TeleportCommand extends VanillaCommand {
             } else {
                 pos = 0;
             }
-            double x;
-            double y;
-            double z;
-            double yaw;
-            double pitch;
-            try {
-                x = Double.parseDouble(args[pos++].replace("~", "" + ((Player) target).x));
-                y = Double.parseDouble(args[pos++].replace("~", "" + ((Player) target).y));
-                z = Double.parseDouble(args[pos++].replace("~", "" + ((Player) target).z));
-                yaw = ((Player) target).getYaw();
-                pitch = ((Player) target).getPitch();
-            } catch (NumberFormatException e1) {
+            Optional<Vector3f> optional = CommandUtils.parseVector3f(Arrays.copyOfRange(args, pos, pos += 3), ((Player) target).getPosition());
+            if (!optional.isPresent()) {
                 sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                 return true;
             }
-            if (y < 0) y = 0;
-            if (y > 256) y = 256;
+            Vector3f position = optional.get();
+            float yaw = ((Player) target).getYaw();
+            float pitch = ((Player) target).getPitch();
+            if (position.getY() < 0) position = Vector3f.from(position.getX(), 0, position.getZ());
             if (args.length == 6 || (args.length == 5 && pos == 3)) {
-                yaw = Integer.parseInt(args[pos++]);
-                pitch = Integer.parseInt(args[pos++]);
+                yaw = Float.parseFloat(args[pos++]);
+                pitch = Float.parseFloat(args[pos++]);
             }
-            ((Player) target).teleport(new Location(x, y, z, yaw, pitch, ((Player) target).getLevel()), PlayerTeleportEvent.TeleportCause.COMMAND);
-            Command.broadcastCommandMessage(sender, new TranslationContainer("commands.tp.success.coordinates", target.getName(), String.valueOf(NukkitMath.round(x, 2)), String.valueOf(NukkitMath.round(y, 2)), String.valueOf(NukkitMath.round(z, 2))));
+            ((Player) target).teleport(Location.from(position, yaw, pitch, ((Player) target).getLevel()), PlayerTeleportEvent.TeleportCause.COMMAND);
+            Command.broadcastCommandMessage(sender, new TranslationContainer("commands.tp.success.coordinates",
+                    target.getName(), String.valueOf(NukkitMath.round(position.getX(), 2)),
+                    String.valueOf(NukkitMath.round(position.getY(), 2)),
+                    String.valueOf(NukkitMath.round(position.getZ(), 2))));
             return true;
         }
         sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));

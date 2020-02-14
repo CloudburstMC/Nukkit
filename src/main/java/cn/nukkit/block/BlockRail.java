@@ -5,13 +5,13 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.Rail;
 import cn.nukkit.utils.Rail.Orientation;
+import com.nukkitx.math.vector.Vector3f;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,13 +37,13 @@ public class BlockRail extends FloodableBlock implements Faceable {
     }
 
     @Override
-    public double getHardness() {
-        return 0.7;
+    public float getHardness() {
+        return 0.7f;
     }
 
     @Override
-    public double getResistance() {
-        return 3.5;
+    public float getResistance() {
+        return 3.5f;
     }
 
     @Override
@@ -61,7 +61,7 @@ public class BlockRail extends FloodableBlock implements Faceable {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             Optional<BlockFace> ascendingDirection = this.getOrientation().ascendingDirection();
             if (this.down().isTransparent() || (ascendingDirection.isPresent() && this.getSide(ascendingDirection.get()).isTransparent())) {
-                this.getLevel().useBreakOn(this);
+                this.getLevel().useBreakOn(this.getPosition());
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         }
@@ -69,8 +69,8 @@ public class BlockRail extends FloodableBlock implements Faceable {
     }
 
     @Override
-    public double getMaxY() {
-        return this.y + 0.125;
+    public float getMaxY() {
+        return this.getY() + 0.125f;
     }
 
     @Override
@@ -117,7 +117,7 @@ public class BlockRail extends FloodableBlock implements Faceable {
                     this.setDamage(this.connect(rails.get(faces.indexOf(f1)), f1, rails.get(faces.indexOf(f2)), f2).metadata());
                 }
             } else {
-                BlockFace f = faces.stream().min((f1, f2) -> (f1.getIndex() < f2.getIndex()) ? 1 : ((x == y) ? 0 : -1)).get();
+                BlockFace f = faces.stream().min((f1, f2) -> (f1.getIndex() < f2.getIndex()) ? 1 : ((this.getX() == this.getY()) ? 0 : -1)).get();
                 BlockFace fo = f.getOpposite();
                 if (faces.contains(fo)) { //Opposite connectable
                     this.setDamage(this.connect(rails.get(faces.indexOf(f)), f, rails.get(faces.indexOf(fo)), fo).metadata());
@@ -126,9 +126,9 @@ public class BlockRail extends FloodableBlock implements Faceable {
                 }
             }
         }
-        this.level.setBlock(this, this, true, true);
+        this.level.setBlock(this.getPosition(), this, true, true);
         if (!isAbstract()) {
-            level.scheduleUpdate(this, this, 0);
+            level.scheduleUpdate(this, this.getPosition(), 0);
         }
         return true;
     }
@@ -138,8 +138,8 @@ public class BlockRail extends FloodableBlock implements Faceable {
         this.connect(rail2, face2);
 
         if (face1.getOpposite() == face2) {
-            int delta1 = (int) (this.y - rail1.y);
-            int delta2 = (int) (this.y - rail2.y);
+            int delta1 = (int) (this.getY() - rail1.getY());
+            int delta2 = (int) (this.getY() - rail2.getY());
 
             if (delta1 == -1) {
                 return Orientation.ascending(face1);
@@ -151,7 +151,7 @@ public class BlockRail extends FloodableBlock implements Faceable {
     }
 
     private Orientation connect(BlockRail other, BlockFace face) {
-        int delta = (int) (this.y - other.y);
+        int delta = (int) (this.getY() - other.getY());
         Map<BlockRail, BlockFace> rails = other.checkRailsConnected();
         if (rails.isEmpty()) { //Only one
             other.setOrientation(delta == 1 ? ascending(face.getOpposite()) : straight(face));
@@ -215,7 +215,7 @@ public class BlockRail extends FloodableBlock implements Faceable {
     public void setOrientation(Orientation o) {
         if (o.metadata() != this.getRealMeta()) {
             this.setDamage(o.metadata());
-            this.level.setBlock(this, this, false, true);
+            this.level.setBlock(this.getPosition(), this, false, true);
         }
     }
 
@@ -225,23 +225,23 @@ public class BlockRail extends FloodableBlock implements Faceable {
         // Reason: When the rail is curved, the meta will return STRAIGHT_NORTH_SOUTH.
         // OR Null Pointer Exception
         if (!isAbstract()) {
-            return getDamage() & 0x7;
+            return getMeta() & 0x7;
         }
         // Return the default: This meta
-        return getDamage();
+        return getMeta();
     }
 
     public boolean isActive() {
-        return (getDamage() & 0x8) != 0;
+        return (getMeta() & 0x8) != 0;
     }
 
     public void setActive(boolean active) {
         if (active) {
-            setDamage(getDamage() | 0x8);
+            setDamage(getMeta() | 0x8);
         } else {
-            setDamage(getDamage() & 0x7);
+            setDamage(getMeta() & 0x7);
         }
-        level.setBlock(this, this, true, true);
+        level.setBlock(this.getPosition(), this, true, true);
     }
 
     @Override
@@ -258,6 +258,6 @@ public class BlockRail extends FloodableBlock implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
     }
 }

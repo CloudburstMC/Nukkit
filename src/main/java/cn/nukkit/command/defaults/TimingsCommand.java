@@ -16,7 +16,7 @@ public class TimingsCommand extends VanillaCommand {
         super(name, "%nukkit.command.timings.description", "%nukkit.command.timings.usage");
         this.setPermission("nukkit.command.timings");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("on|off|paste")
         });
     }

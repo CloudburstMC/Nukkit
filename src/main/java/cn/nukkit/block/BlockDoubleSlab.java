@@ -28,7 +28,7 @@ public class BlockDoubleSlab extends BlockSolid {
     //todo hardness and residence
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 2;
     }
 
@@ -41,7 +41,7 @@ public class BlockDoubleSlab extends BlockSolid {
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
-                    Item.get(STONE_SLAB, this.getDamage() & 0x07, 2)
+                    Item.get(STONE_SLAB, this.getMeta() & 0x07, 2)
             };
         } else {
             return new Item[0];
@@ -50,7 +50,7 @@ public class BlockDoubleSlab extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        switch (this.getDamage() & 0x07) {
+        switch (this.getMeta() & 0x07) {
             case BlockDoubleSlab.STONE:
                 return BlockColor.STONE_BLOCK_COLOR;
             case BlockDoubleSlab.SANDSTONE:

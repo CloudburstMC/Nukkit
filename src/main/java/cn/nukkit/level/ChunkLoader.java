@@ -1,6 +1,7 @@
 package cn.nukkit.level;
 
 import cn.nukkit.level.chunk.Chunk;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * author: MagicDroidX
@@ -12,11 +13,11 @@ public interface ChunkLoader {
 
     boolean isLoaderActive();
 
-    Position getPosition();
+    Vector3f getPosition();
 
-    double getX();
+    float getX();
 
-    double getZ();
+    float getZ();
 
     Level getLevel();
 

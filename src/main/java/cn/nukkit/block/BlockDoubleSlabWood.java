@@ -18,12 +18,12 @@ public class BlockDoubleSlabWood extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 2;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 15;
     }
 
@@ -34,18 +34,18 @@ public class BlockDoubleSlabWood extends BlockSolid {
 
     @Override
     public Item toItem() {
-        return Item.get(WOODEN_SLAB, this.getDamage() & 0x07);
+        return Item.get(WOODEN_SLAB, this.getMeta() & 0x07);
     }
 
     public Item[] getDrops(Item item) {
         return new Item[]{
-                Item.get(WOODEN_SLAB, this.getDamage() & 0x07, 2)
+                Item.get(WOODEN_SLAB, this.getMeta() & 0x07, 2)
         };
     }
 
     @Override
     public BlockColor getColor() {
-        switch (this.getDamage() & 0x07) {
+        switch (this.getMeta() & 0x07) {
             default:
             case 0: //OAK
                 return BlockColor.WOOD_BLOCK_COLOR;

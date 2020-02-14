@@ -1,8 +1,9 @@
 package cn.nukkit.level.particle;
 
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.LevelEventPacket;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.protocol.bedrock.BedrockPacket;
+import com.nukkitx.protocol.bedrock.data.LevelEventType;
+import com.nukkitx.protocol.bedrock.packet.LevelEventPacket;
 
 /**
  * Created on 2015/11/21 by xtypr.
@@ -14,20 +15,18 @@ public class MobSpawnParticle extends Particle {
     protected final int height;
 
     public MobSpawnParticle(Vector3f pos, float width, float height) {
-        super(pos.x, pos.y, pos.z);
+        super(pos);
         this.width = (int) width;
         this.height = (int) height;
     }
 
     @Override
-    public DataPacket[] encode() {
+    public BedrockPacket[] encode() {
         LevelEventPacket packet = new LevelEventPacket();
-        packet.evid = LevelEventPacket.EVENT_PARTICLE_SPAWN;
-        packet.x = (float) this.x;
-        packet.y = (float) this.y;
-        packet.z = (float) this.z;
-        packet.data = (this.width & 0xff) + ((this.height & 0xff) << 8);
+        packet.setType(LevelEventType.ENTITY_SPAWN);
+        packet.setPosition(getPosition());
+        packet.setData((this.width & 0xff) + ((this.height & 0xff) << 8));
 
-        return new DataPacket[]{packet};
+        return new BedrockPacket[]{packet};
     }
 }

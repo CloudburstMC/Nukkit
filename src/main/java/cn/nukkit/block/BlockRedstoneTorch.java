@@ -4,11 +4,11 @@ import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.math.Vector3i;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.math.vector.Vector3i;
 
 import static cn.nukkit.block.BlockIds.UNLIT_REDSTONE_TORCH;
 
@@ -65,7 +65,7 @@ public class BlockRedstoneTorch extends BlockTorch {
     public boolean onBreak(Item item) {
         super.onBreak(item);
 
-        Vector3i pos = asVector3i();
+        Vector3i pos = this.getPosition();
 
         BlockFace face = getBlockFace().getOpposite();
 
@@ -74,7 +74,7 @@ public class BlockRedstoneTorch extends BlockTorch {
                 continue;
             }
 
-            this.level.updateAroundRedstone(pos.getSide(side), null);
+            this.level.updateAroundRedstone(side.getOffset(pos), null);
         }
         return true;
     }
@@ -104,16 +104,16 @@ public class BlockRedstoneTorch extends BlockTorch {
     protected boolean checkState() {
         if (isPoweredFromSide()) {
             BlockFace face = getBlockFace().getOpposite();
-            Vector3i pos = asVector3i();
+            Vector3i pos = this.getPosition();
 
-            this.level.setBlock(pos, Block.get(UNLIT_REDSTONE_TORCH, getDamage()), false, true);
+            this.level.setBlock(pos, Block.get(UNLIT_REDSTONE_TORCH, getMeta()), false, true);
 
             for (BlockFace side : BlockFace.values()) {
                 if (side == face) {
                     continue;
                 }
 
-                this.level.updateAroundRedstone(pos.getSide(side), null);
+                this.level.updateAroundRedstone(side.getOffset(pos), null);
             }
 
             return true;
@@ -124,7 +124,7 @@ public class BlockRedstoneTorch extends BlockTorch {
 
     protected boolean isPoweredFromSide() {
         BlockFace face = getBlockFace().getOpposite();
-        return this.level.isSidePowered(this.asVector3i().getSide(face), face);
+        return this.level.isSidePowered(face.getOffset(this.getPosition()), face);
     }
 
     @Override
