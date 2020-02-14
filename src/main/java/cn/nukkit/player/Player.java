@@ -3153,6 +3153,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             packet.setType(TextPacket.Type.RAW);
             packet.setMessage(this.server.getLanguage().translateString(message, parameters));
         }
+        packet.setNeedsTranslation(true);
         packet.setXuid(this.getXuid());
         this.sendPacket(packet);
     }
