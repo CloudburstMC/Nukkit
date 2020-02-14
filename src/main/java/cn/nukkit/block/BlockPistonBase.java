@@ -48,14 +48,14 @@ public abstract class BlockPistonBase extends BlockSolid implements Faceable {
             float y = player.getY() + player.getEyeHeight();
 
             if (y - this.getY() > 2) {
-                this.setDamage(BlockFace.UP.getIndex());
+                this.setMeta(BlockFace.UP.getIndex());
             } else if (this.getY() - y > 0) {
-                this.setDamage(BlockFace.DOWN.getIndex());
+                this.setMeta(BlockFace.DOWN.getIndex());
             } else {
-                this.setDamage(player.getHorizontalFacing().getIndex());
+                this.setMeta(player.getHorizontalFacing().getIndex());
             }
         } else {
-            this.setDamage(player.getHorizontalFacing().getIndex());
+            this.setMeta(player.getHorizontalFacing().getIndex());
         }
         this.level.setBlock(block.getPosition(), this, true, false);
 
@@ -67,7 +67,7 @@ public abstract class BlockPistonBase extends BlockSolid implements Faceable {
 
     @Override
     public boolean onBreak(Item item) {
-        this.level.setBlock(this.getPosition(), Block.get(AIR), true, true);
+        super.onBreak(item);
 
         Block block = this.getSide(getFacing());
 
@@ -392,5 +392,10 @@ public abstract class BlockPistonBase extends BlockSolid implements Faceable {
         public List<Block> getBlocksToDestroy() {
             return this.toDestroy;
         }
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

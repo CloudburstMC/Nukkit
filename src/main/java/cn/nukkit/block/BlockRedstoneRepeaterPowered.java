@@ -55,8 +55,8 @@ public class BlockRedstoneRepeaterPowered extends BlockRedstoneDiode {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        this.setDamage(this.getMeta() + 4);
-        if (this.getMeta() > 15) this.setDamage(this.getMeta() % 4);
+        this.setMeta(this.getMeta() + 4);
+        if (this.getMeta() > 15) this.setMeta(this.getMeta() % 4);
 
         this.level.setBlock(this.getPosition(), this, true, false);
         return true;

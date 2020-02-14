@@ -83,7 +83,7 @@ public class BlockSapling extends FloodableBlock {
                 if ((this.getMeta() & 0x08) == 0x08) {
                     this.grow();
                 } else {
-                    this.setDamage(this.getMeta() | 0x08);
+                    this.setMeta(this.getMeta() | 0x08);
                     this.getLevel().setBlock(this.getPosition(), this, true);
                     return Level.BLOCK_UPDATE_RANDOM;
                 }

@@ -82,7 +82,7 @@ public class BlockFlowerPot extends FloodableBlock {
         }
         flowerPot.setPlant(Block.get(blockId, blockMeta));
 
-        this.setDamage(1);
+        this.setMeta(1);
         this.getLevel().setBlock(this.getPosition(), this, true);
         blockEntity.spawnToAll();
 
@@ -153,5 +153,10 @@ public class BlockFlowerPot extends FloodableBlock {
     @Override
     public Item toItem() {
         return Item.get(ItemIds.FLOWER_POT);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

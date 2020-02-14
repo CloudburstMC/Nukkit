@@ -1,4 +1,4 @@
 package cn.nukkit.blockentity;
 
-public interface Smoker extends BlockEntity {
+public interface Smoker extends Furnace {
 }

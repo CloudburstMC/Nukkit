@@ -37,8 +37,8 @@ public class BlockCocoa extends BlockTransparent implements Faceable {
     }
 
     @Override
-    public void setDamage(int meta) {
-        super.setDamage(meta);
+    public void setMeta(int meta) {
+        super.setMeta(meta);
     }
 
 
@@ -75,7 +75,7 @@ public class BlockCocoa extends BlockTransparent implements Faceable {
     private AxisAlignedBB getRelativeBoundingBox() {
         int meta = this.getMeta();
         if (meta > 11) {
-            this.setDamage(meta = 11);
+            this.setMeta(meta = 11);
         }
         AxisAlignedBB boundingBox = ALL[meta];
         if (boundingBox != null) return boundingBox;
@@ -124,7 +124,7 @@ public class BlockCocoa extends BlockTransparent implements Faceable {
                         1,
                 };
 
-                this.setDamage(faces[face.getIndex()]);
+                this.setMeta(faces[face.getIndex()]);
                 this.level.setBlock(block.getPosition(), this, true, true);
                 return true;
             }
@@ -149,7 +149,7 @@ public class BlockCocoa extends BlockTransparent implements Faceable {
             if (ThreadLocalRandom.current().nextInt(2) == 1) {
                 if (this.getMeta() / 4 < 2) {
                     BlockCocoa block = (BlockCocoa) this.clone();
-                    block.setDamage(block.getMeta() + 4);
+                    block.setMeta(block.getMeta() + 4);
                     BlockGrowEvent ev = new BlockGrowEvent(this, block);
                     Server.getInstance().getPluginManager().callEvent(ev);
 
@@ -177,7 +177,7 @@ public class BlockCocoa extends BlockTransparent implements Faceable {
         if (item.getId() == DYE && item.getMeta() == 0x0f) {
             Block block = this.clone();
             if (this.getMeta() / 4 < 2) {
-                block.setDamage(block.getMeta() + 4);
+                block.setMeta(block.getMeta() + 4);
                 BlockGrowEvent ev = new BlockGrowEvent(this, block);
                 Server.getInstance().getPluginManager().callEvent(ev);
 
@@ -234,5 +234,15 @@ public class BlockCocoa extends BlockTransparent implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
+
+    @Override
+    public boolean canWaterlogFlowing() {
+        return true;
     }
 }

@@ -23,8 +23,17 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
     public static final int TRAPDOOR_OPEN_BIT = 0x08;
     public static final int TRAPDOOR_TOP_BIT = 0x04;
 
+    private static final AxisAlignedBB[] boundingBoxDamage = new AxisAlignedBB[16];
+
+    protected BlockColor blockColor;
+
     public BlockTrapdoor(Identifier id) {
+        this(id, BlockColor.WOOD_BLOCK_COLOR);
+    }
+
+    public BlockTrapdoor(Identifier id, BlockColor blockColor) {
         super(id);
+        this.blockColor = blockColor;
     }
 
     static {
@@ -110,8 +119,6 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
         return ItemTool.TYPE_AXE;
     }
 
-    private static final AxisAlignedBB[] boundingBoxDamage = new AxisAlignedBB[16];
-
     @Override
     public float getResistance() {
         return 15;
@@ -151,12 +158,16 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
         return this.getZ() + getRelativeBoundingBox().getMaxZ();
     }
 
+    public static BlockFactory factory(BlockColor blockColor) {
+        return identifier -> new BlockTrapdoor(identifier, blockColor);
+    }
+
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_REDSTONE) {
-            if ((!isOpen() && this.level.isBlockPowered(this.getPosition())) || (isOpen() && !this.level.isBlockPowered(this.getPosition()))) {
+            if ((!this.isOpen() && this.level.isBlockPowered(this.getPosition())) || (this.isOpen() && !this.level.isBlockPowered(this.getPosition()))) {
                 this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isOpen() ? 15 : 0, isOpen() ? 0 : 15));
-                this.setDamage(this.getMeta() ^ 0x04);
+                this.setMeta(this.getMeta() ^ TRAPDOOR_OPEN_BIT);
                 this.level.setBlock(this.getPosition(), this, true);
                 this.level.addSound(this.getPosition(), isOpen() ? Sound.RANDOM_DOOR_OPEN : Sound.RANDOM_DOOR_CLOSE);
                 return type;
@@ -164,6 +175,20 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
         }
 
         return 0;
+    }
+
+    @Override
+    public Item toItem() {
+        return Item.get(id, 0);
+    }
+
+    @Override
+    public boolean onActivate(Item item, Player player) {
+        if (toggle(player)) {
+            this.level.addSound(this.getPosition(), isOpen() ? Sound.RANDOM_DOOR_OPEN : Sound.RANDOM_DOOR_CLOSE);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -187,23 +212,9 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
         if (top) {
             meta |= TRAPDOOR_TOP_BIT;
         }
-        this.setDamage(meta);
+        this.setMeta(meta);
         this.getLevel().setBlock(block.getPosition(), this, true, true);
         return true;
-    }
-
-    @Override
-    public Item toItem() {
-        return Item.get(id, 0);
-    }
-
-    @Override
-    public boolean onActivate(Item item, Player player) {
-        if(toggle(player)) {
-            this.level.addSound(this.getPosition(), isOpen() ? Sound.RANDOM_DOOR_OPEN : Sound.RANDOM_DOOR_CLOSE);
-            return true;
-        }
-        return false;
     }
 
     public boolean toggle(Player player) {
@@ -212,14 +223,9 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
         if (ev.isCancelled()) {
             return false;
         }
-        this.setDamage(this.getMeta() ^ TRAPDOOR_OPEN_BIT);
+        this.setMeta(this.getMeta() ^ TRAPDOOR_OPEN_BIT);
         getLevel().setBlock(this.getPosition(), this, true);
         return true;
-    }
-
-    @Override
-    public BlockColor getColor() {
-        return BlockColor.WOOD_BLOCK_COLOR;
     }
 
     public boolean isOpen() {
@@ -233,5 +239,15 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return this.blockColor;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

@@ -45,7 +45,7 @@ public class BlockNetherWart extends FloodableBlock {
             if (new Random().nextInt(10) == 1) {
                 if (this.getMeta() < 0x03) {
                     BlockNetherWart block = (BlockNetherWart) this.clone();
-                    block.setDamage(block.getMeta() + 1);
+                    block.setMeta(block.getMeta() + 1);
                     BlockGrowEvent ev = new BlockGrowEvent(this, block);
                     Server.getInstance().getPluginManager().callEvent(ev);
 

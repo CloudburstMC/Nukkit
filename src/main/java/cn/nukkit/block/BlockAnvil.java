@@ -23,7 +23,7 @@ public class BlockAnvil extends BlockFallable implements Faceable {
     }
 
     @Override
-    public final void setDamage(int meta) {
+    public final void setMeta(int meta) {
         this.meta = meta;
     }
 
@@ -57,11 +57,11 @@ public class BlockAnvil extends BlockFallable implements Faceable {
         if (!target.isTransparent() || target.getId() == SNOW_LAYER) {
             int meta = this.getMeta();
             int[] faces = {1, 2, 3, 0};
-            this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+            this.setMeta(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
             if (meta >= 4 && meta <= 7) {
-                this.setDamage(this.getMeta() | 0x04);
+                this.setMeta(this.getMeta() | 0x04);
             } else if (meta >= 8 && meta <= 11) {
-                this.setDamage(this.getMeta() | 0x08);
+                this.setMeta(this.getMeta() | 0x08);
             }
             this.getLevel().setBlock(block.getPosition(), this, true);
             this.getLevel().addSound(this.getPosition().toFloat(), Sound.RANDOM_ANVIL_LAND, 1, 0.8F);
@@ -113,5 +113,10 @@ public class BlockAnvil extends BlockFallable implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getMeta() & 0x7);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

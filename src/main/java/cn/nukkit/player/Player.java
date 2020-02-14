@@ -5,8 +5,9 @@ import cn.nukkit.AdventureSettings;
 import cn.nukkit.AdventureSettings.Type;
 import cn.nukkit.Server;
 import cn.nukkit.block.*;
-import cn.nukkit.blockentity.impl.BaseBlockEntity;
-import cn.nukkit.blockentity.impl.ItemFrameBlockEntity;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.ItemFrame;
+import cn.nukkit.blockentity.Lectern;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.entity.Attribute;
@@ -24,6 +25,7 @@ import cn.nukkit.entity.projectile.Arrow;
 import cn.nukkit.entity.projectile.FishingHook;
 import cn.nukkit.entity.projectile.ThrownTrident;
 import cn.nukkit.event.block.ItemFrameDropItemEvent;
+import cn.nukkit.event.block.LecternPageChangeEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -787,7 +789,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         this.noDamageTicks = 60;
 
-        // FIXME: 13/02/2020 BREWING/CONTAINER RECIPES CRASH CLIENT
         this.getServer().sendRecipeList(this);
 
         if (this.getGamemode() == Player.SPECTATOR) {
@@ -1325,7 +1326,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     if (!to.equals(ev.getTo())) { //If plugins modify the destination
                         this.teleport(ev.getTo(), null);
                     } else {
-                        this.addMovement(this.getX(), this.getY(), this.getZ(), this.getYaw(), this.getPitch(), this.getY());
+                        this.addMovement(this.getX(), this.getY(), this.getZ(), this.getYaw(), this.getPitch(), this.getYaw());
                     }
                     //Biome biome = Biome.biomes[level.getBiomeId(this.getFloorX(), this.getFloorZ())];
                     //sendTip(biome.getName() + " (" + biome.doesOverhang() + " " + biome.getBaseHeight() + "-" + biome.getHeightVariation() + ")");
@@ -2451,7 +2452,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     serverItem = block.toItem();
 
                     if (pickRequestPacket.isAddUserData()) {
-                        BaseBlockEntity blockEntity = this.getLevel().getLoadedBlockEntity(
+                        BlockEntity blockEntity = this.getLevel().getLoadedBlockEntity(
                                 Vector3i.from(pickPos.getX(), pickPos.getY(), pickPos.getZ()));
                         if (blockEntity != null) {
                             CompoundTag nbt = blockEntity.getCleanNBT();
@@ -2631,8 +2632,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         break;
                     }
 
-                    BaseBlockEntity blockEntity = this.getLevel().getLoadedBlockEntity(blockPos);
-                    if (blockEntity.isSpawnable()) {
+                    BlockEntity blockEntity = this.getLevel().getLoadedBlockEntity(blockPos);
+                    if (blockEntity != null && blockEntity.isSpawnable()) {
                         if (!blockEntity.updateFromClient((CompoundTag) blockEntityDataPacket.getData(), this)) {
                             blockEntity.spawnTo(this);
                         }
@@ -2659,25 +2660,23 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     ItemFrameDropItemPacket itemFrameDropItemPacket = (ItemFrameDropItemPacket) packet;
                     Vector3i vector3 = itemFrameDropItemPacket.getBlockPosition();
                     blockEntity = this.getLevel().getLoadedBlockEntity(vector3);
-                    if (!(blockEntity instanceof ItemFrameBlockEntity)) {
+                    if (!(blockEntity instanceof ItemFrame)) {
                         break;
                     }
-                    ItemFrameBlockEntity itemFrame = (ItemFrameBlockEntity) blockEntity;
-                    if (itemFrame != null) {
-                        block = itemFrame.getBlock();
-                        Item itemDrop = itemFrame.getItem();
-                        ItemFrameDropItemEvent itemFrameDropItemEvent = new ItemFrameDropItemEvent(this, block, itemFrame, itemDrop);
-                        this.server.getPluginManager().callEvent(itemFrameDropItemEvent);
-                        if (!itemFrameDropItemEvent.isCancelled()) {
-                            if (itemDrop.getId() != AIR) {
-                                this.getLevel().dropItem(block.getPosition(), itemDrop);
-                                itemFrame.setItem(Item.get(AIR, 0, 0));
-                                itemFrame.setItemRotation(0);
-                                this.getLevel().addSound(this.getPosition(), Sound.BLOCK_ITEMFRAME_REMOVE_ITEM);
-                            }
-                        } else {
-                            itemFrame.spawnTo(this);
+                    ItemFrame itemFrame = (ItemFrame) blockEntity;
+                    block = itemFrame.getBlock();
+                    Item itemDrop = itemFrame.getItem();
+                    ItemFrameDropItemEvent itemFrameDropItemEvent = new ItemFrameDropItemEvent(this, block, itemFrame, itemDrop);
+                    this.server.getPluginManager().callEvent(itemFrameDropItemEvent);
+                    if (!itemFrameDropItemEvent.isCancelled()) {
+                        if (itemDrop.getId() != AIR) {
+                            this.getLevel().dropItem(block.getPosition(), itemDrop);
+                            itemFrame.setItem(Item.get(AIR, 0, 0));
+                            itemFrame.setItemRotation(0);
+                            this.getLevel().addSound(this.getPosition(), Sound.BLOCK_ITEMFRAME_REMOVE_ITEM);
                         }
+                    } else {
+                        itemFrame.spawnTo(this);
                     }
                     break;
                 case MAP_INFO_REQUEST:
@@ -2691,9 +2690,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     }
 
                     if (mapItem == null) {
-                        for (BaseBlockEntity be : this.getLevel().getBlockEntities().values()) {
-                            if (be instanceof ItemFrameBlockEntity) {
-                                ItemFrameBlockEntity itemFrame1 = (ItemFrameBlockEntity) be;
+                        for (BlockEntity be : this.getLevel().getBlockEntities()) {
+                            if (be instanceof ItemFrame) {
+                                ItemFrame itemFrame1 = (ItemFrame) be;
 
                                 if (itemFrame1.getItem() instanceof ItemMap && ((ItemMap) itemFrame1.getItem()).getMapId() == pk.getUniqueMapId()) {
                                     ((ItemMap) itemFrame1.getItem()).sendImage(this);
@@ -3078,6 +3077,32 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         respawn1.setState(RespawnPacket.State.SERVER_READY);
                         this.sendPacket(respawn1);
                     }
+                case LECTERN_UPDATE:
+                    LecternUpdatePacket lecternUpdatePacket = (LecternUpdatePacket) packet;
+                    Vector3i blockPosition = lecternUpdatePacket.getBlockPosition();
+
+                    if (lecternUpdatePacket.isDroppingBook()) {
+                        Block blockLectern = this.getLevel().getBlock(blockPosition);
+                        if (blockLectern instanceof BlockLectern) {
+                            ((BlockLectern) blockLectern).dropBook(this);
+                        }
+                    } else {
+                        blockEntity = this.level.getBlockEntity(blockPosition);
+                        if (blockEntity instanceof Lectern) {
+                            Lectern lectern = (Lectern) blockEntity;
+                            LecternPageChangeEvent lecternPageChangeEvent = new LecternPageChangeEvent(this, lectern, lecternUpdatePacket.getPage());
+                            this.server.getPluginManager().callEvent(lecternPageChangeEvent);
+                            if (!lecternPageChangeEvent.isCancelled()) {
+                                lectern.setPage(lecternPageChangeEvent.getNewRawPage());
+                                lectern.spawnToAll();
+                                Block blockLectern = lectern.getBlock();
+                                if (blockLectern instanceof BlockLectern) {
+                                    ((BlockLectern) blockLectern).executeRedstonePulse();
+                                }
+                            }
+                        }
+                    }
+                    break;
                 default:
                     break;
             }

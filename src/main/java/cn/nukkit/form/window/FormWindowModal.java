@@ -1,10 +1,14 @@
 package cn.nukkit.form.window;
 
 import cn.nukkit.form.response.FormResponseModal;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class FormWindowModal extends FormWindow {
 
-    private final String type = "modal"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
+    @JsonInclude
+    @JsonProperty
+    protected final String type = "modal"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
     private String title = "";
     private String content = "";
     private String button1 = "";

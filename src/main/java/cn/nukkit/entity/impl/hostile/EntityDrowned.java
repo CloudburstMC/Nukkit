@@ -42,4 +42,10 @@ public class EntityDrowned extends EntityHostile implements Drowned, Smiteable {
     public Item[] getDrops() {
         return new Item[]{Item.get(ROTTEN_FLESH)};
     }
+
+    @Override
+    public boolean isUndead() {
+        return true;
+    }
+
 }

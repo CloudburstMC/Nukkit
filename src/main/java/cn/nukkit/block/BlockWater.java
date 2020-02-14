@@ -22,10 +22,10 @@ public class BlockWater extends BlockLiquid {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        boolean ret = this.getLevel().setBlock(this.getPosition(), this, true, false);
-        this.getLevel().scheduleUpdate(this, this.tickRate());
+        boolean success = target.getLevel().setBlock(block.getPosition(), this, true, false);
+        if (success) this.getLevel().scheduleUpdate(this, this.tickRate());
 
-        return ret;
+        return success;
     }
 
     @Override
@@ -50,5 +50,10 @@ public class BlockWater extends BlockLiquid {
     @Override
     public int tickRate() {
         return 5;
+    }
+
+    @Override
+    public boolean usesWaterLogging() {
+        return true;
     }
 }

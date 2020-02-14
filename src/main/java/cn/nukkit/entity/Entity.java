@@ -18,11 +18,11 @@ import com.nukkitx.math.vector.Vector2f;
 import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.nbt.CompoundTagBuilder;
 import com.nukkitx.nbt.tag.CompoundTag;
+import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public interface Entity extends Metadatable {
@@ -102,7 +102,7 @@ public interface Entity extends Metadatable {
 
     void onDismount(Entity passenger);
 
-    Map<Integer, Effect> getEffects();
+    Short2ObjectMap<Effect> getEffects();
 
     void removeAllEffects();
 
@@ -236,6 +236,10 @@ public interface Entity extends Metadatable {
     boolean isOnGround();
 
     void setOnGround(boolean onGround);
+
+    default boolean isUndead() {
+        return false;
+    }
 
     void kill();
 

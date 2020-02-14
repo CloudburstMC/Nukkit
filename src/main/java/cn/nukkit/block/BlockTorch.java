@@ -64,12 +64,12 @@ public class BlockTorch extends FloodableBlock implements Faceable {
                     2, //4
                     1, //5
             };
-            this.setDamage(faces[face.getIndex()]);
+            this.setMeta(faces[face.getIndex()]);
             this.getLevel().setBlock(block.getPosition(), this, true, true);
 
             return true;
         } else if (!below.isTransparent() || below instanceof BlockFence || below.getId() == COBBLESTONE_WALL) {
-            this.setDamage(0);
+            this.setMeta(0);
             this.getLevel().setBlock(block.getPosition(), this, true, true);
 
             return true;

@@ -1,7 +1,7 @@
 package cn.nukkit.level.chunk;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.blockentity.impl.BaseBlockEntity;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
 import cn.nukkit.player.Player;
@@ -51,7 +51,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
 
     private final Set<Entity> entities = Collections.newSetFromMap(new IdentityHashMap<>());
 
-    private final Short2ObjectMap<BaseBlockEntity> tiles = new Short2ObjectOpenHashMap<>();
+    private final Short2ObjectMap<BlockEntity> tiles = new Short2ObjectOpenHashMap<>();
 
     private final byte[] biomes;
 
@@ -326,7 +326,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
     }
 
     @Override
-    public void addBlockEntity(BaseBlockEntity blockEntity) {
+    public void addBlockEntity(BlockEntity blockEntity) {
         Preconditions.checkNotNull(blockEntity, "blockEntity");
         short hash = Chunk.blockKey(blockEntity.getPosition());
         if (this.tiles.put(hash, blockEntity) != blockEntity && this.initialized == 1) {
@@ -335,7 +335,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
     }
 
     @Override
-    public void removeBlockEntity(BaseBlockEntity blockEntity) {
+    public void removeBlockEntity(BlockEntity blockEntity) {
         Preconditions.checkNotNull(blockEntity, "blockEntity");
         short hash = Chunk.blockKey(blockEntity.getPosition());
         if (this.tiles.remove(hash) == blockEntity && this.initialized == 1) {
@@ -345,7 +345,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
 
     @Nullable
     @Override
-    public BaseBlockEntity getBlockEntity(int x, int y, int z) {
+    public BlockEntity getBlockEntity(int x, int y, int z) {
         checkBounds(x, y, z);
         return this.tiles.get(Chunk.blockKey(x, y, z));
     }
@@ -408,7 +408,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
      */
     @Nonnull
     @Override
-    public Collection<BaseBlockEntity> getBlockEntities() {
+    public Collection<BlockEntity> getBlockEntities() {
         return this.tiles.values();
     }
 
@@ -483,7 +483,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
                 entity.close();
             }
 
-            this.tiles.values().forEach(BaseBlockEntity::close);
+            this.tiles.values().forEach(BlockEntity::close);
             clear();
         }
     }

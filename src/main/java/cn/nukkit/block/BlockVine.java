@@ -119,7 +119,7 @@ public class BlockVine extends BlockTransparent {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (target.isSolid() && face.getHorizontalIndex() != -1) {
-            this.setDamage(getMetaFromFace(face.getOpposite()));
+            this.setMeta(getMetaFromFace(face.getOpposite()));
             this.getLevel().setBlock(block.getPosition(), this, true, true);
             return true;
         }
@@ -194,5 +194,10 @@ public class BlockVine extends BlockTransparent {
     @Override
     public BlockColor getColor() {
         return BlockColor.FOLIAGE_BLOCK_COLOR;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

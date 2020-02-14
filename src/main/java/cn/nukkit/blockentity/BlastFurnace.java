@@ -1,4 +1,4 @@
 package cn.nukkit.blockentity;
 
-public interface BlastFurnace extends BlockEntity {
+public interface BlastFurnace extends Furnace {
 }

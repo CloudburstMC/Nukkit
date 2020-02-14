@@ -161,7 +161,7 @@ public abstract class BlockPressurePlateBase extends FloodableBlock {
 
     @Override
     public boolean onBreak(Item item) {
-        this.level.setBlock(this.getPosition(), Block.get(AIR), true, true);
+        super.onBreak(item);
 
         if (this.getRedstonePower() > 0) {
             this.level.updateAroundRedstone(this.getPosition(), null);
@@ -186,7 +186,7 @@ public abstract class BlockPressurePlateBase extends FloodableBlock {
     }
 
     public void setRedstonePower(int power) {
-        this.setDamage(power);
+        this.setMeta(power);
     }
 
     protected void playOnSound() {
@@ -202,5 +202,10 @@ public abstract class BlockPressurePlateBase extends FloodableBlock {
     @Override
     public Item toItem() {
         return Item.get(AIR, 0, 0);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

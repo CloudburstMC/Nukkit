@@ -14,7 +14,6 @@ import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3f;
 import lombok.extern.log4j.Log4j2;
 
-import static cn.nukkit.block.BlockIds.AIR;
 import static cn.nukkit.blockentity.BlockEntityTypes.CHEST;
 
 /**
@@ -26,6 +25,11 @@ public class BlockChest extends BlockTransparent implements Faceable {
 
     public BlockChest(Identifier id) {
         super(id);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 
     @Override
@@ -83,7 +87,7 @@ public class BlockChest extends BlockTransparent implements Faceable {
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         Chest chest = null;
         int[] faces = {2, 5, 3, 4};
-        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+        this.setMeta(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
 
         for (int side = 2; side <= 5; ++side) {
             if ((this.getMeta() == 4 || this.getMeta() == 5) && (side == 4 || side == 5)) {
@@ -99,6 +103,9 @@ public class BlockChest extends BlockTransparent implements Faceable {
                     break;
                 }
             }
+        }
+        if ((block.getId() == BlockIds.WATER || block.getId() == BlockIds.FLOWING_WATER) && block.getMeta() == 0) {
+            this.getLevel().setBlock(block.getPosition(), 1, block, true, false);
         }
 
         this.getLevel().setBlock(block.getPosition(), this, true, true);
@@ -123,9 +130,7 @@ public class BlockChest extends BlockTransparent implements Faceable {
         if (t instanceof Chest) {
             ((Chest) t).unpair();
         }
-        this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true, true);
-
-        return true;
+        return super.onBreak(item);
     }
 
     @Override

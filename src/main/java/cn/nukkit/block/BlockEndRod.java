@@ -67,7 +67,7 @@ public class BlockEndRod extends BlockTransparent implements Faceable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         int[] faces = {0, 1, 3, 2, 5, 4};
-        this.setDamage(faces[player != null ? face.getIndex() : 0]);
+        this.setMeta(faces[player != null ? face.getIndex() : 0]);
         this.getLevel().setBlock(block.getPosition(), this, true, true);
 
         return true;
@@ -83,4 +83,13 @@ public class BlockEndRod extends BlockTransparent implements Faceable {
         return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
     }
 
+    @Override
+    public boolean canWaterlogFlowing() {
+        return true;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

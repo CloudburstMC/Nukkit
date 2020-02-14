@@ -232,8 +232,11 @@ public abstract class BlockDoor extends BlockTransparent implements Faceable {
                 metaUp |= DOOR_HINGE_BIT;
             }
 
-            this.setDamage(direction);
+            this.setMeta(direction);
             this.getLevel().setBlock(block.getPosition(), this, true, false); //Bottom
+            if (blockUp instanceof BlockLiquid && ((BlockLiquid) blockUp).usesWaterLogging()) {
+                this.getLevel().setBlock(blockUp.getPosition(), 1, blockUp.clone(), true, false);
+            }
             this.getLevel().setBlock(blockUp.getPosition(), Block.get(this.getId(), metaUp), true, true); //Top
 
             if (!this.isOpen() && this.level.isBlockPowered(this.getPosition())) {
@@ -253,15 +256,15 @@ public abstract class BlockDoor extends BlockTransparent implements Faceable {
         if (isTop(this.getMeta())) {
             Block down = this.down();
             if (down.getId() == this.getId()) {
-                this.getLevel().setBlock(down.getPosition(), Block.get(AIR), true);
+                down.removeBlock(true);
             }
         } else {
             Block up = this.up();
             if (up.getId() == this.getId()) {
-                this.getLevel().setBlock(up.getPosition(), Block.get(AIR), true);
+                up.removeBlock(true);
             }
         }
-        this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true);
+        super.onBreak(item);
 
         return true;
     }
@@ -298,7 +301,7 @@ public abstract class BlockDoor extends BlockTransparent implements Faceable {
         if (down.up().getId() != down.getId()) {
             return false;
         }
-        down.setDamage(down.getMeta() ^ DOOR_OPEN_BIT);
+        down.setMeta(down.getMeta() ^ DOOR_OPEN_BIT);
         getLevel().setBlock(down.getPosition(), down, true, true);
         return true;
     }
@@ -328,5 +331,10 @@ public abstract class BlockDoor extends BlockTransparent implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

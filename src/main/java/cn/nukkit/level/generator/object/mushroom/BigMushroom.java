@@ -173,7 +173,7 @@ public class BigMushroom extends BasicGenerator {
                                 if (position.getY() >= position.getY() + i - 1 || meta != ALL_INSIDE) {
 
                                     if (!BlockRegistry.get().getBlock(level.getBlockId(l1, l2, i2), 0).isSolid()) {
-                                        mushroom.setDamage(meta);
+                                        mushroom.setMeta(meta);
                                         level.setBlockAt(l1, l2, i2, mushroom);
                                     }
                                 }
@@ -186,7 +186,7 @@ public class BigMushroom extends BasicGenerator {
                         Identifier id = level.getBlockId(pos.getX(), pos.getY(), pos.getZ());
 
                         if (!BlockRegistry.get().getBlock(id, 0).isSolid()) {
-                            mushroom.setDamage(STEM);
+                            mushroom.setMeta(STEM);
                             level.setBlockAt(pos.getX(), pos.getY(), pos.getZ(), mushroom);
                         }
                     }

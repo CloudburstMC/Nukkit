@@ -1,6 +1,6 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.blockentity.impl.FurnaceBlockEntity;
+import cn.nukkit.blockentity.Furnace;
 import cn.nukkit.item.Item;
 
 /**
@@ -9,13 +9,13 @@ import cn.nukkit.item.Item;
  */
 public class FurnaceInventory extends ContainerInventory {
 
-    public FurnaceInventory(FurnaceBlockEntity furnace) {
-        super(furnace, InventoryType.FURNACE);
+    public FurnaceInventory(Furnace furnace, InventoryType inventoryType) {
+        super(furnace, inventoryType);
     }
 
     @Override
-    public FurnaceBlockEntity getHolder() {
-        return (FurnaceBlockEntity) this.holder;
+    public Furnace getHolder() {
+        return (Furnace) this.holder;
     }
 
     public Item getResult() {

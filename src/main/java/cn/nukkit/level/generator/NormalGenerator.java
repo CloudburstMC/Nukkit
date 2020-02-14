@@ -25,7 +25,6 @@ import com.nukkitx.math.vector.Vector3i;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static cn.nukkit.block.BlockIds.STONE;
 import static cn.nukkit.block.BlockIds.WATER;
@@ -143,7 +142,7 @@ public class NormalGenerator implements Generator {
     private NoiseGeneratorOctavesF mainPerlinNoise;
     private NoiseGeneratorPerlinF surfaceNoise;
 
-    public NormalGenerator(BedrockRandom random, Map<String, Object> options) {
+    public NormalGenerator(BedrockRandom random, String options) {
         this.selector = new BiomeSelector(random);
 
         this.minLimitPerlinNoise = new NoiseGeneratorOctavesF(random, 16);
@@ -179,8 +178,8 @@ public class NormalGenerator implements Generator {
     }
 
     @Override
-    public Map<String, Object> getSettings() {
-        return Collections.emptyMap();
+    public String getSettings() {
+        return "";
     }
 
     public Biome pickBiome(int x, int z) {

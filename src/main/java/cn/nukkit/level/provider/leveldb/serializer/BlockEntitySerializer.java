@@ -2,7 +2,6 @@ package cn.nukkit.level.provider.leveldb.serializer;
 
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityType;
-import cn.nukkit.blockentity.impl.BaseBlockEntity;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.chunk.ChunkBuilder;
 import cn.nukkit.level.chunk.ChunkDataLoader;
@@ -54,12 +53,12 @@ public class BlockEntitySerializer {
             return;
         }
 
-        Collection<BaseBlockEntity> entities = chunk.getBlockEntities();
+        Collection<BlockEntity> entities = chunk.getBlockEntities();
 
         byte[] value;
         try (ByteArrayOutputStream stream = new ByteArrayOutputStream();
              NBTOutputStream nbtOutputStream = NbtUtils.createWriterLE(stream)) {
-            for (BaseBlockEntity entity : entities) {
+            for (BlockEntity entity : entities) {
                 nbtOutputStream.write(entity.getFullNBT());
             }
             value = stream.toByteArray();

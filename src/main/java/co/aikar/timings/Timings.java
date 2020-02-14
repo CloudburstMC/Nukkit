@@ -24,7 +24,7 @@
 package co.aikar.timings;
 
 import cn.nukkit.Server;
-import cn.nukkit.blockentity.impl.BaseBlockEntity;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.command.Command;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.event.Event;
@@ -242,7 +242,7 @@ public final class Timings {
         return TimingsManager.getTiming(DEFAULT_GROUP.name, "## Entity Tick: " + type.getIdentifier(), tickEntityTimer);
     }
 
-    public static Timing getBlockEntityTiming(BaseBlockEntity blockEntity) {
+    public static Timing getBlockEntityTiming(BlockEntity blockEntity) {
         return TimingsManager.getTiming(DEFAULT_GROUP.name, "## BlockEntity Tick: " + blockEntity.getClass().getSimpleName(), tickBlockEntityTimer);
     }
 

@@ -13,7 +13,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -54,9 +53,9 @@ public class LevelBuilder {
         return this;
     }
 
-    public LevelBuilder options(Map<String, Object> options) {
-        Preconditions.checkNotNull(options, "options");
-        levelData.getGeneratorOptions().putAll(options);
+    public LevelBuilder generatorOptions(String generatorOptions) {
+        Preconditions.checkNotNull(generatorOptions, "generatorOptions");
+        levelData.setGeneratorOptions(generatorOptions);
         return this;
     }
 

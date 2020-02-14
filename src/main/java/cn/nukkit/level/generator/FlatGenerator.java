@@ -1,11 +1,8 @@
 package cn.nukkit.level.generator;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
-import cn.nukkit.level.generator.object.ore.OreType;
-import cn.nukkit.level.generator.populator.impl.PopulatorOre;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.registry.BlockRegistry;
@@ -13,9 +10,7 @@ import com.nukkitx.math.vector.Vector3i;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import static cn.nukkit.block.BlockIds.AIR;
@@ -33,7 +28,7 @@ public class FlatGenerator implements Generator {
 
     private Block[] structure;
 
-    private final Map<String, Object> options;
+    private final String options;
 
     private int floorLevel;
 
@@ -41,29 +36,17 @@ public class FlatGenerator implements Generator {
 
     private int biome;
 
-    @Override
-    public Map<String, Object> getSettings() {
-        return this.options;
+    private FlatGenerator(BedrockRandom random, String options) {
+        this.options = options;
+
+        this.preset = options == null || options.isEmpty() ? "2;7,2x3,2;1;" : options;
+
+        this.parsePreset(this.preset);
     }
 
-    private FlatGenerator(BedrockRandom random, Map<String, Object> options) {
-        this.options = options;
-        this.preset = (String) this.options.getOrDefault("preset", "2;7,2x3,2;1;");
-
-        if (this.options.containsKey("decoration")) {
-            PopulatorOre ores = new PopulatorOre(BlockIds.STONE, new OreType[]{
-                    new OreType(Block.get(BlockIds.COAL_ORE), 20, 16, 0, 128),
-                    new OreType(Block.get(BlockIds.IRON_ORE), 20, 8, 0, 64),
-                    new OreType(Block.get(BlockIds.REDSTONE_ORE), 8, 7, 0, 16),
-                    new OreType(Block.get(BlockIds.LAPIS_ORE), 1, 6, 0, 32),
-                    new OreType(Block.get(BlockIds.GOLD_ORE), 2, 8, 0, 32),
-                    new OreType(Block.get(BlockIds.DIAMOND_ORE), 1, 7, 0, 16),
-                    new OreType(Block.get(BlockIds.DIRT), 20, 32, 0, 128),
-                    new OreType(Block.get(BlockIds.GRAVEL), 20, 16, 0, 128),
-            });
-            this.populators.add(ores);
-        }
-        parsePreset(preset);
+    @Override
+    public String getSettings() {
+        return this.options;
     }
 
     protected void parsePreset(String preset) {
@@ -106,20 +89,6 @@ public class FlatGenerator implements Generator {
             this.floorLevel = y;
             for (; y <= 0xFF; ++y) {
                 this.structure[y] = Block.get(AIR);
-            }
-            for (String option : options.split(",")) {
-                if (Pattern.matches("^[0-9a-z_]+$", option)) {
-                    this.options.put(option, true);
-                } else if (Pattern.matches("^[0-9a-z_]+\\([0-9a-z_ =]+\\)$", option)) {
-                    String name = option.substring(0, option.indexOf("("));
-                    String extra = option.substring(option.indexOf("(") + 1, option.indexOf(")"));
-                    Map<String, Float> map = new HashMap<>();
-                    for (String kv : extra.split(" ")) {
-                        String[] data = kv.split("=");
-                        map.put(data[0], Float.valueOf(data[1]));
-                    }
-                    this.options.put(name, map);
-                }
             }
         } catch (Exception e) {
             log.error("error while parsing the preset", e);

@@ -1,7 +1,7 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Server;
-import cn.nukkit.blockentity.impl.BaseBlockEntity;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.impl.BaseEntity;
 import cn.nukkit.event.entity.EntityInventoryChangeEvent;
 import cn.nukkit.event.inventory.InventoryOpenEvent;
@@ -161,8 +161,8 @@ public abstract class BaseInventory implements Inventory {
             item = ev.getNewItem();
         }
 
-        if (holder instanceof BaseBlockEntity) {
-            ((BaseBlockEntity) holder).setDirty();
+        if (holder instanceof BlockEntity) {
+            ((BlockEntity) holder).setDirty();
         }
 
         Item old = this.getItem(index);
@@ -380,8 +380,8 @@ public abstract class BaseInventory implements Inventory {
                 }
                 item = ev.getNewItem();
             }
-            if (holder instanceof BaseBlockEntity) {
-                ((BaseBlockEntity) holder).setDirty();
+            if (holder instanceof BlockEntity) {
+                ((BlockEntity) holder).setDirty();
             }
 
             if (item.getId() != AIR) {

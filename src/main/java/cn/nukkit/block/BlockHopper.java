@@ -43,7 +43,7 @@ public class BlockHopper extends BlockTransparent implements Faceable {
             facing = BlockFace.DOWN;
         }
 
-        this.setDamage(facing.getIndex());
+        this.setMeta(facing.getIndex());
 
         boolean powered = this.level.isBlockPowered(this.getPosition());
 
@@ -98,7 +98,7 @@ public class BlockHopper extends BlockTransparent implements Faceable {
 
     public void setEnabled(boolean enabled) {
         if (isEnabled() != enabled) {
-            this.setDamage(this.getMeta() ^ 0x08);
+            this.setMeta(this.getMeta() ^ 0x08);
         }
     }
 
@@ -145,5 +145,10 @@ public class BlockHopper extends BlockTransparent implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

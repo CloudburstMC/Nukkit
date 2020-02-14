@@ -11,8 +11,6 @@ import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3f;
 
-import static cn.nukkit.block.BlockIds.AIR;
-
 /**
  * @author Nukkit Project Team
  */
@@ -54,10 +52,10 @@ public class BlockLever extends FloodableBlock implements Faceable {
     @Override
     public boolean onActivate(Item item, Player player) {
         this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isPowerOn() ? 15 : 0, isPowerOn() ? 0 : 15));
-        this.setDamage(this.getMeta() ^ 0x08);
+        this.setMeta(this.getMeta() ^ 0x08);
 
         this.getLevel().setBlock(this.getPosition(), this, false, true);
-        this.getLevel().addSound(this.getPosition(), Sound.RANDOM_CLICK); //TODO: correct pitch
+        this.getLevel().addSound(this.getPosition(), Sound.RANDOM_CLICK, 0.8f, isPowerOn() ? 0.58f : 0.5f);
 
         LeverOrientation orientation = LeverOrientation.byMetadata(this.isPowerOn() ? this.getMeta() ^ 0x08 : this.getMeta());
         BlockFace face = orientation.getFacing();
@@ -81,7 +79,7 @@ public class BlockLever extends FloodableBlock implements Faceable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (target.isNormalBlock()) {
-            this.setDamage(LeverOrientation.forFacings(face, player.getHorizontalFacing()).getMetadata());
+            this.setMeta(LeverOrientation.forFacings(face, player.getHorizontalFacing()).getMetadata());
             this.getLevel().setBlock(block.getPosition(), this, true, true);
             return true;
         }
@@ -90,7 +88,7 @@ public class BlockLever extends FloodableBlock implements Faceable {
 
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true, true);
+        super.onBreak(item);
 
         if (isPowerOn()) {
             BlockFace face = LeverOrientation.byMetadata(this.isPowerOn() ? this.getMeta() ^ 0x08 : this.getMeta()).getFacing();
@@ -216,5 +214,15 @@ public class BlockLever extends FloodableBlock implements Faceable {
     @Override
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
+
+    @Override
+    public boolean canWaterlogFlowing() {
+        return true;
     }
 }

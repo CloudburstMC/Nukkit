@@ -39,7 +39,7 @@ public abstract class BlockSlab extends BlockTransparent {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        this.setDamage(this.getMeta() & 0x07);
+        this.setMeta(this.getMeta() & 0x07);
         if (face == BlockFace.DOWN) {
             if (target instanceof BlockSlab && (target.getMeta() & 0x08) == 0x08 && (target.getMeta() & 0x07) == (this.getMeta() & 0x07)) {
                 this.getLevel().setBlock(target.getPosition(), Block.get(getDoubleSlab(), this.getMeta()), true);
@@ -50,7 +50,7 @@ public abstract class BlockSlab extends BlockTransparent {
 
                 return true;
             } else {
-                this.setDamage(this.getMeta() | 0x08);
+                this.setMeta(this.getMeta() | 0x08);
             }
         } else if (face == BlockFace.UP) {
             if (target instanceof BlockSlab && (target.getMeta() & 0x08) == 0 && (target.getMeta() & 0x07) == (this.getMeta() & 0x07)) {
@@ -74,7 +74,7 @@ public abstract class BlockSlab extends BlockTransparent {
                 return false;
             } else {
                 if (clickPos.getY() > 0.5) {
-                    this.setDamage(this.getMeta() | 0x08);
+                    this.setMeta(this.getMeta() | 0x08);
                 }
             }
         }
@@ -88,4 +88,9 @@ public abstract class BlockSlab extends BlockTransparent {
     }
 
     protected abstract Identifier getDoubleSlab();
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

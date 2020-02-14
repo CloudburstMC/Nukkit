@@ -156,7 +156,7 @@ public class BlockTripWireHook extends FloodableBlock {
 
                 if (block != null && this.level.getBlockId(vc) != AIR) {
                     if (canConnect ^ ((block.getMeta() & 0x04) > 0)) {
-                        block.setDamage(block.getMeta() ^ 0x04);
+                        block.setMeta(block.getMeta() ^ 0x04);
                     }
 
                     this.level.setBlock(vc, block, true, false);
@@ -185,7 +185,7 @@ public class BlockTripWireHook extends FloodableBlock {
 
     public void setAttached(boolean value) {
         if (value ^ this.isAttached()) {
-            this.setDamage(this.getMeta() ^ 0x04);
+            this.setMeta(this.getMeta() ^ 0x04);
         }
     }
 
@@ -195,13 +195,13 @@ public class BlockTripWireHook extends FloodableBlock {
 
     public void setPowered(boolean value) {
         if (value ^ this.isPowered()) {
-            this.setDamage(this.getMeta() ^ 0x08);
+            this.setMeta(this.getMeta() ^ 0x08);
         }
     }
 
     public void setFace(BlockFace face) {
-        this.setDamage(this.getMeta() - this.getMeta() % 4);
-        this.setDamage(this.getMeta() | face.getHorizontalIndex());
+        this.setMeta(this.getMeta() - this.getMeta() % 4);
+        this.setMeta(this.getMeta() | face.getHorizontalIndex());
     }
 
     @Override
@@ -222,5 +222,15 @@ public class BlockTripWireHook extends FloodableBlock {
     @Override
     public Item toItem() {
         return Item.get(id, 0);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
+
+    @Override
+    public boolean canWaterlogFlowing() {
+        return true;
     }
 }

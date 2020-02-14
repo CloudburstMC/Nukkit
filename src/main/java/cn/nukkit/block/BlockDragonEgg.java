@@ -70,4 +70,9 @@ public class BlockDragonEgg extends BlockFallable {
             }
         }
     }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

@@ -47,9 +47,9 @@ public abstract class BlockCrops extends FloodableBlock {
         if (item.getId() == DYE && item.getMeta() == 0x0f) {
             if (this.getMeta() < 7) {
                 BlockCrops block = (BlockCrops) this.clone();
-                block.setDamage(block.getMeta() + ThreadLocalRandom.current().nextInt(3) + 2);
+                block.setMeta(block.getMeta() + ThreadLocalRandom.current().nextInt(3) + 2);
                 if (block.getMeta() > 7) {
-                    block.setDamage(7);
+                    block.setMeta(7);
                 }
                 BlockGrowEvent ev = new BlockGrowEvent(this, block);
                 Server.getInstance().getPluginManager().callEvent(ev);
@@ -83,7 +83,7 @@ public abstract class BlockCrops extends FloodableBlock {
             if (ThreadLocalRandom.current().nextInt(2) == 1) {
                 if (this.getMeta() < 0x07) {
                     BlockCrops block = (BlockCrops) this.clone();
-                    block.setDamage(block.getMeta() + 1);
+                    block.setMeta(block.getMeta() + 1);
                     BlockGrowEvent ev = new BlockGrowEvent(this, block);
                     Server.getInstance().getPluginManager().callEvent(ev);
 

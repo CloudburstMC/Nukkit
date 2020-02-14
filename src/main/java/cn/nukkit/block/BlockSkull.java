@@ -46,7 +46,7 @@ public class BlockSkull extends BlockTransparent {
             case EAST:
             case WEST:
             case UP:
-                this.setDamage(face.getIndex());
+                this.setMeta(face.getIndex());
                 break;
             case DOWN:
             default:
@@ -80,5 +80,10 @@ public class BlockSkull extends BlockTransparent {
     @Override
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

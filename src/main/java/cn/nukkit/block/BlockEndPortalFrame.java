@@ -65,7 +65,7 @@ public class BlockEndPortalFrame extends BlockTransparent implements Faceable {
     @Override
     public boolean onActivate(Item item, Player player) {
         if ((this.getMeta() & 0x04) == 0 && player != null && item.getId() == ENDER_EYE) {
-            this.setDamage(this.getMeta() + 4);
+            this.setMeta(this.getMeta() + 4);
             this.getLevel().setBlock(this.getPosition(), this, true, true);
             this.getLevel().addLevelSoundEvent(this.getPosition(), SoundEvent.BLOCK_END_PORTAL_FRAME_FILL);
             //TODO: create portal
@@ -92,5 +92,10 @@ public class BlockEndPortalFrame extends BlockTransparent implements Faceable {
     @Override
     public BlockColor getColor() {
         return BlockColor.GREEN_BLOCK_COLOR;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

@@ -21,8 +21,8 @@ import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.math.vector.Vector3i;
 import com.nukkitx.math.vector.Vector4i;
-import lombok.extern.log4j.Log4j2;
 
+import javax.annotation.Nonnegative;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -33,7 +33,7 @@ import static cn.nukkit.block.BlockIds.*;
  * author: MagicDroidX
  * Nukkit Project
  */
-@Log4j2
+
 public abstract class Block implements Metadatable, Cloneable, AxisAlignedBB {
 
     protected final Identifier id;
@@ -327,7 +327,7 @@ public abstract class Block implements Metadatable, Cloneable, AxisAlignedBB {
         return level != null && position != null;
     }
 
-    public void setDamage(int meta) {
+    public void setMeta(int meta) {
         this.meta = meta;
     }
 
@@ -336,7 +336,20 @@ public abstract class Block implements Metadatable, Cloneable, AxisAlignedBB {
     }
 
     public boolean onBreak(Item item) {
-        return this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true, true);
+        return removeBlock(true);
+    }
+
+    final protected boolean removeBlock(boolean update) {
+        if (this.isWaterlogged()) {
+            Block water = getLevel().getBlock(getX(), getY(), getZ(), 1);
+            getLevel().setBlock(this.getPosition(), water, true, false);
+            return getLevel().setBlock(getX(), getY(), getZ(), 1, Block.get(AIR), true, update);
+        }
+        return this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true, update);
+    }
+
+    public boolean onBreak(Item item, Player player) {
+        return onBreak(item);
     }
 
     public float getHardness() {
@@ -399,7 +412,7 @@ public abstract class Block implements Metadatable, Cloneable, AxisAlignedBB {
         int efficiencyLoreLevel = Optional.ofNullable(item.getEnchantment(Enchantment.ID_EFFICIENCY))
                 .map(Enchantment::getLevel).orElse(0);
         int hasteEffectLevel = Optional.ofNullable(player.getEffect(Effect.HASTE))
-                .map(Effect::getAmplifier).orElse(0);
+                .map(Effect::getAmplifier).orElse((byte) 0);
         boolean insideOfWaterWithoutAquaAffinity = player.isInsideOfWater() &&
                 Optional.ofNullable(player.getInventory().getHelmet().getEnchantment(Enchantment.ID_WATER_WORKER))
                         .map(Enchantment::getLevel).map(l -> l >= 1).orElse(false);
@@ -543,6 +556,19 @@ public abstract class Block implements Metadatable, Cloneable, AxisAlignedBB {
         }
         Block block = Block.get(AIR, 0);
         block.position = this.position.add(face.getUnitVector().mul(step));
+        return block;
+    }
+
+    public Block getExtra() {
+        return layer(1);
+    }
+
+    public Block layer(@Nonnegative int layer) {
+        if (this.isValid()) {
+            return this.getLevel().getBlock(position, layer);
+        }
+        Block block = Block.get(AIR);
+        block.layer = layer;
         return block;
     }
 
@@ -768,4 +794,18 @@ public abstract class Block implements Metadatable, Cloneable, AxisAlignedBB {
     public boolean canSilkTouch() {
         return false;
     }
+
+    public boolean canWaterlogSource() {
+        return false;
+    }
+
+    public boolean canWaterlogFlowing() {
+        return false;
+    }
+
+    public boolean isWaterlogged() {
+        Block b = getLevel().getBlock(this.getX(), this.getY(), this.getZ(), 1);
+        return (b.getId() == WATER || b.getId() == FLOWING_WATER);
+    }
+
 }

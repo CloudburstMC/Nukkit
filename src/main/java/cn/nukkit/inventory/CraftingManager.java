@@ -1,6 +1,7 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Server;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.player.Player;
@@ -19,6 +20,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.*;
+
+import static cn.nukkit.block.BlockIds.LIT_BLAST_FURNACE;
 
 /**
  * author: MagicDroidX
@@ -92,9 +95,17 @@ public class CraftingManager {
         return furnaceRecipes;
     }
 
-    public FurnaceRecipe matchFurnaceRecipe(Item input) {
-        FurnaceRecipe recipe = this.furnaceRecipes.get(getItemHash(input));
-        if (recipe == null) recipe = this.furnaceRecipes.get(getItemHash(input.getId(), 0));
+    public FurnaceRecipe matchFurnaceRecipe(Item input, Identifier craftingBlock) {
+        if (craftingBlock == BlockIds.LIT_SMOKER) {
+            craftingBlock = BlockIds.SMOKER;
+        } else if (craftingBlock == LIT_BLAST_FURNACE) {
+            craftingBlock = BlockIds.BLAST_FURNACE;
+        } else if (craftingBlock == BlockIds.LIT_FURNACE) {
+            craftingBlock = BlockIds.FURNACE;
+        }
+        FurnaceRecipe recipe = this.furnaceRecipes.get(Objects.hash(getItemHash(input), craftingBlock.toString()));
+        if (recipe == null)
+            recipe = this.furnaceRecipes.get(Objects.hash(getItemHash(input.getId(), 0), craftingBlock.toString()));
         return recipe;
     }
 
@@ -125,7 +136,8 @@ public class CraftingManager {
 
     public void registerFurnaceRecipe(FurnaceRecipe recipe) {
         Item input = recipe.getInput();
-        this.furnaceRecipes.put(getItemHash(input), recipe);
+        Identifier block = recipe.getBlock();
+        this.furnaceRecipes.put(Objects.hash(getItemHash(input), block.toString()), recipe);
     }
 
     public void sendRecipesTo(Player player) {

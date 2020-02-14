@@ -52,7 +52,7 @@ public class BlockDispenser extends BlockSolid implements Faceable {
             i |= 8;
         }
 
-        this.setDamage(i);
+        this.setMeta(i);
     }
 
     @Override

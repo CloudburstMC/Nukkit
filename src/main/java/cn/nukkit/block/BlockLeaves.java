@@ -97,7 +97,7 @@ public class BlockLeaves extends BlockTransparent {
             setCheckDecay(true);
             getLevel().setBlock(this.getPosition(), this, false, false);
         } else if (type == Level.BLOCK_UPDATE_RANDOM && isCheckDecay() && !isPersistent()) {
-            setDamage(getMeta() & 0x03);
+            setMeta(getMeta() & 0x03);
 
             LeavesDecayEvent ev = new LeavesDecayEvent(this);
 
@@ -129,9 +129,9 @@ public class BlockLeaves extends BlockTransparent {
 
     public void setCheckDecay(boolean checkDecay) {
         if (checkDecay) {
-            this.setDamage(this.getMeta() | 0x08);
+            this.setMeta(this.getMeta() | 0x08);
         } else {
-            this.setDamage(this.getMeta() & ~0x08);
+            this.setMeta(this.getMeta() & ~0x08);
         }
     }
 
@@ -141,9 +141,9 @@ public class BlockLeaves extends BlockTransparent {
 
     public void setPersistent(boolean persistent) {
         if (persistent) {
-            this.setDamage(this.getMeta() | 0x04);
+            this.setMeta(this.getMeta() | 0x04);
         } else {
-            this.setDamage(this.getMeta() & ~0x04);
+            this.setMeta(this.getMeta() & ~0x04);
         }
     }
 
@@ -163,5 +163,10 @@ public class BlockLeaves extends BlockTransparent {
 
     protected Item getSapling() {
         return Item.get(SAPLING, this.getMeta() & 0x03);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

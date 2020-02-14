@@ -1,6 +1,7 @@
 package cn.nukkit.blockentity.impl;
 
 import cn.nukkit.block.BlockIds;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityType;
 import cn.nukkit.blockentity.Hopper;
 import cn.nukkit.entity.Entity;
@@ -93,7 +94,7 @@ public class HopperBlockEntity extends BaseBlockEntity implements Hopper {
         this.transferCooldown--;
 
         if (!this.isOnTransferCooldown()) {
-            BaseBlockEntity blockEntity = this.getLevel().getBlockEntity(this.getPosition().add(UP));
+            BlockEntity blockEntity = this.getLevel().getBlockEntity(this.getPosition().add(UP));
 
             boolean changed = pushItems();
 
@@ -120,7 +121,7 @@ public class HopperBlockEntity extends BaseBlockEntity implements Hopper {
             return false;
         }
 
-        BaseBlockEntity blockEntity = this.getLevel().getBlockEntity(this.getPosition().add(UP));
+        BlockEntity blockEntity = this.getLevel().getBlockEntity(this.getPosition().add(UP));
         //Fix for furnace outputs
         if (blockEntity instanceof FurnaceBlockEntity) {
             FurnaceInventory inv = ((FurnaceBlockEntity) blockEntity).getInventory();
@@ -259,9 +260,9 @@ public class HopperBlockEntity extends BaseBlockEntity implements Hopper {
             return false;
         }
 
-        BaseBlockEntity be = this.getLevel().getBlockEntity(BlockFace.fromIndex(this.getBlock().getMeta()).getOffset(this.getPosition()));
+        BlockEntity be = this.getLevel().getBlockEntity(BlockFace.fromIndex(this.getBlock().getMeta()).getOffset(this.getPosition()));
 
-        if (be instanceof HopperBlockEntity && this.getBlock().getMeta() == 0 || !(be instanceof InventoryHolder))
+        if (be instanceof Hopper && this.getBlock().getMeta() == 0 || !(be instanceof InventoryHolder))
             return false;
 
         InventoryMoveItemEvent event;

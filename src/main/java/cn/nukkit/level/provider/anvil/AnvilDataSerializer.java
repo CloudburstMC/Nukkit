@@ -105,8 +105,7 @@ public class AnvilDataSerializer implements LevelDataSerializer {
 
         tag.listenForString("LevelName", data::setName);
         if (tag.contains("generatorOptions")) {
-            data.getGeneratorOptions()
-                    .putAll(Nukkit.JSON_MAPPER.readValue(tag.getString("generatorOptions"), OPTIONS_TYPE));
+            data.setGeneratorOptions(tag.getString("generatorOptions"));
         }
         tag.listenForString("generatorName", s -> data.setGenerator(Identifier.fromString(s)));
         tag.listenForInt("thunderTime", data::setLightningTime);

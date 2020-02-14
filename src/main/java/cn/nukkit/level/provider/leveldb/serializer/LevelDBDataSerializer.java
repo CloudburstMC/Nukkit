@@ -1,6 +1,5 @@
 package cn.nukkit.level.provider.leveldb.serializer;
 
-import cn.nukkit.Nukkit;
 import cn.nukkit.level.LevelData;
 import cn.nukkit.level.gamerule.GameRule;
 import cn.nukkit.level.gamerule.GameRuleMap;
@@ -65,7 +64,7 @@ public class LevelDBDataSerializer implements LevelDataSerializer {
     private void saveData(LevelData data, Path levelDatPath) throws IOException {
         CompoundTagBuilder tag = CompoundTag.builder()
                 .stringTag("LevelName", data.getName())
-                .stringTag("FlatWorldLayers", Nukkit.JSON_MAPPER.writeValueAsString(data.getGeneratorOptions()))
+                .stringTag("FlatWorldLayers", data.getGeneratorOptions())
                 .stringTag("generatorName", data.getGenerator().toString())
                 .intTag("lightningTime", data.getLightningTime())
                 .intTag("Difficulty", data.getDifficulty())
@@ -128,8 +127,7 @@ public class LevelDBDataSerializer implements LevelDataSerializer {
 
         tag.listenForString("LevelName", data::setName);
         if (tag.contains("FlatWorldLayers")) {
-            data.getGeneratorOptions()
-                    .putAll(Nukkit.JSON_MAPPER.readValue(tag.getString("FlatWorldLayers"), OPTIONS_TYPE));
+            data.setGeneratorOptions(tag.getString("FlatWorldLayers"));
         }
         tag.listenForString("generatorName", s -> data.setGenerator(Identifier.fromString(s)));
         tag.listenForInt("lightningTime", data::setLightningTime);

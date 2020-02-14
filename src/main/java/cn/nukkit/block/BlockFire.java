@@ -118,7 +118,7 @@ public class BlockFire extends FloodableBlock {
 
                 if (meta < 15) {
                     int newMeta = meta + random.nextInt(3);
-                    this.setDamage(Math.min(newMeta, 15));
+                    this.setMeta(Math.min(newMeta, 15));
                     this.getLevel().setBlock(this.getPosition(), this, true);
                 }
 

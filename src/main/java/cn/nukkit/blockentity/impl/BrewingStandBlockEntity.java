@@ -214,6 +214,8 @@ public class BrewingStandBlockEntity extends BaseBlockEntity implements BrewingS
         //this.sendBrewTime();
         lastUpdate = System.currentTimeMillis();
 
+        this.updateBlock();
+
         return ret;
     }
 
@@ -271,11 +273,13 @@ public class BrewingStandBlockEntity extends BaseBlockEntity implements BrewingS
             }
         }
 
-        block.setDamage(meta);
-        this.getLevel().setBlock(block.getPosition(), block, false, false);
+        if (block.getMeta() != meta) {
+            block.setMeta(meta);
+            this.getLevel().setBlock(block.getPosition(), block, false, false);
+        }
     }
 
-    public int getFuelAmount() {
+    public short getFuelAmount() {
         return fuelAmount;
     }
 

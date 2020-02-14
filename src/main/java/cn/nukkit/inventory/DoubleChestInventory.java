@@ -1,5 +1,6 @@
 package cn.nukkit.inventory;
 
+import cn.nukkit.blockentity.Chest;
 import cn.nukkit.blockentity.impl.ChestBlockEntity;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
@@ -53,7 +54,7 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
     }
 
     @Override
-    public ChestBlockEntity getHolder() {
+    public Chest getHolder() {
         return this.left.getHolder();
     }
 

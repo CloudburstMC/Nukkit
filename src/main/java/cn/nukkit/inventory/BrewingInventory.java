@@ -1,17 +1,17 @@
 package cn.nukkit.inventory;
 
 
-import cn.nukkit.blockentity.impl.BrewingStandBlockEntity;
+import cn.nukkit.blockentity.BrewingStand;
 import cn.nukkit.item.Item;
 
 public class BrewingInventory extends ContainerInventory {
-    public BrewingInventory(BrewingStandBlockEntity brewingStand) {
+    public BrewingInventory(BrewingStand brewingStand) {
         super(brewingStand, InventoryType.BREWING_STAND);
     }
 
     @Override
-    public BrewingStandBlockEntity getHolder() {
-        return (BrewingStandBlockEntity) this.holder;
+    public BrewingStand getHolder() {
+        return (BrewingStand) this.holder;
     }
 
     public Item getIngredient() {
@@ -33,10 +33,6 @@ public class BrewingInventory extends ContainerInventory {
     @Override
     public void onSlotChange(int index, Item before, boolean send) {
         super.onSlotChange(index, before, send);
-
-        if (index >= 1 && index <= 3) {
-            this.getHolder().updateBlock();
-        }
 
         this.getHolder().scheduleUpdate();
     }

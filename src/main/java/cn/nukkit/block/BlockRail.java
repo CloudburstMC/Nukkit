@@ -95,34 +95,34 @@ public class BlockRail extends FloodableBlock implements Faceable {
         List<BlockFace> faces = new ArrayList<>(railsAround.values());
         if (railsAround.size() == 1) {
             BlockRail other = rails.get(0);
-            this.setDamage(this.connect(other, railsAround.get(other)).metadata());
+            this.setMeta(this.connect(other, railsAround.get(other)).metadata());
         } else if (railsAround.size() == 4) {
             if (this.isAbstract()) {
-                this.setDamage(this.connect(rails.get(faces.indexOf(SOUTH)), SOUTH, rails.get(faces.indexOf(EAST)), EAST).metadata());
+                this.setMeta(this.connect(rails.get(faces.indexOf(SOUTH)), SOUTH, rails.get(faces.indexOf(EAST)), EAST).metadata());
             } else {
-                this.setDamage(this.connect(rails.get(faces.indexOf(EAST)), EAST, rails.get(faces.indexOf(WEST)), WEST).metadata());
+                this.setMeta(this.connect(rails.get(faces.indexOf(EAST)), EAST, rails.get(faces.indexOf(WEST)), WEST).metadata());
             }
         } else if (!railsAround.isEmpty()) {
             if (this.isAbstract()) {
                 if (railsAround.size() == 2) {
                     BlockRail rail1 = rails.get(0);
                     BlockRail rail2 = rails.get(1);
-                    this.setDamage(this.connect(rail1, railsAround.get(rail1), rail2, railsAround.get(rail2)).metadata());
+                    this.setMeta(this.connect(rail1, railsAround.get(rail1), rail2, railsAround.get(rail2)).metadata());
                 } else {
                     List<BlockFace> cd = Stream.of(CURVED_SOUTH_EAST, CURVED_NORTH_EAST, CURVED_SOUTH_WEST)
                             .filter(o -> faces.containsAll(o.connectingDirections()))
                             .findFirst().get().connectingDirections();
                     BlockFace f1 = cd.get(0);
                     BlockFace f2 = cd.get(1);
-                    this.setDamage(this.connect(rails.get(faces.indexOf(f1)), f1, rails.get(faces.indexOf(f2)), f2).metadata());
+                    this.setMeta(this.connect(rails.get(faces.indexOf(f1)), f1, rails.get(faces.indexOf(f2)), f2).metadata());
                 }
             } else {
                 BlockFace f = faces.stream().min((f1, f2) -> (f1.getIndex() < f2.getIndex()) ? 1 : ((this.getX() == this.getY()) ? 0 : -1)).get();
                 BlockFace fo = f.getOpposite();
                 if (faces.contains(fo)) { //Opposite connectable
-                    this.setDamage(this.connect(rails.get(faces.indexOf(f)), f, rails.get(faces.indexOf(fo)), fo).metadata());
+                    this.setMeta(this.connect(rails.get(faces.indexOf(f)), f, rails.get(faces.indexOf(fo)), fo).metadata());
                 } else {
-                    this.setDamage(this.connect(rails.get(faces.indexOf(f)), f).metadata());
+                    this.setMeta(this.connect(rails.get(faces.indexOf(f)), f).metadata());
                 }
             }
         }
@@ -214,7 +214,7 @@ public class BlockRail extends FloodableBlock implements Faceable {
 
     public void setOrientation(Orientation o) {
         if (o.metadata() != this.getRealMeta()) {
-            this.setDamage(o.metadata());
+            this.setMeta(o.metadata());
             this.level.setBlock(this.getPosition(), this, false, true);
         }
     }
@@ -237,9 +237,9 @@ public class BlockRail extends FloodableBlock implements Faceable {
 
     public void setActive(boolean active) {
         if (active) {
-            setDamage(getMeta() | 0x8);
+            setMeta(getMeta() | 0x8);
         } else {
-            setDamage(getMeta() & 0x7);
+            setMeta(getMeta() & 0x7);
         }
         level.setBlock(this.getPosition(), this, true, true);
     }

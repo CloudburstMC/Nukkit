@@ -34,7 +34,7 @@ public class BlockStemMelon extends BlockCrops {
             if (random.nextBoolean()) {
                 if (this.getMeta() < 0x07) {
                     Block block = this.clone();
-                    block.setDamage(block.getMeta() + 1);
+                    block.setMeta(block.getMeta() + 1);
                     BlockGrowEvent ev = new BlockGrowEvent(this, block);
                     Server.getInstance().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {

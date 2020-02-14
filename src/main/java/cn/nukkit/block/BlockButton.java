@@ -35,7 +35,7 @@ public abstract class BlockButton extends FloodableBlock implements Faceable {
             return false;
         }
 
-        this.setDamage(face.getIndex());
+        this.setMeta(face.getIndex());
         this.level.setBlock(block.getPosition(), this, true, true);
         return true;
     }
@@ -52,7 +52,7 @@ public abstract class BlockButton extends FloodableBlock implements Faceable {
         }
 
         this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
-        this.setDamage(this.getMeta() ^ 0x08);
+        this.setMeta(this.getMeta() ^ 0x08);
         this.level.setBlock(this.getPosition(), this, true, false);
         this.level.addSound(this.getPosition(), Sound.RANDOM_CLICK);
         this.level.scheduleUpdate(this, 30);
@@ -73,7 +73,7 @@ public abstract class BlockButton extends FloodableBlock implements Faceable {
             if (this.isActivated()) {
                 this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
 
-                this.setDamage(this.getMeta() ^ 0x08);
+                this.setMeta(this.getMeta() ^ 0x08);
                 this.level.setBlock(this.getPosition(), this, true, false);
                 this.level.addSound(this.getPosition(), Sound.RANDOM_CLICK);
 
@@ -120,11 +120,16 @@ public abstract class BlockButton extends FloodableBlock implements Faceable {
 
     @Override
     public Item toItem() {
-        return Item.get(this.getId(), 5);
+        return Item.get(this.getId(), 0);
     }
 
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getMeta() & 0x7);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

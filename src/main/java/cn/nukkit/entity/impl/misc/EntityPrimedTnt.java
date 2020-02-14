@@ -110,8 +110,10 @@ public class EntityPrimedTnt extends BaseEntity implements PrimedTnt, EntityExpl
             return true;
         }
 
-        if (fuse % 5 == 0) {
+        if (fuse <= 5 || fuse % 5 == 0) {
             this.data.setInt(FUSE_LENGTH, fuse);
+
+            this.data.update();
         }
 
         lastUpdate = currentTick;

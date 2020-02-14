@@ -1,7 +1,7 @@
 package cn.nukkit.level.chunk;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.blockentity.impl.BaseBlockEntity;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.BlockUpdate;
 import cn.nukkit.level.ChunkLoader;
@@ -539,7 +539,7 @@ public final class Chunk implements IChunk, Closeable {
 //    }
 
     @Override
-    public void addBlockEntity(BaseBlockEntity blockEntity) {
+    public void addBlockEntity(BlockEntity blockEntity) {
         this.lock.writeLock().lock();
         try {
             unsafe.addBlockEntity(blockEntity);
@@ -549,7 +549,7 @@ public final class Chunk implements IChunk, Closeable {
     }
 
     @Override
-    public void removeBlockEntity(BaseBlockEntity blockEntity) {
+    public void removeBlockEntity(BlockEntity blockEntity) {
         this.lock.writeLock().lock();
         try {
             unsafe.removeBlockEntity(blockEntity);
@@ -563,7 +563,7 @@ public final class Chunk implements IChunk, Closeable {
     }
 
     @Override
-    public BaseBlockEntity getBlockEntity(int x, int y, int z) {
+    public BlockEntity getBlockEntity(int x, int y, int z) {
         this.lock.readLock().lock();
         try {
             return unsafe.getBlockEntity(x, y, z);
@@ -574,7 +574,7 @@ public final class Chunk implements IChunk, Closeable {
 
     @Nonnull
     @Override
-    public Set<BaseBlockEntity> getBlockEntities() {
+    public Set<BlockEntity> getBlockEntities() {
         this.lock.readLock().lock();
         try {
             return new HashSet<>(unsafe.getBlockEntities());
@@ -649,7 +649,7 @@ public final class Chunk implements IChunk, Closeable {
                 // Extra Data length. Replaced by second block layer.
                 VarInts.writeUnsignedInt(buffer, 0);
 
-                Collection<BaseBlockEntity> tiles = unsafe.getBlockEntities();
+                Collection<BlockEntity> tiles = unsafe.getBlockEntities();
                 // Block entities
                 if (!tiles.isEmpty()) {
                     try (ByteBufOutputStream stream = new ByteBufOutputStream(buffer);

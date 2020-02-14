@@ -23,7 +23,7 @@ public class BlockGlassStained extends BlockGlass {
     }
 
     @Override
-    public final void setDamage(int meta) {
+    public final void setMeta(int meta) {
         this.meta = meta;
     }
 }

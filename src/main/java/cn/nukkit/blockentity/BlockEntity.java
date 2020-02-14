@@ -46,9 +46,19 @@ public interface BlockEntity {
 
     boolean isSpawnable();
 
+    boolean updateFromClient(CompoundTag tag, Player player);
+
     Block getBlock();
 
     void spawnToAll();
 
     void spawnTo(Player player);
+
+    void scheduleUpdate();
+
+    void setDirty();
+
+    boolean onUpdate();
+
+    void onBreak();
 }

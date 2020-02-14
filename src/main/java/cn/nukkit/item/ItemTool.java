@@ -30,6 +30,10 @@ public abstract class ItemTool extends Item implements ItemDurable {
     public static final int TYPE_PICKAXE = 3;
     public static final int TYPE_AXE = 4;
     public static final int TYPE_SHEARS = 5;
+    /**
+     * Same breaking speed independent of the tool.
+     */
+    public static final int TYPE_HANDS_ONLY = 6;
 
     public static final int DURABILITY_WOODEN = 60;
     public static final int DURABILITY_GOLD = 33;

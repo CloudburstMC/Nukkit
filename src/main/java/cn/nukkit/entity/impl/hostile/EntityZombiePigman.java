@@ -34,4 +34,10 @@ public class EntityZombiePigman extends EntityHostile implements ZombiePigman, S
     public String getName() {
         return "ZombiePigman";
     }
+
+    @Override
+    public boolean isUndead() {
+        return true;
+    }
+
 }

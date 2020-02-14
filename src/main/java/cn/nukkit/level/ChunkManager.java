@@ -40,6 +40,10 @@ public interface ChunkManager {
         this.setBlockId(pos.getX(), pos.getY(), pos.getZ(), 0, identifier);
     }
 
+    default void setBlockId(Vector3i pos, int layer, Identifier identifier) {
+        this.setBlockId(pos.getX(), pos.getY(), pos.getZ(), layer, identifier);
+    }
+
     void setBlockId(int x, int y, int z, int layer, Identifier id);
 
     default int getBlockRuntimeIdUnsafe(int x, int y, int z) {

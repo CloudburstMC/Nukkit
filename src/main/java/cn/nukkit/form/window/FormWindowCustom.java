@@ -4,6 +4,8 @@ import cn.nukkit.Nukkit;
 import cn.nukkit.form.element.*;
 import cn.nukkit.form.response.FormResponseCustom;
 import cn.nukkit.form.response.FormResponseData;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.io.IOException;
@@ -13,9 +15,12 @@ import java.util.List;
 
 public class FormWindowCustom extends FormWindow {
 
-    private static final TypeReference<List<String>> ELEMENTS_TYPE_REFERENCE = new TypeReference<List<String>>() {};
+    private static final TypeReference<List<String>> ELEMENTS_TYPE_REFERENCE = new TypeReference<List<String>>() {
+    };
 
-    private final String type = "custom_form"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
+    @JsonInclude
+    @JsonProperty
+    protected final String type = "custom_form"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
     private String title = "";
     private ElementButtonImageData icon;
     private List<Element> content;

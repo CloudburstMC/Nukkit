@@ -82,7 +82,7 @@ public class BlockCauldron extends BlockSolid {
                 this.level.getServer().getPluginManager().callEvent(ev);
                 if (!ev.isCancelled()) {
                     replaceBucket(item, player, ev.getItem());
-                    this.setDamage(0);//empty
+                    this.setMeta(0);//empty
                     this.level.setBlock(this.getPosition(), this, true);
                     cauldron.setCustomColor(null);
                     this.getLevel().addSound(this.getPosition().toFloat().add(0.5, 1, 0.5), Sound.CAULDRON_TAKEWATER);
@@ -103,14 +103,14 @@ public class BlockCauldron extends BlockSolid {
                     replaceBucket(item, player, ev.getItem());
 
                     if (cauldron.getPotionId() != 0) {//if has potion
-                        this.setDamage(0);//empty
+                        this.setMeta(0);//empty
                         cauldron.setPotionId(0xffff);//reset potion
                         cauldron.setSplash(false);
                         cauldron.setCustomColor(null);
                         this.level.setBlock(this.getPosition(), this, true);
                         this.level.addSound(this.getPosition(), Sound.CAULDRON_EXPLODE);
                     } else {
-                        this.setDamage(6);//fill
+                        this.setMeta(6);//fill
                         cauldron.setCustomColor(null);
                         this.level.setBlock(this.getPosition(), this, true);
                         this.getLevel().addLevelSoundEvent(this.getPosition().toFloat().add(0.5, 1, 0.5), SoundEvent.BUCKET_FILL_WATER);
@@ -127,9 +127,9 @@ public class BlockCauldron extends BlockSolid {
             if (isFull()) {
                 return true;
             }
-            this.setDamage(this.getMeta() + 1);
+            this.setMeta(this.getMeta() + 1);
             if (this.getMeta() > 0x06)
-                this.setDamage(0x06);
+                this.setMeta(0x06);
 
             if (item.getCount() == 1) {
                 player.getInventory().clear(player.getInventory().getHeldItemIndex());
@@ -151,9 +151,9 @@ public class BlockCauldron extends BlockSolid {
                 return true;
             }
 
-            this.setDamage(this.getMeta() - 1);
+            this.setMeta(this.getMeta() - 1);
             if (this.getMeta() < 0x00)
-                this.setDamage(0x00);
+                this.setMeta(0x00);
 
             if (item.getCount() == 1) {
                 player.getInventory().setItemInHand(Item.get(ItemIds.POTION));

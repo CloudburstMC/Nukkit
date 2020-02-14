@@ -41,4 +41,10 @@ public class EntityStray extends EntityHostile implements Stray, Smiteable {
     public Item[] getDrops() {
         return new Item[]{Item.get(ItemIds.BONE), Item.get(ItemIds.ARROW)};
     }
+
+    @Override
+    public boolean isUndead() {
+        return true;
+    }
+
 }

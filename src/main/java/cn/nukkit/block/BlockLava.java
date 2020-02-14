@@ -139,7 +139,7 @@ public class BlockLava extends BlockLiquid {
 
     @Override
     public Block getBlock(int meta) {
-        return Block.get(LAVA, meta);
+        return Block.get(FLOWING_LAVA, meta);
     }
 
     @Override
@@ -158,9 +158,10 @@ public class BlockLava extends BlockLiquid {
     @Override
     protected void checkForHarden(){ 
         Block colliding = null;
-        for(int side = 1; side < 6; ++side){ //don't check downwards side
+        for (int side = 1; side < 6; ++side) { //don't check downwards side
             Block blockSide = this.getSide(BlockFace.fromIndex(side));
-            if(blockSide instanceof BlockWater){
+            if (blockSide instanceof BlockWater
+                    || (blockSide = blockSide.layer(1)) instanceof BlockWater) {
                 colliding = blockSide;
                 break;
             }

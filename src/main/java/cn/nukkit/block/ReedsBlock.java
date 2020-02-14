@@ -98,10 +98,10 @@ public class ReedsBlock extends FloodableBlock {
                             break;
                         }
                     }
-                    this.setDamage(0);
+                    this.setMeta(0);
                     this.getLevel().setBlock(this.getPosition(), this, false);
                 } else {
-                    this.setDamage(this.getMeta() + 1);
+                    this.setMeta(this.getMeta() + 1);
                     this.getLevel().setBlock(this.getPosition(), this, false);
                 }
                 return Level.BLOCK_UPDATE_RANDOM;

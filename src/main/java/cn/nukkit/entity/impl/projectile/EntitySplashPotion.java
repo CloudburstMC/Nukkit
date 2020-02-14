@@ -20,19 +20,13 @@ import static com.nukkitx.protocol.bedrock.data.EntityData.POTION_AUX_VALUE;
  */
 public class EntitySplashPotion extends EntityProjectile implements SplashPotion {
 
-    public static final int DATA_POTION_ID = 37;
-
-    public int potionId;
-
-    public EntitySplashPotion(EntityType<SplashPotion> type, Location location) {
+    public EntitySplashPotion(EntityType<? extends SplashPotion> type, Location location) {
         super(type, location);
     }
 
     @Override
     protected void initEntity() {
         super.initEntity();
-
-        this.data.setShort(POTION_AUX_VALUE, this.potionId);
 
         /*Effect effect = Potion.getEffect(potionId, true); TODO: potion color
 
@@ -79,8 +73,8 @@ public class EntitySplashPotion extends EntityProjectile implements SplashPotion
         this.splash(entity);
     }
 
-    private void splash(Entity collidedWith) {
-        Potion potion = Potion.getPotion(this.potionId);
+    protected void splash(Entity collidedWith) {
+        Potion potion = Potion.getPotion(this.getPotionId());
         PotionCollideEvent event = new PotionCollideEvent(potion, this);
         this.server.getPluginManager().callEvent(event);
 
@@ -150,5 +144,13 @@ public class EntitySplashPotion extends EntityProjectile implements SplashPotion
 
         this.timing.stopTiming();
         return hasUpdate;
+    }
+
+    public short getPotionId() {
+        return this.data.getShort(POTION_AUX_VALUE);
+    }
+
+    public void setPotionId(int potionId) {
+        this.data.setShort(POTION_AUX_VALUE, potionId);
     }
 }

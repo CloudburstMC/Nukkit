@@ -115,9 +115,9 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (getMode() == Mode.SUBTRACT) {
-            this.setDamage(this.getMeta() - 4);
+            this.setMeta(this.getMeta() - 4);
         } else {
-            this.setDamage(this.getMeta() + 4);
+            this.setMeta(this.getMeta() + 4);
         }
 
         this.level.addSound(this.getPosition(), Sound.RANDOM_CLICK, 1, getMode() == Mode.SUBTRACT ? 0.55F : 0.5F);

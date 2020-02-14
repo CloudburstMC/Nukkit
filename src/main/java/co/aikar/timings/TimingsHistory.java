@@ -25,7 +25,7 @@ package co.aikar.timings;
 
 import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
-import cn.nukkit.blockentity.impl.BaseBlockEntity;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.chunk.Chunk;
@@ -110,7 +110,7 @@ public class TimingsHistory {
                 }
 
                 //count block entities
-                for (BaseBlockEntity blockEntity : chunk.getBlockEntities()) {
+                for (BlockEntity blockEntity : chunk.getBlockEntities()) {
                     if (!blockEntityCounts.containsKey(blockEntity.getBlock().getId()))
                         blockEntityCounts.put(blockEntity.getBlock().getId(), new AtomicInteger(0));
                     blockEntityCounts.get(blockEntity.getBlock().getId()).incrementAndGet();

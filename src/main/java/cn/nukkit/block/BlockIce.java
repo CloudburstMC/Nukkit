@@ -4,9 +4,11 @@ import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
+import static cn.nukkit.block.BlockIds.AIR;
 import static cn.nukkit.block.BlockIds.WATER;
 
 /**
@@ -40,15 +42,22 @@ public class BlockIce extends BlockTransparent {
     }
 
     @Override
-    public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this.getPosition(), Block.get(WATER), true);
-        return true;
+    public boolean onBreak(Item item, Player player) {
+        if (player.getGamemode() == Player.CREATIVE) {
+            return this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true);
+        }
+
+        if (down().isSolid()) {
+            return this.getLevel().setBlock(this.getPosition(), Block.get(WATER), true);
+        } else {
+            return this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true);
+        }
     }
 
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if (this.getLevel().getBlockLightAt((int) this.getX(), (int) this.getY(), (int) this.getZ()) >= 12) {
+            if (this.getLevel().getBlockLightAt(this.getX(), this.getY(), this.getZ()) >= 12) {
                 BlockFadeEvent event = new BlockFadeEvent(this, get(WATER));
                 level.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {

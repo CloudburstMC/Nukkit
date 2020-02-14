@@ -82,14 +82,14 @@ public class BlockFarmland extends BlockTransparent {
             Block block = this.level.getBlock(this.getPosition().down());
             if (found || block instanceof BlockWater) {
                 if (this.getMeta() < 7) {
-                    this.setDamage(7);
+                    this.setMeta(7);
                     this.level.setBlock(this.getPosition(), this, false, false);
                 }
                 return Level.BLOCK_UPDATE_RANDOM;
             }
 
             if (this.getMeta() > 0) {
-                this.setDamage(this.getMeta() - 1);
+                this.setMeta(this.getMeta() - 1);
                 this.level.setBlock(this.getPosition(), this, false, false);
             } else {
                 this.level.setBlock(this.getPosition(), Block.get(DIRT), false, true);

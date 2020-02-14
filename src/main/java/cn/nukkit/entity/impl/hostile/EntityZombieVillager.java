@@ -34,4 +34,10 @@ public class EntityZombieVillager extends EntityHostile implements ZombieVillage
     public String getName() {
         return "Zombie Villager";
     }
+
+    @Override
+    public boolean isUndead() {
+        return true;
+    }
+
 }

@@ -103,4 +103,9 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
     public BlockColor getColor() {
         return BlockColor.PURPLE_BLOCK_COLOR;
     }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

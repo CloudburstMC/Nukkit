@@ -1,6 +1,8 @@
 package cn.nukkit.registry;
 
 import cn.nukkit.block.*;
+import cn.nukkit.item.ItemIds;
+import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 import com.google.common.collect.HashBiMap;
 import com.nukkitx.nbt.CompoundTagBuilder;
@@ -87,7 +89,7 @@ public class BlockRegistry implements Registry {
             log.debug("Non-implemented block found {}", id);
         }
         Block block = this.factoryMap.get(id).create(id);
-        block.setDamage(meta);
+        block.setMeta(meta);
         this.runtimeStateMap.put(runtimeId, block);
         this.stateRuntimeMap.put(getFullId(legacyId, meta), runtimeId);
         return runtimeId;
@@ -313,12 +315,12 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(FARMLAND, BlockFarmland::new); //60
         this.factoryMap.put(FURNACE, BlockFurnace::new); //61
         this.factoryMap.put(LIT_FURNACE, BlockFurnaceBurning::new); //62
-        this.factoryMap.put(STANDING_SIGN, BlockSignPost::new); //63
+        this.factoryMap.put(STANDING_SIGN, BlockSignPost.factory(WALL_SIGN, ItemIds.SIGN)); //63
         this.factoryMap.put(WOODEN_DOOR, BlockDoorWood::new); //64
         this.factoryMap.put(LADDER, BlockLadder::new); //65
         this.factoryMap.put(RAIL, BlockRail::new); //66
         this.factoryMap.put(STONE_STAIRS, BlockStairsCobblestone::new); //67
-        this.factoryMap.put(WALL_SIGN, BlockWallSign::new); //68
+        this.factoryMap.put(WALL_SIGN, BlockWallSign.factory(STANDING_SIGN, ItemIds.SIGN)); //68
         this.factoryMap.put(LEVER, BlockLever::new); //69
         this.factoryMap.put(STONE_PRESSURE_PLATE, BlockPressurePlateStone::new); //70
         this.factoryMap.put(IRON_DOOR, BlockDoorIron::new); //71
@@ -381,13 +383,13 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(SANDSTONE_STAIRS, BlockStairsSandstone::new); //128
         this.factoryMap.put(EMERALD_ORE, BlockOreEmerald::new); //129
         this.factoryMap.put(ENDER_CHEST, BlockEnderChest::new); //130
-        this.factoryMap.put(TRIPWIRE_HOOK, BlockTripWireHook::new);
+        this.factoryMap.put(TRIPWIRE_HOOK, BlockTripWireHook::new); //131
         this.factoryMap.put(TRIPWIRE, BlockTripWire::new); //132
         this.factoryMap.put(EMERALD_BLOCK, BlockEmerald::new); //133
         this.factoryMap.put(SPRUCE_STAIRS, BlockStairsWood::new); //134
         this.factoryMap.put(BIRCH_STAIRS, BlockStairsWood::new); //135
         this.factoryMap.put(JUNGLE_STAIRS, BlockStairsWood::new); //136
-
+        //137: impulse_command_block
         this.factoryMap.put(BEACON, BlockBeacon::new); //138
         this.factoryMap.put(COBBLESTONE_WALL, BlockWall::new); //139
         this.factoryMap.put(FLOWER_POT, BlockFlowerPot::new); //140
@@ -400,7 +402,7 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(LIGHT_WEIGHTED_PRESSURE_PLATE, BlockWeightedPressurePlateLight::new); //147
         this.factoryMap.put(HEAVY_WEIGHTED_PRESSURE_PLATE, BlockWeightedPressurePlateHeavy::new); //148
         this.factoryMap.put(UNPOWERED_COMPARATOR, BlockRedstoneComparatorUnpowered::new); //149
-        this.factoryMap.put(POWERED_COMPARATOR, BlockRedstoneComparatorPowered::new); //149
+        this.factoryMap.put(POWERED_COMPARATOR, BlockRedstoneComparatorPowered::new); //150
         this.factoryMap.put(DAYLIGHT_DETECTOR, BlockDaylightDetector::new); //151
         this.factoryMap.put(REDSTONE_BLOCK, BlockRedstone::new); //152
         this.factoryMap.put(QUARTZ_ORE, BlockOreQuartz::new); //153
@@ -411,13 +413,12 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(WOODEN_SLAB, BlockSlabWood::new); //158
         this.factoryMap.put(STAINED_HARDENED_CLAY, BlockTerracottaStained::new); //159
         this.factoryMap.put(STAINED_GLASS_PANE, BlockGlassPaneStained::new); //160
-
         this.factoryMap.put(LEAVES2, BlockLeaves2::new); //161
         this.factoryMap.put(LOG2, BlockLog2::new); //162
         this.factoryMap.put(ACACIA_STAIRS, BlockStairsWood::new); //163
         this.factoryMap.put(DARK_OAK_STAIRS, BlockStairsWood::new); //164
         this.factoryMap.put(SLIME, BlockSlime::new); //165
-
+        //166: glow_stick
         this.factoryMap.put(IRON_TRAPDOOR, BlockTrapdoorIron::new); //167
         this.factoryMap.put(PRISMARINE, BlockPrismarine::new); //168
         this.factoryMap.put(SEA_LANTERN, BlockSeaLantern::new); //169
@@ -439,7 +440,11 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(JUNGLE_FENCE_GATE, BlockFenceGate::new); //185
         this.factoryMap.put(DARK_OAK_FENCE_GATE, BlockFenceGate::new); //186
         this.factoryMap.put(ACACIA_FENCE_GATE, BlockFenceGate::new); //187
-
+        //188: repeating_command_block
+        //189: chain_command_block
+        //190: hard_glass_pane
+        //191: hard_stained_glass_pane
+        //192: chemical_heat
         this.factoryMap.put(SPRUCE_DOOR, BlockDoorWood::new); //193
         this.factoryMap.put(BIRCH_DOOR, BlockDoorWood::new); //194
         this.factoryMap.put(JUNGLE_DOOR, BlockDoorWood::new); //195
@@ -449,20 +454,22 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(FRAME, BlockItemFrame::new); //199
         this.factoryMap.put(CHORUS_FLOWER, BlockChorusFlower::new); //200
         this.factoryMap.put(PURPUR_BLOCK, BlockPurpur::new); //201
-
+        //202: chorus_flower
         this.factoryMap.put(PURPUR_STAIRS, BlockStairsPurpur::new); //203
-
+        //204: colored_torch_bp
         this.factoryMap.put(UNDYED_SHULKER_BOX, BlockUndyedShulkerBox::new); //205
         this.factoryMap.put(END_BRICKS, BlockBricksEndStone::new); //206
-
+        //207: frosted_ice
         this.factoryMap.put(END_ROD, BlockEndRod::new); //208
         this.factoryMap.put(END_GATEWAY, BlockEndGateway::new); //209
-
+        //210: allow
+        //211: deny
+        //212: border
         this.factoryMap.put(MAGMA, BlockMagma::new); //213
         this.factoryMap.put(NETHER_WART_BLOCK, BlockNetherWartBlock::new); //214
         this.factoryMap.put(RED_NETHER_BRICK, BlockBricksRedNether::new); //215
         this.factoryMap.put(BONE_BLOCK, BlockBone::new); //216
-
+        //217: structure_void
         this.factoryMap.put(SHULKER_BOX, BlockShulkerBox::new); //218
         this.factoryMap.put(PURPLE_GLAZED_TERRACOTTA, BlockTerracottaGlazed::new); //219
         this.factoryMap.put(WHITE_GLAZED_TERRACOTTA, BlockTerracottaGlazed::new); //220
@@ -475,7 +482,7 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(GRAY_GLAZED_TERRACOTTA, BlockTerracottaGlazed::new); //227
         this.factoryMap.put(SILVER_GLAZED_TERRACOTTA, BlockTerracottaGlazed::new); //228
         this.factoryMap.put(CYAN_GLAZED_TERRACOTTA, BlockTerracottaGlazed::new); //229
-
+        //230: chalkboard
         this.factoryMap.put(BLUE_GLAZED_TERRACOTTA, BlockTerracottaGlazed::new); //231
         this.factoryMap.put(BROWN_GLAZED_TERRACOTTA, BlockTerracottaGlazed::new); //232
         this.factoryMap.put(GREEN_GLAZED_TERRACOTTA, BlockTerracottaGlazed::new); //233
@@ -483,21 +490,127 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(BLACK_GLAZED_TERRACOTTA, BlockTerracottaGlazed::new); //235
         this.factoryMap.put(CONCRETE, BlockConcrete::new); //236
         this.factoryMap.put(CONCRETE_POWDER, BlockConcretePowder::new); //237
-
+        //238: chemistry_table
+        //239: underwater_torch
         this.factoryMap.put(CHORUS_PLANT, BlockChorusPlant::new); //240
         this.factoryMap.put(STAINED_GLASS, BlockGlassStained::new); //241
+        //242: camera
         this.factoryMap.put(PODZOL, BlockPodzol::new); //243
         this.factoryMap.put(BEETROOT, BlockBeetroot::new); //244
         this.factoryMap.put(STONECUTTER, BlockStonecutter::new); //245
         this.factoryMap.put(GLOWING_OBSIDIAN, BlockObsidianGlowing::new); //246
         //list.put(NETHER_REACTOR, BlockNetherReactor::new); //247 Should not be removed
-
+        //248: info_update
+        //249: info_update2
         //TODO: list.put(PISTON_EXTENSION, BlockPistonExtension::new); //250
-
         this.factoryMap.put(OBSERVER, BlockObserver::new); //251
-
-        this.factoryMap.put(SPRUCE_STANDING_SIGN, BlockSignPost::new);
-
-        this.factoryMap.put(CAMPFIRE, BlockCampfire::new);
+        //252: structure_block
+        //253: hard_glass
+        //254: hard_stained_glass
+        //255: reserved6
+        //256: unknown
+        this.factoryMap.put(PRISMARINE_STAIRS, BlockStairsPrismarine::new); //257
+        this.factoryMap.put(DARK_PRISMARINE_STAIRS, BlockStairsDarkPrismarine::new); //258
+        this.factoryMap.put(PRISMARINE_BRICKS_STAIRS, BlockStairsPrismarineBricks::new); //259
+        this.factoryMap.put(STRIPPED_SPRUCE_LOG, BlockStrippedLog::new); //260
+        this.factoryMap.put(STRIPPED_BIRCH_LOG, BlockStrippedLog::new); //261
+        this.factoryMap.put(STRIPPED_JUNGLE_LOG, BlockStrippedLog::new); //262
+        this.factoryMap.put(STRIPPED_ACACIA_LOG, BlockStrippedLog::new); //263
+        this.factoryMap.put(STRIPPED_DARK_OAK_LOG, BlockStrippedLog::new); //264
+        this.factoryMap.put(STRIPPED_OAK_LOG, BlockStrippedLog::new); //265
+        this.factoryMap.put(BLUE_ICE, BlockBlueIce::new); //266
+        //267: element_1
+        // ...
+        //384: element_118
+        //385: seagrass
+        //386: coral
+        //387: coral_block
+        //388: coral_fan
+        //389: coral_fan_dead
+        //390: coral_fan_hang
+        //391: coral_fan_hang2
+        //392: coral_fan_hang3
+        //393: kelp
+        this.factoryMap.put(DRIED_KELP_BLOCK, BlockDriedKelp::new); //394
+        this.factoryMap.put(ACACIA_BUTTON, BlockButtonWooden::new);//395
+        this.factoryMap.put(BIRCH_BUTTON, BlockButtonWooden::new);//396
+        this.factoryMap.put(DARK_OAK_BUTTON, BlockButtonWooden::new);//397
+        this.factoryMap.put(JUNGLE_BUTTON, BlockButtonWooden::new);//398
+        this.factoryMap.put(SPRUCE_BUTTON, BlockButtonWooden::new);//399
+        this.factoryMap.put(ACACIA_TRAPDOOR, BlockTrapdoor.factory(BlockColor.ORANGE_BLOCK_COLOR)); //400
+        this.factoryMap.put(BIRCH_TRAPDOOR, BlockTrapdoor.factory(BlockColor.SAND_BLOCK_COLOR)); //401
+        this.factoryMap.put(DARK_OAK_TRAPDOOR, BlockTrapdoor.factory(BlockColor.BROWN_BLOCK_COLOR)); //402
+        this.factoryMap.put(JUNGLE_TRAPDOOR, BlockTrapdoor.factory(BlockColor.DIRT_BLOCK_COLOR)); //403
+        this.factoryMap.put(SPRUCE_TRAPDOOR, BlockTrapdoor.factory(BlockColor.SPRUCE_BLOCK_COLOR)); //404
+        this.factoryMap.put(ACACIA_PRESSURE_PLATE, BlockPressurePlateWood::new);//405
+        this.factoryMap.put(BIRCH_PRESSURE_PLATE, BlockPressurePlateWood::new);//406
+        this.factoryMap.put(DARK_OAK_PRESSURE_PLATE, BlockPressurePlateWood::new);//407
+        this.factoryMap.put(JUNGLE_PRESSURE_PLATE, BlockPressurePlateWood::new);//408
+        this.factoryMap.put(SPRUCE_PRESSURE_PLATE, BlockPressurePlateWood::new);//409
+        //410: carved_pumpkin
+        //411: sea_pickle
+        //412: conduit
+        //413: turtle_egg
+        //414: bubble_column
+        this.factoryMap.put(BARRIER, BlockBarrier::new); //415
+        //416: stone_slab3
+        //417: bamboo
+        //418: bamboo_sapling
+        //419: scaffolding
+        //420: stone_slab4
+        //421: double_stone_slab3
+        //422: double_stone_slab4
+        this.factoryMap.put(GRANITE_STAIRS, BlockStairsGranite::new); //423
+        this.factoryMap.put(DIORITE_STAIRS, BlockStairsDiorite::new); //424
+        this.factoryMap.put(ANDESITE_STAIRS, BlockStairsAndesite::new); //425
+        this.factoryMap.put(POLISHED_GRANITE_STAIRS, BlockStairsGranite::new); //426
+        this.factoryMap.put(POLISHED_DIORITE_STAIRS, BlockStairsDiorite::new); //427
+        this.factoryMap.put(POLISHED_ANDESITE_STAIRS, BlockStairsAndesite::new); //428
+        this.factoryMap.put(MOSSY_STONE_BRICK_STAIRS, BlockStairsStoneBrick::new); //429
+        this.factoryMap.put(SMOOTH_RED_SANDSTONE_STAIRS, BlockStairsSmoothRedSandstone::new); //430
+        this.factoryMap.put(SMOOTH_SANDSTONE_STAIRS, BlockStairsSmoothSandstone::new); //431
+        this.factoryMap.put(END_BRICK_STAIRS, BlockStairsEndStoneBrick::new); //432
+        this.factoryMap.put(MOSSY_COBBLESTONE_STAIRS, BlockStairsCobblestone::new); //433
+        this.factoryMap.put(NORMAL_STONE_STAIRS, BlockStairsStone::new); //434
+        this.factoryMap.put(SPRUCE_STANDING_SIGN, BlockSignPost.factory(SPRUCE_WALL_SIGN, ItemIds.SPRUCE_SIGN)); //435
+        this.factoryMap.put(SPRUCE_WALL_SIGN, BlockWallSign.factory(SPRUCE_STANDING_SIGN, ItemIds.SPRUCE_SIGN)); // 436
+        this.factoryMap.put(SMOOTH_STONE, BlockSmoothStone::new); // 437
+        this.factoryMap.put(RED_NETHER_BRICK_STAIRS, BlockStairsNetherBrick::new); //438
+        this.factoryMap.put(SMOOTH_QUARTZ_STAIRS, BlockStairsQuartz::new); //439
+        this.factoryMap.put(BIRCH_STANDING_SIGN, BlockSignPost.factory(BIRCH_WALL_SIGN, ItemIds.BIRCH_SIGN)); //440
+        this.factoryMap.put(BIRCH_WALL_SIGN, BlockWallSign.factory(BIRCH_STANDING_SIGN, ItemIds.BIRCH_SIGN)); //441
+        this.factoryMap.put(JUNGLE_STANDING_SIGN, BlockSignPost.factory(JUNGLE_WALL_SIGN, ItemIds.JUNGLE_SIGN)); //442
+        this.factoryMap.put(JUNGLE_WALL_SIGN, BlockWallSign.factory(JUNGLE_STANDING_SIGN, ItemIds.JUNGLE_SIGN)); //443
+        this.factoryMap.put(ACACIA_STANDING_SIGN, BlockSignPost.factory(ACACIA_WALL_SIGN, ItemIds.ACACIA_SIGN)); //444
+        this.factoryMap.put(ACACIA_WALL_SIGN, BlockWallSign.factory(ACACIA_STANDING_SIGN, ItemIds.ACACIA_SIGN)); //445
+        this.factoryMap.put(DARK_OAK_STANDING_SIGN, BlockSignPost.factory(DARK_OAK_WALL_SIGN, ItemIds.DARK_OAK_SIGN)); //446
+        this.factoryMap.put(DARK_OAK_WALL_SIGN, BlockWallSign.factory(DARK_OAK_STANDING_SIGN, ItemIds.DARK_OAK_SIGN)); //447
+        this.factoryMap.put(LECTERN, BlockLectern::new); //448
+        //449: grindstone
+        this.factoryMap.put(BLAST_FURNACE, BlockFurnace::new); // 450
+        //451: stonecutter_block
+        this.factoryMap.put(SMOKER, BlockFurnace::new); //452
+        this.factoryMap.put(LIT_SMOKER, BlockFurnaceBurning::new); //453
+        //454: cartography_table
+        //455: fletching_table
+        //456: smithing_table
+        this.factoryMap.put(BARREL, BlockBarrel::new); // 457
+        //458: loom
+        //459: bell
+        //460: sweet_berry_bush
+        //461: lantern
+        this.factoryMap.put(CAMPFIRE, BlockCampfire::new); //462
+        //463: lava_cauldron
+        //464: jigsaw
+        //465: wood
+        //466: composter
+        this.factoryMap.put(LIT_BLAST_FURNACE, BlockFurnaceBurning::new); //467
+        this.factoryMap.put(LIGHT_BLOCK, BlockLight::new); //468
+        //469: wither_rose
+        //470: stickypistonarmcollision
+        //471: bee_nest
+        //472: beehive
+        //473: honey_block
+        this.factoryMap.put(HONEYCOMB_BLOCK, BlockHoneycombBlock::new); //474
     }
 }

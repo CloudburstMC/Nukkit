@@ -43,4 +43,8 @@ public class BlockMobSpawner extends BlockSolid {
         return false;
     }
 
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

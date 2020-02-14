@@ -1,6 +1,7 @@
 package cn.nukkit.blockentity.impl;
 
 import cn.nukkit.block.BlockIds;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityType;
 import cn.nukkit.blockentity.Chest;
 import cn.nukkit.inventory.ChestInventory;
@@ -161,7 +162,7 @@ public class ChestBlockEntity extends BaseBlockEntity implements Chest {
 
     public ChestBlockEntity getPair() {
         if (this.isPaired()) {
-            BaseBlockEntity blockEntity = this.getLevel().getLoadedBlockEntity(this.pairPosition);
+            BlockEntity blockEntity = this.getLevel().getLoadedBlockEntity(this.pairPosition);
             if (blockEntity instanceof ChestBlockEntity) {
                 return (ChestBlockEntity) blockEntity;
             }

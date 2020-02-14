@@ -34,6 +34,11 @@ public class BlockDaylightDetector extends BlockTransparent {
         return false;
     }
 
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
+
     //todo redstone
 
 }

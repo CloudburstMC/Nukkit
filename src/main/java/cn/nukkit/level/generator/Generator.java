@@ -7,7 +7,6 @@ import cn.nukkit.math.BedrockRandom;
 import com.nukkitx.math.vector.Vector3i;
 
 import javax.annotation.concurrent.NotThreadSafe;
-import java.util.Map;
 
 @NotThreadSafe
 public interface Generator {
@@ -20,7 +19,7 @@ public interface Generator {
 
     void populateChunk(ChunkManager level, BedrockRandom random, int chunkX, int chunkZ);
 
-    Map<String, Object> getSettings();
+    String getSettings();
 
     Vector3i getSpawn();
 }

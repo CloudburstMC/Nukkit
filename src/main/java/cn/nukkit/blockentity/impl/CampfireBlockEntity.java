@@ -16,8 +16,10 @@ import com.nukkitx.nbt.tag.CompoundTag;
  * @author Sleepybear
  */
 public class CampfireBlockEntity extends BaseBlockEntity implements Campfire {
+
     private static final String[] ITEM_TAGS = {"Item1", "Item2", "Item3", "Item4"};
     private static final String[] TIME_TAGS = {"ItemTime1", "ItemTime2", "ItemTime3", "ItemTime4"};
+
     private final Item[] items = new Item[4];
     private final int[] itemTimes = new int[4];
 
@@ -80,8 +82,8 @@ public class CampfireBlockEntity extends BaseBlockEntity implements Campfire {
         for (int i = 0; i < items.length; i++) {
             if (items[i] != null) {
                 if (++itemTimes[i] >= 600) {
-                    Item output = getLevel().getServer().getCraftingManager().matchFurnaceRecipe(items[i]).getResult();
-                    getLevel().dropItem(this.getPosition(), output);
+                    Item output = getLevel().getServer().getCraftingManager().matchFurnaceRecipe(items[i], BlockIds.CAMPFIRE).getResult();
+                    this.getLevel().dropItem(this.getPosition(), output);
                     items[i] = null;
                     itemTimes[i] = 0;
                     itemChange = true;
@@ -97,9 +99,9 @@ public class CampfireBlockEntity extends BaseBlockEntity implements Campfire {
 
     @Override
     public void onBreak() {
-        for (int i = 0; i < items.length; i++) {
-            if (items[i] != null) {
-                getLevel().dropItem(this.getPosition(), items[i]);
+        for (Item item : items) {
+            if (item != null) {
+                this.getLevel().dropItem(this.getPosition(), item);
             }
         }
     }
@@ -114,15 +116,17 @@ public class CampfireBlockEntity extends BaseBlockEntity implements Campfire {
     public boolean putItemInFire(Item item) {
         if (!(item instanceof ItemEdible)) return false;
 
-        for (int i = 0; i < items.length; i++) {
-            if (items[i] == null) {
-                Item food = item.clone();
-                if (food.getCount() != 1) food.setCount(1);
-                items[i] = food;
-                itemTimes[i] = 0;
-                spawnToAll();
-                this.scheduleUpdate();
-                return true;
+        if (this.getLevel().getServer().getCraftingManager().matchFurnaceRecipe(item, BlockIds.CAMPFIRE) != null) {
+            for (int i = 0; i < items.length; i++) {
+                if (items[i] == null) {
+                    Item food = item.clone();
+                    if (food.getCount() != 1) food.setCount(1);
+                    items[i] = food;
+                    itemTimes[i] = 0;
+                    this.spawnToAll();
+                    this.scheduleUpdate();
+                    return true;
+                }
             }
         }
         return false;
@@ -150,6 +154,17 @@ public class CampfireBlockEntity extends BaseBlockEntity implements Campfire {
             this.scheduleUpdate();
         }
         return addedFood;
+    }
+
+    /**
+     * Method is used to clear all of the items cooking in the fire, without dropping any into the world.
+     */
+    public void clearItems() {
+        for (int i = 0; i < items.length; i++) {
+            items[i] = null;
+            itemTimes[i] = 0;
+        }
+        spawnToAll();
     }
 
     @Override

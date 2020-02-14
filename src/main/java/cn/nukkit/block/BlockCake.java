@@ -102,7 +102,7 @@ public class BlockCake extends BlockTransparent {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null && player.getFoodData().getLevel() < player.getFoodData().getMaxLevel()) {
-            if (getMeta() <= 0x06) setDamage(getMeta() + 1);
+            if (getMeta() <= 0x06) setMeta(getMeta() + 1);
             if (getMeta() >= 0x06) {
                 getLevel().setBlock(this.getPosition(), Block.get(AIR), true);
             } else {
@@ -124,6 +124,11 @@ public class BlockCake extends BlockTransparent {
     }
 
     public boolean hasComparatorInputOverride() {
+        return true;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
         return true;
     }
 }

@@ -133,7 +133,7 @@ public class BlockRedstoneWire extends FloodableBlock {
         if (meta != maxStrength) {
             this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, meta, maxStrength));
 
-            this.setDamage(maxStrength);
+            this.setMeta(maxStrength);
             this.level.setBlock(this.getPosition(), this, false, false);
 
             this.level.updateAroundRedstone(this.getPosition(), null);

@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.blockentity.Sign;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
@@ -14,7 +13,7 @@ import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3f;
 
-import static cn.nukkit.block.BlockIds.*;
+import static cn.nukkit.block.BlockIds.AIR;
 import static cn.nukkit.blockentity.BlockEntityTypes.SIGN;
 
 /**
@@ -22,8 +21,19 @@ import static cn.nukkit.blockentity.BlockEntityTypes.SIGN;
  */
 public class BlockSignPost extends BlockTransparent implements Faceable {
 
-    public BlockSignPost(Identifier id) {
+    protected final Identifier signItemId;
+    protected final Identifier signWallId;
+    protected final Identifier signStandingId;
+
+    protected BlockSignPost(Identifier id, Identifier signStandingId, Identifier signWallId, Identifier signItemId) {
         super(id);
+        this.signItemId = signItemId;
+        this.signWallId = signWallId;
+        this.signStandingId = signStandingId;
+    }
+
+    public BlockSignPost(Identifier id, Identifier signWallId, Identifier signItemId) {
+        this(id, id, signWallId, signItemId);
     }
 
     @Override
@@ -46,28 +56,8 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
         return null;
     }
 
-    @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        if (face != BlockFace.DOWN) {
-            if (face == BlockFace.UP) {
-                setDamage((int) Math.floor(((player.getYaw() + 180) * 16 / 360) + 0.5) & 0x0f);
-                getLevel().setBlock(block.getPosition(), Block.get(STANDING_SIGN, getMeta()), true);
-            } else {
-                setDamage(face.getIndex());
-                getLevel().setBlock(block.getPosition(), Block.get(WALL_SIGN, getMeta()), true);
-            }
-
-            Sign sign = BlockEntityRegistry.get().newEntity(SIGN, this.getChunk(), this.getPosition());
-            if (!item.hasCompoundTag()) {
-                sign.setCreator(player.getLoginChainData().getXUID());
-            } else {
-                sign.loadAdditionalData(item.getTag());
-            }
-
-            return true;
-        }
-
-        return false;
+    public static BlockFactory factory(Identifier signWallId, Identifier signItemId) {
+        return signStandingId -> new BlockSignPost(signStandingId, signWallId, signItemId);
     }
 
     @Override
@@ -84,8 +74,27 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
     }
 
     @Override
-    public Item toItem() {
-        return Item.get(ItemIds.SIGN);
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        if (face != BlockFace.DOWN) {
+            if (face == BlockFace.UP) {
+                setMeta((int) Math.floor(((player.getYaw() + 180) * 16 / 360) + 0.5) & 0x0f);
+                getLevel().setBlock(block.getPosition(), Block.get(signStandingId, getMeta()), true);
+            } else {
+                setMeta(face.getIndex());
+                getLevel().setBlock(block.getPosition(), Block.get(signWallId, getMeta()), true);
+            }
+
+            Sign sign = BlockEntityRegistry.get().newEntity(SIGN, this.getChunk(), this.getPosition());
+            if (!item.hasCompoundTag()) {
+                sign.setCreator(player.getLoginChainData().getXUID());
+            } else {
+                sign.loadAdditionalData(item.getTag());
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -101,5 +110,27 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromIndex(this.getMeta() & 0x07);
+    }
+
+    @Override
+    public Item toItem() {
+        return Item.get(signItemId);
+    }
+
+    public Identifier getSignItemId() {
+        return signItemId;
+    }
+
+    public Identifier getSignWallId() {
+        return signWallId;
+    }
+
+    public Identifier getSignStandingId() {
+        return signStandingId;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

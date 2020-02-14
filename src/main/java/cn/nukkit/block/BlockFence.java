@@ -61,4 +61,9 @@ public abstract class BlockFence extends BlockTransparent {
     public Item toItem() {
         return Item.get(id, this.getMeta());
     }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

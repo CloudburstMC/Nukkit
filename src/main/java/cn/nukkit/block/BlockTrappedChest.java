@@ -24,7 +24,7 @@ public class BlockTrappedChest extends BlockChest {
         int[] faces = {2, 5, 3, 4};
 
         Chest chest = null;
-        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+        this.setMeta(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
 
         for (BlockFace side : Plane.HORIZONTAL) {
             if ((this.getMeta() == 4 || this.getMeta() == 5) && (side == BlockFace.WEST || side == BlockFace.EAST)) {

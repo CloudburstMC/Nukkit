@@ -61,10 +61,10 @@ public class BlockBanner extends BlockTransparent implements Faceable {
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (face != BlockFace.DOWN) {
             if (face == BlockFace.UP) {
-                this.setDamage(NukkitMath.floorDouble(((player.getYaw() + 180) * 16 / 360) + 0.5) & 0x0f);
+                this.setMeta(NukkitMath.floorDouble(((player.getYaw() + 180) * 16 / 360) + 0.5) & 0x0f);
                 this.getLevel().setBlock(block.getPosition(), this, true);
             } else {
-                this.setDamage(face.getIndex());
+                this.setMeta(face.getIndex());
                 this.getLevel().setBlock(block.getPosition(), Block.get(WALL_BANNER, this.getMeta()), true);
             }
 
@@ -129,5 +129,10 @@ public class BlockBanner extends BlockTransparent implements Faceable {
         }
 
         return DyeColor.WHITE;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

@@ -1,7 +1,7 @@
 package cn.nukkit.level.chunk;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.blockentity.impl.BaseBlockEntity;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
 import cn.nukkit.player.Player;
@@ -174,17 +174,17 @@ public final class LockableChunk implements IChunk, Lock {
     }
 
     @Override
-    public void addBlockEntity(BaseBlockEntity blockEntity) {
+    public void addBlockEntity(BlockEntity blockEntity) {
         this.unsafe.addBlockEntity(blockEntity);
     }
 
     @Override
-    public void removeBlockEntity(BaseBlockEntity blockEntity) {
+    public void removeBlockEntity(BlockEntity blockEntity) {
         this.unsafe.removeBlockEntity(blockEntity);
     }
 
     @Override
-    public BaseBlockEntity getBlockEntity(int x, int y, int z) {
+    public BlockEntity getBlockEntity(int x, int y, int z) {
         return this.unsafe.getBlockEntity(x, y, z);
     }
 
@@ -232,7 +232,7 @@ public final class LockableChunk implements IChunk, Lock {
 
     @Nonnull
     @Override
-    public Collection<BaseBlockEntity> getBlockEntities() {
+    public Collection<BlockEntity> getBlockEntities() {
         return this.unsafe.getBlockEntities();
     }
 

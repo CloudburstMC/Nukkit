@@ -40,7 +40,7 @@ public class BlockTerracottaGlazed extends BlockSolid implements Faceable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         int[] faces = {2, 5, 3, 4};
-        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+        this.setMeta(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
         return this.getLevel().setBlock(block.getPosition(), this, true, true);
     }
 

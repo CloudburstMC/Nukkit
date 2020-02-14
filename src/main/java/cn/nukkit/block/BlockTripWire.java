@@ -10,7 +10,6 @@ import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3f;
 
-import static cn.nukkit.block.BlockIds.AIR;
 import static cn.nukkit.block.BlockIds.TRIPWIRE;
 import static cn.nukkit.item.ItemIds.SHEARS;
 
@@ -54,7 +53,7 @@ public class BlockTripWire extends FloodableBlock {
 
     public void setPowered(boolean value) {
         if (value ^ this.isPowered()) {
-            this.setDamage(this.getMeta() ^ 0x01);
+            this.setMeta(this.getMeta() ^ 0x01);
         }
     }
 
@@ -64,7 +63,7 @@ public class BlockTripWire extends FloodableBlock {
 
     public void setAttached(boolean value) {
         if (value ^ this.isAttached()) {
-            this.setDamage(this.getMeta() ^ 0x04);
+            this.setMeta(this.getMeta() ^ 0x04);
         }
     }
 
@@ -74,7 +73,7 @@ public class BlockTripWire extends FloodableBlock {
 
     public void setDisarmed(boolean value) {
         if (value ^ this.isDisarmed()) {
-            this.setDamage(this.getMeta() ^ 0x08);
+            this.setMeta(this.getMeta() ^ 0x08);
         }
     }
 
@@ -163,10 +162,10 @@ public class BlockTripWire extends FloodableBlock {
             this.setDisarmed(true);
             this.level.setBlock(this.getPosition(), this, true, false);
             this.updateHook(false);
-            this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true, true);
+            super.onBreak(item);
         } else {
             this.setPowered(true);
-            this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true, true);
+            super.onBreak(item);
             this.updateHook(true);
         }
 
@@ -181,5 +180,15 @@ public class BlockTripWire extends FloodableBlock {
     @Override
     protected AxisAlignedBB recalculateCollisionBoundingBox() {
         return this;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
+
+    @Override
+    public boolean canWaterlogFlowing() {
+        return true;
     }
 }

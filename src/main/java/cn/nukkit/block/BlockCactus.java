@@ -108,10 +108,10 @@ public class BlockCactus extends BlockTransparent {
                             }
                         }
                     }
-                    this.setDamage(0);
+                    this.setMeta(0);
                     this.getLevel().setBlock(this.getPosition(), this);
                 } else {
-                    this.setDamage(this.getMeta() + 1);
+                    this.setMeta(this.getMeta() + 1);
                     this.getLevel().setBlock(this.getPosition(), this);
                 }
             }
@@ -123,7 +123,7 @@ public class BlockCactus extends BlockTransparent {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         Block down = this.down();
-        if (down.getId() == SAND || down.getId() == CACTUS) {
+        if (!block.isWaterlogged() && (down.getId() == SAND || down.getId() == CACTUS)) {
             Block block0 = north();
             Block block1 = south();
             Block block2 = west();
@@ -141,11 +141,16 @@ public class BlockCactus extends BlockTransparent {
     public BlockColor getColor() {
         return BlockColor.FOLIAGE_BLOCK_COLOR;
     }
-    
+
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
                 Item.get(CACTUS, 0, 1)
         };
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

@@ -92,8 +92,8 @@ public class BlockLadder extends BlockTransparent implements Faceable {
     }
 
     @Override
-    public void setDamage(int meta) {
-        super.setDamage(meta);
+    public void setMeta(int meta) {
+        super.setMeta(meta);
         calculateOffsets();
     }
 
@@ -126,7 +126,7 @@ public class BlockLadder extends BlockTransparent implements Faceable {
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (!target.isTransparent()) {
             if (face.getIndex() >= 2 && face.getIndex() <= 5) {
-                this.setDamage(face.getIndex());
+                this.setMeta(face.getIndex());
                 this.getLevel().setBlock(block.getPosition(), this, true, true);
                 return true;
             }
@@ -173,5 +173,10 @@ public class BlockLadder extends BlockTransparent implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

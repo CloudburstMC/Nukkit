@@ -40,7 +40,7 @@ public class BlockPumpkin extends BlockSolid implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        this.setDamage(player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0);
+        this.setMeta(player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0);
         this.getLevel().setBlock(block.getPosition(), this, true, true);
         return true;
     }

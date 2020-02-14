@@ -6,6 +6,7 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.ServerException;
+import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.protocol.bedrock.packet.MobEffectPacket;
 
 import static com.nukkitx.protocol.bedrock.data.EntityFlag.INVISIBLE;
@@ -47,6 +48,16 @@ public class Effect implements Cloneable {
     public static final int COUNDIT_POWER = 26;
     public static final int SLOW_FALLING = 27;
 
+    private static final String TAG_ID = "Id";
+    private static final String TAG_AMPLIFIER = "Amplifier";
+    private static final String TAG_DURATION = "Duration";
+    private static final String TAG_DURATION_EASY = "DurationEasy";
+    private static final String TAG_DURATION_NORMAL = "DurationNormal";
+    private static final String TAG_DURATION_HARD = "DurationHard";
+    private static final String TAG_AMBIENT = "Ambient";
+    private static final String TAG_SHOW_PARTICLES = "ShowParticles";
+    private static final String TAG_DISPLAY_ON_SCREEN_TEXTURE_ANIMATION = "DisplayOnScreenTextureAnimation";
+
     protected static Effect[] effects;
 
     public static void init() {
@@ -84,6 +95,8 @@ public class Effect implements Cloneable {
         effects[Effect.SLOW_FALLING] = new Effect(Effect.SLOW_FALLING, "%potion.slowFalling", 206, 255, 255);
     }
 
+    protected final byte id;
+
     public static Effect getEffect(int id) {
         if (id >= 0 && id < effects.length && effects[id] != null) {
             return effects[id].clone();
@@ -102,13 +115,18 @@ public class Effect implements Cloneable {
         }
     }
 
-    protected final int id;
+    protected byte amplifier;
 
     protected final String name;
 
     protected int duration;
 
-    protected int amplifier = 0;
+    public Effect(int id, String name, int r, int g, int b, boolean isBad) {
+        this.id = (byte) id;
+        this.name = name;
+        this.bad = isBad;
+        this.setColor(r, g, b);
+    }
 
     protected int color;
 
@@ -122,18 +140,19 @@ public class Effect implements Cloneable {
         this(id, name, r, g, b, false);
     }
 
-    public Effect(int id, String name, int r, int g, int b, boolean isBad) {
-        this.id = id;
-        this.name = name;
-        this.bad = isBad;
-        this.setColor(r, g, b);
+    public static Effect getEffect(CompoundTag tag) {
+        return getEffect(tag.getByte(TAG_ID))
+                .setAmbient(tag.getBoolean(TAG_AMBIENT))
+                .setAmplifier(tag.getByte(TAG_AMPLIFIER))
+                .setVisible(tag.getBoolean(TAG_SHOW_PARTICLES))
+                .setDuration(tag.getInt(TAG_DURATION));
     }
 
     public String getName() {
         return name;
     }
 
-    public int getId() {
+    public byte getId() {
         return id;
     }
 
@@ -155,12 +174,12 @@ public class Effect implements Cloneable {
         return this;
     }
 
-    public int getAmplifier() {
+    public byte getAmplifier() {
         return amplifier;
     }
 
     public Effect setAmplifier(int amplifier) {
-        this.amplifier = amplifier;
+        this.amplifier = (byte) amplifier;
         return this;
     }
 
@@ -300,6 +319,15 @@ public class Effect implements Cloneable {
         if (this.id == Effect.ABSORPTION) {
             entity.setAbsorption(0);
         }
+    }
+
+    public CompoundTag createTag() {
+        return CompoundTag.builder().byteTag(TAG_ID, getId())
+                .booleanTag(TAG_AMBIENT, isAmbient())
+                .byteTag(TAG_AMPLIFIER, getAmplifier())
+                .booleanTag(TAG_SHOW_PARTICLES, isVisible())
+                .intTag(TAG_DURATION, getDuration())
+                .buildRootTag();
     }
 
     @Override

@@ -92,7 +92,7 @@ public class BlockFenceGate extends BlockTransparent implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        this.setDamage(player != null ? player.getDirection().getHorizontalIndex() : 0);
+        this.setMeta(player != null ? player.getDirection().getHorizontalIndex() : 0);
         this.getLevel().setBlock(block.getPosition(), this, true, true);
 
         return true;
@@ -162,7 +162,7 @@ public class BlockFenceGate extends BlockTransparent implements Faceable {
             }
         }
 
-        this.setDamage(direction | ((~this.getMeta()) & 0x04));
+        this.setMeta(direction | ((~this.getMeta()) & 0x04));
         this.level.setBlock(this.getPosition(), this, false, false);
         return true;
     }
@@ -186,5 +186,10 @@ public class BlockFenceGate extends BlockTransparent implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

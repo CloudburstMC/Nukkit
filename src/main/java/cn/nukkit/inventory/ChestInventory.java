@@ -1,6 +1,6 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.blockentity.impl.ChestBlockEntity;
+import cn.nukkit.blockentity.Chest;
 import cn.nukkit.level.Level;
 import cn.nukkit.player.Player;
 import com.nukkitx.protocol.bedrock.data.SoundEvent;
@@ -14,13 +14,13 @@ public class ChestInventory extends ContainerInventory {
 
     protected DoubleChestInventory doubleInventory;
 
-    public ChestInventory(ChestBlockEntity chest) {
+    public ChestInventory(Chest chest) {
         super(chest, InventoryType.CHEST);
     }
 
     @Override
-    public ChestBlockEntity getHolder() {
-        return (ChestBlockEntity) this.holder;
+    public Chest getHolder() {
+        return (Chest) this.holder;
     }
 
     @Override

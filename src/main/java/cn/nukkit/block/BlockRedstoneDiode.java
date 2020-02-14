@@ -11,7 +11,8 @@ import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.math.vector.Vector3i;
 
-import static cn.nukkit.block.BlockIds.*;
+import static cn.nukkit.block.BlockIds.REDSTONE_BLOCK;
+import static cn.nukkit.block.BlockIds.REDSTONE_WIRE;
 
 /**
  * @author CreeperFace
@@ -27,7 +28,7 @@ public abstract class BlockRedstoneDiode extends FloodableBlock implements Facea
     @Override
     public boolean onBreak(Item item) {
         Vector3i pos = this.getPosition();
-        this.level.setBlock(pos, Block.get(AIR), true, true);
+        super.onBreak(item);
 
         for (BlockFace face : BlockFace.values()) {
             this.level.updateAroundRedstone(face.getOffset(pos), null);
@@ -41,7 +42,7 @@ public abstract class BlockRedstoneDiode extends FloodableBlock implements Facea
             return false;
         }
 
-        this.setDamage(player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0);
+        this.setMeta(player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0);
         this.level.setBlock(block.getPosition(), this, true, true);
 
         if (shouldBePowered()) {
@@ -209,5 +210,15 @@ public abstract class BlockRedstoneDiode extends FloodableBlock implements Facea
     @Override
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
+
+    @Override
+    public boolean canWaterlogFlowing() {
+        return true;
     }
 }

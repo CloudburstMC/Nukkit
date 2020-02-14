@@ -42,6 +42,8 @@ import com.nukkitx.protocol.bedrock.data.EntityDataMap;
 import com.nukkitx.protocol.bedrock.data.EntityLink;
 import com.nukkitx.protocol.bedrock.packet.*;
 import com.spotify.futures.CompletableFutures;
+import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
+import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
 import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nullable;
@@ -64,7 +66,7 @@ public abstract class BaseEntity implements Entity, Metadatable {
 
     protected final Set<Player> hasSpawned = ConcurrentHashMap.newKeySet();
 
-    protected final Map<Integer, Effect> effects = new ConcurrentHashMap<>();
+    protected final Short2ObjectMap<Effect> effects = new Short2ObjectOpenHashMap<>();
     protected final List<Entity> passengers = new ArrayList<>();
     private final long runtimeId = EntityRegistry.get().newEntityId();
     protected final SyncedEntityData data = new SyncedEntityData(this::onDataChange);
@@ -247,14 +249,7 @@ public abstract class BaseEntity implements Entity, Metadatable {
         if (tag.contains("ActiveEffects")) {
             List<CompoundTag> effects = tag.getList("ActiveEffects", CompoundTag.class);
             for (CompoundTag e : effects) {
-                Effect effect = Effect.getEffect(e.getByte("Id"));
-                if (effect == null) {
-                    continue;
-                }
-
-                effect.setAmplifier(e.getByte("Amplifier")).setDuration(e.getInt("Duration")).setVisible(e.getBoolean("showParticles"));
-
-                this.addEffect(effect);
+                this.addEffect(Effect.getEffect(e));
             }
         }
 
@@ -302,14 +297,7 @@ public abstract class BaseEntity implements Entity, Metadatable {
         if (!this.effects.isEmpty()) {
             List<CompoundTag> list = new ArrayList<>();
             for (Effect effect : this.effects.values()) {
-                list.add(CompoundTag.builder()
-                        .byteTag("Id", (byte) effect.getId())
-                        .byteTag("Amplifier", (byte) effect.getAmplifier())
-                        .intTag("Duration", effect.getDuration())
-                        .booleanTag("Ambient", false)
-                        .booleanTag("ShowParticles", effect.isVisible())
-                        .build(String.valueOf(effect.getId()))
-                );
+                list.add(effect.createTag());
             }
 
             tag.listTag("ActiveEffects", CompoundTag.class, list);
@@ -450,7 +438,7 @@ public abstract class BaseEntity implements Entity, Metadatable {
         return vehicle;
     }
 
-    public Map<Integer, Effect> getEffects() {
+    public Short2ObjectMap<Effect> getEffects() {
         return effects;
     }
 
@@ -461,9 +449,9 @@ public abstract class BaseEntity implements Entity, Metadatable {
     }
 
     public void removeEffect(int effectId) {
-        if (this.effects.containsKey(effectId)) {
-            Effect effect = this.effects.get(effectId);
-            this.effects.remove(effectId);
+        if (this.effects.containsKey((short) effectId)) {
+            Effect effect = this.effects.get((short) effectId);
+            this.effects.remove((short) effectId);
             effect.remove(this);
 
             this.recalculateEffectColor();
@@ -471,11 +459,11 @@ public abstract class BaseEntity implements Entity, Metadatable {
     }
 
     public Effect getEffect(int effectId) {
-        return this.effects.getOrDefault(effectId, null);
+        return this.effects.getOrDefault((short) effectId, null);
     }
 
     public boolean hasEffect(int effectId) {
-        return this.effects.containsKey(effectId);
+        return this.effects.containsKey((short) effectId);
     }
 
     public void addEffect(Effect effect) {
@@ -1373,7 +1361,7 @@ public abstract class BaseEntity implements Entity, Metadatable {
         float y = this.getY() + this.getEyeHeight();
         Block block = this.level.getLoadedBlock(this.position.getFloorX(), NukkitMath.floorDouble(y), this.position.getFloorZ());
 
-        if (block instanceof BlockWater) {
+        if (block instanceof BlockWater || (block = block != null ? block.getExtra() : null) instanceof BlockWater) {
             double f = (block.getPosition().getY() + 1) - (((BlockWater) block).getFluidHeightPercent() - 0.1111111);
             return y < f;
         }

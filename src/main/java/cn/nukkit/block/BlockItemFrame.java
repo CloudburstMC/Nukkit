@@ -68,16 +68,16 @@ public class BlockItemFrame extends BlockTransparent {
         if (!target.isTransparent() && face.getIndex() > 1 && !block.isSolid()) {
             switch (face) {
                 case NORTH:
-                    this.setDamage(3);
+                    this.setMeta(3);
                     break;
                 case SOUTH:
-                    this.setDamage(2);
+                    this.setMeta(2);
                     break;
                 case WEST:
-                    this.setDamage(1);
+                    this.setMeta(1);
                     break;
                 case EAST:
-                    this.setDamage(0);
+                    this.setMeta(0);
                     break;
                 default:
                     return false;
@@ -95,7 +95,7 @@ public class BlockItemFrame extends BlockTransparent {
 
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true, true);
+        super.onBreak(item);
         this.getLevel().addSound(this.getPosition(), Sound.BLOCK_ITEMFRAME_REMOVE_ITEM);
         return true;
     }
@@ -160,5 +160,10 @@ public class BlockItemFrame extends BlockTransparent {
     @Override
     public float getHardness() {
         return 0.25f;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

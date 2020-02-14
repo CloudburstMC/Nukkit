@@ -14,7 +14,6 @@ import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3f;
 
 import static cn.nukkit.block.BlockIds.AIR;
-import static cn.nukkit.block.BlockIds.FURNACE;
 
 /**
  * author: Angelic47
@@ -54,7 +53,7 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         int[] faces = {2, 5, 3, 4};
-        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+        this.setMeta(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
         this.getLevel().setBlock(block.getPosition(), this, true, true);
 
         Furnace furnace = BlockEntityRegistry.get().newEntity(BlockEntityTypes.FURNACE, this.getChunk(), this.getPosition());
@@ -91,7 +90,7 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
 
     @Override
     public Item toItem() {
-        return Item.get(FURNACE);
+        return Item.get(getId(), 0);
     }
 
     @Override

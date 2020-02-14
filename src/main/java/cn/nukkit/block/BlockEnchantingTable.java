@@ -94,4 +94,9 @@ public class BlockEnchantingTable extends BlockTransparent {
     public BlockColor getColor() {
         return BlockColor.RED_BLOCK_COLOR;
     }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

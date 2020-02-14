@@ -10,6 +10,7 @@ import cn.nukkit.item.ItemEdible;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
 import cn.nukkit.registry.BlockEntityRegistry;
@@ -56,15 +57,25 @@ public class BlockCampfire extends BlockSolid implements Faceable {
     }
 
     public void toggleFire() {
-        this.setDamage(this.getMeta() ^ CAMPFIRE_LIT_MASK);
+        if (!this.isLit() && isWaterlogged()) return;
+        this.setMeta(this.getMeta() ^ CAMPFIRE_LIT_MASK);
         getLevel().setBlockDataAt(this.getX(), this.getY(), this.getZ(), this.getMeta());
-        getLevel().getBlockEntity(this.getPosition()).scheduleUpdate();
+        Campfire cf = (Campfire) getLevel().getBlockEntity(this.getPosition());
+        if (cf != null) getLevel().getBlockEntity(this.getPosition()).scheduleUpdate();
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (!block.canBeReplaced()) return false;
-        this.setDamage(player.getHorizontalFacing().getOpposite().getHorizontalIndex() & CAMPFIRE_FACING_MASK);
+        if (block.down().getId() == BlockIds.CAMPFIRE) {
+            return false;
+        }
+        this.setMeta(player.getHorizontalFacing().getOpposite().getHorizontalIndex() & CAMPFIRE_FACING_MASK);
+        if ((block.getId() == BlockIds.WATER || block.getId() == BlockIds.FLOWING_WATER) && block.getMeta() == 0) {
+            this.setMeta(this.getMeta() + CAMPFIRE_LIT_MASK);
+            getLevel().setBlock(block.getX(), block.getY(), block.getZ(), 1, block.clone(), true, false);
+        }
+
         if (getLevel().setBlock(block.getPosition(), this, true, true)) {
             BlockEntityRegistry.get().newEntity(CAMPFIRE, this.getChunk(), this.getPosition());
             return true;
@@ -80,6 +91,21 @@ public class BlockCampfire extends BlockSolid implements Faceable {
     @Override
     public boolean canBeActivated() {
         return true;
+    }
+
+    @Override
+    public boolean canSilkTouch() {
+        return true;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
+
+    @Override
+    public boolean canBeFlooded() {
+        return false;
     }
 
     @Override
@@ -110,19 +136,17 @@ public class BlockCampfire extends BlockSolid implements Faceable {
             }
             return true;
         } else if (item instanceof ItemEdible) {
-            if (getLevel().getServer().getCraftingManager().matchFurnaceRecipe(item) != null) {
-                Campfire fire = (Campfire) getLevel().getBlockEntity(this.getPosition());
-                if (fire.putItemInFire(item)) {
-                    if (player != null && player.isSurvival()) {
-                        item.decrementCount();
-                        if (item.getCount() <= 0) {
-                            item = Item.get(BlockIds.AIR);
-                        }
-                        player.getInventory().setItemInHand(item);
+            Campfire fire = (Campfire) getLevel().getBlockEntity(this.getPosition());
+            if (fire.putItemInFire(item)) {
+                if (player != null && player.isSurvival()) {
+                    item.decrementCount();
+                    if (item.getCount() <= 0) {
+                        item = Item.get(BlockIds.AIR);
                     }
+                    player.getInventory().setItemInHand(item);
                 }
-                return true;
             }
+            return true;
         }
         return false;
     }
@@ -134,5 +158,26 @@ public class BlockCampfire extends BlockSolid implements Faceable {
         } else if (!this.isLit() && entity.isOnFire()) {
             this.toggleFire();
         }
+    }
+
+    @Override
+    public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
+            if (this.isLit()) {
+                if (this.isWaterlogged()) {
+                    this.toggleFire();
+                    return type;
+                }
+
+                Block up = this.up();
+                if (up.getId() == BlockIds.WATER || up.getId() == BlockIds.FLOWING_WATER) {
+                    this.toggleFire();
+                    return type;
+                }
+            }
+            return type;
+        }
+
+        return 0;
     }
 }
