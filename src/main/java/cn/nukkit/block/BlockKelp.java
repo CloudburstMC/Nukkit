@@ -71,18 +71,26 @@ public class BlockKelp extends FloodableBlock {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            Block down = down();
             Block layerOneBlock = getBlockAtLayer(1);
             int waterDamage;
-            if (!(layerOneBlock.getId().equals(BlockIds.FROSTED_ICE)) &&
-                    (!(layerOneBlock instanceof BlockWater) || ((waterDamage = layerOneBlock.getDamage()) != 0 && waterDamage != 8))
+            if ((!(layerOneBlock instanceof BlockWater) || ((waterDamage = layerOneBlock.getDamage()) != 0 && waterDamage != 8))
             ) {
                 this.getLevel().useBreakOn(this);
                 return type;
             }
-            if (down instanceof BlockWater) {
+
+
+            Block down = down();
+            if ((!down.isSolid() && down.getId() != BlockIds.KELP)
+                    || down.getId() == BlockIds.MAGMA
+                    || down.getId() == BlockIds.ICE
+                    || down.getId() == BlockIds.SOUL_SAND) {
                 this.getLevel().useBreakOn(this);
                 return type;
+            }
+
+            if (waterDamage == 8) {
+                this.getLevel().setBlock(layer(1), Block.get(BlockIds.FLOWING_WATER), true, false);
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             if (ThreadLocalRandom.current().nextInt(100) <= 14) {
