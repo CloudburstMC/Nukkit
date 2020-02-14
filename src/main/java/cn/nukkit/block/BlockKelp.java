@@ -40,22 +40,25 @@ public class BlockKelp extends FloodableBlock {
         Block down = down();
         Block layerOneBlock = getBlockAtLayer(1);
         int waterDamage;
-        if ((down.getId() == BlockIds.KELP || down.isSolid()) && down.getId() != BlockIds.MAGMA && down.getId() != BlockIds.ICE &&
-                down.getId() != BlockIds.SOUL_SAND && (layerOneBlock instanceof BlockWater && ((waterDamage = (block.getDamage())) == 0
-                || waterDamage == 8))) {
-            if (waterDamage == 8) {
-                this.level.setBlock(this, new BlockWater(BlockIds.WATER), true, false);
-            }
-            if (down.getId() == BlockIds.KELP && down.getDamage() != 24) {
-                down.setDamage(24);
-                this.level.setBlock(this, this, true, true);
-            }
-            setDamage(ThreadLocalRandom.current().nextInt(25));
-            this.level.setBlock(this, this, true, true);
-            return true;
-        } else {
+        if ((down.getId() != BlockIds.KELP && !down.isSolid())
+                || down.getId() == BlockIds.MAGMA
+                || down.getId() == BlockIds.ICE
+                || down.getId() == BlockIds.SOUL_SAND
+                || (!(layerOneBlock instanceof BlockWater) || ((waterDamage = (block.getDamage())) != 0 && waterDamage != 8))
+        ) {
             return false;
         }
+
+        if (waterDamage == 8) {
+            this.level.setBlock(this, new BlockWater(BlockIds.WATER), true, false);
+        }
+        if (down.getId() == BlockIds.KELP && down.getDamage() != 24) {
+            down.setDamage(24);
+            this.level.setBlock(this, this, true, true);
+        }
+        setDamage(ThreadLocalRandom.current().nextInt(25));
+        this.level.setBlock(this, this, true, true);
+        return true;
     }
 
     @Override
