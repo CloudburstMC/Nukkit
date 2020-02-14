@@ -1,6 +1,5 @@
 package cn.nukkit.level.provider.leveldb.serializer;
 
-import cn.nukkit.Nukkit;
 import cn.nukkit.level.LevelData;
 import cn.nukkit.level.gamerule.GameRule;
 import cn.nukkit.level.gamerule.GameRuleMap;
@@ -14,17 +13,18 @@ import cn.nukkit.utils.LoadState;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.io.LittleEndianDataInputStream;
 import com.google.common.io.LittleEndianDataOutputStream;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Type;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
+@Log4j2
 @SuppressWarnings("UnstableApiUsage")
 public class LevelDBDataSerializer implements LevelDataSerializer {
     public static final LevelDataSerializer INSTANCE = new LevelDBDataSerializer();
@@ -34,7 +34,7 @@ public class LevelDBDataSerializer implements LevelDataSerializer {
 
     @Override
     public LoadState load(LevelData data, Path levelPath, String levelId) throws IOException {
-        Path levelDatPath = levelPath.resolve("level.data");
+        Path levelDatPath = levelPath.resolve("level.dat");
         Path levelDatOldPath = levelPath.resolve("level.dat_old");
 
         if (Files.notExists(levelDatPath) && Files.notExists(levelDatOldPath)) {
@@ -42,10 +42,11 @@ public class LevelDBDataSerializer implements LevelDataSerializer {
         }
 
         try {
-            loadData(data, levelPath.resolve("level.data"));
+            loadData(data, levelDatPath);
         } catch (IOException e) {
             // Attempt to load backup
-            loadData(data, levelPath.resolve("level.dat_old"));
+            log.warn("Unable to load level.dat file, attempting to load backup.");
+            loadData(data, levelDatOldPath);
         }
         return LoadState.LOADED;
     }
@@ -118,8 +119,8 @@ public class LevelDBDataSerializer implements LevelDataSerializer {
                     throw new IOException("Incompatible level.dat version");
                 }
                 leStream.readInt(); // Size
+                tag = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN, false);
             }
-            tag = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN, false);
         }
 
         tag.listenString("LevelName", data::setName);
