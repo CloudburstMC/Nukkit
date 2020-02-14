@@ -5,6 +5,7 @@ import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
@@ -35,7 +36,47 @@ public class BlockKelp extends FloodableBlock {
         return Item.get(ItemIds.KELP);
     }
 
-    //TODO canBeActivated and onActivate
+    @Override
+    public boolean canBeActivated()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean onActivate(Item item, Player player)
+    {
+        if(item.getId() == ItemIds.DYE && item.getDamage() == 0x0f) { //Bone Meal
+            int x = getX();
+            int z = getZ();
+            for(int y = getY() + 1; y < 255; y++)
+            {
+                Identifier blockAbove = getLevel().getBlock(x,y,z).id;
+                if(blockAbove != BlockIds.KELP && (blockAbove == BlockIds.WATER || blockAbove == BlockIds.FLOWING_WATER))
+                {
+                    int waterData = getLevel().getBlock(x,y,z).meta;
+                    if(waterData == 0 || waterData == 8)
+                    {
+                        BlockKelp highestKelp = (BlockKelp) getLevel().getBlock(x, y-1 , z);
+                        if(highestKelp.grow())
+                        {
+                            this.level.addParticle(new BoneMealParticle(this));
+
+                            if(player != null && !player.isCreative())
+                            {
+                                item.decrementCount(1);
+                            }
+                            return false;
+                        }
+                    }
+                }
+                else if (blockAbove == BlockIds.KELP) continue;
+                return false;
+
+            }
+
+        }
+        return true;
+    }
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
