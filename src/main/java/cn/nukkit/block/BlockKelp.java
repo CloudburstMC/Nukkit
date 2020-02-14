@@ -35,6 +35,8 @@ public class BlockKelp extends FloodableBlock {
         return Item.get(ItemIds.KELP);
     }
 
+    //TODO canBeActivated and onActivate
+
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         Block down = down();
