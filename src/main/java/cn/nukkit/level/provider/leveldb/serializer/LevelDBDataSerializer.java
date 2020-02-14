@@ -152,11 +152,12 @@ public class LevelDBDataSerializer implements LevelDataSerializer {
         Map<String, Object> tagMap = tag.parseValue();
         GameRuleRegistry.get().getRules().forEach(rule -> {
             Object value = tagMap.get(rule.getName().toLowerCase());
-            if (value instanceof Byte) {
-                data.getGameRules().put((GameRule<Boolean>) rule, (byte) value != 0);
-            } else if (value instanceof Integer) {
+            Class type = rule.getValueClass();
+            if (type == Boolean.class) {
+                data.getGameRules().put((GameRule<Boolean>) rule, (int) value != 0);
+            } else if (type == Integer.class) {
                 data.getGameRules().put((GameRule<Integer>) rule, (int) value);
-            } else if (value instanceof Float) {
+            } else if (type == Float.class) {
                 data.getGameRules().put((GameRule<Float>) rule, (float) value);
             }
         });
