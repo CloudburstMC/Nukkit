@@ -59,6 +59,16 @@ public class BlockKelp extends FloodableBlock {
     }
 
     @Override
+    public boolean onBreak(Item item) {
+        Block down = down();
+        if (down.getId() == BlockIds.KELP) {
+            this.getLevel().setBlock(down, Block.get(BlockIds.KELP, ThreadLocalRandom.current().nextInt(25)), true, true);
+        }
+        super.onBreak(item);
+        return true;
+    }
+
+    @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             Block down = down();
