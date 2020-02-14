@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static cn.nukkit.math.MathHelper.clamp;
 
-public class BlockKelp extends Block {
+public class BlockKelp extends FloodableBlock {
 
     public BlockKelp(Identifier id) {
         super(id);
@@ -26,8 +26,12 @@ public class BlockKelp extends Block {
     }
 
     @Override
-    public Item toItem()
-    {
+    public boolean canWaterlogFlowing() {
+        return true;
+    }
+
+    @Override
+    public Item toItem() {
         return Item.get(ItemIds.KELP);
     }
 
@@ -49,8 +53,9 @@ public class BlockKelp extends Block {
             setDamage(ThreadLocalRandom.current().nextInt(25));
             this.level.setBlock(this, this, true, true);
             return true;
-        } else
+        } else {
             return false;
+        }
     }
 
     @Override
@@ -90,7 +95,7 @@ public class BlockKelp extends Block {
                 if (!ev.isCancelled()) {
                     this.setDamage(25);
                     this.getLevel().setBlock(this, this, true, true);
-                    this.getLevel().setBlock(up, new BlockWater(BlockIds.WATER), true, false);
+                    this.getLevel().setBlock(up.layer(1), new BlockWater(BlockIds.WATER), true, false);
                     this.getLevel().setBlock(up, ev.getNewState(), true, true);
                     return true;
                 }
