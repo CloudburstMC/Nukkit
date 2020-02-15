@@ -2,10 +2,11 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacketV2;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
+import com.nukkitx.protocol.bedrock.packet.LevelSoundEvent2Packet;
 
 import static cn.nukkit.block.BlockIds.*;
 
@@ -20,7 +21,7 @@ public class BlockDoubleSlab extends BlockSolid {
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return this.getId() == DOUBLE_WOODEN_SLAB ? 15 : 30;
     }
 
@@ -47,10 +48,10 @@ public class BlockDoubleSlab extends BlockSolid {
     @Override
     public Item[] getDrops(Item item) {
         if ((item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN)
-                || (this.getId() == STONE_SLAB && (this.getDamage() & 0x07) == 2)
+                || (this.getId() == STONE_SLAB && (this.getMeta() & 0x07) == 2)
                 || this.getId() == WOODEN_SLAB) {
             return new Item[]{
-                    Item.get(getSlab(), this.getDamage() & 0x07, 2)
+                    Item.get(getSlab(), this.getMeta() & 0x07, 2)
             };
         } else {
             return new Item[0];
@@ -59,7 +60,7 @@ public class BlockDoubleSlab extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        return BlockSlab.colorMap.get(getSlab())[this.getDamage() & 0x07];
+        return BlockSlab.colorMap.get(getSlab())[this.getMeta() & 0x07];
     }
 
     public Identifier getSlab() {
@@ -79,16 +80,15 @@ public class BlockDoubleSlab extends BlockSolid {
     }
 
     protected void playPlaceSound() {
-        LevelSoundEventPacketV2 pk = new LevelSoundEventPacketV2();
-        pk.sound = LevelSoundEventPacket.SOUND_ITEM_USE_ON;
-        pk.extraData = 725;
-        pk.x = this.x + 0.5f;
-        pk.y = this.y + 0.5f;
-        pk.z = this.z + 0.5f;
-        pk.entityIdentifier = "";
-        pk.isBabyMob = false;
-        pk.isGlobal = false;
+        LevelSoundEvent2Packet pk = new LevelSoundEvent2Packet();
+        pk.setSound(SoundEvent.ITEM_USE_ON);
+        pk.setExtraData(725); // Who knows what this means?
+        pk.setPosition(Vector3f.from(this.getX() + 0.5f, this.getY() + 0.5f, this.getZ() + 0.5f));
+        pk.setIdentifier("");
+        pk.setBabySound(false);
+        pk.setRelativeVolumeDisabled(false);
 
-        this.getLevel().addChunkPacket(this.getChunkX(), this.getChunkZ(), pk);
+
+        this.getLevel().addChunkPacket(this.getChunk().getX(), this.getChunk().getZ(), pk);
     }
 }

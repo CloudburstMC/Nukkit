@@ -3,11 +3,11 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.IdentityHashMap;
@@ -81,21 +81,21 @@ public class BlockSlab extends BlockTransparent {
 
     @Override
     public BlockColor getColor() {
-        return colorMap.get(this.getId())[this.getDamage() & 0x07];
+        return colorMap.get(this.getId())[this.getMeta() & 0x07];
     }
 
     @Override
-    public double getMinY() {
-        return this.isTopSlab() ? this.y + 0.5 : this.y;
+    public float getMinY() {
+        return this.isTopSlab() ? (this.getY() + 0.5f) : this.getY();
     }
 
     @Override
-    public double getMaxY() {
-        return this.isTopSlab() ? this.y + 1 : this.y + 0.5;
+    public float getMaxY() {
+        return this.isTopSlab() ? (this.getY() + 1f) : (this.getY() + 0.5f);
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return this.getId() == BlockIds.WOODEN_SLAB ? 15 : 30;
     }
 
@@ -120,21 +120,26 @@ public class BlockSlab extends BlockTransparent {
     }
 
     @Override
+    public Item toItem() {
+        return Item.get(this.id, this.getMeta() & 0x07);
+    }
+
+    @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         log.info("OnPlace: \nTarget: {}\nBlock: {}\nFace: {}\nClickPos: {}", target.toString(), block.toString(), face.toString(), clickPos.toString());
-        int meta = this.getDamage() & 0x07;
-        boolean isTop = clickPos.getY() >= 0.5f;
+        int meta = this.getMeta() & 0x07;
+        boolean isTop;
         BlockDoubleSlab dSlab = (BlockDoubleSlab) BlockRegistry.get().getBlock(this.getDoubleSlab(), meta);
 
         if (face == BlockFace.DOWN) {
             if (checkSlab(target) && ((BlockSlab) target).isTopSlab()) {
-                if (this.getLevel().setBlock(target, dSlab, true, false)) {
+                if (this.getLevel().setBlock(target.getPosition(), dSlab, true, false)) {
                     dSlab.playPlaceSound();
                     return true;
                 }
                 return false;
             } else if (checkSlab(block) && !((BlockSlab) block).isTopSlab()) {
-                if (this.getLevel().setBlock(block, dSlab, true, false)) {
+                if (this.getLevel().setBlock(block.getPosition(), dSlab, true, false)) {
                     dSlab.playPlaceSound();
                     return true;
                 }
@@ -144,13 +149,13 @@ public class BlockSlab extends BlockTransparent {
             }
         } else if (face == BlockFace.UP) {
             if (checkSlab(target) && !((BlockSlab) target).isTopSlab()) {
-                if (this.getLevel().setBlock(target, dSlab, true, false)) {
+                if (this.getLevel().setBlock(target.getPosition(), dSlab, true, false)) {
                     dSlab.playPlaceSound();
                     return true;
                 }
                 return false;
             } else if (checkSlab(block) && !((BlockSlab) block).isTopSlab()) {
-                if (this.getLevel().setBlock(block, dSlab, true, false)) {
+                if (this.getLevel().setBlock(block.getPosition(), dSlab, true, false)) {
                     dSlab.playPlaceSound();
                     return true;
                 }
@@ -159,10 +164,11 @@ public class BlockSlab extends BlockTransparent {
                 isTop = false;
             }
         } else { // Horizontal face
+            isTop = clickPos.getY() >= 0.5f;
             if (checkSlab(block)
                     && ((isTop && !((BlockSlab) block).isTopSlab())
                     || (!isTop && ((BlockSlab) block).isTopSlab()))) {
-                if (this.getLevel().setBlock(block, dSlab, true, false)) {
+                if (this.getLevel().setBlock(block.getPosition(), dSlab, true, false)) {
                     dSlab.playPlaceSound();
                     return true;
                 }
@@ -170,15 +176,20 @@ public class BlockSlab extends BlockTransparent {
             }
         }
 
-        if (block instanceof BlockSlab && (target.getDamage() & 0x07) != (this.getDamage() & 0x07)) {
+        if (block instanceof BlockSlab && (target.getMeta() & 0x07) != (this.getMeta() & 0x07)) {
             return false;
         }
-        this.setDamage(meta | (isTop ? 0x08 : 0));
-        return this.getLevel().setBlock(block, this, true, true);
+        this.setMeta(meta + (isTop ? 0x08 : 0));
+        log.info("Placing block: {}:{} at {}", this.id, this.getMeta(), this.position);
+        return this.getLevel().setBlock(block.getPosition(), this, true, true);
+    }
+
+    private boolean isTopSlab() {
+        return (this.getMeta() & 0x08) == 0x08;
     }
 
     private boolean checkSlab(Block other) {
-        return other instanceof BlockSlab && ((other.getDamage() & 0x07) == (this.getDamage() & 0x07));
+        return other instanceof BlockSlab && ((other.getMeta() & 0x07) == (this.getMeta() & 0x07));
     }
 
     protected Identifier getDoubleSlab() {
