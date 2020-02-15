@@ -166,4 +166,9 @@ public class BlockFlowerPot extends FloodableBlock {
     public Item toItem() {
         return Item.get(ItemIds.FLOWER_POT);
     }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

@@ -61,7 +61,7 @@ public class AnvilDataSerializer implements LevelDataSerializer {
     private void saveData(LevelData data, Path levelDatPath) throws IOException {
         CompoundTag tag = new CompoundTag()
                 .putString("LevelName", data.getName())
-                .putString("generatorOptions", Nukkit.JSON_MAPPER.writeValueAsString(data.getGeneratorOptions()))
+                .putString("generatorOptions", data.getGeneratorOptions())
                 .putString("generatorName", data.getGenerator().toString())
                 .putInt("thunderTime", data.getLightningTime())
                 .putInt("Difficulty", data.getDifficulty())
@@ -108,8 +108,7 @@ public class AnvilDataSerializer implements LevelDataSerializer {
 
         tag.listenString("LevelName", data::setName);
         if (tag.contains("generatorOptions")) {
-            data.getGeneratorOptions()
-                    .putAll(Nukkit.JSON_MAPPER.readValue(tag.getString("generatorOptions"), OPTIONS_TYPE));
+            data.setGeneratorOptions(tag.getString("generatorOptions"));
         }
         tag.listenString("generatorName", s -> data.setGenerator(Identifier.fromString(s)));
         tag.listenInt("thunderTime", data::setLightningTime);

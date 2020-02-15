@@ -1,6 +1,7 @@
 package cn.nukkit.registry;
 
 import cn.nukkit.block.*;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -316,12 +317,12 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(FARMLAND, BlockFarmland::new); //60
         this.factoryMap.put(FURNACE, BlockFurnace::new); //61
         this.factoryMap.put(LIT_FURNACE, BlockFurnaceBurning::new); //62
-        this.factoryMap.put(STANDING_SIGN, BlockSignPost::new); //63
+        this.factoryMap.put(STANDING_SIGN, BlockSignPost.factory(WALL_SIGN, ItemIds.SIGN)); //63
         this.factoryMap.put(WOODEN_DOOR, BlockDoorWood::new); //64
         this.factoryMap.put(LADDER, BlockLadder::new); //65
         this.factoryMap.put(RAIL, BlockRail::new); //66
         this.factoryMap.put(STONE_STAIRS, BlockStairsCobblestone::new); //67
-        this.factoryMap.put(WALL_SIGN, BlockWallSign::new); //68
+        this.factoryMap.put(WALL_SIGN, BlockWallSign.factory(STANDING_SIGN, ItemIds.SIGN)); //68
         this.factoryMap.put(LEVER, BlockLever::new); //69
         this.factoryMap.put(STONE_PRESSURE_PLATE, BlockPressurePlateStone::new); //70
         this.factoryMap.put(IRON_DOOR, BlockDoorIron::new); //71
@@ -513,12 +514,12 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(PRISMARINE_STAIRS, BlockStairsPrismarine::new); //257
         this.factoryMap.put(DARK_PRISMARINE_STAIRS, BlockStairsDarkPrismarine::new); //258
         this.factoryMap.put(PRISMARINE_BRICKS_STAIRS, BlockStairsPrismarineBricks::new); //259
-        //260: stripped_spruce_log
-        //261: stripped_birch_log
-        //262: stripped_jungle_log
-        //263: stripped_acacia_log
-        //264: stripped_dark_oak_log
-        //265: stripped_oak_log
+        this.factoryMap.put(STRIPPED_SPRUCE_LOG, BlockStrippedLog::new); //260
+        this.factoryMap.put(STRIPPED_BIRCH_LOG, BlockStrippedLog::new); //261
+        this.factoryMap.put(STRIPPED_JUNGLE_LOG, BlockStrippedLog::new); //262
+        this.factoryMap.put(STRIPPED_ACACIA_LOG, BlockStrippedLog::new); //263
+        this.factoryMap.put(STRIPPED_DARK_OAK_LOG, BlockStrippedLog::new); //264
+        this.factoryMap.put(STRIPPED_OAK_LOG, BlockStrippedLog::new); //265
         this.factoryMap.put(BLUE_ICE, BlockBlueIce::new); //266
         //267: element_1
         // ...
@@ -573,25 +574,25 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(END_BRICK_STAIRS, BlockStairsEndStoneBrick::new); //432
         this.factoryMap.put(MOSSY_COBBLESTONE_STAIRS, BlockStairsCobblestone::new); //433
         this.factoryMap.put(NORMAL_STONE_STAIRS, BlockStairsStone::new); //434
-        this.factoryMap.put(SPRUCE_STANDING_SIGN, BlockSignPost::new); //435
-        //436: spruce_wall_sign
+        this.factoryMap.put(SPRUCE_STANDING_SIGN, BlockSignPost.factory(SPRUCE_WALL_SIGN, ItemIds.SPRUCE_SIGN)); //435
+        this.factoryMap.put(SPRUCE_WALL_SIGN, BlockWallSign.factory(SPRUCE_STANDING_SIGN, ItemIds.SPRUCE_SIGN)); // 436
         this.factoryMap.put(SMOOTH_STONE, BlockSmoothStone::new); // 437
         this.factoryMap.put(RED_NETHER_BRICK_STAIRS, BlockStairsNetherBrick::new); //438
         this.factoryMap.put(SMOOTH_QUARTZ_STAIRS, BlockStairsQuartz::new); //439
-        //440: birch_standing_sign
-        //441: birch_wall_sign
-        //442: jungle_standing_sign
-        //443: jungle_wall_sign
-        //444: acacia_standing_sign
-        //445: acacia_wall_sign
-        //446: darkoak_standing_sign
-        //447: darkoak_wall_sign
-        //448: lectern
+        this.factoryMap.put(BIRCH_STANDING_SIGN, BlockSignPost.factory(BIRCH_WALL_SIGN, ItemIds.BIRCH_SIGN)); //440
+        this.factoryMap.put(BIRCH_WALL_SIGN, BlockWallSign.factory(BIRCH_STANDING_SIGN, ItemIds.BIRCH_SIGN)); //441
+        this.factoryMap.put(JUNGLE_STANDING_SIGN, BlockSignPost.factory(JUNGLE_WALL_SIGN, ItemIds.JUNGLE_SIGN)); //442
+        this.factoryMap.put(JUNGLE_WALL_SIGN, BlockWallSign.factory(JUNGLE_STANDING_SIGN, ItemIds.JUNGLE_SIGN)); //443
+        this.factoryMap.put(ACACIA_STANDING_SIGN, BlockSignPost.factory(ACACIA_WALL_SIGN, ItemIds.ACACIA_SIGN)); //444
+        this.factoryMap.put(ACACIA_WALL_SIGN, BlockWallSign.factory(ACACIA_STANDING_SIGN, ItemIds.ACACIA_SIGN)); //445
+        this.factoryMap.put(DARK_OAK_STANDING_SIGN, BlockSignPost.factory(DARK_OAK_WALL_SIGN, ItemIds.DARK_OAK_SIGN)); //446
+        this.factoryMap.put(DARK_OAK_WALL_SIGN, BlockWallSign.factory(DARK_OAK_STANDING_SIGN, ItemIds.DARK_OAK_SIGN)); //447
+        this.factoryMap.put(LECTERN, BlockLectern::new); //448
         //449: grindstone
-        //450: blast_furnace
+        this.factoryMap.put(BLAST_FURNACE, BlockFurnace::new); // 450
         //451: stonecutter_block
-        //452: smoker
-        //453: lit_smoker
+        this.factoryMap.put(SMOKER, BlockFurnace::new); //452
+        this.factoryMap.put(LIT_SMOKER, BlockFurnaceBurning::new); //453
         //454: cartography_table
         //455: fletching_table
         //456: smithing_table
@@ -605,13 +606,13 @@ public class BlockRegistry implements Registry {
         //464: jigsaw
         //465: wood
         //466: composter
-        //467: lit_blast_furnace
-        //468: light_block
+        this.factoryMap.put(LIT_BLAST_FURNACE, BlockFurnaceBurning::new); //467
+        this.factoryMap.put(LIGHT_BLOCK, BlockLight::new); //468
         //469: wither_rose
         //470: stickypistonarmcollision
         //471: bee_nest
         //472: beehive
         //473: honey_block
-        //474: honeycomb_block
+        this.factoryMap.put(HONEYCOMB_BLOCK, BlockHoneycombBlock::new); //474
     }
 }

@@ -15,7 +15,7 @@ public class StringTag extends Tag {
     public StringTag(String name, String data) {
         super(name);
         this.data = data;
-        if (data == null) throw new IllegalArgumentException("Empty string not allowed");
+        if (data == null) throw new IllegalArgumentException("Null string not allowed");
     }
 
     @Override

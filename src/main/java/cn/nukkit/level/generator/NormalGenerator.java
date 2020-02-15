@@ -143,7 +143,7 @@ public class NormalGenerator implements Generator {
     private NoiseGeneratorOctavesF mainPerlinNoise;
     private NoiseGeneratorPerlinF surfaceNoise;
 
-    public NormalGenerator(BedrockRandom random, Map<String, Object> options) {
+    public NormalGenerator(BedrockRandom random, String options) {
         this.selector = new BiomeSelector(random);
 
         this.minLimitPerlinNoise = new NoiseGeneratorOctavesF(random, 16);
@@ -179,8 +179,8 @@ public class NormalGenerator implements Generator {
     }
 
     @Override
-    public Map<String, Object> getSettings() {
-        return Collections.emptyMap();
+    public String getSettings() {
+        return "";
     }
 
     public Biome pickBiome(int x, int z) {
