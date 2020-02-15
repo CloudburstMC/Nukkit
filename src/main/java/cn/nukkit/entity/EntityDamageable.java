@@ -5,4 +5,8 @@ package cn.nukkit.entity;
  * Nukkit Project
  */
 public interface EntityDamageable {
+    /**
+     * @return if the entity is blocking.
+     */
+    boolean isBlocking();
 }

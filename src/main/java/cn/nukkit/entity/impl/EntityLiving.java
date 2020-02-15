@@ -8,6 +8,7 @@ import cn.nukkit.entity.EntityDamageable;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.Rideable;
 import cn.nukkit.entity.data.EntityData;
+import cn.nukkit.entity.data.EntityFlag;
 import cn.nukkit.entity.impl.passive.EntityWaterAnimal;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -390,5 +391,10 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
 
     public void setAirTicks(int ticks) {
         this.setShortData(EntityData.AIR, ticks);
+    }
+
+    @Override
+    public boolean isBlocking() {
+        return getFlag(EntityFlag.BLOCKING);
     }
 }

@@ -371,11 +371,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         return this.playedBefore;
     }
 
-    @Override
-    public boolean isBlocking() {
-        return getFlag(EntityFlag.BLOCKING);
-    }
-
     public AdventureSettings getAdventureSettings() {
         return adventureSettings;
     }
