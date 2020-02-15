@@ -10,8 +10,12 @@ import static cn.nukkit.block.BlockIds.WATER;
  */
 public class BlockWaterStill extends BlockWater {
 
-    public BlockWaterStill(Identifier id) {
-        super(id);
+    protected BlockWaterStill(Identifier id, Identifier flowingId, Identifier stationaryId) {
+        super(id, flowingId, stationaryId);
+    }
+
+    protected BlockWaterStill(Identifier flowingId, Identifier stationaryId) {
+        this(stationaryId, flowingId, stationaryId);
     }
 
     @Override
@@ -19,4 +23,7 @@ public class BlockWaterStill extends BlockWater {
         return Block.get(WATER, meta);
     }
 
+    public static BlockFactory factory(Identifier flowingId) {
+        return id-> new BlockWaterStill(flowingId, id);
+    }
 }
