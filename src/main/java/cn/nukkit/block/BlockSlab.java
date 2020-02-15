@@ -79,6 +79,10 @@ public class BlockSlab extends BlockTransparent {
         super(id);
     }
 
+    public static boolean isSlab(Identifier id) {
+        return id == WOODEN_SLAB || id == STONE_SLAB || id == STONE_SLAB2 || id == STONE_SLAB3 || id == STONE_SLAB4;
+    }
+
     @Override
     public BlockColor getColor() {
         return colorMap.get(this.getId())[this.getMeta() & 0x07];
@@ -154,7 +158,7 @@ public class BlockSlab extends BlockTransparent {
                     return true;
                 }
                 return false;
-            } else if (checkSlab(block) && !((BlockSlab) block).isTopSlab()) {
+            } else if (checkSlab(block) && ((BlockSlab) block).isTopSlab()) {
                 if (this.getLevel().setBlock(block.getPosition(), dSlab, true, false)) {
                     dSlab.playPlaceSound();
                     return true;

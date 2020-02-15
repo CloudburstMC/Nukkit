@@ -1,10 +1,7 @@
 package cn.nukkit.level;
 
 import cn.nukkit.Server;
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockIds;
-import cn.nukkit.block.BlockLiquid;
-import cn.nukkit.block.BlockRedstoneDiode;
+import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
@@ -1837,7 +1834,8 @@ public class Level implements ChunkManager, Metadatable {
             return null;
         }
 
-        if (!(block.canBeReplaced() || (hand.getId() == STONE_SLAB && block.getId() == STONE_SLAB))) {
+        if (!(block.canBeReplaced()
+                || (BlockSlab.isSlab(hand.getId()) && (BlockSlab.isSlab(block.getId()) || BlockSlab.isSlab(target.getId()))))) {
             return null;
         }
 
