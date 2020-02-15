@@ -8,5 +8,7 @@ public interface EntityDamageable {
     /**
      * @return if the entity is blocking.
      */
-    boolean isBlocking();
+    default boolean isBlocking() {
+        return false;
+    }
 }

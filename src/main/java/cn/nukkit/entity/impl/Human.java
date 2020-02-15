@@ -448,6 +448,15 @@ public class Human extends EntityCreature implements InventoryHolder {
     }
 
     @Override
+    protected void onBlock(int disableTicks, boolean animate) {
+        //TODO Damage shield
+        if (animate) {
+            //TODO Animation
+        }
+        //TODO Disable shield
+    }
+
+    @Override
     public void setOnFire(int seconds) {
         int level = 0;
 

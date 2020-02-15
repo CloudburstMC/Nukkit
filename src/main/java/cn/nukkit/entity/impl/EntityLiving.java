@@ -182,23 +182,16 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
         if (event.isCancelled()) {
             return false;
         }
-        disableTicks = event.getDisableTicks();
-        knockBack = event.getKnockBackAttacker();
 
-        //TODO Damage shield
-        if (knockBack && entity instanceof EntityLiving) {
+        if (event.getKnockBackAttacker() && entity instanceof EntityLiving) {
             ((EntityLiving) entity).knockBack(this, 0, this.x, this.z);
         }
 
-        if (disableTicks > 0) {
-            //TODO Disable item
-        }
-
-        if (event.getAnimation()) {
-            //TODO Attack blocked animation packet (level event?)
-        }
-
+        onBlock(event.getDisableTicks(), event.getAnimation());
         return true;
+    }
+
+    protected void onBlock(int disableTicks, boolean animate) {
     }
 
     public void knockBack(Entity attacker, double damage, double x, double z) {
