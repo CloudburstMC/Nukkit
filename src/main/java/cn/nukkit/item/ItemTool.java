@@ -143,7 +143,7 @@ public abstract class ItemTool extends Item implements ItemDurable {
     @Override
     public boolean isTool() {
         Identifier id = getId();
-        return id == FLINT_AND_STEEL || id == SHEARS || id == BOW ||
+        return id == FLINT_AND_STEEL || id == SHEARS || id == BOW || id == SHIELD ||
                 this.isPickaxe() || this.isAxe() || this.isShovel() || this.isSword() || this.isHoe();
     }
 
