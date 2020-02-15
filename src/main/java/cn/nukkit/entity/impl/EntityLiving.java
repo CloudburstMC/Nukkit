@@ -185,11 +185,11 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
             ((EntityLiving) entity).knockBack(this, 0, this.x, this.z);
         }
 
-        onBlock(event.getAnimation());
+        onBlock(entity, event.getAnimation());
         return true;
     }
 
-    protected void onBlock(boolean animate) {
+    protected void onBlock(Entity entity, boolean animate) {
     }
 
     public void knockBack(Entity attacker, double damage, double x, double z) {

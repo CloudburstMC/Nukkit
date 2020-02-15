@@ -10,6 +10,7 @@ import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.PlayerEnderChestInventory;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.NukkitMath;
@@ -400,37 +401,44 @@ public class Human extends EntityCreature implements InventoryHolder {
             }
 
             for (int slot = 0; slot < 4; slot++) {
-                Item armor = this.inventory.getArmorItem(slot);
+                Item armor = damageArmor(this.inventory.getArmorItem(slot), damager);
 
-                if (armor.hasEnchantments()) {
-                    if (damager != null) {
-                        for (Enchantment enchantment : armor.getEnchantments()) {
-                            enchantment.doPostAttack(damager, this);
-                        }
-                    }
-
-                    Enchantment durability = armor.getEnchantment(Enchantment.ID_DURABILITY);
-                    if (durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= new Random().nextInt(100))
-                        continue;
-                }
-
-                if (armor.isUnbreakable()) {
-                    continue;
-                }
-
-                armor.setDamage(armor.getDamage() + 1);
-
-                if (armor.getDamage() >= armor.getMaxDurability()) {
-                    inventory.setArmorItem(slot, Item.get(AIR, 0, 0));
-                } else {
-                    inventory.setArmorItem(slot, armor, true);
-                }
+                inventory.setArmorItem(slot, armor, armor.getId() != AIR);
             }
 
             return true;
         } else {
             return false;
         }
+    }
+
+    protected Item damageArmor(Item armor, Entity damager) {
+        if (armor.hasEnchantments()) {
+            if (damager != null) {
+                for (Enchantment enchantment : armor.getEnchantments()) {
+                    enchantment.doPostAttack(damager, this);
+                }
+            }
+
+            Enchantment durability = armor.getEnchantment(Enchantment.ID_DURABILITY);
+            if (durability != null
+                    && durability.getLevel() > 0
+                    && (100 / (durability.getLevel() + 1)) <= new Random().nextInt(100)) {
+                return armor;
+            }
+        }
+
+        if (armor.isUnbreakable()) {
+            return armor;
+        }
+
+        armor.setDamage(armor.getDamage() + 1);
+
+        if (armor.getDamage() >= armor.getMaxDurability()) {
+            return Item.get(AIR, 0, 0);
+        }
+
+        return armor;
     }
 
     protected double calculateEnchantmentProtectionFactor(Item item, EntityDamageEvent source) {
@@ -448,8 +456,12 @@ public class Human extends EntityCreature implements InventoryHolder {
     }
 
     @Override
-    protected void onBlock(boolean animate) {
-        //TODO Damage shield
+    protected void onBlock(Entity entity, boolean animate) {
+        Item shield = getInventory().getItemInHand();
+        if (shield.getId() == ItemIds.SHIELD) {
+            shield = damageArmor(shield, entity);
+            getInventory().setItemInHand(shield);
+        }
         if (animate) {
             //TODO Animation
         }
