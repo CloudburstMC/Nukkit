@@ -20,7 +20,7 @@ public class ItemUtils {
                 .stringTag("Name", item.getId().toString())
                 .byteTag("Count", (byte) item.getCount())
                 .shortTag("Damage", (short) item.getMeta());
-        if (slot > -1) {
+        if (slot >= 0) {
             tag.byteTag("Slot", (byte) slot);
         }
 
@@ -28,7 +28,7 @@ public class ItemUtils {
         item.saveAdditionalData(nbt);
         tag.tag(nbt.build("tag"));
 
-        return nbt.buildRootTag();
+        return tag.buildRootTag();
     }
 
     public static Item deserializeItem(CompoundTag tag) {
