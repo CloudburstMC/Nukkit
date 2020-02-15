@@ -17,6 +17,7 @@ import com.nukkitx.nbt.stream.NBTInputStream;
 import com.nukkitx.nbt.stream.NBTOutputStream;
 import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.nbt.tag.Tag;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
