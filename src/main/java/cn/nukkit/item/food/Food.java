@@ -85,6 +85,7 @@ public abstract class Food {
             .addRelative(PUFFERFISH));
     public static final Food dried_kelp = registerDefaultFood(new FoodNormal(1, 0.6F).addRelative(DRIED_KELP));
     public static final Food sweet_berries = registerDefaultFood(new FoodNormal(2, 0.4F).addRelative(SWEET_BERRIES));
+    public static final Food honey = registerDefaultFood(new FoodHoney(6, 2.4F).addRelative(HONEY_BOTTLE));
 
     //Opened API for plugins
     public static Food registerFood(Food food, Plugin plugin) {
