@@ -93,7 +93,7 @@ public class BlockKelp extends FloodableBlock {
         }
 
         if (waterDamage == 8) {
-            this.level.setBlock(this, new BlockWater(BlockIds.FLOWING_WATER), true, false);
+            this.level.setBlock(this, Block.get(BlockIds.FLOWING_WATER, 0), true, false);
         }
         if (down.getId() == BlockIds.KELP && down.getDamage() != 24) {
             down.setDamage(24);
@@ -136,7 +136,7 @@ public class BlockKelp extends FloodableBlock {
             }
 
             if (waterDamage == 8) {
-                this.getLevel().setBlock(layer(1), Block.get(BlockIds.FLOWING_WATER), true, false);
+                this.getLevel().setBlock(layer(1), Block.get(BlockIds.FLOWING_WATER, 0), true, false);
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             if (ThreadLocalRandom.current().nextInt(100) <= 14) {
@@ -158,7 +158,7 @@ public class BlockKelp extends FloodableBlock {
                 if (!ev.isCancelled()) {
                     this.setDamage(25);
                     this.getLevel().setBlock(this, this, true, true);
-                    this.getLevel().setBlock(up.layer(1), Block.get(BlockIds.FLOWING_WATER), true, false);
+                    this.getLevel().setBlock(up.layer(1), Block.get(BlockIds.FLOWING_WATER, 0), true, false);
                     this.getLevel().setBlock(up, ev.getNewState(), true, true);
                     return true;
                 }
