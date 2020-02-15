@@ -15,17 +15,15 @@ public class EntityDamageBlockedEvent extends EntityEvent implements Cancellable
     }
 
     private final EntityDamageEvent damage;
-    private int disableTicks;
     private boolean knockBackAttacker;
     private boolean animation;
 
     public EntityDamageBlockedEvent(
-            Entity entity, EntityDamageEvent damage, int disableTicks, boolean knockBack, boolean animation) {
+            Entity entity, EntityDamageEvent damage, boolean knockBack, boolean animation) {
         this.entity = entity;
         this.damage = damage;
         this.knockBackAttacker = knockBack;
         this.animation = animation;
-        this.disableTicks = disableTicks;
     }
 
     public EntityDamageEvent.DamageCause getCause() {
@@ -38,10 +36,6 @@ public class EntityDamageBlockedEvent extends EntityEvent implements Cancellable
 
     public EntityDamageEvent getDamage() {
         return damage;
-    }
-
-    public int getDisableTicks() {
-        return disableTicks;
     }
 
     public boolean getKnockBackAttacker() {

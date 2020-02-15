@@ -170,10 +170,8 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
         Vector3f direction = this.getDirectionVector();
         Vector3f normalizedVector = this.getPosition().subtract(entityPos).normalize();
         boolean blocked = (normalizedVector.x * direction.x) + (normalizedVector.z * direction.z) < 0.0;
-        //TODO Include non-player attackers
-        int disableTicks = entity instanceof Player && ((Player) entity).getInventory().getItemInHand().isAxe()? 100 : 0;
         boolean knockBack = !(entity instanceof Projectile);
-        EntityDamageBlockedEvent event = new EntityDamageBlockedEvent(this, source, disableTicks, knockBack, true);
+        EntityDamageBlockedEvent event = new EntityDamageBlockedEvent(this, source, knockBack, true);
         if (!blocked || !source.canBeReducedByArmor() || entity instanceof Projectile && ((Projectile) entity).getPierceLevel() > 0) {
             event.setCancelled();
         }
@@ -187,11 +185,11 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
             ((EntityLiving) entity).knockBack(this, 0, this.x, this.z);
         }
 
-        onBlock(event.getDisableTicks(), event.getAnimation());
+        onBlock(event.getAnimation());
         return true;
     }
 
-    protected void onBlock(int disableTicks, boolean animate) {
+    protected void onBlock(boolean animate) {
     }
 
     public void knockBack(Entity attacker, double damage, double x, double z) {
