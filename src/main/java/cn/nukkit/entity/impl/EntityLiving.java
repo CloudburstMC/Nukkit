@@ -3,18 +3,12 @@ package cn.nukkit.entity.impl;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockMagma;
-import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.EntityDamageable;
-import cn.nukkit.entity.EntityType;
-import cn.nukkit.entity.Rideable;
+import cn.nukkit.entity.*;
 import cn.nukkit.entity.data.EntityData;
 import cn.nukkit.entity.data.EntityFlag;
 import cn.nukkit.entity.impl.passive.EntityWaterAnimal;
-import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
-import cn.nukkit.event.entity.EntityDeathEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTurtleShell;
 import cn.nukkit.level.Position;
@@ -121,6 +115,10 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
             }
         }
 
+        if (this.blockedByShield(source)) {
+            return false;
+        }
+
         if (super.attack(source)) {
             if (source instanceof EntityDamageByEntityEvent) {
                 Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
@@ -160,6 +158,47 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
         } else {
             return false;
         }
+    }
+
+    protected boolean blockedByShield(EntityDamageEvent source) {
+        Entity entity = source.getEntity();
+        if (entity == null || !this.isBlocking()) {
+            return false;
+        }
+
+        Vector3f entityPos = entity.getPosition();
+        Vector3f direction = this.getDirectionVector();
+        Vector3f normalizedVector = this.getPosition().subtract(entityPos).normalize();
+        boolean blocked = (normalizedVector.x * direction.x) + (normalizedVector.z * direction.z) < 0.0;
+        //TODO Include non-player attackers
+        int disableTicks = entity instanceof Player && ((Player) entity).getInventory().getItemInHand().isAxe()? 100 : 0;
+        boolean knockBack = !(entity instanceof Projectile);
+        EntityDamageBlockedEvent event = new EntityDamageBlockedEvent(this, source, disableTicks, knockBack, true);
+        if (!blocked || !source.canBeReducedByArmor() || entity instanceof Projectile && ((Projectile) entity).getPiercingLevel() > 0) {
+            event.setCancelled();
+        }
+
+        getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return false;
+        }
+        disableTicks = event.getDisableTicks();
+        knockBack = event.getKnockBackAttacker();
+
+        //TODO Damage shield
+        if (knockBack && entity instanceof EntityLiving) {
+            ((EntityLiving) entity).knockBack(this, 0, this.x, this.z);
+        }
+
+        if (disableTicks > 0) {
+            //TODO Disable item
+        }
+
+        if (event.getAnimation()) {
+            //TODO Attack blocked animation packet (level event?)
+        }
+
+        return true;
     }
 
     public void knockBack(Entity attacker, double damage, double x, double z) {
