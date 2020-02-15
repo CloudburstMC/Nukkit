@@ -407,7 +407,7 @@ public class ItemRegistry implements Registry {
 
         registerVanilla(CAMPFIRE, PlaceableItem.factory(BlockIds.CAMPFIRE), 720);
 
-        registerVanilla(HONEYCOMB, ItemHoneycomb::new, 736);
+        registerVanilla(HONEYCOMB, SimpleItem::new, 736);
         registerVanilla(HONEY_BOTTLE, ItemHoneyBottle::new, 737);
     }
 
