@@ -38,6 +38,8 @@ public abstract class EntityProjectile extends BaseEntity {
 
     protected double damage = 0;
 
+    private int pierceLevel = 0;
+
     public EntityProjectile(EntityType<?> type, Chunk chunk, CompoundTag nbt) {
         super(type, chunk, nbt);
     }
@@ -200,5 +202,13 @@ public abstract class EntityProjectile extends BaseEntity {
 
     public void setCritical(boolean value) {
         this.setFlag(CRITICAL, value);
+    }
+
+    public int getPierceLevel() {
+        return pierceLevel;
+    }
+
+    public void setPierceLevel(int pierceLevel) {
+        this.pierceLevel = pierceLevel;
     }
 }

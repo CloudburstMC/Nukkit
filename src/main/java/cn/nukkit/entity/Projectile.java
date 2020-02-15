@@ -21,5 +21,7 @@ public interface Projectile extends Entity {
         setCritical(true);
     }
 
-    int getPiercingLevel();
+    default int getPierceLevel() {
+        return 0;
+    }
 }

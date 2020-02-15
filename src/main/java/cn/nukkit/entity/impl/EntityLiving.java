@@ -174,7 +174,7 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
         int disableTicks = entity instanceof Player && ((Player) entity).getInventory().getItemInHand().isAxe()? 100 : 0;
         boolean knockBack = !(entity instanceof Projectile);
         EntityDamageBlockedEvent event = new EntityDamageBlockedEvent(this, source, disableTicks, knockBack, true);
-        if (!blocked || !source.canBeReducedByArmor() || entity instanceof Projectile && ((Projectile) entity).getPiercingLevel() > 0) {
+        if (!blocked || !source.canBeReducedByArmor() || entity instanceof Projectile && ((Projectile) entity).getPierceLevel() > 0) {
             event.setCancelled();
         }
 
