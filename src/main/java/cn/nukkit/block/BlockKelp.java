@@ -111,35 +111,29 @@ public class BlockKelp extends FloodableBlock {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player)
-    {
-        if(item.getId() == ItemIds.DYE && item.getDamage() == 0x0f) { //Bone Meal
+    public boolean onActivate(Item item, Player player) {
+        if (item.getId() == ItemIds.DYE && item.getDamage() == 0x0f) { //Bone Meal
             int x = getX();
             int z = getZ();
-            for(int y = getY() + 1; y < 255; y++)
-            {
-                Identifier blockAbove = getLevel().getBlock(x,y,z).id;
-                if(blockAbove != BlockIds.KELP && (blockAbove == BlockIds.WATER || blockAbove == BlockIds.FLOWING_WATER))
-                {
-                    int waterData = getLevel().getBlock(x,y,z).meta;
-                    if(waterData == 0 || waterData == 8)
-                    {
-                        BlockKelp highestKelp = (BlockKelp) getLevel().getBlock(x, y-1 , z);
-                        if(highestKelp.grow())
-                        {
+            for (int y = getY() + 1; y < 255; y++) {
+                Identifier blockAbove = getLevel().getBlock(x, y, z).id;
+                if (blockAbove != BlockIds.KELP && (blockAbove == BlockIds.WATER || blockAbove == BlockIds.FLOWING_WATER)) {
+                    int waterData = getLevel().getBlock(x, y, z).meta;
+                    if (waterData == 0 || waterData == 8) {
+                        BlockKelp highestKelp = (BlockKelp) getLevel().getBlock(x, y - 1, z);
+                        if (highestKelp.grow()) {
                             this.level.addParticle(new BoneMealParticle(this));
 
-                            if(player != null && !player.isCreative())
-                            {
+                            if (player != null && !player.isCreative()) {
                                 item.decrementCount(1);
                             }
                             return false;
                         }
                     }
+                } else if (blockAbove == BlockIds.KELP) {
+                    continue;
                 }
-                else if (blockAbove == BlockIds.KELP) continue;
                 return false;
-
             }
 
         }
@@ -163,8 +157,7 @@ public class BlockKelp extends FloodableBlock {
     }
 
     @Override
-    public boolean canBeActivated()
-    {
+    public boolean canBeActivated() {
         return true;
     }
 }
