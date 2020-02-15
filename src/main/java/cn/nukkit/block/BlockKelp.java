@@ -39,12 +39,12 @@ public class BlockKelp extends FloodableBlock {
         }
 
         if (waterDamage == 8) {
-            this.level.setBlock(this, Block.get(FLOWING_WATER, 0), true, false);
+            this.level.setBlock(layer(1), Block.get(FLOWING_WATER, 0), true, false);
         }
 
         if (down.getId() == KELP && down.getDamage() != 24) {
             down.setDamage(24);
-            this.level.setBlock(this, this, true, true);
+            this.level.setBlock(down, down, true, true);
         }
         setDamage(ThreadLocalRandom.current().nextInt(25));
         this.level.setBlock(this, this, true, true);
@@ -72,6 +72,7 @@ public class BlockKelp extends FloodableBlock {
             if (waterDamage == 8) {
                 this.getLevel().setBlock(layer(1), Block.get(FLOWING_WATER, 0), true, false);
             }
+            return type;
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             if (ThreadLocalRandom.current().nextInt(100) <= 14) {
                 grow();
@@ -81,7 +82,7 @@ public class BlockKelp extends FloodableBlock {
         return super.onUpdate(type);
     }
 
-    private boolean grow() {
+    public boolean grow() {
         int age = clamp(getDamage(), 0, 25);
         if (age < 25) {
             Block up = up();
@@ -92,7 +93,9 @@ public class BlockKelp extends FloodableBlock {
                 if (!ev.isCancelled()) {
                     this.setDamage(25);
                     this.getLevel().setBlock(this, this, true, true);
-                    this.getLevel().setBlock(up.layer(1), Block.get(FLOWING_WATER, 0), true, false);
+                    if (ev.getNewState().canWaterlogSource()) {
+                        this.getLevel().setBlock(up.layer(1), Block.get(FLOWING_WATER, 0), true, false);
+                    }
                     this.getLevel().setBlock(up, ev.getNewState(), true, true);
                     return true;
                 }
@@ -117,9 +120,13 @@ public class BlockKelp extends FloodableBlock {
             int x = getX();
             int z = getZ();
             for (int y = getY() + 1; y < 255; y++) {
-                Identifier blockAbove = getLevel().getBlock(x, y, z).id;
-                if (blockAbove != KELP && (blockAbove == WATER || blockAbove == FLOWING_WATER)) {
-                    int waterData = getLevel().getBlock(x, y, z).getDamage();
+                Identifier blockAbove = getLevel().getBlockIdAt(x, y, z);
+                if (blockAbove == KELP) {
+                    continue;
+                }
+
+                if (blockAbove == WATER || blockAbove == FLOWING_WATER) {
+                    int waterData = getLevel().getBlockDataAt(x, y, z);
                     if (waterData == 0 || waterData == 8) {
                         BlockKelp highestKelp = (BlockKelp) getLevel().getBlock(x, y - 1, z);
                         if (highestKelp.grow()) {
@@ -131,14 +138,15 @@ public class BlockKelp extends FloodableBlock {
                             return false;
                         }
                     }
-                } else if (blockAbove == KELP) {
-                    continue;
                 }
+
                 return false;
             }
 
+            return true;
         }
-        return true;
+
+        return false;
     }
 
     @Override
