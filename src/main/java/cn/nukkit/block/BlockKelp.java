@@ -22,63 +22,6 @@ public class BlockKelp extends FloodableBlock {
     }
 
     @Override
-    public boolean canWaterlogSource() {
-        return true;
-    }
-
-    @Override
-    public boolean canWaterlogFlowing() {
-        return true;
-    }
-
-    @Override
-    public Item toItem() {
-        return Item.get(ItemIds.KELP);
-    }
-
-    @Override
-    public boolean canBeActivated()
-    {
-        return true;
-    }
-
-    @Override
-    public boolean onActivate(Item item, Player player)
-    {
-        if(item.getId() == ItemIds.DYE && item.getDamage() == 0x0f) { //Bone Meal
-            int x = getX();
-            int z = getZ();
-            for(int y = getY() + 1; y < 255; y++)
-            {
-                Identifier blockAbove = getLevel().getBlock(x,y,z).id;
-                if(blockAbove != BlockIds.KELP && (blockAbove == BlockIds.WATER || blockAbove == BlockIds.FLOWING_WATER))
-                {
-                    int waterData = getLevel().getBlock(x,y,z).meta;
-                    if(waterData == 0 || waterData == 8)
-                    {
-                        BlockKelp highestKelp = (BlockKelp) getLevel().getBlock(x, y-1 , z);
-                        if(highestKelp.grow())
-                        {
-                            this.level.addParticle(new BoneMealParticle(this));
-
-                            if(player != null && !player.isCreative())
-                            {
-                                item.decrementCount(1);
-                            }
-                            return false;
-                        }
-                    }
-                }
-                else if (blockAbove == BlockIds.KELP) continue;
-                return false;
-
-            }
-
-        }
-        return true;
-    }
-
-    @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         Block down = down();
         Block layerOneBlock = getBlockAtLayer(1);
@@ -101,16 +44,6 @@ public class BlockKelp extends FloodableBlock {
         }
         setDamage(ThreadLocalRandom.current().nextInt(25));
         this.level.setBlock(this, this, true, true);
-        return true;
-    }
-
-    @Override
-    public boolean onBreak(Item item) {
-        Block down = down();
-        if (down.getId() == BlockIds.KELP) {
-            this.getLevel().setBlock(down, Block.get(BlockIds.KELP, ThreadLocalRandom.current().nextInt(25)), true, true);
-        }
-        super.onBreak(item);
         return true;
     }
 
@@ -165,5 +98,73 @@ public class BlockKelp extends FloodableBlock {
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean onBreak(Item item) {
+        Block down = down();
+        if (down.getId() == BlockIds.KELP) {
+            this.getLevel().setBlock(down, Block.get(BlockIds.KELP, ThreadLocalRandom.current().nextInt(25)), true, true);
+        }
+        super.onBreak(item);
+        return true;
+    }
+
+    @Override
+    public boolean onActivate(Item item, Player player)
+    {
+        if(item.getId() == ItemIds.DYE && item.getDamage() == 0x0f) { //Bone Meal
+            int x = getX();
+            int z = getZ();
+            for(int y = getY() + 1; y < 255; y++)
+            {
+                Identifier blockAbove = getLevel().getBlock(x,y,z).id;
+                if(blockAbove != BlockIds.KELP && (blockAbove == BlockIds.WATER || blockAbove == BlockIds.FLOWING_WATER))
+                {
+                    int waterData = getLevel().getBlock(x,y,z).meta;
+                    if(waterData == 0 || waterData == 8)
+                    {
+                        BlockKelp highestKelp = (BlockKelp) getLevel().getBlock(x, y-1 , z);
+                        if(highestKelp.grow())
+                        {
+                            this.level.addParticle(new BoneMealParticle(this));
+
+                            if(player != null && !player.isCreative())
+                            {
+                                item.decrementCount(1);
+                            }
+                            return false;
+                        }
+                    }
+                }
+                else if (blockAbove == BlockIds.KELP) continue;
+                return false;
+
+            }
+
+        }
+        return true;
+    }
+
+    @Override
+    public Item toItem() {
+        return Item.get(ItemIds.KELP);
+    }
+
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
+
+    @Override
+    public boolean canWaterlogFlowing() {
+        return true;
+    }
+
+    @Override
+    public boolean canBeActivated()
+    {
+        return true;
     }
 }
