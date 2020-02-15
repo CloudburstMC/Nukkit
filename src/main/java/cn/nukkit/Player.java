@@ -3907,6 +3907,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         Position respawnPos = playerRespawnEvent.getRespawnPosition();
 
+        this.sendExperience();
+        this.sendExperienceLevel();
 
         this.setSprinting(false);
         this.setSneaking(false);
