@@ -760,9 +760,6 @@ public class Level implements ChunkManager, Metadatable {
             } else {
                 bolt.setEffect(false);
             }
-
-            this.addLevelSoundEvent(vector, SoundEvent.THUNDER, -1, EntityTypes.LIGHTNING_BOLT);
-            this.addLevelSoundEvent(vector, SoundEvent.EXPLODE, -1, EntityTypes.LIGHTNING_BOLT);
         }
     }
 

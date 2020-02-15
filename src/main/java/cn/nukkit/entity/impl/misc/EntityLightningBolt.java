@@ -5,6 +5,7 @@ import cn.nukkit.block.BlockFire;
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
+import cn.nukkit.entity.EntityTypes;
 import cn.nukkit.entity.impl.BaseEntity;
 import cn.nukkit.entity.misc.LightningBolt;
 import cn.nukkit.event.block.BlockIgniteEvent;
@@ -97,8 +98,8 @@ public class EntityLightningBolt extends BaseEntity implements LightningBolt {
         this.entityBaseTick(tickDiff);
 
         if (this.state == 2) {
-            this.level.addLevelSoundEvent(this.getPosition(), SoundEvent.THUNDER);
-            this.level.addLevelSoundEvent(this.getPosition(), SoundEvent.EXPLODE);
+            this.level.addLevelSoundEvent(this.getPosition(), SoundEvent.THUNDER, -1, EntityTypes.LIGHTNING_BOLT);
+            this.level.addLevelSoundEvent(this.getPosition(), SoundEvent.EXPLODE, -1, EntityTypes.LIGHTNING_BOLT);
         }
 
         this.state--;
