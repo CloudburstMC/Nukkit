@@ -162,18 +162,18 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
     }
 
     protected boolean blockedByShield(EntityDamageEvent source) {
-        Entity entity = source.getEntity();
-        if (entity == null || !this.isBlocking()) {
+        Entity damager = source instanceof EntityDamageByEntityEvent? ((EntityDamageByEntityEvent) source).getDamager() : null;
+        if (damager == null || !this.isBlocking()) {
             return false;
         }
 
-        Vector3f entityPos = entity.getPosition();
+        Vector3f entityPos = damager.getPosition();
         Vector3f direction = this.getDirectionVector();
         Vector3f normalizedVector = this.getPosition().subtract(entityPos).normalize();
         boolean blocked = (normalizedVector.x * direction.x) + (normalizedVector.z * direction.z) < 0.0;
-        boolean knockBack = !(entity instanceof Projectile);
+        boolean knockBack = !(damager instanceof Projectile);
         EntityDamageBlockedEvent event = new EntityDamageBlockedEvent(this, source, knockBack, true);
-        if (!blocked || !source.canBeReducedByArmor() || entity instanceof Projectile && ((Projectile) entity).getPierceLevel() > 0) {
+        if (!blocked || !source.canBeReducedByArmor() || damager instanceof Projectile && ((Projectile) damager).getPierceLevel() > 0) {
             event.setCancelled();
         }
 
@@ -182,11 +182,11 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
             return false;
         }
 
-        if (event.getKnockBackAttacker() && entity instanceof EntityLiving) {
-            ((EntityLiving) entity).knockBack(this, 0, this.x, this.z);
+        if (event.getKnockBackAttacker() && damager instanceof EntityLiving) {
+            ((EntityLiving) damager).knockBack(this, 0, this.x, this.z);
         }
 
-        onBlock(entity, event.getAnimation());
+        onBlock(damager, event.getAnimation());
         return true;
     }
 
