@@ -360,7 +360,6 @@ public class Server {
                 put("rcon.password", Base64.getEncoder().encodeToString(UUID.randomUUID().toString().replace("-", "").getBytes()).substring(3, 13));
                 put("auto-save", true);
                 put("force-resources", false);
-                put("bug-report", true);
                 put("xbox-auth", true);
             }
         });
@@ -435,7 +434,14 @@ public class Server {
             }
         }
 
-        if (this.getConfig().getBoolean("bug-report", true)) {
+        boolean bugReport;
+        if (this.getConfig().exists("settings.bug-report")) {
+            bugReport = this.getConfig().getBoolean("settings.bug-report");
+            this.getProperties().remove("bug-report");
+        } else {
+            bugReport = this.getPropertyBoolean("bug-report", true); //backwards compat
+        }
+        if (bugReport) {
             ExceptionHandler.registerExceptionHandler();
         }
 
