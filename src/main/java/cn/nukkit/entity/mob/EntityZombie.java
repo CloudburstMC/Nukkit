@@ -1,12 +1,13 @@
 package cn.nukkit.entity.mob;
 
+import cn.nukkit.entity.EntitySmite;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
  * Created by Dr. Nick Doran on 4/23/2017.
  */
-public class EntityZombie extends EntityMob {
+public class EntityZombie extends EntityMob implements EntitySmite {
 
     public static final int NETWORK_ID = 32;
 

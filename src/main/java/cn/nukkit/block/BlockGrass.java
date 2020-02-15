@@ -6,6 +6,7 @@ import cn.nukkit.event.block.BlockSpreadEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.generator.object.ObjectTallGrass;
+import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
@@ -17,16 +18,17 @@ import cn.nukkit.utils.BlockColor;
 public class BlockGrass extends BlockDirt {
 
     public BlockGrass() {
+        this(0);
+    }
+
+    public BlockGrass(int meta) {
+        // Grass can't have meta.
+        super(0);
     }
 
     @Override
     public int getId() {
         return GRASS;
-    }
-
-    @Override
-    public boolean canBeActivated() {
-        return true;
     }
 
     @Override
@@ -41,19 +43,17 @@ public class BlockGrass extends BlockDirt {
 
     @Override
     public String getName() {
-        return "Grass";
-    }
-
-    @Override
-    public boolean onActivate(Item item) {
-        return this.onActivate(item, null);
+        return "Grass Block";
     }
 
     @Override
     public boolean onActivate(Item item, Player player) {
         if (item.getId() == Item.DYE && item.getDamage() == 0x0F) {
-            item.count--;
-            ObjectTallGrass.growGrass(this.getLevel(), this, new NukkitRandom(), 15, 10);
+            if (player != null && (player.gamemode & 0x01) == 0) {
+                item.count--;
+            }
+            this.level.addParticle(new BoneMealParticle(this));
+            ObjectTallGrass.growGrass(this.getLevel(), this, new NukkitRandom());
             return true;
         } else if (item.isHoe()) {
             item.useOn(this);
@@ -76,7 +76,7 @@ public class BlockGrass extends BlockDirt {
             y = random.nextRange((int) y - 2, (int) y + 2);
             z = random.nextRange((int) z - 1, (int) z + 1);
             Block block = this.getLevel().getBlock(new Vector3(x, y, z));
-            if (block.getId() == Block.DIRT) {
+            if (block.getId() == Block.DIRT && block.getDamage() == 0) {
                 if (block.up() instanceof BlockAir) {
                     BlockSpreadEvent ev = new BlockSpreadEvent(block, this, new BlockGrass());
                     Server.getInstance().getPluginManager().callEvent(ev);
@@ -105,5 +105,15 @@ public class BlockGrass extends BlockDirt {
     @Override
     public boolean canSilkTouch() {
         return true;
+    }
+
+    @Override
+    public int getFullId() {
+        return this.getId() << 4;
+    }
+
+    @Override
+    public void setDamage(int meta) {
+
     }
 }

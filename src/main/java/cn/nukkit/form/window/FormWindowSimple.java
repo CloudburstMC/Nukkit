@@ -2,7 +2,6 @@ package cn.nukkit.form.window;
 
 import cn.nukkit.form.element.ElementButton;
 import cn.nukkit.form.response.FormResponseSimple;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,10 +47,6 @@ public class FormWindowSimple extends FormWindow {
 
     public void addButton(ElementButton button) {
         this.buttons.add(button);
-    }
-
-    public String getJSONData() {
-        return new Gson().toJson(this);
     }
 
     public FormResponseSimple getResponse() {

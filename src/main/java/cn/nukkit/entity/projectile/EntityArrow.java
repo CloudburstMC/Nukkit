@@ -15,6 +15,12 @@ public class EntityArrow extends EntityProjectile {
 
     public static final int DATA_SOURCE_ID = 17;
 
+    public static final int PICKUP_NONE = 0;
+    public static final int PICKUP_ANY = 1;
+    public static final int PICKUP_CREATIVE = 2;
+
+    protected int pickupMode;
+
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
@@ -66,6 +72,7 @@ public class EntityArrow extends EntityProjectile {
         super.initEntity();
 
         this.damage = namedTag.contains("damage") ? namedTag.getDouble("damage") : 2;
+        this.pickupMode = namedTag.contains("pickup") ? namedTag.getByte("pickup") : PICKUP_ANY;
     }
 
     public void setCritical() {
@@ -118,5 +125,20 @@ public class EntityArrow extends EntityProjectile {
         this.timing.stopTiming();
 
         return hasUpdate;
+    }
+
+    @Override
+    public void saveNBT() {
+        super.saveNBT();
+
+        this.namedTag.putByte("pickup", this.pickupMode);
+    }
+
+    public int getPickupMode() {
+        return this.pickupMode;
+    }
+
+    public void setPickupMode(int pickupMode) {
+        this.pickupMode = pickupMode;
     }
 }

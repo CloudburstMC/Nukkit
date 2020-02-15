@@ -223,7 +223,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[BAKED_POTATO] = ItemPotatoBaked.class; //393
             list[POISONOUS_POTATO] = ItemPotatoPoisonous.class; //394
             //TODO: list[EMPTY_MAP] = ItemEmptyMap.class; //395
-            //TODO: list[GOLDEN_CARROT] = ItemCarrotGolden.class; //396
+            list[GOLDEN_CARROT] = ItemCarrotGolden.class; //396
             list[SKULL] = ItemSkull.class; //397
             list[CARROT_ON_A_STICK] = ItemCarrotOnAStick.class; //398
             list[NETHER_STAR] = ItemNetherStar.class; //399
@@ -271,7 +271,9 @@ public class Item implements Cloneable, BlockID, ItemID {
 
             //TODO: list[SHULKER_SHELL] = ItemShulkerShell.class; //445
             list[BANNER] = ItemBanner.class; //446
-            
+
+            list[TOTEM] = ItemTotem.class; //450
+
             list[TRIDENT] = ItemTrident.class; //455
 
             list[BEETROOT] = ItemBeetroot.class; //457
@@ -287,6 +289,8 @@ public class Item implements Cloneable, BlockID, ItemID {
             
             list[TURTLE_SHELL] = ItemTurtleShell.class; //469
 
+            list[SWEET_BERRIES] = ItemSweetBerries.class; //477
+
             list[RECORD_11] = ItemRecord11.class;
             list[RECORD_CAT] = ItemRecordCat.class;
             list[RECORD_13] = ItemRecord13.class;
@@ -299,6 +303,8 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[RECORD_STAL] = ItemRecordStal.class;
             list[RECORD_STRAD] = ItemRecordStrad.class;
             list[RECORD_WAIT] = ItemRecordWait.class;
+
+            list[SHIELD] = ItemShield.class; //513
 
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {
@@ -322,12 +328,7 @@ public class Item implements Cloneable, BlockID, ItemID {
 
         for (Map map : list) {
             try {
-                int id = (int) map.get("id");
-                int damage = (int) map.getOrDefault("damage", 0);
-                String hex = (String) map.get("nbt_hex");
-                byte[] nbt = hex != null ? Utils.parseHexBinary(hex) : new byte[0];
-
-                addCreativeItem(Item.get(id, damage, 1, nbt));
+                addCreativeItem(fromJson(map));
             } catch (Exception e) {
                 MainLogger.getLogger().logException(e);
             }
@@ -567,7 +568,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             if (entry.getShort("id") == id) {
                 Enchantment e = Enchantment.getEnchantment(entry.getShort("id"));
                 if (e != null) {
-                    e.setLevel(entry.getShort("lvl"));
+                    e.setLevel(entry.getShort("lvl"), false);
                     return e;
                 }
             }
@@ -629,7 +630,7 @@ public class Item implements Cloneable, BlockID, ItemID {
         for (CompoundTag entry : ench.getAll()) {
             Enchantment e = Enchantment.getEnchantment(entry.getShort("id"));
             if (e != null) {
-                e.setLevel(entry.getShort("lvl"));
+                e.setLevel(entry.getShort("lvl"), false);
                 enchantments.add(e);
             }
         }
@@ -949,6 +950,14 @@ public class Item implements Cloneable, BlockID, ItemID {
         return false;
     }
 
+    public boolean onUse(Player player, int ticksUsed) {
+        return false;
+    }
+
+    public boolean onRelease(Player player, int ticksUsed) {
+        return false;
+    }
+
     @Override
     final public String toString() {
         return "Item " + this.name + " (" + this.id + ":" + (!this.hasMeta ? "?" : this.meta) + ")x" + this.count + (this.hasCompoundTag() ? " tags:0x" + Binary.bytesToHexString(this.getCompoundTag()) : "");
@@ -971,17 +980,6 @@ public class Item implements Cloneable, BlockID, ItemID {
      * @return item changed
      */
     public boolean onClickAir(Player player, Vector3 directionVector) {
-        return false;
-    }
-
-    /**
-     * Called when a player is using this item and releases it. Used to handle bow shoot actions.
-     * Returns whether the item was changed, for example count decrease or durability change.
-     *
-     * @param player player
-     * @return item changed
-     */
-    public boolean onReleaseUsing(Player player) {
         return false;
     }
 

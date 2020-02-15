@@ -29,6 +29,11 @@ public class StringTag extends Tag {
     }
 
     @Override
+    public String parseValue() {
+        return this.data;
+    }
+
+    @Override
     public byte getId() {
         return TAG_String;
     }

@@ -39,7 +39,7 @@ public class Nukkit {
 
     public final static Properties GIT_INFO = getGitInfo();
     public final static String VERSION = getVersion();
-    public final static String API_VERSION = "1.0.8";
+    public final static String API_VERSION = "1.0.9";
     public final static String CODENAME = "";
     @Deprecated
     public final static String MINECRAFT_VERSION = ProtocolInfo.MINECRAFT_VERSION;
@@ -175,5 +175,12 @@ public class Nukkit {
         LoggerConfig loggerConfig = log4jConfig.getLoggerConfig(org.apache.logging.log4j.LogManager.ROOT_LOGGER_NAME);
         loggerConfig.setLevel(level);
         ctx.updateLoggers();
+    }
+
+    public static Level getLogLevel() {
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        Configuration log4jConfig = ctx.getConfiguration();
+        LoggerConfig loggerConfig = log4jConfig.getLoggerConfig(org.apache.logging.log4j.LogManager.ROOT_LOGGER_NAME);
+        return loggerConfig.getLevel();
     }
 }

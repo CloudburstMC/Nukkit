@@ -19,7 +19,7 @@ public class ResourcePackChunkDataPacket extends DataPacket {
         this.packId = UUID.fromString(this.getString());
         this.chunkIndex = this.getLInt();
         this.progress = this.getLLong();
-        this.data = this.get(this.getLInt());
+        this.data = this.getByteArray();
     }
 
     @Override
@@ -28,8 +28,7 @@ public class ResourcePackChunkDataPacket extends DataPacket {
         this.putString(this.packId.toString());
         this.putLInt(this.chunkIndex);
         this.putLLong(this.progress);
-        this.putLInt(this.data.length);
-        this.put(this.data);
+        this.putByteArray(this.data);
     }
 
     @Override

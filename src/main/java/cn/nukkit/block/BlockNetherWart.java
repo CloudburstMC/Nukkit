@@ -65,7 +65,7 @@ public class BlockNetherWart extends BlockFlowable {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.FOLIAGE_BLOCK_COLOR;
+        return BlockColor.RED_BLOCK_COLOR;
     }
 
     @Override

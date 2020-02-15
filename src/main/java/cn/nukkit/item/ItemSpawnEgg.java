@@ -3,6 +3,8 @@ package cn.nukkit.item;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.event.entity.CreatureSpawnEvent;
+import cn.nukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.BlockFace;
@@ -61,13 +63,18 @@ public class ItemSpawnEgg extends Item {
             nbt.putString("CustomName", this.getCustomName());
         }
 
+        CreatureSpawnEvent ev = new CreatureSpawnEvent(this.meta, block, nbt, SpawnReason.SPAWN_EGG);
+        level.getServer().getPluginManager().callEvent(ev);
+
+        if (ev.isCancelled()) {
+            return false;
+        }
+
         Entity entity = Entity.createEntity(this.meta, chunk, nbt);
 
         if (entity != null) {
             if (player.isSurvival()) {
-                Item item = player.getInventory().getItemInHand();
-                item.setCount(item.getCount() - 1);
-                player.getInventory().setItemInHand(item);
+                player.getInventory().decreaseCount(player.getInventory().getHeldItemIndex());
             }
             entity.spawnToAll();
             return true;

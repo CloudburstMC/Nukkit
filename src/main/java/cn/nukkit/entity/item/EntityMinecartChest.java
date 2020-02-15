@@ -6,6 +6,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemMinecartChest;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.MinecartType;
 
@@ -55,7 +56,7 @@ public class EntityMinecartChest extends EntityMinecartAbstract {
     }
 
     @Override
-    public boolean onInteract(Player p, Item item) {
+    public boolean onInteract(Player p, Item item, Vector3 clickedPos) {
         return false;
     }
 }

@@ -38,6 +38,11 @@ public class LongTag extends NumberTag<Long> {
     }
 
     @Override
+    public Long parseValue() {
+        return this.data;
+    }
+
+    @Override
     public byte getId() {
         return TAG_Long;
     }

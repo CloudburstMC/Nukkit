@@ -36,6 +36,12 @@ public class ItemFireCharge extends Item {
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         if (block.getId() == AIR && (target instanceof BlockSolid || target instanceof BlockSolidMeta)) {
+            if (target.getId() == OBSIDIAN) {
+                if (level.createPortal(target)) {
+                    return true;
+                }
+            }
+
             BlockFire fire = new BlockFire();
             fire.x = block.x;
             fire.y = block.y;
