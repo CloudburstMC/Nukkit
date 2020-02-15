@@ -12,6 +12,7 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTurtleShell;
 import cn.nukkit.level.Position;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.math.BlockRayTrace;
@@ -190,6 +191,9 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
     }
 
     protected void onBlock(Entity entity, boolean animate) {
+        if (animate) {
+            getLevel().addSound(this.asVector3f(), Sound.ITEM_SHIELD_BLOCK);
+        }
     }
 
     public void knockBack(Entity attacker, double damage, double x, double z) {

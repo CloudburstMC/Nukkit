@@ -457,6 +457,7 @@ public class Human extends EntityCreature implements InventoryHolder {
 
     @Override
     protected void onBlock(Entity entity, boolean animate) {
+        super.onBlock(entity, animate);
         Item shield = getInventory().getItemInHand();
         if (shield.getId() == ItemIds.SHIELD) {
             shield = damageArmor(shield, entity);

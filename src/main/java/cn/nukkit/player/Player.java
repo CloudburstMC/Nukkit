@@ -109,6 +109,7 @@ import static cn.nukkit.block.BlockIds.AIR;
 import static cn.nukkit.entity.data.EntityData.INTERACTIVE_TAG;
 import static cn.nukkit.entity.data.EntityData.PLAYER_BED_POSITION;
 import static cn.nukkit.entity.data.EntityFlag.ACTION;
+import static cn.nukkit.entity.data.EntityFlag.BLOCKING;
 import static cn.nukkit.player.PlayerFlag.SLEEP;
 
 /**
@@ -1552,15 +1553,32 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 this.dummyBossBars.values().forEach(DummyBossBar::updateBossEntityPosition);
             }
 
-            setFlag(
-                    EntityFlag.BLOCKING,
-                    this.isSneaking() && this.getInventory().getItemInHand().getId() == ItemIds.SHIELD // Add support to off hand
-            );
+            updateBlockingFlag(true);
 
             this.updateData();
         }
 
         return true;
+    }
+
+    private void updateBlockingFlag(boolean delayed) {
+        //TODO Add support to off hand
+        if (!isSneaking() || this.getInventory().getItemInHand().getId() != ItemIds.SHIELD) {
+            setFlag(BLOCKING, false);
+            return;
+        }
+
+        if (isBlocking()) {
+            return;
+        }
+
+        if (delayed) {
+            getServer().getScheduler().scheduleDelayedTask(null, ()-> updateBlockingFlag(false), 2);
+            return;
+        }
+
+        setFlag(EntityFlag.BLOCKING, true);
+        updateData();
     }
 
     /**
