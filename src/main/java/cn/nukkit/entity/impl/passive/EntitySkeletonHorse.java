@@ -37,4 +37,10 @@ public class EntitySkeletonHorse extends Animal implements SkeletonHorse, Smitea
     public Item[] getDrops() {
         return new Item[]{Item.get(ItemIds.BONE)};
     }
+
+    @Override
+    public boolean isUndead() {
+        return true;
+    }
+
 }

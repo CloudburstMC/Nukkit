@@ -46,6 +46,7 @@ public abstract class Fuel {
         duration.put(ItemIds.BOW, (short) 200);
         duration.put(ItemIds.BOWL, (short) 200);
         duration.put(BlockIds.LOG2, (short) 300);
+        duration.put(BlockIds.DRIED_KELP_BLOCK, (short) 4000);
         duration.put(BlockIds.WOODEN_PRESSURE_PLATE, (short) 300);
         duration.put(BlockIds.ACACIA_STAIRS, (short) 300);
         duration.put(BlockIds.DARK_OAK_STAIRS, (short) 300);

@@ -211,6 +211,10 @@ public class BlockPosition extends Vector3i {
         return getSide(BlockFace.WEST, step);
     }
 
+    public BlockPosition layer(int layer) {
+        return new BlockPosition(this.x, this.y, this.z, this.level, layer);
+    }
+
     public Level getLevel() {
         return level;
     }
@@ -230,7 +234,12 @@ public class BlockPosition extends Vector3i {
     }
 
     public Block getBlock() {
-        if (this.level != null) return this.level.getBlock(this);
+        if (this.isValid()) return this.level.getBlock(this);
+        else throw new LevelException("Undefined Level reference");
+    }
+
+    public Block getBlockAtLayer(int layer) {
+        if (this.isValid()) return this.level.getBlock(this.x, this.y, this.z, layer);
         else throw new LevelException("Undefined Level reference");
     }
 
@@ -242,6 +251,12 @@ public class BlockPosition extends Vector3i {
     public String toString() {
         return "BlockPosition(level=" + (this.level != null ? this.level.getName() : "null") +
                 ", x=" + this.x + ", y=" + this.y + ", z=" + this.z + ", layer=" + this.layer + ")";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof BlockPosition)) return false;
+        return super.equals(o) && ((BlockPosition) o).getLayer() == this.getLayer();
     }
 
     @Override

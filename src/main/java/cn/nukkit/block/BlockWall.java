@@ -80,4 +80,9 @@ public class BlockWall extends BlockTransparent {
     public boolean canHarvestWithHand() {
         return false;
     }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

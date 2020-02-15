@@ -23,6 +23,8 @@ public abstract class BlockEntity extends BlockPosition {
     public static final String CHEST = "Chest";
     public static final String ENDER_CHEST = "EnderChest";
     public static final String FURNACE = "Furnace";
+    public static final String BLAST_FURNACE = "BlastFurnace";
+    public static final String SMOKER = "Smoker";
     public static final String SIGN = "Sign";
     public static final String MOB_SPAWNER = "MobSpawner";
     public static final String ENCHANT_TABLE = "EnchantTable";
@@ -42,6 +44,9 @@ public abstract class BlockEntity extends BlockPosition {
     public static final String JUKEBOX = "Jukebox";
     public static final String SHULKER_BOX = "ShulkerBox";
     public static final String BANNER = "Banner";
+    public static final String CAMPFIRE = "Campfire";
+    public static final String BARREL = "Barrel";
+    public static final String LECTERN = "Lectern";
 
 
     public static long count = 1;
@@ -149,9 +154,9 @@ public abstract class BlockEntity extends BlockPosition {
 
     public void saveNBT() {
         this.namedTag.putString("id", this.getSaveId());
-        this.namedTag.putInt("x", (int) this.getX());
-        this.namedTag.putInt("y", (int) this.getY());
-        this.namedTag.putInt("z", (int) this.getZ());
+        this.namedTag.putInt("x", this.getX());
+        this.namedTag.putInt("y", this.getY());
+        this.namedTag.putInt("z", this.getZ());
         this.namedTag.putBoolean("isMovable", this.movable);
     }
 

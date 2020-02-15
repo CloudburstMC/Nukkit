@@ -6,6 +6,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Position;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.math.Vector3i;
@@ -56,14 +57,6 @@ public class BlockBed extends BlockTransparent implements Faceable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        int time = this.getLevel().getTime() % Level.TIME_FULL;
-
-        boolean isNight = (time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE);
-
-        if (player != null && !isNight) {
-            player.sendMessage(new TranslationContainer("tile.bed.noSleep"));
-            return true;
-        }
 
         Block blockNorth = this.north();
         Block blockSouth = this.south();
@@ -91,6 +84,21 @@ public class BlockBed extends BlockTransparent implements Faceable {
             }
         }
 
+        Position spawn = new Position(b.getX() + 0.5, b.getY() + 0.5, b.getZ() + 0.5, this.level);
+        if (player != null && !player.getSpawn().equals(spawn)) {
+            player.setSpawn(spawn);
+            player.sendMessage(new TranslationContainer("tile.bed.respawnSet"));
+        }
+
+        int time = this.getLevel().getTime() % Level.TIME_FULL;
+
+        boolean isNight = (time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE);
+
+        if (player != null && !isNight) {
+            player.sendMessage(new TranslationContainer("tile.bed.noSleep"));
+            return true;
+        }
+
         if (player != null && !player.sleepOn(b)) {
             player.sendMessage(new TranslationContainer("tile.bed.occupied"));
         }
@@ -110,6 +118,9 @@ public class BlockBed extends BlockTransparent implements Faceable {
                 int meta = player.getDirection().getHorizontalIndex();
 
                 this.getLevel().setBlock(block, Block.get(this.getId(), meta), true, true);
+                if (next instanceof BlockLiquid && ((BlockLiquid) next).usesWaterLogging()) {
+                    this.getLevel().setBlock(next.layer(1), next.clone(), true, false);
+                }
                 this.getLevel().setBlock(next, Block.get(this.getId(), meta | 0x08), true, true);
 
                 createBlockEntity(this, item.getDamage());
@@ -129,31 +140,34 @@ public class BlockBed extends BlockTransparent implements Faceable {
         Block blockWest = this.west();
 
         Block air = Block.get(AIR);
-
+        Block otherPart = null;
         if ((this.getDamage() & 0x08) == 0x08) { //This is the Top part of bed
             if (blockNorth.getId() == BED && (blockNorth.getDamage() & 0x08) != 0x08) { //Checks if the block ID&&meta are right
-                this.getLevel().setBlock(blockNorth, air, true, true);
+                otherPart = blockNorth;
             } else if (blockSouth.getId() == BED && (blockSouth.getDamage() & 0x08) != 0x08) {
-                this.getLevel().setBlock(blockSouth, air, true, true);
+                otherPart = blockSouth;
             } else if (blockEast.getId() == BED && (blockEast.getDamage() & 0x08) != 0x08) {
-                this.getLevel().setBlock(blockEast, air, true, true);
+                otherPart = blockEast;
             } else if (blockWest.getId() == BED && (blockWest.getDamage() & 0x08) != 0x08) {
-                this.getLevel().setBlock(blockWest, air, true, true);
+                otherPart = blockWest;
             }
         } else { //Bottom Part of Bed
             if (blockNorth.getId() == this.getId() && (blockNorth.getDamage() & 0x08) == 0x08) {
-                this.getLevel().setBlock(blockNorth, air, true, true);
+                otherPart = blockNorth;
             } else if (blockSouth.getId() == this.getId() && (blockSouth.getDamage() & 0x08) == 0x08) {
-                this.getLevel().setBlock(blockSouth, air, true, true);
+                otherPart = blockSouth;
             } else if (blockEast.getId() == this.getId() && (blockEast.getDamage() & 0x08) == 0x08) {
-                this.getLevel().setBlock(blockEast, air, true, true);
+                otherPart = blockEast;
             } else if (blockWest.getId() == this.getId() && (blockWest.getDamage() & 0x08) == 0x08) {
-                this.getLevel().setBlock(blockWest, air, true, true);
+                otherPart = blockWest;
             }
         }
 
-        this.getLevel().setBlock(this, air, true, false); // Do not update both parts to prevent duplication bug if there is two fallable blocks top of the bed
+        if (otherPart instanceof BlockBed) {
+            otherPart.removeBlock(false); // Do not update both parts to prevent duplication bug if there is two fallable blocks top of the bed
+        }
 
+        removeBlock(true);
         return true;
     }
 
@@ -189,5 +203,10 @@ public class BlockBed extends BlockTransparent implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

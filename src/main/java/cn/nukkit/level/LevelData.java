@@ -126,8 +126,12 @@ public class LevelData {
         return this.generatorOptions;
     }
 
-    public void setGeneratorOptions(String generatorOptions)    {
-        this.generatorOptions = generatorOptions;
+    public void setGeneratorOptions(String generatorOptions) {
+        if (generatorOptions == null) {
+            this.generatorOptions = "";
+        } else {
+            this.generatorOptions = generatorOptions;
+        }
     }
 
     public String getName() {

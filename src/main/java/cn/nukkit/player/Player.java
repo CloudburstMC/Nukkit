@@ -8,6 +8,7 @@ import cn.nukkit.Server;
 import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityItemFrame;
+import cn.nukkit.blockentity.BlockEntityLectern;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
@@ -29,6 +30,7 @@ import cn.nukkit.entity.projectile.Arrow;
 import cn.nukkit.entity.projectile.FishingHook;
 import cn.nukkit.entity.projectile.ThrownTrident;
 import cn.nukkit.event.block.ItemFrameDropItemEvent;
+import cn.nukkit.event.block.LecternPageChangeEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -807,7 +809,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             inventory.sendCreativeContents();
         }
 
-        this.chunkManager.getLoadedChunks().forEach((LongConsumer) chunkKey -> {
+        this.getChunkManager().getLoadedChunks().forEach((LongConsumer) chunkKey -> {
             int chunkX = Chunk.fromKeyX(chunkKey);
             int chunkZ = Chunk.fromKeyZ(chunkKey);
             for (Entity entity : this.level.getLoadedChunkEntities(chunkX, chunkZ)) {
@@ -879,10 +881,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.sleeping = pos.clone();
         this.teleport(new Location(pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, this.yaw, this.pitch, this.level), null);
 
-        this.setPosData(PLAYER_BED_POSITION, pos);
+        this.setPosData(PLAYER_BED_POSITION, pos.asVector3i());
         this.setPlayerFlag(SLEEP, true);
-
-        this.setSpawn(pos.asVector3f());
 
         this.level.sleepTicks = 60;
 
@@ -1173,6 +1173,11 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     @Override
+    public void addMovement(double x, double y, double z, double yaw, double pitch, double headYaw) {
+        this.sendPosition(new Vector3f(x, y, z), yaw, pitch, MovePlayerPacket.MODE_NORMAL, this.getViewers().toArray(new Player[0]));
+    }
+
+    @Override
     public boolean setMotion(Vector3f motion) {
         if (super.setMotion(motion)) {
             if (this.chunk != null) {
@@ -1375,7 +1380,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     if (!to.equals(ev.getTo())) { //If plugins modify the destination
                         this.teleport(ev.getTo(), null);
                     } else {
-                        this.addMovement(this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
+                        this.addMovement(this.x, this.y, this.z, this.yaw, this.pitch, this.yaw);
                     }
                     //Biome biome = Biome.biomes[level.getBiomeId(this.getFloorX(), this.getFloorZ())];
                     //sendTip(biome.getName() + " (" + biome.doesOverhang() + " " + biome.getBaseHeight() + "-" + biome.getHeightVariation() + ")");
@@ -1470,7 +1475,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             }
 
             if (this.spawned) {
-                this.chunkManager.queueNewChunks();
+                this.getChunkManager().queueNewChunks();
                 this.processMovement(tickDiff);
 
                 if (!this.isSpectator()) {
@@ -1715,9 +1720,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             return;
         }
 
-        this.chunkManager.sendQueued();
+        this.getChunkManager().sendQueued();
 
-        if (this.chunkManager.getChunksSent() >= this.spawnThreshold && !this.spawned && this.teleportPosition == null) {
+        if (this.getChunkManager().getChunksSent() >= this.spawnThreshold && !this.spawned && this.teleportPosition == null) {
             this.doFirstSpawn();
         }
     }
@@ -2747,7 +2752,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     }
                     break;
                 case ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET:
-                    this.chunkManager.setChunkRadius(((RequestChunkRadiusPacket) packet).radius);
+                    this.getChunkManager().setChunkRadius(((RequestChunkRadiusPacket) packet).radius);
                     break;
                 case ProtocolInfo.SET_PLAYER_GAME_TYPE_PACKET:
                     SetPlayerGameTypePacket setPlayerGameTypePacket = (SetPlayerGameTypePacket) packet;
@@ -3186,6 +3191,33 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         respawn1.respawnState = RespawnPacket.STATE_READY_TO_SPAWN;
                         this.dataPacket(respawn1);
                     }
+                case ProtocolInfo.LECTERN_UPDATE_PACKET:
+                    LecternUpdatePacket lecternUpdatePacket = (LecternUpdatePacket) packet;
+                    Vector3i blockPosition = lecternUpdatePacket.blockPosition;
+                    temporalVector.set(blockPosition.asVector3f());
+
+                    if (lecternUpdatePacket.dropBook) {
+                        Block blockLectern = this.getLevel().getBlock(temporalVector.get().asVector3i());
+                        if (blockLectern instanceof BlockLectern) {
+                            ((BlockLectern) blockLectern).dropBook(this);
+                        }
+                    } else {
+                        BlockEntity blockEntityLectern = this.level.getBlockEntity(temporalVector.get().asVector3i());
+                        if (blockEntityLectern instanceof BlockEntityLectern) {
+                            BlockEntityLectern lectern = (BlockEntityLectern) blockEntityLectern;
+                            LecternPageChangeEvent lecternPageChangeEvent = new LecternPageChangeEvent(this, lectern, lecternUpdatePacket.page);
+                            this.server.getPluginManager().callEvent(lecternPageChangeEvent);
+                            if (!lecternPageChangeEvent.isCancelled()) {
+                                lectern.setRawPage(lecternPageChangeEvent.getNewRawPage());
+                                lectern.spawnToAll();
+                                Block blockLectern = lectern.getBlock();
+                                if (blockLectern instanceof BlockLectern) {
+                                    ((BlockLectern) blockLectern).executeRedstonePulse();
+                                }
+                            }
+                        }
+                    }
+                    break;
                 default:
                     break;
             }
@@ -3193,7 +3225,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public int getChunkRadius() {
-        return this.chunkManager.getChunkRadius();
+        return this.getChunkManager().getChunkRadius();
     }
 
     @Override
@@ -3360,7 +3392,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public void setChunkRadius(int chunkRadius) {
-        this.chunkManager.setChunkRadius(chunkRadius);
+        this.getChunkManager().setChunkRadius(chunkRadius);
     }
 
     public void save() {
@@ -3405,7 +3437,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
             this.removeAllWindows(true);
 
-            this.chunkManager.getLoadedChunks().forEach((LongConsumer) chunkKey -> {
+            this.getChunkManager().getLoadedChunks().forEach((LongConsumer) chunkKey -> {
                 int chunkX = Chunk.fromKeyX(chunkKey);
                 int chunkZ = Chunk.fromKeyZ(chunkKey);
 
@@ -3458,7 +3490,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.inventory = null;
         }
 
-        this.chunkManager.clear();
+        this.getChunkManager().clear();
 
         this.chunk = null;
 
@@ -4307,7 +4339,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             for (int X = -1; X <= 1; ++X) {
                 for (int Z = -1; Z <= 1; ++Z) {
                     long index = Chunk.key(chunkX + X, chunkZ + Z);
-                    if (!this.chunkManager.isChunkInView(index)) {
+                    if (!this.getChunkManager().isChunkInView(index)) {
                         return false;
                     }
                 }
@@ -4343,7 +4375,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.removeAllWindows();
 
             this.teleportPosition = new Vector3f(this.x, this.y, this.z);
-            this.chunkManager.queueNewChunks(this.teleportPosition.getChunkX(), this.teleportPosition.getChunkZ());
+            this.getChunkManager().queueNewChunks(this.teleportPosition.getChunkX(), this.teleportPosition.getChunkZ());
             this.forceMovement = this.teleportPosition;
             this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_TELEPORT);
 
@@ -4365,12 +4397,12 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public boolean isChunkInView(int x, int z) {
-        return this.chunkManager.isChunkInView(x, z);
+        return this.getChunkManager().isChunkInView(x, z);
     }
 
     @Override
     public void onChunkChanged(Chunk chunk) {
-        this.chunkManager.resendChunk(chunk.getX(), chunk.getZ());
+        this.getChunkManager().resendChunk(chunk.getX(), chunk.getZ());
     }
 
     @Override
@@ -4538,7 +4570,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             spawnPosition.z = spawn.getFloorZ();
             this.dataPacket(spawnPosition);
 
-            this.chunkManager.prepareRegion(this.getChunkX(), this.getChunkZ());
+            this.getChunkManager().prepareRegion(this.getChunkX(), this.getChunkZ());
 
             SetTimePacket setTime = new SetTimePacket();
             setTime.time = level.getTime();

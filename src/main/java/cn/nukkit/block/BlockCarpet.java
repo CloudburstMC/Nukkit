@@ -83,4 +83,8 @@ public class BlockCarpet extends FloodableBlock {
         return DyeColor.getByWoolData(getDamage());
     }
 
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

@@ -164,4 +164,9 @@ public class BlockLeaves extends BlockTransparent {
     protected Item getSapling() {
         return Item.get(SAPLING, this.getDamage() & 0x03);
     }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

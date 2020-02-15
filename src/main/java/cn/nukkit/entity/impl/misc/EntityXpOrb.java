@@ -90,9 +90,9 @@ public class EntityXpOrb extends BaseEntity implements XpOrb {
     public boolean attack(EntityDamageEvent source) {
         return (source.getCause() == DamageCause.VOID ||
                 source.getCause() == DamageCause.FIRE_TICK ||
-                source.getCause() == DamageCause.ENTITY_EXPLOSION ||
-                source.getCause() == DamageCause.BLOCK_EXPLOSION)
-                && super.attack(source);
+                (source.getCause() == DamageCause.ENTITY_EXPLOSION ||
+                source.getCause() == DamageCause.BLOCK_EXPLOSION) &&
+                !this.isInsideOfWater()) && super.attack(source);
     }
 
     @Override

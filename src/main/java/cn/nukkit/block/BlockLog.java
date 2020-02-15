@@ -18,6 +18,23 @@ public class BlockLog extends BlockSolid {
     public static final int BIRCH = 2;
     public static final int JUNGLE = 3;
 
+    protected static final Identifier[] STRIPPED_IDS = new Identifier[] {
+            BlockIds.STRIPPED_OAK_LOG,
+            BlockIds.STRIPPED_SPRUCE_LOG,
+            BlockIds.STRIPPED_BIRCH_LOG,
+            BlockIds.STRIPPED_JUNGLE_LOG,
+            BlockIds.STRIPPED_ACACIA_LOG,
+            BlockIds.STRIPPED_DARK_OAK_LOG
+    };
+
+    protected static final short[] FACES = new short[]{
+            0,
+            0,
+            0b1000,
+            0b1000,
+            0b0100,
+            0b0100
+    };
 
     public BlockLog(Identifier id) {
         super(id);
@@ -45,18 +62,27 @@ public class BlockLog extends BlockSolid {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        short[] faces = new short[]{
-                0,
-                0,
-                0b1000,
-                0b1000,
-                0b0100,
-                0b0100
-        };
-
-        this.setDamage(((this.getDamage() & 0x03) | faces[face.getIndex()]));
+        this.setDamage(((this.getDamage() & 0x03) | FACES[face.getIndex()]));
         this.getLevel().setBlock(block, this, true, true);
 
+        return true;
+    }
+
+    @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+
+    @Override
+    public boolean onActivate(Item item, Player player) {
+        if (!item.isAxe() || !item.useOn(this)) {
+            return false;
+        }
+
+        int log2Damage = this instanceof BlockLog2 ? 4 : 0;
+        int damage = ( this.getDamage() & -0b100 ) ^ this.getDamage();
+        Block strippedBlock = Block.get(STRIPPED_IDS[damage + log2Damage], ( this.getDamage() >> 2 ) );
+        this.getLevel().setBlock(this.asVector3i(), strippedBlock, true, true);
         return true;
     }
 

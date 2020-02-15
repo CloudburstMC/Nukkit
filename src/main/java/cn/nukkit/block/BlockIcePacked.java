@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
 
 import static cn.nukkit.block.BlockIds.AIR;
@@ -33,8 +34,12 @@ public class BlockIcePacked extends BlockIce {
     
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, Block.get(AIR), true); //no water
-        return true;
+        return this.getLevel().setBlock(this, Block.get(AIR), true); //no water
+    }
+
+    @Override
+    public boolean onBreak(Item item, Player player) {
+        return this.onBreak(item);
     }
 
     @Override

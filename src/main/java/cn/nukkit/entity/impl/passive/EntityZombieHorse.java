@@ -37,4 +37,10 @@ public class EntityZombieHorse extends Animal implements ZombieHorse, Smiteable 
     public Item[] getDrops() {
         return new Item[]{Item.get(ItemIds.ROTTEN_FLESH, 1, 1)};
     }
+
+    @Override
+    public boolean isUndead() {
+        return true;
+    }
+
 }

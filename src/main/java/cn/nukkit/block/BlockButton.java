@@ -120,11 +120,16 @@ public abstract class BlockButton extends FloodableBlock implements Faceable {
 
     @Override
     public Item toItem() {
-        return Item.get(this.getId(), 5);
+        return Item.get(this.getId(), 0);
     }
 
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

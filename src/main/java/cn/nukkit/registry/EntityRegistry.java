@@ -1,5 +1,6 @@
 package cn.nukkit.registry;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityFactory;
 import cn.nukkit.entity.EntityType;
@@ -15,12 +16,11 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.Identifier;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
@@ -51,18 +51,14 @@ public class EntityRegistry implements Registry {
 
     static {
         try (InputStream stream = RegistryUtils.getOrAssertResource("legacy/entity_names.json")) {
-            Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
-            Gson gson = new Gson();
-            Type collectionType = new TypeToken<Map<String, String>>() {
-            }.getType();
-            Map<String, String> legacyNames = gson.fromJson(reader, collectionType);
+            Map<String, String> legacyNames = Nukkit.JSON_MAPPER.readValue(stream, new TypeReference<Map<String, String>>() {});
 
             ImmutableBiMap.Builder<String, Identifier> mapBuilder = ImmutableBiMap.builder();
 
             legacyNames.forEach((name, identifier) -> mapBuilder.put(name, Identifier.fromString(identifier)));
             LEGACY_NAMES = mapBuilder.build();
         } catch (IOException e) {
-            throw new AssertionError("Unable to close resource stream", e);
+            throw new AssertionError("Unable to load legacy entity names", e);
         }
 
         try (InputStream stream = RegistryUtils.getOrAssertResource("entity_identifiers.dat")) {
@@ -326,9 +322,11 @@ public class EntityRegistry implements Registry {
         registerVanilla(ENDER_PEARL, EntityEnderPearl::new, 87);
         registerVanilla(BOAT, EntityBoat::new, 90);
         registerVanilla(LIGHTNING_BOLT, EntityLightningBolt::new, 93);
+        registerVanilla(AREA_EFFECT_CLOUD, EntityAreaEffectCloud::new, 95);
         registerVanilla(HOPPER_MINECART, EntityHopperMinecart::new, 96);
         registerVanilla(TNT_MINECART, EntityTntMinecart::new, 97);
         registerVanilla(CHEST_MINECART, EntityChestMinecart::new, 98);
+        registerVanilla(LINGERING_POTION, EntityLingeringPotion::new, 101);
         registerVanilla(EVOCATION_ILLAGER, EntityEvocationIllager::new, 104);
         registerVanilla(VEX, EntityVex::new, 105);
         registerVanilla(PUFFERFISH, EntityPufferfish::new, 108);

@@ -20,7 +20,6 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
-import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,7 +31,7 @@ import static cn.nukkit.block.BlockIds.*;
  * author: MagicDroidX
  * Nukkit Project
  */
-@Log4j2
+
 public abstract class Block extends BlockPosition implements Metadatable, Cloneable, AxisAlignedBB {
 
     protected final Identifier id;
@@ -127,7 +126,20 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
     }
 
     public boolean onBreak(Item item) {
-        return this.getLevel().setBlock(this, Block.get(AIR), true, true);
+        return removeBlock(true);
+    }
+
+    final protected boolean removeBlock(boolean update) {
+        if (this.isWaterlogged()) {
+            Block water = getLevel().getBlock(getX(), getY(), getZ(), 1);
+            getLevel().setBlock(this, water, true, false);
+            return getLevel().setBlock(getX(), getY(), getZ(), 1, Block.get(AIR), true, update);
+        }
+        return this.getLevel().setBlock(this, Block.get(AIR), true, update);
+    }
+
+    public boolean onBreak(Item item, Player player) {
+        return onBreak(item);
     }
 
     public int onUpdate(int type) {
@@ -495,7 +507,7 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
 
     @Override
     public String toString() {
-        return String.format("Block(id=%s, data=%s, position=(%d, %d, %d))", this.id, this.meta, this.x, this.y, this.z);
+        return String.format("Block(id=%s, data=%s, position=(%d, %d, %d, %d))", this.id, this.meta, this.x, this.y, this.z, this.layer);
     }
 
     public boolean collidesWithBB(AxisAlignedBB bb) {
@@ -715,4 +727,18 @@ public abstract class Block extends BlockPosition implements Metadatable, Clonea
     public boolean canSilkTouch() {
         return false;
     }
+
+    public boolean canWaterlogSource() {
+        return false;
+    }
+
+    public boolean canWaterlogFlowing() {
+        return false;
+    }
+
+    public boolean isWaterlogged() {
+        Block b = getLevel().getBlock(this.getX(), this.getY(), this.getZ(), 1);
+        return (b.getId() == WATER || b.getId() == FLOWING_WATER);
+    }
+
 }

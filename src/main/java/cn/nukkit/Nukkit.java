@@ -2,6 +2,9 @@ package cn.nukkit;
 
 import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.utils.ServerKiller;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.google.common.base.Preconditions;
 import io.netty.util.ResourceLeakDetector;
 import io.netty.util.internal.logging.InternalLoggerFactory;
@@ -53,6 +56,9 @@ public class Nukkit {
     public final static String PATH = System.getProperty("user.dir") + "/";
     public final static String DATA_PATH = System.getProperty("user.dir") + "/";
     public final static String PLUGIN_PATH = DATA_PATH + "plugins";
+    public static final JsonMapper JSON_MAPPER = new JsonMapper();
+    public static final YAMLMapper YAML_MAPPER = new YAMLMapper();
+    public static final JavaPropsMapper JAVA_PROPS_MAPPER = new JavaPropsMapper();
     public static final long START_TIME = System.currentTimeMillis();
     public static boolean ANSI = true;
     public static boolean TITLE = false;
@@ -192,6 +198,13 @@ public class Nukkit {
             return version.append("null").toString();
         }
         return version.append(commitId).toString();
+    }
+
+    public static Level getLogLevel() {
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        Configuration log4jConfig = ctx.getConfiguration();
+        LoggerConfig loggerConfig = log4jConfig.getLoggerConfig(org.apache.logging.log4j.LogManager.ROOT_LOGGER_NAME);
+        return loggerConfig.getLevel();
     }
 
     public static void setLogLevel(Level level) {

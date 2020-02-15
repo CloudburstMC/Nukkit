@@ -1,18 +1,25 @@
 package cn.nukkit.form.window;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.form.element.*;
 import cn.nukkit.form.response.FormResponseCustom;
 import cn.nukkit.form.response.FormResponseData;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.type.TypeReference;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class FormWindowCustom extends FormWindow {
 
-    private final String type = "custom_form"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
+    private static final TypeReference<List<String>> ELEMENTS_TYPE_REFERENCE = new TypeReference<List<String>>() {};
+
+    @JsonInclude
+    @JsonProperty
+    protected final String type = "custom_form"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
     private String title = "";
     private ElementButtonImageData icon;
     private List<Element> content;
@@ -69,14 +76,20 @@ public class FormWindowCustom extends FormWindow {
         return response;
     }
 
+    @Override
     public void setResponse(String data) {
         if (data.equals("null")) {
             this.closed = true;
             return;
         }
 
-        List<String> elementResponses = new Gson().fromJson(data, new TypeToken<List<String>>() {
-        }.getType());
+
+        List<String> elementResponses;
+        try {
+            elementResponses = Nukkit.JSON_MAPPER.readValue(data, ELEMENTS_TYPE_REFERENCE);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to read JSON response", e);
+        }
         //elementResponses.remove(elementResponses.size() - 1); //submit button //maybe mojang removed that?
 
         int i = 0;

@@ -1,6 +1,6 @@
 package cn.nukkit.form.element;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ public class ElementStepSlider extends Element {
     private final String type = "step_slider"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
     private String text = "";
     private List<String> steps;
-    @SerializedName("default")
+    @JsonProperty("default")
     private int defaultStepIndex = 0;
 
     public ElementStepSlider(String text) {

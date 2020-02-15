@@ -23,8 +23,15 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
     public static final int TRAPDOOR_OPEN_BIT = 0x08;
     public static final int TRAPDOOR_TOP_BIT = 0x04;
 
+    protected BlockColor blockColor;
+
     public BlockTrapdoor(Identifier id) {
+        this(id, BlockColor.WOOD_BLOCK_COLOR);
+    }
+
+    public BlockTrapdoor(Identifier id, BlockColor blockColor) {
         super(id);
+        this.blockColor = blockColor;
     }
 
     @Override
@@ -154,11 +161,12 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_REDSTONE) {
-            if ((!isOpen() && this.level.isBlockPowered(this)) || (isOpen() && !this.level.isBlockPowered(this))) {
+            if ((!this.isOpen() && this.level.isBlockPowered(this)) || (this.isOpen() && !this.level.isBlockPowered(this))) {
                 this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isOpen() ? 15 : 0, isOpen() ? 0 : 15));
-                this.setDamage(this.getDamage() ^ 0x04);
+                this.setDamage(this.getDamage() ^ TRAPDOOR_OPEN_BIT);
                 this.level.setBlock(this, this, true);
                 this.level.addSound(this.asVector3f(), isOpen() ? Sound.RANDOM_DOOR_OPEN : Sound.RANDOM_DOOR_CLOSE);
+
                 return type;
             }
         }
@@ -219,7 +227,7 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.WOOD_BLOCK_COLOR;
+        return this.blockColor;
     }
 
     public boolean isOpen() {
@@ -233,5 +241,14 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+    }
+
+    public static BlockFactory factory(BlockColor blockColor) {
+        return identifier -> new BlockTrapdoor(identifier, blockColor);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

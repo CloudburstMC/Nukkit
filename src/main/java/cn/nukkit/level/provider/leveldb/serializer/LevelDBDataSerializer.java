@@ -1,5 +1,6 @@
 package cn.nukkit.level.provider.leveldb.serializer;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.level.LevelData;
 import cn.nukkit.level.gamerule.GameRule;
 import cn.nukkit.level.gamerule.GameRuleMap;
@@ -10,10 +11,9 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.registry.GameRuleRegistry;
 import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.LoadState;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.io.LittleEndianDataInputStream;
 import com.google.common.io.LittleEndianDataOutputStream;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,9 +29,7 @@ import java.util.Map;
 public class LevelDBDataSerializer implements LevelDataSerializer {
     public static final LevelDataSerializer INSTANCE = new LevelDBDataSerializer();
 
-    private static final Type OPTIONS_TYPE = new TypeToken<Map<String, Object>>() {
-    }.getType();
-    private static final Gson GSON = new Gson();
+    private static final TypeReference<Map<String, Object>> OPTIONS_TYPE = new TypeReference<Map<String, Object>>() {};
     private static final int VERSION = 8;
 
     @Override
@@ -67,7 +65,7 @@ public class LevelDBDataSerializer implements LevelDataSerializer {
     private void saveData(LevelData data, Path levelDatPath) throws IOException {
         CompoundTag tag = new CompoundTag()
                 .putString("LevelName", data.getName())
-                .putString("FlatWorldLayers", GSON.toJson(data.getGeneratorOptions()))
+                .putString("FlatWorldLayers", data.getGeneratorOptions())
                 .putString("generatorName", data.getGenerator().toString())
                 .putInt("lightningTime", data.getLightningTime())
                 .putInt("Difficulty", data.getDifficulty())
@@ -125,7 +123,9 @@ public class LevelDBDataSerializer implements LevelDataSerializer {
         }
 
         tag.listenString("LevelName", data::setName);
-        tag.listenString("FlatWorldLayers", s -> GSON.fromJson(s, OPTIONS_TYPE));
+        if (tag.contains("FlatWorldLayers")) {
+            data.setGeneratorOptions(tag.getString("FlatWorldLayers"));
+        }
         tag.listenString("generatorName", s -> data.setGenerator(Identifier.fromString(s)));
         tag.listenInt("lightningTime", data::setLightningTime);
         tag.listenInt("Difficulty", data::setDifficulty);
