@@ -2,6 +2,8 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.LevelSoundEventPacketV2;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
@@ -75,5 +77,19 @@ public class BlockDoubleSlab extends BlockSolid {
         }
         return BlockIds.AIR;
 
+    }
+
+    protected void playPlaceSound() {
+        LevelSoundEventPacketV2 pk = new LevelSoundEventPacketV2();
+        pk.sound = LevelSoundEventPacket.SOUND_ITEM_USE_ON;
+        pk.extraData = 725;
+        pk.x = this.x + 0.5f;
+        pk.y = this.y + 0.5f;
+        pk.z = this.z + 0.5f;
+        pk.entityIdentifier = "";
+        pk.isBabyMob = false;
+        pk.isGlobal = false;
+
+        this.getLevel().addChunkPacket(this.getChunkX(), this.getChunkZ(), pk);
     }
 }

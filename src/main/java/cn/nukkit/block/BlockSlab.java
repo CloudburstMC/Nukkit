@@ -5,8 +5,10 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -17,6 +19,7 @@ import static cn.nukkit.block.BlockIds.*;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public class BlockSlab extends BlockTransparent {
     protected static Map<Identifier, BlockColor[]> colorMap = new IdentityHashMap<>();
 
@@ -118,52 +121,64 @@ public class BlockSlab extends BlockTransparent {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        this.setDamage(this.getDamage() & 0x07);
+        log.info("OnPlace: \nTarget: {}\nBlock: {}\nFace: {}\nClickPos: {}", target.toString(), block.toString(), face.toString(), clickPos.toString());
+        int meta = this.getDamage() & 0x07;
+        boolean isTop = clickPos.getY() >= 0.5f;
+        BlockDoubleSlab dSlab = (BlockDoubleSlab) BlockRegistry.get().getBlock(this.getDoubleSlab(), meta);
+
         if (face == BlockFace.DOWN) {
-            if (target instanceof BlockSlab && (target.getDamage() & 0x08) == 0x08 && (target.getDamage() & 0x07) == (this.getDamage() & 0x07)) {
-                this.getLevel().setBlock(target, Block.get(getDoubleSlab(), this.getDamage()), true);
-
-                return true;
-            } else if (block instanceof BlockSlab && (block.getDamage() & 0x07) == (this.getDamage() & 0x07)) {
-                this.getLevel().setBlock(block, Block.get(getDoubleSlab(), this.getDamage()), true);
-
-                return true;
-            } else {
-                this.setDamage(this.getDamage() | 0x08);
-            }
-        } else if (face == BlockFace.UP) {
-            if (target instanceof BlockSlab && (target.getDamage() & 0x08) == 0 && (target.getDamage() & 0x07) == (this.getDamage() & 0x07)) {
-                this.getLevel().setBlock(target, Block.get(getDoubleSlab(), this.getDamage()), true);
-
-                return true;
-            } else if (block instanceof BlockSlab && (block.getDamage() & 0x07) == (this.getDamage() & 0x07)) {
-                this.getLevel().setBlock(block, Block.get(getDoubleSlab(), this.getDamage()), true);
-
-                return true;
-            }
-            //TODO: check for collision
-        } else {
-            if (block instanceof BlockSlab) {
-                if ((block.getDamage() & 0x07) == (this.getDamage() & 0x07)) {
-                    this.getLevel().setBlock(block, Block.get(getDoubleSlab(), this.getDamage()), true);
-
+            if (checkSlab(target) && ((BlockSlab) target).isTopSlab()) {
+                if (this.getLevel().setBlock(target, dSlab, true, false)) {
+                    dSlab.playPlaceSound();
                     return true;
                 }
-
+                return false;
+            } else if (checkSlab(block) && !((BlockSlab) block).isTopSlab()) {
+                if (this.getLevel().setBlock(block, dSlab, true, false)) {
+                    dSlab.playPlaceSound();
+                    return true;
+                }
                 return false;
             } else {
-                if (clickPos.getY() > 0.5) {
-                    this.setDamage(this.getDamage() | 0x08);
+                isTop = true;
+            }
+        } else if (face == BlockFace.UP) {
+            if (checkSlab(target) && !((BlockSlab) target).isTopSlab()) {
+                if (this.getLevel().setBlock(target, dSlab, true, false)) {
+                    dSlab.playPlaceSound();
+                    return true;
                 }
+                return false;
+            } else if (checkSlab(block) && !((BlockSlab) block).isTopSlab()) {
+                if (this.getLevel().setBlock(block, dSlab, true, false)) {
+                    dSlab.playPlaceSound();
+                    return true;
+                }
+                return false;
+            } else {
+                isTop = false;
+            }
+        } else { // Horizontal face
+            if (checkSlab(block)
+                    && ((isTop && !((BlockSlab) block).isTopSlab())
+                    || (!isTop && ((BlockSlab) block).isTopSlab()))) {
+                if (this.getLevel().setBlock(block, dSlab, true, false)) {
+                    dSlab.playPlaceSound();
+                    return true;
+                }
+                return false;
             }
         }
 
         if (block instanceof BlockSlab && (target.getDamage() & 0x07) != (this.getDamage() & 0x07)) {
             return false;
         }
-        this.getLevel().setBlock(block, this, true, true);
+        this.setDamage(meta | (isTop ? 0x08 : 0));
+        return this.getLevel().setBlock(block, this, true, true);
+    }
 
-        return true;
+    private boolean checkSlab(Block other) {
+        return other instanceof BlockSlab && ((other.getDamage() & 0x07) == (this.getDamage() & 0x07));
     }
 
     protected Identifier getDoubleSlab() {
