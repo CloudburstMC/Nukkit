@@ -93,7 +93,7 @@ public class BlockKelp extends FloodableBlock {
         }
 
         if (waterDamage == 8) {
-            this.level.setBlock(this, new BlockWater(BlockIds.WATER), true, false);
+            this.level.setBlock(this, new BlockWater(BlockIds.FLOWING_WATER), true, false);
         }
         if (down.getId() == BlockIds.KELP && down.getDamage() != 24) {
             down.setDamage(24);
@@ -152,14 +152,13 @@ public class BlockKelp extends FloodableBlock {
         if (age < 25) {
             Block up = up();
             if (up instanceof BlockWater && up.getDamage() == 0 || up.getDamage() == 8) {
-                BlockKelp grown = new BlockKelp(BlockIds.KELP);
-                grown.setDamage(age + 1);
+                Block grown = Block.get(id, age + 1);
                 BlockGrowEvent ev = new BlockGrowEvent(this, grown);
                 Server.getInstance().getPluginManager().callEvent(ev);
                 if (!ev.isCancelled()) {
                     this.setDamage(25);
                     this.getLevel().setBlock(this, this, true, true);
-                    this.getLevel().setBlock(up.layer(1), new BlockWater(BlockIds.WATER), true, false);
+                    this.getLevel().setBlock(up.layer(1), Block.get(BlockIds.FLOWING_WATER), true, false);
                     this.getLevel().setBlock(up, ev.getNewState(), true, true);
                     return true;
                 }
