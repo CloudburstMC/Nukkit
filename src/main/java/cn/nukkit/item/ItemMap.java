@@ -20,6 +20,9 @@ public class ItemMap extends Item {
 
     public static int mapCount = 0;
 
+    // not very pretty but definitely better than before.
+    private BufferedImage image;
+
     public ItemMap() {
         this(0, 1);
     }
@@ -44,8 +47,6 @@ public class ItemMap extends Item {
 
     public void setImage(BufferedImage img) {
         try {
-            BufferedImage image = img;
-
             if (img.getHeight() != 128 || img.getWidth() != 128) { //resize
                 image = new BufferedImage(128, 128, img.getType());
                 Graphics2D g = image.createGraphics();
@@ -65,7 +66,8 @@ public class ItemMap extends Item {
     protected BufferedImage loadImageFromNBT() {
         try {
             byte[] data = getNamedTag().getByteArray("Colors");
-            return ImageIO.read(new ByteArrayInputStream(data));
+            image = ImageIO.read(new ByteArrayInputStream(data));
+            return image;
         } catch (IOException e) {
             MainLogger.getLogger().logException(e);
         }
@@ -78,7 +80,8 @@ public class ItemMap extends Item {
     }
 
     public void sendImage(Player p) {
-        BufferedImage image = loadImageFromNBT();
+        // don't load the image from NBT if it has been done before.
+        BufferedImage image = this.image != null ? this.image : loadImageFromNBT();
 
         ClientboundMapItemDataPacket pk = new ClientboundMapItemDataPacket();
         pk.mapId = getMapId();
