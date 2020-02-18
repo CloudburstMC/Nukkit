@@ -8,7 +8,6 @@ import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3f;
-import lombok.extern.log4j.Log4j2;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -19,7 +18,6 @@ import static cn.nukkit.block.BlockIds.*;
  * author: MagicDroidX
  * Nukkit Project
  */
-@Log4j2
 public class BlockSlab extends BlockTransparent {
     protected static Map<Identifier, BlockColor[]> colorMap = new IdentityHashMap<>();
 
@@ -130,7 +128,6 @@ public class BlockSlab extends BlockTransparent {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        log.info("OnPlace: \nTarget: {}\nBlock: {}\nFace: {}\nClickPos: {}", target.toString(), block.toString(), face.toString(), clickPos.toString());
         int meta = this.getMeta() & 0x07;
         boolean isTop;
         BlockDoubleSlab dSlab = (BlockDoubleSlab) BlockRegistry.get().getBlock(this.getDoubleSlab(), meta);
@@ -184,7 +181,6 @@ public class BlockSlab extends BlockTransparent {
             return false;
         }
         this.setMeta(meta + (isTop ? 0x08 : 0));
-        log.info("Placing block: {}:{} at {}", this.id, this.getMeta(), this.position);
         return this.getLevel().setBlock(block.getPosition(), this, true, true);
     }
 
