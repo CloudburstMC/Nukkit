@@ -100,7 +100,7 @@ public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to
             if (image != null) {
                 for (int y = 0; y < width; y++) {
                     for (int x = 0; x < height; x++) {
-                        putUnsignedVarInt(this.image.getRGB(x, y));
+                        putUnsignedVarInt(Utils.toABGR(this.image.getRGB(x, y)));
                     }
                 }
 
