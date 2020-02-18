@@ -100,12 +100,7 @@ public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to
             if (image != null) {
                 for (int y = 0; y < width; y++) {
                     for (int x = 0; x < height; x++) {
-                        Color color = new Color(image.getRGB(x, y), true);
-                        byte red = (byte) color.getRed();
-                        byte green = (byte) color.getGreen();
-                        byte blue = (byte) color.getBlue();
-
-                        putUnsignedVarInt(color.getRGB());
+                        putUnsignedVarInt(this.image.getRGB(x, y));
                     }
                 }
 
