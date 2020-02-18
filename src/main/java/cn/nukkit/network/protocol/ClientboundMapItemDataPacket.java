@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Utils;
 import lombok.ToString;
 
@@ -104,7 +105,7 @@ public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to
                         byte green = (byte) color.getGreen();
                         byte blue = (byte) color.getBlue();
 
-                        putUnsignedVarInt(Utils.toRGB(red, green, blue, (byte) 0xff));
+                        putUnsignedVarInt(color.getRGB());
                     }
                 }
 
@@ -117,7 +118,7 @@ public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to
         }
     }
 
-    public class MapDecorator {
+    public static class MapDecorator {
         public byte rotation;
         public byte icon;
         public byte offsetX;

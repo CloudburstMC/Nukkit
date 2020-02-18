@@ -45,17 +45,19 @@ public class ItemMap extends Item {
         setImage(ImageIO.read(file));
     }
 
-    public void setImage(BufferedImage img) {
+    public void setImage(BufferedImage image) {
         try {
-            if (img.getHeight() != 128 || img.getWidth() != 128) { //resize
-                image = new BufferedImage(128, 128, img.getType());
-                Graphics2D g = image.createGraphics();
-                g.drawImage(img, 0, 0, 128, 128, null);
+            if (image.getHeight() != 128 || image.getWidth() != 128) { //resize
+                this.image = new BufferedImage(128, 128, image.getType());
+                Graphics2D g = this.image.createGraphics();
+                g.drawImage(image, 0, 0, 128, 128, null);
                 g.dispose();
+            } else {
+                this.image = image;
             }
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", baos);
+            ImageIO.write(this.image, "png", baos);
 
             this.getNamedTag().putByteArray("Colors", baos.toByteArray());
         } catch (IOException e) {
