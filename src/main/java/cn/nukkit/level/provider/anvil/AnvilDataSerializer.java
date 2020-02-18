@@ -107,10 +107,8 @@ public class AnvilDataSerializer implements LevelDataSerializer {
         }
 
         tag.listenString("LevelName", data::setName);
-        if (tag.contains("generatorOptions")) {
-            data.setGeneratorOptions(tag.getString("generatorOptions"));
-        }
         tag.listenString("generatorName", s -> data.setGenerator(Identifier.fromString(s)));
+        tag.listenString("generatorOptions", data::setGeneratorOptions);
         tag.listenInt("thunderTime", data::setLightningTime);
         tag.listenInt("Difficulty", data::setDifficulty);
         tag.listenInt("GameType", data::setGameType);
