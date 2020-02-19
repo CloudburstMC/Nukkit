@@ -22,4 +22,9 @@ public class BlockStrippedLog extends BlockLog {
         this.setMeta(FACES[face.getIndex()] >> 2);
         return this.getLevel().setBlock(this.getPosition(), this, true, true);
     }
+
+    @Override
+    public Item toItem() {
+        return Item.get(id);
+    }
 }

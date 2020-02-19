@@ -4,6 +4,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3f;
@@ -60,12 +61,11 @@ public class BlockLog extends BlockSolid {
         return 10;
     }
 
-    @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        this.setMeta(((this.getMeta() & 0x03) | FACES[face.getIndex()]));
-        this.getLevel().setBlock(block.getPosition(), this, true, true);
-
-        return true;
+    public static void upgradeLegacyBlock(int[] blockState) {
+        if ((blockState[1] & 0b1100) == 0b1100) { // old full bark texture
+            blockState[0] = BlockRegistry.get().getLegacyId(BlockIds.WOOD);
+            blockState[1] = blockState[1] & 0x03; // gets only the log type and set pillar to y
+        }
     }
 
     @Override
@@ -87,8 +87,17 @@ public class BlockLog extends BlockSolid {
     }
 
     @Override
-    public Item toItem() {
-        return Item.get(id, this.getMeta() & 0x03);
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        // Convert the old log bark to the new wood block
+        if ((this.getMeta() & 0b1100) == 0b1100) {
+            Block woodBlock = Block.get(BlockIds.WOOD, this.getMeta() & 0x03, this.getPosition(), this.getLevel());
+            return woodBlock.place(item, block, target, face, clickPos, player);
+        }
+
+        this.setMeta(((this.getMeta() & 0x03) | FACES[face.getIndex()]));
+        this.getLevel().setBlock(block.getPosition(), this, true, true);
+
+        return true;
     }
 
     @Override
@@ -108,6 +117,15 @@ public class BlockLog extends BlockSolid {
                 return BlockColor.SAND_BLOCK_COLOR;
             case JUNGLE:
                 return BlockColor.DIRT_BLOCK_COLOR;
+        }
+    }
+
+    @Override
+    public Item toItem() {
+        if ((getMeta() & 0b1100) == 0b1100) {
+            return Item.get(BlockIds.WOOD, this.getMeta() & 0x3);
+        } else {
+            return Item.get(id, this.getMeta() & 0x03);
         }
     }
 }
