@@ -51,8 +51,8 @@ public class CampfireBlockEntity extends BaseBlockEntity implements Campfire {
     }
 
     @Override
-    public void saveAdditionalData(CompoundTagBuilder tag) {
-        super.saveAdditionalData(tag);
+    protected void saveClientData(CompoundTagBuilder tag) {
+        super.saveClientData(tag);
 
         for (int i = 0; i < 4; i++) {
             Item item = this.items[i];

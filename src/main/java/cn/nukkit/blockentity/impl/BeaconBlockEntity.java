@@ -5,6 +5,7 @@ import cn.nukkit.blockentity.Beacon;
 import cn.nukkit.blockentity.BlockEntityType;
 import cn.nukkit.inventory.BeaconInventory;
 import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.player.Player;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.registry.BlockRegistry;
@@ -32,10 +33,10 @@ public class BeaconBlockEntity extends BaseBlockEntity implements Beacon {
     }
 
     @Override
-    protected void initBlockEntity() {
+    protected void init() {
         scheduleUpdate();
 
-        super.initBlockEntity();
+        super.init();
     }
 
     @Override
@@ -211,7 +212,7 @@ public class BeaconBlockEntity extends BaseBlockEntity implements Beacon {
 
         this.getLevel().addLevelSoundEvent(this.getPosition(), SoundEvent.BEACON_POWER);
 
-        BeaconInventory inv = (BeaconInventory) player.getWindowById(Player.BEACON_WINDOW_ID);
+        BeaconInventory inv = (BeaconInventory) player.getWindowById(ContainerIds.BEACON);
 
         inv.clear(0);
         return true;

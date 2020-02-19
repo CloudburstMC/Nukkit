@@ -58,14 +58,16 @@ public class ItemBanner extends Item {
         tag.intTag("Base", this.base.getDyeData());
         tag.intTag("Type", this.type);
 
-        List<CompoundTag> patternsTag = new ArrayList<>();
-        for (BannerPattern pattern : this.patterns) {
-            patternsTag.add(CompoundTag.builder().
-                    intTag("Color", pattern.getColor().getDyeData() & 0x0f).
-                    stringTag("Pattern", pattern.getType().getName())
-                    .buildRootTag());
+        if (!this.patterns.isEmpty()) {
+            List<CompoundTag> patternsTag = new ArrayList<>();
+            for (BannerPattern pattern : this.patterns) {
+                patternsTag.add(CompoundTag.builder().
+                        intTag("Color", pattern.getColor().getDyeData() & 0x0f).
+                        stringTag("Pattern", pattern.getType().getName())
+                        .buildRootTag());
+            }
+            tag.listTag("Patterns", CompoundTag.class, patternsTag);
         }
-        tag.listTag("Patterns", CompoundTag.class, patternsTag);
     }
 
     public DyeColor getBaseColor() {

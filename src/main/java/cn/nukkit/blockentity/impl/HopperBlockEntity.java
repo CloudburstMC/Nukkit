@@ -378,4 +378,9 @@ public class HopperBlockEntity extends BaseBlockEntity implements Hopper {
         //TODO: check for minecart
         return false;
     }
+
+    @Override
+    public boolean isSpawnable() {
+        return true;
+    }
 }
