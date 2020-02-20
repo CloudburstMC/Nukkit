@@ -66,10 +66,10 @@ import com.google.common.collect.ImmutableMap;
 import com.spotify.futures.CompletableFutures;
 import io.netty.buffer.ByteBuf;
 import lombok.extern.log4j.Log4j2;
+import net.daporkchop.ldbjni.LevelDB;
 import org.iq80.leveldb.CompressionType;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
-import org.iq80.leveldb.impl.Iq80DBFactory;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -502,7 +502,7 @@ public class Server {
 
         // Convert legacy data before plugins get the chance to mess with it.
         try {
-            nameLookup = Iq80DBFactory.factory.open(new File(dataPath, "players"), new Options()
+            nameLookup = LevelDB.PROVIDER.open(new File(dataPath, "players"), new Options()
                     .createIfMissing(true)
                     .compressionType(CompressionType.ZLIB_RAW));
         } catch (IOException e) {
