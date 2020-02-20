@@ -276,4 +276,9 @@ public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
     public void setMaxTime(int maxTime) {
         this.maxTime = (short) maxTime;
     }
+
+    @Override
+    public boolean isSpawnable() {
+        return true;
+    }
 }

@@ -6,6 +6,7 @@ import cn.nukkit.player.Player;
 import com.nukkitx.math.vector.Vector3i;
 import com.nukkitx.nbt.CompoundTagBuilder;
 import com.nukkitx.nbt.tag.CompoundTag;
+import com.nukkitx.protocol.bedrock.packet.BlockEntityDataPacket;
 
 import javax.annotation.Nullable;
 
@@ -21,11 +22,37 @@ public interface BlockEntity {
 
     void saveAdditionalData(CompoundTagBuilder tag);
 
-    CompoundTag getFullNBT();
+    /**
+     * Gets the NBT for items with block entity data
+     * Contains all server side NBT without ID and position
+     *
+     * @return block entity tag
+     */
+    CompoundTag getItemTag();
 
-    CompoundTag getShortNBT();
+    /**
+     * Get the NBT for saving the block entity to disk
+     * Contains all server side NBT with ID and position
+     *
+     * @return block entity tag
+     */
+    CompoundTag getServerTag();
 
-    CompoundTag getCleanNBT();
+    /**
+     * Get the NBT for saving sending to the client in {@link BlockEntityDataPacket}
+     * Contains all server side NBT with ID but no position
+     *
+     * @return block entity tag
+     */
+    CompoundTag getClientTag();
+
+    /**
+     * Gets the block entity NBT that is sent in a chunk packet
+     * Contains no server side NBT
+     *
+     * @return block entity tag
+     */
+    CompoundTag getChunkTag();
 
     boolean isValid();
 

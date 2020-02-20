@@ -76,4 +76,9 @@ public class BarrelBlockEntity extends BaseBlockEntity implements Barrel {
     public BarrelInventory getInventory() {
         return this.inventory;
     }
+
+    @Override
+    public boolean isSpawnable() {
+        return super.isSpawnable();
+    }
 }

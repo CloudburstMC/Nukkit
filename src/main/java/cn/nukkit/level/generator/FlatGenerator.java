@@ -4,6 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.populator.type.Populator;
+import cn.nukkit.level.provider.LegacyBlockConverter;
 import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.registry.BlockRegistry;
 import com.nukkitx.math.vector.Vector3i;
@@ -59,6 +60,7 @@ public class FlatGenerator implements Generator {
             String options = presetArray.length > 3 ? presetArray[1] : "";
             this.structure = new Block[256];
             int y = 0;
+            LegacyBlockConverter legacyBlockConverter = LegacyBlockConverter.get();
             for (String block : blocks.split(",")) {
                 int id, meta = 0, cnt = 1;
                 if (Pattern.matches("^[0-9]{1,3}x[0-9]$", block)) {
@@ -82,8 +84,10 @@ public class FlatGenerator implements Generator {
                 if (y > 0xFF) {
                     y = 0xFF;
                 }
+                int[] blockState = new int[]{id, meta};
+                LegacyBlockConverter.get().convertBlockState(blockState);
                 for (; cY < y; ++cY) {
-                    this.structure[cY] = BlockRegistry.get().getBlock(id, meta);
+                    this.structure[cY] = BlockRegistry.get().getBlock(blockState[0], blockState[1]);
                 }
             }
             this.floorLevel = y;

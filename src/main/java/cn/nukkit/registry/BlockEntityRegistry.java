@@ -148,5 +148,8 @@ public class BlockEntityRegistry implements Registry {
         registerVanilla(SHULKER_BOX, ShulkerBoxBlockEntity::new, "ShulkerBox");
         registerVanilla(BANNER, BannerBlockEntity::new, "Banner");
         registerVanilla(CAMPFIRE, CampfireBlockEntity::new, "Campfire");
+        registerVanilla(BLAST_FURNACE, BlastFurnaceBlockEntity::new, "BlastFurnace");
+        registerVanilla(SMOKER, SmokerBlockEntity::new, "Smoker");
+        registerVanilla(BARREL, BarrelBlockEntity::new, "Barrel");
     }
 }

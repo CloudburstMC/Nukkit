@@ -6,6 +6,7 @@ import cn.nukkit.inventory.BeaconInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.player.Player;
 import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.BlockColor;
@@ -58,7 +59,7 @@ public class BlockBeacon extends BlockTransparent {
                 BlockEntityRegistry.get().newEntity(BEACON, this.getChunk(), this.getPosition());
             }
 
-            player.addWindow(new BeaconInventory(player.getUIInventory(), this), Player.BEACON_WINDOW_ID);
+            player.addWindow(new BeaconInventory(player.getUIInventory(), this), ContainerIds.BEACON);
         }
         return true;
     }

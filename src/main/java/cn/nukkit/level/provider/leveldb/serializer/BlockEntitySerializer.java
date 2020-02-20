@@ -59,7 +59,7 @@ public class BlockEntitySerializer {
         try (ByteArrayOutputStream stream = new ByteArrayOutputStream();
              NBTOutputStream nbtOutputStream = NbtUtils.createWriterLE(stream)) {
             for (BlockEntity entity : entities) {
-                nbtOutputStream.write(entity.getFullNBT());
+                nbtOutputStream.write(entity.getServerTag());
             }
             value = stream.toByteArray();
         } catch (IOException e) {

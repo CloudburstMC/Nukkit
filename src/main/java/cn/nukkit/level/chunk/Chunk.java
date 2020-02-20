@@ -657,7 +657,7 @@ public final class Chunk implements IChunk, Closeable {
                         tiles.forEach(blockEntity -> {
                             if (blockEntity.isSpawnable()) {
                                 try {
-                                    nbtOutputStream.write(blockEntity.getFullNBT());
+                                    nbtOutputStream.write(blockEntity.getChunkTag());
                                 } catch (IOException e) {
                                     throw new RuntimeException(e);
                                 }

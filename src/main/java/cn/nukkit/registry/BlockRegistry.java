@@ -295,8 +295,8 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(RED_MUSHROOM, BlockMushroomRed::new); //40
         this.factoryMap.put(GOLD_BLOCK, BlockGold::new); //41
         this.factoryMap.put(IRON_BLOCK, BlockIron::new); //42
-        this.factoryMap.put(DOUBLE_STONE_SLAB, BlockDoubleSlab::new); //43
-        this.factoryMap.put(STONE_SLAB, BlockSlab::new); //44
+        this.factoryMap.put(DOUBLE_STONE_SLAB, BlockDoubleSlab.factory(STONE_SLAB, BlockSlab.COLORS_1)); //43
+        this.factoryMap.put(STONE_SLAB, BlockSlab.factory(DOUBLE_STONE_SLAB, BlockSlab.COLORS_1)); //44
         this.factoryMap.put(BRICK_BLOCK, BlockBricks::new); //45
         this.factoryMap.put(TNT, BlockTNT::new); //46
         this.factoryMap.put(BOOKSHELF, BlockBookshelf::new); //47
@@ -409,8 +409,8 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(HOPPER, BlockHopper::new); //154
         this.factoryMap.put(QUARTZ_BLOCK, BlockQuartz::new); //155
         this.factoryMap.put(QUARTZ_STAIRS, BlockStairsQuartz::new); //156
-        this.factoryMap.put(DOUBLE_WOODEN_SLAB, BlockDoubleSlab::new); //157
-        this.factoryMap.put(WOODEN_SLAB, BlockSlab::new); //158
+        this.factoryMap.put(DOUBLE_WOODEN_SLAB, BlockDoubleSlabWood::new); //157
+        this.factoryMap.put(WOODEN_SLAB, BlockSlabWood::new); //158
         this.factoryMap.put(STAINED_HARDENED_CLAY, BlockTerracottaStained::new); //159
         this.factoryMap.put(STAINED_GLASS_PANE, BlockGlassPaneStained::new); //160
         this.factoryMap.put(LEAVES2, BlockLeaves2::new); //161
@@ -433,8 +433,8 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(DAYLIGHT_DETECTOR_INVERTED, BlockDaylightDetectorInverted::new); //178
         this.factoryMap.put(RED_SANDSTONE, BlockRedSandstone::new); //179
         this.factoryMap.put(RED_SANDSTONE_STAIRS, BlockStairsRedSandstone::new); //180
-        this.factoryMap.put(DOUBLE_STONE_SLAB2, BlockDoubleSlab::new); //181
-        this.factoryMap.put(STONE_SLAB2, BlockSlab::new); //182
+        this.factoryMap.put(DOUBLE_STONE_SLAB2, BlockDoubleSlab.factory(STONE_SLAB2, BlockSlab.COLORS_2)); //181
+        this.factoryMap.put(STONE_SLAB2, BlockSlab.factory(DOUBLE_STONE_SLAB2, BlockSlab.COLORS_2)); //182
         this.factoryMap.put(SPRUCE_FENCE_GATE, BlockFenceGate::new); //183
         this.factoryMap.put(BIRCH_FENCE_GATE, BlockFenceGate::new); //184
         this.factoryMap.put(JUNGLE_FENCE_GATE, BlockFenceGate::new); //185
@@ -553,13 +553,14 @@ public class BlockRegistry implements Registry {
         //413: turtle_egg
         //414: bubble_column
         this.factoryMap.put(BARRIER, BlockBarrier::new); //415
-        this.factoryMap.put(STONE_SLAB3, BlockSlab::new); //416
+        this.factoryMap.put(STONE_SLAB3, BlockSlab.factory(DOUBLE_STONE_SLAB3, BlockSlab.COLORS_3)); //416
+        //416: stone_slab3
         //417: bamboo
         //418: bamboo_sapling
         //419: scaffolding
-        this.factoryMap.put(STONE_SLAB4, BlockSlab::new); //420
-        this.factoryMap.put(DOUBLE_STONE_SLAB3, BlockDoubleSlab::new); //421
-        this.factoryMap.put(DOUBLE_STONE_SLAB4, BlockDoubleSlab::new); //422
+        this.factoryMap.put(STONE_SLAB4, BlockSlab.factory(DOUBLE_STONE_SLAB4, BlockSlab.COLORS_4)); //420
+        this.factoryMap.put(DOUBLE_STONE_SLAB3, BlockDoubleSlab.factory(STONE_SLAB3, BlockSlab.COLORS_3)); //421
+        this.factoryMap.put(DOUBLE_STONE_SLAB4, BlockDoubleSlab.factory(DOUBLE_STONE_SLAB4, BlockSlab.COLORS_4)); //422
         this.factoryMap.put(GRANITE_STAIRS, BlockStairsGranite::new); //423
         this.factoryMap.put(DIORITE_STAIRS, BlockStairsDiorite::new); //424
         this.factoryMap.put(ANDESITE_STAIRS, BlockStairsAndesite::new); //425
@@ -602,7 +603,7 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(CAMPFIRE, BlockCampfire::new); //462
         //463: lava_cauldron
         //464: jigsaw
-        //465: wood
+        this.factoryMap.put(WOOD, BlockWood::new); //465
         //466: composter
         this.factoryMap.put(LIT_BLAST_FURNACE, BlockFurnaceBurning::new); //467
         this.factoryMap.put(LIGHT_BLOCK, BlockLight::new); //468

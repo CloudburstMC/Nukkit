@@ -79,7 +79,7 @@ public class MovingBlockEntity extends BaseBlockEntity implements MovingBlock {
         tag.intTag("pistonPosZ", this.piston.getZ());
 
         if (this.blockEntity != null) {
-            tag.tag(this.blockEntity.getFullNBT().toBuilder().build("movingEntity"));
+            tag.tag(this.blockEntity.getServerTag().toBuilder().build("movingEntity"));
         }
     }
 

@@ -36,7 +36,7 @@ public class LecternBlockEntity extends BaseBlockEntity implements Lectern {
     }
 
     @Override
-    protected void initBlockEntity() {
+    protected void init() {
         updateTotalPages(false);
     }
 

@@ -4,77 +4,66 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
-import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3f;
 
-import java.util.IdentityHashMap;
-import java.util.Map;
-
-import static cn.nukkit.block.BlockIds.*;
+import java.util.Arrays;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BlockSlab extends BlockTransparent {
-    protected static Map<Identifier, BlockColor[]> colorMap = new IdentityHashMap<>();
+public abstract class BlockSlab extends BlockTransparent {
 
-    static {
-        BlockColor[] slabColors = new BlockColor[]{
-                BlockColor.STONE_BLOCK_COLOR,
-                BlockColor.SAND_BLOCK_COLOR,
-                BlockColor.WOOD_BLOCK_COLOR,
-                BlockColor.STONE_BLOCK_COLOR,
-                BlockColor.STONE_BLOCK_COLOR,
-                BlockColor.QUARTZ_BLOCK_COLOR,
-                BlockColor.NETHERRACK_BLOCK_COLOR
-        };
-        colorMap.put(STONE_SLAB, slabColors.clone());
-        slabColors = new BlockColor[]{
-                BlockColor.ORANGE_BLOCK_COLOR,
-                BlockColor.PURPLE_BLOCK_COLOR,
-                BlockColor.CYAN_BLOCK_COLOR,
-                BlockColor.CYAN_BLOCK_COLOR,
-                BlockColor.CYAN_BLOCK_COLOR,
-                BlockColor.STONE_BLOCK_COLOR,
-                BlockColor.SAND_BLOCK_COLOR,
-                BlockColor.NETHERRACK_BLOCK_COLOR
-        };
-        colorMap.put(STONE_SLAB2, slabColors.clone());
-        slabColors = new BlockColor[]{
-                BlockColor.WHITE_BLOCK_COLOR,
-                BlockColor.ORANGE_BLOCK_COLOR,
-                BlockColor.STONE_BLOCK_COLOR,
-                BlockColor.STONE_BLOCK_COLOR,
-                BlockColor.WHITE_BLOCK_COLOR,
-                BlockColor.WHITE_BLOCK_COLOR,
-                BlockColor.PINK_BLOCK_COLOR,
-                BlockColor.PINK_BLOCK_COLOR
-        };
-        colorMap.put(STONE_SLAB3, slabColors.clone());
-        slabColors = new BlockColor[]{
-                BlockColor.STONE_BLOCK_COLOR,
-                BlockColor.QUARTZ_BLOCK_COLOR,
-                BlockColor.STONE_BLOCK_COLOR,
-                BlockColor.SAND_BLOCK_COLOR,
-                BlockColor.ORANGE_BLOCK_COLOR
-        };
-        colorMap.put(STONE_SLAB4, slabColors.clone());
-        slabColors = new BlockColor[]{
-                BlockColor.WOOD_BLOCK_COLOR,
-                BlockColor.SPRUCE_BLOCK_COLOR,
-                BlockColor.SAND_BLOCK_COLOR,
-                BlockColor.DIRT_BLOCK_COLOR,
-                BlockColor.ORANGE_BLOCK_COLOR,
-                BlockColor.BROWN_BLOCK_COLOR
-        };
-        colorMap.put(WOODEN_SLAB, slabColors);
+    public static final BlockColor[] COLORS_1 = new BlockColor[]{
+            BlockColor.STONE_BLOCK_COLOR,
+            BlockColor.SAND_BLOCK_COLOR,
+            BlockColor.WOOD_BLOCK_COLOR,
+            BlockColor.STONE_BLOCK_COLOR,
+            BlockColor.STONE_BLOCK_COLOR,
+            BlockColor.QUARTZ_BLOCK_COLOR,
+            BlockColor.NETHERRACK_BLOCK_COLOR
+    };
+    public static final BlockColor[] COLORS_2 = new BlockColor[]{
+            BlockColor.ORANGE_BLOCK_COLOR,
+            BlockColor.PURPLE_BLOCK_COLOR,
+            BlockColor.CYAN_BLOCK_COLOR,
+            BlockColor.CYAN_BLOCK_COLOR,
+            BlockColor.CYAN_BLOCK_COLOR,
+            BlockColor.STONE_BLOCK_COLOR,
+            BlockColor.SAND_BLOCK_COLOR,
+            BlockColor.NETHERRACK_BLOCK_COLOR
+    };
+    public static final BlockColor[] COLORS_3 = new BlockColor[]{
+            BlockColor.WHITE_BLOCK_COLOR,
+            BlockColor.ORANGE_BLOCK_COLOR,
+            BlockColor.STONE_BLOCK_COLOR,
+            BlockColor.STONE_BLOCK_COLOR,
+            BlockColor.WHITE_BLOCK_COLOR,
+            BlockColor.WHITE_BLOCK_COLOR,
+            BlockColor.PINK_BLOCK_COLOR,
+            BlockColor.PINK_BLOCK_COLOR
+    };
+    public static final BlockColor[] COLORS_4 = new BlockColor[]{
+            BlockColor.STONE_BLOCK_COLOR,
+            BlockColor.QUARTZ_BLOCK_COLOR,
+            BlockColor.STONE_BLOCK_COLOR,
+            BlockColor.SAND_BLOCK_COLOR,
+            BlockColor.ORANGE_BLOCK_COLOR
+    };
+
+    private final Identifier doubleSlabId;
+    private final BlockColor[] colors;
+
+    public BlockSlab(Identifier id, Identifier doubleSlabId, BlockColor[] colors) {
+        super(id);
+        this.doubleSlabId = doubleSlabId;
+        this.colors = colors;
     }
 
-    public BlockSlab(Identifier id) {
-        super(id);
+    public static BlockFactory factory(Identifier doubleSlabId, BlockColor... colors) {
+        return id -> new BlockDoubleSlab(id, doubleSlabId, Arrays.copyOf(colors, 8));
     }
 
     public static boolean isSlab(Identifier id) {
@@ -188,6 +177,10 @@ public class BlockSlab extends BlockTransparent {
         return (this.getMeta() & 0x08) == 0x08;
     }
 
+    @Override
+    public BlockColor getColor() {
+        return this.colors[this.getMeta() & 0x7];
+    }
     private boolean checkSlab(Block other) {
         return other instanceof BlockSlab && ((other.getMeta() & 0x07) == (this.getMeta() & 0x07));
     }

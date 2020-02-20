@@ -4,11 +4,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
-import com.nukkitx.math.vector.Vector3f;
-import com.nukkitx.protocol.bedrock.data.SoundEvent;
-import com.nukkitx.protocol.bedrock.packet.LevelSoundEvent2Packet;
 
-import static cn.nukkit.block.BlockIds.*;
+import java.util.Arrays;
 
 /**
  * author: MagicDroidX
@@ -16,8 +13,17 @@ import static cn.nukkit.block.BlockIds.*;
  */
 public class BlockDoubleSlab extends BlockSolid {
 
-    public BlockDoubleSlab(Identifier id) {
+    private final Identifier slabId;
+    private final BlockColor[] colors;
+
+    protected BlockDoubleSlab(Identifier id, Identifier slabId, BlockColor[] colors) {
         super(id);
+        this.slabId = slabId;
+        this.colors = colors;
+    }
+
+    public static BlockFactory factory(Identifier slabId, BlockColor... colors) {
+        return id -> new BlockDoubleSlab(id, slabId, Arrays.copyOf(colors, 8));
     }
 
     @Override
@@ -51,7 +57,7 @@ public class BlockDoubleSlab extends BlockSolid {
                 || (this.getId() == STONE_SLAB && (this.getMeta() & 0x07) == 2)
                 || this.getId() == WOODEN_SLAB) {
             return new Item[]{
-                    Item.get(getSlab(), this.getMeta() & 0x07, 2)
+                    Item.get(this.slabId, this.getMeta() & 0x07, 2)
             };
         } else {
             return new Item[0];
@@ -60,25 +66,8 @@ public class BlockDoubleSlab extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        return BlockSlab.colorMap.get(getSlab())[this.getMeta() & 0x07];
+        return colors[this.getMeta() & 0x7];
     }
-
-    public Identifier getSlab() {
-        if (this.getId() == BlockIds.DOUBLE_STONE_SLAB) {
-            return BlockIds.STONE_SLAB;
-        } else if (this.getId() == BlockIds.DOUBLE_STONE_SLAB2) {
-            return BlockIds.STONE_SLAB2;
-        } else if (this.getId() == BlockIds.DOUBLE_STONE_SLAB3) {
-            return BlockIds.STONE_SLAB3;
-        } else if (this.getId() == BlockIds.DOUBLE_STONE_SLAB4) {
-            return BlockIds.STONE_SLAB4;
-        } else if (this.getId() == BlockIds.DOUBLE_WOODEN_SLAB) {
-            return BlockIds.WOODEN_SLAB;
-        }
-        return BlockIds.AIR;
-
-    }
-
     protected void playPlaceSound() {
         LevelSoundEvent2Packet pk = new LevelSoundEvent2Packet();
         pk.setSound(SoundEvent.ITEM_USE_ON);
