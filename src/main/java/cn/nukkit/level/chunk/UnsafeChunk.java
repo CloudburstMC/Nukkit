@@ -268,7 +268,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
     public byte getSkyLight(int x, int y, int z) {
         checkBounds(x, y, z);
         ChunkSection section = this.getSection(y >> 4);
-        return section == null ? 0 : section.getSkyLight(x, y, z);
+        return section == null ? 0 : section.getSkyLight(x, y & 0xf, z);
     }
 
     @Override

@@ -1831,7 +1831,8 @@ public class Level implements ChunkManager, Metadatable {
             return null;
         }
 
-        if (!(block.canBeReplaced() || (hand instanceof BlockSlab && block instanceof BlockSlab))) {
+        if (!(block.canBeReplaced()
+                || (hand instanceof BlockSlab && (block instanceof BlockSlab || target instanceof BlockSlab)))) {
             return null;
         }
 
@@ -1889,7 +1890,7 @@ public class Level implements ChunkManager, Metadatable {
             pos = liquid.getPosition();
 
             this.setBlock(pos, 1, liquid, false, false);
-            this.setBlock(pos, 2, air, false, false);
+            this.setBlock(pos, 0, air, false, false);
             block = air;
             this.scheduleUpdate(block, 1);
         }

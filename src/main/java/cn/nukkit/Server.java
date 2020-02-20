@@ -329,10 +329,6 @@ public class Server {
 
         this.consoleThread.start();
 
-        //todo: VersionString 现在不必要
-
-        log.debug("Directory: {}", this.dataPath);
-
         if (!new File(this.dataPath + "nukkit.yml").exists()) {
             log.info(TextFormat.GREEN + "Welcome! Please choose a language first!");
 
@@ -383,6 +379,19 @@ public class Server {
         this.config = new Config(this.dataPath + "nukkit.yml", Config.YAML);
 
         ignoredPackets.addAll(getConfig().getStringList("debug.ignored-packets"));
+
+        Nukkit.DEBUG = Math.max(this.getConfig("debug.level", 1), 1);
+
+        int logLevel = (Nukkit.DEBUG + 3) * 100;
+        for (org.apache.logging.log4j.Level level : org.apache.logging.log4j.Level.values()) {
+            if (level.intLevel() == logLevel) {
+                if (level.intLevel() > Nukkit.getLogLevel().intLevel()) {
+                    Nukkit.setLogLevel(level);
+                }
+                break;
+            }
+        }
+        log.debug("DataPath Directory: {}", this.dataPath);
 
         log.info("Loading {} ...", TextFormat.GREEN + "server.properties" + TextFormat.WHITE);
         this.properties = new Properties();
@@ -473,18 +482,6 @@ public class Server {
 
         if (this.getPropertyBoolean("hardcore", false) && this.getDifficulty() < 3) {
             this.setPropertyInt("difficulty", 3);
-        }
-
-        Nukkit.DEBUG = Math.max(this.getConfig("debug.level", 1), 1);
-
-        int logLevel = (Nukkit.DEBUG + 3) * 100;
-        for (org.apache.logging.log4j.Level level : org.apache.logging.log4j.Level.values()) {
-            if (level.intLevel() == logLevel) {
-                if (level.intLevel() > Nukkit.getLogLevel().intLevel()) {
-                    Nukkit.setLogLevel(level);
-                }
-                break;
-            }
         }
 
         if (this.getConfig().getBoolean("bug-report", true)) {

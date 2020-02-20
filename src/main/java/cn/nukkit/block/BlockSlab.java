@@ -4,6 +4,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3f;
@@ -14,7 +15,7 @@ import java.util.Arrays;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class BlockSlab extends BlockTransparent {
+public class BlockSlab extends BlockTransparent {
 
     public static final BlockColor[] COLORS_1 = new BlockColor[]{
             BlockColor.STONE_BLOCK_COLOR,
@@ -63,7 +64,12 @@ public abstract class BlockSlab extends BlockTransparent {
     }
 
     public static BlockFactory factory(Identifier doubleSlabId, BlockColor... colors) {
-        return id -> new BlockDoubleSlab(id, doubleSlabId, Arrays.copyOf(colors, 8));
+        return id -> new BlockSlab(id, doubleSlabId, Arrays.copyOf(colors, 8));
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return colors[this.getMeta() & 0x07];
     }
 
     @Override
@@ -72,8 +78,13 @@ public abstract class BlockSlab extends BlockTransparent {
     }
 
     @Override
-    public boolean canHarvestWithHand() {
-        return false;
+    public float getMaxY() {
+        return this.isTopSlab() ? (this.getY() + 1f) : (this.getY() + 0.5f);
+    }
+
+    @Override
+    public float getResistance() {
+        return 30;
     }
 
     @Override
@@ -82,76 +93,88 @@ public abstract class BlockSlab extends BlockTransparent {
     }
 
     @Override
-    public float getResistance() {
-        return getToolType() < ItemTool.TYPE_AXE ? 30 : 15;
+    public int getToolType() {
+        return ItemTool.TYPE_PICKAXE;
     }
 
     @Override
-    public float getMaxY() {
-        return this.isTopSlab() ? (this.getY() + 1f) : (this.getY() + 0.5f);
+    public boolean canHarvestWithHand() {
+        return false;
+    }
+
+    @Override
+    public Item toItem() {
+        return Item.get(this.id, this.getMeta() & 0x07);
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        this.setMeta(this.getMeta() & 0x07);
+        int meta = this.getMeta() & 0x07;
+        boolean isTop;
+        BlockDoubleSlab dSlab = (BlockDoubleSlab) BlockRegistry.get().getBlock(this.doubleSlabId, meta);
+
         if (face == BlockFace.DOWN) {
-            if (target instanceof BlockSlab && (target.getMeta() & 0x08) == 0x08 && (target.getMeta() & 0x07) == (this.getMeta() & 0x07)) {
-                this.getLevel().setBlock(target.getPosition(), Block.get(this.doubleSlabId, this.getMeta()), true);
-
-                return true;
-            } else if (block instanceof BlockSlab && (block.getMeta() & 0x07) == (this.getMeta() & 0x07)) {
-                this.getLevel().setBlock(block.getPosition(), Block.get(this.doubleSlabId, this.getMeta()), true);
-
-                return true;
-            } else {
-                this.setMeta(this.getMeta() | 0x08);
-            }
-        } else if (face == BlockFace.UP) {
-            if (target instanceof BlockSlab && (target.getMeta() & 0x08) == 0 && (target.getMeta() & 0x07) == (this.getMeta() & 0x07)) {
-                this.getLevel().setBlock(target.getPosition(), Block.get(this.doubleSlabId, this.getMeta()), true);
-
-                return true;
-            } else if (block instanceof BlockSlab && (block.getMeta() & 0x07) == (this.getMeta() & 0x07)) {
-                this.getLevel().setBlock(block.getPosition(), Block.get(this.doubleSlabId, this.getMeta()), true);
-
-                return true;
-            }
-            //TODO: check for collision
-        } else {
-            if (block instanceof BlockSlab) {
-                if ((block.getMeta() & 0x07) == (this.getMeta() & 0x07)) {
-                    this.getLevel().setBlock(block.getPosition(), Block.get(this.doubleSlabId, this.getMeta()), true);
-
+            if (checkSlab(target) && ((BlockSlab) target).isTopSlab()) {
+                if (this.getLevel().setBlock(target.getPosition(), dSlab, true, false)) {
+                    dSlab.playPlaceSound();
                     return true;
                 }
-
+                return false;
+            } else if (checkSlab(block) && !((BlockSlab) block).isTopSlab()) {
+                if (this.getLevel().setBlock(block.getPosition(), dSlab, true, false)) {
+                    dSlab.playPlaceSound();
+                    return true;
+                }
                 return false;
             } else {
-                if (clickPos.getY() > 0.5) {
-                    this.setMeta(this.getMeta() | 0x08);
+                isTop = true;
+            }
+        } else if (face == BlockFace.UP) {
+            if (checkSlab(target) && !((BlockSlab) target).isTopSlab()) {
+                if (this.getLevel().setBlock(target.getPosition(), dSlab, true, false)) {
+                    dSlab.playPlaceSound();
+                    return true;
                 }
+                return false;
+            } else if (checkSlab(block) && ((BlockSlab) block).isTopSlab()) {
+                if (this.getLevel().setBlock(block.getPosition(), dSlab, true, false)) {
+                    dSlab.playPlaceSound();
+                    return true;
+                }
+                return false;
+            } else {
+                isTop = false;
+            }
+        } else { // Horizontal face
+            isTop = clickPos.getY() >= 0.5f;
+            if (checkSlab(block)
+                    && ((isTop && !((BlockSlab) block).isTopSlab())
+                    || (!isTop && ((BlockSlab) block).isTopSlab()))) {
+                if (this.getLevel().setBlock(block.getPosition(), dSlab, true, false)) {
+                    dSlab.playPlaceSound();
+                    return true;
+                }
+                return false;
             }
         }
 
         if (block instanceof BlockSlab && (target.getMeta() & 0x07) != (this.getMeta() & 0x07)) {
             return false;
         }
-        this.getLevel().setBlock(block.getPosition(), this, true, true);
-
-        return true;
+        this.setMeta(meta + (isTop ? 0x08 : 0));
+        return this.getLevel().setBlock(block.getPosition(), this, true, true);
     }
 
-    @Override
-    public BlockColor getColor() {
-        return this.colors[this.getMeta() & 0x7];
+    private boolean isTopSlab() {
+        return (this.getMeta() & 0x08) == 0x08;
+    }
+
+    private boolean checkSlab(Block other) {
+        return other instanceof BlockSlab && ((other.getMeta() & 0x07) == (this.getMeta() & 0x07));
     }
 
     @Override
     public boolean canWaterlogSource() {
         return true;
-    }
-
-    private boolean isTopSlab() {
-        return (this.getMeta() & 0x08) == 0x08;
     }
 }

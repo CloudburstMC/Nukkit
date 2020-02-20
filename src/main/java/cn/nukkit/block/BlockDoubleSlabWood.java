@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.Identifier;
 
@@ -16,11 +17,6 @@ public class BlockDoubleSlabWood extends BlockDoubleSlab {
     }
 
     @Override
-    public float getHardness() {
-        return 2;
-    }
-
-    @Override
     public float getResistance() {
         return 15;
     }
@@ -28,5 +24,27 @@ public class BlockDoubleSlabWood extends BlockDoubleSlab {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_AXE;
+    }
+
+    @Override
+    public int getBurnChance() {
+        return 5;
+    }
+
+    @Override
+    public int getBurnAbility() {
+        return 20;
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return true;
+    }
+
+    @Override
+    public Item[] getDrops(Item item) {
+        return new Item[]{
+                Item.get(this.getSlabId(), this.getMeta() & 0x07, 2)
+        };
     }
 }

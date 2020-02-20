@@ -17,6 +17,7 @@ import com.nukkitx.nbt.stream.NBTInputStream;
 import com.nukkitx.nbt.stream.NBTOutputStream;
 import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.nbt.tag.Tag;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -25,6 +26,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
+@Log4j2
+@SuppressWarnings("UnstableApiUsage")
 public class LevelDBDataSerializer implements LevelDataSerializer {
     public static final LevelDataSerializer INSTANCE = new LevelDBDataSerializer();
 
@@ -33,7 +36,7 @@ public class LevelDBDataSerializer implements LevelDataSerializer {
 
     @Override
     public LoadState load(LevelData data, Path levelPath, String levelId) throws IOException {
-        Path levelDatPath = levelPath.resolve("level.data");
+        Path levelDatPath = levelPath.resolve("level.dat");
         Path levelDatOldPath = levelPath.resolve("level.dat_old");
 
         if (Files.notExists(levelDatPath) && Files.notExists(levelDatOldPath)) {
@@ -41,10 +44,11 @@ public class LevelDBDataSerializer implements LevelDataSerializer {
         }
 
         try {
-            loadData(data, levelPath.resolve("level.data"));
+            loadData(data, levelDatPath);
         } catch (IOException e) {
             // Attempt to load backup
-            loadData(data, levelPath.resolve("level.dat_old"));
+            log.warn("Unable to load level.dat file, attempting to load backup.");
+            loadData(data, levelDatOldPath);
         }
         return LoadState.LOADED;
     }

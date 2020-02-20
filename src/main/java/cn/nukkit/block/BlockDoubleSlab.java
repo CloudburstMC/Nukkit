@@ -4,6 +4,9 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
+import com.nukkitx.protocol.bedrock.packet.LevelSoundEvent2Packet;
 
 import java.util.Arrays;
 
@@ -26,7 +29,14 @@ public class BlockDoubleSlab extends BlockSolid {
         return id -> new BlockDoubleSlab(id, slabId, Arrays.copyOf(colors, 8));
     }
 
-    //todo hardness and residence
+    public Identifier getSlabId() {
+        return this.slabId;
+    }
+
+    @Override
+    public float getResistance() {
+        return 30;
+    }
 
     @Override
     public float getHardness() {
@@ -57,5 +67,17 @@ public class BlockDoubleSlab extends BlockSolid {
     @Override
     public BlockColor getColor() {
         return colors[this.getMeta() & 0x7];
+    }
+    protected void playPlaceSound() {
+        LevelSoundEvent2Packet pk = new LevelSoundEvent2Packet();
+        pk.setSound(SoundEvent.ITEM_USE_ON);
+        pk.setExtraData(725); // Who knows what this means? It's what is sent per ProxyPass
+        pk.setPosition(Vector3f.from(this.getX() + 0.5f, this.getY() + 0.5f, this.getZ() + 0.5f));
+        pk.setIdentifier("");
+        pk.setBabySound(false);
+        pk.setRelativeVolumeDisabled(false);
+
+
+        this.getLevel().addChunkPacket(this.getChunk().getX(), this.getChunk().getZ(), pk);
     }
 }
