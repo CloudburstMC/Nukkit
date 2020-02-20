@@ -6,6 +6,7 @@ import cn.nukkit.inventory.EnchantInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.player.Player;
 import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.BlockColor;
@@ -79,7 +80,7 @@ public class BlockEnchantingTable extends BlockTransparent {
                 BlockEntityRegistry.get().newEntity(ENCHANTING_TABLE, this.getChunk(), this.getPosition());
             }
 
-            player.addWindow(new EnchantInventory(player.getUIInventory(), this), Player.ENCHANT_WINDOW_ID);
+            player.addWindow(new EnchantInventory(player.getUIInventory(), this), ContainerIds.ENCHANTING_TABLE);
         }
 
         return true;

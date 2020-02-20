@@ -77,6 +77,10 @@ public abstract class Block implements Metadatable, Cloneable, AxisAlignedBB {
                 get(identifier, meta, 0, 0, 0, 0, null);
     }
 
+    public static Block get(Identifier identifier, int meta, Vector3i pos, Level level) {
+        return get(identifier, meta, pos.getX(), pos.getY(), pos.getZ(), 0, level);
+    }
+
     public static Block get(Identifier identifier, int meta, Vector3i pos, int layer) {
         return pos != null ? get(identifier, meta, pos.getX(), pos.getY(), pos.getZ(), layer, null) :
                 get(identifier, meta, 0, 0, 0, 0, null);

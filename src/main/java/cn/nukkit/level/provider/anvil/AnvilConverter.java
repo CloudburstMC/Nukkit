@@ -8,6 +8,7 @@ import cn.nukkit.entity.EntityType;
 import cn.nukkit.level.BlockUpdate;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.chunk.*;
+import cn.nukkit.level.provider.LegacyBlockConverter;
 import cn.nukkit.level.provider.anvil.palette.BiomePalette;
 import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.registry.BlockRegistry;
@@ -51,6 +52,11 @@ public class AnvilConverter {
 
         ChunkSection[] sections = new ChunkSection[Chunk.SECTION_COUNT];
 
+        // Reusable array for performance
+        final int[] blockState = new int[2];
+        BlockRegistry blockRegistry = BlockRegistry.get();
+        LegacyBlockConverter legacyBlockConverter = LegacyBlockConverter.get();
+
         // Chunk sections
         for (CompoundTag sectionTag : tag.getList("Sections", CompoundTag.class)) {
             int y = sectionTag.getByte("Y");
@@ -70,8 +76,10 @@ public class AnvilConverter {
                     for (int blockY = 0; blockY < 16; blockY++) {
                         int anvilIndex = getAnvilIndex(blockX, blockY, blockZ);
                         int nukkitIndex = ChunkSection.blockIndex(blockX, blockY, blockZ);
-                        blockStorage.setBlock(nukkitIndex, BlockRegistry.get().getBlock(blocks[anvilIndex] & 0xff,
-                                data.get(anvilIndex)));
+                        blockState[0] = blocks[anvilIndex] & 0xff;
+                        blockState[1] = data.get(anvilIndex);
+                        legacyBlockConverter.convertBlockState(blockState);
+                        blockStorage.setBlock(nukkitIndex, blockRegistry.getBlock(blockState[0], blockState[1]));
                     }
                 }
             }

@@ -42,6 +42,7 @@ public abstract class BaseBlockEntity implements BlockEntity {
     protected Server server;
     protected Timing timing;
     private String customName;
+    private boolean justCreated = true;
 
     public BaseBlockEntity(BlockEntityType<?> type, Chunk chunk, Vector3i position) {
         checkNotNull(type, "type");
@@ -57,10 +58,12 @@ public abstract class BaseBlockEntity implements BlockEntity {
         this.lastUpdate = System.currentTimeMillis();
         this.id = ID_ALLOCATOR.getAndIncrement();
 
-        this.initBlockEntity();
-
         this.chunk.addBlockEntity(this);
         this.level.addBlockEntity(this);
+
+        this.init();
+
+        this.scheduleUpdate();
     }
 
     @Override
@@ -68,10 +71,7 @@ public abstract class BaseBlockEntity implements BlockEntity {
         return this.type;
     }
 
-    protected void initBlockEntity() {
-        if (isSpawnable()) {
-            spawnToAll();
-        }
+    protected void init() {
     }
 
     public long getId() {
@@ -88,38 +88,56 @@ public abstract class BaseBlockEntity implements BlockEntity {
         if (this.customName != null) {
             tag.stringTag("CustomName", this.customName);
         }
+
+        this.saveClientData(tag);
+    }
+
+    /**
+     * NBT data that is specifically sent to the client
+     *
+     * @param tag tag to write data to
+     */
+    protected void saveClientData(CompoundTagBuilder tag) {
+
+    }
+
+    public final CompoundTag getItemTag() {
+        return this.getTag(false, false, true);
     }
 
     @Override
-    public final CompoundTag getFullNBT() {
-        CompoundTagBuilder tag = CompoundTag.builder();
-
-        this.saveAdditionalData(tag);
-
-        tag.stringTag("id", BlockEntityRegistry.get().getPersistentId(this.type));
-        tag.intTag("x", this.position.getX());
-        tag.intTag("y", this.position.getY());
-        tag.intTag("z", this.position.getZ());
-
-        return tag.buildRootTag();
+    public final CompoundTag getServerTag() {
+        return getTag(true, true, true);
     }
 
     @Override
-    public final CompoundTag getShortNBT() {
-        CompoundTagBuilder tag = CompoundTag.builder();
-
-        this.saveAdditionalData(tag);
-
-        tag.stringTag("id", BlockEntityRegistry.get().getPersistentId(this.type));
-
-        return tag.buildRootTag();
+    public final CompoundTag getClientTag() {
+        return getTag(true, false, false);
     }
 
     @Override
-    public final CompoundTag getCleanNBT() {
+    public final CompoundTag getChunkTag() {
+        return getTag(true, true, false);
+    }
+
+    private CompoundTag getTag(boolean id, boolean position, boolean server) {
         CompoundTagBuilder tag = CompoundTag.builder();
 
-        this.saveAdditionalData(tag);
+        if (id) {
+            tag.stringTag("id", BlockEntityRegistry.get().getPersistentId(this.type));
+        }
+
+        if (position) {
+            tag.intTag("x", this.position.getX());
+            tag.intTag("y", this.position.getY());
+            tag.intTag("z", this.position.getZ());
+        }
+
+        if (server) {
+            this.saveAdditionalData(tag);
+        } else {
+            this.saveClientData(tag);
+        }
 
         return tag.buildRootTag();
     }
@@ -128,6 +146,14 @@ public abstract class BaseBlockEntity implements BlockEntity {
     public abstract boolean isValid();
 
     public boolean onUpdate() {
+        if (this.justCreated) {
+            if (this.isSpawnable()) {
+                this.spawnToAll();
+            }
+
+            this.justCreated = false;
+        }
+
         return false;
     }
 
@@ -205,10 +231,9 @@ public abstract class BaseBlockEntity implements BlockEntity {
             return;
         }
 
-        CompoundTag tag = this.getShortNBT();
         BlockEntityDataPacket packet = new BlockEntityDataPacket();
         packet.setBlockPosition(this.getPosition());
-        packet.setData(getShortNBT());
+        packet.setData(this.getClientTag());
         player.sendPacket(packet);
     }
 

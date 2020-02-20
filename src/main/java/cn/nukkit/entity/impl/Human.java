@@ -42,7 +42,7 @@ public class Human extends EntityCreature implements InventoryHolder {
     protected UUID identity;
     private final PlayerInventory inventory = new PlayerInventory(this);
     private final PlayerEnderChestInventory enderChestInventory = new PlayerEnderChestInventory(this);
-    ;
+
     protected SerializedSkin skin;
 
     public Human(EntityType<Human> type, Location location) {
@@ -194,12 +194,14 @@ public class Human extends EntityCreature implements InventoryHolder {
         int slotCount = Player.SURVIVAL_SLOTS + 9;
         for (int slot = 9; slot < slotCount; ++slot) {
             Item item = this.inventory.getItem(slot - 9);
-            inventoryItems.add(ItemUtils.serializeItem(item, slot));
+            if (!item.isNull()) {
+                inventoryItems.add(ItemUtils.serializeItem(item, slot));
+            }
         }
 
         for (int slot = 100; slot < 104; ++slot) {
             Item item = this.inventory.getItem(this.inventory.getSize() + slot - 100);
-            if (item != null && item.getId() != AIR) {
+            if (!item.isNull()) {
                 inventoryItems.add(ItemUtils.serializeItem(item, slot));
             }
         }

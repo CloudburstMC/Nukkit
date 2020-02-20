@@ -39,8 +39,8 @@ public class ItemFrameBlockEntity extends BaseBlockEntity implements ItemFrame {
     }
 
     @Override
-    public void saveAdditionalData(CompoundTagBuilder tag) {
-        super.saveAdditionalData(tag);
+    protected void saveClientData(CompoundTagBuilder tag) {
+        super.saveClientData(tag);
 
         if (this.item != null && !this.item.isNull()) {
             tag.tag(ItemUtils.serializeItem(this.item).toBuilder().build("Item"));

@@ -160,7 +160,7 @@ public class InventoryTransactionUtils {
                 }
 
                 if (containerId >= SOURCE_TYPE_ANVIL_OUTPUT && containerId <= SOURCE_TYPE_ANVIL_INPUT) { //anvil actions
-                    Inventory inv = player.getWindowById(Player.ANVIL_WINDOW_ID);
+                    Inventory inv = player.getWindowById(ContainerIds.ANVIL);
 
                     if (!(inv instanceof AnvilInventory)) {
                         log.debug("Player " + player.getName() + " has no open anvil inventory");
@@ -195,7 +195,7 @@ public class InventoryTransactionUtils {
                 }
 
                 if (containerId >= SOURCE_TYPE_ENCHANT_OUTPUT && containerId <= SOURCE_TYPE_ENCHANT_INPUT) {
-                    Inventory inv = player.getWindowById(Player.ENCHANT_WINDOW_ID);
+                    Inventory inv = player.getWindowById(ContainerIds.ENCHANTING_TABLE);
 
                     if (!(inv instanceof EnchantInventory)) {
                         log.debug("Player " + player.getName() + " has no open enchant inventory");
@@ -255,7 +255,7 @@ public class InventoryTransactionUtils {
                 }
 
                 if (containerId == SOURCE_TYPE_BEACON) {
-                    Inventory inv = player.getWindowById(Player.BEACON_WINDOW_ID);
+                    Inventory inv = player.getWindowById(ContainerIds.BEACON);
 
                     if (!(inv instanceof BeaconInventory)) {
                         log.debug("Player " + player.getName() + " has no open beacon inventory");

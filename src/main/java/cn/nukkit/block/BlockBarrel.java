@@ -57,7 +57,6 @@ public class BlockBarrel extends BlockSolid implements Faceable {
             barrel = (Barrel) blockEntity;
         } else {
             barrel = BlockEntityRegistry.get().newEntity(BARREL, this.getChunk(), this.getPosition());
-            barrel.spawnToAll();
         }
 
         player.addWindow(barrel.getInventory());
@@ -128,5 +127,4 @@ public class BlockBarrel extends BlockSolid implements Faceable {
 
         return super.getComparatorInputOverride();
     }
-
 }

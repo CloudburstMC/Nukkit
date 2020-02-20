@@ -28,8 +28,8 @@ public class BedBlockEntity extends BaseBlockEntity implements Bed {
     }
 
     @Override
-    public void saveAdditionalData(CompoundTagBuilder tag) {
-        super.saveAdditionalData(tag);
+    protected void saveClientData(CompoundTagBuilder tag) {
+        super.saveClientData(tag);
 
         tag.byteTag("color", (byte) this.getColor().getDyeData());
     }

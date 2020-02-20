@@ -95,8 +95,9 @@ import com.nukkitx.protocol.bedrock.data.*;
 import com.nukkitx.protocol.bedrock.handler.BatchHandler;
 import com.nukkitx.protocol.bedrock.packet.*;
 import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.bytes.ByteOpenHashSet;
+import it.unimi.dsi.fastutil.bytes.ByteSet;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import lombok.extern.log4j.Log4j2;
 
@@ -145,10 +146,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public static final int PERMISSION_MEMBER = 1;
     public static final int PERMISSION_VISITOR = 0;
 
-    public static final int ANVIL_WINDOW_ID = 2;
-    public static final int ENCHANT_WINDOW_ID = 3;
-    public static final int BEACON_WINDOW_ID = 4;
-
     protected final BedrockServerSession session;
 
     public boolean spawned = false;
@@ -156,12 +153,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public long lastBreak;
     public Vector3f speed = null;
 
-    protected int windowCnt = 4;
-
-    protected final BiMap<Inventory, Integer> windows = HashBiMap.create();
-
-    protected final BiMap<Integer, Inventory> windowIndex = windows.inverse();
-    protected final Set<Integer> permanentWindows = new IntOpenHashSet();
+    protected final BiMap<Inventory, Byte> windows = HashBiMap.create();
+    protected final BiMap<Byte, Inventory> windowIndex = windows.inverse();
+    protected final ByteSet permanentWindows = new ByteOpenHashSet();
+    protected byte windowCnt = 4;
 
     protected final PlayerData playerData = new PlayerData();
 
@@ -2455,7 +2450,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         BlockEntity blockEntity = this.getLevel().getLoadedBlockEntity(
                                 Vector3i.from(pickPos.getX(), pickPos.getY(), pickPos.getZ()));
                         if (blockEntity != null) {
-                            CompoundTag nbt = blockEntity.getCleanNBT();
+                            CompoundTag nbt = blockEntity.getItemTag();
                             if (nbt != null) {
                                 serverItem.addTag(nbt);
                                 serverItem.setLore("+(DATA)");
@@ -4068,7 +4063,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
     }
 
-    public int getWindowId(Inventory inventory) {
+    public byte getWindowId(Inventory inventory) {
         if (this.windows.containsKey(inventory)) {
             return this.windows.get(inventory);
         }
@@ -4077,24 +4072,24 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public Inventory getWindowById(int id) {
-        return this.windowIndex.get(id);
+        return this.windowIndex.get((byte) id);
     }
 
     public int addWindow(Inventory inventory) {
         return this.addWindow(inventory, null);
     }
 
-    public int addWindow(Inventory inventory, Integer forceId) {
+    public int addWindow(Inventory inventory, Byte forceId) {
         return addWindow(inventory, forceId, false);
     }
 
-    public int addWindow(Inventory inventory, Integer forceId, boolean isPermanent) {
+    public int addWindow(Inventory inventory, Byte forceId, boolean isPermanent) {
         if (this.windows.containsKey(inventory)) {
             return this.windows.get(inventory);
         }
-        int cnt;
+        byte cnt;
         if (forceId == null) {
-            this.windowCnt = cnt = Math.max(4, ++this.windowCnt % 99);
+            this.windowCnt = cnt = (byte) Math.max(4, ++this.windowCnt % 99);
         } else {
             cnt = forceId;
         }
@@ -4114,8 +4109,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public Optional<Inventory> getTopWindow() {
-        for (Entry<Inventory, Integer> entry : this.windows.entrySet()) {
-            if (!this.permanentWindows.contains(entry.getValue())) {
+        for (Entry<Inventory, Byte> entry : this.windows.entrySet()) {
+            if (!this.permanentWindows.contains((byte) entry.getValue())) {
                 return Optional.of(entry.getKey());
             }
         }
@@ -4203,8 +4198,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public void removeAllWindows(boolean permanent) {
-        for (Entry<Integer, Inventory> entry : new ArrayList<>(this.windowIndex.entrySet())) {
-            if (!permanent && this.permanentWindows.contains(entry.getKey())) {
+        for (Entry<Byte, Inventory> entry : new ArrayList<>(this.windowIndex.entrySet())) {
+            if (!permanent && this.permanentWindows.contains((byte) entry.getKey())) {
                 continue;
             }
             this.removeWindow(entry.getValue());
