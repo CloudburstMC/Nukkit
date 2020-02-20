@@ -4,6 +4,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3f;
@@ -14,7 +15,7 @@ import java.util.Arrays;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class BlockSlab extends BlockTransparent {
+public class BlockSlab extends BlockTransparent {
 
     public static final BlockColor[] COLORS_1 = new BlockColor[]{
             BlockColor.STONE_BLOCK_COLOR,
@@ -63,16 +64,12 @@ public abstract class BlockSlab extends BlockTransparent {
     }
 
     public static BlockFactory factory(Identifier doubleSlabId, BlockColor... colors) {
-        return id -> new BlockDoubleSlab(id, doubleSlabId, Arrays.copyOf(colors, 8));
-    }
-
-    public static boolean isSlab(Identifier id) {
-        return id == WOODEN_SLAB || id == STONE_SLAB || id == STONE_SLAB2 || id == STONE_SLAB3 || id == STONE_SLAB4;
+        return id -> new BlockSlab(id, doubleSlabId, Arrays.copyOf(colors, 8));
     }
 
     @Override
     public BlockColor getColor() {
-        return colorMap.get(this.getId())[this.getMeta() & 0x07];
+        return colors[this.getMeta() & 0x07];
     }
 
     @Override
@@ -87,27 +84,17 @@ public abstract class BlockSlab extends BlockTransparent {
 
     @Override
     public float getResistance() {
-        return this.getId() == BlockIds.WOODEN_SLAB ? 15 : 30;
+        return 30;
     }
 
     @Override
     public int getToolType() {
-        return this.getId() == BlockIds.WOODEN_SLAB ? ItemTool.TYPE_AXE : ItemTool.TYPE_PICKAXE;
+        return ItemTool.TYPE_PICKAXE;
     }
 
     @Override
     public boolean canHarvestWithHand() {
-        return this.getId() == BlockIds.WOODEN_SLAB;
-    }
-
-    @Override
-    public int getBurnChance() {
-        return this.getId() == WOODEN_SLAB ? 5 : 0;
-    }
-
-    @Override
-    public int getBurnAbility() {
-        return this.getId() == WOODEN_SLAB ? 20 : 0;
+        return false;
     }
 
     @Override
@@ -119,7 +106,7 @@ public abstract class BlockSlab extends BlockTransparent {
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         int meta = this.getMeta() & 0x07;
         boolean isTop;
-        BlockDoubleSlab dSlab = (BlockDoubleSlab) BlockRegistry.get().getBlock(this.getDoubleSlab(), meta);
+        BlockDoubleSlab dSlab = (BlockDoubleSlab) BlockRegistry.get().getBlock(this.doubleSlabId, meta);
 
         if (face == BlockFace.DOWN) {
             if (checkSlab(target) && ((BlockSlab) target).isTopSlab()) {
@@ -177,27 +164,8 @@ public abstract class BlockSlab extends BlockTransparent {
         return (this.getMeta() & 0x08) == 0x08;
     }
 
-    @Override
-    public BlockColor getColor() {
-        return this.colors[this.getMeta() & 0x7];
-    }
     private boolean checkSlab(Block other) {
         return other instanceof BlockSlab && ((other.getMeta() & 0x07) == (this.getMeta() & 0x07));
-    }
-
-    protected Identifier getDoubleSlab() {
-        if (this.id == STONE_SLAB) {
-            return DOUBLE_STONE_SLAB;
-        } else if (this.id == STONE_SLAB2) {
-            return DOUBLE_STONE_SLAB2;
-        } else if (this.id == STONE_SLAB3) {
-            return DOUBLE_STONE_SLAB3;
-        } else if (this.id == STONE_SLAB4) {
-            return DOUBLE_STONE_SLAB4;
-        } else if (this.id == WOODEN_SLAB) {
-            return DOUBLE_WOODEN_SLAB;
-        }
-        return null;
     }
 
     @Override

@@ -42,10 +42,13 @@ public class BlockSlabWood extends BlockSlab {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        return new Item[]{
-                toItem()
-        };
+    public float getResistance() {
+        return 15;
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return true;
     }
 
     @Override
