@@ -88,6 +88,11 @@ public class BlockSlab extends BlockTransparent {
     }
 
     @Override
+    public float getHardness() {
+        return 2;
+    }
+
+    @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }

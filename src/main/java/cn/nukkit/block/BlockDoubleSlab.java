@@ -39,6 +39,11 @@ public class BlockDoubleSlab extends BlockSolid {
     }
 
     @Override
+    public float getHardness() {
+        return 2;
+    }
+
+    @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }
