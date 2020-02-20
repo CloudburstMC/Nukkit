@@ -8,8 +8,8 @@ import cn.nukkit.level.provider.leveldb.serializer.*;
 import cn.nukkit.utils.LoadState;
 import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
+import net.daporkchop.ldbjni.LevelDB;
 import org.iq80.leveldb.*;
-import org.iq80.leveldb.impl.Iq80DBFactory;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
@@ -42,7 +42,7 @@ class LevelDBProvider implements LevelProvider {
                 .createIfMissing(true)
                 .compressionType(CompressionType.ZLIB_RAW)
                 .blockSize(64 * 1024);
-        this.db = Iq80DBFactory.factory.open(dbPath.toFile(), options);
+        this.db = LevelDB.PROVIDER.open(dbPath.toFile(), options);
     }
 
     @Override
