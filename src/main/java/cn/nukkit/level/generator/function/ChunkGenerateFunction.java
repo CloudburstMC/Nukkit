@@ -29,7 +29,7 @@ public class ChunkGenerateFunction implements Function<Chunk, Chunk> {
             return chunk;
         }
 
-        LockableChunk lockableChunk = chunk.lockable();
+        LockableChunk lockableChunk = chunk.writeLockable();
 
         BedrockRandom random = BedrockRandom.getThreadLocal();
         long seed = Generator.getChunkSeed(chunk.getX(), chunk.getZ(), this.level.getSeed());
@@ -40,7 +40,6 @@ public class ChunkGenerateFunction implements Function<Chunk, Chunk> {
             generator.generateChunk(random, chunk);
             chunk.setGenerated();
         } finally {
-            chunk.setDirty(false);
             lockableChunk.unlock();
         }
         return chunk;
