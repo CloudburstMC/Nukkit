@@ -84,6 +84,11 @@ class LevelDBProvider implements LevelProvider {
         final int z = chunk.getZ();
 
         return CompletableFuture.supplyAsync(() -> {
+            //we clear the dirty flag here instead of in LevelChunkManager in case there are modifications to the chunk between now and the time it was enqueued
+            if (!chunk.clearDirty()) {
+                //the chunk was not dirty, do nothing
+                return null;
+            }
             try (WriteBatch batch = this.db.createWriteBatch()) {
                 LockableChunk lockableChunk = chunk.readLockable();
                 lockableChunk.lock();
