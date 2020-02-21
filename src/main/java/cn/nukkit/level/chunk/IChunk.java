@@ -256,6 +256,13 @@ public interface IChunk extends Comparable<IChunk> {
     void setDirty(boolean dirty);
 
     /**
+     * Atomically resets this chunk's dirty status.
+     *
+     * @return whether or not the chunk was previously dirty
+     */
+    boolean clearDirty();
+
+    /**
      * Clear chunk to a state as if it was not generated.
      */
     void clear();

@@ -262,8 +262,7 @@ public final class LevelChunkManager {
         Preconditions.checkNotNull(chunk, "chunk");
         Preconditions.checkArgument(chunk.getLevel() == this.level,
                 "Chunk is not from this ChunkManager's Level");
-        if (chunk.isDirty()) {
-            chunk.setDirty(false);
+        if (chunk.clearDirty()) {
             return this.provider.saveChunk(chunk).exceptionally(throwable -> {
                 log.warn("Unable to save chunk", throwable);
                 return null;
