@@ -9,10 +9,10 @@ import cn.nukkit.math.BedrockRandom;
 import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 @Log4j2
 public class ChunkPopulateFunction implements BiFunction<Chunk, List<Chunk>, Chunk> {
@@ -38,25 +38,27 @@ public class ChunkPopulateFunction implements BiFunction<Chunk, List<Chunk>, Chu
 
         PopChunkManager manager = POP_CHUNK_MANAGER.get();
 
-        List<LockableChunk> lockableChunks = new ArrayList<>();
-        lockableChunks.add(chunk.lockable());
-
-        for (Chunk aroundChunk : chunks) {
-            Preconditions.checkNotNull(aroundChunk, "aroundChunk");
-            if (!aroundChunk.isGenerated()) {
-                throw new IllegalStateException("Chunk should have been loaded before");
-            }
-            lockableChunks.add(aroundChunk.lockable());
-        }
-
         BedrockRandom random = BedrockRandom.getThreadLocal();
         long seed = Generator.getChunkSeed(chunk.getX(), chunk.getZ(), this.level.getSeed());
         random.setSeed((int) seed);
 
         manager.setSeed(this.level.getSeed());
-        lockableChunks.forEach(manager::setChunk);
-        lockableChunks.forEach(Lock::lock);
+
+        chunks.add(chunk);
+        List<LockableChunk> lockableChunks = chunks.stream()
+                .map(Chunk::writeLockable)
+                .sorted()
+                .peek(manager::setChunk)
+                .peek(Lock::lock)
+                .collect(Collectors.toList());
+
         try {
+            for (LockableChunk c : lockableChunks)  {
+                if (!c.isGenerated()) {
+                    throw new IllegalStateException("Chunk should have been generated before");
+                }
+            }
+
             generator.populateChunk(manager, random, chunk.getX(), chunk.getZ());
 
             chunk.setPopulated();
@@ -67,10 +69,7 @@ public class ChunkPopulateFunction implements BiFunction<Chunk, List<Chunk>, Chu
             throw new IllegalArgumentException(String.format("Generation error (%d, %d)", chunk.getX(), chunk.getZ()), e);
         } finally {
             manager.clean();
-            for (LockableChunk lockableChunk : lockableChunks) {
-                lockableChunk.unlock();
-                lockableChunk.setDirty(false);
-            }
+            lockableChunks.forEach(Lock::unlock);
         }
 
         return chunk;
