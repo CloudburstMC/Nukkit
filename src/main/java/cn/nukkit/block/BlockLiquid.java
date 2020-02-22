@@ -107,7 +107,7 @@ public abstract class BlockLiquid extends BlockTransparent {
 
     protected int getFlowDecay(Block block) {
         if (!isSameLiquid(block.getId())) {
-            if (block.isWaterlogged()) {
+            if (block.getLayer() != 1 && block.isWaterlogged()) {
                 return getFlowDecay(this.getLiquidBlock(block));
             }
             return -1;
