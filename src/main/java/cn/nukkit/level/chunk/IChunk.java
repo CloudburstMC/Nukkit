@@ -244,6 +244,10 @@ public interface IChunk extends Comparable<IChunk> {
         this.setPopulated(true);
     }
 
+    boolean isPopulatedAround();
+
+    void setPopulatedAround(boolean populatedAround);
+
     /**
      * Whether the chunk has changed since it was last loaded or saved.
      *

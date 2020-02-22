@@ -128,15 +128,11 @@ public final class LevelChunkManager {
      */
     @Nonnull
     public Chunk getChunk(int x, int z) {
-        return this.getChunk(x, z, true);
-    }
-
-    @Nonnull
-    public Chunk getChunk(int x, int z, boolean generate) {
         Chunk chunk = getLoadedChunk(x, z);
         if (chunk == null) {
-            chunk = this.getChunkFuture(x, z, generate).join();
+            chunk = this.getChunkFuture(x, z).join();
         }
+
         return chunk;
     }
 
@@ -149,27 +145,21 @@ public final class LevelChunkManager {
      */
     @Nonnull
     public CompletableFuture<Chunk> getChunkFuture(int x, int z) {
-        return this.getChunkFuture(x, z, true);
+        return this.getChunkFuture(x, z, true, true, true);
     }
 
     @Nonnull
-    public CompletableFuture<Chunk> getChunkFuture(int x, int z, boolean generate) {
-        return this.getChunkFuture(x, z, generate, generate);
-    }
-
-    @Nonnull
-    private synchronized CompletableFuture<Chunk> getChunkFuture(int chunkX, int chunkZ, boolean generate,
-                                                                 boolean populate) {
+    private synchronized CompletableFuture<Chunk> getChunkFuture(int chunkX, int chunkZ, boolean generate, boolean populate, boolean populateAround) {
         final long chunkKey = Chunk.key(chunkX, chunkZ);
         this.chunkLastAccessTimes.put(chunkKey, System.currentTimeMillis());
         LoadingChunk chunk = this.chunks.computeIfAbsent(chunkKey, key -> new LoadingChunk(key, true));
 
-        if (generate) {
-            chunk.generate();
-        }
-
-        if (populate) {
+        if (populateAround) {
+            chunk.populateAround();
+        } else if (populate) {
             chunk.populate();
+        } else if (generate) {
+            chunk.generate();
         }
 
         return chunk.getFuture();
@@ -346,12 +336,13 @@ public final class LevelChunkManager {
     }
 
     @ToString
-    private class LoadingChunk implements Predicate<ChunkPos>, Function<ChunkPos, CompletableFuture<Chunk>> {
+    private class LoadingChunk {
         private final int x;
         private final int z;
         private CompletableFuture<Chunk> future;
         private volatile boolean generated;
         private volatile boolean populated;
+        private volatile boolean populatedAround;
 
         public LoadingChunk(long key, boolean load) {
             this.x = Chunk.fromKeyX(key);
@@ -417,25 +408,52 @@ public final class LevelChunkManager {
             }
             this.populated = true;
 
-            List<CompletableFuture<Chunk>> populationChunkFutures = LevelChunkManager.this.level.getGenerator()
-                    .populationChunks(new ChunkPos(this.x, this.z), this.x, this.z).stream().distinct()
-                    .filter(this).map(this) //see Predicate and Function implementations below
-                    .collect(Collectors.toList());
+            List<CompletableFuture<Chunk>> generationChunkFutures = new ArrayList<>(8);
+            for (int x = -1; x <= 1; x++)   {
+                for (int z = -1; z <= 1; z++)   {
+                    if (x == 0 && z == 0)   {
+                        continue;
+                    }
+
+                    generationChunkFutures.add(LevelChunkManager.this.getChunkFuture(this.x + x, this.z + z, true, false, false));
+                }
+            }
 
             this.future = this.future.thenCombineAsync(
-                    CompletableFutures.allAsList(populationChunkFutures),
+                    CompletableFutures.allAsList(generationChunkFutures),
                     LevelChunkManager.this.chunkPopulateFunction,
                     LevelChunkManager.this.executor);
         }
 
-        @Override
-        public boolean test(ChunkPos pos) {
-            return !pos.equals(this.x, this.z);
-        }
+        private void populateAround()   {
+            this.populate();
 
-        @Override
-        public CompletableFuture<Chunk> apply(ChunkPos pos) {
-            return LevelChunkManager.this.getChunkFuture(pos.x, pos.z, true, false);
+            if (this.populatedAround)    {
+                Chunk chunk = this.getChunk();
+                if (chunk == null || chunk.isPopulatedAround())   {
+                    return;
+                }
+            }
+            this.populatedAround = true;
+
+            List<CompletableFuture<Chunk>> populationChunkFutures = new ArrayList<>(8);
+            for (int x = -1; x <= 1; x++)   {
+                for (int z = -1; z <= 1; z++)   {
+                    if (x == 0 && z == 0)   {
+                        continue;
+                    }
+
+                    populationChunkFutures.add(LevelChunkManager.this.getChunkFuture(this.x + x, this.z + z, true, true, false));
+                }
+            }
+
+            this.future = this.future.thenCombineAsync(
+                    CompletableFutures.allAsList(populationChunkFutures),
+                    (chunk, chunks) -> {
+                        chunk.setPopulatedAround(true);
+                        return chunk;
+                    },
+                    LevelChunkManager.this.executor);
         }
 
         private void clear() {

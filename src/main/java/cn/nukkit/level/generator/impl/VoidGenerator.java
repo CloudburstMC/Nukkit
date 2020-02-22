@@ -31,9 +31,4 @@ public final class VoidGenerator implements Generator {
     public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
         //no-op
     }
-
-    @Override
-    public Collection<ChunkPos> populationChunks(ChunkPos pos, int chunkX, int chunkZ) {
-        return Collections.emptyList();
-    }
 }

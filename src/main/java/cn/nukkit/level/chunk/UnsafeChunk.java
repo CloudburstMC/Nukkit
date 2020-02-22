@@ -33,6 +33,8 @@ public final class UnsafeChunk implements IChunk, Closeable {
             .newUpdater(UnsafeChunk.class, "generated");
     private static final AtomicIntegerFieldUpdater<UnsafeChunk> POPULATED_FIELD = AtomicIntegerFieldUpdater
             .newUpdater(UnsafeChunk.class, "populated");
+    private static final AtomicIntegerFieldUpdater<UnsafeChunk> POPULATED_AROUND_FIELD = AtomicIntegerFieldUpdater
+            .newUpdater(UnsafeChunk.class, "populatedAround");
     private static final AtomicIntegerFieldUpdater<UnsafeChunk> CLOSED_FIELD = AtomicIntegerFieldUpdater
             .newUpdater(UnsafeChunk.class, "closed");
     static final AtomicIntegerFieldUpdater<UnsafeChunk> CLEAR_CACHE_FIELD = AtomicIntegerFieldUpdater
@@ -63,6 +65,8 @@ public final class UnsafeChunk implements IChunk, Closeable {
     private volatile int generated;
 
     private volatile int populated;
+
+    private volatile int populatedAround;
 
     private volatile int closed;
 
@@ -439,6 +443,16 @@ public final class UnsafeChunk implements IChunk, Closeable {
 
     public void setPopulated() {
         this.setPopulated(true);
+    }
+
+    @Override
+    public boolean isPopulatedAround() {
+        return this.populatedAround == 1;
+    }
+
+    @Override
+    public void setPopulatedAround(boolean populatedAround) {
+        POPULATED_AROUND_FIELD.compareAndSet(this, populatedAround ? 0 : 1, populatedAround ? 1 : 0);
     }
 
     /**

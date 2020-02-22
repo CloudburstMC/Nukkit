@@ -23,8 +23,9 @@ public final class GenerationTask implements Function<Chunk, Chunk> {
 
     @Override
     public Chunk apply(Chunk chunk) {
-        Preconditions.checkNotNull(chunk, "chunk");
-        Preconditions.checkState(!chunk.isGenerated(), "Chunk %d,%d was generated already!", chunk.getX(), chunk.getZ());
+        if (Preconditions.checkNotNull(chunk, "chunk").isGenerated()) {
+            return chunk;
+        }
 
         PRandom random = new FastJavaPRandom(chunk.key() ^ chunk.getLevel().getSeed());
         LockableChunk lockable = chunk.writeLockable();
