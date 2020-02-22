@@ -247,7 +247,7 @@ public final class LevelChunkManager {
             }
         }
 
-        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]));
     }
 
     public CompletableFuture<Void> saveChunk(Chunk chunk) {
