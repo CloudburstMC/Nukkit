@@ -5,7 +5,6 @@ import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.Identifier;
 
 import java.util.Random;

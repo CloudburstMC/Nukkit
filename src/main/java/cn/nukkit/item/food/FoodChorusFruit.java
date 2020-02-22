@@ -6,7 +6,6 @@ import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
-import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 

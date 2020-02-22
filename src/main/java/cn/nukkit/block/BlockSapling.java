@@ -3,7 +3,6 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
-import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.math.Vector3i;

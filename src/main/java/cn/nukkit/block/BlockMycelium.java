@@ -5,7 +5,6 @@ import cn.nukkit.event.block.BlockSpreadEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 

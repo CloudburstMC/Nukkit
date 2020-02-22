@@ -229,6 +229,11 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>net.daporkchop.lib</groupId>
+            <artifactId>random</artifactId> <!-- will be replaced by porklib:noise later, but it's not needed yet -->
+            <version>0.5.3-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>4.39.2</version>

@@ -5,10 +5,8 @@ import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
-import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.Identifier;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -32,7 +30,7 @@ public class BlockStemMelon extends BlockCrops {
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
-            BedrockRandom random = new BedrockRandom();
+            ThreadLocalRandom random = ThreadLocalRandom.current();
             if (random.nextBoolean()) {
                 if (this.getDamage() < 0x07) {
                     Block block = this.clone();

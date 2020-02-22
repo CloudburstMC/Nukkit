@@ -6,7 +6,6 @@ import cn.nukkit.entity.misc.Tnt;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
-import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
