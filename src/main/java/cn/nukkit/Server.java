@@ -2038,6 +2038,10 @@ public class Server {
         return itemRegistry;
     }
 
+    public GeneratorRegistry getGeneratorRegistry() {
+        return this.generatorRegistry;
+    }
+
     public int getBaseTickRate() {
         return baseTickRate;
     }

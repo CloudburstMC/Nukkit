@@ -50,6 +50,7 @@ public class LevelBuilder {
 
     public LevelBuilder generator(Identifier generatorId) {
         Preconditions.checkNotNull(generatorId, "generatorId");
+        Preconditions.checkArgument(this.server.getGeneratorRegistry().isRegistered(generatorId), "Unknown generator: \"%s\"", generatorId);
         this.levelData.setGenerator(generatorId);
         return this;
     }

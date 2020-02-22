@@ -27,24 +27,22 @@ public final class PopulationTask implements BiFunction<Chunk, List<Chunk>, Chun
 
     @Override
     public Chunk apply(Chunk chunk, List<Chunk> chunks) {
-        if (chunk == null || chunk.isPopulated())   {
-            return chunk;
-        } else if (!chunk.isGenerated())    {
-            throw new IllegalStateException("Cannot populate chunk before it is generated! x=" + chunk.getX() + ",z=" + chunk.getZ());
-        }
+        Preconditions.checkNotNull(chunk, "chunk");
+        Preconditions.checkState(chunk.isGenerated(), "Chunk %d,%d was populated before being generated!", chunk.getX(), chunk.getZ());
+        Preconditions.checkState(!chunk.isPopulated(), "Chunk %d,%d was populated already!", chunk.getX(), chunk.getZ());
 
         PRandom random = new FastJavaPRandom(~(chunk.key() ^ chunk.getLevel().getSeed()));
 
         chunks.add(chunk);
         List<LockableChunk> lockableChunks = chunks.stream()
+                .peek(populationChunk -> Preconditions.checkState(populationChunk.isGenerated(), "Chunk %d,%d was used for population before being generated!", populationChunk.getX(), populationChunk.getZ()))
                 .map(Chunk::writeLockable)
                 .sorted()
-                .peek(populationChunk -> Preconditions.checkState(populationChunk.isGenerated(), "Chunk %d,%d was used for population before being generated!", populationChunk.getX(), populationChunk.getZ()))
                 .peek(Lock::lock)
                 .collect(Collectors.toList());
         try {
             this.generator.populate(random, PopulationChunkManager.create(chunk, lockableChunks), chunk.getX(), chunk.getZ());
-            chunk.setPopulated(true);
+            chunk.setPopulated();
         } finally {
             lockableChunks.forEach(Lock::unlock);
         }

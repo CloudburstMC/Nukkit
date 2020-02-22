@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public final class Identifier implements Comparable<Identifier> {
     public static final Identifier EMPTY = new Identifier("", "", ":");
 
-    private static final Pattern PATTERN = Pattern.compile("^([a-zA-Z0-9_]+):([a-zA-Z0-9_.]+)$");
+    private static final Pattern PATTERN = Pattern.compile("^([a-z0-9_]+):([a-z0-9_.]+)$", Pattern.CASE_INSENSITIVE);
     private static final ConcurrentMap<String, Identifier> VALUES = new ConcurrentHashMap<>();
     private static final char NAMESPACE_SEPARATOR = ':';
 
