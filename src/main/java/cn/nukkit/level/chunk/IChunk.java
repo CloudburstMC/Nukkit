@@ -259,13 +259,6 @@ public interface IChunk extends Comparable<IChunk> {
     }
 
     /**
-     * Clears the chunk's dirty status.
-     */
-    default void setNotDirty() {
-        this.setDirty(false);
-    }
-
-    /**
      * Sets the chunk's dirty status.
      *
      * @param dirty true if chunk is dirty
@@ -283,6 +276,13 @@ public interface IChunk extends Comparable<IChunk> {
      * Clear chunk to a state as if it was not generated.
      */
     void clear();
+
+    /**
+     * @return this chunk's key, as returned by {@link Chunk#key()}
+     */
+    default long key()  {
+        return Chunk.key(this.getX(), this.getZ());
+    }
 
     @Override
     default int compareTo(IChunk o) {

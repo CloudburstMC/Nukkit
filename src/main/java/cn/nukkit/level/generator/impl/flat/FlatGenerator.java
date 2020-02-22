@@ -7,10 +7,10 @@ import cn.nukkit.math.ChunkPos;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
 import com.google.common.collect.ImmutableList;
+import net.daporkchop.lib.random.PRandom;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Random;
 
 import static cn.nukkit.block.BlockIds.*;
 
@@ -27,7 +27,7 @@ public final class FlatGenerator implements Generator {
     }
 
     @Override
-    public boolean generate(Random random, IChunk chunk, int chunkX, int chunkZ) {
+    public void generate(PRandom random, IChunk chunk, int chunkX, int chunkZ) {
         final int bedrockId = BlockRegistry.get().getRuntimeId(BEDROCK, 0);
         final int dirtId = BlockRegistry.get().getRuntimeId(DIRT, 0);
         final int grassId = BlockRegistry.get().getRuntimeId(GRASS, 0);
@@ -46,12 +46,10 @@ public final class FlatGenerator implements Generator {
         chunk.setBlockRuntimeIdUnsafe(15, 5, 0, bedrockId);
         chunk.setBlockRuntimeIdUnsafe(0, 5, 15, bedrockId);
         chunk.setBlockRuntimeIdUnsafe(15, 5, 15, bedrockId);
-
-        return false;
     }
 
     @Override
-    public boolean populate(Random random, ChunkManager level, int chunkX, int chunkZ) {
+    public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
         //debug stuff
         if (true)   {
             int blockX = chunkX << 4;
@@ -71,7 +69,6 @@ public final class FlatGenerator implements Generator {
         }
 
         //no-op
-        return false;
     }
 
     @Override

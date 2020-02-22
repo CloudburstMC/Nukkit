@@ -1,10 +1,12 @@
-package cn.nukkit.level.generator;
+package cn.nukkit.level.manager;
 
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.chunk.LockableChunk;
+import cn.nukkit.level.generator.Generator;
 import com.google.common.base.Preconditions;
+import net.daporkchop.lib.random.PRandom;
+import net.daporkchop.lib.random.impl.FastJavaPRandom;
 
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 
 /**
@@ -25,17 +27,14 @@ public final class GenerationTask implements Function<Chunk, Chunk> {
             return chunk;
         }
 
-        boolean retainDirty = false;
+        PRandom random = new FastJavaPRandom(chunk.key() ^ chunk.getLevel().getSeed());
         LockableChunk lockable = chunk.writeLockable();
 
         lockable.lock();
         try {
-            retainDirty = this.generator.generate(ThreadLocalRandom.current(), lockable, chunk.getX(), chunk.getZ());
+            this.generator.generate(random, lockable, chunk.getX(), chunk.getZ());
             chunk.setGenerated();
         } finally {
-            if (!retainDirty)   {
-                chunk.setDirty(false);
-            }
             lockable.unlock();
         }
         return chunk;

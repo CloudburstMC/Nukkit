@@ -5,10 +5,10 @@ import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.math.ChunkPos;
 import cn.nukkit.utils.Identifier;
+import net.daporkchop.lib.random.PRandom;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Random;
 
 /**
  * A basic generator that does nothing at all, resulting in a world of nothing but air.
@@ -23,15 +23,13 @@ public final class VoidGenerator implements Generator {
     }
 
     @Override
-    public boolean generate(Random random, IChunk chunk, int chunkX, int chunkZ) {
+    public void generate(PRandom random, IChunk chunk, int chunkX, int chunkZ) {
         //no-op
-        return false;
     }
 
     @Override
-    public boolean populate(Random random, ChunkManager level, int chunkX, int chunkZ) {
+    public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
         //no-op
-        return false;
     }
 
     @Override
