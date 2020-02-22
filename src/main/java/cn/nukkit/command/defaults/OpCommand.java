@@ -4,7 +4,7 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.IPlayer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
@@ -16,7 +16,7 @@ import cn.nukkit.utils.TextFormat;
 public class OpCommand extends VanillaCommand {
 
     public OpCommand(String name) {
-        super(name, "%nukkit.command.op.description", "%commands.op.description");
+        super(name, "%commands.op.description", "%commands.op.description");
         this.setPermission("nukkit.command.op.give");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{

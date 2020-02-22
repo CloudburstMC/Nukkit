@@ -4,7 +4,7 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.InstantEffect;
@@ -17,7 +17,7 @@ import cn.nukkit.utils.TextFormat;
  */
 public class EffectCommand extends Command {
     public EffectCommand(String name) {
-        super(name, "%nukkit.command.effect.description", "%commands.effect.usage");
+        super(name, "%commands.effect.description", "%commands.effect.usage");
         this.setPermission("nukkit.command.effect");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{

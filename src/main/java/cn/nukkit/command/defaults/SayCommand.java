@@ -3,7 +3,7 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
@@ -14,7 +14,7 @@ import cn.nukkit.utils.TextFormat;
 public class SayCommand extends VanillaCommand {
 
     public SayCommand(String name) {
-        super(name, "%nukkit.command.say.description", "%commands.say.usage");
+        super(name, "%commands.say.description", "%commands.say.usage");
         this.setPermission("nukkit.command.say");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{

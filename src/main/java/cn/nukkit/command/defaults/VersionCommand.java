@@ -1,7 +1,7 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.network.ProtocolInfo;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginDescription;
@@ -33,7 +33,6 @@ public class VersionCommand extends VanillaCommand {
         if (args.length == 0) {
             sender.sendMessage(new TranslationContainer("nukkit.server.info.extended", sender.getServer().getName(),
                     sender.getServer().getNukkitVersion(),
-                    "", // codename - not used anymore
                     sender.getServer().getApiVersion(),
                     sender.getServer().getVersion(),
                     String.valueOf(ProtocolInfo.getDefaultProtocolVersion())));

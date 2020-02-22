@@ -6,8 +6,8 @@ import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.event.player.PlayerTeleportEvent;
-import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Location;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
@@ -22,7 +22,7 @@ import java.util.Optional;
  */
 public class TeleportCommand extends VanillaCommand {
     public TeleportCommand(String name) {
-        super(name, "%nukkit.command.tp.description", "%commands.tp.usage");
+        super(name, "%commands.tp.description", "%commands.tp.usage");
         this.setPermission("nukkit.command.teleport");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{

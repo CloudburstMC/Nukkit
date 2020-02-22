@@ -63,7 +63,7 @@ public class Network {
             } catch (Exception e) {
                 interfaz.emergencyShutdown();
                 this.unregisterInterface(interfaz);
-                log.fatal(this.server.getLanguage().translateString("nukkit.server.networkError", new String[]{interfaz.getClass().getName(), Utils.getExceptionMessage(e)}));
+                log.fatal(this.server.getLanguage().translate("nukkit.server.networkError", new String[]{interfaz.getClass().getName(), Utils.getExceptionMessage(e)}));
             }
         }
     }

@@ -5,7 +5,7 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
@@ -16,7 +16,7 @@ import cn.nukkit.utils.TextFormat;
 public class GamemodeCommand extends VanillaCommand {
 
     public GamemodeCommand(String name) {
-        super(name, "%nukkit.command.gamemode.description", "%commands.gamemode.usage",
+        super(name, "%commands.gamemode.description", "%commands.gamemode.usage",
                 new String[]{"gm"});
         this.setPermission("nukkit.command.gamemode.survival;" +
                 "nukkit.command.gamemode.creative;" +

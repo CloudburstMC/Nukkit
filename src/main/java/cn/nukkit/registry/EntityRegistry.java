@@ -21,7 +21,6 @@ import com.google.common.collect.ImmutableSet;
 import com.nukkitx.nbt.NbtUtils;
 import com.nukkitx.nbt.stream.NBTInputStream;
 import com.nukkitx.nbt.tag.CompoundTag;
-import com.nukkitx.nbt.tag.ListTag;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
@@ -77,7 +76,7 @@ public class EntityRegistry implements Registry {
     private final int customEntityStart;
     private int runtimeTypeAllocator;
     private volatile boolean closed;
-    private ListTag<CompoundTag> entityIdentifiersPalette;
+    private CompoundTag entityIdentifiersPalette;
 
     private EntityRegistry() {
         this.registerVanillaEntities();
@@ -190,7 +189,7 @@ public class EntityRegistry implements Registry {
         return LEGACY_NAMES.inverse().get(identifier);
     }
 
-    public ListTag<CompoundTag> getEntityIdentifiersPalette() {
+    public CompoundTag getEntityIdentifiersPalette() {
         return entityIdentifiersPalette;
     }
 
@@ -233,7 +232,9 @@ public class EntityRegistry implements Registry {
             );
         }
 
-        this.entityIdentifiersPalette = new ListTag<>("idlist", CompoundTag.class, entityIdentifiers);
+        this.entityIdentifiersPalette = CompoundTag.builder()
+                .listTag("idlist", CompoundTag.class, entityIdentifiers)
+                .buildRootTag();
         this.closed = true;
     }
 

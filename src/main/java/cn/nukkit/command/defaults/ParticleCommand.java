@@ -5,9 +5,9 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
-import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.particle.*;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3f;
@@ -27,7 +27,7 @@ public class ParticleCommand extends VanillaCommand {
             , "spore", "portal", "flame", "lava", "reddust", "snowballpoof", "slime", "itembreak", "terrain", "heart"
             , "ink", "droplet", "enchantmenttable", "happyvillager", "angryvillager", "forcefield"};
     public ParticleCommand(String name) {
-        super(name, "%nukkit.command.particle.description", "%nukkit.command.particle.usage");
+        super(name, "%commands.particle.description", "%commands.particle.usage");
         this.setPermission("nukkit.command.particle");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{

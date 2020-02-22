@@ -1,4 +1,4 @@
-package cn.nukkit.lang;
+package cn.nukkit.locale;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
@@ -15,12 +15,12 @@ public class TextContainer implements Cloneable {
         this.text = text;
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
-
     public String getText() {
         return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     @Override

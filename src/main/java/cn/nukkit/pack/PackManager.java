@@ -149,7 +149,7 @@ public class PackManager implements Closeable {
         }
 
         log.info(Server.getInstance().getLanguage()
-                .translateString("nukkit.resources.success", String.valueOf(manifestMap.size())));
+                .translate("nukkit.resources.success", String.valueOf(manifestMap.size())));
     }
 
     public void loadPack(Path packPath) throws IOException {
@@ -188,7 +188,7 @@ public class PackManager implements Closeable {
             }
         }
         if (loader == null) {
-            log.warn(Server.getInstance().getLanguage().translateString("nukkit.resources.unknown-format", path));
+            log.warn(Server.getInstance().getLanguage().translate("nukkit.resources.unknown-format", path));
         }
         return loader;
     }

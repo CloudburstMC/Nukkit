@@ -5,7 +5,7 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import com.nukkitx.protocol.bedrock.packet.SetDifficultyPacket;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class DifficultyCommand extends VanillaCommand {
 
     public DifficultyCommand(String name) {
-        super(name, "%nukkit.command.difficulty.description", "%commands.difficulty.usage");
+        super(name, "%commands.difficulty.description", "%commands.difficulty.usage");
         this.setPermission("nukkit.command.difficulty");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{

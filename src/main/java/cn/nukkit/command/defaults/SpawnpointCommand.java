@@ -4,9 +4,9 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
@@ -18,7 +18,7 @@ import java.text.DecimalFormat;
  */
 public class SpawnpointCommand extends VanillaCommand {
     public SpawnpointCommand(String name) {
-        super(name, "%nukkit.command.spawnpoint.description", "%commands.spawnpoint.usage");
+        super(name, "%commands.spawnpoint.description", "%commands.spawnpoint.usage");
         this.setPermission("nukkit.command.spawnpoint");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{

@@ -4,7 +4,7 @@ import cn.nukkit.Server;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.command.defaults.*;
 import cn.nukkit.command.simple.*;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Utils;
@@ -254,7 +254,7 @@ public class SimpleCommandMap implements CommandMap {
             target.execute(sender, sentCommandLabel, args);
         } catch (Exception e) {
             sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.exception"));
-            log.error(this.server.getLanguage().translateString("nukkit.command.exception", cmdLine,
+            log.error(this.server.getLanguage().translate("nukkit.command.exception", cmdLine,
                     target.toString(), Utils.getExceptionMessage(e)));
         }
         target.timing.stopTiming();
@@ -289,7 +289,7 @@ public class SimpleCommandMap implements CommandMap {
             String alias = entry.getKey();
             List<String> commandStrings = entry.getValue();
             if (alias.contains(" ") || alias.contains(":")) {
-                log.warn(this.server.getLanguage().translateString("nukkit.command.alias.illegal", alias));
+                log.warn(this.server.getLanguage().translate("nukkit.command.alias.illegal", alias));
                 continue;
             }
             List<String> targets = new ArrayList<>();
@@ -311,7 +311,7 @@ public class SimpleCommandMap implements CommandMap {
             }
 
             if (bad.length() > 0) {
-                log.warn(this.server.getLanguage().translateString("nukkit.command.alias.notFound",
+                log.warn(this.server.getLanguage().translate("nukkit.command.alias.notFound",
                         new String[]{alias, bad}));
                 continue;
             }
