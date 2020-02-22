@@ -3072,6 +3072,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         respawn1.setState(RespawnPacket.State.SERVER_READY);
                         this.sendPacket(respawn1);
                     }
+                    break;
                 case LECTERN_UPDATE:
                     LecternUpdatePacket lecternUpdatePacket = (LecternUpdatePacket) packet;
                     Vector3i blockPosition = lecternUpdatePacket.getBlockPosition();
