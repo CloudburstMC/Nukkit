@@ -4740,6 +4740,21 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     @Override
+    protected void onBlock(Entity entity, boolean animate) {
+        super.onBlock(entity, animate);
+        if (animate) {
+            this.setFlag(EntityFlag.SHIELD_SHAKING, true);
+            this.updateData();
+            this.getServer().getScheduler().scheduleTask(null, ()-> {
+                if (this.isOnline()) {
+                    this.setFlag(EntityFlag.SHIELD_SHAKING, false);
+                    this.updateData();
+                }
+            });
+        }
+    }
+
+    @Override
     public String toString() {
         return "Player(name=" + getName() + ")";
     }
