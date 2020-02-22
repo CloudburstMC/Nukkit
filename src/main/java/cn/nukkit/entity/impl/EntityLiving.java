@@ -154,6 +154,7 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
             Server.broadcastPacket(this.hasSpawned, pk);
 
             this.attackTime = source.getAttackCooldown();
+            this.scheduleUpdate();
 
             return true;
         } else {
@@ -320,6 +321,7 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
 
             if (this.attackTime > 0) {
                 this.attackTime -= tickDiff;
+                hasUpdate = true;
             }
 
             if (this.vehicle == null) {
