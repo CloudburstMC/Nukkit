@@ -3656,12 +3656,12 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             //source.setCancelled();
             return false;
         } else if (source.getCause() == DamageCause.FALL) {
-        }
-        if (this.getLevel().getBlock(this.getPosition().asBlockPosition().add(0, -1, 0)).getId() == BlockIds.SLIME) {
-            if (!this.isSneaking()) {
-                //source.setCancelled();
-                this.resetFallDistance();
-                return false;
+            if (this.getLevel().getBlock(this.getPosition().asBlockPosition().add(0, -1, 0)).getId() == BlockIds.SLIME) {
+                if (!this.isSneaking()) {
+                    //source.setCancelled();
+                    this.resetFallDistance();
+                    return false;
+                }
             }
         }
 
