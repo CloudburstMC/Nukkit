@@ -5,7 +5,7 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 import lombok.extern.log4j.Log4j2;
@@ -19,7 +19,7 @@ import static cn.nukkit.block.BlockIds.AIR;
 @Log4j2
 public class GiveCommand extends VanillaCommand {
     public GiveCommand(String name) {
-        super(name, "%nukkit.command.give.description", "%nukkit.command.give.usage");
+        super(name, "%commands.give.description", "%commands.give.usage");
         this.setPermission("nukkit.command.give");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{

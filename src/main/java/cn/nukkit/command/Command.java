@@ -2,8 +2,8 @@ package cn.nukkit.command;
 
 import cn.nukkit.Server;
 import cn.nukkit.command.data.*;
-import cn.nukkit.lang.TextContainer;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TextContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
@@ -346,7 +346,7 @@ public abstract class Command {
         }
         CommandEnumData aliases = new CommandEnumData(this.name.toLowerCase() + "-aliases", aliasesEnum, false);
 
-        String description = player.getServer().getLanguage().translateString(this.description);
+        String description = player.getServer().getLanguage().translate(this.description);
 
         CommandParamData[][] overloads = new CommandParamData[this.commandParameters.size()][];
 

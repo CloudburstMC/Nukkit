@@ -1,7 +1,8 @@
 package cn.nukkit.command;
 
 import cn.nukkit.Server;
-import cn.nukkit.lang.TextContainer;
+import cn.nukkit.locale.TextContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.permission.PermissibleBase;
 import cn.nukkit.permission.Permission;
 import cn.nukkit.permission.PermissionAttachment;
@@ -85,7 +86,7 @@ public class ConsoleCommandSender implements CommandSender {
 
     @Override
     public void sendMessage(String message) {
-        message = this.getServer().getLanguage().translateString(message);
+        message = this.getServer().getLanguage().translate(message);
         for (String line : message.trim().split("\n")) {
             log.info(line);
         }
@@ -93,7 +94,11 @@ public class ConsoleCommandSender implements CommandSender {
 
     @Override
     public void sendMessage(TextContainer message) {
-        this.sendMessage(this.getServer().getLanguage().translate(message));
+        Object[] args = null;
+        if (message instanceof TranslationContainer) {
+            args = ((TranslationContainer) message).getParameters();
+        }
+        this.sendMessage(this.getServer().getLanguage().translate(message.getText(), args));
     }
 
     @Override

@@ -1,6 +1,6 @@
 package cn.nukkit.command;
 
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.plugin.Plugin;
 
 /**

@@ -4,7 +4,7 @@ import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
@@ -13,7 +13,7 @@ import cn.nukkit.utils.TextFormat;
  */
 public class TitleCommand extends VanillaCommand {
     public TitleCommand(String name) {
-        super(name, "%nukkit.command.title.description", "%nukkit.command.title.usage");
+        super(name, "%commands.title.description", "%commands.title.usage");
         this.setPermission("nukkit.command.title");
 
         this.commandParameters.clear();
@@ -113,7 +113,7 @@ public class TitleCommand extends VanillaCommand {
                     sender.sendMessage(new TranslationContainer("nukkit.command.title.times.success",
                             args[2], args[3], args[4], player.getName()));
                 } catch (NumberFormatException exception) {
-                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%nukkit.command.title.times.fail"));
+                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.title.times.fail"));
                 }
             } else {
                 sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));

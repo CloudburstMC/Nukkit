@@ -12,12 +12,12 @@ import cn.nukkit.inventory.CraftingManager;
 import cn.nukkit.inventory.Recipe;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.lang.BaseLang;
-import cn.nukkit.lang.TextContainer;
-import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.*;
 import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.storage.StorageIds;
+import cn.nukkit.locale.LocaleManager;
+import cn.nukkit.locale.TextContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
@@ -171,8 +171,6 @@ public class Server {
     private int autoSaveTicker = 0;
     private int autoSaveTicks = 6000;
 
-    private BaseLang baseLang;
-
     private boolean forceLanguage = false;
 
     private UUID serverID;
@@ -190,6 +188,8 @@ public class Server {
     private QueryRegenerateEvent queryRegenerateEvent;
     private Config config;
 
+    private final LocaleManager localeManager = new LocaleManager("locale/nukkit/languages.json",
+            "locale/nukkit/texts", "locale/vanilla");
     private final GameRuleRegistry gameRuleRegistry = GameRuleRegistry.get();
     private final GeneratorRegistry generatorRegistry = GeneratorRegistry.get();
     private final StorageRegistry storageRegistry = StorageRegistry.get();
@@ -332,44 +332,36 @@ public class Server {
         if (!new File(this.dataPath + "nukkit.yml").exists()) {
             log.info(TextFormat.GREEN + "Welcome! Please choose a language first!");
 
-            InputStream languageList = this.getClass().getClassLoader().getResourceAsStream("lang/language.list");
-            if (languageList == null) {
-                throw new IllegalStateException("lang/language.list is missing. If you are running a development version, make sure you have run 'git submodule update --init'.");
-            }
-            String[] lines = Utils.readFile(languageList).split("\n");
-            for (String line : lines) {
-                log.info(line);
+            for (Locale locale : localeManager.getAvailableLocales()) {
+                log.info("{}: {}", locale.toString(), locale.getDisplayName(locale));
             }
 
-            String fallback = BaseLang.FALLBACK_LANGUAGE;
-            String language = null;
-            while (language == null) {
-                String lang;
-                if (predefinedLanguage != null) {
-                    log.info("Trying to load language from predefined language: " + predefinedLanguage);
-                    lang = predefinedLanguage;
+            String locale;
+            do {
+                if (this.predefinedLanguage != null) {
+                    locale = this.predefinedLanguage;
+                    this.predefinedLanguage = null;
                 } else {
-                    lang = this.console.readLine();
+                    locale = this.console.readLine();
                 }
+            } while (!localeManager.setLocale(locale));
 
-                InputStream conf = this.getClass().getClassLoader().getResourceAsStream("lang/" + lang + "/lang.ini");
-                if (conf != null) {
-                    language = lang;
-                } else if(predefinedLanguage != null) {
-                    log.warn("No language found for predefined language: " + predefinedLanguage + ", please choose a valid language");
-                    predefinedLanguage = null;
+            // Generate config with specified locale
+            LocaleManager configLocaleManager = new LocaleManager("locale/nukkit/languages.json",
+                    "locale/nukkit/configs");
+            configLocaleManager.setLocale(locale);
+
+            File configFile = new File(this.dataPath + "nukkit.yml");
+            InputStream stream = Nukkit.class.getClassLoader().getResourceAsStream("nukkit.yml");
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(configFile)))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (!line.isEmpty()) {
+                        line = configLocaleManager.translate(line);
+                    }
+                    writer.write(line + '\n');
                 }
-            }
-
-            InputStream advacedConf = this.getClass().getClassLoader().getResourceAsStream("lang/" + language + "/nukkit.yml");
-            if (advacedConf == null) {
-                advacedConf = this.getClass().getClassLoader().getResourceAsStream("lang/" + fallback + "/nukkit.yml");
-            }
-
-            try {
-                Utils.writeFile(this.dataPath + "nukkit.yml", advacedConf);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
         }
 
@@ -428,9 +420,10 @@ public class Server {
         this.allowNether = this.getPropertyBoolean("allow-nether", true);
 
         this.forceLanguage = this.getConfig("settings.force-language", false);
-        this.baseLang = new BaseLang(this.getConfig("settings.language", BaseLang.FALLBACK_LANGUAGE));
-        log.info(this.getLanguage().translateString("language.selected", new String[]{getLanguage().getName(), getLanguage().getLang()}));
-        log.info(getLanguage().translateString("nukkit.server.start", TextFormat.AQUA + this.getVersion() + TextFormat.RESET));
+        this.localeManager.setLocaleOrFallback(this.getConfig("settings.language"));
+        Locale locale = this.getLanguage().getLocale();
+        log.info(this.getLanguage().translate("language.selected", locale.getDisplayCountry(locale), locale));
+        log.info(this.getLanguage().translate("nukkit.server.start", TextFormat.AQUA + this.getVersion() + TextFormat.RESET));
 
         Object poolSize = this.getConfig("settings.async-workers", (Object) (-1));
         if (!(poolSize instanceof Integer)) {
@@ -462,7 +455,7 @@ public class Server {
             try {
                 this.rcon = new RCON(this, this.getProperty("rcon.password", ""), (!this.getIp().equals("")) ? this.getIp() : "0.0.0.0", this.getPropertyInt("rcon.port", this.getPort()));
             } catch (IllegalArgumentException e) {
-                log.error(getLanguage().translateString(e.getMessage(), e.getCause().getMessage()));
+                log.error(getLanguage().translate(e.getMessage(), e.getCause().getMessage()));
             }
         }
 
@@ -488,8 +481,8 @@ public class Server {
             ExceptionHandler.registerExceptionHandler();
         }
 
-        log.info(this.getLanguage().translateString("nukkit.server.info", this.getName(), TextFormat.YELLOW + this.getNukkitVersion() + TextFormat.WHITE, TextFormat.AQUA + "" + TextFormat.WHITE, this.getApiVersion()));
-        log.info(this.getLanguage().translateString("nukkit.server.license", this.getName()));
+        log.info(this.getLanguage().translate("nukkit.server.info", this.getName(), TextFormat.YELLOW + this.getNukkitVersion() + TextFormat.WHITE, TextFormat.AQUA + "" + TextFormat.WHITE, this.getApiVersion()));
+        log.info(this.getLanguage().translate("nukkit.server.license", this.getName()));
 
         this.consoleSender = new ConsoleCommandSender();
         this.commandMap = new SimpleCommandMap(this);
@@ -553,7 +546,7 @@ public class Server {
         this.saveProperties();
 
         if (this.getDefaultLevel() == null) {
-            log.fatal(this.getLanguage().translateString("nukkit.level.defaultError"));
+            log.fatal(this.getLanguage().translate("nukkit.level.defaultError"));
             this.forceShutdown();
 
             return;
@@ -567,7 +560,7 @@ public class Server {
 
         this.enablePlugins(PluginLoadOrder.POSTWORLD);
 
-        log.info(this.getLanguage().translateString("nukkit.server.networkStart", new String[]{this.getIp().equals("") ? "*" : this.getIp(), String.valueOf(this.getPort())}));
+        log.info(this.getLanguage().translate("nukkit.server.networkStart", this.getIp().equals("") ? "*" : this.getIp(), this.getPort()));
         this.serverID = UUID.randomUUID();
 
         this.network = new Network(this);
@@ -739,9 +732,9 @@ public class Server {
         //todo send usage setting
         this.tickCounter = 0;
 
-        log.info(this.getLanguage().translateString("nukkit.server.defaultGameMode", getGamemodeString(this.getGamemode())));
+        log.info(this.getLanguage().translate("nukkit.server.defaultGameMode", getGamemodeString(this.getGamemode())));
 
-        log.info(this.getLanguage().translateString("nukkit.server.startFinished", String.valueOf((double) (System.currentTimeMillis() - Nukkit.START_TIME) / 1000)));
+        log.info(this.getLanguage().translate("nukkit.server.startFinished", (System.currentTimeMillis() - Nukkit.START_TIME) / 1000d));
 
         this.tickProcessor();
         this.forceShutdown();
@@ -1417,7 +1410,7 @@ public class Server {
                 }
             }
         } catch (IOException e) {
-            log.warn(this.getLanguage().translateString("nukkit.data.playerCorrupted", name));
+            log.warn(this.getLanguage().translate("nukkit.data.playerCorrupted", name));
             log.throwing(e);
         } finally {
             if (dataStream.isPresent()) {
@@ -1430,7 +1423,7 @@ public class Server {
         }
         CompoundTag nbt = null;
         if (create) {
-            log.info(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
+            log.info(this.getLanguage().translate("nukkit.data.playerNotFound", name));
             Location spawn = this.getDefaultLevel().getSafeSpawn();
             nbt = CompoundTag.builder()
                     .longTag("firstPlayed", System.currentTimeMillis() / 1000)
@@ -1503,7 +1496,7 @@ public class Server {
              NBTOutputStream stream = NbtUtils.createGZIPWriter(dataStream)) {
             stream.write(tag);
         } catch (Exception e) {
-            log.error(this.getLanguage().translateString("nukkit.data.saveError", name, e));
+            log.error(this.getLanguage().translate("nukkit.data.saveError", name, e));
         }
     }
 
@@ -1657,8 +1650,8 @@ public class Server {
         return new LevelBuilder(this);
     }
 
-    public BaseLang getLanguage() {
-        return baseLang;
+    public LocaleManager getLanguage() {
+        return localeManager;
     }
 
     public boolean isLanguageForced() {

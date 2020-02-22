@@ -10,8 +10,6 @@ import cn.nukkit.player.Player;
 import cn.nukkit.registry.BlockEntityRegistry;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.nukkitx.math.vector.Vector3i;
 import com.nukkitx.nbt.CompoundTagBuilder;
 import com.nukkitx.nbt.tag.CompoundTag;
@@ -29,7 +27,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Log4j2
 public abstract class BaseBlockEntity implements BlockEntity {
 
-    private static final BiMap<String, Class<? extends BaseBlockEntity>> knownBlockEntities = HashBiMap.create(21);
     public static AtomicLong ID_ALLOCATOR = new AtomicLong(1);
     public final long id;
     private final BlockEntityType<?> type;

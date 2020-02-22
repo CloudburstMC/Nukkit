@@ -253,7 +253,7 @@ public class Level implements ChunkManager, Metadatable {
 //        this.timings = new LevelTimings(this);
 //
 //        if (fullConvert) {
-//            this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.level.updating",
+//            this.server.getLogger().info(this.server.getLanguage().translate("nukkit.level.updating",
 //                    TextFormat.GREEN + this.chunkProvider.getName() + TextFormat.WHITE));
 //            LevelChunkProvider old = this.chunkProvider;
 //            try {
@@ -267,7 +267,7 @@ public class Level implements ChunkManager, Metadatable {
 //            }
 //        }
 
-        log.info(this.server.getLanguage().translateString("nukkit.level.preparing",
+        log.info(this.server.getLanguage().translate("nukkit.level.preparing",
                 TextFormat.GREEN + getId() + TextFormat.WHITE));
 
         this.generatorFactory = GeneratorRegistry.get().getGeneratorFactory(this.levelData.getGenerator());
@@ -497,7 +497,7 @@ public class Level implements ChunkManager, Metadatable {
             return false;
         }
 
-        log.info(this.server.getLanguage().translateString("nukkit.level.unloading",
+        log.info(this.server.getLanguage().translate("nukkit.level.unloading",
                 TextFormat.GREEN + this.getName() + TextFormat.WHITE));
         Level defaultLevel = this.server.getDefaultLevel();
 
@@ -2525,29 +2525,25 @@ public class Level implements ChunkManager, Metadatable {
             players = this.getPlayers().values().toArray(new Player[0]);
         }
 
-        LevelEventPacket rainEvent = new LevelEventPacket();
-
         if (this.isRaining()) {
+            LevelEventPacket rainEvent = new LevelEventPacket();
+
             rainEvent.setType(LevelEventType.START_RAIN);
             rainEvent.setData(ThreadLocalRandom.current().nextInt(50000) + 10000);
-        } else {
             rainEvent.setType(LevelEventType.STOP_RAIN);
+
+            Server.broadcastPacket(players, rainEvent);
         }
-        rainEvent.setPosition(Vector3f.ZERO);
-
-        Server.broadcastPacket(players, rainEvent);
-
-        LevelEventPacket thunderEvent = new LevelEventPacket();
 
         if (this.isThundering()) {
+            LevelEventPacket thunderEvent = new LevelEventPacket();
+
             thunderEvent.setType(LevelEventType.START_THUNDER);
             thunderEvent.setData(ThreadLocalRandom.current().nextInt(50000) + 10000);
-        } else {
-            thunderEvent.setType(LevelEventType.STOP_THUNDER);
-        }
-        thunderEvent.setPosition(Vector3f.ZERO);
+            thunderEvent.setPosition(Vector3f.ZERO);
 
-        Server.broadcastPacket(players, thunderEvent);
+            Server.broadcastPacket(players, thunderEvent);
+        }
     }
 
     public void sendWeather(Player player) {

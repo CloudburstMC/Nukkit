@@ -3,7 +3,7 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
@@ -16,7 +16,7 @@ import java.util.Objects;
 public class TellCommand extends VanillaCommand {
 
     public TellCommand(String name) {
-        super(name, "%nukkit.command.tell.description", "%commands.message.usage", new String[]{"w", "msg"});
+        super(name, "%commands.tell.description", "%commands.message.usage", new String[]{"w", "msg"});
         this.setPermission("nukkit.command.tell");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{

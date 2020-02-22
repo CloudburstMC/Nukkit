@@ -2,7 +2,7 @@ package cn.nukkit.utils.bugreport;
 
 import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
-import cn.nukkit.lang.BaseLang;
+import cn.nukkit.locale.LocaleManager;
 import cn.nukkit.utils.Utils;
 import com.sun.management.OperatingSystemMXBean;
 import lombok.extern.log4j.Log4j2;
@@ -33,15 +33,15 @@ public class BugReportGenerator extends Thread {
 
     @Override
     public void run() {
-        BaseLang baseLang = Server.getInstance().getLanguage();
+        LocaleManager localeManager = Server.getInstance().getLanguage();
         try {
-            log.info("[BugReport] " + baseLang.translateString("nukkit.bugreport.create"));
+            log.info("[BugReport] " + localeManager.translate("nukkit.bugreport.create"));
             String path = generate();
-            log.info("[BugReport] " + baseLang.translateString("nukkit.bugreport.archive", path));
+            log.info("[BugReport] " + localeManager.translate("nukkit.bugreport.archive", path));
         } catch (Exception e) {
             StringWriter stringWriter = new StringWriter();
             e.printStackTrace(new PrintWriter(stringWriter));
-            log.info("[BugReport] " + baseLang.translateString("nukkit.bugreport.error", stringWriter.toString()));
+            log.info("[BugReport] " + localeManager.translate("nukkit.bugreport.error", stringWriter.toString()));
         }
     }
 

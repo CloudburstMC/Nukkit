@@ -49,8 +49,6 @@ import cn.nukkit.inventory.transaction.InventoryTransaction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.item.*;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.lang.TextContainer;
-import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
@@ -59,6 +57,8 @@ import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.level.particle.PunchBlockParticle;
+import cn.nukkit.locale.TextContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.math.*;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.network.ProtocolInfo;
@@ -758,9 +758,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.sendPlayStatus(PlayStatusPacket.Status.PLAYER_SPAWN);
 
         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(this,
-                new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.joined", new String[]{
-                        this.getDisplayName()
-                })
+                new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.joined", this.getDisplayName())
         );
 
         this.server.getPluginManager().callEvent(playerJoinEvent);
@@ -1254,7 +1252,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                 revert = ev.isRevert();
 
                                 if (revert) {
-                                    log.warn(this.getServer().getLanguage().translateString("nukkit.player.invalidMove", this.getName()));
+                                    log.warn(this.getServer().getLanguage().translate("nukkit.player.invalidMove", this.getName()));
                                 }
                             }
                         }
@@ -1633,7 +1631,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.setNameTagAlwaysVisible(true);
         this.setCanClimb(true);
 
-        log.info(this.getServer().getLanguage().translateString("nukkit.player.logIn",
+        log.info(this.getServer().getLanguage().translate("nukkit.player.logIn",
                 TextFormat.AQUA + this.username + TextFormat.WHITE,
                 this.getAddress(),
                 this.getPort(),
@@ -1792,7 +1790,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 PlayerChatEvent chatEvent = new PlayerChatEvent(this, msg);
                 this.server.getPluginManager().callEvent(chatEvent);
                 if (!chatEvent.isCancelled()) {
-                    this.server.broadcastMessage(this.getServer().getLanguage().translateString(chatEvent.getFormat(), new String[]{chatEvent.getPlayer().getDisplayName(), chatEvent.getMessage()}), chatEvent.getRecipients());
+                    this.server.broadcastMessage(this.getServer().getLanguage().translate(chatEvent.getFormat(), chatEvent.getPlayer().getDisplayName(), chatEvent.getMessage()), chatEvent.getRecipients());
                 }
             }
         }
@@ -2424,7 +2422,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
                     if (targetEntity instanceof DroppedItem || targetEntity instanceof EntityArrow || targetEntity instanceof ExperienceOrb) {
                         this.kick(PlayerKickEvent.Reason.INVALID_PVE, "Attempting to interact with an invalid entity");
-                        log.warn(this.getServer().getLanguage().translateString("nukkit.player.invalidEntity", this.getName()));
+                        log.warn(this.getServer().getLanguage().translate("nukkit.player.invalidEntity", this.getName()));
                         break;
                     }
 
@@ -3123,7 +3121,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         TextPacket packet = new TextPacket();
         packet.setType(TextPacket.Type.RAW);
         packet.setXuid(this.getXuid());
-        packet.setMessage(this.server.getLanguage().translateString(message));
+        packet.setMessage(this.server.getLanguage().translateOnly("nukkit.", message));
         this.sendPacket(packet);
     }
 
@@ -3136,23 +3134,20 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.sendMessage(message.getText());
     }
 
-    public void sendTranslation(String message) {
-        this.sendTranslation(message, new String[0]);
-    }
-
-    public void sendTranslation(String message, String[] parameters) {
+    public void sendTranslation(String message, Object... parameters) {
+        if (parameters == null) parameters = new Object[0];
         TextPacket packet = new TextPacket();
         if (!this.server.isLanguageForced()) {
             packet.setType(TextPacket.Type.TRANSLATION);
-            packet.setMessage(this.server.getLanguage().translateString(message, parameters, "nukkit."));
+            packet.setMessage(this.server.getLanguage().translateOnly("nukkit.", message, parameters));
+            String[] params = new String[parameters.length];
             for (int i = 0; i < parameters.length; i++) {
-                parameters[i] = this.server.getLanguage().translateString(parameters[i], parameters, "nukkit.");
-
+                params[i] = this.server.getLanguage().translateOnly("nukkit.", parameters[i].toString());
             }
-            packet.setParameters(Arrays.asList(parameters));
+            packet.setParameters(Arrays.asList(params));
         } else {
             packet.setType(TextPacket.Type.RAW);
-            packet.setMessage(this.server.getLanguage().translateString(message, parameters));
+            packet.setMessage(this.server.getLanguage().translate(message, parameters));
         }
         packet.setNeedsTranslation(true);
         packet.setXuid(this.getXuid());
@@ -3167,7 +3162,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         TextPacket packet = new TextPacket();
         packet.setType(TextPacket.Type.CHAT);
         packet.setSourceName(source);
-        packet.setMessage(this.server.getLanguage().translateString(message));
+        packet.setMessage(this.server.getLanguage().translateOnly("nukkit.", message));
         packet.setXuid(this.getXuid());
         this.sendPacket(packet);
     }
@@ -3362,11 +3357,11 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
             this.server.getPluginManager().unsubscribeFromPermission(Server.BROADCAST_CHANNEL_USERS, this);
             this.spawned = false;
-            log.info(this.getServer().getLanguage().translateString("nukkit.player.logOut",
+            log.info(this.getServer().getLanguage().translate("nukkit.player.logOut",
                     TextFormat.AQUA + (this.getName() == null ? "" : this.getName()) + TextFormat.WHITE,
-                    this.getSocketAddress().getAddress().getHostAddress(),
-                    String.valueOf(this.getSocketAddress().getPort()),
-                    this.getServer().getLanguage().translateString(reason)));
+                    this.getAddress(),
+                    this.getPort(),
+                    reason));
             this.windows.clear();
             this.hasSpawned.clear();
             this.spawnLocation = null;

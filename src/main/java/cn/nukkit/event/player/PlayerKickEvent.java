@@ -2,7 +2,7 @@ package cn.nukkit.event.player;
 
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.lang.TextContainer;
+import cn.nukkit.locale.TextContainer;
 import cn.nukkit.player.Player;
 
 public class PlayerKickEvent extends PlayerEvent implements Cancellable {
