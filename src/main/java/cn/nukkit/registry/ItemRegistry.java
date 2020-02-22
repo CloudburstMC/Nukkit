@@ -149,14 +149,13 @@ public class ItemRegistry implements Registry {
         checkClosed();
         this.closed = true;
 
-        List<Identifier> customBlocks = this.blockRegistry.getCustomBlocks();
-
         List<StartGamePacket.ItemEntry> itemEntries = new ArrayList<>();
 
         for (ItemData data : VANILLA_ITEMS) {
             itemEntries.add(new StartGamePacket.ItemEntry(data.name, (short) data.id));
         }
 
+        List<Identifier> customBlocks = this.blockRegistry.getCustomBlocks();
         for (Identifier blockId : customBlocks) {
             itemEntries.add(new StartGamePacket.ItemEntry(blockId.toString(), (short) this.getRuntimeId(blockId)));
         }

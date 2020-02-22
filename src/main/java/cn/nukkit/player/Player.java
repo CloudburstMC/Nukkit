@@ -738,19 +738,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     protected void doFirstSpawn() {
         this.spawned = true;
 
-        this.setEnableClientCommand(true);
-
-        this.getAdventureSettings().update();
-
-        this.sendPotionEffects(this);
-        this.sendData(this);
-        this.getInventory().sendContents(this);
-        this.getInventory().sendArmorContents(this);
-
-        SetTimePacket setTimePacket = new SetTimePacket();
-        setTimePacket.setTime(this.getLevel().getTime());
-        this.sendPacket(setTimePacket);
-
         Location loc = this.getLevel().getSafeSpawn(this.getLocation());
 
         PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(this, loc, true);
@@ -784,15 +771,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         this.noDamageTicks = 60;
 
-        this.getServer().sendRecipeList(this);
-
-        if (this.getGamemode() == Player.SPECTATOR) {
-            InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
-            inventoryContentPacket.setContainerId(ContainerIds.CREATIVE);
-            this.sendPacket(inventoryContentPacket);
-        } else {
-            this.getInventory().sendCreativeContents();
-        }
 
         this.getChunkManager().getLoadedChunks().forEach((LongConsumer) chunkKey -> {
             int chunkX = Chunk.fromKeyX(chunkKey);
@@ -1592,14 +1570,17 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         startGamePacket.setRainLevel(0);
         startGamePacket.setLightningLevel(0);
         startGamePacket.setCommandsEnabled(this.isEnableClientCommand());
+        startGamePacket.setMultiplayerGame(true);
+        startGamePacket.setBroadcastingToLan(true);
         this.getLevel().getGameRules().toNetwork(startGamePacket.getGamerules());
         startGamePacket.setLevelId(""); // This is irrelevant since we have multiple levels
         startGamePacket.setWorldName(this.getServer().getNetwork().getName()); // We might as well use the MOTD instead of the default level name
-        startGamePacket.setGeneratorId(1); //0 old, 1 infinite, 2 flat - Has no effect to my knowledge
+        startGamePacket.setGeneratorId(1); // 0 old, 1 infinite, 2 flat - Has no effect to my knowledge
         startGamePacket.setItemEntries(ItemRegistry.get().getItemEntries());
         startGamePacket.setXblBroadcastMode(GamePublishSetting.PUBLIC);
         startGamePacket.setPlatformBroadcastMode(GamePublishSetting.PUBLIC);
-        startGamePacket.setDefaultPlayerPermission(PlayerPermission.VISITOR);
+        startGamePacket.setDefaultPlayerPermission(PlayerPermission.MEMBER);
+        startGamePacket.setServerChunkTickRange(4);
         startGamePacket.setVanillaVersion("*");
         startGamePacket.setPremiumWorldTemplateId("");
         startGamePacket.setMultiplayerCorrelationId("");
@@ -1619,6 +1600,29 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         updateBlockPropertiesPacket.setProperties(BlockRegistry.get().getPropertiesTag());
         this.sendPacket(updateBlockPropertiesPacket);
 
+        this.setEnableClientCommand(true);
+
+        this.getAdventureSettings().update();
+
+        this.sendPotionEffects(this);
+        this.sendData(this);
+        this.getInventory().sendContents(this);
+        this.getInventory().sendArmorContents(this);
+
+        if (this.getGamemode() == Player.SPECTATOR) {
+            InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
+            inventoryContentPacket.setContainerId(ContainerIds.CREATIVE);
+            this.sendPacket(inventoryContentPacket);
+        } else {
+            this.getInventory().sendCreativeContents();
+        }
+
+        SetTimePacket setTimePacket = new SetTimePacket();
+        setTimePacket.setTime(this.getLevel().getTime());
+        this.sendPacket(setTimePacket);
+
+        this.getServer().sendRecipeList(this);
+
         this.loggedIn = true;
 
         this.getLevel().sendTime(this);
@@ -1631,13 +1635,14 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         log.info(this.getServer().getLanguage().translateString("nukkit.player.logIn",
                 TextFormat.AQUA + this.username + TextFormat.WHITE,
-                this.getSocketAddress().getAddress().getHostAddress(),
-                String.valueOf(this.getSocketAddress().getPort()),
-                String.valueOf(this.getUniqueId()),
+                this.getAddress(),
+                this.getPort(),
+                this.getUniqueId(),
                 this.getLevel().getName(),
-                String.valueOf(NukkitMath.round(pos.getX(), 4)),
-                String.valueOf(NukkitMath.round(pos.getY(), 4)),
-                String.valueOf(NukkitMath.round(pos.getZ(), 4))));
+                NukkitMath.round(pos.getX(), 4),
+                NukkitMath.round(pos.getY(), 4),
+                NukkitMath.round(pos.getZ(), 4)
+        ));
 
         if (this.isOp() || this.hasPermission("nukkit.textcolor")) {
             this.setRemoveFormat(false);
