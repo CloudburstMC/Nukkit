@@ -144,7 +144,7 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
                 }
 
                 double deltaX = this.x - damager.getX();
-                double deltaZ = this.z - damager.getY();
+                double deltaZ = this.z - damager.getZ();
                 this.knockBack(damager, source.getDamage(), deltaX, deltaZ, ((EntityDamageByEntityEvent) source).getKnockBack());
             }
 
