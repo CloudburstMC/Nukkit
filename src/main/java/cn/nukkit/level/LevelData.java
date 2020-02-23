@@ -22,7 +22,7 @@ public class LevelData {
     private int dimension;
     private Identifier generator;
     private String generatorOptions = "";
-    private String name = "World";
+    private String name;
     private long time;
     private Vector3i spawn = new Vector3i(0, 128, 0);
     private int serverChunkTickRange;

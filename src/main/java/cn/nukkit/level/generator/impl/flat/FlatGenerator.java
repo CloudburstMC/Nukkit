@@ -6,11 +6,17 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.math.ChunkPos;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import lombok.RequiredArgsConstructor;
 import net.daporkchop.lib.random.PRandom;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static cn.nukkit.block.BlockIds.*;
 
@@ -20,54 +26,59 @@ import static cn.nukkit.block.BlockIds.*;
  * @author DaPorkchop_
  */
 public final class FlatGenerator implements Generator {
-    public static final Identifier ID = Identifier.from("nukkitx", "flat");
+    public static final Identifier ID = Identifier.from("minecraft", "flat");
+
+    private static final Pattern PRESET_PATTERN = Pattern.compile("^(?:([0-9]+)\\*)?((?:[a-z0-9_]+:)?[a-z0-9_]+)(?:#([0-9]+))?$", Pattern.CASE_INSENSITIVE);
+    private static final String DEFAULT_PRESET = "bedrock,3*dirt,grass";
+
+    private final Layer[] layers;
 
     public FlatGenerator(long seed, String options) {
-        //porktodo: parse generator options
+        if (options == null || options.isEmpty())   {
+            options = DEFAULT_PRESET;
+        }
+
+        List<Layer> layers = new ArrayList<>();
+        Matcher matcher = PRESET_PATTERN.matcher("");
+        String[] split = options.split(",");
+        for (String s : split)  {
+            Preconditions.checkArgument(matcher.reset(s).find(), "Invalid layer: \"%s\"", s);
+
+            String size = matcher.group(1);
+            String id = matcher.group(2);
+            String meta = matcher.group(3);
+            layers.add(new Layer(
+                    BlockRegistry.get().getRuntimeId(Identifier.fromString(id), meta == null ? 0 : Integer.parseInt(meta)),
+                    size == null ? 1 : Integer.parseInt(size)));
+        }
+        Preconditions.checkArgument(!layers.isEmpty(), "No layers configured!");
+        this.layers = layers.toArray(new Layer[layers.size()]);
     }
 
     @Override
     public void generate(PRandom random, IChunk chunk, int chunkX, int chunkZ) {
-        final int bedrockId = BlockRegistry.get().getRuntimeId(BEDROCK, 0);
-        final int dirtId = BlockRegistry.get().getRuntimeId(DIRT, 0);
-        final int grassId = BlockRegistry.get().getRuntimeId(GRASS, 0);
+        int y = 0;
 
-        for (int x = 15; x >= 0; x--)   {
-            for (int z = 15; z >= 0; z--)   {
-                chunk.setBlockRuntimeIdUnsafe(x, 0, z, bedrockId);
-                for (int y = 1; y < 4; y++) {
-                    chunk.setBlockRuntimeIdUnsafe(x, y, z, dirtId);
+        for (Layer layer : this.layers) {
+            for (int i = 0; i < layer.size; i++) {
+                for (int x = 15; x >= 0; x--) {
+                    for (int z = 15; z >= 0; z--) {
+                        chunk.setBlockRuntimeIdUnsafe(x, y, z, layer.runtimeId);
+                    }
                 }
-                chunk.setBlockRuntimeIdUnsafe(x, 4, z, grassId);
+                y++;
             }
         }
-
-        chunk.setBlockRuntimeIdUnsafe(0, 5, 0, bedrockId);
-        chunk.setBlockRuntimeIdUnsafe(15, 5, 0, bedrockId);
-        chunk.setBlockRuntimeIdUnsafe(0, 5, 15, bedrockId);
-        chunk.setBlockRuntimeIdUnsafe(15, 5, 15, bedrockId);
     }
 
     @Override
     public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
-        //debug stuff
-        if (true)   {
-            int blockX = chunkX << 4;
-            int blockZ = chunkZ << 4;
-
-            for (int x = 16 - 3; x <= 16 + 3; x++)  {
-                level.setBlockIdAt(blockX + x, 5, blockZ + 16 - 3, BRICK_BLOCK);
-            }
-            for (int z = 16 - 3; z <= 16 + 3; z++)  {
-                level.setBlockIdAt(blockX + 16 - 3, 5, blockZ + z, BRICK_BLOCK);
-            }
-
-            level.setBlockIdAt(blockX + 15, 6, blockZ + 15, GLOWSTONE);
-            level.setBlockIdAt(blockX + 16, 6, blockZ + 15, GLOWSTONE);
-            level.setBlockIdAt(blockX + 15, 6, blockZ + 16, GLOWSTONE);
-            level.setBlockIdAt(blockX + 16, 6, blockZ + 16, GLOWSTONE);
-        }
-
         //no-op
+    }
+
+    @RequiredArgsConstructor
+    private static final class Layer    {
+        private final int runtimeId;
+        private final int size;
     }
 }

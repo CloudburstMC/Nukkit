@@ -16,7 +16,7 @@ import java.util.Collections;
  * @author DaPorkchop_
  */
 public final class VoidGenerator implements Generator {
-    public static final Identifier ID = Identifier.from("nukkitx", "void");
+    public static final Identifier ID = Identifier.from("minecraft", "void");
 
     public VoidGenerator(long seed, String options) {
         //no-op
