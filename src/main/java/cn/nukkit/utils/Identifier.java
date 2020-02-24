@@ -7,8 +7,6 @@ import net.daporkchop.lib.common.cache.ThreadCache;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -20,7 +18,7 @@ public final class Identifier implements Comparable<Identifier> {
 
     public static final Identifier EMPTY = new Identifier("", "", "" + NAMESPACE_SEPARATOR);
 
-    private static final Pattern PATTERN = Pattern.compile("^(?>minecraft:)?(?>([a-z0-9_]*)" + NAMESPACE_SEPARATOR + ")?([a-z0-9_]*)$");
+    private static final Pattern PATTERN = Pattern.compile("^(?>minecraft:)?(?>([a-z0-9_]*)" + NAMESPACE_SEPARATOR + ")?([a-zA-Z0-9_]*)$");
     private static final Cache<Matcher> MATCHER_CACHE = ThreadCache.soft(() -> PATTERN.matcher(""));
 
     private static final Lock READ_LOCK;
@@ -55,23 +53,23 @@ public final class Identifier implements Comparable<Identifier> {
         Identifier id;
         READ_LOCK.lock();
         try {
-            id = VALUES.get(identifier);
+            id = VALUES.get(identifier.toLowerCase());
         } finally {
             READ_LOCK.unlock();
         }
 
         if (id == null) {
             String namespace = matcher.group(1);
-            String name = matcher.group(2);
-            String fullName = namespace == null && !identifier.startsWith("minecraft:") ? "minecraft:" + name : identifier;
+            String name = matcher.group(2).toLowerCase();
+            String fullName = namespace == null && !identifier.startsWith("minecraft:") ? "minecraft:" + matcher.group(2) : identifier;
 
             //create new identifier instance
             WRITE_LOCK.lock();
             try {
                 //try get again in case identifier was created while obtaining write lock
-                if ((id = VALUES.get(identifier)) == null)  {
+                if ((id = VALUES.get(identifier.toLowerCase())) == null) {
                     id = new Identifier(namespace == null ? "minecraft" : namespace, name, fullName);
-                    if (namespace == null)  {
+                    if (namespace == null) {
                         //also put it into the map without minecraft: in the key to facilitate faster lookups when the prefix is omitted
                         VALUES.put(name, id);
                     }
