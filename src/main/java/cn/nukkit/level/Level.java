@@ -263,7 +263,6 @@ public class Level implements ChunkManager, Metadatable {
         log.info(this.server.getLanguage().translateString("nukkit.level.preparing",
                 TextFormat.GREEN + getId() + TextFormat.WHITE));
 
-        //porktodo:
         this.generator = GeneratorRegistry.get().getGeneratorFactory(this.levelData.getGenerator()).create(this.getSeed(), this.levelData.getGeneratorOptions());
 
         if (this.levelData.getRainTime() <= 0) {

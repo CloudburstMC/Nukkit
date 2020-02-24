@@ -10,99 +10,91 @@ import cn.nukkit.utils.Identifier;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import lombok.experimental.UtilityClass;
+import lombok.Getter;
+import lombok.NonNull;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Implementation of {@link ChunkManager} used during chunk population.
  *
  * @author DaPorkchop_
  */
-@UtilityClass
-public class PopulationChunkManager {
-    public static ChunkManager create(Chunk chunk, Collection<LockableChunk> allChunks) {
-        //porktodo: optimized implementation for simple 3x3 square of chunks
-        return new ComplexShape(chunk, allChunks);
+public final class PopulationChunkManager implements ChunkManager {
+    @Getter
+    private final long seed;
+
+    private final LockableChunk[] chunks = new LockableChunk[3 * 3];
+
+    private final int cornerX;
+    private final int cornerZ;
+
+    public PopulationChunkManager(@NonNull Chunk chunk, @NonNull LockableChunk[] allChunks, long seed) {
+        this.seed = seed;
+        this.cornerX = chunk.getX() - 1;
+        this.cornerZ = chunk.getZ() - 1;
+
+        for (LockableChunk lockableChunk : allChunks)   {
+            this.chunks[this.chunkIndex(lockableChunk.getX(), lockableChunk.getZ())] = lockableChunk;
+        }
     }
 
-    private static final class ComplexShape implements ChunkManager {
-        private final Long2ObjectMap<LockableChunk> chunks = new Long2ObjectOpenHashMap<>();
-        private final Level level;
+    private int chunkIndex(int chunkX, int chunkZ)  {
+        int relativeX = chunkX - this.cornerX;
+        int relativeZ = chunkZ - this.cornerZ;
+        Preconditions.checkArgument(relativeX >= 0 && relativeX < 3 && relativeZ >= 0 && relativeZ < 3, "Chunk position (%s,%s) out of population bounds", chunkX, chunkZ);
+        return relativeX * 3 + relativeZ;
+    }
 
-        public ComplexShape(Chunk chunk, Collection<LockableChunk> allChunks) {
-            this.level = chunk.getLevel();
+    private LockableChunk chunkFromBlock(int blockX, int blockZ)  {
+        int relativeX = (blockX >> 4) - this.cornerX;
+        int relativeZ = (blockZ >> 4) - this.cornerZ;
+        Preconditions.checkArgument(relativeX >= 0 && relativeX < 3 && relativeZ >= 0 && relativeZ < 3, "Block position (%s,%s) out of population bounds", blockX, blockZ);
+        return this.chunks[relativeX * 3 + relativeZ];
+    }
 
-            for (LockableChunk populationChunk : allChunks) {
-                this.chunks.put(populationChunk.key(), populationChunk);
-            }
-        }
+    @Override
+    public Identifier getBlockIdAt(int x, int y, int z, int layer) {
+        return this.chunkFromBlock(x, z).getBlockId(x & 0xF, y, z & 0xF, layer);
+    }
 
-        @Override
-        public Identifier getBlockIdAt(int x, int y, int z, int layer) {
-            LockableChunk chunk = this.chunks.get(Chunk.key(x >> 4, z >> 4));
-            return Preconditions.checkNotNull(chunk, "Block position (%s,%s) out of population bounds", x, z)
-                    .getBlockId(x & 0xF, y, z & 0xF, layer);
-        }
+    @Override
+    public void setBlockIdAt(int x, int y, int z, int layer, Identifier id) {
+        this.chunkFromBlock(x, z).setBlockId(x & 0xF, y, z & 0xF, layer, id);
+    }
 
-        @Override
-        public void setBlockIdAt(int x, int y, int z, int layer, Identifier id) {
-            LockableChunk chunk = this.chunks.get(Chunk.key(x >> 4, z >> 4));
-            Preconditions.checkNotNull(chunk, "Block position (%s,%s) out of population bounds", x, z)
-                    .setBlockId(x & 0xF, y, z & 0xF, layer, id);
-        }
+    @Override
+    public int getBlockRuntimeIdUnsafe(int x, int y, int z, int layer) {
+        return this.chunkFromBlock(x, z).getBlockRuntimeIdUnsafe(x & 0xF, y, z & 0xF, layer);
+    }
 
-        @Override
-        public int getBlockRuntimeIdUnsafe(int x, int y, int z, int layer) {
-            LockableChunk chunk = this.chunks.get(Chunk.key(x >> 4, z >> 4));
-            return Preconditions.checkNotNull(chunk, "Block position (%s,%s) out of population bounds", x, z)
-                    .getBlockRuntimeIdUnsafe(x & 0xF, y, z & 0xF, layer);
-        }
+    @Override
+    public void setBlockRuntimeIdUnsafe(int x, int y, int z, int layer, int runtimeId) {
+        this.chunkFromBlock(x, z).setBlockRuntimeIdUnsafe(x & 0xF, y, z & 0xF, layer, runtimeId);
+    }
 
-        @Override
-        public void setBlockRuntimeIdUnsafe(int x, int y, int z, int layer, int runtimeId) {
-            LockableChunk chunk = this.chunks.get(Chunk.key(x >> 4, z >> 4));
-            Preconditions.checkNotNull(chunk, "Block position (%s,%s) out of population bounds", x, z)
-                    .setBlockRuntimeIdUnsafe(x & 0xF, y, z & 0xF, layer, runtimeId);
-        }
+    @Override
+    public int getBlockDataAt(int x, int y, int z, int layer) {
+        return this.chunkFromBlock(x, z).getBlockData(x & 0xF, y, z & 0xF, layer);
+    }
 
-        @Override
-        public int getBlockDataAt(int x, int y, int z, int layer) {
-            LockableChunk chunk = this.chunks.get(Chunk.key(x >> 4, z >> 4));
-            return Preconditions.checkNotNull(chunk, "Block position (%s,%s) out of population bounds", x, z)
-                    .getBlockData(x & 0xF, y, z & 0xF, layer);
-        }
+    @Override
+    public void setBlockDataAt(int x, int y, int z, int layer, int data) {
+        this.chunkFromBlock(x, z).setBlockData(x & 0xF, y, z & 0xF, layer, data);
+    }
 
-        @Override
-        public void setBlockDataAt(int x, int y, int z, int layer, int data) {
-            LockableChunk chunk = this.chunks.get(Chunk.key(x >> 4, z >> 4));
-            Preconditions.checkNotNull(chunk, "Block position (%s,%s) out of population bounds", x, z)
-                    .setBlockData(x & 0xF, y, z & 0xF, layer, data);
-        }
+    @Override
+    public Block getBlockAt(int x, int y, int z, int layer) {
+        return this.chunkFromBlock(x, z).getBlock(x & 0xF, y, z & 0xF, layer);
+    }
 
-        @Override
-        public Block getBlockAt(int x, int y, int z, int layer) {
-            LockableChunk chunk = this.chunks.get(Chunk.key(x >> 4, z >> 4));
-            return Preconditions.checkNotNull(chunk, "Block position (%s,%s) out of population bounds", x, z)
-                    .getBlock(x & 0xF, y, z & 0xF, layer);
-        }
+    @Override
+    public void setBlockAt(int x, int y, int z, int layer, Block block) {
+        this.chunkFromBlock(x, z).setBlock(x & 0xF, y, z & 0xF, layer, block);
+    }
 
-        @Override
-        public void setBlockAt(int x, int y, int z, int layer, Block block) {
-            LockableChunk chunk = this.chunks.get(Chunk.key(x >> 4, z >> 4));
-            Preconditions.checkNotNull(chunk, "Block position (%s,%s) out of population bounds", x, z)
-                    .setBlock(x & 0xF, y, z & 0xF, layer, block);
-        }
-
-        @Override
-        public IChunk getChunk(int chunkX, int chunkZ) {
-            return Preconditions.checkNotNull(this.chunks.get(Chunk.key(chunkX, chunkZ)), "Chunk position (%s,%s) out of population bounds", chunkX, chunkZ);
-        }
-
-        @Override
-        public long getSeed() {
-            return this.level.getSeed();
-        }
+    @Override
+    public IChunk getChunk(int chunkX, int chunkZ) {
+        return this.chunks[this.chunkIndex(chunkX, chunkZ)];
     }
 }

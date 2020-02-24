@@ -35,17 +35,19 @@ public final class PopulationTask implements BiFunction<Chunk, List<Chunk>, Chun
         PRandom random = new FastJavaPRandom(~(chunk.key() ^ chunk.getLevel().getSeed()));
 
         chunks.add(chunk);
-        List<LockableChunk> lockableChunks = chunks.stream()
+        LockableChunk[] lockableChunks = chunks.stream()
                 .peek(populationChunk -> Preconditions.checkState(populationChunk.isGenerated(), "Chunk %d,%d was used for population before being generated!", populationChunk.getX(), populationChunk.getZ()))
                 .map(Chunk::writeLockable)
                 .sorted()
                 .peek(Lock::lock)
-                .collect(Collectors.toList());
+                .toArray(LockableChunk[]::new);
         try {
-            this.generator.populate(random, PopulationChunkManager.create(chunk, lockableChunks), chunk.getX(), chunk.getZ());
+            this.generator.populate(random, new PopulationChunkManager(chunk, lockableChunks, chunk.getLevel().getSeed()), chunk.getX(), chunk.getZ());
             chunk.setPopulated();
         } finally {
-            lockableChunks.forEach(Lock::unlock);
+            for (LockableChunk lockableChunk : lockableChunks)  {
+                lockableChunk.unlock();
+            }
         }
         return chunk;
     }
