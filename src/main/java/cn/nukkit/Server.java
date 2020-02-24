@@ -1910,7 +1910,6 @@ public class Server {
         this.registerBlockEntities();
 
         Enchantment.init();
-        //porktodo: EnumBiome.values(); //load class, this also registers biomes
         Item.initCreativeItems();
         Effect.init();
         Potion.init();

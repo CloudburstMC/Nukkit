@@ -3,6 +3,7 @@ package cn.nukkit.registry;
 import cn.nukkit.level.generator.*;
 import cn.nukkit.level.generator.impl.VoidGenerator;
 import cn.nukkit.level.generator.impl.flat.FlatGenerator;
+import cn.nukkit.level.generator.standard.StandardGenerator;
 import cn.nukkit.utils.Identifier;
 import lombok.RequiredArgsConstructor;
 
@@ -67,11 +68,7 @@ public class GeneratorRegistry implements Registry {
     }
 
     private void registerVanillaStorage() throws RegistryException {
-        //porktodo: implement this
-        //this.register(GeneratorIds.NORMAL, NormalGenerator.FACTORY, 1000);
-        //this.register(GeneratorIds.FLAT, FlatGenerator.FACTORY, 500);
-        //this.register(GeneratorIds.NETHER, NetherGenerator.FACTORY, 100);
-
+        this.register(StandardGenerator.ID, StandardGenerator::new, 1000);
         this.register(FlatGenerator.ID, FlatGenerator::new, 500);
         this.register(VoidGenerator.ID, VoidGenerator::new, 1);
     }

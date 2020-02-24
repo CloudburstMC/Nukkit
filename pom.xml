@@ -230,7 +230,7 @@
         </dependency>
         <dependency>
             <groupId>net.daporkchop.lib</groupId>
-            <artifactId>random</artifactId> <!-- will be replaced by porklib:noise later, but it's not needed yet -->
+            <artifactId>noise</artifactId>
             <version>0.5.3-SNAPSHOT</version>
         </dependency>
         <dependency>
