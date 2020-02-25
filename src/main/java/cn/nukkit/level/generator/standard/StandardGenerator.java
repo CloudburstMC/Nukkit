@@ -4,6 +4,8 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.Generator;
+import cn.nukkit.level.generator.standard.biome.BiomeMap;
+import cn.nukkit.level.generator.standard.biome.CachingBiomeMap;
 import cn.nukkit.level.generator.standard.gen.BlockReplacer;
 import cn.nukkit.level.generator.standard.gen.DensitySource;
 import cn.nukkit.level.generator.standard.registry.StandardGeneratorRegistries;
@@ -27,13 +29,16 @@ public final class StandardGenerator implements Generator {
 
     private static final String DEFAULT_PRESET = "nukkitx:overworld";
 
-    private static final int    STEP         = 4;
-    private static final double D_STEP       = 1.0d / (double) STEP;
-    private static final int    CACHE_WIDTH  = 16 / STEP + 1;
-    private static final int    CACHE_HEIGHT = 256 / STEP + 1;
+    private static final int    STEP          = 4;
+    private static final double D_STEP        = 1.0d / (double) STEP;
+    private static final int    CACHE_WIDTH   = 16 / STEP + 1;
+    private static final int    CACHE_HEIGHT  = 256 / STEP + 1;
+    private static final int    ICACHE_WIDTH  = 16 + 1;
+    private static final int    ICACHE_HEIGHT = 256 + 1;
 
     private static final Cache<ThreadData> THREAD_DATA_CACHE = ThreadCache.soft(ThreadData::new);
 
+    private final BiomeMap        biomes;
     private final DensitySource   density;
     private final BlockReplacer[] replacers;
 
@@ -41,9 +46,13 @@ public final class StandardGenerator implements Generator {
         Identifier presetId = Identifier.fromString(Strings.isNullOrEmpty(options) ? DEFAULT_PRESET : options);
         Config preset = StandardGeneratorUtils.loadUnchecked("preset", presetId);
 
-        ConfigSection noiseConfig = preset.getSection("generation.density");
+        ConfigSection biomesConfig = preset.getSection("generation.biomes");
+        this.biomes = StandardGeneratorRegistries.biomeMap()
+                .apply(biomesConfig, computeRandom(seed, "generation.biomes", biomesConfig));
+
+        ConfigSection densityConfig = preset.getSection("generation.density");
         this.density = StandardGeneratorRegistries.worldNoise()
-                .apply(noiseConfig, computeRandom(seed, "generation.density", noiseConfig));
+                .apply(densityConfig, computeRandom(seed, "generation.density", densityConfig));
 
         this.replacers = preset.<ConfigSection>getList("generation.replacers").stream()
                 .map(section -> StandardGeneratorRegistries.blockReplacer()
@@ -57,22 +66,23 @@ public final class StandardGenerator implements Generator {
         final int baseZ = chunkZ << 4;
         final ThreadData threadData = THREAD_DATA_CACHE.get();
 
+        final CachingBiomeMap biomeMap = threadData.biomeMap.init(this.biomes);
+
         //compute initial densities
         final double[] densityCache = threadData.densityCache;
         for (int i = 0, x = 0; x < CACHE_WIDTH; x++) {
             for (int y = 0; y < CACHE_HEIGHT; y++) {
                 for (int z = 0; z < CACHE_WIDTH; z++) {
-                    //porktodo: biomes
-                    densityCache[i++] = this.density.get(baseX + x * STEP, y * STEP, baseZ + z * STEP, null);
+                    densityCache[i++] = this.density.get(baseX + x * STEP, y * STEP, baseZ + z * STEP, biomeMap);
                 }
             }
         }
 
-        //interpolate densities and run block replacers
+        //interpolate densities
+        final double[] iDensityCache = threadData.iDensityCache;
         for (int sectionX = 0; sectionX < CACHE_WIDTH - 1; sectionX++) {
             for (int sectionY = 0; sectionY < CACHE_HEIGHT - 1; sectionY++) {
-                for (int sectionZ = 0; sectionZ < CACHE_WIDTH - 1; sectionZ++) {
-                    int i = ((sectionX) * CACHE_HEIGHT + (sectionY)) * CACHE_WIDTH + (sectionZ);
+                for (int i = (sectionX * CACHE_HEIGHT + sectionY) * CACHE_WIDTH, sectionZ = 0; sectionZ < CACHE_WIDTH - 1; sectionZ++, i++) {
                     double dxyz = densityCache[i];
                     double dxyZ = densityCache[i + 1];
                     double dxYz = densityCache[i + CACHE_WIDTH];
@@ -116,19 +126,43 @@ public final class StandardGenerator implements Generator {
                                 int blockY = sectionY * STEP | stepY;
                                 int blockZ = sectionZ * STEP | stepZ;
 
-                                Block block = null;
-                                for (BlockReplacer replacer : this.replacers) {
-                                    block = replacer.replace(block, baseX | blockX, blockY, baseZ | blockZ, 0.0d, 0.0d, 0.0d, iz);
-                                }
-                                if (block != null) {
-                                    chunk.setBlock(blockX, blockY, blockZ, 0, block);
-                                }
+                                iDensityCache[(blockX * ICACHE_HEIGHT + blockY) * ICACHE_WIDTH + blockZ] = iz;
                             }
                         }
                     }
                 }
             }
         }
+
+        //run replacers
+        for (int x = 0; x < 16; x++) {
+            for (int y = 0; y < 256; y++) {
+                for (int i = (x * ICACHE_HEIGHT + y) * ICACHE_WIDTH, z = 0; z < 16; z++, i++) {
+                    double d = iDensityCache[i];
+                    double gradX = iDensityCache[i + ICACHE_HEIGHT * ICACHE_WIDTH] - d;
+                    double gradY = iDensityCache[i + ICACHE_WIDTH] - d;
+                    double gradZ = iDensityCache[i + 1] - d;
+
+                    Block block = null;
+                    for (BlockReplacer replacer : this.replacers) {
+                        block = replacer.replace(block, x | baseX, y, z | baseZ, gradX, gradY, gradZ, d);
+                    }
+                    if (block != null) {
+                        chunk.setBlock(x, y, z, 0, block);
+                    }
+                }
+            }
+        }
+
+        //set biomes
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                chunk.setBiome(x, z, biomeMap.get(x | baseX, z | baseZ).getRuntimeId());
+            }
+        }
+
+        //clean up
+        biomeMap.clear();
     }
 
     @Override
@@ -136,6 +170,8 @@ public final class StandardGenerator implements Generator {
     }
 
     private static final class ThreadData {
-        private final double[] densityCache = new double[CACHE_WIDTH * CACHE_HEIGHT * CACHE_WIDTH];
+        private final double[]        densityCache  = new double[CACHE_WIDTH * CACHE_HEIGHT * CACHE_WIDTH];
+        private final double[]        iDensityCache = new double[ICACHE_WIDTH * ICACHE_HEIGHT * ICACHE_WIDTH];
+        private final CachingBiomeMap biomeMap      = new CachingBiomeMap();
     }
 }

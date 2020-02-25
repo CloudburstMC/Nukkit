@@ -3,6 +3,10 @@
 # Author: DaPorkchop_
 
 generation:
+  biomes:
+    id: "nukkitx:constant"
+    dictionary: "nukkitx:overworld"
+    biome: "minecraft:jungle"
   density:
     id: "nukkitx:vanilla"
     selectorNoise:

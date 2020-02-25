@@ -3,6 +3,7 @@ package cn.nukkit.level.generator.standard.biome;
 import cn.nukkit.level.generator.standard.store.StandardGeneratorStores;
 import cn.nukkit.utils.ConfigSection;
 import cn.nukkit.utils.Identifier;
+import com.google.common.base.Preconditions;
 import lombok.NonNull;
 
 import java.util.Collections;
@@ -32,6 +33,6 @@ public final class BiomeDictionary {
     }
 
     public GenerationBiome find(@NonNull Identifier id) {
-        return this.biomes.get(id);
+        return Preconditions.checkNotNull(this.biomes.get(id), "Unknown biome ID \"%s\"", id);
     }
 }

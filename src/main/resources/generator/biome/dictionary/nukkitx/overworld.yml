@@ -1,0 +1,7 @@
+# Runtime IDs sourced from https://minecraft.gamepedia.com/Biome/ID
+
+biomes:
+  - id: "minecraft:plains"
+    runtimeId: 1
+  - id: "minecraft:jungle"
+    runtimeId: 21
