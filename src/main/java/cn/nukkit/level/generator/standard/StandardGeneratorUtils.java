@@ -54,8 +54,8 @@ public class StandardGeneratorUtils {
         Config config = new Config(Config.YAML);
         try (InputStream in = read(category, id)) {
             Preconditions.checkState(config.load(in));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(String.format("Unable to load %s \"%s\"", category, id), e);
         }
         return config;
     }

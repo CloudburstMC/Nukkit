@@ -1,6 +1,8 @@
 package cn.nukkit.level.generator.standard.gen;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.utils.ConfigSection;
+import lombok.NonNull;
 
 /**
  * Replaces blocks as part of the terrain surface generation pipeline.
@@ -23,4 +25,20 @@ public interface BlockReplacer {
      * @return the replaced block. A value of {@code null} indicates air
      */
     Block replace(Block prev, int x, int y, int z, double gradX, double gradY, double gradZ, double density);
+
+    /**
+     * Creates instances of {@link BlockReplacer} from their configuration.
+     *
+     * @author DaPorkchop_
+     */
+    @FunctionalInterface
+    interface Factory {
+        /**
+         * Creates a new {@link BlockReplacer} from the given config.
+         *
+         * @param config the {@link ConfigSection} containing the config to use
+         * @return a new {@link BlockReplacer} with the given configuration
+         */
+        BlockReplacer create(@NonNull ConfigSection config);
+    }
 }

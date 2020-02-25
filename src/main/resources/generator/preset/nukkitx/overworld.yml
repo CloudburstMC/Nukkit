@@ -3,4 +3,8 @@
 # Author: DaPorkchop_
 
 generation:
+  replacers:
+    - id: "nukkitx:sea"
+      block: "water"
+      seaLevel: 4
 population:
