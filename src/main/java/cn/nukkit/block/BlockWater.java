@@ -16,8 +16,12 @@ import static cn.nukkit.block.BlockIds.FLOWING_WATER;
  */
 public class BlockWater extends BlockLiquid {
 
-    public BlockWater(Identifier id) {
-        super(id);
+    protected BlockWater(Identifier id, Identifier flowingId, Identifier stationaryId) {
+        super(id, flowingId, stationaryId);
+    }
+
+    protected BlockWater(Identifier flowingId, Identifier stationaryId) {
+        this(flowingId, flowingId, stationaryId);
     }
 
     @Override
@@ -55,5 +59,9 @@ public class BlockWater extends BlockLiquid {
     @Override
     public boolean usesWaterLogging() {
         return true;
+    }
+
+    public static BlockFactory factory(Identifier stationaryId) {
+        return id-> new BlockWater(id, stationaryId);
     }
 }
