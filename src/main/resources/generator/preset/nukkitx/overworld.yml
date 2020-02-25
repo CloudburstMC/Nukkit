@@ -7,9 +7,9 @@ generation:
     id: "nukkitx:vanilla"
     selectorNoise:
       id: "nukkitx:simplex"
-      scaleX: 0.05
-      scaleY: 0.05
-      scaleZ: 0.05
+      scaleX: 0.01
+      scaleY: 0.01
+      scaleZ: 0.01
       octaves: 4
       factor: 1.0
       offset: 0.0
