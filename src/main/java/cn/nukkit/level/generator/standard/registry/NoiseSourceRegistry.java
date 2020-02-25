@@ -2,6 +2,7 @@ package cn.nukkit.level.generator.standard.registry;
 
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
+import cn.nukkit.level.generator.standard.StandardGeneratorUtils;
 import cn.nukkit.level.generator.standard.gen.BlockReplacer;
 import cn.nukkit.level.generator.standard.gen.NoiseSourceFactory;
 import cn.nukkit.level.generator.standard.gen.noise.NoiseEngines;
@@ -22,15 +23,13 @@ import net.daporkchop.lib.random.PRandom;
  * Registry for {@link BlockReplacer}.
  *
  * @author DaPorkchop_
- * @see StandardGeneratorRegistries#noiseSourceRegistry()
+ * @see StandardGeneratorRegistries#noiseSource()
  */
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public final class NoiseSourceRegistry extends AbstractGeneratorRegistry<NoiseSourceFactory> implements NoiseSourceFactory {
     @Override
     public NoiseSource apply(@NonNull ConfigSection config, @NonNull PRandom random) {
-        String id = config.getString("id");
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "id must be set!");
-        NoiseSourceFactory factory = this.get(Identifier.fromString(id));
+        NoiseSourceFactory factory = this.get(StandardGeneratorUtils.getId(config, "id"));
         return factory.apply(config, random);
     }
 

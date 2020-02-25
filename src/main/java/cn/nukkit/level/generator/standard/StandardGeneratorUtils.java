@@ -15,6 +15,8 @@ import lombok.experimental.UtilityClass;
 import net.daporkchop.lib.common.cache.Cache;
 import net.daporkchop.lib.common.cache.ThreadCache;
 import net.daporkchop.lib.common.misc.file.PFiles;
+import net.daporkchop.lib.random.PRandom;
+import net.daporkchop.lib.random.impl.FastJavaPRandom;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -53,12 +55,18 @@ public class StandardGeneratorUtils {
         return BlockRegistry.get().getBlock(id, meta == null ? 0 : Integer.parseInt(meta));
     }
 
-    public static Config load(@NonNull String category, @NonNull Identifier id) {
+    public static Config loadUnchecked(@NonNull String category, @NonNull Identifier id) {
+        try {
+            return load(category, id);
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("Unable to load %s \"%s\"", category, id), e);
+        }
+    }
+
+    public static Config load(@NonNull String category, @NonNull Identifier id) throws IOException {
         Config config = new Config(Config.YAML);
         try (InputStream in = read(category, id)) {
             Preconditions.checkState(config.load(in));
-        } catch (Exception e) {
-            throw new RuntimeException(String.format("Unable to load %s \"%s\"", category, id), e);
         }
         return config;
     }
@@ -91,6 +99,15 @@ public class StandardGeneratorUtils {
     }
 
     /**
+     * Creates the {@link PRandom} instance to be used for initializing a generation component.
+     *
+     * @see #computeSeed(long, String, ConfigSection)
+     */
+    public static PRandom computeRandom(long levelSeed, @NonNull String category, @NonNull ConfigSection config) {
+        return new FastJavaPRandom(computeSeed(levelSeed, category, config));
+    }
+
+    /**
      * Calculates the seed to be used for initializing a generation component.
      * <p>
      * This is important so that the RNG state for each component remains the same even if other ones are added/removed/modified.
@@ -107,5 +124,11 @@ public class StandardGeneratorUtils {
         }
         UUID uuid = UUID.nameUUIDFromBytes((category + '|' + config.getString("id")).getBytes(StandardCharsets.UTF_8));
         return levelSeed ^ uuid.getLeastSignificantBits() ^ uuid.getMostSignificantBits();
+    }
+
+    public static Identifier getId(@NonNull ConfigSection config, @NonNull String fieldName)    {
+        String id = config.getString(fieldName);
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "%s must be set!", fieldName);
+        return Identifier.fromString(id);
     }
 }

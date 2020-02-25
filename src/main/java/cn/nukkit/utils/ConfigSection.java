@@ -352,7 +352,7 @@ public class ConfigSection extends LinkedHashMap<String, Object> {
      * @param key - key (inside) current section
      * @return
      */
-    public List getList(String key) {
+    public <T> List<T> getList(String key) {
         return this.getList(key, null);
     }
 
@@ -363,7 +363,7 @@ public class ConfigSection extends LinkedHashMap<String, Object> {
      * @param defaultList - default value that will returned if section element is not exists
      * @return
      */
-    public List getList(String key, List defaultList) {
+    public <T> List<T> getList(String key, List<T> defaultList) {
         return this.get(key, defaultList);
     }
 
