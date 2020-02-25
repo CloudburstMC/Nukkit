@@ -36,7 +36,7 @@ public class PopulatorLava extends Populator {
                 if (y != -1 && chunk.getBlockId(x, y, z) == AIR) {
                     chunk.setBlockId(x, y, z, 0, FLOWING_LAVA);
                     chunk.setBlockLight(x, y, z, BlockRegistry.get().getBlock(FLOWING_LAVA, 0).getLightLevel());
-                    this.lavaSpread(level, random, bx + x, y, bz + z);
+                    //this.lavaSpread(level, random, bx + x, y, bz + z); <--- Causes errors
                 }
             }
         }

@@ -3,13 +3,14 @@ package cn.nukkit.level.provider.leveldb;
 import cn.nukkit.level.LevelData;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.chunk.ChunkBuilder;
+import cn.nukkit.level.chunk.LockableChunk;
 import cn.nukkit.level.provider.LevelProvider;
 import cn.nukkit.level.provider.leveldb.serializer.*;
 import cn.nukkit.utils.LoadState;
 import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
+import net.daporkchop.ldbjni.LevelDB;
 import org.iq80.leveldb.*;
-import org.iq80.leveldb.impl.Iq80DBFactory;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
@@ -42,7 +43,7 @@ class LevelDBProvider implements LevelProvider {
                 .createIfMissing(true)
                 .compressionType(CompressionType.ZLIB_RAW)
                 .blockSize(64 * 1024);
-        this.db = Iq80DBFactory.factory.open(dbPath.toFile(), options);
+        this.db = LevelDB.PROVIDER.open(dbPath.toFile(), options);
     }
 
     @Override
@@ -83,18 +84,32 @@ class LevelDBProvider implements LevelProvider {
         final int z = chunk.getZ();
 
         return CompletableFuture.supplyAsync(() -> {
-            WriteBatch batch = this.db.createWriteBatch();
+            //we clear the dirty flag here instead of in LevelChunkManager in case there are modifications to the chunk between now and the time it was enqueued
+            if (!chunk.clearDirty()) {
+                //the chunk was not dirty, do nothing
+                return null;
+            }
+            try (WriteBatch batch = this.db.createWriteBatch()) {
+                LockableChunk lockableChunk = chunk.readLockable();
+                lockableChunk.lock();
+                try {
+                    ChunkSerializers.serializeChunk(batch, chunk, 7);
+                    Data2dSerializer.serialize(batch, chunk);
 
-            ChunkSerializers.serializeChunk(batch, chunk, 7);
-            Data2dSerializer.serialize(batch, chunk);
+                    batch.put(LevelDBKey.VERSION.getKey(x, z), new byte[]{7});
 
-            batch.put(LevelDBKey.VERSION.getKey(x, z), new byte[]{7});
+                    BlockEntitySerializer.saveBlockEntities(batch, chunk);
+                    EntitySerializer.saveEntities(batch, chunk);
+                } finally {
+                    lockableChunk.unlock();
+                }
 
-            BlockEntitySerializer.saveBlockEntities(batch, chunk);
-            EntitySerializer.saveEntities(batch, chunk);
-
-            this.db.write(batch);
-            return null;
+                this.db.write(batch);
+                return null;
+            } catch (IOException e) {
+                //can't happen
+                throw new RuntimeException(e);
+            }
         }, this.executor);
     }
 

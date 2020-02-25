@@ -25,6 +25,10 @@ public final class PackManifest {
 
     private List<Dependency> dependencies = Collections.emptyList();
 
+    private List<String> capabilities = Collections.emptyList();
+
+    private List<SubPack> subpacks = Collections.emptyList();
+
     public static PackManifest load(InputStream stream) throws IOException {
         return Nukkit.JSON_MAPPER.readValue(stream, PackManifest.class);
     }
@@ -50,6 +54,16 @@ public final class PackManifest {
         private SemVersion version;
         @JsonProperty("min_engine_version")
         private SemVersion minEngineVersion;
+        @JsonProperty("pack_scope")
+        private String packScope = "global";
+        @JsonProperty("directory_load")
+        private boolean directoryLoad;
+        @JsonProperty("load_before_game")
+        private boolean loadBeforeGame;
+        @JsonProperty("lock_template_options")
+        private boolean lockTemplateOptions;
+        @JsonProperty("population_control")
+        private boolean populationControl;
     }
 
     @Data
@@ -71,5 +85,14 @@ public final class PackManifest {
     public static class Dependency {
         private UUID uuid;
         private SemVersion version;
+    }
+
+    @Data
+    public static class SubPack {
+        @JsonProperty("folder_name")
+        private String folderName;
+        private String name;
+        @JsonProperty("memory_tier")
+        private int memoryTier;
     }
 }

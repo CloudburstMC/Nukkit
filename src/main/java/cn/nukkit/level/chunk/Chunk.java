@@ -448,6 +448,11 @@ public final class Chunk implements IChunk, Closeable {
         return unsafe.isDirty();
     }
 
+    @Override
+    public boolean clearDirty() {
+        return this.unsafe.clearDirty();
+    }
+
     @Synchronized("loaders")
     public void addLoader(ChunkLoader chunkLoader) {
         Preconditions.checkNotNull(chunkLoader, "chunkLoader");
@@ -491,7 +496,11 @@ public final class Chunk implements IChunk, Closeable {
         //todo
     }
 
-    public LockableChunk lockable() {
+    public LockableChunk readLockable() {
+        return new LockableChunk(unsafe, lock.readLock());
+    }
+
+    public LockableChunk writeLockable() {
         return new LockableChunk(unsafe, lock.writeLock());
     }
 

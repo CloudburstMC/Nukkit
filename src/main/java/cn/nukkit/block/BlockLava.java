@@ -29,8 +29,12 @@ import static cn.nukkit.block.BlockIds.*;
  */
 public class BlockLava extends BlockLiquid {
 
-    public BlockLava(Identifier id) {
-        super(id);
+    protected BlockLava(Identifier id, Identifier flowingId, Identifier stationaryId) {
+        super(id, flowingId, stationaryId);
+    }
+
+    protected BlockLava(Identifier flowingId, Identifier stationaryId) {
+        this(flowingId, flowingId, stationaryId);
     }
 
     @Override
@@ -190,5 +194,10 @@ public class BlockLava extends BlockLiquid {
             return super.addVelocityToEntity(entity, vector);
         }
         return vector;
+    }
+
+
+    public static BlockFactory factory(Identifier stationaryId) {
+        return id-> new BlockLava(id, stationaryId);
     }
 }

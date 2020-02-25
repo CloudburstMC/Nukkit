@@ -267,6 +267,11 @@ public final class LockableChunk implements IChunk, Lock {
     }
 
     @Override
+    public boolean clearDirty() {
+        return this.unsafe.clearDirty();
+    }
+
+    @Override
     public void clear() {
         this.unsafe.clear();
     }
