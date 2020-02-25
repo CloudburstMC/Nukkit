@@ -1,7 +1,6 @@
-package cn.nukkit.level.generator.standard.gen.noise;
+package cn.nukkit.level.generator.standard.gen;
 
 import cn.nukkit.level.generator.standard.StandardGeneratorUtils;
-import cn.nukkit.level.generator.standard.gen.NoiseSourceFactory;
 import cn.nukkit.utils.ConfigSection;
 import cn.nukkit.utils.Identifier;
 import lombok.NonNull;
@@ -13,31 +12,34 @@ import net.daporkchop.lib.noise.engine.PerlinNoiseEngine;
 import net.daporkchop.lib.noise.engine.PorkianV2NoiseEngine;
 import net.daporkchop.lib.noise.engine.SimplexNoiseEngine;
 import net.daporkchop.lib.noise.filter.ScaleOctavesOffsetFilter;
+import net.daporkchop.lib.random.PRandom;
 import net.daporkchop.lib.random.impl.FastJavaPRandom;
+
+import java.util.function.BiFunction;
 
 /**
  * @author DaPorkchop_
  */
 @UtilityClass
-public class NoiseEngines {
+public class NoiseSources {
     public final Identifier ID_OPENSIMPLEX = Identifier.fromString("nukkitx:opensimplex");
     public final Identifier ID_PERLIN      = Identifier.fromString("nukkitx:perlin");
     public final Identifier ID_PORKIAN     = Identifier.fromString("nukkitx:porkian");
     public final Identifier ID_SIMPLEX     = Identifier.fromString("nukkitx:simplex");
 
-    public final NoiseSourceFactory OPENSIMPLEX = (config, random) -> {
+    public final BiFunction<ConfigSection, PRandom, NoiseSource> OPENSIMPLEX = (config, random) -> {
         random = new FastJavaPRandom(StandardGeneratorUtils.computeSeed(random.nextLong(), "noise", config));
         return parse(new OpenSimplexNoiseEngine(random), config);
     };
-    public final NoiseSourceFactory PERLIN      = (config, random) -> {
+    public final BiFunction<ConfigSection, PRandom, NoiseSource> PERLIN      = (config, random) -> {
         random = new FastJavaPRandom(StandardGeneratorUtils.computeSeed(random.nextLong(), "noise", config));
         return parse(new PerlinNoiseEngine(random), config);
     };
-    public final NoiseSourceFactory PORKIAN     = (config, random) -> {
+    public final BiFunction<ConfigSection, PRandom, NoiseSource> PORKIAN     = (config, random) -> {
         random = new FastJavaPRandom(StandardGeneratorUtils.computeSeed(random.nextLong(), "noise", config));
         return parse(new PorkianV2NoiseEngine(random), config);
     };
-    public final NoiseSourceFactory SIMPLEX     = (config, random) -> {
+    public final BiFunction<ConfigSection, PRandom, NoiseSource> SIMPLEX     = (config, random) -> {
         random = new FastJavaPRandom(StandardGeneratorUtils.computeSeed(random.nextLong(), "noise", config));
         return parse(new SimplexNoiseEngine(random), config);
     };

@@ -2,7 +2,7 @@ package cn.nukkit.level.generator.standard.registry;
 
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.generator.standard.gen.NoiseSources;
+import cn.nukkit.level.generator.standard.gen.DensitySource;
 import cn.nukkit.level.generator.standard.gen.noise.VanillaNoiseSource;
 import cn.nukkit.utils.Identifier;
 import lombok.AccessLevel;
@@ -19,13 +19,10 @@ import net.daporkchop.lib.noise.NoiseSource;
  * @see StandardGeneratorRegistries#noiseSource()
  */
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-public final class NoiseSourceRegistry extends AbstractGeneratorRegistry<NoiseSource> {
+public final class DensitySourceRegistry extends AbstractGeneratorRegistry<DensitySource> {
     @Override
     protected void registerDefault() {
-        this.register(NoiseSources.ID_OPENSIMPLEX, NoiseSources.OPENSIMPLEX);
-        this.register(NoiseSources.ID_PERLIN, NoiseSources.PERLIN);
-        this.register(NoiseSources.ID_PORKIAN, NoiseSources.PORKIAN);
-        this.register(NoiseSources.ID_SIMPLEX, NoiseSources.SIMPLEX);
+        this.register(Identifier.fromString("nukkitx:vanilla"), VanillaNoiseSource::new);
     }
 
     @Override
@@ -39,9 +36,9 @@ public final class NoiseSourceRegistry extends AbstractGeneratorRegistry<NoiseSo
         private static HandlerList handlers = new HandlerList();
 
         @NonNull
-        private final NoiseSourceRegistry registry;
+        private final DensitySourceRegistry registry;
 
-        public NoiseSourceRegistry getRegistry() {
+        public DensitySourceRegistry getRegistry() {
             return this.registry;
         }
     }

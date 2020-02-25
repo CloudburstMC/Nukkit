@@ -4,6 +4,7 @@ import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.generator.standard.StandardGeneratorUtils;
 import cn.nukkit.level.generator.standard.gen.BlockReplacer;
+import cn.nukkit.level.generator.standard.gen.replacer.GroundReplacer;
 import cn.nukkit.level.generator.standard.gen.replacer.SeaReplacer;
 import cn.nukkit.utils.ConfigSection;
 import cn.nukkit.utils.Identifier;
@@ -23,15 +24,10 @@ import net.daporkchop.lib.random.PRandom;
  * @see StandardGeneratorRegistries#blockReplacer()
  */
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-public final class BlockReplacerRegistry extends AbstractGeneratorRegistry<BlockReplacer.Factory> implements BlockReplacer.Factory {
-    @Override
-    public BlockReplacer apply(@NonNull ConfigSection config, @NonNull PRandom random) {
-        BlockReplacer.Factory factory = this.get(StandardGeneratorUtils.getId(config, "id"));
-        return factory.apply(config, random);
-    }
-
+public final class BlockReplacerRegistry extends AbstractGeneratorRegistry<BlockReplacer> {
     @Override
     protected void registerDefault() {
+        this.register(Identifier.fromString("nukkitx:ground"), GroundReplacer::new);
         this.register(Identifier.fromString("nukkitx:sea"), SeaReplacer::new);
     }
 

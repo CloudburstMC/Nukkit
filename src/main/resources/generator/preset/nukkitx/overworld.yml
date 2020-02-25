@@ -3,8 +3,20 @@
 # Author: DaPorkchop_
 
 generation:
+  density:
+    id: "nukkitx:vanilla"
+    selectorNoise:
+      id: "nukkitx:simplex"
+      scaleX: 0.05
+      scaleY: 0.05
+      scaleZ: 0.05
+      octaves: 4
+      factor: 1.0
+      offset: 0.0
   replacers:
+    - id: "nukkitx:ground"
+      block: "stone"
     - id: "nukkitx:sea"
       block: "water"
-      seaLevel: 4
+      seaLevel: 8
 population:
