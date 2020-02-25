@@ -263,10 +263,10 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(PLANKS, BlockPlanks::new); //5
         this.factoryMap.put(SAPLING, BlockSapling::new); //6
         this.factoryMap.put(BEDROCK, BlockBedrock::new); //7
-        this.factoryMap.put(FLOWING_WATER, BlockWater::new); //8
-        this.factoryMap.put(WATER, BlockWaterStill::new); //9
-        this.factoryMap.put(FLOWING_LAVA, BlockLava::new); //10
-        this.factoryMap.put(LAVA, BlockLavaStill::new); //11
+        this.factoryMap.put(FLOWING_WATER, BlockWater.factory(WATER)); //8
+        this.factoryMap.put(WATER, BlockWaterStill.factory(FLOWING_WATER)); //9
+        this.factoryMap.put(FLOWING_LAVA, BlockLava.factory(LAVA)); //10
+        this.factoryMap.put(LAVA, BlockLavaStill.factory(FLOWING_LAVA)); //11
         this.factoryMap.put(SAND, BlockSand::new); //12
         this.factoryMap.put(GRAVEL, BlockGravel::new); //13
         this.factoryMap.put(GOLD_ORE, BlockOreGold::new); //14

@@ -28,15 +28,19 @@ import static cn.nukkit.block.BlockIds.AIR;
 
 public abstract class BlockLiquid extends BlockTransparent {
 
-    private final byte CAN_FLOW_DOWN = 1;
-    private final byte CAN_FLOW = 0;
-    private final byte BLOCKED = -1;
+    private static final byte CAN_FLOW_DOWN = 1;
+    private static final byte CAN_FLOW = 0;
+    private static final byte BLOCKED = -1;
+    protected final Identifier flowingId;
+    protected final Identifier stationaryId;
     public int adjacentSources = 0;
     protected Vector3f flowVector = null;
     private Long2ByteMap flowCostVisited = new Long2ByteOpenHashMap();
 
-    public BlockLiquid(Identifier id) {
+    public BlockLiquid(Identifier id, Identifier flowingId, Identifier stationaryId) {
         super(id);
+        this.flowingId = flowingId;
+        this.stationaryId = stationaryId;
     }
 
     @Override
@@ -102,8 +106,8 @@ public abstract class BlockLiquid extends BlockTransparent {
     }
 
     protected int getFlowDecay(Block block) {
-        if (block.getId() != this.getId()) {
-            if (block.isWaterlogged()) {
+        if (!isSameLiquid(block.getId())) {
+            if (block.getLayer() != 1 && block.isWaterlogged()) {
                 return getFlowDecay(this.getLiquidBlock(block));
             }
             return -1;
@@ -112,7 +116,7 @@ public abstract class BlockLiquid extends BlockTransparent {
     }
 
     protected int getEffectiveFlowDecay(Block block) {
-        if (block.getId() != this.getId()) {
+        if (!isSameLiquid(block.getId())) {
             return -1;
         }
         int decay = block.getDamage();
@@ -490,5 +494,17 @@ public abstract class BlockLiquid extends BlockTransparent {
 
     public boolean usesWaterLogging() {
         return false;
+    }
+
+    public boolean isSameLiquid(Identifier other) {
+        return other == getFlowingId() || other == getStationaryId();
+    }
+
+    public Identifier getFlowingId() {
+        return flowingId;
+    }
+
+    public Identifier getStationaryId() {
+        return stationaryId;
     }
 }
