@@ -24,3 +24,7 @@ generation:
       block: "water"
       seaLevel: 8
 population:
+  populators:
+    - id: "nukkitx:bedrock"
+      base: 1
+      fade: 5

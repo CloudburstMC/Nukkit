@@ -82,7 +82,8 @@ public class BlockStorage {
     public void setBlockRuntimeIdUnsafe(int index, int runtimeId)    {
         try {
             BlockRegistry.get().getBlock(runtimeId); //this will throw RegistryException if the runtimeId is not registered
-            this.bitArray.set(index, this.idFor(runtimeId));
+            int idx = this.idFor(runtimeId); //need to do this separately since bitArray can change, and is apparently dereferenced first
+            this.bitArray.set(index, idx);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Unable to set block runtime ID: " + runtimeId + ", palette: " + palette, e);
         }

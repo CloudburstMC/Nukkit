@@ -8,6 +8,7 @@ import cn.nukkit.level.generator.standard.biome.BiomeMap;
 import cn.nukkit.level.generator.standard.biome.CachingBiomeMap;
 import cn.nukkit.level.generator.standard.gen.BlockReplacer;
 import cn.nukkit.level.generator.standard.gen.DensitySource;
+import cn.nukkit.level.generator.standard.pop.Populator;
 import cn.nukkit.level.generator.standard.registry.StandardGeneratorRegistries;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.ConfigSection;
@@ -41,6 +42,7 @@ public final class StandardGenerator implements Generator {
     private final BiomeMap        biomes;
     private final DensitySource   density;
     private final BlockReplacer[] replacers;
+    private final Populator[]     populators;
 
     public StandardGenerator(long seed, String options) {
         Identifier presetId = Identifier.fromString(Strings.isNullOrEmpty(options) ? DEFAULT_PRESET : options);
@@ -58,6 +60,11 @@ public final class StandardGenerator implements Generator {
                 .map(section -> StandardGeneratorRegistries.blockReplacer()
                         .apply(section, computeRandom(seed, "generation.replacers", section)))
                 .toArray(BlockReplacer[]::new);
+
+        this.populators = preset.<ConfigSection>getList("population.populators").stream()
+                .map(section -> StandardGeneratorRegistries.populator()
+                        .apply(section, computeRandom(seed, "population.populators", section)))
+                .toArray(Populator[]::new);
     }
 
     @Override
@@ -167,6 +174,9 @@ public final class StandardGenerator implements Generator {
 
     @Override
     public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
+        for (Populator populator : this.populators) {
+            populator.populate(random, level, chunkX, chunkZ);
+        }
     }
 
     private static final class ThreadData {

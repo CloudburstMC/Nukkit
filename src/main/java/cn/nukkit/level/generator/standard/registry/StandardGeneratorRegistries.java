@@ -14,6 +14,7 @@ public class StandardGeneratorRegistries {
     private final Cache<BlockReplacerRegistry> BLOCK_REPLACER_REGISTRY_CACHE = Cache.late(BlockReplacerRegistry::new);
     private final Cache<NoiseSourceRegistry>   NOISE_SOURCE_REGISTRY_CACHE   = Cache.late(NoiseSourceRegistry::new);
     private final Cache<DensitySourceRegistry> WORLD_NOISE_REGISTRY_CACHE    = Cache.late(DensitySourceRegistry::new);
+    private final Cache<PopulatorRegistry>     POPULATOR_REGISTRY_CACHE      = Cache.late(PopulatorRegistry::new);
 
     public BiomeMapRegistry biomeMap() {
         return BIOME_MAP_REGISTRY_CACHE.get();
@@ -29,5 +30,9 @@ public class StandardGeneratorRegistries {
 
     public DensitySourceRegistry worldNoise() {
         return WORLD_NOISE_REGISTRY_CACHE.get();
+    }
+
+    public PopulatorRegistry populator() {
+        return POPULATOR_REGISTRY_CACHE.get();
     }
 }

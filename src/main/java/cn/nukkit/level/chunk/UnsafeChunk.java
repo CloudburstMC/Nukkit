@@ -225,7 +225,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
         checkBounds(x, y, z);
         ChunkSection section = this.getSection(y >> 4);
         if (section == null) {
-            if (runtimeId == BlockRegistry.get().getRuntimeId(AIR, 0)) { //will probably always evaluate to 0, but oh well
+            if (runtimeId == 0) {
                 // Setting air in an empty section.
                 return;
             }
