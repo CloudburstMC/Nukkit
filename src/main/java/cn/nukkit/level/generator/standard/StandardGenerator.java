@@ -11,6 +11,7 @@ import cn.nukkit.utils.ConfigSection;
 import cn.nukkit.utils.Identifier;
 import com.google.common.base.Strings;
 import net.daporkchop.lib.random.PRandom;
+import net.daporkchop.lib.random.impl.FastJavaPRandom;
 
 /**
  * Main class of the NukkitX Standard Generator.
@@ -29,7 +30,10 @@ public final class StandardGenerator implements Generator {
         Config preset = StandardGeneratorUtils.load("preset", presetId);
 
         this.replacers = preset.<ConfigSection>getList("generation.replacers").stream()
-                .map(StandardGeneratorRegistries.blockReplacerRegistry()::create)
+                .map(section -> {
+                    PRandom random = new FastJavaPRandom(StandardGeneratorUtils.computeSeed(seed, "replacers", section));
+                    return StandardGeneratorRegistries.blockReplacerRegistry().apply(section, random);
+                })
                 .toArray(BlockReplacer[]::new);
     }
 

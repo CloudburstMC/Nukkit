@@ -5,6 +5,7 @@ import cn.nukkit.level.generator.standard.gen.BlockReplacer;
 import cn.nukkit.utils.ConfigSection;
 import lombok.NonNull;
 import net.daporkchop.lib.common.util.PValidation;
+import net.daporkchop.lib.random.PRandom;
 
 import static cn.nukkit.level.generator.standard.StandardGeneratorUtils.*;
 
@@ -17,7 +18,7 @@ public final class SeaReplacer implements BlockReplacer {
     private final Block block;
     private final int   seaLevel;
 
-    public SeaReplacer(@NonNull ConfigSection config) {
+    public SeaReplacer(@NonNull ConfigSection config, PRandom random) {
         this(parseBlock(config.getString("block")), config.getInt("seaLevel", -1));
     }
 

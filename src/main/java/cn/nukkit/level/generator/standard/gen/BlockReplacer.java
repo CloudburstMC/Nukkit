@@ -3,6 +3,10 @@ package cn.nukkit.level.generator.standard.gen;
 import cn.nukkit.block.Block;
 import cn.nukkit.utils.ConfigSection;
 import lombok.NonNull;
+import net.daporkchop.lib.random.PRandom;
+
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Replaces blocks as part of the terrain surface generation pipeline.
@@ -32,13 +36,15 @@ public interface BlockReplacer {
      * @author DaPorkchop_
      */
     @FunctionalInterface
-    interface Factory {
+    interface Factory extends BiFunction<ConfigSection, PRandom, BlockReplacer> {
         /**
          * Creates a new {@link BlockReplacer} from the given config.
          *
          * @param config the {@link ConfigSection} containing the config to use
+         * @param random an instance of {@link PRandom} for generating random numbers
          * @return a new {@link BlockReplacer} with the given configuration
          */
-        BlockReplacer create(@NonNull ConfigSection config);
+        @Override
+        BlockReplacer apply(@NonNull ConfigSection config, @NonNull PRandom random);
     }
 }

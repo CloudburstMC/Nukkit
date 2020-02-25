@@ -6,6 +6,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Config;
+import cn.nukkit.utils.ConfigSection;
 import cn.nukkit.utils.Identifier;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -21,6 +22,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -85,5 +88,24 @@ public class StandardGeneratorUtils {
         } else {
             return in;
         }
+    }
+
+    /**
+     * Calculates the seed to be used for initializing a generation component.
+     * <p>
+     * This is important so that the RNG state for each component remains the same even if other ones are added/removed/modified.
+     *
+     * @param levelSeed the global level seed
+     * @param category  the category that the component belongs to
+     * @param config    the component's configuration
+     * @return the seed to be used for the given component
+     */
+    public static long computeSeed(long levelSeed, @NonNull String category, @NonNull ConfigSection config) {
+        if (config.containsKey("seed")) {
+            //allow users to manually specify a seed that will be XOR-ed with the level seed
+            return levelSeed ^ config.getLong("seed");
+        }
+        UUID uuid = UUID.nameUUIDFromBytes((category + '|' + config.getString("id")).getBytes(StandardCharsets.UTF_8));
+        return levelSeed ^ uuid.getLeastSignificantBits() ^ uuid.getMostSignificantBits();
     }
 }
