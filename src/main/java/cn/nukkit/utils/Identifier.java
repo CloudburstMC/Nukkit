@@ -7,6 +7,7 @@ import net.daporkchop.lib.common.cache.ThreadCache;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -24,7 +25,7 @@ public final class Identifier implements Comparable<Identifier> {
     private static final Lock READ_LOCK;
     private static final Lock WRITE_LOCK;
 
-    private static final Map<String, Identifier> VALUES = new HashMap<>();
+    private static final Map<String, Identifier> VALUES = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     static {
         ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -53,21 +54,21 @@ public final class Identifier implements Comparable<Identifier> {
         Identifier id;
         READ_LOCK.lock();
         try {
-            id = VALUES.get(identifier.toLowerCase());
+            id = VALUES.get(identifier);
         } finally {
             READ_LOCK.unlock();
         }
 
         if (id == null) {
             String namespace = matcher.group(1);
-            String name = matcher.group(2).toLowerCase();
-            String fullName = namespace == null && !identifier.startsWith("minecraft:") ? "minecraft:" + matcher.group(2) : identifier;
+            String name = matcher.group(2);
+            String fullName = namespace == null && !identifier.startsWith("minecraft:") ? "minecraft:" + name : identifier;
 
             //create new identifier instance
             WRITE_LOCK.lock();
             try {
                 //try get again in case identifier was created while obtaining write lock
-                if ((id = VALUES.get(identifier.toLowerCase())) == null) {
+                if ((id = VALUES.get(identifier)) == null) {
                     id = new Identifier(namespace == null ? "minecraft" : namespace, name, fullName);
                     if (namespace == null) {
                         //also put it into the map without minecraft: in the key to facilitate faster lookups when the prefix is omitted
