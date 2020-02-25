@@ -73,7 +73,7 @@ public final class Identifier implements Comparable<Identifier> {
                         //also put it into the map without minecraft: in the key to facilitate faster lookups when the prefix is omitted
                         VALUES.put(name, id);
                     }
-                    VALUES.put(fullName, id);
+                    VALUES.put(fullName.toLowerCase(), id);
                 }
             } finally {
                 WRITE_LOCK.unlock();
