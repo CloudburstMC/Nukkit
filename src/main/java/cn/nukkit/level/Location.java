@@ -52,11 +52,11 @@ public final class Location {
     }
 
     public float getY() {
-        return this.position.getX();
+        return this.position.getY();
     }
 
     public float getZ() {
-        return this.position.getX();
+        return this.position.getZ();
     }
 
     public Vector3f getPosition() {
