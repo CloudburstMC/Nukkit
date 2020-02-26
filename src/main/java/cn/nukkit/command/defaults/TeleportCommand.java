@@ -34,10 +34,10 @@ public class TeleportCommand extends VanillaCommand {
         });
         this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("blockPos", CommandParamType.POSITION, false),
+                new CommandParameter("position", CommandParamType.POSITION, false),
         });
         this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("blockPos", CommandParamType.POSITION, false),
+                new CommandParameter("position", CommandParamType.POSITION, false),
         });
     }
 
@@ -56,7 +56,7 @@ public class TeleportCommand extends VanillaCommand {
             if (sender instanceof Player) {
                 target = sender;
             } else {
-                sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
+                sender.sendMessage(new TranslationContainer("commands.locate.fail.noplayer"));
                 return true;
             }
             if (args.length == 1) {
