@@ -5,7 +5,7 @@
 generation:
   biomes:
     id: "nukkitx:constant"
-    dictionary: "nukkitx:overworld"
+    dictionary: "nukkitx:vanilla"
     biome: "minecraft:jungle"
   density:
     id: "nukkitx:vanilla"
@@ -23,8 +23,9 @@ generation:
     - id: "nukkitx:sea"
       block: "water"
       seaLevel: 8
-population:
-  populators:
+  decorators:
     - id: "nukkitx:bedrock"
       base: 1
       fade: 5
+population:
+  populators:

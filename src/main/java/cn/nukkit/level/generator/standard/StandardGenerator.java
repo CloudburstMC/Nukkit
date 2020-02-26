@@ -7,6 +7,7 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.standard.biome.BiomeMap;
 import cn.nukkit.level.generator.standard.biome.CachingBiomeMap;
 import cn.nukkit.level.generator.standard.gen.BlockReplacer;
+import cn.nukkit.level.generator.standard.gen.Decorator;
 import cn.nukkit.level.generator.standard.gen.DensitySource;
 import cn.nukkit.level.generator.standard.pop.Populator;
 import cn.nukkit.level.generator.standard.registry.StandardGeneratorRegistries;
@@ -42,6 +43,7 @@ public final class StandardGenerator implements Generator {
     private final BiomeMap        biomes;
     private final DensitySource   density;
     private final BlockReplacer[] replacers;
+    private final Decorator[] decorators;
     private final Populator[]     populators;
 
     public StandardGenerator(long seed, String options) {
@@ -53,13 +55,18 @@ public final class StandardGenerator implements Generator {
                 .apply(biomesConfig, computeRandom(seed, "generation.biomes", biomesConfig));
 
         ConfigSection densityConfig = preset.getSection("generation.density");
-        this.density = StandardGeneratorRegistries.worldNoise()
+        this.density = StandardGeneratorRegistries.densitySource()
                 .apply(densityConfig, computeRandom(seed, "generation.density", densityConfig));
 
         this.replacers = preset.<ConfigSection>getList("generation.replacers").stream()
                 .map(section -> StandardGeneratorRegistries.blockReplacer()
                         .apply(section, computeRandom(seed, "generation.replacers", section)))
                 .toArray(BlockReplacer[]::new);
+
+        this.decorators = preset.<ConfigSection>getList("generation.decorators").stream()
+                .map(section -> StandardGeneratorRegistries.decorator()
+                        .apply(section, computeRandom(seed, "generation.decorators", section)))
+                .toArray(Decorator[]::new);
 
         this.populators = preset.<ConfigSection>getList("population.populators").stream()
                 .map(section -> StandardGeneratorRegistries.populator()
@@ -159,6 +166,11 @@ public final class StandardGenerator implements Generator {
                     }
                 }
             }
+        }
+
+        //run decorators
+        for (Decorator decorator : this.decorators) {
+            decorator.decorate(chunk, random);
         }
 
         //set biomes

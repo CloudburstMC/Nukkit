@@ -1,0 +1,213 @@
+# Adapted from https://minecraft.gamepedia.com/Biome/ID
+
+biomes:
+    # Ocean
+  - id: "minecraft:ocean"
+    runtimeId: 0
+    # Deep Ocean
+  - id: "minecraft:deep_ocean"
+    runtimeId: 24
+    # Frozen Ocean
+  - id: "minecraft:frozen_ocean"
+    runtimeId: 10
+    # Deep Frozen Ocean
+  - id: "minecraft:deep_frozen_ocean"
+    runtimeId: 50
+    # Cold Ocean
+  - id: "minecraft:cold_ocean"
+    runtimeId: 46
+    # Deep Cold Ocean
+  - id: "minecraft:deep_cold_ocean"
+    runtimeId: 49
+    # Lukewarm Ocean
+  - id: "minecraft:lukewarm_ocean"
+    runtimeId: 45
+    # Deep Lukewarm Ocean
+  - id: "minecraft:deep_lukewarm_ocean"
+    runtimeId: 48
+    # Warm Ocean
+  - id: "minecraft:warm_ocean"
+    runtimeId: 44
+    # Deep Warm Ocean
+  - id: "minecraft:deep_warm_ocean"
+    runtimeId: 47
+    # River
+  - id: "minecraft:river"
+    runtimeId: 7
+    # Frozen River
+  - id: "minecraft:frozen_river"
+    runtimeId: 11
+    # Beach
+  - id: "minecraft:beach"
+    runtimeId: 16
+    # Stone Shore
+  - id: "minecraft:stone_beach"
+    runtimeId: 25
+    # Snowy Beach
+  - id: "minecraft:cold_beach"
+    runtimeId: 26
+    # Forest
+  - id: "minecraft:forest"
+    runtimeId: 4
+    # Wooded Hills
+  - id: "minecraft:forest_hills"
+    runtimeId: 18
+    # Flower Forest
+  - id: "minecraft:flower_forest"
+    runtimeId: 132
+    # Birch Forest
+  - id: "minecraft:birch_forest"
+    runtimeId: 27
+    # Birch Forest Hills
+  - id: "minecraft:birch_forest_hills"
+    runtimeId: 28
+    # Tall Birch Forest
+  - id: "minecraft:birch_forest_mutated"
+    runtimeId: 155
+    # Tall Birch Hills
+  - id: "minecraft:birch_forest_hills_mutated"
+    runtimeId: 156
+    # Dark Forest
+  - id: "minecraft:roofed_forest"
+    runtimeId: 29
+    # Dark Forest Hills
+  - id: "minecraft:roofed_forest_mutated"
+    runtimeId: 157
+    # Jungle
+  - id: "minecraft:jungle"
+    runtimeId: 21
+    # Jungle Hills
+  - id: "minecraft:jungle_hills"
+    runtimeId: 22
+    # Modified Jungle
+  - id: "minecraft:jungle_mutated"
+    runtimeId: 149
+    # Jungle Edge
+  - id: "minecraft:jungle_edge"
+    runtimeId: 23
+    # Modified Jungle Edge
+  - id: "minecraft:jungle_edge_mutated"
+    runtimeId: 151
+    # Bamboo Jungle
+  - id: "minecraft:bamboo_jungle"
+    runtimeId: 168
+    # Bamboo Jungle Hills
+  - id: "minecraft:bamboo_jungle_hills"
+    runtimeId: 169
+    # Taiga
+  - id: "minecraft:taiga"
+    runtimeId: 5
+    # Taiga Hills
+  - id: "minecraft:taiga_hills"
+    runtimeId: 19
+    # Taiga Mountains
+  - id: "minecraft:taiga_mutated"
+    runtimeId: 133
+    # Snowy Taiga
+  - id: "minecraft:cold_taiga"
+    runtimeId: 30
+    # Snowy Taiga Hills
+  - id: "minecraft:cold_taiga_hills"
+    runtimeId: 31
+    # Snowy Taiga Mountains
+  - id: "minecraft:cold_taiga_mutated"
+    runtimeId: 158
+    # Giant Tree Taiga
+  - id: "minecraft:mega_taiga"
+    runtimeId: 32
+    # Giant Tree Taiga Hills
+  - id: "minecraft:mega_taiga_hills"
+    runtimeId: 33
+    # Giant Spruce Taiga
+  - id: "minecraft:redwood_taiga_mutated"
+    runtimeId: 160
+    # Giant Spruce Taiga Hills
+  - id: "minecraft:redwood_taiga_hills_mutated"
+    runtimeId: 161
+    # Mushroom Fields
+  - id: "minecraft:mushroom_island"
+    runtimeId: 14
+    # Mushroom Field Shore
+  - id: "minecraft:mushroom_island_shore"
+    runtimeId: 15
+    # Swamp
+  - id: "minecraft:swampland"
+    runtimeId: 6
+    # Swamp Hills
+  - id: "minecraft:swampland_mutated"
+    runtimeId: 134
+    # Savanna
+  - id: "minecraft:savanna"
+    runtimeId: 35
+    # Savanna Plateau
+  - id: "minecraft:savanna_plateau"
+    runtimeId: 36
+    # Shattered Savanna
+  - id: "minecraft:savanna_mutated"
+    runtimeId: 163
+    # Shattered Savanna Plateau
+  - id: "minecraft:savanna_plateau_mutated"
+    runtimeId: 164
+    # Plains
+  - id: "minecraft:plains"
+    runtimeId: 1
+    # Sunflower Plains
+  - id: "minecraft:sunflower_plains"
+    runtimeId: 129
+    # Desert
+  - id: "minecraft:desert"
+    runtimeId: 2
+    # Desert Hills
+  - id: "minecraft:desert_hills"
+    runtimeId: 17
+    # Desert Lakes
+  - id: "minecraft:desert_mutated"
+    runtimeId: 130
+    # Snowy Tundra
+  - id: "minecraft:ice_plains"
+    runtimeId: 12
+    # Snowy Mountains
+  - id: "minecraft:ice_mountains"
+    runtimeId: 13
+    # Ice Spikes
+  - id: "minecraft:ice_plains_spikes"
+    runtimeId: 140
+    # Mountains
+  - id: "minecraft:extreme_hills"
+    runtimeId: 3
+    # Wooded Mountains
+  - id: "minecraft:extreme_hills_plus_trees"
+    runtimeId: 34
+    # Gravelly Mountains
+  - id: "minecraft:extreme_hills_mutated"
+    runtimeId: 131
+    # Gravelly Mountains+
+  - id: "minecraft:extreme_hills_plus_trees_mutated"
+    runtimeId: 162
+    # Mountain Edge
+  - id: "minecraft:extreme_hills_edge"
+    runtimeId: 20
+    # Badlands
+  - id: "minecraft:mesa"
+    runtimeId: 37
+    # Badlands Plateau
+  - id: "minecraft:mesa_plateau"
+    runtimeId: 39
+    # Modified Badlands Plateau
+  - id: "minecraft:mesa_plateau_mutated"
+    runtimeId: 167
+    # Wooded Badlands Plateau
+  - id: "minecraft:mesa_plateau_stone"
+    runtimeId: 38
+    # Modified Wooded Badlands Plateau
+  - id: "minecraft:mesa_plateau_stone_mutated"
+    runtimeId: 166
+    # Eroded Badlands
+  - id: "minecraft:mesa_bryce"
+    runtimeId: 165
+    # Nether
+  - id: "minecraft:hell"
+    runtimeId: 8
+    # The End
+  - id: "minecraft:the_end"
+    runtimeId: 9
