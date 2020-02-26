@@ -604,10 +604,10 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(CAMPFIRE, BlockCampfire::new); //462
         //463: lava_cauldron
         //464: jigsaw
-        //465: wood
+        this.factoryMap.put(WOOD, BlockWood::new); //465
         //466: composter
         this.factoryMap.put(LIT_BLAST_FURNACE, BlockFurnaceBurning::new); //467
-        //468: light_block
+        this.factoryMap.put(LIGHT_BLOCK, BlockLight::new); //468
         //469: wither_rose
         //470: stickypistonarmcollision
         //471: bee_nest

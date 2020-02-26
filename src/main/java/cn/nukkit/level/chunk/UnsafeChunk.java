@@ -460,6 +460,11 @@ public final class UnsafeChunk implements IChunk, Closeable {
         DIRTY_FIELD.set(this, dirty ? 1 : 0);
     }
 
+    @Override
+    public boolean clearDirty() {
+        return DIRTY_FIELD.compareAndSet(this, 1, 0);
+    }
+
     /**
      * Clear chunk to a state as if it was not generated.
      */

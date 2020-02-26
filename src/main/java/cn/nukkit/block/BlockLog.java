@@ -5,6 +5,7 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
@@ -62,6 +63,12 @@ public class BlockLog extends BlockSolid {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        // Convert the old log bark to the new wood block
+        if ((this.getDamage() & 0b1100) == 0b1100) {
+            Block woodBlock = Block.get(BlockIds.WOOD, this.getDamage() & 0x03, this);
+            return woodBlock.place(item, block, target, face, clickPos, player);
+        }
+
         this.setDamage(((this.getDamage() & 0x03) | FACES[face.getIndex()]));
         this.getLevel().setBlock(block, this, true, true);
 
@@ -88,7 +95,11 @@ public class BlockLog extends BlockSolid {
 
     @Override
     public Item toItem() {
-        return Item.get(id, this.getDamage() & 0x03);
+        if ((getDamage() & 0b1100) == 0b1100) {
+            return Item.get(BlockIds.WOOD, this.getDamage() & 0x3);
+        } else {
+            return Item.get(id, this.getDamage() & 0x03);
+        }
     }
 
     @Override
@@ -108,6 +119,13 @@ public class BlockLog extends BlockSolid {
                 return BlockColor.SAND_BLOCK_COLOR;
             case JUNGLE:
                 return BlockColor.DIRT_BLOCK_COLOR;
+        }
+    }
+
+    public static void upgradeLegacyBlock(int[] blockState) {
+        if ((blockState[1] & 0b1100) == 0b1100) { // old full bark texture
+            blockState[0] = BlockRegistry.get().getLegacyId(BlockIds.WOOD);
+            blockState[1] = blockState[1] & 0x03; // gets only the log type and set pillar to y
         }
     }
 }

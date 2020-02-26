@@ -3,6 +3,8 @@ package cn.nukkit.level;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockTNT;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.misc.DroppedItem;
+import cn.nukkit.entity.misc.XpOrb;
 import cn.nukkit.event.block.BlockUpdateEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -96,10 +98,15 @@ public class Explosion {
                             Block block = this.level.getLoadedBlock(vBlock);
 
                             if (block != null && block.getId() != AIR) {
-                                blastForce -= (block.getResistance() / 5 + 0.3d) * this.stepLen;
+                                Block layer1 = block.getBlockAtLayer(1);
+                                double resistance = Math.max(block.getResistance(), layer1.getResistance());
+                                blastForce -= (resistance / 5 + 0.3d) * this.stepLen;
                                 if (blastForce > 0) {
                                     if (!this.affectedBlocks.contains(block)) {
                                         this.affectedBlocks.add(block);
+                                        if (layer1.getId() != AIR) {
+                                            this.affectedBlocks.add(layer1);
+                                        }
                                     }
                                 }
                             }
@@ -161,7 +168,9 @@ public class Explosion {
                     entity.attack(new EntityDamageEvent(entity, DamageCause.BLOCK_EXPLOSION, damage));
                 }
 
-                entity.setMotion(motion.multiply(impact));
+                if (!(entity instanceof DroppedItem || entity instanceof XpOrb)) {
+                    entity.setMotion(motion.multiply(impact));
+                }
             }
         }
 
@@ -178,7 +187,11 @@ public class Explosion {
                 }
             }
 
-            this.level.setBlockIdAt(block.x, block.y, block.z, 0, AIR);
+            this.level.setBlockIdAt(block.x, block.y, block.z, block.layer, AIR);
+
+            if (block.layer != 0) {
+                continue;
+            }
 
             for (BlockFace side : BlockFace.values()) {
                 Block sideBlock = block.getSide(side);
@@ -188,6 +201,14 @@ public class Explosion {
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
                         ev.getBlock().onUpdate(Level.BLOCK_UPDATE_NORMAL);
+                    }
+                    Block layer1 = sideBlock.getBlockAtLayer(1);
+                    if (layer1.getId() != AIR) {
+                        ev = new BlockUpdateEvent(this.level.getBlock(layer1));
+                        this.level.getServer().getPluginManager().callEvent(ev);
+                        if (!ev.isCancelled()) {
+                            ev.getBlock().onUpdate(Level.BLOCK_UPDATE_NORMAL);
+                        }
                     }
                     updateBlocks.add(index);
                 }

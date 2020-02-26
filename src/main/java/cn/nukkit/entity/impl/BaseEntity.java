@@ -1426,7 +1426,7 @@ public abstract class BaseEntity extends Location implements Entity, Metadatable
         Block block = this.level.getLoadedBlock(NukkitMath.floorDouble(this.x), NukkitMath.floorDouble(y),
                 NukkitMath.floorDouble(this.z));
 
-        if (block instanceof BlockWater) {
+        if (block instanceof BlockWater || (block = block != null? block.getBlockAtLayer(1): null) instanceof BlockWater) {
             double f = (block.y + 1) - (((BlockWater) block).getFluidHeightPercent() - 0.1111111);
             return y < f;
         }

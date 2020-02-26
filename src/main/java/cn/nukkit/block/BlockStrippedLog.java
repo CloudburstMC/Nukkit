@@ -22,4 +22,9 @@ public class BlockStrippedLog extends BlockLog {
         this.setDamage(FACES[face.getIndex()] >> 2);
         return this.getLevel().setBlock(this.asVector3i(), this, true, true);
     }
+
+    @Override
+    public Item toItem() {
+        return Item.get(id);
+    }
 }

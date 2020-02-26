@@ -406,6 +406,9 @@ public class ItemRegistry implements Registry {
         registerVanilla(SHIELD, ItemShield::new, 513);
 
         registerVanilla(CAMPFIRE, PlaceableItem.factory(BlockIds.CAMPFIRE), 720);
+
+        registerVanilla(HONEYCOMB, SimpleItem::new, 736);
+        registerVanilla(HONEY_BOTTLE, ItemHoneyBottle::new, 737);
     }
 
     @Getter
