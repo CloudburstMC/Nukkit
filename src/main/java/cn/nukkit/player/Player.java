@@ -3071,7 +3071,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     RespawnPacket respawnPacket = (RespawnPacket) packet;
                     if (respawnPacket.getState() == RespawnPacket.State.CLIENT_READY) {
                         RespawnPacket respawn1 = new RespawnPacket();
-                        respawn1.setPosition(this.getPosition());
+                        respawn1.setPosition(this.getSpawn().getPosition());
                         respawn1.setState(RespawnPacket.State.SERVER_READY);
                         this.sendPacket(respawn1);
                     }

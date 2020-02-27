@@ -35,7 +35,7 @@ public class SetWorldSpawnCommand extends VanillaCommand {
         if (args.length == 0) {
             if (sender instanceof Player) {
                 level = ((Player) sender).getLevel();
-                pos = ((Player) sender).getPosition().round();
+                pos = ((Player) sender).getPosition();
             } else {
                 sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
                 return true;

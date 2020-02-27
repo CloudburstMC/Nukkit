@@ -2329,10 +2329,10 @@ public class Level implements ChunkManager, Metadatable {
             int x = v.getFloorX() & 0x0f;
             int z = v.getFloorZ() & 0x0f;
             if (chunk != null) {
-                int y = NukkitMath.clamp(v.getFloorX(), 0, 254);
-                boolean wasAir = chunk.getBlockId(x & 0xf, (y - 1) & 0xf, z & 0xf) == AIR;
+                int y = NukkitMath.clamp(v.getFloorY(), 0, 254);
+                boolean wasAir = !this.isFullBlock(chunk.getBlock(x, y + 1, z));
                 for (; y > 0; --y) {
-                    Block block = chunk.getBlock(x & 0xf, y & 0xf, z & 0xf);
+                    Block block = chunk.getBlock(x, y, z);
                     if (this.isFullBlock(block)) {
                         if (wasAir) {
                             y++;
@@ -2344,22 +2344,19 @@ public class Level implements ChunkManager, Metadatable {
                 }
 
                 for (; y >= 0 && y < 255; y++) {
-                    Block block = chunk.getBlock(x & 0xf, (y + 1), z & 0xf);
+                    Block block = chunk.getBlock(x, (y + 1), z);
                     if (!this.isFullBlock(block)) {
-                        block = chunk.getBlock(x & 0xf, y & 0xf, z & 0xf);
+                        block = chunk.getBlock(x, y, z);
                         if (!this.isFullBlock(block)) {
-                            return Location.from(spawn.getX(), y == (int) spawn.getY() ? spawn.getY() : y, spawn.getZ(),
-                                    spawn.getYaw(), spawn.getPitch(), this);
+                            return Location.from(spawn.getX(), y, spawn.getZ(), spawn.getYaw(), spawn.getPitch(), this);
                         }
-                    } else {
-                        ++y;
                     }
                 }
 
-                v = Vector3f.from(v.getX(), y, v.getZ());
+                v = Vector3f.from(spawn.getX(), y, spawn.getZ());
             }
 
-            return Location.from(spawn.getX(), v.getY(), spawn.getZ(), spawn.getY(), spawn.getPitch(), this);
+            return Location.from(v.getX(), v.getY(), v.getZ(), spawn.getYaw(), spawn.getPitch(), this);
         }
 
         return null;

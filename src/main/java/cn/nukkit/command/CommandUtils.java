@@ -35,9 +35,9 @@ public class CommandUtils {
     public static float getPosition(String pos, float relative) throws IllegalArgumentException {
         Matcher matcher = RELATIVE_PATTERN.matcher(pos);
         checkArgument(matcher.matches(), "Invalid position");
-        float position = Float.parseFloat(matcher.group(matcher.groupCount()));
+        float position = Float.parseFloat(matcher.group(2));
 
-        if (matcher.groupCount() > 1) {
+        if (matcher.group(1) != null) {
             position += relative;
         }
         return position;

@@ -52,11 +52,11 @@ public final class Location {
     }
 
     public float getY() {
-        return this.position.getX();
+        return this.position.getY();
     }
 
     public float getZ() {
-        return this.position.getX();
+        return this.position.getZ();
     }
 
     public Vector3f getPosition() {
@@ -84,11 +84,11 @@ public final class Location {
     }
 
     public Location add(double x, double y, double z) {
-        return Location.from(Vector3f.from(x, y, z), this.yaw, this.pitch, this.level);
+        return Location.from(Vector3f.from(this.getX() + x, this.getY() + y, this.getZ() + z), this.yaw, this.pitch, this.level);
     }
 
     public Location add(float x, float y, float z) {
-        return Location.from(Vector3f.from(x, y, z), this.yaw, this.pitch, this.level);
+        return Location.from(Vector3f.from(this.getX() + x, this.getY() + y, this.getZ() + z), this.yaw, this.pitch, this.level);
     }
 
     public int getFloorX() {
