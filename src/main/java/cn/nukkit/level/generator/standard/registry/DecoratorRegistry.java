@@ -4,6 +4,7 @@ import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.generator.standard.gen.Decorator;
 import cn.nukkit.level.generator.standard.gen.decorator.BedrockDecorator;
+import cn.nukkit.level.generator.standard.gen.decorator.SurfaceDecorator;
 import cn.nukkit.utils.Identifier;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public final class DecoratorRegistry extends AbstractGeneratorRegistry<Decorator
     @Override
     protected void registerDefault() {
         this.register(Identifier.fromString("nukkitx:bedrock"), BedrockDecorator::new);
+        this.register(Identifier.fromString("nukkitx:surface"), SurfaceDecorator::new);
     }
 
     @Override

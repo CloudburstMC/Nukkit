@@ -13,9 +13,10 @@ import net.daporkchop.lib.random.PRandom;
 public interface Decorator {
     /**
      * Decorates a given chunk.
-     *
-     * @param chunk  the chunk to be decorated
+     *  @param chunk  the chunk to be decorated
      * @param random an instance of {@link PRandom} for generating random numbers, initialized with a seed based on chunk's position
+     * @param x
+     * @param z
      */
-    void decorate(IChunk chunk, PRandom random);
+    void decorate(IChunk chunk, PRandom random, int x, int z);
 }

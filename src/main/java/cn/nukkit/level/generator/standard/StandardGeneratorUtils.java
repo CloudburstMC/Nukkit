@@ -42,8 +42,8 @@ public class StandardGeneratorUtils {
     private final Pattern        BLOCK_PATTERN = Pattern.compile("^((?:[a-z0-9_]+:)?[a-z0-9_]+)(?:#([0-9]+))?$", Pattern.CASE_INSENSITIVE);
     private final Cache<Matcher> BLOCK_CACHE   = ThreadCache.soft(() -> BLOCK_PATTERN.matcher(""));
 
-    private final Pattern        BLOCK_MATCHER_PATTERN = Pattern.compile("(?:^|,)((?:[a-z0-9_]+:)?[a-z0-9_]+)(?:#([0-9]+))?(?:$|(?=,))", Pattern.CASE_INSENSITIVE);
-    private final Cache<Matcher> BLOCK_MATCHER_CACHE   = ThreadCache.soft(() -> BLOCK_MATCHER_PATTERN.matcher(""));
+    private final Pattern        BLOCK_LIST_PATTERN = Pattern.compile("^(?:([0-9]+)\\*)?((?:[a-z0-9_]+:)?[a-z0-9_]+)(?:#([0-9]+))?$", Pattern.CASE_INSENSITIVE);
+    private final Cache<Matcher> BLOCK_LIST_CACHE   = ThreadCache.soft(() -> BLOCK_LIST_PATTERN.matcher(""));
 
     /**
      * Gets a block encoded in the form {@code <identifier>[#meta]} from a named field in the given {@link ConfigSection}.
@@ -76,13 +76,9 @@ public class StandardGeneratorUtils {
 
     public static BlockMatcher parseBlockMatcher(String block) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(block), "block must be set!");
-        Matcher matcher = BLOCK_MATCHER_CACHE.get().reset(block);
-
         Collection<Block> blocks = new ArrayList<>();
-        while (matcher.find()) {
-            Identifier id = Identifier.fromString(matcher.group(1));
-            String meta = matcher.group(2);
-            blocks.add(BlockRegistry.get().getBlock(id, meta == null ? 0 : Integer.parseInt(meta)));
+        for (String s : block.split(",")) {
+            blocks.add(parseBlock(s));
         }
         Preconditions.checkArgument(!blocks.isEmpty());
         int[] ids = blocks.stream()
@@ -91,6 +87,25 @@ public class StandardGeneratorUtils {
                 .sorted()
                 .toArray();
         return ids.length == 1 ? new BlockMatcher.Single(ids[0]) : new BlockMatcher.AnyOf(ids);
+    }
+
+    public static Collection<Block> parseBlockList(String blockList) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(blockList), "blocks must be set!");
+        Matcher matcher = BLOCK_LIST_CACHE.get();
+        Collection<Block> blocks = new ArrayList<>();
+        for (String s : blockList.split(",")) {
+            Preconditions.checkArgument(matcher.reset(s).find(), "Invalid list entry: \"%s\"", s);
+
+            String countS = matcher.group(1);
+            Identifier id = Identifier.fromString(matcher.group(2));
+            String meta = matcher.group(3);
+            Block block = BlockRegistry.get().getBlock(id, meta == null ? 0 : Integer.parseInt(meta));
+            for (int i = countS == null ? 0 : (Integer.parseUnsignedInt(countS) - 1); i >= 0; i--) {
+                blocks.add(block);
+            }
+        }
+        Preconditions.checkArgument(!blocks.isEmpty());
+        return blocks;
     }
 
     public static Config loadUnchecked(@NonNull String category, @NonNull Identifier id) {

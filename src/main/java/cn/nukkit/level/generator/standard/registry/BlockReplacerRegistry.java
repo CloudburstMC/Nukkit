@@ -2,20 +2,15 @@ package cn.nukkit.level.generator.standard.registry;
 
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.generator.standard.StandardGeneratorUtils;
 import cn.nukkit.level.generator.standard.gen.BlockReplacer;
 import cn.nukkit.level.generator.standard.gen.replacer.GroundReplacer;
 import cn.nukkit.level.generator.standard.gen.replacer.SeaReplacer;
-import cn.nukkit.utils.ConfigSection;
 import cn.nukkit.utils.Identifier;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import net.daporkchop.lib.random.PRandom;
 
 /**
  * Registry for {@link BlockReplacer}.

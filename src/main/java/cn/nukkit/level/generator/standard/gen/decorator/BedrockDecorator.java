@@ -1,11 +1,8 @@
 package cn.nukkit.level.generator.standard.gen.decorator;
 
-import cn.nukkit.block.Block;
-import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.standard.StandardGeneratorUtils;
 import cn.nukkit.level.generator.standard.gen.Decorator;
-import cn.nukkit.level.generator.standard.pop.Populator;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.ConfigSection;
 import lombok.NonNull;
@@ -18,11 +15,11 @@ import net.daporkchop.lib.random.PRandom;
  * @author DaPorkchop_
  */
 public final class BedrockDecorator implements Decorator {
-    private final int   startY;
-    private final int   runtimeId;
-    private final int   step;
-    private final int   fade;
-    private final int   base;
+    private final int startY;
+    private final int runtimeId;
+    private final int step;
+    private final int fade;
+    private final int base;
 
     public BedrockDecorator(@NonNull ConfigSection config, @NonNull PRandom random) {
         this.runtimeId = BlockRegistry.get().getRuntimeId(StandardGeneratorUtils.parseBlock(config.getString("block", "bedrock")));
@@ -33,22 +30,14 @@ public final class BedrockDecorator implements Decorator {
     }
 
     @Override
-    public void decorate(IChunk chunk, PRandom random) {
+    public void decorate(IChunk chunk, PRandom random, int x, int z) {
         int y = this.startY;
         for (int i = this.base - 1; i >= 0 && (y & 0xFF) == y; i--, y += this.step) {
-            for (int x = 0; x < 16; x++) {
-                for (int z = 0; z < 16; z++) {
-                    chunk.setBlockRuntimeIdUnsafe(x, y, z, 0, this.runtimeId);
-                }
-            }
+            chunk.setBlockRuntimeIdUnsafe(x, y, z, 0, this.runtimeId);
         }
         for (int i = 0; i < this.fade && (y & 0xFF) == y; i++, y += this.step) {
-            for (int x = 0; x < 16; x++) {
-                for (int z = 0; z < 16; z++) {
-                    if (random.nextInt(i + 2) == 0) {
-                        chunk.setBlockRuntimeIdUnsafe(x, y, z, 0, this.runtimeId);
-                    }
-                }
+            if (random.nextInt(i + 2) == 0) {
+                chunk.setBlockRuntimeIdUnsafe(x, y, z, 0, this.runtimeId);
             }
         }
     }

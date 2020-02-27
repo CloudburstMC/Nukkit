@@ -43,7 +43,7 @@ public final class StandardGenerator implements Generator {
     private final BiomeMap        biomes;
     private final DensitySource   density;
     private final BlockReplacer[] replacers;
-    private final Decorator[] decorators;
+    private final Decorator[]     decorators;
     private final Populator[]     populators;
 
     public StandardGenerator(long seed, String options) {
@@ -170,7 +170,11 @@ public final class StandardGenerator implements Generator {
 
         //run decorators
         for (Decorator decorator : this.decorators) {
-            decorator.decorate(chunk, random);
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    decorator.decorate(chunk, random, x, z);
+                }
+            }
         }
 
         //set biomes
