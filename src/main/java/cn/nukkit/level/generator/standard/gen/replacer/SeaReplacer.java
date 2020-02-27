@@ -18,7 +18,7 @@ public final class SeaReplacer implements BlockReplacer {
     private final int   seaLevel;
 
     public SeaReplacer(@NonNull ConfigSection config, @NonNull PRandom random) {
-        this.block = StandardGeneratorUtils.parseBlock(config.getString("block"));
+        this.block = StandardGeneratorUtils.getBlock(config, "block");
         this.seaLevel = PValidation.ensureNonNegative(config.getInt("seaLevel", -1));
     }
 

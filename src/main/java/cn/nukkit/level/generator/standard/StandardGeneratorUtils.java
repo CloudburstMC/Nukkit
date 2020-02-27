@@ -40,6 +40,19 @@ public class StandardGeneratorUtils {
     private final Cache<Matcher> BLOCK_MATCHER_CACHE = ThreadCache.soft(() -> BLOCK_PATTERN.matcher(""));
 
     /**
+     * Gets a block encoded in the form {@code <identifier>[#meta]} from a named field in the given {@link ConfigSection}.
+     *
+     * @param config    the {@link ConfigSection} to load the block from
+     * @param fieldName the name of the field that the block is stored as
+     * @see #parseBlock(String)
+     */
+    public static Block getBlock(@NonNull ConfigSection config, @NonNull String fieldName) {
+        String block = config.getString(fieldName, null);
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(block), "%s must be set!", fieldName);
+        return parseBlock(block);
+    }
+
+    /**
      * Gets a block encoded in the form {@code <identifier>[#meta]}.
      *
      * @param block the encoded block
@@ -126,7 +139,7 @@ public class StandardGeneratorUtils {
         return levelSeed ^ uuid.getLeastSignificantBits() ^ uuid.getMostSignificantBits();
     }
 
-    public static Identifier getId(@NonNull ConfigSection config, @NonNull String fieldName)    {
+    public static Identifier getId(@NonNull ConfigSection config, @NonNull String fieldName) {
         String id = config.getString(fieldName);
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "%s must be set!", fieldName);
         return Identifier.fromString(id);

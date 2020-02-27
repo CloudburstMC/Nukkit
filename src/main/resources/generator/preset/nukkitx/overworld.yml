@@ -29,3 +29,11 @@ generation:
       fade: 5
 population:
   populators:
+    - id: "nukkitx:basic_tree"
+      start: "grass"
+      trunk: "log"
+      leaf: "leaves"
+      minTries: 2
+      maxTries: 6
+      minHeight: 4
+      maxHeight: 8

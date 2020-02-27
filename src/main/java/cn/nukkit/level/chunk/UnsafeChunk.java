@@ -178,7 +178,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
             return BlockRegistry.get().getRuntimeId(AIR, 0); //will probably always evaluate to 0, but oh well
             //TODO: constant fields for runtime ids of default block states
         }
-        return section.getBlockRuntimeIdUnsafe(x, y, z, layer);
+        return section.getBlockRuntimeIdUnsafe(x, y & 0xF, z, layer);
     }
 
     @Override

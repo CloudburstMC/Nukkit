@@ -3,6 +3,8 @@ package cn.nukkit.level.generator.standard.registry;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.generator.standard.pop.Populator;
+import cn.nukkit.level.generator.standard.pop.tree.BasicTreePopulator;
+import cn.nukkit.utils.Identifier;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public final class PopulatorRegistry extends AbstractGeneratorRegistry<Populator> {
     @Override
     protected void registerDefault() {
+        this.register(Identifier.fromString("nukkitx:basic_tree"), BasicTreePopulator::new);
     }
 
     @Override
