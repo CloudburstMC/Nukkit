@@ -1,6 +1,7 @@
 package cn.nukkit.event.server;
 
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandSource;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
@@ -14,14 +15,14 @@ public class ServerCommandEvent extends ServerEvent implements Cancellable {
 
     protected String command;
 
-    protected final CommandSender sender;
+    protected final CommandSource sender;
 
-    public ServerCommandEvent(CommandSender sender, String command) {
+    public ServerCommandEvent(CommandSource sender, String command) {
         this.sender = sender;
         this.command = command;
     }
 
-    public CommandSender getSender() {
+    public CommandSource getSender() {
         return sender;
     }
 

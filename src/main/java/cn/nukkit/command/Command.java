@@ -9,12 +9,8 @@ import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
-import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 /**
  * author: MagicDroidX
@@ -275,14 +271,14 @@ public abstract class Command {
 
         TranslationContainer colored = new TranslationContainer(TextFormat.GRAY + "" + TextFormat.ITALIC + "%chat.type.admin", source.getName(), message);
 
-        if (sendToSource && !(source instanceof ConsoleCommandSender)) {
+        if (sendToSource && !(source instanceof ConsoleCommandSource)) {
             source.sendMessage(message);
         }
 
         for (Permissible user : users) {
             if (user instanceof CommandSender) {
-                if (user instanceof ConsoleCommandSender) {
-                    ((ConsoleCommandSender) user).sendMessage(result);
+                if (user instanceof ConsoleCommandSource) {
+                    ((ConsoleCommandSource) user).sendMessage(result);
                 } else if (!user.equals(source)) {
                     ((CommandSender) user).sendMessage(colored);
                 }
@@ -307,14 +303,14 @@ public abstract class Command {
         m.setText(coloredStr);
         TextContainer colored = m.clone();
 
-        if (sendToSource && !(source instanceof ConsoleCommandSender)) {
+        if (sendToSource && !(source instanceof ConsoleCommandSource)) {
             source.sendMessage(message);
         }
 
         for (Permissible user : users) {
             if (user instanceof CommandSender) {
-                if (user instanceof ConsoleCommandSender) {
-                    ((ConsoleCommandSender) user).sendMessage(result);
+                if (user instanceof ConsoleCommandSource) {
+                    ((ConsoleCommandSource) user).sendMessage(result);
                 } else if (!user.equals(source)) {
                     ((CommandSender) user).sendMessage(colored);
                 }

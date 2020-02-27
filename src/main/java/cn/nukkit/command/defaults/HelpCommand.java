@@ -1,10 +1,7 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.*;
-import cn.nukkit.command.data.CommandParamType;
-import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
-import cn.nukkit.player.IPlayer;
 import cn.nukkit.utils.TextFormat;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
@@ -13,12 +10,8 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static cn.nukkit.command.args.OfflinePlayerArgument.getOfflinePlayer;
-import static cn.nukkit.command.args.OfflinePlayerArgument.offlinePlayer;
 import static com.mojang.brigadier.arguments.IntegerArgumentType.getInteger;
 import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
-import static com.mojang.brigadier.arguments.StringArgumentType.getString;
-import static com.mojang.brigadier.arguments.StringArgumentType.string;
 
 public class HelpCommand extends BaseCommand {
 
@@ -55,7 +48,7 @@ public class HelpCommand extends BaseCommand {
             }
 
         // TODO
-        if (source instanceof ConsoleCommandSender) {
+        if (source instanceof ConsoleCommandSource) {
             pageHeight = Integer.MAX_VALUE;
         }
 

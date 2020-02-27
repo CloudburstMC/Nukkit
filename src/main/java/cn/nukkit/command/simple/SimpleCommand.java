@@ -2,7 +2,7 @@ package cn.nukkit.command.simple;
 
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.command.ConsoleCommandSender;
+import cn.nukkit.command.ConsoleCommandSource;
 import cn.nukkit.lang.TranslationContainer;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
@@ -50,7 +50,7 @@ public class SimpleCommand extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (this.forbidConsole && sender instanceof ConsoleCommandSender) {
+        if (this.forbidConsole && sender instanceof ConsoleCommandSource) {
             this.sendInGameMessage(sender);
             return false;
         } else if (!this.testPermission(sender)) {

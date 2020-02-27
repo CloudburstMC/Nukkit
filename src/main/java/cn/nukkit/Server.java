@@ -146,7 +146,7 @@ public class Server {
 
     private final PackManager packManager = new PackManager();
 
-    private ConsoleCommandSender consoleSender;
+    private ConsoleCommandSource consoleSender;
 
     private int maxPlayers;
 
@@ -499,7 +499,7 @@ public class Server {
         log.info(this.getLanguage().translateString("nukkit.server.info", this.getName(), TextFormat.YELLOW + this.getNukkitVersion() + TextFormat.WHITE, TextFormat.AQUA + "" + TextFormat.WHITE, this.getApiVersion()));
         log.info(this.getLanguage().translateString("nukkit.server.license", this.getName()));
 
-        this.consoleSender = new ConsoleCommandSender();
+        this.consoleSender = new ConsoleCommandSource();
         this.commandMap = new SimpleCommandMap(this);
         this.commandDispatcher = new NukkitCommandDispatcher();
 
@@ -654,34 +654,33 @@ public class Server {
         this.pluginManager.disablePlugins();
     }
 
-    public boolean dispatchCommand(CommandSender sender, String commandLine) throws ServerException {
+    public boolean dispatchCommand(CommandSource source, String commandLine) throws ServerException {
         // First we need to check if this command is on the main thread or not, if not, warn the user
         if (!this.isPrimaryThread()) {
             log.warn("Command Dispatched Async: " + commandLine);
             log.warn("Please notify author of plugin causing this execution to fix this bug!", new Throwable());
             // TODO: We should sync the command to the main thread too!
         }
-        if (sender == null) {
+        if (source == null) {
             throw new ServerException("CommandSender is not valid");
         }
 
         try {
             // TODO: avoid this cast, allow for multiple command senders
-            if (this.commandDispatcher.dispatch((Player) sender, commandLine)) {
+            if (this.commandDispatcher.dispatch(source, commandLine)) {
                 return true;
             }
         } catch (CommandSyntaxException e) {
-            sender.sendMessage(e.getMessage());
+            source.sendMessage(e.getMessage());
         }
 
-        // TODO: uncomment when the commands are actually registered
-        //sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.unknown", commandLine));
+        source.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.unknown", commandLine));
 
         return false;
     }
 
     //todo: use ticker to check console
-    public ConsoleCommandSender getConsoleSender() {
+    public ConsoleCommandSource getConsoleSender() {
         return consoleSender;
     }
 

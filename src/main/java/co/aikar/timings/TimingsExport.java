@@ -26,8 +26,8 @@ package co.aikar.timings;
 import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.command.ConsoleCommandSender;
-import cn.nukkit.command.RemoteConsoleCommandSender;
+import cn.nukkit.command.ConsoleCommandSource;
+import cn.nukkit.command.RemoteConsoleCommandSource;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.nbt.stream.PGZIPOutputStream;
 import cn.nukkit.timings.JsonUtil;
@@ -43,7 +43,6 @@ import java.lang.management.RuntimeMXBean;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -192,7 +191,7 @@ public class TimingsExport extends Thread {
 
     @Override
     public synchronized void start() {
-        if (this.sender instanceof RemoteConsoleCommandSender) {
+        if (this.sender instanceof RemoteConsoleCommandSource) {
             this.sender.sendMessage(new TranslationContainer("nukkit.command.timings.rcon"));
             run();
         } else {
@@ -231,7 +230,7 @@ public class TimingsExport extends Thread {
 
             String location = con.getHeaderField("Location");
             this.sender.sendMessage(new TranslationContainer("nukkit.command.timings.timingsLocation", location));
-            if (!(this.sender instanceof ConsoleCommandSender)) {
+            if (!(this.sender instanceof ConsoleCommandSource)) {
                 log.info(Server.getInstance().getLanguage().translateString("nukkit.command.timings.timingsLocation", location));
             }
 

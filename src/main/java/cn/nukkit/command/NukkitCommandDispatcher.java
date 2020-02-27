@@ -63,9 +63,8 @@ public class NukkitCommandDispatcher {
         // TODO: /xp
     }
 
-    // TODO: support for command senders
-    public boolean dispatch(Player player, String command) throws CommandSyntaxException {
-        dispatcher.execute(command, player.getCommandListener());
+    public boolean dispatch(CommandSource source, String command) throws CommandSyntaxException {
+        dispatcher.execute(command, source);
         return true;
     }
 

@@ -1,7 +1,7 @@
 package cn.nukkit.network.rcon;
 
 import cn.nukkit.Server;
-import cn.nukkit.command.RemoteConsoleCommandSender;
+import cn.nukkit.command.RemoteConsoleCommandSource;
 import cn.nukkit.event.server.RemoteServerCommandEvent;
 import cn.nukkit.utils.TextFormat;
 import lombok.extern.log4j.Log4j2;
@@ -47,7 +47,7 @@ public class RCON {
 
         RCONCommand command;
         while ((command = serverThread.receive()) != null) {
-            RemoteConsoleCommandSender sender = new RemoteConsoleCommandSender();
+            RemoteConsoleCommandSource sender = new RemoteConsoleCommandSource();
             RemoteServerCommandEvent event = new RemoteServerCommandEvent(sender, command.getCommand());
             this.server.getPluginManager().callEvent(event);
 

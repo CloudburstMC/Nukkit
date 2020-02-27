@@ -1,10 +1,8 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.BaseCommand;
-import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandSource;
-import cn.nukkit.command.ConsoleCommandSender;
-import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.ConsoleCommandSource;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
@@ -35,7 +33,7 @@ public class SayCommand extends BaseCommand {
         String senderString;
         if (source instanceof Player) {
             senderString = ((Player) source).getDisplayName();
-        } else if (source instanceof ConsoleCommandSender) {
+        } else if (source instanceof ConsoleCommandSource) {
             senderString = "Server";
         } else {
             senderString = source.getName();

@@ -3,10 +3,9 @@ package cn.nukkit.command;
 import cn.nukkit.Server;
 import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandDataVersions;
-import cn.nukkit.command.data.CommandEnum;
-import cn.nukkit.command.data.CommandOverload;
 import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.level.Level;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
@@ -16,12 +15,8 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -33,7 +28,7 @@ public abstract class BaseCommand {
     private CommandData commandData;
 
     private String name;
-    private String description = "test";
+    private String description;
     private String usage = null;
     private String permission = null;
     private String permissionMessage = null;
@@ -96,14 +91,14 @@ public abstract class BaseCommand {
         TranslationContainer result = new TranslationContainer("chat.type.admin", source.getName(), message);
         TranslationContainer colored = new TranslationContainer(TextFormat.GRAY + "" + TextFormat.ITALIC + "%chat.type.admin", source.getName(), message);
 
-        if (sendToSource && !(source instanceof ConsoleCommandSender)) {
+        if (sendToSource && !(source instanceof ConsoleCommandSource)) {
             source.sendMessage(message);
         }
 
         for (Permissible user : users) {
             if (user instanceof CommandSender) {
-                if (user instanceof ConsoleCommandSender) {
-                    ((ConsoleCommandSender) user).sendMessage(result);
+                if (user instanceof ConsoleCommandSource) {
+                    ((ConsoleCommandSource) user).sendMessage(result);
                 } else if (!user.equals(source)) {
                     ((CommandSender) user).sendMessage(colored);
                 }
@@ -129,14 +124,14 @@ public abstract class BaseCommand {
         m.setText(coloredStr);
         TextContainer colored = m.clone();
 
-        if (sendToSource && !(source instanceof ConsoleCommandSender)) {
+        if (sendToSource && !(source instanceof ConsoleCommandSource)) {
             source.sendMessage(message);
         }
 
         for (Permissible user : users) {
             if (user instanceof CommandSender) {
-                if (user instanceof ConsoleCommandSender) {
-                    ((ConsoleCommandSender) user).sendMessage(result);
+                if (user instanceof ConsoleCommandSource) {
+                    ((ConsoleCommandSource) user).sendMessage(result);
                 } else if (!user.equals(source)) {
                     ((CommandSender) user).sendMessage(colored);
                 }
@@ -173,19 +168,33 @@ public abstract class BaseCommand {
         return versions;
     }
 
+    /**
+     * Constructs a literal argument.
+     *
+     * This an an argument where the user must type the literal word provided.
+     *
+     * For example, in the command "/effect Steve clear", 'effect' and 'clear' are literal
+     * arguments, and 'Steve' is normal argument (in this case its a player name).
+     */
     protected static LiteralArgumentBuilder<CommandSource> literal(String name) {
         return LiteralArgumentBuilder.literal(name);
     }
 
+    /**
+     * Constructs a required argument.
+     */
     protected static <T> RequiredArgumentBuilder<CommandSource, T> argument(String name, ArgumentType<T> type) {
         return RequiredArgumentBuilder.argument(name, type);
     }
 
     protected final Predicate<CommandSource> requireCheatsEnabled() {
-        return source -> false; // TODO
+        return source -> {
+            Level level = (source instanceof Player) ? ((Player) source).getLevel() : source.getServer().getDefaultLevel();
+            return true; // TODO: check if cheats are enabled
+        };
     }
 
     protected final Predicate<CommandSource> requireOp() {
-        return source -> false; // TODO
+        return source -> (!(source instanceof Player)) || source.isOp();
     }
 }

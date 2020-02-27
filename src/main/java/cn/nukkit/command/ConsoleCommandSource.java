@@ -16,11 +16,11 @@ import java.util.Map;
  * Nukkit Project
  */
 @Log4j2
-public class ConsoleCommandSender implements CommandSender {
+public class ConsoleCommandSource implements CommandSource {
 
     private final PermissibleBase perm;
 
-    public ConsoleCommandSender() {
+    public ConsoleCommandSource() {
         this.perm = new PermissibleBase(this);
     }
 

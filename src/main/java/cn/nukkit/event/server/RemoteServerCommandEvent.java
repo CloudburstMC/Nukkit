@@ -1,6 +1,7 @@
 package cn.nukkit.event.server;
 
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandSource;
 import cn.nukkit.event.HandlerList;
 
 /**
@@ -15,7 +16,7 @@ public class RemoteServerCommandEvent extends ServerCommandEvent {
         return handlers;
     }
 
-    public RemoteServerCommandEvent(CommandSender sender, String command) {
+    public RemoteServerCommandEvent(CommandSource sender, String command) {
         super(sender, command);
     }
 }

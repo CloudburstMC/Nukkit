@@ -44,7 +44,7 @@ public class DeopCommand extends BaseCommand {
             ((Player) target).sendMessage(new TranslationContainer(TextFormat.GRAY + "%commands.deop.message"));
         }
 
-        sendAdminMessage(source, new TranslationContainer("commands.deop.success", new String[]{target.getName()}));
+        sendAdminMessage(source, new TranslationContainer("commands.deop.success", target.getName()));
 
         return 1;
     }
