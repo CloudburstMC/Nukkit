@@ -3,7 +3,7 @@ package cn.nukkit.level.generator.standard.gen.decorator;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.standard.StandardGeneratorUtils;
 import cn.nukkit.level.generator.standard.gen.Decorator;
-import cn.nukkit.level.generator.standard.misc.BlockMatcher;
+import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.ConfigSection;
 import lombok.NonNull;
@@ -15,11 +15,11 @@ import net.daporkchop.lib.random.PRandom;
  * @author DaPorkchop_
  */
 public final class SurfaceDecorator implements Decorator {
-    private final BlockMatcher target;
-    private final int[]        replaceIds;
+    private final BlockFilter target;
+    private final int[]       replaceIds;
 
     public SurfaceDecorator(@NonNull ConfigSection config, @NonNull PRandom random) {
-        this.target = StandardGeneratorUtils.parseBlockMatcher(config.getString("target", "stone"));
+        this.target = StandardGeneratorUtils.parseBlockChecker(config.getString("target", "stone"));
         this.replaceIds = StandardGeneratorUtils.parseBlockList(config.getString("blocks")).stream()
                 .mapToInt(BlockRegistry.get()::getRuntimeId)
                 .toArray();

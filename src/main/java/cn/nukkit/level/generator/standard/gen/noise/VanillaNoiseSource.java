@@ -33,7 +33,7 @@ public final class VanillaNoiseSource implements DensitySource {
     }
 
     @Override
-    public double get(int x, int y, int z, /*@NonNull */BiomeMap biomes) {
+    public double get(int x, int y, int z, @NonNull BiomeMap biomes) {
         return this.selector.get((double) x, (double) y, (double) z) - (1.0d / 32.0d) * y;
     }
 }

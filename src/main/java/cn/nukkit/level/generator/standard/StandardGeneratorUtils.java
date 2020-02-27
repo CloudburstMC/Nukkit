@@ -3,7 +3,9 @@ package cn.nukkit.level.generator.standard;
 import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
-import cn.nukkit.level.generator.standard.misc.BlockMatcher;
+import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
+import cn.nukkit.level.generator.standard.misc.filter.AnyOfBlockFilter;
+import cn.nukkit.level.generator.standard.misc.filter.SingleBlockFilter;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Config;
@@ -74,7 +76,7 @@ public class StandardGeneratorUtils {
         return BlockRegistry.get().getBlock(id, meta == null ? 0 : Integer.parseInt(meta));
     }
 
-    public static BlockMatcher parseBlockMatcher(String block) {
+    public static BlockFilter parseBlockChecker(String block) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(block), "block must be set!");
         Collection<Block> blocks = new ArrayList<>();
         for (String s : block.split(",")) {
@@ -86,7 +88,7 @@ public class StandardGeneratorUtils {
                 .distinct()
                 .sorted()
                 .toArray();
-        return ids.length == 1 ? new BlockMatcher.Single(ids[0]) : new BlockMatcher.AnyOf(ids);
+        return ids.length == 1 ? new SingleBlockFilter(ids[0]) : new AnyOfBlockFilter(ids);
     }
 
     public static Collection<Block> parseBlockList(String blockList) {
