@@ -1,9 +1,14 @@
 package cn.nukkit.command;
 
 import cn.nukkit.Server;
+import cn.nukkit.command.data.CommandData;
+import cn.nukkit.command.data.CommandDataVersions;
+import cn.nukkit.command.data.CommandEnum;
+import cn.nukkit.command.data.CommandOverload;
 import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.permission.Permissible;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 import com.mojang.brigadier.LiteralMessage;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -14,6 +19,9 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -21,6 +29,8 @@ import java.util.function.Predicate;
 public abstract class BaseCommand {
     public static final DynamicCommandExceptionType UNKNOWN_COMMAND =
             new DynamicCommandExceptionType(name -> new LiteralMessage("Unknown command " + name));
+
+    private CommandData commandData;
 
     private String name;
     private String description = "test";
@@ -31,6 +41,7 @@ public abstract class BaseCommand {
     public BaseCommand(String name, String description) {
         this.name = name;
         this.description = description;
+        this.commandData = new CommandData();
     }
 
     public String getUsage() {
@@ -131,6 +142,35 @@ public abstract class BaseCommand {
                 }
             }
         }
+    }
+
+    /**
+     * Generates modified command data for the specified player
+     * for AvailableCommandsPacket.
+     *
+     * @param player player
+     * @return CommandData|null
+     */
+    public CommandDataVersions generateCustomCommandData(Player player) throws CommandSyntaxException {
+        if (!testPermission(player)) {
+            return null;
+        }
+
+        CommandData customData = this.commandData.clone();
+        customData.description = player.getServer().getLanguage().translateString(description);
+
+//            this.commandParameters.forEach((key, par) -> {
+//                CommandOverload overload = new CommandOverload();
+//                overload.input.parameters = par;
+//                customData.overloads.put(key, overload);
+//            });
+//            if (customData.overloads.size() == 0) customData.overloads.put("default", new CommandOverload());
+//            CommandDataVersions versions = new CommandDataVersions();
+//            versions.versions.add(customData);
+//
+        CommandDataVersions versions = new CommandDataVersions();
+        versions.versions.add(customData);
+        return versions;
     }
 
     protected static LiteralArgumentBuilder<CommandSource> literal(String name) {

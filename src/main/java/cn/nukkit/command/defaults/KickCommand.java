@@ -29,12 +29,13 @@ public class KickCommand extends BaseCommand {
         super("kick", "%nukkit.command.kick.description");
         setPermission("nukkit.command.kick");
 
+        // TODO: This doesnt work. Stacktrace: https://hastebin.com/teyuyopome.apache
         dispatcher.register(literal("kick")
                 .then(argument("target", player()).executes(context ->
-                        run(context, getPlayer(context, "target"), null))
+                        run(context, getPlayer(context, "target"), null)))
 
                 .then(argument("reason", greedyString()).executes(context ->
-                        run(context, getPlayer(context, "target"), getString(context, "reason"))))));
+                        run(context, getPlayer(context, "target"), getString(context, "reason")))));
     }
 
     public int run(CommandContext<CommandSource> context, Player target, String reason) throws CommandSyntaxException {

@@ -26,7 +26,7 @@ public class HelpCommand extends BaseCommand {
         super("help", "%nukkit.command.help.description");
         setPermission("nukkit.command.help");
 
-        dispatcher.register(literal("nkhelp") // temporary until i send the commands to the client
+        dispatcher.register(literal("help")
                 .then(argument("page", integer()).executes(ctx -> run(ctx, getInteger(ctx, "page"))))
                 // TODO: The following line will "overwrite" the page argument above.
                 //       Find out a way to make them play together

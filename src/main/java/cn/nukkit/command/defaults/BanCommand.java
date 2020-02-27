@@ -32,12 +32,13 @@ public class BanCommand extends BaseCommand {
         super("ban", "%nukkit.command.ban.player.description");
         setPermission("nukkit.command.ban.player");
 
+        // TODO: This doesnt work. Stacktrace: https://hastebin.com/teyuyopome.apache
         dispatcher.register(literal("ban")
                 .then(argument("target", offlinePlayer()).executes(context ->
-                        run(context, getOfflinePlayer(context, "target"), null))
+                        run(context, getOfflinePlayer(context, "target"), null)))
 
                 .then(argument("reason", greedyString()).executes(context ->
-                        run(context, getOfflinePlayer(context, "target"), getString(context, "reason"))))));
+                        run(context, getOfflinePlayer(context, "target"), getString(context, "reason")))));
     }
 
     public int run(CommandContext<CommandSource> context, IPlayer target, String reason) throws CommandSyntaxException {

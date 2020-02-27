@@ -10,6 +10,7 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityItemFrame;
 import cn.nukkit.blockentity.BlockEntityLectern;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
+import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandSource;
@@ -609,12 +610,17 @@ public class Player extends Human implements CommandSender, CommandSource, Inven
         AvailableCommandsPacket pk = new AvailableCommandsPacket();
         Map<String, CommandDataVersions> data = new HashMap<>();
         int count = 0;
-        for (Command command : this.server.getCommandMap().getCommands().values()) {
+        for (BaseCommand command : this.server.getCommandDispatcher().getCommands().values()) {
             if (!command.testPermissionSilent(this)) {
                 continue;
             }
             ++count;
-            CommandDataVersions data0 = command.generateCustomCommandData(this);
+            CommandDataVersions data0 = null;
+            try {
+                data0 = command.generateCustomCommandData(this);
+            } catch (CommandSyntaxException e) {
+                log.warn("Failed to generate command data for player " + getName(), e);
+            }
             data.put(command.getName(), data0);
         }
         if (count > 0) {
