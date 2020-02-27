@@ -22,7 +22,7 @@ import java.util.Optional;
  */
 public class TeleportCommand extends VanillaCommand {
     public TeleportCommand(String name) {
-        super(name, "%commands.tp.description", "%commands.tp.usage");
+        super(name, "commands.tp.description", "commands.tp.usage");
         this.setPermission("nukkit.command.teleport");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{

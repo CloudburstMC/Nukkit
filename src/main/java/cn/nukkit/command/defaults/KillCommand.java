@@ -22,7 +22,7 @@ import java.util.StringJoiner;
 public class KillCommand extends VanillaCommand {
 
     public KillCommand(String name) {
-        super(name, "%commands.kill.description", "%commands.kill.usage", new String[]{"suicide"});
+        super(name, "commands.kill.description", "commands.kill.usage", new String[]{"suicide"});
         this.setPermission("nukkit.command.kill.self;"
                 + "nukkit.command.kill.other");
         this.commandParameters.clear();

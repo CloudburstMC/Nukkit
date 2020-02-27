@@ -9,6 +9,9 @@ import cn.nukkit.player.IPlayer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
+import java.util.Optional;
+import java.util.UUID;
+
 /**
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -16,7 +19,7 @@ import cn.nukkit.utils.TextFormat;
 public class OpCommand extends VanillaCommand {
 
     public OpCommand(String name) {
-        super(name, "%commands.op.description", "%commands.op.description");
+        super(name, "commands.op.description", "commands.op.description");
         this.setPermission("nukkit.command.op.give");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{
@@ -35,10 +38,11 @@ public class OpCommand extends VanillaCommand {
         }
 
         String name = args[0];
-        IPlayer player = sender.getServer().getOfflinePlayer(name);
+        Optional<UUID> uuid = sender.getServer().lookupName(name);
 
-        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.op.success", player.getName()));
-        if (player != null) {
+        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.op.success", name));
+        if (uuid.isPresent()) {
+            IPlayer player = sender.getServer().getOfflinePlayer(uuid.get());
             if (player instanceof Player) {
                 ((Player) player).sendMessage(new TranslationContainer(TextFormat.GRAY + "%commands.op.message"));
             }

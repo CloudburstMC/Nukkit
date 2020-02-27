@@ -15,7 +15,7 @@ import cn.nukkit.utils.TextFormat;
  */
 public class DeopCommand extends VanillaCommand {
     public DeopCommand(String name) {
-        super(name, "%commands.deop.description", "%commands.deop.description");
+        super(name, "commands.deop.description", "commands.deop.description");
         this.setPermission("nukkit.command.op.take");
         this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false)

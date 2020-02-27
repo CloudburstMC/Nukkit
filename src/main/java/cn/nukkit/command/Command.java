@@ -339,14 +339,15 @@ public abstract class Command {
         if (getAliases().length > 0) {
             Set<String> aliasList = new HashSet<>();
             Collections.addAll(aliasList, this.getAliases());
+            aliasList.add(this.name.toLowerCase());
 
             aliasesEnum = aliasList.toArray(new String[0]);
         } else {
-            aliasesEnum = new String[0];
+            aliasesEnum = new String[]{this.name.toLowerCase()};
         }
-        CommandEnumData aliases = new CommandEnumData(this.name.toLowerCase() + "-aliases", aliasesEnum, false);
+        CommandEnumData aliases = new CommandEnumData(this.name.toLowerCase() + "Aliases", aliasesEnum, false);
 
-        String description = player.getServer().getLanguage().translate(this.description);
+        String description = player.getServer().getLanguage().translateOnly("nukkit.", this.description);
 
         CommandParamData[][] overloads = new CommandParamData[this.commandParameters.size()][];
 

@@ -591,7 +591,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         SetCommandsEnabledPacket packet = new SetCommandsEnabledPacket();
         packet.setCommandsEnabled(enable);
         this.sendPacket(packet);
-        //if (enable) this.sendCommandData();
+        if (enable) this.sendCommandData();
     }
 
     @Override
@@ -621,12 +621,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public void sendCommandData() {
-        if (!spawned) {
-            return;
-        }
         AvailableCommandsPacket packet = new AvailableCommandsPacket();
         List<CommandData> commandData = packet.getCommands();
-        for (Command command : this.server.getCommandMap().getCommands().values()) {
+        for (Command command : this.server.getCommandMap().getRegisteredCommands()) {
             if (!command.testPermissionSilent(this)) {
                 continue;
             }

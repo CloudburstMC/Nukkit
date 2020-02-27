@@ -16,7 +16,7 @@ import cn.nukkit.utils.TextFormat;
 public class KickCommand extends VanillaCommand {
 
     public KickCommand(String name) {
-        super(name, "%commands.kick.description", "%commands.kick.usage");
+        super(name, "commands.kick.description", "commands.kick.usage");
         this.setPermission("nukkit.command.kick");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{

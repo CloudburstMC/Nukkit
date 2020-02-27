@@ -19,7 +19,7 @@ import static cn.nukkit.block.BlockIds.AIR;
 @Log4j2
 public class GiveCommand extends VanillaCommand {
     public GiveCommand(String name) {
-        super(name, "%commands.give.description", "%commands.give.usage");
+        super(name, "commands.give.description", "commands.give.usage");
         this.setPermission("nukkit.command.give");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{

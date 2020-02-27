@@ -13,7 +13,7 @@ import cn.nukkit.player.Player;
 public class SaveCommand extends VanillaCommand {
 
     public SaveCommand(String name) {
-        super(name, "%commands.save.description", "%commands.save.usage");
+        super(name, "commands.save.description", "commands.save.usage");
         this.setPermission("nukkit.command.save.perform");
         this.commandParameters.clear();
     }

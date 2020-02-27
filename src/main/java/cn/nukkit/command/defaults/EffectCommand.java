@@ -17,7 +17,7 @@ import cn.nukkit.utils.TextFormat;
  */
 public class EffectCommand extends Command {
     public EffectCommand(String name) {
-        super(name, "%commands.effect.description", "%commands.effect.usage");
+        super(name, "commands.effect.description", "commands.effect.usage");
         this.setPermission("nukkit.command.effect");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{

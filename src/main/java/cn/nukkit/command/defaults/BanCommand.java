@@ -15,7 +15,7 @@ import cn.nukkit.player.Player;
 public class BanCommand extends VanillaCommand {
 
     public BanCommand(String name) {
-        super(name, "%commands.ban.description", "%commands.ban.usage");
+        super(name, "commands.ban.description", "commands.ban.usage");
         this.setPermission("nukkit.command.ban.player");
         this.commandParameters.clear();
         this.commandParameters.add(

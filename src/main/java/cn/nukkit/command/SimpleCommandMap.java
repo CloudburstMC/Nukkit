@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @Log4j2
 public class SimpleCommandMap implements CommandMap {
     protected final Map<String, Command> knownCommands = new HashMap<>();
+    protected final Map<String, Command> registeredCommands = new HashMap<>();
 
     private final Server server;
 
@@ -74,7 +75,7 @@ public class SimpleCommandMap implements CommandMap {
         this.register("nukkit", new GarbageCollectorCommand("gc"));
         this.register("nukkit", new TimingsCommand("timings"));
         this.register("nukkit", new DebugPasteCommand("debugpaste"));
-        //this.register("nukkit", new DumpMemoryCommand("dumpmemory"));
+//        this.register("nukkit", new DumpMemoryCommand("dumpmemory"));
 //        }
     }
 
@@ -108,6 +109,8 @@ public class SimpleCommandMap implements CommandMap {
 
         if (!registered) {
             command.setLabel(fallbackPrefix + ":" + label);
+        } else {
+            this.registeredCommands.put(label, command);
         }
 
         command.register(this);
@@ -268,6 +271,7 @@ public class SimpleCommandMap implements CommandMap {
             command.unregister(this);
         }
         this.knownCommands.clear();
+        this.registeredCommands.clear();
         this.setDefaultCommands();
     }
 
@@ -281,6 +285,10 @@ public class SimpleCommandMap implements CommandMap {
 
     public Map<String, Command> getCommands() {
         return knownCommands;
+    }
+
+    public Collection<Command> getRegisteredCommands() {
+        return registeredCommands.values();
     }
 
     public void registerServerAliases() {

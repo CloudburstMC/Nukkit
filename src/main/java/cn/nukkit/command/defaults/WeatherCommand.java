@@ -17,7 +17,7 @@ public class WeatherCommand extends VanillaCommand {
     private java.util.Random rand = new java.util.Random();
 
     public WeatherCommand(String name) {
-        super(name, "%commands.weather.description", "%commands.weather.usage");
+        super(name, "commands.weather.description", "commands.weather.usage");
         this.setPermission("nukkit.command.weather");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{

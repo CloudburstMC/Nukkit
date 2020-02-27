@@ -16,7 +16,7 @@ public class GameruleCommand extends VanillaCommand {
     private static final GameRuleRegistry registry = GameRuleRegistry.get();
 
     public GameruleCommand(String name) {
-        super(name, "%commands.gamerule.description", "%commands.gamerule.usage");
+        super(name, "commands.gamerule.description", "commands.gamerule.usage");
         this.setPermission("nukkit.command.gamerule");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{

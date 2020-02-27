@@ -18,7 +18,7 @@ import static cn.nukkit.block.BlockIds.AIR;
 public class EnchantCommand extends VanillaCommand {
 
     public EnchantCommand(String name) {
-        super(name, "%commands.enchant.description", "%commands.enchant.usage");
+        super(name, "commands.enchant.description", "commands.enchant.usage");
         this.setPermission("nukkit.command.enchant");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{

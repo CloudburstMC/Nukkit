@@ -13,7 +13,7 @@ import cn.nukkit.utils.TextFormat;
  */
 public class TitleCommand extends VanillaCommand {
     public TitleCommand(String name) {
-        super(name, "%commands.title.description", "%commands.title.usage");
+        super(name, "commands.title.description", "commands.title.usage");
         this.setPermission("nukkit.command.title");
 
         this.commandParameters.clear();

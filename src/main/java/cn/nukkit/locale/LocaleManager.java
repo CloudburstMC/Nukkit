@@ -3,7 +3,6 @@ package cn.nukkit.locale;
 import cn.nukkit.Nukkit;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import lombok.extern.log4j.Log4j2;
 
@@ -16,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -120,7 +120,10 @@ public class LocaleManager {
     }
 
     public String translate(String string, Object... objects) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(string), "string is null or empty");
+        Preconditions.checkNotNull(string, "string is null");
+        if (string.isEmpty()) {
+            return string;
+        }
 
         String i18n;
         boolean percentBreak = false;
@@ -136,7 +139,7 @@ public class LocaleManager {
         Object[] args = objects == null ? new Object[0] : objects;
 
         for (int i = 0; i < args.length; i++) {
-            String arg = objects[i].toString();
+            String arg = Objects.toString(objects[i]);
             Matcher argMatcher = I18N_PATTERN.matcher(arg);
             if (argMatcher.matches()) {
                 String match = argMatcher.group(1);
@@ -157,7 +160,10 @@ public class LocaleManager {
     }
 
     public String translateOnly(String prefix, String string, Object... objects) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(string), "string is null or empty");
+        Preconditions.checkNotNull(string, "string is null");
+        if (string.isEmpty()) {
+            return string;
+        }
 
         String i18n;
         boolean percentBreak = false;

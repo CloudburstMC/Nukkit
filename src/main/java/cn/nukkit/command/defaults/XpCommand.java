@@ -14,7 +14,7 @@ import cn.nukkit.utils.TextFormat;
  */
 public class XpCommand extends Command {
     public XpCommand(String name) {
-        super(name, "%commands.xp.description", "%commands.xp.usage");
+        super(name, "commands.xp.description", "commands.xp.usage");
         this.setPermission("nukkit.command.xp");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{

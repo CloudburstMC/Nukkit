@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class DifficultyCommand extends VanillaCommand {
 
     public DifficultyCommand(String name) {
-        super(name, "%commands.difficulty.description", "%commands.difficulty.usage");
+        super(name, "commands.difficulty.description", "commands.difficulty.usage");
         this.setPermission("nukkit.command.difficulty");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{
