@@ -148,6 +148,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     protected final BedrockServerSession session;
 
+    private boolean initialized;
     public boolean spawned = false;
     public boolean loggedIn = false;
     public long lastBreak;
@@ -757,18 +758,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         this.sendPlayStatus(PlayStatusPacket.Status.PLAYER_SPAWN);
 
-        PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(this,
-                new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.joined", this.getDisplayName())
-        );
-
-        this.server.getPluginManager().callEvent(playerJoinEvent);
-
-        if (playerJoinEvent.getJoinMessage().toString().trim().length() > 0) {
-            this.server.broadcastMessage(playerJoinEvent.getJoinMessage());
-        }
-
         this.noDamageTicks = 60;
-
 
         this.getChunkManager().getLoadedChunks().forEach((LongConsumer) chunkKey -> {
             int chunkX = Chunk.fromKeyX(chunkKey);
@@ -1586,14 +1576,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         startGamePacket.setItemEntries(ItemRegistry.get().getItemEntries());
         this.sendPacket(startGamePacket);
 
-        BiomeDefinitionListPacket biomeDefinitionListPacket = new BiomeDefinitionListPacket();
-        biomeDefinitionListPacket.setTag(EnumBiome.BIOME_DEFINITIONS);
-        this.sendPacket(biomeDefinitionListPacket);
-
-        AvailableEntityIdentifiersPacket availableEntityIdentifiersPacket = new AvailableEntityIdentifiersPacket();
-        availableEntityIdentifiersPacket.setTag(EntityRegistry.get().getEntityIdentifiersPalette());
-        this.sendPacket(availableEntityIdentifiersPacket);
-
         UpdateBlockPropertiesPacket updateBlockPropertiesPacket = new UpdateBlockPropertiesPacket();
         updateBlockPropertiesPacket.setProperties(BlockRegistry.get().getPropertiesTag());
         this.sendPacket(updateBlockPropertiesPacket);
@@ -1648,6 +1630,14 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         this.server.addOnlinePlayer(this);
         this.server.onPlayerCompleteLoginSequence(this);
+
+        BiomeDefinitionListPacket biomeDefinitionListPacket = new BiomeDefinitionListPacket();
+        biomeDefinitionListPacket.setTag(EnumBiome.BIOME_DEFINITIONS);
+        this.sendPacket(biomeDefinitionListPacket);
+
+        AvailableEntityIdentifiersPacket availableEntityIdentifiersPacket = new AvailableEntityIdentifiersPacket();
+        availableEntityIdentifiersPacket.setTag(EntityRegistry.get().getEntityIdentifiersPalette());
+        this.sendPacket(availableEntityIdentifiersPacket);
     }
 
     public void checkNetwork() {
@@ -3100,6 +3090,21 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                                 }
                             }
                         }
+                    }
+                    break;
+                case SET_LOCAL_PLAYER_AS_INITIALIZED:
+                    if (this.initialized) {
+                        break;
+                    }
+                    this.initialized = true;
+                    PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(this,
+                            new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.joined", this.getDisplayName())
+                    );
+
+                    this.server.getPluginManager().callEvent(playerJoinEvent);
+
+                    if (playerJoinEvent.getJoinMessage().toString().trim().length() > 0) {
+                        this.server.broadcastMessage(playerJoinEvent.getJoinMessage());
                     }
                     break;
                 default:
