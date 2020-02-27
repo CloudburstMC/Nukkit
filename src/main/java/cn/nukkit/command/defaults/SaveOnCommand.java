@@ -1,28 +1,32 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandSource;
 import cn.nukkit.lang.TranslationContainer;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-/**
- * Created on 2015/11/13 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
- */
-public class SaveOnCommand extends VanillaCommand {
+public class SaveOnCommand extends BaseCommand {
 
-    public SaveOnCommand(String name) {
-        super(name, "%nukkit.command.saveon.description", "%commands.save-on.usage");
-        this.setPermission("nukkit.command.save.enable");
-        this.commandParameters.clear();
+    public SaveOnCommand(CommandDispatcher<CommandSource> dispatcher) {
+        super("save-n", "%nukkit.command.saveon.description");
+        setPermission("nukkit.command.saveon");
+
+        dispatcher.register(literal("save-on").executes(this::run));
     }
 
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!this.testPermission(sender)) {
-            return true;
+    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
+        CommandSource source = context.getSource();
+
+        if (!this.testPermission(source)) {
+            return -1;
         }
-        sender.getServer().setAutoSave(true);
-        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.save.enabled"));
-        return true;
+
+        source.getServer().setAutoSave(true);
+        sendAdminMessage(source, new TranslationContainer("commands.save.enabled"));
+        return 1;
     }
 }

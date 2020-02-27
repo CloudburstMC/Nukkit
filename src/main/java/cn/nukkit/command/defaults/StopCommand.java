@@ -1,31 +1,32 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandSource;
 import cn.nukkit.lang.TranslationContainer;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class StopCommand extends VanillaCommand {
+public class StopCommand extends BaseCommand {
 
-    public StopCommand(String name) {
-        super(name, "%nukkit.command.stop.description", "%commands.stop.usage");
-        this.setPermission("nukkit.command.stop");
-        this.commandParameters.clear();
+    public StopCommand(CommandDispatcher<CommandSource> dispatcher) {
+        super("stop", "%nukkit.command.stop.description");
+        setPermission("nukkit.command.stop");
+
+        dispatcher.register(literal("stop").executes(this::run));
     }
 
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!this.testPermission(sender)) {
-            return true;
+    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
+        CommandSource source = context.getSource();
+
+        if (!this.testPermission(source)) {
+            return -1;
         }
 
-        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.stop.start"));
-
-        sender.getServer().shutdown();
-
-        return true;
+        sendAdminMessage(source, new TranslationContainer("commands.stop.start"));
+        source.getServer().shutdown();
+        return 1;
     }
 }

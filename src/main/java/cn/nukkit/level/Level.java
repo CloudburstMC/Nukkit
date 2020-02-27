@@ -155,7 +155,7 @@ public class Level implements ChunkManager, Metadatable {
     private final ConcurrentLinkedQueue<BlockEntity> updateBlockEntities = new ConcurrentLinkedQueue<>();
 
     private final Server server;
-    public final LevelTimings timings;
+//    public final LevelTimings timings;
 
     private LevelProvider provider;
 
@@ -240,7 +240,7 @@ public class Level implements ChunkManager, Metadatable {
         this.autoSave = server.getAutoSave();
         this.provider = levelProvider;
         this.levelData = levelData;
-        this.timings = new LevelTimings(this);
+        //this.timings = new LevelTimings(this);
 
 //        try {
 //            if (fullConvert) {
@@ -583,7 +583,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void doTick(int currentTick) {
-        try (Timing ignored = this.timings.doTick.startTiming()) {
+        //try (Timing ignored = this.timings.doTick.startTiming()) {
             synchronized (lightQueue) {
                 updateBlockLight(lightQueue);
             }
@@ -630,9 +630,9 @@ public class Level implements ChunkManager, Metadatable {
 
             int polled = 0;
 
-            try (Timing ignored2 = timings.doTickPending.startTiming()) {
+            ///try (Timing ignored2 = timings.doTickPending.startTiming()) {
                 this.updateQueue.tick(this.getCurrentTick());
-            }
+            //}
 
             Block block;
             while ((block = this.normalUpdateQueue.poll()) != null) {
@@ -642,21 +642,21 @@ public class Level implements ChunkManager, Metadatable {
             TimingsHistory.entityTicks += this.updateEntities.size();
 
 
-            try (Timing ignored2 = this.timings.entityTick.startTiming()) {
+            //try (Timing ignored2 = this.timings.entityTick.startTiming()) {
                 if (!this.updateEntities.isEmpty()) {
                     this.updateEntities.removeIf(entity -> entity.isClosed() || !entity.onUpdate(currentTick));
                 }
-            }
+            //}
 
             TimingsHistory.tileEntityTicks += this.updateBlockEntities.size();
-            try (Timing ignored2 = this.timings.blockEntityTick.startTiming()) {
+            //try (Timing ignored2 = this.timings.blockEntityTick.startTiming()) {
                 this.updateBlockEntities.removeIf(blockEntity -> !blockEntity.isValid() || !blockEntity.onUpdate());
-            }
+            //}
 
-            try (Timing ignored2 = this.timings.tickChunks.startTiming()) {
-                try (Timing ignored3 = this.timings.tickChunks.startTiming()) {
+            //try (Timing ignored2 = this.timings.tickChunks.startTiming()) {
+                //try (Timing ignored3 = this.timings.tickChunks.startTiming()) {
                     this.tickChunks();
-                }
+                //}
 
                 synchronized (changedBlocks) {
                     ConcurrentMap<Long, IntSet> changedBlocks = this.changedBlocks.asMap();
@@ -690,7 +690,7 @@ public class Level implements ChunkManager, Metadatable {
                             }
                         }
                     }
-                }
+             //   }
 
                 //this.processChunkRequest();
 
@@ -724,7 +724,7 @@ public class Level implements ChunkManager, Metadatable {
                     this.levelData.getGameRules().refresh();
                 }
             }
-        }
+        //}
     }
 
     private void performThunder(Chunk chunk) {

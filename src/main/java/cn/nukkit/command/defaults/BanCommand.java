@@ -1,61 +1,61 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.Command;
-import cn.nukkit.command.CommandSender;
-import cn.nukkit.command.data.CommandParamType;
-import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.CommandSource;
+import cn.nukkit.command.args.PlayerArgument;
 import cn.nukkit.event.player.PlayerKickEvent;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.permission.BanList;
+import cn.nukkit.player.IPlayer;
+import cn.nukkit.player.OfflinePlayer;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.TextFormat;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.LiteralMessage;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import lombok.extern.log4j.Log4j2;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class BanCommand extends VanillaCommand {
+import java.util.Collection;
 
-    public BanCommand(String name) {
-        super(name, "%nukkit.command.ban.player.description", "%commands.ban.usage");
-        this.setPermission("nukkit.command.ban.player");
-        this.commandParameters.clear();
-        this.commandParameters.put("default",
-                new CommandParameter[]{
-                        new CommandParameter("player", CommandParamType.TARGET, false),
-                        new CommandParameter("reason", CommandParamType.STRING, true)
-                });
+import static cn.nukkit.command.args.OfflinePlayerArgument.getOfflinePlayer;
+import static cn.nukkit.command.args.OfflinePlayerArgument.offlinePlayer;
+import static cn.nukkit.command.args.PlayerArgument.*;
+import static com.mojang.brigadier.arguments.StringArgumentType.getString;
+import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
+
+public class BanCommand extends BaseCommand {
+    public static final SimpleCommandExceptionType ALREADY_BANNED = new SimpleCommandExceptionType(new LiteralMessage("That player is already banned"));
+
+    public BanCommand(CommandDispatcher<CommandSource> dispatcher) {
+        super("ban", "%nukkit.command.ban.player.description");
+        setPermission("nukkit.command.ban.player");
+
+        dispatcher.register(literal("ban")
+                .then(argument("target", offlinePlayer()).executes(context -> run(context, getOfflinePlayer(context, "target"), null)))
+                .then(argument("reason", greedyString()).executes(context -> run(context, getOfflinePlayer(context, "target"), getString(context, "reason")))));
     }
 
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!this.testPermission(sender)) {
-            return true;
+    public int run(CommandContext<CommandSource> context, IPlayer target, String reason) throws CommandSyntaxException {
+        CommandSource source = context.getSource();
+        BanList banList = source.getServer().getNameBans();
+
+        if(!testPermission(source)) {
+            return -1;
+        }
+        if(target.isBanned()) {
+            throw ALREADY_BANNED.create();
         }
 
-        if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+        // TODO: BanEntry.of()?
+        banList.addBan(target.getName(), reason, null, source.getName());
 
-            return false;
+        if(target instanceof Player) {
+            ((Player) target).kick(PlayerKickEvent.Reason.NAME_BANNED, reason != null ? "Banned by admin. Reason: " + reason : "Banned by admin");
         }
 
-        String name = args[0];
-        String reason = "";
-        for (int i = 1; i < args.length; i++) {
-            reason += args[i] + " ";
-        }
-
-        if (reason.length() > 0) {
-            reason = reason.substring(0, reason.length() - 1);
-        }
-
-        sender.getServer().getNameBans().addBan(name, reason, null, sender.getName());
-
-        Player player = sender.getServer().getPlayerExact(name);
-        if (player != null) {
-            player.kick(PlayerKickEvent.Reason.NAME_BANNED, !reason.isEmpty() ? "Banned by admin. Reason: " + reason : "Banned by admin");
-        }
-
-        Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.ban.success", player != null ? player.getName() : name));
-
-        return true;
+        sendAdminMessage(source, "Ban successful: " + target.getName());
+        return 1;
     }
 }

@@ -1,27 +1,31 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandSource;
+import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.ThreadCache;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-/**
- * Created on 2015/11/11 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
- */
-public class GarbageCollectorCommand extends VanillaCommand {
+public class GarbageCollectorCommand extends BaseCommand {
 
-    public GarbageCollectorCommand(String name) {
-        super(name, "%nukkit.command.gc.description", "%nukkit.command.gc.usage");
-        this.setPermission("nukkit.command.gc");
-        this.commandParameters.clear();
+    public GarbageCollectorCommand(CommandDispatcher<CommandSource> dispatcher) {
+        super("gc", "%nukkit.command.gc.description");
+        setPermission("nukkit.gc.stop");
+
+        dispatcher.register(literal("gc").executes(this::run));
     }
 
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!this.testPermission(sender)) {
-            return true;
+    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
+        CommandSource source = context.getSource();
+
+        if (!this.testPermission(source)) {
+            return -1;
         }
 
         int chunksCollected = 0;
@@ -29,7 +33,7 @@ public class GarbageCollectorCommand extends VanillaCommand {
         int tilesCollected = 0;
         long memory = Runtime.getRuntime().freeMemory();
 
-        for (Level level : sender.getServer().getLevels()) {
+        for (Level level : source.getServer().getLevels()) {
             int chunksCount = level.getChunkCount();
             int entitiesCount = level.getEntities().length;
             int tilesCount = level.getBlockEntities().size();
@@ -45,11 +49,11 @@ public class GarbageCollectorCommand extends VanillaCommand {
 
         long freedMemory = Runtime.getRuntime().freeMemory() - memory;
 
-        sender.sendMessage(TextFormat.GREEN + "---- " + TextFormat.WHITE + "Garbage collection result" + TextFormat.GREEN + " ----");
-        sender.sendMessage(TextFormat.GOLD + "Chunks: " + TextFormat.RED + chunksCollected);
-        sender.sendMessage(TextFormat.GOLD + "Entities: " + TextFormat.RED + entitiesCollected);
-        sender.sendMessage(TextFormat.GOLD + "Block Entities: " + TextFormat.RED + tilesCollected);
-        sender.sendMessage(TextFormat.GOLD + "Memory freed: " + TextFormat.RED + NukkitMath.round((freedMemory / 1024d / 1024d), 2) + " MB");
-        return true;
+        source.sendMessage(TextFormat.GREEN + "---- " + TextFormat.WHITE + "Garbage collection result" + TextFormat.GREEN + " ----");
+        source.sendMessage(TextFormat.GOLD + "Chunks: " + TextFormat.RED + chunksCollected);
+        source.sendMessage(TextFormat.GOLD + "Entities: " + TextFormat.RED + entitiesCollected);
+        source.sendMessage(TextFormat.GOLD + "Block Entities: " + TextFormat.RED + tilesCollected);
+        source.sendMessage(TextFormat.GOLD + "Memory freed: " + TextFormat.RED + NukkitMath.round((freedMemory / 1024d / 1024d), 2) + " MB");
+        return 1;
     }
 }

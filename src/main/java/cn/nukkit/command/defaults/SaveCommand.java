@@ -1,40 +1,46 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandSource;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
 import cn.nukkit.player.Player;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-/**
- * Created on 2015/11/13 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
- */
-public class SaveCommand extends VanillaCommand {
+import java.util.Collection;
+import java.util.concurrent.atomic.AtomicInteger;
 
-    public SaveCommand(String name) {
-        super(name, "%nukkit.command.save.description", "%commands.save.usage");
-        this.setPermission("nukkit.command.save.perform");
-        this.commandParameters.clear();
+public class SaveCommand extends BaseCommand {
+
+    public SaveCommand(CommandDispatcher<CommandSource> dispatcher) {
+        super("save-all", "%nukkit.command.save.description");
+        setPermission("nukkit.command.save.perform");
+
+        dispatcher.register(literal("save-all").executes(this::run));
     }
 
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!this.testPermission(sender)) {
-            return true;
+    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
+        CommandSource source = context.getSource();
+
+        if (!this.testPermission(source)) {
+            return -1;
         }
 
-        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.save.start"));
+        sendAdminMessage(source, new TranslationContainer("commands.save.start"));
 
-        for (Player player : sender.getServer().getOnlinePlayers().values()) {
+        for (Player player : source.getServer().getOnlinePlayers().values()) {
             player.save();
         }
 
-        for (Level level : sender.getServer().getLevels()) {
+        for (Level level : source.getServer().getLevels()) {
             level.save(true);
         }
 
-        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.save.success"));
-        return true;
+        sendAdminMessage(source, new TranslationContainer("commands.save.success"));
+        return 1;
     }
 }

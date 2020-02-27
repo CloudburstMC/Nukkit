@@ -1,36 +1,41 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandSource;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.player.Player;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class SeedCommand extends VanillaCommand {
+import static com.mojang.brigadier.arguments.StringArgumentType.getString;
+import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
 
-    public SeedCommand(String name) {
-        super(name, "%nukkit.command.seed.description", "%commands.seed.usage");
-        this.setPermission("nukkit.command.seed");
-        this.commandParameters.clear();
+public class SeedCommand extends BaseCommand {
+
+    public SeedCommand(CommandDispatcher<CommandSource> dispatcher) {
+        super("seed", "%nukkit.command.seed.description");
+        setPermission("nukkit.command.seed");
+
+        dispatcher.register(literal("seed").executes(this::run));
     }
 
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!this.testPermission(sender)) {
-            return true;
+    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
+        CommandSource source = context.getSource();
+
+        if (!this.testPermission(source)) {
+            return -1;
         }
 
         long seed;
-        if (sender instanceof Player) {
-            seed = ((Player) sender).getLevel().getSeed();
+        if (source instanceof Player) {
+            seed = ((Player) source).getLevel().getSeed();
         } else {
-            seed = sender.getServer().getDefaultLevel().getSeed();
+            seed = source.getServer().getDefaultLevel().getSeed();
         }
 
-        sender.sendMessage(new TranslationContainer("commands.seed.success", String.valueOf(seed)));
-
-        return true;
+        source.sendMessage(new TranslationContainer("commands.seed.success", String.valueOf(seed)));
+        return 1;
     }
 }

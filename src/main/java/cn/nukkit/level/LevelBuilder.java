@@ -86,6 +86,7 @@ public class LevelBuilder {
             }
             try {
                 LevelProvider provider = factory.create(id, worldsPath, executor);
+
                 // Load level data
                 provider.loadLevelData(levelData);
                 return provider;

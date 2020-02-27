@@ -1,38 +1,52 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.Server;
+import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandSource;
 import cn.nukkit.network.protocol.ProtocolInfo;
+import cn.nukkit.player.IPlayer;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginDescription;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.HastebinUtility;
 import cn.nukkit.utils.Utils;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 
-@Log4j2
-public class DebugPasteCommand extends VanillaCommand {
+import static cn.nukkit.command.args.OfflinePlayerArgument.offlinePlayer;
+import static cn.nukkit.command.args.PlayerArgument.getPlayer;
 
-    public DebugPasteCommand(String name) {
-        super(name, "%nukkit.command.debug.description", "%nukkit.command.debug.usage");
-        this.setPermission("nukkit.command.debug.perform");
+@Log4j2
+public class DebugPasteCommand extends BaseCommand {
+
+    public DebugPasteCommand(CommandDispatcher<CommandSource> dispatcher) {
+        super("debugpaste", "%nukkit.command.debug.description");
+        setPermission("nukkit.command.debug.perform");
+
+        dispatcher.register(literal("debugpaste").executes(this::run));
     }
 
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!this.testPermission(sender)) {
-            return true;
+    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
+        CommandSource source = context.getSource();
+
+        if (!this.testPermission(source)) {
+            return -1;
         }
-        Server server = Server.getInstance();
+
+        Server server = source.getServer();
         server.getScheduler().scheduleAsyncTask(new AsyncTask() {
             @Override
             public void onRun() {
                 try {
-                    new StatusCommand("status").execute(server.getConsoleSender(), "status", new String[]{});
+                    // TODO
+                    //new StatusCommand("status").execute(server.getConsoleSender(), "status", new String[]{});
                     String dataPath = server.getDataPath();
                     String nukkitYML = HastebinUtility.upload(new File(dataPath, "nukkit.yml"));
                     String serverProperties = HastebinUtility.upload(new File(dataPath, "server.properties"));
@@ -80,12 +94,12 @@ public class DebugPasteCommand extends VanillaCommand {
                     b.append("os.version: '").append(System.getProperty("os.version")).append("'\n\n");
                     b.append("\n# Create a ticket: https://github.com/NukkitX/Nukkit/issues/new");
                     String link = HastebinUtility.upload(b.toString());
-                    sender.sendMessage(link);
+                    source.sendMessage(link);
                 } catch (IOException e) {
                     log.error("Error creating debug paste", e);
                 }
             }
         });
-        return true;
+        return 1;
     }
 }

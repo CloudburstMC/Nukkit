@@ -1,42 +1,55 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.BaseCommand;
+import cn.nukkit.command.CommandSource;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.player.Player;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-/**
- * Created on 2015/11/11 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
- */
-public class ListCommand extends VanillaCommand {
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicInteger;
 
-    public ListCommand(String name) {
-        super(name, "%nukkit.command.list.description", "%commands.players.usage");
-        this.setPermission("nukkit.command.list");
-        this.commandParameters.clear();
+public class ListCommand extends BaseCommand {
+
+    public ListCommand(CommandDispatcher<CommandSource> dispatcher) {
+        super("list", "%nukkit.command.list.description");
+        setPermission("nukkit.command.list");
+
+        dispatcher.register(literal("list").executes(this::run));
     }
 
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!this.testPermission(sender)) {
-            return true;
-        }
-        String online = "";
-        int onlineCount = 0;
-        for (Player player : sender.getServer().getOnlinePlayers().values()) {
-            if (player.isOnline() && (!(sender instanceof Player) || ((Player) sender).canSee(player))) {
-                online += player.getDisplayName() + ", ";
-                ++onlineCount;
-            }
+    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
+        CommandSource source = context.getSource();
+
+        if (!this.testPermission(source)) {
+            return -1;
         }
 
+        Collection<Player> onlineList = source.getServer().getOnlinePlayers().values();
+        StringBuilder builder = new StringBuilder();
+        AtomicInteger onlineCount = new AtomicInteger();
+
+        // TODO: iterator?
+        onlineList.forEach(player -> {
+            if (player.isOnline() && (!(source instanceof Player) || ((Player) source).canSee(player))) {
+                builder.append(player.getDisplayName());
+                builder.append(", ");
+
+                onlineCount.getAndIncrement();
+            }
+        });
+
+        String online = builder.toString();
         if (online.length() > 0) {
             online = online.substring(0, online.length() - 2);
         }
 
-        sender.sendMessage(new TranslationContainer("commands.players.list",
-                String.valueOf(onlineCount), String.valueOf(sender.getServer().getMaxPlayers())));
-        sender.sendMessage(online);
-        return true;
+        source.sendMessage(new TranslationContainer("commands.players.list",
+                String.valueOf(onlineCount), String.valueOf(source.getServer().getMaxPlayers())));
+        source.sendMessage(online);
+        return 1;
     }
 }

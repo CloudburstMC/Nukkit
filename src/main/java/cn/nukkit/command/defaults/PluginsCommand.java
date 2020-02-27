@@ -1,49 +1,46 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandSource;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.TextFormat;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import java.util.Map;
 
-/**
- * Created on 2015/11/12 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
- */
-public class PluginsCommand extends VanillaCommand {
+public class PluginsCommand extends BaseCommand {
 
-    public PluginsCommand(String name) {
-        super(name,
-                "%nukkit.command.plugins.description",
-                "%nukkit.command.plugins.usage",
-                new String[]{"pl"}
-        );
-        this.setPermission("nukkit.command.plugins");
-        this.commandParameters.clear();
+    public PluginsCommand(CommandDispatcher<CommandSource> dispatcher) {
+        super("plugins", "%nukkit.command.plugins.description");
+        setPermission("nukkit.command.plugins"); // TODO: aliases
+
+        dispatcher.register(literal("plugins").executes(this::run));
     }
 
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!this.testPermission(sender)) {
-            return true;
+    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
+        CommandSource source = context.getSource();
+
+        if (!this.testPermission(source)) {
+            return -1;
         }
 
-        this.sendPluginList(sender);
-        return true;
-    }
+        StringBuilder list = new StringBuilder();
+        Map<String, Plugin> plugins = source.getServer().getPluginManager().getPlugins();
 
-    private void sendPluginList(CommandSender sender) {
-        String list = "";
-        Map<String, Plugin> plugins = sender.getServer().getPluginManager().getPlugins();
         for (Plugin plugin : plugins.values()) {
             if (list.length() > 0) {
-                list += TextFormat.WHITE + ", ";
+                list.append(TextFormat.WHITE + ", ");
             }
-            list += plugin.isEnabled() ? TextFormat.GREEN : TextFormat.RED;
-            list += plugin.getDescription().getFullName();
+
+            list.append(plugin.isEnabled() ? TextFormat.GREEN : TextFormat.RED);
+            list.append(plugin.getDescription().getFullName());
         }
 
-        sender.sendMessage(new TranslationContainer("nukkit.command.plugins.success", String.valueOf(plugins.size()), list));
+        source.sendMessage(new TranslationContainer("nukkit.command.plugins.success", String.valueOf(plugins.size()), list.toString()));
+        return 1;
     }
 }

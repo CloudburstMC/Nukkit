@@ -1,64 +1,57 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandSource;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.event.player.PlayerKickEvent;
 import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.permission.BanList;
+import cn.nukkit.player.IPlayer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-/**
- * Created on 2015/11/11 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
- */
-public class KickCommand extends VanillaCommand {
+import static cn.nukkit.command.args.OfflinePlayerArgument.getOfflinePlayer;
+import static cn.nukkit.command.args.OfflinePlayerArgument.offlinePlayer;
+import static cn.nukkit.command.args.PlayerArgument.getPlayer;
+import static cn.nukkit.command.args.PlayerArgument.player;
+import static com.mojang.brigadier.arguments.StringArgumentType.getString;
+import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
 
-    public KickCommand(String name) {
-        super(name, "%nukkit.command.kick.description", "%commands.kick.usage");
-        this.setPermission("nukkit.command.kick");
-        this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("reason", true)
-        });
+public class KickCommand extends BaseCommand {
+
+    public KickCommand(CommandDispatcher<CommandSource> dispatcher) {
+        super("kick", "%nukkit.command.kick.description");
+        setPermission("nukkit.command.kick");
+
+        dispatcher.register(literal("kick")
+                .then(argument("target", player()).executes(context ->
+                        run(context, getPlayer(context, "target"), null)))
+
+                .then(argument("reason", greedyString()).executes(context ->
+                        run(context, getPlayer(context, "target"), getString(context, "reason")))));
     }
 
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!this.testPermission(sender)) {
-            return true;
-        }
-        if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-            return false;
+    public int run(CommandContext<CommandSource> context, Player target, String reason) throws CommandSyntaxException {
+        CommandSource source = context.getSource();
+
+        if(!testPermission(source)) {
+            return -1;
         }
 
-        String name = args[0];
+        target.kick(PlayerKickEvent.Reason.KICKED_BY_ADMIN, reason);
 
-        String reason = "";
-        for (int i = 1; i < args.length; i++) {
-            reason += args[i] + " ";
-        }
-
-        if (reason.length() > 0) {
-            reason = reason.substring(0, reason.length() - 1);
-        }
-
-        Player player = sender.getServer().getPlayer(name);
-        if (player != null) {
-            player.kick(PlayerKickEvent.Reason.KICKED_BY_ADMIN, reason);
-            if (reason.length() >= 1) {
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.kick.success.reason", player.getName(), reason)
-                );
-            } else {
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.kick.success", player.getName()));
-            }
+        if (reason != null) {
+            sendAdminMessage(source, new TranslationContainer("commands.kick.success.reason", target.getName(), reason));
         } else {
-            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
+            sendAdminMessage(source, new TranslationContainer("commands.kick.success", target.getName()));
         }
 
-        return true;
+        return 1;
     }
 }

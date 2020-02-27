@@ -12,6 +12,7 @@ import cn.nukkit.blockentity.BlockEntityLectern;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandSource;
 import cn.nukkit.command.data.CommandDataVersions;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
@@ -87,6 +88,7 @@ import co.aikar.timings.Timings;
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -117,7 +119,7 @@ import static cn.nukkit.player.PlayerFlag.SLEEP;
  * Nukkit Project
  */
 @Log4j2
-public class Player extends Human implements CommandSender, InventoryHolder, ChunkLoader, IPlayer {
+public class Player extends Human implements CommandSender, CommandSource, InventoryHolder, ChunkLoader, IPlayer {
 
     public static final int SURVIVAL = 0;
     public static final int CREATIVE = 1;
@@ -4713,6 +4715,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         return false;
+    }
+
+    public CommandSource getCommandListener() {
+        return this;
     }
 
     @Override

@@ -223,7 +223,7 @@ public final class LevelChunkManager {
         }
 
 
-        try (Timing ignored = this.level.timings.doChunkUnload.startTiming()) {
+        //try (Timing ignored = this.level.timings.doChunkUnload.startTiming()) {
             ChunkUnloadEvent chunkUnloadEvent = new ChunkUnloadEvent(chunk);
             this.level.getServer().getPluginManager().callEvent(chunkUnloadEvent);
             if (chunkUnloadEvent.isCancelled()) {
@@ -243,7 +243,7 @@ public final class LevelChunkManager {
 
             chunk.close();
             return true;
-        }
+        //}
     }
 
     public synchronized CompletableFuture<Void> saveChunks() {
@@ -304,7 +304,7 @@ public final class LevelChunkManager {
         Config config = this.level.getServer().getConfig();
 
         // Do chunk garbage collection
-        try (Timing ignored = this.level.timings.doChunkGC.startTiming()) {
+        //try (Timing ignored = this.level.timings.doChunkGC.startTiming()) {
             ObjectIterator<Long2ObjectMap.Entry<LoadingChunk>> iterator = this.chunks.long2ObjectEntrySet().iterator();
             while (iterator.hasNext()) {
                 Long2ObjectMap.Entry<LoadingChunk> entry = iterator.next();
@@ -340,7 +340,7 @@ public final class LevelChunkManager {
 //                    }
                 }
             }
-        }
+        //}
     }
 
     @ToString

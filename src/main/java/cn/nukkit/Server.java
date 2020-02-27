@@ -63,8 +63,10 @@ import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.spotify.futures.CompletableFutures;
 import io.netty.buffer.ByteBuf;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import net.daporkchop.ldbjni.LevelDB;
 import org.iq80.leveldb.CompressionType;
@@ -137,6 +139,8 @@ public class Server {
     private final ConsoleThread consoleThread;
 
     private SimpleCommandMap commandMap;
+    @Getter
+    private NukkitCommandDispatcher commandDispatcher;
 
     private CraftingManager craftingManager;
 
@@ -497,6 +501,7 @@ public class Server {
 
         this.consoleSender = new ConsoleCommandSender();
         this.commandMap = new SimpleCommandMap(this);
+        this.commandDispatcher = new NukkitCommandDispatcher();
 
         this.registerVanillaComponents();
 
@@ -660,8 +665,13 @@ public class Server {
             throw new ServerException("CommandSender is not valid");
         }
 
-        if (this.commandMap.dispatch(sender, commandLine)) {
-            return true;
+        try {
+            // TODO: avoid this cast, allow for multiple command senders
+            if (this.commandDispatcher.dispatch((Player) sender, commandLine)) {
+                return true;
+            }
+        } catch (CommandSyntaxException e) {
+            sender.sendMessage(e.getMessage());
         }
 
         sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.unknown", commandLine));

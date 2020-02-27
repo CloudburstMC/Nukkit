@@ -1,59 +1,50 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandSource;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-/**
- * Created on 2015/11/12 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
- */
-public class SayCommand extends VanillaCommand {
+import static com.mojang.brigadier.arguments.StringArgumentType.*;
 
-    public SayCommand(String name) {
-        super(name, "%nukkit.command.say.description", "%commands.say.usage");
-        this.setPermission("nukkit.command.say");
-        this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("message")
-        });
+public class SayCommand extends BaseCommand {
+
+    public SayCommand(CommandDispatcher<CommandSource> dispatcher) {
+        super("say", "%nukkit.command.say.description");
+        setPermission("nukkit.command.say");
+
+        dispatcher.register(literal("say")
+                .then(argument("message", greedyString()).executes(context ->
+                        run(context, getString(context, "message")))));
     }
 
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!this.testPermission(sender)) {
-            return true;
-        }
+    public int run(CommandContext<CommandSource> context, String message) throws CommandSyntaxException {
+        CommandSource source = context.getSource();
 
-        if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-            return false;
+        if (!this.testPermission(source)) {
+            return -1;
         }
 
         String senderString;
-        if (sender instanceof Player) {
-            senderString = ((Player) sender).getDisplayName();
-        } else if (sender instanceof ConsoleCommandSender) {
+        if (source instanceof Player) {
+            senderString = ((Player) source).getDisplayName();
+        } else if (source instanceof ConsoleCommandSender) {
             senderString = "Server";
         } else {
-            senderString = sender.getName();
+            senderString = source.getName();
         }
 
-        String msg = "";
-        for (String arg : args) {
-            msg += arg + " ";
-        }
-        if (msg.length() > 0) {
-            msg = msg.substring(0, msg.length() - 1);
-        }
-
-
-        sender.getServer().broadcastMessage(new TranslationContainer(
+        source.getServer().broadcastMessage(new TranslationContainer(
                 TextFormat.LIGHT_PURPLE + "%chat.type.announcement",
-                senderString, TextFormat.LIGHT_PURPLE + msg));
-        return true;
+                senderString, TextFormat.LIGHT_PURPLE + message));
+
+        return 1;
     }
 }

@@ -80,7 +80,7 @@ public final class Chunk implements IChunk, Closeable {
     public void init() {
         boolean init = this.unsafe.init();
         if (init) {
-            try (Timing ignored = unsafe.getLevel().timings.syncChunkLoadEntitiesTimer.startTiming()) {
+            //try (Timing ignored = unsafe.getLevel().timings.syncChunkLoadEntitiesTimer.startTiming()) {
                 boolean dirty = false;
 
                 for (ChunkDataLoader chunkDataLoader : this.chunkDataLoaders) {
@@ -90,7 +90,7 @@ public final class Chunk implements IChunk, Closeable {
                 }
 
                 this.setDirty(dirty);
-            }
+            //}
 
             for (BlockUpdate update : blockUpdates) {
                 this.unsafe.getLevel().scheduleUpdate(update);

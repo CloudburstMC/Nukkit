@@ -1,54 +1,59 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandSource;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.permission.BanEntry;
 import cn.nukkit.permission.BanList;
+import cn.nukkit.player.IPlayer;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import java.util.Iterator;
 
-/**
- * Created on 2015/11/11 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
- */
-public class BanListCommand extends VanillaCommand {
-    public BanListCommand(String name) {
-        super(name, "%nukkit.command.banlist.description", "%commands.banlist.usage");
-        this.setPermission("nukkit.command.ban.list");
-        this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("ips|players", true)
-        });
+import static cn.nukkit.command.args.OfflinePlayerArgument.getOfflinePlayer;
+import static cn.nukkit.command.args.OfflinePlayerArgument.offlinePlayer;
+import static com.mojang.brigadier.arguments.StringArgumentType.getString;
+import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
+
+public class BanListCommand extends BaseCommand {
+
+    public BanListCommand(CommandDispatcher<CommandSource> dispatcher) {
+        super("banlist", "%nukkit.command.banlist.description");
+        setPermission("nukkit.command.banlist");
+
+        dispatcher.register(
+                literal("banlist")
+                    .then(literal("ips").executes(context -> run(context, Type.IPS)))
+                    .then(literal("players").executes(context -> run(context, Type.PLAYERS)))
+                .executes(context -> run(context, Type.PLAYERS)));
     }
 
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!this.testPermission(sender)) {
-            return true;
+    public int run(CommandContext<CommandSource> context, Type type) throws CommandSyntaxException {
+        CommandSource source = context.getSource();
+        BanList banList;
+
+        if (!this.testPermission(source)) {
+            return -1;
         }
 
-        BanList list;
         boolean ips = false;
-        if (args.length > 0) {
-            switch (args[0].toLowerCase()) {
-                case "ips":
-                    list = sender.getServer().getIPBans();
-                    ips = true;
-                    break;
-                case "players":
-                    list = sender.getServer().getNameBans();
-                    break;
-                default:
-                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-                    return false;
-            }
-        } else {
-            list = sender.getServer().getNameBans();
+        switch(type) {
+            case IPS:
+                banList = source.getServer().getIPBans();
+                ips = true;
+                break;
+            case PLAYERS:
+            default:
+                banList = source.getServer().getNameBans();
+                break;
         }
 
         StringBuilder builder = new StringBuilder();
-        Iterator<BanEntry> itr = list.getEntires().values().iterator();
+        Iterator<BanEntry> itr = banList.getEntires().values().iterator();
         while (itr.hasNext()) {
             builder.append(itr.next().getName());
             if (itr.hasNext()) {
@@ -57,11 +62,16 @@ public class BanListCommand extends VanillaCommand {
         }
 
         if (ips) {
-            sender.sendMessage(new TranslationContainer("commands.banlist.ips", String.valueOf(list.getEntires().size())));
+            source.sendMessage(new TranslationContainer("commands.banlist.ips", String.valueOf(banList.getEntires().size())));
         } else {
-            sender.sendMessage(new TranslationContainer("commands.banlist.players", String.valueOf(list.getEntires().size())));
+            source.sendMessage(new TranslationContainer("commands.banlist.players", String.valueOf(banList.getEntires().size())));
         }
-        sender.sendMessage(builder.toString());
-        return true;
+        source.sendMessage(builder.toString());
+        return 1;
+    }
+
+    private enum Type {
+        IPS,
+        PLAYERS
     }
 }

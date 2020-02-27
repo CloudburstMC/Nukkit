@@ -1,52 +1,56 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandSource;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.player.IPlayer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.LiteralMessage;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 
-/**
- * Created on 2015/11/12 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
- */
-public class OpCommand extends VanillaCommand {
+import static cn.nukkit.command.args.OfflinePlayerArgument.getOfflinePlayer;
+import static cn.nukkit.command.args.OfflinePlayerArgument.offlinePlayer;
 
-    public OpCommand(String name) {
-        super(name, "%nukkit.command.op.description", "%commands.op.description");
-        this.setPermission("nukkit.command.op.give");
-        this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false)
-        });
+public class OpCommand extends BaseCommand {
+    public static final DynamicCommandExceptionType ALREADY_OP = new DynamicCommandExceptionType(name ->
+            new LiteralMessage("Could not op (already op or higher): " + name));
+
+    public OpCommand(CommandDispatcher<CommandSource> dispatcher) {
+        super("op", "%nukkit.command.op.description");
+        setPermission("nukkit.command.op.give");
+
+        dispatcher.register(literal("op")
+                .then(argument("player", offlinePlayer()).executes(context -> run(context, getOfflinePlayer(context, "player")))));
     }
 
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!this.testPermission(sender)) {
-            return true;
-        }
-        if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-            return false;
+    public int run(CommandContext<CommandSource> context, IPlayer target) throws CommandSyntaxException {
+        CommandSource source = context.getSource();
+
+        if (!this.testPermission(source)) {
+            return -1;
         }
 
-        String name = args[0];
-        IPlayer player = sender.getServer().getOfflinePlayer(name);
-
-        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.op.success", player.getName()));
-        if (player != null) {
-            if (player instanceof Player) {
-                ((Player) player).sendMessage(new TranslationContainer(TextFormat.GRAY + "%commands.op.message"));
-            }
-            player.setOp(true);
-        } else {
-            sender.getServer().addOp(name);
+        // Matches vanilla behaviour
+        if(target.isOp()) {
+            throw ALREADY_OP.create(target.getName());
         }
 
-        return true;
+        target.setOp(true);
+
+        sendAdminMessage(source, new TranslationContainer("commands.op.success", target.getName()));
+
+        if (target instanceof Player) {
+            ((Player) target).sendMessage(new TranslationContainer(TextFormat.GRAY + "%commands.op.message"));
+        }
+        return 1;
     }
 }
