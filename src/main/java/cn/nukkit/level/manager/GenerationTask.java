@@ -6,6 +6,7 @@ import cn.nukkit.level.generator.Generator;
 import com.google.common.base.Preconditions;
 import net.daporkchop.lib.random.PRandom;
 import net.daporkchop.lib.random.impl.FastJavaPRandom;
+import net.daporkchop.lib.random.impl.FastPRandom;
 
 import java.util.function.Function;
 
@@ -27,7 +28,7 @@ public final class GenerationTask implements Function<Chunk, Chunk> {
             return chunk;
         }
 
-        PRandom random = new FastJavaPRandom(chunk.key() ^ chunk.getLevel().getSeed());
+        PRandom random = new FastPRandom(chunk.getX() * 3053330778986901431L ^ chunk.getZ() * 1517227374085824433L ^ chunk.getLevel().getSeed());
         LockableChunk lockable = chunk.writeLockable();
 
         lockable.lock();

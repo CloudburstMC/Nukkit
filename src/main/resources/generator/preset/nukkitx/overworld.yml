@@ -30,7 +30,7 @@ generation:
 population:
   populators:
     - id: "nukkitx:basic_tree"
-      start: "grass"
+      start: "grass,minecraft:diamond_block"
       trunk: "log"
       leaf: "leaves"
       minTries: 2

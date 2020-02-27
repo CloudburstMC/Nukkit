@@ -3,6 +3,7 @@ package cn.nukkit.level.generator.standard;
 import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
+import cn.nukkit.level.generator.standard.misc.BlockMatcher;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Config;
@@ -16,7 +17,7 @@ import net.daporkchop.lib.common.cache.Cache;
 import net.daporkchop.lib.common.cache.ThreadCache;
 import net.daporkchop.lib.common.misc.file.PFiles;
 import net.daporkchop.lib.random.PRandom;
-import net.daporkchop.lib.random.impl.FastJavaPRandom;
+import net.daporkchop.lib.random.impl.FastPRandom;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -25,6 +26,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,8 +39,11 @@ import java.util.regex.Pattern;
  */
 @UtilityClass
 public class StandardGeneratorUtils {
-    private final Pattern        BLOCK_PATTERN       = Pattern.compile("^((?:[a-z0-9_]+:)?[a-z0-9_]+)(?:#([0-9]+))?$", Pattern.CASE_INSENSITIVE);
-    private final Cache<Matcher> BLOCK_MATCHER_CACHE = ThreadCache.soft(() -> BLOCK_PATTERN.matcher(""));
+    private final Pattern        BLOCK_PATTERN = Pattern.compile("^((?:[a-z0-9_]+:)?[a-z0-9_]+)(?:#([0-9]+))?$", Pattern.CASE_INSENSITIVE);
+    private final Cache<Matcher> BLOCK_CACHE   = ThreadCache.soft(() -> BLOCK_PATTERN.matcher(""));
+
+    private final Pattern        BLOCK_MATCHER_PATTERN = Pattern.compile("(?:^|,)((?:[a-z0-9_]+:)?[a-z0-9_]+)(?:#([0-9]+))?(?:$|(?=,))", Pattern.CASE_INSENSITIVE);
+    private final Cache<Matcher> BLOCK_MATCHER_CACHE   = ThreadCache.soft(() -> BLOCK_MATCHER_PATTERN.matcher(""));
 
     /**
      * Gets a block encoded in the form {@code <identifier>[#meta]} from a named field in the given {@link ConfigSection}.
@@ -60,12 +66,31 @@ public class StandardGeneratorUtils {
      */
     public static Block parseBlock(String block) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(block), "block must be set!");
-        Matcher matcher = BLOCK_MATCHER_CACHE.get().reset(block);
+        Matcher matcher = BLOCK_CACHE.get().reset(block);
         Preconditions.checkArgument(matcher.find(), block);
 
         Identifier id = Identifier.fromString(matcher.group(1));
         String meta = matcher.group(2);
         return BlockRegistry.get().getBlock(id, meta == null ? 0 : Integer.parseInt(meta));
+    }
+
+    public static BlockMatcher parseBlockMatcher(String block) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(block), "block must be set!");
+        Matcher matcher = BLOCK_MATCHER_CACHE.get().reset(block);
+
+        Collection<Block> blocks = new ArrayList<>();
+        while (matcher.find()) {
+            Identifier id = Identifier.fromString(matcher.group(1));
+            String meta = matcher.group(2);
+            blocks.add(BlockRegistry.get().getBlock(id, meta == null ? 0 : Integer.parseInt(meta)));
+        }
+        Preconditions.checkArgument(!blocks.isEmpty());
+        int[] ids = blocks.stream()
+                .mapToInt(BlockRegistry.get()::getRuntimeId)
+                .distinct()
+                .sorted()
+                .toArray();
+        return ids.length == 1 ? new BlockMatcher.Single(ids[0]) : new BlockMatcher.AnyOf(ids);
     }
 
     public static Config loadUnchecked(@NonNull String category, @NonNull Identifier id) {
@@ -117,7 +142,7 @@ public class StandardGeneratorUtils {
      * @see #computeSeed(long, String, ConfigSection)
      */
     public static PRandom computeRandom(long levelSeed, @NonNull String category, @NonNull ConfigSection config) {
-        return new FastJavaPRandom(computeSeed(levelSeed, category, config));
+        return new FastPRandom(computeSeed(levelSeed, category, config));
     }
 
     /**

@@ -2,6 +2,7 @@ package cn.nukkit.level.generator.standard.pop.tree;
 
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.standard.StandardGeneratorUtils;
+import cn.nukkit.level.generator.standard.misc.BlockMatcher;
 import cn.nukkit.level.generator.standard.pop.RepeatingPopulator;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.ConfigSection;
@@ -17,16 +18,16 @@ import static java.lang.Math.*;
  * @author DaPorkchop_
  */
 public class BasicTreePopulator extends RepeatingPopulator {
-    private final int startId;
-    private final int trunkId;
-    private final int leafId;
-    private final int minHeight;
-    private final int maxHeight;
+    private final BlockMatcher start;
+    private final int          trunkId;
+    private final int          leafId;
+    private final int          minHeight;
+    private final int          maxHeight;
 
     public BasicTreePopulator(@NonNull ConfigSection config, @NonNull PRandom random) {
         super(config, random);
 
-        this.startId = BlockRegistry.get().getRuntimeId(StandardGeneratorUtils.getBlock(config, "start"));
+        this.start = StandardGeneratorUtils.parseBlockMatcher(config.getString("start"));
         this.trunkId = BlockRegistry.get().getRuntimeId(StandardGeneratorUtils.getBlock(config, "trunk"));
         this.leafId = BlockRegistry.get().getRuntimeId(StandardGeneratorUtils.getBlock(config, "leaf"));
         this.minHeight = PValidation.ensurePositive(config.getInt("minHeight", -1));
@@ -39,7 +40,7 @@ public class BasicTreePopulator extends RepeatingPopulator {
 
         int id;
         while ((id = level.getBlockRuntimeIdUnsafe(x, y, z, 0)) == 0 && --y >= 0) ;
-        if (id != this.startId) {
+        if (!this.start.test(id)) {
             //no start block could be found
             return;
         }

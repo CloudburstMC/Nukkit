@@ -13,7 +13,7 @@ import net.daporkchop.lib.noise.engine.PorkianV2NoiseEngine;
 import net.daporkchop.lib.noise.engine.SimplexNoiseEngine;
 import net.daporkchop.lib.noise.filter.ScaleOctavesOffsetFilter;
 import net.daporkchop.lib.random.PRandom;
-import net.daporkchop.lib.random.impl.FastJavaPRandom;
+import net.daporkchop.lib.random.impl.FastPRandom;
 
 import java.util.function.BiFunction;
 
@@ -28,19 +28,19 @@ public class NoiseSources {
     public final Identifier ID_SIMPLEX     = Identifier.fromString("nukkitx:simplex");
 
     public final BiFunction<ConfigSection, PRandom, NoiseSource> OPENSIMPLEX = (config, random) -> {
-        random = new FastJavaPRandom(StandardGeneratorUtils.computeSeed(random.nextLong(), "noise", config));
+        random = new FastPRandom(StandardGeneratorUtils.computeSeed(random.nextLong(), "noise", config));
         return parse(new OpenSimplexNoiseEngine(random), config);
     };
     public final BiFunction<ConfigSection, PRandom, NoiseSource> PERLIN      = (config, random) -> {
-        random = new FastJavaPRandom(StandardGeneratorUtils.computeSeed(random.nextLong(), "noise", config));
+        random = new FastPRandom(StandardGeneratorUtils.computeSeed(random.nextLong(), "noise", config));
         return parse(new PerlinNoiseEngine(random), config);
     };
     public final BiFunction<ConfigSection, PRandom, NoiseSource> PORKIAN     = (config, random) -> {
-        random = new FastJavaPRandom(StandardGeneratorUtils.computeSeed(random.nextLong(), "noise", config));
+        random = new FastPRandom(StandardGeneratorUtils.computeSeed(random.nextLong(), "noise", config));
         return parse(new PorkianV2NoiseEngine(random), config);
     };
     public final BiFunction<ConfigSection, PRandom, NoiseSource> SIMPLEX     = (config, random) -> {
-        random = new FastJavaPRandom(StandardGeneratorUtils.computeSeed(random.nextLong(), "noise", config));
+        random = new FastPRandom(StandardGeneratorUtils.computeSeed(random.nextLong(), "noise", config));
         return parse(new SimplexNoiseEngine(random), config);
     };
 
