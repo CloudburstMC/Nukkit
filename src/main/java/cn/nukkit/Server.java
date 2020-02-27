@@ -674,7 +674,8 @@ public class Server {
             sender.sendMessage(e.getMessage());
         }
 
-        sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.unknown", commandLine));
+        // TODO: uncomment when the commands are actually registered
+        //sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.unknown", commandLine));
 
         return false;
     }
