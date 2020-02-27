@@ -1,79 +1,67 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.command.Command;
-import cn.nukkit.command.CommandSender;
-import cn.nukkit.command.ConsoleCommandSender;
+import cn.nukkit.command.*;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.player.IPlayer;
 import cn.nukkit.utils.TextFormat;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import java.util.Map;
 import java.util.TreeMap;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class HelpCommand extends VanillaCommand {
+import static cn.nukkit.command.args.OfflinePlayerArgument.getOfflinePlayer;
+import static cn.nukkit.command.args.OfflinePlayerArgument.offlinePlayer;
+import static com.mojang.brigadier.arguments.IntegerArgumentType.getInteger;
+import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
+import static com.mojang.brigadier.arguments.StringArgumentType.getString;
+import static com.mojang.brigadier.arguments.StringArgumentType.string;
 
-    public HelpCommand(String name) {
-        super(name, "%nukkit.command.help.description", "%commands.help.usage", new String[]{"?"});
-        this.setPermission("nukkit.command.help");
-        this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("page", CommandParamType.INT, true)
-        });
+public class HelpCommand extends BaseCommand {
+
+    public HelpCommand(CommandDispatcher<CommandSource> dispatcher) {
+        super("help", "%nukkit.command.help.description");
+        setPermission("nukkit.command.help");
+
+        dispatcher.register(literal("nkhelp") // temporary until i send the commands to the client
+                .then(argument("page", integer()).executes(ctx -> run(ctx, getInteger(ctx, "page"))))
+                // TODO: The following line will "overwrite" the page argument above.
+                //       Find out a way to make them play together
+                //.then(argument("command", string()).executes(ctx -> command(ctx, getString(ctx, "command"))))
+                .executes(ctx -> run(ctx, 1)));
     }
 
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!this.testPermission(sender)) {
-            return true;
+    public int run(CommandContext<CommandSource> context, int page) throws CommandSyntaxException {
+        CommandSource source = context.getSource();
+
+        if (!this.testPermission(source)) {
+            return -1;
         }
-        String command = "";
-        int pageNumber = 1;
+
+        int pageNumber = page;
         int pageHeight = 5;
-        if (args.length != 0) {
             try {
-                pageNumber = Integer.valueOf(args[args.length - 1]);
                 if (pageNumber <= 0) {
                     pageNumber = 1;
                 }
 
-                String[] newargs = new String[args.length - 1];
-                System.arraycopy(args, 0, newargs, 0, newargs.length);
-                args = newargs;
-                /*if (args.length > 1) {
-                    args = Arrays.copyOfRange(args, 0, args.length - 2);
-                } else {
-                    args = new String[0];
-                }*/
-                for (String arg : args) {
-                    if (!command.equals("")) {
-                        command += " ";
-                    }
-                    command += arg;
-                }
+
             } catch (NumberFormatException e) {
                 pageNumber = 1;
-                for (String arg : args) {
-                    if (!command.equals("")) {
-                        command += " ";
-                    }
-                    command += arg;
-                }
-            }
-        }
 
-        if (sender instanceof ConsoleCommandSender) {
+            }
+
+        // TODO
+        if (source instanceof ConsoleCommandSender) {
             pageHeight = Integer.MAX_VALUE;
         }
 
-        if (command.equals("")) {
-            Map<String, Command> commands = new TreeMap<>();
-            for (Command cmd : sender.getServer().getCommandMap().getCommands().values()) {
-                if (cmd.testPermissionSilent(sender)) {
+            Map<String, BaseCommand> commands = new TreeMap<>();
+            for (BaseCommand cmd : source.getServer().getCommandDispatcher().getCommands().values()) {
+                if (cmd.testPermissionSilent(source)) {
                     commands.put(cmd.getName(), cmd);
                 }
             }
@@ -83,38 +71,41 @@ public class HelpCommand extends VanillaCommand {
                 pageNumber = 1;
             }
 
-            sender.sendMessage(new TranslationContainer("commands.help.header", String.valueOf(pageNumber), String.valueOf(totalPage)));
+            source.sendMessage(new TranslationContainer("commands.help.header", String.valueOf(pageNumber), String.valueOf(totalPage)));
             int i = 1;
-            for (Command command1 : commands.values()) {
+            for (BaseCommand command1 : commands.values()) {
                 if (i >= (pageNumber - 1) * pageHeight + 1 && i <= Math.min(commands.size(), pageNumber * pageHeight)) {
-                    sender.sendMessage(TextFormat.DARK_GREEN + "/" + command1.getName() + ": " + TextFormat.WHITE + command1.getDescription());
+                    source.sendMessage(TextFormat.DARK_GREEN + "/" + command1.getName() + ": " + TextFormat.WHITE + command1.getDescription());
                 }
                 i++;
             }
 
-            return true;
-        } else {
-            Command cmd = sender.getServer().getCommandMap().getCommand(command.toLowerCase());
-            if (cmd != null) {
-                if (cmd.testPermissionSilent(sender)) {
-                    String message = TextFormat.YELLOW + "--------- " + TextFormat.WHITE + " Help: /" + cmd.getName() + TextFormat.YELLOW + " ---------\n";
-                    message += TextFormat.GOLD + "Description: " + TextFormat.WHITE + cmd.getDescription() + "\n";
-                    String usage = "";
-                    String[] usages = cmd.getUsage().split("\n");
-                    for (String u : usages) {
-                        if (!usage.equals("")) {
-                            usage += "\n" + TextFormat.WHITE;
-                        }
-                        usage += u;
-                    }
-                    message += TextFormat.GOLD + "Usage: " + TextFormat.WHITE + usage + "\n";
-                    sender.sendMessage(message);
-                    return true;
-                }
-            }
+        return 1;
+    }
 
-            sender.sendMessage(TextFormat.RED + "No help for " + command.toLowerCase());
-            return true;
+    public int command(CommandContext<CommandSource> context, String command) {
+        CommandSource source = context.getSource();
+
+        BaseCommand cmd = source.getServer().getCommandDispatcher().getCommand(command.toLowerCase());
+        if (cmd != null) {
+            if (cmd.testPermissionSilent(source)) {
+                String message = TextFormat.YELLOW + "--------- " + TextFormat.WHITE + " Help: /" + cmd.getName() + TextFormat.YELLOW + " ---------\n";
+                message += TextFormat.GOLD + "Description: " + TextFormat.WHITE + cmd.getDescription() + "\n";
+                String usage = "";
+                String[] usages = cmd.getUsage().split("\n");
+                for (String u : usages) {
+                    if (!usage.equals("")) {
+                        usage += "\n" + TextFormat.WHITE;
+                    }
+                    usage += u;
+                }
+                message += TextFormat.GOLD + "Usage: " + TextFormat.WHITE + usage + "\n";
+                source.sendMessage(message);
+                return 1;
+            }
         }
+
+        source.sendMessage(TextFormat.RED + "No help for " + command.toLowerCase());
+        return 1;
     }
 }

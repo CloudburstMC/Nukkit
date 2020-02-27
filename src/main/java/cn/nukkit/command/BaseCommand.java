@@ -12,21 +12,32 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import lombok.Getter;
 
 import java.util.Set;
 import java.util.function.Predicate;
 
+@Getter
 public abstract class BaseCommand {
     public static final DynamicCommandExceptionType UNKNOWN_COMMAND =
             new DynamicCommandExceptionType(name -> new LiteralMessage("Unknown command " + name));
 
     private String name;
+    private String description = "test";
+    private String usage = null;
     private String permission = null;
     private String permissionMessage = null;
 
-    public BaseCommand(String name, String permission) {
+    public BaseCommand(String name, String description) {
         this.name = name;
-        this.permission = permission;
+        this.description = description;
+    }
+
+    public String getUsage() {
+        // TODO: figure out a way to get the usage from brigadier and still allow
+        // plugins to modify it. This can be done by calling `CommandDispatcher.getSmartUsage`,
+        // but the problem is that it requires a CommandNode. smh
+        return "placeholder";
     }
 
     public boolean testPermission(CommandSource target) throws CommandSyntaxException {

@@ -33,8 +33,11 @@ public class BanCommand extends BaseCommand {
         setPermission("nukkit.command.ban.player");
 
         dispatcher.register(literal("ban")
-                .then(argument("target", offlinePlayer()).executes(context -> run(context, getOfflinePlayer(context, "target"), null)))
-                .then(argument("reason", greedyString()).executes(context -> run(context, getOfflinePlayer(context, "target"), getString(context, "reason")))));
+                .then(argument("target", offlinePlayer()).executes(context ->
+                        run(context, getOfflinePlayer(context, "target"), null))
+
+                .then(argument("reason", greedyString()).executes(context ->
+                        run(context, getOfflinePlayer(context, "target"), getString(context, "reason"))))));
     }
 
     public int run(CommandContext<CommandSource> context, IPlayer target, String reason) throws CommandSyntaxException {

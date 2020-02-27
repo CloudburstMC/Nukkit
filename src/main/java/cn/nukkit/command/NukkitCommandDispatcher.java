@@ -2,30 +2,43 @@ package cn.nukkit.command;
 
 import cn.nukkit.command.defaults.*;
 import cn.nukkit.player.Player;
+import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import lombok.Getter;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class NukkitCommandDispatcher {
-    private final com.mojang.brigadier.CommandDispatcher<CommandSource> dispatcher = new com.mojang.brigadier.CommandDispatcher<>();
+    @Getter
+    private final CommandDispatcher<CommandSource> dispatcher = new CommandDispatcher<>();
+    private final Map<String, BaseCommand> knownCommands = new HashMap<>();
 
     public NukkitCommandDispatcher() {
-        // TODO: store in a registry
-        new BanCommand(dispatcher);
-        new BanListCommand(dispatcher);
-//        new BanIpCommand(dispatcher);
-        new VersionCommand(dispatcher);
-        new EffectCommand(dispatcher);
-        new KickCommand(dispatcher);
-        new ListCommand(dispatcher);
-        new DeopCommand(dispatcher);
-        new OpCommand(dispatcher);
-        new SaveCommand(dispatcher);
-        new SayCommand(dispatcher);
-        new SeedCommand(dispatcher);
-        new SaveOffCommand(dispatcher);
-        new SaveOnCommand(dispatcher);
-        new StopCommand(dispatcher);
-        new PluginsCommand(dispatcher);
-        new MeCommand(dispatcher);
+        registerAll("nukkit", new BaseCommand[]{
+                new BanCommand(dispatcher),
+                new BanListCommand(dispatcher),
+                new VersionCommand(dispatcher),
+                new EffectCommand(dispatcher),
+                new KickCommand(dispatcher),
+                new ListCommand(dispatcher),
+                new DeopCommand(dispatcher),
+                new OpCommand(dispatcher),
+                new SaveCommand(dispatcher),
+                new SayCommand(dispatcher),
+                new SeedCommand(dispatcher),
+                new SaveOffCommand(dispatcher),
+                new SaveOnCommand(dispatcher),
+                new StopCommand(dispatcher),
+                new PluginsCommand(dispatcher),
+                new MeCommand(dispatcher),
+                new HelpCommand(dispatcher),
+
+                // Debug
+                new DebugPasteCommand(dispatcher),
+                new GarbageCollectorCommand(dispatcher)
+        });
+
 
         // TODO: /kill
         // TODO: /defaultgamemode
@@ -34,7 +47,6 @@ public class NukkitCommandDispatcher {
         // TODO: /gamemode
         // TODO: /gamerule
         // TODO: /give
-        // TODO: /help
         // TODO: /pardon
         // TODO: /pardon-ip
         // TODO: /particle
@@ -49,16 +61,30 @@ public class NukkitCommandDispatcher {
         // TODO: /weather
         // TODO: /whitelist
         // TODO: /xp
-
-
-        // Debug
-        new DebugPasteCommand(dispatcher);
-        new GarbageCollectorCommand(dispatcher);
     }
 
     // TODO: support for command senders
     public boolean dispatch(Player player, String command) throws CommandSyntaxException {
         dispatcher.execute(command, player.getCommandListener());
         return true;
+    }
+
+    private void registerAll(String fallbackPrefix, BaseCommand[] commands) {
+        for (BaseCommand command : commands) {
+            register(fallbackPrefix, command);
+        }
+    }
+
+    private void register(String fallbackPrefix, BaseCommand command) {
+        // TODO
+        knownCommands.put(command.getName(), command);
+    }
+
+    public BaseCommand getCommand(String name) {
+        return knownCommands.get(name.toLowerCase());
+    }
+
+    public Map<String, BaseCommand> getCommands() {
+        return knownCommands;
     }
 }
