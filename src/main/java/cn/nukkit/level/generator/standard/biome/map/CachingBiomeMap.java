@@ -1,6 +1,7 @@
-package cn.nukkit.level.generator.standard.biome;
+package cn.nukkit.level.generator.standard.biome.map;
 
 import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.generator.standard.biome.GenerationBiome;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import lombok.NonNull;

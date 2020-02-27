@@ -1,4 +1,6 @@
-package cn.nukkit.level.generator.standard.biome;
+package cn.nukkit.level.generator.standard.biome.map;
+
+import cn.nukkit.level.generator.standard.biome.GenerationBiome;
 
 /**
  * A map of the biomes in a given area.

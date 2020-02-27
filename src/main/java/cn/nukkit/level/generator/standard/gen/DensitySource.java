@@ -1,6 +1,6 @@
 package cn.nukkit.level.generator.standard.gen;
 
-import cn.nukkit.level.generator.standard.biome.BiomeMap;
+import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
 import lombok.NonNull;
 
 /**

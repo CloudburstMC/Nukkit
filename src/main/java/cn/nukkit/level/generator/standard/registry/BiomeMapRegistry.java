@@ -2,8 +2,8 @@ package cn.nukkit.level.generator.standard.registry;
 
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.generator.standard.biome.BiomeMap;
-import cn.nukkit.level.generator.standard.biome.ConstantBiomeMap;
+import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
+import cn.nukkit.level.generator.standard.biome.map.ConstantBiomeMap;
 import cn.nukkit.level.generator.standard.gen.BlockReplacer;
 import cn.nukkit.utils.Identifier;
 import lombok.AccessLevel;

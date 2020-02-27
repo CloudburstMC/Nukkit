@@ -1,6 +1,6 @@
 package cn.nukkit.level.generator.standard.gen.noise;
 
-import cn.nukkit.level.generator.standard.biome.BiomeMap;
+import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
 import cn.nukkit.level.generator.standard.gen.DensitySource;
 import cn.nukkit.level.generator.standard.registry.NoiseSourceRegistry;
 import cn.nukkit.level.generator.standard.registry.StandardGeneratorRegistries;

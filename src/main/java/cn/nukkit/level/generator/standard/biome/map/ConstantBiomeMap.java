@@ -1,6 +1,8 @@
-package cn.nukkit.level.generator.standard.biome;
+package cn.nukkit.level.generator.standard.biome.map;
 
 import cn.nukkit.level.generator.standard.StandardGeneratorUtils;
+import cn.nukkit.level.generator.standard.biome.BiomeDictionary;
+import cn.nukkit.level.generator.standard.biome.GenerationBiome;
 import cn.nukkit.level.generator.standard.store.StandardGeneratorStores;
 import cn.nukkit.utils.ConfigSection;
 import lombok.NonNull;
@@ -16,7 +18,7 @@ public final class ConstantBiomeMap implements BiomeMap {
 
     public ConstantBiomeMap(@NonNull ConfigSection config, @NonNull PRandom random) {
         BiomeDictionary dictionary = StandardGeneratorStores.biomeDictionary().apply(StandardGeneratorUtils.getId(config, "dictionary"));
-        this.biome = dictionary.find(StandardGeneratorUtils.getId(config, "biome"));
+        this.biome = new GenerationBiome(dictionary, StandardGeneratorUtils.getId(config, "biome")); //porktodo
     }
 
     @Override
