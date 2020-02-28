@@ -3115,7 +3115,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public String getXuid() {
-        return this.getLoginChainData().getXUID();
+        return this.getLoginChainData().isXboxAuthed() ? this.getLoginChainData().getXUID() : "";
     }
 
     @Override
