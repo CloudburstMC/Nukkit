@@ -29,6 +29,7 @@ abstract public class PluginBase implements Plugin {
     private PluginLoader loader;
 
     private Server server;
+    private static PluginBase instance;
 
     private boolean isEnabled = false;
 
@@ -44,7 +45,7 @@ abstract public class PluginBase implements Plugin {
 
 
     public void onLoad() {
-
+        instance = this;
     }
 
     public void onEnable() {
@@ -53,6 +54,10 @@ abstract public class PluginBase implements Plugin {
 
     public void onDisable() {
 
+    }
+    
+    public PluginBase getInstance() {
+        return instance;
     }
 
     public final boolean isEnabled() {
