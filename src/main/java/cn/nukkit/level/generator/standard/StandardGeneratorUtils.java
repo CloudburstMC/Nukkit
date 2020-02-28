@@ -3,9 +3,12 @@ package cn.nukkit.level.generator.standard;
 import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
-import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.misc.filter.AnyOfBlockFilter;
+import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.misc.filter.SingleBlockFilter;
+import cn.nukkit.level.generator.standard.misc.layer.BlockLayer;
+import cn.nukkit.level.generator.standard.misc.layer.ConstantSizeBlockLayer;
+import cn.nukkit.level.generator.standard.misc.layer.VariableSizeBlockLayer;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Config;
@@ -30,9 +33,9 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Various helper methods used by the NukkitX standard generator.
@@ -41,11 +44,8 @@ import java.util.regex.Pattern;
  */
 @UtilityClass
 public class StandardGeneratorUtils {
-    private final Pattern        BLOCK_PATTERN = Pattern.compile("^((?:[a-z0-9_]+:)?[a-z0-9_]+)(?:#([0-9]+))?$", Pattern.CASE_INSENSITIVE);
-    private final Cache<Matcher> BLOCK_CACHE   = ThreadCache.soft(() -> BLOCK_PATTERN.matcher(""));
-
-    private final Pattern        BLOCK_LIST_PATTERN = Pattern.compile("^(?:([0-9]+)\\*)?((?:[a-z0-9_]+:)?[a-z0-9_]+)(?:#([0-9]+))?$", Pattern.CASE_INSENSITIVE);
-    private final Cache<Matcher> BLOCK_LIST_CACHE   = ThreadCache.soft(() -> BLOCK_LIST_PATTERN.matcher(""));
+    private final Cache<Matcher> BLOCK_CACHE      = ThreadCache.regex("^((?:[a-zA-Z0-9_]+:)?[a-zA-Z0-9_]+)(?:#([0-9]+))?$");
+    private final Cache<Matcher> BLOCK_LIST_CACHE = ThreadCache.regex("^(?:(?:([0-9]+)|\\(([0-9]+)-([0-9]+)\\))\\*)?((?:[a-zA-Z0-9_]+:)?[a-zA-Z0-9_]+)(?:#([0-9]+))?$");
 
     /**
      * Gets a block encoded in the form {@code <identifier>[#meta]} from a named field in the given {@link ConfigSection}.
@@ -94,17 +94,40 @@ public class StandardGeneratorUtils {
     public static Collection<Block> parseBlockList(String blockList) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(blockList), "blocks must be set!");
         Matcher matcher = BLOCK_LIST_CACHE.get();
+
         Collection<Block> blocks = new ArrayList<>();
         for (String s : blockList.split(",")) {
             Preconditions.checkArgument(matcher.reset(s).find(), "Invalid list entry: \"%s\"", s);
 
-            String countS = matcher.group(1);
+            String countS = Objects.requireNonNull(matcher.group(1), "size range not allowed!");
             Identifier id = Identifier.fromString(matcher.group(2));
             String meta = matcher.group(3);
             Block block = BlockRegistry.get().getBlock(id, meta == null ? 0 : Integer.parseInt(meta));
             for (int i = countS == null ? 0 : (Integer.parseUnsignedInt(countS) - 1); i >= 0; i--) {
                 blocks.add(block);
             }
+        }
+        Preconditions.checkArgument(!blocks.isEmpty());
+        return blocks;
+    }
+
+    public static Collection<BlockLayer> parseBlockLayers(String blockList) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(blockList), "blocks must be set!");
+        Matcher matcher = BLOCK_LIST_CACHE.get();
+
+        Collection<BlockLayer> blocks = new ArrayList<>();
+        for (String s : blockList.split(",")) {
+            Preconditions.checkArgument(matcher.reset(s).find(), "Invalid list entry: \"%s\"", s);
+
+            Identifier id = Identifier.fromString(matcher.group(4));
+            String meta = matcher.group(5);
+            Block block = BlockRegistry.get().getBlock(id, meta == null ? 0 : Integer.parseInt(meta));
+            String count = matcher.group(1);
+            String min = matcher.group(2);
+            String max = matcher.group(3);
+            blocks.add(count == null && min != null
+                    ? new VariableSizeBlockLayer(block, Integer.parseUnsignedInt(matcher.group(2)), Integer.parseUnsignedInt(matcher.group(3)) + 1)
+                    : new ConstantSizeBlockLayer(block, count == null ? 1 : Integer.parseUnsignedInt(count)));
         }
         Preconditions.checkArgument(!blocks.isEmpty());
         return blocks;

@@ -29,7 +29,7 @@ generation:
       fade: 5
     - id: "nukkitx:surface"
       target: "stone"
-      blocks: "grass,4*dirt"
+      blocks: "grass,(0-4)*dirt"
 population:
   populators:
     - id: "nukkitx:basic_tree"
