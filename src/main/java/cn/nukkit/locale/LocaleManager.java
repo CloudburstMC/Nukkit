@@ -10,14 +10,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Set;
+import java.nio.file.*;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,35 +29,44 @@ public class LocaleManager {
 
     private final Set<Locale> availableLocales;
     private final Properties texts = new Properties();
-    private final Path[] textPaths;
+    private final URI[] textPaths;
     private Locale locale;
 
     public LocaleManager(String languagesPath, String... textPathStrings) {
-        Path path;
-        Path[] textPaths = new Path[textPathStrings.length];
+        URI langPath;
+        URI[] textPaths = new URI[textPathStrings.length];
         try {
-            path = Paths.get(ClassLoader.getSystemResource(languagesPath).toURI());
+            langPath = ClassLoader.getSystemResource(languagesPath).toURI();
 
             for (int i = 0; i < textPathStrings.length; i++) {
-                textPaths[i] = Paths.get(ClassLoader.getSystemResource(textPathStrings[i]).toURI());
+                textPaths[i] = ClassLoader.getSystemResource(textPathStrings[i]).toURI();
             }
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("Invalid resource path", e);
         }
-        this.availableLocales = loadAvailableLocales(path);
+        this.availableLocales = loadAvailableLocales(langPath);
         this.textPaths = textPaths;
     }
 
-    public LocaleManager(Set<Locale> availableLocales, Path... textPaths) {
+    public LocaleManager(Set<Locale> availableLocales, URI... textPaths) {
         this.availableLocales = checkNotNull(availableLocales, "availableLocales");
         this.textPaths = checkNotNull(textPaths, "textPaths");
     }
 
-    public static ImmutableSet<Locale> loadAvailableLocales(Path languagesPath) {
+    public static ImmutableSet<Locale> loadAvailableLocales(URI languagesPath) {
         ImmutableSet.Builder<Locale> builder = ImmutableSet.builder();
-        try (InputStream stream = Files.newInputStream(languagesPath)) {
-            JsonNode array = Nukkit.JSON_MAPPER.readTree(stream);
-            for (JsonNode element : array) {
+        try {
+            InputStream stream;
+            String[] array = languagesPath.toString().split("!");
+            System.out.println(array[0]);
+            if (array.length > 1) {
+                String path = array[array.length - 1].substring(1);
+                stream = LocaleManager.class.getClassLoader().getResourceAsStream(path);
+            } else {
+                stream = Files.newInputStream(Paths.get(languagesPath));
+            }
+            JsonNode jarray = Nukkit.JSON_MAPPER.readTree(stream);
+            for (JsonNode element : jarray) {
                 builder.add(getLocaleFromString(element.textValue()));
             }
         } catch (IOException e) {
@@ -216,9 +221,19 @@ public class LocaleManager {
         this.locale = locale;
 
         this.texts.clear(); // Clear any existing
-        for (Path path : this.textPaths) {
-            this.loadTransforms(path.resolve(locale + LANG_FILE_EXTENSION));
+        Map<String, String> env = new HashMap<>();
+        env.put("create", "false");
+        try (FileSystem jarFS = FileSystems.newFileSystem(URI.create("jar:file:" + getClass().getProtectionDomain().getCodeSource().getLocation().getPath()), env)) {
+            for (URI path : this.textPaths) {
+                if (path.toString().contains("!")) {
+                    this.loadTransforms(jarFS.getPath(path.toString().split("!")[1]).resolve(locale + LANG_FILE_EXTENSION));
+                } else {
+                    this.loadTransforms(Paths.get(path).resolve(locale + LANG_FILE_EXTENSION));
+                }
+            }
+            this.texts.setProperty("language", locale.toString());
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to load locale " + locale, e);
         }
-        this.texts.setProperty("language", locale.toString());
     }
 }
