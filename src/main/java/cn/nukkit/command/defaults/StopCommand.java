@@ -13,17 +13,14 @@ public class StopCommand extends BaseCommand {
 
     public StopCommand(CommandDispatcher<CommandSource> dispatcher) {
         super("stop", "%nukkit.command.stop.description");
-        setPermission("nukkit.command.stop");
 
-        dispatcher.register(literal("stop").executes(this::run));
+        dispatcher.register(literal("stop")
+                .requires(requirePermission("nukkit.command.stop"))
+                .executes(this::run));
     }
 
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         CommandSource source = context.getSource();
-
-        if (!this.testPermission(source)) {
-            return -1;
-        }
 
         sendAdminMessage(source, new TranslationContainer("commands.stop.start"));
         source.getServer().shutdown();

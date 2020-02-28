@@ -27,10 +27,10 @@ public class KickCommand extends BaseCommand {
 
     public KickCommand(CommandDispatcher<CommandSource> dispatcher) {
         super("kick", "%nukkit.command.kick.description");
-        setPermission("nukkit.command.kick");
 
         // TODO: This doesnt work. Stacktrace: https://hastebin.com/teyuyopome.apache
         dispatcher.register(literal("kick")
+                .requires(requirePermission("nukkit.command.kick"))
                 .then(argument("player", player()).executes(this::run))
                 .then(argument("reason", greedyString()).executes(this::run)));
     }
@@ -39,10 +39,6 @@ public class KickCommand extends BaseCommand {
         CommandSource source = context.getSource();
         Player target = getPlayer(context, "player");
         String reason = getString(context, "reason");
-
-        if(!testPermission(source)) {
-            return -1;
-        }
 
         target.kick(PlayerKickEvent.Reason.KICKED_BY_ADMIN, reason);
 

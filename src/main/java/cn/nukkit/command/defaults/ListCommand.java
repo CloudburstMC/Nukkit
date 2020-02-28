@@ -16,17 +16,14 @@ public class ListCommand extends BaseCommand {
 
     public ListCommand(CommandDispatcher<CommandSource> dispatcher) {
         super("list", "%nukkit.command.list.description");
-        setPermission("nukkit.command.list");
 
-        dispatcher.register(literal("list").executes(this::run));
+        dispatcher.register(literal("list")
+                .requires(requirePermission("nukkit.command.list"))
+                .executes(this::run));
     }
 
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         CommandSource source = context.getSource();
-
-        if (!this.testPermission(source)) {
-            return -1;
-        }
 
         Collection<Player> onlineList = source.getServer().getOnlinePlayers().values();
         StringBuilder builder = new StringBuilder();

@@ -16,17 +16,14 @@ public class GarbageCollectorCommand extends BaseCommand {
 
     public GarbageCollectorCommand(CommandDispatcher<CommandSource> dispatcher) {
         super("gc", "%nukkit.command.gc.description");
-        setPermission("nukkit.gc.stop");
 
-        dispatcher.register(literal("gc").executes(this::run));
+        dispatcher.register(literal("gc")
+                .requires(requirePermission("nukkit.command.gc"))
+                .executes(this::run));
     }
 
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         CommandSource source = context.getSource();
-
-        if (!this.testPermission(source)) {
-            return -1;
-        }
 
         int chunksCollected = 0;
         int entitiesCollected = 0;

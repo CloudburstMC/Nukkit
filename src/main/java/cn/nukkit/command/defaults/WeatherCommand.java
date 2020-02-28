@@ -1,87 +1,90 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandSource;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
 import cn.nukkit.player.Player;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+
+import static com.mojang.brigadier.arguments.IntegerArgumentType.getInteger;
+import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
 
 /**
  * author: Angelic47
  * Nukkit Project
  */
-public class WeatherCommand extends VanillaCommand {
-
+public class WeatherCommand extends BaseCommand {
     private java.util.Random rand = new java.util.Random();
 
-    public WeatherCommand(String name) {
-        super(name, "%nukkit.command.weather.description", "%commands.weather.usage");
-        this.setPermission("nukkit.command.weather");
-        this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("clear|rain|thunder", CommandParamType.STRING, false),
-                new CommandParameter("duration in seconds", CommandParamType.INT, true)
-        });
+    public WeatherCommand(CommandDispatcher<CommandSource> dispatcher) {
+        super("weather", "%nukkit.command.weather.description");
+
+        dispatcher.register(literal("weather")
+                .requires(requirePermission("nukkit.command.weather"))
+                .then(literal("clear")
+                        .executes(this::clear)
+                            .then(argument("duration", integer()).executes(this::clear)))
+                .then(literal("rain")
+                        .executes(this::rain)
+                            .then(argument("duration", integer()).executes(this::clear)))
+                .then(literal("thunder")
+                        .executes(this::thunder)
+                            .then(argument("duration", integer()).executes(this::clear))));
     }
 
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!this.testPermission(sender)) {
-            return true;
-        }
-        if (args.length == 0 || args.length > 2) {
-            sender.sendMessage(new TranslationContainer("commands.weather.usage", this.usageMessage));
-            return false;
-        }
+    public int clear(CommandContext<CommandSource> context) {
+        CommandSource source = context.getSource();
+        int duration = 600 * 20;
 
-        String weather = args[0];
-        Level level;
-        int seconds;
-        if (args.length > 1) {
-            try {
-                seconds = Integer.parseInt(args[1]);
-            } catch (Exception e) {
-                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-                return true;
-            }
-        } else {
-            seconds = 600 * 20;
-        }
+        // TODO: accept duration
+        //getInteger(context, "duration") * 20;
+        Level level = (source instanceof Player) ? ((Player) source).getLevel() : source.getServer().getDefaultLevel();
 
-        if (sender instanceof Player) {
-            level = ((Player) sender).getLevel();
-        } else {
-            level = sender.getServer().getDefaultLevel();
-        }
+        level.setRaining(false);
+        level.setThundering(false);
+        level.setRainTime(duration * 20);
+        level.setThunderTime(duration * 20);
 
-        switch (weather) {
-            case "clear":
-                level.setRaining(false);
-                level.setThundering(false);
-                level.setRainTime(seconds * 20);
-                level.setThunderTime(seconds * 20);
-                Command.broadcastCommandMessage(sender,
-                        new TranslationContainer("commands.weather.clear"));
-                return true;
-            case "rain":
-                level.setRaining(true);
-                level.setRainTime(seconds * 20);
-                Command.broadcastCommandMessage(sender,
-                        new TranslationContainer("commands.weather.rain"));
-                return true;
-            case "thunder":
-                level.setThundering(true);
-                level.setRainTime(seconds * 20);
-                level.setThunderTime(seconds * 20);
-                Command.broadcastCommandMessage(sender,
-                        new TranslationContainer("commands.weather.thunder"));
-                return true;
-            default:
-                sender.sendMessage(new TranslationContainer("commands.weather.usage", this.usageMessage));
-                return false;
-        }
+        sendAdminMessage(source, new TranslationContainer("commands.weather.clear"));
+        return 1;
+    }
 
+    public int rain(CommandContext<CommandSource> context) {
+        CommandSource source = context.getSource();
+        int duration = 600 * 20;
+
+        // TODO: accept duration
+        //getInteger(context, "duration") * 20;
+        Level level = (source instanceof Player) ? ((Player) source).getLevel() : source.getServer().getDefaultLevel();
+
+        level.setRaining(true);
+        level.setRainTime(duration * 20);
+        level.setThunderTime(duration * 20);
+
+        sendAdminMessage(source, new TranslationContainer("commands.weather.rain"));
+        return 1;
+    }
+
+    public int thunder(CommandContext<CommandSource> context) {
+        CommandSource source = context.getSource();
+        int duration = 600 * 20;
+
+        // TODO: accept duration
+        //getInteger(context, "duration") * 20;
+        Level level = (source instanceof Player) ? ((Player) source).getLevel() : source.getServer().getDefaultLevel();
+
+        level.setThundering(true);
+        level.setRainTime(duration * 20);
+        level.setThunderTime(duration * 20);
+
+        sendAdminMessage(source, new TranslationContainer("commands.weather.thunder"));
+        return 1;
     }
 }

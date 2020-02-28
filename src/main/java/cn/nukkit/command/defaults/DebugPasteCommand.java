@@ -28,17 +28,14 @@ public class DebugPasteCommand extends BaseCommand {
 
     public DebugPasteCommand(CommandDispatcher<CommandSource> dispatcher) {
         super("debugpaste", "%nukkit.command.debug.description");
-        setPermission("nukkit.command.debug.perform");
 
-        dispatcher.register(literal("debugpaste").executes(this::run));
+        dispatcher.register(literal("debugpaste")
+                .requires(requirePermission("nukkit.command.debug.perform"))
+                .executes(this::run));
     }
 
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         CommandSource source = context.getSource();
-
-        if (!this.testPermission(source)) {
-            return -1;
-        }
 
         Server server = source.getServer();
         server.getScheduler().scheduleAsyncTask(new AsyncTask() {

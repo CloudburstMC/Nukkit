@@ -19,21 +19,17 @@ public class MeCommand extends BaseCommand {
 
     public MeCommand(CommandDispatcher<CommandSource> dispatcher) {
         super("me", "%nukkit.command.me.description");
-        setPermission("nukkit.command.me");
 
         dispatcher.register(literal("me")
+                .requires(requirePermission("nukkit.command.me"))
                 .then(argument("action...", greedyString()).executes(this::run)));
     }
 
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         CommandSource source = context.getSource();
         String message = getString(context, "action...");
-
-        if (!this.testPermission(source)) {
-            return -1;
-        }
-
         String name = (source instanceof Player) ? ((Player) source).getDisplayName() : source.getName();
+
         source.getServer().broadcastMessage(new TranslationContainer("chat.type.emote", name, TextFormat.WHITE + message));
         return 1;
     }

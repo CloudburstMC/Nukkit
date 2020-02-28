@@ -33,6 +33,7 @@ public class NukkitCommandDispatcher {
                 new PluginsCommand(dispatcher),
                 new MeCommand(dispatcher),
                 new HelpCommand(dispatcher),
+                new WeatherCommand(dispatcher),
 
                 // Debug
                 new DebugPasteCommand(dispatcher),
@@ -58,7 +59,6 @@ public class NukkitCommandDispatcher {
         // TODO: /time
         // TODO: /timings
         // TODO: /title
-        // TODO: /weather
         // TODO: /whitelist
         // TODO: /xp
     }

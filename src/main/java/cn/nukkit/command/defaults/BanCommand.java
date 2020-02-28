@@ -30,10 +30,10 @@ public class BanCommand extends BaseCommand {
 
     public BanCommand(CommandDispatcher<CommandSource> dispatcher) {
         super("ban", "%nukkit.command.ban.player.description");
-        setPermission("nukkit.command.ban.player");
 
         // TODO: This doesnt work. Stacktrace: https://hastebin.com/teyuyopome.apache
         dispatcher.register(literal("kick")
+                .requires(requirePermission("nukkit.command.ban.player"))
                 .then(argument("player", player()).executes(this::run))
                 .then(argument("reason", greedyString()).executes(this::run)));
     }
@@ -45,9 +45,6 @@ public class BanCommand extends BaseCommand {
         Player target = getPlayer(context, "player");
         String reason = getString(context, "reason");
 
-        if(!testPermission(source)) {
-            return -1;
-        }
         if(target.isBanned()) {
             throw ALREADY_BANNED.create();
         }

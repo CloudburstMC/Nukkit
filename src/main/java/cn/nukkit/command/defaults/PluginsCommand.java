@@ -16,18 +16,15 @@ public class PluginsCommand extends BaseCommand {
 
     public PluginsCommand(CommandDispatcher<CommandSource> dispatcher) {
         super("plugins", "%nukkit.command.plugins.description");
-        setPermission("nukkit.command.plugins"); // TODO: aliases
+        // TODO: aliases
 
-        dispatcher.register(literal("plugins").executes(this::run));
+        dispatcher.register(literal("plugins")
+                .requires(requirePermission("nukkit.command.plugins"))
+                .executes(this::run));
     }
 
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         CommandSource source = context.getSource();
-
-        if (!this.testPermission(source)) {
-            return -1;
-        }
-
         StringBuilder list = new StringBuilder();
         Map<String, Plugin> plugins = source.getServer().getPluginManager().getPlugins();
 

@@ -16,19 +16,15 @@ public class SayCommand extends BaseCommand {
 
     public SayCommand(CommandDispatcher<CommandSource> dispatcher) {
         super("say", "%nukkit.command.say.description");
-        setPermission("nukkit.command.say");
 
         dispatcher.register(literal("say")
+                .requires(requirePermission("nukkit.command.say"))
                 .then(argument("message", greedyString()).executes(this::run)));
     }
 
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         CommandSource source = context.getSource();
         String message = getString(context, "message");
-
-        if (!this.testPermission(source)) {
-            return -1;
-        }
 
         String senderString;
         if (source instanceof Player) {

@@ -26,19 +26,15 @@ public class OpCommand extends BaseCommand {
 
     public OpCommand(CommandDispatcher<CommandSource> dispatcher) {
         super("op", "%nukkit.command.op.description");
-        setPermission("nukkit.command.op.give");
 
         dispatcher.register(literal("op")
+                .requires(requirePermission("nukkit.command.op.give"))
                 .then(argument("player", offlinePlayer()).executes(this::run)));
     }
 
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         CommandSource source = context.getSource();
         IPlayer target = getOfflinePlayer(context, "player");
-
-        if (!this.testPermission(source)) {
-            return -1;
-        }
 
         // Matches vanilla behaviour
         if(target.isOp()) {

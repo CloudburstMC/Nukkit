@@ -23,22 +23,17 @@ public class BanListCommand extends BaseCommand {
 
     public BanListCommand(CommandDispatcher<CommandSource> dispatcher) {
         super("banlist", "%nukkit.command.banlist.description");
-        setPermission("nukkit.command.banlist");
 
-        dispatcher.register(
-                literal("banlist")
-                    .then(literal("ips").executes(context -> run(context, Type.IPS)))
-                    .then(literal("players").executes(context -> run(context, Type.PLAYERS)))
+        dispatcher.register(literal("banlist")
+                .requires(requirePermission("nukkit.command.banlist"))
+                .then(literal("ips").executes(context -> run(context, Type.IPS)))
+                .then(literal("players").executes(context -> run(context, Type.PLAYERS)))
                 .executes(context -> run(context, Type.PLAYERS)));
     }
 
     public int run(CommandContext<CommandSource> context, Type type) throws CommandSyntaxException {
         CommandSource source = context.getSource();
         BanList banList;
-
-        if (!this.testPermission(source)) {
-            return -1;
-        }
 
         boolean ips = false;
         switch(type) {

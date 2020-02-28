@@ -26,19 +26,16 @@ public class VersionCommand extends BaseCommand {
 
     public VersionCommand(CommandDispatcher<CommandSource> dispatcher) {
         super("version", "%nukkit.command.version.description");
-        setPermission("nukkit.command.version"); // TODO: aliases
+        // TODO: aliases
 
         dispatcher.register(literal("version")
+                .requires(requirePermission("nukkit.command.version"))
                 .then(argument("plugin", string()).executes(this::plugin))
                 .executes(this::run));
     }
 
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         CommandSource source = context.getSource();
-
-        if(!this.testPermission(source)) {
-            return -1;
-        }
 
         source.sendMessage(new TranslationContainer("nukkit.server.info.extended", source.getServer().getName(),
                 source.getServer().getNukkitVersion(),

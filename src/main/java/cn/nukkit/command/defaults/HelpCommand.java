@@ -17,9 +17,9 @@ public class HelpCommand extends BaseCommand {
 
     public HelpCommand(CommandDispatcher<CommandSource> dispatcher) {
         super("help", "%nukkit.command.help.description");
-        setPermission("nukkit.command.help");
 
         dispatcher.register(literal("help")
+                .requires(requirePermission("nukkit.command.help"))
                 .then(argument("page", integer()).executes(ctx -> run(ctx, getInteger(ctx, "page"))))
                 // TODO: The following line will "overwrite" the page argument above.
                 //       Find out a way to make them play together
@@ -29,10 +29,6 @@ public class HelpCommand extends BaseCommand {
 
     public int run(CommandContext<CommandSource> context, int page) throws CommandSyntaxException {
         CommandSource source = context.getSource();
-
-        if (!this.testPermission(source)) {
-            return -1;
-        }
 
         int pageNumber = page;
         int pageHeight = 5;

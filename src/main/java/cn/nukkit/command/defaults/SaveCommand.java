@@ -18,17 +18,14 @@ public class SaveCommand extends BaseCommand {
 
     public SaveCommand(CommandDispatcher<CommandSource> dispatcher) {
         super("save-all", "%nukkit.command.save.description");
-        setPermission("nukkit.command.save.perform");
 
-        dispatcher.register(literal("save-all").executes(this::run));
+        dispatcher.register(literal("save-all")
+                .requires(requirePermission("nukkit.command.save.perform"))
+                .executes(this::run));
     }
 
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         CommandSource source = context.getSource();
-
-        if (!this.testPermission(source)) {
-            return -1;
-        }
 
         sendAdminMessage(source, new TranslationContainer("commands.save.start"));
 

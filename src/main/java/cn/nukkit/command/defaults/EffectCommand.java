@@ -30,10 +30,9 @@ public class EffectCommand extends BaseCommand {
 
     public EffectCommand(CommandDispatcher<CommandSource> dispatcher) {
         super("effect", "%nukkit.command.effect.description");
-        setPermission("nukkit.command.effect");
 
-        dispatcher.register(
-                literal("effect")
+        dispatcher.register(literal("effect")
+                .requires(requirePermission("nukkit.command.effect"))
                     .then(argument("player", player())
                         .then(literal("clear").executes(ctx -> clear(ctx, getPlayer(ctx, "player")))))
                     .then(argument("effect", effect()))
@@ -46,10 +45,6 @@ public class EffectCommand extends BaseCommand {
     public int run(CommandContext<CommandSource> context, Player target, Effect effect, int seconds, int amplifier,
                    boolean hideParticles) throws CommandSyntaxException {
         CommandSource source = context.getSource();
-
-        if (!this.testPermission(source)) {
-            return -1;
-        }
 
         return 1;
     }

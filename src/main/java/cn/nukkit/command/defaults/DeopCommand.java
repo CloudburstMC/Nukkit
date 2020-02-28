@@ -25,19 +25,15 @@ public class DeopCommand extends BaseCommand {
 
     public DeopCommand(CommandDispatcher<CommandSource> dispatcher) {
         super("deop", "%nukkit.command.deop.description");
-        setPermission("nukkit.command.op.take");
 
         dispatcher.register(literal("deop")
+                .requires(requirePermission("nukkit.command.op.take"))
                 .then(argument("player", offlinePlayer()).executes(this::run)));
     }
 
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         CommandSource source = context.getSource();
         IPlayer target = getOfflinePlayer(context, "player");
-
-        if (!this.testPermission(source)) {
-            return -1;
-        }
 
         target.setOp(false);
 

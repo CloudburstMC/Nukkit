@@ -16,17 +16,14 @@ public class SeedCommand extends BaseCommand {
 
     public SeedCommand(CommandDispatcher<CommandSource> dispatcher) {
         super("seed", "%nukkit.command.seed.description");
-        setPermission("nukkit.command.seed");
 
-        dispatcher.register(literal("seed").executes(this::run));
+        dispatcher.register(literal("seed")
+                .requires(requirePermission("nukkit.command.seed"))
+                .executes(this::run));
     }
 
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         CommandSource source = context.getSource();
-
-        if (!this.testPermission(source)) {
-            return -1;
-        }
 
         long seed;
         if (source instanceof Player) {

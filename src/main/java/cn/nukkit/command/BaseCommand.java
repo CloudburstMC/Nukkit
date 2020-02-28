@@ -75,10 +75,6 @@ public abstract class BaseCommand {
         return false;
     }
 
-    public void setPermission(String permission) {
-        this.permission = permission;
-    }
-
     public void sendAdminMessage(CommandSource source, String message) {
         sendAdminMessage(source, message, true);
     }
@@ -196,5 +192,10 @@ public abstract class BaseCommand {
 
     protected final Predicate<CommandSource> requireOp() {
         return source -> (!(source instanceof Player)) || source.isOp();
+    }
+
+    protected final Predicate<CommandSource> requirePermission(String permission) {
+        this.permission = permission;
+        return this::testPermissionSilent;
     }
 }
