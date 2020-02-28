@@ -19,12 +19,12 @@ public class SayCommand extends BaseCommand {
         setPermission("nukkit.command.say");
 
         dispatcher.register(literal("say")
-                .then(argument("message", greedyString()).executes(context ->
-                        run(context, getString(context, "message")))));
+                .then(argument("message", greedyString()).executes(this::run)));
     }
 
-    public int run(CommandContext<CommandSource> context, String message) throws CommandSyntaxException {
+    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         CommandSource source = context.getSource();
+        String message = getString(context, "message");
 
         if (!this.testPermission(source)) {
             return -1;

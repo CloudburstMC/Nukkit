@@ -22,12 +22,12 @@ public class MeCommand extends BaseCommand {
         setPermission("nukkit.command.me");
 
         dispatcher.register(literal("me")
-                .then(argument("action...", greedyString())
-                    .executes(context -> run(context, getString(context, "action...")))));
+                .then(argument("action...", greedyString()).executes(this::run)));
     }
 
-    public int run(CommandContext<CommandSource> context, String message) throws CommandSyntaxException {
+    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         CommandSource source = context.getSource();
+        String message = getString(context, "action...");
 
         if (!this.testPermission(source)) {
             return -1;

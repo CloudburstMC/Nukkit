@@ -29,7 +29,7 @@ public class VersionCommand extends BaseCommand {
         setPermission("nukkit.command.version"); // TODO: aliases
 
         dispatcher.register(literal("version")
-                .then(argument("plugin", string()).executes(context -> plugin(context, getString(context, "plugin"))))
+                .then(argument("plugin", string()).executes(this::plugin))
                 .executes(this::run));
     }
 
@@ -49,12 +49,13 @@ public class VersionCommand extends BaseCommand {
         return 1;
     }
 
-    public int plugin(CommandContext<CommandSource> context, String pluginName) throws CommandSyntaxException {
+    public int plugin(CommandContext<CommandSource> context) throws CommandSyntaxException {
         CommandSource source = context.getSource();
 
         if(!this.testPermission(source)) {
             return -1;
         }
+        String pluginName = getString(context, "plugin");
 
         final boolean[] found = {false};
         final Plugin[] exactPlugin = { source.getServer().getPluginManager().getPlugin(pluginName) };

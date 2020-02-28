@@ -33,17 +33,17 @@ public class BanCommand extends BaseCommand {
         setPermission("nukkit.command.ban.player");
 
         // TODO: This doesnt work. Stacktrace: https://hastebin.com/teyuyopome.apache
-        dispatcher.register(literal("ban")
-                .then(argument("target", offlinePlayer()).executes(context ->
-                        run(context, getOfflinePlayer(context, "target"), null)))
-
-                .then(argument("reason", greedyString()).executes(context ->
-                        run(context, getOfflinePlayer(context, "target"), getString(context, "reason")))));
+        dispatcher.register(literal("kick")
+                .then(argument("player", player()).executes(this::run))
+                .then(argument("reason", greedyString()).executes(this::run)));
     }
 
-    public int run(CommandContext<CommandSource> context, IPlayer target, String reason) throws CommandSyntaxException {
+    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         CommandSource source = context.getSource();
         BanList banList = source.getServer().getNameBans();
+
+        Player target = getPlayer(context, "player");
+        String reason = getString(context, "reason");
 
         if(!testPermission(source)) {
             return -1;
