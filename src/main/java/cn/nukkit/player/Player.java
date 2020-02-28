@@ -647,7 +647,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
         if (this.spawned) {
-            this.server.updatePlayerListData(this.getServerId(), this.getUniqueId(), this.getDisplayName(), this.getSkin(), this.getLoginChainData().getXUID());
+            this.server.updatePlayerListData(this.getServerId(), this.getUniqueId(), this.getDisplayName(), this.getSkin(), this.getXuid());
         }
     }
 
@@ -659,7 +659,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public void setSkin(SerializedSkin skin) {
         super.setSkin(skin);
         if (this.spawned) {
-            this.server.updatePlayerListData(this.getServerId(), this.getUniqueId(), this.getDisplayName(), skin, this.getLoginChainData().getXUID());
+            this.server.updatePlayerListData(this.getServerId(), this.getUniqueId(), this.getDisplayName(), skin, this.getXuid());
         }
     }
 

@@ -806,7 +806,7 @@ public class Server {
 
     public void addOnlinePlayer(Player player) {
         this.playerList.put(player.getServerId(), player);
-        this.updatePlayerListData(player.getServerId(), player.getUniqueId(), player.getDisplayName(), player.getSkin(), player.getLoginChainData().getXUID());
+        this.updatePlayerListData(player.getServerId(), player.getUniqueId(), player.getDisplayName(), player.getSkin(), player.getXuid());
     }
 
     public void removeOnlinePlayer(Player player) {
@@ -877,7 +877,7 @@ public class Server {
                     entry.setEntityId(p.getUniqueId());
                     entry.setName(p.getDisplayName());
                     entry.setSkin(p.getSkin());
-                    entry.setXuid(p.getLoginChainData().getXUID());
+                    entry.setXuid(p.getXuid());
                     entry.setPlatformChatId("");
                     return entry;
                 }).collect(Collectors.toList()));

@@ -266,7 +266,7 @@ public class Human extends EntityCreature implements InventoryHolder {
             }
 
             if (this instanceof Player)
-                this.server.updatePlayerListData(this.getServerId(), this.getUniqueId(), this.getName(), this.skin, ((Player) this).getLoginChainData().getXUID(), new Player[]{player});
+                this.server.updatePlayerListData(this.getServerId(), this.getUniqueId(), this.getName(), this.skin, ((Player) this).getXuid(), new Player[]{player});
             else
                 this.server.updatePlayerListData(this.getServerId(), this.getUniqueId(), this.getName(), this.skin, new Player[]{player});
 

@@ -119,7 +119,7 @@ public class SignBlockEntity extends BaseBlockEntity implements Sign {
 
         SignChangeEvent event = new SignChangeEvent(this.getBlock(), player, text);
 
-        if (!tag.contains("Creator") || !Objects.equals(player.getLoginChainData().getXUID(), tag.getString("Creator"))) {
+        if (!tag.contains("Creator") || !Objects.equals(player.getXuid(), tag.getString("Creator"))) {
             event.setCancelled();
         }
 
