@@ -15,11 +15,18 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  */
 @JsonDeserialize
 public final class ConstantBiomeMap implements BiomeMap {
+    public static final Identifier ID = Identifier.fromString("nukkitx:constant");
+
     @JsonProperty(required = true)
     private GenerationBiome biome;
 
     @Override
     public GenerationBiome get(int x, int z) {
         return this.biome;
+    }
+
+    @Override
+    public Identifier getId() {
+        return ID;
     }
 }

@@ -2,6 +2,7 @@ package cn.nukkit.level.generator.standard.biome.map;
 
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.generator.standard.biome.GenerationBiome;
+import cn.nukkit.utils.Identifier;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import lombok.NonNull;
@@ -38,5 +39,11 @@ public final class CachingBiomeMap implements BiomeMap {
     public void clear() {
         this.cache.clear();
         this.delegate = null;
+    }
+
+    @Override
+    public Identifier getId() {
+        //should never be accessed in this way
+        throw new UnsupportedOperationException();
     }
 }

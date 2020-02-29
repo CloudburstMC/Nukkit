@@ -5,6 +5,7 @@ import cn.nukkit.level.generator.standard.misc.ConstantBlock;
 import cn.nukkit.level.generator.standard.misc.IntRange;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.pop.RepeatingPopulator;
+import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.daporkchop.lib.random.PRandom;
@@ -18,6 +19,8 @@ import static java.lang.Math.*;
  */
 @JsonDeserialize
 public class BasicTreePopulator extends RepeatingPopulator {
+    public static final Identifier ID = Identifier.fromString("nukkitx:basic_tree");
+
     @JsonProperty(required = true)
     private BlockFilter   on;
     @JsonProperty(required = true)
@@ -54,6 +57,11 @@ public class BasicTreePopulator extends RepeatingPopulator {
         this.placeLeafLayer(random, level, x, z, y + 0, leafId, 2, true);
         this.placeLeafLayer(random, level, x, z, y + 1, leafId, 1, false);
         this.placeLeafLayer(random, level, x, z, y + 2, leafId, 1, true);
+    }
+
+    @Override
+    public Identifier getId() {
+        return ID;
     }
 
     protected void placeLeafLayer(PRandom random, ChunkManager level, int x, int z, int y, int leafId, int radius, boolean cutCorners) {

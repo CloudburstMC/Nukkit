@@ -1,6 +1,8 @@
 package cn.nukkit.level.generator.standard.biome.map;
 
 import cn.nukkit.level.generator.standard.biome.GenerationBiome;
+import cn.nukkit.level.generator.standard.misc.GenerationPass;
+import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
@@ -8,9 +10,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  *
  * @author DaPorkchop_
  */
-@FunctionalInterface
 @JsonDeserialize(using = BiomeMapDeserializer.class)
-public interface BiomeMap {
+public interface BiomeMap extends GenerationPass {
     /**
      * Gets the {@link GenerationBiome} at the given world coordinates.
      *
@@ -19,4 +20,7 @@ public interface BiomeMap {
      * @return the {@link GenerationBiome} at the given coordinates
      */
     GenerationBiome get(int x, int z);
+
+    @Override
+    Identifier getId();
 }

@@ -1,6 +1,8 @@
 package cn.nukkit.level.generator.standard.gen.decorator;
 
 import cn.nukkit.level.chunk.IChunk;
+import cn.nukkit.level.generator.standard.misc.GenerationPass;
+import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.daporkchop.lib.random.PRandom;
 
@@ -11,9 +13,8 @@ import net.daporkchop.lib.random.PRandom;
  *
  * @author DaPorkchop_
  */
-@FunctionalInterface
 @JsonDeserialize(using = DecoratorDeserializer.class)
-public interface Decorator {
+public interface Decorator extends GenerationPass {
     Decorator[] EMPTY_ARRAY = new Decorator[0];
 
     /**
@@ -23,4 +24,7 @@ public interface Decorator {
      * @param random an instance of {@link PRandom} for generating random numbers, initialized with a seed based on chunk's position
      */
     void decorate(IChunk chunk, PRandom random, int x, int z);
+
+    @Override
+    Identifier getId();
 }

@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 public final class BiomeMapRegistry extends AbstractGeneratorRegistry<BiomeMap> {
     @Override
     protected void registerDefault() {
-        this.register(Identifier.fromString("nukkitx:constant"), ConstantBiomeMap.class);
+        this.register(ConstantBiomeMap.ID, ConstantBiomeMap.class);
     }
 
     @Override

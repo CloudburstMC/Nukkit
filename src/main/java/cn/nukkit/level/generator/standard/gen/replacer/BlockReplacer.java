@@ -1,6 +1,8 @@
 package cn.nukkit.level.generator.standard.gen.replacer;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.level.generator.standard.misc.GenerationPass;
+import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
@@ -8,9 +10,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  *
  * @author DaPorkchop_
  */
-@FunctionalInterface
 @JsonDeserialize(using = BlockReplacerDeserializer.class)
-public interface BlockReplacer {
+public interface BlockReplacer extends GenerationPass {
     BlockReplacer[] EMPTY_ARRAY = new BlockReplacer[0];
 
     /**
@@ -27,4 +28,7 @@ public interface BlockReplacer {
      * @return the replaced block. A value of {@code null} indicates air
      */
     Block replace(Block prev, int x, int y, int z, double gradX, double gradY, double gradZ, double density);
+
+    @Override
+    Identifier getId();
 }

@@ -23,8 +23,8 @@ import lombok.RequiredArgsConstructor;
 public final class DecoratorRegistry extends AbstractGeneratorRegistry<Decorator> {
     @Override
     protected void registerDefault() {
-        this.register(Identifier.fromString("nukkitx:bedrock"), BedrockDecorator.class);
-        this.register(Identifier.fromString("nukkitx:surface"), SurfaceDecorator.class);
+        this.register(BedrockDecorator.ID, BedrockDecorator.class);
+        this.register(SurfaceDecorator.ID, SurfaceDecorator.class);
     }
 
     @Override

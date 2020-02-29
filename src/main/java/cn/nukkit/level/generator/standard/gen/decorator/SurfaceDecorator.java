@@ -4,6 +4,7 @@ import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.misc.layer.BlockLayer;
 import cn.nukkit.level.generator.standard.misc.layer.BlockLayersDeserializer;
+import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.daporkchop.lib.random.PRandom;
@@ -15,6 +16,8 @@ import net.daporkchop.lib.random.PRandom;
  */
 @JsonDeserialize
 public final class SurfaceDecorator implements Decorator {
+    public static final Identifier ID = Identifier.fromString("nukkitx:surface");
+
     @JsonProperty(required = true)
     private BlockFilter  target;
     @JsonProperty(required = true)
@@ -38,5 +41,10 @@ public final class SurfaceDecorator implements Decorator {
             }
             prevId = id;
         }
+    }
+
+    @Override
+    public Identifier getId() {
+        return ID;
     }
 }

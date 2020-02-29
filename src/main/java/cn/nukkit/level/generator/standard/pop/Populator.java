@@ -1,6 +1,8 @@
 package cn.nukkit.level.generator.standard.pop;
 
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.level.generator.standard.misc.GenerationPass;
+import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.daporkchop.lib.random.PRandom;
 
@@ -9,9 +11,8 @@ import net.daporkchop.lib.random.PRandom;
  *
  * @author DaPorkchop_
  */
-@FunctionalInterface
 @JsonDeserialize(using = PopulatorDeserializer.class)
-public interface Populator {
+public interface Populator extends GenerationPass {
     Populator[] EMPTY_ARRAY = new Populator[0];
 
     /**
@@ -23,4 +24,7 @@ public interface Populator {
      * @param chunkZ the chunk's Z coordinate
      */
     void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ);
+
+    @Override
+    Identifier getId();
 }

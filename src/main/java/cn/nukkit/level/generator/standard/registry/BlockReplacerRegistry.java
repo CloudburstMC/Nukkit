@@ -22,8 +22,8 @@ import lombok.RequiredArgsConstructor;
 public final class BlockReplacerRegistry extends AbstractGeneratorRegistry<BlockReplacer> {
     @Override
     protected void registerDefault() {
-        this.register(Identifier.fromString("nukkitx:ground"), GroundReplacer.class);
-        this.register(Identifier.fromString("nukkitx:sea"), SeaReplacer.class);
+        this.register(GroundReplacer.ID, GroundReplacer.class);
+        this.register(SeaReplacer.ID, SeaReplacer.class);
     }
 
     @Override

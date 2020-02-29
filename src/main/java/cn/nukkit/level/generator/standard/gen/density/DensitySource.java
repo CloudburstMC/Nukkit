@@ -1,6 +1,9 @@
 package cn.nukkit.level.generator.standard.gen.density;
 
 import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
+import cn.nukkit.level.generator.standard.misc.GenerationPass;
+import cn.nukkit.utils.Identifier;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.NonNull;
 
 /**
@@ -9,7 +12,8 @@ import lombok.NonNull;
  * @author DaPorkchop_
  * @see net.daporkchop.lib.noise.NoiseSource
  */
-public interface DensitySource {
+@JsonDeserialize(using = DensitySourceDeserializer.class)
+public interface DensitySource extends GenerationPass {
     /**
      * Gets the density at the given coordinates.
      *
@@ -20,4 +24,7 @@ public interface DensitySource {
      * @return the density at the given coordinates
      */
     double get(int x, int y, int z, @NonNull BiomeMap biomes);
+
+    @Override
+    Identifier getId();
 }

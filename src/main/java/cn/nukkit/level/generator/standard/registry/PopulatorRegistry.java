@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 public final class PopulatorRegistry extends AbstractGeneratorRegistry<Populator> {
     @Override
     protected void registerDefault() {
-        this.register(Identifier.fromString("nukkitx:basic_tree"), BasicTreePopulator.class);
+        this.register(BasicTreePopulator.ID, BasicTreePopulator.class);
     }
 
     @Override

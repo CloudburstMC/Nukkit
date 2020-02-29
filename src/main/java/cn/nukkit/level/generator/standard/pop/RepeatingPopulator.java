@@ -3,6 +3,7 @@ package cn.nukkit.level.generator.standard.pop;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.standard.misc.IntRange;
 import cn.nukkit.utils.ConfigSection;
+import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
@@ -38,4 +39,7 @@ public abstract class RepeatingPopulator implements Populator {
      * @see #populate(PRandom, ChunkManager, int, int)
      */
     protected abstract void tryPopulate(PRandom random, ChunkManager level, int x, int z);
+
+    @Override
+    public abstract Identifier getId();
 }

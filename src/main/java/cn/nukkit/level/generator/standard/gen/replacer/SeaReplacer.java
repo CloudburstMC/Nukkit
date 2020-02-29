@@ -4,6 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.generator.standard.StandardGeneratorUtils;
 import cn.nukkit.level.generator.standard.misc.ConstantBlock;
 import cn.nukkit.utils.ConfigSection;
+import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -19,6 +20,8 @@ import net.daporkchop.lib.random.PRandom;
  */
 @JsonDeserialize
 public final class SeaReplacer implements BlockReplacer {
+    public static final Identifier ID = Identifier.fromString("nukkitx:sea");
+
     @JsonProperty(required = true)
     private Block block;
     @JsonProperty(required = true)
@@ -27,6 +30,11 @@ public final class SeaReplacer implements BlockReplacer {
     @Override
     public Block replace(Block prev, int x, int y, int z, double gradX, double gradY, double gradZ, double density) {
         return prev == null && y <= this.seaLevel ? this.block : prev;
+    }
+
+    @Override
+    public Identifier getId() {
+        return ID;
     }
 
     @JsonSetter("block")

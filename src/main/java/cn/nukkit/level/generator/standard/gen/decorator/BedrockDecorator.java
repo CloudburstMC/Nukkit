@@ -3,6 +3,7 @@ package cn.nukkit.level.generator.standard.gen.decorator;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.standard.misc.ConstantBlock;
 import cn.nukkit.level.generator.standard.misc.IntRange;
+import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.daporkchop.lib.random.PRandom;
@@ -14,6 +15,8 @@ import net.daporkchop.lib.random.PRandom;
  */
 @JsonDeserialize
 public final class BedrockDecorator implements Decorator {
+    public static final Identifier ID = Identifier.fromString("nukkitx:bedrock");
+
     @JsonProperty(required = true)
     private ConstantBlock block;
     @JsonProperty(required = true)
@@ -47,5 +50,10 @@ public final class BedrockDecorator implements Decorator {
                 }
             }
         }
+    }
+
+    @Override
+    public Identifier getId() {
+        return ID;
     }
 }

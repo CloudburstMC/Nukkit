@@ -8,6 +8,18 @@ biomes:
     id: "minecraft:jungle"
     dict: "nukkitx:vanilla"
 
+density:
+  id: "nukkitx:vanilla"
+  selectorNoise:
+    id: "nukkitx:simplex"
+    scale:
+      x: 0.01
+      y: 0.0025
+      z: 0.01
+    octaves: 8
+    factor: 4.0
+    offset: 0.0
+
 replacers:
   - id: "nukkitx:ground"
     block: "stone"

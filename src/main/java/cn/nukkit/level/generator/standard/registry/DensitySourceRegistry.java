@@ -16,13 +16,13 @@ import net.daporkchop.lib.noise.NoiseSource;
  * Registry for {@link NoiseSource}.
  *
  * @author DaPorkchop_
- * @see StandardGeneratorRegistries#noiseSource()
+ * @see StandardGeneratorRegistries#noiseGenerator()
  */
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public final class DensitySourceRegistry extends AbstractGeneratorRegistry<DensitySource> {
     @Override
     protected void registerDefault() {
-        this.register(Identifier.fromString("nukkitx:vanilla"), VanillaDensitySource.class);
+        this.register(VanillaDensitySource.ID, VanillaDensitySource.class);
     }
 
     @Override
