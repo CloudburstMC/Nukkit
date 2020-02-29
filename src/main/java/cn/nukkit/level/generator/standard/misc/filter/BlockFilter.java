@@ -2,6 +2,7 @@ package cn.nukkit.level.generator.standard.misc.filter;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.registry.BlockRegistry;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.function.Predicate;
 
@@ -11,6 +12,7 @@ import java.util.function.Predicate;
  * @author DaPorkchop_
  */
 @FunctionalInterface
+@JsonDeserialize(using = BlockFilterDeserializer.class)
 public interface BlockFilter extends Predicate<Block> {
     @Override
     boolean test(Block block);

@@ -2,9 +2,6 @@ package cn.nukkit.level.generator.standard.registry;
 
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.generator.standard.gen.NoiseSources;
-import cn.nukkit.level.generator.standard.gen.noise.VanillaNoiseSource;
-import cn.nukkit.utils.Identifier;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,10 +19,11 @@ import net.daporkchop.lib.noise.NoiseSource;
 public final class NoiseSourceRegistry extends AbstractGeneratorRegistry<NoiseSource> {
     @Override
     protected void registerDefault() {
-        this.register(NoiseSources.ID_OPENSIMPLEX, NoiseSources.OPENSIMPLEX);
+        //porktodo:
+        /*this.register(NoiseSources.ID_OPENSIMPLEX, NoiseSources.OPENSIMPLEX);
         this.register(NoiseSources.ID_PERLIN, NoiseSources.PERLIN);
         this.register(NoiseSources.ID_PORKIAN, NoiseSources.PORKIAN);
-        this.register(NoiseSources.ID_SIMPLEX, NoiseSources.SIMPLEX);
+        this.register(NoiseSources.ID_SIMPLEX, NoiseSources.SIMPLEX);*/
     }
 
     @Override

@@ -21,11 +21,11 @@ import java.util.function.BiFunction;
  *
  * @author DaPorkchop_
  */
-public abstract class AbstractGeneratorRegistry<V> implements BiFunction<ConfigSection, PRandom, V>, Registry {
+public abstract class AbstractGeneratorRegistry<V> implements Registry {
     private static final AtomicIntegerFieldUpdater<AbstractGeneratorRegistry> CLOSED_UPDATER
             = AtomicIntegerFieldUpdater.newUpdater(AbstractGeneratorRegistry.class, "closed");
 
-    protected final Map<Identifier, BiFunction<ConfigSection, PRandom, V>> idToValues = new IdentityHashMap<>();
+    protected final Map<Identifier, Class<? extends V>> idToValues = new IdentityHashMap<>();
 
     private volatile int closed = 0;
 
@@ -37,16 +37,13 @@ public abstract class AbstractGeneratorRegistry<V> implements BiFunction<ConfigS
         this.close();
     }
 
-    public void register(@NonNull Identifier id, @NonNull BiFunction<ConfigSection, PRandom, V> value) {
-        Preconditions.checkState(this.idToValues.putIfAbsent(id, value) == null, "ID \"%s\" already registered!", id);
+    public void register(@NonNull Identifier id, @NonNull Class<? extends V> clazz) {
+        Preconditions.checkState(this.idToValues.putIfAbsent(id, clazz) == null, "ID \"%s\" already registered!", id);
     }
 
-    @Override
-    public V apply(@NonNull ConfigSection config, @NonNull PRandom random) {
+    public Class<? extends V> get(@NonNull Identifier id)   {
         Preconditions.checkState(this.closed == 1, "not closed");
-        Identifier id = StandardGeneratorUtils.getId(config, "id");
-        return Preconditions.checkNotNull(this.idToValues.get(id), "Unknown ID \"%s\"", id)
-                .apply(config, random);
+        return Preconditions.checkNotNull(this.idToValues.get(id));
     }
 
     public boolean isRegistered(@NonNull Identifier id) {

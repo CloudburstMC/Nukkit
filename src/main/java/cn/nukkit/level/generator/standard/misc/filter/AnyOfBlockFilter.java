@@ -1,8 +1,10 @@
 package cn.nukkit.level.generator.standard.misc.filter;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.level.generator.standard.misc.ConstantBlock;
 import cn.nukkit.registry.BlockRegistry;
-import lombok.NonNull;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Arrays;
 
@@ -11,11 +13,27 @@ import java.util.Arrays;
  *
  * @author DaPorkchop_
  */
+@JsonDeserialize
 public final class AnyOfBlockFilter implements BlockFilter {
-    private final int[] runtimeIds;
+    final int[] runtimeIds;
 
-    public AnyOfBlockFilter(@NonNull int[] runtimeIds) {
-        Arrays.sort(this.runtimeIds = runtimeIds.clone());
+    @JsonCreator
+    public AnyOfBlockFilter(ConstantBlock[] blocks) {
+        this.runtimeIds = Arrays.stream(blocks)
+                .mapToInt(ConstantBlock::runtimeId)
+                .distinct()
+                .sorted()
+                .toArray();
+    }
+
+    @JsonCreator
+    public AnyOfBlockFilter(String value) {
+        this.runtimeIds = Arrays.stream(value.split(","))
+                .map(ConstantBlock::new)
+                .mapToInt(ConstantBlock::runtimeId)
+                .distinct()
+                .sorted()
+                .toArray();
     }
 
     @Override

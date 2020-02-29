@@ -5,7 +5,6 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.generator.standard.misc.filter.AnyOfBlockFilter;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
-import cn.nukkit.level.generator.standard.misc.filter.SingleBlockFilter;
 import cn.nukkit.level.generator.standard.misc.layer.BlockLayer;
 import cn.nukkit.level.generator.standard.misc.layer.ConstantSizeBlockLayer;
 import cn.nukkit.level.generator.standard.misc.layer.VariableSizeBlockLayer;
@@ -77,18 +76,7 @@ public class StandardGeneratorUtils {
     }
 
     public static BlockFilter parseBlockChecker(String block) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(block), "block must be set!");
-        Collection<Block> blocks = new ArrayList<>();
-        for (String s : block.split(",")) {
-            blocks.add(parseBlock(s));
-        }
-        Preconditions.checkArgument(!blocks.isEmpty());
-        int[] ids = blocks.stream()
-                .mapToInt(BlockRegistry.get()::getRuntimeId)
-                .distinct()
-                .sorted()
-                .toArray();
-        return ids.length == 1 ? new SingleBlockFilter(ids[0]) : new AnyOfBlockFilter(ids);
+        throw new UnsupportedOperationException();
     }
 
     public static Collection<Block> parseBlockList(String blockList) {

@@ -1,7 +1,7 @@
 package cn.nukkit.level.generator.standard.biome;
 
-import cn.nukkit.level.generator.standard.gen.BlockReplacer;
-import cn.nukkit.level.generator.standard.gen.Decorator;
+import cn.nukkit.level.generator.standard.gen.replacer.BlockReplacer;
+import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
 import cn.nukkit.level.generator.standard.pop.Populator;
 import cn.nukkit.utils.Identifier;
 import lombok.NonNull;

@@ -8,20 +8,14 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.GeneratorFactory;
 import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
 import cn.nukkit.level.generator.standard.biome.map.CachingBiomeMap;
-import cn.nukkit.level.generator.standard.gen.BlockReplacer;
-import cn.nukkit.level.generator.standard.gen.Decorator;
-import cn.nukkit.level.generator.standard.gen.DensitySource;
+import cn.nukkit.level.generator.standard.gen.replacer.BlockReplacer;
+import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
+import cn.nukkit.level.generator.standard.gen.density.DensitySource;
 import cn.nukkit.level.generator.standard.pop.Populator;
-import cn.nukkit.level.generator.standard.registry.StandardGeneratorRegistries;
-import cn.nukkit.utils.Config;
-import cn.nukkit.utils.ConfigSection;
 import cn.nukkit.utils.Identifier;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Strings;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import net.daporkchop.lib.common.cache.Cache;
 import net.daporkchop.lib.common.cache.ThreadCache;
 import net.daporkchop.lib.random.PRandom;
@@ -29,23 +23,18 @@ import net.daporkchop.lib.random.PRandom;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static cn.nukkit.level.generator.standard.StandardGeneratorUtils.*;
-
 /**
  * Main class of the NukkitX Standard Generator.
  *
  * @author DaPorkchop_
  */
-@RequiredArgsConstructor(onConstructor_ = {@JsonCreator})
+@NoArgsConstructor
 public final class StandardGenerator implements Generator {
     public static final Identifier ID = Identifier.fromString("minecraft:standard");
 
     private static final String DEFAULT_PRESET = "nukkitx:overworld";
 
     public static final GeneratorFactory FACTORY = (seed, options) -> {
-        if (true)   {
-            return new StandardGenerator(seed, options);
-        }
         Identifier presetId = Identifier.fromString(Strings.isNullOrEmpty(options) ? DEFAULT_PRESET : options);
         try (InputStream in = StandardGeneratorUtils.read("preset", presetId)) {
             return Nukkit.YAML_MAPPER.readValue(in, StandardGenerator.class);
@@ -64,51 +53,15 @@ public final class StandardGenerator implements Generator {
     private static final Cache<ThreadData> THREAD_DATA_CACHE = ThreadCache.soft(ThreadData::new);
 
     @JsonProperty
-    private final BiomeMap        biomes;
+    private BiomeMap        biomes;
     @JsonProperty
-    private final DensitySource   density;
+    private DensitySource   density;
     @JsonProperty
-    private final BlockReplacer[] replacers;
+    private BlockReplacer[] replacers;
     @JsonProperty
-    private final Decorator[]     decorators;
+    private Decorator[]     decorators;
     @JsonProperty
-    private final Populator[]     populators;
-
-    protected StandardGenerator(long seed, String options) {
-        Identifier presetId = Identifier.fromString(Strings.isNullOrEmpty(options) ? DEFAULT_PRESET : options);
-        Config preset = StandardGeneratorUtils.loadUnchecked("preset", presetId);
-
-        ConfigSection biomesConfig = preset.getSection("generation.biomes");
-        this.biomes = StandardGeneratorRegistries.biomeMap()
-                .apply(biomesConfig, computeRandom(seed, "generation.biomes", biomesConfig));
-
-        ConfigSection densityConfig = preset.getSection("generation.density");
-        this.density = StandardGeneratorRegistries.densitySource()
-                .apply(densityConfig, computeRandom(seed, "generation.density", densityConfig));
-
-        this.replacers = preset.<ConfigSection>getList("generation.replacers").stream()
-                .map(section -> StandardGeneratorRegistries.blockReplacer()
-                        .apply(section, computeRandom(seed, "generation.replacers", section)))
-                .toArray(BlockReplacer[]::new);
-
-        /*this.decorators = preset.<ConfigSection>getList("generation.decorators").stream()
-                .map(section -> StandardGeneratorRegistries.decorator()
-                        .apply(section, computeRandom(seed, "generation.decorators", section)))
-                .toArray(Decorator[]::new);*/
-        try (InputStream in = StandardGeneratorUtils.read("preset", Identifier.fromString("nukkitx:decorate"))) {
-            /*YAMLMapper mapper = new YAMLMapper();
-            mapper.registerModule(new SimpleModule()
-            .addDeserializer())*/
-            this.decorators = Nukkit.YAML_MAPPER.readValue(in, Decorator[].class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        this.populators = preset.<ConfigSection>getList("population.populators").stream()
-                .map(section -> StandardGeneratorRegistries.populator()
-                        .apply(section, computeRandom(seed, "population.populators", section)))
-                .toArray(Populator[]::new);
-    }
+    private Populator[]     populators;
 
     @Override
     public void generate(PRandom random, IChunk chunk, int chunkX, int chunkZ) {
@@ -120,10 +73,11 @@ public final class StandardGenerator implements Generator {
 
         //compute initial densities
         final double[] densityCache = threadData.densityCache;
+        final DensitySource density = this.density; //avoid expensive getfield opcode
         for (int i = 0, x = 0; x < CACHE_WIDTH; x++) {
             for (int y = 0; y < CACHE_HEIGHT; y++) {
                 for (int z = 0; z < CACHE_WIDTH; z++) {
-                    densityCache[i++] = this.density.get(baseX + x * STEP, y * STEP, baseZ + z * STEP, biomeMap);
+                    densityCache[i++] = density.get(baseX + x * STEP, y * STEP, baseZ + z * STEP, biomeMap);
                 }
             }
         }
@@ -185,6 +139,7 @@ public final class StandardGenerator implements Generator {
         }
 
         //run replacers
+        final BlockReplacer[] replacers = this.replacers;
         for (int x = 0; x < 16; x++) {
             for (int y = 0; y < 256; y++) {
                 for (int i = (x * ICACHE_HEIGHT + y) * ICACHE_WIDTH, z = 0; z < 16; z++, i++) {
@@ -194,7 +149,7 @@ public final class StandardGenerator implements Generator {
                     double gradZ = iDensityCache[i + 1] - d;
 
                     Block block = null;
-                    for (BlockReplacer replacer : this.replacers) {
+                    for (BlockReplacer replacer : replacers) {
                         block = replacer.replace(block, x | baseX, y, z | baseZ, gradX, gradY, gradZ, d);
                     }
                     if (block != null) {
@@ -205,7 +160,8 @@ public final class StandardGenerator implements Generator {
         }
 
         //run decorators
-        for (Decorator decorator : this.decorators) {
+        final Decorator[] decorators = this.decorators;
+        for (Decorator decorator : decorators) {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     decorator.decorate(chunk, random, x, z);

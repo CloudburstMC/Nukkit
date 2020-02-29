@@ -1,4 +1,4 @@
-package cn.nukkit.level.generator.standard.gen;
+package cn.nukkit.level.generator.standard.gen.replacer;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.utils.ConfigSection;

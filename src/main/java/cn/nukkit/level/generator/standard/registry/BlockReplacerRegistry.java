@@ -2,7 +2,7 @@ package cn.nukkit.level.generator.standard.registry;
 
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.generator.standard.gen.BlockReplacer;
+import cn.nukkit.level.generator.standard.gen.replacer.BlockReplacer;
 import cn.nukkit.level.generator.standard.gen.replacer.GroundReplacer;
 import cn.nukkit.level.generator.standard.gen.replacer.SeaReplacer;
 import cn.nukkit.utils.Identifier;
@@ -22,8 +22,8 @@ import lombok.RequiredArgsConstructor;
 public final class BlockReplacerRegistry extends AbstractGeneratorRegistry<BlockReplacer> {
     @Override
     protected void registerDefault() {
-        this.register(Identifier.fromString("nukkitx:ground"), GroundReplacer::new);
-        this.register(Identifier.fromString("nukkitx:sea"), SeaReplacer::new);
+        this.register(Identifier.fromString("nukkitx:ground"), GroundReplacer.class);
+        this.register(Identifier.fromString("nukkitx:sea"), SeaReplacer.class);
     }
 
     @Override

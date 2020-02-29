@@ -1,4 +1,4 @@
-package cn.nukkit.level.generator.standard.gen;
+package cn.nukkit.level.generator.standard.gen.density;
 
 import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
 import lombok.NonNull;

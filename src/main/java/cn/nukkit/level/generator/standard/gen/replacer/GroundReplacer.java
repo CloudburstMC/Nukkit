@@ -2,7 +2,6 @@ package cn.nukkit.level.generator.standard.gen.replacer;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.generator.standard.StandardGeneratorUtils;
-import cn.nukkit.level.generator.standard.gen.BlockReplacer;
 import cn.nukkit.utils.ConfigSection;
 import lombok.NonNull;
 import net.daporkchop.lib.random.PRandom;

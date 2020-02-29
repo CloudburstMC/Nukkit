@@ -1,10 +1,17 @@
 package cn.nukkit.utils;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import net.daporkchop.lib.common.cache.Cache;
 import net.daporkchop.lib.common.cache.ThreadCache;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -14,6 +21,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@JsonDeserialize(using = Identifier.Deserializer.class)
 public final class Identifier implements Comparable<Identifier> {
     private static final char NAMESPACE_SEPARATOR = ':';
 
@@ -111,5 +119,12 @@ public final class Identifier implements Comparable<Identifier> {
     @Override
     public int compareTo(Identifier o) {
         return this.fullName.compareTo(o.fullName);
+    }
+
+    static final class Deserializer extends JsonDeserializer<Identifier>    {
+        @Override
+        public Identifier deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+            return Identifier.fromString(p.getText());
+        }
     }
 }

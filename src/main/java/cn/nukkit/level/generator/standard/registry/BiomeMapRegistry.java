@@ -4,7 +4,7 @@ import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
 import cn.nukkit.level.generator.standard.biome.map.ConstantBiomeMap;
-import cn.nukkit.level.generator.standard.gen.BlockReplacer;
+import cn.nukkit.level.generator.standard.gen.replacer.BlockReplacer;
 import cn.nukkit.utils.Identifier;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 public final class BiomeMapRegistry extends AbstractGeneratorRegistry<BiomeMap> {
     @Override
     protected void registerDefault() {
-        this.register(Identifier.fromString("nukkitx:constant"), ConstantBiomeMap::new);
+        this.register(Identifier.fromString("nukkitx:constant"), ConstantBiomeMap.class);
     }
 
     @Override

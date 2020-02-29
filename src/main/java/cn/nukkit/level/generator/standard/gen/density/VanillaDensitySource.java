@@ -1,7 +1,6 @@
-package cn.nukkit.level.generator.standard.gen.noise;
+package cn.nukkit.level.generator.standard.gen.density;
 
 import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
-import cn.nukkit.level.generator.standard.gen.DensitySource;
 import cn.nukkit.level.generator.standard.registry.NoiseSourceRegistry;
 import cn.nukkit.level.generator.standard.registry.StandardGeneratorRegistries;
 import cn.nukkit.utils.ConfigSection;
@@ -14,7 +13,7 @@ import net.daporkchop.lib.random.PRandom;
  *
  * @author DaPorkchop_
  */
-public final class VanillaNoiseSource implements DensitySource {
+public final class VanillaDensitySource implements DensitySource {
     private final NoiseSource selector;
     private final NoiseSource low;
     private final NoiseSource high;
@@ -22,9 +21,9 @@ public final class VanillaNoiseSource implements DensitySource {
     private final NoiseSource height;
     private final NoiseSource volitility;
 
-    public VanillaNoiseSource(@NonNull ConfigSection config, @NonNull PRandom random) {
+    public VanillaDensitySource(@NonNull ConfigSection config, @NonNull PRandom random) {
         NoiseSourceRegistry registry = StandardGeneratorRegistries.noiseSource();
-        this.selector = registry.apply(config.getSection("selectorNoise"), random);
+        this.selector = null;//registry.apply(config.getSection("selectorNoise"), random);
         this.low = null;//registry.apply(config.getSection("low"), random);
         this.high = null;//registry.apply(config.getSection("high"), random);
         this.randomHeight2d = null;//registry.apply(config.getSection("randomHeight2d"), random);
