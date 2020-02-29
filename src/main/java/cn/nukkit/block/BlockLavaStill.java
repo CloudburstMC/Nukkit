@@ -11,8 +11,12 @@ import static cn.nukkit.block.BlockIds.LAVA;
  */
 public class BlockLavaStill extends BlockLava {
 
-    public BlockLavaStill(Identifier id) {
-        super(id);
+    protected BlockLavaStill(Identifier id, Identifier flowingId, Identifier stationaryId) {
+        super(id, flowingId, stationaryId);
+    }
+
+    protected BlockLavaStill(Identifier flowingId, Identifier stationaryId) {
+        this(stationaryId, flowingId, stationaryId);
     }
 
     @Override
@@ -26,5 +30,9 @@ public class BlockLavaStill extends BlockLava {
             return super.onUpdate(type);
         }
         return 0;
+    }
+
+    public static BlockFactory factory(Identifier flowingId) {
+        return id-> new BlockLavaStill(flowingId, id);
     }
 }
