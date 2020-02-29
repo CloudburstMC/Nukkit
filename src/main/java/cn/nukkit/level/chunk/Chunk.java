@@ -469,6 +469,11 @@ public final class Chunk implements IChunk, Closeable {
         return unsafe.isDirty();
     }
 
+    @Override
+    public boolean clearDirty() {
+        return this.unsafe.clearDirty();
+    }
+
     public static short blockKey(Vector3i vector) {
         return blockKey(vector.x, vector.y, vector.z);
     }
@@ -523,7 +528,11 @@ public final class Chunk implements IChunk, Closeable {
         //todo
     }
 
-    public LockableChunk lockable() {
+    public LockableChunk readLockable() {
+        return new LockableChunk(unsafe, lock.readLock());
+    }
+
+    public LockableChunk writeLockable() {
         return new LockableChunk(unsafe, lock.writeLock());
     }
 

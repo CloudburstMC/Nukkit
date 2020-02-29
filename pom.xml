@@ -39,16 +39,6 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
-        <repository>
-            <id>daporkchop-repo</id>
-            <url>https://maven.daporkchop.net/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
     </repositories>
 
     <distributionManagement>
@@ -216,7 +206,7 @@
         <dependency>
             <groupId>net.daporkchop</groupId>
             <artifactId>leveldb-mcpe-jni</artifactId>
-            <version>0.0.4-SNAPSHOT</version>
+            <version>0.0.5-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.guava</groupId>

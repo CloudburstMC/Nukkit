@@ -42,8 +42,8 @@ public class PopChunkManager extends SimpleChunkManager {
         int chunkX = chunk.getX();
         int chunkZ = chunk.getZ();
         if (clean) {
-            CX = chunkX;
-            CZ = chunkZ;
+            CX = chunkX + 1; //this method is called with sorted chunks, meaning the first chunk is the one with the lowest position
+            CZ = chunkZ + 1;
             clean = false;
         }
 

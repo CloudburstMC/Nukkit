@@ -15,7 +15,7 @@ import java.util.Collection;
 
 import static cn.nukkit.block.BlockIds.AIR;
 
-public interface IChunk {
+public interface IChunk extends Comparable<IChunk> {
     @Nonnull
     ChunkSection getOrCreateSection(@Nonnegative int y);
 
@@ -256,7 +256,21 @@ public interface IChunk {
     void setDirty(boolean dirty);
 
     /**
+     * Atomically resets this chunk's dirty status.
+     *
+     * @return whether or not the chunk was previously dirty
+     */
+    boolean clearDirty();
+
+    /**
      * Clear chunk to a state as if it was not generated.
      */
     void clear();
+
+    @Override
+    default int compareTo(IChunk o) {
+        //compare x positions, and use z position to break ties
+        int x = Integer.compare(this.getX(), o.getX());
+        return x != 0 ? x : Integer.compare(this.getZ(), o.getZ());
+    }
 }
