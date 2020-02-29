@@ -229,7 +229,7 @@ public class Server {
         this.dataPath = dataPath;
         this.pluginPath = pluginPath;
         this.predefinedLanguage = predefinedLanguage;
-
+        
         this.console = new NukkitConsole(this);
         this.consoleThread = new ConsoleThread();
     }
@@ -1948,7 +1948,16 @@ public class Server {
     private void loadLevels()   {
         Map<String, Object> worldNames = this.getConfig("worlds", Collections.emptyMap());
         if (worldNames.isEmpty())   {
-            throw new IllegalStateException("No worlds configured! Add a world to nukkit.yml and try again!");
+            String defaultWorld = this.getProperty("level-name", "world");
+            worldNames = new Hashtable<String, Object>();
+            worldNames.put(defaultWorld, Collections.emptyMap());
+            if (defaultWorld == null || defaultWorld.trim().isEmpty()){
+                log.warn("level-name cannot be null, using default");
+                defaultWorld = "world";
+                this.setProperty("level-name", defaultWorld);
+
+            }
+            // throw new IllegalStateException("No worlds configured! Add a world to nukkit.yml and try again!");
         }
         List<CompletableFuture<Level>> levelFutures = new ArrayList<>(worldNames.size());
 
@@ -1961,6 +1970,7 @@ public class Server {
             } else if (seedObj instanceof String)   {
                 if (seedObj == name)    {
                     log.warn("World \"{}\" does not have a seed! Using a the name as the seed", name);
+                    seed = System.currentTimeMillis();
                 }
 
                 //this internally generates an MD5 hash of the seed string
