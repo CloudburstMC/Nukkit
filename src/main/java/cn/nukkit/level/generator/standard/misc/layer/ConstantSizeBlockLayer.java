@@ -16,11 +16,17 @@ import net.daporkchop.lib.random.PRandom;
 @Accessors(fluent = true)
 public final class ConstantSizeBlockLayer implements BlockLayer {
     @Getter
-    private final int blockId;
+    private final int runtimeId;
     private final int size;
 
     public ConstantSizeBlockLayer(@NonNull Block block, int size) {
-        this.blockId = BlockRegistry.get().getRuntimeId(block);
+        this.runtimeId = BlockRegistry.get().getRuntimeId(block);
+        this.size = PValidation.ensurePositive(size);
+    }
+
+    public ConstantSizeBlockLayer(int runtimeId, int size) {
+        BlockRegistry.get().getBlock(runtimeId); //ensure runtimeId is valid
+        this.runtimeId = runtimeId;
         this.size = PValidation.ensurePositive(size);
     }
 

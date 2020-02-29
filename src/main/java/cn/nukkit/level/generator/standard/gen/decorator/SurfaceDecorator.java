@@ -1,13 +1,11 @@
 package cn.nukkit.level.generator.standard.gen.decorator;
 
 import cn.nukkit.level.chunk.IChunk;
-import cn.nukkit.level.generator.standard.StandardGeneratorUtils;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.misc.layer.BlockLayer;
-import cn.nukkit.utils.ConfigSection;
+import cn.nukkit.level.generator.standard.misc.layer.BlockLayersDeserializer;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import lombok.NonNull;
 import net.daporkchop.lib.random.PRandom;
 
 /**
@@ -19,7 +17,8 @@ import net.daporkchop.lib.random.PRandom;
 public final class SurfaceDecorator implements Decorator {
     @JsonProperty(required = true)
     private BlockFilter  target;
-    @JsonProperty
+    @JsonProperty(required = true)
+    @JsonDeserialize(using = BlockLayersDeserializer.class)
     private BlockLayer[] layers;
 
     @Override
@@ -29,7 +28,7 @@ public final class SurfaceDecorator implements Decorator {
             if (prevId == 0 && this.target.test(id)) {
                 LAYERS:
                 for (BlockLayer layer : this.layers) {
-                    for (int replaceId = layer.blockId(), i = layer.size(random) - 1; y >= 0 && i >= 0; i--) {
+                    for (int replaceId = layer.runtimeId(), i = layer.size(random) - 1; y >= 0 && i >= 0; i--) {
                         chunk.setBlockRuntimeIdUnsafe(x, y, z, 0, replaceId);
                         if (!this.target.test(id = chunk.getBlockRuntimeIdUnsafe(x, --y, z, 0))) {
                             break LAYERS;

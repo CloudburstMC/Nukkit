@@ -1,37 +1,74 @@
 package cn.nukkit.level.generator.standard.biome;
 
-import cn.nukkit.level.generator.standard.gen.replacer.BlockReplacer;
 import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
+import cn.nukkit.level.generator.standard.gen.replacer.BlockReplacer;
 import cn.nukkit.level.generator.standard.pop.Populator;
+import cn.nukkit.level.generator.standard.store.StandardGeneratorStores;
 import cn.nukkit.utils.Identifier;
-import lombok.NonNull;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * Representation of a biome used during terrain generation.
  *
  * @author DaPorkchop_
  */
+@JsonDeserialize
 public final class GenerationBiome {
-    private final Identifier      id;
-    private final BlockReplacer[] replacers;
-    private final Decorator[]     decorators;
-    private final Populator[]     populators;
-    private final int             runtimeId;
+    @JsonProperty(required = true)
+    private Identifier      id;
+    @JsonProperty(required = true)
+    @JsonAlias({"dict"})
+    private BiomeDictionary dictionary;
 
-    public GenerationBiome(@NonNull BiomeDictionary dictionary, @NonNull Identifier id) {
-        this.id = id;
-        this.runtimeId = dictionary.get(id);
+    @JsonProperty
+    private BlockReplacer[] replacers  = BlockReplacer.EMPTY_ARRAY;
+    @JsonProperty
+    private Decorator[]     decorators = Decorator.EMPTY_ARRAY;
+    @JsonProperty
+    private Populator[]     populators = Populator.EMPTY_ARRAY;
 
-        this.replacers = new BlockReplacer[0]; //porktodo: this
-        this.decorators = new Decorator[0];
-        this.populators = new Populator[0];
-    }
+    private int runtimeId = -1;
 
     public Identifier getId() {
         return this.id;
     }
 
+    public BiomeDictionary getDictionary() {
+        return this.dictionary;
+    }
+
+    public BlockReplacer[] getReplacers() {
+        return this.replacers;
+    }
+
+    public Decorator[] getDecorators() {
+        return this.decorators;
+    }
+
+    public Populator[] getPopulators() {
+        return this.populators;
+    }
+
     public int getRuntimeId() {
         return this.runtimeId;
+    }
+
+    @JsonSetter("id")
+    private void setId(Identifier id) {
+        this.id = id;
+        if (this.dictionary != null) {
+            this.runtimeId = this.dictionary.get(id);
+        }
+    }
+
+    @JsonSetter("dictionary")
+    private void setDictionary(Identifier dictionaryId) {
+        BiomeDictionary dictionary = this.dictionary = StandardGeneratorStores.biomeDictionary().find(dictionaryId);
+        if (this.id != null) {
+            this.runtimeId = dictionary.get(this.id);
+        }
     }
 }

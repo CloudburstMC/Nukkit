@@ -1,6 +1,7 @@
 package cn.nukkit.level.generator.standard.pop;
 
 import cn.nukkit.level.ChunkManager;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.daporkchop.lib.random.PRandom;
 
 /**
@@ -9,7 +10,10 @@ import net.daporkchop.lib.random.PRandom;
  * @author DaPorkchop_
  */
 @FunctionalInterface
+@JsonDeserialize(using = PopulatorDeserializer.class)
 public interface Populator {
+    Populator[] EMPTY_ARRAY = new Populator[0];
+
     /**
      * Populates a given chunk.
      *

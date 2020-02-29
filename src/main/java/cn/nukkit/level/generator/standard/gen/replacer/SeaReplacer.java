@@ -2,7 +2,12 @@ package cn.nukkit.level.generator.standard.gen.replacer;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.generator.standard.StandardGeneratorUtils;
+import cn.nukkit.level.generator.standard.misc.ConstantBlock;
 import cn.nukkit.utils.ConfigSection;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.common.base.Preconditions;
 import lombok.NonNull;
 import net.daporkchop.lib.common.util.PValidation;
 import net.daporkchop.lib.random.PRandom;
@@ -12,17 +17,26 @@ import net.daporkchop.lib.random.PRandom;
  *
  * @author DaPorkchop_
  */
+@JsonDeserialize
 public final class SeaReplacer implements BlockReplacer {
-    private final Block block;
-    private final int   seaLevel;
-
-    public SeaReplacer(@NonNull ConfigSection config, @NonNull PRandom random) {
-        this.block = StandardGeneratorUtils.getBlock(config, "block");
-        this.seaLevel = PValidation.ensureNonNegative(config.getInt("seaLevel", -1));
-    }
+    @JsonProperty(required = true)
+    private Block block;
+    @JsonProperty(required = true)
+    private int   seaLevel;
 
     @Override
     public Block replace(Block prev, int x, int y, int z, double gradX, double gradY, double gradZ, double density) {
         return prev == null && y <= this.seaLevel ? this.block : prev;
+    }
+
+    @JsonSetter("block")
+    private void setBlock(ConstantBlock block)  {
+        this.block = block.block();
+    }
+
+    @JsonSetter("seaLevel")
+    private void setSeaLevel(int seaLevel)  {
+        Preconditions.checkArgument(seaLevel >= 0 && seaLevel < 256, "seaLevel (%d) must be in range 0-255!", seaLevel);
+        this.seaLevel = seaLevel;
     }
 }

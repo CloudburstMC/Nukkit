@@ -1,13 +1,12 @@
 package cn.nukkit.level.generator.standard.pop.tree;
 
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.generator.standard.StandardGeneratorUtils;
+import cn.nukkit.level.generator.standard.misc.ConstantBlock;
+import cn.nukkit.level.generator.standard.misc.IntRange;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.pop.RepeatingPopulator;
-import cn.nukkit.registry.BlockRegistry;
-import cn.nukkit.utils.ConfigSection;
-import lombok.NonNull;
-import net.daporkchop.lib.common.util.PValidation;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.daporkchop.lib.random.PRandom;
 
 import static java.lang.Math.*;
@@ -17,22 +16,16 @@ import static java.lang.Math.*;
  *
  * @author DaPorkchop_
  */
+@JsonDeserialize
 public class BasicTreePopulator extends RepeatingPopulator {
-    private final BlockFilter start;
-    private final int         trunkId;
-    private final int         leafId;
-    private final int         minHeight;
-    private final int         maxHeight;
-
-    public BasicTreePopulator(@NonNull ConfigSection config, @NonNull PRandom random) {
-        super(config, random);
-
-        this.start = StandardGeneratorUtils.parseBlockChecker(config.getString("start"));
-        this.trunkId = BlockRegistry.get().getRuntimeId(StandardGeneratorUtils.getBlock(config, "trunk"));
-        this.leafId = BlockRegistry.get().getRuntimeId(StandardGeneratorUtils.getBlock(config, "leaf"));
-        this.minHeight = PValidation.ensurePositive(config.getInt("minHeight", -1));
-        this.maxHeight = PValidation.ensurePositive(config.getInt("maxHeight", this.minHeight) + 1);
-    }
+    @JsonProperty(required = true)
+    private BlockFilter   on;
+    @JsonProperty(required = true)
+    private ConstantBlock trunk;
+    @JsonProperty(required = true)
+    private ConstantBlock leaf;
+    @JsonProperty(required = true)
+    private IntRange      height;
 
     @Override
     protected void tryPopulate(PRandom random, ChunkManager level, int x, int z) {
@@ -40,36 +33,37 @@ public class BasicTreePopulator extends RepeatingPopulator {
 
         int id;
         while ((id = level.getBlockRuntimeIdUnsafe(x, y, z, 0)) == 0 && --y >= 0) ;
-        if (!this.start.test(id)) {
+        if (!this.on.test(id)) {
             //no start block could be found
             return;
         }
 
         //place trunk
-        int height = random.nextInt(this.minHeight, this.maxHeight);
+        int height = this.height.rand(random);
         if (y + height + 2 >= 256) {
             //abort, not enough room
             return;
         }
-        for (int i = 0; i < height; i++) {
-            level.setBlockRuntimeIdUnsafe(x, ++y, z, 0, this.trunkId);
+        for (int trunkId = this.trunk.runtimeId(), i = 0; i < height; i++) {
+            level.setBlockRuntimeIdUnsafe(x, ++y, z, 0, trunkId);
         }
 
         //place leaves
-        this.placeLeafLayer(random, level, x, z, y - 1, 2, false);
-        this.placeLeafLayer(random, level, x, z, y, 2, true);
-        this.placeLeafLayer(random, level, x, z, y + 1, 1, false);
-        this.placeLeafLayer(random, level, x, z, y + 2, 1, true);
+        int leafId = this.leaf.runtimeId();
+        this.placeLeafLayer(random, level, x, z, y - 1, leafId, 2, false);
+        this.placeLeafLayer(random, level, x, z, y + 0, leafId, 2, true);
+        this.placeLeafLayer(random, level, x, z, y + 1, leafId, 1, false);
+        this.placeLeafLayer(random, level, x, z, y + 2, leafId, 1, true);
     }
 
-    protected void placeLeafLayer(PRandom random, ChunkManager level, int x, int z, int y, int radius, boolean cutCorners) {
+    protected void placeLeafLayer(PRandom random, ChunkManager level, int x, int z, int y, int leafId, int radius, boolean cutCorners) {
         for (int dx = -radius; dx <= radius; dx++) {
             for (int dz = -radius; dz <= radius; dz++) {
                 if (level.getBlockRuntimeIdUnsafe(x + dx, y, z + dz, 0) == 0) {
                     if (cutCorners && abs(dx) == radius && abs(dz) == radius && random.nextBoolean()) {
                         continue;
                     }
-                    level.setBlockRuntimeIdUnsafe(x + dx, y, z + dz, 0, this.leafId);
+                    level.setBlockRuntimeIdUnsafe(x + dx, y, z + dz, 0, leafId);
                 }
             }
         }

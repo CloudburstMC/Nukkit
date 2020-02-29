@@ -16,13 +16,20 @@ import net.daporkchop.lib.random.PRandom;
 @Accessors(fluent = true)
 public final class VariableSizeBlockLayer implements BlockLayer {
     @Getter
-    private final int blockId;
+    private final int runtimeId;
     private final int minSize;
     private final int maxSize;
 
     public VariableSizeBlockLayer(@NonNull Block block, int minSize, int maxSize) {
-        this.blockId = BlockRegistry.get().getRuntimeId(block);
+        this.runtimeId = BlockRegistry.get().getRuntimeId(block);
         this.minSize = PValidation.ensureNonNegative(minSize);
+        this.maxSize = maxSize;
+    }
+
+    public VariableSizeBlockLayer(int runtimeId, int minSize, int maxSize) {
+        BlockRegistry.get().getBlock(runtimeId); //ensure runtimeId is valid
+        this.runtimeId = runtimeId;
+        this.minSize = minSize;
         this.maxSize = maxSize;
     }
 

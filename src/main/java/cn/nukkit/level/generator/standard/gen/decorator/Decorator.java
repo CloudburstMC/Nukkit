@@ -11,8 +11,11 @@ import net.daporkchop.lib.random.PRandom;
  *
  * @author DaPorkchop_
  */
+@FunctionalInterface
 @JsonDeserialize(using = DecoratorDeserializer.class)
 public interface Decorator {
+    Decorator[] EMPTY_ARRAY = new Decorator[0];
+
     /**
      * Decorates a given chunk.
      *

@@ -8,9 +8,9 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.GeneratorFactory;
 import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
 import cn.nukkit.level.generator.standard.biome.map.CachingBiomeMap;
-import cn.nukkit.level.generator.standard.gen.replacer.BlockReplacer;
 import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
 import cn.nukkit.level.generator.standard.gen.density.DensitySource;
+import cn.nukkit.level.generator.standard.gen.replacer.BlockReplacer;
 import cn.nukkit.level.generator.standard.pop.Populator;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -53,15 +53,15 @@ public final class StandardGenerator implements Generator {
     private static final Cache<ThreadData> THREAD_DATA_CACHE = ThreadCache.soft(ThreadData::new);
 
     @JsonProperty
-    private BiomeMap        biomes;
+    private BiomeMap      biomes;
     @JsonProperty
-    private DensitySource   density;
+    private DensitySource density;
     @JsonProperty
-    private BlockReplacer[] replacers;
+    private BlockReplacer[] replacers  = BlockReplacer.EMPTY_ARRAY;
     @JsonProperty
-    private Decorator[]     decorators;
+    private Decorator[]     decorators = Decorator.EMPTY_ARRAY;
     @JsonProperty
-    private Populator[]     populators;
+    private Populator[]     populators = Populator.EMPTY_ARRAY;
 
     @Override
     public void generate(PRandom random, IChunk chunk, int chunkX, int chunkZ) {

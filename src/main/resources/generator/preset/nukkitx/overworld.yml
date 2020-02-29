@@ -2,11 +2,32 @@
 #
 # Author: DaPorkchop_
 
+biomes:
+  id: "nukkitx:constant"
+  biome:
+    id: "minecraft:jungle"
+    dict: "nukkitx:vanilla"
+
+replacers:
+  - id: "nukkitx:ground"
+    block: "stone"
+  - id: "nukkitx:sea"
+    block: "water"
+    seaLevel: 8
+
 decorators:
   - id: "nukkitx:bedrock"
     block: "bedrock"
-    base: "0-0"
-    fade: "1-5"
+    base: 0
+    fade: 1-5
   - id: "nukkitx:surface"
     target: "stone"
-    #blocks: "grass,(0-4)*dirt"
+    layers: "grass,0-4*dirt"
+
+populators:
+  - id: "nukkitx:basic_tree"
+    tries: 2-8
+    on: "grass"
+    height: 4-8
+    trunk: "log"
+    leaf: "leaves"

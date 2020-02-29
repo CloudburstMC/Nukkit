@@ -13,7 +13,7 @@ public interface BlockLayer {
     /**
      * @return the block ID used by this block layer
      */
-    int blockId();
+    int runtimeId();
 
     /**
      * @return the size of this block layer

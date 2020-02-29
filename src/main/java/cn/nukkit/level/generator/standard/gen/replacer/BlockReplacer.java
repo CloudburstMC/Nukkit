@@ -1,12 +1,7 @@
 package cn.nukkit.level.generator.standard.gen.replacer;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.utils.ConfigSection;
-import lombok.NonNull;
-import net.daporkchop.lib.random.PRandom;
-
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * Replaces blocks as part of the terrain surface generation pipeline.
@@ -14,7 +9,10 @@ import java.util.function.Function;
  * @author DaPorkchop_
  */
 @FunctionalInterface
+@JsonDeserialize(using = BlockReplacerDeserializer.class)
 public interface BlockReplacer {
+    BlockReplacer[] EMPTY_ARRAY = new BlockReplacer[0];
+
     /**
      * Replaces the block.
      *
