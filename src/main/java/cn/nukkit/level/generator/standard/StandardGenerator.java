@@ -11,6 +11,7 @@ import cn.nukkit.level.generator.standard.biome.map.CachingBiomeMap;
 import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
 import cn.nukkit.level.generator.standard.gen.density.DensitySource;
 import cn.nukkit.level.generator.standard.gen.replacer.BlockReplacer;
+import cn.nukkit.level.generator.standard.misc.GenerationPass;
 import cn.nukkit.level.generator.standard.pop.Populator;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,9 +20,11 @@ import lombok.NoArgsConstructor;
 import net.daporkchop.lib.common.cache.Cache;
 import net.daporkchop.lib.common.cache.ThreadCache;
 import net.daporkchop.lib.random.PRandom;
+import net.daporkchop.lib.random.impl.FastPRandom;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.stream.Stream;
 
 /**
  * Main class of the NukkitX Standard Generator.
@@ -37,7 +40,7 @@ public final class StandardGenerator implements Generator {
     public static final GeneratorFactory FACTORY = (seed, options) -> {
         Identifier presetId = Identifier.fromString(Strings.isNullOrEmpty(options) ? DEFAULT_PRESET : options);
         try (InputStream in = StandardGeneratorUtils.read("preset", presetId)) {
-            return Nukkit.YAML_MAPPER.readValue(in, StandardGenerator.class);
+            return Nukkit.YAML_MAPPER.readValue(in, StandardGenerator.class).init(seed);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -62,6 +65,14 @@ public final class StandardGenerator implements Generator {
     private Decorator[]     decorators = Decorator.EMPTY_ARRAY;
     @JsonProperty
     private Populator[]     populators = Populator.EMPTY_ARRAY;
+
+    private StandardGenerator init(long seed) {
+        PRandom random = new FastPRandom(seed);
+        Stream.of(this.biomes, this.density, this.replacers, this.decorators, this.populators)
+                .flatMap(o -> o instanceof GenerationPass ? Stream.of((GenerationPass) o) : Stream.of((GenerationPass[]) o))
+                .forEach(pass -> pass.init(seed, random.nextLong()));
+        return this;
+    }
 
     @Override
     public void generate(PRandom random, IChunk chunk, int chunkX, int chunkZ) {

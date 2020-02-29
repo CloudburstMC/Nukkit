@@ -1,6 +1,7 @@
 package cn.nukkit.level.generator.standard.gen.decorator;
 
 import cn.nukkit.level.chunk.IChunk;
+import cn.nukkit.level.generator.standard.misc.AbstractGenerationPass;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.misc.layer.BlockLayer;
 import cn.nukkit.level.generator.standard.misc.layer.BlockLayersDeserializer;
@@ -15,7 +16,7 @@ import net.daporkchop.lib.random.PRandom;
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public final class SurfaceDecorator implements Decorator {
+public final class SurfaceDecorator extends AbstractGenerationPass implements Decorator {
     public static final Identifier ID = Identifier.fromString("nukkitx:surface");
 
     @JsonProperty(required = true)

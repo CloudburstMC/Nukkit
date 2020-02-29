@@ -4,12 +4,14 @@
 
 biomes:
   id: "nukkitx:constant"
+  seed: "biome"
   biome:
     id: "minecraft:jungle"
     dict: "nukkitx:vanilla"
 
 density:
   id: "nukkitx:vanilla"
+  seed: "noise"
   selectorNoise:
     id: "nukkitx:simplex"
     scale:

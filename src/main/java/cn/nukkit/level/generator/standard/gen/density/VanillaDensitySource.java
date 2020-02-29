@@ -2,6 +2,7 @@ package cn.nukkit.level.generator.standard.gen.density;
 
 import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
 import cn.nukkit.level.generator.standard.gen.noise.NoiseGenerator;
+import cn.nukkit.level.generator.standard.misc.AbstractGenerationPass;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -17,7 +18,7 @@ import net.daporkchop.lib.random.impl.FastPRandom;
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public final class VanillaDensitySource implements DensitySource {
+public final class VanillaDensitySource extends AbstractGenerationPass implements DensitySource {
     public static final Identifier ID = Identifier.fromString("nukkitx:vanilla");
 
     private NoiseSource selector;
@@ -41,7 +42,7 @@ public final class VanillaDensitySource implements DensitySource {
     private NoiseGenerator volatilityNoise;
 
     @Override
-    public void init(long levelSeed, long localSeed) {
+    protected void init0(long levelSeed, long localSeed) {
         PRandom random = new FastPRandom(localSeed);
         this.selector = this.selectorNoise.create(new FastPRandom(random.nextLong()));
         //porktodo: the rest

@@ -2,6 +2,7 @@ package cn.nukkit.level.generator.standard.biome.map;
 
 import cn.nukkit.level.generator.standard.biome.BiomeDictionary;
 import cn.nukkit.level.generator.standard.biome.GenerationBiome;
+import cn.nukkit.level.generator.standard.misc.AbstractGenerationPass;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,7 +15,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public final class ConstantBiomeMap implements BiomeMap {
+public final class ConstantBiomeMap extends AbstractGenerationPass implements BiomeMap {
     public static final Identifier ID = Identifier.fromString("nukkitx:constant");
 
     @JsonProperty(required = true)
