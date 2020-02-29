@@ -1,9 +1,11 @@
 package cn.nukkit.level.generator.standard;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.Generator;
+import cn.nukkit.level.generator.GeneratorFactory;
 import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
 import cn.nukkit.level.generator.standard.biome.map.CachingBiomeMap;
 import cn.nukkit.level.generator.standard.gen.BlockReplacer;
@@ -14,10 +16,18 @@ import cn.nukkit.level.generator.standard.registry.StandardGeneratorRegistries;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.ConfigSection;
 import cn.nukkit.utils.Identifier;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Strings;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import net.daporkchop.lib.common.cache.Cache;
 import net.daporkchop.lib.common.cache.ThreadCache;
 import net.daporkchop.lib.random.PRandom;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import static cn.nukkit.level.generator.standard.StandardGeneratorUtils.*;
 
@@ -26,10 +36,23 @@ import static cn.nukkit.level.generator.standard.StandardGeneratorUtils.*;
  *
  * @author DaPorkchop_
  */
+@RequiredArgsConstructor(onConstructor_ = {@JsonCreator})
 public final class StandardGenerator implements Generator {
     public static final Identifier ID = Identifier.fromString("minecraft:standard");
 
     private static final String DEFAULT_PRESET = "nukkitx:overworld";
+
+    public static final GeneratorFactory FACTORY = (seed, options) -> {
+        if (true)   {
+            return new StandardGenerator(seed, options);
+        }
+        Identifier presetId = Identifier.fromString(Strings.isNullOrEmpty(options) ? DEFAULT_PRESET : options);
+        try (InputStream in = StandardGeneratorUtils.read("preset", presetId)) {
+            return Nukkit.YAML_MAPPER.readValue(in, StandardGenerator.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    };
 
     private static final int    STEP          = 4;
     private static final double D_STEP        = 1.0d / (double) STEP;
@@ -40,13 +63,18 @@ public final class StandardGenerator implements Generator {
 
     private static final Cache<ThreadData> THREAD_DATA_CACHE = ThreadCache.soft(ThreadData::new);
 
+    @JsonProperty
     private final BiomeMap        biomes;
+    @JsonProperty
     private final DensitySource   density;
+    @JsonProperty
     private final BlockReplacer[] replacers;
+    @JsonProperty
     private final Decorator[]     decorators;
+    @JsonProperty
     private final Populator[]     populators;
 
-    public StandardGenerator(long seed, String options) {
+    protected StandardGenerator(long seed, String options) {
         Identifier presetId = Identifier.fromString(Strings.isNullOrEmpty(options) ? DEFAULT_PRESET : options);
         Config preset = StandardGeneratorUtils.loadUnchecked("preset", presetId);
 
@@ -63,10 +91,18 @@ public final class StandardGenerator implements Generator {
                         .apply(section, computeRandom(seed, "generation.replacers", section)))
                 .toArray(BlockReplacer[]::new);
 
-        this.decorators = preset.<ConfigSection>getList("generation.decorators").stream()
+        /*this.decorators = preset.<ConfigSection>getList("generation.decorators").stream()
                 .map(section -> StandardGeneratorRegistries.decorator()
                         .apply(section, computeRandom(seed, "generation.decorators", section)))
-                .toArray(Decorator[]::new);
+                .toArray(Decorator[]::new);*/
+        try (InputStream in = StandardGeneratorUtils.read("preset", Identifier.fromString("nukkitx:decorate"))) {
+            /*YAMLMapper mapper = new YAMLMapper();
+            mapper.registerModule(new SimpleModule()
+            .addDeserializer())*/
+            this.decorators = Nukkit.YAML_MAPPER.readValue(in, Decorator[].class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         this.populators = preset.<ConfigSection>getList("population.populators").stream()
                 .map(section -> StandardGeneratorRegistries.populator()

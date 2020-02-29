@@ -1,0 +1,7 @@
+- id: "nukkitx:bedrock"
+  base: 1
+  fade: 5
+  block: "bedrock"
+- id: "nukkitx:surface"
+  target: "stone"
+  blocks: "grass,(0-4)*dirt"

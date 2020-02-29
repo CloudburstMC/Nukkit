@@ -68,7 +68,7 @@ public class GeneratorRegistry implements Registry {
     }
 
     private void registerVanillaStorage() throws RegistryException {
-        this.register(StandardGenerator.ID, StandardGenerator::new, 1000);
+        this.register(StandardGenerator.ID, StandardGenerator.FACTORY, 1000);
         this.register(FlatGenerator.ID, FlatGenerator::new, 500);
         this.register(VoidGenerator.ID, VoidGenerator::new, 1);
     }
