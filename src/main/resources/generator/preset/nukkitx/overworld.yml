@@ -6,7 +6,7 @@ biomes:
   id: "nukkitx:constant"
   seed: "biome"
   biome:
-    id: "minecraft:jungle"
+    id: "minecraft:plains"
     dict: "nukkitx:vanilla"
 
 density:
@@ -28,6 +28,7 @@ replacers:
   - id: "nukkitx:sea"
     block: "water"
     seaLevel: 8
+  - id: "nukkitx:biome"
 
 decorators:
   - id: "nukkitx:bedrock"
@@ -39,6 +40,7 @@ decorators:
     layers: "grass,0-4*dirt"
 
 populators:
+  - id: "nukkitx:biome"
   - id: "nukkitx:basic_tree"
     tries: 2-8
     on: "grass"

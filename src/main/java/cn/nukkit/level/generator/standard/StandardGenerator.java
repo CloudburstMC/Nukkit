@@ -6,11 +6,13 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.GeneratorFactory;
+import cn.nukkit.level.generator.standard.biome.GenerationBiome;
 import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
 import cn.nukkit.level.generator.standard.biome.map.CachingBiomeMap;
 import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
 import cn.nukkit.level.generator.standard.gen.density.DensitySource;
 import cn.nukkit.level.generator.standard.gen.replacer.BlockReplacer;
+import cn.nukkit.level.generator.standard.misc.BiomeGenerationPass;
 import cn.nukkit.level.generator.standard.misc.GenerationPass;
 import cn.nukkit.level.generator.standard.pop.Populator;
 import cn.nukkit.utils.Identifier;
@@ -24,6 +26,10 @@ import net.daporkchop.lib.random.impl.FastPRandom;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -65,6 +71,21 @@ public final class StandardGenerator implements Generator {
     private Decorator[]     decorators = Decorator.EMPTY_ARRAY;
     @JsonProperty
     private Populator[]     populators = Populator.EMPTY_ARRAY;
+
+    private final Map<GenerationBiome, BlockReplacer[]>      replacerLookup         = new ConcurrentHashMap<>();
+    private final Function<GenerationBiome, BlockReplacer[]> replacerLookupComputer = biome -> Arrays.stream(this.replacers)
+            .flatMap(replacer -> replacer instanceof BiomeGenerationPass ? Arrays.stream(biome.getReplacers()) : Stream.of(replacer))
+            .toArray(BlockReplacer[]::new);
+
+    private final Map<GenerationBiome, Decorator[]>      decoratorLookup         = new ConcurrentHashMap<>();
+    private final Function<GenerationBiome, Decorator[]> decoratorLookupComputer = biome -> Arrays.stream(this.decorators)
+            .flatMap(decorator -> decorator instanceof BiomeGenerationPass ? Arrays.stream(biome.getDecorators()) : Stream.of(decorator))
+            .toArray(Decorator[]::new);
+
+    private final Map<GenerationBiome, Populator[]>      populatorsLookup         = new ConcurrentHashMap<>();
+    private final Function<GenerationBiome, Populator[]> populatorsLookupComputer = biome -> Arrays.stream(this.populators)
+            .flatMap(populator -> populator instanceof BiomeGenerationPass ? Arrays.stream(biome.getPopulators()) : Stream.of(populator))
+            .toArray(Populator[]::new);
 
     private StandardGenerator init(long seed) {
         PRandom random = new FastPRandom(seed);
@@ -150,10 +171,10 @@ public final class StandardGenerator implements Generator {
         }
 
         //run replacers
-        final BlockReplacer[] replacers = this.replacers;
         for (int x = 0; x < 16; x++) {
-            for (int y = 0; y < 256; y++) {
-                for (int i = (x * ICACHE_HEIGHT + y) * ICACHE_WIDTH, z = 0; z < 16; z++, i++) {
+            for (int z = 0; z < 16; z++) {
+                final BlockReplacer[] replacers = this.replacerLookup.computeIfAbsent(biomeMap.get(x | baseX, z | baseZ), this.replacerLookupComputer);
+                for (int i = (x * ICACHE_WIDTH + z) * ICACHE_HEIGHT, y = 0; y < 256; y++, i++) {
                     double d = iDensityCache[i];
                     double gradX = iDensityCache[i + ICACHE_HEIGHT * ICACHE_WIDTH] - d;
                     double gradY = iDensityCache[i + ICACHE_WIDTH] - d;
@@ -170,20 +191,14 @@ public final class StandardGenerator implements Generator {
             }
         }
 
-        //run decorators
-        final Decorator[] decorators = this.decorators;
-        for (Decorator decorator : decorators) {
-            for (int x = 0; x < 16; x++) {
-                for (int z = 0; z < 16; z++) {
-                    decorator.decorate(chunk, random, x, z);
-                }
-            }
-        }
-
-        //set biomes
+        //run decorators and set biomes
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                chunk.setBiome(x, z, biomeMap.get(x | baseX, z | baseZ).getRuntimeId());
+                GenerationBiome biome = biomeMap.get(x | baseX, z | baseZ);
+                chunk.setBiome(x, z, biome.getRuntimeId());
+                for (Decorator decorator : this.decoratorLookup.computeIfAbsent(biome, this.decoratorLookupComputer)) {
+                    decorator.decorate(chunk, random, x, z);
+                }
             }
         }
 
@@ -193,7 +208,9 @@ public final class StandardGenerator implements Generator {
 
     @Override
     public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
-        for (Populator populator : this.populators) {
+        //porktodo: cache this as well? (reuse cache instead of clearing)
+        GenerationBiome biome = this.biomes.get((chunkX << 4) + 7, (chunkZ << 4) + 7); //use biome in middle of chunk for selecting populators
+        for (Populator populator : this.populatorsLookup.computeIfAbsent(biome, this.populatorsLookupComputer)) {
             populator.populate(random, level, chunkX, chunkZ);
         }
     }
