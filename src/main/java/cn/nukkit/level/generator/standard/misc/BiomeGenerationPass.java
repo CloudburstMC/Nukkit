@@ -8,6 +8,8 @@ import cn.nukkit.level.generator.standard.gen.replacer.BlockReplacer;
 import cn.nukkit.level.generator.standard.pop.Populator;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import net.daporkchop.lib.random.PRandom;
 
 /**
@@ -15,9 +17,11 @@ import net.daporkchop.lib.random.PRandom;
  *
  * @author DaPorkchop_
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @JsonDeserialize
 public final class BiomeGenerationPass implements BlockReplacer, Decorator, Populator {
-    public static final Identifier ID = Identifier.fromString("nukkitx:biome");
+    public static final Identifier          ID       = Identifier.fromString("nukkitx:biome");
+    public static final BiomeGenerationPass INSTANCE = new BiomeGenerationPass();
 
     @Override
     public void decorate(IChunk chunk, PRandom random, int x, int z) {

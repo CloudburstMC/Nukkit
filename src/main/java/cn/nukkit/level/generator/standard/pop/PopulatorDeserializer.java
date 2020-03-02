@@ -2,6 +2,7 @@ package cn.nukkit.level.generator.standard.pop;
 
 import cn.nukkit.Nukkit;
 import cn.nukkit.level.generator.standard.gen.replacer.BlockReplacer;
+import cn.nukkit.level.generator.standard.misc.BiomeGenerationPass;
 import cn.nukkit.level.generator.standard.registry.StandardGeneratorRegistries;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.core.JsonParser;
@@ -23,6 +24,7 @@ final class PopulatorDeserializer extends JsonDeserializer<Populator> {
         Identifier id = Identifier.fromString(p.nextTextValue());
         p.nextToken();
 
-        return Nukkit.YAML_MAPPER.readValue(p, StandardGeneratorRegistries.populator().get(id));
+        return id == BiomeGenerationPass.ID
+                ? BiomeGenerationPass.INSTANCE : Nukkit.YAML_MAPPER.readValue(p, StandardGeneratorRegistries.populator().get(id));
     }
 }

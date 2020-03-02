@@ -3,34 +3,41 @@ package cn.nukkit.level.generator.standard.biome;
 import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
 import cn.nukkit.level.generator.standard.gen.replacer.BlockReplacer;
 import cn.nukkit.level.generator.standard.pop.Populator;
-import cn.nukkit.level.generator.standard.store.StandardGeneratorStores;
+import cn.nukkit.level.generator.standard.store.GenerationBiomeStore;
 import cn.nukkit.utils.Identifier;
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.NonNull;
 
 /**
  * Representation of a biome used during terrain generation.
  *
  * @author DaPorkchop_
  */
-@JsonDeserialize
+@JsonDeserialize(using = GenerationBiomeDeserializer.class)
 public final class GenerationBiome {
-    @JsonProperty(required = true)
-    private Identifier      id;
-    @JsonProperty(required = true)
-    @JsonAlias({"dict"})
-    private BiomeDictionary dictionary;
+    private final Identifier      id;
+    private final BiomeDictionary dictionary;
 
-    @JsonProperty
-    private BlockReplacer[] replacers  = BlockReplacer.EMPTY_ARRAY;
-    @JsonProperty
-    private Decorator[]     decorators = Decorator.EMPTY_ARRAY;
-    @JsonProperty
-    private Populator[]     populators = Populator.EMPTY_ARRAY;
+    private final BlockReplacer[] replacers;
+    private final Decorator[]     decorators;
+    private final Populator[]     populators;
 
-    private int runtimeId = -1;
+    private final double avgHeight;
+    private final double heightVariation;
+
+    private final int runtimeId;
+
+    public GenerationBiome(@NonNull GenerationBiomeStore.TempBiome temp, @NonNull Identifier id) {
+        this.id = id;
+        this.dictionary = temp.getDictionary();
+        this.replacers = temp.getReplacers();
+        this.decorators = temp.getDecorators();
+        this.populators = temp.getPopulators();
+        this.avgHeight = (temp.getHeight().min + temp.getHeight().max - 1) * 0.5d;
+        this.heightVariation = (temp.getHeight().max - 1 - this.avgHeight);
+
+        this.runtimeId = this.dictionary.get(id);
+    }
 
     public Identifier getId() {
         return this.id;
@@ -54,21 +61,5 @@ public final class GenerationBiome {
 
     public int getRuntimeId() {
         return this.runtimeId;
-    }
-
-    @JsonSetter("id")
-    private void setId(Identifier id) {
-        this.id = id;
-        if (this.dictionary != null) {
-            this.runtimeId = this.dictionary.get(id);
-        }
-    }
-
-    @JsonSetter("dictionary")
-    private void setDictionary(Identifier dictionaryId) {
-        BiomeDictionary dictionary = this.dictionary = StandardGeneratorStores.biomeDictionary().find(dictionaryId);
-        if (this.id != null) {
-            this.runtimeId = dictionary.get(this.id);
-        }
     }
 }

@@ -22,7 +22,7 @@ import java.io.InputStream;
 public final class BiomeDictionaryStore extends AbstractGeneratorStore<BiomeDictionary> {
     @Override
     protected BiomeDictionary compute(@NonNull Identifier id) throws IOException {
-        try (InputStream in = StandardGeneratorUtils.read("biome/dictionary", id))  {
+        try (InputStream in = StandardGeneratorUtils.read("biomedictionary", id))  {
             return Nukkit.YAML_MAPPER.readValue(in, BiomeDictionary.class).setId(id);
         }
     }

@@ -5,9 +5,7 @@
 biomes:
   id: "nukkitx:constant"
   seed: "biome"
-  biome:
-    id: "minecraft:plains"
-    dict: "nukkitx:vanilla"
+  biome: "minecraft:plains"
 
 density:
   id: "nukkitx:vanilla"

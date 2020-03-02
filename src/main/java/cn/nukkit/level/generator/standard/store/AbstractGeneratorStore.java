@@ -14,7 +14,7 @@ import java.util.function.Function;
  *
  * @author DaPorkchop_
  */
-public abstract class AbstractGeneratorStore<V> implements Function<Identifier, V> {
+public abstract class AbstractGeneratorStore<V> {
     protected final Map<Identifier, V> idToValues = new IdentityHashMap<>();
 
     //don't make tons of lambda objects
@@ -25,9 +25,4 @@ public abstract class AbstractGeneratorStore<V> implements Function<Identifier, 
     }
 
     protected abstract V compute(@NonNull Identifier id) throws IOException;
-
-    @Override
-    public V apply(@NonNull Identifier id) {
-        return this.find(id);
-    }
 }

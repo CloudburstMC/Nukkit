@@ -1,6 +1,7 @@
 package cn.nukkit.level.generator.standard.gen.decorator;
 
 import cn.nukkit.Nukkit;
+import cn.nukkit.level.generator.standard.misc.BiomeGenerationPass;
 import cn.nukkit.level.generator.standard.registry.StandardGeneratorRegistries;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.core.JsonParser;
@@ -22,6 +23,7 @@ final class DecoratorDeserializer extends JsonDeserializer<Decorator> {
         Identifier id = Identifier.fromString(p.nextTextValue());
         p.nextToken();
 
-        return Nukkit.YAML_MAPPER.readValue(p, StandardGeneratorRegistries.decorator().get(id));
+        return id == BiomeGenerationPass.ID
+                ? BiomeGenerationPass.INSTANCE : Nukkit.YAML_MAPPER.readValue(p, StandardGeneratorRegistries.decorator().get(id));
     }
 }
