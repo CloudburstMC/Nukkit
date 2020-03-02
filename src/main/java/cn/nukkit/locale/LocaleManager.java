@@ -10,14 +10,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,33 +32,51 @@ public class LocaleManager {
 
     private final Set<Locale> availableLocales;
     private final Properties texts = new Properties();
-    private final Path[] textPaths;
+    private final boolean defaultFileSystem;
+    private final URI[] textUris;
     private Locale locale;
 
-    public LocaleManager(String languagesPath, String... textPathStrings) {
-        Path path;
-        Path[] textPaths = new Path[textPathStrings.length];
+    public LocaleManager(String languagesPath, String... textPaths) {
         try {
-            path = Paths.get(ClassLoader.getSystemResource(languagesPath).toURI());
-
-            for (int i = 0; i < textPathStrings.length; i++) {
-                textPaths[i] = Paths.get(ClassLoader.getSystemResource(textPathStrings[i]).toURI());
+            try (InputStream stream = ClassLoader.getSystemResourceAsStream(languagesPath)) {
+                this.availableLocales = loadAvailableLocales(stream);
             }
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("Invalid resource path", e);
+            this.textUris = new URI[textPaths.length];
+            for (int i = 0; i < textPaths.length; i++) {
+                this.textUris[i] = ClassLoader.getSystemResource(textPaths[i]).toURI();
+            }
+        } catch (IOException | URISyntaxException e) {
+            throw new IllegalArgumentException(e);
         }
-        this.availableLocales = loadAvailableLocales(path);
-        this.textPaths = textPaths;
+        this.defaultFileSystem = false;
+    }
+
+    public LocaleManager(URI languagesUri, URI... textUris) {
+        try (FileSystem fileSystem = FileSystems.newFileSystem(languagesUri, new HashMap<>())) {
+            Path path = fileSystem.provider().getPath(languagesUri);
+            try (InputStream stream = Files.newInputStream(path)) {
+                this.availableLocales = loadAvailableLocales(stream);
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+        this.textUris = textUris;
+        this.defaultFileSystem = false;
     }
 
     public LocaleManager(Set<Locale> availableLocales, Path... textPaths) {
         this.availableLocales = checkNotNull(availableLocales, "availableLocales");
-        this.textPaths = checkNotNull(textPaths, "textPaths");
+        checkNotNull(textPaths, "textPaths");
+        this.textUris = new URI[textPaths.length];
+        for (int i = 0; i < textPaths.length; i++) {
+            this.textUris[i] = textPaths[i].toUri();
+        }
+        this.defaultFileSystem = true;
     }
 
-    public static ImmutableSet<Locale> loadAvailableLocales(Path languagesPath) {
+    public static ImmutableSet<Locale> loadAvailableLocales(InputStream stream) {
         ImmutableSet.Builder<Locale> builder = ImmutableSet.builder();
-        try (InputStream stream = Files.newInputStream(languagesPath)) {
+        try {
             JsonNode array = Nukkit.JSON_MAPPER.readTree(stream);
             for (JsonNode element : array) {
                 builder.add(getLocaleFromString(element.textValue()));
@@ -216,9 +233,23 @@ public class LocaleManager {
         this.locale = locale;
 
         this.texts.clear(); // Clear any existing
-        for (Path path : this.textPaths) {
-            this.loadTransforms(path.resolve(locale + LANG_FILE_EXTENSION));
+
+        if (this.defaultFileSystem) {
+            loadTransforms(FileSystems.getDefault());
+        } else {
+            try (FileSystem fs = FileSystems.newFileSystem(this.textUris[1], new HashMap<>())) {
+                this.loadTransforms(fs);
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
         }
+
         this.texts.setProperty("language", locale.toString());
+    }
+
+    private void loadTransforms(FileSystem fs) {
+        for (URI uri : this.textUris) {
+            this.loadTransforms(fs.provider().getPath(uri).resolve(locale + LANG_FILE_EXTENSION));
+        }
     }
 }
