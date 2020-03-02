@@ -812,4 +812,13 @@ public abstract class Block implements Metadatable, Cloneable, AxisAlignedBB {
         return (b.getId() == WATER || b.getId() == FLOWING_WATER);
     }
 
+    /**
+     * Returns the data of the water which is waterlogging this block.
+     * @return -1 if the block is not waterlogged, the water meta otherwise.
+     */
+    public int getWaterloggingWaterDamage() {
+        Block b = getLevel().getBlock(this.getX(), this.getY(), this.getZ(), 1);
+        return (b.getId() != WATER && b.getId() != FLOWING_WATER)? -1 : b.getDamage();
+    }
+
 }
