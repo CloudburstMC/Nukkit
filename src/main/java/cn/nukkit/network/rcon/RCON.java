@@ -35,7 +35,7 @@ public class RCON {
             throw new IllegalArgumentException("nukkit.server.rcon.startupError", e);
         }
 
-        log.info(this.server.getLanguage().translate("nukkit.server.rcon.running", new String[]{address, String.valueOf(port)}));
+        log.info(this.server.getLanguage().translate("nukkit.server.rcon.running", address, String.valueOf(port)));
     }
 
     public void check() {

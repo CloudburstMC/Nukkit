@@ -188,7 +188,7 @@ public class Server {
     private QueryRegenerateEvent queryRegenerateEvent;
     private Config config;
 
-    private final LocaleManager localeManager = new LocaleManager("locale/nukkit/languages.json",
+    private final LocaleManager localeManager = LocaleManager.from("locale/nukkit/languages.json",
             "locale/nukkit/texts", "locale/vanilla");
     private final GameRuleRegistry gameRuleRegistry = GameRuleRegistry.get();
     private final GeneratorRegistry generatorRegistry = GeneratorRegistry.get();
@@ -347,7 +347,7 @@ public class Server {
             } while (!localeManager.setLocale(locale));
 
             // Generate config with specified locale
-            LocaleManager configLocaleManager = new LocaleManager("locale/nukkit/languages.json",
+            LocaleManager configLocaleManager = LocaleManager.from("locale/nukkit/languages.json",
                     "locale/nukkit/configs");
             configLocaleManager.setLocale(locale);
 

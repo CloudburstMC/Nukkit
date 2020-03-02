@@ -196,17 +196,18 @@ public class ParticleCommand extends VanillaCommand {
         if (name.startsWith("iconcrack_")) {
             String[] d = name.split("_");
             if (d.length == 3) {
-                return new ItemBreakParticle(pos, Item.get(Integer.valueOf(d[1]), Integer.valueOf(d[2])));
+                return new ItemBreakParticle(pos, Item.get(Integer.parseInt(d[1]), Integer.parseInt(d[2])));
             }
         } else if (name.startsWith("blockcrack_")) {
             String[] d = name.split("_");
             if (d.length == 2) {
-                return new TerrainParticle(pos, Block.get(Integer.valueOf(d[1]) & 0xff, Integer.valueOf(d[1]) >> 12));
+                return new TerrainParticle(pos, Block.get(Integer.parseInt(d[1]) & 0xff, Integer.parseInt(d[1]) >> 12));
             }
         } else if (name.startsWith("blockdust_")) {
             String[] d = name.split("_");
             if (d.length >= 4) {
-                return new DustParticle(pos, Integer.valueOf(d[1]) & 0xff, Integer.valueOf(d[2]) & 0xff, Integer.valueOf(d[3]) & 0xff, d.length >= 5 ? Integer.valueOf(d[4]) & 0xff : 255);
+                return new DustParticle(pos, Integer.parseInt(d[1]) & 0xff, Integer.parseInt(d[2]) & 0xff,
+                        Integer.parseInt(d[3]) & 0xff, d.length >= 5 ? Integer.parseInt(d[4]) & 0xff : 255);
             }
         }
 

@@ -7,9 +7,9 @@ import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -39,15 +39,15 @@ public class BlockKelp extends FloodableBlock {
         }
 
         if (waterDamage == 8) {
-            this.level.setBlock(layer(1), Block.get(FLOWING_WATER, 0), true, false);
+            this.level.setBlock(this.getPosition(), 1, Block.get(FLOWING_WATER, 0), true, false);
         }
 
-        if (down.getId() == KELP && down.getDamage() != 24) {
-            down.setDamage(24);
-            this.level.setBlock(down, down, true, true);
+        if (down.getId() == KELP && down.getMeta() != 24) {
+            down.setMeta(24);
+            this.level.setBlock(down.getPosition(), down, true, true);
         }
-        setDamage(ThreadLocalRandom.current().nextInt(25));
-        this.level.setBlock(this, this, true, true);
+        setMeta(ThreadLocalRandom.current().nextInt(25));
+        this.level.setBlock(this.getPosition(), this, true, true);
         return true;
     }
 
@@ -56,7 +56,7 @@ public class BlockKelp extends FloodableBlock {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             int waterDamage = getWaterloggingWaterDamage();
             if (waterDamage != 0 && waterDamage != 8) {
-                this.getLevel().useBreakOn(this);
+                this.getLevel().useBreakOn(this.getPosition());
                 return type;
             }
 
@@ -65,12 +65,12 @@ public class BlockKelp extends FloodableBlock {
                     || down.getId() == MAGMA
                     || down.getId() == ICE
                     || down.getId() == SOUL_SAND) {
-                this.getLevel().useBreakOn(this);
+                this.getLevel().useBreakOn(this.getPosition());
                 return type;
             }
 
             if (waterDamage == 8) {
-                this.getLevel().setBlock(layer(1), Block.get(FLOWING_WATER, 0), true, false);
+                this.getLevel().setBlock(this.getPosition(), 1, Block.get(FLOWING_WATER, 0), true, false);
             }
             return type;
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
@@ -83,20 +83,20 @@ public class BlockKelp extends FloodableBlock {
     }
 
     public boolean grow() {
-        int age = clamp(getDamage(), 0, 25);
+        int age = clamp(getMeta(), 0, 25);
         if (age < 25) {
             Block up = up();
-            if ((up.getId() == WATER || up.getId() == FLOWING_WATER) && (up.getDamage() == 0 || up.getDamage() == 8)) {
+            if ((up.getId() == WATER || up.getId() == FLOWING_WATER) && (up.getMeta() == 0 || up.getMeta() == 8)) {
                 Block grown = Block.get(id, age + 1);
                 BlockGrowEvent ev = new BlockGrowEvent(this, grown);
                 Server.getInstance().getPluginManager().callEvent(ev);
                 if (!ev.isCancelled()) {
-                    this.setDamage(25);
-                    this.getLevel().setBlock(this, this, true, true);
+                    this.setMeta(25);
+                    this.getLevel().setBlock(this.getPosition(), this, true, true);
                     if (ev.getNewState().canWaterlogSource()) {
-                        this.getLevel().setBlock(up.layer(1), Block.get(FLOWING_WATER, 0), true, false);
+                        this.getLevel().setBlock(up.getPosition(), 1, Block.get(FLOWING_WATER, 0), true, false);
                     }
-                    this.getLevel().setBlock(up, ev.getNewState(), true, true);
+                    this.getLevel().setBlock(up.getPosition(), ev.getNewState(), true, true);
                     return true;
                 }
             }
@@ -108,7 +108,7 @@ public class BlockKelp extends FloodableBlock {
     public boolean onBreak(Item item) {
         Block down = down();
         if (down.getId() == KELP) {
-            this.getLevel().setBlock(down, Block.get(KELP, ThreadLocalRandom.current().nextInt(25)), true, true);
+            this.getLevel().setBlock(down.getPosition(), Block.get(KELP, ThreadLocalRandom.current().nextInt(25)), true, true);
         }
         super.onBreak(item);
         return true;
@@ -116,11 +116,11 @@ public class BlockKelp extends FloodableBlock {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.getId() == ItemIds.DYE && item.getDamage() == 0x0f) { //Bone Meal
+        if (item.getId() == ItemIds.DYE && item.getMeta() == 0x0f) { //Bone Meal
             int x = getX();
             int z = getZ();
             for (int y = getY() + 1; y < 255; y++) {
-                Identifier blockAbove = getLevel().getBlockIdAt(x, y, z);
+                Identifier blockAbove = getLevel().getBlockId(x, y, z);
                 if (blockAbove == KELP) {
                     continue;
                 }
@@ -130,7 +130,7 @@ public class BlockKelp extends FloodableBlock {
                     if (waterData == 0 || waterData == 8) {
                         BlockKelp highestKelp = (BlockKelp) getLevel().getBlock(x, y - 1, z);
                         if (highestKelp.grow()) {
-                            this.level.addParticle(new BoneMealParticle(this));
+                            this.level.addParticle(new BoneMealParticle(this.getPosition()));
 
                             if (player != null && !player.isCreative()) {
                                 item.decrementCount(1);

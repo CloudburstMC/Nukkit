@@ -31,13 +31,13 @@ public class DefaultGamemodeCommand extends VanillaCommand {
             return true;
         }
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", new String[]{this.usageMessage}));
+            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return false;
         }
         int gameMode = Server.getGamemodeFromString(args[0]);
         if (gameMode != -1) {
             sender.getServer().setPropertyInt("gamemode", gameMode);
-            sender.sendMessage(new TranslationContainer("commands.defaultgamemode.success", new String[]{Server.getGamemodeString(gameMode)}));
+            sender.sendMessage(new TranslationContainer("commands.defaultgamemode.success", Server.getGamemodeString(gameMode)));
         } else {
             sender.sendMessage("Unknown game mode"); //
         }

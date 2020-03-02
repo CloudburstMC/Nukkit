@@ -319,8 +319,7 @@ public class SimpleCommandMap implements CommandMap {
             }
 
             if (bad.length() > 0) {
-                log.warn(this.server.getLanguage().translate("nukkit.command.alias.notFound",
-                        new String[]{alias, bad}));
+                log.warn(this.server.getLanguage().translate("nukkit.command.alias.notFound", alias, bad));
                 continue;
             }
 

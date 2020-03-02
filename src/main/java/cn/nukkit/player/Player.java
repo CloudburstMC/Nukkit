@@ -3805,7 +3805,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.health = 0;
         this.scheduleUpdate();
 
-        PlayerDeathEvent ev = new PlayerDeathEvent(this, this.getDrops(), new TranslationContainer(message, params.toArray(new String[0])), this.getExperienceLevel());
+        PlayerDeathEvent ev = new PlayerDeathEvent(this, this.getDrops(), new TranslationContainer(message, params.toArray()), this.getExperienceLevel());
 
         ev.setKeepExperience(this.getLevel().getGameRules().get(GameRules.KEEP_INVENTORY));
         ev.setKeepInventory(ev.getKeepExperience());

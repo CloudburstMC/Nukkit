@@ -44,7 +44,7 @@ public class QueryHandler {
         this.regenerateToken();
         this.lastToken = this.token;
         this.regenerateInfo();
-        log.info(this.server.getLanguage().translate("nukkit.server.query.running", new String[]{addr, String.valueOf(port)}));
+        log.info(this.server.getLanguage().translate("nukkit.server.query.running", addr, String.valueOf(port)));
     }
 
     public void regenerateInfo() {

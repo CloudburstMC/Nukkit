@@ -12,10 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,51 +29,64 @@ public class LocaleManager {
 
     private final Set<Locale> availableLocales;
     private final Properties texts = new Properties();
-    private final boolean defaultFileSystem;
-    private final URI[] textUris;
+    private final Path[] textPaths;
     private Locale locale;
 
-    public LocaleManager(String languagesPath, String... textPaths) {
+    private LocaleManager(Set<Locale> availableLocales, Path[] textPaths) {
+        this.availableLocales = availableLocales;
+        this.textPaths = textPaths;
+    }
+
+    public static LocaleManager from(String languagesPath, String... textPaths) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try {
-            try (InputStream stream = ClassLoader.getSystemResourceAsStream(languagesPath)) {
-                this.availableLocales = loadAvailableLocales(stream);
+            URI uri = classLoader.getResource(languagesPath).toURI();
+            Path langsPath;
+            try {
+                langsPath = Paths.get(uri);
+            } catch (FileSystemNotFoundException e) {
+                FileSystems.newFileSystem(uri, new HashMap<>());
+                langsPath = Paths.get(uri);
             }
-            this.textUris = new URI[textPaths.length];
+
+            Path[] paths = new Path[textPaths.length];
             for (int i = 0; i < textPaths.length; i++) {
-                this.textUris[i] = ClassLoader.getSystemResource(textPaths[i]).toURI();
+                paths[i] = Paths.get(classLoader.getResource(textPaths[i]).toURI());
             }
-        } catch (IOException | URISyntaxException e) {
+            return from(langsPath, paths);
+        } catch (IOException | URISyntaxException | NullPointerException e) {
             throw new IllegalArgumentException(e);
         }
-        this.defaultFileSystem = false;
     }
 
-    public LocaleManager(URI languagesUri, URI... textUris) {
-        try (FileSystem fileSystem = FileSystems.newFileSystem(languagesUri, new HashMap<>())) {
-            Path path = fileSystem.provider().getPath(languagesUri);
-            try (InputStream stream = Files.newInputStream(path)) {
-                this.availableLocales = loadAvailableLocales(stream);
-            }
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-        this.textUris = textUris;
-        this.defaultFileSystem = false;
-    }
-
-    public LocaleManager(Set<Locale> availableLocales, Path... textPaths) {
-        this.availableLocales = checkNotNull(availableLocales, "availableLocales");
+    public static LocaleManager from(FileSystem fs, String languagesPath, String... textPaths) {
+        checkNotNull(fs, "fs");
+        checkNotNull(languagesPath, "languagesPath");
         checkNotNull(textPaths, "textPaths");
-        this.textUris = new URI[textPaths.length];
+
+        Path[] paths = new Path[textPaths.length];
+
         for (int i = 0; i < textPaths.length; i++) {
-            this.textUris[i] = textPaths[i].toUri();
+            paths[i] = fs.getPath(textPaths[i]);
         }
-        this.defaultFileSystem = true;
+
+        return from(fs.getPath(languagesPath), paths);
     }
 
-    public static ImmutableSet<Locale> loadAvailableLocales(InputStream stream) {
+    public static LocaleManager from(Path languagesPath, Path... textPaths) {
+        return from(loadAvailableLocales(languagesPath), textPaths);
+    }
+
+    public static LocaleManager from(ImmutableSet<Locale> availableLocales, Path... textPaths) {
+        checkNotNull(availableLocales, "availableLocales");
+        checkNotNull(textPaths, "textPaths");
+        return new LocaleManager(availableLocales, textPaths);
+    }
+
+    public static ImmutableSet<Locale> loadAvailableLocales(Path path) {
+        log.debug(path.toAbsolutePath());
         ImmutableSet.Builder<Locale> builder = ImmutableSet.builder();
-        try {
+        try (InputStream stream = Files.newInputStream(path)) {
             JsonNode array = Nukkit.JSON_MAPPER.readTree(stream);
             for (JsonNode element : array) {
                 builder.add(getLocaleFromString(element.textValue()));
@@ -234,22 +244,10 @@ public class LocaleManager {
 
         this.texts.clear(); // Clear any existing
 
-        if (this.defaultFileSystem) {
-            loadTransforms(FileSystems.getDefault());
-        } else {
-            try (FileSystem fs = FileSystems.newFileSystem(this.textUris[1], new HashMap<>())) {
-                this.loadTransforms(fs);
-            } catch (IOException e) {
-                throw new IllegalStateException(e);
-            }
+        for (Path path : this.textPaths) {
+            this.loadTransforms(path.resolve(locale + LANG_FILE_EXTENSION));
         }
 
         this.texts.setProperty("language", locale.toString());
-    }
-
-    private void loadTransforms(FileSystem fs) {
-        for (URI uri : this.textUris) {
-            this.loadTransforms(fs.provider().getPath(uri).resolve(locale + LANG_FILE_EXTENSION));
-        }
     }
 }
