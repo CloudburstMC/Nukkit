@@ -47,9 +47,9 @@ density:
     factor: 1.0240000486373901
     offset: 0.0
   specialHeightVariation: 0.25
-  heightFactor: 1.0
-  heightOffset: 0.0
-  heightVariationFactor: 1.0
+  heightFactor: 64.0
+  heightOffset: 64.0
+  heightVariationFactor: 64.0
   heightVariationOffset: 0.0
 
 replacers:
@@ -57,7 +57,7 @@ replacers:
     block: "stone"
   - id: "nukkitx:sea"
     block: "water"
-    seaLevel: 8
+    seaLevel: 63
   - id: "nukkitx:biome"
 
 decorators:
@@ -71,9 +71,3 @@ decorators:
 
 populators:
   - id: "nukkitx:biome"
-  - id: "nukkitx:basic_tree"
-    tries: 2-8
-    on: "grass"
-    height: 4-8
-    trunk: "log"
-    leaf: "leaves"

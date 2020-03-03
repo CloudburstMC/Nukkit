@@ -42,11 +42,11 @@ public final class VanillaDensitySource extends AbstractGenerationPass implement
     @JsonProperty
     private double specialHeightVariation = 0.25d;
     @JsonProperty
-    private double heightFactor  = 1.0d;
+    private double heightFactor  = 64.0d;
     @JsonProperty
-    private double heightOffset  = 0.0d;
+    private double heightOffset  = 64.0d;
     @JsonProperty
-    private double heightVariationFactor  = 1.0d;
+    private double heightVariationFactor  = 64.0d;
     @JsonProperty
     private double heightVariationOffset  = 0.0d;
 

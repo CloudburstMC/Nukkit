@@ -1,2 +1,12 @@
 dict: "nukkitx:vanilla"
-height: "65-71"
+height:
+  base: 0.125
+  variation: 0.05
+
+populators:
+  - id: "nukkitx:basic_tree"
+    tries: 2-8
+    on: "grass"
+    height: 4-8
+    trunk: "log"
+    leaf: "leaves"

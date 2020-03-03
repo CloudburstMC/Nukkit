@@ -1,0 +1,65 @@
+some values extracted from java edition to use as reference while making the actual biome presets
+
+ocean (Ocean) baseHeight -1.0,variation 0.1,temperature 0.5,rainfall 0.5
+plains (Plains) baseHeight 0.125,variation 0.05,temperature 0.8,rainfall 0.4
+desert (Desert) baseHeight 0.125,variation 0.05,temperature 2.0,rainfall 0.0
+extreme_hills (Extreme Hills) baseHeight 1.0,variation 0.5,temperature 0.2,rainfall 0.3
+forest (Forest) baseHeight 0.1,variation 0.2,temperature 0.7,rainfall 0.8
+taiga (Taiga) baseHeight 0.2,variation 0.2,temperature 0.25,rainfall 0.8
+swampland (Swampland) baseHeight -0.2,variation 0.1,temperature 0.8,rainfall 0.9
+river (River) baseHeight -0.5,variation 0.0,temperature 0.5,rainfall 0.5
+hell (Hell) baseHeight 0.1,variation 0.2,temperature 2.0,rainfall 0.0
+sky (The End) baseHeight 0.1,variation 0.2,temperature 0.5,rainfall 0.5
+frozen_ocean (FrozenOcean) baseHeight -1.0,variation 0.1,temperature 0.0,rainfall 0.5
+frozen_river (FrozenRiver) baseHeight -0.5,variation 0.0,temperature 0.0,rainfall 0.5
+ice_flats (Ice Plains) baseHeight 0.125,variation 0.05,temperature 0.0,rainfall 0.5
+ice_mountains (Ice Mountains) baseHeight 0.45,variation 0.3,temperature 0.0,rainfall 0.5
+mushroom_island (MushroomIsland) baseHeight 0.2,variation 0.3,temperature 0.9,rainfall 1.0
+mushroom_island_shore (MushroomIslandShore) baseHeight 0.0,variation 0.025,temperature 0.9,rainfall 1.0
+beaches (Beach) baseHeight 0.0,variation 0.025,temperature 0.8,rainfall 0.4
+desert_hills (DesertHills) baseHeight 0.45,variation 0.3,temperature 2.0,rainfall 0.0
+forest_hills (ForestHills) baseHeight 0.45,variation 0.3,temperature 0.7,rainfall 0.8
+taiga_hills (TaigaHills) baseHeight 0.1,variation 0.2,temperature 0.25,rainfall 0.8
+smaller_extreme_hills (Extreme Hills Edge) baseHeight 0.8,variation 0.3,temperature 0.2,rainfall 0.3
+jungle (Jungle) baseHeight 0.1,variation 0.2,temperature 0.95,rainfall 0.9
+jungle_hills (JungleHills) baseHeight 0.45,variation 0.3,temperature 0.95,rainfall 0.9
+jungle_edge (JungleEdge) baseHeight 0.1,variation 0.2,temperature 0.95,rainfall 0.8
+void (The Void) baseHeight -1.8,variation 0.1,temperature 0.5,rainfall 0.5
+stone_beach (Stone Beach) baseHeight 0.1,variation 0.8,temperature 0.2,rainfall 0.3
+cold_beach (Cold Beach) baseHeight 0.0,variation 0.025,temperature 0.05,rainfall 0.3
+birch_forest (Birch Forest) baseHeight 0.1,variation 0.2,temperature 0.6,rainfall 0.6
+birch_forest_hills (Birch Forest Hills) baseHeight 0.45,variation 0.3,temperature 0.6,rainfall 0.6
+roofed_forest (Roofed Forest) baseHeight 0.1,variation 0.2,temperature 0.7,rainfall 0.8
+taiga_cold (Cold Taiga) baseHeight 0.2,variation 0.2,temperature -0.5,rainfall 0.4
+taiga_cold_hills (Cold Taiga Hills) baseHeight 0.45,variation 0.3,temperature -0.5,rainfall 0.4
+redwood_taiga (Mega Taiga) baseHeight 0.1,variation 0.2,temperature 0.3,rainfall 0.8
+redwood_taiga_hills (Mega Taiga Hills) baseHeight 0.45,variation 0.3,temperature 0.3,rainfall 0.8
+extreme_hills_with_trees (Extreme Hills+) baseHeight 1.0,variation 0.5,temperature 0.2,rainfall 0.3
+savanna (Savanna) baseHeight 0.125,variation 0.05,temperature 1.2,rainfall 0.0
+savanna_rock (Savanna Plateau) baseHeight 1.5,variation 0.025,temperature 1.0,rainfall 0.0
+mesa (Mesa) baseHeight 0.1,variation 0.2,temperature 2.0,rainfall 0.0
+mesa_rock (Mesa Plateau F) baseHeight 1.5,variation 0.025,temperature 2.0,rainfall 0.0
+mesa_clear_rock (Mesa Plateau) baseHeight 1.5,variation 0.025,temperature 2.0,rainfall 0.0
+void (The Void) baseHeight 0.1,variation 0.2,temperature 0.5,rainfall 0.5
+mutated_plains (Sunflower Plains) baseHeight 0.125,variation 0.05,temperature 0.8,rainfall 0.4
+mutated_desert (Desert M) baseHeight 0.225,variation 0.25,temperature 2.0,rainfall 0.0
+mutated_extreme_hills (Extreme Hills M) baseHeight 1.0,variation 0.5,temperature 0.2,rainfall 0.3
+mutated_forest (Flower Forest) baseHeight 0.1,variation 0.4,temperature 0.7,rainfall 0.8
+mutated_taiga (Taiga M) baseHeight 0.3,variation 0.4,temperature 0.25,rainfall 0.8
+mutated_swampland (Swampland M) baseHeight -0.1,variation 0.3,temperature 0.8,rainfall 0.9
+mutated_ice_flats (Ice Plains Spikes) baseHeight 0.425,variation 0.45000002,temperature 0.0,rainfall 0.5
+mutated_jungle (Jungle M) baseHeight 0.2,variation 0.4,temperature 0.95,rainfall 0.9
+mutated_jungle_edge (JungleEdge M) baseHeight 0.2,variation 0.4,temperature 0.95,rainfall 0.8
+mutated_birch_forest (Birch Forest M) baseHeight 0.2,variation 0.4,temperature 0.6,rainfall 0.6
+mutated_birch_forest_hills (Birch Forest Hills M) baseHeight 0.55,variation 0.5,temperature 0.6,rainfall 0.6
+mutated_roofed_forest (Roofed Forest M) baseHeight 0.2,variation 0.4,temperature 0.7,rainfall 0.8
+mutated_taiga_cold (Cold Taiga M) baseHeight 0.3,variation 0.4,temperature -0.5,rainfall 0.4
+mutated_redwood_taiga (Mega Spruce Taiga) baseHeight 0.2,variation 0.2,temperature 0.25,rainfall 0.8
+mutated_redwood_taiga_hills (Redwood Taiga Hills M) baseHeight 0.2,variation 0.2,temperature 0.25,rainfall 0.8
+mutated_extreme_hills_with_trees (Extreme Hills+ M) baseHeight 1.0,variation 0.5,temperature 0.2,rainfall 0.3
+mutated_savanna (Savanna M) baseHeight 0.3625,variation 1.225,temperature 1.1,rainfall 0.0
+mutated_savanna_rock (Savanna Plateau M) baseHeight 1.05,variation 1.2125001,temperature 1.0,rainfall 0.0
+mutated_mesa (Mesa (Bryce)) baseHeight 0.1,variation 0.2,temperature 2.0,rainfall 0.0
+mutated_mesa_rock (Mesa Plateau F M) baseHeight 0.45,variation 0.3,temperature 2.0,rainfall 0.0
+mutated_mesa_clear_rock (Mesa Plateau M) baseHeight 0.45,variation 0.3,temperature 2.0,rainfall 0.0
+    

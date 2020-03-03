@@ -33,8 +33,9 @@ public final class GenerationBiome {
         this.replacers = temp.getReplacers();
         this.decorators = temp.getDecorators();
         this.populators = temp.getPopulators();
-        this.avgHeight = (temp.getHeight().min + temp.getHeight().max - 1) * 0.5d;
-        this.heightVariation = (temp.getHeight().max - 1 - this.avgHeight);
+
+        this.avgHeight = temp.getHeight().correctedBaseHeight();
+        this.heightVariation = temp.getHeight().correctedHeightVariation();
 
         this.runtimeId = this.dictionary.get(id);
     }

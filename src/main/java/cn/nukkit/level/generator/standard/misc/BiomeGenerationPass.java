@@ -25,17 +25,17 @@ public final class BiomeGenerationPass implements BlockReplacer, Decorator, Popu
 
     @Override
     public void decorate(IChunk chunk, PRandom random, int x, int z) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("nukkitx:biome may only be used in the base preset!");
     }
 
     @Override
     public Block replace(Block prev, int x, int y, int z, double gradX, double gradY, double gradZ, double density) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("nukkitx:biome may only be used in the base preset!");
     }
 
     @Override
     public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("nukkitx:biome may only be used in the base preset!");
     }
 
     @Override
