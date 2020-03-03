@@ -20,7 +20,7 @@ public class GenerateWorld {
 
     public Map<String, Object> SetWorldNames() {
         Map<String, Object> worldNames = server.getConfig("worlds", Collections.emptyMap());
-        if (worldNames == null)
+        if (worldNames.size() == 0)
             worldNames = new Hashtable<String, Object>();
         // throw new IllegalStateException("No worlds configured! Add a world to
         // nukkit.yml and try again!");
@@ -31,7 +31,7 @@ public class GenerateWorld {
             defaultWorld = "world";
         }
         worldNames.put(defaultWorld, Collections.emptyMap());
-        Boolean useNether = server.getProperty("allow-nether") == "on";
+        Boolean useNether = server.getProperty("allow-nether").equalsIgnoreCase("on");
         if (useNether && !worldNames.containsKey("nether")) {
             worldNames.put("nether", Collections.emptyMap());
         }
