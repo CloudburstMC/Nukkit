@@ -27,6 +27,7 @@ public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to
     public byte dimensionId;
 
     public MapDecorator[] decorators = new MapDecorator[0];
+    public MapTrackedObject[] trackedEntities = new MapTrackedObject[0];
     public int[] colors = new int[0];
     public BufferedImage image = null;
 
@@ -77,6 +78,18 @@ public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to
         }
 
         if ((update & DECORATIONS_UPDATE) != 0) {
+            this.putUnsignedVarInt(trackedEntities.length);
+            for (MapTrackedObject object : trackedEntities) {
+                this.putLInt(object.type);
+                if (object.type == MapTrackedObject.TYPE_BLOCK) {
+                    this.putBlockVector3(object.x, object.y, object.z);
+                } else if (object.type == MapTrackedObject.TYPE_ENTITY) {
+                    this.putEntityUniqueId(object.entityUniqueId);
+                } else {
+                    throw new IllegalArgumentException("Unknown map object type " + object.type);
+                }
+            }
+
             this.putUnsignedVarInt(decorators.length);
 
             for (MapDecorator decorator : decorators) {
@@ -120,5 +133,17 @@ public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to
         public byte offsetZ;
         public String label;
         public Color color;
+    }
+
+    public static class MapTrackedObject {
+        public static final int TYPE_ENTITY = 0;
+        public static final int TYPE_BLOCK = 1;
+
+        public int type;
+        public int entityUniqueId;
+
+        public int x;
+        public int y;
+        public int z;
     }
 }
