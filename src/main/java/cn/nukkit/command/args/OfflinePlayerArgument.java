@@ -24,7 +24,7 @@ public class OfflinePlayerArgument implements ArgumentType<IPlayer> {
         return new OfflinePlayerArgument();
     }
 
-    public static IPlayer getOfflinePlayer(CommandContext<CommandSource> context, String name) throws CommandSyntaxException {
+    public static IPlayer getOfflinePlayer(CommandContext<CommandSource> context, String name) {
         return context.getArgument(name, IPlayer.class);
     }
 

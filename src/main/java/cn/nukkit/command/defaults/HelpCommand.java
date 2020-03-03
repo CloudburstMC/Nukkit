@@ -1,6 +1,7 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.*;
+import cn.nukkit.command.args.CommandArgument;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 import com.mojang.brigadier.CommandDispatcher;
@@ -10,10 +11,12 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static cn.nukkit.command.args.CommandArgument.getCommand;
 import static com.mojang.brigadier.arguments.IntegerArgumentType.getInteger;
 import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
 
 public class HelpCommand extends BaseCommand {
+    private CommandDispatcher<CommandSource> dispatcher;
 
     public HelpCommand(CommandDispatcher<CommandSource> dispatcher) {
         super("help", "%nukkit.command.help.description");
@@ -21,10 +24,10 @@ public class HelpCommand extends BaseCommand {
         dispatcher.register(literal("help")
                 .requires(requirePermission("nukkit.command.help"))
                 .then(argument("page", integer()).executes(ctx -> run(ctx, getInteger(ctx, "page"))))
-                // TODO: The following line will "overwrite" the page argument above.
-                //       Find out a way to make them play together
-                //.then(argument("command", string()).executes(ctx -> command(ctx, getString(ctx, "command"))))
+                .then(argument("command", CommandArgument.command()).executes(this::command))
                 .executes(ctx -> run(ctx, 1)));
+
+        this.dispatcher = dispatcher;
     }
 
     public int run(CommandContext<CommandSource> context, int page) throws CommandSyntaxException {
@@ -72,29 +75,29 @@ public class HelpCommand extends BaseCommand {
         return 1;
     }
 
-    public int command(CommandContext<CommandSource> context, String command) {
+    public int command(CommandContext<CommandSource> context) {
         CommandSource source = context.getSource();
+        BaseCommand cmd = getCommand(context, "command");
 
-        BaseCommand cmd = source.getServer().getCommandDispatcher().getCommand(command.toLowerCase());
         if (cmd != null) {
             if (cmd.testPermissionSilent(source)) {
                 String message = TextFormat.YELLOW + "--------- " + TextFormat.WHITE + " Help: /" + cmd.getName() + TextFormat.YELLOW + " ---------\n";
                 message += TextFormat.GOLD + "Description: " + TextFormat.WHITE + cmd.getDescription() + "\n";
+
                 String usage = "";
-                String[] usages = cmd.getUsage().split("\n");
-                for (String u : usages) {
-                    if (!usage.equals("")) {
-                        usage += "\n" + TextFormat.WHITE;
-                    }
-                    usage += u;
+                String[] usages = dispatcher.getAllUsage(dispatcher.getRoot().getChild(cmd.getName()), source, false);
+
+                for(String u : usages) {
+                    usage += "\n" + TextFormat.WHITE + "/" + cmd.getName() + " " + u;
                 }
+
                 message += TextFormat.GOLD + "Usage: " + TextFormat.WHITE + usage + "\n";
                 source.sendMessage(message);
                 return 1;
             }
         }
 
-        source.sendMessage(TextFormat.RED + "No help for " + command.toLowerCase());
+        //source.sendMessage(TextFormat.RED + "No help for " + command.toLowerCase());
         return 1;
     }
 }

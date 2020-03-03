@@ -2,6 +2,7 @@ package cn.nukkit.utils;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.mojang.brigadier.StringReader;
 import net.daporkchop.lib.common.cache.Cache;
 import net.daporkchop.lib.common.cache.ThreadCache;
 
@@ -93,6 +94,21 @@ public final class Identifier implements Comparable<Identifier> {
             }
         }
         return fromString(space + NAMESPACE_SEPARATOR + name);
+    }
+
+    public static Identifier from(StringReader reader) {
+        int i = reader.getCursor();
+
+        while(reader.canRead() && checkIdentifier(reader.peek())) {
+            reader.skip();
+        }
+
+        String identifier = reader.getString().substring(i, reader.getCursor());
+        return fromString(identifier);
+    }
+
+    private static boolean checkIdentifier(char c0) {
+        return c0 >= '0' && c0 <= '9' || c0 >= 'a' && c0 <= 'z' || c0 == '_' || c0 == ':' || c0 == '/' || c0 == '.' || c0 == '-';
     }
 
     public String getName() {

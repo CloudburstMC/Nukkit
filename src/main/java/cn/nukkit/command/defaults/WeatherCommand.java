@@ -16,12 +16,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import static com.mojang.brigadier.arguments.IntegerArgumentType.getInteger;
 import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
 
-/**
- * author: Angelic47
- * Nukkit Project
- */
 public class WeatherCommand extends BaseCommand {
-    private java.util.Random rand = new java.util.Random();
 
     public WeatherCommand(CommandDispatcher<CommandSource> dispatcher) {
         super("weather", "%nukkit.command.weather.description");
@@ -53,7 +48,7 @@ public class WeatherCommand extends BaseCommand {
         level.setThunderTime(duration * 20);
 
         sendAdminMessage(source, new TranslationContainer("commands.weather.clear"));
-        return 1;
+        return duration;
     }
 
     public int rain(CommandContext<CommandSource> context) {
@@ -69,7 +64,7 @@ public class WeatherCommand extends BaseCommand {
         level.setThunderTime(duration * 20);
 
         sendAdminMessage(source, new TranslationContainer("commands.weather.rain"));
-        return 1;
+        return duration;
     }
 
     public int thunder(CommandContext<CommandSource> context) {
@@ -85,6 +80,6 @@ public class WeatherCommand extends BaseCommand {
         level.setThunderTime(duration * 20);
 
         sendAdminMessage(source, new TranslationContainer("commands.weather.thunder"));
-        return 1;
+        return duration;
     }
 }

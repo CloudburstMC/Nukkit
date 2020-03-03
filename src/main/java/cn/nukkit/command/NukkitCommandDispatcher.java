@@ -2,6 +2,7 @@ package cn.nukkit.command;
 
 import cn.nukkit.command.defaults.*;
 import cn.nukkit.player.Player;
+import cn.nukkit.utils.TextFormat;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.Getter;
@@ -39,6 +40,17 @@ public class NukkitCommandDispatcher {
                 new DebugPasteCommand(dispatcher),
                 new GarbageCollectorCommand(dispatcher)
         });
+
+        // Temporary test command to show all commands and usages
+        dispatcher.register(BaseCommand.literal("bhelp").executes(ctx -> {
+            String[] usages = dispatcher.getAllUsage(dispatcher.getRoot(), ctx.getSource(), false);
+
+            for(String usage : usages) {
+                ctx.getSource().sendMessage(TextFormat.LIGHT_PURPLE + "/" + TextFormat.AQUA + usage);
+            }
+
+            return 1;
+        }));
 
 
         // TODO: /kill

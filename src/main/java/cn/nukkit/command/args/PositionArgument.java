@@ -22,7 +22,7 @@ public class PositionArgument implements ArgumentType<Position> {
         return new PositionArgument();
     }
 
-    public static Position getPosition(CommandContext<CommandSource> context, String name) throws CommandSyntaxException {
+    public static Position getPosition(CommandContext<CommandSource> context, String name) {
         return context.getArgument(name, Position.class);
     }
 
