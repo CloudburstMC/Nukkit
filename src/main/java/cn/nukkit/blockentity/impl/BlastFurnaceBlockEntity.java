@@ -12,7 +12,7 @@ import com.nukkitx.math.vector.Vector3i;
 public class BlastFurnaceBlockEntity extends FurnaceBlockEntity implements BlastFurnace {
 
     public BlastFurnaceBlockEntity(BlockEntityType<?> type, Chunk chunk, Vector3i position) {
-        super(type, chunk, position, InventoryType.SMOKER);
+        super(type, chunk, position, InventoryType.BLAST_FURNACE);
     }
 
     @Override

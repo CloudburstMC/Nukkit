@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityType;
 import cn.nukkit.blockentity.BlockEntityTypes;
 import cn.nukkit.blockentity.Furnace;
 import cn.nukkit.inventory.ContainerInventory;
@@ -56,7 +57,7 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
         this.setMeta(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
         this.getLevel().setBlock(block.getPosition(), this, true, true);
 
-        Furnace furnace = BlockEntityRegistry.get().newEntity(BlockEntityTypes.FURNACE, this.getChunk(), this.getPosition());
+        Furnace furnace = BlockEntityRegistry.get().newEntity(getEntityType(), this.getChunk(), this.getPosition());
         furnace.loadAdditionalData(item.getTag());
         if (item.hasCustomName()) {
             furnace.setCustomName(item.getCustomName());
@@ -79,7 +80,7 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
             if (blockEntity instanceof Furnace) {
                 furnace = (Furnace) blockEntity;
             } else {
-                furnace = BlockEntityRegistry.get().newEntity(BlockEntityTypes.FURNACE, this.getChunk(), this.getPosition());
+                furnace = BlockEntityRegistry.get().newEntity(getEntityType(), this.getChunk(), this.getPosition());
             }
 
             player.addWindow(furnace.getInventory());
@@ -127,5 +128,15 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getMeta() & 0x7);
+    }
+
+    protected BlockEntityType<? extends Furnace> getEntityType() {
+        if (getId() == BlockIds.BLAST_FURNACE || getId() == BlockIds.LIT_BLAST_FURNACE) {
+            return BlockEntityTypes.BLAST_FURNACE;
+        } else if (getId() == BlockIds.SMOKER || getId() == BlockIds.LIT_SMOKER) {
+            return BlockEntityTypes.SMOKER;
+        } else {
+            return BlockEntityTypes.FURNACE;
+        }
     }
 }
