@@ -9,7 +9,8 @@ import cn.nukkit.Server;
 /**
  *      created by jangel3 on 2020/3/2. 
  *      Package cn.nukkit.utils in project Nukkit
- */@Log4j2
+ */
+@Log4j2
 public class GenerateWorld {
     private Server server;
 
