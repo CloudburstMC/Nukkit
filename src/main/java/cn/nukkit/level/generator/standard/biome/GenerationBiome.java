@@ -59,6 +59,14 @@ public final class GenerationBiome {
         return this.populators;
     }
 
+    public double getAvgHeight() {
+        return this.avgHeight;
+    }
+
+    public double getHeightVariation() {
+        return this.heightVariation;
+    }
+
     public int getRuntimeId() {
         return this.runtimeId;
     }

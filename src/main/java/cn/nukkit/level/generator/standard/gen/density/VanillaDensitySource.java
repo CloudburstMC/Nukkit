@@ -1,5 +1,6 @@
 package cn.nukkit.level.generator.standard.gen.density;
 
+import cn.nukkit.level.generator.standard.biome.BiomeTerrainCache;
 import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
 import cn.nukkit.level.generator.standard.gen.noise.NoiseGenerator;
 import cn.nukkit.level.generator.standard.misc.AbstractGenerationPass;
@@ -9,8 +10,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.NonNull;
 import net.daporkchop.lib.noise.NoiseSource;
 import net.daporkchop.lib.random.PRandom;
-import net.daporkchop.lib.random.impl.FastJavaPRandom;
 import net.daporkchop.lib.random.impl.FastPRandom;
+
+import static java.util.Objects.*;
 
 /**
  * A {@link NoiseSource} that provides noise similar to that of vanilla terrain.
@@ -24,28 +26,26 @@ public final class VanillaDensitySource extends AbstractGenerationPass implement
     private NoiseSource selector;
     private NoiseSource low;
     private NoiseSource high;
-    private NoiseSource randomHeight2d;
-    private NoiseSource height;
-    private NoiseSource volatility;
+    private NoiseSource depth;
+
+    private final BiomeTerrainCache terrainCache = new BiomeTerrainCache(2);
 
     @JsonProperty(required = true)
     private NoiseGenerator selectorNoise;
-    @JsonProperty
+    @JsonProperty(required = true)
     private NoiseGenerator lowNoise;
-    @JsonProperty
+    @JsonProperty(required = true)
     private NoiseGenerator highNoise;
-    @JsonProperty
-    private NoiseGenerator randomNoise;
-    @JsonProperty
-    private NoiseGenerator heightNoise;
-    @JsonProperty
-    private NoiseGenerator volatilityNoise;
+    @JsonProperty(required = true)
+    private NoiseGenerator depthNoise;
 
     @Override
     protected void init0(long levelSeed, long localSeed) {
         PRandom random = new FastPRandom(localSeed);
-        this.selector = this.selectorNoise.create(new FastPRandom(random.nextLong()));
-        //porktodo: the rest
+        this.selector = requireNonNull(this.selectorNoise, "selectorNoise must be set!").create(new FastPRandom(random.nextLong()));
+        this.low = requireNonNull(this.lowNoise, "lowNoise must be set!").create(new FastPRandom(random.nextLong()));
+        this.high = requireNonNull(this.highNoise, "highNoise must be set!").create(new FastPRandom(random.nextLong()));
+        this.depth = requireNonNull(this.depthNoise, "depthNoise must be set!").create(new FastPRandom(random.nextLong()));
     }
 
     @Override
