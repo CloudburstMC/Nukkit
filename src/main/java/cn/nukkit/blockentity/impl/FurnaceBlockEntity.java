@@ -78,12 +78,6 @@ public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
         tag.shortTag("CookTime", cookTime);
         tag.shortTag("BurnTime", burnTime);
         tag.shortTag("MaxTime", maxTime);
-    }
-
-    @Override
-    protected void saveClientData(CompoundTagBuilder tag) {
-        super.saveClientData(tag);
-
         List<CompoundTag> items = new ArrayList<>();
         for (Map.Entry<Integer, Item> entry : this.inventory.getContents().entrySet()) {
             items.add(ItemUtils.serializeItem(entry.getValue(), entry.getKey()));
