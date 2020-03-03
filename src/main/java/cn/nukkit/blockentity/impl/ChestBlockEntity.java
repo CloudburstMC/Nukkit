@@ -56,6 +56,16 @@ public class ChestBlockEntity extends BaseBlockEntity implements Chest {
     }
 
     @Override
+    protected void saveClientData(CompoundTagBuilder tag) {
+        super.saveClientData(tag);
+        if (this.pairPosition != null && this.pairlead) {
+            tag.intTag("pairx", this.pairPosition.getX());
+            tag.intTag("pairz", this.pairPosition.getZ());
+            tag.booleanTag("pairlead", this.pairlead);
+        }
+    }
+
+    @Override
     public void saveAdditionalData(CompoundTagBuilder tag) {
         super.saveAdditionalData(tag);
 
@@ -64,16 +74,10 @@ public class ChestBlockEntity extends BaseBlockEntity implements Chest {
             items.add(ItemUtils.serializeItem(entry.getValue(), entry.getKey()));
         }
         tag.listTag("Items", CompoundTag.class, items);
-
-        if (this.pairPosition != null) {
-            tag.intTag("pairx", this.pairPosition.getX());
-            tag.intTag("pairz", this.pairPosition.getZ());
-        }
-        tag.booleanTag("pairlead", this.pairlead);
         tag.booleanTag("Findable", this.findable);
     }
 
-    private void setPairlead(boolean pairlead) {
+    public void setPairlead(boolean pairlead) {
         this.pairlead = pairlead;
     }
 
@@ -149,9 +153,10 @@ public class ChestBlockEntity extends BaseBlockEntity implements Chest {
                 }
             }
         } else {
-            if (this.getLevel().isChunkLoaded(this.pairPosition)) {
+            if (this.pairPosition != null && this.getLevel().isChunkLoaded(this.pairPosition)) {
                 this.doubleInventory = null;
                 this.pairPosition = null;
+                this.pairlead = false;
             }
         }
     }
@@ -177,6 +182,7 @@ public class ChestBlockEntity extends BaseBlockEntity implements Chest {
         }
 
         this.createPair((ChestBlockEntity) chest);
+        this.pairlead = true;
 
         chest.spawnToAll();
         this.spawnToAll();
@@ -205,6 +211,7 @@ public class ChestBlockEntity extends BaseBlockEntity implements Chest {
         if (chest != null) {
             chest.pairPosition = null;
             chest.doubleInventory = null;
+            chest.pairlead = false;
             chest.checkPairing();
             chest.spawnToAll();
         }
@@ -216,5 +223,24 @@ public class ChestBlockEntity extends BaseBlockEntity implements Chest {
     @Override
     public boolean isSpawnable() {
         return true;
+    }
+
+    @Override
+    public boolean onUpdate() {
+        super.onUpdate();
+        if (this.pairlead) {
+            if (this.pairPosition != null) {
+                ChestBlockEntity other = getPair();
+                if (other == null) {
+                    return true;
+                }
+                if (!other.isPaired()) {
+                    other.pairPosition = this.getPosition();
+                    checkPairing();
+                    other.checkPairing();
+                }
+            }
+        }
+        return false;
     }
 }

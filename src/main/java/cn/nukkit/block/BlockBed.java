@@ -17,6 +17,7 @@ import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.math.vector.Vector3i;
+import lombok.extern.log4j.Log4j2;
 
 import static cn.nukkit.block.BlockIds.AIR;
 import static cn.nukkit.block.BlockIds.BED;
@@ -25,6 +26,7 @@ import static cn.nukkit.block.BlockIds.BED;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public class BlockBed extends BlockTransparent implements Faceable {
 
     public BlockBed(Identifier id) {
@@ -111,11 +113,11 @@ public class BlockBed extends BlockTransparent implements Faceable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         Block down = this.down();
-        if (!down.isTransparent()) {
-            Block next = this.getSide(player.getDirection());
+        if (!down.isTransparent() || down instanceof BlockSlab) {
+            Block next = this.getSide(player.getHorizontalFacing());
             Block downNext = next.down();
 
-            if (next.canBeReplaced() && !downNext.isTransparent()) {
+            if (next.canBeReplaced() && (!downNext.isTransparent() || downNext instanceof BlockSlab)) {
                 int meta = player.getDirection().getHorizontalIndex();
 
                 this.getLevel().setBlock(block.getPosition(), Block.get(this.getId(), meta), true, true);
