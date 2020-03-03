@@ -82,7 +82,7 @@ public class BlockEntitySerializer {
                         dirty = true;
                         continue;
                     }
-                    Vector3i position = Vector3i.from(tag.getInt("x"), tag.getInt("y"), tag.getInt("y"));
+                    Vector3i position = Vector3i.from(tag.getInt("x"), tag.getInt("y"), tag.getInt("z"));
                     if ((position.getX() >> 4) != chunk.getX() || ((position.getZ() >> 4) != chunk.getZ())) {
                         dirty = true;
                         continue;
@@ -92,7 +92,9 @@ public class BlockEntitySerializer {
                     BlockEntity blockEntity = REGISTRY.newEntity(type, chunk, position);
                     if (blockEntity == null) {
                         dirty = true;
+                        continue;
                     }
+                    blockEntity.loadAdditionalData(tag);
                 }
             }
             return dirty;

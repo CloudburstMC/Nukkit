@@ -111,7 +111,10 @@ public class EntitySerializer {
                 EntityRegistry registry = EntityRegistry.get();
                 EntityType<?> type = registry.getEntityType(identifier);
                 try {
-                    registry.newEntity(type, location);
+                    Entity entity = registry.newEntity(type, location);
+                    if (entity != null) {
+                        entity.loadAdditionalData(entityTag);
+                    }
                 } catch (RegistryException e) {
                     dirty = true;
                 }
