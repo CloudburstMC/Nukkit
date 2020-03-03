@@ -17,7 +17,6 @@ import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.math.vector.Vector3i;
-import lombok.extern.log4j.Log4j2;
 
 import static cn.nukkit.block.BlockIds.AIR;
 import static cn.nukkit.block.BlockIds.BED;
@@ -26,7 +25,6 @@ import static cn.nukkit.block.BlockIds.BED;
  * author: MagicDroidX
  * Nukkit Project
  */
-@Log4j2
 public class BlockBed extends BlockTransparent implements Faceable {
 
     public BlockBed(Identifier id) {
