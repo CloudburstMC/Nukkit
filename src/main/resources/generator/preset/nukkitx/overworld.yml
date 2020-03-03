@@ -13,12 +13,44 @@ density:
   selectorNoise:
     id: "nukkitx:simplex"
     scale:
-      x: 0.01
-      y: 0.0025
-      z: 0.01
+      x: 0.016709277406334877
+      y: 0.008354638703167439
+      z: 0.016709277406334877
     octaves: 8
-    factor: 4.0
+    factor: 12.75
+    offset: 0.5
+  lowNoise:
+    id: "nukkitx:simplex"
+    scale:
+      x: 0.005221649073064327
+      y: 0.0026108245365321636
+      z: 0.005221649073064327
+    octaves: 16
+    factor: 1.0
     offset: 0.0
+  highNoise:
+    id: "nukkitx:simplex"
+    scale:
+      x: 0.005221649073064327
+      y: 0.0026108245365321636
+      z: 0.005221649073064327
+    octaves: 16
+    factor: 1.0
+    offset: 0.0
+  depthNoise:
+    id: "nukkitx:simplex"
+    scale:
+      x: 0.005221649073064327
+      y: 0.0 # not used
+      z: 0.005221649073064327
+    octaves: 16
+    factor: 1.0240000486373901
+    offset: 0.0
+  specialHeightVariation: 0.25
+  heightFactor: 1.0
+  heightOffset: 0.0
+  heightVariationFactor: 1.0
+  heightVariationOffset: 0.0
 
 replacers:
   - id: "nukkitx:ground"

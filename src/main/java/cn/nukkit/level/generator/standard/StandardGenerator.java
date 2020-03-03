@@ -162,7 +162,7 @@ public final class StandardGenerator implements Generator {
                                 int blockY = sectionY * STEP | stepY;
                                 int blockZ = sectionZ * STEP | stepZ;
 
-                                iDensityCache[(blockX * ICACHE_HEIGHT + blockY) * ICACHE_WIDTH + blockZ] = iz;
+                                iDensityCache[(blockX * ICACHE_WIDTH + blockZ) * ICACHE_HEIGHT + blockY] = iz;
                             }
                         }
                     }
