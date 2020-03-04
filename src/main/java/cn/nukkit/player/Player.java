@@ -736,6 +736,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     protected void doFirstSpawn() {
         this.spawned = true;
 
+        this.getInventory().sendContents(this);
+        this.getInventory().sendArmorContents(this);
+
         Location loc = this.getLevel().getSafeSpawn(this.getLocation());
 
         PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(this, loc, true);
@@ -1583,8 +1586,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         this.sendPotionEffects(this);
         this.sendData(this);
-        this.getInventory().sendContents(this);
-        this.getInventory().sendArmorContents(this);
 
         if (this.getGamemode() == Player.SPECTATOR) {
             InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
