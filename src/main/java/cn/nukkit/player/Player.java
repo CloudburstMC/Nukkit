@@ -736,9 +736,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     protected void doFirstSpawn() {
         this.spawned = true;
 
-        this.getInventory().sendContents(this);
-        this.getInventory().sendArmorContents(this);
-
         Location loc = this.getLevel().getSafeSpawn(this.getLocation());
 
         PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(this, loc, true);
@@ -1583,9 +1580,11 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.setEnableClientCommand(true);
 
         this.getAdventureSettings().update();
-
-        this.sendPotionEffects(this);
-        this.sendData(this);
+        this.sendAttributes();
+        this.getInventory().sendContents(this);
+        this.getInventory().sendArmorContents(this);
+        // Send OffHand Inv
+        // Send HotBarPacket
 
         if (this.getGamemode() == Player.SPECTATOR) {
             InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
@@ -1594,6 +1593,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         } else {
             this.getInventory().sendCreativeContents();
         }
+        this.sendPotionEffects(this);
+        this.sendData(this);
 
         SetTimePacket setTimePacket = new SetTimePacket();
         setTimePacket.setTime(this.getLevel().getTime());
@@ -1606,7 +1607,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.getLevel().sendTime(this);
 
         this.setMovementSpeed(DEFAULT_SPEED);
-        this.sendAttributes();
+
         this.setNameTagVisible(true);
         this.setNameTagAlwaysVisible(true);
         this.setCanClimb(true);
