@@ -92,7 +92,7 @@ import java.util.regex.Pattern;
  * @author Box
  */
 @Log4j2
-public class Server {
+public class Server implements IServer {
 
     public static final String BROADCAST_CHANNEL_ADMINISTRATIVE = "nukkit.broadcast.admin";
     public static final String BROADCAST_CHANNEL_USERS = "nukkit.broadcast.user";
