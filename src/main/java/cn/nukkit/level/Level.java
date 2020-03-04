@@ -2120,7 +2120,7 @@ public class Level implements ChunkManager, Metadatable {
     @Override
     public Block getBlockAt(int x, int y, int z, int layer) {
         Chunk chunk = this.getChunk(x >> 4, z >> 4);
-        return chunk.getBlock(x, y, z, layer);
+        return chunk.getBlock(x & 0x0f, y & 0xff, z & 0x0f, layer);
     }
 
     @Override
@@ -2224,7 +2224,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public BlockColor getMapColorAt(int x, int z) {
         Chunk chunk = this.getChunk(x >> 4, z >> 4);
-        int y = chunk.getHighestBlock(x, z);
+        int y = chunk.getHighestBlock(x & 0x0f, z & 0x0f);
         while (y > 1) {
             Block block = getBlock(new BlockPosition(x, y, z));
             BlockColor blockColor = block.getColor();
