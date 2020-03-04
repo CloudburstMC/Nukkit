@@ -1,26 +1,33 @@
 package cn.nukkit.command;
 
 import cn.nukkit.Server;
-import cn.nukkit.command.data.CommandData;
-import cn.nukkit.command.data.CommandDataVersions;
+import cn.nukkit.command.args.registry.ArgumentData;
+import cn.nukkit.command.args.registry.ArgumentRegistry;
+import cn.nukkit.command.data.*;
 import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
+import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.LiteralMessage;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+import com.mojang.brigadier.tree.ArgumentCommandNode;
+import com.mojang.brigadier.tree.CommandNode;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
-import java.util.Set;
+import java.lang.reflect.Field;
+import java.util.*;
 import java.util.function.Predicate;
 
 @Getter
+@Log4j2
 public abstract class BaseCommand {
     public static final DynamicCommandExceptionType UNKNOWN_COMMAND =
             new DynamicCommandExceptionType(name -> new LiteralMessage("Unknown command " + name));
@@ -32,6 +39,8 @@ public abstract class BaseCommand {
     private String usage = null;
     private String permission = null;
     private String permissionMessage = null;
+
+    protected boolean canResultsBeCached = false;
 
     public BaseCommand(String name, String description) {
         this.name = name;
@@ -150,18 +159,70 @@ public abstract class BaseCommand {
         CommandData customData = this.commandData.clone();
         customData.description = player.getServer().getLanguage().translateString(description);
 
-//            this.commandParameters.forEach((key, par) -> {
-//                CommandOverload overload = new CommandOverload();
-//                overload.input.parameters = par;
-//                customData.overloads.put(key, overload);
-//            });
-//            if (customData.overloads.size() == 0) customData.overloads.put("default", new CommandOverload());
-//            CommandDataVersions versions = new CommandDataVersions();
-//            versions.versions.add(customData);
-//
+        CommandDispatcher dispatcher =  Server.getInstance().getCommandDispatcher().getDispatcher();
+        ArgumentRegistry registry = Server.getInstance().getCommandDispatcher().getArgumentRegistry();
+
+        final HashMap<String, Class<? extends ArgumentType>> result = new HashMap();
+        CommandNode node = dispatcher.getRoot().getChild(getName());
+        getBrigadierArguments(node, result);
+
+        List<CommandParameter> params = new ArrayList<>();
+
+        for(Map.Entry<String, Class<? extends ArgumentType>> arg : result.entrySet()) {
+            ArgumentData argdata = registry.getArgumentData(arg.getValue());
+            if(argdata == null) {
+                continue; // TODO: remove this when all argument types are registered
+            }
+
+            // Apparently `node.getCommand() != null` checks whether an argument is optional.
+            // No idea how, and it doesn't seem to work all the time, but its here for now.
+            params.add(new CommandParameter(arg.getKey(), argdata.getArgumentType(), node.getCommand() != null));
+        }
+
+        CommandParameter[] parameters = new CommandParameter[params.size()];
+
+        for(int i = 0; i < params.size(); i++) {
+            parameters[i] = params.get(i);
+        }
+
+        // TODO: support for subcommands, options arguments
+
+        CommandOverload overload = new CommandOverload();
+        overload.input.parameters = parameters;
+        customData.overloads.put("default", overload);
+
         CommandDataVersions versions = new CommandDataVersions();
         versions.versions.add(customData);
         return versions;
+    }
+
+    private void getBrigadierArguments(final CommandNode<CommandSource> node, final HashMap<String, Class<? extends ArgumentType>> result) {
+        Map<String, ArgumentCommandNode<CommandSource, ?>> arguments = new HashMap<>();
+
+        if(node == null) {
+            log.warn("NODE IS NULL: " + getName());
+            return;
+        }
+
+        try {
+            Field argumentsField = node.getClass().getSuperclass().getDeclaredField("arguments");
+            argumentsField.setAccessible(true);
+
+            arguments = (Map<String, ArgumentCommandNode<CommandSource, ?>>) argumentsField.get(node);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        for(Map.Entry<String, ArgumentCommandNode<CommandSource, ?>> argument : arguments.entrySet()) {
+            result.put(argument.getKey(), argument.getValue().getType().getClass());
+            //log.warn("REFLECT: " + argument.getKey());
+        }
+
+        if(!node.getChildren().isEmpty()) {
+            for(final CommandNode<CommandSource> child : node.getChildren()) {
+                getBrigadierArguments(child, result);
+            }
+        }
     }
 
     /**

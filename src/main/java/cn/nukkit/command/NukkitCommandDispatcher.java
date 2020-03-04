@@ -1,19 +1,28 @@
 package cn.nukkit.command;
 
+import cn.nukkit.command.args.registry.ArgumentRegistry;
 import cn.nukkit.command.defaults.*;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Log4j2
 public class NukkitCommandDispatcher {
     @Getter
     private final CommandDispatcher<CommandSource> dispatcher = new CommandDispatcher<>();
     private final Map<String, BaseCommand> knownCommands = new HashMap<>();
+
+    @Getter
+    private ArgumentRegistry argumentRegistry = new ArgumentRegistry(); // TODO: move to server?
+
+    private final Map<String, ParseResults<CommandSource>> commandResultCache = new HashMap<>();
 
     public NukkitCommandDispatcher() {
         registerAll("nukkit", new BaseCommand[]{
@@ -73,6 +82,32 @@ public class NukkitCommandDispatcher {
         // TODO: /title
         // TODO: /whitelist
         // TODO: /xp
+    }
+
+    public boolean quickDispatch(CommandSource source, String command) throws CommandSyntaxException {
+        if(!knownCommands.containsKey(command)) {
+            return false;
+        }
+        if(commandResultCache.containsKey(command)) {
+            log.info("Retrieved command from cache: " + command);
+            dispatcher.execute(commandResultCache.get(command));
+            return true;
+        }
+
+        BaseCommand knownCommand = knownCommands.get(command);
+        if(knownCommand.isCanResultsBeCached()) {
+            ParseResults<CommandSource> results = dispatcher.parse(command, source);
+            if(results.getExceptions().isEmpty()) {
+                commandResultCache.put(command, results);
+
+                dispatcher.execute(results);
+                return true;
+            }
+            log.warn("Failed to parse command " + command, results.getExceptions());
+        }
+
+        dispatcher.execute(command, source);
+        return true;
     }
 
     public boolean dispatch(CommandSource source, String command) throws CommandSyntaxException {

@@ -32,7 +32,7 @@ public class BanCommand extends BaseCommand {
         super("ban", "%nukkit.command.ban.player.description");
 
         // TODO: This doesnt work. Stacktrace: https://hastebin.com/teyuyopome.apache
-        dispatcher.register(literal("kick")
+        dispatcher.register(literal("ban")
                 .requires(requirePermission("nukkit.command.ban.player"))
                 .then(argument("player", player()).executes(this::run))
                 .then(argument("reason", greedyString()).executes(this::run)));

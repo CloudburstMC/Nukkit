@@ -15,6 +15,10 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+
+import java.util.concurrent.CompletableFuture;
 
 public class EffectArgument implements ArgumentType<Effect> {
     public static final DynamicCommandExceptionType NOT_FOUND = new DynamicCommandExceptionType((object) ->
@@ -38,5 +42,10 @@ public class EffectArgument implements ArgumentType<Effect> {
         } else {
             return effect;
         }
+    }
+
+    @Override
+    public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+        return builder.suggest("TEST EFFECT!!!").buildFuture();
     }
 }
