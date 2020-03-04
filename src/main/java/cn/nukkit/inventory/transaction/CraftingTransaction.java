@@ -6,10 +6,10 @@ import cn.nukkit.inventory.CraftingRecipe;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
-import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.player.Player;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.protocol.bedrock.data.ContainerId;
 import com.nukkitx.protocol.bedrock.packet.ContainerClosePacket;
 
 import java.util.Arrays;
@@ -157,7 +157,7 @@ public class CraftingTransaction extends InventoryTransaction {
          * transaction goes wrong.
          */
         ContainerClosePacket packet = new ContainerClosePacket();
-        packet.setWindowId((byte) ContainerIds.NONE);
+        packet.setWindowId((byte) ContainerId.NONE);
         source.getServer().getScheduler().scheduleDelayedTask(new Task() {
             @Override
             public void onRun(int currentTick) {

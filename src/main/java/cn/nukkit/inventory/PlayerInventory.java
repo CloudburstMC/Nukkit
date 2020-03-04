@@ -6,8 +6,8 @@ import cn.nukkit.event.entity.EntityArmorChangeEvent;
 import cn.nukkit.event.entity.EntityInventoryChangeEvent;
 import cn.nukkit.event.player.PlayerItemHeldEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.player.Player;
+import com.nukkitx.protocol.bedrock.data.ContainerId;
 import com.nukkitx.protocol.bedrock.data.ItemData;
 import com.nukkitx.protocol.bedrock.packet.InventoryContentPacket;
 import com.nukkitx.protocol.bedrock.packet.InventorySlotPacket;
@@ -349,7 +349,7 @@ public class PlayerInventory extends BaseInventory {
         for (Player player : players) {
             if (player.equals(this.getHolder())) {
                 InventoryContentPacket packet2 = new InventoryContentPacket();
-                packet2.setContainerId(ContainerIds.SPECIAL_ARMOR);
+                packet2.setContainerId(ContainerId.ARMOR);
                 packet2.setContents(Item.toNetwork(armor));
                 player.sendPacket(packet2);
             } else {
@@ -399,7 +399,7 @@ public class PlayerInventory extends BaseInventory {
         for (Player player : players) {
             if (player.equals(this.getHolder())) {
                 InventorySlotPacket packet2 = new InventorySlotPacket();
-                packet2.setContainerId(ContainerIds.SPECIAL_ARMOR);
+                packet2.setContainerId(ContainerId.ARMOR);
                 packet2.setSlot(index - this.getSize());
                 packet2.setItem(this.getItem(index).toNetwork());
                 player.sendPacket(packet2);
@@ -468,7 +468,7 @@ public class PlayerInventory extends BaseInventory {
             packet.setItem(itemData);
 
             if (player.equals(this.getHolder())) {
-                packet.setContainerId(ContainerIds.INVENTORY);
+                packet.setContainerId(ContainerId.INVENTORY);
                 player.sendPacket(packet);
             } else {
                 int id = player.getWindowId(this);
@@ -489,7 +489,7 @@ public class PlayerInventory extends BaseInventory {
         Player p = (Player) this.getHolder();
 
         InventoryContentPacket pk = new InventoryContentPacket();
-        pk.setContainerId(ContainerIds.CREATIVE);
+        pk.setContainerId(ContainerId.CREATIVE);
 
         if (!p.isSpectator()) { //fill it for all gamemodes except spectator
             pk.setContents(Item.toNetwork(Item.getCreativeItems().toArray(new Item[0])));
