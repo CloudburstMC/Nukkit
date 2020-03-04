@@ -108,6 +108,9 @@ public class InventoryTransactionUtils {
                     //TODO: HACK!
                     slot += 36;
                     containerId = ContainerId.INVENTORY;
+                } else if (containerId == ContainerId.OFFHAND) {
+                    slot = 40;
+                    containerId = ContainerId.INVENTORY;
                 }
 
                 Inventory window = player.getWindowById(containerId);

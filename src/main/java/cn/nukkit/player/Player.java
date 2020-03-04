@@ -62,7 +62,6 @@ import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.math.*;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.network.ProtocolInfo;
-import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.network.protocol.types.InventoryTransactionUtils;
 import cn.nukkit.pack.Pack;
 import cn.nukkit.permission.PermissibleBase;
@@ -1087,6 +1086,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.getInventory().sendContents(this);
         this.getInventory().sendContents(this.getViewers());
         this.getInventory().sendHeldItem(this.hasSpawned);
+        this.getInventory().sendOffHandContents(this);
+        this.getInventory().sendOffHandContents(this.getViewers());
 
         this.getInventory().sendCreativeContents();
         return true;
@@ -1583,7 +1584,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.sendAttributes();
         this.getInventory().sendContents(this);
         this.getInventory().sendArmorContents(this);
-        // Send OffHand Inv
+        this.getInventory().sendOffHandContents(this);
         // Send HotBarPacket
 
         if (this.getGamemode() == Player.SPECTATOR) {
@@ -2133,7 +2134,13 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
                     MobEquipmentPacket mobEquipmentPacket = (MobEquipmentPacket) packet;
 
-                    Item serverItem = this.getInventory().getItem(mobEquipmentPacket.getHotbarSlot());
+                    boolean offhand = mobEquipmentPacket.getContainerId() == ContainerId.OFFHAND;
+                    Item serverItem;
+                    if (offhand) {
+                        serverItem = this.getInventory().getOffHand();
+                    } else {
+                        serverItem = this.getInventory().getItem(mobEquipmentPacket.getHotbarSlot());
+                    }
                     Item clientItem = Item.fromNetwork(mobEquipmentPacket.getItem());
 
                     if (!serverItem.equals(clientItem)) {
@@ -2141,9 +2148,11 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         this.getInventory().sendContents(this);
                         return;
                     }
-
-                    this.getInventory().equipItem(mobEquipmentPacket.getHotbarSlot());
-
+                    if (offhand) {
+                        this.getInventory().setOffHandContents(clientItem);
+                    } else {
+                        this.getInventory().equipItem(mobEquipmentPacket.getHotbarSlot());
+                    }
                     this.setUsingItem(false);
 
                     break;

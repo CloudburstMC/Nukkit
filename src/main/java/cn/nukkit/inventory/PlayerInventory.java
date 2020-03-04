@@ -28,6 +28,7 @@ public class PlayerInventory extends BaseInventory {
 
     protected int itemInHandIndex = 0;
     private int[] hotbar;
+    private int offHandIndex = 40;
 
     public PlayerInventory(Human player) {
         super(player, InventoryType.PLAYER);
@@ -41,12 +42,13 @@ public class PlayerInventory extends BaseInventory {
 
     @Override
     public int getSize() {
-        return super.getSize() - 4;
+        return super.getSize() - 5;
     }
 
     @Override
     public void setSize(int size) {
-        super.setSize(size + 4);
+        super.setSize(size + 5);
+        this.offHandIndex = size + 4;
         this.sendContents(this.getViewers());
     }
 
@@ -180,7 +182,10 @@ public class PlayerInventory extends BaseInventory {
             return;
         }
 
-        if (index >= this.getSize()) {
+        if (index == this.offHandIndex) {
+            this.sendOffHandSlot(this.getViewers());
+            this.sendOffHandSlot(this.getHolder().getViewers());
+        } else if (index >= this.getSize()) {
             this.sendArmorSlot(index, this.getViewers());
             this.sendArmorSlot(index, this.getHolder().getViewers());
         } else {
@@ -253,7 +258,11 @@ public class PlayerInventory extends BaseInventory {
             EntityArmorChangeEvent ev = new EntityArmorChangeEvent(this.getHolder(), this.getItem(index), item, index);
             Server.getInstance().getPluginManager().callEvent(ev);
             if (ev.isCancelled() && this.getHolder() != null) {
-                this.sendArmorSlot(index, this.getViewers());
+                if (index == this.offHandIndex) {
+                    this.sendOffHandSlot(this.getViewers());
+                } else {
+                    this.sendArmorSlot(index, this.getViewers());
+                }
                 return false;
             }
             item = ev.getNewItem();
@@ -326,9 +335,83 @@ public class PlayerInventory extends BaseInventory {
 
     @Override
     public void clearAll() {
-        int limit = this.getSize() + 4;
+        int limit = this.getSize() + 5;
         for (int index = 0; index < limit; ++index) {
             this.clear(index);
+        }
+    }
+
+    public Item getOffHand() {
+        return this.getItem(offHandIndex);
+    }
+
+    public void setOffHandContents(Item offhand) {
+        if (offhand == null) {
+            offhand = Item.get(AIR);
+        }
+        this.setItem(offHandIndex, offhand);
+    }
+
+    public void sendOffHandContents(Collection<Player> players) {
+        this.sendOffHandContents(players.toArray(new Player[0]));
+    }
+
+    public void sendOffHandContents(Player player) {
+        this.sendOffHandContents(new Player[]{player});
+    }
+
+    public void sendOffHandContents(Player[] players) {
+        Item offHand = this.getOffHand();
+
+        if (offHand == null) {
+            offHand = Item.get(AIR);
+        }
+
+        MobEquipmentPacket packet = new MobEquipmentPacket();
+        packet.setRuntimeEntityId(this.getHolder().getRuntimeId());
+        packet.setItem(offHand.toNetwork());
+        packet.setContainerId(ContainerId.OFFHAND);
+        packet.setInventorySlot(1);
+
+        for (Player player : players) {
+            if (player.equals(this.getHolder())) {
+                InventoryContentPacket invPacket = new InventoryContentPacket();
+                invPacket.setContainerId(ContainerId.OFFHAND);
+                invPacket.setContents(Item.toNetwork(new Item[]{offHand}));
+                player.sendPacket(invPacket);
+            } else {
+                player.sendPacket(packet);
+            }
+        }
+    }
+
+    public void sendOffHandSlot(Player player) {
+        this.sendOffHandSlot(new Player[]{player});
+    }
+
+    public void sendOffHandSlot(Collection<Player> players) {
+        this.sendOffHandSlot(players.toArray(new Player[0]));
+    }
+
+    public void sendOffHandSlot(Player[] players) {
+        Item offhand = this.getOffHand();
+
+        MobEquipmentPacket packet = new MobEquipmentPacket();
+        packet.setRuntimeEntityId(this.getHolder().getRuntimeId());
+        packet.setItem(offhand.toNetwork());
+        packet.setContainerId(ContainerId.OFFHAND);
+        packet.setInventorySlot(1);
+
+        for (Player player : players) {
+            if (player.equals(this.getHolder())) {
+                InventorySlotPacket slotPacket = new InventorySlotPacket();
+                slotPacket.setContainerId(ContainerId.OFFHAND);
+                slotPacket.setItem(offhand.toNetwork());
+                slotPacket.setSlot(0); // Not sure why offhand uses slot 0 in SlotPacket and 1 in MobEq Packet
+                player.sendPacket(slotPacket);
+            } else {
+                player.sendPacket(packet);
+            }
         }
     }
 
