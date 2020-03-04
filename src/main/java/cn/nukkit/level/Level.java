@@ -2110,7 +2110,7 @@ public class Level implements ChunkManager, Metadatable {
     @Override
     public void setBlockDataAt(int x, int y, int z, int layer, int data) {
         this.getChunk(x >> 4, z >> 4).setBlockData(x & 0x0f, y & 0xff, z & 0x0f, layer, data & 0x0f);
-        this.addBlockChange(x, y, z);
+        this.addBlockChange(x, y, z, layer);
     }
 
     public int getBlockSkyLightAt(int x, int y, int z) {
