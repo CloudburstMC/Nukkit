@@ -1,6 +1,30 @@
 package cn.nukkit;
 
-public interface IServer{
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.util.*;
+
+import cn.nukkit.command.*;
+import cn.nukkit.entity.data.*;
+import cn.nukkit.event.server.*;
+import cn.nukkit.inventory.*;
+import cn.nukkit.lang.*;
+import cn.nukkit.level.*;
+import cn.nukkit.metadata.*;
+import cn.nukkit.nbt.tag.*;
+import cn.nukkit.network.*;
+import cn.nukkit.network.protocol.*;
+import cn.nukkit.pack.*;
+import cn.nukkit.permission.*;
+import cn.nukkit.player.*;
+import cn.nukkit.plugin.*;
+import cn.nukkit.plugin.service.*;
+import cn.nukkit.registry.*;
+import cn.nukkit.scheduler.*;
+import cn.nukkit.utils.*;
+import io.netty.buffer.*;
+
+public interface IServer {
     int broadcastMessage(String message);
     int broadcastMessage(TextContainer message);
     int broadcastMessage(String message, CommandSender[] recipients);
@@ -8,7 +32,7 @@ public interface IServer{
     int broadcastMessage(TextContainer message, Collection<? extends CommandSender> recipients);
     int broadcast(String message, String permissions);
     int broadcast(TextContainer message, String permissions);
-    void boot();
+    void boot(IocContainer dependencies) throws IOException;
     void batchPackets(Player[] players, DataPacket[] packets);
     void batchPackets(Player[] players, DataPacket[] packets, boolean forceSync);
     void enablePlugins(PluginLoadOrder type);
@@ -87,6 +111,7 @@ public interface IServer{
     void updateName(UUID uuid, String name);
     IPlayer getOfflinePlayer(final String name);
     IPlayer getOfflinePlayer(UUID uuid);
+    
     CompoundTag getOfflinePlayerData(UUID uuid);
     CompoundTag getOfflinePlayerData(UUID uuid, boolean create);
     CompoundTag getOfflinePlayerData(String name);
@@ -137,7 +162,6 @@ public interface IServer{
     Map<String, List<String>> getCommandAliases();
     boolean shouldSavePlayerData();
     int getPlayerSkinChangeCooldown();
-    final boolean isPrimaryThread();
     Thread getPrimaryThread();
     boolean isNetherAllowed();
     PlayerDataSerializer getPlayerDataSerializer();

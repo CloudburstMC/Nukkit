@@ -1,7 +1,8 @@
 package cn.nukkit;
 
 import cn.nukkit.network.protocol.ProtocolInfo;
-import cn.nukkit.utils.ServerKiller;
+import cn.nukkit.utils.*;
+import cn.nukkit.*;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Properties;
 
 /*
@@ -64,6 +66,9 @@ public class Nukkit {
     public static boolean TITLE = false;
     public static boolean shortTitle = requiresShortTitle();
     public static int DEBUG = 1;
+
+    
+    private IGenerateWorld genWorld;
 
     public static void main(String[] args) {
         System.setProperty("log4j.skipJansi", "false");
@@ -110,6 +115,7 @@ public class Nukkit {
             return;
         }
 
+        IocContainer dependencies = new IocContainer();
         File dataPath = options.valueOf(dataPathSpec);
 
         File pluginPath;
@@ -136,12 +142,12 @@ public class Nukkit {
 
         Server server = new Server(path.getAbsolutePath() + "/", dataPath.getAbsolutePath() + "/",
                 pluginPath.getAbsolutePath() + "/", language);
-
+        dependencies.Register(IGenerateWorld.class, new GenerateWorld(server));
         try {
             if (TITLE) {
                 System.out.print((char) 0x1b + "]0;Nukkit is starting up..." + (char) 0x07);
             }
-            server.boot();
+            server.boot(dependencies);
         } catch (Throwable t) {
             log.fatal("Nukkit crashed", t);
         }

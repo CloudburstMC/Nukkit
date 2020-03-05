@@ -1,17 +1,20 @@
 package cn.nukkit.utils;
 
-import lombok.extern.log4j.Log4j2;
-
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.UUID;
+
 import cn.nukkit.Server;
+import lombok.extern.log4j.Log4j2;
 
 /**
  *      created by jangel3 on 2020/3/2. 
  *      Package cn.nukkit.utils in project Nukkit
  */
 @Log4j2
-public class GenerateWorld {
+public class GenerateWorld implements IGenerateWorld {
     private Server server;
 
     public GenerateWorld(Server server) {

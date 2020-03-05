@@ -97,6 +97,7 @@ public class Server implements IServer {
     public static final String BROADCAST_CHANNEL_ADMINISTRATIVE = "nukkit.broadcast.admin";
     public static final String BROADCAST_CHANNEL_USERS = "nukkit.broadcast.user";
 
+    private IocContainer dependencies;
     private static Server instance = null;
 
     private BanList banByName;
@@ -316,7 +317,8 @@ public class Server implements IServer {
         broadcastPacket(players.toArray(new Player[0]), packet);
     }
 
-    public void boot() throws IOException {
+    public void boot(IocContainer dependencies) throws IOException {
+        this.dependencies = dependencies;
         // Create directories
         if (!new File(dataPath + "worlds/").exists()) {
             new File(dataPath + "worlds/").mkdirs();
@@ -1951,7 +1953,7 @@ public class Server implements IServer {
     }
 
     private void loadLevels() {
-        GenerateWorld setWorld = new GenerateWorld(this);
+        IGenerateWorld setWorld = dependencies.Retrieve(IGenerateWorld.class);
 
         Map<String, Object> worldNames = setWorld.SetWorldNames();
         List<CompletableFuture<Level>> levelFutures = new ArrayList<>(worldNames.size());
