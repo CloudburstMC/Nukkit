@@ -171,7 +171,7 @@ public class Human extends EntityCreature implements InventoryHolder {
                 int slot = itemTag.getByte("Slot");
                 if (slot >= 0 && slot < 9) { //hotbar
                     //Old hotbar saving stuff, useless now
-                } else if (slot >= 100 && slot < 104) {
+                } else if (slot >= 100 && slot < 105) {
                     this.inventory.setItem(this.inventory.getSize() + slot - 100, ItemUtils.deserializeItem(itemTag));
                 } else {
                     this.inventory.setItem(slot - 9, ItemUtils.deserializeItem(itemTag));
@@ -199,7 +199,7 @@ public class Human extends EntityCreature implements InventoryHolder {
             }
         }
 
-        for (int slot = 100; slot < 104; ++slot) {
+        for (int slot = 100; slot < 105; ++slot) {
             Item item = this.inventory.getItem(this.inventory.getSize() + slot - 100);
             if (!item.isNull()) {
                 inventoryItems.add(ItemUtils.serializeItem(item, slot));

@@ -62,7 +62,6 @@ import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.math.*;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.network.ProtocolInfo;
-import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.network.protocol.types.InventoryTransactionUtils;
 import cn.nukkit.pack.Pack;
 import cn.nukkit.permission.PermissibleBase;
@@ -1070,14 +1069,14 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.teleport(this.getPosition().add(0, 0.1, 0));
 
             InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
-            inventoryContentPacket.setContainerId(ContainerIds.SPECIAL_CREATIVE);
+            inventoryContentPacket.setContainerId(ContainerId.CREATIVE);
             this.sendPacket(inventoryContentPacket);
         } else {
             if (this.isSurvival()) {
                 this.getAdventureSettings().set(Type.FLYING, false);
             }
             InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
-            inventoryContentPacket.setContainerId(ContainerIds.SPECIAL_CREATIVE);
+            inventoryContentPacket.setContainerId(ContainerId.CREATIVE);
             inventoryContentPacket.setContents(Item.toNetwork(Item.getCreativeItems().toArray(new Item[0])));
             this.sendPacket(inventoryContentPacket);
         }
@@ -1087,6 +1086,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.getInventory().sendContents(this);
         this.getInventory().sendContents(this.getViewers());
         this.getInventory().sendHeldItem(this.hasSpawned);
+        this.getInventory().sendOffHandContents(this);
+        this.getInventory().sendOffHandContents(this.getViewers());
 
         this.getInventory().sendCreativeContents();
         return true;
@@ -1580,19 +1581,21 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.setEnableClientCommand(true);
 
         this.getAdventureSettings().update();
-
-        this.sendPotionEffects(this);
-        this.sendData(this);
+        this.sendAttributes();
         this.getInventory().sendContents(this);
         this.getInventory().sendArmorContents(this);
+        this.getInventory().sendOffHandContents(this);
+        // Send HotBarPacket
 
         if (this.getGamemode() == Player.SPECTATOR) {
             InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
-            inventoryContentPacket.setContainerId(ContainerIds.CREATIVE);
+            inventoryContentPacket.setContainerId(ContainerId.CREATIVE);
             this.sendPacket(inventoryContentPacket);
         } else {
             this.getInventory().sendCreativeContents();
         }
+        this.sendPotionEffects(this);
+        this.sendData(this);
 
         SetTimePacket setTimePacket = new SetTimePacket();
         setTimePacket.setTime(this.getLevel().getTime());
@@ -1605,7 +1608,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.getLevel().sendTime(this);
 
         this.setMovementSpeed(DEFAULT_SPEED);
-        this.sendAttributes();
+
         this.setNameTagVisible(true);
         this.setNameTagAlwaysVisible(true);
         this.setCanClimb(true);
@@ -2131,7 +2134,13 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
                     MobEquipmentPacket mobEquipmentPacket = (MobEquipmentPacket) packet;
 
-                    Item serverItem = this.getInventory().getItem(mobEquipmentPacket.getHotbarSlot());
+                    boolean offhand = mobEquipmentPacket.getContainerId() == ContainerId.OFFHAND;
+                    Item serverItem;
+                    if (offhand) {
+                        serverItem = this.getInventory().getOffHand();
+                    } else {
+                        serverItem = this.getInventory().getItem(mobEquipmentPacket.getHotbarSlot());
+                    }
                     Item clientItem = Item.fromNetwork(mobEquipmentPacket.getItem());
 
                     if (!serverItem.equals(clientItem)) {
@@ -2139,9 +2148,11 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         this.getInventory().sendContents(this);
                         return;
                     }
-
-                    this.getInventory().equipItem(mobEquipmentPacket.getHotbarSlot());
-
+                    if (offhand) {
+                        this.getInventory().setOffHandContents(clientItem);
+                    } else {
+                        this.getInventory().equipItem(mobEquipmentPacket.getHotbarSlot());
+                    }
                     this.setUsingItem(false);
 
                     break;
@@ -2598,7 +2609,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     if (containerClosePacket.getWindowId() == -1) {
                         this.craftingType = CRAFTING_SMALL;
                         this.resetCraftingGridType();
-                        this.addWindow(this.craftingGrid, ContainerIds.NONE);
+                        this.addWindow(this.craftingGrid, (byte) ContainerId.NONE);
                     }
                     break;
                 case CRAFTING_EVENT:
@@ -3032,7 +3043,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 case PLAYER_HOTBAR:
                     PlayerHotbarPacket hotbarPacket = (PlayerHotbarPacket) packet;
 
-                    if (hotbarPacket.getContainerId() != ContainerIds.INVENTORY) {
+                    if (hotbarPacket.getContainerId() != ContainerId.INVENTORY) {
                         return; // This should never happen
                     }
 
@@ -4136,13 +4147,13 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     protected void addDefaultWindows() {
-        this.addWindow(this.getInventory(), ContainerIds.INVENTORY, true);
+        this.addWindow(this.getInventory(), (byte) ContainerId.INVENTORY, true);
 
         this.playerUIInventory = new PlayerUIInventory(this);
-        this.addWindow(this.playerUIInventory, ContainerIds.UI, true);
+        this.addWindow(this.playerUIInventory, (byte) ContainerId.CURSOR, true);
 
         this.craftingGrid = this.playerUIInventory.getCraftingGrid();
-        this.addWindow(this.craftingGrid, ContainerIds.NONE);
+        this.addWindow(this.craftingGrid, (byte) ContainerId.NONE);
 
         //TODO: more windows
     }
@@ -4161,7 +4172,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     public void setCraftingGrid(CraftingGrid grid) {
         this.craftingGrid = grid;
-        this.addWindow(grid, ContainerIds.NONE);
+        this.addWindow(grid, (byte) ContainerId.NONE);
     }
 
     public void resetCraftingGridType() {
@@ -4185,7 +4196,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
             if (this.craftingGrid instanceof BigCraftingGrid) {
                 this.craftingGrid = this.playerUIInventory.getCraftingGrid();
-                this.addWindow(this.craftingGrid, ContainerIds.NONE);
+                this.addWindow(this.craftingGrid, (byte) ContainerId.NONE);
 //
 //                ContainerClosePacket pk = new ContainerClosePacket(); //be sure, big crafting is really closed
 //                pk.windowId = ContainerIds.NONE;

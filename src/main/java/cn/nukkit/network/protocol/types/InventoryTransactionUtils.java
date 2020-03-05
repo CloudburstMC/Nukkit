@@ -8,6 +8,7 @@ import cn.nukkit.inventory.transaction.action.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.player.Player;
+import com.nukkitx.protocol.bedrock.data.ContainerId;
 import com.nukkitx.protocol.bedrock.data.InventoryActionData;
 import com.nukkitx.protocol.bedrock.data.InventorySource;
 import com.nukkitx.protocol.bedrock.packet.InventoryTransactionPacket;
@@ -103,10 +104,13 @@ public class InventoryTransactionUtils {
 
         switch (source.getType()) {
             case CONTAINER:
-                if (containerId == ContainerIds.ARMOR) {
+                if (containerId == ContainerId.ARMOR) {
                     //TODO: HACK!
                     slot += 36;
-                    containerId = ContainerIds.INVENTORY;
+                    containerId = ContainerId.INVENTORY;
+                } else if (containerId == ContainerId.OFFHAND) {
+                    slot = 40;
+                    containerId = ContainerId.INVENTORY;
                 }
 
                 Inventory window = player.getWindowById(containerId);
