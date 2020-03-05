@@ -1,10 +1,16 @@
 dict: "nukkitx:vanilla"
 
 baseHeight: 0.125
-heightVariation: 0.05
+#heightVariation: 0.05
+heightVariation: 1.5
 
 temperature: 0.8
 rainfall: 0.4
+
+replacers:
+  - id: "nukkitx:surface"
+    top: "grass"
+    fill: "dirt"
 
 populators:
   - id: "nukkitx:basic_tree"
@@ -13,8 +19,3 @@ populators:
     height: 4-8
     trunk: "log"
     leaf: "leaves"
-
-replacers:
-  - id: "nukkitx:surface"
-    top: "grass"
-    fill: "dirt"

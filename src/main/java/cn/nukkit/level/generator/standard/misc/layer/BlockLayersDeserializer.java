@@ -15,8 +15,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import net.daporkchop.lib.common.cache.Cache;
-import net.daporkchop.lib.common.cache.ThreadCache;
+import net.daporkchop.lib.common.ref.Ref;
+import net.daporkchop.lib.common.ref.ThreadRef;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -54,7 +54,7 @@ public final class BlockLayersDeserializer extends JsonDeserializer<BlockLayer[]
 
     @JsonDeserialize
     private static final class TempBlockLayer {
-        private static final Cache<Matcher> LAYER_MATCHER_CACHE = ThreadCache.regex("^(?:([0-9]+(?:-[0-9]+)?)\\*)?((?:[a-zA-Z0-9_]+:)?[a-zA-Z0-9_]+)(?:#([0-9]+))?$");
+        private static final Ref<Matcher> LAYER_MATCHER_CACHE = ThreadRef.regex("^(?:([0-9]+(?:-[0-9]+)?)\\*)?((?:[a-zA-Z0-9_]+:)?[a-zA-Z0-9_]+)(?:#([0-9]+))?$");
 
         private final int blockId;
         private final int minSize;

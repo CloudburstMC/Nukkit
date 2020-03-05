@@ -55,9 +55,9 @@ density:
 replacers:
   - id: "nukkitx:ground"
     block: "stone"
-  - id: "nukkitx:sea"
-    block: "water"
-    seaLevel: 63
+#  - id: "nukkitx:sea"
+#    block: "water"
+#    seaLevel: 63
   - id: "nukkitx:biome"
 
 decorators:
@@ -65,9 +65,6 @@ decorators:
     block: "bedrock"
     base: 0
     fade: 1-5
-#  - id: "nukkitx:surface"
-#    target: "stone"
-#    layers: "grass,0-4*dirt"
 
 populators:
   - id: "nukkitx:biome"

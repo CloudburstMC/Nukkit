@@ -9,9 +9,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
-import lombok.NoArgsConstructor;
-import net.daporkchop.lib.common.cache.Cache;
-import net.daporkchop.lib.common.cache.ThreadCache;
+import net.daporkchop.lib.common.ref.Ref;
+import net.daporkchop.lib.common.ref.ThreadRef;
 
 import java.util.regex.Matcher;
 
@@ -22,7 +21,7 @@ import java.util.regex.Matcher;
  */
 @JsonDeserialize
 public final class ConstantBlock implements BlockFilter {
-    private static final Cache<Matcher> BLOCK_MATCHER_CACHE = ThreadCache.regex("^((?:[a-zA-Z0-9_]+:)?[a-zA-Z0-9_]+)(?:#([0-9]+))?$");
+    private static final Ref<Matcher> BLOCK_MATCHER_CACHE = ThreadRef.regex("^((?:[a-zA-Z0-9_]+:)?[a-zA-Z0-9_]+)(?:#([0-9]+))?$");
 
     private final Block block;
     private final int   runtimeId;
@@ -41,7 +40,7 @@ public final class ConstantBlock implements BlockFilter {
     }
 
     @JsonCreator
-    public ConstantBlock(String value)  {
+    public ConstantBlock(String value) {
         Matcher matcher = BLOCK_MATCHER_CACHE.get().reset(value);
         Preconditions.checkArgument(matcher.find(), "Cannot parse block: \"%s\"", value);
 

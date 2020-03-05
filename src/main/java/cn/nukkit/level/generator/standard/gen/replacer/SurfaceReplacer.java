@@ -7,6 +7,7 @@ import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
 import net.daporkchop.lib.noise.NoiseSource;
 import net.daporkchop.lib.noise.engine.PorkianV2NoiseEngine;
@@ -18,6 +19,7 @@ import static java.lang.Math.*;
 /**
  * @author DaPorkchop_
  */
+@JsonDeserialize
 public final class SurfaceReplacer implements BlockReplacer {
     public static final Identifier ID = Identifier.fromString("nukkitx:surface");
 
@@ -51,7 +53,7 @@ public final class SurfaceReplacer implements BlockReplacer {
                 return depth > 0.0d ? this.top : null;
             }
         } else {
-            if (gradY < 0.0d && density / abs(gradY) < depth + 1 - sqrt(gradX * gradX + gradZ * gradZ) / gradY) {
+            if (gradY < 0.0d && density / abs(gradY) < depth + 1.0d - sqrt(gradX * gradX + gradZ * gradZ) / gradY) {
                 return this.fill;
             }
 

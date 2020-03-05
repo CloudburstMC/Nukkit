@@ -200,8 +200,8 @@ public final class StandardGenerator implements Generator {
                 for (int i = (x * ICACHE_WIDTH + z) * ICACHE_HEIGHT, y = 0; y < 256; y++, i++) {
                     double d = iDensityCache[i];
                     double gradX = iDensityCache[i + ICACHE_HEIGHT * ICACHE_WIDTH] - d;
-                    double gradY = iDensityCache[i + ICACHE_WIDTH] - d;
-                    double gradZ = iDensityCache[i + 1] - d;
+                    double gradY = iDensityCache[i + 1] - d;
+                    double gradZ = iDensityCache[i + ICACHE_HEIGHT] - d;
 
                     Block block = null;
                     for (BlockReplacer replacer : replacers) {

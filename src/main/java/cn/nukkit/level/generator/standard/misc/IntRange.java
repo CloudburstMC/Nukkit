@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
 import lombok.NonNull;
-import net.daporkchop.lib.common.cache.Cache;
-import net.daporkchop.lib.common.cache.ThreadCache;
+import net.daporkchop.lib.common.ref.Ref;
+import net.daporkchop.lib.common.ref.ThreadRef;
 import net.daporkchop.lib.random.PRandom;
 
 import java.util.regex.Matcher;
@@ -21,7 +21,7 @@ import java.util.regex.Matcher;
  */
 @JsonDeserialize
 public final class IntRange {
-    private static final Cache<Matcher> RANGE_MATCHER_CACHE = ThreadCache.regex("^([0-9]+)(?:-([0-9]+))?$");
+    private static final Ref<Matcher> RANGE_MATCHER_CACHE = ThreadRef.regex("^([0-9]+)(?:-([0-9]+))?$");
 
     public static final IntRange EMPTY_RANGE = new IntRange(0, 0, true);
 

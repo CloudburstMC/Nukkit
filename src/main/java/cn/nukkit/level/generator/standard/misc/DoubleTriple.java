@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
-import net.daporkchop.lib.common.cache.Cache;
-import net.daporkchop.lib.common.cache.ThreadCache;
+import net.daporkchop.lib.common.ref.Ref;
+import net.daporkchop.lib.common.ref.ThreadRef;
 
 import java.util.regex.Matcher;
 
@@ -16,7 +16,7 @@ import java.util.regex.Matcher;
  */
 @JsonDeserialize
 public final class DoubleTriple {
-    private static final Cache<Matcher> TRIPLE_MATCHER_CACHE = ThreadCache.regex("^(-?(?:[0-9]+|[0-9]*\\.[0-9]+)),(-?(?:[0-9]+|[0-9]*\\.[0-9]+)),(-?(?:[0-9]+|[0-9]*\\.[0-9]+))$");
+    private static final Ref<Matcher> TRIPLE_MATCHER_CACHE = ThreadRef.regex("^(-?(?:[0-9]+|[0-9]*\\.[0-9]+)),(-?(?:[0-9]+|[0-9]*\\.[0-9]+)),(-?(?:[0-9]+|[0-9]*\\.[0-9]+))$");
 
     public static final DoubleTriple ONE = new DoubleTriple(1.0d, 1.0d, 1.0d);
 

@@ -2,26 +2,12 @@ package cn.nukkit.level.generator.standard;
 
 import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
-import cn.nukkit.block.Block;
-import cn.nukkit.level.generator.standard.misc.filter.AnyOfBlockFilter;
-import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
-import cn.nukkit.level.generator.standard.misc.layer.BlockLayer;
-import cn.nukkit.level.generator.standard.misc.layer.ConstantSizeBlockLayer;
-import cn.nukkit.level.generator.standard.misc.layer.VariableSizeBlockLayer;
 import cn.nukkit.plugin.Plugin;
-import cn.nukkit.registry.BlockRegistry;
-import cn.nukkit.utils.Config;
 import cn.nukkit.utils.ConfigSection;
 import cn.nukkit.utils.Identifier;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-import net.daporkchop.lib.common.cache.Cache;
-import net.daporkchop.lib.common.cache.ThreadCache;
 import net.daporkchop.lib.common.misc.file.PFiles;
-import net.daporkchop.lib.random.PRandom;
-import net.daporkchop.lib.random.impl.FastPRandom;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -30,11 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
 import java.util.UUID;
-import java.util.regex.Matcher;
 
 /**
  * Various helper methods used by the NukkitX standard generator.
