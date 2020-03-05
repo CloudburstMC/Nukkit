@@ -8,8 +8,8 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import net.daporkchop.lib.common.cache.Cache;
-import net.daporkchop.lib.common.cache.ThreadCache;
+import net.daporkchop.lib.common.ref.Ref;
+import net.daporkchop.lib.common.ref.ThreadRef;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -19,7 +19,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @JsonDeserialize(using = Identifier.Deserializer.class)
 public final class Identifier implements Comparable<Identifier> {
@@ -27,8 +26,7 @@ public final class Identifier implements Comparable<Identifier> {
 
     public static final Identifier EMPTY = new Identifier("", "", "" + NAMESPACE_SEPARATOR);
 
-    private static final Pattern PATTERN = Pattern.compile("^(?>minecraft:)?(?>([a-z0-9_]*)" + NAMESPACE_SEPARATOR + ")?([a-zA-Z0-9_]*)$");
-    private static final Cache<Matcher> MATCHER_CACHE = ThreadCache.soft(() -> PATTERN.matcher(""));
+    private static final Ref<Matcher> MATCHER_CACHE = ThreadRef.regex("^(?>minecraft:)?(?>([a-z0-9_]*)" + NAMESPACE_SEPARATOR + ")?([a-zA-Z0-9_]*)$");
 
     private static final Lock READ_LOCK;
     private static final Lock WRITE_LOCK;
