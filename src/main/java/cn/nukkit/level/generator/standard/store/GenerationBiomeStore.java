@@ -19,6 +19,8 @@ import lombok.NonNull;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * Store for {@link GenerationBiome}.
@@ -28,6 +30,12 @@ import java.io.InputStream;
  */
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public final class GenerationBiomeStore extends AbstractGeneratorStore<GenerationBiome> {
+    public synchronized Collection<GenerationBiome> reset() {
+        Collection<GenerationBiome> biomes = new HashSet<>(this.idToValues.values());
+        this.idToValues.clear();
+        return biomes;
+    }
+
     @Override
     protected GenerationBiome compute(@NonNull Identifier id) throws IOException {
         try (InputStream in = StandardGeneratorUtils.read("biome", id)) {
@@ -51,7 +59,14 @@ public final class GenerationBiomeStore extends AbstractGeneratorStore<Generatio
         private Populator[]     populators = Populator.EMPTY_ARRAY;
 
         @JsonProperty
-        private BiomeHeight height = BiomeHeight.DEFAULT_HEIGHT_RANGE;
+        private double baseHeight      = 0.1d;
+        @JsonProperty
+        private double heightVariation = 0.2d;
+
+        @JsonProperty
+        private double temperature = 0.5d;
+        @JsonProperty
+        private double rainfall    = 0.5d;
 
         public GenerationBiome build(@NonNull Identifier id) {
             return new GenerationBiome(this, id);
@@ -60,30 +75,6 @@ public final class GenerationBiomeStore extends AbstractGeneratorStore<Generatio
         @JsonSetter("dictionary")
         private void setDictionary(Identifier dictionaryId) {
             this.dictionary = StandardGeneratorStores.biomeDictionary().find(dictionaryId);
-        }
-    }
-
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    @Getter
-    @JsonDeserialize
-    public static final class BiomeHeight {
-        private static final BiomeHeight DEFAULT_HEIGHT_RANGE = new BiomeHeight();
-
-        @JsonProperty
-        @JsonAlias({"base"})
-        private double baseHeight      = 0.1d;
-        @JsonProperty
-        @JsonAlias({"variation"})
-        private double heightVariation = 0.2d;
-
-        public double correctedBaseHeight() {
-            return this.baseHeight;
-            //return this.baseHeight * 17.0d / 64.0d - 1.0d / 256.0d;
-        }
-
-        public double correctedHeightVariation() {
-            return this.heightVariation;
-            //return 2.4d * this.heightVariation + 4.0d / 15.0d;
         }
     }
 }

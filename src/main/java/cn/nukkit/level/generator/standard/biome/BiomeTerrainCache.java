@@ -5,15 +5,15 @@ import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import net.daporkchop.lib.common.cache.Cache;
-import net.daporkchop.lib.common.cache.ThreadCache;
+import net.daporkchop.lib.common.ref.Ref;
+import net.daporkchop.lib.common.ref.ThreadRef;
 import net.daporkchop.lib.common.util.PValidation;
 
 /**
  * @author DaPorkchop_
  */
 public final class BiomeTerrainCache {
-    private final Cache<Long2ObjectLinkedOpenHashMap<Data>> cacheCache = ThreadCache.soft(Long2ObjectLinkedOpenHashMap::new);
+    private final Ref<Long2ObjectLinkedOpenHashMap<Data>> cacheCache = ThreadRef.soft(Long2ObjectLinkedOpenHashMap::new);
     private final double[] weights;
     private final int      radius;
     private final int      diameter;
@@ -43,16 +43,16 @@ public final class BiomeTerrainCache {
             double smoothVariation = 0.0d;
             double totalWeight = 0.0d;
 
-            final double centerHeight = biomes.get(x, z).getAvgHeight();
-            for (int radius = this.radius, dx = -radius; dx <= radius; dx++)    {
-                for (int dz = -radius; dz <= radius; dz++)  {
+            final double centerHeight = biomes.get(x, z).getBaseHeight();
+            for (int radius = this.radius, dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
                     GenerationBiome biome = biomes.get(x + dx, z + dz);
 
-                    double height = biome.getAvgHeight();
+                    double height = biome.getBaseHeight();
                     double variation = biome.getHeightVariation();
 
                     double weight = Math.abs(this.weights[(dx + this.radius) * this.diameter + dx + this.radius] / (height + 2.0d));
-                    if (height > centerHeight)  {
+                    if (height > centerHeight) {
                         weight *= 0.5d;
                     }
 

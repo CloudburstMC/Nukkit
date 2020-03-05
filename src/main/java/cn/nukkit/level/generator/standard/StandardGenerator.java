@@ -15,19 +15,24 @@ import cn.nukkit.level.generator.standard.gen.replacer.BlockReplacer;
 import cn.nukkit.level.generator.standard.misc.BiomeGenerationPass;
 import cn.nukkit.level.generator.standard.misc.GenerationPass;
 import cn.nukkit.level.generator.standard.pop.Populator;
+import cn.nukkit.level.generator.standard.store.StandardGeneratorStores;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Strings;
 import lombok.NoArgsConstructor;
-import net.daporkchop.lib.common.cache.Cache;
-import net.daporkchop.lib.common.cache.ThreadCache;
+import net.daporkchop.lib.common.ref.Ref;
+import net.daporkchop.lib.common.ref.ThreadRef;
 import net.daporkchop.lib.random.PRandom;
 import net.daporkchop.lib.random.impl.FastPRandom;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -46,7 +51,9 @@ public final class StandardGenerator implements Generator {
     public static final GeneratorFactory FACTORY = (seed, options) -> {
         Identifier presetId = Identifier.fromString(Strings.isNullOrEmpty(options) ? DEFAULT_PRESET : options);
         try (InputStream in = StandardGeneratorUtils.read("preset", presetId)) {
-            return Nukkit.YAML_MAPPER.readValue(in, StandardGenerator.class).init(seed);
+            synchronized (StandardGenerator.class) {
+                return Nukkit.YAML_MAPPER.readValue(in, StandardGenerator.class).init(seed);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -59,7 +66,7 @@ public final class StandardGenerator implements Generator {
     private static final int    ICACHE_WIDTH  = 16 + 1;
     private static final int    ICACHE_HEIGHT = 256 + 1;
 
-    private static final Cache<ThreadData> THREAD_DATA_CACHE = ThreadCache.soft(ThreadData::new);
+    private static final Ref<ThreadData> THREAD_DATA_CACHE = ThreadRef.soft(ThreadData::new);
 
     @JsonProperty
     private BiomeMap      biomes;
@@ -88,10 +95,26 @@ public final class StandardGenerator implements Generator {
             .toArray(Populator[]::new);
 
     private StandardGenerator init(long seed) {
+        //reset generation biome store to ensure that the replacers/decorators/populators for a given biome aren't initialized multiple times for multiple worlds
+        Collection<GenerationBiome> biomes = StandardGeneratorStores.generationBiome().reset();
+
+        Collection<GenerationPass> generationPasses = new ArrayList<>();
+        generationPasses.add(Objects.requireNonNull(this.density, "density must be set!"));
+        generationPasses.add(Objects.requireNonNull(this.biomes, "biomes must be set!"));
+        Collections.addAll(generationPasses, this.replacers);
+        Collections.addAll(generationPasses, this.decorators);
+        Collections.addAll(generationPasses, this.populators);
+
+        for (GenerationBiome biome : biomes) {
+            Collections.addAll(generationPasses, biome.getReplacers());
+            Collections.addAll(generationPasses, biome.getDecorators());
+            Collections.addAll(generationPasses, biome.getPopulators());
+        }
+
         PRandom random = new FastPRandom(seed);
-        Stream.of(this.biomes, this.density, this.replacers, this.decorators, this.populators)
-                .flatMap(o -> o instanceof GenerationPass ? Stream.of((GenerationPass) o) : Stream.of((GenerationPass[]) o))
-                .forEach(pass -> pass.init(seed, random.nextLong()));
+        for (GenerationPass pass : generationPasses) {
+            pass.init(seed, random.nextLong());
+        }
         return this;
     }
 

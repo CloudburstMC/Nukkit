@@ -22,8 +22,11 @@ public final class GenerationBiome {
     private final Decorator[]     decorators;
     private final Populator[]     populators;
 
-    private final double avgHeight;
+    private final double baseHeight;
     private final double heightVariation;
+
+    private final double temperature;
+    private final double rainfall;
 
     private final int runtimeId;
 
@@ -34,8 +37,11 @@ public final class GenerationBiome {
         this.decorators = temp.getDecorators();
         this.populators = temp.getPopulators();
 
-        this.avgHeight = temp.getHeight().correctedBaseHeight();
-        this.heightVariation = temp.getHeight().correctedHeightVariation();
+        this.baseHeight = temp.getBaseHeight();
+        this.heightVariation = temp.getHeightVariation();
+
+        this.temperature = temp.getTemperature();
+        this.rainfall = temp.getRainfall();
 
         this.runtimeId = this.dictionary.get(id);
     }
@@ -60,8 +66,8 @@ public final class GenerationBiome {
         return this.populators;
     }
 
-    public double getAvgHeight() {
-        return this.avgHeight;
+    public double getBaseHeight() {
+        return this.baseHeight;
     }
 
     public double getHeightVariation() {

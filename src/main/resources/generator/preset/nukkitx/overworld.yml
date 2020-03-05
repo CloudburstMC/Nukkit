@@ -65,9 +65,9 @@ decorators:
     block: "bedrock"
     base: 0
     fade: 1-5
-  - id: "nukkitx:surface"
-    target: "stone"
-    layers: "grass,0-4*dirt"
+#  - id: "nukkitx:surface"
+#    target: "stone"
+#    layers: "grass,0-4*dirt"
 
 populators:
   - id: "nukkitx:biome"

@@ -1,5 +1,6 @@
 package cn.nukkit.level.generator.standard.misc;
 
+import cn.nukkit.level.generator.standard.StandardGenerator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

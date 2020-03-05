@@ -1,8 +1,10 @@
 package cn.nukkit.level.generator.standard.gen.replacer;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.generator.standard.StandardGeneratorUtils;
 import cn.nukkit.level.generator.standard.misc.ConstantBlock;
+import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.ConfigSection;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,8 +22,8 @@ import net.daporkchop.lib.random.PRandom;
 public final class GroundReplacer implements BlockReplacer {
     public static final Identifier ID = Identifier.fromString("nukkitx:ground");
 
-    @JsonProperty(required = true)
-    private Block block;
+    @JsonProperty
+    private Block block = BlockRegistry.get().getBlock(BlockIds.STONE, 0);
 
     @Override
     public Block replace(Block prev, int x, int y, int z, double gradX, double gradY, double gradZ, double density) {

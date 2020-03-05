@@ -82,7 +82,7 @@ public final class VanillaDensitySource extends AbstractGenerationPass implement
 
         double outputNoise = lerp(low, high, selector);
 
-        double depth = this.depth.get(xd, yd, zd); //yd parameter is ignored, but scale factor is always 0.0 (vectorization)
+        double depth = this.depth.get(xd, zd);
 
         if (depth < 0.0d) {
             depth *= DEPTH_SCALE_FACTOR_1;

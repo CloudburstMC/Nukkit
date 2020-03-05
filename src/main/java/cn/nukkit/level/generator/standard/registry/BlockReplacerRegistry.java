@@ -5,6 +5,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.generator.standard.gen.replacer.BlockReplacer;
 import cn.nukkit.level.generator.standard.gen.replacer.GroundReplacer;
 import cn.nukkit.level.generator.standard.gen.replacer.SeaReplacer;
+import cn.nukkit.level.generator.standard.gen.replacer.SurfaceReplacer;
 import cn.nukkit.level.generator.standard.misc.BiomeGenerationPass;
 import cn.nukkit.utils.Identifier;
 import lombok.AccessLevel;
@@ -25,6 +26,7 @@ public final class BlockReplacerRegistry extends AbstractGeneratorRegistry<Block
     protected void registerDefault() {
         this.register(GroundReplacer.ID, GroundReplacer.class);
         this.register(SeaReplacer.ID, SeaReplacer.class);
+        this.register(SurfaceReplacer.ID, SurfaceReplacer.class);
 
         this.register(BiomeGenerationPass.ID, BiomeGenerationPass.class);
     }

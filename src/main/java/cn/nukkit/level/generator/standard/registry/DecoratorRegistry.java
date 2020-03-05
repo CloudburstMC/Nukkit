@@ -25,7 +25,7 @@ public final class DecoratorRegistry extends AbstractGeneratorRegistry<Decorator
     @Override
     protected void registerDefault() {
         this.register(BedrockDecorator.ID, BedrockDecorator.class);
-        this.register(SurfaceDecorator.ID, SurfaceDecorator.class);
+        //this.register(SurfaceDecorator.ID, SurfaceDecorator.class);
 
         this.register(BiomeGenerationPass.ID, BiomeGenerationPass.class);
     }

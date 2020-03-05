@@ -1,7 +1,7 @@
 package cn.nukkit.level.generator.standard.store;
 
 import lombok.experimental.UtilityClass;
-import net.daporkchop.lib.common.cache.Cache;
+import net.daporkchop.lib.common.ref.Ref;
 
 /**
  * Stores for the various different cacheable resources required for parsing the config for the NukkitX standard generator.
@@ -10,8 +10,8 @@ import net.daporkchop.lib.common.cache.Cache;
  */
 @UtilityClass
 public class StandardGeneratorStores {
-    private final Cache<BiomeDictionaryStore> BIOME_DICTIONARY_STORE_CACHE = Cache.late(BiomeDictionaryStore::new);
-    private final Cache<GenerationBiomeStore> GENERATION_BIOME_STORE_CACHE = Cache.late(GenerationBiomeStore::new);
+    private final Ref<BiomeDictionaryStore> BIOME_DICTIONARY_STORE_CACHE = Ref.late(BiomeDictionaryStore::new);
+    private final Ref<GenerationBiomeStore> GENERATION_BIOME_STORE_CACHE = Ref.late(GenerationBiomeStore::new);
 
     public BiomeDictionaryStore biomeDictionary() {
         return BIOME_DICTIONARY_STORE_CACHE.get();
