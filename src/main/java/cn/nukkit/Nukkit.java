@@ -140,9 +140,11 @@ public class Nukkit {
 
         String language = options.valueOf(languageSpec);
 
-        Server server = new Server(path.getAbsolutePath() + "/", dataPath.getAbsolutePath() + "/",
+        String fullDataPath = dataPath.getAbsolutePath() + "/";
+        Server server = new Server(path.getAbsolutePath() + "/", fullDataPath,
                 pluginPath.getAbsolutePath() + "/", language);
         dependencies.Register(IGenerateWorld.class, new GenerateWorld(server));
+        dependencies.Register(Config.class, new Config(fullDataPath + "nukkit.yml", Config.YAML));
         try {
             if (TITLE) {
                 System.out.print((char) 0x1b + "]0;Nukkit is starting up..." + (char) 0x07);
