@@ -44,6 +44,7 @@ public class NukkitCommandDispatcher {
                 new MeCommand(dispatcher),
                 new HelpCommand(dispatcher),
                 new WeatherCommand(dispatcher),
+                new GiveCommand(dispatcher),
 
                 // Debug
                 new DebugPasteCommand(dispatcher),

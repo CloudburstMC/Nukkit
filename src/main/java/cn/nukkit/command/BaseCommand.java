@@ -3,6 +3,7 @@ package cn.nukkit.command;
 import cn.nukkit.Server;
 import cn.nukkit.command.args.registry.ArgumentData;
 import cn.nukkit.command.args.registry.ArgumentRegistry;
+import cn.nukkit.command.args.registry.EnumArgumentData;
 import cn.nukkit.command.data.*;
 import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
@@ -19,6 +20,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.CommandNode;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
@@ -174,9 +176,14 @@ public abstract class BaseCommand {
                 continue; // TODO: remove this when all argument types are registered
             }
 
-            // Apparently `node.getCommand() != null` checks whether an argument is optional.
-            // No idea how, and it doesn't seem to work all the time, but its here for now.
-            params.add(new CommandParameter(arg.getKey(), argdata.getArgumentType(), node.getCommand() != null));
+            if(argdata instanceof EnumArgumentData) {
+                List<String> enumArgs = new ArrayList<>();
+                params.add(new CommandParameter(arg.getKey(), node.getCommand() != null, argdata.getEnumName()));
+            } else {
+                // Apparently `node.getCommand() != null` checks whether an argument is optional.
+                // No idea how, and it doesn't seem to work all the time, but its here for now.
+                params.add(new CommandParameter(arg.getKey(), argdata.getArgumentType(), node.getCommand() != null));
+            }
         }
 
         CommandParameter[] parameters = new CommandParameter[params.size()];
@@ -185,11 +192,23 @@ public abstract class BaseCommand {
             parameters[i] = params.get(i);
         }
 
-        // TODO: support for subcommands, options arguments
+        // TODO: support for subcommands
 
         CommandOverload overload = new CommandOverload();
         overload.input.parameters = parameters;
         customData.overloads.put("default", overload);
+
+        final ArrayList<String> literalResult = new ArrayList<>();
+        CommandNode literalNode = dispatcher.getRoot().getChild(getName());
+        getBrigaderLiterals(literalNode, literalResult);
+
+        for (String literal : literalResult) {
+            CommandOverload subcommand = new CommandOverload();
+            // TODO: For literals make it an enum with one value: the literal name.
+            // For example:
+            //    https://github.com/NukkitX/Nukkit/blob/master/src/main/java/cn/nukkit/command/defaults/EffectCommand.java#L30-#L33
+            //customData.overloads.put(literal, overload);
+        }
 
         CommandDataVersions versions = new CommandDataVersions();
         versions.versions.add(customData);
@@ -221,6 +240,34 @@ public abstract class BaseCommand {
         if(!node.getChildren().isEmpty()) {
             for(final CommandNode<CommandSource> child : node.getChildren()) {
                 getBrigadierArguments(child, result);
+            }
+        }
+    }
+
+    private void getBrigaderLiterals(final CommandNode<CommandSource> node, final ArrayList<String> result) {
+        Map<String, LiteralCommandNode<CommandSource>> literals = new HashMap<>();
+
+        if(node == null) {
+            log.warn("NODE IS NULL: " + getName());
+            return;
+        }
+
+        try {
+            Field literalsField = node.getClass().getSuperclass().getDeclaredField("literals");
+            literalsField.setAccessible(true);
+
+            literals = (Map<String, LiteralCommandNode<CommandSource>>) literalsField.get(node);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        for(String literal : literals.keySet()) {
+            result.add(literal);
+        }
+
+        if(!node.getChildren().isEmpty()) {
+            for(final CommandNode<CommandSource> child : node.getChildren()) {
+                getBrigaderLiterals(child, result);
             }
         }
     }

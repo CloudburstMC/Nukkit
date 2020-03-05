@@ -1,9 +1,7 @@
 package cn.nukkit.command.args.registry;
 
-import cn.nukkit.command.args.CommandArgument;
-import cn.nukkit.command.args.EffectArgument;
-import cn.nukkit.command.args.ParticleArgument;
-import cn.nukkit.command.args.PlayerArgument;
+import cn.nukkit.command.args.*;
+
 import static cn.nukkit.network.protocol.AvailableCommandsPacket.*;
 
 import static cn.nukkit.command.data.CommandParamType.*;
@@ -26,9 +24,10 @@ public class ArgumentRegistry {
         register(BoolArgumentType.class, new ArgumentData("bool", STRING)); // TODO: theres no bool type? really?
 
         // Nukkit
-        register(EffectArgument.class, new ArgumentData("Effect", STRING));
-        register(CommandArgument.class, new ArgumentData("CommandName", STRING));
-        register(ParticleArgument.class, new ArgumentData("Particle", STRING));
+        register(EffectArgument.class, new EnumArgumentData("Effect", STRING));
+        register(CommandArgument.class, new EnumArgumentData("CommandName", STRING));
+        register(ParticleArgument.class, new EnumArgumentData("Particle", STRING));
+        register(ItemArgument.class, new EnumArgumentData("Item", STRING));
         register(PlayerArgument.class, new ArgumentData("target", TARGET));
     }
 
