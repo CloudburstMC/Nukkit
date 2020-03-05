@@ -5,7 +5,6 @@ import cn.nukkit.level.generator.standard.StandardGeneratorUtils;
 import cn.nukkit.level.generator.standard.biome.BiomeDictionary;
 import cn.nukkit.level.generator.standard.biome.GenerationBiome;
 import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
-import cn.nukkit.level.generator.standard.gen.replacer.BlockReplacer;
 import cn.nukkit.level.generator.standard.pop.Populator;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonAlias;
@@ -52,11 +51,9 @@ public final class GenerationBiomeStore extends AbstractGeneratorStore<Generatio
         private BiomeDictionary dictionary;
 
         @JsonProperty
-        private BlockReplacer[] replacers  = BlockReplacer.EMPTY_ARRAY;
+        private Decorator[] decorators = Decorator.EMPTY_ARRAY;
         @JsonProperty
-        private Decorator[]     decorators = Decorator.EMPTY_ARRAY;
-        @JsonProperty
-        private Populator[]     populators = Populator.EMPTY_ARRAY;
+        private Populator[] populators = Populator.EMPTY_ARRAY;
 
         @JsonProperty
         private double baseHeight      = 0.1d;

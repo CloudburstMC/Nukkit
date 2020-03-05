@@ -7,11 +7,6 @@ heightVariation: 1.5
 temperature: 0.8
 rainfall: 0.4
 
-replacers:
-  - id: "nukkitx:surface"
-    top: "grass"
-    fill: "dirt"
-
 populators:
   - id: "nukkitx:basic_tree"
     tries: 2-8

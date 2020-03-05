@@ -2,6 +2,10 @@
 #
 # Author: DaPorkchop_
 
+groundBlock: "stone"
+seaBlock: "water"
+seaLevel: 63
+
 biomes:
   id: "nukkitx:constant"
   seed: "biome"
@@ -51,14 +55,6 @@ density:
   heightOffset: 64.0
   heightVariationFactor: 64.0
   heightVariationOffset: 0.0
-
-replacers:
-  - id: "nukkitx:ground"
-    block: "stone"
-#  - id: "nukkitx:sea"
-#    block: "water"
-#    seaLevel: 63
-  - id: "nukkitx:biome"
 
 decorators:
   - id: "nukkitx:bedrock"

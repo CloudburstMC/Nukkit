@@ -1,7 +1,6 @@
 package cn.nukkit.level.generator.standard.pop;
 
 import cn.nukkit.Nukkit;
-import cn.nukkit.level.generator.standard.gen.replacer.BlockReplacer;
 import cn.nukkit.level.generator.standard.misc.BiomeGenerationPass;
 import cn.nukkit.level.generator.standard.registry.StandardGeneratorRegistries;
 import cn.nukkit.utils.Identifier;

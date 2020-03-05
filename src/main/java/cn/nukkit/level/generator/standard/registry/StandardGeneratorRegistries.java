@@ -11,7 +11,6 @@ import net.daporkchop.lib.common.ref.Ref;
 @UtilityClass
 public class StandardGeneratorRegistries {
     private final Ref<BiomeMapRegistry>       BIOME_MAP_REGISTRY_CACHE       = Ref.late(BiomeMapRegistry::new);
-    private final Ref<BlockReplacerRegistry>  BLOCK_REPLACER_REGISTRY_CACHE  = Ref.late(BlockReplacerRegistry::new);
     private final Ref<DecoratorRegistry>      DECORATOR_REGISTRY_CACHE       = Ref.late(DecoratorRegistry::new);
     private final Ref<DensitySourceRegistry>  DENSITY_SOURCE_REGISTRY_CACHE  = Ref.late(DensitySourceRegistry::new);
     private final Ref<NoiseGeneratorRegistry> NOISE_GENERATOR_REGISTRY_CACHE = Ref.late(NoiseGeneratorRegistry::new);
@@ -19,10 +18,6 @@ public class StandardGeneratorRegistries {
 
     public BiomeMapRegistry biomeMap() {
         return BIOME_MAP_REGISTRY_CACHE.get();
-    }
-
-    public BlockReplacerRegistry blockReplacer() {
-        return BLOCK_REPLACER_REGISTRY_CACHE.get();
     }
 
     public DecoratorRegistry decorator() {
