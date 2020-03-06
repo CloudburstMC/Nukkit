@@ -38,14 +38,14 @@ public final class BedrockDecorator extends AbstractGenerationPass implements De
 
         if (!this.fade.empty()) {
             if (this.reverseFade) {
-                for (int y = this.fade.max, i = 2, size = this.fade.size() + 2; i < size; y--, i++) {
-                    if (random.nextInt(0, i) == 0) {
+                for (int y = this.fade.max, i = 1, size = this.fade.size() + 1; i < size; y--, i++) {
+                    if (random.nextInt(size) < i) {
                         chunk.setBlockRuntimeIdUnsafe(x, y, z, 0, runtimeId);
                     }
                 }
             } else {
-                for (int y = this.fade.min, i = 2, size = this.fade.size() + 2; i < size; y++, i++) {
-                    if (random.nextInt(0, i) == 0) {
+                for (int y = this.fade.min, i = 1, size = this.fade.size() + 1; i < size; y++, i++) {
+                    if (random.nextInt(size) < i) {
                         chunk.setBlockRuntimeIdUnsafe(x, y, z, 0, runtimeId);
                     }
                 }

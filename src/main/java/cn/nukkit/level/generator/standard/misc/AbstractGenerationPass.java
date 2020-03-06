@@ -22,11 +22,11 @@ public abstract class AbstractGenerationPass implements GenerationPass {
     private long seed = -1L;
 
     @Override
-    public final void init(long levelSeed, long localSeed) {
-        this.init0(levelSeed, this.seed == -1L ? localSeed : levelSeed ^ this.seed);
+    public final void init(long levelSeed, long localSeed, StandardGenerator generator) {
+        this.init0(levelSeed, this.seed == -1L ? localSeed : levelSeed ^ this.seed, generator);
     }
 
-    protected void init0(long levelSeed, long localSeed) {
+    protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
         //no-op
     }
 

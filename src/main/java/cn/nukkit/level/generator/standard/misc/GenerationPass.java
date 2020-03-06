@@ -11,10 +11,12 @@ import cn.nukkit.utils.Identifier;
 public interface GenerationPass {
     /**
      * Prepares this instance for actual generation.
-     *  @param levelSeed the level seed, as defined in nukkit.yml
+     *
+     * @param levelSeed the level seed, as defined in nukkit.yml
      * @param localSeed a seed defined specifically for this generation pass
+     * @param generator the instance of {@link StandardGenerator} that this generation pass will be used by
      */
-    default void init(long levelSeed, long localSeed) {
+    default void init(long levelSeed, long localSeed, StandardGenerator generator) {
         //no-op
     }
 

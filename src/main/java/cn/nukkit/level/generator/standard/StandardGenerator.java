@@ -20,7 +20,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 import net.daporkchop.lib.common.ref.Ref;
 import net.daporkchop.lib.common.ref.ThreadRef;
 import net.daporkchop.lib.random.PRandom;
@@ -44,6 +46,7 @@ import java.util.stream.Stream;
  * @author DaPorkchop_
  */
 @NoArgsConstructor
+@Accessors(fluent = true)
 public final class StandardGenerator implements Generator {
     public static final Identifier ID = Identifier.fromString("minecraft:standard");
 
@@ -98,10 +101,13 @@ public final class StandardGenerator implements Generator {
             .toArray(Populator[]::new);
 
     @JsonProperty("groundBlock")
+    @Getter
     private int ground   = -1;
     @JsonProperty("seaBlock")
+    @Getter
     private int sea      = -1;
     @JsonProperty
+    @Getter
     private int seaLevel = -1;
 
     private StandardGenerator init(long seed) {
@@ -124,7 +130,7 @@ public final class StandardGenerator implements Generator {
 
         PRandom random = new FastPRandom(seed);
         for (GenerationPass pass : generationPasses) {
-            pass.init(seed, random.nextLong());
+            pass.init(seed, random.nextLong(), this);
         }
         return this;
     }

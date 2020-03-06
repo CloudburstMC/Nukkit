@@ -1,5 +1,6 @@
 package cn.nukkit.level.generator.standard.gen.density;
 
+import cn.nukkit.level.generator.standard.StandardGenerator;
 import cn.nukkit.level.generator.standard.biome.BiomeTerrainCache;
 import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
 import cn.nukkit.level.generator.standard.gen.noise.NoiseGenerator;
@@ -60,7 +61,7 @@ public final class VanillaDensitySource extends AbstractGenerationPass implement
     private NoiseGenerator depthNoise;
 
     @Override
-    protected void init0(long levelSeed, long localSeed) {
+    protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
         PRandom random = new FastPRandom(localSeed);
         this.selector = requireNonNull(this.selectorNoise, "selectorNoise must be set!").create(new FastPRandom(random.nextLong()));
         this.low = requireNonNull(this.lowNoise, "lowNoise must be set!").create(new FastPRandom(random.nextLong()));

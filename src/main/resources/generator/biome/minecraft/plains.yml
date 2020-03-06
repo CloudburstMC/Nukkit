@@ -1,11 +1,16 @@
 dict: "nukkitx:vanilla"
 
 baseHeight: 0.125
-#heightVariation: 0.05
-heightVariation: 1.5
+heightVariation: 0.05
 
 temperature: 0.8
 rainfall: 0.4
+
+decorators:
+  - id: "nukkitx:surface"
+    ground: "stone"
+    top: "grass"
+    fill: "dirt"
 
 populators:
   - id: "nukkitx:basic_tree"

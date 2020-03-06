@@ -57,6 +57,7 @@ density:
   heightVariationOffset: 0.0
 
 decorators:
+  - id: "nukkitx:biome"
   - id: "nukkitx:bedrock"
     block: "bedrock"
     base: 0
