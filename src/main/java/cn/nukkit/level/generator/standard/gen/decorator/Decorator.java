@@ -22,6 +22,8 @@ public interface Decorator extends GenerationPass {
      *
      * @param chunk  the chunk to be decorated
      * @param random an instance of {@link PRandom} for generating random numbers, initialized with a seed based on chunk's position
+     * @param x      the X coordinate of the block column in the chunk to decorate
+     * @param z      the Z coordinate of the block column in the chunk to decorate
      */
     void decorate(IChunk chunk, PRandom random, int x, int z);
 

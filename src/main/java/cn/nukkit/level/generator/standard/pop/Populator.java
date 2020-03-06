@@ -17,13 +17,14 @@ public interface Populator extends GenerationPass {
 
     /**
      * Populates a given chunk.
-     *
-     * @param random an instance of {@link PRandom} for generating random numbers, initialized with a seed based on chunk's position
+     *  @param random an instance of {@link PRandom} for generating random numbers, initialized with a seed based on chunk's position
      * @param level  a {@link ChunkManager} containing only a 3x3 square of generated chunks, centered around the chunk being populated
      * @param chunkX the chunk's X coordinate
      * @param chunkZ the chunk's Z coordinate
+     * @param blockX
+     * @param blockZ
      */
-    void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ);
+    void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ, int blockX, int blockZ);
 
     @Override
     Identifier getId();

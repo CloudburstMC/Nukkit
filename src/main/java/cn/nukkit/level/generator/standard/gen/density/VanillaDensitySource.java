@@ -51,13 +51,13 @@ public class VanillaDensitySource extends AbstractGenerationPass implements Dens
     @JsonProperty
     private double heightVariationOffset  = 0.0d;
 
-    @JsonProperty(required = true)
+    @JsonProperty
     private NoiseGenerator selectorNoise;
-    @JsonProperty(required = true)
+    @JsonProperty
     private NoiseGenerator lowNoise;
-    @JsonProperty(required = true)
+    @JsonProperty
     private NoiseGenerator highNoise;
-    @JsonProperty(required = true)
+    @JsonProperty
     private NoiseGenerator depthNoise;
 
     @Override
@@ -67,6 +67,8 @@ public class VanillaDensitySource extends AbstractGenerationPass implements Dens
         this.low = requireNonNull(this.lowNoise, "lowNoise must be set!").create(new FastPRandom(random.nextLong()));
         this.high = requireNonNull(this.highNoise, "highNoise must be set!").create(new FastPRandom(random.nextLong()));
         this.depth = requireNonNull(this.depthNoise, "depthNoise must be set!").create(new FastPRandom(random.nextLong()));
+
+        this.selectorNoise = this.lowNoise = this.highNoise = this.depthNoise = null;
     }
 
     @Override

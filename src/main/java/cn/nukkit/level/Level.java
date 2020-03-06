@@ -220,7 +220,7 @@ public class Level implements ChunkManager, Metadatable {
     private final LevelChunkManager chunkManager;
     private final LevelData levelData;
 
-    private final Generator generator;
+    private Generator generator;
 
     Level(Server server, String id, LevelProvider levelProvider, LevelData levelData) {
         this.id = id;
@@ -285,6 +285,12 @@ public class Level implements ChunkManager, Metadatable {
         this.chunkManager = new LevelChunkManager(this);
 
         this.skyLightSubtracted = this.calculateSkylightSubtracted(1);
+    }
+
+    public void reloadGenerator()   {
+        //porktodo: remove this
+        this.generator = GeneratorRegistry.get().getGeneratorFactory(this.levelData.getGenerator()).create(this.getSeed(), this.levelData.getGeneratorOptions());
+        this.generator.hashCode();
     }
 
     public int getTickRate() {

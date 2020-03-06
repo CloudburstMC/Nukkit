@@ -2,6 +2,7 @@ package cn.nukkit.level.generator.standard.gen.decorator;
 
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.standard.StandardGenerator;
+import cn.nukkit.level.generator.standard.misc.AbstractGenerationPass;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.misc.selector.BlockSelector;
 import cn.nukkit.utils.Identifier;
@@ -29,7 +30,7 @@ public class ScatteredCoverDecorator implements Decorator {
     protected BlockFilter on;
 
     @JsonProperty
-    protected BlockFilter replace;
+    protected BlockFilter replace = BlockFilter.AIR;
 
     @JsonProperty
     @JsonAlias({"blocks"})
@@ -51,7 +52,7 @@ public class ScatteredCoverDecorator implements Decorator {
 
         for (int y = min(chunk.getHighestBlock(x, z), 254); y >= 0; y--) {
             if (on.test(chunk.getBlockRuntimeIdUnsafe(x, y, z, 0))
-                    && replace != null ? replace.test(chunk.getBlockRuntimeIdUnsafe(x, y + 1, z, 0)) : chunk.getBlockRuntimeIdUnsafe(x, y + 1, z, 0) == 0
+                    && replace.test(chunk.getBlockRuntimeIdUnsafe(x, y + 1, z, 0))
                     && random.nextDouble() < chance) {
                 chunk.setBlockRuntimeIdUnsafe(x, y + 1, z, 0, block.selectRuntimeId(random));
             }

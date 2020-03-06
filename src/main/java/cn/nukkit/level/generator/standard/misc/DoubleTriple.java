@@ -25,10 +25,15 @@ public final class DoubleTriple {
     private final double z;
 
     @JsonCreator
+    public DoubleTriple(double val) {
+        this(val, val, val);
+    }
+
+    @JsonCreator
     public DoubleTriple(
-            @JsonProperty(value = "x", required = true) double x,
-            @JsonProperty(value = "y", required = true) double y,
-            @JsonProperty(value = "z", required = true) double z) {
+            @JsonProperty("x") double x,
+            @JsonProperty("y") double y,
+            @JsonProperty("z") double z) {
         this.x = x;
         this.y = y;
         this.z = z;

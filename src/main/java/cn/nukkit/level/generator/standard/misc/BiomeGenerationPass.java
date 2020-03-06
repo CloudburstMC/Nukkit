@@ -27,7 +27,7 @@ public final class BiomeGenerationPass implements Decorator, Populator {
     }
 
     @Override
-    public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
+    public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ, int blockX, int blockZ) {
         throw new UnsupportedOperationException("nukkitx:biome may only be used in the base preset!");
     }
 

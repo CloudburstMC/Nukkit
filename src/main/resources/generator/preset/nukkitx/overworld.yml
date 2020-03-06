@@ -66,7 +66,7 @@ decorators:
 populators:
   - id: "nukkitx:biome"
 #  - id: "nukkitx:basic_tree"
-#    tries: 2-8
+#    count: 2-8
 #    on: "grass"
 #    height: 4-8
 #    trunk: "log"

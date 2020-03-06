@@ -43,7 +43,7 @@ public abstract class AbstractGeneratorRegistry<V> implements Registry {
 
     public Class<? extends V> get(@NonNull Identifier id)   {
         Preconditions.checkState(this.closed == 1, "not closed");
-        return Preconditions.checkNotNull(this.idToValues.get(id));
+        return Preconditions.checkNotNull(this.idToValues.get(id), id.toString());
     }
 
     public boolean isRegistered(@NonNull Identifier id) {

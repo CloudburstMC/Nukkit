@@ -11,17 +11,25 @@ decorators:
     ground: "stone"
     top: "grass"
     fill: "dirt"
+    # Tall grass
   - id: "nukkitx:scattered_cover"
-    chance: 0.25
+    chance: 0.3333
     on: "grass"
-    block:
-      - "100*tallgrass"
-      - "3*red_flower#4" # red tulip
-      - "3*red_flower#5" # orange tulip
-      - "3*red_flower#6" # white tulip
-      - "3*red_flower#7" # pink tulip
-      - "red_flower#3" # azure bluet
-      - "red_flower#8" # oxeye daisy
-      - "red_flower#9" # cornflower
+    block: "tallgrass"
 
 populators:
+    # Flowers
+  - id: "nukkitx:flower"
+    count: 2
+    height: "50-90"
+    on: "grass"
+    replace: "air,tallgrass"
+    blocks:
+      - "red_flower#4" # Red Tulip
+      - "red_flower#5" # Orange Tulip
+      - "red_flower#6" # White Tulip
+      - "red_flower#7" # Pink Tulip
+      - "red_flower#3" # Azure Bluet
+      - "red_flower#8" # Oxeye Daisy
+      - "red_flower#9" # Cornflower
+

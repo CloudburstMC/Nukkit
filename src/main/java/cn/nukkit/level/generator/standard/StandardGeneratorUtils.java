@@ -3,7 +3,6 @@ package cn.nukkit.level.generator.standard;
 import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
-import cn.nukkit.utils.ConfigSection;
 import cn.nukkit.utils.Identifier;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -53,21 +52,13 @@ public class StandardGeneratorUtils {
     }
 
     /**
-     * Calculates the seed to be used for initializing a generation component.
-     * <p>
-     * This is important so that the RNG state for each component remains the same even if other ones are added/removed/modified.
+     * Hashes a {@link String} to a 64-bit value.
      *
-     * @param levelSeed the global level seed
-     * @param category  the category that the component belongs to
-     * @param config    the component's configuration
-     * @return the seed to be used for the given component
+     * @param text the text to hash
+     * @return the hashed value
      */
-    public static long computeSeed(long levelSeed, @NonNull String category, @NonNull ConfigSection config) {
-        if (config.containsKey("seed")) {
-            //allow users to manually specify a seed that will be XOR-ed with the level seed
-            return levelSeed ^ config.getLong("seed");
-        }
-        UUID uuid = UUID.nameUUIDFromBytes((category + '|' + config.getString("id")).getBytes(StandardCharsets.UTF_8));
-        return levelSeed ^ uuid.getLeastSignificantBits() ^ uuid.getMostSignificantBits();
+    public static long hash(@NonNull String text) {
+        UUID uuid = UUID.nameUUIDFromBytes(text.getBytes(StandardCharsets.UTF_8));
+        return uuid.getLeastSignificantBits() ^ uuid.getMostSignificantBits();
     }
 }

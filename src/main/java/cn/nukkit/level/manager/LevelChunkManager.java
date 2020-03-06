@@ -44,8 +44,6 @@ public final class LevelChunkManager {
     private final Long2ObjectMap<LoadingChunk> chunks = new Long2ObjectOpenHashMap<>();
     private final Long2LongMap chunkLoadedTimes = new Long2LongOpenHashMap();
     private final Long2LongMap chunkLastAccessTimes = new Long2LongOpenHashMap();
-    private final Function<Chunk, Chunk> chunkGenerateFunction;
-    private final BiFunction<Chunk, List<Chunk>, Chunk> chunkPopulateFunction;
     private final Executor executor;
 
     public LevelChunkManager(Level level) {
@@ -56,8 +54,6 @@ public final class LevelChunkManager {
         this.level = level;
         this.executor = this.level.getServer().getScheduler().getAsyncPool();
         this.provider = provider;
-        this.chunkGenerateFunction = new GenerationTask(this.level.getGenerator());
-        this.chunkPopulateFunction = new PopulationTask(this.level.getGenerator());
     }
 
     private static long chunkKey(int x, int z) {
@@ -394,7 +390,7 @@ public final class LevelChunkManager {
             }
             this.generated = true;
 
-            this.future = this.future.thenApplyAsync(LevelChunkManager.this.chunkGenerateFunction, LevelChunkManager.this.executor);
+            this.future = this.future.thenApplyAsync(GenerationTask.INSTANCE, LevelChunkManager.this.executor);
         }
 
         private void populate() {
@@ -421,7 +417,7 @@ public final class LevelChunkManager {
 
             this.future = this.future.thenCombineAsync(
                     CompletableFutures.allAsList(generationChunkFutures),
-                    LevelChunkManager.this.chunkPopulateFunction,
+                    PopulationTask.INSTANCE,
                     LevelChunkManager.this.executor);
         }
 

@@ -24,6 +24,8 @@ public final class IntRange {
     private static final Ref<Matcher> RANGE_MATCHER_CACHE = ThreadRef.regex("^([0-9]+)(?:-([0-9]+))?$");
 
     public static final IntRange EMPTY_RANGE = new IntRange(0, 0, true);
+    public static final IntRange ONE         = new IntRange(1, 1);
+    public static final IntRange WHOLE_WORLD = new IntRange(0, 255);
 
     public final int min;
     public final int max;

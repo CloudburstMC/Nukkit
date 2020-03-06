@@ -76,6 +76,9 @@ public class SimpleCommandMap implements CommandMap {
         this.register("nukkit", new DebugPasteCommand("debugpaste"));
         //this.register("nukkit", new DumpMemoryCommand("dumpmemory"));
 //        }
+
+        //porktodo: remove this
+        this.register("nukkit", new ReloadGeneratorCommand("reload"));
     }
 
     @Override

@@ -4,6 +4,8 @@ import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.chunk.LockableChunk;
 import cn.nukkit.level.generator.Generator;
 import com.google.common.base.Preconditions;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import net.daporkchop.lib.random.PRandom;
 import net.daporkchop.lib.random.impl.FastJavaPRandom;
 import net.daporkchop.lib.random.impl.FastPRandom;
@@ -15,12 +17,9 @@ import java.util.function.Function;
  *
  * @author DaPorkchop_
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class GenerationTask implements Function<Chunk, Chunk> {
-    private final Generator generator;
-
-    public GenerationTask(Generator generator) {
-        this.generator = Preconditions.checkNotNull(generator, "generator");
-    }
+    public static final GenerationTask INSTANCE = new GenerationTask();
 
     @Override
     public Chunk apply(Chunk chunk) {
@@ -33,7 +32,7 @@ public final class GenerationTask implements Function<Chunk, Chunk> {
 
         lockable.lock();
         try {
-            this.generator.generate(random, lockable, chunk.getX(), chunk.getZ());
+            chunk.getLevel().getGenerator().generate(random, lockable, chunk.getX(), chunk.getZ());
             chunk.setGenerated();
         } finally {
             lockable.unlock();
