@@ -1,7 +1,6 @@
 package cn.nukkit.level.generator.standard.misc.filter;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.registry.BlockRegistry;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.function.Predicate;
@@ -11,13 +10,16 @@ import java.util.function.Predicate;
  *
  * @author DaPorkchop_
  */
-@FunctionalInterface
 @JsonDeserialize(using = BlockFilterDeserializer.class)
 public interface BlockFilter extends Predicate<Block> {
     @Override
     boolean test(Block block);
 
-    default boolean test(int runtimeId) {
-        return this.test(BlockRegistry.get().getBlock(runtimeId));
-    }
+    /**
+     * Checks if the given runtime ID matches this filter.
+     *
+     * @param runtimeId the runtime ID to check
+     * @return whether or not the given runtime ID matches this filter
+     */
+    boolean test(int runtimeId);
 }

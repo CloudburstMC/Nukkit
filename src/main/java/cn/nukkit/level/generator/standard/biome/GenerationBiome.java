@@ -7,6 +7,8 @@ import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.NonNull;
 
+import static net.daporkchop.lib.common.util.PorkUtil.*;
+
 /**
  * Representation of a biome used during terrain generation.
  *
@@ -31,8 +33,8 @@ public final class GenerationBiome {
     public GenerationBiome(@NonNull GenerationBiomeStore.TempBiome temp, @NonNull Identifier id) {
         this.id = id;
         this.dictionary = temp.getDictionary();
-        this.decorators = temp.getDecorators();
-        this.populators = temp.getPopulators();
+        this.decorators = fallbackIfNull(temp.getDecorators(), Decorator.EMPTY_ARRAY);
+        this.populators = fallbackIfNull(temp.getPopulators(), Populator.EMPTY_ARRAY);
 
         this.baseHeight = temp.getBaseHeight();
         this.heightVariation = temp.getHeightVariation();
@@ -65,6 +67,14 @@ public final class GenerationBiome {
 
     public double getHeightVariation() {
         return this.heightVariation;
+    }
+
+    public double getTemperature() {
+        return this.temperature;
+    }
+
+    public double getRainfall() {
+        return this.rainfall;
     }
 
     public int getRuntimeId() {

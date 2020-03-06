@@ -23,7 +23,7 @@ import static net.daporkchop.lib.math.primitive.PMath.*;
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public final class VanillaDensitySource extends AbstractGenerationPass implements DensitySource {
+public class VanillaDensitySource extends AbstractGenerationPass implements DensitySource {
     private static final double DEPTH_SCALE_FACTOR_1 = -0.3d;
     private static final double DEPTH_SCALE_FACTOR_2 = 0.17857142857142d;
     private static final double DEPTH_SCALE_FACTOR_3 = 0.125d;

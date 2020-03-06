@@ -128,19 +128,21 @@ public interface IChunk extends Comparable<IChunk> {
     void setHeightMap(int x, int z, @Nonnegative int value);
 
     default int getHighestBlock(int x, int z) {
-        return getHighestBlock(x, z, true);
+        //porktodo: fix heightmap
+        return this.getHighestBlock(x, z, false);
     }
 
     default int getHighestBlock(int x, int z, boolean cache) {
-        if (cache) {
+        //porktodo: fix heightmap
+        if (false && cache) {
             int h = this.getHeightMap(x, z);
             if (h != 0 && h != 255) {
                 return h;
             }
         }
-        for (int y = 255; y >= 0; --y) {
-            if (getBlockId(x, y, z) != AIR) {
-                this.setHeightMap(x, z, y);
+
+        for (int y = 255; y >= 0; y--)  {
+            if (this.getBlockRuntimeIdUnsafe(x, y, z, 0) != 0) {
                 return y;
             }
         }

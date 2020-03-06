@@ -2,6 +2,7 @@ package cn.nukkit.level.generator.standard.misc;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
+import cn.nukkit.level.generator.standard.misc.selector.BlockSelector;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonAlias;
@@ -9,8 +10,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
+import lombok.NonNull;
 import net.daporkchop.lib.common.ref.Ref;
 import net.daporkchop.lib.common.ref.ThreadRef;
+import net.daporkchop.lib.random.PRandom;
 
 import java.util.regex.Matcher;
 
@@ -20,7 +23,7 @@ import java.util.regex.Matcher;
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public final class ConstantBlock implements BlockFilter {
+public final class ConstantBlock implements BlockFilter, BlockSelector {
     private static final Ref<Matcher> BLOCK_MATCHER_CACHE = ThreadRef.regex("^((?:[a-zA-Z0-9_]+:)?[a-zA-Z0-9_]+)(?:#([0-9]+))?$");
 
     private final Block block;
@@ -51,6 +54,15 @@ public final class ConstantBlock implements BlockFilter {
         this.runtimeId = BlockRegistry.get().getRuntimeId(id, meta);
     }
 
+    public Block block() {
+        return this.block;
+    }
+
+    public int runtimeId() {
+        return this.runtimeId;
+    }
+
+    //block filter methods
     @Override
     public boolean test(Block block) {
         return this.block == block || (this.block.getId() == block.getId() && this.block.getDamage() == block.getDamage());
@@ -61,11 +73,14 @@ public final class ConstantBlock implements BlockFilter {
         return this.runtimeId == runtimeId;
     }
 
-    public Block block() {
+    //block selector methods
+    @Override
+    public Block select(PRandom random) {
         return this.block;
     }
 
-    public int runtimeId() {
+    @Override
+    public int selectRuntimeId(PRandom random) {
         return this.runtimeId;
     }
 }

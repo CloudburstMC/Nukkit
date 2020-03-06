@@ -18,10 +18,12 @@ import net.daporkchop.lib.random.impl.FastPRandom;
 import static net.daporkchop.lib.math.primitive.PMath.*;
 
 /**
+ * Places the surface blocks on terrain, consisting of a single "top" block followed by a number of "filler" blocks.
+ *
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public final class SurfaceDecorator implements Decorator {
+public class SurfaceDecorator implements Decorator {
     public static final Identifier ID = Identifier.fromString("nukkitx:surface");
 
     //depth noise is not bound to world seed
@@ -31,7 +33,7 @@ public final class SurfaceDecorator implements Decorator {
     protected NoiseSource depthNoise;
 
     @JsonProperty
-    protected int ground    = -1;
+    protected int ground = -1;
     @JsonProperty
     protected int top    = -1;
     @JsonProperty

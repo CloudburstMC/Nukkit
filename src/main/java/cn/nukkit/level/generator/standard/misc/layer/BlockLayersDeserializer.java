@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 /**
  * @author DaPorkchop_
  */
-public final class BlockLayersDeserializer extends JsonDeserializer<BlockLayer[]> {
+final class BlockLayersDeserializer extends JsonDeserializer<BlockLayer[]> {
     @Override
     public BlockLayer[] deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
         return Nukkit.YAML_MAPPER.readValue(p, BlockLayers.class).stream()

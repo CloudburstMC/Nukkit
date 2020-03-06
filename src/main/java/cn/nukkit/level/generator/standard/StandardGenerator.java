@@ -40,6 +40,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static net.daporkchop.lib.common.util.PorkUtil.*;
+
 /**
  * Main class of the NukkitX Standard Generator.
  *
@@ -120,8 +122,8 @@ public final class StandardGenerator implements Generator {
         Collection<GenerationPass> generationPasses = new ArrayList<>();
         generationPasses.add(Objects.requireNonNull(this.density, "density must be set!"));
         generationPasses.add(Objects.requireNonNull(this.biomes, "biomes must be set!"));
-        Collections.addAll(generationPasses, this.decorators);
-        Collections.addAll(generationPasses, this.populators);
+        Collections.addAll(generationPasses, this.decorators = fallbackIfNull(this.decorators, Decorator.EMPTY_ARRAY));
+        Collections.addAll(generationPasses, this.populators = fallbackIfNull(this.populators, Populator.EMPTY_ARRAY));
 
         for (GenerationBiome biome : biomes) {
             Collections.addAll(generationPasses, biome.getDecorators());

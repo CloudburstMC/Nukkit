@@ -15,7 +15,7 @@ import net.daporkchop.lib.random.PRandom;
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public final class BedrockDecorator extends AbstractGenerationPass implements Decorator {
+public class BedrockDecorator extends AbstractGenerationPass implements Decorator {
     public static final Identifier ID = Identifier.fromString("nukkitx:bedrock");
 
     @JsonProperty(required = true)
@@ -38,13 +38,13 @@ public final class BedrockDecorator extends AbstractGenerationPass implements De
 
         if (!this.fade.empty()) {
             if (this.reverseFade) {
-                for (int y = this.fade.max, i = 1, size = this.fade.size() + 1; i < size; y--, i++) {
+                for (int y = this.fade.min, i = 1, size = this.fade.size() + 1; i < size; y++, i++) {
                     if (random.nextInt(size) < i) {
                         chunk.setBlockRuntimeIdUnsafe(x, y, z, 0, runtimeId);
                     }
                 }
             } else {
-                for (int y = this.fade.min, i = 1, size = this.fade.size() + 1; i < size; y++, i++) {
+                for (int y = this.fade.min, i = this.fade.size(), size = i + 1; i > 0; y++, i--) {
                     if (random.nextInt(size) < i) {
                         chunk.setBlockRuntimeIdUnsafe(x, y, z, 0, runtimeId);
                     }
