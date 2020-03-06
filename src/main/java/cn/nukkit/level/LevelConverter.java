@@ -21,6 +21,7 @@ public class LevelConverter {
         this.newLevelProvider = newLevelProvider;
 
         LevelData data = new LevelData();
+        data.setName("converting");
         data.setGenerator(VoidGenerator.ID);
         this.fakeLevel = new Level(Server.getInstance(), "converting", newLevelProvider, data);
     }
