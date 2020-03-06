@@ -1,7 +1,6 @@
 package cn.nukkit.level.generator.standard.biome.map;
 
 import cn.nukkit.Nukkit;
-import cn.nukkit.level.generator.standard.gen.replacer.BlockReplacer;
 import cn.nukkit.level.generator.standard.registry.StandardGeneratorRegistries;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.core.JsonParser;

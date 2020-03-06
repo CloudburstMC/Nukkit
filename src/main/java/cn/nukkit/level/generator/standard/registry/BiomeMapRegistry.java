@@ -4,8 +4,6 @@ import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
 import cn.nukkit.level.generator.standard.biome.map.ConstantBiomeMap;
-import cn.nukkit.level.generator.standard.gen.replacer.BlockReplacer;
-import cn.nukkit.utils.Identifier;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +11,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Registry for {@link BlockReplacer}.
+ * Registry for {@link BiomeMap}.
  *
  * @author DaPorkchop_
  * @see StandardGeneratorRegistries#biomeMap()
