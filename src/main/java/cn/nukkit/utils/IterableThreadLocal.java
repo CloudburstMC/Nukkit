@@ -38,7 +38,7 @@ public abstract class IterableThreadLocal<T> extends ThreadLocal<T> implements I
         IterableThreadLocal.clean(this);
     }
 
-    public static void clean(ThreadLocal instance) {
+    public static void clean(ThreadLocal<?> instance) {
         try {
             ThreadGroup rootGroup = Thread.currentThread( ).getThreadGroup( );
             ThreadGroup parentGroup;
@@ -85,7 +85,7 @@ public abstract class IterableThreadLocal<T> extends ThreadLocal<T> implements I
 
             // Get a reference to the array holding the thread local variables inside the
             // ThreadLocalMap of the current thread
-            Class threadLocalMapClass = Class.forName("java.lang.ThreadLocal$ThreadLocalMap");
+            Class<?> threadLocalMapClass = Class.forName("java.lang.ThreadLocal$ThreadLocalMap");
             Field tableField = threadLocalMapClass.getDeclaredField("table");
             tableField.setAccessible(true);
             Object table = tableField.get(threadLocalTable);
@@ -101,7 +101,7 @@ public abstract class IterableThreadLocal<T> extends ThreadLocal<T> implements I
                 Object entry = Array.get(table, i);
                 if (entry != null) {
                     // Get a reference to the thread local object and remove it from the table
-                    ThreadLocal threadLocal = (ThreadLocal)referentField.get(entry);
+                    ThreadLocal<?> threadLocal = (ThreadLocal<?>)referentField.get(entry);
                     clean(threadLocal);
                 }
             }

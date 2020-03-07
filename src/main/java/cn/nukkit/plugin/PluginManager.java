@@ -58,9 +58,9 @@ public class PluginManager {
     public boolean registerInterface(Class<? extends PluginLoader> loaderClass) {
         if (loaderClass != null) {
             try {
-                Constructor constructor = loaderClass.getDeclaredConstructor(Server.class);
+                Constructor<? extends PluginLoader> constructor = loaderClass.getDeclaredConstructor(Server.class);
                 constructor.setAccessible(true);
-                this.fileAssociations.put(loaderClass.getName(), (PluginLoader) constructor.newInstance(this.server));
+                this.fileAssociations.put(loaderClass.getName(), constructor.newInstance(this.server));
                 return true;
             } catch (Exception e) {
                 return false;
@@ -96,7 +96,7 @@ public class PluginManager {
                             if (plugin != null) {
                                 this.plugins.put(plugin.getDescription().getName(), plugin);
 
-                                List<PluginCommand> pluginCommands = this.parseYamlCommands(plugin);
+                                List<PluginCommand<? extends Plugin>> pluginCommands = this.parseYamlCommands(plugin);
 
                                 if (!pluginCommands.isEmpty()) {
                                     this.commandMap.registerAll(plugin.getDescription().getName(), pluginCommands);
@@ -447,29 +447,40 @@ public class PluginManager {
         }
     }
 
-    protected List<PluginCommand> parseYamlCommands(Plugin plugin) {
-        List<PluginCommand> pluginCmds = new ArrayList<>();
+    protected List<PluginCommand<? extends Plugin>> parseYamlCommands(Plugin plugin) {
+        List<PluginCommand<? extends Plugin>> pluginCmds = new ArrayList<>();
 
-        for (Map.Entry entry : plugin.getDescription().getCommands().entrySet()) {
-            String key = (String) entry.getKey();
+        for (Map.Entry<String, Object> entry : plugin.getDescription().getCommands().entrySet()) {
+            String key = entry.getKey();
             Object data = entry.getValue();
             if (key.contains(":")) {
                 this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.commandError", new String[]{key, plugin.getDescription().getFullName()}));
                 continue;
             }
             if (data instanceof Map) {
-                PluginCommand newCmd = new PluginCommand<>(key, plugin);
+                PluginCommand<Plugin> newCmd = new PluginCommand<>(key, plugin);
 
-                if (((Map) data).containsKey("description")) {
-                    newCmd.setDescription((String) ((Map) data).get("description"));
+                {
+                    Map<String, String> ssMap = (Map<String, String>) data;
+                    if (ssMap.containsKey("description")) {
+                        newCmd.setDescription(ssMap.get("description"));
+                    }
+
+                    if (ssMap.containsKey("usage")) {
+                        newCmd.setUsage(ssMap.get("usage"));
+                    }
+
+                    if (ssMap.containsKey("permission")) {
+                        newCmd.setPermission(ssMap.get("permission"));
+                    }
+
+                    if (ssMap.containsKey("permission-message")) {
+                        newCmd.setPermissionMessage(ssMap.get("permission-message"));
+                    }
                 }
-
-                if (((Map) data).containsKey("usage")) {
-                    newCmd.setUsage((String) ((Map) data).get("usage"));
-                }
-
-                if (((Map) data).containsKey("aliases")) {
-                    Object aliases = ((Map) data).get("aliases");
+                Map<String, Object> soMap = (Map<String, Object>) data;
+                if (soMap.containsKey("aliases")) {
+                    Object aliases = soMap.get("aliases");
                     if (aliases instanceof List) {
                         List<String> aliasList = new ArrayList<>();
                         for (String alias : (List<String>) aliases) {
@@ -484,13 +495,6 @@ public class PluginManager {
                     }
                 }
 
-                if (((Map) data).containsKey("permission")) {
-                    newCmd.setPermission((String) ((Map) data).get("permission"));
-                }
-
-                if (((Map) data).containsKey("permission-message")) {
-                    newCmd.setPermissionMessage((String) ((Map) data).get("permission-message"));
-                }
 
                 pluginCmds.add(newCmd);
             }

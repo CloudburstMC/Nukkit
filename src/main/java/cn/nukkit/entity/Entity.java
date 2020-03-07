@@ -751,7 +751,7 @@ public abstract class Entity extends Location implements Metadatable {
                 return null;
             }
 
-            for (Constructor constructor : clazz.getConstructors()) {
+            for (Constructor<?> constructor : clazz.getConstructors()) {
                 if (entity != null) {
                     break;
                 }

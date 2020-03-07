@@ -143,7 +143,7 @@ public class Chunk extends BaseChunk {
                         @SuppressWarnings("unchecked")
                         Class<? extends Block> clazz = (Class<? extends Block>) Class.forName("cn.nukkit.block." + name);
 
-                        Constructor constructor = clazz.getDeclaredConstructor();
+                        Constructor<?> constructor = clazz.getDeclaredConstructor();
                         constructor.setAccessible(true);
                         block = (Block) constructor.newInstance();
                     }

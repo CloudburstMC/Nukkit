@@ -14,7 +14,7 @@ import static cn.nukkit.level.GameRule.*;
 
 @SuppressWarnings({"unchecked"})
 public class GameRules {
-    private final EnumMap<GameRule, Value> gameRules = new EnumMap<>(GameRule.class);
+    private final EnumMap<GameRule, Value<Object>> gameRules = new EnumMap<>(GameRule.class);
     private boolean stale;
 
     private GameRules() {
@@ -27,8 +27,8 @@ public class GameRules {
         gameRules.gameRules.put(COMMAND_BLOCK_OUTPUT, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(DO_DAYLIGHT_CYCLE, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(DO_ENTITY_DROPS, new Value<>(Type.BOOLEAN, true));
-        gameRules.gameRules.put(DO_FIRE_TICK, new Value(Type.BOOLEAN, true));
-        gameRules.gameRules.put(DO_IMMEDIATE_RESPAWN, new Value(Type.BOOLEAN, false));
+        gameRules.gameRules.put(DO_FIRE_TICK, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(DO_IMMEDIATE_RESPAWN, new Value<>(Type.BOOLEAN, false));
         gameRules.gameRules.put(DO_MOB_LOOT, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(DO_MOB_SPAWNING, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(DO_TILE_DROPS, new Value<>(Type.BOOLEAN, true));
@@ -49,7 +49,7 @@ public class GameRules {
         return gameRules;
     }
 
-    public Map<GameRule, Value> getGameRules() {
+    public Map<GameRule, Value<?>> getGameRules() {
         return ImmutableMap.copyOf(gameRules);
     }
 
@@ -143,7 +143,7 @@ public class GameRules {
     public CompoundTag writeNBT() {
         CompoundTag nbt = new CompoundTag();
 
-        for (Entry<GameRule, Value> entry : gameRules.entrySet()) {
+        for (Entry<GameRule, Value<Object>> entry : gameRules.entrySet()) {
             nbt.putString(entry.getKey().getName(), entry.getValue().value.toString());
         }
 
@@ -165,29 +165,29 @@ public class GameRules {
     public enum Type {
         UNKNOWN {
             @Override
-            void write(BinaryStream pk, Value value) {
+            void write(BinaryStream pk, Value<?> value) {
             }
         },
         BOOLEAN {
             @Override
-            void write(BinaryStream pk, Value value) {
+            void write(BinaryStream pk, Value<?> value) {
                 pk.putBoolean(value.getValueAsBoolean());
             }
         },
         INTEGER {
             @Override
-            void write(BinaryStream pk, Value value) {
+            void write(BinaryStream pk, Value<?> value) {
                 pk.putUnsignedVarInt(value.getValueAsInteger());
             }
         },
         FLOAT {
             @Override
-            void write(BinaryStream pk, Value value) {
+            void write(BinaryStream pk, Value<?> value) {
                 pk.putLFloat(value.getValueAsFloat());
             }
         };
 
-        abstract void write(BinaryStream pk, Value value);
+        abstract void write(BinaryStream pk, Value<?> value);
     }
 
     public static class Value<T> {

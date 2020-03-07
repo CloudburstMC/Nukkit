@@ -2187,9 +2187,9 @@ public class Server {
         Object section = this.getConfig("aliases");
         Map<String, List<String>> result = new LinkedHashMap<>();
         if (section instanceof Map) {
-            for (Map.Entry entry : (Set<Map.Entry>) ((Map) section).entrySet()) {
+            for (Map.Entry<String, Object> entry : ((Map<String, Object>) section).entrySet()) {
                 List<String> commands = new ArrayList<>();
-                String key = (String) entry.getKey();
+                String key = entry.getKey();
                 Object value = entry.getValue();
                 if (value instanceof List) {
                     commands.addAll((List<String>) value);

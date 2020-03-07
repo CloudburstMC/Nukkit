@@ -53,12 +53,12 @@ public class BlockEntityPistonArm extends BlockEntity {
         }
 
         if (namedTag.contains("AttachedBlocks")) {
-            ListTag blocks = namedTag.getList("AttachedBlocks", IntTag.class);
+            ListTag<IntTag> blocks = namedTag.getList("AttachedBlocks", IntTag.class);
             if (blocks != null && blocks.size() > 0) {
-                this.attachedBlock = new Vector3((double) ((IntTag) blocks.get(0)).getData(), (double) ((IntTag) blocks.get(1)).getData(), (double) ((IntTag) blocks.get(2)).getData());
+                this.attachedBlock = new Vector3((double) blocks.get(0).getData(), (double) blocks.get(1).getData(), (double) blocks.get(2).getData());
             }
         } else {
-            namedTag.putList(new ListTag("AttachedBlocks"));
+            namedTag.putList(new ListTag<IntTag>("AttachedBlocks"));
         }
 
         super.initBlockEntity();

@@ -99,7 +99,7 @@ public abstract class BlockEntity extends Position {
                 return null;
             }
 
-            for (Constructor constructor : clazz.getConstructors()) {
+            for (Constructor<?> constructor : clazz.getConstructors()) {
                 if (blockEntity != null) {
                     break;
                 }

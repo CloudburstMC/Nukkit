@@ -18,7 +18,7 @@ public class JsonUtil {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public static JsonArray toArray(Object... objects) {
-        List array = new ArrayList();
+        List<Object> array = new ArrayList<>();
         Collections.addAll(array, objects);
         return GSON.toJsonTree(array).getAsJsonArray();
     }
@@ -28,7 +28,7 @@ public class JsonUtil {
     }
 
     public static <E> JsonObject mapToObject(Iterable<E> collection, Function<E, JSONPair> mapper) {
-        Map object = new LinkedHashMap();
+        Map<String, Object> object = new LinkedHashMap<>();
         for (E e : collection) {
             JSONPair pair = mapper.apply(e);
             if (pair != null) {
@@ -39,13 +39,13 @@ public class JsonUtil {
     }
 
     public static <E> JsonArray mapToArray(E[] elements, Function<E, Object> mapper) {
-        ArrayList array = new ArrayList();
+        List<E> array = new ArrayList<>();
         Collections.addAll(array, elements);
         return mapToArray(array, mapper);
     }
 
     public static <E> JsonArray mapToArray(Iterable<E> collection, Function<E, Object> mapper) {
-        List array = new ArrayList();
+        List<Object> array = new ArrayList<>();
         for (E e : collection) {
             Object obj = mapper.apply(e);
             if (obj != null) {

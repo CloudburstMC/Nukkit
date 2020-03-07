@@ -76,10 +76,10 @@ public class NKServiceManager implements ServiceManager {
 
         synchronized (handle) {
             Iterator<RegisteredServiceProvider<?>> it = handle.get(service).iterator();
-            RegisteredServiceProvider next;
+            RegisteredServiceProvider<T> next;
 
             while (it.hasNext() && result == null) {
-                next = it.next();
+                next = (RegisteredServiceProvider<T>) it.next();
                 if (next.getProvider() == provider) {
                     it.remove();
                     result = next;

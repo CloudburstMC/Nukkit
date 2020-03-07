@@ -135,39 +135,39 @@ public class CompoundTag extends Tag implements Cloneable {
 
     public int getByte(String name) {
         if (!tags.containsKey(name)) return (byte) 0;
-        return ((NumberTag) tags.get(name)).getData().intValue();
+        return ((NumberTag<?>) tags.get(name)).getData().intValue();
     }
 
     public int getShort(String name) {
         if (!tags.containsKey(name)) return 0;
-        return ((NumberTag) tags.get(name)).getData().intValue();
+        return ((NumberTag<?>) tags.get(name)).getData().intValue();
     }
 
     public int getInt(String name) {
         if (!tags.containsKey(name)) return 0;
-        return ((NumberTag) tags.get(name)).getData().intValue();
+        return ((NumberTag<?>) tags.get(name)).getData().intValue();
     }
 
     public long getLong(String name) {
         if (!tags.containsKey(name)) return (long) 0;
-        return ((NumberTag) tags.get(name)).getData().longValue();
+        return ((NumberTag<?>) tags.get(name)).getData().longValue();
     }
 
     public float getFloat(String name) {
         if (!tags.containsKey(name)) return (float) 0;
-        return ((NumberTag) tags.get(name)).getData().floatValue();
+        return ((NumberTag<?>) tags.get(name)).getData().floatValue();
     }
 
     public double getDouble(String name) {
         if (!tags.containsKey(name)) return (double) 0;
-        return ((NumberTag) tags.get(name)).getData().doubleValue();
+        return ((NumberTag<?>) tags.get(name)).getData().doubleValue();
     }
 
     public String getString(String name) {
         if (!tags.containsKey(name)) return "";
         Tag tag = tags.get(name);
         if (tag instanceof NumberTag) {
-            return String.valueOf(((NumberTag) tag).getData());
+            return String.valueOf(((NumberTag<?>) tag).getData());
         }
         return ((StringTag) tag).data;
     }

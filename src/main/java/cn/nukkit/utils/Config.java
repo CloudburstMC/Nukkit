@@ -231,8 +231,7 @@ public class Config {
                     content = yaml.dump(this.config);
                     break;
                 case Config.ENUM:
-                    for (Object o : this.config.entrySet()) {
-                        Map.Entry entry = (Map.Entry) o;
+                    for (Map.Entry<String, Object> entry : this.config.entrySet()) {
                         content += entry.getKey() + "\r\n";
                     }
                     break;
@@ -342,11 +341,11 @@ public class Config {
         return config.isBoolean(key);
     }
 
-    public List getList(String key) {
+    public List<?> getList(String key) {
         return this.getList(key, null);
     }
 
-    public List getList(String key, List defaultList) {
+    public List<?> getList(String key, List<?> defaultList) {
         return this.correct ? this.config.getList(key, defaultList) : defaultList;
     }
 
@@ -390,7 +389,7 @@ public class Config {
         return config.getShortList(key);
     }
 
-    public List<Map> getMapList(String key) {
+    public List<Map<String, Object>> getMapList(String key) {
         return config.getMapList(key);
     }
 
@@ -459,10 +458,9 @@ public class Config {
 
     private String writeProperties() {
         String content = "#Properties Config file\r\n#" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()) + "\r\n";
-        for (Object o : this.config.entrySet()) {
-            Map.Entry entry = (Map.Entry) o;
+        for (Map.Entry<String, Object> entry : this.config.entrySet()) {
+            String k = entry.getKey();
             Object v = entry.getValue();
-            Object k = entry.getKey();
             if (v instanceof Boolean) {
                 v = (Boolean) v ? "on" : "off";
             }

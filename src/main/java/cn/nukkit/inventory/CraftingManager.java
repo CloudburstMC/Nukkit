@@ -74,7 +74,7 @@ public class CraftingManager {
 
     @SuppressWarnings("unchecked")
     private void loadRecipes(Config config) {
-        List<Map> recipes = config.getMapList("recipes");
+        List<Map<String, Object>> recipes = config.getMapList("recipes");
         MainLogger.getLogger().info("Loading recipes...");
         for (Map<String, Object> recipe : recipes) {
             try {
@@ -86,13 +86,13 @@ public class CraftingManager {
                             continue;
                         }
                         // TODO: handle multiple result items
-                        List<Map> outputs = ((List<Map>) recipe.get("output"));
+                        List<Map<String, Object>> outputs = ((List<Map<String, Object>>) recipe.get("output"));
                         if (outputs.size() > 1) {
                             continue;
                         }
                         Map<String, Object> first = outputs.get(0);
                         List<Item> sorted = new ArrayList<>();
-                        for (Map<String, Object> ingredient : ((List<Map>) recipe.get("input"))) {
+                        for (Map<String, Object> ingredient : ((List<Map<String, Object>>) recipe.get("input"))) {
                             sorted.add(Item.fromJson(ingredient));
                         }
                         // Bake sorted list
@@ -111,14 +111,14 @@ public class CraftingManager {
                             // Ignore other recipes than crafting table ones
                             continue;
                         }
-                        outputs = (List<Map>) recipe.get("output");
+                        outputs = (List<Map<String, Object>>) recipe.get("output");
 
                         first = outputs.remove(0);
                         String[] shape = ((List<String>) recipe.get("shape")).toArray(new String[0]);
                         Map<Character, Item> ingredients = new CharObjectHashMap<>();
                         List<Item> extraResults = new ArrayList<>();
 
-                        Map<String, Map<String, Object>> input = (Map) recipe.get("input");
+                        Map<String, Map<String, Object>> input = (Map<String, Map<String, Object>>) recipe.get("input");
                         for (Map.Entry<String, Map<String, Object>> ingredientEntry : input.entrySet()) {
                             char ingredientChar = ingredientEntry.getKey().charAt(0);
                             Item ingredient = Item.fromJson(ingredientEntry.getValue());
@@ -142,11 +142,11 @@ public class CraftingManager {
                             // Ignore other recipes than furnaces
                             continue;
                         }
-                        Map<String, Object> resultMap = (Map) recipe.get("output");
+                        Map<String, Object> resultMap = (Map<String, Object>) recipe.get("output");
                         Item resultItem = Item.fromJson(resultMap);
                         Item inputItem;
                         try {
-                            Map<String, Object> inputMap = (Map) recipe.get("input");
+                            Map<String, Object> inputMap = (Map<String, Object>) recipe.get("input");
                             inputItem = Item.fromJson(inputMap);
                         } catch (Exception old) {
                             inputItem = Item.get(Utils.toInt(recipe.get("inputId")), recipe.containsKey("inputDamage") ? Utils.toInt(recipe.get("inputDamage")) : -1, 1);
@@ -162,22 +162,22 @@ public class CraftingManager {
         }
 
         // Load brewing recipes
-        List<Map> potionMixes = config.getMapList("potionMixes");
+        List<? extends Map<String, ?>> potionMixes = config.getMapList("potionMixes");
 
-        for (Map potionMix : potionMixes) {
-            int fromPotionId = ((Number) potionMix.get("fromPotionId")).intValue(); // gson returns doubles...
-            int ingredient = ((Number) potionMix.get("ingredient")).intValue();
-            int toPotionId = ((Number) potionMix.get("toPotionId")).intValue();
+        for (Map<String, Number> potionMix : (List<Map<String, Number>>) potionMixes) {
+            int fromPotionId = potionMix.get("fromPotionId").intValue(); // gson returns doubles...
+            int ingredient = potionMix.get("ingredient").intValue();
+            int toPotionId = potionMix.get("toPotionId").intValue();
 
             registerBrewingRecipe(new BrewingRecipe(Item.get(ItemID.POTION, fromPotionId), Item.get(ingredient), Item.get(ItemID.POTION, toPotionId)));
         }
 
-        List<Map> containerMixes = config.getMapList("containerMixes");
+        List<? extends Map<String, ?>> containerMixes = config.getMapList("containerMixes");
 
-        for (Map containerMix : containerMixes) {
-            int fromItemId = ((Number) containerMix.get("fromItemId")).intValue();
-            int ingredient = ((Number) containerMix.get("ingredient")).intValue();
-            int toItemId = ((Number) containerMix.get("toItemId")).intValue();
+        for (Map<String, Number> containerMix : (List<Map<String, Number>>) containerMixes) {
+            int fromItemId = containerMix.get("fromItemId").intValue();
+            int ingredient = containerMix.get("ingredient").intValue();
+            int toItemId = containerMix.get("toItemId").intValue();
 
             registerContainerRecipe(new ContainerRecipe(Item.get(fromItemId), Item.get(ingredient), Item.get(toItemId)));
         }

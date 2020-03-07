@@ -137,8 +137,8 @@ public class Permission {
     public static List<Permission> loadPermissions(Map<String, Object> data, String defaultValue) {
         List<Permission> result = new ArrayList<>();
         if (data != null) {
-            for (Map.Entry e : data.entrySet()) {
-                String key = (String) e.getKey();
+            for (Map.Entry<String, Object> e : data.entrySet()) {
+                String key = e.getKey();
                 Map<String, Object> entry = (Map<String, Object>) e.getValue();
                 result.add(loadPermission(key, entry, defaultValue, result));
             }
@@ -168,8 +168,8 @@ public class Permission {
 
         if (data.containsKey("children")) {
             if (data.get("children") instanceof Map) {
-                for (Map.Entry entry : ((Map<String, Object>) data.get("children")).entrySet()) {
-                    String k = (String) entry.getKey();
+                for (Map.Entry<String, Object> entry : ((Map<String, Object>) data.get("children")).entrySet()) {
+                    String k = entry.getKey();
                     Object v = entry.getValue();
                     if (v instanceof Map) {
                         Permission permission = loadPermission(k, (Map<String, Object>) v, defaultValue, output);

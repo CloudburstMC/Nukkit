@@ -29,7 +29,7 @@ import java.util.Optional;
  * Nukkit Project
  */
 public abstract class Block extends Position implements Metadatable, Cloneable, AxisAlignedBB, BlockID {
-    public static Class[] list = null;
+    public static Class<?>[] list = null;
     public static Block[] fullList = null;
     public static int[] light = null;
     public static int[] lightFilter = null;
@@ -301,13 +301,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[OBSERVER] = BlockObserver.class; //251
 
             for (int id = 0; id < 256; id++) {
-                Class c = list[id];
+                Class<?> c = list[id];
                 if (c != null) {
                     Block block;
                     try {
                         block = (Block) c.newInstance();
                         try {
-                            Constructor constructor = c.getDeclaredConstructor(int.class);
+                            Constructor<?> constructor = c.getDeclaredConstructor(int.class);
                             constructor.setAccessible(true);
                             for (int data = 0; data < 16; ++data) {
                                 fullList[(id << 4) | data] = (Block) constructor.newInstance(data);

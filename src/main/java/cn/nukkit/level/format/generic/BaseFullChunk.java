@@ -127,8 +127,8 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
                         this.setChanged();
                         continue;
                     }
-                    ListTag pos = nbt.getList("Pos");
-                    if ((((NumberTag) pos.get(0)).getData().intValue() >> 4) != this.getX() || ((((NumberTag) pos.get(2)).getData().intValue() >> 4) != this.getZ())) {
+                    ListTag<NumberTag<?>> pos = (ListTag<NumberTag<?>>) nbt.getList("Pos");
+                    if ((pos.get(0).getData().intValue() >> 4) != this.getX() || ((pos.get(2).getData().intValue() >> 4) != this.getZ())) {
                         changed = true;
                         continue;
                     }

@@ -777,7 +777,7 @@ public class Level implements ChunkManager, Metadatable {
             if (this.isThundering()) {
                 Map<Long, ? extends FullChunk> chunks = getChunks();
                 if (chunks instanceof Long2ObjectOpenHashMap) {
-                    Long2ObjectOpenHashMap<? extends FullChunk> fastChunks = (Long2ObjectOpenHashMap) chunks;
+                    Long2ObjectOpenHashMap<? extends FullChunk> fastChunks = (Long2ObjectOpenHashMap<FullChunk>) chunks;
                     ObjectIterator<? extends Long2ObjectMap.Entry<? extends FullChunk>> iter = fastChunks.long2ObjectEntrySet().fastIterator();
                     while (iter.hasNext()) {
                         Long2ObjectMap.Entry<? extends FullChunk> entry = iter.next();

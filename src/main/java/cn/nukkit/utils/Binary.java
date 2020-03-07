@@ -161,7 +161,7 @@ public class Binary {
         for (int i = 0; i < count; i++) {
             int key = (int) stream.getUnsignedVarInt();
             int type = (int) stream.getUnsignedVarInt();
-            EntityData value = null;
+            EntityData<?> value = null;
             switch (type) {
                 case Entity.DATA_TYPE_BYTE:
                     value = new ByteEntityData(key, stream.getByte());

@@ -34,7 +34,7 @@ public class Item implements Cloneable, BlockID, ItemID {
     //Normal Item IDs
 
     protected static String UNKNOWN_STR = "Unknown";
-    public static Class[] list = null;
+    public static Class<?>[] list = null;
 
     protected Block block = null;
     protected final int id;
@@ -324,9 +324,9 @@ public class Item implements Cloneable, BlockID, ItemID {
 
         Config config = new Config(Config.YAML);
         config.load(Server.class.getClassLoader().getResourceAsStream("creativeitems.json"));
-        List<Map> list = config.getMapList("items");
+        List<Map<String, Object>> list = config.getMapList("items");
 
-        for (Map map : list) {
+        for (Map<String, Object> map : list) {
             try {
                 addCreativeItem(fromJson(map));
             } catch (Exception e) {
@@ -390,7 +390,7 @@ public class Item implements Cloneable, BlockID, ItemID {
 
     public static Item get(int id, Integer meta, int count, byte[] tags) {
         try {
-            Class c = list[id];
+            Class<?> c = list[id];
             Item item;
 
             if (c == null) {

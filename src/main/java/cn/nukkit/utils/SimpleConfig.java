@@ -86,7 +86,7 @@ public abstract class SimpleConfig {
                     Type genericFieldType = field.getGenericType();
                     if (genericFieldType instanceof ParameterizedType) {
                         ParameterizedType aType = (ParameterizedType) genericFieldType;
-                        Class fieldArgClass = (Class) aType.getActualTypeArguments()[0];
+                        Class<?> fieldArgClass = (Class<?>) aType.getActualTypeArguments()[0];
                         if (fieldArgClass == Integer.class) field.set(this, cfg.getIntegerList(path));
                         else if (fieldArgClass == Boolean.class) field.set(this, cfg.getBooleanList(path));
                         else if (fieldArgClass == Double.class) field.set(this, cfg.getDoubleList(path));

@@ -307,7 +307,7 @@ public interface AxisAlignedBB extends Cloneable {
 
     AxisAlignedBB clone();
 
-    default void forEach(BBConsumer action) {
+    default void forEach(BBConsumer<?> action) {
         int minX = NukkitMath.floorDouble(this.getMinX());
         int minY = NukkitMath.floorDouble(this.getMinY());
         int minZ = NukkitMath.floorDouble(this.getMinZ());
