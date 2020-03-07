@@ -27,7 +27,10 @@ public class ReloadGeneratorCommand extends VanillaCommand {
             return true;
         }
 
-        Server.getInstance().getLevels().forEach(Level::reloadGenerator);
+        Server.getInstance().getLevelManager().getChunkExecutor().submit(() -> {
+            Server.getInstance().getLevels().forEach(Level::reloadGenerator);
+            sender.sendMessage("Generators reloaded!");
+        });
 
         return true;
     }

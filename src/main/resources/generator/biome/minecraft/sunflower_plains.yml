@@ -25,6 +25,13 @@ decorators:
     lowBlock: "double_plant#2"
     highBlock: "double_plant#10"
 
+    # Sunflower
+  - id: "nukkitx:double_scattered_cover"
+    chance: 0.03
+    on: "grass"
+    lowBlock: "double_plant#0"
+    highBlock: "double_plant#8"
+
 populators:
     # Flowers
   - id: "nukkitx:flower"
