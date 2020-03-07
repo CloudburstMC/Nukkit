@@ -1,60 +1,52 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandSource;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.player.Player;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.regex.Pattern;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class PardonIpCommand extends VanillaCommand {
+import static cn.nukkit.command.args.PlayerArgument.getPlayer;
+import static cn.nukkit.command.args.PlayerArgument.player;
+import static com.mojang.brigadier.arguments.StringArgumentType.getString;
+import static com.mojang.brigadier.arguments.StringArgumentType.string;
 
-    public PardonIpCommand(String name) {
-        super(name, "%nukkit.command.unban.ip.description", "%commands.unbanip.usage");
-        this.setPermission("nukkit.command.unban.ip");
-        this.setAliases(new String[]{"unbanip", "unban-ip", "pardonip"});
-        this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("ip")
-        });
+public class PardonIpCommand extends BaseCommand {
+
+    public PardonIpCommand(CommandDispatcher<CommandSource> dispatcher) {
+        super("pardon-ip", "%nukkit.command.unban.ip.description"); // TODO: aliases (unban-ip)
+
+        dispatcher.register(literal("pardon")
+                .requires(requirePermission("nukkit.command.unban.ip"))
+                .then(argument("ip", string()).executes(this::run)));
     }
 
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!this.testPermission(sender)) {
-            return true;
-        }
+    public int run(CommandContext<CommandSource> context) {
+        CommandSource source = context.getSource();
+        String ip = getString(context, "ip");
 
-        if (args.length != 1) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
-            return false;
-        }
-
-        String value = args[0];
-
-        if (Pattern.matches("^(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])$", value)) {
-            sender.getServer().getIPBans().remove(value);
+        if (Pattern.matches("^(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])$", ip)) {
+            source.getServer().getIPBans().remove(ip);
 
             try {
-                sender.getServer().getNetwork().unblockAddress(InetAddress.getByName(value));
+                source.getServer().getNetwork().unblockAddress(InetAddress.getByName(ip));
             } catch (UnknownHostException e) {
-                sender.sendMessage(new TranslationContainer("commands.unbanip.invalid"));
-                return true;
+                source.sendMessage(new TranslationContainer("commands.unbanip.invalid"));
+                return 1;
             }
 
-            Command.broadcastCommandMessage(sender, new TranslationContainer("commands.unbanip.success", value));
+            sendAdminMessage(source, new TranslationContainer("commands.unbanip.success", ip));
         } else {
-
-            sender.sendMessage(new TranslationContainer("commands.unbanip.invalid"));
+            source.sendMessage(new TranslationContainer("commands.unbanip.invalid"));
         }
-
-        return true;
+        return 1;
     }
 }

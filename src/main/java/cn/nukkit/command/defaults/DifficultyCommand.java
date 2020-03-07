@@ -10,60 +10,53 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.network.protocol.SetDifficultyPacket;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
 
 import java.util.ArrayList;
 
+import static cn.nukkit.command.args.DifficultyArgument.difficulty;
+import static cn.nukkit.command.args.DifficultyArgument.getDifficulty;
+
 public class DifficultyCommand extends BaseCommand {
-    private final String[] DIFFICULTY_VALUES = new String[]{"peaceful", "p", "easy", "e", "normal", "n", "hard", "h"};
 
     public DifficultyCommand(CommandDispatcher<CommandSource> dispatcher) {
         super("difficulty", "%nukkit.command.difficulty.description");
-//        this.setPermission("nukkit.command.difficulty");
 
-//        dispatcher.register(literal("difficulty")
-//                .requires(requirePermission("nukkit.command.difficulty"))
-//                .then(argument("difficulty", simpleEnum(DIFFICULTY_VALUES)).executes(this::run)));
-//        this.commandParameters.clear();
-//        this.commandParameters.put("default", new CommandParameter[]{
-//                new CommandParameter("difficulty", CommandParamType.INT, false)
-//        });
-//        this.commandParameters.put("byString", new CommandParameter[]{
-//                new CommandParameter("difficulty", new String[]{"peaceful", "p", "easy", "e",
-//                        "normal", "n", "hard", "h"})
-//        });
+        dispatcher.register(literal("difficulty")
+                .requires(requirePermission("nukkit.command.difficulty"))
+                .then(argument("difficulty", difficulty()).executes(this::run)));
     }
-//
-//    @Override
-//    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-//        if (!this.testPermission(sender)) {
-//            return true;
-//        }
-//
-//        if (args.length != 1) {
-//            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-//            return false;
-//        }
-//
-//        int difficulty = Server.getDifficultyFromString(args[0]);
-//
-//        if (sender.getServer().isHardcore()) {
-//            difficulty = 3;
-//        }
-//
-//        if (difficulty != -1) {
-//            sender.getServer().setPropertyInt("difficulty", difficulty);
-//
-//            SetDifficultyPacket pk = new SetDifficultyPacket();
-//            pk.difficulty = sender.getServer().getDifficulty();
-//            Server.broadcastPacket(new ArrayList<>(sender.getServer().getOnlinePlayers().values()), pk);
-//
-//            Command.broadcastCommandMessage(sender, new TranslationContainer("commands.difficulty.success", String.valueOf(difficulty)));
-//        } else {
-//            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-//
-//            return false;
-//        }
-//
-//        return true;
-//    }
+
+    public int run(CommandContext<CommandSource> context) {
+        CommandSource source = context.getSource();
+        String difficulty = getDifficulty(context, "difficulty");
+        int difficultyInt = Server.getDifficultyFromString(difficulty);
+
+        if(source.getServer().isHardcore()) {
+            difficultyInt = 3;
+        }
+
+        source.getServer().setPropertyInt("difficulty", difficultyInt);
+
+        SetDifficultyPacket pk = new SetDifficultyPacket();
+        pk.difficulty = source.getServer().getDifficulty();
+        Server.broadcastPacket(new ArrayList<>(source.getServer().getOnlinePlayers().values()), pk);
+
+        sendAdminMessage(source, new TranslationContainer("commands.difficulty.success", getDifficultyName(difficultyInt).toUpperCase()));
+        return 1;
+    }
+
+    private String getDifficultyName(int difficulty) {
+        switch(difficulty) {
+            case 0:
+                return "peaceful";
+            case 1:
+                return "easy";
+            case 2:
+                return "normal";
+            case 3:
+                return "hard";
+        }
+        return "unknown";
+    }
 }

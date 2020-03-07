@@ -1,43 +1,36 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandSource;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.player.Player;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class PardonCommand extends VanillaCommand {
+import static cn.nukkit.command.args.PlayerArgument.getPlayer;
+import static cn.nukkit.command.args.PlayerArgument.player;
 
-    public PardonCommand(String name) {
-        super(name, "%nukkit.command.unban.player.description", "%commands.unban.usage");
-        this.setPermission("nukkit.command.unban.player");
-        this.setAliases(new String[]{"unban"});
-        this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false)
-        });
+public class PardonCommand extends BaseCommand {
+
+    public PardonCommand(CommandDispatcher<CommandSource> dispatcher) {
+        super("pardon", "%nukkit.command.unban.player.description"); // TODO: aliases (unban)
+
+        dispatcher.register(literal("pardon")
+                .requires(requirePermission("nukkit.command.unban.player"))
+                .then(argument("player", player()).executes(this::run)));
     }
 
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!this.testPermission(sender)) {
-            return true;
-        }
+    public int run(CommandContext<CommandSource> context) {
+        CommandSource source = context.getSource();
+        Player target = getPlayer(context, "player");
 
-        if (args.length != 1) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+        source.getServer().getNameBans().remove(target.getName());
 
-            return false;
-        }
-
-        sender.getServer().getNameBans().remove(args[0]);
-
-        Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.unban.success", args[0]));
-
-        return true;
+        sendAdminMessage(source, new TranslationContainer("%commands.unban.success", target.getName()));
+        return 1;
     }
 }

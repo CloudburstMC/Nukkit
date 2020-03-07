@@ -2,42 +2,42 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
+import cn.nukkit.command.BaseCommand;
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandSource;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.utils.TextFormat;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created on 2015/11/11 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
- */
-public class StatusCommand extends VanillaCommand {
+public class StatusCommand extends BaseCommand {
     private static final String UPTIME_FORMAT = TextFormat.RED + "%d" + TextFormat.GOLD + " days " +
             TextFormat.RED + "%d" + TextFormat.GOLD + " hours " +
             TextFormat.RED + "%d" + TextFormat.GOLD + " minutes " +
             TextFormat.RED + "%d" + TextFormat.GOLD + " seconds";
 
-    public StatusCommand(String name) {
-        super(name, "%nukkit.command.status.description", "%nukkit.command.status.usage");
-        this.setPermission("nukkit.command.status");
-        this.commandParameters.clear();
+    public StatusCommand(CommandDispatcher<CommandSource> dispatcher) {
+        super("status", "%nukkit.command.status.description");
+
+        dispatcher.register(literal("status")
+                .requires(requirePermission("nukkit.command.status"))
+                .executes(this::run));
     }
 
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!this.testPermission(sender)) {
-            return true;
-        }
+    public int run(CommandContext<CommandSource> context) {
+        CommandSource source = context.getSource();
 
-        Server server = sender.getServer();
-        sender.sendMessage(TextFormat.GREEN + "---- " + TextFormat.WHITE + "Server status" + TextFormat.GREEN + " ----");
+        Server server = source.getServer();
+        source.sendMessage(TextFormat.GREEN + "---- " + TextFormat.WHITE + "Server status" + TextFormat.GREEN + " ----");
 
         long time = System.currentTimeMillis() - Nukkit.START_TIME;
 
-        sender.sendMessage(TextFormat.GOLD + "Uptime: " + formatUptime(time));
+        source.sendMessage(TextFormat.GOLD + "Uptime: " + formatUptime(time));
 
         TextFormat tpsColor = TextFormat.GREEN;
         float tps = server.getTicksPerSecond();
@@ -47,16 +47,11 @@ public class StatusCommand extends VanillaCommand {
             tpsColor = TextFormat.RED;
         }
 
-        sender.sendMessage(TextFormat.GOLD + "Current TPS: " + tpsColor + NukkitMath.round(tps, 2));
-
-        sender.sendMessage(TextFormat.GOLD + "Load: " + tpsColor + server.getTickUsage() + "%");
-
-        sender.sendMessage(TextFormat.GOLD + "Network upload: " + TextFormat.GREEN + NukkitMath.round((server.getNetwork().getUpload() / 1024 * 1000), 2) + " kB/s");
-
-        sender.sendMessage(TextFormat.GOLD + "Network download: " + TextFormat.GREEN + NukkitMath.round((server.getNetwork().getDownload() / 1024 * 1000), 2) + " kB/s");
-
-        sender.sendMessage(TextFormat.GOLD + "Thread count: " + TextFormat.GREEN + Thread.getAllStackTraces().size());
-
+        source.sendMessage(TextFormat.GOLD + "Current TPS: " + tpsColor + NukkitMath.round(tps, 2));
+        source.sendMessage(TextFormat.GOLD + "Load: " + tpsColor + server.getTickUsage() + "%");
+        source.sendMessage(TextFormat.GOLD + "Network upload: " + TextFormat.GREEN + NukkitMath.round((server.getNetwork().getUpload() / 1024 * 1000), 2) + " kB/s");
+        source.sendMessage(TextFormat.GOLD + "Network download: " + TextFormat.GREEN + NukkitMath.round((server.getNetwork().getDownload() / 1024 * 1000), 2) + " kB/s");
+        source.sendMessage(TextFormat.GOLD + "Thread count: " + TextFormat.GREEN + Thread.getAllStackTraces().size());
 
         Runtime runtime = Runtime.getRuntime();
         double totalMB = NukkitMath.round(((double) runtime.totalMemory()) / 1024 / 1024, 2);
@@ -69,25 +64,21 @@ public class StatusCommand extends VanillaCommand {
             usageColor = TextFormat.GOLD;
         }
 
-        sender.sendMessage(TextFormat.GOLD + "Used memory: " + usageColor + usedMB + " MB. (" + NukkitMath.round(usage, 2) + "%)");
-
-        sender.sendMessage(TextFormat.GOLD + "Total memory: " + TextFormat.RED + totalMB + " MB.");
-
-        sender.sendMessage(TextFormat.GOLD + "Maximum VM memory: " + TextFormat.RED + maxMB + " MB.");
-
-        sender.sendMessage(TextFormat.GOLD + "Available processors: " + TextFormat.GREEN + runtime.availableProcessors());
-
+        source.sendMessage(TextFormat.GOLD + "Used memory: " + usageColor + usedMB + " MB. (" + NukkitMath.round(usage, 2) + "%)");
+        source.sendMessage(TextFormat.GOLD + "Total memory: " + TextFormat.RED + totalMB + " MB.");
+        source.sendMessage(TextFormat.GOLD + "Maximum VM memory: " + TextFormat.RED + maxMB + " MB.");
+        source.sendMessage(TextFormat.GOLD + "Available processors: " + TextFormat.GREEN + runtime.availableProcessors());
 
         TextFormat playerColor = TextFormat.GREEN;
         if (((float) server.getOnlinePlayers().size() / (float) server.getMaxPlayers()) > 0.85) {
             playerColor = TextFormat.GOLD;
         }
 
-        sender.sendMessage(TextFormat.GOLD + "Players: " + playerColor + server.getOnlinePlayers().size() + TextFormat.GREEN + " online, " +
+        source.sendMessage(TextFormat.GOLD + "Players: " + playerColor + server.getOnlinePlayers().size() + TextFormat.GREEN + " online, " +
                 TextFormat.RED + server.getMaxPlayers() + TextFormat.GREEN + " max. ");
 
         for (Level level : server.getLevels()) {
-            sender.sendMessage(
+            source.sendMessage(
                     TextFormat.GOLD + "World \"" + level.getId() + "\"" + (!Objects.equals(level.getId(), level.getName()) ? " (" + level.getName() + ")" : "") + ": " +
                             TextFormat.RED + level.getChunks().size() + TextFormat.GREEN + " chunks, " +
                             TextFormat.RED + level.getEntities().length + TextFormat.GREEN + " entities, " +
@@ -97,7 +88,7 @@ public class StatusCommand extends VanillaCommand {
             );
         }
 
-        return true;
+        return 1;
     }
 
     private static String formatUptime(long uptime) {

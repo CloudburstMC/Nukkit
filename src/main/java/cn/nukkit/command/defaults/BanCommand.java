@@ -31,11 +31,10 @@ public class BanCommand extends BaseCommand {
     public BanCommand(CommandDispatcher<CommandSource> dispatcher) {
         super("ban", "%nukkit.command.ban.player.description");
 
-        // TODO: This doesnt work. Stacktrace: https://hastebin.com/teyuyopome.apache
         dispatcher.register(literal("ban")
                 .requires(requirePermission("nukkit.command.ban.player"))
-                .then(argument("player", player()).executes(this::run))
-                .then(argument("reason", greedyString()).executes(this::run)));
+                .then(argument("player", player()).executes(this::run)
+                        .then(argument("reason", greedyString()).executes(this::run))));
     }
 
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
@@ -52,9 +51,7 @@ public class BanCommand extends BaseCommand {
         // TODO: BanEntry.of()?
         banList.addBan(target.getName(), reason, null, source.getName());
 
-        if(target instanceof Player) {
-            ((Player) target).kick(PlayerKickEvent.Reason.NAME_BANNED, reason != null ? "Banned by admin. Reason: " + reason : "Banned by admin");
-        }
+        target.kick(PlayerKickEvent.Reason.NAME_BANNED, reason != null ? "Banned by admin. Reason: " + reason : "Banned by admin");
 
         sendAdminMessage(source, "Ban successful: " + target.getName());
         return 1;

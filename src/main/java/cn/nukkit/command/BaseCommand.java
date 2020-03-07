@@ -50,6 +50,10 @@ public abstract class BaseCommand {
         this.commandData = new CommandData();
     }
 
+    protected void setPermission(String perm) {
+        this.permission = perm;
+    }
+
     public String getUsage() {
         // TODO: figure out a way to get the usage from brigadier and still allow
         // plugins to modify it. This can be done by calling `CommandDispatcher.getSmartUsage`,
@@ -305,5 +309,9 @@ public abstract class BaseCommand {
     protected final Predicate<CommandSource> requirePermission(String permission) {
         this.permission = permission;
         return this::testPermissionSilent;
+    }
+
+    protected final Predicate<CommandSource> requireSourceBePlayer() {
+        return source -> source instanceof Player;
     }
 }

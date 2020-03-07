@@ -26,29 +26,29 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import java.util.Arrays;
 import java.util.List;
 
-public class DifficultyArgument implements ArgumentType<String> {
-    public static final DynamicCommandExceptionType NOT_FOUND = new DynamicCommandExceptionType(difficulty ->
-            new LiteralMessage("Unknown difficulty: " + difficulty));
+public class GameModeArgument implements ArgumentType<String> {
+    public static final DynamicCommandExceptionType NOT_FOUND = new DynamicCommandExceptionType(gamemode ->
+            new LiteralMessage("Unknown gamemode: " + gamemode));
 
-    private final String[] DIFFICULTY_VALUES = new String[]{"peaceful", "p", "easy", "e", "normal", "n", "hard", "h"};
+    private final String[] GAMEMODE_VALUES = new String[]{"survival", "s", "creative", "c", "adventure", "a", "spectator", "sp"};
 
-    public static DifficultyArgument difficulty() {
-        return new DifficultyArgument();
+    public static GameModeArgument gamemode() {
+        return new GameModeArgument();
     }
 
-    public static String getDifficulty(CommandContext<CommandSource> context, String name) {
+    public static String getGamemode(CommandContext<CommandSource> context, String name) {
         return context.getArgument(name, String.class);
     }
 
     @Override
     public String parse(StringReader reader) throws CommandSyntaxException {
-        String difficultyString = reader.readUnquotedString();
-        List<String> list = Arrays.asList(DIFFICULTY_VALUES);
+        String gamemodeString = reader.readUnquotedString();
+        List<String> list = Arrays.asList(GAMEMODE_VALUES);
 
-        if(!list.contains(difficultyString)) {
-            throw NOT_FOUND.create(difficultyString);
+        if(!list.contains(gamemodeString)) {
+            throw NOT_FOUND.create(gamemodeString);
         }
 
-        return difficultyString;
+        return gamemodeString;
     }
 }

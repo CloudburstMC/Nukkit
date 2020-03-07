@@ -5,6 +5,8 @@ import cn.nukkit.command.args.*;
 import static cn.nukkit.network.protocol.AvailableCommandsPacket.*;
 
 import static cn.nukkit.command.data.CommandParamType.*;
+
+import cn.nukkit.command.defaults.GamemodeCommand;
 import cn.nukkit.network.protocol.AvailableCommandsPacket;
 import com.mojang.brigadier.arguments.*;
 
@@ -29,6 +31,9 @@ public class ArgumentRegistry {
         register(ParticleArgument.class, new EnumArgumentData("Particle", STRING));
         register(ItemArgument.class, new EnumArgumentData("Item", STRING));
         register(PlayerArgument.class, new ArgumentData("target", TARGET));
+        register(GameRuleArgument.class, new EnumArgumentData("GameRule", STRING));
+        register(DifficultyArgument.class, new EnumArgumentData("Difficulty", STRING));
+        register(GameModeArgument.class, new EnumArgumentData("GameMode", STRING));
     }
 
     public void register(Class<? extends ArgumentType> argumentClass, ArgumentData data) {

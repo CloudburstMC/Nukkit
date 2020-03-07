@@ -1,75 +1,71 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandSource;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.gamerule.GameRule;
 import cn.nukkit.level.gamerule.GameRuleMap;
 import cn.nukkit.player.Player;
 import cn.nukkit.registry.GameRuleRegistry;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
 
 import java.util.Arrays;
 import java.util.StringJoiner;
 
-public class GameruleCommand extends VanillaCommand {
+import static cn.nukkit.command.args.GameRuleArgument.gamerule;
+import static cn.nukkit.command.args.GameRuleArgument.getGameRule;
+import static com.mojang.brigadier.arguments.StringArgumentType.getString;
+import static com.mojang.brigadier.arguments.StringArgumentType.string;
+
+public class GameruleCommand extends BaseCommand {
     private static final GameRuleRegistry registry = GameRuleRegistry.get();
 
-    public GameruleCommand(String name) {
-        super(name, "%nukkit.command.gamerule.description", "%nukkit.command.gamerule.usage");
-        this.setPermission("nukkit.command.gamerule");
-        this.commandParameters.clear();
-        this.commandParameters.put("byString", new CommandParameter[]{
-                new CommandParameter("gamerule", true, registry.getRuleNames().toArray(new String[0])),
-                new CommandParameter("value", CommandParamType.STRING, true)
-        });
+    public GameruleCommand(CommandDispatcher<CommandSource> dispatcher) {
+        super("gamerule", "%nukkit.command.gamerule.description");
+
+        dispatcher.register(literal("gamerule")
+                .requires(requirePermission("nukkit.command.gamerule"))
+                .then(argument("rule", gamerule()).executes(this::queryRule)
+                        .then(argument("value", string()).executes(this::setRule)))
+                .executes(this::queryAll));
     }
 
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!this.testPermission(sender)) {
-            return true;
+    public int queryAll(CommandContext<CommandSource> context) {
+        CommandSource source = context.getSource();
+        Level level = source instanceof Player ? ((Player) source).getLevel() : source.getServer().getDefaultLevel();
+        StringJoiner rulesJoiner = new StringJoiner(", ");
+
+        for (GameRule rule : registry.getRules()) {
+            rulesJoiner.add(rule.getName().toLowerCase() + " = " + level.getGameRules().get(rule).toString());
         }
 
-        if (!sender.isPlayer()) {
-            sender.sendMessage(new TranslationContainer("%commands.generic.ingame"));
-            return true;
-        }
-        GameRuleMap rules = ((Player) sender).getLevel().getGameRules();
+        source.sendMessage(rulesJoiner.toString());
+        return 1;
+    }
 
-        switch (args.length) {
-            case 0:
-                StringJoiner rulesJoiner = new StringJoiner(", ");
-                for (String rule : registry.getRuleNames()) {
-                    rulesJoiner.add(rule.toLowerCase());
-                }
-                sender.sendMessage(rulesJoiner.toString());
-                return true;
-            case 1:
-                GameRule gameRule = registry.fromString(args[0]);
-                if (gameRule == null || !rules.contains(gameRule)) {
-                    sender.sendMessage(new TranslationContainer("commands.generic.syntax", "/gamerule", args[0]));
-                    return true;
-                }
+    public int queryRule(CommandContext<CommandSource> context) {
+        CommandSource source = context.getSource();
+        Level level = source instanceof Player ? ((Player) source).getLevel() : source.getServer().getDefaultLevel();
+        GameRule rule = getGameRule(context, "rule", level);
 
-                sender.sendMessage(gameRule.getName() + " = " + rules.get(gameRule).toString());
-                return true;
-            default:
-                gameRule = registry.fromString(args[0]);
+        source.sendMessage(rule.getName() + " = " + level.getGameRules().get(rule).toString());
+        return 1;
+    }
 
-                if (gameRule == null) {
-                    sender.sendMessage(new TranslationContainer("commands.generic.syntax",
-                            "/gamerule ", args[0], " " + String.join(" ", Arrays.copyOfRange(args, 1, args.length))));
-                    return true;
-                }
+    public int setRule(CommandContext<CommandSource> context) {
+        CommandSource source = context.getSource();
+        Level level = source instanceof Player ? ((Player) source).getLevel() : source.getServer().getDefaultLevel();
+        GameRule rule = getGameRule(context, "rule", level);
+        String value = getString(context, "value");
 
-                try {
-                    rules.put(gameRule, gameRule.parse(args[1]));
-                    sender.sendMessage(new TranslationContainer("commands.gamerule.success", gameRule.getName(), args[1]));
-                } catch (NumberFormatException e) {
-                    sender.sendMessage(new TranslationContainer("commands.generic.syntax", "/gamerule "  + args[0] + " ", args[1], " " + String.join(" ", Arrays.copyOfRange(args, 2, args.length))));
-                }
-                return true;
-        }
+        level.getGameRules().put(rule, rule.parse(value));
+
+        source.sendMessage(new TranslationContainer("commands.gamerule.success", rule.getName(), value));
+        return 1;
     }
 }

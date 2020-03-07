@@ -45,8 +45,18 @@ public class NukkitCommandDispatcher {
                 new HelpCommand(dispatcher),
                 new WeatherCommand(dispatcher),
                 new GiveCommand(dispatcher),
+                new GameruleCommand(dispatcher),
+                new DifficultyCommand(dispatcher),
+                new KillCommand(dispatcher),
+                new TellCommand(dispatcher),
+                new GamemodeCommand(dispatcher),
+                new PardonCommand(dispatcher),
+                new PardonIpCommand(dispatcher),
+                new DefaultGamemodeCommand(dispatcher),
+                new DaylockCommand(dispatcher),
 
                 // Debug
+                new StatusCommand(dispatcher),
                 new DebugPasteCommand(dispatcher),
                 new GarbageCollectorCommand(dispatcher)
         });
@@ -63,26 +73,19 @@ public class NukkitCommandDispatcher {
         }));
 
 
-        // TODO: /kill
-        // TODO: /defaultgamemode
-        // TODO: /difficulty
         // TODO: /enchant
-        // TODO: /gamemode
-        // TODO: /gamerule
-        // TODO: /give
-        // TODO: /pardon
-        // TODO: /pardon-ip
         // TODO: /particle
         // TODO: /setworldspawn
         // TODO: /spawnpoint
-        // TODO: /status
         // TODO: /tp
-        // TODO: /tell
         // TODO: /time
         // TODO: /timings
         // TODO: /title
         // TODO: /whitelist
         // TODO: /xp
+
+        // TODO: /clear
+        // TODO: /setblock
     }
 
     public boolean quickDispatch(CommandSource source, String command) throws CommandSyntaxException {

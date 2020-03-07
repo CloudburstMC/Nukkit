@@ -1,68 +1,49 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandSource;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
 
 import java.util.Objects;
 
-/**
- * Created on 2015/11/12 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
- */
-public class TellCommand extends VanillaCommand {
+import static cn.nukkit.command.args.PlayerArgument.getPlayer;
+import static cn.nukkit.command.args.PlayerArgument.player;
+import static com.mojang.brigadier.arguments.StringArgumentType.getString;
+import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
 
-    public TellCommand(String name) {
-        super(name, "%nukkit.command.tell.description", "%commands.message.usage", new String[]{"w", "msg"});
-        this.setPermission("nukkit.command.tell");
-        this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("message")
-        });
+public class TellCommand extends BaseCommand {
+
+    public TellCommand(CommandDispatcher<CommandSource> dispatcher) {
+        super("tell", "%nukkit.command.tell.description"); // TODO: aliases (w, msg)
+
+        dispatcher.register(literal("tell")
+                .requires(requirePermission("nukkit.command.tell"))
+                .then(argument("player", player())
+                        .then(argument("message", greedyString())
+                            .executes(this::run))));
     }
 
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!this.testPermission(sender)) {
-            return true;
+    public int run(CommandContext<CommandSource> context) {
+        CommandSource source = context.getSource();
+        Player player = getPlayer(context, "player");
+        String message = getString(context, "message");
+
+        if (Objects.equals(player, source)) {
+            source.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.message.sameTarget"));
+            return 1;
         }
 
-        if (args.length < 2) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+        String displayName = (source instanceof Player ? ((Player) source).getDisplayName() : source.getName());
 
-            return false;
-        }
-
-        String name = args[0].toLowerCase();
-
-        Player player = sender.getServer().getPlayer(name);
-        if (player == null) {
-            sender.sendMessage(new TranslationContainer("commands.generic.player.notFound"));
-            return true;
-        }
-
-        if (Objects.equals(player, sender)) {
-            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.message.sameTarget"));
-            return true;
-        }
-
-        String msg = "";
-        for (int i = 1; i < args.length; i++) {
-            msg += args[i] + " ";
-        }
-        if (msg.length() > 0) {
-            msg = msg.substring(0, msg.length() - 1);
-        }
-
-        String displayName = (sender instanceof Player ? ((Player) sender).getDisplayName() : sender.getName());
-
-        sender.sendMessage("[" + sender.getName() + " -> " + player.getDisplayName() + "] " + msg);
-        player.sendMessage("[" + displayName + " -> " + player.getName() + "] " + msg);
-
-        return true;
+        source.sendMessage("[" + source.getName() + " -> " + player.getDisplayName() + "] " + message);
+        player.sendMessage("[" + displayName + " -> me] " + message);
+        return 1;
     }
 }
