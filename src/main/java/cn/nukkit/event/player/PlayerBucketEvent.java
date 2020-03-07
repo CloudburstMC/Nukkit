@@ -6,7 +6,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
 
-abstract class PlayerBucketEvent extends PlayerEvent implements Cancellable {
+public abstract class PlayerBucketEvent extends PlayerEvent implements Cancellable {
 
     private final Block blockClicked;
 
