@@ -156,12 +156,7 @@ public class Utils {
     }
 
     public static boolean isByteArrayEmpty(final byte[] array) {
-        for (byte b : array) {
-            if (b != 0) {
-                return false;
-            }
-        }
-        return true;
+        return array.length == 0 || array[0] != 0;
     }
 
     public static long toRGB(byte r, byte g, byte b, byte a) {
