@@ -2,9 +2,8 @@ package cn.nukkit.level.generator.standard.registry;
 
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
-import cn.nukkit.level.generator.standard.biome.map.ConstantBiomeMap;
-import cn.nukkit.level.generator.standard.biome.map.filtered.FilteredBiomeMap;
+import cn.nukkit.level.generator.standard.biome.map.filtered.BiomeFilter;
+import cn.nukkit.level.generator.standard.biome.map.filtered.IslandBiomeFilter;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,17 +11,16 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Registry for {@link BiomeMap}.
+ * Registry for {@link BiomeFilter}.
  *
  * @author DaPorkchop_
- * @see StandardGeneratorRegistries#biomeMap()
+ * @see StandardGeneratorRegistries#biomeFilter()
  */
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-public final class BiomeMapRegistry extends AbstractGeneratorRegistry<BiomeMap> {
+public final class BiomeFilterRegistry extends AbstractGeneratorRegistry<BiomeFilter> {
     @Override
     protected void registerDefault() {
-        this.register(ConstantBiomeMap.ID, ConstantBiomeMap.class);
-        this.register(FilteredBiomeMap.ID, FilteredBiomeMap.class);
+        this.register(IslandBiomeFilter.ID, IslandBiomeFilter.class);
     }
 
     @Override
@@ -36,9 +34,9 @@ public final class BiomeMapRegistry extends AbstractGeneratorRegistry<BiomeMap> 
         private static HandlerList handlers = new HandlerList();
 
         @NonNull
-        private final BiomeMapRegistry registry;
+        private final BiomeFilterRegistry registry;
 
-        public BiomeMapRegistry getRegistry() {
+        public BiomeFilterRegistry getRegistry() {
             return this.registry;
         }
     }

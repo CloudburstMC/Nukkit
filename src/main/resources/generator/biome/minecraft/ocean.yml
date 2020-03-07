@@ -1,6 +1,6 @@
 dict: "nukkitx:vanilla"
 
-baseHeight: -1.0
+baseHeight: -0.125
 heightVariation: 0.1
 
 temperature: 0.5

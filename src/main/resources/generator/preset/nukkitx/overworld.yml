@@ -7,9 +7,15 @@ seaBlock: "water"
 seaLevel: 63
 
 biomes:
-  id: "nukkitx:constant"
-  seed: "biome"
-  biome: "minecraft:plains"
+  id: "nukkitx:filtered"
+  root:
+    id: "nukkitx:island"
+    biome: "minecraft:ocean"
+  fallback: "minecraft:plains"
+
+#  id: "nukkitx:constant"
+#  seed: "biome"
+#  biome: "minecraft:plains"
 
 density:
   id: "nukkitx:vanilla"
