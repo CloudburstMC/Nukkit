@@ -1,0 +1,17 @@
+id: "nukkitx:zoom"
+next:
+  id: "nukkitx:zoom"
+  next:
+    id: "nukkitx:zoom"
+    next:
+      id: "nukkitx:zoom"
+      next:
+        id: "nukkitx:zoom"
+        fuzzy: true
+        next:
+          id: "nukkitx:zoom"
+          fuzzy: true
+          next:
+            id: "nukkitx:island"
+            chance: 10
+            biome: "plains"

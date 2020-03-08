@@ -221,7 +221,7 @@
         <dependency>
             <groupId>net.daporkchop.lib</groupId>
             <artifactId>noise</artifactId>
-            <version>0.5.3-SNAPSHOT</version>
+            <version>0.5.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.nimbusds</groupId>

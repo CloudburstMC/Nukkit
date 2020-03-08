@@ -4,6 +4,7 @@ import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.generator.standard.biome.map.filtered.BiomeFilter;
 import cn.nukkit.level.generator.standard.biome.map.filtered.IslandBiomeFilter;
+import cn.nukkit.level.generator.standard.biome.map.filtered.ZoomBiomeFilter;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,7 @@ public final class BiomeFilterRegistry extends AbstractGeneratorRegistry<BiomeFi
     @Override
     protected void registerDefault() {
         this.register(IslandBiomeFilter.ID, IslandBiomeFilter.class);
+        this.register(ZoomBiomeFilter.ID, ZoomBiomeFilter.class);
     }
 
     @Override

@@ -33,7 +33,10 @@ public abstract class AbstractGeneratorRegistry<V> implements Registry {
         this.registerDefault();
 
         Event event = this.constructionEvent();
-        Server.getInstance().getPluginManager().callEvent(event);
+        if (Server.getInstance() != null)   {
+            //i was debugging stuff
+            Server.getInstance().getPluginManager().callEvent(event);
+        }
         this.close();
     }
 

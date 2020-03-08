@@ -2,6 +2,8 @@ package cn.nukkit.level.generator.standard.biome.map.filtered;
 
 import net.daporkchop.lib.random.PRandom;
 
+import static net.daporkchop.lib.random.impl.FastPRandom.*;
+
 /**
  * @author DaPorkchop_
  */
@@ -14,8 +16,6 @@ public abstract class AbstractBiomeFilter implements BiomeFilter {
     }
 
     protected int random(int x, int z, int i, int bound) {
-        long l = (this.seed + i) * 6364136223846793005L + 1442695040888963407L;
-        int val = (int) (((l + x) * 6364136223846793005L + 1442695040888963407L + z) % bound);
-        return val < 0 ? val + bound : val;
+        return (mix32(mix64(mix64(mix64(this.seed + i) + x) + z)) >>> 1) % bound;
     }
 }

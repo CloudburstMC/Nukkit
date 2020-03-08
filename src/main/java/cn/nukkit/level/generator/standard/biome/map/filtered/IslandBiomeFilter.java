@@ -1,13 +1,18 @@
 package cn.nukkit.level.generator.standard.biome.map.filtered;
 
 import cn.nukkit.level.generator.standard.biome.GenerationBiome;
+import cn.nukkit.level.generator.standard.misc.IntArrayAllocator;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.daporkchop.lib.common.util.PValidation;
 import net.daporkchop.lib.random.PRandom;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
+
+import static java.lang.Math.*;
 
 /**
  * Generates a random pattern of islands.
@@ -32,7 +37,20 @@ public class IslandBiomeFilter extends AbstractBiomeFilter {
     }
 
     @Override
-    public GenerationBiome get(int x, int z) {
-        return this.random(x, z, 0, this.chance) == 0 ? this.biome : null;
+    public Collection<GenerationBiome> getAllBiomes() {
+        return Collections.singleton(this.biome);
+    }
+
+    @Override
+    public int[] get(int x, int z, int sizeX, int sizeZ, IntArrayAllocator alloc) {
+        int[] arr = alloc.get(sizeX * sizeZ);
+
+        for (int chance = this.chance, dx = 0; dx < sizeX; dx++) {
+            for (int dz = 0; dz < sizeZ; dz++) {
+                arr[dx * sizeZ + dz] = min(this.random(x + dx, z + dz, 0, chance), 1);
+            }
+        }
+
+        return arr;
     }
 }

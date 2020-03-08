@@ -38,7 +38,7 @@ public final class GenerationBiomeStore extends AbstractGeneratorStore<Generatio
     @Override
     protected GenerationBiome compute(@NonNull Identifier id) throws IOException {
         try (InputStream in = StandardGeneratorUtils.read("biome", id)) {
-            return Nukkit.YAML_MAPPER.readValue(in, TempBiome.class).build(id);
+            return Nukkit.YAML_MAPPER.readValue(in, TempBiome.class).build(id, this.idToValues.size());
         }
     }
 
@@ -65,8 +65,8 @@ public final class GenerationBiomeStore extends AbstractGeneratorStore<Generatio
         @JsonProperty
         private double rainfall    = 0.5d;
 
-        public GenerationBiome build(@NonNull Identifier id) {
-            return new GenerationBiome(this, id);
+        public GenerationBiome build(@NonNull Identifier id, int internalId) {
+            return new GenerationBiome(this, id, internalId);
         }
 
         @JsonSetter("dictionary")

@@ -29,8 +29,9 @@ public final class GenerationBiome {
     private final double rainfall;
 
     private final int runtimeId;
+    private final int internalId;
 
-    public GenerationBiome(@NonNull GenerationBiomeStore.TempBiome temp, @NonNull Identifier id) {
+    public GenerationBiome(@NonNull GenerationBiomeStore.TempBiome temp, @NonNull Identifier id, int internalId) {
         this.id = id;
         this.dictionary = temp.getDictionary();
         this.decorators = fallbackIfNull(temp.getDecorators(), Decorator.EMPTY_ARRAY);
@@ -43,6 +44,7 @@ public final class GenerationBiome {
         this.rainfall = temp.getRainfall();
 
         this.runtimeId = this.dictionary.get(id);
+        this.internalId = internalId;
     }
 
     public Identifier getId() {
@@ -79,5 +81,9 @@ public final class GenerationBiome {
 
     public int getRuntimeId() {
         return this.runtimeId;
+    }
+
+    public int getInternalId() {
+        return this.internalId;
     }
 }
