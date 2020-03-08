@@ -304,6 +304,22 @@ public abstract class Item implements Cloneable {
         if (this.customName != null) {
             CompoundTagBuilder displayTag = CompoundTag.builder();
             displayTag.stringTag("Name", this.customName);
+            if(!this.lore.isEmpty()){
+                List<com.nukkitx.nbt.tag.StringTag> loreLinesTag = new ArrayList<>();
+                for(String line : this.lore){
+                    loreLinesTag.add(new com.nukkitx.nbt.tag.StringTag("", line));
+                }
+                displayTag.listTag("Lore", com.nukkitx.nbt.tag.StringTag.class, loreLinesTag);
+            }
+            tag.tag(displayTag.build("display"));
+        }
+        else if(!this.lore.isEmpty()){
+            CompoundTagBuilder displayTag = CompoundTag.builder();
+            List<com.nukkitx.nbt.tag.StringTag> loreListTag = new ArrayList<>();
+            for(String line : this.lore){
+                loreListTag.add(new com.nukkitx.nbt.tag.StringTag("", line));
+            }
+            displayTag.listTag("Lore", com.nukkitx.nbt.tag.StringTag.class, loreListTag);
             tag.tag(displayTag.build("display"));
         }
 
