@@ -2,7 +2,8 @@ package cn.nukkit.blockentity.impl;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockIds;
-import cn.nukkit.blockentity.*;
+import cn.nukkit.blockentity.BlockEntityType;
+import cn.nukkit.blockentity.Furnace;
 import cn.nukkit.event.inventory.FurnaceBurnEvent;
 import cn.nukkit.event.inventory.FurnaceSmeltEvent;
 import cn.nukkit.inventory.FurnaceInventory;
@@ -29,7 +30,7 @@ import static cn.nukkit.item.ItemIds.BUCKET;
 /**
  * @author MagicDroidX
  */
-public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace, BlastFurnace, Smoker {
+public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
 
     protected final FurnaceInventory inventory;
     protected short burnTime = 0;
