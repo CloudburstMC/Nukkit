@@ -10,15 +10,13 @@ import net.daporkchop.lib.random.PRandom;
 import java.util.Objects;
 
 /**
- * Generates islands randomly scattered around the world.
+ * Generates a random pattern of islands.
  *
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public class IslandBiomeFilter implements BiomeFilter {
+public class IslandBiomeFilter extends AbstractBiomeFilter {
     public static final Identifier ID = Identifier.fromString("nukkitx:island");
-
-    protected long seed;
 
     @JsonProperty
     protected GenerationBiome biome;
@@ -30,12 +28,11 @@ public class IslandBiomeFilter implements BiomeFilter {
         Objects.requireNonNull(this.biome, "biome must be set!");
         PValidation.ensurePositive(this.chance);
 
-        this.seed = random.nextLong();
+        super.init(seed, random);
     }
 
     @Override
     public GenerationBiome get(int x, int z) {
-        int i = (int) (((this.seed + x) * 6364136223846793005L + 1442695040888963407L + z) % this.chance);
-        return (i < 0 ? i + this.chance : i) == 0 ? this.biome : null;
+        return this.random(x, z, 0, this.chance) == 0 ? this.biome : null;
     }
 }
