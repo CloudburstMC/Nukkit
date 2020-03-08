@@ -301,26 +301,23 @@ public abstract class Item implements Cloneable {
         tag.putAll(this.getTag());
 
 
+        CompoundTagBuilder displayTag = CompoundTag.builder();
         if (this.customName != null) {
-            CompoundTagBuilder displayTag = CompoundTag.builder();
             displayTag.stringTag("Name", this.customName);
-            if(!this.lore.isEmpty()){
-                List<StringTag> loreLinesTag = new ArrayList<>();
-                for(String line : this.lore){
-                    loreLinesTag.add(new StringTag("", line));
-                }
-                displayTag.listTag("Lore", StringTag.class, loreLinesTag);
-            }
             tag.tag(displayTag.build("display"));
         }
-        else if(!this.lore.isEmpty()){
-            CompoundTagBuilder displayTag = CompoundTag.builder();
-            List<StringTag> loreListTag = new ArrayList<>();
+        
+        if(!this.lore.isEmpty()){
+            List<StringTag> loreLinesTag = new ArrayList<>();
             for(String line : this.lore){
-                loreListTag.add(new StringTag("", line));
+                loreLinesTag.add(new StringTag("", line));
             }
-            displayTag.listTag("Lore", StringTag.class, loreListTag);
-            tag.tag(displayTag.build("display"));
+            displayTag.listTag("Lore", StringTag.class, loreLinesTag);
+        }
+
+        CompoundTag display = displayTag.build("display");
+        if(!display.getValue().isEmpty()){
+            tag.tag(display);
         }
 
         if (!this.canDestroy.isEmpty()) {
