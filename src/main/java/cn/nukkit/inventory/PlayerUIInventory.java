@@ -1,7 +1,7 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.player.Player;
+import com.nukkitx.protocol.bedrock.data.ContainerId;
 import com.nukkitx.protocol.bedrock.data.ItemData;
 import com.nukkitx.protocol.bedrock.packet.InventoryContentPacket;
 import com.nukkitx.protocol.bedrock.packet.InventorySlotPacket;
@@ -49,12 +49,12 @@ public class PlayerUIInventory extends BaseInventory {
 
         for (Player p : target) {
             if (p == this.getHolder()) {
-                packet.setContainerId(ContainerIds.UI);
+                packet.setContainerId(ContainerId.CURSOR);
                 p.sendPacket(packet);
             } else {
                 int id;
 
-                if ((id = p.getWindowId(this)) == ContainerIds.NONE) {
+                if ((id = p.getWindowId(this)) == ContainerId.NONE) {
                     this.close(p);
                     continue;
                 }
@@ -74,12 +74,12 @@ public class PlayerUIInventory extends BaseInventory {
 
         for (Player p : target) {
             if (p == this.getHolder()) {
-                packet.setContainerId(ContainerIds.UI);
+                packet.setContainerId(ContainerId.CURSOR);
                 p.sendPacket(packet);
             } else {
                 int id;
 
-                if ((id = p.getWindowId(this)) == ContainerIds.NONE) {
+                if ((id = p.getWindowId(this)) == ContainerId.NONE) {
                     this.close(p);
                     continue;
                 }
