@@ -236,8 +236,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
         checkBounds(x, y, z);
         ChunkSection section = this.getSection(y >> 4);
         if (section == null) {
-            //setting meta on non-existing block?
-            return;
+            throw new IllegalStateException("Setting BlockData on null section");
         }
 
         section.setBlockData(x, y & 0xf, z, layer, data);

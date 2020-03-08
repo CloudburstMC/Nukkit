@@ -2,8 +2,7 @@ package cn.nukkit.blockentity.impl;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockIds;
-import cn.nukkit.blockentity.BlockEntityType;
-import cn.nukkit.blockentity.Furnace;
+import cn.nukkit.blockentity.*;
 import cn.nukkit.event.inventory.FurnaceBurnEvent;
 import cn.nukkit.event.inventory.FurnaceSmeltEvent;
 import cn.nukkit.inventory.FurnaceInventory;
@@ -30,11 +29,10 @@ import static cn.nukkit.item.ItemIds.BUCKET;
 /**
  * @author MagicDroidX
  */
-public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
+public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace, BlastFurnace, Smoker {
 
     protected final FurnaceInventory inventory;
     protected short burnTime = 0;
-    protected short burnDuration = 0;
     protected short cookTime = 0;
     protected short maxTime = 0;
 
@@ -44,17 +42,7 @@ public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
     }
 
     public FurnaceBlockEntity(BlockEntityType<?> type, Chunk chunk, Vector3i position) {
-        super(type, chunk, position);
-        InventoryType invType;
-        Block furnace = getBlock();
-        if (furnace.getId() == BLAST_FURNACE || furnace.getId() == LIT_BLAST_FURNACE) {
-            invType = InventoryType.BLAST_FURNACE;
-        } else if (furnace.getId() == SMOKER || furnace.getId() == LIT_SMOKER) {
-            invType = InventoryType.SMOKER;
-        } else {
-            invType = InventoryType.FURNACE;
-        }
-        this.inventory = new FurnaceInventory(this, invType);
+        this(type, chunk, position, InventoryType.FURNACE);
     }
 
     @Override
@@ -95,10 +83,6 @@ public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
         }
     }
 
-    public float getBurnRate() {
-        return 1.0f;
-    }
-
     @Override
     public void onBreak() {
         for (Item content : inventory.getContents().values()) {
@@ -109,12 +93,16 @@ public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
     @Override
     public boolean isValid() {
         Identifier blockId = getBlock().getId();
-        return blockId == BlockIds.FURNACE || blockId == BlockIds.LIT_FURNACE;
+        return blockId == FURNACE || blockId == LIT_FURNACE;
     }
 
     @Override
     public FurnaceInventory getInventory() {
         return inventory;
+    }
+
+    protected float getBurnRate() {
+        return 1.0f;
     }
 
     protected void checkFuel(Item fuel) {
@@ -237,11 +225,11 @@ public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
     }
 
     protected void extinguishFurnace() {
-        this.getLevel().setBlock(this.getPosition(), Block.get(BlockIds.FURNACE, this.getBlock().getMeta()), true);
+        this.getLevel().setBlock(this.getPosition(), Block.get(FURNACE, this.getBlock().getMeta()), true);
     }
 
     protected void lightFurnace() {
-        this.getLevel().setBlock(this.getPosition(), Block.get(BlockIds.LIT_FURNACE, this.getBlock().getMeta()), true);
+        this.getLevel().setBlock(this.getPosition(), Block.get(LIT_FURNACE, this.getBlock().getMeta()), true);
     }
 
     public int getBurnTime() {

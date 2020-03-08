@@ -1,6 +1,9 @@
 package cn.nukkit.registry;
 
 import cn.nukkit.block.*;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityType;
+import cn.nukkit.blockentity.BlockEntityTypes;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
@@ -313,8 +316,8 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(CRAFTING_TABLE, BlockCraftingTable::new); //58
         this.factoryMap.put(WHEAT, BlockWheat::new); //59
         this.factoryMap.put(FARMLAND, BlockFarmland::new); //60
-        this.factoryMap.put(FURNACE, BlockFurnace::new); //61
-        this.factoryMap.put(LIT_FURNACE, BlockFurnaceBurning::new); //62
+        this.factoryMap.put(FURNACE, BlockFurnace.factory(BlockEntityTypes.FURNACE)); //61
+        this.factoryMap.put(LIT_FURNACE, BlockFurnaceBurning.factory(BlockEntityTypes.FURNACE)); //62
         this.factoryMap.put(STANDING_SIGN, BlockSignPost.factory(WALL_SIGN, ItemIds.SIGN)); //63
         this.factoryMap.put(WOODEN_DOOR, BlockDoorWood::new); //64
         this.factoryMap.put(LADDER, BlockLadder::new); //65
@@ -588,10 +591,10 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(DARK_OAK_WALL_SIGN, BlockWallSign.factory(DARK_OAK_STANDING_SIGN, ItemIds.DARK_OAK_SIGN)); //447
         this.factoryMap.put(LECTERN, BlockLectern::new); //448
         //449: grindstone
-        this.factoryMap.put(BLAST_FURNACE, BlockFurnace::new); // 450
+        this.factoryMap.put(BLAST_FURNACE, BlockFurnace.factory(BlockEntityTypes.BLAST_FURNACE)); // 450
         //451: stonecutter_block
-        this.factoryMap.put(SMOKER, BlockFurnace::new); //452
-        this.factoryMap.put(LIT_SMOKER, BlockFurnaceBurning::new); //453
+        this.factoryMap.put(SMOKER, BlockFurnace.factory(BlockEntityTypes.SMOKER)); //452
+        this.factoryMap.put(LIT_SMOKER, BlockFurnaceBurning.factory(BlockEntityTypes.SMOKER)); //453
         //454: cartography_table
         //455: fletching_table
         //456: smithing_table
@@ -605,7 +608,7 @@ public class BlockRegistry implements Registry {
         //464: jigsaw
         this.factoryMap.put(WOOD, BlockWood::new); //465
         //466: composter
-        this.factoryMap.put(LIT_BLAST_FURNACE, BlockFurnaceBurning::new); //467
+        this.factoryMap.put(LIT_BLAST_FURNACE, BlockFurnaceBurning.factory(BlockEntityTypes.BLAST_FURNACE)); //467
         this.factoryMap.put(LIGHT_BLOCK, BlockLight::new); //468
         //469: wither_rose
         //470: stickypistonarmcollision
