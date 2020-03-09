@@ -667,9 +667,17 @@ public abstract class Item implements Cloneable {
     }
 
     public final boolean equals(Item that, boolean checkDamage, boolean checkCompound) {
-        return this.id == that.id &&
-                (!checkDamage || this.meta == that.meta) &&
-                (!checkCompound || this.tag.equals(that.tag));
+        if (this.id == that.id && (!checkDamage || this.meta == that.meta)) {
+            if (!checkCompound) {
+                return true;
+            }
+            CompoundTagBuilder thisTag = CompoundTag.builder();
+            CompoundTagBuilder thatTag = CompoundTag.builder();
+            this.saveAdditionalData(thisTag);
+            that.saveAdditionalData(thatTag);
+            return thisTag.buildRootTag().equals(thatTag.buildRootTag());
+        }
+        return false;
     }
 
     @Override
