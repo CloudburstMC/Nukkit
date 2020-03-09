@@ -6,6 +6,7 @@ import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import net.daporkchop.lib.common.util.PValidation;
 import net.daporkchop.lib.random.PRandom;
 
 import java.util.Collection;
@@ -15,19 +16,18 @@ import java.util.Objects;
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public class ZoomBiomeFilter extends AbstractBiomeFilter {
+public class ZoomBiomeFilter extends AbstractBiomeFilter.Next {
     public static final Identifier ID = Identifier.fromString("nukkitx:zoom");
 
     @JsonProperty
-    @JsonAlias({"parent"})
-    protected BiomeFilter next;
+    protected int times = 1;
 
     @JsonProperty
     protected boolean fuzzy = false;
 
     @Override
     public void init(long seed, PRandom random) {
-        Objects.requireNonNull(this.next, "next must be set!");
+        PValidation.ensurePositive(this.times);
 
         super.init(seed, random);
     }
@@ -39,11 +39,17 @@ public class ZoomBiomeFilter extends AbstractBiomeFilter {
 
     @Override
     public int[] get(int x, int z, int sizeX, int sizeZ, IntArrayAllocator alloc) {
+        return this.actuallyDoGet(x, z, sizeX, sizeZ, alloc, this.times);
+    }
+
+    protected int[] actuallyDoGet(int x, int z, int sizeX, int sizeZ, IntArrayAllocator alloc, int depth) {
         int belowX = x >> 1;
         int belowZ = z >> 1;
         int belowSizeX = (sizeX >> 1) + 2;
         int belowSizeZ = (sizeZ >> 1) + 2;
-        int[] values = this.next.get(belowX, belowZ, belowSizeX, belowSizeZ, alloc);
+        int[] values = depth == 1
+                ? this.next.get(belowX, belowZ, belowSizeX, belowSizeZ, alloc)
+                : this.actuallyDoGet(belowX, belowZ, belowSizeX, belowSizeZ, alloc, depth - 1);
 
         int zoomSizeX = (belowSizeX - 1) << 1;
         int zoomSizeZ = (belowSizeZ - 1) << 1;
@@ -81,7 +87,7 @@ public class ZoomBiomeFilter extends AbstractBiomeFilter {
         return finalValues;
     }
 
-    protected int selectNormal(int x, int z, int v0, int v1, int v2, int v3)   {
+    protected int selectNormal(int x, int z, int v0, int v1, int v2, int v3) {
         if (v1 == v2 && v2 == v3) {
             return v1;
         } else if (v0 == v1 && v0 == v2) {
@@ -107,8 +113,8 @@ public class ZoomBiomeFilter extends AbstractBiomeFilter {
         return this.selectRandom(x, z, v0, v1, v2, v3);
     }
 
-    protected int selectRandom(int x, int z, int v0, int v1, int v2, int v3)   {
-        switch (this.random(x, z, 0, 4))    {
+    protected int selectRandom(int x, int z, int v0, int v1, int v2, int v3) {
+        switch (this.random(x, z, 0, 4)) {
             case 0:
                 return v0;
             case 1:

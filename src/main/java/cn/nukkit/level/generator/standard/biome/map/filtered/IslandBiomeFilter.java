@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.daporkchop.lib.common.util.PValidation;
 import net.daporkchop.lib.random.PRandom;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
@@ -26,28 +27,34 @@ public class IslandBiomeFilter extends AbstractBiomeFilter {
     @JsonProperty
     protected GenerationBiome biome;
     @JsonProperty
-    protected int chance = 10;
+    protected GenerationBiome ocean;
+    @JsonProperty
+    protected int chance = 9;
 
     @Override
     public void init(long seed, PRandom random) {
         Objects.requireNonNull(this.biome, "biome must be set!");
-        PValidation.ensurePositive(this.chance);
+        Objects.requireNonNull(this.ocean, "ocean must be set!");
+        PValidation.ensurePositive(this.chance++);
 
         super.init(seed, random);
     }
 
     @Override
     public Collection<GenerationBiome> getAllBiomes() {
-        return Collections.singleton(this.biome);
+        return Arrays.asList(this.biome, this.ocean);
     }
 
     @Override
     public int[] get(int x, int z, int sizeX, int sizeZ, IntArrayAllocator alloc) {
         int[] arr = alloc.get(sizeX * sizeZ);
 
+        final int biome = this.biome.getInternalId();
+        final int ocean = this.ocean.getInternalId();
+
         for (int chance = this.chance, dx = 0; dx < sizeX; dx++) {
             for (int dz = 0; dz < sizeZ; dz++) {
-                arr[dx * sizeZ + dz] = min(this.random(x + dx, z + dz, 0, chance), 1);
+                arr[dx * sizeZ + dz] = this.random(x + dx, z + dz, 0, chance) == 0 ? biome : ocean;
             }
         }
 
