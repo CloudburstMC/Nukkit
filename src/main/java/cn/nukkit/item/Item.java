@@ -278,8 +278,8 @@ public abstract class Item implements Cloneable {
         this.tag = this.tag.toBuilder().putAll(tag).buildRootTag();
 
         tag.listenForCompound("display", displayTag -> {
-            tag.listenForString("Name", this::setCustomName);
-            tag.listenForList("Lore", StringTag.class, tags -> {
+            displayTag.listenForString("Name", this::setCustomName);
+            displayTag.listenForList("Lore", StringTag.class, tags -> {
                 List<String> lines = new ArrayList<>();
                 for (StringTag line : tags) {
                     lines.add(line.getValue());
