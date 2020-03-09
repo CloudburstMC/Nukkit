@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ElementInput extends Element {
 
+    @JsonProperty
     private final String type = "input"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
     private String text = "";
     private String placeholder = "";

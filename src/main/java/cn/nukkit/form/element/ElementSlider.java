@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ElementSlider extends Element {
 
+    @JsonProperty
     private final String type = "slider"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
     private String text = "";
     private float min = 0f;
