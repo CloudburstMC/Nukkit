@@ -102,6 +102,7 @@ public class BlockBarrel extends BlockSolid implements Faceable {
 
     public void setBlockFace(BlockFace face) {
         setMeta((getMeta() & 0x8) | (face.getIndex() & 0x7));
+        getLevel().setBlockDataAt(this.getX(), this.getY(), this.getZ(), this.getLayer(), getMeta());
     }
 
     public boolean isOpen() {
@@ -110,6 +111,7 @@ public class BlockBarrel extends BlockSolid implements Faceable {
 
     public void setOpen(boolean open) {
         setMeta((getMeta() & 0x7) | (open ? 0x8 : 0x0));
+        getLevel().setBlockDataAt(this.getX(), this.getY(), this.getZ(), this.getLayer(), getMeta());
     }
 
     @Override

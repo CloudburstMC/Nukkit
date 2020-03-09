@@ -2067,11 +2067,11 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     }
 
                     MovePlayerPacket movePlayerPacket = (MovePlayerPacket) packet;
-                    Vector3f newPos = Vector3f.from(movePlayerPacket.getPosition().sub(0, this.getEyeHeight(), 0));
+                    Vector3f newPos = movePlayerPacket.getPosition().sub(0, this.getEyeHeight(), 0);
                     Vector3f currentPos = this.getPosition();
 
-                    float yaw = movePlayerPacket.getRotation().getX() % 360;
-                    float pitch = movePlayerPacket.getRotation().getY() % 360;
+                    float yaw = movePlayerPacket.getRotation().getY() % 360;
+                    float pitch = movePlayerPacket.getRotation().getX() % 360;
 
                     if (yaw < 0) {
                         yaw += 360;
@@ -3606,7 +3606,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         MovePlayerPacket packet = new MovePlayerPacket();
         packet.setRuntimeEntityId(this.getRuntimeId());
         packet.setPosition(pos.add(0, getEyeHeight(), 0));
-        packet.setRotation(com.nukkitx.math.vector.Vector3f.from(yaw, pitch, yaw));
+        packet.setRotation(Vector3f.from(pitch, yaw, yaw));
         packet.setMode(mode);
         if (mode == MovePlayerPacket.Mode.TELEPORT) {
             packet.setTeleportationCause(MovePlayerPacket.TeleportationCause.BEHAVIOR);

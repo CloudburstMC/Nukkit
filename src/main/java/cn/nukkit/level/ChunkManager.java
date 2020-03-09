@@ -68,6 +68,14 @@ public interface ChunkManager {
         this.setBlockDataAt(x, y, z, 0, data);
     }
 
+    default void setBlockDataAt(Vector3i pos, int data) {
+        this.setBlockDataAt(pos, 0, data);
+    }
+
+    default void setBlockDataAt(Vector3i pos, int layer, int data) {
+        this.setBlockDataAt(pos.getX(), pos.getY(), pos.getZ(), layer, data);
+    }
+
     void setBlockDataAt(int x, int y, int z, int layer, int data);
 
     default Block getBlockAt(int x, int y, int z) {

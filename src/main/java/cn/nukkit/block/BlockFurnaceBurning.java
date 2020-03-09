@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityType;
 import cn.nukkit.blockentity.BlockEntityTypes;
 import cn.nukkit.blockentity.Furnace;
 import cn.nukkit.inventory.ContainerInventory;
@@ -20,9 +21,15 @@ import static cn.nukkit.block.BlockIds.AIR;
  * Nukkit Project
  */
 public class BlockFurnaceBurning extends BlockSolid implements Faceable {
+    private BlockEntityType<? extends Furnace> furnaceEntity;
 
-    public BlockFurnaceBurning(Identifier id) {
+    protected BlockFurnaceBurning(Identifier id, BlockEntityType<? extends Furnace> entity) {
         super(id);
+        this.furnaceEntity = entity;
+    }
+
+    public static BlockFactory factory (BlockEntityType<? extends Furnace> furnaceEntity) {
+        return id -> new BlockFurnaceBurning(id, furnaceEntity);
     }
 
     @Override
@@ -56,7 +63,7 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
         this.setMeta(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
         this.getLevel().setBlock(block.getPosition(), this, true, true);
 
-        Furnace furnace = BlockEntityRegistry.get().newEntity(BlockEntityTypes.FURNACE, this.getChunk(), this.getPosition());
+        Furnace furnace = BlockEntityRegistry.get().newEntity(furnaceEntity, this.getChunk(), this.getPosition());
         furnace.loadAdditionalData(item.getTag());
         if (item.hasCustomName()) {
             furnace.setCustomName(item.getCustomName());
@@ -79,7 +86,7 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
             if (blockEntity instanceof Furnace) {
                 furnace = (Furnace) blockEntity;
             } else {
-                furnace = BlockEntityRegistry.get().newEntity(BlockEntityTypes.FURNACE, this.getChunk(), this.getPosition());
+                furnace = BlockEntityRegistry.get().newEntity(furnaceEntity, this.getChunk(), this.getPosition());
             }
 
             player.addWindow(furnace.getInventory());
@@ -128,4 +135,5 @@ public class BlockFurnaceBurning extends BlockSolid implements Faceable {
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getMeta() & 0x7);
     }
+
 }

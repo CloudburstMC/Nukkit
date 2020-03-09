@@ -37,7 +37,7 @@ public abstract class ContainerInventory extends BaseInventory {
     public void onOpen(Player who) {
         super.onOpen(who);
         ContainerOpenPacket packet = new ContainerOpenPacket();
-        packet.setWindowId((byte) who.getWindowId(this));
+        packet.setWindowId(who.getWindowId(this));
         packet.setType((byte) this.getType().getNetworkType());
         InventoryHolder holder = this.getHolder();
         if (holder instanceof BlockEntity) {
@@ -54,7 +54,7 @@ public abstract class ContainerInventory extends BaseInventory {
     @Override
     public void onClose(Player who) {
         ContainerClosePacket packet = new ContainerClosePacket();
-        packet.setWindowId((byte) who.getWindowId(this));
+        packet.setWindowId(who.getWindowId(this));
         who.sendPacket(packet);
         super.onClose(who);
     }

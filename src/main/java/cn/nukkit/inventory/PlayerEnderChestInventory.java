@@ -28,7 +28,7 @@ public class PlayerEnderChestInventory extends BaseInventory {
         }
         super.onOpen(who);
         ContainerOpenPacket containerOpenPacket = new ContainerOpenPacket();
-        containerOpenPacket.setWindowId((byte) who.getWindowId(this));
+        containerOpenPacket.setWindowId(who.getWindowId(this));
         containerOpenPacket.setType((byte) this.getType().getNetworkType());
         BlockEnderChest chest = who.getViewingEnderChest();
         if (chest != null) {
@@ -45,7 +45,7 @@ public class PlayerEnderChestInventory extends BaseInventory {
             BlockEventPacket blockEventPacket = new BlockEventPacket();
             blockEventPacket.setBlockPosition(chest.getPosition());
             blockEventPacket.setEventType(1);
-            blockEventPacket.setEventData(2);
+            blockEventPacket.setEventData(1);
 
             Level level = this.getHolder().getLevel();
             if (level != null) {
@@ -58,7 +58,7 @@ public class PlayerEnderChestInventory extends BaseInventory {
     @Override
     public void onClose(Player who) {
         ContainerClosePacket containerClosePacket = new ContainerClosePacket();
-        containerClosePacket.setWindowId((byte) who.getWindowId(this));
+        containerClosePacket.setWindowId(who.getWindowId(this));
         who.sendPacket(containerClosePacket);
         super.onClose(who);
 

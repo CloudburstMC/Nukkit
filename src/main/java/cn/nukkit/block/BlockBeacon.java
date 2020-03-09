@@ -53,9 +53,8 @@ public class BlockBeacon extends BlockTransparent {
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
             BlockEntity t = this.getLevel().getBlockEntity(this.getPosition());
-            if (t instanceof Beacon) {
+            if (!(t instanceof Beacon)) {
                 t.close();
-            } else {
                 BlockEntityRegistry.get().newEntity(BEACON, this.getChunk(), this.getPosition());
             }
 

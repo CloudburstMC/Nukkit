@@ -111,11 +111,11 @@ public class BlockBed extends BlockTransparent implements Faceable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         Block down = this.down();
-        if (!down.isTransparent()) {
-            Block next = this.getSide(player.getDirection());
+        if (!down.isTransparent() || down instanceof BlockSlab) {
+            Block next = this.getSide(player.getHorizontalFacing());
             Block downNext = next.down();
 
-            if (next.canBeReplaced() && !downNext.isTransparent()) {
+            if (next.canBeReplaced() && (!downNext.isTransparent() || downNext instanceof BlockSlab)) {
                 int meta = player.getDirection().getHorizontalIndex();
 
                 this.getLevel().setBlock(block.getPosition(), Block.get(this.getId(), meta), true, true);

@@ -119,11 +119,11 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
             BlockEventPacket packet = new BlockEventPacket();
             packet.setBlockPosition(this.left.getHolder().getPosition());
             packet.setEventType(1);
-            packet.setEventData(2);
+            packet.setEventData(1);
             Level level = this.left.getHolder().getLevel();
             if (level != null) {
                 level.addLevelSoundEvent(this.left.getHolder().getPosition(), SoundEvent.CHEST_OPEN);
-                level.addChunkPacket(left.getHolder().getPosition(), packet);
+                level.addChunkPacket(this.left.getHolder().getPosition(), packet);
             }
         }
     }

@@ -31,7 +31,7 @@ public class ChestInventory extends ContainerInventory {
             BlockEventPacket packet = new BlockEventPacket();
             packet.setBlockPosition(this.getHolder().getPosition());
             packet.setEventType(1);
-            packet.setEventData(2);
+            packet.setEventData(1);
 
             Level level = this.getHolder().getLevel();
             if (level != null) {

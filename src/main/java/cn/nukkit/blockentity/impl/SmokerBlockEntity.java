@@ -2,7 +2,9 @@ package cn.nukkit.blockentity.impl;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockIds;
+import cn.nukkit.blockentity.BlockEntityFactory;
 import cn.nukkit.blockentity.BlockEntityType;
+import cn.nukkit.blockentity.Furnace;
 import cn.nukkit.blockentity.Smoker;
 import cn.nukkit.inventory.InventoryType;
 import cn.nukkit.level.chunk.Chunk;

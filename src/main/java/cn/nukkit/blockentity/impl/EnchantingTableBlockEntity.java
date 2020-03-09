@@ -21,8 +21,4 @@ public class EnchantingTableBlockEntity extends BaseBlockEntity implements Encha
         return getBlock().getId() == BlockIds.ENCHANTING_TABLE;
     }
 
-    @Override
-    public boolean isSpawnable() {
-        return true;
-    }
 }

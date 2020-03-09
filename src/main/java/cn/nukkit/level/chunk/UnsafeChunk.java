@@ -236,11 +236,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
         checkBounds(x, y, z);
         ChunkSection section = this.getSection(y >> 4);
         if (section == null) {
-            if (data == 0) {
-                // Setting air in an empty section.
-                return;
-            }
-            section = this.getOrCreateSection(y >> 4);
+            throw new IllegalStateException("Setting BlockData on null section");
         }
 
         section.setBlockData(x, y & 0xf, z, layer, data);

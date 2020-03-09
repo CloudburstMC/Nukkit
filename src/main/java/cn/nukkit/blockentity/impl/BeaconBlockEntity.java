@@ -33,13 +33,6 @@ public class BeaconBlockEntity extends BaseBlockEntity implements Beacon {
     }
 
     @Override
-    protected void init() {
-        scheduleUpdate();
-
-        super.init();
-    }
-
-    @Override
     public void loadAdditionalData(CompoundTag tag) {
         super.loadAdditionalData(tag);
 
@@ -49,6 +42,7 @@ public class BeaconBlockEntity extends BaseBlockEntity implements Beacon {
 
     @Override
     public void saveAdditionalData(CompoundTagBuilder tag) {
+        super.saveAdditionalData(tag);
         tag.intTag("primary", this.getPrimaryEffect());
         tag.intTag("secondary", this.getSecondaryEffect());
     }
@@ -107,9 +101,9 @@ public class BeaconBlockEntity extends BaseBlockEntity implements Beacon {
 
                     //If secondary is selected as the primary too, apply 2 amplification
                     if (getSecondaryEffect() == getPrimaryEffect()) {
-                        e.setAmplifier(2);
-                    } else {
                         e.setAmplifier(1);
+                    } else {
+                        e.setAmplifier(0);
                     }
 
                     //Hide particles
@@ -128,7 +122,7 @@ public class BeaconBlockEntity extends BaseBlockEntity implements Beacon {
                     e.setDuration(duration * 20);
 
                     //Regen I
-                    e.setAmplifier(1);
+                    e.setAmplifier(0);
 
                     //Hide particles
                     e.setVisible(false);
@@ -158,7 +152,7 @@ public class BeaconBlockEntity extends BaseBlockEntity implements Beacon {
     }
 
     private int calculatePowerLevel() {
-        int tileX = this.getPosition().getZ();
+        int tileX = this.getPosition().getX();
         int tileY = this.getPosition().getY();
         int tileZ = this.getPosition().getZ();
 
@@ -215,6 +209,12 @@ public class BeaconBlockEntity extends BaseBlockEntity implements Beacon {
         BeaconInventory inv = (BeaconInventory) player.getWindowById(ContainerIds.BEACON);
 
         inv.clear(0);
+        this.scheduleUpdate();
+        return true;
+    }
+
+    @Override
+    public boolean isSpawnable() {
         return true;
     }
 }

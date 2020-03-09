@@ -34,7 +34,6 @@ public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
 
     protected final FurnaceInventory inventory;
     protected short burnTime = 0;
-    protected short burnDuration = 0;
     protected short cookTime = 0;
     protected short maxTime = 0;
 
@@ -44,8 +43,7 @@ public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
     }
 
     public FurnaceBlockEntity(BlockEntityType<?> type, Chunk chunk, Vector3i position) {
-        super(type, chunk, position);
-        this.inventory = new FurnaceInventory(this, InventoryType.FURNACE);
+        this(type, chunk, position, InventoryType.FURNACE);
     }
 
     @Override
@@ -59,7 +57,6 @@ public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
         });
         tag.listenForShort("CookTime", this::setCookTime);
         tag.listenForShort("BurnTime", this::setBurnTime);
-        tag.listenForShort("BurnDuration", this::setBurnDuration);
         tag.listenForShort("MaxTime", this::setMaxTime);
     }
 
@@ -67,16 +64,14 @@ public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
     public void saveAdditionalData(CompoundTagBuilder tag) {
         super.saveAdditionalData(tag);
 
+        tag.shortTag("CookTime", cookTime);
+        tag.shortTag("BurnTime", burnTime);
+        tag.shortTag("MaxTime", maxTime);
         List<CompoundTag> items = new ArrayList<>();
         for (Map.Entry<Integer, Item> entry : this.inventory.getContents().entrySet()) {
             items.add(ItemUtils.serializeItem(entry.getValue(), entry.getKey()));
         }
         tag.listTag("Items", CompoundTag.class, items);
-
-        tag.shortTag("CookTime", cookTime);
-        tag.shortTag("BurnTime", burnTime);
-        tag.shortTag("BurnDuration", burnDuration);
-        tag.shortTag("MaxTime", maxTime);
     }
 
     @Override
@@ -89,10 +84,6 @@ public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
         }
     }
 
-    public float getBurnRate() {
-        return 1.0f;
-    }
-
     @Override
     public void onBreak() {
         for (Item content : inventory.getContents().values()) {
@@ -103,12 +94,16 @@ public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
     @Override
     public boolean isValid() {
         Identifier blockId = getBlock().getId();
-        return blockId == BlockIds.FURNACE || blockId == BlockIds.LIT_FURNACE;
+        return blockId == FURNACE || blockId == LIT_FURNACE;
     }
 
     @Override
     public FurnaceInventory getInventory() {
         return inventory;
+    }
+
+    protected float getBurnRate() {
+        return 1.0f;
     }
 
     protected void checkFuel(Item fuel) {
@@ -120,7 +115,6 @@ public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
 
         maxTime = (short) (ev.getBurnTime() / getBurnRate());
         burnTime = (short) (ev.getBurnTime() / getBurnRate());
-        burnDuration = 0;
 
         if (this.getBlock().getId() == BlockIds.FURNACE
                 || this.getBlock().getId() == BlockIds.SMOKER
@@ -131,7 +125,7 @@ public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
         if (burnTime > 0 && ev.isBurning()) {
             for (Player p : this.getInventory().getViewers()) {
                 ContainerSetDataPacket packet = new ContainerSetDataPacket();
-                packet.setWindowId((byte) p.getWindowId(this.getInventory()));
+                packet.setWindowId(p.getWindowId(this.getInventory()));
                 packet.setProperty(ContainerSetDataPacket.FURNACE_LIT_DURATION);
                 packet.setValue(maxTime);
 
@@ -173,11 +167,10 @@ public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
 
         if (burnTime > 0) {
             burnTime--;
-            burnDuration = (short) Math.ceil((float) burnTime / maxTime * 200);
 
             if (smelt != null && canSmelt) {
                 cookTime++;
-                if (cookTime >= 200) {
+                if (cookTime >= (200 / getBurnRate())) {
                     product = Item.get(smelt.getResult().getId(), smelt.getResult().getMeta(), product.getCount() + 1);
 
                     FurnaceSmeltEvent ev = new FurnaceSmeltEvent(this, raw, product);
@@ -191,12 +184,11 @@ public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
                         this.inventory.setSmelting(raw);
                     }
 
-                    cookTime -= 200;
+                    cookTime -= (200 / getBurnRate());
                 }
             } else if (burnTime <= 0) {
                 burnTime = 0;
                 cookTime = 0;
-                burnDuration = 0;
             } else {
                 cookTime = 0;
             }
@@ -207,22 +199,21 @@ public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
             }
             burnTime = 0;
             cookTime = 0;
-            burnDuration = 0;
         }
 
         for (Player player : this.getInventory().getViewers()) {
-            int windowId = player.getWindowId(this.getInventory());
+            byte windowId = player.getWindowId(this.getInventory());
             if (windowId > 0) {
                 ContainerSetDataPacket packet = new ContainerSetDataPacket();
-                packet.setWindowId((byte) windowId);
+                packet.setWindowId(windowId);
                 packet.setProperty(ContainerSetDataPacket.FURNACE_TICK_COUNT);
                 packet.setValue(cookTime);
                 player.sendPacket(packet);
 
                 packet = new ContainerSetDataPacket();
-                packet.setWindowId((byte) windowId);
+                packet.setWindowId(windowId);
                 packet.setProperty(ContainerSetDataPacket.FURNACE_LIT_TIME);
-                packet.setValue(burnDuration);
+                packet.setValue(burnTime);
                 player.sendPacket(packet);
             }
         }
@@ -235,11 +226,11 @@ public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
     }
 
     protected void extinguishFurnace() {
-        this.getLevel().setBlock(this.getPosition(), Block.get(BlockIds.FURNACE, this.getBlock().getMeta()), true);
+        this.getLevel().setBlock(this.getPosition(), Block.get(FURNACE, this.getBlock().getMeta()), true);
     }
 
     protected void lightFurnace() {
-        this.getLevel().setBlock(this.getPosition(), Block.get(BlockIds.LIT_FURNACE, this.getBlock().getMeta()), true);
+        this.getLevel().setBlock(this.getPosition(), Block.get(LIT_FURNACE, this.getBlock().getMeta()), true);
     }
 
     public int getBurnTime() {
@@ -251,14 +242,6 @@ public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
         if (burnTime > 0) {
             this.scheduleUpdate();
         }
-    }
-
-    public int getBurnDuration() {
-        return burnDuration;
-    }
-
-    public void setBurnDuration(int burnDuration) {
-        this.burnDuration = (short) burnDuration;
     }
 
     public int getCookTime() {
