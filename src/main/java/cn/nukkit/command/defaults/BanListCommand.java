@@ -17,7 +17,7 @@ import java.util.Iterator;
 public class BanListCommand extends BaseCommand {
 
     public BanListCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("banlist", "%nukkit.command.banlist.description");
+        super("banlist", "commands.banlist.description");
 
         dispatcher.register(literal("banlist")
                 .requires(requirePermission("nukkit.command.banlist"))

@@ -626,11 +626,15 @@ public class Player extends Human implements CommandSender, CommandSource, Inven
     public void sendCommandData() {
         AvailableCommandsPacket packet = new AvailableCommandsPacket();
         List<CommandData> commandData = packet.getCommands();
-        for (Command command : this.server.getCommandMap().getRegisteredCommands()) {
+        for (BaseCommand command : this.server.getCommandDispatcher().getCommands().values()) {
             if (!command.testPermissionSilent(this)) {
                 continue;
             }
-            commandData.add(command.generateCustomCommandData(this));
+            try {
+                commandData.add(command.generateCustomCommandData(this));
+            } catch (CommandSyntaxException e) {
+                e.printStackTrace();
+            }
         }
         this.sendPacket(packet);
     }

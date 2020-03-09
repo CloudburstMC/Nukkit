@@ -13,7 +13,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 public class SaveOffCommand extends BaseCommand {
 
     public SaveOffCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("save-off", "%nukkit.command.saveoff.description");
+        super("save-off", "commands.save-off.description");
 
         dispatcher.register(literal("save-off")
                 .requires(requirePermission("nukkit.command.saveoff"))

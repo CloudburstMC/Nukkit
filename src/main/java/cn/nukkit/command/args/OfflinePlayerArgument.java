@@ -14,9 +14,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class OfflinePlayerArgument implements ArgumentType<IPlayer> {
 
@@ -41,7 +39,13 @@ public class OfflinePlayerArgument implements ArgumentType<IPlayer> {
             }
 
             String playerName = reader.getString().substring(cursor, reader.getCursor());
-            IPlayer player = Server.getInstance().getOfflinePlayer(playerName);
+            Optional<UUID> uuid = Server.getInstance().lookupName(playerName);
+
+            if(!uuid.isPresent()) {
+                throw PlayerArgument.NOT_FOUND.create();
+            }
+
+            IPlayer player = Server.getInstance().getOfflinePlayer(uuid.get());
 
             if(!player.hasPlayedBefore()) {
                 throw PlayerArgument.NOT_FOUND.create();

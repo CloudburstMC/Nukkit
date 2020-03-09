@@ -25,7 +25,7 @@ import static cn.nukkit.command.args.PlayerArgument.player;
 public class KillCommand extends BaseCommand {
 
     public KillCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("kill", "%nukkit.command.kill.description"); // TODO: aliases (suicide)
+        super("kill", "commands.kill.description"); // TODO: aliases (suicide)
 
         dispatcher.register(literal("kill")
                 .requires(requirePermission("nukkit.command.kill.self"))

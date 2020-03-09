@@ -15,7 +15,7 @@ import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
 public class SeedCommand extends BaseCommand {
 
     public SeedCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("seed", "%nukkit.command.seed.description");
+        super("seed", "commands.seed.description");
 
         dispatcher.register(literal("seed")
                 .requires(requirePermission("nukkit.command.seed"))

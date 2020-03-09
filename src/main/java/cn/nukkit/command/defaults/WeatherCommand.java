@@ -19,7 +19,7 @@ import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
 public class WeatherCommand extends BaseCommand {
 
     public WeatherCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("weather", "%nukkit.command.weather.description");
+        super("weather", "commands.weather.description");
 
         dispatcher.register(literal("weather")
                 .requires(requirePermission("nukkit.command.weather"))

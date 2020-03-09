@@ -25,7 +25,7 @@ import static com.mojang.brigadier.arguments.BoolArgumentType.getBool;
 public class DaylockCommand extends BaseCommand {
 
     public DaylockCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("daylock", "%nukkit.command.daylock.description"); // TODO: aliases (alwaysday)
+        super("daylock", "commands.daylock.description"); // TODO: aliases (alwaysday)
         // TODO: lang
         dispatcher.register(literal("daylock")
                 .requires(requirePermission("nukkit.command.daylock"))

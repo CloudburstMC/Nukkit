@@ -26,7 +26,7 @@ import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
 public class KickCommand extends BaseCommand {
 
     public KickCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("kick", "%nukkit.command.kick.description");
+        super("kick", "commands.kick.description");
 
         // TODO: This doesnt work. Stacktrace: https://hastebin.com/teyuyopome.apache
         dispatcher.register(literal("kick")

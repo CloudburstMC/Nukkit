@@ -21,7 +21,7 @@ import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
 public class TellCommand extends BaseCommand {
 
     public TellCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("tell", "%nukkit.command.tell.description"); // TODO: aliases (w, msg)
+        super("tell", "commands.tell.description"); // TODO: aliases (w, msg)
 
         dispatcher.register(literal("tell")
                 .requires(requirePermission("nukkit.command.tell"))

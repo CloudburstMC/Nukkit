@@ -20,7 +20,7 @@ import static cn.nukkit.command.args.DifficultyArgument.getDifficulty;
 public class DifficultyCommand extends BaseCommand {
 
     public DifficultyCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("difficulty", "%nukkit.command.difficulty.description");
+        super("difficulty", "commands.difficulty.description");
 
         dispatcher.register(literal("difficulty")
                 .requires(requirePermission("nukkit.command.difficulty"))

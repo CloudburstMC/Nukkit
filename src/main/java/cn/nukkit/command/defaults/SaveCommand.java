@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SaveCommand extends BaseCommand {
 
     public SaveCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("save-all", "%nukkit.command.save.description");
+        super("save-all", "commands.save.description");
 
         dispatcher.register(literal("save-all")
                 .requires(requirePermission("nukkit.command.save.perform"))

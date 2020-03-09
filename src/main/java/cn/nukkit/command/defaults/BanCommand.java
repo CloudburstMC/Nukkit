@@ -30,7 +30,7 @@ public class BanCommand extends BaseCommand {
     public static final SimpleCommandExceptionType ALREADY_BANNED = new SimpleCommandExceptionType(new LiteralMessage("That player is already banned"));
 
     public BanCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("ban", "%nukkit.command.ban.player.description");
+        super("ban", "commands.ban.description");
 
         dispatcher.register(literal("ban")
                 .requires(requirePermission("nukkit.command.ban.player"))
@@ -54,7 +54,7 @@ public class BanCommand extends BaseCommand {
 
         target.kick(PlayerKickEvent.Reason.NAME_BANNED, reason != null ? "Banned by admin. Reason: " + reason : "Banned by admin");
 
-        sendAdminMessage(source, "Ban successful: " + target.getName());
+        sendAdminMessage(source, new TranslationContainer("%commands.unban.success", target.getName()));
         return 1;
     }
 }

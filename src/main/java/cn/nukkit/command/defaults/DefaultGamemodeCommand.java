@@ -17,7 +17,7 @@ import static cn.nukkit.command.args.PlayerArgument.player;
 public class DefaultGamemodeCommand extends BaseCommand {
 
     public DefaultGamemodeCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("defaultgamemode", "%nukkit.command.defaultgamemode.description");
+        super("defaultgamemode", "commands.defaultgamemode.description");
 
         dispatcher.register(literal("defaultgamemode")
                 .requires(requirePermission("nukkit.command.defaultgamemode"))

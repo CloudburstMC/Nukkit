@@ -24,7 +24,7 @@ import static com.mojang.brigadier.arguments.StringArgumentType.string;
 public class DeopCommand extends BaseCommand {
 
     public DeopCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("deop", "%nukkit.command.deop.description");
+        super("deop", "commands.deop.description");
 
         dispatcher.register(literal("deop")
                 .requires(requirePermission("nukkit.command.op.take"))
@@ -34,6 +34,8 @@ public class DeopCommand extends BaseCommand {
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         CommandSource source = context.getSource();
         IPlayer target = getOfflinePlayer(context, "player");
+
+        // TODO: check targets permission level vs source
 
         target.setOp(false);
 

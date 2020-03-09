@@ -15,7 +15,7 @@ import static com.mojang.brigadier.arguments.StringArgumentType.*;
 public class SayCommand extends BaseCommand {
 
     public SayCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("say", "%nukkit.command.say.description");
+        super("say", "commands.say.description");
 
         dispatcher.register(literal("say")
                 .requires(requirePermission("nukkit.command.say"))

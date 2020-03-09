@@ -21,7 +21,7 @@ import static cn.nukkit.command.args.PlayerArgument.player;
 public class GamemodeCommand extends BaseCommand {
 
     public GamemodeCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("gamemode", "%nukkit.command.gamemode.description"); // TODO: aliases (gm)
+        super("gamemode", "commands.gamemode.description"); // TODO: aliases (gm)
 
         setPermission("nukkit.command.gamemode.survival;" +
                 "nukkit.command.gamemode.creative;" +

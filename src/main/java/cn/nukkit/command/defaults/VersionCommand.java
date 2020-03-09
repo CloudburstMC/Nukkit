@@ -24,7 +24,7 @@ public class VersionCommand extends BaseCommand {
     public static final SimpleCommandExceptionType UNKNOWN_PLUGIN = new SimpleCommandExceptionType(new LiteralMessage("No such plugin")); // TOOD: nukkit.command.version.noSuchPlugin
 
     public VersionCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("version", "%nukkit.command.version.description");
+        super("version", "nukkit.command.version.description");
         // TODO: aliases
 
         dispatcher.register(literal("version")

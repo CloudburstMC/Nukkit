@@ -26,7 +26,7 @@ public class GameruleCommand extends BaseCommand {
     private static final GameRuleRegistry registry = GameRuleRegistry.get();
 
     public GameruleCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("gamerule", "%nukkit.command.gamerule.description");
+        super("gamerule", "commands.gamerule.description");
 
         dispatcher.register(literal("gamerule")
                 .requires(requirePermission("nukkit.command.gamerule"))

@@ -32,7 +32,7 @@ import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
 public class EffectCommand extends BaseCommand {
 
     public EffectCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("effect", "%nukkit.command.effect.description");
+        super("effect", "commands.effect.description");
 
         // TODO: try and get around this, its not pretty
         dispatcher.register(literal("effect")

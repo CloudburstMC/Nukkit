@@ -4,13 +4,17 @@ import cn.nukkit.Server;
 import cn.nukkit.command.args.registry.ArgumentData;
 import cn.nukkit.command.args.registry.ArgumentRegistry;
 import cn.nukkit.command.args.registry.EnumArgumentData;
-import cn.nukkit.command.data.*;
+import cn.nukkit.command.data.CommandEnum;
+import cn.nukkit.command.data.CommandOverload;
+import cn.nukkit.command.data.CommandParamType;
+import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.level.Level;
 import cn.nukkit.locale.TextContainer;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
+import com.google.common.collect.ImmutableMap;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.LiteralMessage;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -21,6 +25,9 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import com.nukkitx.protocol.bedrock.data.CommandData;
+import com.nukkitx.protocol.bedrock.data.CommandEnumData;
+import com.nukkitx.protocol.bedrock.data.CommandParamData;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
@@ -34,20 +41,23 @@ public abstract class BaseCommand {
     public static final DynamicCommandExceptionType UNKNOWN_COMMAND =
             new DynamicCommandExceptionType(name -> new LiteralMessage("Unknown command " + name));
 
-    private CommandData commandData;
-
     private String name;
     private String description;
     private String usage = null;
     private String permission = null;
     private String permissionMessage = null;
+    private String[] aliases = null;
 
     protected boolean canResultsBeCached = false;
 
     public BaseCommand(String name, String description) {
+        this(name, description, new String[]{});
+    }
+
+    public BaseCommand(String name, String description, String[] aliases) {
         this.name = name;
-        this.description = description;
-        this.commandData = new CommandData();
+        this.description = Server.getInstance().getLanguage().translate(description);
+        this.aliases = aliases;
     }
 
     protected void setPermission(String perm) {
@@ -157,66 +167,108 @@ public abstract class BaseCommand {
      * @param player player
      * @return CommandData|null
      */
-    public CommandDataVersions generateCustomCommandData(Player player) throws CommandSyntaxException {
+    public CommandData generateCustomCommandData(Player player) throws CommandSyntaxException {
         if (!testPermission(player)) {
             return null;
         }
-
-        CommandData customData = this.commandData.clone();
-        customData.description = player.getServer().getLanguage().translate(description);
-
         CommandDispatcher dispatcher =  Server.getInstance().getCommandDispatcher().getDispatcher();
         ArgumentRegistry registry = Server.getInstance().getCommandDispatcher().getArgumentRegistry();
 
+        // Aliases
+        String[] aliasesEnum;
+        if (aliases.length > 0) {
+            Set<String> aliasList = new HashSet<>();
+            Collections.addAll(aliasList, aliases);
+            aliasList.add(name.toLowerCase());
+
+            aliasesEnum = aliasList.toArray(new String[0]);
+        } else {
+            aliasesEnum = new String[]{name.toLowerCase()};
+        }
+
+        CommandEnumData aliases = new CommandEnumData(this.name.toLowerCase() + "Aliases", aliasesEnum, false);
+
+        // Fetch brigadier arguments
         final HashMap<String, Class<? extends ArgumentType>> result = new HashMap();
         CommandNode node = dispatcher.getRoot().getChild(getName());
         getBrigadierArguments(node, result);
 
-        List<CommandParameter> params = new ArrayList<>();
+
+        List<CommandParamData> params = new ArrayList<>();
 
         for(Map.Entry<String, Class<? extends ArgumentType>> arg : result.entrySet()) {
             ArgumentData argdata = registry.getArgumentData(arg.getValue());
             if(argdata == null) {
-                continue; // TODO: remove this when all argument types are registered
+                continue; // TODO: remove
             }
 
             if(argdata instanceof EnumArgumentData) {
-                List<String> enumArgs = new ArrayList<>();
-                params.add(new CommandParameter(arg.getKey(), node.getCommand() != null, argdata.getEnumName()));
+                CommandEnumData enumData =  new CommandEnumData(argdata.getEnumName(), new String[0], false);
+
+                params.add(new CommandParamData(arg.getKey(), node.getCommand() != null,
+                        enumData, argdata.getArgumentType(), null, Collections.emptyList()));
             } else {
                 // Apparently `node.getCommand() != null` checks whether an argument is optional.
                 // No idea how, and it doesn't seem to work all the time, but its here for now.
-                params.add(new CommandParameter(arg.getKey(), argdata.getArgumentType(), node.getCommand() != null));
+                params.add(new CommandParamData(arg.getKey(),node.getCommand() != null, null,
+                        argdata.getArgumentType(), null, Collections.emptyList()));
             }
         }
 
-        CommandParameter[] parameters = new CommandParameter[params.size()];
-
-        for(int i = 0; i < params.size(); i++) {
-            parameters[i] = params.get(i);
+        CommandParamData[][] overloads = new CommandParamData[aliasesEnum.length][];
+        for(int i = 0; i < overloads.length; i++) {
+            CommandParamData[] paramData = new CommandParamData[params.toArray().length];
+            for(int j = 0; j < paramData.length; j++) {
+                paramData[j] = params.get(j);
+            }
+            overloads[i] = paramData;
         }
 
-        // TODO: support for subcommands
+        log.info(name.toLowerCase() + " --- " + Arrays.deepToString(overloads));
 
-        CommandOverload overload = new CommandOverload();
-        overload.input.parameters = parameters;
-        customData.overloads.put("default", overload);
+        return new CommandData(name.toLowerCase(), description, Collections.emptyList(), (byte) 0, aliases, overloads);
 
-        final ArrayList<String> literalResult = new ArrayList<>();
-        CommandNode literalNode = dispatcher.getRoot().getChild(getName());
-        getBrigaderLiterals(literalNode, literalResult);
+//        for (int i = 0; i < overloads.length; i++) {
+//            CommandParameter[] parameters = this.commandParameters.get(i);
+//            CommandParamData[] params = new CommandParamData[parameters.length];
+//            for (int i2 = 0; i2 < parameters.length; i2++) {
+//                params[i2] = toNetwork(parameters[i2]);
+//            }
+//            overloads[i] = params;
+//        }
 
-        for (String literal : literalResult) {
-            CommandOverload subcommand = new CommandOverload();
-            // TODO: For literals make it an enum with one value: the literal name.
-            // For example:
-            //    https://github.com/NukkitX/Nukkit/blob/master/src/main/java/cn/nukkit/command/defaults/EffectCommand.java#L30-#L33
-            //customData.overloads.put(literal, overload);
-        }
+//        return new com.nukkitx.protocol.bedrock.data.CommandData(this.name.toLowerCase(), description, Collections.emptyList(),
+//                (byte) 0, aliases, overloads);
 
-        CommandDataVersions versions = new CommandDataVersions();
-        versions.versions.add(customData);
-        return versions;
+//        CommandParamData commandData = new CommandParamData()
+//
+//        CommandParameter[] parameters = new CommandParameter[params.size()];
+//
+//        for(int i = 0; i < params.size(); i++) {
+//            parameters[i] = params.get(i);
+//        }
+//
+//        // TODO: support for subcommands
+//
+//        CommandOverload overload = new CommandOverload();
+//        overload.input.parameters = parameters;
+//        customData.overloads.put("default", overload);
+//
+//        final ArrayList<String> literalResult = new ArrayList<>();
+//        CommandNode literalNode = dispatcher.getRoot().getChild(getName());
+//        getBrigaderLiterals(literalNode, literalResult);
+//
+//        for (String literal : literalResult) {
+//            CommandOverload subcommand = new CommandOverload();
+//            // TODO: For literals make it an enum with one value: the literal name.
+//            // For example:
+//            //    https://github.com/NukkitX/Nukkit/blob/master/src/main/java/cn/nukkit/command/defaults/EffectCommand.java#L30-#L33
+//            //customData.overloads.put(literal, overload);
+//        }
+//
+//        CommandDataVersions versions = new CommandDataVersions();
+//        versions.versions.add(customData);
+//        return versions;
     }
 
     private void getBrigadierArguments(final CommandNode<CommandSource> node, final HashMap<String, Class<? extends ArgumentType>> result) {

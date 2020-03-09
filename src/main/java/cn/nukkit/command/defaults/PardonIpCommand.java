@@ -22,9 +22,9 @@ import static com.mojang.brigadier.arguments.StringArgumentType.string;
 public class PardonIpCommand extends BaseCommand {
 
     public PardonIpCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("pardon-ip", "%nukkit.command.unban.ip.description"); // TODO: aliases (unban-ip)
+        super("pardon-ip", "commands.unban.ip.description"); // TODO: aliases (unban-ip)
 
-        dispatcher.register(literal("pardon")
+        dispatcher.register(literal("pardon-ip")
                 .requires(requirePermission("nukkit.command.unban.ip"))
                 .then(argument("ip", string()).executes(this::run)));
     }

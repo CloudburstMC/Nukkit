@@ -1,9 +1,6 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.command.BaseCommand;
-import cn.nukkit.command.Command;
-import cn.nukkit.command.CommandSender;
-import cn.nukkit.command.CommandSource;
+import cn.nukkit.command.*;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
@@ -21,11 +18,9 @@ import static cn.nukkit.command.args.OfflinePlayerArgument.getOfflinePlayer;
 import static cn.nukkit.command.args.OfflinePlayerArgument.offlinePlayer;
 
 public class OpCommand extends BaseCommand {
-    public static final DynamicCommandExceptionType ALREADY_OP = new DynamicCommandExceptionType(name ->
-            new LiteralMessage("Could not op (already op or higher): " + name));
 
     public OpCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("op", "%nukkit.command.op.description");
+        super("op", "commands.op.description");
 
         dispatcher.register(literal("op")
                 .requires(requirePermission("nukkit.command.op.give"))
@@ -38,7 +33,8 @@ public class OpCommand extends BaseCommand {
 
         // Matches vanilla behaviour
         if(target.isOp()) {
-            throw ALREADY_OP.create(target.getName());
+            source.sendMessage(new TranslationContainer("commands.op.failed", target.getName()));
+            return 1;
         }
 
         target.setOp(true);

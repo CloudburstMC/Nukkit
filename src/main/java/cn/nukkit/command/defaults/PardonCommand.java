@@ -17,7 +17,7 @@ import static cn.nukkit.command.args.PlayerArgument.player;
 public class PardonCommand extends BaseCommand {
 
     public PardonCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("pardon", "%nukkit.command.unban.player.description"); // TODO: aliases (unban)
+        super("pardon", "nukkit.command.unban.player.description"); // TODO: aliases (unban)
 
         dispatcher.register(literal("pardon")
                 .requires(requirePermission("nukkit.command.unban.player"))

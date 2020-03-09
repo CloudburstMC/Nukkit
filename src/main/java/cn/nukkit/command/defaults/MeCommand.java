@@ -18,7 +18,7 @@ import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
 public class MeCommand extends BaseCommand {
 
     public MeCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("me", "%nukkit.command.me.description");
+        super("me", "commands.me.description");
 
         dispatcher.register(literal("me")
                 .requires(requirePermission("nukkit.command.me"))

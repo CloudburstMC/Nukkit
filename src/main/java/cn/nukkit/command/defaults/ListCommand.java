@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ListCommand extends BaseCommand {
 
     public ListCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("list", "%nukkit.command.list.description");
+        super("list", "commands.list.description");
 
         dispatcher.register(literal("list")
                 .requires(requirePermission("nukkit.command.list"))

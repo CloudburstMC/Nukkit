@@ -1,6 +1,6 @@
 package cn.nukkit.command.args.registry;
 
-import cn.nukkit.command.data.CommandParamType;
+import com.nukkitx.protocol.bedrock.data.CommandParamData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -8,5 +8,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class ArgumentData {
     private String enumName;
-    private CommandParamType argumentType;
+    private CommandParamData.Type argumentType;
 }

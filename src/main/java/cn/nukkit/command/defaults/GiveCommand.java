@@ -26,7 +26,7 @@ import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
 public class GiveCommand extends BaseCommand {
 
     public GiveCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("give", "%nukkit.command.give.description");
+        super("give", "commands.give.description");
 
         dispatcher.register(literal("give")
                 .requires(requirePermission("nukkit.command.give"))

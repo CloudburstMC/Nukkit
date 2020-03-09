@@ -12,7 +12,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 public class StopCommand extends BaseCommand {
 
     public StopCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("stop", "%nukkit.command.stop.description");
+        super("stop", "commands.stop.description");
 
         dispatcher.register(literal("stop")
                 .requires(requirePermission("nukkit.command.stop"))

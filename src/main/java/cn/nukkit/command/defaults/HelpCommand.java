@@ -19,7 +19,7 @@ public class HelpCommand extends BaseCommand {
     private CommandDispatcher<CommandSource> dispatcher;
 
     public HelpCommand(CommandDispatcher<CommandSource> dispatcher) {
-        super("help", "%nukkit.command.help.description");
+        super("help", "commands.help.description");
 
         dispatcher.register(literal("help")
                 .requires(requirePermission("nukkit.command.help"))
