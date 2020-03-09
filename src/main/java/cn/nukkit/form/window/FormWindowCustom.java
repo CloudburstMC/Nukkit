@@ -52,6 +52,7 @@ public class FormWindowCustom extends FormWindow {
         this.title = title;
     }
 
+    @JsonProperty("content")
     public List<Element> getElements() {
         return content;
     }
