@@ -663,14 +663,22 @@ public abstract class Item implements Cloneable {
                 ", count=" + this.count +
                 ", customName=" + this.customName +
                 ", enchantments=" + this.enchantments +
+                ", tag=" + this.tag.toString() +
                 ")";
     }
 
     public final boolean equals(Item that, boolean checkDamage, boolean checkCompound) {
-        return this.id == that.id &&
-                (!checkDamage || this.meta == that.meta) &&
-                (!checkCompound || this.tag.equals(that.tag));
+        if(this.id != that.id)
+            return false;
+        if(checkDamage && this.meta != that.meta)
+            return false;
+        if(checkCompound){
+            this.saveAdditionalData(this.tag.toBuilder());
+            return this.tag.equals(that.tag);
+        }
+        return true;
     }
+
 
     @Override
     public Item clone() {
