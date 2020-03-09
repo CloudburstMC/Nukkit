@@ -3240,7 +3240,7 @@ public class Player extends Human implements CommandSender, CommandSource, Inven
     }
 
 
-    private void setTitle(String text) {
+    public void setTitle(String text) {
         SetTitlePacket packet = new SetTitlePacket();
         packet.setType(SetTitlePacket.Type.SET_TITLE);
         packet.setText(text);
@@ -3268,13 +3268,15 @@ public class Player extends Human implements CommandSender, CommandSource, Inven
         this.sendActionBar(title, 1, 0, 1);
     }
 
-    public void sendActionBar(String title, int fadein, int duration, int fadeout) {
+    public void sendActionBar(String title, int fadeIn, int stay, int fadeOut) {
+        this.setTitleAnimationTimes(fadeIn, stay, fadeOut);
+        this.setActionBar(Strings.isNullOrEmpty(title) ? " " : title);
+    }
+
+    public void setActionBar(String title) {
         SetTitlePacket packet = new SetTitlePacket();
         packet.setType(SetTitlePacket.Type.SET_ACTIONBAR_MESSAGE);
         packet.setText(title);
-        packet.setFadeInTime(fadein);
-        packet.setStayTime(duration);
-        packet.setFadeInTime(fadeout);
         this.sendPacket(packet);
     }
 

@@ -48,6 +48,9 @@ public abstract class BaseCommand {
     private String permissionMessage = null;
     private String[] aliases = null;
 
+    private List<String> subCommands = new ArrayList<>();
+    private Map<String, ArgumentType> arguments = new HashMap<>();
+
     protected boolean canResultsBeCached = false;
 
     public BaseCommand(String name, String description) {
@@ -189,7 +192,7 @@ public abstract class BaseCommand {
         CommandEnumData aliases = new CommandEnumData(this.name.toLowerCase() + "Aliases", aliasesEnum, false);
 
         // Fetch brigadier arguments
-        final HashMap<String, Class<? extends ArgumentType>> result = new HashMap();
+        final LinkedHashMap<String, Class<? extends ArgumentType>> result = new LinkedHashMap();
         CommandNode node = dispatcher.getRoot().getChild(getName());
         getBrigadierArguments(node, result);
 
@@ -203,7 +206,7 @@ public abstract class BaseCommand {
             }
 
             if(argdata instanceof EnumArgumentData) {
-                CommandEnumData enumData =  new CommandEnumData(argdata.getEnumName(), new String[0], false);
+                CommandEnumData enumData =  new CommandEnumData(argdata.getEnumName(), new String[]{"hey", "lol"}, false);
 
                 params.add(new CommandParamData(arg.getKey(), node.getCommand() != null,
                         enumData, argdata.getArgumentType(), null, Collections.emptyList()));
@@ -217,6 +220,7 @@ public abstract class BaseCommand {
 
         CommandParamData[][] overloads = new CommandParamData[aliasesEnum.length][];
         for(int i = 0; i < overloads.length; i++) {
+            log.info("LOOP: " + i + " cmd: " + this.name + " p: " + params.toArray().length);
             CommandParamData[] paramData = new CommandParamData[params.toArray().length];
             for(int j = 0; j < paramData.length; j++) {
                 paramData[j] = params.get(j);
@@ -225,6 +229,8 @@ public abstract class BaseCommand {
         }
 
         log.info(name.toLowerCase() + " --- " + Arrays.deepToString(overloads));
+
+        log.info(new CommandData(name.toLowerCase(), description, Collections.emptyList(), (byte) 0, aliases, overloads));
 
         return new CommandData(name.toLowerCase(), description, Collections.emptyList(), (byte) 0, aliases, overloads);
 
@@ -271,8 +277,8 @@ public abstract class BaseCommand {
 //        return versions;
     }
 
-    private void getBrigadierArguments(final CommandNode<CommandSource> node, final HashMap<String, Class<? extends ArgumentType>> result) {
-        Map<String, ArgumentCommandNode<CommandSource, ?>> arguments = new HashMap<>();
+    private void getBrigadierArguments(final CommandNode<CommandSource> node, final LinkedHashMap<String, Class<? extends ArgumentType>> result) {
+        Map<String, ArgumentCommandNode<CommandSource, ?>> arguments = new LinkedHashMap<>();
 
         if(node == null) {
             log.warn("NODE IS NULL: " + getName());
@@ -336,14 +342,23 @@ public abstract class BaseCommand {
      * For example, in the command "/effect Steve clear", 'effect' and 'clear' are literal
      * arguments, and 'Steve' is normal argument (in this case its a player name).
      */
-    protected static LiteralArgumentBuilder<CommandSource> literal(String name) {
+    protected LiteralArgumentBuilder<CommandSource> literal(String name) {
+        if(!name.equals(this.name)) {
+            subCommands.add(name);
+        }
         return LiteralArgumentBuilder.literal(name);
+    }
+
+    protected LiteralArgumentBuilder<CommandSource> literalEnum(String... enumValues) {
+
+        return null; // TODO
     }
 
     /**
      * Constructs a required argument.
      */
-    protected static <T> RequiredArgumentBuilder<CommandSource, T> argument(String name, ArgumentType<T> type) {
+    protected <T> RequiredArgumentBuilder<CommandSource, T> argument(String name, ArgumentType<T> type) {
+        arguments.put(name, type);
         return RequiredArgumentBuilder.argument(name, type);
     }
 

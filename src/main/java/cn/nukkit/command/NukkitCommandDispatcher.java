@@ -6,6 +6,7 @@ import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.ParseResults;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
@@ -27,6 +28,7 @@ public class NukkitCommandDispatcher {
     public NukkitCommandDispatcher() {
         registerAll("nukkit", new BaseCommand[]{
                 new BanCommand(dispatcher),
+                new BanIpCommand(dispatcher),
                 new BanListCommand(dispatcher),
                 new VersionCommand(dispatcher),
                 new EffectCommand(dispatcher),
@@ -53,6 +55,7 @@ public class NukkitCommandDispatcher {
                 new PardonCommand(dispatcher),
                 new PardonIpCommand(dispatcher),
                 new DefaultGamemodeCommand(dispatcher),
+                new TitleCommand(dispatcher),
                 new DaylockCommand(dispatcher),
 
                 // Debug
@@ -62,7 +65,7 @@ public class NukkitCommandDispatcher {
         });
 
         // Temporary test command to show all commands and usages
-        dispatcher.register(BaseCommand.literal("bhelp").executes(ctx -> {
+        dispatcher.register(LiteralArgumentBuilder.<CommandSource>literal("bhelp").executes(ctx -> {
             String[] usages = dispatcher.getAllUsage(dispatcher.getRoot(), ctx.getSource(), false);
 
             for(String usage : usages) {
@@ -80,7 +83,6 @@ public class NukkitCommandDispatcher {
         // TODO: /tp
         // TODO: /time
         // TODO: /timings
-        // TODO: /title
         // TODO: /whitelist
         // TODO: /xp
 

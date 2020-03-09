@@ -22,14 +22,15 @@ public class ArgumentRegistry {
         register(BoolArgumentType.class, new ArgumentData("bool", Type.STRING)); // TODO: theres no bool type? really?
 
         // Nukkit
+        register(PlayerArgument.class, new ArgumentData("target", Type.TARGET));
         register(EffectArgument.class, new EnumArgumentData("Effect", Type.STRING));
         register(CommandArgument.class, new EnumArgumentData("CommandName", Type.STRING));
         register(ParticleArgument.class, new EnumArgumentData("Particle", Type.STRING));
         register(ItemArgument.class, new EnumArgumentData("Item", Type.STRING));
-        register(PlayerArgument.class, new ArgumentData("target", Type.TARGET));
         register(GameRuleArgument.class, new EnumArgumentData("GameRule", Type.STRING));
         register(DifficultyArgument.class, new EnumArgumentData("Difficulty", Type.STRING));
         register(GameModeArgument.class, new EnumArgumentData("GameMode", Type.STRING));
+        register(OfflinePlayerArgument.class, new EnumArgumentData("OfflinePlayer", Type.STRING));
     }
 
     public void register(Class<? extends ArgumentType> argumentClass, ArgumentData data) {
