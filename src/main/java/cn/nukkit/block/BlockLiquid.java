@@ -10,6 +10,7 @@ import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.GenericMath;
 import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.protocol.bedrock.data.SoundEvent;
 import it.unimi.dsi.fastutil.longs.Long2ByteMap;
@@ -166,7 +167,7 @@ public abstract class BlockLiquid extends BlockTransparent {
                 vector = vector.normalize().add(0, -6, 0);
             }
         }
-        return this.flowVector = vector.normalize();
+        return this.flowVector = GenericMath.normalizeSafe(vector);
     }
 
     @Override
