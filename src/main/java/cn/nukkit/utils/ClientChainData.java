@@ -1,14 +1,16 @@
 package cn.nukkit.utils;
 
 import cn.nukkit.Nukkit;
-import cn.nukkit.entity.data.Skin;
-import cn.nukkit.network.protocol.LoginPacket;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
+import com.nukkitx.protocol.bedrock.data.AnimationData;
+import com.nukkitx.protocol.bedrock.data.ImageData;
+import com.nukkitx.protocol.bedrock.data.SerializedSkin;
+import com.nukkitx.protocol.bedrock.packet.LoginPacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minidev.json.JSONObject;
@@ -53,7 +55,7 @@ public final class ClientChainData implements LoginChainData {
 
     private final String chainData;
     private final String skinData;
-    private Skin skin;
+    private SerializedSkin skin;
 
     @Override
     public String getUsername() {
@@ -152,7 +154,7 @@ public final class ClientChainData implements LoginChainData {
     }
 
     public static ClientChainData read(LoginPacket pk) {
-        return new ClientChainData(pk.chainData, pk.skinData);
+        return new ClientChainData(pk.getChainData().toString(), pk.getSkinData().toString());
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -188,9 +190,48 @@ public final class ClientChainData implements LoginChainData {
         return new String(bytes, StandardCharsets.US_ASCII); // base 64 encoded.
     }
 
-    @Override
-    public Skin getSkin() {
-        return skin;
+    private static SerializedSkin getSkin(JsonNode skinToken) {
+        SerializedSkin.Builder skinBuilder = SerializedSkin.builder();
+        if (skinToken.has("SkinId")) {
+            skinBuilder.skinId(skinToken.get("SkinId").textValue());
+        }
+        if (skinToken.has("CapeId")) {
+            skinBuilder.capeId(skinToken.get("CapeId").textValue());
+        }
+
+        skinBuilder.skinData(getImage(skinToken, "Skin"));
+        skinBuilder.capeData(getImage(skinToken, "Cape"));
+        if (skinToken.has("PremiumSkin")) {
+            skinBuilder.premium(skinToken.get("PremiumSkin").booleanValue());
+        }
+        if (skinToken.has("PersonaSkin")) {
+            skinBuilder.persona(skinToken.get("PersonaSkin").booleanValue());
+        }
+        if (skinToken.has("CapeOnClassicSkin")) {
+            skinBuilder.capeOnClassic(skinToken.get("CapeOnClassicSkin").booleanValue());
+        }
+
+        if (skinToken.has("SkinResourcePatch")) {
+            skinBuilder.skinResourcePatch(new String(Base64.getDecoder().decode(skinToken.get("SkinResourcePatch").textValue()), StandardCharsets.UTF_8));
+        }
+
+        if (skinToken.has("SkinGeometryData")) {
+            skinBuilder.geometryData(new String(Base64.getDecoder().decode(skinToken.get("SkinGeometryData").textValue()), StandardCharsets.UTF_8));
+        }
+
+        if (skinToken.has("SkinAnimationData")) {
+            skinBuilder.animationData(new String(Base64.getDecoder().decode(skinToken.get("SkinAnimationData").textValue()), StandardCharsets.UTF_8));
+        }
+
+        if (skinToken.has("AnimatedImageData")) {
+            List<AnimationData> animations = new ArrayList<>();
+            JsonNode array = skinToken.get("AnimatedImageData");
+            for (JsonNode element : array) {
+                animations.add(getAnimation(element));
+            }
+            skinBuilder.animations(animations);
+        }
+        return skinBuilder.build();
     }
 
     @Override
@@ -291,69 +332,32 @@ public final class ClientChainData implements LoginChainData {
         return mojangKeyVerified;
     }
 
-    private static Skin getSkin(JsonNode skinToken) {
-        Skin skin = new Skin();
-        if (skinToken.has("SkinId")) {
-            skin.setSkinId(skinToken.get("SkinId").textValue());
-        }
-        if (skinToken.has("CapeId")) {
-            skin.setCapeId(skinToken.get("CapeId").textValue());
-        }
-
-        skin.setSkinData(getImage(skinToken, "Skin"));
-        skin.setCapeData(getImage(skinToken, "Cape"));
-        if (skinToken.has("PremiumSkin")) {
-            skin.setPremium(skinToken.get("PremiumSkin").booleanValue());
-        }
-        if (skinToken.has("PersonaSkin")) {
-            skin.setPersona(skinToken.get("PersonaSkin").booleanValue());
-        }
-        if (skinToken.has("CapeOnClassicSkin")) {
-            skin.setCapeOnClassic(skinToken.get("CapeOnClassicSkin").booleanValue());
-        }
-
-        if (skinToken.has("SkinResourcePatch")) {
-            skin.setSkinResourcePatch(new String(Base64.getDecoder().decode(skinToken.get("SkinResourcePatch").textValue()), StandardCharsets.UTF_8));
-        }
-
-        if (skinToken.has("SkinGeometryData")) {
-            skin.setGeometryData(new String(Base64.getDecoder().decode(skinToken.get("SkinGeometryData").textValue()), StandardCharsets.UTF_8));
-        }
-
-        if (skinToken.has("SkinAnimationData")) {
-            skin.setAnimationData(new String(Base64.getDecoder().decode(skinToken.get("SkinAnimationData").textValue()), StandardCharsets.UTF_8));
-        }
-
-        if (skinToken.has("AnimatedImageData")) {
-            JsonNode array = skinToken.get("AnimatedImageData");
-            for (JsonNode element : array) {
-                skin.getAnimations().add(getAnimation(element));
-            }
-        }
-        return skin;
-    }
-
-    private static SkinAnimation getAnimation(JsonNode element) {
+    private static AnimationData getAnimation(JsonNode element) {
         float frames = element.get("Frames").floatValue();
         int type = element.get("Type").intValue();
         byte[] data = Base64.getDecoder().decode(element.get("Image").textValue());
         int width = element.get("ImageWidth").intValue();
         int height = element.get("ImageHeight").intValue();
-        return new SkinAnimation(new SerializedImage(width, height, data), type, frames);
+        return new AnimationData(ImageData.of(width, height, data), type, frames);
     }
 
-    private static SerializedImage getImage(JsonNode token, String name) {
+    private static ImageData getImage(JsonNode token, String name) {
         if (token.has(name + "Data")) {
             byte[] skinImage = Base64.getDecoder().decode(token.get(name + "Data").textValue());
             if (token.has(name + "ImageHeight") && token.has(name + "ImageWidth")) {
                 int width = token.get(name + "ImageWidth").intValue();
                 int height = token.get(name + "ImageHeight").intValue();
-                return new SerializedImage(width, height, skinImage);
+                return ImageData.of(width, height, skinImage);
             } else {
-                return SerializedImage.fromLegacy(skinImage);
+                return ImageData.of(skinImage);
             }
         }
-        return SerializedImage.EMPTY;
+        return ImageData.EMPTY;
+    }
+
+    @Override
+    public SerializedSkin getSkin() {
+        return skin;
     }
 
     private void decodeSkinData(String skinData) {

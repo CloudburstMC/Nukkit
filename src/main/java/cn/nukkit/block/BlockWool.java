@@ -21,12 +21,12 @@ public class BlockWool extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
-        return 0.8;
+    public float getHardness() {
+        return 0.8f;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 4;
     }
 
@@ -42,10 +42,10 @@ public class BlockWool extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        return DyeColor.getByWoolData(getDamage()).getColor();
+        return DyeColor.getByWoolData(getMeta()).getColor();
     }
 
     public DyeColor getDyeColor() {
-        return DyeColor.getByWoolData(getDamage());
+        return DyeColor.getByWoolData(getMeta());
     }
 }

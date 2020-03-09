@@ -1,8 +1,7 @@
 package cn.nukkit.command;
 
 import cn.nukkit.Server;
-import cn.nukkit.lang.TextContainer;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TextContainer;
 import cn.nukkit.permission.Permissible;
 
 public interface CommandSource extends Permissible {

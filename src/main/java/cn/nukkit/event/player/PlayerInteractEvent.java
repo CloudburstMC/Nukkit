@@ -4,10 +4,9 @@ import cn.nukkit.block.Block;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.BlockPosition;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
+import com.nukkitx.math.vector.Vector3f;
 
 import static cn.nukkit.block.BlockIds.AIR;
 
@@ -34,11 +33,11 @@ public class PlayerInteractEvent extends PlayerEvent implements Cancellable {
     protected final Action action;
 
     public PlayerInteractEvent(Player player, Item item, Block block, BlockFace face, Action action) {
-        this(player, item, face, action, block, new Vector3f(0, 0, 0));
+        this(player, item, face, action, block, Vector3f.ZERO);
     }
 
     public PlayerInteractEvent(Player player, Item item, Vector3f touchVector, BlockFace face, Action action) {
-        this(player, item, face, action, Block.get(AIR, 0, new BlockPosition(0, 0, 0, player.level)), touchVector);
+        this(player, item, face, action, Block.get(AIR, 0, 0, 0, 0, player.getLevel()), touchVector);
     }
 
     private PlayerInteractEvent(Player player, Item item, BlockFace face, Action action, Block block, Vector3f touchVector) {

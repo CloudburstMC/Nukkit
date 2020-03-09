@@ -3,10 +3,10 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * http://minecraft.gamepedia.com/End_Rod
@@ -20,12 +20,12 @@ public class BlockEndRod extends BlockTransparent implements Faceable {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 0;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 0;
     }
 
@@ -45,30 +45,30 @@ public class BlockEndRod extends BlockTransparent implements Faceable {
     }
 
     @Override
-    public double getMinX() {
-        return this.x + 0.4;
+    public float getMinX() {
+        return this.getX() + 0.4f;
     }
 
     @Override
-    public double getMinZ() {
-        return this.z + 0.4;
+    public float getMinZ() {
+        return this.getZ() + 0.4f;
     }
 
     @Override
-    public double getMaxX() {
-        return this.x + 0.6;
+    public float getMaxX() {
+        return this.getX() + 0.6f;
     }
 
     @Override
-    public double getMaxZ() {
-        return this.z + 0.6;
+    public float getMaxZ() {
+        return this.getZ() + 0.6f;
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         int[] faces = {0, 1, 3, 2, 5, 4};
-        this.setDamage(faces[player != null ? face.getIndex() : 0]);
-        this.getLevel().setBlock(block, this, true, true);
+        this.setMeta(faces[player != null ? face.getIndex() : 0]);
+        this.getLevel().setBlock(block.getPosition(), this, true, true);
 
         return true;
     }
@@ -80,7 +80,7 @@ public class BlockEndRod extends BlockTransparent implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
     }
 
     @Override

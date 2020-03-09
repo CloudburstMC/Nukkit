@@ -4,11 +4,11 @@ import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.math.Vector3i;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.math.vector.Vector3i;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
 
 import static cn.nukkit.block.BlockIds.*;
 
@@ -22,14 +22,14 @@ public class BlockTripWireHook extends FloodableBlock {
     }
 
     public BlockFace getFacing() {
-        return BlockFace.fromHorizontalIndex(getDamage() & 0b11);
+        return BlockFace.fromHorizontalIndex(getMeta() & 0b11);
     }
 
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (!this.getSide(this.getFacing().getOpposite()).isNormalBlock()) {
-                this.level.useBreakOn(this);
+                this.level.useBreakOn(this.getPosition());
             }
 
             return type;
@@ -51,7 +51,7 @@ public class BlockTripWireHook extends FloodableBlock {
             this.setFace(face);
         }
 
-        this.level.setBlock(this, this);
+        this.level.setBlock(this.getPosition(), this);
 
         if (player != null) {
             this.calculateState(false, false, -1, null);
@@ -70,8 +70,8 @@ public class BlockTripWireHook extends FloodableBlock {
         }
 
         if (powered) {
-            this.level.updateAroundRedstone(this, null);
-            this.level.updateAroundRedstone(this.asVector3i().getSide(getFacing().getOpposite()), null);
+            this.level.updateAroundRedstone(this.getPosition(), null);
+            this.level.updateAroundRedstone(this.getFacing().getOpposite().getOffset(this.getPosition()), null);
         }
 
         return true;
@@ -79,7 +79,7 @@ public class BlockTripWireHook extends FloodableBlock {
 
     public void calculateState(boolean onBreak, boolean updateAround, int pos, Block block) {
         BlockFace facing = getFacing();
-        Vector3i v = this.asVector3i();
+        Vector3i v = this.getPosition();
         boolean attached = isAttached();
         boolean powered = isPowered();
         boolean canConnect = !onBreak;
@@ -88,7 +88,7 @@ public class BlockTripWireHook extends FloodableBlock {
         Block[] blocks = new Block[42];
 
         for (int i = 1; i < 42; ++i) {
-            Vector3i vector = v.getSide(facing, i);
+            Vector3i vector = v.add(facing.getUnitVector().mul(i));
             Block b = this.level.getBlock(vector);
 
             if (b instanceof BlockTripWireHook) {
@@ -128,16 +128,16 @@ public class BlockTripWireHook extends FloodableBlock {
 
 
         if (distance > 0) {
-            Vector3i vec = v.getSide(facing, distance);
+            Vector3i vec = v.add(facing.getUnitVector().mul(distance));
             BlockFace face = facing.getOpposite();
             hook.setFace(face);
             this.level.setBlock(vec, hook, true, false);
             this.level.updateAroundRedstone(vec, null);
-            this.level.updateAroundRedstone(vec.getSide(face.getOpposite()), null);
-            this.addSound(vec.asVector3f(), canConnect, nextPowered, attached, powered);
+            this.level.updateAroundRedstone(face.getOpposite().getOffset(vec), null);
+            this.addSound(vec.toFloat(), canConnect, nextPowered, attached, powered);
         }
 
-        this.addSound(v.asVector3f(), canConnect, nextPowered, attached, powered);
+        this.addSound(v.toFloat(), canConnect, nextPowered, attached, powered);
 
         if (!onBreak) {
             hook.setFace(facing);
@@ -145,18 +145,18 @@ public class BlockTripWireHook extends FloodableBlock {
 
             if (updateAround) {
                 this.level.updateAroundRedstone(v, null);
-                this.level.updateAroundRedstone(v.getSide(facing.getOpposite()), null);
+                this.level.updateAroundRedstone(facing.getOpposite().getOffset(v), null);
             }
         }
 
         if (attached != canConnect) {
             for (int i = 1; i < distance; i++) {
-                Vector3i vc = v.getSide(facing, i);
+                Vector3i vc = v.add(facing.getUnitVector().mul(i));
                 block = blocks[i];
 
-                if (block != null && this.level.getBlockIdAt(vc.getX(), vc.getY(), vc.getZ()) != AIR) {
-                    if (canConnect ^ ((block.getDamage() & 0x04) > 0)) {
-                        block.setDamage(block.getDamage() ^ 0x04);
+                if (block != null && this.level.getBlockId(vc) != AIR) {
+                    if (canConnect ^ ((block.getMeta() & 0x04) > 0)) {
+                        block.setMeta(block.getMeta() ^ 0x04);
                     }
 
                     this.level.setBlock(vc, block, true, false);
@@ -167,41 +167,41 @@ public class BlockTripWireHook extends FloodableBlock {
 
     private void addSound(Vector3f pos, boolean canConnect, boolean nextPowered, boolean attached, boolean powered) {
         if (nextPowered && !powered) {
-            this.level.addLevelSoundEvent(pos, LevelSoundEventPacket.SOUND_POWER_ON);
+            this.level.addLevelSoundEvent(pos, SoundEvent.POWER_ON);
             this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
         } else if (!nextPowered && powered) {
-            this.level.addLevelSoundEvent(pos, LevelSoundEventPacket.SOUND_POWER_OFF);
+            this.level.addLevelSoundEvent(pos, SoundEvent.POWER_OFF);
             this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
         } else if (canConnect && !attached) {
-            this.level.addLevelSoundEvent(pos, LevelSoundEventPacket.SOUND_ATTACH);
+            this.level.addLevelSoundEvent(pos, SoundEvent.ATTACH);
         } else if (!canConnect && attached) {
-            this.level.addLevelSoundEvent(pos, LevelSoundEventPacket.SOUND_DETACH);
+            this.level.addLevelSoundEvent(pos, SoundEvent.DETACH);
         }
     }
 
     public boolean isAttached() {
-        return (getDamage() & 0x04) > 0;
-    }
-
-    public boolean isPowered() {
-        return (this.getDamage() & 0x08) > 0;
-    }
-
-    public void setPowered(boolean value) {
-        if (value ^ this.isPowered()) {
-            this.setDamage(this.getDamage() ^ 0x08);
-        }
+        return (getMeta() & 0x04) > 0;
     }
 
     public void setAttached(boolean value) {
         if (value ^ this.isAttached()) {
-            this.setDamage(this.getDamage() ^ 0x04);
+            this.setMeta(this.getMeta() ^ 0x04);
+        }
+    }
+
+    public boolean isPowered() {
+        return (this.getMeta() & 0x08) > 0;
+    }
+
+    public void setPowered(boolean value) {
+        if (value ^ this.isPowered()) {
+            this.setMeta(this.getMeta() ^ 0x08);
         }
     }
 
     public void setFace(BlockFace face) {
-        this.setDamage(this.getDamage() - this.getDamage() % 4);
-        this.setDamage(this.getDamage() | face.getHorizontalIndex());
+        this.setMeta(this.getMeta() - this.getMeta() % 4);
+        this.setMeta(this.getMeta() | face.getHorizontalIndex());
     }
 
     @Override

@@ -27,7 +27,7 @@ public class BlockRedSandstone extends BlockSandstone {
 
     @Override
     public Item toItem() {
-        return Item.get(id, this.getDamage() & 0x03);
+        return Item.get(id, this.getMeta() & 0x03);
     }
 
     @Override

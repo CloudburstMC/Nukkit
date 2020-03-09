@@ -3,7 +3,7 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandSource;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.utils.TextFormat;

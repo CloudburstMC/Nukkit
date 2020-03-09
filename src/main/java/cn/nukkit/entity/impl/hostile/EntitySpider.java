@@ -4,8 +4,7 @@ import cn.nukkit.entity.Arthropod;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.hostile.Spider;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 import static cn.nukkit.item.ItemIds.SPIDER_EYE;
 import static cn.nukkit.item.ItemIds.STRING;
@@ -15,8 +14,8 @@ import static cn.nukkit.item.ItemIds.STRING;
  */
 public class EntitySpider extends EntityHostile implements Spider, Arthropod {
 
-    public EntitySpider(EntityType<Spider> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntitySpider(EntityType<Spider> type, Location location) {
+        super(type, location);
     }
 
     @Override

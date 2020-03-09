@@ -21,10 +21,10 @@ public class BlockWheat extends BlockCrops {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (this.getDamage() >= 0x07) {
+        if (this.getMeta() >= 0x07) {
             return new Item[]{
                     Item.get(ItemIds.WHEAT),
-                    Item.get(ItemIds.WHEAT, 0, (int) (4d * Math.random()))
+                    Item.get(ItemIds.WHEAT, 0, (int) (4f * Math.random()))
             };
         } else {
             return new Item[]{

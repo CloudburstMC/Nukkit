@@ -4,8 +4,7 @@ import cn.nukkit.Server;
 import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandSource;
-import cn.nukkit.network.protocol.ProtocolInfo;
-import cn.nukkit.player.IPlayer;
+import cn.nukkit.network.ProtocolInfo;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginDescription;
 import cn.nukkit.scheduler.AsyncTask;
@@ -61,7 +60,7 @@ public class DebugPasteCommand extends BaseCommand {
                     b.append("version.api: ").append(server.getApiVersion()).append('\n');
                     b.append("version.nukkit: ").append(server.getNukkitVersion()).append('\n');
                     b.append("version.minecraft: ").append(server.getVersion()).append('\n');
-                    b.append("version.protocol: ").append(ProtocolInfo.CURRENT_PROTOCOL).append('\n');
+                    b.append("version.protocol: ").append(ProtocolInfo.getDefaultProtocolVersion()).append('\n');
                     b.append("plugins:");
                     for (Plugin plugin : server.getPluginManager().getPlugins().values()) {
                         boolean enabled = plugin.isEnabled();

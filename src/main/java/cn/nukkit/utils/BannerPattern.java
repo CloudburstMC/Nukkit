@@ -1,6 +1,6 @@
 package cn.nukkit.utils;
 
-import cn.nukkit.nbt.tag.CompoundTag;
+import com.nukkitx.nbt.tag.CompoundTag;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +16,8 @@ public class BannerPattern {
     }
 
     public static BannerPattern fromCompoundTag(CompoundTag compoundTag) {
-        return new BannerPattern(Type.getByName(compoundTag.contains("Pattern") ? compoundTag.getString("Pattern") : ""), compoundTag.contains("Color") ? DyeColor.getByDyeData(compoundTag.getInt("Color")) : DyeColor.BLACK);
+        return new BannerPattern(Type.getByName(compoundTag.contains("Pattern") ? compoundTag.getString("Pattern") : ""),
+                compoundTag.contains("Color") ? DyeColor.getByDyeData(compoundTag.getInt("Color")) : DyeColor.BLACK);
     }
 
     public DyeColor getColor() {

@@ -2,13 +2,12 @@ package cn.nukkit.entity.impl.hostile;
 
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.hostile.Pillager;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 public class EntityPillager extends EntityHostile implements Pillager {
 
-    public EntityPillager(EntityType<Pillager> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityPillager(EntityType<Pillager> type, Location location) {
+        super(type, location);
     }
 
     @Override

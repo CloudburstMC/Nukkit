@@ -1,7 +1,7 @@
 package cn.nukkit.command;
 
 import cn.nukkit.Server;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import com.mojang.brigadier.Message;
 
 public class TranslationMessage implements Message {
@@ -19,7 +19,7 @@ public class TranslationMessage implements Message {
 
     @Override
     public String getString() {
-        return Server.getInstance().getLanguage().translateString(string, params);
+        return Server.getInstance().getLanguage().translate(string, params);
     }
 
     @Override

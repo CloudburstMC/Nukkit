@@ -3,7 +3,7 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.CommandSource;
 import cn.nukkit.command.ConsoleCommandSource;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 import com.mojang.brigadier.CommandDispatcher;

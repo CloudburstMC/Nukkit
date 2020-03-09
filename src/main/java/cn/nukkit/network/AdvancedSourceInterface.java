@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.util.concurrent.TimeUnit;
 
 /**
  * author: MagicDroidX
@@ -13,7 +14,7 @@ public interface AdvancedSourceInterface extends SourceInterface {
 
     void blockAddress(InetAddress address);
 
-    void blockAddress(InetAddress address, int timeout);
+    void blockAddress(InetAddress address, long timeout, TimeUnit unit);
 
     void unblockAddress(InetAddress address);
 

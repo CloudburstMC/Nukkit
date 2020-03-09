@@ -2,8 +2,7 @@ package cn.nukkit.entity.impl.projectile;
 
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.projectile.Snowball;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 /**
  * author: MagicDroidX
@@ -11,8 +10,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
  */
 public class EntitySnowball extends EntityProjectile implements Snowball {
 
-    public EntitySnowball(EntityType<Snowball> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntitySnowball(EntityType<Snowball> type, Location location) {
+        super(type, location);
     }
 
     @Override

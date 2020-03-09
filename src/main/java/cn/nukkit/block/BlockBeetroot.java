@@ -22,10 +22,10 @@ public class BlockBeetroot extends BlockCrops {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (this.getDamage() >= 0x07) {
+        if (this.getMeta() >= 0x07) {
             return new Item[]{
                     Item.get(ItemIds.BEETROOT, 0, 1),
-                    Item.get(BEETROOT_SEEDS, 0, (int) (4d * Math.random()))
+                    Item.get(BEETROOT_SEEDS, 0, (int) (4f * Math.random()))
             };
         } else {
             return new Item[]{

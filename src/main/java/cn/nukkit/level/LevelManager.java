@@ -133,8 +133,7 @@ public class LevelManager implements Closeable {
                     level.doChunkGarbageCollection();
                 }
             } catch (Exception e) {
-                log.error(server.getLanguage().translateString("nukkit.level.tickError",
-                        new String[]{level.getId(), Utils.getExceptionMessage(e)}));
+                log.error(server.getLanguage().translate("nukkit.level.tickError", level.getId(), Utils.getExceptionMessage(e)));
             }
         }
     }

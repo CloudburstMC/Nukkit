@@ -81,7 +81,7 @@ public class BlockFire extends FloodableBlock {
                 BlockFadeEvent event = new BlockFadeEvent(this, get(AIR));
                 level.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    level.setBlock(this, event.getNewState(), true);
+                    level.setBlock(this.getPosition(), event.getNewState(), true);
                 }
             }
 
@@ -97,29 +97,29 @@ public class BlockFire extends FloodableBlock {
                 BlockFadeEvent event = new BlockFadeEvent(this, get(AIR));
                 level.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    level.setBlock(this, event.getNewState(), true);
+                    level.setBlock(this.getPosition(), event.getNewState(), true);
                 }
             }
 
             if (!forever && this.getLevel().isRaining() &&
-                    (this.getLevel().canBlockSeeSky(this) ||
-                            this.getLevel().canBlockSeeSky(this.east()) ||
-                            this.getLevel().canBlockSeeSky(this.west()) ||
-                            this.getLevel().canBlockSeeSky(this.south()) ||
-                            this.getLevel().canBlockSeeSky(this.north()))
+                    (this.getLevel().canBlockSeeSky(this.getPosition()) ||
+                            this.getLevel().canBlockSeeSky(this.getPosition().east()) ||
+                            this.getLevel().canBlockSeeSky(this.getPosition().west()) ||
+                            this.getLevel().canBlockSeeSky(this.getPosition().south()) ||
+                            this.getLevel().canBlockSeeSky(this.getPosition().north()))
                     ) {
                 BlockFadeEvent event = new BlockFadeEvent(this, get(AIR));
                 level.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    level.setBlock(this, event.getNewState(), true);
+                    level.setBlock(this.getPosition(), event.getNewState(), true);
                 }
             } else {
-                int meta = this.getDamage();
+                int meta = this.getMeta();
 
                 if (meta < 15) {
                     int newMeta = meta + random.nextInt(3);
-                    this.setDamage(Math.min(newMeta, 15));
-                    this.getLevel().setBlock(this, this, true);
+                    this.setMeta(Math.min(newMeta, 15));
+                    this.getLevel().setBlock(this.getPosition(), this, true);
                 }
 
                 this.getLevel().scheduleUpdate(this, this.tickRate() + random.nextInt(10));
@@ -129,14 +129,14 @@ public class BlockFire extends FloodableBlock {
                         BlockFadeEvent event = new BlockFadeEvent(this, get(AIR));
                         level.getServer().getPluginManager().callEvent(event);
                         if (!event.isCancelled()) {
-                            level.setBlock(this, event.getNewState(), true);
+                            level.setBlock(this.getPosition(), event.getNewState(), true);
                         }
                     }
                 } else if (!forever && !(this.down().getBurnAbility() > 0) && meta == 15 && random.nextInt(4) == 0) {
                     BlockFadeEvent event = new BlockFadeEvent(this, get(AIR));
                     level.getServer().getPluginManager().callEvent(event);
                     if (!event.isCancelled()) {
-                        level.setBlock(this, event.getNewState(), true);
+                        level.setBlock(this.getPosition(), event.getNewState(), true);
                     }
                 } else {
                     int o = 0;
@@ -150,14 +150,14 @@ public class BlockFire extends FloodableBlock {
                     this.tryToCatchBlockOnFire(this.south(), 300 + o, meta);
                     this.tryToCatchBlockOnFire(this.north(), 300 + o, meta);
 
-                    for (int x = (int) (this.x - 1); x <= (int) (this.x + 1); ++x) {
-                        for (int z = (int) (this.z - 1); z <= (int) (this.z + 1); ++z) {
-                            for (int y = (int) (this.y - 1); y <= (int) (this.y + 4); ++y) {
-                                if (x != (int) this.x || y != (int) this.y || z != (int) this.z) {
+                    for (int x = (int) (this.getX() - 1); x <= (int) (this.getX() + 1); ++x) {
+                        for (int z = (int) (this.getZ() - 1); z <= (int) (this.getZ() + 1); ++z) {
+                            for (int y = (int) (this.getY() - 1); y <= (int) (this.getY() + 4); ++y) {
+                                if (x != (int) this.getX() || y != (int) this.getY() || z != (int) this.getZ()) {
                                     int k = 100;
 
-                                    if (y > this.y + 1) {
-                                        k += (y - (this.y + 1)) * 100;
+                                    if (y > this.getY() + 1) {
+                                        k += (y - (this.getY() + 1)) * 100;
                                     }
 
                                     Block block = this.getLevel().getBlock(x, y, z);
@@ -179,7 +179,7 @@ public class BlockFire extends FloodableBlock {
                                             this.level.getServer().getPluginManager().callEvent(e);
 
                                             if (!e.isCancelled()) {
-                                                this.getLevel().setBlock(block, Block.get(FIRE, damage), true);
+                                                this.getLevel().setBlock(block.getPosition(), Block.get(FIRE, damage), true);
                                                 this.getLevel().scheduleUpdate(block, this.tickRate());
                                             }
                                         }
@@ -213,7 +213,7 @@ public class BlockFire extends FloodableBlock {
                 this.level.getServer().getPluginManager().callEvent(e);
 
                 if (!e.isCancelled()) {
-                    this.getLevel().setBlock(block, Block.get(FIRE, meta), true);
+                    this.getLevel().setBlock(block.getPosition(), Block.get(FIRE, meta), true);
                     this.getLevel().scheduleUpdate(block, this.tickRate());
                 }
             } else {
@@ -221,7 +221,7 @@ public class BlockFire extends FloodableBlock {
                 this.getLevel().getServer().getPluginManager().callEvent(ev);
 
                 if (!ev.isCancelled()) {
-                    this.getLevel().setBlock(block, Block.get(AIR), true);
+                    this.getLevel().setBlock(block.getPosition(), Block.get(AIR), true);
                 }
             }
 
@@ -262,15 +262,15 @@ public class BlockFire extends FloodableBlock {
                 return true;
             } else {
                 if (block instanceof BlockStairs &&
-                        (block.getDamage() & 4) == 4) {
+                        (block.getMeta() & 4) == 4) {
 
                     return true;
                 } else if (block instanceof BlockSlab &&
-                        (block.getDamage() & 8) == 8) {
+                        (block.getMeta() & 8) == 8) {
 
                     return true;
                 } else if (block instanceof BlockSnowLayer &&
-                        (block.getDamage() & 7) == 7) {
+                        (block.getMeta() & 7) == 7) {
 
                     return true;
                 }

@@ -5,9 +5,9 @@ import cn.nukkit.command.args.registry.ArgumentData;
 import cn.nukkit.command.args.registry.ArgumentRegistry;
 import cn.nukkit.command.args.registry.EnumArgumentData;
 import cn.nukkit.command.data.*;
-import cn.nukkit.lang.TextContainer;
-import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
+import cn.nukkit.locale.TextContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
@@ -163,7 +163,7 @@ public abstract class BaseCommand {
         }
 
         CommandData customData = this.commandData.clone();
-        customData.description = player.getServer().getLanguage().translateString(description);
+        customData.description = player.getServer().getLanguage().translate(description);
 
         CommandDispatcher dispatcher =  Server.getInstance().getCommandDispatcher().getDispatcher();
         ArgumentRegistry registry = Server.getInstance().getCommandDispatcher().getArgumentRegistry();

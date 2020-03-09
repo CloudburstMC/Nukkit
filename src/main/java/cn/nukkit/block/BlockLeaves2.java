@@ -19,11 +19,11 @@ public class BlockLeaves2 extends BlockLeaves {
 
     @Override
     protected boolean canDropApple() {
-        return (this.getDamage() & 0x01) != 0;
+        return (this.getMeta() & 0x01) != 0;
     }
 
     @Override
     protected Item getSapling() {
-        return Item.get(SAPLING, (this.getDamage() & 0x01) + 4);
+        return Item.get(SAPLING, (this.getMeta() & 0x01) + 4);
     }
 }

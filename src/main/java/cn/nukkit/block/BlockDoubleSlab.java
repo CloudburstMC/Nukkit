@@ -4,31 +4,42 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
+import com.nukkitx.protocol.bedrock.packet.LevelSoundEvent2Packet;
 
-import static cn.nukkit.block.BlockIds.STONE_SLAB;
+import java.util.Arrays;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class BlockDoubleSlab extends BlockSolid {
-    public static final int STONE = 0;
-    public static final int SANDSTONE = 1;
-    public static final int FAKE_WOOD = 2;
-    public static final int COBBLESTONE = 3;
-    public static final int BRICK = 4;
-    public static final int STONE_BRICK = 5;
-    public static final int QUARTZ = 6;
-    public static final int NETHER_BRICK = 7;
 
-    public BlockDoubleSlab(Identifier id) {
+    private final Identifier slabId;
+    private final BlockColor[] colors;
+
+    protected BlockDoubleSlab(Identifier id, Identifier slabId, BlockColor[] colors) {
         super(id);
+        this.slabId = slabId;
+        this.colors = colors;
     }
 
-    //todo hardness and residence
+    public static BlockFactory factory(Identifier slabId, BlockColor... colors) {
+        return id -> new BlockDoubleSlab(id, slabId, Arrays.copyOf(colors, 8));
+    }
+
+    public Identifier getSlabId() {
+        return this.slabId;
+    }
 
     @Override
-    public double getHardness() {
+    public float getResistance() {
+        return 30;
+    }
+
+    @Override
+    public float getHardness() {
         return 2;
     }
 
@@ -38,10 +49,15 @@ public class BlockDoubleSlab extends BlockSolid {
     }
 
     @Override
+    public boolean canHarvestWithHand() {
+        return false;
+    }
+
+    @Override
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
-                    Item.get(STONE_SLAB, this.getDamage() & 0x07, 2)
+                    Item.get(this.slabId, this.getMeta() & 0x07, 2)
             };
         } else {
             return new Item[0];
@@ -50,25 +66,18 @@ public class BlockDoubleSlab extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        switch (this.getDamage() & 0x07) {
-            case BlockDoubleSlab.STONE:
-                return BlockColor.STONE_BLOCK_COLOR;
-            case BlockDoubleSlab.SANDSTONE:
-                return BlockColor.SAND_BLOCK_COLOR;
-            case BlockDoubleSlab.FAKE_WOOD:
-                return BlockColor.WOOD_BLOCK_COLOR;
-            case BlockDoubleSlab.COBBLESTONE:
-                return BlockColor.STONE_BLOCK_COLOR;
-            case BlockDoubleSlab.BRICK:
-                return BlockColor.STONE_BLOCK_COLOR;
-            case BlockDoubleSlab.STONE_BRICK:
-                return BlockColor.STONE_BLOCK_COLOR;
-            case BlockDoubleSlab.QUARTZ:
-                return BlockColor.QUARTZ_BLOCK_COLOR;
-            case BlockDoubleSlab.NETHER_BRICK:
-                return BlockColor.NETHERRACK_BLOCK_COLOR;
-            default:
-                return BlockColor.STONE_BLOCK_COLOR;     //unreachable
-        }
+        return colors[this.getMeta() & 0x7];
+    }
+    protected void playPlaceSound() {
+        LevelSoundEvent2Packet pk = new LevelSoundEvent2Packet();
+        pk.setSound(SoundEvent.ITEM_USE_ON);
+        pk.setExtraData(725); // Who knows what this means? It's what is sent per ProxyPass
+        pk.setPosition(Vector3f.from(this.getX() + 0.5f, this.getY() + 0.5f, this.getZ() + 0.5f));
+        pk.setIdentifier("");
+        pk.setBabySound(false);
+        pk.setRelativeVolumeDisabled(false);
+
+
+        this.getLevel().addChunkPacket(this.getChunk().getX(), this.getChunk().getZ(), pk);
     }
 }

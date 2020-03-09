@@ -6,7 +6,7 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandSource;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.InstantEffect;
@@ -75,7 +75,7 @@ public class EffectCommand extends BaseCommand {
         } else {
             effect.setDuration(duration).setAmplifier(amplifier);
             target.addEffect(effect);
-            sendAdminMessage(source, new TranslationContainer("%commands.effect.success", effect.getName(), String.valueOf(effect.getAmplifier()), target.getDisplayName(), String.valueOf(effect.getDuration() / 20)));
+            sendAdminMessage(source, new TranslationContainer("%commands.effect.success", effect.getName(), effect.getAmplifier(), target.getDisplayName(), effect.getDuration() / 20));
         }
         return 1;
     }

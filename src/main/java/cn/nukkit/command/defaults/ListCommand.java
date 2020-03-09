@@ -2,7 +2,7 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.CommandSource;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
@@ -44,8 +44,7 @@ public class ListCommand extends BaseCommand {
             online = online.substring(0, online.length() - 2);
         }
 
-        source.sendMessage(new TranslationContainer("commands.players.list",
-                String.valueOf(onlineCount), String.valueOf(source.getServer().getMaxPlayers())));
+        source.sendMessage(new TranslationContainer("commands.players.list", onlineCount.get(), source.getServer().getMaxPlayers()));
         source.sendMessage(online);
         return 1;
     }

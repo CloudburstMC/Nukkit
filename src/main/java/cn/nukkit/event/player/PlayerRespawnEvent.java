@@ -1,7 +1,7 @@
 package cn.nukkit.event.player;
 
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.Position;
+import cn.nukkit.level.Location;
 import cn.nukkit.player.Player;
 
 public class PlayerRespawnEvent extends PlayerEvent {
@@ -11,26 +11,26 @@ public class PlayerRespawnEvent extends PlayerEvent {
         return handlers;
     }
 
-    private Position position;
+    private Location location;
 
     private boolean firstSpawn;
 
-    public PlayerRespawnEvent(Player player, Position position) {
-        this(player, position, false);
+    public PlayerRespawnEvent(Player player, Location location) {
+        this(player, location, false);
     }
 
-    public PlayerRespawnEvent(Player player, Position position, boolean firstSpawn) {
+    public PlayerRespawnEvent(Player player, Location location, boolean firstSpawn) {
         this.player = player;
-        this.position = position;
+        this.location = location;
         this.firstSpawn = firstSpawn;
     }
 
-    public Position getRespawnPosition() {
-        return position;
+    public Location getRespawnLocation() {
+        return location;
     }
 
-    public void setRespawnPosition(Position position) {
-        this.position = position;
+    public void setRespawnLocation(Location location) {
+        this.location = location;
     }
 
     public boolean isFirstSpawn() {

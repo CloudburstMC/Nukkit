@@ -3,6 +3,7 @@ package cn.nukkit.entity.misc;
 import cn.nukkit.entity.Entity;
 import lombok.RequiredArgsConstructor;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +11,10 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public interface Painting extends Entity {
+
+    Motive getMotive();
+
+    void setMotive(@Nonnull Motive motive);
 
     @RequiredArgsConstructor
     enum Motive {

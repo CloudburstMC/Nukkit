@@ -21,12 +21,12 @@ public class BlockCraftingTable extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
-        return 2.5;
+    public float getHardness() {
+        return 2.5f;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 15;
     }
 

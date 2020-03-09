@@ -19,6 +19,6 @@ public class BlockGlassPaneStained extends BlockGlassPane {
     }
 
     public DyeColor getDyeColor() {
-        return DyeColor.getByWoolData(getDamage());
+        return DyeColor.getByWoolData(getMeta());
     }
 }

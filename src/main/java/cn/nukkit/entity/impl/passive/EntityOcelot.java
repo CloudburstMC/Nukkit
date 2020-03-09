@@ -4,16 +4,15 @@ import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.passive.Ocelot;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 /**
  * Author: BeYkeRYkt Nukkit Project
  */
 public class EntityOcelot extends Animal implements Ocelot {
 
-    public EntityOcelot(EntityType<Ocelot> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityOcelot(EntityType<Ocelot> type, Location location) {
+        super(type, location);
     }
 
     @Override

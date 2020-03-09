@@ -2,12 +2,8 @@ package cn.nukkit.command.args.registry;
 
 import cn.nukkit.command.args.*;
 
-import static cn.nukkit.network.protocol.AvailableCommandsPacket.*;
-
 import static cn.nukkit.command.data.CommandParamType.*;
 
-import cn.nukkit.command.defaults.GamemodeCommand;
-import cn.nukkit.network.protocol.AvailableCommandsPacket;
 import com.mojang.brigadier.arguments.*;
 
 import java.util.HashMap;

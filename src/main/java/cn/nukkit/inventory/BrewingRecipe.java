@@ -2,6 +2,7 @@ package cn.nukkit.inventory;
 
 
 import cn.nukkit.item.Item;
+import com.nukkitx.protocol.bedrock.data.PotionMixData;
 
 
 public class BrewingRecipe extends MixRecipe {
@@ -15,8 +16,7 @@ public class BrewingRecipe extends MixRecipe {
         manager.registerBrewingRecipe(this);
     }
 
-    @Override
-    public RecipeType getType() {
-        throw new UnsupportedOperationException();
+    public PotionMixData toData() {
+        return new PotionMixData(getInput().getMeta(), getIngredient().getNetworkId(), getResult().getMeta());
     }
 }

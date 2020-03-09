@@ -3,16 +3,15 @@ package cn.nukkit.entity.impl.passive;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.passive.Wolf;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 /**
  * Author: BeYkeRYkt Nukkit Project
  */
 public class EntityWolf extends Animal implements Wolf {
 
-    public EntityWolf(EntityType<Wolf> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityWolf(EntityType<Wolf> type, Location location) {
+        super(type, location);
     }
 
     @Override

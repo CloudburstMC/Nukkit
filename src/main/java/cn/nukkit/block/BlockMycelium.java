@@ -8,6 +8,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3i;
 
 import static cn.nukkit.block.BlockIds.DIRT;
 import static cn.nukkit.block.BlockIds.MYCELIUM;
@@ -27,13 +28,13 @@ public class BlockMycelium extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
-        return 0.6;
+    public float getHardness() {
+        return 0.6f;
     }
 
     @Override
-    public double getResistance() {
-        return 2.5;
+    public float getResistance() {
+        return 2.5f;
     }
 
     @Override
@@ -48,16 +49,17 @@ public class BlockMycelium extends BlockSolid {
         if (type == Level.BLOCK_UPDATE_RANDOM) {
             //TODO: light levels
             NukkitRandom random = new NukkitRandom();
-            x = random.nextRange(x - 1, x + 1);
-            y = random.nextRange(y - 1, y + 1);
-            z = random.nextRange(z - 1, z + 1);
+            Vector3i pos = this.getPosition();
+            int x = random.nextRange(pos.getX() - 1, pos.getX() + 1);
+            int y = random.nextRange(pos.getY() - 1, pos.getY() + 1);
+            int z = random.nextRange(pos.getZ() - 1, pos.getZ() + 1);
             Block block = this.getLevel().getBlock(x, y, z);
-            if (block.getId() == DIRT && block.getDamage() == 0) {
+            if (block.getId() == DIRT && block.getMeta() == 0) {
                 if (block.up().isTransparent()) {
                     BlockSpreadEvent ev = new BlockSpreadEvent(block, this, Block.get(MYCELIUM));
                     Server.getInstance().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
-                        this.getLevel().setBlock(block, ev.getNewState());
+                        this.getLevel().setBlock(block.getPosition(), ev.getNewState());
                     }
                 }
             }

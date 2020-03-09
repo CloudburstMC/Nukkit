@@ -30,7 +30,7 @@ public class PopulatorOre extends Populator {
                 int x = random.nextInt(sx, ex);
                 int z = random.nextInt(sz, ez);
                 int y = random.nextInt(type.minHeight, type.maxHeight);
-                if (level.getBlockIdAt(x, y, z) != replaceId) {
+                if (level.getBlockId(x, y, z) != replaceId) {
                     continue;
                 }
                 type.spawn(level, random, replaceId, x, y, z);

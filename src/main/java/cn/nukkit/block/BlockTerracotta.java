@@ -21,12 +21,12 @@ public class BlockTerracotta extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
-        return 1.25;
+    public float getHardness() {
+        return 1.25f;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 7;
     }
 
@@ -43,10 +43,10 @@ public class BlockTerracotta extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        return TerracottaColor.getByTerracottaData(getDamage()).getColor();
+        return TerracottaColor.getByTerracottaData(getMeta()).getColor();
     }
 
     public TerracottaColor getDyeColor() {
-        return TerracottaColor.getByTerracottaData(getDamage());
+        return TerracottaColor.getByTerracottaData(getMeta());
     }
 }

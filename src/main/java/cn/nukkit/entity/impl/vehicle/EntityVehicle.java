@@ -9,11 +9,10 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.vehicle.VehicleDamageEvent;
 import cn.nukkit.event.vehicle.VehicleDestroyEvent;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 import cn.nukkit.player.Player;
 
-import static cn.nukkit.entity.data.EntityData.*;
+import static com.nukkitx.protocol.bedrock.data.EntityData.*;
 
 /**
  * author: MagicDroidX
@@ -21,32 +20,32 @@ import static cn.nukkit.entity.data.EntityData.*;
  */
 public abstract class EntityVehicle extends BaseEntity implements Rideable, EntityInteractable {
 
-    public EntityVehicle(EntityType<?> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityVehicle(EntityType<?> type, Location location) {
+        super(type, location);
     }
 
     public int getRollingAmplitude() {
-        return this.getIntData(HURT_TIME);
+        return this.data.getInt(HURT_TIME);
     }
 
     public void setRollingAmplitude(int time) {
-        this.setIntData(HURT_TIME, time);
+        this.data.setInt(HURT_TIME, time);
     }
 
     public int getRollingDirection() {
-        return this.getIntData(HURT_DIRECTION);
+        return this.data.getInt(HURT_DIRECTION);
     }
 
     public void setRollingDirection(int direction) {
-        this.setIntData(HURT_DIRECTION, direction);
+        this.data.setInt(HURT_DIRECTION, direction);
     }
 
     public int getDamage() {
-        return this.getIntData(HEALTH); // false data name (should be DATA_DAMAGE_TAKEN)
+        return this.data.getInt(HEALTH); // false data name (should be DATA_DAMAGE_TAKEN)
     }
 
     public void setDamage(int damage) {
-        this.setIntData(HEALTH, damage);
+        this.data.setInt(HEALTH, damage);
     }
 
     @Override
@@ -67,7 +66,7 @@ public abstract class EntityVehicle extends BaseEntity implements Rideable, Enti
         }
 
         // A killer task
-        if (y < -16) {
+        if (this.getY() < -16) {
             kill();
         }
         // Movement code

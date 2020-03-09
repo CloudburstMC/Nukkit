@@ -4,8 +4,8 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.item.Item;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * Created by CreeperFace on 1. 1. 2017.

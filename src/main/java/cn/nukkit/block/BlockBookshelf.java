@@ -17,13 +17,13 @@ public class BlockBookshelf extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
-        return 1.5D;
+    public float getHardness() {
+        return 1.5f;
     }
 
     @Override
-    public double getResistance() {
-        return 7.5D;
+    public float getResistance() {
+        return 7.5f;
     }
 
     @Override

@@ -4,10 +4,10 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import static cn.nukkit.block.BlockIds.AIR;
 
@@ -22,28 +22,28 @@ public class BlockWaterLily extends FloodableBlock {
     }
 
     @Override
-    public double getMinX() {
-        return this.x + 0.0625;
+    public float getMinX() {
+        return this.getX() + 0.0625f;
     }
 
     @Override
-    public double getMinZ() {
-        return this.z + 0.0625;
+    public float getMinZ() {
+        return this.getZ() + 0.0625f;
     }
 
     @Override
-    public double getMaxX() {
-        return this.x + 0.9375;
+    public float getMaxX() {
+        return this.getX() + 0.9375f;
     }
 
     @Override
-    public double getMaxY() {
-        return this.y + 0.015625;
+    public float getMaxY() {
+        return this.getY() + 0.015625f;
     }
 
     @Override
-    public double getMaxZ() {
-        return this.z + 0.9375;
+    public float getMaxZ() {
+        return this.getZ() + 0.9375f;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class BlockWaterLily extends FloodableBlock {
         if (target instanceof BlockWater) {
             Block up = target.up();
             if (up.getId() == AIR) {
-                this.getLevel().setBlock(up, this, true, true);
+                this.getLevel().setBlock(up.getPosition(), this, true, true);
                 return true;
             }
         }
@@ -67,7 +67,7 @@ public class BlockWaterLily extends FloodableBlock {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (!(this.down() instanceof BlockWater)) {
-                this.getLevel().useBreakOn(this);
+                this.getLevel().useBreakOn(this.getPosition());
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         }

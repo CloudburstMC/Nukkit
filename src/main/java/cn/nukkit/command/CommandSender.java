@@ -1,7 +1,7 @@
 package cn.nukkit.command;
 
 import cn.nukkit.Server;
-import cn.nukkit.lang.TextContainer;
+import cn.nukkit.locale.TextContainer;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.player.Player;
 

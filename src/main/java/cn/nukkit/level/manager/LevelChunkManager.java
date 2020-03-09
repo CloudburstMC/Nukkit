@@ -294,6 +294,10 @@ public final class LevelChunkManager {
     }
 
     public synchronized void tick() {
+        if (this.chunks.isEmpty()) {
+            return;
+        }
+
         long time = System.currentTimeMillis();
 
         // Spawn chunk
@@ -315,7 +319,7 @@ public final class LevelChunkManager {
                     continue; // Chunk hasn't loaded
                 }
 
-                if (Math.abs(chunk.getX() - spawnX) <= spawnRadius || Math.abs(chunk.getZ() - spawnZ) <= spawnRadius ||
+                if ((Math.abs(chunk.getX() - spawnX) <= spawnRadius && Math.abs(chunk.getZ() - spawnZ) <= spawnRadius) ||
                         !chunk.getLoaders().isEmpty()) {
                     continue; // Spawn protection or is loaded
                 }
@@ -328,7 +332,7 @@ public final class LevelChunkManager {
 
                 long lastAccessTime = this.chunkLastAccessTimes.get(chunkKey);
                 if ((time - lastAccessTime) <= TimeUnit.SECONDS.toMillis(
-                        config.getInt("level-settings. chunk-timeout-after-last-access", 120))) {
+                        config.getInt("level-settings.chunk-timeout-after-last-access", 120))) {
                     continue;
                 }
 

@@ -2,8 +2,10 @@ package cn.nukkit.item;
 
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.EntityTypes;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.entity.Projectile;
 import cn.nukkit.utils.Identifier;
+
+import static com.nukkitx.protocol.bedrock.data.EntityData.POTION_AUX_VALUE;
 
 /**
  * Created on 2015/12/27 by xtypr.
@@ -26,7 +28,7 @@ public class ItemPotionSplash extends ProjectileItem {
     }
 
     @Override
-    public EntityType<?> getProjectileEntityType() {
+    public EntityType<? extends Projectile> getProjectileEntityType() {
         return EntityTypes.SPLASH_POTION;
     }
 
@@ -36,7 +38,7 @@ public class ItemPotionSplash extends ProjectileItem {
     }
 
     @Override
-    protected void correctNBT(CompoundTag nbt) {
-        nbt.putInt("PotionId", this.getDamage());
+    protected void onProjectileCreation(Projectile entity) {
+        entity.getData().setShort(POTION_AUX_VALUE, this.getMeta());
     }
 }

@@ -2,16 +2,15 @@ package cn.nukkit.entity.impl.hostile;
 
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.hostile.EvocationIllager;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 /**
  * @author PikyCZ
  */
 public class EntityEvocationIllager extends EntityHostile implements EvocationIllager {
 
-    public EntityEvocationIllager(EntityType<EvocationIllager> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityEvocationIllager(EntityType<EvocationIllager> type, Location location) {
+        super(type, location);
     }
 
     @Override

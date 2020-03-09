@@ -19,13 +19,12 @@ import cn.nukkit.level.generator.populator.impl.PopulatorOre;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.MathHelper;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.registry.BlockRegistry;
 import com.google.common.collect.ImmutableList;
+import com.nukkitx.math.vector.Vector3i;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static cn.nukkit.block.BlockIds.STONE;
 import static cn.nukkit.block.BlockIds.WATER;
@@ -372,7 +371,7 @@ public class NormalGenerator implements Generator {
     }
 
     @Override
-    public Vector3f getSpawn() {
-        return new Vector3f(0.5, 256, 0.5);
+    public Vector3i getSpawn() {
+        return Vector3i.from(0, 256, 0);
     }
 }

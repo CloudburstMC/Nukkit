@@ -11,12 +11,12 @@ public class BlockSmoothStone extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
-        return 1.5;
+    public float getHardness() {
+        return 1.5f;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 10;
     }
 
@@ -33,7 +33,7 @@ public class BlockSmoothStone extends BlockSolid {
     @Override
     public Item[] getDrops(Item item) {
         if (item.isPickaxe()) {
-            return new Item[]{ toItem() };
+            return new Item[]{toItem()};
         } else {
             return new Item[0];
         }

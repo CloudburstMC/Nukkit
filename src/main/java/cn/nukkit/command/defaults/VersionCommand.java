@@ -3,9 +3,8 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandSource;
-import cn.nukkit.lang.TranslationContainer;
-import cn.nukkit.network.protocol.ProtocolInfo;
-import cn.nukkit.player.IPlayer;
+import cn.nukkit.locale.TranslationContainer;
+import cn.nukkit.network.ProtocolInfo;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginDescription;
 import cn.nukkit.utils.TextFormat;
@@ -42,7 +41,7 @@ public class VersionCommand extends BaseCommand {
                 "", // codename - not used anymore
                 source.getServer().getApiVersion(),
                 source.getServer().getVersion(),
-                String.valueOf(ProtocolInfo.CURRENT_PROTOCOL)));
+                ProtocolInfo.getDefaultProtocolVersion()));
         return 1;
     }
 

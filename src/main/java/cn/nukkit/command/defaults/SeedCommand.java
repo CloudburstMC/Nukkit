@@ -3,7 +3,7 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandSource;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
@@ -32,7 +32,7 @@ public class SeedCommand extends BaseCommand {
             seed = source.getServer().getDefaultLevel().getSeed();
         }
 
-        source.sendMessage(new TranslationContainer("commands.seed.success", String.valueOf(seed)));
+        source.sendMessage(new TranslationContainer("commands.seed.success", seed));
         return 1;
     }
 }

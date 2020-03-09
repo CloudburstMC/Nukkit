@@ -3,7 +3,7 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandSource;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.TextFormat;
 import com.mojang.brigadier.CommandDispatcher;
@@ -37,7 +37,7 @@ public class PluginsCommand extends BaseCommand {
             list.append(plugin.getDescription().getFullName());
         }
 
-        source.sendMessage(new TranslationContainer("nukkit.command.plugins.success", String.valueOf(plugins.size()), list.toString()));
+        source.sendMessage(new TranslationContainer("nukkit.command.plugins.success", plugins.size(), list.toString()));
         return 1;
     }
 }

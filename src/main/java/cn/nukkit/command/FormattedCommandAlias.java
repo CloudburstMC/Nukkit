@@ -1,7 +1,7 @@
 package cn.nukkit.command;
 
 import cn.nukkit.Server;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;

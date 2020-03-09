@@ -29,12 +29,12 @@ import cn.nukkit.command.Command;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.Listener;
-import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.plugin.EventExecutor;
 import cn.nukkit.plugin.MethodEventExecutor;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.scheduler.TaskHandler;
+import com.nukkitx.protocol.bedrock.BedrockPacket;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.HashSet;
@@ -246,11 +246,11 @@ public final class Timings {
         return TimingsManager.getTiming(DEFAULT_GROUP.name, "## BlockEntity Tick: " + blockEntity.getClass().getSimpleName(), tickBlockEntityTimer);
     }
 
-    public static Timing getReceiveDataPacketTiming(DataPacket pk) {
+    public static Timing getReceiveDataPacketTiming(BedrockPacket pk) {
         return TimingsManager.getTiming(DEFAULT_GROUP.name, "## Receive Packet: " + pk.getClass().getSimpleName(), playerNetworkReceiveTimer);
     }
 
-    public static Timing getSendDataPacketTiming(DataPacket pk) {
+    public static Timing getSendDataPacketTiming(BedrockPacket pk) {
         return TimingsManager.getTiming(DEFAULT_GROUP.name, "## Send Packet: " + pk.getClass().getSimpleName(), playerNetworkSendTimer);
     }
 

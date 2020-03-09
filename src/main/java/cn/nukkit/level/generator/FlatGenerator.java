@@ -1,22 +1,17 @@
 package cn.nukkit.level.generator;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
-import cn.nukkit.level.generator.object.ore.OreType;
-import cn.nukkit.level.generator.populator.impl.PopulatorOre;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.level.provider.LegacyBlockConverter;
 import cn.nukkit.math.BedrockRandom;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.registry.BlockRegistry;
+import com.nukkitx.math.vector.Vector3i;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import static cn.nukkit.block.BlockIds.AIR;
@@ -42,17 +37,17 @@ public class FlatGenerator implements Generator {
 
     private int biome;
 
-    @Override
-    public String getSettings() {
-        return this.options;
-    }
-
     private FlatGenerator(BedrockRandom random, String options) {
         this.options = options;
 
         this.preset = options == null || options.isEmpty() ? "2;7,2x3,2;1;" : options;
 
         this.parsePreset(this.preset);
+    }
+
+    @Override
+    public String getSettings() {
+        return this.options;
     }
 
     protected void parsePreset(String preset) {
@@ -89,7 +84,7 @@ public class FlatGenerator implements Generator {
                 if (y > 0xFF) {
                     y = 0xFF;
                 }
-                int[] blockState = new int[] { id, meta };
+                int[] blockState = new int[]{id, meta};
                 LegacyBlockConverter.get().convertBlockState(blockState);
                 for (; cY < y; ++cY) {
                     this.structure[cY] = BlockRegistry.get().getBlock(blockState[0], blockState[1]);
@@ -127,7 +122,7 @@ public class FlatGenerator implements Generator {
     }
 
     @Override
-    public Vector3f getSpawn() {
-        return new Vector3f(128, this.floorLevel, 128);
+    public Vector3i getSpawn() {
+        return Vector3i.from(128, this.floorLevel, 128);
     }
 }

@@ -4,7 +4,7 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
 /**
@@ -14,7 +14,7 @@ import cn.nukkit.utils.TextFormat;
 public class WhitelistCommand extends VanillaCommand {
 
     public WhitelistCommand(String name) {
-        super(name, "%nukkit.command.whitelist.description", "%commands.whitelist.usage");
+        super(name, "commands.whitelist.description", "commands.whitelist.usage");
         this.setPermission(
                 "nukkit.command.whitelist.reload;" +
                         "nukkit.command.whitelist.enable;" +
@@ -24,10 +24,10 @@ public class WhitelistCommand extends VanillaCommand {
                         "nukkit.command.whitelist.remove"
         );
         this.commandParameters.clear();
-        this.commandParameters.put("1arg", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("on|off|list|reload", CommandParamType.STRING, false)
         });
-        this.commandParameters.put("2args", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("add|remove", CommandParamType.STRING, false),
                 new CommandParameter("player", CommandParamType.TARGET, false)
         });
@@ -72,7 +72,7 @@ public class WhitelistCommand extends VanillaCommand {
                         result += player + ", ";
                         ++count;
                     }
-                    sender.sendMessage(new TranslationContainer("commands.whitelist.list", String.valueOf(count), String.valueOf(count)));
+                    sender.sendMessage(new TranslationContainer("commands.whitelist.list", count, count));
                     sender.sendMessage(result.length() > 0 ? result.substring(0, result.length() - 2) : "");
 
                     return true;

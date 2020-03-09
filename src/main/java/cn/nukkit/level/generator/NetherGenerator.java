@@ -15,12 +15,10 @@ import cn.nukkit.level.generator.populator.impl.PopulatorLava;
 import cn.nukkit.level.generator.populator.impl.PopulatorOre;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.BedrockRandom;
-import cn.nukkit.math.Vector3f;
+import com.nukkitx.math.vector.Vector3i;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static cn.nukkit.block.BlockIds.*;
 
@@ -112,8 +110,8 @@ public class NetherGenerator implements Generator {
         biome.populateChunk(level, chunkX, chunkZ, random);
     }
 
-    public Vector3f getSpawn() {
-        return new Vector3f(0, 64, 0);
+    public Vector3i getSpawn() {
+        return Vector3i.from(0, 64, 0);
     }
 
     public float getNoise(int x, int y, int z) {

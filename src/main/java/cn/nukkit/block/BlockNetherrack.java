@@ -16,13 +16,13 @@ public class BlockNetherrack extends BlockSolid {
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 2;
     }
 
     @Override
-    public double getHardness() {
-        return 0.4;
+    public float getHardness() {
+        return 0.4f;
     }
 
     @Override

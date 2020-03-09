@@ -4,20 +4,20 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Axis;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 //Block state information: https://hastebin.com/emuvawasoj.js
 public class BlockWood extends BlockSolid {
-    private static final int STRIPPED_BIT = 0b1000;
     public static final int OAK = 0;
     public static final int SPRUCE = 1;
     public static final int BIRCH = 2;
     public static final int JUNGLE = 3;
     public static final int ACACIA = 4;
     public static final int DARK_OAK = 5;
+    private static final int STRIPPED_BIT = 0b1000;
     private static final int AXIS_Y = 0;
     private static final int AXIS_X = 1 << 4;
     private static final int AXIS_Z = 2 << 4;
@@ -27,12 +27,12 @@ public class BlockWood extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 2;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 15;
     }
 
@@ -53,7 +53,7 @@ public class BlockWood extends BlockSolid {
 
     @Override
     public Item toItem() {
-        return Item.get(id, getDamage() & 0xF);
+        return Item.get(id, getMeta() & 0xF);
     }
 
 
@@ -68,21 +68,21 @@ public class BlockWood extends BlockSolid {
             return false;
         }
 
-        setDamage(getDamage() | STRIPPED_BIT);  // adds the offset for stripped woods
-        getLevel().setBlock(this, this, true);
+        setMeta(getMeta() | STRIPPED_BIT);  // adds the offset for stripped woods
+        getLevel().setBlock(this.getPosition(), this, true);
         return true;
     }
 
-    public void setStripped(boolean stripped) {
-        setDamage((getDamage() & ~STRIPPED_BIT) | (stripped ? STRIPPED_BIT : 0));
+    public boolean isStripped() {
+        return (getMeta() & STRIPPED_BIT) != 0;
     }
 
-    public boolean isStripped() {
-        return (getDamage() & STRIPPED_BIT) != 0;
+    public void setStripped(boolean stripped) {
+        setMeta((getMeta() & ~STRIPPED_BIT) | (stripped ? STRIPPED_BIT : 0));
     }
 
     public Axis getAxis() {
-        switch (getDamage() & 0x30) {
+        switch (getMeta() & 0x30) {
             default:
             case AXIS_Y:
                 return Axis.Y;
@@ -107,7 +107,7 @@ public class BlockWood extends BlockSolid {
                 axisProp = AXIS_Z;
                 break;
         }
-        setDamage((getDamage() & ~0x30) | axisProp);
+        setMeta((getMeta() & ~0x30) | axisProp);
     }
 
     @Override
@@ -116,15 +116,15 @@ public class BlockWood extends BlockSolid {
         return super.place(item, block, target, face, clickPos, player);
     }
 
+    public int getWoodType() {
+        return getMeta() & 0b111;
+    }
+
     public void setWoodType(int woodType) {
         if (woodType < OAK || woodType > DARK_OAK) {
             woodType = OAK;
         }
-        setDamage((getDamage() & -0b1000) | woodType);
-    }
-
-    public int getWoodType() {
-        return getDamage() & 0b111;
+        setMeta((getMeta() & -0b1000) | woodType);
     }
 
     @Override
@@ -145,5 +145,4 @@ public class BlockWood extends BlockSolid {
                 return BlockColor.BROWN_BLOCK_COLOR;
         }
     }
-
 }

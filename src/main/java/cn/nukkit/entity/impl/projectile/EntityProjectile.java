@@ -7,16 +7,17 @@ import cn.nukkit.entity.impl.EntityLiving;
 import cn.nukkit.entity.misc.EnderCrystal;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.MovingObjectPosition;
-import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.tag.CompoundTag;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.tag.CompoundTag;
 
 import java.util.Set;
 
-import static cn.nukkit.entity.data.EntityFlag.CRITICAL;
+import static com.nukkitx.protocol.bedrock.data.EntityFlag.CRITICAL;
 
 /**
  * author: MagicDroidX
@@ -24,26 +25,42 @@ import static cn.nukkit.entity.data.EntityFlag.CRITICAL;
  */
 public abstract class EntityProjectile extends BaseEntity {
 
-    protected double getDamage() {
-        return namedTag.contains("damage") ? namedTag.getDouble("damage") : getBaseDamage();
-    }
-
-    protected double getBaseDamage() {
-        return 0;
-    }
-
+    protected float damage;
     public boolean hadCollision = false;
-
     public boolean closeOnCollide = true;
 
-    protected double damage = 0;
+    public EntityProjectile(EntityType<?> type, Location location) {
+        super(type, location);
+    }
 
-    public EntityProjectile(EntityType<?> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    @Override
+    public void loadAdditionalData(CompoundTag tag) {
+        super.loadAdditionalData(tag);
+
+        tag.listenForNumber("damage", v -> this.damage = v.floatValue());
+    }
+
+    @Override
+    public void saveAdditionalData(CompoundTagBuilder tag) {
+        super.saveAdditionalData(tag);
+
+        tag.floatTag("damage", this.damage);
     }
 
     public int getResultDamage() {
-        return NukkitMath.ceilDouble(Math.sqrt(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ) * getDamage());
+        return NukkitMath.ceilFloat(this.motion.length() * getDamage());
+    }
+
+    public float getDamage() {
+        return damage <= 0 ? getBaseDamage() : damage;
+    }
+
+    public void setDamage(float damage) {
+        this.damage = damage;
+    }
+
+    protected float getBaseDamage() {
+        return 0;
     }
 
     public boolean attack(EntityDamageEvent source) {
@@ -81,20 +98,11 @@ public abstract class EntityProjectile extends BaseEntity {
 
         this.setMaxHealth(1);
         this.setHealth(1);
-        if (this.namedTag.contains("Age")) {
-            this.age = this.namedTag.getShort("Age");
-        }
     }
 
     @Override
     public boolean canCollideWith(Entity entity) {
         return (entity instanceof EntityLiving || entity instanceof EnderCrystal) && !this.onGround;
-    }
-
-    @Override
-    public void saveNBT() {
-        super.saveNBT();
-        this.namedTag.putShort("Age", this.age);
     }
 
     @Override
@@ -116,13 +124,13 @@ public abstract class EntityProjectile extends BaseEntity {
             MovingObjectPosition movingObjectPosition = null;
 
             if (!this.isCollided) {
-                this.motionY -= this.getGravity();
+                this.motion = motion.sub(0, this.getGravity(), 0);
             }
 
-            Vector3f moveVector = new Vector3f(this.x + this.motionX, this.y + this.motionY, this.z + this.motionZ);
+            Vector3f moveVector = this.position.add(this.motion);
 
             Set<Entity> collidingEntities = this.getLevel().getCollidingEntities(
-                    this.boundingBox.addCoord(this.motionX, this.motionY, this.motionZ).expand(1, 1, 1),
+                    this.boundingBox.addCoord(this.motion).expand(1, 1, 1),
                     this);
 
             double nearDistance = Integer.MAX_VALUE;
@@ -131,18 +139,18 @@ public abstract class EntityProjectile extends BaseEntity {
             for (Entity entity : collidingEntities) {
                 if (/*!entity.canCollideWith(this) or */
                         (entity == this.getOwner() && this.ticksLived < 5)
-                        ) {
+                ) {
                     continue;
                 }
 
-                AxisAlignedBB axisalignedbb = entity.getBoundingBox().grow(0.3, 0.3, 0.3);
-                MovingObjectPosition ob = axisalignedbb.calculateIntercept(this, moveVector);
+                AxisAlignedBB axisalignedbb = entity.getBoundingBox().grow(0.3f, 0.3f, 0.3f);
+                MovingObjectPosition ob = axisalignedbb.calculateIntercept(this.getPosition(), moveVector);
 
                 if (ob == null) {
                     continue;
                 }
 
-                double distance = this.distanceSquared(ob.hitVector);
+                double distance = this.position.distanceSquared(ob.hitVector);
 
                 if (distance < nearDistance) {
                     nearDistance = distance;
@@ -161,25 +169,24 @@ public abstract class EntityProjectile extends BaseEntity {
                 }
             }
 
-            this.move(this.motionX, this.motionY, this.motionZ);
+            this.move(this.motion);
 
             if (this.isCollided && !this.hadCollision) { //collide with block
                 this.hadCollision = true;
 
-                this.motionX = 0;
-                this.motionY = 0;
-                this.motionZ = 0;
+                this.motion = Vector3f.ZERO;
 
-                this.server.getPluginManager().callEvent(new ProjectileHitEvent(this, MovingObjectPosition.fromBlock(this.getFloorX(), this.getFloorY(), this.getFloorZ(), -1, this)));
+                this.server.getPluginManager().callEvent(new ProjectileHitEvent(this,
+                        MovingObjectPosition.fromBlock(this.position.toInt(), -1, this.getPosition())));
                 return false;
             } else if (!this.isCollided && this.hadCollision) {
                 this.hadCollision = false;
             }
 
-            if (!this.hadCollision || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001) {
-                double f = Math.sqrt((this.motionX * this.motionX) + (this.motionZ * this.motionZ));
-                this.yaw = Math.atan2(this.motionX, this.motionZ) * 180 / Math.PI;
-                this.pitch = Math.atan2(this.motionY, f) * 180 / Math.PI;
+            if (!this.hadCollision || motion.length() > 0.00001) {
+                double f = Math.sqrt((this.motion.getX() * this.motion.getX()) + (this.motion.getZ() * this.motion.getZ()));
+                this.yaw = (float) (Math.atan2(this.motion.getX(), this.motion.getZ()) * 180 / Math.PI);
+                this.pitch = (float) (Math.atan2(this.motion.getY(), f) * 180 / Math.PI);
                 hasUpdate = true;
             }
 
@@ -195,10 +202,10 @@ public abstract class EntityProjectile extends BaseEntity {
     }
 
     public boolean isCritical() {
-        return this.getFlag(CRITICAL);
+        return this.data.getFlag(CRITICAL);
     }
 
     public void setCritical(boolean value) {
-        this.setFlag(CRITICAL, value);
+        this.data.setFlag(CRITICAL, value);
     }
 }

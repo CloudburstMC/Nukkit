@@ -3,11 +3,11 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * Created on 2015/12/8 by xtypr.
@@ -19,12 +19,12 @@ public class BlockPumpkin extends BlockSolid implements Faceable {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 1;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 5;
     }
 
@@ -40,8 +40,8 @@ public class BlockPumpkin extends BlockSolid implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        this.setDamage(player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0);
-        this.getLevel().setBlock(block, this, true, true);
+        this.setMeta(player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0);
+        this.getLevel().setBlock(block.getPosition(), this, true, true);
         return true;
     }
 
@@ -57,6 +57,6 @@ public class BlockPumpkin extends BlockSolid implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x7);
     }
 }

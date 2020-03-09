@@ -43,7 +43,7 @@ public class PopulatorLava extends Populator {
     }
 
     private int getFlowDecay(ChunkManager level, int x1, int y1, int z1, int x2, int y2, int z2) {
-        if (level.getBlockIdAt(x1, y1, z1) != level.getBlockIdAt(x2, y2, z2)) {
+        if (level.getBlockId(x1, y1, z1) != level.getBlockId(x2, y2, z2)) {
             return -1;
         } else {
             return level.getBlockDataAt(x2, y2, z2);
@@ -80,7 +80,7 @@ public class PopulatorLava extends Populator {
             if (k != decay) {
                 decay = k;
                 if (decay < 0) {
-                    level.setBlockIdAt(x, y, z, AIR);
+                    level.setBlockId(x, y, z, AIR);
                 } else {
                     level.setBlockAt(x, y, z, FLOWING_LAVA, decay);
                     this.lavaSpread(level, random, x, y, z);
@@ -119,14 +119,14 @@ public class PopulatorLava extends Populator {
     }
 
     private void flowIntoBlock(ChunkManager level, BedrockRandom random, int x, int y, int z, int newFlowDecay) {
-        if (level.getBlockIdAt(x, y, z) == AIR) {
+        if (level.getBlockId(x, y, z) == AIR) {
             level.setBlockAt(x, y, z, FLOWING_LAVA, newFlowDecay);
             this.lavaSpread(level, random, x, y, z);
         }
     }
 
     private boolean canFlowInto(ChunkManager level, int x, int y, int z) {
-        Identifier id = level.getBlockIdAt(x, y, z);
+        Identifier id = level.getBlockId(x, y, z);
         return id == AIR || id == FLOWING_LAVA || id == LAVA;
     }
 

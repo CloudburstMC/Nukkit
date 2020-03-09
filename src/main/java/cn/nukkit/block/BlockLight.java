@@ -11,13 +11,13 @@ public class BlockLight extends BlockTransparent {
     }
 
     @Override
-    public void setDamage(int meta) {
-        super.setDamage(meta & 0xF);
+    public void setMeta(int meta) {
+        super.setMeta(meta & 0xF);
     }
 
     @Override
     public int getLightLevel() {
-        return getDamage() & 0xF;
+        return getMeta() & 0xF;
     }
 
     @Override
@@ -46,12 +46,12 @@ public class BlockLight extends BlockTransparent {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 0;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 0;
     }
 

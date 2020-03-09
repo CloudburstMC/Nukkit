@@ -5,6 +5,7 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSource;
 import cn.nukkit.command.args.PlayerArgument;
 import cn.nukkit.event.player.PlayerKickEvent;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.permission.BanList;
 import cn.nukkit.player.IPlayer;
 import cn.nukkit.player.OfflinePlayer;

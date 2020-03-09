@@ -22,12 +22,12 @@ public class BlockPlanks extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 2;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 15;
     }
 
@@ -48,7 +48,7 @@ public class BlockPlanks extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        switch (getDamage() & 0x07) {
+        switch (getMeta() & 0x07) {
             default:
             case OAK:
                 return BlockColor.WOOD_BLOCK_COLOR;

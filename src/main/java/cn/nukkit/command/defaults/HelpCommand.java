@@ -2,7 +2,7 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.*;
 import cn.nukkit.command.args.CommandArgument;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
@@ -63,7 +63,7 @@ public class HelpCommand extends BaseCommand {
                 pageNumber = 1;
             }
 
-            source.sendMessage(new TranslationContainer("commands.help.header", String.valueOf(pageNumber), String.valueOf(totalPage)));
+            source.sendMessage(new TranslationContainer("commands.help.header", pageNumber, totalPage));
             int i = 1;
             for (BaseCommand command1 : commands.values()) {
                 if (i >= (pageNumber - 1) * pageHeight + 1 && i <= Math.min(commands.size(), pageNumber * pageHeight)) {

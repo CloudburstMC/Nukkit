@@ -23,12 +23,12 @@ public class BlockObsidian extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 35; //50 in PC
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 6000;
     }
 

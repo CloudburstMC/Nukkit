@@ -4,10 +4,12 @@ import cn.nukkit.entity.EntityAgeable;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.impl.EntityCreature;
 import cn.nukkit.entity.passive.Villager;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.tag.CompoundTag;
+import com.nukkitx.protocol.bedrock.data.EntityData;
 
-import static cn.nukkit.entity.data.EntityFlag.BABY;
+import static com.nukkitx.protocol.bedrock.data.EntityFlag.BABY;
 
 /**
  * Created by Pub4Game on 21.06.2016.
@@ -21,8 +23,8 @@ public class EntityVillager extends EntityCreature implements Villager, EntityAg
     public static final int PROFESSION_BUTCHER = 4;
     public static final int PROFESSION_GENERIC = 5;
 
-    public EntityVillager(EntityType<Villager> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityVillager(EntityType<Villager> type, Location location) {
+        super(type, location);
     }
 
     @Override
@@ -51,21 +53,33 @@ public class EntityVillager extends EntityCreature implements Villager, EntityAg
         super.initEntity();
         this.setMaxHealth(20);
 
-        if (!this.namedTag.contains("Profession")) {
-            this.setProfession(PROFESSION_GENERIC);
-        }
+        this.setProfession(PROFESSION_GENERIC);
+    }
+
+    @Override
+    public void loadAdditionalData(CompoundTag tag) {
+        super.loadAdditionalData(tag);
+
+        tag.listenForInt("Profession", this::setProfession);
+    }
+
+    @Override
+    public void saveAdditionalData(CompoundTagBuilder tag) {
+        super.saveAdditionalData(tag);
+
+        tag.intTag("Profession", this.getProfession());
     }
 
     public int getProfession() {
-        return this.namedTag.getInt("Profession");
+        return this.data.getInt(EntityData.VARIANT);
     }
 
     public void setProfession(int profession) {
-        this.namedTag.putInt("Profession", profession);
+        this.data.setInt(EntityData.VARIANT, profession);
     }
 
     @Override
     public boolean isBaby() {
-        return this.getFlag(BABY);
+        return this.data.getFlag(BABY);
     }
 }

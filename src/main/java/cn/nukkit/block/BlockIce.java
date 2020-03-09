@@ -22,18 +22,18 @@ public class BlockIce extends BlockTransparent {
     }
 
     @Override
-    public double getResistance() {
-        return 2.5;
+    public float getResistance() {
+        return 2.5f;
     }
 
     @Override
-    public double getHardness() {
-        return 0.5;
+    public float getHardness() {
+        return 0.5f;
     }
 
     @Override
-    public double getFrictionFactor() {
-        return 0.98;
+    public float getFrictionFactor() {
+        return 0.98f;
     }
 
     @Override
@@ -44,24 +44,24 @@ public class BlockIce extends BlockTransparent {
     @Override
     public boolean onBreak(Item item, Player player) {
         if (player.getGamemode() == Player.CREATIVE) {
-            return this.getLevel().setBlock(this, Block.get(AIR), true);
+            return this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true);
         }
 
         if (down().isSolid()) {
-            return this.getLevel().setBlock(this, Block.get(WATER), true);
+            return this.getLevel().setBlock(this.getPosition(), Block.get(WATER), true);
         } else {
-            return this.getLevel().setBlock(this, Block.get(AIR), true);
+            return this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true);
         }
     }
 
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if (this.getLevel().getBlockLightAt(this.x, this.y, this.z) >= 12) {
+            if (this.getLevel().getBlockLightAt(this.getX(), this.getY(), this.getZ()) >= 12) {
                 BlockFadeEvent event = new BlockFadeEvent(this, get(WATER));
                 level.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    level.setBlock(this, event.getNewState(), true);
+                    level.setBlock(this.getPosition(), event.getNewState(), true);
                 }
                 return Level.BLOCK_UPDATE_NORMAL;
             }

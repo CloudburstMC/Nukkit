@@ -4,7 +4,7 @@ import cn.nukkit.command.BaseCommand;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandSource;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.permission.BanEntry;
 import cn.nukkit.permission.BanList;
 import cn.nukkit.player.IPlayer;
@@ -13,11 +13,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import java.util.Iterator;
-
-import static cn.nukkit.command.args.OfflinePlayerArgument.getOfflinePlayer;
-import static cn.nukkit.command.args.OfflinePlayerArgument.offlinePlayer;
-import static com.mojang.brigadier.arguments.StringArgumentType.getString;
-import static com.mojang.brigadier.arguments.StringArgumentType.greedyString;
 
 public class BanListCommand extends BaseCommand {
 
@@ -57,9 +52,9 @@ public class BanListCommand extends BaseCommand {
         }
 
         if (ips) {
-            source.sendMessage(new TranslationContainer("commands.banlist.ips", String.valueOf(banList.getEntires().size())));
+            source.sendMessage(new TranslationContainer("commands.banlist.ips", banList.getEntires().size()));
         } else {
-            source.sendMessage(new TranslationContainer("commands.banlist.players", String.valueOf(banList.getEntires().size())));
+            source.sendMessage(new TranslationContainer("commands.banlist.players", banList.getEntires().size()));
         }
         source.sendMessage(builder.toString());
         return 1;

@@ -6,10 +6,10 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -35,7 +35,7 @@ public abstract class BlockCrops extends FloodableBlock {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (block.down().getId() == FARMLAND) {
-            this.getLevel().setBlock(block, this, true, true);
+            this.getLevel().setBlock(block.getPosition(), this, true, true);
             return true;
         }
         return false;
@@ -44,12 +44,12 @@ public abstract class BlockCrops extends FloodableBlock {
     @Override
     public boolean onActivate(Item item, Player player) {
         //Bone meal
-        if (item.getId() == DYE && item.getDamage() == 0x0f) {
-            if (this.getDamage() < 7) {
+        if (item.getId() == DYE && item.getMeta() == 0x0f) {
+            if (this.getMeta() < 7) {
                 BlockCrops block = (BlockCrops) this.clone();
-                block.setDamage(block.getDamage() + ThreadLocalRandom.current().nextInt(3) + 2);
-                if (block.getDamage() > 7) {
-                    block.setDamage(7);
+                block.setMeta(block.getMeta() + ThreadLocalRandom.current().nextInt(3) + 2);
+                if (block.getMeta() > 7) {
+                    block.setMeta(7);
                 }
                 BlockGrowEvent ev = new BlockGrowEvent(this, block);
                 Server.getInstance().getPluginManager().callEvent(ev);
@@ -58,10 +58,10 @@ public abstract class BlockCrops extends FloodableBlock {
                     return false;
                 }
 
-                this.getLevel().setBlock(this, ev.getNewState(), false, true);
-                this.level.addParticle(new BoneMealParticle(this));
+                this.getLevel().setBlock(this.getPosition(), ev.getNewState(), false, true);
+                this.level.addParticle(new BoneMealParticle(this.getPosition()));
 
-                if (player != null && (player.gamemode & 0x01) == 0) {
+                if (player != null && (player.getGamemode() & 0x01) == 0) {
                     item.decrementCount();
                 }
             }
@@ -76,19 +76,19 @@ public abstract class BlockCrops extends FloodableBlock {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (this.down().getId() != FARMLAND) {
-                this.getLevel().useBreakOn(this);
+                this.getLevel().useBreakOn(this.getPosition());
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             if (ThreadLocalRandom.current().nextInt(2) == 1) {
-                if (this.getDamage() < 0x07) {
+                if (this.getMeta() < 0x07) {
                     BlockCrops block = (BlockCrops) this.clone();
-                    block.setDamage(block.getDamage() + 1);
+                    block.setMeta(block.getMeta() + 1);
                     BlockGrowEvent ev = new BlockGrowEvent(this, block);
                     Server.getInstance().getPluginManager().callEvent(ev);
 
                     if (!ev.isCancelled()) {
-                        this.getLevel().setBlock(this, ev.getNewState(), false, true);
+                        this.getLevel().setBlock(this.getPosition(), ev.getNewState(), false, true);
                     } else {
                         return Level.BLOCK_UPDATE_RANDOM;
                     }

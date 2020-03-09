@@ -7,7 +7,7 @@ import cn.nukkit.command.CommandSource;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 import com.mojang.brigadier.CommandDispatcher;
@@ -42,7 +42,7 @@ public class GiveCommand extends BaseCommand {
         Item item = getItem(context, "itemName");
 
         item.setCount(amount);
-        item.setDamage(data);
+        item.setMeta(data);
 
         if(item.getId() == AIR) {
             source.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.give.item.notFound", item.getName()));
@@ -51,7 +51,7 @@ public class GiveCommand extends BaseCommand {
         target.getInventory().addItem(item.clone());
 
         sendAdminMessage(source, new TranslationContainer("%commands.give.success",
-                item.getName(), String.valueOf(item.getCount()), target.getName()));
+                item.getName(), item.getCount(), target.getName()));
         return 1;
     }
 }

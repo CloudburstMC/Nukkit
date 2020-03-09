@@ -11,12 +11,12 @@ public class BlockNetherWartBlock extends BlockSolid {
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 5;
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 1;
     }
 

@@ -26,13 +26,13 @@ public class BlockDirt extends BlockSolid {
     }
 
     @Override
-    public double getResistance() {
-        return 2.5;
+    public float getResistance() {
+        return 2.5f;
     }
 
     @Override
-    public double getHardness() {
-        return 0.5;
+    public float getHardness() {
+        return 0.5f;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class BlockDirt extends BlockSolid {
     public boolean onActivate(Item item, Player player) {
         if (item.isHoe()) {
             item.useOn(this);
-            this.getLevel().setBlock(this, this.getDamage() == 0 ? Block.get(FARMLAND) : Block.get(DIRT), true);
+            this.getLevel().setBlock(this.getPosition(), this.getMeta() == 0 ? Block.get(FARMLAND) : Block.get(DIRT), true);
 
             return true;
         }

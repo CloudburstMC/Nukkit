@@ -2,11 +2,10 @@ package cn.nukkit.entity.impl.projectile;
 
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.projectile.WitherSkull;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 public class EntityWitherSkull extends EntityProjectile implements WitherSkull {
-    public EntityWitherSkull(EntityType<?> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityWitherSkull(EntityType<?> type, Location location) {
+        super(type, location);
     }
 }

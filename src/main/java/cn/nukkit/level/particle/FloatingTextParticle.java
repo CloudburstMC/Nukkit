@@ -1,35 +1,33 @@
 package cn.nukkit.level.particle;
 
-import cn.nukkit.entity.data.EntityDataMap;
-import cn.nukkit.entity.data.EntityFlag;
-import cn.nukkit.entity.data.EntityFlags;
-import cn.nukkit.entity.data.Skin;
-import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.Location;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.network.protocol.*;
-import cn.nukkit.utils.SerializedImage;
 import com.google.common.base.Strings;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.protocol.bedrock.BedrockPacket;
+import com.nukkitx.protocol.bedrock.data.*;
+import com.nukkitx.protocol.bedrock.packet.AddPlayerPacket;
+import com.nukkitx.protocol.bedrock.packet.PlayerListPacket;
+import com.nukkitx.protocol.bedrock.packet.RemoveEntityPacket;
+import com.nukkitx.protocol.bedrock.packet.SetEntityDataPacket;
 
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static cn.nukkit.block.BlockIds.AIR;
-import static cn.nukkit.entity.data.EntityData.*;
+import static com.nukkitx.protocol.bedrock.data.EntityData.*;
 
 /**
  * Created on 2015/11/21 by xtypr.
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class FloatingTextParticle extends Particle {
-    private static final Skin EMPTY_SKIN = new Skin();
-    private static final SerializedImage SKIN_DATA = SerializedImage.fromLegacy(new byte[8192]);
+    private static final SerializedSkin EMPTY_SKIN;
+    private static final ImageData SKIN_DATA = ImageData.of(new byte[8192]);
 
     static {
-        EMPTY_SKIN.setSkinData(SKIN_DATA);
-        EMPTY_SKIN.generateSkinId("FloatingText");
+        EMPTY_SKIN = SerializedSkin.builder()
+                .skinId("FloatingText")
+                .skinData(SKIN_DATA).build();
     }
 
     protected UUID uuid = UUID.randomUUID();
@@ -38,28 +36,24 @@ public class FloatingTextParticle extends Particle {
     protected boolean invisible = false;
     protected EntityDataMap dataMap = new EntityDataMap();
 
-    public FloatingTextParticle(Location location, String title) {
-        this(location, title, null);
-    }
-
-    public FloatingTextParticle(Location location, String title, String text) {
-        this(location.getLevel(), location, title, text);
-    }
-
     public FloatingTextParticle(Vector3f pos, String title) {
         this(pos, title, null);
+    }
+
+    public FloatingTextParticle(Level level, Vector3f pos, String title) {
+        this(level, pos, title, null);
     }
 
     public FloatingTextParticle(Vector3f pos, String title, String text) {
         this(null, pos, title, text);
     }
 
-    private FloatingTextParticle(Level level, Vector3f pos, String title, String text) {
-        super(pos.x, pos.y, pos.z);
+    public FloatingTextParticle(Level level, Vector3f pos, String title, String text) {
+        super(pos);
         this.level = level;
 
         EntityFlags flags = new EntityFlags();
-        flags.setFlag(EntityFlag.IMMOBILE, true);
+        flags.setFlag(EntityFlag.NO_AI, true);
         dataMap.putFlags(flags)
                 .putLong(LEAD_HOLDER_EID, -1)
                 .putFloat(SCALE, 0.01f) //zero causes problems on debug builds?
@@ -92,11 +86,11 @@ public class FloatingTextParticle extends Particle {
     }
 
     private void sendMetadata() {
-        if (level != null) {
+        if (this.level != null) {
             SetEntityDataPacket packet = new SetEntityDataPacket();
-            packet.entityRuntimeId = entityId;
-            packet.dataMap.putAll(dataMap);
-            level.addChunkPacket(getChunkX(), getChunkZ(), packet);
+            packet.setRuntimeEntityId(this.entityId);
+            packet.getMetadata().putAll(this.dataMap);
+            this.level.addChunkPacket(this.getPosition(), packet);
         }
     }
 
@@ -117,49 +111,48 @@ public class FloatingTextParticle extends Particle {
     }
 
     @Override
-    public DataPacket[] encode() {
-        ArrayList<DataPacket> packets = new ArrayList<>();
+    public BedrockPacket[] encode() {
+        ArrayList<BedrockPacket> packets = new ArrayList<>();
 
         if (this.entityId == -1) {
             this.entityId = 1095216660480L + ThreadLocalRandom.current().nextLong(0, 0x7fffffffL);
         } else {
-            RemoveEntityPacket pk = new RemoveEntityPacket();
-            pk.entityUniqueId = this.entityId;
+            RemoveEntityPacket packet = new RemoveEntityPacket();
+            packet.setUniqueEntityId(this.entityId);
 
-            packets.add(pk);
+            packets.add(packet);
         }
 
         if (!this.invisible) {
-            PlayerListPacket.Entry[] entry = {new PlayerListPacket.Entry(uuid, entityId,
-                    dataMap.getString(NAMETAG), EMPTY_SKIN)};
+            PlayerListPacket.Entry entry = new PlayerListPacket.Entry(uuid);
+            entry.setEntityId(entityId);
+            entry.setName(dataMap.getString(NAMETAG));
+            entry.setSkin(EMPTY_SKIN);
+            entry.setXuid("");
+            entry.setPlatformChatId("");
             PlayerListPacket playerAdd = new PlayerListPacket();
-            playerAdd.entries = entry;
-            playerAdd.type = PlayerListPacket.TYPE_ADD;
+            playerAdd.getEntries().add(entry);
+            playerAdd.setAction(PlayerListPacket.Action.ADD);
             packets.add(playerAdd);
 
-            AddPlayerPacket pk = new AddPlayerPacket();
-            pk.uuid = uuid;
-            pk.username = "";
-            pk.entityUniqueId = this.entityId;
-            pk.entityRuntimeId = this.entityId;
-            pk.x = (float) this.x;
-            pk.y = (float) (this.y - 0.75);
-            pk.z = (float) this.z;
-            pk.speedX = 0;
-            pk.speedY = 0;
-            pk.speedZ = 0;
-            pk.yaw = 0;
-            pk.pitch = 0;
-            pk.dataMap = this.dataMap;
-            pk.item = Item.get(AIR);
-            packets.add(pk);
+            AddPlayerPacket packet = new AddPlayerPacket();
+            packet.setUuid(uuid);
+            packet.setUsername("");
+            packet.setUniqueEntityId(this.entityId);
+            packet.setRuntimeEntityId(this.entityId);
+            packet.setPosition(this.getPosition());
+            packet.setMotion(com.nukkitx.math.vector.Vector3f.ZERO);
+            packet.setRotation(com.nukkitx.math.vector.Vector3f.ZERO);
+            packet.getMetadata().putAll(this.dataMap);
+            packet.setHand(ItemData.AIR);
+            packets.add(packet);
 
             PlayerListPacket playerRemove = new PlayerListPacket();
-            playerRemove.entries = entry;
-            playerRemove.type = PlayerListPacket.TYPE_REMOVE;
+            playerRemove.getEntries().add(entry);
+            playerRemove.setAction(PlayerListPacket.Action.REMOVE);
             packets.add(playerRemove);
         }
 
-        return packets.toArray(new DataPacket[0]);
+        return packets.toArray(new BedrockPacket[0]);
     }
 }

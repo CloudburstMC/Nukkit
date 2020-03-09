@@ -1,7 +1,9 @@
 package cn.nukkit;
 
-import cn.nukkit.network.protocol.AdventureSettingsPacket;
 import cn.nukkit.player.Player;
+import com.nukkitx.protocol.bedrock.data.CommandPermission;
+import com.nukkitx.protocol.bedrock.data.PlayerPermission;
+import com.nukkitx.protocol.bedrock.packet.AdventureSettingsPacket;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -50,45 +52,47 @@ public class AdventureSettings implements Cloneable {
     public void update() {
         AdventureSettingsPacket pk = new AdventureSettingsPacket();
         for (Type t : Type.values()) {
-            pk.setFlag(t.getId(), get(t));
+            if (get(t)) {
+                pk.getFlags().add(t.getFlag());
+            }
         }
 
-        pk.commandPermission = (player.isOp() ? AdventureSettingsPacket.PERMISSION_OPERATOR : AdventureSettingsPacket.PERMISSION_NORMAL);
-        pk.playerPermission = (player.isOp() ? Player.PERMISSION_OPERATOR : Player.PERMISSION_MEMBER);
-        pk.entityUniqueId = player.getUniqueId();
+        pk.setCommandPermission((player.isOp() ? CommandPermission.OPERATOR : CommandPermission.NORMAL));
+        pk.setPlayerPermission((player.isOp() ? PlayerPermission.OPERATOR : PlayerPermission.MEMBER));
+        pk.setUniqueEntityId(player.getUniqueId());
 
         Server.broadcastPacket(player.getViewers(), pk);
-        player.dataPacket(pk);
+        player.sendPacket(pk);
 
         player.resetInAirTicks();
     }
 
     public enum Type {
-        WORLD_IMMUTABLE(AdventureSettingsPacket.WORLD_IMMUTABLE, false),
-        AUTO_JUMP(AdventureSettingsPacket.AUTO_JUMP, true),
-        ALLOW_FLIGHT(AdventureSettingsPacket.ALLOW_FLIGHT, false),
-        NO_CLIP(AdventureSettingsPacket.NO_CLIP, false),
-        WORLD_BUILDER(AdventureSettingsPacket.WORLD_BUILDER, true),
-        FLYING(AdventureSettingsPacket.FLYING, false),
-        MUTED(AdventureSettingsPacket.MUTED, false),
-        BUILD_AND_MINE(AdventureSettingsPacket.BUILD_AND_MINE, true),
-        DOORS_AND_SWITCHED(AdventureSettingsPacket.DOORS_AND_SWITCHES, true),
-        OPEN_CONTAINERS(AdventureSettingsPacket.OPEN_CONTAINERS, true),
-        ATTACK_PLAYERS(AdventureSettingsPacket.ATTACK_PLAYERS, true),
-        ATTACK_MOBS(AdventureSettingsPacket.ATTACK_MOBS, true),
-        OPERATOR(AdventureSettingsPacket.OPERATOR, false),
-        TELEPORT(AdventureSettingsPacket.TELEPORT, false);
+        WORLD_IMMUTABLE(AdventureSettingsPacket.Flag.IMMUTABLE_WORLD, false),
+        AUTO_JUMP(AdventureSettingsPacket.Flag.AUTO_JUMP, true),
+        ALLOW_FLIGHT(AdventureSettingsPacket.Flag.MAY_FLY, false),
+        NO_CLIP(AdventureSettingsPacket.Flag.NO_CLIP, false),
+        WORLD_BUILDER(AdventureSettingsPacket.Flag.WORLD_BUILDER, true),
+        FLYING(AdventureSettingsPacket.Flag.FLYING, false),
+        MUTED(AdventureSettingsPacket.Flag.MUTE, false),
+        BUILD_AND_MINE(AdventureSettingsPacket.Flag.MINE, true),
+        DOORS_AND_SWITCHED(AdventureSettingsPacket.Flag.DOORS_AND_SWITCHES, true),
+        OPEN_CONTAINERS(AdventureSettingsPacket.Flag.OPEN_CONTAINERS, true),
+        ATTACK_PLAYERS(AdventureSettingsPacket.Flag.ATTACK_PLAYERS, true),
+        ATTACK_MOBS(AdventureSettingsPacket.Flag.ATTACK_MOBS, true),
+        OPERATOR(AdventureSettingsPacket.Flag.OP, false),
+        TELEPORT(AdventureSettingsPacket.Flag.TELEPORT, false);
 
-        private final int id;
+        private final AdventureSettingsPacket.Flag flag;
         private final boolean defaultValue;
 
-        Type(int id, boolean defaultValue) {
-            this.id = id;
+        Type(AdventureSettingsPacket.Flag flag, boolean defaultValue) {
+            this.flag = flag;
             this.defaultValue = defaultValue;
         }
 
-        public int getId() {
-            return id;
+        public AdventureSettingsPacket.Flag getFlag() {
+            return flag;
         }
 
         public boolean getDefaultValue() {

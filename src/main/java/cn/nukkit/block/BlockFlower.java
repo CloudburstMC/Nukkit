@@ -1,14 +1,14 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.level.BlockPosition;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.math.vector.Vector3i;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -38,7 +38,7 @@ public class BlockFlower extends FloodableBlock {
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         Block down = this.down();
         if (down.getId() == GRASS || down.getId() == DIRT || down.getId() == FARMLAND || down.getId() == PODZOL) {
-            this.getLevel().setBlock(block, this, true);
+            this.getLevel().setBlock(block.getPosition(), this, true);
 
             return true;
         }
@@ -49,7 +49,7 @@ public class BlockFlower extends FloodableBlock {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (this.down().isTransparent()) {
-                this.getLevel().useBreakOn(this);
+                this.getLevel().useBreakOn(this.getPosition());
 
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -70,15 +70,15 @@ public class BlockFlower extends FloodableBlock {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.getId() == DYE && item.getDamage() == 0x0f) { //Bone meal
-            if (player != null && (player.gamemode & 0x01) == 0) {
+        if (item.getId() == DYE && item.getMeta() == 0x0f) { //Bone meal
+            if (player != null && (player.getGamemode() & 0x01) == 0) {
                 item.decrementCount();
             }
 
-            this.level.addParticle(new BoneMealParticle(this));
+            this.level.addParticle(new BoneMealParticle(this.getPosition()));
 
             for (int i = 0; i < 8; i++) {
-                BlockPosition vec = this.add(
+                Vector3i vec = this.getPosition().add(
                         ThreadLocalRandom.current().nextInt(-3, 4),
                         ThreadLocalRandom.current().nextInt(-1, 2),
                         ThreadLocalRandom.current().nextInt(-3, 4));

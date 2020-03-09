@@ -5,16 +5,15 @@ import cn.nukkit.entity.Smiteable;
 import cn.nukkit.entity.passive.SkeletonHorse;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 /**
  * @author PikyCZ
  */
 public class EntitySkeletonHorse extends Animal implements SkeletonHorse, Smiteable {
 
-    public EntitySkeletonHorse(EntityType<SkeletonHorse> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntitySkeletonHorse(EntityType<SkeletonHorse> type, Location location) {
+        super(type, location);
     }
 
     @Override

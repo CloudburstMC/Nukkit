@@ -26,12 +26,12 @@ public class BlockEndGateway extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return -1;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 18000000;
     }
 

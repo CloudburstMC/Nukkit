@@ -1,5 +1,7 @@
 package cn.nukkit.math;
 
+import com.nukkitx.math.vector.Vector3f;
+
 import java.util.concurrent.atomic.AtomicLong;
 
 public class BedrockRandom {
@@ -136,14 +138,14 @@ public class BedrockRandom {
         float x = this.nextFloat();
         float y = this.nextFloat();
         float z = this.nextFloat();
-        return new Vector3f(x, y, z);
+        return Vector3f.from(x, y, z);
     }
 
     public Vector3f nextGaussianVector3() {
         float x = (float) nextGaussian();
         float y = (float) nextGaussian();
         float z = (float) nextGaussian();
-        return new Vector3f(x, y, z);
+        return Vector3f.from(x, y, z);
     }
 
     private void initGenRand(int initialValue) {

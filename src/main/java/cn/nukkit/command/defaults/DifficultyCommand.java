@@ -7,8 +7,8 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandSource;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
-import cn.nukkit.network.protocol.SetDifficultyPacket;
+import cn.nukkit.locale.TranslationContainer;
+import com.nukkitx.protocol.bedrock.packet.SetDifficultyPacket;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 
@@ -39,8 +39,8 @@ public class DifficultyCommand extends BaseCommand {
         source.getServer().setPropertyInt("difficulty", difficultyInt);
 
         SetDifficultyPacket pk = new SetDifficultyPacket();
-        pk.difficulty = source.getServer().getDifficulty();
-        Server.broadcastPacket(new ArrayList<>(source.getServer().getOnlinePlayers().values()), pk);
+        pk.setDifficulty(source.getServer().getDifficulty());
+        Server.broadcastPacket(source.getServer().getOnlinePlayers().values(), pk);
 
         sendAdminMessage(source, new TranslationContainer("commands.difficulty.success", getDifficultyName(difficultyInt).toUpperCase()));
         return 1;

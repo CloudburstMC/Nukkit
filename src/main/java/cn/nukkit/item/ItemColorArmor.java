@@ -1,29 +1,43 @@
 package cn.nukkit.item;
 
-import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.tag.CompoundTag;
 
 /**
  * Created by fromgate on 27.03.2016.
  */
 abstract public class ItemColorArmor extends ItemArmor {
 
+    private BlockColor color = BlockColor.WHITE_BLOCK_COLOR;
+
     public ItemColorArmor(Identifier id) {
         super(id);
     }
 
+    @Override
+    public void loadAdditionalData(CompoundTag tag) {
+        super.loadAdditionalData(tag);
+
+        tag.listenForInt("customColor", this::setColor);
+    }
+
+    @Override
+    public void saveAdditionalData(CompoundTagBuilder tag) {
+        super.saveAdditionalData(tag);
+
+        tag.intTag("customColor", this.getColor().getRGB());
+    }
+
     /**
-     * Set leather armor color
+     * Get color of Leather Item
      *
-     * @param dyeColor - Dye color data value
-     * @return - Return colored item
+     * @return - BlockColor, or null if item has no color
      */
-    @Deprecated
-    public ItemColorArmor setColor(int dyeColor) {
-        BlockColor blockColor = DyeColor.getByDyeData(dyeColor).getColor();
-        return setColor(blockColor.getRed(), blockColor.getGreen(), blockColor.getBlue());
+    public BlockColor getColor() {
+        return this.color;
     }
 
     /**
@@ -33,8 +47,7 @@ abstract public class ItemColorArmor extends ItemArmor {
      * @return - Return colored item
      */
     public ItemColorArmor setColor(DyeColor dyeColor) {
-        BlockColor blockColor = dyeColor.getColor();
-        return setColor(blockColor.getRed(), blockColor.getGreen(), blockColor.getBlue());
+        return setColor(dyeColor.getColor());
     }
 
     /**
@@ -44,35 +57,18 @@ abstract public class ItemColorArmor extends ItemArmor {
      * @return - Return colored item
      */
     public ItemColorArmor setColor(BlockColor color) {
-        return setColor(color.getRed(), color.getGreen(), color.getBlue());
+        this.color = color;
+        return this;
     }
 
     /**
      * Set leather armor color
      *
-     * @param r - red
-     * @param g - green
-     * @param b - blue
+     * @param rgb - red, green, blue
      * @return - Return colored item
      */
-    public ItemColorArmor setColor(int r, int g, int b) {
-        int rgb = r << 16 | g << 8 | b;
-        CompoundTag tag = this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag();
-        tag.putInt("customColor", rgb);
-        this.setNamedTag(tag);
+    public ItemColorArmor setColor(int rgb) {
+        this.color = new BlockColor(rgb);
         return this;
-    }
-
-    /**
-     * Get color of Leather Item
-     *
-     * @return - BlockColor, or null if item has no color
-     */
-    public BlockColor getColor() {
-        if (!this.hasCompoundTag()) return null;
-        CompoundTag tag = this.getNamedTag();
-        if (!tag.exist("customColor")) return null;
-        int rgb = tag.getInt("customColor");
-        return new BlockColor(rgb);
     }
 }

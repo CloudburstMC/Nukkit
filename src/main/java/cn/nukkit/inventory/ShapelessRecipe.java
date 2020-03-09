@@ -1,6 +1,8 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.protocol.bedrock.data.CraftingData;
 
 import java.util.*;
 
@@ -10,24 +12,19 @@ import java.util.*;
  */
 public class ShapelessRecipe implements CraftingRecipe {
 
-    private String recipeId;
-
+    private final String recipeId;
     private final Item output;
-
-    private long least,most;
-
     private final List<Item> ingredients;
-
     private final int priority;
+    private final Identifier block;
 
-    public ShapelessRecipe(Item result, Collection<Item> ingredients) {
-        this(null, 10, result, ingredients);
-    }
+    private UUID id;
 
-    public ShapelessRecipe(String recipeId, int priority, Item result, Collection<Item> ingredients) {
+    public ShapelessRecipe(String recipeId, int priority, Item result, Collection<Item> ingredients, Identifier block) {
         this.recipeId = recipeId;
         this.priority = priority;
         this.output = result.clone();
+        this.block = block;
         if (ingredients.size() > 9) {
             throw new IllegalArgumentException("Shapeless recipes cannot have more than 9 ingredients");
         }
@@ -54,17 +51,12 @@ public class ShapelessRecipe implements CraftingRecipe {
 
     @Override
     public UUID getId() {
-        return new UUID(least, most);
+        return id;
     }
 
     @Override
-    public void setId(UUID uuid) {
-        this.least = uuid.getLeastSignificantBits();
-        this.most = uuid.getMostSignificantBits();
-
-        if (this.recipeId == null) {
-            this.recipeId = this.getId().toString();
-        }
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public List<Item> getIngredientList() {
@@ -102,7 +94,7 @@ public class ShapelessRecipe implements CraftingRecipe {
 
     @Override
     public List<Item> getAllResults() {
-        return null;
+        return Collections.singletonList(this.getResult());
     }
 
     @Override
@@ -155,5 +147,16 @@ public class ShapelessRecipe implements CraftingRecipe {
         }
 
         return completed == size;
+    }
+
+    @Override
+    public Identifier getBlock() {
+        return block;
+    }
+
+    @Override
+    public CraftingData toNetwork() {
+        return CraftingData.fromShapeless(this.recipeId, Item.toNetwork(this.getIngredientList()),
+                Item.toNetwork(this.getAllResults()), this.id, this.block.getName(), this.priority);
     }
 }

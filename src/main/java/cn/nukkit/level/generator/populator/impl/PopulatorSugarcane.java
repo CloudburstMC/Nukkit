@@ -26,7 +26,7 @@ public class PopulatorSugarcane extends PopulatorSurfaceBlock {
         int count = 0;
         for (int i = x - 4; i < (x + 4); i++) {
             for (int j = z - 4; j < (z + 4); j++) {
-                Identifier b = level.getBlockIdAt(i, y, j);
+                Identifier b = level.getBlockId(i, y, j);
                 if (b == FLOWING_WATER || b == WATER) {
                     count++;
                 }
