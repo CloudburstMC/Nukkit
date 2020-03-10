@@ -25,9 +25,9 @@ public class FilteredTest {
 
         filter.init(1234L, new FastPRandom(1234L));
 
-        int size = 1024;
+        int size = 512;
         BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
-        int[] arr = filter.get(0, 0, size, size, IntArrayAllocator.DEFAULT.get());
+        int[] arr = filter.get(-27985 - (size >> 1), -51602 - (size >> 1), size, size, IntArrayAllocator.DEFAULT.get());
 
         for (int x = 0; x < size; x++) {
             for (int z = 0; z < size; z++) {

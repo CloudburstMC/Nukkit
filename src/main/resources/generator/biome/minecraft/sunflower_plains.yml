@@ -12,12 +12,6 @@ decorators:
     top: "grass"
     fill: "dirt"
 
-    # Tall grass
-  - id: "nukkitx:scattered_cover"
-    chance: 0.3333
-    on: "grass"
-    block: "tallgrass"
-
     # Double tall grass
   - id: "nukkitx:double_scattered_cover"
     chance: 0.02

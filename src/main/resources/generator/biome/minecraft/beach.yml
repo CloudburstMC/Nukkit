@@ -1,0 +1,13 @@
+dict: "nukkitx:vanilla"
+
+baseHeight: 64.0
+heightVariation: 1.6
+
+temperature: 0.8
+rainfall: 0.4
+
+decorators:
+  - id: "nukkitx:surface"
+    ground: "stone"
+    top: "sand"
+    fill: "sand"

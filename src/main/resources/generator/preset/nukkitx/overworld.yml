@@ -16,38 +16,43 @@ biomes:
       id: "nukkitx:smooth"
       next:
         id: "nukkitx:zoom"
-        times: 2
+        times: 1
         next:
-          id: "nukkitx:zoom"
-          times: 1
-          fuzzy: true
+          id: "nukkitx:shore"
+          ocean: "ocean"
+          beach: "beach"
           next:
-            id: "nukkitx:island"
-            ocean: "ocean"
-            islandBiomes:
-              - "plains"
-            chance: 32
+            id: "nukkitx:zoom"
+            times: 1
             next:
               id: "nukkitx:zoom"
               times: 1
+              fuzzy: true
               next:
-                id: "nukkitx:substitute_random"
-                biomes:
-                  plains:
-                    - "plains"
-                    - "sunflower_plains"
-                    - "forest"
+                id: "nukkitx:island"
+                ocean: "ocean"
+                islandBiomes:
+                  - "plains"
+                chance: 32
                 next:
                   id: "nukkitx:zoom"
-                  times: 3
-                  fuzzy: true
+                  times: 1
                   next:
-                    id: "nukkitx:random"
+                    id: "nukkitx:substitute_random"
                     biomes:
-                      - "plains"
-                      - "plains"
-                      - "plains"
-                      - "ocean"
+                      plains:
+                        - "plains"
+                        - "sunflower_plains"
+                        - "forest"
+                    next:
+                      id: "nukkitx:zoom"
+                      times: 3
+                      fuzzy: true
+                      next:
+                        id: "nukkitx:random"
+                        biomes:
+                          - "plains"
+                          - "ocean"
 
 #  id: "nukkitx:constant"
 #  seed: "biome"
@@ -100,6 +105,14 @@ density:
 
 decorators:
   - id: "nukkitx:biome"
+
+    # Tall grass
+  - id: "nukkitx:scattered_cover"
+    chance: 0.3333
+    on: "grass,dirt"
+    block: "tallgrass"
+
+    # Bedrock
   - id: "nukkitx:bedrock"
     block: "bedrock"
     base: 0
