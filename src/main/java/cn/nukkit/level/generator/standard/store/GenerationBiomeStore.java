@@ -29,6 +29,10 @@ import java.util.HashSet;
  */
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 public final class GenerationBiomeStore extends AbstractGeneratorStore<GenerationBiome> {
+    public synchronized Collection<GenerationBiome> snapshot() {
+        return new HashSet<>(this.idToValues.values());
+    }
+
     public synchronized Collection<GenerationBiome> reset() {
         Collection<GenerationBiome> biomes = new HashSet<>(this.idToValues.values());
         this.idToValues.clear();

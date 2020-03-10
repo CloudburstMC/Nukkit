@@ -113,28 +113,32 @@ public final class StandardGenerator implements Generator {
     private int seaLevel = -1;
 
     private StandardGenerator init(long seed) {
-        //reset generation biome store to ensure that the replacers/decorators/populators for a given biome aren't initialized multiple times for multiple worlds
-        Collection<GenerationBiome> biomes = StandardGeneratorStores.generationBiome().reset();
+        try {
+            Collection<GenerationBiome> biomes = StandardGeneratorStores.generationBiome().snapshot();
 
-        Preconditions.checkState(this.ground >= 0, "groundBlock must be set!");
-        Preconditions.checkState(this.seaLevel < 0 || this.sea >= 0, "seaBlock and seaLevel must either both be set or be omitted!");
+            Preconditions.checkState(this.ground >= 0, "groundBlock must be set!");
+            Preconditions.checkState(this.seaLevel < 0 || this.sea >= 0, "seaBlock and seaLevel must either both be set or be omitted!");
 
-        Collection<GenerationPass> generationPasses = new ArrayList<>();
-        generationPasses.add(Objects.requireNonNull(this.density, "density must be set!"));
-        generationPasses.add(Objects.requireNonNull(this.biomes, "biomes must be set!"));
-        Collections.addAll(generationPasses, this.decorators = fallbackIfNull(this.decorators, Decorator.EMPTY_ARRAY));
-        Collections.addAll(generationPasses, this.populators = fallbackIfNull(this.populators, Populator.EMPTY_ARRAY));
+            Collection<GenerationPass> generationPasses = new ArrayList<>();
+            generationPasses.add(Objects.requireNonNull(this.density, "density must be set!"));
+            generationPasses.add(Objects.requireNonNull(this.biomes, "biomes must be set!"));
+            Collections.addAll(generationPasses, this.decorators = fallbackIfNull(this.decorators, Decorator.EMPTY_ARRAY));
+            Collections.addAll(generationPasses, this.populators = fallbackIfNull(this.populators, Populator.EMPTY_ARRAY));
 
-        for (GenerationBiome biome : biomes) {
-            Collections.addAll(generationPasses, biome.getDecorators());
-            Collections.addAll(generationPasses, biome.getPopulators());
+            for (GenerationBiome biome : biomes) {
+                Collections.addAll(generationPasses, biome.getDecorators());
+                Collections.addAll(generationPasses, biome.getPopulators());
+            }
+
+            PRandom random = new FastPRandom(seed);
+            for (GenerationPass pass : generationPasses) {
+                pass.init(seed, random.nextLong(), this);
+            }
+            return this;
+        } finally {
+            //reset generation biome store to ensure that the replacers/decorators/populators for a given biome aren't initialized multiple times for multiple worlds
+            StandardGeneratorStores.generationBiome().reset();
         }
-
-        PRandom random = new FastPRandom(seed);
-        for (GenerationPass pass : generationPasses) {
-            pass.init(seed, random.nextLong(), this);
-        }
-        return this;
     }
 
     @Override

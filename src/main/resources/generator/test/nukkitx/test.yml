@@ -1,48 +1,19 @@
-id: "nukkitx:add_island"
-fallback: "plains"
-special: "forest"
-ocean: "ocean"
+id: "nukkitx:zoom"
+times: 3
 next:
-  id: "nukkitx:add_snow"
+  id: "nukkitx:substitute_random"
   biomes:
-    - "forest"
-    - "extreme_hills"
-    - "plains"
-    - "plains"
-    - "plains"
-    - "plains"
-  ocean: "ocean"
+    plains:
+      - "plains"
+      - "sunflower_plains"
+      - "forest"
   next:
-    id: "nukkitx:remove_ocean"
-    replacement: "plains"
-    ocean: "ocean"
+    id: "nukkitx:zoom"
+    times: 2
+    fuzzy: true
     next:
-      id: "nukkitx:add_island"
-      fallback: "plains"
-      special: "forest"
-      ocean: "ocean"
-      next:
-        id: "nukkitx:add_island"
-        fallback: "plains"
-        special: "forest"
-        ocean: "ocean"
-        next:
-          id: "nukkitx:add_island"
-          fallback: "plains"
-          special: "forest"
-          ocean: "ocean"
-          next:
-            id: "nukkitx:zoom"
-            next:
-              id: "nukkitx:add_island"
-              fallback: "plains"
-              special: "forest"
-              ocean: "ocean"
-              next:
-                id: "nukkitx:zoom"
-                fuzzy: true
-                next:
-                  id: "nukkitx:island"
-                  chance: 10
-                  biome: "plains"
-                  ocean: "ocean"
+      id: "nukkitx:random"
+      biomes:
+        - "plains"
+        - "ocean"
+        - "extreme_hills"
