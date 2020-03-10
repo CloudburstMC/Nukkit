@@ -494,7 +494,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         packet.setRotation(Vector3f.from(this.getYaw(), this.getPitch(), this.getYaw()));
         packet.setHand(this.getInventory().getItemInHand().toNetwork());
         packet.setPlatformChatId("");
-        packet.setDeviceId(this.getLoginChainData().getDeviceId());
+        packet.setDeviceId("");
         packet.getAdventureSettings().setCommandPermission((this.isOp() ? CommandPermission.OPERATOR : CommandPermission.NORMAL));
         packet.getAdventureSettings().setPlayerPermission((this.isOp() ? PlayerPermission.OPERATOR : PlayerPermission.MEMBER));
         this.getData().putAllIn(packet.getMetadata());
