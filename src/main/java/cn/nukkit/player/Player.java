@@ -483,6 +483,25 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     @Override
+    protected BedrockPacket createAddEntityPacket() {
+        AddPlayerPacket packet = new AddPlayerPacket();
+        packet.setUuid(this.getServerId());
+        packet.setUsername(this.getName());
+        packet.setUniqueEntityId(this.getUniqueId());
+        packet.setRuntimeEntityId(this.getRuntimeId());
+        packet.setPosition(this.getPosition());
+        packet.setMotion(this.getMotion());
+        packet.setRotation(Vector3f.from(this.getYaw(), this.getPitch(), this.getYaw()));
+        packet.setHand(this.getInventory().getItemInHand().toNetwork());
+        packet.setPlatformChatId("");
+        packet.setDeviceId(this.getLoginChainData().getDeviceId());
+        packet.getAdventureSettings().setCommandPermission((this.isOp() ? CommandPermission.OPERATOR : CommandPermission.NORMAL));
+        packet.getAdventureSettings().setPlayerPermission((this.isOp() ? PlayerPermission.OPERATOR : PlayerPermission.MEMBER));
+        this.getData().putAllIn(packet.getMetadata());
+        return packet;
+    }
+
+    @Override
     public boolean isOnline() {
         return this.connected && this.loggedIn;
     }
