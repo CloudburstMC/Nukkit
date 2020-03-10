@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Replaces specific biome with a replacement biome randomly selected from a list.
+ * Replaces specific biome with a replacement islandBiomes randomly selected from a list.
  *
  * @author DaPorkchop_
  */

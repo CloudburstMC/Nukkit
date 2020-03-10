@@ -3,14 +3,11 @@ package cn.nukkit.level.generator.standard.biome.map.filtered;
 import cn.nukkit.level.generator.standard.biome.GenerationBiome;
 import cn.nukkit.level.generator.standard.misc.IntArrayAllocator;
 import cn.nukkit.utils.Identifier;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import net.daporkchop.lib.common.util.PValidation;
 import net.daporkchop.lib.random.PRandom;
 
 import java.util.Collection;
-import java.util.Objects;
 
 /**
  * @author DaPorkchop_
@@ -26,20 +23,15 @@ public class ZoomBiomeFilter extends AbstractBiomeFilter.Next {
     protected boolean fuzzy = false;
 
     @Override
-    public void init(long seed, PRandom random) {
-        PValidation.ensurePositive(this.times);
-
-        super.init(seed, random);
-    }
-
-    @Override
     public Collection<GenerationBiome> getAllBiomes() {
         return this.next.getAllBiomes();
     }
 
     @Override
     public int[] get(int x, int z, int sizeX, int sizeZ, IntArrayAllocator alloc) {
-        return this.actuallyDoGet(x, z, sizeX, sizeZ, alloc, this.times);
+        return this.times > 0
+                ? this.actuallyDoGet(x, z, sizeX, sizeZ, alloc, this.times)
+                : this.next.get(x, z, sizeX, sizeZ, alloc);
     }
 
     protected int[] actuallyDoGet(int x, int z, int sizeX, int sizeZ, IntArrayAllocator alloc, int depth) {

@@ -5,3 +5,18 @@ heightVariation: 12.8
 
 temperature: 0.7
 rainfall: 0.8
+
+decorators:
+  - id: "nukkitx:surface"
+    ground: "stone"
+    top: "grass"
+    fill: "dirt"
+
+populators:
+  - id: "nukkitx:normal_tree"
+    count: 2-8
+    on: "grass"
+    replaceOn: "dirt"
+    height: 4-7
+    trunk: "log"
+    leaf: "leaves"

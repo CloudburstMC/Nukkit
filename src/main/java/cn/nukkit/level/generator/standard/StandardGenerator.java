@@ -136,7 +136,7 @@ public final class StandardGenerator implements Generator {
             }
             return this;
         } finally {
-            //reset generation biome store to ensure that the replacers/decorators/populators for a given biome aren't initialized multiple times for multiple worlds
+            //reset generation biome store to ensure that the replacers/decorators/populators for a given islandBiomes aren't initialized multiple times for multiple worlds
             StandardGeneratorStores.generationBiome().reset();
         }
     }

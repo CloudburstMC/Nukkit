@@ -73,7 +73,7 @@ public class SurfaceDecorator implements Decorator {
             if (chunk.getBlockRuntimeIdUnsafe(x, y, z, 0) == this.ground) {
                 if (!placed) {
                     placed = true;
-                    if (y > this.seaLevel) {
+                    if (y + 1 >= this.seaLevel) {
                         chunk.setBlockRuntimeIdUnsafe(x, y--, z, 0, this.top);
                     }
                     for (int i = depth - 1; i >= 0 && y >= 0; i--, y--) {

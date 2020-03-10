@@ -1383,7 +1383,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         this.addMovement(this.x, this.y, this.z, this.yaw, this.pitch, this.yaw);
                     }
                     //Biome biome = Biome.biomes[level.getBiomeId(this.getFloorX(), this.getFloorZ())];
-                    //sendTip(biome.getName() + " (" + biome.doesOverhang() + " " + biome.getBaseHeight() + "-" + biome.getHeightVariation() + ")");
+                    //sendTip(biome.getName() + " (" + islandBiomes.doesOverhang() + " " + islandBiomes.getBaseHeight() + "-" + islandBiomes.getHeightVariation() + ")");
                 } else {
                     this.blocksAround = blocksAround;
                     this.collisionBlocks = collidingBlocks;

@@ -5,41 +5,33 @@ import cn.nukkit.level.generator.standard.misc.IntArrayAllocator;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import net.daporkchop.lib.common.util.PValidation;
 import net.daporkchop.lib.random.PRandom;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Objects;
 
 /**
- * Generates a random pattern of islands.
+ * Replaces all biome intersections with rivers, except for those neighboring an ocean.
  *
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public class IslandBiomeFilter extends AbstractBiomeFilter.Next {
-    public static final Identifier ID = Identifier.fromString("nukkitx:island");
+public class BorderRiverBiomeFilter extends AbstractBiomeFilter.Next {
+    public static final Identifier ID = Identifier.fromString("nukkitx:border_river");
 
-    protected int[] islandIds;
-    protected int   oceanId;
-    @JsonProperty
-    protected int chance = 9;
+    protected int oceanId;
+    protected int riverId;
 
     @JsonProperty
-    protected GenerationBiome[] islandBiomes;
+    protected GenerationBiome ocean;
     @JsonProperty
-    protected GenerationBiome   ocean;
+    protected GenerationBiome river;
 
     @Override
     public void init(long seed, PRandom random) {
-        this.islandIds = Arrays.stream(Objects.requireNonNull(this.islandBiomes, "islandBiomes must be set!"))
-                .mapToInt(GenerationBiome::getInternalId)
-                .toArray();
         this.oceanId = Objects.requireNonNull(this.ocean, "ocean must be set!").getInternalId();
-        PValidation.ensurePositive(this.chance++);
+        this.riverId = Objects.requireNonNull(this.river, "river must be set!").getInternalId();
 
         super.init(seed, random);
     }
@@ -47,8 +39,8 @@ public class IslandBiomeFilter extends AbstractBiomeFilter.Next {
     @Override
     public Collection<GenerationBiome> getAllBiomes() {
         Collection<GenerationBiome> biomes = new ArrayList<>(this.next.getAllBiomes());
-        Collections.addAll(biomes, this.islandBiomes);
         biomes.add(this.ocean);
+        biomes.add(this.river);
         return biomes;
     }
 
@@ -58,22 +50,25 @@ public class IslandBiomeFilter extends AbstractBiomeFilter.Next {
         int belowSizeZ = sizeZ + 2;
         int[] below = this.next.get(x - 1, z - 1, belowSizeX, belowSizeZ, alloc);
 
-        int[] out = alloc.get(sizeX * sizeZ);
-
         final int oceanId = this.oceanId;
-        final int chance = this.chance;
-        final int[] islandIds = this.islandIds;
+        final int riverId = this.riverId;
 
+        int[] out = alloc.get(sizeX * sizeZ);
         for (int dx = 0; dx < sizeX; dx++) {
             for (int dz = 0; dz < sizeZ; dz++) {
                 int center = below[(dx + 1) * belowSizeZ + (dz + 1)];
-                out[dx * sizeZ + dz] = center == oceanId
-                        && below[dx * belowSizeZ + (dz + 1)] == oceanId
-                        && below[(dx + 1) * belowSizeZ + dz] == oceanId
-                        && below[(dx + 2) * belowSizeZ + (dz + 1)] == oceanId
-                        && below[(dx + 1) * belowSizeZ + (dz + 2)] == oceanId
-                        && this.random(x + dx, z + dz, 0, chance) == 0
-                        ? islandIds[this.random(x + dx, z + dz, 1, islandIds.length)] : center;
+                int v0 = below[(dx + 1) * belowSizeZ + dz];
+                int v1 = below[(dx + 1) * belowSizeZ + (dz + 2)];
+                int v2 = below[dx * belowSizeZ + (dz + 1)];
+                int v3 = below[(dx + 2) * belowSizeZ + (dz + 1)];
+
+                int id = center;
+                if (center != oceanId && v0 != oceanId && v1 != oceanId && v2 != oceanId && v3 != oceanId) {
+                    if (v0 != center || v1 != center || v2 != center || v3 != center) {
+                        id = riverId;
+                    }
+                }
+                out[dx * sizeZ + dz] = id;
             }
         }
         alloc.release(below);

@@ -8,6 +8,7 @@ import cn.nukkit.level.generator.standard.misc.AbstractGenerationPass;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.Getter;
 import lombok.NonNull;
 import net.daporkchop.lib.noise.NoiseSource;
 import net.daporkchop.lib.random.PRandom;
@@ -38,16 +39,17 @@ public class VanillaDensitySource extends AbstractGenerationPass implements Dens
     private NoiseSource high;
     private NoiseSource depth;
 
+    @Getter
     private final BiomeTerrainCache terrainCache = new BiomeTerrainCache(2);
 
     @JsonProperty
     private double specialHeightVariation = 0.25d;
     @JsonProperty
-    private double heightFactor  = 64.0d;
+    private double heightFactor  = 1.0d;
     @JsonProperty
-    private double heightOffset  = 64.0d;
+    private double heightOffset  = 0.0d;
     @JsonProperty
-    private double heightVariationFactor  = 64.0d;
+    private double heightVariationFactor  = 1.0d;
     @JsonProperty
     private double heightVariationOffset  = 0.0d;
 

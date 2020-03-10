@@ -1,0 +1,39 @@
+id: "nukkitx:zoom"
+times: 1
+next:
+  id: "nukkitx:border_river"
+  ocean: "ocean"
+  river: "river"
+  next:
+    id: "nukkitx:zoom"
+    times: 2
+    next:
+      id: "nukkitx:zoom"
+      times: 1
+      fuzzy: true
+      next:
+        id: "nukkitx:island"
+        ocean: "ocean"
+        islandBiomes:
+          - "plains"
+        chance: 32
+        next:
+          id: "nukkitx:zoom"
+          times: 3
+          next:
+            id: "nukkitx:substitute_random"
+            biomes:
+              plains:
+                - "plains"
+                - "sunflower_plains"
+                - "forest"
+            next:
+              id: "nukkitx:zoom"
+              times: 2
+              fuzzy: true
+              next:
+                id: "nukkitx:random"
+                biomes:
+                  - "plains"
+                  - "ocean"
+                  - "extreme_hills"
