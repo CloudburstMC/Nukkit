@@ -145,6 +145,7 @@ public class FloatingTextParticle extends Particle {
             packet.setRotation(com.nukkitx.math.vector.Vector3f.ZERO);
             packet.getMetadata().putAll(this.dataMap);
             packet.setHand(ItemData.AIR);
+            packet.setPlatformChatId("");
             packets.add(packet);
 
             PlayerListPacket playerRemove = new PlayerListPacket();

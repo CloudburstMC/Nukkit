@@ -299,6 +299,7 @@ public class Human extends EntityCreature implements InventoryHolder {
         packet.setMotion(this.getMotion());
         packet.setRotation(Vector3f.from(this.getYaw(), this.getPitch(), this.getYaw()));
         packet.setHand(this.getInventory().getItemInHand().toNetwork());
+        packet.setPlatformChatId("");
         this.getData().putAllIn(packet.getMetadata());
         return packet;
     }
