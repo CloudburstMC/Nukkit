@@ -698,10 +698,12 @@ public abstract class Item implements Cloneable {
 
         CompoundTagBuilder tagBuilder = CompoundTag.builder();
         this.saveAdditionalData(tagBuilder);
+        CompoundTag tag = tagBuilder.buildRootTag();
+        if (tag.getValue().isEmpty()) tag = null;
 
         String[] canPlace = this.canPlaceOn.stream().map(Identifier::toString).toArray(String[]::new);
         String[] canBreak = this.canDestroy.stream().map(Identifier::toString).toArray(String[]::new);
 
-        return ItemData.of(id, (short) this.meta, this.count, tagBuilder.buildRootTag(), canPlace, canBreak);
+        return ItemData.of(id, (short) this.meta, this.count, tag, canPlace, canBreak);
     }
 }
