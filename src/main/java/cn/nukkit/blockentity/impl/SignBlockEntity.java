@@ -59,10 +59,10 @@ public class SignBlockEntity extends BaseBlockEntity implements Sign {
     }
 
     @Override
-    public void saveAdditionalData(CompoundTagBuilder tag) {
-        super.saveAdditionalData(tag);
+    public void saveClientData(CompoundTagBuilder tag) {
+        super.saveClientData(tag);
 
-        tag.stringTag("Text", String.join("", this.text));
+        tag.stringTag("Text", String.join("\n", this.text));
         tag.stringTag("Creator", this.creator);
     }
 
