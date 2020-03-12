@@ -3203,6 +3203,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public void clearTitle() {
         SetTitlePacket packet = new SetTitlePacket();
         packet.setType(SetTitlePacket.Type.CLEAR_TITLE);
+        packet.setText("");
         this.sendPacket(packet);
     }
 
@@ -3212,6 +3213,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public void resetTitleSettings() {
         SetTitlePacket packet = new SetTitlePacket();
         packet.setType(SetTitlePacket.Type.RESET_TITLE);
+        packet.setText("");
         this.sendPacket(packet);
     }
 
@@ -3228,9 +3230,9 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         packet.setFadeInTime(fadein);
         packet.setStayTime(duration);
         packet.setFadeOutTime(fadeout);
+        packet.setText("");
         this.sendPacket(packet);
     }
-
 
     private void setTitle(String text) {
         SetTitlePacket packet = new SetTitlePacket();
