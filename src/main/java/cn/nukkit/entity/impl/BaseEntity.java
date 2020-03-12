@@ -173,7 +173,7 @@ public abstract class BaseEntity implements Entity, Metadatable {
         this.data.setFlag(HAS_COLLISION, true);
         this.data.setShort(AIR, 400);
         this.data.setShort(MAX_AIR, 400);
-        this.data.setString(NAMETAG, "");
+        this.data.setString(NAMETAG, this.getName());
         this.data.setLong(LEAD_HOLDER_EID, -1);
         this.data.setFloat(SCALE, 1f);
         this.data.setFloat(BOUNDING_BOX_HEIGHT, this.getHeight());
