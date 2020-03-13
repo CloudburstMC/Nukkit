@@ -1,12 +1,15 @@
 package cn.nukkit.level;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.chunk.Chunk;
 import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.math.vector.Vector3i;
+import lombok.EqualsAndHashCode;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@EqualsAndHashCode
 public final class Location {
     private final Vector3f position;
     private final float yaw;
@@ -105,10 +108,6 @@ public final class Location {
 
     public int getChunkX() {
         return this.getFloorX() >> 4;
-    }
-
-    public int getChunkY() {
-        return this.getFloorY() >> 4;
     }
 
     public int getChunkZ() {
