@@ -2522,25 +2522,25 @@ public class Level implements ChunkManager, Metadatable {
             players = this.getPlayers().values().toArray(new Player[0]);
         }
 
+        LevelEventPacket rainEvent = new LevelEventPacket();
         if (this.isRaining()) {
-            LevelEventPacket rainEvent = new LevelEventPacket();
-
             rainEvent.setType(LevelEventType.START_RAIN);
             rainEvent.setData(ThreadLocalRandom.current().nextInt(50000) + 10000);
+        } else {
             rainEvent.setType(LevelEventType.STOP_RAIN);
-
-            Server.broadcastPacket(players, rainEvent);
         }
+        rainEvent.setPosition(Vector3f.ZERO);
+        Server.broadcastPacket(players, rainEvent);
 
+        LevelEventPacket thunderEvent = new LevelEventPacket();
         if (this.isThundering()) {
-            LevelEventPacket thunderEvent = new LevelEventPacket();
-
             thunderEvent.setType(LevelEventType.START_THUNDER);
             thunderEvent.setData(ThreadLocalRandom.current().nextInt(50000) + 10000);
-            thunderEvent.setPosition(Vector3f.ZERO);
-
-            Server.broadcastPacket(players, thunderEvent);
+        } else {
+            thunderEvent.setType(LevelEventType.STOP_THUNDER);
         }
+        thunderEvent.setPosition(Vector3f.ZERO);
+        Server.broadcastPacket(players, thunderEvent);
     }
 
     public void sendWeather(Player player) {
