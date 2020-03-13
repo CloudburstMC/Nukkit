@@ -107,7 +107,7 @@ public final class Location {
     public int getChunkX() {
         return this.getFloorX() >> 4;
     }
-    
+
     public int getChunkZ() {
         return this.getFloorZ() >> 4;
     }
@@ -121,7 +121,7 @@ public final class Location {
         return this.equals(location, checkYaw, false);
     }
 
-    public final boolean equals(Location that, boolean checkYaw, boolean checkPitch){
+    public final boolean equals(Location that, boolean checkYaw, boolean checkPitch) {
         return this.getLevel().getId().equals(that.getLevel().getId()) && this.getPosition().equals(that.getPosition()) && (!checkYaw || this.getYaw() == that.getYaw()) && (!checkPitch || this.getPitch() == that.getPitch());
     }
 }
