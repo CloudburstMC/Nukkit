@@ -145,6 +145,10 @@ public class FloatingTextParticle extends Particle {
             packet.setRotation(com.nukkitx.math.vector.Vector3f.ZERO);
             packet.getMetadata().putAll(this.dataMap);
             packet.setHand(ItemData.AIR);
+            packet.setPlatformChatId("");
+            packet.setDeviceId("");
+            packet.getAdventureSettings().setCommandPermission(CommandPermission.NORMAL);
+            packet.getAdventureSettings().setPlayerPermission(PlayerPermission.MEMBER);
             packets.add(packet);
 
             PlayerListPacket playerRemove = new PlayerListPacket();

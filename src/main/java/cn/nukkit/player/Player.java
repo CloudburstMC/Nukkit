@@ -483,6 +483,25 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     @Override
+    protected BedrockPacket createAddEntityPacket() {
+        AddPlayerPacket packet = new AddPlayerPacket();
+        packet.setUuid(this.getServerId());
+        packet.setUsername(this.getName());
+        packet.setUniqueEntityId(this.getUniqueId());
+        packet.setRuntimeEntityId(this.getRuntimeId());
+        packet.setPosition(this.getPosition());
+        packet.setMotion(this.getMotion());
+        packet.setRotation(Vector3f.from(this.getYaw(), this.getPitch(), this.getYaw()));
+        packet.setHand(this.getInventory().getItemInHand().toNetwork());
+        packet.setPlatformChatId("");
+        packet.setDeviceId("");
+        packet.getAdventureSettings().setCommandPermission((this.isOp() ? CommandPermission.OPERATOR : CommandPermission.NORMAL));
+        packet.getAdventureSettings().setPlayerPermission((this.isOp() ? PlayerPermission.OPERATOR : PlayerPermission.MEMBER));
+        this.getData().putAllIn(packet.getMetadata());
+        return packet;
+    }
+
+    @Override
     public boolean isOnline() {
         return this.connected && this.loggedIn;
     }
@@ -735,6 +754,20 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     protected void doFirstSpawn() {
         this.spawned = true;
 
+        this.setEnableClientCommand(true);
+
+        this.getAdventureSettings().update();
+
+        this.sendPotionEffects(this);
+        this.sendData(this);
+        this.getInventory().sendContents(this);
+        this.getInventory().sendArmorContents(this);
+        this.getInventory().sendOffHandContents(this);
+
+        SetTimePacket setTimePacket = new SetTimePacket();
+        setTimePacket.setTime(this.getLevel().getTime());
+        this.sendPacket(setTimePacket);
+
         Location loc = this.getLevel().getSafeSpawn(this.getLocation());
 
         PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(this, loc, true);
@@ -755,6 +788,16 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.sendPlayStatus(PlayStatusPacket.Status.PLAYER_SPAWN);
 
         this.noDamageTicks = 60;
+
+        this.getServer().sendRecipeList(this);
+
+        if (this.getGamemode() == Player.SPECTATOR) {
+            InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
+            inventoryContentPacket.setContainerId(ContainerId.CREATIVE);
+            this.sendPacket(inventoryContentPacket);
+        } else {
+            this.getInventory().sendCreativeContents();
+        }
 
         this.getChunkManager().getLoadedChunks().forEach((LongConsumer) chunkKey -> {
             int chunkX = Chunk.fromKeyX(chunkKey);
@@ -1574,41 +1617,24 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         startGamePacket.setItemEntries(ItemRegistry.get().getItemEntries());
         this.sendPacket(startGamePacket);
 
+        BiomeDefinitionListPacket biomeDefinitionListPacket = new BiomeDefinitionListPacket();
+        biomeDefinitionListPacket.setTag(EnumBiome.BIOME_DEFINITIONS);
+        this.sendPacket(biomeDefinitionListPacket);
+
+        AvailableEntityIdentifiersPacket availableEntityIdentifiersPacket = new AvailableEntityIdentifiersPacket();
+        availableEntityIdentifiersPacket.setTag(EntityRegistry.get().getEntityIdentifiersPalette());
+        this.sendPacket(availableEntityIdentifiersPacket);
+
         UpdateBlockPropertiesPacket updateBlockPropertiesPacket = new UpdateBlockPropertiesPacket();
         updateBlockPropertiesPacket.setProperties(BlockRegistry.get().getPropertiesTag());
         this.sendPacket(updateBlockPropertiesPacket);
-
-        this.setEnableClientCommand(true);
-
-        this.getAdventureSettings().update();
-        this.sendAttributes();
-        this.getInventory().sendContents(this);
-        this.getInventory().sendArmorContents(this);
-        this.getInventory().sendOffHandContents(this);
-        // Send HotBarPacket
-
-        if (this.getGamemode() == Player.SPECTATOR) {
-            InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
-            inventoryContentPacket.setContainerId(ContainerId.CREATIVE);
-            this.sendPacket(inventoryContentPacket);
-        } else {
-            this.getInventory().sendCreativeContents();
-        }
-        this.sendPotionEffects(this);
-        this.sendData(this);
-
-        SetTimePacket setTimePacket = new SetTimePacket();
-        setTimePacket.setTime(this.getLevel().getTime());
-        this.sendPacket(setTimePacket);
-
-        this.getServer().sendRecipeList(this);
 
         this.loggedIn = true;
 
         this.getLevel().sendTime(this);
 
         this.setMovementSpeed(DEFAULT_SPEED);
-
+        this.sendAttributes();
         this.setNameTagVisible(true);
         this.setNameTagAlwaysVisible(true);
         this.setCanClimb(true);
@@ -1630,14 +1656,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         this.server.addOnlinePlayer(this);
         this.server.onPlayerCompleteLoginSequence(this);
-
-        BiomeDefinitionListPacket biomeDefinitionListPacket = new BiomeDefinitionListPacket();
-        biomeDefinitionListPacket.setTag(EnumBiome.BIOME_DEFINITIONS);
-        this.sendPacket(biomeDefinitionListPacket);
-
-        AvailableEntityIdentifiersPacket availableEntityIdentifiersPacket = new AvailableEntityIdentifiersPacket();
-        availableEntityIdentifiersPacket.setTag(EntityRegistry.get().getEntityIdentifiersPalette());
-        this.sendPacket(availableEntityIdentifiersPacket);
     }
 
     public void checkNetwork() {

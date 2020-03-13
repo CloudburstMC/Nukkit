@@ -1,5 +1,6 @@
 package cn.nukkit.entity.impl;
 
+import cn.nukkit.AdventureSettings;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -20,6 +21,7 @@ import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.protocol.bedrock.BedrockPacket;
 import com.nukkitx.protocol.bedrock.data.*;
 import com.nukkitx.protocol.bedrock.packet.AddPlayerPacket;
+import com.nukkitx.protocol.bedrock.packet.AdventureSettingsPacket;
 import com.nukkitx.protocol.bedrock.packet.RemoveEntityPacket;
 import com.nukkitx.protocol.bedrock.packet.SetEntityLinkPacket;
 
@@ -299,6 +301,10 @@ public class Human extends EntityCreature implements InventoryHolder {
         packet.setMotion(this.getMotion());
         packet.setRotation(Vector3f.from(this.getYaw(), this.getPitch(), this.getYaw()));
         packet.setHand(this.getInventory().getItemInHand().toNetwork());
+        packet.setPlatformChatId("");
+        packet.setDeviceId("");
+        packet.getAdventureSettings().setCommandPermission(CommandPermission.NORMAL);
+        packet.getAdventureSettings().setPlayerPermission(PlayerPermission.MEMBER);
         this.getData().putAllIn(packet.getMetadata());
         return packet;
     }
