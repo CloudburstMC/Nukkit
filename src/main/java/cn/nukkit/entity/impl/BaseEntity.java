@@ -1773,6 +1773,10 @@ public abstract class BaseEntity implements Entity, Metadatable {
             to = ev.getTo();
         }
 
+        if (from.getLevel() != to.getLevel() && !this.switchLevel(to.getLevel())) {
+            return false;
+        }
+
         this.ySize = 0;
 
         this.setMotion(Vector3f.ZERO);
