@@ -1520,7 +1520,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
      * @return Entity|null    either NULL if no entity is found or an instance of the entity
      */
     public EntityInteractable getEntityPlayerLookingAt(int maxDistance) {
-        try (Timing timing = Timings.playerEntityLookingAtTimer.startTiming()) {
+        try (Timing ignored = Timings.playerEntityLookingAtTimer.startTiming()) {
             EntityInteractable entity = null;
 
             Set<Entity> nearbyEntities = this.getLevel().getNearbyEntities(boundingBox.grow(maxDistance, maxDistance, maxDistance), this);
@@ -3719,7 +3719,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                             break;
                         } else if (e instanceof EntityLiving) {
                             message = "death.attack.mob";
-                            params.add(!Objects.equals(e.getCustomName(), "") ? e.getCustomName() : e.getName());
+                            params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : e.getName());
                             break;
                         } else {
                             params.add("Unknown");
@@ -3735,7 +3735,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                             params.add(((Player) e).getDisplayName());
                         } else if (e instanceof EntityLiving) {
                             message = "death.attack.arrow";
-                            params.add(!Objects.equals(e.getCustomName(), "") ? e.getCustomName() : e.getName());
+                            params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : e.getName());
                             break;
                         } else {
                             params.add("Unknown");
@@ -3801,7 +3801,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                             params.add(((Player) e).getDisplayName());
                         } else if (e instanceof EntityLiving) {
                             message = "death.attack.explosion.player";
-                            params.add(!Objects.equals(e.getCustomName(), "") ? e.getCustomName() : e.getName());
+                            params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : e.getName());
                             break;
                         }
                     } else {

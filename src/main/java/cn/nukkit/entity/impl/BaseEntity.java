@@ -173,7 +173,6 @@ public abstract class BaseEntity implements Entity, Metadatable {
         this.data.setFlag(HAS_COLLISION, true);
         this.data.setShort(AIR, 400);
         this.data.setShort(MAX_AIR, 400);
-        this.data.setString(NAMETAG, "");
         this.data.setLong(LEAD_HOLDER_EID, -1);
         this.data.setFloat(SCALE, 1f);
         this.data.setFloat(BOUNDING_BOX_HEIGHT, this.getHeight());
@@ -260,8 +259,8 @@ public abstract class BaseEntity implements Entity, Metadatable {
 
     @Override
     public void saveAdditionalData(CompoundTagBuilder tag) {
-        if (this.hasCustomName()) {
-            tag.stringTag("CustomName", this.getCustomName());
+        if (this.hasNameTag()) {
+            tag.stringTag("CustomName", this.getNameTag());
             tag.booleanTag("CustomNameVisible", this.isNameTagVisible());
             tag.booleanTag("CustomNameAlwaysVisible", this.isNameTagAlwaysVisible());
         }
@@ -308,11 +307,11 @@ public abstract class BaseEntity implements Entity, Metadatable {
         return this.data;
     }
 
-    public boolean hasCustomName() {
-        return !this.getCustomName().isEmpty();
+    public boolean hasNameTag() {
+        return !this.getNameTag().isEmpty();
     }
 
-    public String getCustomName() {
+    public String getNameTag() {
         return this.data.getString(NAMETAG);
     }
 
@@ -563,8 +562,8 @@ public abstract class BaseEntity implements Entity, Metadatable {
     }
 
     public String getName() {
-        if (this.hasCustomName()) {
-            return this.getCustomName();
+        if (this.hasNameTag()) {
+            return this.getNameTag();
         } else {
             // FIXME: 04/01/2020 Use language files
             return EntityRegistry.get().getLegacyName(this.type.getIdentifier());

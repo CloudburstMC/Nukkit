@@ -237,7 +237,7 @@ public class EntityDroppedItem extends BaseEntity implements DroppedItem {
 
     @Override
     public String getName() {
-        return this.hasCustomName() ? this.getCustomName() : (this.item.hasCustomName() ? this.item.getCustomName() : this.item.getName());
+        return this.hasNameTag() ? this.getNameTag() : (this.item.hasCustomName() ? this.item.getCustomName() : this.item.getName());
     }
 
     public Item getItem() {

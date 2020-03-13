@@ -102,7 +102,7 @@ public abstract class EntityAbstractMinecart extends EntityVehicle {
     }
 
     @Override
-    public boolean hasCustomName() {
+    public boolean hasNameTag() {
         return entityName != null;
     }
 

@@ -58,7 +58,7 @@ public abstract class EntityTameable extends Animal implements EntityOwnable {
 
     @Override
     public String getName() {
-        return getCustomName();
+        return getNameTag();
     }
 
     public boolean isTamed() {

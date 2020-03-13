@@ -57,9 +57,9 @@ public interface Entity extends Metadatable {
 
     float getDrag();
 
-    boolean hasCustomName();
+    boolean hasNameTag();
 
-    String getCustomName();
+    String getNameTag();
 
     void setNameTag(String name);
 

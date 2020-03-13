@@ -1,6 +1,5 @@
 package cn.nukkit.entity.impl;
 
-import cn.nukkit.AdventureSettings;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -21,7 +20,6 @@ import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.protocol.bedrock.BedrockPacket;
 import com.nukkitx.protocol.bedrock.data.*;
 import com.nukkitx.protocol.bedrock.packet.AddPlayerPacket;
-import com.nukkitx.protocol.bedrock.packet.AdventureSettingsPacket;
 import com.nukkitx.protocol.bedrock.packet.RemoveEntityPacket;
 import com.nukkitx.protocol.bedrock.packet.SetEntityLinkPacket;
 
@@ -165,7 +163,7 @@ public class Human extends EntityCreature implements InventoryHolder {
             }
 
             this.identity = Utils.dataToUUID(String.valueOf(this.getUniqueId()).getBytes(UTF_8), this.getSkin()
-                    .getSkinData().getImage(), this.getCustomName().getBytes(UTF_8));
+                    .getSkinData().getImage(), this.getNameTag().getBytes(UTF_8));
         }
 
         tag.listenForList("Inventory", CompoundTag.class, items -> {
@@ -255,7 +253,7 @@ public class Human extends EntityCreature implements InventoryHolder {
 
     @Override
     public String getName() {
-        return this.getCustomName();
+        return this.getNameTag();
     }
 
     @Override
