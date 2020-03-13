@@ -5,9 +5,11 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.chunk.Chunk;
 import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.math.vector.Vector3i;
+import lombok.EqualsAndHashCode;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@EqualsAndHashCode
 public final class Location {
     private final Vector3f position;
     private final float yaw;
@@ -110,18 +112,5 @@ public final class Location {
 
     public int getChunkZ() {
         return this.getFloorZ() >> 4;
-    }
-
-    @Override
-    public final boolean equals(Object location) {
-        return location instanceof Location && this.equals((Location) location, false);
-    }
-
-    public final boolean equals(Location location, boolean checkYaw) {
-        return this.equals(location, checkYaw, false);
-    }
-
-    public final boolean equals(Location that, boolean checkYaw, boolean checkPitch) {
-        return this.getLevel().getId().equals(that.getLevel().getId()) && this.getPosition().equals(that.getPosition()) && (!checkYaw || this.getYaw() == that.getYaw()) && (!checkPitch || this.getPitch() == that.getPitch());
     }
 }
