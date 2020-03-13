@@ -1,6 +1,7 @@
 package cn.nukkit.level;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.chunk.Chunk;
 import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.math.vector.Vector3i;
@@ -106,12 +107,21 @@ public final class Location {
     public int getChunkX() {
         return this.getFloorX() >> 4;
     }
-
-    public int getChunkY() {
-        return this.getFloorY() >> 4;
-    }
-
+    
     public int getChunkZ() {
         return this.getFloorZ() >> 4;
+    }
+
+    @Override
+    public final boolean equals(Object location) {
+        return location instanceof Location && this.equals((Location) location, false);
+    }
+
+    public final boolean equals(Location location, boolean checkYaw) {
+        return this.equals(location, checkYaw, false);
+    }
+
+    public final boolean equals(Location that, boolean checkYaw, boolean checkPitch){
+        return this.getLevel().getId().equals(that.getLevel().getId()) && this.getPosition().equals(that.getPosition()) && (!checkYaw || this.getYaw() == that.getYaw()) && (!checkPitch || this.getPitch() == that.getPitch());
     }
 }
