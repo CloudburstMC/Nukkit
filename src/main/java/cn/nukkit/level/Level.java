@@ -2526,8 +2526,7 @@ public class Level implements ChunkManager, Metadatable {
         if (this.isRaining()) {
             rainEvent.setType(LevelEventType.START_RAIN);
             rainEvent.setData(ThreadLocalRandom.current().nextInt(50000) + 10000);
-        }
-        else{
+        } else {
             rainEvent.setType(LevelEventType.STOP_RAIN);
         }
         rainEvent.setPosition(Vector3f.ZERO);
@@ -2537,8 +2536,7 @@ public class Level implements ChunkManager, Metadatable {
         if (this.isThundering()) {
             thunderEvent.setType(LevelEventType.START_THUNDER);
             thunderEvent.setData(ThreadLocalRandom.current().nextInt(50000) + 10000);
-        }
-        else{
+        } else {
             thunderEvent.setType(LevelEventType.STOP_THUNDER);
         }
         thunderEvent.setPosition(Vector3f.ZERO);
