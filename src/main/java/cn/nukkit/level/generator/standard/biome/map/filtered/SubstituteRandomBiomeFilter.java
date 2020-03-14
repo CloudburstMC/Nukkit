@@ -51,22 +51,18 @@ public class SubstituteRandomBiomeFilter extends AbstractBiomeFilter.Next {
 
     @Override
     public int[] get(int x, int z, int sizeX, int sizeZ, IntArrayAllocator alloc) {
-        int[] below = this.next.get(x, z, sizeX, sizeZ, alloc);
+        int[] out = this.next.get(x, z, sizeX, sizeZ, alloc);
 
-        int[] out = alloc.get(sizeX * sizeZ);
         for (int dx = 0; dx < sizeX; dx++) {
             for (int dz = 0; dz < sizeZ; dz++) {
-                int id = below[dx * sizeZ + dz];
+                int i = dx * sizeZ + dz;
 
-                int[] replacementIds = this.replacements.get(id);
+                int[] replacementIds = this.replacements.get(out[i]);
                 if (replacementIds != null) {
-                    id = replacementIds[this.random(x + dx, z + dz, 0, replacementIds.length)];
+                    out[i] = replacementIds[this.random(x + dx, z + dz, 0, replacementIds.length)];
                 }
-
-                out[dx * sizeZ + dz] = id;
             }
         }
-        alloc.release(below);
 
         return out;
     }

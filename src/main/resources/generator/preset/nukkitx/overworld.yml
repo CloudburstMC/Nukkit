@@ -11,7 +11,7 @@ biomes:
   fallback: "ocean"
   root:
     id: "nukkitx:zoom"
-    times: 2
+    times: 3
     next:
       id: "nukkitx:smooth"
       next:
@@ -46,12 +46,11 @@ biomes:
                         - "forest"
                     next:
                       id: "nukkitx:zoom"
-                      times: 3
+                      times: 2
                       fuzzy: true
                       next:
                         id: "nukkitx:random"
                         biomes:
-                          - "plains"
                           - "plains"
                           - "ocean"
 
@@ -99,9 +98,9 @@ density:
     factor: 1.0240000486373901
     offset: 0.0
   specialHeightVariation: 0.25
-  heightFactor: 1.0
-  heightOffset: 0.0
-  heightVariationFactor: 1.0
+  heightFactor: 64.0
+  heightOffset: 64.0
+  heightVariationFactor: 64.0
   heightVariationOffset: 0.0
 
 decorators:

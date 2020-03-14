@@ -29,7 +29,7 @@ public class ZoomBiomeFilter extends AbstractBiomeFilter.Next {
 
     @Override
     public int[] get(int x, int z, int sizeX, int sizeZ, IntArrayAllocator alloc) {
-        return this.times > 0 //useless debug code lol
+        return this.times > 0
                 ? this.actuallyDoGet(x, z, sizeX, sizeZ, alloc, this.times)
                 : this.next.get(x, z, sizeX, sizeZ, alloc);
     }

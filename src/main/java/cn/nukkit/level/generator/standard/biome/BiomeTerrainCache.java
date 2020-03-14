@@ -52,7 +52,7 @@ public final class BiomeTerrainCache {
                     double variation = biome.getHeightVariation();
 
                     double weight = Math.abs(this.weights[(dx + this.radius) * this.diameter + dx + this.radius] / (height + 2.0d));
-                    if (false && height > centerHeight) {
+                    if (height > centerHeight) {
                         weight *= 0.5d;
                     }
 
@@ -67,9 +67,13 @@ public final class BiomeTerrainCache {
         return val;
     }
 
-    @RequiredArgsConstructor
     public static final class Data {
         public final double baseHeight;
         public final double heightVariation;
+
+        public Data(double baseHeight, double heightVariation)  {
+            this.baseHeight = baseHeight * 17.0d / 64.0d - 1.0d / 256.0d;
+            this.heightVariation = heightVariation * 2.4d + 4.0d / 15.0d;
+        }
     }
 }
