@@ -7,6 +7,7 @@ import java.util.List;
 
 public class ElementDropdown extends Element {
 
+    @JsonProperty
     private final String type = "dropdown"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
     private String text = "";
     private List<String> options;
