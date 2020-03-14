@@ -794,6 +794,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         if (this.getGamemode() == Player.SPECTATOR) {
             InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
             inventoryContentPacket.setContainerId(ContainerId.CREATIVE);
+            inventoryContentPacket.setContents(new ItemData[0]);
             this.sendPacket(inventoryContentPacket);
         } else {
             this.getInventory().sendCreativeContents();
@@ -1113,6 +1114,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
             InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
             inventoryContentPacket.setContainerId(ContainerId.CREATIVE);
+            inventoryContentPacket.setContents(new ItemData[0]);
             this.sendPacket(inventoryContentPacket);
         } else {
             if (this.isSurvival()) {

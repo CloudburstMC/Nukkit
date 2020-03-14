@@ -576,6 +576,8 @@ public class PlayerInventory extends BaseInventory {
 
         if (!p.isSpectator()) { //fill it for all gamemodes except spectator
             pk.setContents(Item.toNetwork(Item.getCreativeItems().toArray(new Item[0])));
+        } else {
+            pk.setContents(new ItemData[0]);
         }
 
         p.sendPacket(pk);
