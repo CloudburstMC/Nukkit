@@ -19,45 +19,33 @@ public abstract class BlockThin extends BlockTransparent {
     }
 
     protected AxisAlignedBB recalculateBoundingBox() {
-        double f = 0.4375;
-        double f1 = 0.5625;
-        double f2 = 0.4375;
-        double f3 = 0.5625;
+        final double offNW = 7.0 / 16.0;
+        final double offSE = 9.0 / 16.0;
+        final double onNW = 0.0;
+        final double onSE = 1.0;
+        double w = offNW;
+        double e = offSE;
+        double n = offNW;
+        double s = offSE;
         try {
-            boolean flag = this.canConnect(this.north());
-            boolean flag1 = this.canConnect(this.south());
-            boolean flag2 = this.canConnect(this.west());
-            boolean flag3 = this.canConnect(this.east());
-            if ((!flag2 || !flag3) && (flag2 || flag3 || flag || flag1)) {
-                if (flag2) {
-                    f = 0;
-                } else if (flag3) {
-                    f1 = 1;
-                }
-            } else {
-                f = 0;
-                f1 = 1;
-            }
-            if ((!flag || !flag1) && (flag2 || flag3 || flag || flag1)) {
-                if (flag) {
-                    f2 = 0;
-                } else if (flag1) {
-                    f3 = 1;
-                }
-            } else {
-                f2 = 0;
-                f3 = 1;
-            }
+            boolean north = this.canConnect(this.north());
+            boolean south = this.canConnect(this.south());
+            boolean west = this.canConnect(this.west());
+            boolean east = this.canConnect(this.east());
+            w = west ? onNW : offNW;
+            e = east ? onSE : offSE;
+            n = north ? onNW : offNW;
+            s = south ? onSE : offSE;
         } catch (LevelException ignore) {
             //null sucks
         }
         return new SimpleAxisAlignedBB(
-                this.x + f,
+                this.x + w,
                 this.y,
-                this.z + f2,
-                this.x + f1,
+                this.z + n,
+                this.x + e,
                 this.y + 1,
-                this.z + f3
+                this.z + s
         );
     }
 
