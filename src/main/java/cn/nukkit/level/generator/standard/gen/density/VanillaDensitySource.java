@@ -14,7 +14,7 @@ import net.daporkchop.lib.noise.NoiseSource;
 import net.daporkchop.lib.random.PRandom;
 import net.daporkchop.lib.random.impl.FastPRandom;
 
-import static java.lang.Math.signum;
+import static java.lang.Math.*;
 import static java.util.Objects.*;
 import static net.daporkchop.lib.math.primitive.PMath.*;
 
@@ -45,9 +45,9 @@ public class VanillaDensitySource extends AbstractGenerationPass implements Dens
     @JsonProperty
     private double specialHeightVariation = 0.25d;
     @JsonProperty
-    private double heightFactor  = 1.0d;
+    private double heightFactor           = 1.0d;
     @JsonProperty
-    private double heightOffset  = 0.0d;
+    private double heightOffset           = 0.0d;
     @JsonProperty
     private double heightVariationFactor  = 1.0d;
     @JsonProperty
@@ -99,8 +99,8 @@ public class VanillaDensitySource extends AbstractGenerationPass implements Dens
         outputNoise += depth;
 
         BiomeTerrainCache.Data terrainData = this.terrainCache.get(x, z, biomes);
-        double height = terrainData.avgHeight * this.heightFactor + this.heightOffset;
-        double volatility = terrainData.variation;
+        double height = terrainData.baseHeight * this.heightFactor + this.heightOffset;
+        double volatility = terrainData.heightVariation;
         if (height > yd) {
             volatility *= this.specialHeightVariation;
         }

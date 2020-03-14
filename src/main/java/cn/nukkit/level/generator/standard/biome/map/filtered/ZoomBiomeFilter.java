@@ -29,7 +29,7 @@ public class ZoomBiomeFilter extends AbstractBiomeFilter.Next {
 
     @Override
     public int[] get(int x, int z, int sizeX, int sizeZ, IntArrayAllocator alloc) {
-        return this.times > 0
+        return this.times > 0 //useless debug code lol
                 ? this.actuallyDoGet(x, z, sizeX, sizeZ, alloc, this.times)
                 : this.next.get(x, z, sizeX, sizeZ, alloc);
     }
@@ -68,15 +68,13 @@ public class ZoomBiomeFilter extends AbstractBiomeFilter.Next {
         }
         alloc.release(values);
 
-        int[] finalValues = alloc.get(sizeX * sizeZ);
+        int[] out = alloc.get(sizeX * sizeZ);
         for (int dx = 0; dx < sizeX; dx++) {
-            for (int dz = 0; dz < sizeZ; dz++) {
-                finalValues[dx * sizeZ + dz] = tmp[dz + (dx + (z & 1)) * zoomSizeX + (x & 1)];
-            }
+            System.arraycopy(tmp, (dx + (x & 1)) * zoomSizeZ + (z & 1), out, dx * sizeZ, sizeZ);
         }
         alloc.release(tmp);
 
-        return finalValues;
+        return out;
     }
 
     protected int selectNormal(int x, int z, int v0, int v1, int v2, int v3) {

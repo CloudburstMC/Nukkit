@@ -52,6 +52,7 @@ biomes:
                         id: "nukkitx:random"
                         biomes:
                           - "plains"
+                          - "plains"
                           - "ocean"
 
 #  id: "nukkitx:constant"
