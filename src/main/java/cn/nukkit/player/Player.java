@@ -2878,7 +2878,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
                                     getInventory().sendHeldItem(this);
 
-                                    if (blockEntity.isSpawnable()) {
+                                    if (blockEntity != null && blockEntity.isSpawnable()) {
                                         blockEntity.spawnTo(this);
                                     }
 
