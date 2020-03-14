@@ -25,11 +25,6 @@ import static net.daporkchop.lib.math.primitive.PMath.*;
  */
 @JsonDeserialize
 public class VanillaDensitySource extends AbstractGenerationPass implements DensitySource {
-    private static final double DEPTH_SCALE_FACTOR_1 = -0.3d;
-    private static final double DEPTH_SCALE_FACTOR_2 = 0.17857142857142d;
-    private static final double DEPTH_SCALE_FACTOR_3 = 0.125d;
-    private static final double DEPTH_SCALE_FACTOR_4 = 0.053125d;
-
     public static final Identifier ID = Identifier.fromString("nukkitx:vanilla");
 
     //these fields aren't sorted in ascending order by size (so there's a possibility that fields might not be word-aligned), however they ARE sorted
@@ -90,11 +85,11 @@ public class VanillaDensitySource extends AbstractGenerationPass implements Dens
         double depth = this.depth.get(xd, zd);
 
         if (depth < 0.0d) {
-            depth *= DEPTH_SCALE_FACTOR_1;
+            depth *= -0.3d;
         }
         depth = clamp(depth * 3.0d - 2.0d, -2.0d, 1.0d);
-        depth *= depth < 0.0d ? DEPTH_SCALE_FACTOR_2 : DEPTH_SCALE_FACTOR_3;
-        depth *= DEPTH_SCALE_FACTOR_4;
+        depth /= depth < 0.0d ? 2.0d * 2.0d * 1.4d : 8.0d;
+        depth *= 0.2d * 17.0d / 64.0d;
 
         outputNoise += depth;
 
