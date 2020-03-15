@@ -1263,6 +1263,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 return; //maybe solve that in better way
             }
 
+            currentPos = this.getPosition();
+
             double diffX = currentPos.getX() - newPosition.getX();
             double diffY = currentPos.getY() - newPosition.getY();
             double diffZ = currentPos.getZ() - newPosition.getZ();
