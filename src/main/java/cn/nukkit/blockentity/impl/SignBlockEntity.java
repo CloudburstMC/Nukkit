@@ -24,7 +24,7 @@ public class SignBlockEntity extends BaseBlockEntity implements Sign {
     private static final String[] LEGACY_TEXT_TAGS = {"Text1", "Text2", "Text3", "Text4"};
 
     private String[] text = new String[4];
-    private String creator;
+    private String creator = "";
 
     public SignBlockEntity(BlockEntityType<?> type, Chunk chunk, Vector3i position) {
         super(type, chunk, position);
