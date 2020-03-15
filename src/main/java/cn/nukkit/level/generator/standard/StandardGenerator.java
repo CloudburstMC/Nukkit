@@ -1,6 +1,7 @@
 package cn.nukkit.level.generator.standard;
 
 import cn.nukkit.Nukkit;
+import cn.nukkit.Server;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.Generator;
@@ -64,6 +65,22 @@ public final class StandardGenerator implements Generator {
             throw new RuntimeException(e);
         }
     };
+
+    static {
+        //porktodo: remove this before merge
+        Thread t = new Thread(() -> {
+            sleep(10000L);
+            while (true) {
+                sleep(100L);
+                Server.getInstance().getOnlinePlayers().values().forEach(player -> {
+                    StandardGenerator generator = uncheckedCast(player.getLevel().getGenerator());
+                    player.sendTip(generator.biomes.get(player.getFloorX(), player.getFloorZ()).getId().toString());
+                });
+            }
+        });
+        t.setDaemon(true);
+        t.start();
+    }
 
     private static final int STEP_X = 4;
     private static final int STEP_Y = 8;

@@ -29,8 +29,8 @@ public class FlowerPopulator extends RepeatingPopulator {
     protected BlockFilter replace = BlockFilter.AIR;
 
     @JsonProperty
-    @JsonAlias({"type", "block", "blocks"})
-    protected BlockSelector types;
+    @JsonAlias({"types", "block", "blocks"})
+    protected BlockSelector type;
 
     @JsonProperty
     protected IntRange height = IntRange.WHOLE_WORLD;
@@ -41,7 +41,7 @@ public class FlowerPopulator extends RepeatingPopulator {
 
         BlockFilter on = this.on;
         BlockFilter replace = this.replace;
-        int type = this.types.selectRuntimeId(random);
+        int type = this.type.selectRuntimeId(random);
 
         for (int i = 0; i < 64; i++) {
             int blockX = x + random.nextInt(8) - random.nextInt(8);

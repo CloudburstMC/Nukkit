@@ -23,24 +23,33 @@ import java.util.regex.Matcher;
 public final class IntRange {
     private static final Ref<Matcher> RANGE_MATCHER_CACHE = ThreadRef.regex("^([0-9]+)(?:-([0-9]+))?$");
 
-    public static final IntRange EMPTY_RANGE = new IntRange(0, 0, true);
+    public static final IntRange EMPTY_RANGE = new IntRange(0, 0, 0L);
     public static final IntRange ONE         = new IntRange(1, 1);
     public static final IntRange WHOLE_WORLD = new IntRange(0, 255);
 
     public final int min;
     public final int max;
 
-    private IntRange(int min, int max, boolean overloadFlag) {
+    public final boolean gaussian;
+
+    private IntRange(int min, int max, long overloadFlag) {
         this.min = min;
         this.max = max;
+        this.gaussian = false;
+    }
+
+    public IntRange(int min, int max) {
+        this(min, max, false);
     }
 
     @JsonCreator
     public IntRange(
             @JsonProperty(value = "min", required = true) @JsonAlias({"min"}) int min,
-            @JsonProperty(value = "max", required = true) @JsonAlias({"max"}) int max) {
+            @JsonProperty(value = "max", required = true) @JsonAlias({"max"}) int max,
+            @JsonProperty("gaussian") boolean gaussian) {
         this.min = min;
         this.max = max + 1; //add 1 to make max exclusive
+        this.gaussian = gaussian;
 
         this.validate();
     }
@@ -51,6 +60,7 @@ public final class IntRange {
         Preconditions.checkArgument(matcher.find(), "Cannot parse range: \"%s\"", value);
         this.min = Integer.parseUnsignedInt(matcher.group(1));
         this.max = (matcher.group(2) == null ? this.min : Integer.parseUnsignedInt(matcher.group(2))) + 1;
+        this.gaussian = false;
 
         this.validate();
     }
@@ -59,6 +69,7 @@ public final class IntRange {
     public IntRange(int value) {
         this.min = value;
         this.max = value + 1;
+        this.gaussian = false;
 
         this.validate();
     }
@@ -76,7 +87,14 @@ public final class IntRange {
      * @return a random value within this {@link IntRange}
      */
     public int rand(@NonNull PRandom random) {
-        return this.empty() ? this.min : random.nextInt(this.min, this.max);
+        if (this.empty())   {
+            return this.min;
+        } else if (this.gaussian)   {
+            double center = (this.min + this.max) * 0.5d;
+            return (int) (random.nextGaussianDouble() * (this.max - center) + center);
+        } else {
+            return random.nextInt(this.min, this.max);
+        }
     }
 
     /**

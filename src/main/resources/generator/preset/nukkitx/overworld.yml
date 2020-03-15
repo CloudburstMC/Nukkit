@@ -105,7 +105,7 @@ density:
   specialHeightVariation: 0.25
   heightFactor: 64.0
   heightOffset: 64.0
-  heightVariationFactor: 64.0
+  heightVariationFactor: 32.0 # TODO: this should be 64, which means I need to figure out how to scale biome variation correctly
   heightVariationOffset: 0.0
 
 decorators:
@@ -125,3 +125,101 @@ decorators:
 
 populators:
   - id: "nukkitx:biome"
+
+    #
+    # Minerals
+    # (and other veins that aren't ores)
+    #
+
+    # Dirt
+  - id: "nukkitx:ore"
+    count: 10
+    size: 33
+    block: "dirt"
+    replace: "stone"
+
+    # Gravel
+  - id: "nukkitx:ore"
+    count: 8
+    size: 33
+    block: "gravel"
+    replace: "stone"
+
+    # Granite
+  - id: "nukkitx:ore"
+    count: 10
+    size: 33
+    height: "0-80"
+    block: "stone#1"
+    replace: "stone"
+
+    # Diorite
+  - id: "nukkitx:ore"
+    count: 10
+    size: 33
+    height: "0-80"
+    block: "stone#3"
+    replace: "stone"
+
+    # Andesite
+  - id: "nukkitx:ore"
+    count: 10
+    size: 33
+    height: "0-80"
+    block: "stone#5"
+    replace: "stone"
+
+    #
+    # Ores
+    #
+
+    # Coal
+  - id: "nukkitx:ore"
+    count: 20
+    size: 17
+    height: "0-128"
+    block: "coal_ore"
+    replace: "stone"
+
+    # Iron
+  - id: "nukkitx:ore"
+    count: 20
+    size: 9
+    height: "0-64"
+    block: "iron_ore"
+    replace: "stone"
+
+    # Gold
+  - id: "nukkitx:ore"
+    count: 2
+    size: 9
+    height: "0-32"
+    block: "gold_ore"
+    replace: "stone"
+
+    # Redstone
+  - id: "nukkitx:ore"
+    count: 8
+    size: 8
+    height: "0-16"
+    block: "redstone_ore"
+    replace: "stone"
+
+    # Diamond
+  - id: "nukkitx:ore"
+    count: 1
+    size: 8
+    height: "0-16"
+    block: "diamond_ore"
+    replace: "stone"
+
+    # Lapis Lazuli
+  - id: "nukkitx:ore"
+    count: 1
+    size: 7
+    height:
+      min: 0
+      max: 32
+      gaussian: true
+    block: "lapis_ore"
+    replace: "stone"
