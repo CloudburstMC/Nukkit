@@ -3,6 +3,7 @@ package cn.nukkit.level.generator.standard.store;
 import cn.nukkit.Nukkit;
 import cn.nukkit.level.generator.standard.StandardGeneratorUtils;
 import cn.nukkit.level.generator.standard.biome.BiomeDictionary;
+import cn.nukkit.level.generator.standard.biome.BiomeElevation;
 import cn.nukkit.level.generator.standard.biome.GenerationBiome;
 import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
 import cn.nukkit.level.generator.standard.pop.Populator;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * Store for {@link GenerationBiome}.
@@ -50,7 +52,7 @@ public final class GenerationBiomeStore extends AbstractGeneratorStore<Generatio
     @Getter
     @JsonDeserialize
     public static final class TempBiome {
-        @JsonProperty(required = true)
+        @JsonProperty
         @JsonAlias({"dict"})
         private BiomeDictionary dictionary;
 
@@ -59,10 +61,7 @@ public final class GenerationBiomeStore extends AbstractGeneratorStore<Generatio
         @JsonProperty
         private Populator[] populators = Populator.EMPTY_ARRAY;
 
-        @JsonProperty
-        private double baseHeight      = 0.1d;
-        @JsonProperty
-        private double heightVariation = 0.2d;
+        private BiomeElevation elevation = BiomeElevation.DEFAULT;
 
         @JsonProperty
         private double temperature = 0.5d;
@@ -70,12 +69,24 @@ public final class GenerationBiomeStore extends AbstractGeneratorStore<Generatio
         private double rainfall    = 0.5d;
 
         public GenerationBiome build(@NonNull Identifier id, int internalId) {
+            Objects.requireNonNull(this.dictionary, "dictionary must be set!");
+
             return new GenerationBiome(this, id, internalId);
         }
 
         @JsonSetter("dictionary")
         private void setDictionary(Identifier dictionaryId) {
             this.dictionary = StandardGeneratorStores.biomeDictionary().find(dictionaryId);
+        }
+
+        @JsonSetter("elevationAbsolute")
+        private void setElevationAbsolute(BiomeElevation.Absolute elevationAbsolute) {
+            this.elevation = Objects.requireNonNull(elevationAbsolute, "elevationAbsolute");
+        }
+
+        @JsonSetter("elevationVanilla")
+        private void setElevationVanilla(BiomeElevation.Vanilla elevationVanilla) {
+            this.elevation = Objects.requireNonNull(elevationVanilla, "elevationVanilla");
         }
     }
 }

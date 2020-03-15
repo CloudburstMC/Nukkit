@@ -43,6 +43,7 @@ biomes:
                       plains:
                         - "plains"
                         - "sunflower_plains"
+                        - "extreme_hills"
                         - "forest"
                     next:
                       id: "nukkitx:zoom"
@@ -98,10 +99,13 @@ density:
     octaves: 16
     factor: 1.0240000486373901
     offset: 0.0
+  terrainSmoothing:
+    radius: 2
+    scale: 4
   specialHeightVariation: 0.25
-  heightFactor: 1.0
-  heightOffset: 0.0
-  heightVariationFactor: 1.0
+  heightFactor: 64.0
+  heightOffset: 64.0
+  heightVariationFactor: 64.0
   heightVariationOffset: 0.0
 
 decorators:

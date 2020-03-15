@@ -8,7 +8,6 @@ import cn.nukkit.level.generator.standard.misc.AbstractGenerationPass;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import lombok.Getter;
 import lombok.NonNull;
 import net.daporkchop.lib.noise.NoiseSource;
 import net.daporkchop.lib.random.PRandom;
@@ -34,8 +33,8 @@ public class VanillaDensitySource extends AbstractGenerationPass implements Dens
     private NoiseSource high;
     private NoiseSource depth;
 
-    @Getter
-    private final BiomeTerrainCache terrainCache = new BiomeTerrainCache(2);
+    @JsonProperty("terrainSmoothing")
+    private BiomeTerrainCache terrainCache;
 
     @JsonProperty
     private double specialHeightVariation = 0.25d;
@@ -66,6 +65,8 @@ public class VanillaDensitySource extends AbstractGenerationPass implements Dens
         this.depth = requireNonNull(this.depthNoise, "depthNoise must be set!").create(new FastPRandom(random.nextLong()));
 
         this.selectorNoise = this.lowNoise = this.highNoise = this.depthNoise = null;
+
+        requireNonNull(this.terrainCache, "terrainSmoothing must be set!");
     }
 
     @Override
@@ -95,15 +96,15 @@ public class VanillaDensitySource extends AbstractGenerationPass implements Dens
 
         BiomeTerrainCache.Data terrainData = this.terrainCache.get(x, z, biomes);
         double height = terrainData.baseHeight * this.heightFactor + this.heightOffset;
-        double volatility = terrainData.heightVariation;
+        double variation = terrainData.heightVariation;
         if (height > yd) {
-            volatility *= this.specialHeightVariation;
+            variation *= this.specialHeightVariation;
         }
-        volatility = volatility * this.heightVariationFactor + this.heightVariationOffset;
+        variation = variation * this.heightVariationFactor + this.heightVariationOffset;
 
-        outputNoise *= volatility;
+        outputNoise *= variation;
         outputNoise += height;
-        outputNoise -= signum(volatility) * yd;
+        outputNoise -= signum(variation) * yd;
 
         return outputNoise;
     }

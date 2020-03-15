@@ -1,7 +1,8 @@
 dict: "nukkitx:vanilla"
 
-baseHeight: 70.4
-heightVariation: 12.8
+elevationVanilla:
+  height: 0.1
+  variation: 0.2
 
 temperature: 0.7
 rainfall: 0.8
