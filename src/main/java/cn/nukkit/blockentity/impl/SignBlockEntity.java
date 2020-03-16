@@ -23,8 +23,8 @@ public class SignBlockEntity extends BaseBlockEntity implements Sign {
 
     private static final String[] LEGACY_TEXT_TAGS = {"Text1", "Text2", "Text3", "Text4"};
 
-    private String[] text = new String[4];
-    private String creator;
+    private String[] text = {"", "", "", ""};
+    private String textOwner;
 
     public SignBlockEntity(BlockEntityType<?> type, Chunk chunk, Vector3i position) {
         super(type, chunk, position);
@@ -55,7 +55,7 @@ public class SignBlockEntity extends BaseBlockEntity implements Sign {
 
         this.text = text;
 
-        tag.listenForString("Creator", this::setCreator);
+        tag.listenForString("TextOwner", this::setTextOwner);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class SignBlockEntity extends BaseBlockEntity implements Sign {
         super.saveClientData(tag);
 
         tag.stringTag("Text", String.join("\n", this.text));
-        tag.stringTag("Creator", this.creator);
+        tag.stringTag("TextOwner", this.textOwner);
     }
 
     @Override
@@ -93,12 +93,12 @@ public class SignBlockEntity extends BaseBlockEntity implements Sign {
         return Arrays.copyOf(text, text.length);
     }
 
-    public String getCreator() {
-        return creator;
+    public String getTextOwner() {
+        return textOwner;
     }
 
-    public void setCreator(String creator) {
-        this.creator = creator;
+    public void setTextOwner(String textOwner) {
+        this.textOwner = textOwner;
     }
 
     @Override
@@ -117,7 +117,7 @@ public class SignBlockEntity extends BaseBlockEntity implements Sign {
 
         SignChangeEvent event = new SignChangeEvent(this.getBlock(), player, text);
 
-        if (!tag.contains("Creator") || !Objects.equals(player.getXuid(), tag.getString("Creator"))) {
+        if (!tag.contains("TextOwner") || !Objects.equals(player.getXuid(), tag.getString("TextOwner"))) {
             event.setCancelled();
         }
 
