@@ -2,9 +2,9 @@ package cn.nukkit.blockentity;
 
 public interface Sign extends BlockEntity {
 
-    String getCreator();
+    String getTextOwner();
 
-    void setCreator(String creator);
+    void setTextOwner(String textOwner);
 
     String[] getText();
 
