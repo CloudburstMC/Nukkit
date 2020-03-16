@@ -3,8 +3,8 @@ package cn.nukkit.level.chunk;
 import cn.nukkit.level.BlockUpdate;
 import cn.nukkit.level.Level;
 import com.google.common.base.Preconditions;
-import gnu.trove.map.TIntShortMap;
-import gnu.trove.map.hash.TIntShortHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ShortMap;
+import it.unimi.dsi.fastutil.ints.Int2ShortOpenHashMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ public class ChunkBuilder {
     private final int x;
     private final int z;
     private final Level level;
-    private final TIntShortMap extraData = new TIntShortHashMap();
+    private final Int2ShortMap extraData = new Int2ShortOpenHashMap();
     private final List<BlockUpdate> blockUpdates = new ArrayList<>();
     private final List<ChunkDataLoader> chunkDataLoaders = new ArrayList<>();
     private ChunkSection[] sections;

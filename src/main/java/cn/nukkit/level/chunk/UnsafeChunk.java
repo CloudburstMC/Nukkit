@@ -413,13 +413,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
     }
 
     public void setGenerated(boolean generated) {
-        if (GENERATED_FIELD.compareAndSet(this, generated ? 0 : 1, generated ? 1 : 0)) {
-            setDirty();
-        }
-    }
-
-    public void setGenerated() {
-        this.setGenerated(true);
+        GENERATED_FIELD.set(this, generated ? 1 : 0);
     }
 
     public boolean isPopulated() {
@@ -427,13 +421,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
     }
 
     public void setPopulated(boolean populated) {
-        if (POPULATED_FIELD.compareAndSet(this, populated ? 0 : 1, populated ? 1 : 0)) {
-            setDirty();
-        }
-    }
-
-    public void setPopulated() {
-        this.setPopulated(true);
+        POPULATED_FIELD.set(this, populated ? 1 : 0);
     }
 
     /**

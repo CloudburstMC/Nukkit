@@ -6,7 +6,6 @@ import cn.nukkit.level.chunk.LockableChunk;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.PopChunkManager;
 import cn.nukkit.math.BedrockRandom;
-import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
@@ -53,7 +52,7 @@ public class ChunkPopulateFunction implements BiFunction<Chunk, List<Chunk>, Chu
                 .collect(Collectors.toList());
 
         try {
-            for (LockableChunk c : lockableChunks)  {
+            for (LockableChunk c : lockableChunks) {
                 if (!c.isGenerated()) {
                     throw new IllegalStateException("Chunk should have been generated before");
                 }
