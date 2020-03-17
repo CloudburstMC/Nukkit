@@ -1,6 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
@@ -8,19 +7,19 @@ import cn.nukkit.utils.Identifier;
 /**
  * @author Erik Miller | EinBexiii | Bex
  */
-public class BlockStairsStone extends BlockStairs{
+public class BlockStairsStone extends BlockStairs {
 
-    public BlockStairsStone(Identifier id){
+    public BlockStairsStone(Identifier id) {
         super(id);
     }
 
     @Override
-    public double getHardness() {
-        return 1.5;
+    public float getHardness() {
+        return 1.5f;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 10;
     }
 

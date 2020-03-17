@@ -1,6 +1,6 @@
 package cn.nukkit.utils;
 
-import cn.nukkit.entity.data.Skin;
+import com.nukkitx.protocol.bedrock.data.SerializedSkin;
 
 import java.util.UUID;
 
@@ -39,7 +39,7 @@ public interface LoginChainData {
 
     int getDefaultInputMode();
 
-    Skin getSkin();
+    SerializedSkin getSkin();
 
     int getUIProfile();
 }

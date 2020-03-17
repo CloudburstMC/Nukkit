@@ -15,12 +15,12 @@ public class BlockStairsRedSandstone extends BlockStairs {
     }
 
     @Override
-    public double getHardness() {
-        return 0.8;
+    public float getHardness() {
+        return 0.8f;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 4;
     }
 
@@ -42,7 +42,7 @@ public class BlockStairsRedSandstone extends BlockStairs {
 
     @Override
     public Item toItem() {
-        return Item.get(id, this.getDamage() & 0x07);
+        return Item.get(id, this.getMeta() & 0x07);
     }
 
     @Override

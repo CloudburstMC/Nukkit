@@ -6,11 +6,11 @@ import cn.nukkit.block.BlockLog2;
 public class LegacyBlockConverter {
     private static final LegacyBlockConverter INSTANCE = new LegacyBlockConverter();
 
-    public static LegacyBlockConverter get() {
-        return INSTANCE;
+    private LegacyBlockConverter() {
     }
 
-    private LegacyBlockConverter() {
+    public static LegacyBlockConverter get() {
+        return INSTANCE;
     }
 
     public void convertBlockState(final int[] blockState) {

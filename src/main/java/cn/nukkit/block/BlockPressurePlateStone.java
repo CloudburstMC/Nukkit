@@ -20,13 +20,13 @@ public class BlockPressurePlateStone extends BlockPressurePlateBase {
     }
 
     @Override
-    public double getHardness() {
-        return 0.5D;
+    public float getHardness() {
+        return 0.5f;
     }
 
     @Override
-    public double getResistance() {
-        return 2.5D;
+    public float getResistance() {
+        return 2.5f;
     }
 
     @Override

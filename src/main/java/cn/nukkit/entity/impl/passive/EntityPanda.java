@@ -2,13 +2,12 @@ package cn.nukkit.entity.impl.passive;
 
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.passive.Panda;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 public class EntityPanda extends Animal implements Panda {
 
-    public EntityPanda(EntityType<Panda> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityPanda(EntityType<Panda> type, Location location) {
+        super(type, location);
     }
 
     @Override

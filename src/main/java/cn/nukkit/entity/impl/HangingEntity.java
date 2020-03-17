@@ -1,19 +1,20 @@
 package cn.nukkit.entity.impl;
 
 import cn.nukkit.entity.EntityType;
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.Location;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.nbt.tag.CompoundTag;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.tag.CompoundTag;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public abstract class HangingEntity extends BaseEntity {
-    protected int direction;
+    protected byte direction;
 
-    public HangingEntity(EntityType<?> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public HangingEntity(EntityType<?> type, Location location) {
+        super(type, location);
     }
 
     @Override
@@ -22,28 +23,23 @@ public abstract class HangingEntity extends BaseEntity {
 
         this.setMaxHealth(1);
         this.setHealth(1);
-
-        if (this.namedTag.contains("Direction")) {
-            this.direction = this.namedTag.getByte("Direction");
-        } else if (this.namedTag.contains("Dir")) {
-            int d = this.namedTag.getByte("Dir");
-            if (d == 2) {
-                this.direction = 0;
-            } else if (d == 0) {
-                this.direction = 2;
-            }
-        }
-
     }
 
     @Override
-    public void saveNBT() {
-        super.saveNBT();
+    public void loadAdditionalData(CompoundTag tag) {
+        super.loadAdditionalData(tag);
 
-        this.namedTag.putByte("Direction", this.getDirection().getHorizontalIndex());
-        this.namedTag.putInt("TileX", (int) this.x);
-        this.namedTag.putInt("TileY", (int) this.y);
-        this.namedTag.putInt("TileZ", (int) this.z);
+        tag.listenForByte("Direction", v -> this.direction = v);
+    }
+
+    @Override
+    public void saveAdditionalData(CompoundTagBuilder tag) {
+        super.saveAdditionalData(tag);
+
+        tag.byteTag("Direction", this.direction);
+        tag.intTag("TileX", (int) this.getX());
+        tag.intTag("TileY", (int) this.getY());
+        tag.intTag("TileZ", (int) this.getZ());
     }
 
     @Override
@@ -67,15 +63,13 @@ public abstract class HangingEntity extends BaseEntity {
             return true;
         }
 
-        if (this.lastYaw != this.yaw || this.lastX != this.x || this.lastY != this.y || this.lastZ != this.z) {
+        if (this.lastYaw != this.getY() || !this.position.equals(this.lastPosition)) {
             this.despawnFromAll();
 
-            this.direction = (int) (this.yaw / 90);
+            this.direction = (byte) (this.getYaw() / 90);
 
-            this.lastYaw = this.yaw;
-            this.lastX = this.x;
-            this.lastY = this.y;
-            this.lastZ = this.z;
+            this.lastYaw = this.getYaw();
+            this.lastPosition = this.position;
 
             this.spawnToAll();
 

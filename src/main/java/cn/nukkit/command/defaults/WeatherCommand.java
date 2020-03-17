@@ -4,8 +4,8 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 
 /**
@@ -17,10 +17,10 @@ public class WeatherCommand extends VanillaCommand {
     private java.util.Random rand = new java.util.Random();
 
     public WeatherCommand(String name) {
-        super(name, "%nukkit.command.weather.description", "%commands.weather.usage");
+        super(name, "commands.weather.description", "commands.weather.usage");
         this.setPermission("nukkit.command.weather");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("clear|rain|thunder", CommandParamType.STRING, false),
                 new CommandParameter("duration in seconds", CommandParamType.INT, true)
         });

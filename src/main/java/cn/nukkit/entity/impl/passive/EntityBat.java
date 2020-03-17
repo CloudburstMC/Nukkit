@@ -2,16 +2,15 @@ package cn.nukkit.entity.impl.passive;
 
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.passive.Bat;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 /**
  * @author PikyCZ
  */
 public class EntityBat extends Animal implements Bat {
 
-    public EntityBat(EntityType<Bat> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityBat(EntityType<Bat> type, Location location) {
+        super(type, location);
     }
 
     @Override

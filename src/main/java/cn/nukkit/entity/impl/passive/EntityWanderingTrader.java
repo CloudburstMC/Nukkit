@@ -3,13 +3,12 @@ package cn.nukkit.entity.impl.passive;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.impl.EntityCreature;
 import cn.nukkit.entity.passive.WanderingTrader;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 public class EntityWanderingTrader extends EntityCreature implements WanderingTrader {
 
-    public EntityWanderingTrader(EntityType<WanderingTrader> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityWanderingTrader(EntityType<WanderingTrader> type, Location location) {
+        super(type, location);
     }
 
     @Override

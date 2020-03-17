@@ -4,11 +4,12 @@ import cn.nukkit.level.LevelData;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.chunk.ChunkBuilder;
 import cn.nukkit.level.provider.LevelProvider;
-import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.LoadState;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.*;
+import com.nukkitx.nbt.NbtUtils;
+import com.nukkitx.nbt.stream.NBTOutputStream;
+import com.nukkitx.nbt.tag.CompoundTag;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufOutputStream;
@@ -18,7 +19,6 @@ import lombok.extern.log4j.Log4j2;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
-import java.nio.ByteOrder;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -141,8 +141,9 @@ class AnvilProvider implements LevelProvider {
                 RegionFile file = this.regionFiles.get(regionPosition);
 
                 ByteBuf buffer = ByteBufAllocator.DEFAULT.ioBuffer();
-                try (ByteBufOutputStream stream = new ByteBufOutputStream(buffer)) {
-                    NBTIO.write(tag, stream, ByteOrder.BIG_ENDIAN);
+                try (ByteBufOutputStream stream = new ByteBufOutputStream(buffer);
+                     NBTOutputStream nbtOutputStream = NbtUtils.createWriter(stream)) {
+                    nbtOutputStream.write(tag);
                     file.writeChunk(inX, inZ, buffer);
                 } finally {
                     buffer.release();

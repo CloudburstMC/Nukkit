@@ -3,6 +3,7 @@ package cn.nukkit.event.player;
 import cn.nukkit.Server;
 import cn.nukkit.event.HandlerList;
 
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -23,19 +24,17 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
 
     private final String name;
     private final UUID uuid;
-    private final String address;
-    private final int port;
+    private final InetSocketAddress address;
 
     private LoginResult loginResult = LoginResult.SUCCESS;
     private String kickMessage = "Plugin Reason";
 
     private final List<Consumer<Server>> scheduledActions = new ArrayList<>();
 
-    public PlayerAsyncPreLoginEvent(String name, UUID uuid, String address, int port) {
+    public PlayerAsyncPreLoginEvent(String name, UUID uuid, InetSocketAddress address) {
         this.name = name;
         this.uuid = uuid;
         this.address = address;
-        this.port = port;
     }
 
     public String getName() {
@@ -46,12 +45,8 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
         return uuid;
     }
 
-    public String getAddress() {
+    public InetSocketAddress getAddress() {
         return address;
-    }
-
-    public int getPort() {
-        return port;
     }
 
     public LoginResult getLoginResult() {

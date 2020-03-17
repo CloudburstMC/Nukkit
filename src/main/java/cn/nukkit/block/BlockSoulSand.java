@@ -15,13 +15,13 @@ public class BlockSoulSand extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
-        return 0.5;
+    public float getHardness() {
+        return 0.5f;
     }
 
     @Override
-    public double getResistance() {
-        return 2.5;
+    public float getResistance() {
+        return 2.5f;
     }
 
     @Override
@@ -30,8 +30,8 @@ public class BlockSoulSand extends BlockSolid {
     }
 
     @Override
-    public double getMaxY() {
-        return this.y + 1 - 0.125;
+    public float getMaxY() {
+        return this.getY() + 1 - 0.125f;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class BlockSoulSand extends BlockSolid {
 
     @Override
     public void onEntityCollide(Entity entity) {
-        entity.setMotion(entity.getMotion().multiply(0.4, 1, 0.4));
+        entity.setMotion(entity.getMotion().mul(0.4, 1, 0.4));
     }
 
     @Override

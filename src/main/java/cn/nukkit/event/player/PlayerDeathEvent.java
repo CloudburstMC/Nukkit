@@ -4,7 +4,7 @@ import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.entity.EntityDeathEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.lang.TextContainer;
+import cn.nukkit.locale.TextContainer;
 import cn.nukkit.player.Player;
 
 public class PlayerDeathEvent extends EntityDeathEvent implements Cancellable {

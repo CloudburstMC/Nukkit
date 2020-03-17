@@ -13,17 +13,16 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.ProjectileHitEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.randomitem.Fishing;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.MovingObjectPosition;
-import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.particle.BubbleParticle;
 import cn.nukkit.level.particle.WaterParticle;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.player.Player;
 import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.protocol.bedrock.data.EntityEventType;
+import com.nukkitx.protocol.bedrock.packet.EntityEventPacket;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -51,8 +50,8 @@ public class EntityFishingHook extends EntityProjectile implements FishingHook {
 
     private Item rod;
 
-    public EntityFishingHook(EntityType<FishingHook> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityFishingHook(EntityType<FishingHook> type, Location location) {
+        super(type, location);
     }
 
     @Override
@@ -97,14 +96,10 @@ public class EntityFishingHook extends EntityProjectile implements FishingHook {
         }
 
         if (this.isInsideOfWater()) {
-            this.motionX = 0;
-            this.motionY -= getGravity() * -0.04;
-            this.motionZ = 0;
+            this.motion = Vector3f.from(0, getGravity() * -0.04, 0);
             hasUpdate = true;
         } else if (this.isCollided && this.keepMovement) {
-            this.motionX = 0;
-            this.motionY = 0;
-            this.motionZ = 0;
+            this.motion = Vector3f.ZERO;
             this.keepMovement = false;
             hasUpdate = true;
         }
@@ -148,61 +143,61 @@ public class EntityFishingHook extends EntityProjectile implements FishingHook {
     }
 
     public int getWaterHeight() {
-        for (int y = this.getFloorY(); y < 256; y++) {
-            Identifier id = this.level.getBlockIdAt(this.getFloorX(), y, this.getFloorZ());
+        for (int y = this.getPosition().getFloorY(); y < 256; y++) {
+            Identifier id = this.getLevel().getBlockId(getPosition().getFloorX(), y, getPosition().getFloorZ());
             if (id == AIR) {
                 return y;
             }
         }
-        return this.getFloorY();
+        return this.getPosition().getFloorY();
     }
 
     public void fishBites() {
-        EntityEventPacket pk = new EntityEventPacket();
-        pk.entityRuntimeId = this.getUniqueId();
-        pk.event = EntityEventPacket.FISH_HOOK_HOOK;
-        Server.broadcastPacket(this.level.getPlayers().values(), pk);
+        EntityEventPacket hookPacket = new EntityEventPacket();
+        hookPacket.setRuntimeEntityId(this.getRuntimeId());
+        hookPacket.setType(EntityEventType.FISH_HOOK_HOOK);
+        Server.broadcastPacket(this.getViewers(), hookPacket);
 
-        EntityEventPacket bubblePk = new EntityEventPacket();
-        bubblePk.entityRuntimeId = this.getUniqueId();
-        bubblePk.event = EntityEventPacket.FISH_HOOK_BUBBLE;
-        Server.broadcastPacket(this.level.getPlayers().values(), bubblePk);
+        EntityEventPacket bubblePacket = new EntityEventPacket();
+        bubblePacket.setRuntimeEntityId(this.getRuntimeId());
+        bubblePacket.setType(EntityEventType.FISH_HOOK_BUBBLE);
+        Server.broadcastPacket(this.getViewers(), bubblePacket);
 
-        EntityEventPacket teasePk = new EntityEventPacket();
-        teasePk.entityRuntimeId = this.getUniqueId();
-        teasePk.event = EntityEventPacket.FISH_HOOK_TEASE;
-        Server.broadcastPacket(this.level.getPlayers().values(), teasePk);
+        EntityEventPacket teasePacket = new EntityEventPacket();
+        teasePacket.setRuntimeEntityId(this.getRuntimeId());
+        teasePacket.setType(EntityEventType.FISH_HOOK_LURED);
+        Server.broadcastPacket(this.getViewers(), teasePacket);
 
-        Random random = new Random();
+        Random random = ThreadLocalRandom.current();
         for (int i = 0; i < 5; i++) {
-            this.level.addParticle(new BubbleParticle(this.setComponents(
-                    this.x + random.nextDouble() * 0.5 - 0.25,
+            this.getLevel().addParticle(new BubbleParticle(Vector3f.from(
+                    this.getX() + random.nextDouble() * 0.5 - 0.25,
                     this.getWaterHeight(),
-                    this.z + random.nextDouble() * 0.5 - 0.25
+                    this.getZ() + random.nextDouble() * 0.5 - 0.25
             )));
         }
     }
 
     public void spawnFish() {
         Random random = new Random();
-        this.fish = new Vector3f(
-                this.x + (random.nextDouble() * 1.2 + 1) * (random.nextBoolean() ? -1 : 1),
+        this.fish = Vector3f.from(
+                this.getX() + (random.nextDouble() * 1.2 + 1) * (random.nextBoolean() ? -1 : 1),
                 this.getWaterHeight(),
-                this.z + (random.nextDouble() * 1.2 + 1) * (random.nextBoolean() ? -1 : 1)
+                this.getZ() + (random.nextDouble() * 1.2 + 1) * (random.nextBoolean() ? -1 : 1)
         );
     }
 
     public boolean attractFish() {
         double multiply = 0.1;
-        this.fish.setComponents(
-                this.fish.x + (this.x - this.fish.x) * multiply,
-                this.fish.y,
-                this.fish.z + (this.z - this.fish.z) * multiply
+        this.fish = Vector3f.from(
+                this.fish.getX() + (this.getX() - this.fish.getX()) * multiply,
+                this.fish.getY(),
+                this.fish.getZ() + (this.getZ() - this.fish.getZ()) * multiply
         );
         if (new Random().nextInt(100) < 85) {
-            this.level.addParticle(new WaterParticle(this.fish));
+            this.getLevel().addParticle(new WaterParticle(this.fish));
         }
-        double dist = Math.abs(Math.sqrt(this.x * this.x + this.z * this.z) - Math.sqrt(this.fish.x * this.fish.x + this.fish.z * this.fish.z));
+        double dist = Math.abs(Math.sqrt(this.getX() * this.getX() + this.getZ() * this.getZ()) - Math.sqrt(this.fish.getX() * this.fish.getX() + this.fish.getZ() * this.fish.getZ()));
         if (dist < 0.15) {
             return true;
         }
@@ -216,27 +211,16 @@ public class EntityFishingHook extends EntityProjectile implements FishingHook {
             int experience = new Random().nextInt((3 - 1) + 1) + 1;
             Vector3f motion;
 
-            if (owner != null) {
-                motion = owner.getPosition().subtract(this).multiply(0.1);
-                motion.y += Math.sqrt(owner.getPosition().distance(this)) * 0.08;
-            } else {
-                motion = new Vector3f();
-            }
+            motion = owner.getPosition().sub(this.getPosition()).mul(0.1);
+            motion = motion.add(0, Math.sqrt(owner.getPosition().distance(this.getPosition())) * 0.08, 0);
 
-            CompoundTag itemTag = NBTIO.putItemHelper(item);
-            itemTag.setName("Item");
-
-            DroppedItem itemEntity = EntityRegistry.get().newEntity(EntityTypes.ITEM,
-                    this.level.getChunk(this.getChunkX(), this.getChunkZ()),
-                    Entity.getDefaultNBT(this, this.getMotion(), ThreadLocalRandom.current().nextFloat() * 300, 0)
-                            .putShort("Health", 5)
-                            .putCompound("Item", itemTag)
-                            .putShort("PickupDelay", 1));
-
-            if (owner != null && owner instanceof Player) {
-                itemEntity.setOwner(owner);
-            }
-            itemEntity.spawnToAll();
+            DroppedItem droppedItem = EntityRegistry.get().newEntity(EntityTypes.ITEM, this.getLocation());
+            droppedItem.setMotion(motion);
+            droppedItem.setHealth(5);
+            droppedItem.setItem(item);
+            droppedItem.setPickupDelay(1);
+            droppedItem.setOwner(owner);
+            droppedItem.spawnToAll();
 
             Player player = (Player) owner;
             if (experience > 0) {
@@ -244,10 +228,10 @@ public class EntityFishingHook extends EntityProjectile implements FishingHook {
             }
         }
         if (owner instanceof Player) {
-            EntityEventPacket pk = new EntityEventPacket();
-            pk.entityRuntimeId = this.getUniqueId();
-            pk.event = EntityEventPacket.FISH_HOOK_TEASE;
-            Server.broadcastPacket(this.level.getPlayers().values(), pk);
+            EntityEventPacket packet = new EntityEventPacket();
+            packet.setRuntimeEntityId(this.getRuntimeId());
+            packet.setType(EntityEventType.FISH_HOOK_LURED);
+            Server.broadcastPacket(this.getViewers(), packet);
         }
         if (!this.closed) {
             this.kill();

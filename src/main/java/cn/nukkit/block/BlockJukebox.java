@@ -1,19 +1,19 @@
 package cn.nukkit.block;
 
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityJukebox;
+import cn.nukkit.blockentity.Jukebox;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.RecordItem;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.blockentity.BlockEntityTypes.JUKEBOX;
 
 /**
  * Created by CreeperFace on 7.8.2017.
@@ -36,12 +36,12 @@ public class BlockJukebox extends BlockSolid implements Faceable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
-        if (!(blockEntity instanceof BlockEntityJukebox)) {
+        BlockEntity blockEntity = this.getLevel().getBlockEntity(this.getPosition());
+        if (!(blockEntity instanceof Jukebox)) {
             blockEntity = this.createBlockEntity();
         }
 
-        BlockEntityJukebox jukebox = (BlockEntityJukebox) blockEntity;
+        Jukebox jukebox = (Jukebox) blockEntity;
         if (jukebox.getRecordItem().getId() != AIR) {
             jukebox.dropItem();
         } else if (item instanceof RecordItem) {
@@ -66,10 +66,10 @@ public class BlockJukebox extends BlockSolid implements Faceable {
     @Override
     public boolean onBreak(Item item) {
         if (super.onBreak(item)) {
-            BlockEntity blockEntity = this.level.getBlockEntity(this);
+            BlockEntity blockEntity = this.level.getBlockEntity(this.getPosition());
 
-            if (blockEntity instanceof BlockEntityJukebox) {
-                ((BlockEntityJukebox) blockEntity).dropItem();
+            if (blockEntity instanceof Jukebox) {
+                ((Jukebox) blockEntity).dropItem();
             }
             return true;
         }
@@ -78,19 +78,12 @@ public class BlockJukebox extends BlockSolid implements Faceable {
     }
 
     private BlockEntity createBlockEntity() {
-        CompoundTag nbt = new CompoundTag()
-                .putList(new ListTag<>("Items"))
-                .putString("id", BlockEntity.JUKEBOX)
-                .putInt("x", getX())
-                .putInt("y", getY())
-                .putInt("z", getZ());
-
-        return BlockEntity.createBlockEntity(BlockEntity.JUKEBOX, this.level.getChunk(getChunkX(), getChunkZ()), nbt);
+        return BlockEntityRegistry.get().newEntity(JUKEBOX, this.getChunk(), this.getPosition());
     }
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
     }
 
     @Override

@@ -2,8 +2,8 @@ package cn.nukkit.player;
 
 import cn.nukkit.Server;
 import cn.nukkit.metadata.MetadataValue;
-import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.plugin.Plugin;
+import com.nukkitx.nbt.tag.CompoundTag;
 
 import java.util.List;
 import java.util.UUID;
@@ -51,16 +51,18 @@ public class OfflinePlayer implements IPlayer {
             throw new IllegalArgumentException("Name and UUID cannot both be null");
         }
         if (nbt == null) {
-            nbt = new CompoundTag();
+            nbt = CompoundTag.EMPTY;
         }
-        this.namedTag = nbt;
 
         if (uuid != null) {
-            this.namedTag.putLong("UUIDMost", uuid.getMostSignificantBits());
-            this.namedTag.putLong("UUIDLeast", uuid.getLeastSignificantBits());
+            nbt = nbt.toBuilder()
+                    .longTag("UUIDMost", uuid.getMostSignificantBits())
+                    .longTag("UUIDLeast", uuid.getLeastSignificantBits())
+                    .buildRootTag();
         } else {
-            this.namedTag.putString("NameTag", name);
+            nbt = nbt.toBuilder().stringTag("NameTag", name).buildRootTag();
         }
+        this.namedTag = nbt;
     }
 
     @Override

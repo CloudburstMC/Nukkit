@@ -21,12 +21,12 @@ public class BlockBricksStone extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
-        return 1.5;
+    public float getHardness() {
+        return 1.5f;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 30;
     }
 
@@ -34,7 +34,7 @@ public class BlockBricksStone extends BlockSolid {
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
-                    Item.get(STONEBRICK, this.getDamage() & 0x03, 1)
+                    Item.get(STONEBRICK, this.getMeta() & 0x03, 1)
             };
         } else {
             return new Item[0];

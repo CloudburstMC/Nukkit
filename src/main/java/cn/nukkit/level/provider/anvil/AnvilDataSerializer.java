@@ -5,18 +5,18 @@ import cn.nukkit.level.LevelData;
 import cn.nukkit.level.gamerule.GameRule;
 import cn.nukkit.level.gamerule.GameRuleMap;
 import cn.nukkit.level.provider.LevelDataSerializer;
-import cn.nukkit.math.Vector3i;
-import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.registry.GameRuleRegistry;
 import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.LoadState;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.nukkitx.math.vector.Vector3i;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.NbtUtils;
+import com.nukkitx.nbt.stream.NBTInputStream;
+import com.nukkitx.nbt.stream.NBTOutputStream;
+import com.nukkitx.nbt.tag.CompoundTag;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -59,86 +59,83 @@ public class AnvilDataSerializer implements LevelDataSerializer {
     }
 
     private void saveData(LevelData data, Path levelDatPath) throws IOException {
-        CompoundTag tag = new CompoundTag()
-                .putString("LevelName", data.getName())
-                .putString("generatorOptions", data.getGeneratorOptions())
-                .putString("generatorName", data.getGenerator().toString())
-                .putInt("thunderTime", data.getLightningTime())
-                .putInt("Difficulty", data.getDifficulty())
-                .putInt("GameType", data.getGameType())
-                .putInt("serverChunkTickRange", data.getServerChunkTickRange())
-                .putInt("NetherScale", data.getNetherScale())
-                .putLong("currentTick", data.getCurrentTick())
-                .putLong("LastPlayed", data.getLastPlayed())
-                .putLong("RandomSeed", data.getRandomSeed())
-                .putLong("Time", data.getTime())
-                .putInt("SpawnX", data.getSpawn().getX())
-                .putInt("SpawnY", data.getSpawn().getY())
-                .putInt("SpawnZ", data.getSpawn().getZ())
-                .putInt("Dimension", data.getDimension())
-                .putInt("rainTime", data.getRainTime())
-                .putFloat("rainLevel", data.getRainLevel())
-                .putFloat("thunderLevel", data.getLightningLevel())
-                .putBoolean("hardcore", data.isHardcore());
+        CompoundTagBuilder tag = CompoundTag.builder()
+                .stringTag("LevelName", data.getName())
+                .stringTag("generatorOptions", Nukkit.JSON_MAPPER.writeValueAsString(data.getGeneratorOptions()))
+                .stringTag("generatorName", data.getGenerator().toString())
+                .intTag("thunderTime", data.getLightningTime())
+                .intTag("Difficulty", data.getDifficulty())
+                .intTag("GameType", data.getGameType())
+                .intTag("serverChunkTickRange", data.getServerChunkTickRange())
+                .intTag("NetherScale", data.getNetherScale())
+                .longTag("currentTick", data.getCurrentTick())
+                .longTag("LastPlayed", data.getLastPlayed())
+                .longTag("RandomSeed", data.getRandomSeed())
+                .longTag("Time", data.getTime())
+                .intTag("SpawnX", data.getSpawn().getX())
+                .intTag("SpawnY", data.getSpawn().getY())
+                .intTag("SpawnZ", data.getSpawn().getZ())
+                .intTag("Dimension", data.getDimension())
+                .intTag("rainTime", data.getRainTime())
+                .floatTag("rainLevel", data.getRainLevel())
+                .floatTag("thunderLevel", data.getLightningLevel())
+                .booleanTag("hardcore", data.isHardcore());
 
-        // Gamerules - No idea why these aren't in a separate tag
+        CompoundTagBuilder gameRulesTag = CompoundTag.builder();
         GameRuleMap gameRules = data.getGameRules();
         gameRules.forEach((gameRule, o) -> {
-            String name = gameRule.getName().toLowerCase();
-            if (gameRule.getValueClass() == Boolean.class) {
-                tag.putBoolean(name, (boolean) o);
-            } else if (gameRule.getValueClass() == Integer.class) {
-                tag.putInt(name, (int) o);
-            } else if (gameRule.getValueClass() == Boolean.class) {
-                tag.putFloat(name, (float) o);
-            }
+            String name = gameRule.getName();
+            gameRulesTag.stringTag(name, o.toString());
         });
+        tag.tag(gameRulesTag.build("GameRules"));
 
         // Write
-        try (OutputStream stream = Files.newOutputStream(levelDatPath)) {
-            NBTIO.writeGZIPCompressed(new CompoundTag("").putCompound("Data", tag), stream);
+        try (NBTOutputStream stream = NbtUtils.createWriter(Files.newOutputStream(levelDatPath))) {
+            stream.write(CompoundTag.builder()
+                    .tag(tag.build("Data"))
+                    .buildRootTag());
         }
     }
 
     private void loadData(LevelData data, Path levelDatPath) throws IOException {
         CompoundTag tag;
-        try (InputStream stream = Files.newInputStream(levelDatPath)) {
-            tag = NBTIO.readCompressed(stream);
+        try (NBTInputStream stream = NbtUtils.createReader(Files.newInputStream(levelDatPath))) {
+            tag = (CompoundTag) stream.readTag();
         }
 
-        tag.listenString("LevelName", data::setName);
-        tag.listenString("generatorName", s -> data.setGenerator(Identifier.fromString(s)));
-        tag.listenString("generatorOptions", data::setGeneratorOptions);
-        tag.listenInt("thunderTime", data::setLightningTime);
-        tag.listenInt("Difficulty", data::setDifficulty);
-        tag.listenInt("GameType", data::setGameType);
-        tag.listenInt("serverChunkTickRange", data::setServerChunkTickRange);
-        tag.listenInt("NetherScale", data::setNetherScale);
-        tag.listenLong("currentTick", data::setCurrentTick);
-        tag.listenLong("LastPlayed", data::setLastPlayed);
-        tag.listenLong("RandomSeed", data::setRandomSeed);
-        tag.listenLong("Time", data::setTime);
+        tag.listenForString("LevelName", data::setName);
+        tag.listenForString("generatorName", s -> data.setGenerator(Identifier.fromString(s)));
+        tag.listenForString("generatorOptions", data::setGeneratorOptions);
+        tag.listenForInt("thunderTime", data::setLightningTime);
+        tag.listenForInt("Difficulty", data::setDifficulty);
+        tag.listenForInt("GameType", data::setGameType);
+        tag.listenForInt("serverChunkTickRange", data::setServerChunkTickRange);
+        tag.listenForInt("NetherScale", data::setNetherScale);
+        tag.listenForLong("currentTick", data::setCurrentTick);
+        tag.listenForLong("LastPlayed", data::setLastPlayed);
+        tag.listenForLong("RandomSeed", data::setRandomSeed);
+        tag.listenForLong("Time", data::setTime);
         if (tag.contains("SpawnX") && tag.contains("SpawnY") && tag.contains("SpawnZ")) {
             int x = tag.getInt("SpawnX");
             int y = tag.getInt("SpawnY");
             int z = tag.getInt("SpawnZ");
-            data.setSpawn(new Vector3i(x, y, z));
+            data.setSpawn(Vector3i.from(x, y, z));
         }
-        tag.listenInt("Dimension", data::setDimension);
-        tag.listenInt("rainTime", data::setRainTime);
-        tag.listenFloat("rainLevel", data::setRainLevel);
-        tag.listenFloat("thunderLevel", data::setLightningLevel);
-        tag.listenBoolean("hardcore", data::setHardcore);
+        tag.listenForInt("Dimension", data::setDimension);
+        tag.listenForInt("rainTime", data::setRainTime);
+        tag.listenForFloat("rainLevel", data::setRainLevel);
+        tag.listenForFloat("thunderLevel", data::setLightningLevel);
+        tag.listenForBoolean("hardcore", data::setHardcore);
 
-        Map<String, Object> tagMap = tag.parseValue();
+        CompoundTag gameRulesTag = tag.getCompound("GameRules");
         GameRuleRegistry.get().getRules().forEach(rule -> {
-            Object value = tagMap.get(rule.getName().toLowerCase());
-            if (value instanceof Byte) {
-                data.getGameRules().put((GameRule<Boolean>) rule, (byte) value != 0);
-            } else if (value instanceof Integer) {
-                data.getGameRules().put((GameRule<Integer>) rule, (int) value);
-            } else if (value instanceof Float) {
-                data.getGameRules().put((GameRule<Float>) rule, (float) value);
+            String value = gameRulesTag.getString(rule.getName());
+            if (rule.getValueClass() == Boolean.class) {
+                data.getGameRules().put((GameRule<Boolean>) rule, Boolean.valueOf(value));
+            } else if (rule.getValueClass() == Integer.class) {
+                data.getGameRules().put((GameRule<Integer>) rule, Integer.valueOf(value));
+            } else if (rule.getValueClass() == Float.class) {
+                data.getGameRules().put((GameRule<Float>) rule, Float.valueOf(value));
             }
         });
     }

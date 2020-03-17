@@ -4,10 +4,10 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import java.util.Random;
 
@@ -33,7 +33,7 @@ public class BlockDeadBush extends FloodableBlock {
         Block down = this.down();
         if (down.getId() == SAND || down.getId() == HARDENED_CLAY || down.getId() == STAINED_HARDENED_CLAY ||
                 down.getId() == DIRT || down.getId() == PODZOL) {
-            this.getLevel().setBlock(block, this, true, true);
+            this.getLevel().setBlock(block.getPosition(), this, true, true);
             return true;
         }
         return false;
@@ -44,7 +44,7 @@ public class BlockDeadBush extends FloodableBlock {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (this.down().isTransparent()) {
-                this.getLevel().useBreakOn(this);
+                this.getLevel().useBreakOn(this.getPosition());
 
                 return Level.BLOCK_UPDATE_NORMAL;
             }

@@ -2,11 +2,11 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * Created on 2015/11/24 by xtypr.
@@ -18,13 +18,13 @@ public class BlockHayBale extends BlockSolid implements Faceable {
     }
 
     @Override
-    public double getHardness() {
-        return 0.5;
+    public float getHardness() {
+        return 0.5f;
     }
 
     @Override
-    public double getResistance() {
-        return 2.5;
+    public float getResistance() {
+        return 2.5f;
     }
 
     @Override
@@ -47,8 +47,8 @@ public class BlockHayBale extends BlockSolid implements Faceable {
                 0b0100,
                 0b0100,
         };
-        this.setDamage((this.getDamage() & 0x03) | faces[face.getIndex()]);
-        this.getLevel().setBlock(block, this, true, true);
+        this.setMeta((this.getMeta() & 0x03) | faces[face.getIndex()]);
+        this.getLevel().setBlock(block.getPosition(), this, true, true);
 
         return true;
     }
@@ -60,6 +60,6 @@ public class BlockHayBale extends BlockSolid implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
     }
 }

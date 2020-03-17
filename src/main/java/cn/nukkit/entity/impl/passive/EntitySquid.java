@@ -4,8 +4,7 @@ import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.passive.Squid;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 import cn.nukkit.utils.DyeColor;
 
 /**
@@ -15,8 +14,8 @@ public class EntitySquid extends EntityWaterAnimal implements Squid {
 
     public static final int NETWORK_ID = 17;
 
-    public EntitySquid(EntityType<Squid> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntitySquid(EntityType<Squid> type, Location location) {
+        super(type, location);
     }
 
     @Override

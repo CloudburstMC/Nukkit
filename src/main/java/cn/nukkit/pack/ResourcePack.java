@@ -1,7 +1,7 @@
 package cn.nukkit.pack;
 
-import cn.nukkit.network.protocol.ResourcePackDataInfoPacket;
 import cn.nukkit.pack.loader.PackLoader;
+import com.nukkitx.protocol.bedrock.packet.ResourcePackDataInfoPacket;
 
 public class ResourcePack extends Pack {
     public static final Pack.Factory FACTORY = ResourcePack::new;
@@ -11,8 +11,8 @@ public class ResourcePack extends Pack {
     }
 
     @Override
-    public int getType() {
-        return ResourcePackDataInfoPacket.TYPE_RESOURCE;
+    public ResourcePackDataInfoPacket.Type getType() {
+        return ResourcePackDataInfoPacket.Type.RESOURCE;
     }
 
     @Override

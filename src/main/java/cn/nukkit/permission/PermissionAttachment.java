@@ -81,11 +81,11 @@ public class PermissionAttachment {
         this.permissible.recalculatePermissions();
     }
 
-    public void unsetPermission(Permission permission, boolean value) {
-        this.unsetPermission(permission.getName(), value);
+    public void unsetPermission(Permission permission) {
+        this.unsetPermission(permission.getName());
     }
 
-    public void unsetPermission(String name, boolean value) {
+    public void unsetPermission(String name) {
         if (this.permissions.containsKey(name)) {
             this.permissions.remove(name);
             this.permissible.recalculatePermissions();

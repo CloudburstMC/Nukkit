@@ -33,11 +33,14 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 @Log4j2
 @ParametersAreNonnullByDefault
 public final class LevelChunkManager {
     private static final CompletableFuture<Void> COMPLETED_VOID_FUTURE = CompletableFuture.completedFuture(null);
+    private static final AtomicIntegerFieldUpdater<LoadingChunk> GENERATION_RUNNING_UPDATER = AtomicIntegerFieldUpdater.newUpdater(LoadingChunk.class, "generationRunning");
+    private static final AtomicIntegerFieldUpdater<LoadingChunk> POPULATION_RUNNING_UPDATER = AtomicIntegerFieldUpdater.newUpdater(LoadingChunk.class, "populationRunning");
 
     private final Level level;
     private final LevelProvider provider;
@@ -282,6 +285,10 @@ public final class LevelChunkManager {
     }
 
     public synchronized void tick() {
+        if (this.chunks.isEmpty()) {
+            return;
+        }
+
         long time = System.currentTimeMillis();
 
         // Spawn chunk
@@ -303,7 +310,7 @@ public final class LevelChunkManager {
                     continue; // Chunk hasn't loaded
                 }
 
-                if (Math.abs(chunk.getX() - spawnX) <= spawnRadius || Math.abs(chunk.getZ() - spawnZ) <= spawnRadius ||
+                if ((Math.abs(chunk.getX() - spawnX) <= spawnRadius && Math.abs(chunk.getZ() - spawnZ) <= spawnRadius) ||
                         !chunk.getLoaders().isEmpty()) {
                     continue; // Spawn protection or is loaded
                 }
@@ -316,7 +323,7 @@ public final class LevelChunkManager {
 
                 long lastAccessTime = this.chunkLastAccessTimes.get(chunkKey);
                 if ((time - lastAccessTime) <= TimeUnit.SECONDS.toMillis(
-                        config.getInt("level-settings. chunk-timeout-after-last-access", 120))) {
+                        config.getInt("level-settings.chunk-timeout-after-last-access", 120))) {
                     continue;
                 }
 
@@ -333,11 +340,13 @@ public final class LevelChunkManager {
 
     @ToString
     private class LoadingChunk {
+
         private final int x;
         private final int z;
         private CompletableFuture<Chunk> future;
-        private volatile boolean generated;
-        private volatile boolean populated;
+        volatile int generationRunning;
+        volatile int populationRunning;
+        private Chunk chunk;
         private volatile boolean populatedAround;
 
         public LoadingChunk(long key, boolean load) {
@@ -370,6 +379,7 @@ public final class LevelChunkManager {
             } else {
                 this.future = CompletableFuture.completedFuture(new Chunk(x, z, LevelChunkManager.this.level));
             }
+            this.future.whenComplete((chunk, throwable) -> this.chunk = chunk);
         }
 
         public CompletableFuture<Chunk> getFuture() {
@@ -378,47 +388,35 @@ public final class LevelChunkManager {
 
         @Nullable
         private Chunk getChunk() {
-            return future.getNow(null);
+            if (this.chunk != null && this.chunk.isGenerated() && this.chunk.isPopulated() && this.populatedAround) {
+                return this.chunk;
+            }
+            return null;
         }
 
         private void generate() {
-            if (this.generated) {
-                Chunk chunk = this.getChunk();
-                if (chunk == null || chunk.isGenerated()) {
-                    return;
-                }
+            if ((this.chunk == null || !this.chunk.isGenerated()) && GENERATION_RUNNING_UPDATER.compareAndSet(this, 0, 1)) {
+                future = future.thenApplyAsync(GenerationTask.INSTANCE, LevelChunkManager.this.executor);
+                future.whenComplete((chunk, throwable) -> GENERATION_RUNNING_UPDATER.compareAndSet(this, 1, 0));
             }
-            this.generated = true;
-
-            this.future = this.future.thenApplyAsync(GenerationTask.INSTANCE, LevelChunkManager.this.executor);
         }
 
         private void populate() {
-            this.generate(); // Generation has to happen before population
-
-            if (this.populated) {
-                Chunk chunk = this.getChunk();
-                if (chunk == null || chunk.isPopulated()) {
-                    return;
-                }
-            }
-            this.populated = true;
-
-            List<CompletableFuture<Chunk>> generationChunkFutures = new ArrayList<>(8);
-            for (int x = -1; x <= 1; x++)   {
-                for (int z = -1; z <= 1; z++)   {
-                    if (x == 0 && z == 0)   {
-                        continue;
+            this.generate();
+            if ((this.chunk == null || !this.chunk.isPopulated()) && POPULATION_RUNNING_UPDATER.compareAndSet(this, 0, 1)) {
+                // Load and generate chunks around the chunk to be populated.
+                List<CompletableFuture<Chunk>> chunksToLoad = new ArrayList<>(8);
+                for (int z = this.z - 1, maxZ = this.z + 1; z <= maxZ; z++) {
+                    for (int x = this.x - 1, maxX = this.x + 1; x <= maxX; x++) {
+                        if (x == this.x && z == this.z) continue;
+                        chunksToLoad.add(LevelChunkManager.this.getChunkFuture(x, z, true, false, false));
                     }
-
-                    generationChunkFutures.add(LevelChunkManager.this.getChunkFuture(this.x + x, this.z + z, true, false, false));
                 }
-            }
+                CompletableFuture<List<Chunk>> aroundFuture = CompletableFutures.allAsList(chunksToLoad);
 
-            this.future = this.future.thenCombineAsync(
-                    CompletableFutures.allAsList(generationChunkFutures),
-                    PopulationTask.INSTANCE,
-                    LevelChunkManager.this.executor);
+                future = future.thenCombineAsync(aroundFuture, LevelChunkManager.this.chunkPopulateFunction, LevelChunkManager.this.executor);
+                future.whenComplete((chunk, throwable) -> POPULATION_RUNNING_UPDATER.compareAndSet(this, 1, 0));
+            }
         }
 
         private void populateAround()   {
@@ -453,10 +451,11 @@ public final class LevelChunkManager {
         }
 
         private void clear() {
-            this.generated = false;
-            this.populated = false;
             this.future = future.thenApply(chunk -> {
                 chunk.clear();
+                GENERATION_RUNNING_UPDATER.set(this, 0);
+                POPULATION_RUNNING_UPDATER.set(this, 0);
+                this.populatedAround = false;
                 return chunk;
             });
         }

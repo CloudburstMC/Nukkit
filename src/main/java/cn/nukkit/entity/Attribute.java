@@ -172,4 +172,8 @@ public class Attribute implements Cloneable {
             return null;
         }
     }
+
+    public com.nukkitx.protocol.bedrock.data.Attribute toNetwork() {
+        return new com.nukkitx.protocol.bedrock.data.Attribute(name, minValue, maxValue, currentValue, defaultValue);
+    }
 }

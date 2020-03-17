@@ -3,16 +3,15 @@ package cn.nukkit.entity.impl.hostile;
 import cn.nukkit.entity.Arthropod;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.hostile.CaveSpider;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 /**
  * @author PikyCZ
  */
 public class EntityCaveSpider extends EntityHostile implements CaveSpider, Arthropod {
 
-    public EntityCaveSpider(EntityType<CaveSpider> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityCaveSpider(EntityType<CaveSpider> type, Location location) {
+        super(type, location);
     }
 
     @Override

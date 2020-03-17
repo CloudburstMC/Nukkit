@@ -8,8 +8,8 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
-import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
@@ -22,11 +22,11 @@ import java.util.StringJoiner;
 public class KillCommand extends VanillaCommand {
 
     public KillCommand(String name) {
-        super(name, "%nukkit.command.kill.description", "%nukkit.command.kill.usage", new String[]{"suicide"});
+        super(name, "commands.kill.description", "commands.kill.usage", new String[]{"suicide"});
         this.setPermission("nukkit.command.kill.self;"
                 + "nukkit.command.kill.other");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, true)
         });
     }

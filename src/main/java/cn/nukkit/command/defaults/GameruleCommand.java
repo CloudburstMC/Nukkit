@@ -3,9 +3,9 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.gamerule.GameRule;
 import cn.nukkit.level.gamerule.GameRuleMap;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.registry.GameRuleRegistry;
 
@@ -16,10 +16,10 @@ public class GameruleCommand extends VanillaCommand {
     private static final GameRuleRegistry registry = GameRuleRegistry.get();
 
     public GameruleCommand(String name) {
-        super(name, "%nukkit.command.gamerule.description", "%nukkit.command.gamerule.usage");
+        super(name, "commands.gamerule.description", "commands.gamerule.usage");
         this.setPermission("nukkit.command.gamerule");
         this.commandParameters.clear();
-        this.commandParameters.put("byString", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("gamerule", true, registry.getRuleNames().toArray(new String[0])),
                 new CommandParameter("value", CommandParamType.STRING, true)
         });

@@ -1,5 +1,7 @@
 package cn.nukkit.math;
 
+import com.nukkitx.math.vector.Vector3f;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -48,4 +50,72 @@ public class NukkitMath {
         return diffX > diffZ ? diffX : diffZ;
     }
 
+    /**
+     * Returns a new vector with x value equal to the second parameter, along the line between this vector and the
+     * passed in vector, or null if not possible.
+     *
+     * @param v2 vector
+     * @param x  x value
+     * @return intermediate vector
+     */
+    public static Vector3f getIntermediateWithXValue(Vector3f v, Vector3f v2, float x) {
+        float xDiff = v2.getX() - v.getX();
+        float yDiff = v2.getY() - v.getY();
+        float zDiff = v2.getZ() - v.getZ();
+        if (xDiff * xDiff < 0.0000001) {
+            return null;
+        }
+        float f = (x - v.getX()) / xDiff;
+        if (f < 0 || f > 1) {
+            return null;
+        } else {
+            return Vector3f.from(v.getX() + xDiff * f, v.getY() + yDiff * f, v.getZ() + zDiff * f);
+        }
+    }
+
+    /**
+     * Returns a new vector with y value equal to the second parameter, along the line between this vector and the
+     * passed in vector, or null if not possible.
+     *
+     * @param v2 vector
+     * @param y  y value
+     * @return intermediate vector
+     */
+    public static Vector3f getIntermediateWithYValue(Vector3f v, Vector3f v2, float y) {
+        float xDiff = v2.getX() - v.getX();
+        float yDiff = v2.getY() - v.getY();
+        float zDiff = v2.getZ() - v.getZ();
+        if (yDiff * yDiff < 0.0000001) {
+            return null;
+        }
+        float f = (y - v.getY()) / yDiff;
+        if (f < 0 || f > 1) {
+            return null;
+        } else {
+            return Vector3f.from(v.getX() + xDiff * f, v.getY() + yDiff * f, v.getZ() + zDiff * f);
+        }
+    }
+
+    /**
+     * Returns a new vector with z value equal to the second parameter, along the line between this vector and the
+     * passed in vector, or null if not possible.
+     *
+     * @param v2 vector
+     * @param z  z value
+     * @return intermediate vector
+     */
+    public static Vector3f getIntermediateWithZValue(Vector3f v, Vector3f v2, float z) {
+        float xDiff = v2.getX() - v.getX();
+        float yDiff = v2.getY() - v.getY();
+        float zDiff = v2.getZ() - v.getZ();
+        if (zDiff * zDiff < 0.0000001) {
+            return null;
+        }
+        float f = (z - v.getZ()) / zDiff;
+        if (f < 0 || f > 1) {
+            return null;
+        } else {
+            return Vector3f.from(v.getX() + xDiff * f, v.getY() + yDiff * f, v.getZ() + zDiff * f);
+        }
+    }
 }

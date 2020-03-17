@@ -6,11 +6,11 @@ import cn.nukkit.inventory.CraftingRecipe;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
-import cn.nukkit.network.protocol.ContainerClosePacket;
-import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.player.Player;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.protocol.bedrock.data.ContainerId;
+import com.nukkitx.protocol.bedrock.packet.ContainerClosePacket;
 
 import java.util.Arrays;
 import java.util.List;
@@ -150,18 +150,18 @@ public class CraftingTransaction extends InventoryTransaction {
     protected void sendInventories() {
         super.sendInventories();
 
-		/*
+        /*
          * TODO: HACK!
-		 * we can't resend the contents of the crafting window, so we force the client to close it instead.
-		 * So people don't whine about messy desync issues when someone cancels CraftItemEvent, or when a crafting
-		 * transaction goes wrong.
-		 */
-        ContainerClosePacket pk = new ContainerClosePacket();
-        pk.windowId = ContainerIds.NONE;
+         * we can't resend the contents of the crafting window, so we force the client to close it instead.
+         * So people don't whine about messy desync issues when someone cancels CraftItemEvent, or when a crafting
+         * transaction goes wrong.
+         */
+        ContainerClosePacket packet = new ContainerClosePacket();
+        packet.setWindowId((byte) ContainerId.NONE);
         source.getServer().getScheduler().scheduleDelayedTask(new Task() {
             @Override
             public void onRun(int currentTick) {
-                source.dataPacket(pk);
+                source.sendPacket(packet);
             }
         }, 20);
 

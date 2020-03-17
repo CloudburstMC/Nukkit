@@ -1,18 +1,20 @@
 package cn.nukkit.block;
 
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityMusic;
+import cn.nukkit.blockentity.BlockEntityTypes;
+import cn.nukkit.blockentity.Noteblock;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.network.protocol.BlockEventPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
+import com.nukkitx.protocol.bedrock.packet.BlockEventPacket;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -157,13 +159,13 @@ public class BlockNoteblock extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
-        return 0.8D;
+    public float getHardness() {
+        return 0.8f;
     }
 
     @Override
-    public double getResistance() {
-        return 4D;
+    public float getResistance() {
+        return 4f;
     }
 
     @Override
@@ -173,19 +175,19 @@ public class BlockNoteblock extends BlockSolid {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        this.getLevel().setBlock(block, this, true);
+        this.getLevel().setBlock(block.getPosition(), this, true);
         return this.createBlockEntity() != null;
     }
 
     public int getStrength() {
-        BlockEntityMusic blockEntity = this.getBlockEntity();
-        return blockEntity != null ? blockEntity.getPitch() : 0;
+        Noteblock blockEntity = this.getBlockEntity();
+        return blockEntity != null ? blockEntity.getNote() : 0;
     }
 
     public void increaseStrength() {
-        BlockEntityMusic blockEntity = this.getBlockEntity();
+        Noteblock blockEntity = this.getBlockEntity();
         if (blockEntity != null) {
-            blockEntity.changePitch();
+            blockEntity.changeNote();
         }
     }
 
@@ -198,15 +200,13 @@ public class BlockNoteblock extends BlockSolid {
 
         Instrument instrument = this.getInstrument();
 
-        this.level.addLevelSoundEvent(this.asVector3f(), LevelSoundEventPacket.SOUND_NOTE, instrument.ordinal() << 8 | this.getStrength());
+        this.level.addLevelSoundEvent(this.getPosition(), SoundEvent.NOTE, instrument.ordinal() << 8 | this.getStrength());
 
         BlockEventPacket pk = new BlockEventPacket();
-        pk.x = this.getX();
-        pk.y = this.getY();
-        pk.z = this.getZ();
-        pk.case1 = instrument.ordinal();
-        pk.case2 = this.getStrength();
-        this.getLevel().addChunkPacket(this.getChunkX(), this.getChunkZ(), pk);
+        pk.setBlockPosition(this.getPosition());
+        pk.setEventType(instrument.ordinal());
+        pk.setEventData(this.getStrength());
+        this.getLevel().addChunkPacket(this.getPosition(), pk);
     }
 
     @Override
@@ -219,9 +219,9 @@ public class BlockNoteblock extends BlockSolid {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_REDSTONE) {
-            BlockEntityMusic blockEntity = this.getBlockEntity();
+            Noteblock blockEntity = this.getBlockEntity();
             if (blockEntity != null) {
-                if (this.getLevel().isBlockPowered(this)) {
+                if (this.getLevel().isBlockPowered(this.getPosition())) {
                     if (!blockEntity.isPowered()) {
                         this.emitSound();
                     }
@@ -234,17 +234,16 @@ public class BlockNoteblock extends BlockSolid {
         return super.onUpdate(type);
     }
 
-    private BlockEntityMusic getBlockEntity() {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
-        if (blockEntity instanceof BlockEntityMusic) {
-            return (BlockEntityMusic) blockEntity;
+    private Noteblock getBlockEntity() {
+        BlockEntity blockEntity = this.getLevel().getBlockEntity(this.getPosition());
+        if (blockEntity instanceof Noteblock) {
+            return (Noteblock) blockEntity;
         }
         return null;
     }
 
-    private BlockEntityMusic createBlockEntity() {
-        return (BlockEntityMusic) BlockEntity.createBlockEntity(BlockEntity.MUSIC, this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()),
-                BlockEntity.getDefaultCompound(this, BlockEntity.MUSIC));
+    private Noteblock createBlockEntity() {
+        return BlockEntityRegistry.get().newEntity(BlockEntityTypes.NOTEBLOCK, this.getChunk(), this.getPosition());
     }
 
     public enum Instrument {

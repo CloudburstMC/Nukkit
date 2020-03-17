@@ -1,9 +1,10 @@
 package cn.nukkit.level.particle;
 
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.protocol.bedrock.BedrockPacket;
+import com.nukkitx.protocol.bedrock.data.LevelEventType;
+import com.nukkitx.protocol.bedrock.packet.LevelEventPacket;
 
 /**
  * Created on 2015/12/27 by xtypr.
@@ -19,7 +20,7 @@ public class SpellParticle extends Particle {
     }
 
     public SpellParticle(Vector3f pos, int data) {
-        super(pos.x, pos.y, pos.z);
+        super(pos);
         this.data = data;
     }
 
@@ -37,14 +38,12 @@ public class SpellParticle extends Particle {
     }
 
     @Override
-    public DataPacket[] encode() {
-        LevelEventPacket pk = new LevelEventPacket();
-        pk.evid = LevelEventPacket.EVENT_PARTICLE_SPLASH;
-        pk.x = (float) this.x;
-        pk.y = (float) this.y;
-        pk.z = (float) this.z;
-        pk.data = this.data;
+    public BedrockPacket[] encode() {
+        LevelEventPacket packet = new LevelEventPacket();
+        packet.setType(LevelEventType.PARTICLE_SPLASH);
+        packet.setPosition(getPosition());
+        packet.setData(this.data);
 
-        return new DataPacket[]{pk};
+        return new BedrockPacket[]{packet};
     }
 }

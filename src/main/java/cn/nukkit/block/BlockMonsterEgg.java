@@ -16,13 +16,13 @@ public class BlockMonsterEgg extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
-        return 0.75;
+    public float getHardness() {
+        return 0.75f;
     }
 
     @Override
-    public double getResistance() {
-        return 3.75;
+    public float getResistance() {
+        return 3.75f;
     }
 
     @Override

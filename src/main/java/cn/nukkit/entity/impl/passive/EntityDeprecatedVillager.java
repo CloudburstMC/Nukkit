@@ -4,15 +4,14 @@ import cn.nukkit.entity.EntityAgeable;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.impl.EntityCreature;
 import cn.nukkit.entity.passive.DeprecatedVillager;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
-import static cn.nukkit.entity.data.EntityFlag.BABY;
+import static com.nukkitx.protocol.bedrock.data.EntityFlag.BABY;
 
 public class EntityDeprecatedVillager extends EntityCreature implements DeprecatedVillager, EntityAgeable {
 
-    public EntityDeprecatedVillager(EntityType<DeprecatedVillager> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityDeprecatedVillager(EntityType<DeprecatedVillager> type, Location location) {
+        super(type, location);
     }
 
     @Override
@@ -43,11 +42,11 @@ public class EntityDeprecatedVillager extends EntityCreature implements Deprecat
     }
 
     public boolean isBaby() {
-        return this.getFlag(BABY);
+        return this.data.getFlag(BABY);
     }
 
     public void setBaby(boolean baby) {
-        this.setFlag(BABY, baby);
+        this.data.setFlag(BABY, baby);
         this.setScale(baby ? 0.5f : 1);
     }
 }

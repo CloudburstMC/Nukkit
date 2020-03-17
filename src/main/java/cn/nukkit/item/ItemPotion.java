@@ -1,10 +1,10 @@
 package cn.nukkit.item;
 
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import static cn.nukkit.player.Player.SURVIVAL;
 
@@ -69,7 +69,7 @@ public class ItemPotion extends Item {
         if (consumeEvent.isCancelled()) {
             return false;
         }
-        Potion potion = Potion.getPotion(this.getDamage()).setSplash(false);
+        Potion potion = Potion.getPotion(this.getMeta()).setSplash(false);
 
         if (player.getGamemode() == SURVIVAL) {
             this.decrementCount();

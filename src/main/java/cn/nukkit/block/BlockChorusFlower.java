@@ -11,12 +11,12 @@ public class BlockChorusFlower extends BlockTransparent {
     }
 
     @Override
-    public double getHardness() {
-        return 0.4;
+    public float getHardness() {
+        return 0.4f;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 2;
     }
 

@@ -1,11 +1,11 @@
 package cn.nukkit.item;
 
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 public class ItemHoneyBottle extends ItemEdible {
-    public ItemHoneyBottle(Identifier id){
+    public ItemHoneyBottle(Identifier id) {
         super(id);
     }
 

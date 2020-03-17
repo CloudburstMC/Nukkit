@@ -7,6 +7,7 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3i;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -28,13 +29,13 @@ public class BlockMycelium extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
-        return 0.6;
+    public float getHardness() {
+        return 0.6f;
     }
 
     @Override
-    public double getResistance() {
-        return 2.5;
+    public float getResistance() {
+        return 2.5f;
     }
 
     @Override
@@ -48,16 +49,17 @@ public class BlockMycelium extends BlockSolid {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_RANDOM) {
             //TODO: light levels
-            this.x = ThreadLocalRandom.current().nextInt(this.x - 1, this.x + 2);
-            this.y = ThreadLocalRandom.current().nextInt(this.y - 1, this.y + 2);
-            this.z = ThreadLocalRandom.current().nextInt(this.z - 1, this.z + 2);
+            Vector3i pos = this.getPosition();
+            int x = ThreadLocalRandom.current().nextInt(pos.getX() - 1, pos.getX() + 1);
+            int y = ThreadLocalRandom.current().nextInt(pos.getY() - 1, pos.getY() + 1);
+            int z = ThreadLocalRandom.current().nextInt(pos.getZ() - 1, pos.getZ() + 1);
             Block block = this.getLevel().getBlock(x, y, z);
-            if (block.getId() == DIRT && block.getDamage() == 0) {
+            if (block.getId() == DIRT && block.getMeta() == 0) {
                 if (block.up().isTransparent()) {
                     BlockSpreadEvent ev = new BlockSpreadEvent(block, this, Block.get(MYCELIUM));
                     Server.getInstance().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
-                        this.getLevel().setBlock(block, ev.getNewState());
+                        this.getLevel().setBlock(block.getPosition(), ev.getNewState());
                     }
                 }
             }

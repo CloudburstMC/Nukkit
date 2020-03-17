@@ -2,6 +2,8 @@ package cn.nukkit.math;
 
 import net.daporkchop.lib.random.impl.AbstractFastPRandom;
 
+import com.nukkitx.math.vector.Vector3f;
+
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -84,14 +86,14 @@ public class BedrockRandom extends AbstractFastPRandom {
         float x = this.nextFloat();
         float y = this.nextFloat();
         float z = this.nextFloat();
-        return new Vector3f(x, y, z);
+        return Vector3f.from(x, y, z);
     }
 
     public Vector3f nextGaussianVector3() {
         float x = this.nextGaussianFloat();
         float y = this.nextGaussianFloat();
         float z = this.nextGaussianFloat();
-        return new Vector3f(x, y, z);
+        return Vector3f.from(x, y, z);
     }
 
     private void initGenRand(int initialValue) {

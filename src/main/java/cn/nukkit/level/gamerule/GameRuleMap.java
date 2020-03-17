@@ -1,14 +1,16 @@
 package cn.nukkit.level.gamerule;
 
 import com.google.common.base.Preconditions;
+import com.nukkitx.protocol.bedrock.data.GameRuleData;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-public class GameRuleMap implements Iterable<Map.Entry<GameRule, Object>> {
-    private final Map<GameRule, Object> gameRules = new HashMap<>();
+public class GameRuleMap implements Iterable<Map.Entry<GameRule<?>, Object>> {
+    private final Map<GameRule<?>, Object> gameRules = new HashMap<>();
     private volatile boolean dirty;
 
     public GameRuleMap() {
@@ -63,8 +65,14 @@ public class GameRuleMap implements Iterable<Map.Entry<GameRule, Object>> {
     }
 
     @Override
-    public Iterator<Map.Entry<GameRule, Object>> iterator() {
+    public Iterator<Map.Entry<GameRule<?>, Object>> iterator() {
         return this.gameRules.entrySet().iterator();
+    }
+
+    public void toNetwork(List<GameRuleData<?>> networkRules) {
+        gameRules.forEach((gameRule, o) -> {
+            networkRules.add(new GameRuleData<>(gameRule.getName(), o));
+        });
     }
 
     @Override

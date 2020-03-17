@@ -3,13 +3,12 @@ package cn.nukkit.entity.impl.hostile;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.Smiteable;
 import cn.nukkit.entity.hostile.DeprecatedZombieVillager;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 public class EntityDeprecatedZombieVillager extends EntityHostile implements DeprecatedZombieVillager, Smiteable {
 
-    public EntityDeprecatedZombieVillager(EntityType<DeprecatedZombieVillager> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityDeprecatedZombieVillager(EntityType<DeprecatedZombieVillager> type, Location location) {
+        super(type, location);
     }
 
     @Override

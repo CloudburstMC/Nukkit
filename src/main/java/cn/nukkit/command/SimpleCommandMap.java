@@ -4,7 +4,7 @@ import cn.nukkit.Server;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.command.defaults.*;
 import cn.nukkit.command.simple.*;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Utils;
@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @Log4j2
 public class SimpleCommandMap implements CommandMap {
     protected final Map<String, Command> knownCommands = new HashMap<>();
+    protected final Map<String, Command> registeredCommands = new HashMap<>();
 
     private final Server server;
 
@@ -74,7 +75,7 @@ public class SimpleCommandMap implements CommandMap {
         this.register("nukkit", new GarbageCollectorCommand("gc"));
         this.register("nukkit", new TimingsCommand("timings"));
         this.register("nukkit", new DebugPasteCommand("debugpaste"));
-        //this.register("nukkit", new DumpMemoryCommand("dumpmemory"));
+//        this.register("nukkit", new DumpMemoryCommand("dumpmemory"));
 //        }
 
         //porktodo: remove this
@@ -111,6 +112,8 @@ public class SimpleCommandMap implements CommandMap {
 
         if (!registered) {
             command.setLabel(fallbackPrefix + ":" + label);
+        } else {
+            this.registeredCommands.put(label, command);
         }
 
         command.register(this);
@@ -142,13 +145,13 @@ public class SimpleCommandMap implements CommandMap {
 
                 CommandParameters commandParameters = method.getAnnotation(CommandParameters.class);
                 if (commandParameters != null) {
-                    Map<String, CommandParameter[]> map = Arrays.stream(commandParameters.parameters())
+                    Collection<CommandParameter[]> map = Arrays.stream(commandParameters.parameters())
                             .collect(Collectors.toMap(Parameters::name, parameters -> Arrays.stream(parameters.parameters())
                                     .map(parameter -> new CommandParameter(parameter.name(), parameter.type(), parameter.optional()))
                                     .distinct()
-                                    .toArray(CommandParameter[]::new)));
+                                    .toArray(CommandParameter[]::new))).values();
 
-                    sc.commandParameters.putAll(map);
+                    sc.commandParameters.addAll(map);
                 }
 
                 this.register(def.name(), sc);
@@ -257,7 +260,7 @@ public class SimpleCommandMap implements CommandMap {
             target.execute(sender, sentCommandLabel, args);
         } catch (Exception e) {
             sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.exception"));
-            log.error(this.server.getLanguage().translateString("nukkit.command.exception", cmdLine,
+            log.error(this.server.getLanguage().translate("nukkit.command.exception", cmdLine,
                     target.toString(), Utils.getExceptionMessage(e)));
         }
         target.timing.stopTiming();
@@ -271,6 +274,7 @@ public class SimpleCommandMap implements CommandMap {
             command.unregister(this);
         }
         this.knownCommands.clear();
+        this.registeredCommands.clear();
         this.setDefaultCommands();
     }
 
@@ -286,13 +290,17 @@ public class SimpleCommandMap implements CommandMap {
         return knownCommands;
     }
 
+    public Collection<Command> getRegisteredCommands() {
+        return registeredCommands.values();
+    }
+
     public void registerServerAliases() {
         Map<String, List<String>> values = this.server.getCommandAliases();
         for (Map.Entry<String, List<String>> entry : values.entrySet()) {
             String alias = entry.getKey();
             List<String> commandStrings = entry.getValue();
             if (alias.contains(" ") || alias.contains(":")) {
-                log.warn(this.server.getLanguage().translateString("nukkit.command.alias.illegal", alias));
+                log.warn(this.server.getLanguage().translate("nukkit.command.alias.illegal", alias));
                 continue;
             }
             List<String> targets = new ArrayList<>();
@@ -314,8 +322,7 @@ public class SimpleCommandMap implements CommandMap {
             }
 
             if (bad.length() > 0) {
-                log.warn(this.server.getLanguage().translateString("nukkit.command.alias.notFound",
-                        new String[]{alias, bad}));
+                log.warn(this.server.getLanguage().translate("nukkit.command.alias.notFound", alias, bad));
                 continue;
             }
 

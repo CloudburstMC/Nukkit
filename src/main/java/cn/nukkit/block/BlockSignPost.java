@@ -1,21 +1,20 @@
 package cn.nukkit.block;
 
-import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntitySign;
+import cn.nukkit.blockentity.Sign;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
-import static cn.nukkit.block.BlockIds.*;
+import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.blockentity.BlockEntityTypes.SIGN;
 
 /**
  * @author Nukkit Project Team
@@ -38,12 +37,12 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 1;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 5;
     }
 
@@ -57,49 +56,15 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
         return null;
     }
 
-    @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        if (face != BlockFace.DOWN) {
-            CompoundTag nbt = new CompoundTag()
-                    .putString("id", BlockEntity.SIGN)
-                    .putInt("x", block.x)
-                    .putInt("y", block.y)
-                    .putInt("z", block.z)
-                    .putString("Text1", "")
-                    .putString("Text2", "")
-                    .putString("Text3", "")
-                    .putString("Text4", "");
-
-            if (face == BlockFace.UP) {
-                setDamage((int) Math.floor(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f);
-                getLevel().setBlock(block, Block.get(signStandingId, getDamage()), true);
-            } else {
-                setDamage(face.getIndex());
-                getLevel().setBlock(block, Block.get(signWallId, getDamage()), true);
-            }
-
-            if (player != null) {
-                nbt.putString("Creator", player.getServerId().toString());
-            }
-
-            if (item.hasCustomBlockData()) {
-                for (Tag aTag : item.getCustomBlockData().getAllTags()) {
-                    nbt.put(aTag.getName(), aTag);
-                }
-            }
-
-            BlockEntitySign sign = (BlockEntitySign) BlockEntity.createBlockEntity(BlockEntity.SIGN, getLevel().getChunk(block.getChunkX(), block.getChunkZ()), nbt);
-            return sign != null;
-        }
-
-        return false;
+    public static BlockFactory factory(Identifier signWallId, Identifier signItemId) {
+        return signStandingId -> new BlockSignPost(signStandingId, signWallId, signItemId);
     }
 
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (down().getId() == AIR) {
-                getLevel().useBreakOn(this);
+                getLevel().useBreakOn(this.getPosition());
 
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -109,8 +74,27 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
     }
 
     @Override
-    public Item toItem() {
-        return Item.get(signItemId);
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        if (face != BlockFace.DOWN) {
+            if (face == BlockFace.UP) {
+                setMeta((int) Math.floor(((player.getYaw() + 180) * 16 / 360) + 0.5) & 0x0f);
+                getLevel().setBlock(block.getPosition(), Block.get(signStandingId, getMeta()), true);
+            } else {
+                setMeta(face.getIndex());
+                getLevel().setBlock(block.getPosition(), Block.get(signWallId, getMeta()), true);
+            }
+
+            Sign sign = BlockEntityRegistry.get().newEntity(SIGN, this.getChunk(), this.getPosition());
+            if (!item.hasCompoundTag()) {
+                sign.setTextOwner(player.getXuid());
+            } else {
+                sign.loadAdditionalData(item.getTag());
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -125,7 +109,12 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromIndex(this.getDamage() & 0x07);
+        return BlockFace.fromIndex(this.getMeta() & 0x07);
+    }
+
+    @Override
+    public Item toItem() {
+        return Item.get(signItemId);
     }
 
     public Identifier getSignItemId() {
@@ -143,9 +132,5 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
     @Override
     public boolean canWaterlogSource() {
         return true;
-    }
-
-    public static BlockFactory factory(Identifier signWallId, Identifier signItemId) {
-        return signStandingId -> new BlockSignPost(signStandingId, signWallId, signItemId);
     }
 }

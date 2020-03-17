@@ -9,15 +9,17 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.ProjectileHitEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemUtils;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.MovingObjectPosition;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.tag.CompoundTag;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import static cn.nukkit.entity.data.EntityFlag.CRITICAL;
+import static cn.nukkit.block.BlockIds.AIR;
+import static com.nukkitx.protocol.bedrock.data.EntityFlag.CRITICAL;
 
 /**
  * Created by PetteriM1
@@ -28,8 +30,8 @@ public class EntityThrownTrident extends EntityProjectile implements ThrownTride
     protected float gravity = 0.04f;
     protected float drag = 0.01f;
 
-    public EntityThrownTrident(EntityType<ThrownTrident> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityThrownTrident(EntityType<ThrownTrident> type, Location location) {
+        super(type, location);
     }
 
     @Override
@@ -61,17 +63,23 @@ public class EntityThrownTrident extends EntityProjectile implements ThrownTride
     protected void initEntity() {
         super.initEntity();
 
-        this.damage = namedTag.contains("damage") ? namedTag.getDouble("damage") : 8;
-        this.trident = namedTag.contains("Trident") ? NBTIO.getItemHelper(namedTag.getCompound("Trident")) : Item.get(0);
-
+        this.damage = 8;
+        this.trident = Item.get(AIR);
         closeOnCollide = false;
     }
 
     @Override
-    public void saveNBT() {
-        super.saveNBT();
+    public void loadAdditionalData(CompoundTag tag) {
+        super.loadAdditionalData(tag);
 
-        this.namedTag.put("Trident", NBTIO.putItemHelper(this.trident));
+        tag.listenForCompound("Trident", itemTag -> this.trident = ItemUtils.deserializeItem(itemTag));
+    }
+
+    @Override
+    public void saveAdditionalData(CompoundTagBuilder tag) {
+        super.saveAdditionalData(tag);
+
+        tag.tag(ItemUtils.serializeItem(this.trident).toBuilder().build("Trident"));
     }
 
     @Override
@@ -89,11 +97,11 @@ public class EntityThrownTrident extends EntityProjectile implements ThrownTride
     }
 
     public boolean isCritical() {
-        return this.getFlag(CRITICAL);
+        return this.data.getFlag(CRITICAL);
     }
 
     public void setCritical(boolean value) {
-        this.setFlag(CRITICAL, value);
+        this.data.setFlag(CRITICAL, value);
     }
 
     @Override
@@ -108,7 +116,7 @@ public class EntityThrownTrident extends EntityProjectile implements ThrownTride
     }
 
     @Override
-    protected double getBaseDamage() {
+    protected float getBaseDamage() {
         return 8;
     }
 
@@ -121,7 +129,7 @@ public class EntityThrownTrident extends EntityProjectile implements ThrownTride
         this.timing.startTiming();
 
         if (this.isCollided && !this.hadCollision) {
-            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_ITEM_TRIDENT_HIT_GROUND);
+            this.getLevel().addLevelSoundEvent(this.getPosition(), SoundEvent.ITEM_TRIDENT_HIT_GROUND);
         }
 
         boolean hasUpdate = super.onUpdate(currentTick);
@@ -152,7 +160,7 @@ public class EntityThrownTrident extends EntityProjectile implements ThrownTride
             ev = new EntityDamageByChildEntityEvent(this.getOwner(), this, entity, DamageCause.PROJECTILE, damage);
         }
         entity.attack(ev);
-        this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_ITEM_TRIDENT_HIT);
+        this.getLevel().addLevelSoundEvent(this.getPosition(), SoundEvent.ITEM_TRIDENT_HIT);
         this.hadCollision = true;
 //        this.close();
 //        EntityThrownTrident newTrident = create(this);

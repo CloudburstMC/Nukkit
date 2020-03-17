@@ -3,9 +3,9 @@ package cn.nukkit.level;
 
 import cn.nukkit.level.gamerule.GameRuleMap;
 import cn.nukkit.level.gamerule.GameRules;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.math.Vector3i;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.math.vector.Vector3i;
 import lombok.ToString;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -24,7 +24,7 @@ public class LevelData {
     private String generatorOptions = "";
     private String name;
     private long time;
-    private Vector3i spawn = new Vector3i(0, 128, 0);
+    private Vector3i spawn = Vector3i.from(0, 128, 0);
     private int serverChunkTickRange;
     private int spawnRadius;
     private int rainTime;

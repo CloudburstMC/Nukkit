@@ -19,12 +19,12 @@ public class BlockOreQuartz extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 3;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 5;
     }
 

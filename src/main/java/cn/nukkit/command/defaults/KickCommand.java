@@ -5,7 +5,7 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.event.player.PlayerKickEvent;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
@@ -16,10 +16,10 @@ import cn.nukkit.utils.TextFormat;
 public class KickCommand extends VanillaCommand {
 
     public KickCommand(String name) {
-        super(name, "%nukkit.command.kick.description", "%commands.kick.usage");
+        super(name, "commands.kick.description", "commands.kick.usage");
         this.setPermission("nukkit.command.kick");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
                 new CommandParameter("reason", true)
         });

@@ -14,6 +14,6 @@ public class ItemDye extends Item {
     }
 
     public DyeColor getDyeColor() {
-        return DyeColor.getByDyeData(this.getDamage());
+        return DyeColor.getByDyeData(this.getMeta());
     }
 }

@@ -2,6 +2,7 @@ package cn.nukkit.math;
 
 import com.google.common.collect.Iterators;
 import net.daporkchop.lib.random.PRandom;
+import com.nukkitx.math.vector.Vector3i;
 
 import java.util.Iterator;
 import java.util.Random;
@@ -9,12 +10,12 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 
 public enum BlockFace {
-    DOWN(0, 1, -1, "down", AxisDirection.NEGATIVE, new Vector3f(0, -1, 0)),
-    UP(1, 0, -1, "up", AxisDirection.POSITIVE, new Vector3f(0, 1, 0)),
-    NORTH(2, 3, 2, "north", AxisDirection.NEGATIVE, new Vector3f(0, 0, -1)),
-    SOUTH(3, 2, 0, "south", AxisDirection.POSITIVE, new Vector3f(0, 0, 1)),
-    WEST(4, 5, 1, "west", AxisDirection.NEGATIVE, new Vector3f(-1, 0, 0)),
-    EAST(5, 4, 3, "east", AxisDirection.POSITIVE, new Vector3f(1, 0, 0));
+    DOWN(0, 1, -1, "down", AxisDirection.NEGATIVE, Vector3i.from(0, -1, 0)),
+    UP(1, 0, -1, "up", AxisDirection.POSITIVE, Vector3i.from(0, 1, 0)),
+    NORTH(2, 3, 2, "north", AxisDirection.NEGATIVE, Vector3i.from(0, 0, -1)),
+    SOUTH(3, 2, 0, "south", AxisDirection.POSITIVE, Vector3i.from(0, 0, 1)),
+    WEST(4, 5, 1, "west", AxisDirection.NEGATIVE, Vector3i.from(-1, 0, 0)),
+    EAST(5, 4, 3, "east", AxisDirection.POSITIVE, Vector3i.from(1, 0, 0));
 
     /**
      * All faces in D-U-N-S-W-E order
@@ -71,9 +72,9 @@ public enum BlockFace {
     /**
      * Normalized vector that points in the direction of this BlockFace
      */
-    private final Vector3f unitVector;
+    private final Vector3i unitVector;
 
-    BlockFace(int index, int opposite, int horizontalIndex, String name, AxisDirection axisDirection, Vector3f unitVector) {
+    BlockFace(int index, int opposite, int horizontalIndex, String name, AxisDirection axisDirection, Vector3i unitVector) {
         this.index = index;
         this.opposite = opposite;
         this.horizontalIndex = horizontalIndex;
@@ -191,8 +192,12 @@ public enum BlockFace {
      *
      * @return vector
      */
-    public Vector3f getUnitVector() {
+    public Vector3i getUnitVector() {
         return unitVector;
+    }
+
+    public Vector3i getOffset(Vector3i pos) {
+        return pos.add(unitVector);
     }
 
     /**

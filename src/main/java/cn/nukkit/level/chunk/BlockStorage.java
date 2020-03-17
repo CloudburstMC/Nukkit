@@ -3,12 +3,14 @@ package cn.nukkit.level.chunk;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.chunk.bitarray.BitArray;
 import cn.nukkit.level.chunk.bitarray.BitArrayVersion;
-import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.registry.BlockRegistry;
-import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Identifier;
 import com.google.common.base.Preconditions;
+import com.nukkitx.nbt.NbtUtils;
+import com.nukkitx.nbt.stream.NBTInputStream;
+import com.nukkitx.nbt.stream.NBTOutputStream;
+import com.nukkitx.nbt.tag.CompoundTag;
+import com.nukkitx.network.VarInts;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
@@ -16,7 +18,6 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 
 import java.io.IOException;
-import java.nio.ByteOrder;
 import java.util.function.IntConsumer;
 
 public class BlockStorage {
@@ -90,7 +91,7 @@ public class BlockStorage {
     }
 
     public int getBlockData(int index) {
-        return this.blockFor(this.bitArray.get(index)).getDamage();
+        return this.blockFor(this.bitArray.get(index)).getMeta();
     }
 
     public void setBlockData(int index, int blockData) {
@@ -110,8 +111,8 @@ public class BlockStorage {
             buffer.writeIntLE(word);
         }
 
-        Binary.writeVarInt(buffer, palette.size());
-        palette.forEach((IntConsumer) id -> Binary.writeVarInt(buffer, id));
+        VarInts.writeInt(buffer, palette.size());
+        palette.forEach((IntConsumer) id -> VarInts.writeInt(buffer, id));
     }
 
     public void writeToStorage(ByteBuf buffer) {
@@ -122,15 +123,15 @@ public class BlockStorage {
 
         buffer.writeIntLE(this.palette.size());
 
-        try (ByteBufOutputStream stream = new ByteBufOutputStream(buffer)) {
+        try (ByteBufOutputStream stream = new ByteBufOutputStream(buffer);
+             NBTOutputStream nbtOutputStream = NbtUtils.createWriterLE(stream)) {
             for (int runtimeId : palette.toIntArray()) {
                 Block block = BlockRegistry.get().getBlock(runtimeId);
 
-                CompoundTag tag = new CompoundTag();
-                tag.putString("name", block.getId().toString());
-                tag.putShort("val", block.getDamage());
-
-                NBTIO.write(tag, stream, ByteOrder.LITTLE_ENDIAN);
+                nbtOutputStream.write(CompoundTag.builder()
+                        .stringTag("name", block.getId().toString())
+                        .shortTag("val", (short) block.getMeta())
+                        .buildRootTag());
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -154,9 +155,10 @@ public class BlockStorage {
                 "Palette is too large. Max size %s. Actual size %s", version.getMaxEntryValue(),
                 paletteSize);
 
-        try (ByteBufInputStream stream = new ByteBufInputStream(buffer)) {
+        try (ByteBufInputStream stream = new ByteBufInputStream(buffer);
+             NBTInputStream nbtInputStream = NbtUtils.createReaderLE(stream)) {
             for (int i = 0; i < paletteSize; i++) {
-                CompoundTag tag = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN);
+                CompoundTag tag = (CompoundTag) nbtInputStream.readTag();
                 int id = BlockRegistry.get().getLegacyId(tag.getString("name"));
                 int data = tag.getShort("val");
 

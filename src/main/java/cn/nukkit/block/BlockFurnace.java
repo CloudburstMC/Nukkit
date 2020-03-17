@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.blockentity.BlockEntityType;
+import cn.nukkit.blockentity.Furnace;
 import cn.nukkit.utils.Identifier;
 
 /**
@@ -8,8 +10,8 @@ import cn.nukkit.utils.Identifier;
  */
 public class BlockFurnace extends BlockFurnaceBurning {
 
-    public BlockFurnace(Identifier id) {
-        super(id);
+    protected BlockFurnace(Identifier id, BlockEntityType<? extends Furnace> furnace) {
+        super(id, furnace);
     }
 
     @Override

@@ -1,11 +1,11 @@
 package cn.nukkit.item;
 
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.tag.ByteTag;
-import cn.nukkit.nbt.tag.Tag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.tag.CompoundTag;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
 
 /**
  * author: MagicDroidX
@@ -19,6 +19,8 @@ abstract public class ItemArmor extends Item implements ItemDurable {
     public static final int TIER_GOLD = 4;
     public static final int TIER_DIAMOND = 5;
     public static final int TIER_OTHER = 6;
+
+    private boolean unbreakable;
 
     public ItemArmor(Identifier id) {
         super(id);
@@ -58,23 +60,23 @@ abstract public class ItemArmor extends Item implements ItemDurable {
             player.getInventory().clear(player.getInventory().getHeldItemIndex());
             switch (this.getTier()) {
                 case TIER_CHAIN:
-                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_ARMOR_EQUIP_CHAIN);
+                    player.getLevel().addLevelSoundEvent(player.getPosition(), SoundEvent.ARMOR_EQUIP_CHAIN);
                     break;
                 case TIER_DIAMOND:
-                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_ARMOR_EQUIP_DIAMOND);
+                    player.getLevel().addLevelSoundEvent(player.getPosition(), SoundEvent.ARMOR_EQUIP_DIAMOND);
                     break;
                 case TIER_GOLD:
-                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_ARMOR_EQUIP_GOLD);
+                    player.getLevel().addLevelSoundEvent(player.getPosition(), SoundEvent.ARMOR_EQUIP_GOLD);
                     break;
                 case TIER_IRON:
-                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_ARMOR_EQUIP_IRON);
+                    player.getLevel().addLevelSoundEvent(player.getPosition(), SoundEvent.ARMOR_EQUIP_IRON);
                     break;
                 case TIER_LEATHER:
-                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_ARMOR_EQUIP_LEATHER);
+                    player.getLevel().addLevelSoundEvent(player.getPosition(), SoundEvent.ARMOR_EQUIP_LEATHER);
                     break;
                 case TIER_OTHER:
                 default:
-                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_ARMOR_EQUIP_GENERIC);
+                    player.getLevel().addLevelSoundEvent(player.getPosition(), SoundEvent.ARMOR_EQUIP_GENERIC);
             }
         }
 
@@ -100,8 +102,25 @@ abstract public class ItemArmor extends Item implements ItemDurable {
     }
 
     @Override
+    public void loadAdditionalData(CompoundTag tag) {
+        super.loadAdditionalData(tag);
+
+        tag.listenForBoolean("Unbreakable", v -> this.unbreakable = v);
+    }
+
+    @Override
+    public void saveAdditionalData(CompoundTagBuilder tag) {
+        super.saveAdditionalData(tag);
+
+        tag.booleanTag("Unbreakable", this.unbreakable);
+    }
+
+    @Override
     public boolean isUnbreakable() {
-        Tag tag = this.getNamedTagEntry("Unbreakable");
-        return tag instanceof ByteTag && ((ByteTag) tag).data > 0;
+        return unbreakable;
+    }
+
+    public void setUnbreakable(boolean unbreakable) {
+        this.unbreakable = unbreakable;
     }
 }

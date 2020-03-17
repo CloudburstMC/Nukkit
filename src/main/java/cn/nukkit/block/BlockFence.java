@@ -22,17 +22,17 @@ public abstract class BlockFence extends BlockTransparent {
         boolean south = this.canConnect(this.south());
         boolean west = this.canConnect(this.west());
         boolean east = this.canConnect(this.east());
-        double n = north ? 0 : 0.375;
-        double s = south ? 1 : 0.625;
-        double w = west ? 0 : 0.375;
-        double e = east ? 1 : 0.625;
+        float n = north ? 0 : 0.375f;
+        float s = south ? 1 : 0.625f;
+        float w = west ? 0 : 0.375f;
+        float e = east ? 1 : 0.625f;
         return new SimpleAxisAlignedBB(
-                this.x + w,
-                this.y,
-                this.z + n,
-                this.x + e,
-                this.y + 1.5,
-                this.z + s
+                this.getX() + w,
+                this.getY(),
+                this.getZ() + n,
+                this.getX() + e,
+                this.getY() + 1.5f,
+                this.getZ() + s
         );
     }
 
@@ -40,7 +40,7 @@ public abstract class BlockFence extends BlockTransparent {
 
     @Override
     public BlockColor getColor() {
-        switch (this.getDamage() & 0x07) {
+        switch (this.getMeta() & 0x07) {
             default:
             case 1: //OAK
                 return BlockColor.WOOD_BLOCK_COLOR;
@@ -59,7 +59,7 @@ public abstract class BlockFence extends BlockTransparent {
 
     @Override
     public Item toItem() {
-        return Item.get(id, this.getDamage());
+        return Item.get(id, this.getMeta());
     }
 
     @Override

@@ -5,7 +5,7 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
 import java.util.Map;
@@ -18,10 +18,10 @@ import java.util.TreeMap;
 public class HelpCommand extends VanillaCommand {
 
     public HelpCommand(String name) {
-        super(name, "%nukkit.command.help.description", "%commands.help.usage", new String[]{"?"});
+        super(name, "commands.help.description", "commands.help.usage", new String[]{"?"});
         this.setPermission("nukkit.command.help");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("page", CommandParamType.INT, true)
         });
     }
@@ -83,7 +83,7 @@ public class HelpCommand extends VanillaCommand {
                 pageNumber = 1;
             }
 
-            sender.sendMessage(new TranslationContainer("commands.help.header", String.valueOf(pageNumber), String.valueOf(totalPage)));
+            sender.sendMessage(new TranslationContainer("commands.help.header", pageNumber, totalPage));
             int i = 1;
             for (Command command1 : commands.values()) {
                 if (i >= (pageNumber - 1) * pageHeight + 1 && i <= Math.min(commands.size(), pageNumber * pageHeight)) {

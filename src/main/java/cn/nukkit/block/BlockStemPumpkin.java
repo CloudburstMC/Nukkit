@@ -26,19 +26,19 @@ public class BlockStemPumpkin extends BlockCrops {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (this.down().getId() != FARMLAND) {
-                this.getLevel().useBreakOn(this);
+                this.getLevel().useBreakOn(this.getPosition());
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             ThreadLocalRandom random = ThreadLocalRandom.current();
             if (random.nextBoolean()) {
-                if (this.getDamage() < 0x07) {
+                if (this.getMeta() < 0x07) {
                     Block block = this.clone();
-                    block.setDamage(block.getDamage() + 1);
+                    block.setMeta(block.getMeta() + 1);
                     BlockGrowEvent ev = new BlockGrowEvent(this, block);
                     Server.getInstance().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
-                        this.getLevel().setBlock(this, ev.getNewState(), true);
+                        this.getLevel().setBlock(this.getPosition(), ev.getNewState(), true);
                     }
                     return Level.BLOCK_UPDATE_RANDOM;
                 } else {
@@ -54,7 +54,7 @@ public class BlockStemPumpkin extends BlockCrops {
                         BlockGrowEvent ev = new BlockGrowEvent(side, Block.get(PUMPKIN));
                         Server.getInstance().getPluginManager().callEvent(ev);
                         if (!ev.isCancelled()) {
-                            this.getLevel().setBlock(side, ev.getNewState(), true);
+                            this.getLevel().setBlock(side.getPosition(), ev.getNewState(), true);
                         }
                     }
                 }

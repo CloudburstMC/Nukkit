@@ -28,8 +28,7 @@ import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.command.RemoteConsoleCommandSender;
-import cn.nukkit.lang.TranslationContainer;
-import cn.nukkit.nbt.stream.PGZIPOutputStream;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.timings.JsonUtil;
 import cn.nukkit.utils.TextFormat;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -43,12 +42,11 @@ import java.lang.management.RuntimeMXBean;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.zip.Deflater;
+import java.util.zip.GZIPOutputStream;
 
 import static co.aikar.timings.TimingsManager.HISTORY;
 
@@ -213,11 +211,9 @@ public class TimingsExport extends Thread {
             con.setRequestMethod("POST");
             con.setInstanceFollowRedirects(false);
 
-            PGZIPOutputStream request = new PGZIPOutputStream(con.getOutputStream());
-            request.setLevel(Deflater.BEST_COMPRESSION);
-
-            request.write(Nukkit.JSON_MAPPER.writeValueAsBytes(this.out));
-            request.close();
+            try (GZIPOutputStream outputStream = new GZIPOutputStream(con.getOutputStream())) {
+                outputStream.write(Nukkit.JSON_MAPPER.writeValueAsBytes(this.out));
+            }
 
             response = getResponse(con);
 
@@ -232,11 +228,11 @@ public class TimingsExport extends Thread {
             String location = con.getHeaderField("Location");
             this.sender.sendMessage(new TranslationContainer("nukkit.command.timings.timingsLocation", location));
             if (!(this.sender instanceof ConsoleCommandSender)) {
-                log.info(Server.getInstance().getLanguage().translateString("nukkit.command.timings.timingsLocation", location));
+                log.info(Server.getInstance().getLanguage().translate("nukkit.command.timings.timingsLocation", location));
             }
 
             if (response != null && !response.isEmpty()) {
-                log.info(Server.getInstance().getLanguage().translateString("nukkit.command.timings.timingsResponse", response));
+                log.info(Server.getInstance().getLanguage().translate("nukkit.command.timings.timingsResponse", response));
             }
 
             File timingFolder = new File(Server.getInstance().getDataPath() + File.separator + "timings");
@@ -244,11 +240,11 @@ public class TimingsExport extends Thread {
             String fileName = timingFolder + File.separator + new SimpleDateFormat("'timings-'yyyy-MM-dd-hh-mm'.txt'").format(new Date());
 
             FileWriter writer = new FileWriter(fileName);
-            writer.write(Server.getInstance().getLanguage().translateString("nukkit.command.timings.timingsLocation", location) + "\n\n");
+            writer.write(Server.getInstance().getLanguage().translate("nukkit.command.timings.timingsLocation", location) + "\n\n");
             writer.write(Nukkit.JSON_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.out));
             writer.close();
 
-            log.info(Server.getInstance().getLanguage().translateString("nukkit.command.timings.timingsWrite", fileName));
+            log.info(Server.getInstance().getLanguage().translate("nukkit.command.timings.timingsWrite", fileName));
         } catch (IOException exception) {
             this.sender.sendMessage(TextFormat.RED + "" + new TranslationContainer("nukkit.command.timings.reportError"));
             if (response != null) {

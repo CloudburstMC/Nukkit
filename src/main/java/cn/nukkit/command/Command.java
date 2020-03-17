@@ -2,13 +2,16 @@ package cn.nukkit.command;
 
 import cn.nukkit.Server;
 import cn.nukkit.command.data.*;
-import cn.nukkit.lang.TextContainer;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TextContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+import com.google.common.collect.ImmutableMap;
+import com.nukkitx.protocol.bedrock.data.CommandEnumData;
+import com.nukkitx.protocol.bedrock.data.CommandParamData;
 
 import java.util.*;
 
@@ -42,7 +45,24 @@ public abstract class Command {
 
     private String permissionMessage = null;
 
-    protected Map<String, CommandParameter[]> commandParameters = new HashMap<>();
+    private static final ImmutableMap<CommandParamType, CommandParamData.Type> NETWORK_TYPES = ImmutableMap.<CommandParamType, CommandParamData.Type>builder()
+            .put(CommandParamType.INT, CommandParamData.Type.INT)
+            .put(CommandParamType.FLOAT, CommandParamData.Type.FLOAT)
+            .put(CommandParamType.VALUE, CommandParamData.Type.VALUE)
+            .put(CommandParamType.WILDCARD_INT, CommandParamData.Type.WILDCARD_INT)
+            .put(CommandParamType.OPERATOR, CommandParamData.Type.OPERATOR)
+            .put(CommandParamType.TARGET, CommandParamData.Type.TARGET)
+            .put(CommandParamType.WILDCARD_TARGET, CommandParamData.Type.WILDCARD_TARGET)
+            .put(CommandParamType.FILE_PATH, CommandParamData.Type.FILE_PATH)
+            .put(CommandParamType.STRING, CommandParamData.Type.STRING)
+            .put(CommandParamType.POSITION, CommandParamData.Type.POSITION)
+            .put(CommandParamType.MESSAGE, CommandParamData.Type.MESSAGE)
+            .put(CommandParamType.TEXT, CommandParamData.Type.TEXT)
+            .put(CommandParamType.JSON, CommandParamData.Type.JSON)
+            .put(CommandParamType.COMMAND, CommandParamData.Type.COMMAND)
+            .put(CommandParamType.RAWTEXT, CommandParamData.Type.TEXT)
+
+            .build();
 
     public Timing timing;
 
@@ -58,18 +78,7 @@ public abstract class Command {
         this(name, description, usageMessage, new String[0]);
     }
 
-    public Command(String name, String description, String usageMessage, String[] aliases) {
-        this.commandData = new CommandData();
-        this.name = name.toLowerCase(); // Uppercase letters crash the client?!?
-        this.nextLabel = name;
-        this.label = name;
-        this.description = description;
-        this.usageMessage = usageMessage == null ? "/" + name : usageMessage;
-        this.aliases = aliases;
-        this.activeAliases = aliases;
-        this.timing = Timings.getCommandTiming(this);
-        this.commandParameters.put("default", new CommandParameter[]{new CommandParameter("args", CommandParamType.RAWTEXT, true)});
-    }
+    protected List<CommandParameter[]> commandParameters = new ArrayList<>();
 
     /**
      * Returns an CommandData containing command data
@@ -80,55 +89,41 @@ public abstract class Command {
         return this.commandData;
     }
 
-    public CommandParameter[] getCommandParameters(String key) {
-        return commandParameters.get(key);
+    public Command(String name, String description, String usageMessage, String[] aliases) {
+        this.commandData = new CommandData();
+        this.name = name.toLowerCase(); // Uppercase letters crash the client?!?
+        this.nextLabel = name;
+        this.label = name;
+        this.description = description;
+        this.usageMessage = usageMessage == null ? "/" + name : usageMessage;
+        this.aliases = aliases;
+        this.activeAliases = aliases;
+        this.timing = Timings.getCommandTiming(this);
+        this.commandParameters.add(new CommandParameter[]{new CommandParameter("args", CommandParamType.RAWTEXT, true)});
     }
 
-    public Map<String, CommandParameter[]> getCommandParameters() {
-        return commandParameters;
+    public static CommandData generateDefaultData() {
+        if (defaultDataTemplate == null) {
+            //defaultDataTemplate = new Gson().fromJson(new InputStreamReader(Server.class.getClassLoader().getResourceAsStream("command_default.json")));
+        }
+        return defaultDataTemplate;
     }
 
-    public void setCommandParameters(Map<String, CommandParameter[]> commandParameters) {
-        this.commandParameters = commandParameters;
+    private static CommandParamData toNetwork(CommandParameter commandParameter) {
+        return new CommandParamData(commandParameter.name, commandParameter.optional,
+                toNetwork(commandParameter.enumData), NETWORK_TYPES.get(commandParameter.type),
+                commandParameter.postFix, Collections.emptyList());
     }
 
-    public void addCommandParameters(String key, CommandParameter[] parameters) {
-        this.commandParameters.put(key, parameters);
-    }
-
-    /**
-     * Generates modified command data for the specified player
-     * for AvailableCommandsPacket.
-     *
-     * @param player player
-     * @return CommandData|null
-     */
-    public CommandDataVersions generateCustomCommandData(Player player) {
-        if (!this.testPermission(player)) {
+    private static CommandEnumData toNetwork(CommandEnum commandEnum) {
+        if (commandEnum == null) {
             return null;
         }
+        return new CommandEnumData(commandEnum.getName(), commandEnum.getValues().toArray(new String[0]), false);
+    }
 
-        CommandData customData = this.commandData.clone();
-
-        if (getAliases().length > 0) {
-            List<String> aliases = new ArrayList<>(Arrays.asList(getAliases()));
-            if (!aliases.contains(this.name)) {
-                aliases.add(this.name);
-            }
-
-            customData.aliases = new CommandEnum(this.name + "Aliases", aliases);
-        }
-
-        customData.description = player.getServer().getLanguage().translateString(this.getDescription());
-        this.commandParameters.forEach((key, par) -> {
-            CommandOverload overload = new CommandOverload();
-            overload.input.parameters = par;
-            customData.overloads.put(key, overload);
-        });
-        if (customData.overloads.size() == 0) customData.overloads.put("default", new CommandOverload());
-        CommandDataVersions versions = new CommandDataVersions();
-        versions.versions.add(customData);
-        return versions;
+    public CommandParameter[] getCommandParameters(int key) {
+        return commandParameters.get(key);
     }
 
     public Map<String, CommandOverload> getOverloads() {
@@ -253,11 +248,8 @@ public abstract class Command {
         this.usageMessage = usageMessage;
     }
 
-    public static CommandData generateDefaultData() {
-        if (defaultDataTemplate == null) {
-            //defaultDataTemplate = new Gson().fromJson(new InputStreamReader(Server.class.getClassLoader().getResourceAsStream("command_default.json")));
-        }
-        return defaultDataTemplate.clone();
+    public List<CommandParameter[]> getCommandParameters() {
+        return commandParameters;
     }
 
     public static void broadcastCommandMessage(CommandSender source, String message) {
@@ -323,4 +315,52 @@ public abstract class Command {
         return this.name;
     }
 
+    public void setCommandParameters(List<CommandParameter[]> parameters) {
+        this.commandParameters = parameters;
+    }
+
+    public void addCommandParameters(CommandParameter[] parameters) {
+        this.commandParameters.add(parameters);
+    }
+
+    /**
+     * Generates modified command data for the specified player
+     * for AvailableCommandsPacket.
+     *
+     * @param player player
+     * @return CommandData|null
+     */
+    public com.nukkitx.protocol.bedrock.data.CommandData generateCustomCommandData(Player player) {
+        if (!this.testPermission(player)) {
+            return null;
+        }
+
+        String[] aliasesEnum;
+        if (getAliases().length > 0) {
+            Set<String> aliasList = new HashSet<>();
+            Collections.addAll(aliasList, this.getAliases());
+            aliasList.add(this.name.toLowerCase());
+
+            aliasesEnum = aliasList.toArray(new String[0]);
+        } else {
+            aliasesEnum = new String[]{this.name.toLowerCase()};
+        }
+        CommandEnumData aliases = new CommandEnumData(this.name.toLowerCase() + "Aliases", aliasesEnum, false);
+
+        String description = player.getServer().getLanguage().translateOnly("nukkit.", this.description);
+
+        CommandParamData[][] overloads = new CommandParamData[this.commandParameters.size()][];
+
+        for (int i = 0; i < overloads.length; i++) {
+            CommandParameter[] parameters = this.commandParameters.get(i);
+            CommandParamData[] params = new CommandParamData[parameters.length];
+            for (int i2 = 0; i2 < parameters.length; i2++) {
+                params[i2] = toNetwork(parameters[i2]);
+            }
+            overloads[i] = params;
+        }
+
+        return new com.nukkitx.protocol.bedrock.data.CommandData(this.name.toLowerCase(), description, Collections.emptyList(),
+                (byte) 0, aliases, overloads);
+    }
 }

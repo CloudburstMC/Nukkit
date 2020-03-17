@@ -15,7 +15,8 @@ import java.util.List;
 
 public class FormWindowCustom extends FormWindow {
 
-    private static final TypeReference<List<String>> ELEMENTS_TYPE_REFERENCE = new TypeReference<List<String>>() {};
+    private static final TypeReference<List<String>> ELEMENTS_TYPE_REFERENCE = new TypeReference<List<String>>() {
+    };
 
     @JsonInclude
     @JsonProperty

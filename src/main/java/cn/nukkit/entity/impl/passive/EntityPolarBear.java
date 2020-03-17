@@ -3,8 +3,7 @@ package cn.nukkit.entity.impl.passive;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.passive.PolarBear;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 import static cn.nukkit.item.ItemIds.FISH;
 import static cn.nukkit.item.ItemIds.SALMON;
@@ -14,8 +13,8 @@ import static cn.nukkit.item.ItemIds.SALMON;
  */
 public class EntityPolarBear extends Animal implements PolarBear {
 
-    public EntityPolarBear(EntityType<PolarBear> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityPolarBear(EntityType<PolarBear> type, Location location) {
+        super(type, location);
     }
 
     @Override

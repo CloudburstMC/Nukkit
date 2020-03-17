@@ -171,28 +171,59 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- Fastutil -->
+        <dependency>
+            <groupId>com.nukkitx.fastutil</groupId>
+            <artifactId>fastutil-byte-sets</artifactId>
+            <version>8.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nukkitx.fastutil</groupId>
+            <artifactId>fastutil-long-queues</artifactId>
+            <version>8.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nukkitx.fastutil</groupId>
+            <artifactId>fastutil-int-int-maps</artifactId>
+            <version>8.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nukkitx.fastutil</groupId>
+            <artifactId>fastutil-int-short-maps</artifactId>
+            <version>8.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nukkitx.fastutil</groupId>
+            <artifactId>fastutil-long-long-maps</artifactId>
+            <version>8.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nukkitx.fastutil</groupId>
+            <artifactId>fastutil-long-int-maps</artifactId>
+            <version>8.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nukkitx.fastutil</groupId>
+            <artifactId>fastutil-long-byte-maps</artifactId>
+            <version>8.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nukkitx.fastutil</groupId>
+            <artifactId>fastutil-short-object-maps</artifactId>
+            <version>8.3.1</version>
+        </dependency>
+
         <!-- Miscellaneous -->
         <dependency>
-            <groupId>com.nukkitx.network</groupId>
-            <artifactId>raknet</artifactId>
-            <version>1.6.15</version>
+            <groupId>com.nukkitx.protocol</groupId>
+            <artifactId>bedrock-v389</artifactId>
+            <version>2.5.4</version>
         </dependency>
         <dependency>
             <groupId>com.nukkitx</groupId>
             <artifactId>natives</artifactId>
             <version>1.0.0</version>
         </dependency>
-        <dependency>
-            <groupId>it.unimi.dsi</groupId>
-            <artifactId>fastutil</artifactId>
-            <version>8.3.0</version>
-        </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>com.nukkitx</groupId>-->
-        <!--            <artifactId>fastutil-lite</artifactId>-->
-        <!--            <version>8.1.1</version>-->
-        <!--            <scope>compile</scope>-->
-        <!--        </dependency>-->
         <dependency>
             <groupId>com.spotify</groupId>
             <artifactId>completable-futures</artifactId>
@@ -222,11 +253,6 @@
             <groupId>net.daporkchop.lib</groupId>
             <artifactId>noise</artifactId>
             <version>0.5.4-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.nimbusds</groupId>
-            <artifactId>nimbus-jose-jwt</artifactId>
-            <version>4.39.2</version>
         </dependency>
         <dependency>
             <groupId>net.sf.jopt-simple</groupId>

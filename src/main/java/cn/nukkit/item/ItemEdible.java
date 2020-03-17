@@ -2,9 +2,9 @@ package cn.nukkit.item;
 
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
 import cn.nukkit.item.food.Food;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * author: MagicDroidX

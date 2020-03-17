@@ -5,10 +5,10 @@ import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.food.Food;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import static cn.nukkit.block.BlockIds.AIR;
 
@@ -27,49 +27,49 @@ public class BlockCake extends BlockTransparent {
     }
 
     @Override
-    public double getHardness() {
-        return 0.5;
+    public float getHardness() {
+        return 0.5f;
     }
 
     @Override
-    public double getResistance() {
-        return 2.5;
+    public float getResistance() {
+        return 2.5f;
     }
 
     @Override
-    public double getMinX() {
-        return this.x + (1 + getDamage() * 2) / 16D;
+    public float getMinX() {
+        return this.getX() + (1 + getMeta() * 2) / 16f;
     }
 
     @Override
-    public double getMinY() {
-        return this.y;
+    public float getMinY() {
+        return this.getY();
     }
 
     @Override
-    public double getMinZ() {
-        return this.z + 0.0625;
+    public float getMinZ() {
+        return this.getZ() + 0.0625f;
     }
 
     @Override
-    public double getMaxX() {
-        return this.x - 0.0625 + 1;
+    public float getMaxX() {
+        return this.getX() - 0.0625f + 1;
     }
 
     @Override
-    public double getMaxY() {
-        return this.y + 0.5;
+    public float getMaxY() {
+        return this.getY() + 0.5f;
     }
 
     @Override
-    public double getMaxZ() {
-        return this.z - 0.0625 + 1;
+    public float getMaxZ() {
+        return this.getZ() - 0.0625f + 1;
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (down().getId() != AIR) {
-            getLevel().setBlock(block, this, true, true);
+            getLevel().setBlock(block.getPosition(), this, true, true);
 
             return true;
         }
@@ -80,7 +80,7 @@ public class BlockCake extends BlockTransparent {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (down().getId() == AIR) {
-                getLevel().setBlock(this, Block.get(AIR), true);
+                getLevel().setBlock(this.getPosition(), Block.get(AIR), true);
 
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -102,12 +102,12 @@ public class BlockCake extends BlockTransparent {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null && player.getFoodData().getLevel() < player.getFoodData().getMaxLevel()) {
-            if (getDamage() <= 0x06) setDamage(getDamage() + 1);
-            if (getDamage() >= 0x06) {
-                getLevel().setBlock(this, Block.get(AIR), true);
+            if (getMeta() <= 0x06) setMeta(getMeta() + 1);
+            if (getMeta() >= 0x06) {
+                getLevel().setBlock(this.getPosition(), Block.get(AIR), true);
             } else {
                 Food.getByRelative(this).eatenBy(player);
-                getLevel().setBlock(this, this, true);
+                getLevel().setBlock(this.getPosition(), this, true);
             }
             return true;
         }
@@ -120,7 +120,7 @@ public class BlockCake extends BlockTransparent {
     }
 
     public int getComparatorInputOverride() {
-        return (7 - this.getDamage()) * 2;
+        return (7 - this.getMeta()) * 2;
     }
 
     public boolean hasComparatorInputOverride() {

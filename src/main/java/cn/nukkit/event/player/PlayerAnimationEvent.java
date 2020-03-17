@@ -2,8 +2,8 @@ package cn.nukkit.event.player;
 
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.network.protocol.AnimatePacket;
 import cn.nukkit.player.Player;
+import com.nukkitx.protocol.bedrock.packet.AnimatePacket;
 
 public class PlayerAnimationEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();

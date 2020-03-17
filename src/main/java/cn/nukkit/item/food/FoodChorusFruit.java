@@ -6,8 +6,9 @@ import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
-import cn.nukkit.math.Vector3f;
+import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.player.Player;
+import com.nukkitx.math.vector.Vector3f;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -25,9 +26,9 @@ public class FoodChorusFruit extends FoodNormal {
     protected boolean onEatenBy(Player player) {
         super.onEatenBy(player);
         // Teleportation
-        int minX = player.getFloorX() - 8;
-        int minY = player.getFloorY() - 8;
-        int minZ = player.getFloorZ() - 8;
+        int minX = player.getPosition().getFloorX() - 8;
+        int minY = player.getPosition().getFloorY() - 8;
+        int minZ = player.getPosition().getFloorZ() - 8;
         int maxX = minX + 16;
         int maxY = minY + 16;
         int maxZ = minZ + 16;
@@ -56,9 +57,9 @@ public class FoodChorusFruit extends FoodNormal {
             }
 
             // Sounds are broadcast at both source and destination
-            level.addSound(player, Sound.MOB_ENDERMEN_PORTAL);
-            player.teleport(new Vector3f(x + 0.5, y + 1, z + 0.5), PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
-            level.addSound(player, Sound.MOB_ENDERMEN_PORTAL);
+            level.addSound(player.getPosition(), Sound.MOB_ENDERMEN_PORTAL);
+            player.teleport(Vector3f.from(x + 0.5, y + 1, z + 0.5), PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
+            level.addSound(player.getPosition(), Sound.MOB_ENDERMEN_PORTAL);
 
             break;
         }

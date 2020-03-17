@@ -18,12 +18,12 @@ public class BlockStairsStoneBrick extends BlockStairs {
     }
 
     @Override
-    public double getHardness() {
-        return 1.5;
+    public float getHardness() {
+        return 1.5f;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 30;
     }
 }
