@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.common.base.Preconditions;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -57,6 +58,9 @@ public final class GenerationBiomeStore extends AbstractGeneratorStore<Generatio
         private BiomeDictionary dictionary;
 
         @JsonProperty
+        private GenerationBiome parent;
+
+        @JsonProperty
         private Decorator[] decorators = Decorator.EMPTY_ARRAY;
         @JsonProperty
         private Populator[] populators = Populator.EMPTY_ARRAY;
@@ -64,12 +68,12 @@ public final class GenerationBiomeStore extends AbstractGeneratorStore<Generatio
         private BiomeElevation elevation = BiomeElevation.DEFAULT;
 
         @JsonProperty
-        private double temperature = 0.5d;
+        private double temperature = Double.NaN;
         @JsonProperty
-        private double rainfall    = 0.5d;
+        private double rainfall    = Double.NaN;
 
         public GenerationBiome build(@NonNull Identifier id, int internalId) {
-            Objects.requireNonNull(this.dictionary, "dictionary must be set!");
+            Preconditions.checkState(this.dictionary != null || (this.parent != null && this.parent.getDictionary() != null), "dictionary must be set!");
 
             return new GenerationBiome(this, id, internalId);
         }

@@ -11,7 +11,7 @@ import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
 import cn.nukkit.level.generator.standard.biome.map.CachingBiomeMap;
 import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
 import cn.nukkit.level.generator.standard.gen.density.DensitySource;
-import cn.nukkit.level.generator.standard.misc.BiomeGenerationPass;
+import cn.nukkit.level.generator.standard.misc.NextGenerationPass;
 import cn.nukkit.level.generator.standard.misc.ConstantBlock;
 import cn.nukkit.level.generator.standard.misc.GenerationPass;
 import cn.nukkit.level.generator.standard.pop.Populator;
@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -113,10 +114,10 @@ public final class StandardGenerator implements Generator {
     private final Map<GenerationBiome, Populator[]> populatorsLookup = new ConcurrentHashMap<>();
 
     private final Function<GenerationBiome, Decorator[]> decoratorLookupComputer  = biome -> Arrays.stream(this.decorators)
-            .flatMap(decorator -> decorator instanceof BiomeGenerationPass ? Arrays.stream(biome.getDecorators()) : Stream.of(decorator))
+            .flatMap(decorator -> decorator instanceof NextGenerationPass ? Arrays.stream(biome.getDecorators()) : Stream.of(decorator))
             .toArray(Decorator[]::new);
     private final Function<GenerationBiome, Populator[]> populatorsLookupComputer = biome -> Arrays.stream(this.populators)
-            .flatMap(populator -> populator instanceof BiomeGenerationPass ? Arrays.stream(biome.getPopulators()) : Stream.of(populator))
+            .flatMap(populator -> populator instanceof NextGenerationPass ? Arrays.stream(biome.getPopulators()) : Stream.of(populator))
             .toArray(Populator[]::new);
 
     @JsonProperty("groundBlock")
@@ -136,7 +137,7 @@ public final class StandardGenerator implements Generator {
             Preconditions.checkState(this.ground >= 0, "groundBlock must be set!");
             Preconditions.checkState(this.seaLevel < 0 || this.sea >= 0, "seaBlock and seaLevel must either both be set or be omitted!");
 
-            Collection<GenerationPass> generationPasses = new ArrayList<>();
+            Collection<GenerationPass> generationPasses = new LinkedHashSet<>(); //preserve order but don't allow duplicates
             generationPasses.add(Objects.requireNonNull(this.density, "density must be set!"));
             generationPasses.add(Objects.requireNonNull(this.biomes, "biomes must be set!"));
             Collections.addAll(generationPasses, this.decorators = fallbackIfNull(this.decorators, Decorator.EMPTY_ARRAY));

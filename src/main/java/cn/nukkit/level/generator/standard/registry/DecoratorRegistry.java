@@ -7,7 +7,7 @@ import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
 import cn.nukkit.level.generator.standard.gen.decorator.DoubleScatteredCoverDecorator;
 import cn.nukkit.level.generator.standard.gen.decorator.ScatteredCoverDecorator;
 import cn.nukkit.level.generator.standard.gen.decorator.SurfaceDecorator;
-import cn.nukkit.level.generator.standard.misc.BiomeGenerationPass;
+import cn.nukkit.level.generator.standard.misc.NextGenerationPass;
 import cn.nukkit.registry.RegistryException;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -30,7 +30,7 @@ public final class DecoratorRegistry extends AbstractGeneratorRegistry<Decorator
         this.register(ScatteredCoverDecorator.ID, ScatteredCoverDecorator.class);
         this.register(SurfaceDecorator.ID, SurfaceDecorator.class);
 
-        this.register(BiomeGenerationPass.ID, BiomeGenerationPass.class);
+        this.register(NextGenerationPass.ID, NextGenerationPass.class);
     }
 
     @Override

@@ -2,7 +2,7 @@ package cn.nukkit.level.generator.standard.registry;
 
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.generator.standard.misc.BiomeGenerationPass;
+import cn.nukkit.level.generator.standard.misc.NextGenerationPass;
 import cn.nukkit.level.generator.standard.pop.FlowerPopulator;
 import cn.nukkit.level.generator.standard.pop.OrePopulator;
 import cn.nukkit.level.generator.standard.pop.Populator;
@@ -27,7 +27,7 @@ public final class PopulatorRegistry extends AbstractGeneratorRegistry<Populator
         this.register(NormalTreePopulator.ID, NormalTreePopulator.class);
         this.register(OrePopulator.ID, OrePopulator.class);
 
-        this.register(BiomeGenerationPass.ID, BiomeGenerationPass.class);
+        this.register(NextGenerationPass.ID, NextGenerationPass.class);
     }
 
     @Override

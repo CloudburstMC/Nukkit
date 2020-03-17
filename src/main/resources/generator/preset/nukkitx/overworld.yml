@@ -109,7 +109,7 @@ density:
   heightVariationOffset: 0.0
 
 decorators:
-  - id: "nukkitx:biome"
+  - id: "nukkitx:next"
 
     # Tall grass
   - id: "nukkitx:scattered_cover"
@@ -124,7 +124,7 @@ decorators:
     fade: 1-5
 
 populators:
-  - id: "nukkitx:biome"
+  - id: "nukkitx:next"
 
     #
     # Minerals
@@ -145,7 +145,8 @@ populators:
     block: "gravel"
     replace: "stone"
 
-    # Granite
+    # Granite, Diorite and Andesite
+    # in vanilla these are generated separately
   - id: "nukkitx:ore"
     count: 10
     size: 33
@@ -153,7 +154,7 @@ populators:
     block: "stone#1"
     replace: "stone"
 
-    # Diorite
+    #
   - id: "nukkitx:ore"
     count: 10
     size: 33

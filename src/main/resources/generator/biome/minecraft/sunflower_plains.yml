@@ -1,24 +1,8 @@
 dict: "nukkitx:vanilla"
-
-elevationVanilla:
-  height: 0.125
-  variation: 0.05
-
-temperature: 0.8
-rainfall: 0.4
+parent: "minecraft:plains"
 
 decorators:
-  - id: "nukkitx:surface"
-    ground: "stone"
-    top: "grass"
-    fill: "dirt"
-
-    # Double tall grass
-  - id: "nukkitx:double_scattered_cover"
-    chance: 0.02
-    on: "grass"
-    lowBlock: "double_plant#2"
-    highBlock: "double_plant#10"
+  - id: "nukkitx:next"
 
     # Sunflower
   - id: "nukkitx:double_scattered_cover"
@@ -26,19 +10,3 @@ decorators:
     on: "grass"
     lowBlock: "double_plant#0"
     highBlock: "double_plant#8"
-
-populators:
-    # Flowers
-  - id: "nukkitx:flower"
-    count: 2
-    height: "50-90"
-    on: "grass"
-    replace: "air,tallgrass"
-    blocks:
-      - "red_flower#4" # Red Tulip
-      - "red_flower#5" # Orange Tulip
-      - "red_flower#6" # White Tulip
-      - "red_flower#7" # Pink Tulip
-      - "red_flower#3" # Azure Bluet
-      - "red_flower#8" # Oxeye Daisy
-      - "red_flower#9" # Cornflower

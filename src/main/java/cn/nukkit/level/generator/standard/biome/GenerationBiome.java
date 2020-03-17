@@ -1,11 +1,15 @@
 package cn.nukkit.level.generator.standard.biome;
 
 import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
+import cn.nukkit.level.generator.standard.misc.NextGenerationPass;
 import cn.nukkit.level.generator.standard.pop.Populator;
 import cn.nukkit.level.generator.standard.store.GenerationBiomeStore;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.NonNull;
+
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 import static net.daporkchop.lib.common.util.PorkUtil.*;
 
@@ -33,13 +37,56 @@ public final class GenerationBiome {
     public GenerationBiome(@NonNull GenerationBiomeStore.TempBiome temp, @NonNull Identifier id, int internalId) {
         this.id = id;
         this.dictionary = temp.getDictionary();
-        this.decorators = fallbackIfNull(temp.getDecorators(), Decorator.EMPTY_ARRAY);
-        this.populators = fallbackIfNull(temp.getPopulators(), Populator.EMPTY_ARRAY);
 
-        this.elevation = temp.getElevation();
+        Decorator[] decorators = fallbackIfNull(temp.getDecorators(), Decorator.EMPTY_ARRAY);
+        Populator[] populators = fallbackIfNull(temp.getPopulators(), Populator.EMPTY_ARRAY);
 
-        this.temperature = temp.getTemperature();
-        this.rainfall = temp.getRainfall();
+        BiomeElevation elevation = temp.getElevation();
+
+        double temperature = temp.getTemperature();
+        double rainfall = temp.getRainfall();
+
+        GenerationBiome parent = temp.getParent();
+        if (parent != null) {
+            if (decorators == Decorator.EMPTY_ARRAY) {
+                decorators = parent.decorators;
+            } else {
+                decorators = Arrays.stream(decorators)
+                        .flatMap(decorator -> decorator instanceof NextGenerationPass ? Arrays.stream(parent.getDecorators()) : Stream.of(decorator))
+                        .toArray(Decorator[]::new);
+            }
+            if (populators == Populator.EMPTY_ARRAY) {
+                populators = parent.populators;
+            } else {
+                populators = Arrays.stream(decorators)
+                        .flatMap(populator -> populator instanceof NextGenerationPass ? Arrays.stream(parent.getPopulators()) : Stream.of(populator))
+                        .toArray(Populator[]::new);
+            }
+
+            if (elevation == BiomeElevation.DEFAULT) {
+                elevation = parent.elevation;
+            }
+
+            if (Double.isNaN(temperature)) {
+                temperature = parent.temperature;
+            }
+            if (Double.isNaN(rainfall)) {
+                temperature = parent.rainfall;
+            }
+        } else {
+            if (Double.isNaN(temperature)) {
+                temperature = 0.5d;
+            }
+            if (Double.isNaN(rainfall)) {
+                temperature = 0.5d;
+            }
+        }
+
+        this.decorators = decorators;
+        this.populators = populators;
+        this.elevation = elevation;
+        this.temperature = temperature;
+        this.rainfall = rainfall;
 
         this.runtimeId = this.dictionary.get(id);
         this.internalId = internalId;

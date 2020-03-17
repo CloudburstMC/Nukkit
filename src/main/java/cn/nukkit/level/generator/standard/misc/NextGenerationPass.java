@@ -11,24 +11,24 @@ import lombok.NoArgsConstructor;
 import net.daporkchop.lib.random.PRandom;
 
 /**
- * Dummy generation pass to indicate where biome-specific generation passes should be inserted.
+ * Dummy generation pass to indicate where generation passes from the next layer down should be inserted.
  *
  * @author DaPorkchop_
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @JsonDeserialize
-public final class BiomeGenerationPass implements Decorator, Populator {
-    public static final Identifier          ID       = Identifier.fromString("nukkitx:biome");
-    public static final BiomeGenerationPass INSTANCE = new BiomeGenerationPass();
+public final class NextGenerationPass implements Decorator, Populator {
+    public static final Identifier         ID       = Identifier.fromString("nukkitx:next");
+    public static final NextGenerationPass INSTANCE = new NextGenerationPass();
 
     @Override
     public void decorate(IChunk chunk, PRandom random, int x, int z) {
-        throw new UnsupportedOperationException("nukkitx:biome may only be used in the base preset!");
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ, int blockX, int blockZ) {
-        throw new UnsupportedOperationException("nukkitx:biome may only be used in the base preset!");
+        throw new UnsupportedOperationException();
     }
 
     @Override

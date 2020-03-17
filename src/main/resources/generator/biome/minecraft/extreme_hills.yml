@@ -6,3 +6,20 @@ elevationVanilla:
 
 temperature: 0.2
 rainfall: 0.3
+
+populators:
+    # Emerald
+  - id: "nukkitx:ore"
+    count: "3-8"
+    size: 1
+    height: "4-32"
+    block: "emerald_ore"
+    replace: "stone"
+
+    # Silverfish
+  - id: "nukkitx:ore"
+    count: 4
+    size: 9
+    height: "0-32"
+    block: "monster_egg"
+    replace: "stone"
