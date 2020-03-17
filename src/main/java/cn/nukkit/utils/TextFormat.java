@@ -75,6 +75,10 @@ public enum TextFormat {
      */
     WHITE('f', 0xF),
     /**
+     * Represents minecoins gold.
+     */
+    MINECOIN_GOLD('g', 0x16),
+    /**
      * Makes the text obfuscated.
      */
     OBFUSCATED('k', 0x10, true),
@@ -105,7 +109,7 @@ public enum TextFormat {
      */
     public static final char ESCAPE = '\u00A7';
 
-    private static final Pattern CLEAN_PATTERN = Pattern.compile("(?i)" + ESCAPE + "[0-9A-FK-OR]");
+    private static final Pattern CLEAN_PATTERN = Pattern.compile("(?i)" + ESCAPE + "[0-9A-GK-OR]");
     private final static Map<Integer, TextFormat> BY_ID = Maps.newTreeMap();
     private final static Map<Character, TextFormat> BY_CHAR = new HashMap<>();
 
@@ -185,7 +189,7 @@ public enum TextFormat {
      * Translates a string using an alternate format code character into a
      * string that uses the internal TextFormat.ESCAPE format code
      * character. The alternate format code character will only be replaced if
-     * it is immediately followed by 0-9, A-F, a-f, K-O, k-o, R or r.
+     * it is immediately followed by 0-9, A-G, a-g, K-O, k-o, R or r.
      *
      * @param altFormatChar   The alternate format code character to replace. Ex: &amp;
      * @param textToTranslate Text containing the alternate format code character.
@@ -194,7 +198,7 @@ public enum TextFormat {
     public static String colorize(char altFormatChar, String textToTranslate) {
         char[] b = textToTranslate.toCharArray();
         for (int i = 0; i < b.length - 1; i++) {
-            if (b[i] == altFormatChar && "0123456789AaBbCcDdEeFfKkLlMmNnOoRr".indexOf(b[i + 1]) > -1) {
+            if (b[i] == altFormatChar && "0123456789AaBbCcDdEeFfGgKkLlMmNnOoRr".indexOf(b[i + 1]) > -1) {
                 b[i] = TextFormat.ESCAPE;
                 b[i + 1] = Character.toLowerCase(b[i + 1]);
             }
@@ -206,7 +210,7 @@ public enum TextFormat {
      * Translates a string, using an ampersand (&amp;) as an alternate format code
      * character, into a string that uses the internal TextFormat.ESCAPE format
      * code character. The alternate format code character will only be replaced if
-     * it is immediately followed by 0-9, A-F, a-f, K-O, k-o, R or r.
+     * it is immediately followed by 0-9, A-G, a-g, K-O, k-o, R or r.
      *
      * @param textToTranslate Text containing the alternate format code character.
      * @return Text containing the TextFormat.ESCAPE format code character.
