@@ -77,7 +77,7 @@ public enum TextFormat {
     /**
      * Represents minecoins gold.
      */
-    MINECOIN_GOLD('g', 0x10),
+    MINECOIN_GOLD('g', 0x16),
     /**
      * Makes the text obfuscated.
      */
