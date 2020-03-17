@@ -210,7 +210,7 @@ public enum TextFormat {
      * Translates a string, using an ampersand (&amp;) as an alternate format code
      * character, into a string that uses the internal TextFormat.ESCAPE format
      * code character. The alternate format code character will only be replaced if
-     * it is immediately followed by 0-9, A-F, a-f, K-O, k-o, R or r.
+     * it is immediately followed by 0-9, A-G, a-g, K-O, k-o, R or r.
      *
      * @param textToTranslate Text containing the alternate format code character.
      * @return Text containing the TextFormat.ESCAPE format code character.
