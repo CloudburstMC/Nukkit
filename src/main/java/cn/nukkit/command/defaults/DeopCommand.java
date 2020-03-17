@@ -4,7 +4,7 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.IPlayer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
@@ -15,9 +15,9 @@ import cn.nukkit.utils.TextFormat;
  */
 public class DeopCommand extends VanillaCommand {
     public DeopCommand(String name) {
-        super(name, "%nukkit.command.deop.description", "%commands.deop.description");
+        super(name, "commands.deop.description", "commands.deop.description");
         this.setPermission("nukkit.command.op.take");
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false)
         });
     }
@@ -42,7 +42,7 @@ public class DeopCommand extends VanillaCommand {
             ((Player) player).sendMessage(new TranslationContainer(TextFormat.GRAY + "%commands.deop.message"));
         }
 
-        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.deop.success", new String[]{player.getName()}));
+        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.deop.success", player.getName()));
 
         return true;
     }

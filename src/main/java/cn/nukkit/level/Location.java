@@ -1,175 +1,116 @@
 package cn.nukkit.level;
 
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.utils.LevelException;
+import cn.nukkit.block.Block;
+import cn.nukkit.item.Item;
+import cn.nukkit.level.chunk.Chunk;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.math.vector.Vector3i;
+import lombok.EqualsAndHashCode;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class Location extends Position {
+import static com.google.common.base.Preconditions.checkNotNull;
 
-    public double yaw;
-    public double pitch;
+@EqualsAndHashCode
+public final class Location {
+    private final Vector3f position;
+    private final float yaw;
+    private final float pitch;
+    private final Level level;
 
-    public Location() {
-        this(0);
-    }
-
-    public Location(double x) {
-        this(x, 0);
-    }
-
-    public Location(double x, double y) {
-        this(x, y, 0);
-    }
-
-    public Location(double x, double y, double z, Level level) {
-        this(x, y, z, 0, 0, level);
-    }
-
-    public Location(double x, double y, double z) {
-        this(x, y, z, 0);
-    }
-
-    public Location(double x, double y, double z, double yaw) {
-        this(x, y, z, yaw, 0);
-    }
-
-    public Location(double x, double y, double z, double yaw, double pitch) {
-        this(x, y, z, yaw, pitch, null);
-    }
-
-    public Location(double x, double y, double z, double yaw, double pitch, Level level) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+    private Location(Vector3f position, float yaw, float pitch, Level level) {
+        this.position = position;
         this.yaw = yaw;
         this.pitch = pitch;
         this.level = level;
     }
 
-    public static Location fromObject(Vector3f pos) {
-        return fromObject(pos, null, 0.0f, 0.0f);
+    public static Location from(Level level) {
+        return from(Vector3f.ZERO, level);
     }
 
-    public static Location fromObject(Vector3f pos, Level level) {
-        return fromObject(pos, level, 0.0f, 0.0f);
+    public static Location from(Vector3i position, Level level) {
+        return from(position.getX(), position.getY(), position.getZ(), 0f, 0f, level);
     }
 
-    public static Location fromObject(Vector3f pos, Level level, double yaw) {
-        return fromObject(pos, level, yaw, 0.0f);
+    public static Location from(float x, float y, float z, Level level) {
+        return from(x, y, z, 0, 0, level);
     }
 
-    public static Location fromObject(Vector3f pos, Level level, double yaw, double pitch) {
-        return new Location(pos.x, pos.y, pos.z, yaw, pitch, (level == null) ? ((pos instanceof Position) ? ((Position) pos).level : null) : level);
+    public static Location from(Vector3f position, Level level) {
+        return from(position, 0f, 0f, level);
     }
 
-    public double getYaw() {
-        return this.yaw;
+    public static Location from(Vector3f position, float yaw, float pitch, Level level) {
+        checkNotNull(position, "position");
+        checkNotNull(level, "level");
+        return new Location(position, yaw, pitch, level);
     }
 
-    public double getPitch() {
-        return this.pitch;
+    public static Location from(float x, float y, float z, float yaw, float pitch, Level level) {
+        checkNotNull(level, "level");
+        return new Location(Vector3f.from(x, y, z), yaw, pitch, level);
     }
 
-    @Override
-    public String toString() {
-        return "Location (level=" + (this.isValid() ? this.getLevel().getName() : "null") + ", x=" + this.x + ", y=" + this.y + ", z=" + this.z + ", yaw=" + this.yaw + ", pitch=" + this.pitch + ")";
+    public float getX() {
+        return this.position.getX();
     }
 
-    @Override
-    public Location getLocation() {
-        if (this.isValid()) return new Location(this.x, this.y, this.z, this.yaw, this.pitch, this.level);
-        else throw new LevelException("Undefined Level reference");
+    public float getY() {
+        return this.position.getY();
     }
 
-    @Override
-    public Location add(double x) {
-        return this.add(x, 0, 0);
+    public float getZ() {
+        return this.position.getZ();
     }
 
-    @Override
-    public Location add(double x, double y) {
-        return this.add(x, y, 0);
+    public Vector3f getPosition() {
+        return position;
     }
 
-    @Override
+    public float getYaw() {
+        return yaw;
+    }
+
+    public float getPitch() {
+        return pitch;
+    }
+
+    public Level getLevel() {
+        return level;
+    }
+
+    public Chunk getChunk() {
+        return level.getChunk(this.getChunkX(), this.getChunkZ());
+    }
+
+    public Block getBlock() {
+        return level.getBlock(this.position);
+    }
+
     public Location add(double x, double y, double z) {
-        return new Location(this.x + x, this.y + y, this.z + z, this.yaw, this.pitch, this.level);
+        return Location.from(Vector3f.from(this.getX() + x, this.getY() + y, this.getZ() + z), this.yaw, this.pitch, this.level);
     }
 
-    @Override
-    public Location add(Vector3f x) {
-        return new Location(this.x + x.getX(), this.y + x.getY(), this.z + x.getZ(), this.yaw, this.pitch, this.level);
+    public Location add(float x, float y, float z) {
+        return Location.from(Vector3f.from(this.getX() + x, this.getY() + y, this.getZ() + z), this.yaw, this.pitch, this.level);
     }
 
-    @Override
-    public Location subtract() {
-        return this.subtract(0, 0, 0);
+    public int getFloorX() {
+        return this.position.getFloorX();
     }
 
-    @Override
-    public Location subtract(double x) {
-        return this.subtract(x, 0, 0);
+    public int getFloorY() {
+        return this.position.getFloorY();
     }
 
-    @Override
-    public Location subtract(double x, double y) {
-        return this.subtract(x, y, 0);
+    public int getFloorZ() {
+        return this.position.getFloorZ();
     }
 
-    @Override
-    public Location subtract(double x, double y, double z) {
-        return this.add(-x, -y, -z);
+    public int getChunkX() {
+        return this.getFloorX() >> 4;
     }
 
-    @Override
-    public Location subtract(Vector3f x) {
-        return this.add(-x.getX(), -x.getY(), -x.getZ());
-    }
-
-    @Override
-    public Location multiply(double val) {
-        return new Location(this.x * val, this.y * val, this.z * val, this.yaw, this.pitch, this.level);
-    }
-
-    @Override
-    public Location divide(double number) {
-        return new Location(this.x / number, this.y / number, this.z / number, this.yaw, this.pitch, this.level);
-    }
-
-    @Override
-    public Location ceil() {
-        return new Location((int) Math.ceil(this.x), (int) Math.ceil(this.y), (int) Math.ceil(this.z), this.yaw, this.pitch, this.level);
-    }
-
-    @Override
-    public Location floor() {
-        return new Location(this.getFloorX(), this.getFloorY(), this.getFloorZ(), this.yaw, this.pitch, this.level);
-    }
-
-    @Override
-    public Location round() {
-        return new Location(Math.round(this.x), Math.round(this.y), Math.round(this.z), this.yaw, this.pitch, this.level);
-    }
-
-    @Override
-    public Location abs() {
-        return new Location((int) Math.abs(this.x), (int) Math.abs(this.y), (int) Math.abs(this.z), this.yaw, this.pitch, this.level);
-    }
-
-    public Vector3f getDirectionVector() {
-        double pitch = ((getPitch() + 90) * Math.PI) / 180;
-        double yaw = ((getYaw() + 90) * Math.PI) / 180;
-        double x = Math.sin(pitch) * Math.cos(yaw);
-        double z = Math.sin(pitch) * Math.sin(yaw);
-        double y = Math.cos(pitch);
-        return new Vector3f(x, y, z).normalize();
-    }
-
-    @Override
-    public Location clone() {
-        return (Location) super.clone();
+    public int getChunkZ() {
+        return this.getFloorZ() >> 4;
     }
 }

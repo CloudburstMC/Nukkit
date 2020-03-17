@@ -2,7 +2,7 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.network.protocol.ProtocolInfo;
+import cn.nukkit.network.ProtocolInfo;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginDescription;
 import cn.nukkit.scheduler.AsyncTask;
@@ -18,7 +18,7 @@ import java.lang.management.ManagementFactory;
 public class DebugPasteCommand extends VanillaCommand {
 
     public DebugPasteCommand(String name) {
-        super(name, "%nukkit.command.debug.description", "%nukkit.command.debug.usage");
+        super(name, "commands.debug.description", "commands.debug.usage");
         this.setPermission("nukkit.command.debug.perform");
     }
 
@@ -50,7 +50,7 @@ public class DebugPasteCommand extends VanillaCommand {
                     b.append("version.api: ").append(server.getApiVersion()).append('\n');
                     b.append("version.nukkit: ").append(server.getNukkitVersion()).append('\n');
                     b.append("version.minecraft: ").append(server.getVersion()).append('\n');
-                    b.append("version.protocol: ").append(ProtocolInfo.CURRENT_PROTOCOL).append('\n');
+                    b.append("version.protocol: ").append(ProtocolInfo.getDefaultProtocolVersion()).append('\n');
                     b.append("plugins:");
                     for (Plugin plugin : server.getPluginManager().getPlugins().values()) {
                         boolean enabled = plugin.isEnabled();

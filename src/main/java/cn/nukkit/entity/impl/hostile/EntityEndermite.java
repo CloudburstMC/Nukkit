@@ -3,16 +3,15 @@ package cn.nukkit.entity.impl.hostile;
 import cn.nukkit.entity.Arthropod;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.hostile.Endermite;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 /**
  * @author Box.
  */
 public class EntityEndermite extends EntityHostile implements Endermite, Arthropod {
 
-    public EntityEndermite(EntityType<Endermite> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityEndermite(EntityType<Endermite> type, Location location) {
+        super(type, location);
     }
 
     @Override

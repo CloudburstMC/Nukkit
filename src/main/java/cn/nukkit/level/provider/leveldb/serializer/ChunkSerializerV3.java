@@ -7,11 +7,11 @@ import cn.nukkit.level.chunk.ChunkSection;
 import cn.nukkit.level.provider.leveldb.LevelDBKey;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.ChunkException;
-import gnu.trove.map.TIntShortMap;
-import gnu.trove.map.hash.TIntShortHashMap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.Unpooled;
+import it.unimi.dsi.fastutil.ints.Int2ShortMap;
+import it.unimi.dsi.fastutil.ints.Int2ShortOpenHashMap;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.iq80.leveldb.DB;
@@ -51,11 +51,11 @@ class ChunkSerializerV3 extends ChunkSerializerV1 {
         int chunkX = chunkBuilder.getX();
         int chunkZ = chunkBuilder.getZ();
 
-        TIntShortMap extraDataMap = null;
+        Int2ShortMap extraDataMap = null;
 
         byte[] extraData = db.get(LevelDBKey.BLOCK_EXTRA_DATA.getKey(chunkX, chunkZ));
         if (extraData != null) {
-            extraDataMap = new TIntShortHashMap(16, 0.5f, 0, (short) 0);
+            extraDataMap = new Int2ShortOpenHashMap();
             ByteBuf extraDataBuf = Unpooled.wrappedBuffer(extraData);
 
             int count = extraDataBuf.readIntLE();

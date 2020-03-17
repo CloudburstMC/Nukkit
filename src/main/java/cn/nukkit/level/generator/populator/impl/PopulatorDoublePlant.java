@@ -33,6 +33,6 @@ public class PopulatorDoublePlant extends PopulatorSurfaceBlock {
     @Override
     protected void placeBlock(int x, int y, int z, Block block, IChunk chunk, BedrockRandom random) {
         super.placeBlock(x, y, z, block, chunk, random);
-        chunk.setBlock(x, y + 1, z, Block.get(block.getId(), block.getDamage() | 8));
+        chunk.setBlock(x, y + 1, z, Block.get(block.getId(), block.getMeta() | 8));
     }
 }

@@ -2,6 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.EntityTypes;
+import cn.nukkit.entity.Projectile;
 import cn.nukkit.utils.Identifier;
 
 /**
@@ -20,7 +21,7 @@ public class ItemSnowball extends ProjectileItem {
     }
 
     @Override
-    public EntityType<?> getProjectileEntityType() {
+    public EntityType<? extends Projectile> getProjectileEntityType() {
         return EntityTypes.SNOWBALL;
     }
 

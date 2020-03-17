@@ -1,5 +1,7 @@
 package cn.nukkit.math;
 
+import com.nukkitx.math.vector.Vector2f;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -8,7 +10,7 @@ package cn.nukkit.math;
 public abstract class VectorMath {
 
     public static Vector2f getDirection2D(double azimuth) {
-        return new Vector2f(Math.cos(azimuth), Math.sin(azimuth));
+        return Vector2f.from(Math.cos(azimuth), Math.sin(azimuth));
     }
 
 }

@@ -2,7 +2,7 @@ package cn.nukkit.level.generator.object;
 
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.BedrockRandom;
-import cn.nukkit.math.Vector3i;
+import com.nukkitx.math.vector.Vector3i;
 
 public abstract class BasicGenerator {
 

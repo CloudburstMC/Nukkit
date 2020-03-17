@@ -3,16 +3,15 @@ package cn.nukkit.entity.impl.hostile;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.Smiteable;
 import cn.nukkit.entity.hostile.Zombie;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 /**
  * Created by Dr. Nick Doran on 4/23/2017.
  */
 public class EntityZombie extends EntityHostile implements Zombie, Smiteable {
 
-    public EntityZombie(EntityType<Zombie> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityZombie(EntityType<Zombie> type, Location location) {
+        super(type, location);
     }
 
     @Override

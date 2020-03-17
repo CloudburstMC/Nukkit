@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.blockentity.Banner;
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityBanner;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
@@ -9,19 +9,19 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.IntTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.tag.CompoundTag;
 
 import static cn.nukkit.block.BlockIds.AIR;
 import static cn.nukkit.block.BlockIds.WALL_BANNER;
+import static cn.nukkit.blockentity.BlockEntityTypes.BANNER;
 
 /**
  * Created by PetteriM1
@@ -33,12 +33,12 @@ public class BlockBanner extends BlockTransparent implements Faceable {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 1;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 5;
     }
 
@@ -61,26 +61,18 @@ public class BlockBanner extends BlockTransparent implements Faceable {
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (face != BlockFace.DOWN) {
             if (face == BlockFace.UP) {
-                this.setDamage(NukkitMath.floorDouble(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f);
-                this.getLevel().setBlock(block, this, true);
+                this.setMeta(NukkitMath.floorDouble(((player.getYaw() + 180) * 16 / 360) + 0.5) & 0x0f);
+                this.getLevel().setBlock(block.getPosition(), this, true);
             } else {
-                this.setDamage(face.getIndex());
-                this.getLevel().setBlock(block, Block.get(WALL_BANNER, this.getDamage()), true);
+                this.setMeta(face.getIndex());
+                this.getLevel().setBlock(block.getPosition(), Block.get(WALL_BANNER, this.getMeta()), true);
             }
 
-            CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.BANNER)
-                    .putInt("Base", item.getDamage() & 0xf);
+            CompoundTagBuilder tag = CompoundTag.builder();
+            item.saveAdditionalData(tag);
+            tag.intTag("Base", item.getMeta());
 
-            Tag type = item.getNamedTagEntry("Type");
-            if (type instanceof IntTag) {
-                nbt.put("Type", type);
-            }
-            Tag patterns = item.getNamedTagEntry("Patterns");
-            if (patterns instanceof ListTag) {
-                nbt.put("Patterns", patterns);
-            }
-
-            BlockEntity.createBlockEntity(BlockEntity.BANNER, this.getChunk(), nbt);
+            BlockEntityRegistry.get().newEntity(BANNER, this.getChunk(), this.getPosition()).loadAdditionalData(tag.buildRootTag());
 
             return true;
         }
@@ -91,7 +83,7 @@ public class BlockBanner extends BlockTransparent implements Faceable {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (this.down().getId() == AIR) {
-                this.getLevel().useBreakOn(this);
+                this.getLevel().useBreakOn(this.getPosition());
 
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -102,30 +94,24 @@ public class BlockBanner extends BlockTransparent implements Faceable {
 
     @Override
     public Item toItem() {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
+        BlockEntity blockEntity = this.getLevel().getBlockEntity(this.getPosition());
         Item item = Item.get(ItemIds.BANNER);
-        if (blockEntity instanceof BlockEntityBanner) {
-            BlockEntityBanner banner = (BlockEntityBanner) blockEntity;
-            item.setDamage(banner.getBaseColor() & 0xf);
-            item.setNamedTag((item.hasCompoundTag() ? item.getNamedTag() : new CompoundTag())
-                    .putInt("Base", banner.getBaseColor() & 0xf));
-            int type = banner.namedTag.getInt("Type");
-            if (type > 0) {
-                item.setNamedTag((item.hasCompoundTag() ? item.getNamedTag() : new CompoundTag())
-                        .putInt("Type", type));
-            }
-            ListTag<CompoundTag> patterns = banner.namedTag.getList("Patterns", CompoundTag.class);
-            if (patterns.size() > 0) {
-                item.setNamedTag((item.hasCompoundTag() ? item.getNamedTag() : new CompoundTag())
-                        .putList(patterns));
-            }
+        if (blockEntity instanceof Banner) {
+            Banner banner = (Banner) blockEntity;
+            item.setMeta(banner.getBase().getDyeData());
+
+            CompoundTagBuilder tag = CompoundTag.builder();
+            banner.saveAdditionalData(tag);
+            tag.remove("Base");
+
+            item.loadAdditionalData(tag.buildRootTag());
         }
         return item;
     }
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x7);
     }
 
     @Override
@@ -135,10 +121,10 @@ public class BlockBanner extends BlockTransparent implements Faceable {
 
     public DyeColor getDyeColor() {
         if (this.level != null) {
-            BlockEntity blockEntity = this.level.getBlockEntity(this);
+            BlockEntity blockEntity = this.level.getBlockEntity(this.getPosition());
 
-            if (blockEntity instanceof BlockEntityBanner) {
-                return ((BlockEntityBanner) blockEntity).getDyeColor();
+            if (blockEntity instanceof Banner) {
+                return ((Banner) blockEntity).getBase();
             }
         }
 

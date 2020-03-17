@@ -6,11 +6,11 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * Created on 2015/11/23 by xtypr.
@@ -22,15 +22,8 @@ public class BlockFenceGate extends BlockTransparent implements Faceable {
         super(id);
     }
 
-    @Override
-    public double getHardness() {
-        return 2;
-    }
-
-    @Override
-    public double getResistance() {
-        return 15;
-    }
+    private static final float[] offMinX = new float[2];
+    private static final float[] offMinZ = new float[2];
 
     @Override
     public boolean canBeActivated() {
@@ -42,25 +35,33 @@ public class BlockFenceGate extends BlockTransparent implements Faceable {
         return ItemTool.TYPE_AXE;
     }
 
-    private static final double[] offMinX = new double[2];
-    private static final double[] offMinZ = new double[2];
-    private static final double[] offMaxX = new double[2];
-    private static final double[] offMaxZ = new double[2];
+    private static final float[] offMaxX = new float[2];
+    private static final float[] offMaxZ = new float[2];
 
     static {
         offMinX[0] = 0;
-        offMinZ[0] = 0.375;
+        offMinZ[0] = 0.375f;
         offMaxX[0] = 1;
-        offMaxZ[0] = 0.625;
+        offMaxZ[0] = 0.625f;
 
-        offMinX[1] = 0.375;
+        offMinX[1] = 0.375f;
         offMinZ[1] = 0;
-        offMaxX[1] = 0.625;
+        offMaxX[1] = 0.625f;
         offMaxZ[1] = 1;
     }
 
+    @Override
+    public float getHardness() {
+        return 2;
+    }
+
+    @Override
+    public float getResistance() {
+        return 15;
+    }
+
     private int getOffsetIndex() {
-        switch (this.getDamage() & 0x03) {
+        switch (this.getMeta() & 0x03) {
             case 0:
             case 2:
                 return 0;
@@ -70,29 +71,29 @@ public class BlockFenceGate extends BlockTransparent implements Faceable {
     }
 
     @Override
-    public double getMinX() {
-        return this.x + offMinX[getOffsetIndex()];
+    public float getMinX() {
+        return this.getX() + offMinX[getOffsetIndex()];
     }
 
     @Override
-    public double getMinZ() {
-        return this.z + offMinZ[getOffsetIndex()];
+    public float getMinZ() {
+        return this.getZ() + offMinZ[getOffsetIndex()];
     }
 
     @Override
-    public double getMaxX() {
-        return this.x + offMaxX[getOffsetIndex()];
+    public float getMaxX() {
+        return this.getX() + offMaxX[getOffsetIndex()];
     }
 
     @Override
-    public double getMaxZ() {
-        return this.z + offMaxZ[getOffsetIndex()];
+    public float getMaxZ() {
+        return this.getZ() + offMaxZ[getOffsetIndex()];
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        this.setDamage(player != null ? player.getDirection().getHorizontalIndex() : 0);
-        this.getLevel().setBlock(block, this, true, true);
+        this.setMeta(player != null ? player.getDirection().getHorizontalIndex() : 0);
+        this.getLevel().setBlock(block.getPosition(), this, true, true);
 
         return true;
     }
@@ -107,7 +108,7 @@ public class BlockFenceGate extends BlockTransparent implements Faceable {
             return false;
         }
 
-        this.level.addSound(this.asVector3f(), isOpen() ? Sound.RANDOM_DOOR_OPEN : Sound.RANDOM_DOOR_CLOSE);
+        this.level.addSound(this.getPosition(), isOpen() ? Sound.RANDOM_DOOR_OPEN : Sound.RANDOM_DOOR_CLOSE);
         return true;
     }
 
@@ -129,14 +130,14 @@ public class BlockFenceGate extends BlockTransparent implements Faceable {
         int direction;
 
         if (player != null) {
-            double yaw = player.yaw;
-            double rotation = (yaw - 90) % 360;
+            float yaw = player.getYaw();
+            float rotation = (yaw - 90) % 360;
 
             if (rotation < 0) {
-                rotation += 360.0;
+                rotation += 360.0f;
             }
 
-            int originDirection = this.getDamage() & 0x01;
+            int originDirection = this.getMeta() & 0x01;
 
             if (originDirection == 0) {
                 if (rotation >= 0 && rotation < 180) {
@@ -152,7 +153,7 @@ public class BlockFenceGate extends BlockTransparent implements Faceable {
                 }
             }
         } else {
-            int originDirection = this.getDamage() & 0x01;
+            int originDirection = this.getMeta() & 0x01;
 
             if (originDirection == 0) {
                 direction = 0;
@@ -161,19 +162,19 @@ public class BlockFenceGate extends BlockTransparent implements Faceable {
             }
         }
 
-        this.setDamage(direction | ((~this.getDamage()) & 0x04));
-        this.level.setBlock(this, this, false, false);
+        this.setMeta(direction | ((~this.getMeta()) & 0x04));
+        this.level.setBlock(this.getPosition(), this, false, false);
         return true;
     }
 
     public boolean isOpen() {
-        return (this.getDamage() & 0x04) > 0;
+        return (this.getMeta() & 0x04) > 0;
     }
 
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_REDSTONE) {
-            if ((!isOpen() && this.level.isBlockPowered(this.asVector3i())) || (isOpen() && !this.level.isBlockPowered(this.asVector3i()))) {
+            if ((!isOpen() && this.level.isBlockPowered(this.getPosition())) || (isOpen() && !this.level.isBlockPowered(this.getPosition()))) {
                 this.toggle(null);
                 return type;
             }
@@ -184,7 +185,7 @@ public class BlockFenceGate extends BlockTransparent implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
     }
 
     @Override

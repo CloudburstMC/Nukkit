@@ -8,29 +8,25 @@ import cn.nukkit.entity.misc.FallingBlock;
 import cn.nukkit.event.entity.EntityBlockChangeEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
-import cn.nukkit.item.Item;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.Sound;
-import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.gamerule.GameRules;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.math.Vector3i;
-import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.registry.BlockRegistry;
+import com.nukkitx.math.vector.Vector3i;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.tag.CompoundTag;
 
 import static cn.nukkit.block.BlockIds.AIR;
 import static cn.nukkit.block.BlockIds.ANVIL;
-import static cn.nukkit.entity.data.EntityData.VARIANT;
+import static com.nukkitx.protocol.bedrock.data.EntityData.VARIANT;
 
 /**
  * @author MagicDroidX
  */
 public class EntityFallingBlock extends BaseEntity implements FallingBlock {
 
-    protected int blockId;
-    protected int damage;
-
-    public EntityFallingBlock(EntityType<FallingBlock> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityFallingBlock(EntityType<FallingBlock> type, Location location) {
+        super(type, location);
     }
 
     @Override
@@ -69,28 +65,38 @@ public class EntityFallingBlock extends BaseEntity implements FallingBlock {
     }
 
     @Override
-    protected void initEntity() {
-        super.initEntity();
+    public void loadAdditionalData(CompoundTag tag) {
+        super.loadAdditionalData(tag);
 
-        if (namedTag != null) {
-            if (namedTag.contains("TileID")) {
-                blockId = namedTag.getInt("TileID");
-            } else if (namedTag.contains("Tile")) {
-                blockId = namedTag.getInt("Tile");
-                namedTag.putInt("TileID", blockId);
-            }
-
-            if (namedTag.contains("Data")) {
-                damage = namedTag.getByte("Data");
-            }
+        int id;
+        int meta;
+        BlockRegistry registry = BlockRegistry.get();
+        if (tag.contains("Tile") && tag.contains("Data")) {
+            id = tag.getByte("Tile") & 0xff;
+            meta = tag.getByte("Data");
+        } else {
+            CompoundTag plantTag = tag.getCompound("FallingBlock");
+            id = registry.getLegacyId(plantTag.getString("name"));
+            meta = plantTag.getShort("val");
         }
-
-        if (blockId == 0) {
+        if (id == 0) {
             close();
             return;
         }
 
-        setIntData(VARIANT, BlockRegistry.get().getRuntimeId(this.getBlock(), this.getDamage()));
+        this.data.setInt(VARIANT, registry.getRuntimeId(id, meta));
+    }
+
+    @Override
+    public void saveAdditionalData(CompoundTagBuilder tag) {
+        super.saveAdditionalData(tag);
+
+        Block block = getBlock();
+
+        tag.tag(CompoundTag.builder()
+                .stringTag("name", block.getId().toString())
+                .shortTag("val", (short) block.getMeta())
+                .build("FallingBlock"));
     }
 
     public boolean canCollideWith(Entity entity) {
@@ -121,33 +127,31 @@ public class EntityFallingBlock extends BaseEntity implements FallingBlock {
         boolean hasUpdate = entityBaseTick(tickDiff);
 
         if (isAlive()) {
-            motionY -= getGravity();
+            this.motion = this.motion.sub(0, getGravity(), 0);
 
-            move(motionX, motionY, motionZ);
+            move(this.motion);
 
             float friction = 1 - getDrag();
 
-            motionX *= friction;
-            motionY *= 1 - getDrag();
-            motionZ *= friction;
+            this.motion = this.motion.mul(friction, 1 - this.getDrag(), friction);
 
-            Vector3i pos = (new Vector3f(x - 0.5, y, z - 0.5)).round().asVector3i();
+            Vector3i pos = this.getPosition().sub(0.5, 0, 0.5).round().toInt();
 
             if (onGround) {
                 close();
                 Block block = level.getBlock(pos);
                 if (block.getId() != AIR && block.isTransparent() && !block.canBeReplaced()) {
                     if (this.level.getGameRules().get(GameRules.DO_ENTITY_DROPS)) {
-                        getLevel().dropItem(this, Item.get(this.getBlock(), this.getDamage(), 1));
+                        getLevel().dropItem(this.getPosition(), this.getBlock().toItem());
                     }
                 } else {
-                    EntityBlockChangeEvent event = new EntityBlockChangeEvent(this, block, Block.get(getBlock(), getDamage()));
+                    EntityBlockChangeEvent event = new EntityBlockChangeEvent(this, block, this.getBlock());
                     server.getPluginManager().callEvent(event);
                     if (!event.isCancelled()) {
                         getLevel().setBlock(pos, event.getTo(), true);
 
                         if (event.getTo().getId() == ANVIL) {
-                            getLevel().addSound(pos.asVector3f(), Sound.RANDOM_ANVIL_LAND);
+                            getLevel().addSound(pos, Sound.RANDOM_ANVIL_LAND);
                         }
                     }
                 }
@@ -159,21 +163,17 @@ public class EntityFallingBlock extends BaseEntity implements FallingBlock {
 
         this.timing.stopTiming();
 
-        return hasUpdate || !onGround || Math.abs(motionX) > 0.00001 || Math.abs(motionY) > 0.00001 || Math.abs(motionZ) > 0.00001;
+        return hasUpdate || !onGround || this.motion.length() > 0.00001;
     }
 
-    public int getBlock() {
-        return blockId;
-    }
-
-    public int getDamage() {
-        return damage;
+    public Block getBlock() {
+        return BlockRegistry.get().getBlock(this.data.getInt(VARIANT));
     }
 
     @Override
-    public void saveNBT() {
-        namedTag.putInt("TileID", blockId);
-        namedTag.putByte("Data", damage);
+    public void setBlock(Block block) {
+        int runtimeId = BlockRegistry.get().getRuntimeId(block);
+        this.data.setInt(VARIANT, runtimeId);
     }
 
     @Override

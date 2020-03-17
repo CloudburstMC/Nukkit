@@ -13,7 +13,7 @@ import cn.nukkit.utils.ThreadCache;
 public class GarbageCollectorCommand extends VanillaCommand {
 
     public GarbageCollectorCommand(String name) {
-        super(name, "%nukkit.command.gc.description", "%nukkit.command.gc.usage");
+        super(name, "commands.gc.description", "commands.gc.usage");
         this.setPermission("nukkit.command.gc");
         this.commandParameters.clear();
     }

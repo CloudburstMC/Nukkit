@@ -14,10 +14,10 @@ public class PopulatorGlowStone extends Populator {
         int x = random.nextInt(chunkX << 4, (chunkX << 4) + 15);
         int z = random.nextInt(chunkZ << 4, (chunkZ << 4) + 15);
         int y = this.getHighestWorkableBlock(chunk, x & 0xF, z & 0xF);
-        if (y != -1 && level.getBlockIdAt(x, y, z) != NETHERRACK) {
+        if (y != -1 && level.getBlockId(x, y, z) != NETHERRACK) {
             int count = random.nextInt(40, 60);
             for (int i = 0; i < count; i++) {
-                level.setBlockIdAt(x + (random.nextInt(7) - 3), y + (random.nextInt(9) - 4), z + (random.nextInt(7) - 3), GLOWSTONE);
+                level.setBlockId(x + (random.nextInt(7) - 3), y + (random.nextInt(9) - 4), z + (random.nextInt(7) - 3), GLOWSTONE);
             }
         }
     }

@@ -6,10 +6,10 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import static cn.nukkit.block.BlockIds.AIR;
 import static cn.nukkit.item.ItemIds.SNOWBALL;
@@ -25,13 +25,13 @@ public class BlockSnowLayer extends BlockFallable {
     }
 
     @Override
-    public double getHardness() {
-        return 0.1;
+    public float getHardness() {
+        return 0.1f;
     }
 
     @Override
-    public double getResistance() {
-        return 0.5;
+    public float getResistance() {
+        return 0.5f;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class BlockSnowLayer extends BlockFallable {
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         Block down = this.down();
         if (down.isSolid()) {
-            this.getLevel().setBlock(block, this, true);
+            this.getLevel().setBlock(block.getPosition(), this, true);
 
             return true;
         }
@@ -59,11 +59,11 @@ public class BlockSnowLayer extends BlockFallable {
     public int onUpdate(int type) {
         super.onUpdate(type);
         if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if (this.getLevel().getBlockLightAt((int) this.x, (int) this.y, (int) this.z) >= 10) {
+            if (this.getLevel().getBlockLightAt((int) this.getX(), (int) this.getY(), (int) this.getZ()) >= 10) {
                 BlockFadeEvent event = new BlockFadeEvent(this, get(AIR));
                 level.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    level.setBlock(this, event.getNewState(), true);
+                    level.setBlock(this.getPosition(), event.getNewState(), true);
                 }
                 return Level.BLOCK_UPDATE_NORMAL;
             }

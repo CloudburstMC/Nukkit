@@ -15,15 +15,15 @@ public class BlockGlassStained extends BlockGlass {
 
     @Override
     public BlockColor getColor() {
-        return DyeColor.getByWoolData(getDamage()).getColor();
+        return DyeColor.getByWoolData(getMeta()).getColor();
     }
 
     public DyeColor getDyeColor() {
-        return DyeColor.getByWoolData(getDamage());
+        return DyeColor.getByWoolData(getMeta());
     }
 
     @Override
-    public final void setDamage(int meta) {
+    public final void setMeta(int meta) {
         this.meta = meta;
     }
 }

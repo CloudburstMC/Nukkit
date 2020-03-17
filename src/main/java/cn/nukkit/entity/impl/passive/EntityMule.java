@@ -4,16 +4,15 @@ import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.passive.Mule;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 /**
  * @author PikyCZ
  */
 public class EntityMule extends Animal implements Mule {
 
-    public EntityMule(EntityType<Mule> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityMule(EntityType<Mule> type, Location location) {
+        super(type, location);
     }
 
     @Override

@@ -24,13 +24,13 @@ public class BlockGrassPath extends BlockGrass {
     }
 
     @Override
-    public double getMaxY() {
-        return this.y + 0.9375;
+    public float getMaxY() {
+        return this.getY() + 0.9375f;
     }
 
     @Override
-    public double getResistance() {
-        return 3.25;
+    public float getResistance() {
+        return 3.25f;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class BlockGrassPath extends BlockGrass {
     public boolean onActivate(Item item, Player player) {
         if (item.isHoe()) {
             item.useOn(this);
-            this.getLevel().setBlock(this, Block.get(FARMLAND), true);
+            this.getLevel().setBlock(this.getPosition(), Block.get(FARMLAND), true);
             return true;
         }
 

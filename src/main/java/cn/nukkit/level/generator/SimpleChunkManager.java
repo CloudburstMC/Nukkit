@@ -21,7 +21,7 @@ public abstract class SimpleChunkManager implements ChunkManager {
     }
 
     @Override
-    public Identifier getBlockIdAt(int x, int y, int z, int layer) {
+    public Identifier getBlockId(int x, int y, int z, int layer) {
         IChunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
             return chunk.getBlockId(x & 0xf, y & 0xff, z & 0xf, layer);
@@ -30,7 +30,7 @@ public abstract class SimpleChunkManager implements ChunkManager {
     }
 
     @Override
-    public void setBlockIdAt(int x, int y, int z, int layer, Identifier id) {
+    public void setBlockId(int x, int y, int z, int layer, Identifier id) {
         IChunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
             chunk.setBlockId(x & 0xf, y & 0xff, z & 0xf, layer, id);

@@ -2,7 +2,7 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 
 /**
  * Created on 2015/11/13 by xtypr.
@@ -11,7 +11,7 @@ import cn.nukkit.lang.TranslationContainer;
 public class SaveOffCommand extends VanillaCommand {
 
     public SaveOffCommand(String name) {
-        super(name, "%nukkit.command.saveoff.description", "%commands.save-off.usage");
+        super(name);
         this.setPermission("nukkit.command.save.disable");
         this.commandParameters.clear();
     }

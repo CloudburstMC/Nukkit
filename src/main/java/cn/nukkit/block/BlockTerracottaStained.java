@@ -17,13 +17,13 @@ public class BlockTerracottaStained extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
-        return 1.25;
+    public float getHardness() {
+        return 1.25f;
     }
 
     @Override
-    public double getResistance() {
-        return 0.75;
+    public float getResistance() {
+        return 0.75f;
     }
 
     @Override
@@ -42,11 +42,11 @@ public class BlockTerracottaStained extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        return DyeColor.getByWoolData(getDamage()).getColor();
+        return DyeColor.getByWoolData(getMeta()).getColor();
     }
 
     public DyeColor getDyeColor() {
-        return DyeColor.getByWoolData(getDamage());
+        return DyeColor.getByWoolData(getMeta());
     }
 
 }

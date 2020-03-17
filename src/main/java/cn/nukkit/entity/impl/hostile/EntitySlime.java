@@ -4,16 +4,15 @@ import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.hostile.Slime;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 /**
  * @author PikyCZ
  */
 public class EntitySlime extends EntityHostile implements Slime {
 
-    public EntitySlime(EntityType<Slime> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntitySlime(EntityType<Slime> type, Location location) {
+        super(type, location);
     }
 
     @Override

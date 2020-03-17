@@ -1,9 +1,9 @@
 package cn.nukkit.event.player;
 
-import cn.nukkit.entity.data.Skin;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.player.Player;
+import com.nukkitx.protocol.bedrock.data.SerializedSkin;
 
 /**
  * author: KCodeYT
@@ -17,14 +17,14 @@ public class PlayerChangeSkinEvent extends PlayerEvent implements Cancellable {
         return handlers;
     }
 
-    private final Skin skin;
+    private final SerializedSkin skin;
 
-    public PlayerChangeSkinEvent(Player player, Skin skin) {
+    public PlayerChangeSkinEvent(Player player, SerializedSkin skin) {
         this.player = player;
         this.skin = skin;
     }
 
-    public Skin getSkin() {
+    public SerializedSkin getSkin() {
         return this.skin;
     }
 

@@ -7,19 +7,25 @@ import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.vehicle.HopperMinecart;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.MinecartType;
+import com.nukkitx.math.vector.Vector3f;
 
 public class EntityHopperMinecart extends EntityAbstractMinecart implements HopperMinecart {
 
     public static final int NETWORK_ID = 96;
 
-    public EntityHopperMinecart(EntityType<HopperMinecart> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
-        super.setDisplayBlock(Block.get(BlockIds.HOPPER), false);
+    public EntityHopperMinecart(EntityType<HopperMinecart> type, Location location) {
+        super(type, location);
+    }
+
+    @Override
+    public void initEntity() {
+        super.initEntity();
+
+        this.setDisplayBlock(Block.get(BlockIds.HOPPER));
+        this.setDisplay(true);
     }
 
     // TODO: 2016/12/18 inventory
@@ -36,7 +42,7 @@ public class EntityHopperMinecart extends EntityAbstractMinecart implements Hopp
 
     @Override
     public void dropItem() {
-        level.dropItem(this, Item.get(ItemIds.HOPPER_MINECART));
+        this.getLevel().dropItem(this.getPosition(), Item.get(ItemIds.HOPPER_MINECART));
     }
 
     @Override

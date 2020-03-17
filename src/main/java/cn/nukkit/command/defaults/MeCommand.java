@@ -3,7 +3,7 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
@@ -14,10 +14,10 @@ import cn.nukkit.utils.TextFormat;
 public class MeCommand extends VanillaCommand {
 
     public MeCommand(String name) {
-        super(name, "%nukkit.command.me.description", "%commands.me.usage");
+        super(name, "commands.me.description", "commands.me.usage");
         this.setPermission("nukkit.command.me");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("action ...", CommandParamType.RAWTEXT, false)
         });
     }

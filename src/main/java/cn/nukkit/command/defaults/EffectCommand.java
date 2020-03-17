@@ -4,7 +4,7 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.InstantEffect;
@@ -17,17 +17,17 @@ import cn.nukkit.utils.TextFormat;
  */
 public class EffectCommand extends Command {
     public EffectCommand(String name) {
-        super(name, "%nukkit.command.effect.description", "%commands.effect.usage");
+        super(name, "commands.effect.description", "commands.effect.usage");
         this.setPermission("nukkit.command.effect");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
                 new CommandParameter("effect", CommandParamType.STRING, false), //Do not use Enum here because of buggy behavior
                 new CommandParameter("seconds", CommandParamType.INT, true),
                 new CommandParameter("amplifier", true),
                 new CommandParameter("hideParticle", true, new String[]{"true", "false"})
         });
-        this.commandParameters.put("clear", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
                 new CommandParameter("clear", new String[]{"clear"})
         });

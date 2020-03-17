@@ -2,16 +2,15 @@ package cn.nukkit.entity.impl.hostile;
 
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.hostile.Blaze;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 /**
  * @author PikyCZ
  */
 public class EntityBlaze extends EntityHostile implements Blaze {
 
-    public EntityBlaze(EntityType<Blaze> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityBlaze(EntityType<Blaze> type, Location location) {
+        super(type, location);
     }
 
     @Override

@@ -19,22 +19,22 @@ public class BlockBlueIce extends BlockIce {
     }
 
     @Override
-    public double getHardness() {
-        return 2.8;
+    public float getHardness() {
+        return 2.8f;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 14;
     }
 
     @Override
-    public double getFrictionFactor() {
-        return 0.989;
+    public float getFrictionFactor() {
+        return 0.989f;
     }
 
     @Override
-    public int onUpdate(int type){
+    public int onUpdate(int type) {
         return 0;
     }
 
@@ -45,7 +45,7 @@ public class BlockBlueIce extends BlockIce {
 
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, Block.get(AIR), true);
+        this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true);
         return true;
     }
 

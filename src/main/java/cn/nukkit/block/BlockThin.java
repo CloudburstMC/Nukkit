@@ -24,10 +24,10 @@ public abstract class BlockThin extends BlockTransparent {
     }
 
     protected AxisAlignedBB recalculateBoundingBox() {
-        double f = 0.4375;
-        double f1 = 0.5625;
-        double f2 = 0.4375;
-        double f3 = 0.5625;
+        float f = 0.4375f;
+        float f1 = 0.5625f;
+        float f2 = 0.4375f;
+        float f3 = 0.5625f;
         try {
             boolean flag = this.canConnect(this.north());
             boolean flag1 = this.canConnect(this.south());
@@ -57,12 +57,12 @@ public abstract class BlockThin extends BlockTransparent {
             //null sucks
         }
         return new SimpleAxisAlignedBB(
-                this.x + f,
-                this.y,
-                this.z + f2,
-                this.x + f1,
-                this.y + 1,
-                this.z + f3
+                this.getX() + f,
+                this.getY(),
+                this.getZ() + f2,
+                this.getX() + f1,
+                this.getY() + 1,
+                this.getZ() + f3
         );
     }
 

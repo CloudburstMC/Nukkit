@@ -5,7 +5,6 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
-
 public class BlockPrismarine extends BlockSolid {
 
     public static final int NORMAL = 0;
@@ -17,12 +16,12 @@ public class BlockPrismarine extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
-        return 1.5;
+    public float getHardness() {
+        return 1.5f;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 30;
     }
 
@@ -49,7 +48,7 @@ public class BlockPrismarine extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        switch (getDamage() & 0x07) {
+        switch (getMeta() & 0x07) {
             case NORMAL:
                 return BlockColor.CYAN_BLOCK_COLOR;
             case BRICKS:

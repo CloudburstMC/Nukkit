@@ -5,15 +5,15 @@ import cn.nukkit.block.BlockFire;
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
+import cn.nukkit.entity.EntityTypes;
 import cn.nukkit.entity.impl.BaseEntity;
 import cn.nukkit.entity.misc.LightningBolt;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -29,8 +29,8 @@ public class EntityLightningBolt extends BaseEntity implements LightningBolt {
     public int liveTime;
     protected boolean isEffect = true;
 
-    public EntityLightningBolt(EntityType<LightningBolt> type, Chunk chunk, CompoundTag tag) {
-        super(type, chunk, tag);
+    public EntityLightningBolt(EntityType<LightningBolt> type, Location location) {
+        super(type, location);
     }
 
     @Override
@@ -44,21 +44,19 @@ public class EntityLightningBolt extends BaseEntity implements LightningBolt {
         this.liveTime = ThreadLocalRandom.current().nextInt(3) + 1;
 
         if (isEffect && this.level.getGameRules().get(GameRules.DO_FIRE_TICK) && (this.server.getDifficulty() >= 2)) {
-            Block block = this.getLevelBlock();
+            Block block = this.getLevel().getBlock(this.getPosition());
             if (block.getId() == AIR || block.getId() == TALL_GRASS) {
                 BlockFire fire = (BlockFire) Block.get(BlockIds.FIRE);
-                fire.x = block.x;
-                fire.y = block.y;
-                fire.z = block.z;
-                fire.level = level;
-                this.getLevel().setBlock(fire, fire, true);
+                fire.setPosition(block.getPosition());
+                fire.setLevel(this.level);
+                this.getLevel().setBlock(fire.getPosition(), fire, true);
                 if (fire.isBlockTopFacingSurfaceSolid(fire.down()) || fire.canNeighborBurn()) {
 
                     BlockIgniteEvent e = new BlockIgniteEvent(block, null, this, BlockIgniteEvent.BlockIgniteCause.LIGHTNING);
                     getServer().getPluginManager().callEvent(e);
 
                     if (!e.isCancelled()) {
-                        level.setBlock(fire, fire, true);
+                        level.setBlock(fire.getPosition(), fire, true);
                         level.scheduleUpdate(fire, fire.tickRate() + ThreadLocalRandom.current().nextInt(10));
                     }
                 }
@@ -100,8 +98,8 @@ public class EntityLightningBolt extends BaseEntity implements LightningBolt {
         this.entityBaseTick(tickDiff);
 
         if (this.state == 2) {
-            this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_THUNDER);
-            this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_EXPLODE);
+            this.level.addLevelSoundEvent(this.getPosition(), SoundEvent.THUNDER, -1, EntityTypes.LIGHTNING_BOLT);
+            this.level.addLevelSoundEvent(this.getPosition(), SoundEvent.EXPLODE, -1, EntityTypes.LIGHTNING_BOLT);
         }
 
         this.state--;
@@ -115,7 +113,7 @@ public class EntityLightningBolt extends BaseEntity implements LightningBolt {
                 this.state = 1;
 
                 if (this.isEffect && this.level.getGameRules().get(GameRules.DO_FIRE_TICK)) {
-                    Block block = this.getLevelBlock();
+                    Block block = this.getLevel().getBlock(this.getPosition());
 
                     if (block.getId() == AIR || block.getId() == TALL_GRASS) {
                         BlockIgniteEvent e = new BlockIgniteEvent(block, null, this, BlockIgniteEvent.BlockIgniteCause.LIGHTNING);
@@ -123,7 +121,7 @@ public class EntityLightningBolt extends BaseEntity implements LightningBolt {
 
                         if (!e.isCancelled()) {
                             Block fire = Block.get(BlockIds.FIRE);
-                            this.level.setBlock(block, fire);
+                            this.level.setBlock(block.getPosition(), fire);
                             this.getLevel().scheduleUpdate(fire, fire.tickRate());
                         }
                     }

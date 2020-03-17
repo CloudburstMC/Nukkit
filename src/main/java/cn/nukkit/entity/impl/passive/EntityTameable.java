@@ -2,12 +2,13 @@ package cn.nukkit.entity.impl.passive;
 
 import cn.nukkit.entity.EntityOwnable;
 import cn.nukkit.entity.EntityType;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.tag.CompoundTag;
 
-import static cn.nukkit.entity.data.EntityData.OWNER_EID;
-import static cn.nukkit.entity.data.EntityFlag.SITTING;
-import static cn.nukkit.entity.data.EntityFlag.TAMED;
+import static com.nukkitx.protocol.bedrock.data.EntityData.OWNER_EID;
+import static com.nukkitx.protocol.bedrock.data.EntityFlag.SITTING;
+import static com.nukkitx.protocol.bedrock.data.EntityFlag.TAMED;
 
 /**
  * Author: BeYkeRYkt
@@ -16,51 +17,43 @@ import static cn.nukkit.entity.data.EntityFlag.TAMED;
 public abstract class EntityTameable extends Animal implements EntityOwnable {
 
 
-    public EntityTameable(EntityType<?> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityTameable(EntityType<?> type, Location location) {
+        super(type, location);
     }
 
     @Override
     protected void initEntity() {
         super.initEntity();
-
-        if (!hasData(OWNER_EID)) {
-            setLongData(OWNER_EID, -1);
-        }
-
-        long ownerId = -1;
-
-        if (namedTag != null) {
-            if (namedTag.contains("OwnerID")) {
-                ownerId = namedTag.getLong("OwnerID");
-            }
-
-            if (ownerId != -1) {
-                this.setOwnerId(ownerId);
-                this.setTamed(true);
-            }
-
-            this.setSitting(namedTag.getBoolean("Sitting"));
-        }
+        this.setOwner(null);
     }
 
     @Override
-    public void saveNBT() {
-        super.saveNBT();
+    public void loadAdditionalData(CompoundTag tag) {
+        super.loadAdditionalData(tag);
 
-        namedTag.putLong("OwnerID", getOwnerId());
+        tag.listenForLong("OwnerID", v -> {
+            this.setOwnerId(v);
+            this.setTamed(true);
+        });
+        tag.listenForBoolean("Sitting", this::setSitting);
+    }
 
-        namedTag.putBoolean("Sitting", isSitting());
+    @Override
+    public void saveAdditionalData(CompoundTagBuilder tag) {
+        super.saveAdditionalData(tag);
+
+        tag.longTag("OwnerID", this.getOwnerId());
+        tag.booleanTag("Sitting", this.isSitting());
     }
 
     @Override
     public long getOwnerId() {
-        return getLongData(OWNER_EID);
+        return this.data.getLong(OWNER_EID);
     }
 
     @Override
     public void setOwnerId(long id) {
-        setLongData(OWNER_EID, id);
+        this.data.setLong(OWNER_EID, id);
     }
 
     @Override
@@ -69,18 +62,18 @@ public abstract class EntityTameable extends Animal implements EntityOwnable {
     }
 
     public boolean isTamed() {
-        return getFlag(TAMED);
+        return this.data.getFlag(TAMED);
     }
 
     public void setTamed(boolean value) {
-        setFlag(TAMED, value);
+        this.data.setFlag(TAMED, value);
     }
 
     public boolean isSitting() {
-        return getFlag(SITTING);
+        return this.data.getFlag(SITTING);
     }
 
     public void setSitting(boolean value) {
-        setFlag(SITTING, value);
+        this.data.setFlag(SITTING, value);
     }
 }

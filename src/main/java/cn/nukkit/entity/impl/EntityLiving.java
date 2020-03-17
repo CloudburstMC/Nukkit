@@ -7,7 +7,6 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityDamageable;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.Rideable;
-import cn.nukkit.entity.data.EntityData;
 import cn.nukkit.entity.impl.passive.EntityWaterAnimal;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -16,29 +15,30 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityDeathEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTurtleShell;
-import cn.nukkit.level.Position;
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.math.BlockRayTrace;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.math.Vector3i;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.network.protocol.AnimatePacket;
-import cn.nukkit.network.protocol.EntityEventPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.player.Player;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.Identifier;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.math.vector.Vector3i;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.tag.CompoundTag;
+import com.nukkitx.protocol.bedrock.data.EntityData;
+import com.nukkitx.protocol.bedrock.data.EntityEventType;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
+import com.nukkitx.protocol.bedrock.packet.AnimatePacket;
+import com.nukkitx.protocol.bedrock.packet.EntityEventPacket;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static cn.nukkit.block.BlockIds.AIR;
-import static cn.nukkit.entity.data.EntityFlag.BREATHING;
+import static com.nukkitx.protocol.bedrock.data.EntityFlag.BREATHING;
 
 /**
  * author: MagicDroidX
@@ -46,8 +46,8 @@ import static cn.nukkit.entity.data.EntityFlag.BREATHING;
  */
 public abstract class EntityLiving extends BaseEntity implements EntityDamageable {
 
-    public EntityLiving(EntityType<?> type, Chunk chunk, CompoundTag tag) {
-        super(type, chunk, tag);
+    public EntityLiving(EntityType<?> type, Location location) {
+        super(type, location);
     }
 
     @Override
@@ -69,19 +69,17 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
     protected int turtleTicks = 200;
 
     @Override
-    protected void initEntity() {
-        super.initEntity();
+    public void loadAdditionalData(CompoundTag tag) {
+        super.loadAdditionalData(tag);
 
-        if (this.namedTag.contains("HealF")) {
-            this.namedTag.putFloat("Health", this.namedTag.getShort("HealF"));
-            this.namedTag.remove("HealF");
-        }
+        tag.listenForFloat("Health", this::setHealth);
+    }
 
-        if (!this.namedTag.contains("Health") || !(this.namedTag.get("Health") instanceof FloatTag)) {
-            this.namedTag.putFloat("Health", this.getMaxHealth());
-        }
+    @Override
+    public void saveAdditionalData(CompoundTagBuilder tag) {
+        super.saveAdditionalData(tag);
 
-        this.setHealth(this.namedTag.getFloat("Health"));
+        tag.floatTag("Health", this.getHealth());
     }
 
     @Override
@@ -90,16 +88,10 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
         super.setHealth(health);
         if (this.isAlive() && !wasAlive) {
             EntityEventPacket pk = new EntityEventPacket();
-            pk.entityRuntimeId = this.getUniqueId();
-            pk.event = EntityEventPacket.RESPAWN;
+            pk.setRuntimeEntityId(this.getRuntimeId());
+            pk.setType(EntityEventType.RESPAWN);
             Server.broadcastPacket(this.hasSpawned, pk);
         }
-    }
-
-    @Override
-    public void saveNBT() {
-        super.saveNBT();
-        this.namedTag.putFloat("Health", this.getHealth());
     }
 
     public boolean hasLineOfSight(Entity entity) {
@@ -130,11 +122,11 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
                 //Critical hit
                 if (damager instanceof Player && !damager.isOnGround()) {
                     AnimatePacket animate = new AnimatePacket();
-                    animate.action = AnimatePacket.Action.CRITICAL_HIT;
-                    animate.entityRuntimeId = getUniqueId();
+                    animate.setAction(AnimatePacket.Action.CRITICAL_HIT);
+                    animate.setRuntimeEntityId(this.getRuntimeId());
 
                     this.getLevel().addChunkPacket(damager.getPosition(), animate);
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_ATTACK_STRONG);
+                    this.getLevel().addLevelSoundEvent(this.getPosition(), SoundEvent.ATTACK_STRONG);
 
                     source.setDamage(source.getDamage() * 1.5f);
                 }
@@ -143,14 +135,14 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
                     this.setOnFire(2 * this.server.getDifficulty());
                 }
 
-                double deltaX = this.x - damager.getX();
-                double deltaZ = this.z - damager.getY();
+                double deltaX = this.getPosition().getX() - damager.getX();
+                double deltaZ = this.getPosition().getZ() - damager.getZ();
                 this.knockBack(damager, source.getDamage(), deltaX, deltaZ, ((EntityDamageByEntityEvent) source).getKnockBack());
             }
 
             EntityEventPacket pk = new EntityEventPacket();
-            pk.entityRuntimeId = this.getUniqueId();
-            pk.event = this.getHealth() <= 0 ? EntityEventPacket.DEATH_ANIMATION : EntityEventPacket.HURT_ANIMATION;
+            pk.setRuntimeEntityId(this.getRuntimeId());
+            pk.setType(this.getHealth() <= 0 ? EntityEventType.DEATH_ANIMATION : EntityEventType.HURT_ANIMATION);
             Server.broadcastPacket(this.hasSpawned, pk);
 
             this.attackTime = source.getAttackCooldown();
@@ -173,17 +165,11 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
 
         f = 1 / f;
 
-        Vector3f motion = new Vector3f(this.motionX, this.motionY, this.motionZ);
+        motion = motion.div(2);
+        motion = motion.add(x * f * base, base, z * f * base);
 
-        motion.x /= 2d;
-        motion.y /= 2d;
-        motion.z /= 2d;
-        motion.x += x * f * base;
-        motion.y += base;
-        motion.z += z * f * base;
-
-        if (motion.y > base) {
-            motion.y = base;
+        if (motion.getY() > base) {
+            motion = Vector3f.from(motion.getX(), base, motion.getY());
         }
 
         this.setMotion(motion);
@@ -198,9 +184,9 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
         EntityDeathEvent ev = new EntityDeathEvent(this, this.getDrops());
         this.server.getPluginManager().callEvent(ev);
 
-        if (this.level.getGameRules().get(GameRules.DO_ENTITY_DROPS)) {
+        if (this.getLevel().getGameRules().get(GameRules.DO_ENTITY_DROPS)) {
             for (cn.nukkit.item.Item item : ev.getDrops()) {
-                this.getLevel().dropItem(this, item);
+                this.getLevel().dropItem(this.getPosition(), item);
             }
         }
     }
@@ -229,7 +215,7 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
                 }
             }
 
-            this.setFlag(BREATHING, isBreathing);
+            this.data.setFlag(BREATHING, isBreathing);
 
             boolean hasUpdate = super.entityBaseTick(tickDiff);
 
@@ -286,7 +272,7 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
             }
 
             if (this.vehicle == null) {
-                for (Entity entity : level.getNearbyEntities(this.boundingBox.grow(0.20000000298023224, 0.0D, 0.20000000298023224), this)) {
+                for (Entity entity : this.getLevel().getNearbyEntities(this.boundingBox.grow(0.2f, 0, 0.2f), this)) {
                     if (entity instanceof Rideable) {
                         this.collidingWith(entity);
                     }
@@ -294,7 +280,7 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
             }
 
             // Used to check collisions with magma blocks
-            Block block = this.level.getLoadedBlock((int) x, (int) y - 1, (int) z);
+            Block block = this.getLevel().getLoadedBlock(this.getPosition().sub(0, 1, 0));
             if (block instanceof BlockMagma) block.onEntityCollide(this);
             return hasUpdate;
         }
@@ -323,10 +309,9 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
 
         List<Block> blocks = new ArrayList<>();
 
-        Position position = getPosition();
-        position.y += getEyeHeight();
+        Vector3f position = getPosition().add(0, this.getEyeHeight(), 0);
         for (Vector3i pos : BlockRayTrace.of(position, getDirectionVector(), maxDistance)) {
-            Block block = this.level.getLoadedBlock(pos.x, pos.y, pos.z);
+            Block block = this.getLevel().getLoadedBlock(pos);
             if (block == null) {
                 break;
             }
@@ -385,10 +370,10 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
     }
 
     public int getAirTicks() {
-        return this.getShortData(EntityData.AIR);
+        return this.data.getShort(EntityData.AIR);
     }
 
     public void setAirTicks(int ticks) {
-        this.setShortData(EntityData.AIR, ticks);
+        this.data.setShort(EntityData.AIR, ticks);
     }
 }

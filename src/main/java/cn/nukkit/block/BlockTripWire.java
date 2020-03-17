@@ -6,11 +6,10 @@ import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
-import static cn.nukkit.block.BlockIds.AIR;
 import static cn.nukkit.block.BlockIds.TRIPWIRE;
 import static cn.nukkit.item.ItemIds.SHEARS;
 
@@ -29,12 +28,12 @@ public class BlockTripWire extends FloodableBlock {
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 0;
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 0;
     }
 
@@ -49,32 +48,32 @@ public class BlockTripWire extends FloodableBlock {
     }
 
     public boolean isPowered() {
-        return (this.getDamage() & 1) > 0;
-    }
-
-    public boolean isAttached() {
-        return (this.getDamage() & 4) > 0;
-    }
-
-    public boolean isDisarmed() {
-        return (this.getDamage() & 8) > 0;
+        return (this.getMeta() & 1) > 0;
     }
 
     public void setPowered(boolean value) {
         if (value ^ this.isPowered()) {
-            this.setDamage(this.getDamage() ^ 0x01);
+            this.setMeta(this.getMeta() ^ 0x01);
         }
+    }
+
+    public boolean isAttached() {
+        return (this.getMeta() & 4) > 0;
     }
 
     public void setAttached(boolean value) {
         if (value ^ this.isAttached()) {
-            this.setDamage(this.getDamage() ^ 0x04);
+            this.setMeta(this.getMeta() ^ 0x04);
         }
+    }
+
+    public boolean isDisarmed() {
+        return (this.getMeta() & 8) > 0;
     }
 
     public void setDisarmed(boolean value) {
         if (value ^ this.isDisarmed()) {
-            this.setDamage(this.getDamage() ^ 0x08);
+            this.setMeta(this.getMeta() ^ 0x08);
         }
     }
 
@@ -88,7 +87,7 @@ public class BlockTripWire extends FloodableBlock {
 
         if (!powered) {
             this.setPowered(true);
-            this.level.setBlock(this, this, true, false);
+            this.level.setBlock(this.getPosition(), this, true, false);
             this.updateHook(false);
 
             this.level.scheduleUpdate(this, 10);
@@ -140,7 +139,7 @@ public class BlockTripWire extends FloodableBlock {
                 this.level.scheduleUpdate(this, 10);
             } else {
                 this.setPowered(false);
-                this.level.setBlock(this, this, true, false);
+                this.level.setBlock(this.getPosition(), this, true, false);
                 this.updateHook(false);
             }
             return type;
@@ -151,7 +150,7 @@ public class BlockTripWire extends FloodableBlock {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        this.getLevel().setBlock(this, this, true, true);
+        this.getLevel().setBlock(this.getPosition(), this, true, true);
         this.updateHook(false);
 
         return true;
@@ -161,7 +160,7 @@ public class BlockTripWire extends FloodableBlock {
     public boolean onBreak(Item item) {
         if (item.getId() == SHEARS) {
             this.setDisarmed(true);
-            this.level.setBlock(this, this, true, false);
+            this.level.setBlock(this.getPosition(), this, true, false);
             this.updateHook(false);
             super.onBreak(item);
         } else {
@@ -174,8 +173,8 @@ public class BlockTripWire extends FloodableBlock {
     }
 
     @Override
-    public double getMaxY() {
-        return this.y + 0.5;
+    public float getMaxY() {
+        return this.getY() + 0.5f;
     }
 
     @Override

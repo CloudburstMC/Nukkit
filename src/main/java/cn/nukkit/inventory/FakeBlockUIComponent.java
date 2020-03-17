@@ -1,19 +1,19 @@
 package cn.nukkit.inventory;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.event.inventory.InventoryOpenEvent;
-import cn.nukkit.level.BlockPosition;
-import cn.nukkit.math.Vector3i;
-import cn.nukkit.network.protocol.ContainerClosePacket;
-import cn.nukkit.network.protocol.ContainerOpenPacket;
 import cn.nukkit.player.Player;
+import com.nukkitx.math.vector.Vector3i;
+import com.nukkitx.protocol.bedrock.packet.ContainerClosePacket;
+import com.nukkitx.protocol.bedrock.packet.ContainerOpenPacket;
 
 public class FakeBlockUIComponent extends PlayerUIComponent {
     private final InventoryType type;
 
-    FakeBlockUIComponent(PlayerUIInventory playerUI, InventoryType type, int offset, BlockPosition position) {
+    FakeBlockUIComponent(PlayerUIInventory playerUI, InventoryType type, int offset, Block block) {
         super(playerUI, offset, type.getDefaultSize());
         this.type = type;
-        this.holder = new FakeBlockMenu(this, position);
+        this.holder = new FakeBlockMenu(this, block);
     }
 
 
@@ -37,28 +37,26 @@ public class FakeBlockUIComponent extends PlayerUIComponent {
     @Override
     public void onOpen(Player who) {
         super.onOpen(who);
-        ContainerOpenPacket pk = new ContainerOpenPacket();
-        pk.windowId = who.getWindowId(this);
-        pk.type = type.getNetworkType();
+        ContainerOpenPacket packet = new ContainerOpenPacket();
+        packet.setWindowId((byte) who.getWindowId(this));
+        packet.setType((byte) type.getNetworkType());
         InventoryHolder holder = this.getHolder();
         if (holder != null) {
-            pk.x = ((Vector3i) holder).getX();
-            pk.y = ((Vector3i) holder).getY();
-            pk.z = ((Vector3i) holder).getZ();
+            packet.setBlockPosition(((FakeBlockMenu) holder).getPosition());
         } else {
-            pk.x = pk.y = pk.z = 0;
+            packet.setBlockPosition(Vector3i.ZERO);
         }
 
-        who.dataPacket(pk);
+        who.sendPacket(packet);
 
         this.sendContents(who);
     }
 
     @Override
     public void onClose(Player who) {
-        ContainerClosePacket pk = new ContainerClosePacket();
-        pk.windowId = who.getWindowId(this);
-        who.dataPacket(pk);
+        ContainerClosePacket packet = new ContainerClosePacket();
+        packet.setWindowId((byte) who.getWindowId(this));
+        who.sendPacket(packet);
         super.onClose(who);
     }
 }

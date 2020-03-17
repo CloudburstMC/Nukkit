@@ -2,27 +2,25 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.protocol.bedrock.data.CraftingData;
+
+import javax.annotation.concurrent.Immutable;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
+@Immutable
 public class FurnaceRecipe implements Recipe {
 
     private final Item output;
+    private final Item ingredient;
+    private final Identifier block;
 
-    private Item ingredient;
-
-    private final Identifier craftingBlock;
-
-    public FurnaceRecipe(Item result, Item ingredient, Identifier blockId) {
+    public FurnaceRecipe(Item result, Item ingredient, Identifier block) {
         this.output = result.clone();
         this.ingredient = ingredient.clone();
-        this.craftingBlock = blockId;
-    }
-
-    public void setInput(Item item) {
-        this.ingredient = item.clone();
+        this.block = block;
     }
 
     public Item getInput() {
@@ -44,7 +42,17 @@ public class FurnaceRecipe implements Recipe {
         return this.ingredient.hasMeta() ? RecipeType.FURNACE_DATA : RecipeType.FURNACE;
     }
 
-    public Identifier getCraftingBlock() {
-        return this.craftingBlock;
+    @Override
+    public Identifier getBlock() {
+        return block;
+    }
+
+    @Override
+    public CraftingData toNetwork() {
+        if (this.ingredient.hasMeta()) {
+            return CraftingData.fromFurnaceData(ingredient.getNetworkId(), ingredient.getMeta(), output.toNetwork(), block.getName());
+        } else {
+            return CraftingData.fromFurnace(ingredient.getNetworkId(), output.toNetwork(), block.getName());
+        }
     }
 }

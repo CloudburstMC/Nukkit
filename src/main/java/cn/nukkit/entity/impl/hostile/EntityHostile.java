@@ -3,10 +3,9 @@ package cn.nukkit.entity.impl.hostile;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.impl.EntityCreature;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 import cn.nukkit.player.Player;
+import com.nukkitx.math.vector.Vector3f;
 
 import static cn.nukkit.item.ItemIds.NAME_TAG;
 
@@ -16,8 +15,8 @@ import static cn.nukkit.item.ItemIds.NAME_TAG;
  */
 public abstract class EntityHostile extends EntityCreature {
 
-    public EntityHostile(EntityType<?> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityHostile(EntityType<?> type, Location location) {
+        super(type, location);
     }
 
     @Override

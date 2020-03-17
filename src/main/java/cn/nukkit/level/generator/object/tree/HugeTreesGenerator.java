@@ -3,8 +3,8 @@ package cn.nukkit.level.generator.object.tree;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.BedrockRandom;
-import cn.nukkit.math.Vector3i;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3i;
 
 import static cn.nukkit.block.BlockIds.*;
 
@@ -64,7 +64,7 @@ public abstract class HugeTreesGenerator extends TreeGenerator {
                 for (int k = -j; k <= j && flag; ++k) {
                     for (int l = -j; l <= j && flag; ++l) {
                         Vector3i blockPos = leavesPos.add(k, i, l);
-                        if (leavesPos.getY() + i < 0 || leavesPos.getY() + i >= 256 || !this.canGrowInto(worldIn.getBlockIdAt((int) blockPos.x, (int) blockPos.y, (int) blockPos.z))) {
+                        if (leavesPos.getY() + i < 0 || leavesPos.getY() + i >= 256 || !this.canGrowInto(worldIn.getBlockId(blockPos))) {
                             flag = false;
                         }
                     }
@@ -83,7 +83,7 @@ public abstract class HugeTreesGenerator extends TreeGenerator {
      */
     private boolean ensureDirtsUnderneath(Vector3i pos, ChunkManager worldIn) {
         Vector3i blockpos = pos.down();
-        Identifier block = worldIn.getBlockIdAt((int) blockpos.x, (int) blockpos.y, (int) blockpos.z);
+        Identifier block = worldIn.getBlockId(blockpos);
 
         if ((block == GRASS || block == DIRT) && pos.getY() >= 2) {
             this.setDirtAt(worldIn, blockpos);
@@ -117,7 +117,7 @@ public abstract class HugeTreesGenerator extends TreeGenerator {
 
                 if (j * j + k * k <= i || l * l + i1 * i1 <= i || j * j + i1 * i1 <= i || l * l + k * k <= i) {
                     Vector3i blockpos = layerCenter.add(j, 0, k);
-                    Identifier id = worldIn.getBlockIdAt(blockpos.x, blockpos.y, blockpos.z);
+                    Identifier id = worldIn.getBlockId(blockpos);
 
                     if (id == AIR || id == LEAVES) {
                         worldIn.setBlockAt(blockpos.getX(), blockpos.getY(), blockpos.getZ(), this.leavesMetadata);
@@ -137,10 +137,10 @@ public abstract class HugeTreesGenerator extends TreeGenerator {
             for (int k = -width; k <= width; ++k) {
                 if (j * j + k * k <= i) {
                     Vector3i blockpos = layerCenter.add(j, 0, k);
-                    Identifier id = worldIn.getBlockIdAt(blockpos.x, blockpos.y, blockpos.z);
+                    Identifier id = worldIn.getBlockId(blockpos);
 
                     if (id == AIR || id == LEAVES) {
-                        worldIn.setBlockAt(blockpos.x, blockpos.y, blockpos.z, this.leavesMetadata);
+                        worldIn.setBlockAt(blockpos, this.leavesMetadata);
                     }
                 }
             }

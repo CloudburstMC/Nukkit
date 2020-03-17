@@ -4,10 +4,10 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.Vector3f;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
+import com.nukkitx.math.vector.Vector3f;
 
 import java.text.DecimalFormat;
 
@@ -17,10 +17,10 @@ import java.text.DecimalFormat;
  */
 public class SetWorldSpawnCommand extends VanillaCommand {
     public SetWorldSpawnCommand(String name) {
-        super(name, "%nukkit.command.setworldspawn.description", "%commands.setworldspawn.usage");
+        super(name, "commands.setworldspawn.description", "commands.setworldspawn.usage");
         this.setPermission("nukkit.command.setworldspawn");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("blockPos", CommandParamType.POSITION, true)
         });
     }
@@ -35,7 +35,7 @@ public class SetWorldSpawnCommand extends VanillaCommand {
         if (args.length == 0) {
             if (sender instanceof Player) {
                 level = ((Player) sender).getLevel();
-                pos = ((Player) sender).round();
+                pos = ((Player) sender).getPosition();
             } else {
                 sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
                 return true;
@@ -43,7 +43,7 @@ public class SetWorldSpawnCommand extends VanillaCommand {
         } else if (args.length == 3) {
             level = sender.getServer().getDefaultLevel();
             try {
-                pos = new Vector3f(Integer.parseInt(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2]));
+                pos = Vector3f.from(Integer.parseInt(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2]));
             } catch (NumberFormatException e1) {
                 sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                 return true;
@@ -54,9 +54,8 @@ public class SetWorldSpawnCommand extends VanillaCommand {
         }
         level.setSpawnLocation(pos);
         DecimalFormat round2 = new DecimalFormat("##0.00");
-        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.setworldspawn.success", round2.format(pos.x),
-                round2.format(pos.y),
-                round2.format(pos.z)));
+        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.setworldspawn.success", round2.format(pos.getX()),
+                round2.format(pos.getY()), round2.format(pos.getZ())));
         return true;
     }
 }

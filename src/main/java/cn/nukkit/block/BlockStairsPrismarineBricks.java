@@ -8,12 +8,12 @@ import cn.nukkit.utils.Identifier;
  */
 public class BlockStairsPrismarineBricks extends BlockStairsPrismarine {
 
-    public BlockStairsPrismarineBricks(Identifier id){
+    public BlockStairsPrismarineBricks(Identifier id) {
         super(id);
     }
 
     @Override
-    public BlockColor getColor(){
+    public BlockColor getColor() {
         return BlockColor.DIAMOND_BLOCK_COLOR;
     }
 }

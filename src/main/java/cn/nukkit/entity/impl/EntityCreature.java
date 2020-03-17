@@ -1,8 +1,7 @@
 package cn.nukkit.entity.impl;
 
 import cn.nukkit.entity.EntityType;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 /**
  * author: MagicDroidX
@@ -10,7 +9,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
  */
 public abstract class EntityCreature extends EntityLiving {
 
-    public EntityCreature(EntityType<?> type, Chunk chunk, CompoundTag tag) {
-        super(type, chunk, tag);
+    public EntityCreature(EntityType<?> type, Location location) {
+        super(type, location);
     }
 }

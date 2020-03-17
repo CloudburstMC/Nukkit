@@ -11,13 +11,13 @@ public class BlockStonecutter extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
-        return 3.5;
+    public float getHardness() {
+        return 3.5f;
     }
 
     @Override
-    public double getResistance() {
-        return 17.5;
+    public float getResistance() {
+        return 17.5f;
     }
 
     @Override

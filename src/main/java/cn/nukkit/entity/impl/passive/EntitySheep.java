@@ -5,18 +5,19 @@ import cn.nukkit.entity.passive.Sheep;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDye;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.DyeColor;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.tag.CompoundTag;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 import static cn.nukkit.block.BlockIds.WOOL;
-import static cn.nukkit.entity.data.EntityData.COLOR;
-import static cn.nukkit.entity.data.EntityFlag.SHEARED;
 import static cn.nukkit.item.ItemIds.DYE;
 import static cn.nukkit.item.ItemIds.SHEARS;
+import static com.nukkitx.protocol.bedrock.data.EntityData.COLOR;
+import static com.nukkitx.protocol.bedrock.data.EntityFlag.SHEARED;
 
 /**
  * Author: BeYkeRYkt Nukkit Project
@@ -25,11 +26,8 @@ public class EntitySheep extends Animal implements Sheep {
 
     public static final int NETWORK_ID = 13;
 
-    public boolean sheared = false;
-    public int color = 0;
-
-    public EntitySheep(EntityType<Sheep> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntitySheep(EntityType<Sheep> type, Location location) {
+        super(type, location);
     }
 
     @Override
@@ -56,28 +54,22 @@ public class EntitySheep extends Animal implements Sheep {
     @Override
     public void initEntity() {
         this.setMaxHealth(8);
-
-        if (!this.namedTag.contains("Color")) {
-            this.setColor(randomColor());
-        } else {
-            this.setColor(this.namedTag.getByte("Color"));
-        }
-
-        if (!this.namedTag.contains("Sheared")) {
-            this.namedTag.putByte("Sheared", 0);
-        } else {
-            this.sheared = this.namedTag.getBoolean("Sheared");
-        }
-
-        this.setFlag(SHEARED, this.sheared);
     }
 
     @Override
-    public void saveNBT() {
-        super.saveNBT();
+    public void loadAdditionalData(CompoundTag tag) {
+        super.loadAdditionalData(tag);
 
-        this.namedTag.putByte("Color", this.color);
-        this.namedTag.putBoolean("Sheared", this.sheared);
+        tag.listenForByte("Color", this::setColor);
+        tag.listenForBoolean("Sheared", this::setSheared);
+    }
+
+    @Override
+    public void saveAdditionalData(CompoundTagBuilder tag) {
+        super.saveAdditionalData(tag);
+
+        tag.byteTag("Color", (byte) this.getColor());
+        tag.booleanTag("Sheared", this.isSheared());
     }
 
     @Override
@@ -91,14 +83,14 @@ public class EntitySheep extends Animal implements Sheep {
     }
 
     public boolean shear() {
-        if (sheared) {
+        if (isSheared()) {
             return false;
         }
 
-        this.sheared = true;
-        this.setFlag(SHEARED, true);
+        this.setSheared(true);
+        this.data.setFlag(SHEARED, true);
 
-        this.level.dropItem(this, Item.get(WOOL, getColor(), ThreadLocalRandom.current().nextInt(2) + 1));
+        this.level.dropItem(this.getPosition(), Item.get(WOOL, getColor(), ThreadLocalRandom.current().nextInt(2) + 1));
         return true;
     }
 
@@ -110,14 +102,20 @@ public class EntitySheep extends Animal implements Sheep {
         return new Item[0];
     }
 
+    public boolean isSheared() {
+        return this.data.getFlag(SHEARED);
+    }
+
+    public void setSheared(boolean sheared) {
+        this.data.setFlag(SHEARED, sheared);
+    }
+
     public int getColor() {
-        return namedTag.getByte("Color");
+        return this.data.getByte(COLOR);
     }
 
     public void setColor(int color) {
-        this.color = color;
-        this.setByteData(COLOR, color);
-        this.namedTag.putByte("Color", this.color);
+        this.data.setByte(COLOR, color);
     }
 
     private int randomColor() {

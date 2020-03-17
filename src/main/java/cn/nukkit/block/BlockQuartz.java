@@ -3,10 +3,10 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import static cn.nukkit.block.BlockIds.QUARTZ_BLOCK;
 
@@ -27,18 +27,18 @@ public class BlockQuartz extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
-        return 0.8;
+    public float getHardness() {
+        return 0.8f;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 4;
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        if (this.getDamage() != QUARTZ_NORMAL) {
+        if (this.getMeta() != QUARTZ_NORMAL) {
             short[] faces = new short[]{
                     0,
                     0,
@@ -48,9 +48,9 @@ public class BlockQuartz extends BlockSolid {
                     0b0100
             };
 
-            this.setDamage(((this.getDamage() & 0x03) | faces[face.getIndex()]));
+            this.setMeta(((this.getMeta() & 0x03) | faces[face.getIndex()]));
         }
-        this.getLevel().setBlock(block, this, true, true);
+        this.getLevel().setBlock(block.getPosition(), this, true, true);
 
         return true;
     }
@@ -68,7 +68,7 @@ public class BlockQuartz extends BlockSolid {
 
     @Override
     public Item toItem() {
-        return Item.get(QUARTZ_BLOCK, this.getDamage() & 0x03, 1);
+        return Item.get(QUARTZ_BLOCK, this.getMeta() & 0x03, 1);
     }
 
     @Override

@@ -1,18 +1,15 @@
 package cn.nukkit.item;
 
-import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
+import cn.nukkit.entity.Projectile;
 import cn.nukkit.entity.impl.projectile.EntityEnderPearl;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.level.Location;
 import cn.nukkit.player.Player;
 import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
 
 /**
  * @author CreeperFace
@@ -23,28 +20,19 @@ public abstract class ProjectileItem extends Item {
         super(id);
     }
 
-    abstract public EntityType<?> getProjectileEntityType();
+    abstract public EntityType<? extends Projectile> getProjectileEntityType();
 
     abstract public float getThrowForce();
 
     public boolean onClickAir(Player player, Vector3f directionVector) {
-        CompoundTag nbt = new CompoundTag()
-                .putList(new ListTag<DoubleTag>("Pos")
-                        .add(new DoubleTag("", player.x))
-                        .add(new DoubleTag("", player.y + player.getEyeHeight() - 0.30000000149011612))
-                        .add(new DoubleTag("", player.z)))
-                .putList(new ListTag<DoubleTag>("Motion")
-                        .add(new DoubleTag("", directionVector.x))
-                        .add(new DoubleTag("", directionVector.y))
-                        .add(new DoubleTag("", directionVector.z)))
-                .putList(new ListTag<FloatTag>("Rotation")
-                        .add(new FloatTag("", (float) player.yaw))
-                        .add(new FloatTag("", (float) player.pitch)));
+        Location location = Location.from(player.getPosition().add(0, player.getEyeHeight() - 0.3f, 0),
+                player.getYaw(), player.getPitch(), player.getLevel());
 
-        this.correctNBT(nbt);
-
-        Entity projectile = EntityRegistry.get().newEntity(this.getProjectileEntityType(), player.getLevel().getChunk(player.getChunkX(), player.getChunkZ()), nbt);
+        Projectile projectile = EntityRegistry.get().newEntity(this.getProjectileEntityType(), location);
+        projectile.setMotion(directionVector);
         projectile.setOwner(player);
+        this.onProjectileCreation(projectile);
+
         if (projectile instanceof EntityEnderPearl) {
             if (player.getServer().getTick() - player.getLastEnderPearlThrowingTick() < 20) {
                 projectile.kill();
@@ -52,7 +40,7 @@ public abstract class ProjectileItem extends Item {
             }
         }
 
-        projectile.setMotion(projectile.getMotion().multiply(this.getThrowForce()));
+        projectile.setMotion(projectile.getMotion().mul(this.getThrowForce()));
 
         ProjectileLaunchEvent ev = new ProjectileLaunchEvent(projectile);
 
@@ -67,12 +55,12 @@ public abstract class ProjectileItem extends Item {
                 player.onThrowEnderPearl();
             }
             projectile.spawnToAll();
-            player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BOW);
+            player.getLevel().addLevelSoundEvent(player.getPosition(), SoundEvent.BOW);
         }
         return true;
     }
 
-    protected void correctNBT(CompoundTag nbt) {
+    protected void onProjectileCreation(Projectile projectile) {
 
     }
 }

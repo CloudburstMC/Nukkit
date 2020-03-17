@@ -1,13 +1,18 @@
 package cn.nukkit.registry;
 
 import cn.nukkit.block.*;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityType;
+import cn.nukkit.blockentity.BlockEntityTypes;
 import cn.nukkit.item.ItemIds;
-import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 import com.google.common.collect.HashBiMap;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.NbtUtils;
+import com.nukkitx.nbt.stream.NBTInputStream;
+import com.nukkitx.nbt.tag.CompoundTag;
+import com.nukkitx.nbt.tag.ListTag;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -16,7 +21,6 @@ import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteOrder;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,9 +34,9 @@ public class BlockRegistry implements Registry {
 
     static {
         InputStream stream = RegistryUtils.getOrAssertResource("runtime_block_states.dat");
-        try {
+        try (NBTInputStream nbtInputStream = NbtUtils.createReaderLE(stream)) {
             //noinspection unchecked
-            VANILLA_PALETTE = ((ListTag<CompoundTag>) NBTIO.readTag(stream, ByteOrder.LITTLE_ENDIAN, false)).getAll();
+            VANILLA_PALETTE = ((ListTag<CompoundTag>) nbtInputStream.readTag()).getValue();
         } catch (IOException e) {
             throw new AssertionError(e);
         }
@@ -45,8 +49,8 @@ public class BlockRegistry implements Registry {
     private final Int2ObjectMap<Block> runtimeStateMap = new Int2ObjectOpenHashMap<>();
     private final AtomicInteger runtimeIdAllocator = new AtomicInteger();
     private final AtomicInteger customIdAllocator = new AtomicInteger(1000);
-    private byte[] cachedPalette;
-    private byte[] cachedProperties;
+    private ListTag<CompoundTag> paletteTag;
+    private CompoundTag propertiesTag;
 
     private volatile boolean closed;
 
@@ -88,7 +92,7 @@ public class BlockRegistry implements Registry {
             log.debug("Non-implemented block found {}", id);
         }
         Block block = this.factoryMap.get(id).create(id);
-        block.setDamage(meta);
+        block.setMeta(meta);
         this.runtimeStateMap.put(runtimeId, block);
         this.stateRuntimeMap.put(getFullId(legacyId, meta), runtimeId);
         return runtimeId;
@@ -113,8 +117,6 @@ public class BlockRegistry implements Registry {
             for (int i = 1; i < meta.length; i++) {
                 this.stateRuntimeMap.put(getFullId(legacyId, meta[i]), runtimeId);
             }
-
-            entry.remove("meta"); // No point in sending this since the client doesn't use it.
         }
     }
 
@@ -123,7 +125,7 @@ public class BlockRegistry implements Registry {
     }
 
     public int getRuntimeId(Block block) {
-        return getRuntimeId(block.getId(), block.getDamage());
+        return getRuntimeId(block.getId(), block.getMeta());
     }
 
     public int getRuntimeId(Identifier identifier, int meta) {
@@ -204,40 +206,39 @@ public class BlockRegistry implements Registry {
         int startId = VANILLA_PALETTE.size();
         int size = this.runtimeIdAllocator.get();
 
-        CompoundTag propertiesTag = new CompoundTag();
+        CompoundTagBuilder propertiesTag = CompoundTag.builder();
 
         // add custom blocks
         for (int i = startId; i < size; i++) {
             Block block = this.runtimeStateMap.get(i);
 
             //noinspection ConstantConditions
-            CompoundTag tag = new CompoundTag()
-                    .putShort("id", this.idLegacyMap.get(block.getId()))
-                    .putCompound("block", new CompoundTag()
-                            .putString("name", block.getId().toString())
-                            .putCompound("states", new CompoundTag())); // custom blocks can't have states
+            CompoundTag tag = CompoundTag.builder()
+                    .shortTag("id", (short) (int) this.idLegacyMap.get(block.getId()))
+                    .tag(CompoundTag.builder()
+                            .stringTag("name", block.getId().toString())
+                            .tag(CompoundTag.builder().build("states"))
+                            .build("block"))
+                    .buildRootTag(); // custom blocks can't have states
 
             palette.add(tag);
 
             // this doesn't have to be sent
-            propertiesTag.putCompound(block.getId().toString(), new CompoundTag()
-                    .putCompound("minecraft:block_light_absorption", new CompoundTag()
-                            .putInt("value", 1))
-                    .putCompound("minecraft:block_light_emission", new CompoundTag()
-                            .putFloat("emission", 0.0f))
-                    .putCompound("minecraft:destroy_time", new CompoundTag()
-                            .putFloat("value", 1)));
+            propertiesTag.tag(CompoundTag.builder()
+                    .tag(CompoundTag.builder()
+                            .intTag("value", 1)
+                            .build("minecraft:block_light_absorption"))
+                    .tag(CompoundTag.builder()
+                            .floatTag("emission", 0.0f)
+                            .build("minecraft:block_light_emission"))
+                    .tag(CompoundTag.builder()
+                            .floatTag("value", 1)
+                            .build("minecraft:destroy_time"))
+                    .build(block.getId().toString()));
         }
 
-        ListTag<CompoundTag> paletteTag = new ListTag<>();
-        paletteTag.setAll(palette);
-
-        try {
-            this.cachedPalette = NBTIO.write(paletteTag, ByteOrder.LITTLE_ENDIAN, true);
-            this.cachedProperties = NBTIO.write(propertiesTag, ByteOrder.LITTLE_ENDIAN, true);
-        } catch (IOException e) {
-            throw new RegistryException("Unable to create cached block palette", e);
-        }
+        this.paletteTag = new ListTag<>("palette", CompoundTag.class, palette);
+        this.propertiesTag = propertiesTag.buildRootTag();
     }
 
     private void checkClosed() throws RegistryException {
@@ -246,12 +247,12 @@ public class BlockRegistry implements Registry {
         }
     }
 
-    public byte[] getCachedPalette() {
-        return cachedPalette;
+    public ListTag<CompoundTag> getPaletteTag() {
+        return paletteTag;
     }
 
-    public byte[] getCachedProperties() {
-        return cachedProperties;
+    public CompoundTag getPropertiesTag() {
+        return propertiesTag;
     }
 
     private void registerVanillaBlocks() {
@@ -297,8 +298,8 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(RED_MUSHROOM, BlockMushroomRed::new); //40
         this.factoryMap.put(GOLD_BLOCK, BlockGold::new); //41
         this.factoryMap.put(IRON_BLOCK, BlockIron::new); //42
-        this.factoryMap.put(DOUBLE_STONE_SLAB, BlockDoubleSlabStone::new); //43
-        this.factoryMap.put(STONE_SLAB, BlockSlabStone::new); //44
+        this.factoryMap.put(DOUBLE_STONE_SLAB, BlockDoubleSlab.factory(STONE_SLAB, BlockSlab.COLORS_1)); //43
+        this.factoryMap.put(STONE_SLAB, BlockSlab.factory(DOUBLE_STONE_SLAB, BlockSlab.COLORS_1)); //44
         this.factoryMap.put(BRICK_BLOCK, BlockBricks::new); //45
         this.factoryMap.put(TNT, BlockTNT::new); //46
         this.factoryMap.put(BOOKSHELF, BlockBookshelf::new); //47
@@ -315,8 +316,8 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(CRAFTING_TABLE, BlockCraftingTable::new); //58
         this.factoryMap.put(WHEAT, BlockWheat::new); //59
         this.factoryMap.put(FARMLAND, BlockFarmland::new); //60
-        this.factoryMap.put(FURNACE, BlockFurnace::new); //61
-        this.factoryMap.put(LIT_FURNACE, BlockFurnaceBurning::new); //62
+        this.factoryMap.put(FURNACE, BlockFurnace.factory(BlockEntityTypes.FURNACE)); //61
+        this.factoryMap.put(LIT_FURNACE, BlockFurnaceBurning.factory(BlockEntityTypes.FURNACE)); //62
         this.factoryMap.put(STANDING_SIGN, BlockSignPost.factory(WALL_SIGN, ItemIds.SIGN)); //63
         this.factoryMap.put(WOODEN_DOOR, BlockDoorWood::new); //64
         this.factoryMap.put(LADDER, BlockLadder::new); //65
@@ -435,8 +436,8 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(DAYLIGHT_DETECTOR_INVERTED, BlockDaylightDetectorInverted::new); //178
         this.factoryMap.put(RED_SANDSTONE, BlockRedSandstone::new); //179
         this.factoryMap.put(RED_SANDSTONE_STAIRS, BlockStairsRedSandstone::new); //180
-        this.factoryMap.put(DOUBLE_STONE_SLAB2, BlockDoubleSlabRedSandstone::new); //181
-        this.factoryMap.put(STONE_SLAB2, BlockSlabRedSandstone::new); //182
+        this.factoryMap.put(DOUBLE_STONE_SLAB2, BlockDoubleSlab.factory(STONE_SLAB2, BlockSlab.COLORS_2)); //181
+        this.factoryMap.put(STONE_SLAB2, BlockSlab.factory(DOUBLE_STONE_SLAB2, BlockSlab.COLORS_2)); //182
         this.factoryMap.put(SPRUCE_FENCE_GATE, BlockFenceGate::new); //183
         this.factoryMap.put(BIRCH_FENCE_GATE, BlockFenceGate::new); //184
         this.factoryMap.put(JUNGLE_FENCE_GATE, BlockFenceGate::new); //185
@@ -534,7 +535,7 @@ public class BlockRegistry implements Registry {
         //392: coral_fan_hang3
         this.factoryMap.put(KELP, BlockKelp::new);//393
         this.factoryMap.put(DRIED_KELP_BLOCK, BlockDriedKelp::new); //394
-        this.factoryMap.put(ACACIA_BUTTON,BlockButtonWooden::new);//395
+        this.factoryMap.put(ACACIA_BUTTON, BlockButtonWooden::new);//395
         this.factoryMap.put(BIRCH_BUTTON, BlockButtonWooden::new);//396
         this.factoryMap.put(DARK_OAK_BUTTON, BlockButtonWooden::new);//397
         this.factoryMap.put(JUNGLE_BUTTON, BlockButtonWooden::new);//398
@@ -555,13 +556,14 @@ public class BlockRegistry implements Registry {
         //413: turtle_egg
         //414: bubble_column
         this.factoryMap.put(BARRIER, BlockBarrier::new); //415
+        this.factoryMap.put(STONE_SLAB3, BlockSlab.factory(DOUBLE_STONE_SLAB3, BlockSlab.COLORS_3)); //416
         //416: stone_slab3
         //417: bamboo
         //418: bamboo_sapling
         //419: scaffolding
-        //420: stone_slab4
-        //421: double_stone_slab3
-        //422: double_stone_slab4
+        this.factoryMap.put(STONE_SLAB4, BlockSlab.factory(DOUBLE_STONE_SLAB4, BlockSlab.COLORS_4)); //420
+        this.factoryMap.put(DOUBLE_STONE_SLAB3, BlockDoubleSlab.factory(STONE_SLAB3, BlockSlab.COLORS_3)); //421
+        this.factoryMap.put(DOUBLE_STONE_SLAB4, BlockDoubleSlab.factory(DOUBLE_STONE_SLAB4, BlockSlab.COLORS_4)); //422
         this.factoryMap.put(GRANITE_STAIRS, BlockStairsGranite::new); //423
         this.factoryMap.put(DIORITE_STAIRS, BlockStairsDiorite::new); //424
         this.factoryMap.put(ANDESITE_STAIRS, BlockStairsAndesite::new); //425
@@ -589,10 +591,10 @@ public class BlockRegistry implements Registry {
         this.factoryMap.put(DARK_OAK_WALL_SIGN, BlockWallSign.factory(DARK_OAK_STANDING_SIGN, ItemIds.DARK_OAK_SIGN)); //447
         this.factoryMap.put(LECTERN, BlockLectern::new); //448
         //449: grindstone
-        this.factoryMap.put(BLAST_FURNACE, BlockFurnace::new); // 450
+        this.factoryMap.put(BLAST_FURNACE, BlockFurnace.factory(BlockEntityTypes.BLAST_FURNACE)); // 450
         //451: stonecutter_block
-        this.factoryMap.put(SMOKER, BlockFurnace::new); //452
-        this.factoryMap.put(LIT_SMOKER, BlockFurnaceBurning::new); //453
+        this.factoryMap.put(SMOKER, BlockFurnace.factory(BlockEntityTypes.SMOKER)); //452
+        this.factoryMap.put(LIT_SMOKER, BlockFurnaceBurning.factory(BlockEntityTypes.SMOKER)); //453
         //454: cartography_table
         //455: fletching_table
         //456: smithing_table
@@ -606,7 +608,7 @@ public class BlockRegistry implements Registry {
         //464: jigsaw
         this.factoryMap.put(WOOD, BlockWood::new); //465
         //466: composter
-        this.factoryMap.put(LIT_BLAST_FURNACE, BlockFurnaceBurning::new); //467
+        this.factoryMap.put(LIT_BLAST_FURNACE, BlockFurnaceBurning.factory(BlockEntityTypes.BLAST_FURNACE)); //467
         this.factoryMap.put(LIGHT_BLOCK, BlockLight::new); //468
         //469: wither_rose
         //470: stickypistonarmcollision

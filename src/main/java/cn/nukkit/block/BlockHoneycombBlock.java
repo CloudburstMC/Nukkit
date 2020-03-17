@@ -10,12 +10,12 @@ public class BlockHoneycombBlock extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
-        return 0.6;
+    public float getHardness() {
+        return 0.6f;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 3;
     }
 

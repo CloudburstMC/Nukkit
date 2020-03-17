@@ -2,20 +2,20 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockBarrel;
-import cn.nukkit.blockentity.BlockEntityBarrel;
+import cn.nukkit.blockentity.Barrel;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.Sound;
 import cn.nukkit.player.Player;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
 
 public class BarrelInventory extends ContainerInventory {
 
-    public BarrelInventory(BlockEntityBarrel barrelEntity) {
+    public BarrelInventory(Barrel barrelEntity) {
         super(barrelEntity, InventoryType.BARREL);
     }
 
     @Override
-    public BlockEntityBarrel getHolder() {
-        return (BlockEntityBarrel) this.holder;
+    public Barrel getHolder() {
+        return (Barrel) this.holder;
     }
 
     @Override
@@ -23,7 +23,7 @@ public class BarrelInventory extends ContainerInventory {
         super.onOpen(who);
 
         if (this.getViewers().size() == 1) {
-            BlockEntityBarrel barrel = this.getHolder();
+            Barrel barrel = this.getHolder();
             Level level = barrel.getLevel();
             if (level != null) {
                 Block block = barrel.getBlock();
@@ -31,8 +31,7 @@ public class BarrelInventory extends ContainerInventory {
                     BlockBarrel blockBarrel = (BlockBarrel) block;
                     if (!blockBarrel.isOpen()) {
                         blockBarrel.setOpen(true);
-                        level.setBlock(blockBarrel, blockBarrel, true, true);
-                        level.addSound(blockBarrel.asVector3f(), Sound.BLOCK_BARREL_OPEN);
+                        level.addLevelSoundEvent(this.getHolder().getPosition(), SoundEvent.BARREL_OPEN);
                     }
                 }
             }
@@ -44,7 +43,7 @@ public class BarrelInventory extends ContainerInventory {
         super.onClose(who);
 
         if (this.getViewers().isEmpty()) {
-            BlockEntityBarrel barrel = this.getHolder();
+            Barrel barrel = this.getHolder();
             Level level = barrel.getLevel();
             if (level != null) {
                 Block block = barrel.getBlock();
@@ -52,8 +51,7 @@ public class BarrelInventory extends ContainerInventory {
                     BlockBarrel blockBarrel = (BlockBarrel) block;
                     if (blockBarrel.isOpen()) {
                         blockBarrel.setOpen(false);
-                        level.setBlock(blockBarrel, blockBarrel, true, true);
-                        level.addSound(blockBarrel.asVector3f(), Sound.BLOCK_BARREL_CLOSE);
+                        level.addLevelSoundEvent(this.getHolder().getPosition(), SoundEvent.BARREL_CLOSE);
                     }
                 }
             }

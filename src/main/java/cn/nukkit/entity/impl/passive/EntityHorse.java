@@ -3,8 +3,7 @@ package cn.nukkit.entity.impl.passive;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.passive.Horse;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 import static cn.nukkit.item.ItemIds.LEATHER;
 
@@ -13,8 +12,8 @@ import static cn.nukkit.item.ItemIds.LEATHER;
  */
 public class EntityHorse extends Animal implements Horse {
 
-    public EntityHorse(EntityType<Horse> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityHorse(EntityType<Horse> type, Location location) {
+        super(type, location);
     }
 
     @Override

@@ -5,7 +5,7 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
@@ -16,7 +16,7 @@ import cn.nukkit.utils.TextFormat;
 public class GamemodeCommand extends VanillaCommand {
 
     public GamemodeCommand(String name) {
-        super(name, "%nukkit.command.gamemode.description", "%commands.gamemode.usage",
+        super(name, "commands.gamemode.description", "commands.gamemode.usage",
                 new String[]{"gm"});
         this.setPermission("nukkit.command.gamemode.survival;" +
                 "nukkit.command.gamemode.creative;" +
@@ -24,11 +24,11 @@ public class GamemodeCommand extends VanillaCommand {
                 "nukkit.command.gamemode.spectator;" +
                 "nukkit.command.gamemode.other");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("mode", CommandParamType.INT, false),
                 new CommandParameter("player", CommandParamType.TARGET, true)
         });
-        this.commandParameters.put("byString", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("mode", new String[]{"survival", "s", "creative", "c",
                         "adventure", "a", "spectator", "spc", "view", "v"}),
                 new CommandParameter("player", CommandParamType.TARGET, true)

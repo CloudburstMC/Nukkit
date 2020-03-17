@@ -3,11 +3,10 @@ package cn.nukkit.entity.impl.projectile;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.projectile.XpBottle;
-import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.particle.EnchantParticle;
 import cn.nukkit.level.particle.Particle;
 import cn.nukkit.level.particle.SpellParticle;
-import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -16,8 +15,8 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class EntityXpBottle extends EntityProjectile implements XpBottle {
 
-    public EntityXpBottle(EntityType<XpBottle> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityXpBottle(EntityType<XpBottle> type, Location location) {
+        super(type, location);
     }
 
     @Override
@@ -78,11 +77,11 @@ public class EntityXpBottle extends EntityProjectile implements XpBottle {
     }
 
     public void dropXp() {
-        Particle particle1 = new EnchantParticle(this);
+        Particle particle1 = new EnchantParticle(this.getPosition());
         this.getLevel().addParticle(particle1);
-        Particle particle2 = new SpellParticle(this, 0x00385dc6);
+        Particle particle2 = new SpellParticle(this.getPosition(), 0x00385dc6);
         this.getLevel().addParticle(particle2);
 
-        this.getLevel().dropExpOrb(this, ThreadLocalRandom.current().nextInt(3, 12));
+        this.getLevel().dropExpOrb(this.getPosition(), ThreadLocalRandom.current().nextInt(3, 12));
     }
 }

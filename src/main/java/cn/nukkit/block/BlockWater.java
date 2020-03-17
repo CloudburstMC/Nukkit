@@ -3,10 +3,10 @@ package cn.nukkit.block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import static cn.nukkit.block.BlockIds.FLOWING_WATER;
 
@@ -26,7 +26,7 @@ public class BlockWater extends BlockLiquid {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        boolean success = target.getLevel().setBlock(block, this, true, false);
+        boolean success = target.getLevel().setBlock(block.getPosition(), this, true, false);
         if (success) this.getLevel().scheduleUpdate(this, this.tickRate());
 
         return success;

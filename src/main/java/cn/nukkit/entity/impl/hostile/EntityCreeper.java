@@ -7,20 +7,28 @@ import cn.nukkit.event.entity.CreeperPowerEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.tag.CompoundTag;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import static cn.nukkit.entity.data.EntityFlag.POWERED;
+import static com.nukkitx.protocol.bedrock.data.EntityFlag.POWERED;
 
 /**
  * @author Box.
  */
 public class EntityCreeper extends EntityHostile implements Creeper {
 
-    public EntityCreeper(EntityType<Creeper> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityCreeper(EntityType<Creeper> type, Location location) {
+        super(type, location);
+    }
+
+    @Override
+    protected void initEntity() {
+        super.initEntity();
+
+        this.setMaxHealth(20);
     }
 
     @Override
@@ -33,8 +41,22 @@ public class EntityCreeper extends EntityHostile implements Creeper {
         return 1.7f;
     }
 
+    @Override
+    public void loadAdditionalData(CompoundTag tag) {
+        super.loadAdditionalData(tag);
+
+        tag.listenForBoolean("powered", this::setPowered);
+    }
+
+    @Override
+    public void saveAdditionalData(CompoundTagBuilder tag) {
+        super.saveAdditionalData(tag);
+
+        tag.booleanTag("powered", this.isPowered());
+    }
+
     public boolean isPowered() {
-        return getFlag(POWERED);
+        return this.data.getFlag(POWERED);
     }
 
     public void setPowered(LightningBolt lightningBolt) {
@@ -42,8 +64,7 @@ public class EntityCreeper extends EntityHostile implements Creeper {
         this.getServer().getPluginManager().callEvent(ev);
 
         if (!ev.isCancelled()) {
-            this.setFlag(POWERED, true);
-            this.namedTag.putBoolean("powered", true);
+            this.data.setFlag(POWERED, true);
         }
     }
 
@@ -52,24 +73,13 @@ public class EntityCreeper extends EntityHostile implements Creeper {
         this.getServer().getPluginManager().callEvent(ev);
 
         if (!ev.isCancelled()) {
-            this.setFlag(POWERED, powered);
-            this.namedTag.putBoolean("powered", powered);
+            this.data.setFlag(POWERED, powered);
         }
     }
 
     @Override
     public void onStruckByLightning(LightningBolt lightningBolt) {
         this.setPowered(true);
-    }
-
-    @Override
-    protected void initEntity() {
-        super.initEntity();
-
-        if (this.namedTag.getBoolean("powered") || this.namedTag.getBoolean("IsPowered")) {
-            this.setFlag(POWERED, true);
-        }
-        this.setMaxHealth(20);
     }
 
     @Override

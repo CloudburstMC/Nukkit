@@ -2,8 +2,9 @@ package cn.nukkit.entity.impl.projectile;
 
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.projectile.Arrow;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.tag.CompoundTag;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -17,12 +18,12 @@ public class EntityArrow extends EntityProjectile implements Arrow {
     public static final int PICKUP_ANY = 1;
     public static final int PICKUP_CREATIVE = 2;
 
-    protected int pickupMode;
+    protected int pickupMode = PICKUP_ANY;
     protected float gravity = 0.05f;
     protected float drag = 0.01f;
 
-    public EntityArrow(EntityType<Arrow> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityArrow(EntityType<Arrow> type, Location location) {
+        super(type, location);
     }
 
     @Override
@@ -51,14 +52,6 @@ public class EntityArrow extends EntityProjectile implements Arrow {
     }
 
     @Override
-    protected void initEntity() {
-        super.initEntity();
-
-        this.damage = namedTag.contains("damage") ? namedTag.getDouble("damage") : 2;
-        this.pickupMode = namedTag.contains("pickup") ? namedTag.getByte("pickup") : PICKUP_ANY;
-    }
-
-    @Override
     public int getResultDamage() {
         int base = super.getResultDamage();
 
@@ -70,7 +63,7 @@ public class EntityArrow extends EntityProjectile implements Arrow {
     }
 
     @Override
-    protected double getBaseDamage() {
+    protected float getBaseDamage() {
         return 2;
     }
 
@@ -99,10 +92,17 @@ public class EntityArrow extends EntityProjectile implements Arrow {
     }
 
     @Override
-    public void saveNBT() {
-        super.saveNBT();
+    public void loadAdditionalData(CompoundTag tag) {
+        super.loadAdditionalData(tag);
 
-        this.namedTag.putByte("pickup", this.pickupMode);
+        this.pickupMode = tag.contains("pickup") ? tag.getByte("pickup") : PICKUP_ANY;
+    }
+
+    @Override
+    public void saveAdditionalData(CompoundTagBuilder tag) {
+        super.saveAdditionalData(tag);
+
+        tag.byteTag("pickup", (byte) this.pickupMode);
     }
 
     public int getPickupMode() {

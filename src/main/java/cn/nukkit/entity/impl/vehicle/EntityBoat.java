@@ -5,7 +5,6 @@ import cn.nukkit.block.BlockWater;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.MountMode;
-import cn.nukkit.entity.data.EntityData;
 import cn.nukkit.entity.impl.EntityLiving;
 import cn.nukkit.entity.impl.passive.EntityWaterAnimal;
 import cn.nukkit.entity.vehicle.Boat;
@@ -15,30 +14,29 @@ import cn.nukkit.event.vehicle.VehicleUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Location;
-import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.AnimatePacket;
-import cn.nukkit.network.protocol.SetEntityLinkPacket;
 import cn.nukkit.player.Player;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.protocol.bedrock.data.EntityData;
+import com.nukkitx.protocol.bedrock.data.EntityLink;
+import com.nukkitx.protocol.bedrock.packet.AnimatePacket;
 
 import java.util.ArrayList;
 
-import static cn.nukkit.entity.data.EntityData.*;
+import static com.nukkitx.protocol.bedrock.data.EntityData.*;
 
 /**
  * Created by yescallop on 2016/2/13.
  */
 public class EntityBoat extends EntityVehicle implements Boat {
 
-    public static final Vector3f RIDER_PLAYER_OFFSET = new Vector3f(0, 1.02001f, 0);
-    public static final Vector3f RIDER_OFFSET = new Vector3f(0, -0.2f, 0);
-    public static final Vector3f PASSENGER_OFFSET = new Vector3f(-0.6f);
-    public static final Vector3f RIDER_PASSENGER_OFFSET = new Vector3f(0.2f);
+    public static final Vector3f RIDER_PLAYER_OFFSET = Vector3f.from(0, 1.02001f, 0);
+    public static final Vector3f RIDER_OFFSET = Vector3f.from(0, -0.2, 0);
+    public static final Vector3f PASSENGER_OFFSET = Vector3f.from(-0.6, 0, 0);
+    public static final Vector3f RIDER_PASSENGER_OFFSET = Vector3f.from(0.2, 0, 0);
     public static final int RIDER_INDEX = 0;
     public static final int PASSENGER_INDEX = 1;
     public static final double SINKING_DEPTH = 0.07;
@@ -47,8 +45,8 @@ public class EntityBoat extends EntityVehicle implements Boat {
     private static final String INTERACT_TAG = "action.interact.ride.boat";
     protected boolean sinking = true;
 
-    public EntityBoat(EntityType<Boat> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityBoat(EntityType<Boat> type, Location location) {
+        super(type, location);
 
         this.setMaxHealth(40);
         this.setHealth(40);
@@ -57,8 +55,15 @@ public class EntityBoat extends EntityVehicle implements Boat {
     @Override
     protected void initEntity() {
         super.initEntity();
+    }
 
-        this.setIntData(VARIANT, this.namedTag.getInt("Variant"));
+    public int getWoodType() {
+        return this.data.getInt(VARIANT);
+    }
+
+    @Override
+    public void setWoodType(int woodType) {
+        this.data.setInt(VARIANT, woodType);
     }
 
     @Override
@@ -116,8 +121,8 @@ public class EntityBoat extends EntityVehicle implements Boat {
             passenger.dismount(this);
         }
 
-        SmokeParticle particle = new SmokeParticle(this);
-        this.level.addParticle(particle);
+        SmokeParticle particle = new SmokeParticle(this.getPosition());
+        this.getLevel().addParticle(particle);
     }
 
     @Override
@@ -149,37 +154,41 @@ public class EntityBoat extends EntityVehicle implements Boat {
                 }
 
                 if (waterDiff < -SINKING_DEPTH) {
-                    this.motionY = Math.min(0.05, this.motionY + 0.005);
+                    this.motion = Vector3f.from(this.motion.getX(), Math.min(0.05, this.motion.getY() + 0.005), this.motion.getZ());
                 } else if (waterDiff < 0 || !sinking) {
-                    this.motionY = this.motionY > SINKING_MAX_SPEED ? Math.max(this.motionY - 0.02, SINKING_MAX_SPEED) : this.motionY + SINKING_SPEED;
+                    this.motion = Vector3f.from(this.motion.getX(),
+                            this.motion.getY() > SINKING_MAX_SPEED ?
+                                    Math.max(this.motion.getY() - 0.02, SINKING_MAX_SPEED) :
+                                    this.motion.getY() + SINKING_SPEED,
+                            this.motion.getZ());
 //                    this.motionY = this.motionY + SINKING_SPEED > SINKING_MAX_SPEED ? this.motionY - SINKING_SPEED : this.motionY + SINKING_SPEED;
                 }
             }
 
-            if (this.checkObstruction(this.x, this.y, this.z)) {
+            if (this.checkObstruction(this.position)) {
                 hasUpdate = true;
             }
 
-            this.move(this.motionX, this.motionY, this.motionZ);
+            this.move(this.motion);
 
             double friction = 1 - this.getDrag();
 
-            if (this.onGround && (Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionZ) > 0.00001)) {
-                friction *= this.getLevel().getBlock((int) Math.floor(this.x), (int) Math.floor(this.y - 1), (int) Math.floor(this.z) - 1).getFrictionFactor();
+            if (this.onGround && (Math.abs(this.motion.getX()) > 0.00001 || Math.abs(this.motion.getZ()) > 0.00001)) {
+                friction *= this.getLevel().getBlock(this.getPosition().down()).getFrictionFactor();
             }
 
-            this.motionX *= friction;
+            this.motion = motion.mul(friction, 1, friction);
 
-            if (!hasControllingPassenger()) {
-                if (waterDiff > SINKING_DEPTH || sinking) {
-                    this.motionY = waterDiff > 0.5 ? this.motionY - this.getGravity() : (this.motionY - SINKING_SPEED < -SINKING_MAX_SPEED ? this.motionY : this.motionY - SINKING_SPEED);
-                }
+            if (!hasControllingPassenger() && (waterDiff > SINKING_DEPTH || sinking)) {
+                this.motion = Vector3f.from(motion.getX(),
+                        waterDiff > 0.5 ?
+                                this.motion.getY() - this.getGravity() :
+                                (this.motion.getY() - SINKING_SPEED < -SINKING_MAX_SPEED ? this.motion.getY() : this.motion.getY() - SINKING_SPEED),
+                        motion.getZ());
             }
 
-            this.motionZ *= friction;
-
-            Location from = new Location(lastX, lastY, lastZ, lastYaw, lastPitch, level);
-            Location to = new Location(this.x, this.y, this.z, this.yaw, this.pitch, level);
+            Location from = Location.from(this.lastPosition, lastYaw, lastPitch, this.getLevel());
+            Location to = Location.from(this.position, this.yaw, this.pitch, this.getLevel());
 
             this.getServer().getPluginManager().callEvent(new VehicleUpdateEvent(this));
 
@@ -191,7 +200,7 @@ public class EntityBoat extends EntityVehicle implements Boat {
             this.updateMovement();
 
             if (this.passengers.size() < 2) {
-                for (Entity entity : this.level.getCollidingEntities(this.boundingBox.grow(0.2, 0, 0.2), this)) {
+                for (Entity entity : this.getLevel().getCollidingEntities(this.boundingBox.grow(0.2f, 0, 0.2f), this)) {
                     if (entity.getVehicle() != null || !(entity instanceof EntityLiving) || entity instanceof Player || entity instanceof EntityWaterAnimal || isPassenger(entity)) {
                         continue;
                     }
@@ -205,7 +214,7 @@ public class EntityBoat extends EntityVehicle implements Boat {
             }
         }
 
-        return hasUpdate || !this.onGround || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001;
+        return hasUpdate || !this.onGround || motion.abs().length() > 0.00001;
     }
 
     public void updatePassengers() {
@@ -230,7 +239,7 @@ public class EntityBoat extends EntityVehicle implements Boat {
             super.updatePassengerPosition(ent);
 
             if (sendLinks) {
-                broadcastLinkPacket(ent, SetEntityLinkPacket.TYPE_RIDE);
+                broadcastLinkPacket(ent, EntityLink.Type.RIDER);
             }
         } else if (passengers.size() == 2) {
             if (!((ent = passengers.get(0)) instanceof Player)) { //swap
@@ -247,7 +256,7 @@ public class EntityBoat extends EntityVehicle implements Boat {
             ent.setSeatPosition(getMountedOffset(ent).add(RIDER_PASSENGER_OFFSET));
             super.updatePassengerPosition(ent);
             if (sendLinks) {
-                broadcastLinkPacket(ent, SetEntityLinkPacket.TYPE_RIDE);
+                broadcastLinkPacket(ent, EntityLink.Type.RIDER);
             }
 
             (ent = this.passengers.get(1)).setSeatPosition(getMountedOffset(ent).add(PASSENGER_OFFSET));
@@ -255,7 +264,7 @@ public class EntityBoat extends EntityVehicle implements Boat {
             super.updatePassengerPosition(ent);
 
             if (sendLinks) {
-                broadcastLinkPacket(this, SetEntityLinkPacket.TYPE_PASSENGER);
+                broadcastLinkPacket(this, EntityLink.Type.PASSENGER);
             }
 
             float yawDiff = ent.getUniqueId() % 2 == 0 ? 90 : 270;
@@ -276,7 +285,7 @@ public class EntityBoat extends EntityVehicle implements Boat {
 
             @Override
             public void accept(int x, int y, int z) {
-                Block block = EntityBoat.this.level.getBlock(x, y, z);
+                Block block = EntityBoat.this.getLevel().getBlock(x, y, z);
 
                 if (block instanceof BlockWater) {
                     double level = block.getMaxY();
@@ -312,9 +321,9 @@ public class EntityBoat extends EntityVehicle implements Boat {
     public void onMount(Entity passenger) {
         super.onMount(passenger);
 
-        passenger.setByteData(RIDER_ROTATION_LOCKED, 1);
-        passenger.setFloatData(RIDER_MAX_ROTATION, 90);
-        passenger.setFloatData(RIDER_MIN_ROTATION, -90);
+        passenger.getData().setByte(RIDER_ROTATION_LOCKED, 1);
+        passenger.getData().setFloat(RIDER_MAX_ROTATION, 90);
+        passenger.getData().setFloat(RIDER_MIN_ROTATION, -90);
 
         //            if(entity instanceof Player && mode == SetEntityLinkPacket.TYPE_RIDE){ //TODO: controlling?
 //                entity.setDataProperty(new ByteEntityData(DATA_FLAG_WASD_CONTROLLED))
@@ -354,20 +363,20 @@ public class EntityBoat extends EntityVehicle implements Boat {
     public void onPaddle(AnimatePacket.Action animation, float value) {
         EntityData data = animation == AnimatePacket.Action.ROW_RIGHT ? PADDLE_TIME_RIGHT : PADDLE_TIME_LEFT;
 
-        if (getFloatData(data) != value) {
-            this.setFloatData(data, value);
+        if (this.data.getFloat(data) != value) {
+            this.data.setFloat(data, value);
         }
     }
 
     @Override
     public void onEntityCollision(Entity entity) {
         if (this.vehicle == null && entity.getVehicle() != this && !entity.getPassengers().contains(this)) {
-            if (!entity.getBoundingBox().intersectsWith(this.boundingBox.grow(0.20000000298023224, -0.1, 0.20000000298023224))) {
+            if (!entity.getBoundingBox().intersectsWith(this.boundingBox.grow(0.2f, -0.1f, 0.2f))) {
                 return;
             }
 
-            double diffX = entity.getX() - this.x;
-            double diffZ = entity.getZ() - this.z;
+            double diffX = entity.getX() - this.getX();
+            double diffZ = entity.getZ() - this.getZ();
 
             double direction = NukkitMath.getDirection(diffX, diffZ);
 
@@ -385,8 +394,7 @@ public class EntityBoat extends EntityVehicle implements Boat {
                 diffX *= 1 + entityCollisionReduction;
 
                 if (this.vehicle == null) {
-                    motionX -= diffX;
-                    motionZ -= diffZ;
+                    this.motion = motion.sub(diffX, 0, diffZ);
                 }
             }
         }
@@ -401,8 +409,8 @@ public class EntityBoat extends EntityVehicle implements Boat {
     public void kill() {
         super.kill();
 
-        if (level.getGameRules().get(GameRules.DO_ENTITY_DROPS)) {
-            this.level.dropItem(this, Item.get(ItemIds.BOAT));
+        if (this.getLevel().getGameRules().get(GameRules.DO_ENTITY_DROPS)) {
+            this.getLevel().dropItem(this.getPosition(), Item.get(ItemIds.BOAT));
         }
     }
 }

@@ -2,13 +2,12 @@ package cn.nukkit.entity.impl.passive;
 
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.passive.Cat;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 public class EntityCat extends Animal implements Cat {
 
-    public EntityCat(EntityType<Cat> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityCat(EntityType<Cat> type, Location location) {
+        super(type, location);
     }
 
     @Override

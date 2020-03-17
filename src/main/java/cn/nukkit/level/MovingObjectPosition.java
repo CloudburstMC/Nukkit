@@ -1,7 +1,8 @@
 package cn.nukkit.level;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.math.Vector3f;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.math.vector.Vector3i;
 
 /**
  * author: MagicDroidX
@@ -14,9 +15,7 @@ public class MovingObjectPosition {
      */
     public int typeOfHit;
 
-    public int blockX;
-    public int blockY;
-    public int blockZ;
+    public Vector3i blockPos;
 
     /**
      * Which side was hit. If its -1 then it went the full length of the ray trace.
@@ -28,13 +27,11 @@ public class MovingObjectPosition {
 
     public Entity entityHit;
 
-    public static MovingObjectPosition fromBlock(int x, int y, int z, int side, Vector3f hitVector) {
+    public static MovingObjectPosition fromBlock(Vector3i blockPos, int side, Vector3f hitVector) {
         MovingObjectPosition objectPosition = new MovingObjectPosition();
         objectPosition.typeOfHit = 0;
-        objectPosition.blockX = x;
-        objectPosition.blockY = y;
-        objectPosition.blockZ = z;
-        objectPosition.hitVector = new Vector3f(hitVector.x, hitVector.y, hitVector.z);
+        objectPosition.blockPos = blockPos;
+        objectPosition.hitVector = hitVector;
         return objectPosition;
     }
 
@@ -42,7 +39,7 @@ public class MovingObjectPosition {
         MovingObjectPosition objectPosition = new MovingObjectPosition();
         objectPosition.typeOfHit = 1;
         objectPosition.entityHit = entity;
-        objectPosition.hitVector = new Vector3f(entity.getX(), entity.getY(), entity.getZ());
+        objectPosition.hitVector = entity.getPosition();
         return objectPosition;
     }
 }

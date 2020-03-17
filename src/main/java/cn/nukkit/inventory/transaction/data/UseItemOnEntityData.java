@@ -1,7 +1,7 @@
 package cn.nukkit.inventory.transaction.data;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.math.Vector3f;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * @author CreeperFace

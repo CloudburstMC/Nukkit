@@ -59,12 +59,12 @@ public class BlockRailDetector extends BlockRail {
         boolean isPowered = false;
 
         for (Entity entity : level.getNearbyEntities(new SimpleAxisAlignedBB(
-                getX() + 0.125D,
+                getX() + 0.125f,
                 getY(),
-                getZ() + 0.125D,
-                getX() + 0.875D,
-                getY() + 0.525D,
-                getZ() + 0.875D))) {
+                getZ() + 0.125f,
+                getX() + 0.875f,
+                getY() + 0.525f,
+                getZ() + 0.875f))) {
             if (entity instanceof EntityAbstractMinecart) {
                 isPowered = true;
             }
@@ -72,17 +72,17 @@ public class BlockRailDetector extends BlockRail {
 
         if (isPowered && !wasPowered) {
             setActive(true);
-            level.scheduleUpdate(this, this, 0);
-            level.scheduleUpdate(this, this.down(), 0);
+            level.scheduleUpdate(this, this.getPosition(), 0);
+            level.scheduleUpdate(this, this.getPosition().down(), 0);
         }
 
         if (!isPowered && wasPowered) {
             setActive(false);
-            level.scheduleUpdate(this, this, 0);
-            level.scheduleUpdate(this, this.down(), 0);
+            level.scheduleUpdate(this, this.getPosition(), 0);
+            level.scheduleUpdate(this, this.getPosition().down(), 0);
         }
 
-        level.updateComparatorOutputLevel(this);
+        level.updateComparatorOutputLevel(this.getPosition());
     }
 
     @Override

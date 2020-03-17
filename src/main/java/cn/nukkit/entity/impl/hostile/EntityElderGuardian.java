@@ -2,25 +2,24 @@ package cn.nukkit.entity.impl.hostile;
 
 import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.hostile.ElderGuardian;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
-import static cn.nukkit.entity.data.EntityFlag.ELDER;
+import static com.nukkitx.protocol.bedrock.data.EntityFlag.ELDER;
 
 /**
  * @author PikyCZ
  */
 public class EntityElderGuardian extends EntityHostile implements ElderGuardian {
 
-    public EntityElderGuardian(EntityType<ElderGuardian> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityElderGuardian(EntityType<ElderGuardian> type, Location location) {
+        super(type, location);
     }
 
     @Override
     protected void initEntity() {
         super.initEntity();
         this.setMaxHealth(80);
-        this.setFlag(ELDER, true);
+        this.data.setFlag(ELDER, true);
     }
 
     @Override

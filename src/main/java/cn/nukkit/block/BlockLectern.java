@@ -1,7 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityLectern;
+import cn.nukkit.blockentity.BlockEntityTypes;
+import cn.nukkit.blockentity.Lectern;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.event.block.LecternDropBookEvent;
 import cn.nukkit.item.Item;
@@ -10,12 +11,12 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 public class BlockLectern extends BlockTransparent implements Faceable {
 
@@ -29,13 +30,13 @@ public class BlockLectern extends BlockTransparent implements Faceable {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 2;
     }
 
     @Override
-    public double getResistance() {
-        return 12.5;
+    public float getResistance() {
+        return 12.5f;
     }
 
     @Override
@@ -44,8 +45,8 @@ public class BlockLectern extends BlockTransparent implements Faceable {
     }
 
     @Override
-    public double getMaxY() {
-        return y + 0.89999;
+    public float getMaxY() {
+        return this.getY() + 0.89999f;
     }
 
     @Override
@@ -58,13 +59,13 @@ public class BlockLectern extends BlockTransparent implements Faceable {
         int power = 0;
         int page = 0;
         int maxPage = 0;
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
-        if (blockEntity instanceof BlockEntityLectern) {
-            BlockEntityLectern lectern = (BlockEntityLectern) blockEntity;
+        BlockEntity blockEntity = this.getLevel().getBlockEntity(this.getPosition());
+        if (blockEntity instanceof Lectern) {
+            Lectern lectern = (Lectern) blockEntity;
             if (lectern.hasBook()) {
                 maxPage = lectern.getTotalPages();
-                page = lectern.getLeftPage() + 1;
-                power = (int)(((float)page / maxPage) * 16);
+                page = lectern.getPage() + 1;
+                power = (int) (((float) page / maxPage) * 16);
             }
         }
         return power;
@@ -72,7 +73,7 @@ public class BlockLectern extends BlockTransparent implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(getDamage() & 0b11);
+        return BlockFace.fromHorizontalIndex(getMeta() & 0b11);
     }
 
     public void setBlockFace(BlockFace face) {
@@ -80,46 +81,29 @@ public class BlockLectern extends BlockTransparent implements Faceable {
 
         int horizontalIndex = face.getHorizontalIndex();
         if (horizontalIndex >= 0) {
-            setDamage(getDamage() & (dataMask ^ 0b11) | (horizontalIndex & 0b11));
+            setMeta(getMeta() & (dataMask ^ 0b11) | (horizontalIndex & 0b11));
         }
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         setBlockFace(player != null ? player.getDirection().getOpposite() : BlockFace.SOUTH);
-        CompoundTag nbt = new CompoundTag()
-                .putString("id", BlockEntity.LECTERN)
-                .putInt("x", this.x)
-                .putInt("y", this.y)
-                .putInt("z", this.z);
 
-        BlockEntityLectern lectern = (BlockEntityLectern) BlockEntity.createBlockEntity(BlockEntity.LECTERN, this.getLevel().getChunk(this.x >> 4, this.z >> 4), nbt);
-        if (lectern == null) {
-            return false;
-        }
+        Lectern lectern = BlockEntityRegistry.get().newEntity(BlockEntityTypes.LECTERN, this.getChunk(), this.getPosition());
 
-        this.getLevel().setBlock(block, this, true, true);
+        this.getLevel().setBlock(block.getPosition(), this, true, true);
         return true;
     }
 
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            BlockEntity t = this.getLevel().getBlockEntity(this);
-            BlockEntityLectern lectern;
-            if (t instanceof BlockEntityLectern) {
-                lectern = (BlockEntityLectern) t;
+            BlockEntity t = this.getLevel().getBlockEntity(this.getPosition());
+            Lectern lectern;
+            if (t instanceof Lectern) {
+                lectern = (Lectern) t;
             } else {
-                CompoundTag nbt = new CompoundTag()
-                        .putString("id", BlockEntity.LECTERN)
-                        .putInt("x", this.x)
-                        .putInt("y", this.y)
-                        .putInt("z", this.z);
-
-                lectern = (BlockEntityLectern) BlockEntity.createBlockEntity(BlockEntity.LECTERN, this.getLevel().getChunk(this.x >> 4, this.z >> 4), nbt);
-                if (lectern == null) {
-                    return false;
-                }
+                lectern = BlockEntityRegistry.get().newEntity(BlockEntityTypes.LECTERN, this.getChunk(), this.getPosition());
             }
 
             Item currentBook = lectern.getBook();
@@ -133,7 +117,7 @@ public class BlockLectern extends BlockTransparent implements Faceable {
                     newBook.setCount(1);
                     lectern.setBook(newBook);
                     lectern.spawnToAll();
-                    this.getLevel().addSound(this.add(0.5, 0.5, 0.5), Sound.ITEM_BOOK_PUT);
+                    this.getLevel().addSound(this.getPosition(), Sound.ITEM_BOOK_PUT);
                 }
             }
         }
@@ -147,35 +131,35 @@ public class BlockLectern extends BlockTransparent implements Faceable {
     }
 
     public boolean isActivated() {
-        return (this.getDamage() & 0x04) == 0x04;
+        return (this.getMeta() & 0x04) == 0x04;
     }
 
     public void setActivated(boolean activated) {
         if (activated) {
-            setDamage(getDamage() | 0x04);
+            setMeta(getMeta() | 0x04);
         } else {
-            setDamage(getDamage() ^ 0x04);
+            setMeta(getMeta() ^ 0x04);
         }
     }
 
     public void executeRedstonePulse() {
         if (isActivated()) {
-            level.cancelSheduledUpdate(this, this);
+            level.cancelSheduledUpdate(this.getPosition(), this);
         } else {
             this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
         }
 
-        level.scheduleUpdate(this, this, 4);
+        level.scheduleUpdate(this, this.getPosition(), 4);
         setActivated(true);
-        level.setBlock(this, this, true, false);
-        level.addSound(this.add(0.5, 0.5, 0.5), Sound.ITEM_BOOK_PAGE_TURN);
+        level.setBlock(this.getPosition(), this, true, false);
+        level.addSound(this.getPosition(), Sound.ITEM_BOOK_PAGE_TURN);
 
-        level.updateAroundRedstone(this, null);
+        level.updateAroundRedstone(this.getPosition(), null);
     }
 
     @Override
     public int getWeakPower(BlockFace face) {
-        return isActivated()? 15 : 0;
+        return isActivated() ? 15 : 0;
     }
 
     @Override
@@ -190,8 +174,8 @@ public class BlockLectern extends BlockTransparent implements Faceable {
                 this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
 
                 setActivated(false);
-                level.setBlock(this, this, true, false);
-                level.updateAroundRedstone(this, null);
+                level.setBlock(this.getPosition(), this, true, false);
+                level.updateAroundRedstone(this.getPosition(), null);
             }
 
             return Level.BLOCK_UPDATE_SCHEDULED;
@@ -206,17 +190,17 @@ public class BlockLectern extends BlockTransparent implements Faceable {
     }
 
     public void dropBook(Player player) {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
-        if (blockEntity instanceof BlockEntityLectern) {
-            BlockEntityLectern lectern = (BlockEntityLectern) blockEntity;
+        BlockEntity blockEntity = this.getLevel().getBlockEntity(this.getPosition());
+        if (blockEntity instanceof Lectern) {
+            Lectern lectern = (Lectern) blockEntity;
             Item book = lectern.getBook();
             if (book.getId() != BlockIds.AIR) {
-                LecternDropBookEvent dropBookEvent = new LecternDropBookEvent(player,lectern, book);
+                LecternDropBookEvent dropBookEvent = new LecternDropBookEvent(player, lectern, book);
                 this.getLevel().getServer().getPluginManager().callEvent(dropBookEvent);
                 if (!dropBookEvent.isCancelled()) {
                     lectern.setBook(Item.get(BlockIds.AIR));
                     lectern.spawnToAll();
-                    this.level.dropItem(lectern.add(0.5f, 1, 0.5f), dropBookEvent.getBook());
+                    this.level.dropItem(lectern.getPosition().add(0.5f, 1, 0.5f), dropBookEvent.getBook());
                 }
             }
         }

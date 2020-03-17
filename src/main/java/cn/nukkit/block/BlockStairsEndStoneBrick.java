@@ -9,17 +9,17 @@ import cn.nukkit.utils.Identifier;
  */
 public class BlockStairsEndStoneBrick extends BlockStairs {
 
-    public BlockStairsEndStoneBrick(Identifier id){
+    public BlockStairsEndStoneBrick(Identifier id) {
         super(id);
     }
 
     @Override
-    public double getHardness() {
-        return 2.0;
+    public float getHardness() {
+        return 2.0f;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 45;
     }
 

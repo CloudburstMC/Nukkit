@@ -7,10 +7,10 @@ import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import static cn.nukkit.block.BlockIds.*;
 import static cn.nukkit.item.ItemIds.DYE;
@@ -36,11 +36,11 @@ public class ReedsBlock extends FloodableBlock {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.getId() == DYE && item.getDamage() == 0x0F) { //Bonemeal
+        if (item.getId() == DYE && item.getMeta() == 0x0F) { //Bonemeal
             int count = 1;
 
             for (int i = 1; i <= 2; i++) {
-                Identifier id = this.level.getBlockIdAt(this.getX(), this.getY() - i, this.getZ());
+                Identifier id = this.level.getBlockId(this.getX(), this.getY() - i, this.getZ());
 
                 if (id == REEDS) {
                     count++;
@@ -58,7 +58,7 @@ public class ReedsBlock extends FloodableBlock {
                         Server.getInstance().getPluginManager().callEvent(ev);
 
                         if (!ev.isCancelled()) {
-                            this.getLevel().setBlock(block, ev.getNewState(), true);
+                            this.getLevel().setBlock(block.getPosition(), ev.getNewState(), true);
                             success = true;
                         }
                     } else if (block.getId() != REEDS) {
@@ -67,11 +67,11 @@ public class ReedsBlock extends FloodableBlock {
                 }
 
                 if (success) {
-                    if (player != null && (player.gamemode & 0x01) == 0) {
+                    if (player != null && (player.getGamemode() & 0x01) == 0) {
                         item.decrementCount();
                     }
 
-                    this.level.addParticle(new BoneMealParticle(this));
+                    this.level.addParticle(new BoneMealParticle(this.getPosition()));
                 }
             }
 
@@ -85,24 +85,24 @@ public class ReedsBlock extends FloodableBlock {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             Block down = this.down();
             if (down.isTransparent() && down.getId() != REEDS) {
-                this.getLevel().useBreakOn(this);
+                this.getLevel().useBreakOn(this.getPosition());
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             if (this.down().getId() != REEDS) {
-                if (this.getDamage() == 0x0F) {
+                if (this.getMeta() == 0x0F) {
                     for (int y = 1; y < 3; ++y) {
-                        Block b = this.getLevel().getBlock(this.x, this.y + y, this.z);
+                        Block b = this.getLevel().getBlock(this.getX(), this.getY() + y, this.getZ());
                         if (b.getId() == AIR) {
-                            this.getLevel().setBlock(b, Block.get(REEDS), false);
+                            this.getLevel().setBlock(b.getPosition(), Block.get(REEDS), false);
                             break;
                         }
                     }
-                    this.setDamage(0);
-                    this.getLevel().setBlock(this, this, false);
+                    this.setMeta(0);
+                    this.getLevel().setBlock(this.getPosition(), this, false);
                 } else {
-                    this.setDamage(this.getDamage() + 1);
-                    this.getLevel().setBlock(this, this, false);
+                    this.setMeta(this.getMeta() + 1);
+                    this.getLevel().setBlock(this.getPosition(), this, false);
                 }
                 return Level.BLOCK_UPDATE_RANDOM;
             }
@@ -117,7 +117,7 @@ public class ReedsBlock extends FloodableBlock {
         }
         Block down = this.down();
         if (down.getId() == REEDS) {
-            this.getLevel().setBlock(block, Block.get(REEDS), true);
+            this.getLevel().setBlock(block.getPosition(), Block.get(REEDS), true);
             return true;
         } else if (down.getId() == GRASS || down.getId() == DIRT || down.getId() == SAND) {
             Block block0 = down.north();
@@ -125,7 +125,7 @@ public class ReedsBlock extends FloodableBlock {
             Block block2 = down.west();
             Block block3 = down.east();
             if ((block0 instanceof BlockWater) || (block1 instanceof BlockWater) || (block2 instanceof BlockWater) || (block3 instanceof BlockWater)) {
-                this.getLevel().setBlock(block, Block.get(REEDS), true);
+                this.getLevel().setBlock(block.getPosition(), Block.get(REEDS), true);
                 return true;
             }
         }

@@ -1,23 +1,20 @@
 package cn.nukkit.block;
 
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityChest;
+import cn.nukkit.blockentity.Chest;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.level.BlockPosition;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.Map;
+import static cn.nukkit.blockentity.BlockEntityTypes.CHEST;
 
 /**
  * author: Angelic47
@@ -41,13 +38,13 @@ public class BlockChest extends BlockTransparent implements Faceable {
     }
 
     @Override
-    public double getHardness() {
-        return 2.5;
+    public float getHardness() {
+        return 2.5f;
     }
 
     @Override
-    public double getResistance() {
-        return 12.5;
+    public float getResistance() {
+        return 12.5f;
     }
 
     @Override
@@ -56,92 +53,71 @@ public class BlockChest extends BlockTransparent implements Faceable {
     }
 
     @Override
-    public double getMinX() {
-        return this.x + 0.0625;
+    public float getMinX() {
+        return this.getX() + 0.0625f;
     }
 
     @Override
-    public double getMinY() {
-        return this.y;
+    public float getMinY() {
+        return this.getY();
     }
 
     @Override
-    public double getMinZ() {
-        return this.z + 0.0625;
+    public float getMinZ() {
+        return this.getZ() + 0.0625f;
     }
 
     @Override
-    public double getMaxX() {
-        return this.x + 0.9375;
+    public float getMaxX() {
+        return this.getX() + 0.9375f;
     }
 
     @Override
-    public double getMaxY() {
-        return this.y + 0.9475;
+    public float getMaxY() {
+        return this.getY() + 0.9475f;
     }
 
     @Override
-    public double getMaxZ() {
-        return this.z + 0.9375;
+    public float getMaxZ() {
+        return this.getZ() + 0.9375f;
     }
 
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
-        BlockEntityChest chest = null;
+        Chest chest = null;
         int[] faces = {2, 5, 3, 4};
-        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+        this.setMeta(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
 
         for (int side = 2; side <= 5; ++side) {
-            if ((this.getDamage() == 4 || this.getDamage() == 5) && (side == 4 || side == 5)) {
+            if ((this.getMeta() == 4 || this.getMeta() == 5) && (side == 4 || side == 5)) {
                 continue;
-            } else if ((this.getDamage() == 3 || this.getDamage() == 2) && (side == 2 || side == 3)) {
+            } else if ((this.getMeta() == 3 || this.getMeta() == 2) && (side == 2 || side == 3)) {
                 continue;
             }
             Block c = this.getSide(BlockFace.fromIndex(side));
-            if (c instanceof BlockChest && c.getDamage() == this.getDamage()) {
-                BlockEntity blockEntity = this.getLevel().getBlockEntity(c);
-                if (blockEntity instanceof BlockEntityChest && !((BlockEntityChest) blockEntity).isPaired()) {
-                    chest = (BlockEntityChest) blockEntity;
+            if (c instanceof BlockChest && c.getMeta() == this.getMeta()) {
+                BlockEntity blockEntity = this.getLevel().getBlockEntity(c.getPosition());
+                if (blockEntity instanceof Chest && !((Chest) blockEntity).isPaired()) {
+                    chest = (Chest) blockEntity;
                     break;
                 }
             }
         }
-        if ((block.getId() == BlockIds.WATER || block.getId() == BlockIds.FLOWING_WATER)
-                && block.getDamage() == 0) {
-            BlockPosition pos = BlockPosition.from(block);
-            pos.setLayer(1);
-            this.getLevel().setBlock(pos, block, true, false);
+        if ((block.getId() == BlockIds.WATER || block.getId() == BlockIds.FLOWING_WATER) && block.getMeta() == 0) {
+            this.getLevel().setBlock(block.getPosition(), 1, block, true, false);
         }
 
-        this.getLevel().setBlock(block, this, true, true);
-        CompoundTag nbt = new CompoundTag("")
-                .putList(new ListTag<>("Items"))
-                .putString("id", BlockEntity.CHEST)
-                .putInt("x", this.x)
-                .putInt("y", this.y)
-                .putInt("z", this.z);
+        this.getLevel().setBlock(block.getPosition(), this, true, true);
 
+        Chest chest1 = BlockEntityRegistry.get().newEntity(CHEST, this.getChunk(), this.getPosition());
+        chest1.loadAdditionalData(item.getTag());
         if (item.hasCustomName()) {
-            nbt.putString("CustomName", item.getCustomName());
-        }
-
-        if (item.hasCustomBlockData()) {
-            Map<String, Tag> customData = item.getCustomBlockData().getTags();
-            for (Map.Entry<String, Tag> tag : customData.entrySet()) {
-                nbt.put(tag.getKey(), tag.getValue());
-            }
-        }
-
-        BlockEntityChest blockEntity = (BlockEntityChest) BlockEntity.createBlockEntity(BlockEntity.CHEST, this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
-
-        if (blockEntity == null) {
-            return false;
+            chest1.setCustomName(item.getCustomName());
         }
 
         if (chest != null) {
-            chest.pairWith(blockEntity);
-            blockEntity.pairWith(chest);
+            chest.pairWith(chest1);
         }
 
         return true;
@@ -149,9 +125,9 @@ public class BlockChest extends BlockTransparent implements Faceable {
 
     @Override
     public boolean onBreak(Item item) {
-        BlockEntity t = this.getLevel().getBlockEntity(this);
-        if (t instanceof BlockEntityChest) {
-            ((BlockEntityChest) t).unpair();
+        BlockEntity t = this.getLevel().getBlockEntity(this.getPosition());
+        if (t instanceof Chest) {
+            ((Chest) t).unpair();
         }
         return super.onBreak(item);
     }
@@ -164,21 +140,12 @@ public class BlockChest extends BlockTransparent implements Faceable {
                 return true;
             }
 
-            BlockEntity t = this.getLevel().getBlockEntity(this);
-            BlockEntityChest chest;
-            if (t instanceof BlockEntityChest) {
-                chest = (BlockEntityChest) t;
+            BlockEntity t = this.getLevel().getBlockEntity(this.getPosition());
+            Chest chest;
+            if (t instanceof Chest) {
+                chest = (Chest) t;
             } else {
-                CompoundTag nbt = new CompoundTag("")
-                        .putList(new ListTag<>("Items"))
-                        .putString("id", BlockEntity.CHEST)
-                        .putInt("x", this.x)
-                        .putInt("y", this.y)
-                        .putInt("z", this.z);
-                chest = (BlockEntityChest) BlockEntity.createBlockEntity(BlockEntity.CHEST, this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()), nbt);
-                if (chest == null) {
-                    return false;
-                }
+                chest = BlockEntityRegistry.get().newEntity(CHEST, this.getChunk(), this.getPosition());
             }
 
             player.addWindow(chest.getInventory());
@@ -197,10 +164,10 @@ public class BlockChest extends BlockTransparent implements Faceable {
     }
 
     public int getComparatorInputOverride() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntity blockEntity = this.level.getBlockEntity(this.getPosition());
 
-        if (blockEntity instanceof BlockEntityChest) {
-            return ContainerInventory.calculateRedstone(((BlockEntityChest) blockEntity).getInventory());
+        if (blockEntity instanceof Chest) {
+            return ContainerInventory.calculateRedstone(((Chest) blockEntity).getInventory());
         }
 
         return super.getComparatorInputOverride();
@@ -213,6 +180,6 @@ public class BlockChest extends BlockTransparent implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x7);
     }
 }

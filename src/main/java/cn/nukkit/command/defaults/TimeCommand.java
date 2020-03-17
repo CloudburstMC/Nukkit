@@ -4,8 +4,8 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
@@ -16,20 +16,20 @@ import cn.nukkit.utils.TextFormat;
 public class TimeCommand extends VanillaCommand {
 
     public TimeCommand(String name) {
-        super(name, "%nukkit.command.time.description", "%nukkit.command.time.usage");
+        super(name, "commands.time.description", "commands.time.usage");
         this.setPermission("nukkit.command.time.add;" +
                 "nukkit.command.time.set;" +
                 "nukkit.command.time.start;" +
                 "nukkit.command.time.stop");
         this.commandParameters.clear();
-        this.commandParameters.put("1arg", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("start|stop", CommandParamType.STRING, false)
         });
-        this.commandParameters.put("2args", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("add|set", CommandParamType.STRING, false),
                 new CommandParameter("value", CommandParamType.INT, false)
         });
-        this.commandParameters.put("2args_", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("add|set", CommandParamType.STRING, false),
                 new CommandParameter("value", CommandParamType.STRING, false)
         });

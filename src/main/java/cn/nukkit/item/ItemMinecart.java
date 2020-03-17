@@ -5,16 +5,13 @@ import cn.nukkit.block.BlockRail;
 import cn.nukkit.entity.EntityTypes;
 import cn.nukkit.entity.vehicle.Minecart;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Location;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3f;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.player.Player;
 import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.Rail;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * author: MagicDroidX
@@ -39,20 +36,8 @@ public class ItemMinecart extends Item {
             if (type.isAscending()) {
                 adjacent = 0.5D;
             }
-            Minecart minecart = EntityRegistry.get().newEntity(EntityTypes.MINECART,
-                    level.getChunk(target.getChunkX(), target.getChunkZ()), new CompoundTag("")
-                            .putList(new ListTag<>("Pos")
-                                    .add(new DoubleTag("", target.getX() + 0.5))
-                                    .add(new DoubleTag("", target.getY() + 0.0625D + adjacent))
-                                    .add(new DoubleTag("", target.getZ() + 0.5)))
-                            .putList(new ListTag<>("Motion")
-                                    .add(new DoubleTag("", 0))
-                                    .add(new DoubleTag("", 0))
-                                    .add(new DoubleTag("", 0)))
-                            .putList(new ListTag<>("Rotation")
-                                    .add(new FloatTag("", 0))
-                                    .add(new FloatTag("", 0)))
-            );
+            Vector3f pos = target.getPosition().toFloat().add(0.5, 0.0625 + adjacent, 0.5);
+            Minecart minecart = EntityRegistry.get().newEntity(EntityTypes.MINECART, Location.from(pos, level));
             minecart.spawnToAll();
 
             if (player.isSurvival()) {

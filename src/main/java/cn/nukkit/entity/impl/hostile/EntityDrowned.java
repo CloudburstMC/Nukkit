@@ -4,8 +4,7 @@ import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.Smiteable;
 import cn.nukkit.entity.hostile.Drowned;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.chunk.Chunk;
-import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.level.Location;
 
 import static cn.nukkit.item.ItemIds.ROTTEN_FLESH;
 
@@ -14,8 +13,8 @@ import static cn.nukkit.item.ItemIds.ROTTEN_FLESH;
  */
 public class EntityDrowned extends EntityHostile implements Drowned, Smiteable {
 
-    public EntityDrowned(EntityType<Drowned> type, Chunk chunk, CompoundTag nbt) {
-        super(type, chunk, nbt);
+    public EntityDrowned(EntityType<Drowned> type, Location location) {
+        super(type, location);
     }
 
     @Override
