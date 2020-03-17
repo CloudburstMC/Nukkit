@@ -1,6 +1,7 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -12,6 +13,7 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddItemEntityPacket;
 import cn.nukkit.network.protocol.DataPacket;
+import cn.nukkit.network.protocol.EntityEventPacket;
 
 /**
  * @author MagicDroidX
@@ -101,7 +103,7 @@ public class EntityItem extends Entity {
         }
 
         this.item = NBTIO.getItemHelper(this.namedTag.getCompound("Item"));
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_IMMOBILE, true);
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_GRAVITY, true);
 
         this.server.getPluginManager().callEvent(new ItemSpawnEvent(this));
     }
@@ -109,10 +111,12 @@ public class EntityItem extends Entity {
     @Override
     public boolean attack(EntityDamageEvent source) {
         return (source.getCause() == DamageCause.VOID ||
+                source.getCause() == DamageCause.CONTACT ||
                 source.getCause() == DamageCause.FIRE_TICK ||
-                source.getCause() == DamageCause.ENTITY_EXPLOSION ||
-                source.getCause() == DamageCause.BLOCK_EXPLOSION)
-                && super.attack(source);
+                (source.getCause() == DamageCause.ENTITY_EXPLOSION ||
+                source.getCause() == DamageCause.BLOCK_EXPLOSION) &&
+                !this.isInsideOfWater() && (this.item == null ||
+                this.item.getId() != Item.NETHER_STAR)) && super.attack(source);
     }
 
     @Override
@@ -130,6 +134,36 @@ public class EntityItem extends Entity {
         this.lastUpdate = currentTick;
 
         this.timing.startTiming();
+        
+        if (this.age % 60 == 0 && this.onGround && this.getItem() != null && this.isAlive()) {
+            if (this.getItem().getCount() < this.getItem().getMaxStackSize()) {
+                for (Entity entity : this.getLevel().getNearbyEntities(getBoundingBox().grow(1, 1, 1), this, false)) {
+                    if (entity instanceof EntityItem) {
+                        if (!entity.isAlive()) {
+                            continue;
+                        }
+                        Item closeItem = ((EntityItem) entity).getItem();
+                        if (!closeItem.equals(getItem(), true, true)) {
+                            continue;
+                        }
+                        if(!entity.isOnGround()) {
+                            continue;
+                        }
+                        int newAmount = this.getItem().getCount() + closeItem.getCount();
+                        if (newAmount > this.getItem().getMaxStackSize()) {
+                            continue;
+                        }
+                        entity.close();
+                        this.getItem().setCount(newAmount);
+                        EntityEventPacket packet = new EntityEventPacket();
+                        packet.eid = getId();
+                        packet.data = newAmount;
+                        packet.event = EntityEventPacket.MERGE_ITEMS;
+                        Server.broadcastPacket(this.getLevel().getPlayers().values(), packet);
+                    }
+                }
+            }
+        }
 
         boolean hasUpdate = this.entityBaseTick(tickDiff);
 

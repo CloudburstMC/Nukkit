@@ -5,10 +5,11 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemSeedsWheat;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: Angelic47
@@ -32,10 +33,10 @@ public class BlockTallGrass extends BlockFlowable {
     @Override
     public String getName() {
         String[] names = new String[]{
-                "Dead Shrub",
-                "Tall Grass",
+                "Grass",
+                "Grass",
                 "Fern",
-                ""
+                "Fern"
         };
         return names[this.getDamage() & 0x03];
     }
@@ -82,20 +83,46 @@ public class BlockTallGrass extends BlockFlowable {
     }
 
     @Override
-    public boolean onActivate(Item item) {
-        return this.onActivate(item, null);
-    }
-
-    @Override
     public boolean onActivate(Item item, Player player) {
-        //todo bonemeal
+        if (item.getId() == Item.DYE && item.getDamage() == 0x0f) {
+            Block up = this.up();
+
+            if (up.getId() == AIR) {
+                int meta;
+
+                switch (this.getDamage()) {
+                    case 0:
+                    case 1:
+                        meta = BlockDoublePlant.TALL_GRASS;
+                        break;
+                    case 2:
+                    case 3:
+                        meta = BlockDoublePlant.LARGE_FERN;
+                        break;
+                    default:
+                        meta = -1;
+                }
+
+                if (meta != -1) {
+                    if (player != null && (player.gamemode & 0x01) == 0) {
+                        item.count--;
+                    }
+
+                    this.level.addParticle(new BoneMealParticle(this));
+                    this.level.setBlock(this, get(DOUBLE_PLANT, meta), true, false);
+                    this.level.setBlock(up, get(DOUBLE_PLANT, meta ^ BlockDoublePlant.TOP_HALF_BITMASK), true);
+                }
+            }
+
+            return true;
+        }
 
         return false;
     }
 
     @Override
     public Item[] getDrops(Item item) {
-        boolean dropSeeds = new Random().nextInt(10) == 0;
+        boolean dropSeeds = ThreadLocalRandom.current().nextInt(10) == 0;
         if (item.isShears()) {
             //todo enchantment
             if (dropSeeds) {

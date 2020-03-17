@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.LeavesDecayEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemApple;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
@@ -13,6 +12,8 @@ import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Hash;
 import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: Angelic47
@@ -23,8 +24,6 @@ public class BlockLeaves extends BlockTransparentMeta {
     public static final int SPRUCE = 1;
     public static final int BIRCH = 2;
     public static final int JUNGLE = 3;
-    public static final int ACACIA = 4;
-    public static final int DARK_OAK = 5;
 
     public BlockLeaves() {
         this(0);
@@ -72,14 +71,14 @@ public class BlockLeaves extends BlockTransparentMeta {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.setDamage(this.getDamage() | 0x04);
+        this.setPersistent(true);
         this.getLevel().setBlock(this, this, true);
         return true;
     }
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0, 1);
+        return new ItemBlock(this, this.getDamage() & 0x3, 1);
     }
 
     @Override
@@ -89,15 +88,21 @@ public class BlockLeaves extends BlockTransparentMeta {
                     toItem()
             };
         } else {
-            if ((int) ((Math.random()) * 200) == 0 && (this.getDamage() & 0x03) == OAK) {
+            if (this.canDropApple() && ThreadLocalRandom.current().nextInt(200) == 0) {
                 return new Item[]{
-                        new ItemApple()
+                        Item.get(Item.APPLE)
                 };
             }
-            if ((int) ((Math.random()) * 20) == 0) {
-                return new Item[]{
-                        new ItemBlock(new BlockSapling(), this.getDamage() & 0x03, 1)
-                };
+            if (ThreadLocalRandom.current().nextInt(20) == 0) {
+                if (ThreadLocalRandom.current().nextBoolean()) {
+                    return new Item[]{
+                            Item.get(Item.STICK, 0, ThreadLocalRandom.current().nextInt(1, 2))
+                    };
+                } else if ((this.getDamage() & 0x03) != JUNGLE || ThreadLocalRandom.current().nextInt(20) == 0) {
+                    return new Item[]{
+                            this.getSapling()
+                    };
+                }
             }
         }
         return new Item[0];
@@ -105,23 +110,21 @@ public class BlockLeaves extends BlockTransparentMeta {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_RANDOM && (getDamage() & 0b00001100) == 0x00) {
-            setDamage(getDamage() | 0x08);
+        if (type == Level.BLOCK_UPDATE_RANDOM && !isPersistent() && !isCheckDecay()) {
+            setCheckDecay(true);
             getLevel().setBlock(this, this, false, false);
-        } else if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if ((getDamage() & 0b00001100) == 0x08) {
-                setDamage(getDamage() & 0x03);
-                int check = 0;
+        } else if (type == Level.BLOCK_UPDATE_RANDOM && isCheckDecay() && !isPersistent()) {
+            setDamage(getDamage() & 0x03);
+            int check = 0;
 
-                LeavesDecayEvent ev = new LeavesDecayEvent(this);
+            LeavesDecayEvent ev = new LeavesDecayEvent(this);
 
-                Server.getInstance().getPluginManager().callEvent(ev);
-                if (ev.isCancelled() || findLog(this, new LongArraySet(), 0, check)) {
-                    getLevel().setBlock(this, this, false, false);
-                } else {
-                    getLevel().useBreakOn(this);
-                    return Level.BLOCK_UPDATE_NORMAL;
-                }
+            Server.getInstance().getPluginManager().callEvent(ev);
+            if (ev.isCancelled() || findLog(this, new LongArraySet(), 0, check)) {
+                getLevel().setBlock(this, this, false, false);
+            } else {
+                getLevel().useBreakOn(this);
+                return Level.BLOCK_UPDATE_NORMAL;
             }
         }
         return 0;
@@ -135,11 +138,11 @@ public class BlockLeaves extends BlockTransparentMeta {
         ++check;
         long index = Hash.hashBlock((int) pos.x, (int) pos.y, (int) pos.z);
         if (visited.contains(index)) return false;
-        if (pos.getId() == Block.WOOD) return true;
-        if (pos.getId() == Block.LEAVES && distance < 4) {
+        if (pos.getId() == WOOD || pos.getId() == WOOD2) return true;
+        if ((pos.getId() == LEAVES || pos.getId() == LEAVES2) && distance <= 4) {
             visited.add(index);
             int down = pos.down().getId();
-            if (down == Item.WOOD) {
+            if (down == WOOD || down == WOOD2) {
                 return true;
             }
             if (fromSide == null) {
@@ -187,12 +190,28 @@ public class BlockLeaves extends BlockTransparentMeta {
         return false;
     }
 
-    public boolean isChechDecay() {
-        return (this.getDamage() & 0x08) > 0;
+    public boolean isCheckDecay() {
+        return (this.getDamage() & 0x08) != 0;
     }
 
-    public boolean isDecayable() {
-        return (this.getDamage() & 0x04) == 0;
+    public void setCheckDecay(boolean checkDecay) {
+        if (checkDecay) {
+            this.setDamage(this.getDamage() | 0x08);
+        } else {
+            this.setDamage(this.getDamage() & ~0x08);
+        }
+    }
+
+    public boolean isPersistent() {
+        return (this.getDamage() & 0x04) != 0;
+    }
+
+    public void setPersistent(boolean persistent) {
+        if (persistent) {
+            this.setDamage(this.getDamage() | 0x04);
+        } else {
+            this.setDamage(this.getDamage() & ~0x04);
+        }
     }
 
     @Override
@@ -203,5 +222,13 @@ public class BlockLeaves extends BlockTransparentMeta {
     @Override
     public boolean canSilkTouch() {
         return true;
+    }
+
+    protected boolean canDropApple() {
+        return (this.getDamage() & 0x03) == OAK;
+    }
+
+    protected Item getSapling() {
+        return Item.get(BlockID.SAPLING, this.getDamage() & 0x03);
     }
 }

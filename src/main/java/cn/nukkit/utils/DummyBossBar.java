@@ -98,6 +98,7 @@ public class DummyBossBar {
         if (this.length != length) {
             this.length = length;
             this.sendAttributes();
+            this.sendSetBossBarLength();
         }
     }
 
@@ -162,7 +163,7 @@ public class DummyBossBar {
         pkBoss.bossEid = bossBarId;
         pkBoss.type = BossEventPacket.TYPE_SHOW;
         pkBoss.title = text;
-        pkBoss.healthPercent = this.length;
+        pkBoss.healthPercent = this.length / 100;
         player.dataPacket(pkBoss);
     }
 
@@ -186,7 +187,15 @@ public class DummyBossBar {
         pkBoss.bossEid = bossBarId;
         pkBoss.type = BossEventPacket.TYPE_TITLE;
         pkBoss.title = text;
-        pkBoss.healthPercent = this.length;
+        pkBoss.healthPercent = this.length / 100;
+        player.dataPacket(pkBoss);
+    }
+
+    private void sendSetBossBarLength() {
+        BossEventPacket pkBoss = new BossEventPacket();
+        pkBoss.bossEid = bossBarId;
+        pkBoss.type = BossEventPacket.TYPE_HEALTH_PERCENT;
+        pkBoss.healthPercent = this.length / 100;
         player.dataPacket(pkBoss);
     }
 
@@ -223,6 +232,7 @@ public class DummyBossBar {
         createBossEntity();
         sendAttributes();
         sendShowBossBar();
+        sendSetBossBarLength();
         if (color != null) this.sendSetBossBarTexture();
     }
 
@@ -232,6 +242,7 @@ public class DummyBossBar {
     public void reshow() {
         updateBossEntityPosition();
         sendShowBossBar();
+        sendSetBossBarLength();
     }
 
     public void destroy() {

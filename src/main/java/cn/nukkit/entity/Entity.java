@@ -223,6 +223,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected final EntityMetadata dataProperties = new EntityMetadata()
             .putLong(DATA_FLAGS, 0)
+            .putByte(DATA_COLOR, 0)
             .putShort(DATA_AIR, 400)
             .putShort(DATA_MAX_AIR, 400)
             .putString(DATA_NAMETAG, "")
@@ -608,11 +609,7 @@ public abstract class Entity extends Location implements Metadatable {
     public void setScale(float scale) {
         this.scale = scale;
         this.setDataProperty(new FloatEntityData(DATA_SCALE, this.scale));
-
-        float height = this.getHeight() * this.scale;
-        double radius = (this.getWidth() * this.scale) / 2d;
-
-        this.boundingBox.setBounds(x - radius, y, z - radius, x + radius, y + height, z + radius);
+        this.recalculateBoundingBox();
     }
 
     public float getScale() {
@@ -686,6 +683,24 @@ public abstract class Entity extends Location implements Metadatable {
             this.setHealth(this.getHealth() + 4 * (effect.getAmplifier() + 1));
         }
 
+    }
+
+    public void recalculateBoundingBox() {
+        this.recalculateBoundingBox(true);
+    }
+
+    public void recalculateBoundingBox(boolean send) {
+        float height = this.getHeight() * this.scale;
+        double radius = (this.getWidth() * this.scale) / 2d;
+        this.boundingBox.setBounds(x - radius, y, z - radius, x + radius, y + height, z + radius);
+
+        FloatEntityData bbH = new FloatEntityData(DATA_BOUNDING_BOX_HEIGHT, this.getHeight());
+        FloatEntityData bbW = new FloatEntityData(DATA_BOUNDING_BOX_WIDTH, this.getWidth());
+        this.dataProperties.put(bbH);
+        this.dataProperties.put(bbW);
+        if (send) {
+            sendData(this.hasSpawned.values().toArray(new Player[0]), new EntityMetadata().put(bbH).put(bbW));
+        }
     }
 
     protected void recalculateEffectColor() {
@@ -794,20 +809,32 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public static CompoundTag getDefaultNBT(Vector3 pos) {
+        return getDefaultNBT(pos, null);
+    }
+
+    public static CompoundTag getDefaultNBT(Vector3 pos, Vector3 motion) {
         Location loc = pos instanceof Location ? (Location) pos : null;
 
+        if (loc != null) {
+            return getDefaultNBT(pos, motion, (float) loc.getYaw(), (float) loc.getPitch());
+        }
+
+        return getDefaultNBT(pos, motion, 0, 0);
+    }
+
+    public static CompoundTag getDefaultNBT(Vector3 pos, Vector3 motion, float yaw, float pitch) {
         return new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", pos.x))
                         .add(new DoubleTag("", pos.y))
                         .add(new DoubleTag("", pos.z)))
                 .putList(new ListTag<DoubleTag>("Motion")
-                        .add(new DoubleTag("", 0))
-                        .add(new DoubleTag("", 0))
-                        .add(new DoubleTag("", 0)))
+                        .add(new DoubleTag("", motion != null ? motion.x : 0))
+                        .add(new DoubleTag("", motion != null ? motion.y : 0))
+                        .add(new DoubleTag("", motion != null ? motion.z : 0)))
                 .putList(new ListTag<FloatTag>("Rotation")
-                        .add(new FloatTag("", (float) (loc != null ? loc.getYaw() : 0)))
-                        .add(new FloatTag("", (float) (loc != null ? loc.getPitch() : 0))));
+                        .add(new FloatTag("", yaw))
+                        .add(new FloatTag("", pitch)));
     }
 
     public void saveNBT() {
@@ -879,10 +906,10 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void spawnTo(Player player) {
-        player.dataPacket(createAddEntityPacket());
 
-        if (!this.hasSpawned.containsKey(player.getLoaderId()) && player.usedChunks.containsKey(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()))) {
+        if (!this.hasSpawned.containsKey(player.getLoaderId()) && this.chunk != null && player.usedChunks.containsKey(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()))) {
             this.hasSpawned.put(player.getLoaderId(), player);
+            player.dataPacket(createAddEntityPacket());
         }
 
         if (this.riding != null) {
@@ -1544,6 +1571,10 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void fall(float fallDistance) {
+        if (this.hasEffect(Effect.SLOW_FALLING)) {
+            return;
+        }
+
         float damage = (float) Math.floor(fallDistance - 3 - (this.hasEffect(Effect.JUMP) ? this.getEffect(Effect.JUMP).getAmplifier() + 1 : 0));
         if (damage > 0) {
             this.attack(new EntityDamageEvent(this, DamageCause.FALL, damage));
@@ -2027,10 +2058,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.y = pos.y;
         this.z = pos.z;
 
-        double radius = this.getWidth() / 2d;
-
-        this.boundingBox.setBounds(pos.x - radius, pos.y, pos.z - radius, pos.x + radius, pos.y + (this.getHeight() * this.scale), pos.z
-                + radius);
+        this.recalculateBoundingBox(false); // Don't need to send BB height/width to client on position change
 
         this.checkChunks();
 

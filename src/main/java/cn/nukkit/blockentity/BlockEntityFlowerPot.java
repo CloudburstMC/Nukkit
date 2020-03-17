@@ -39,13 +39,18 @@ public class BlockEntityFlowerPot extends BlockEntitySpawnable {
 
     @Override
     public CompoundTag getSpawnCompound() {
-        return new CompoundTag()
+        CompoundTag tag = new CompoundTag()
                 .putString("id", BlockEntity.FLOWER_POT)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z)
-                .putShort("item", this.namedTag.getShort("item"))
-                .putInt("mData", this.namedTag.getInt("data"));
+                .putInt("z", (int) this.z);
+
+        int item = namedTag.getShort("item");
+        if (item != Block.AIR) {
+            tag.putShort("item", this.namedTag.getShort("item"))
+                    .putInt("mData", this.namedTag.getInt("data"));
+        }
+        return tag;
     }
 
 }

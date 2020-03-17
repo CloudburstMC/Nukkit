@@ -3,6 +3,7 @@ package cn.nukkit.item;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockWater;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityBoat;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
@@ -36,7 +37,7 @@ public class ItemBoat extends Item {
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         if (face != BlockFace.UP) return false;
-        EntityBoat boat = new EntityBoat(
+        EntityBoat boat = (EntityBoat) Entity.createEntity("Boat",
                 level.getChunk(block.getFloorX() >> 4, block.getFloorZ() >> 4), new CompoundTag("")
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", block.getX() + 0.5))
@@ -51,6 +52,10 @@ public class ItemBoat extends Item {
                         .add(new FloatTag("", 0)))
                 .putByte("woodID", this.getDamage())
         );
+
+        if (boat == null) {
+            return false;
+        }
 
         if (player.isSurvival()) {
             Item item = player.getInventory().getItemInHand();

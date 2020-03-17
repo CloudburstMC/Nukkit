@@ -46,13 +46,6 @@ public class ItemSpawnEgg extends Item {
             return false;
         }
 
-        CreatureSpawnEvent ev = new CreatureSpawnEvent(this.meta, SpawnReason.SPAWN_EGG);
-        level.getServer().getPluginManager().callEvent(ev);
-
-        if (ev.isCancelled()) {
-            return false;
-        }
-
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", block.getX() + 0.5))
@@ -70,13 +63,18 @@ public class ItemSpawnEgg extends Item {
             nbt.putString("CustomName", this.getCustomName());
         }
 
+        CreatureSpawnEvent ev = new CreatureSpawnEvent(this.meta, block, nbt, SpawnReason.SPAWN_EGG);
+        level.getServer().getPluginManager().callEvent(ev);
+
+        if (ev.isCancelled()) {
+            return false;
+        }
+
         Entity entity = Entity.createEntity(this.meta, chunk, nbt);
 
         if (entity != null) {
             if (player.isSurvival()) {
-                Item item = player.getInventory().getItemInHand();
-                item.setCount(item.getCount() - 1);
-                player.getInventory().setItemInHand(item);
+                player.getInventory().decreaseCount(player.getInventory().getHeldItemIndex());
             }
             entity.spawnToAll();
             return true;

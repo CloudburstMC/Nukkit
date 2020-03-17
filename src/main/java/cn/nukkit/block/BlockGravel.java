@@ -54,10 +54,9 @@ public class BlockGravel extends BlockFallable {
             };
         }
     }
-
+    
     @Override
-    public BlockColor getColor() {
-        return BlockColor.SAND_BLOCK_COLOR;
+    public boolean canSilkTouch() {
+        return true;
     }
-
 }

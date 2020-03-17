@@ -40,10 +40,11 @@ public class ListTag<T extends Tag> extends Tag {
         type = dis.readByte();
         int size = dis.readInt();
 
-        list = new ArrayList<>();
+        list = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             Tag tag = Tag.newTag(type, null);
             tag.load(dis);
+            tag.setName("");
             list.add((T) tag);
         }
     }
@@ -72,12 +73,14 @@ public class ListTag<T extends Tag> extends Tag {
 
     public ListTag<T> add(T tag) {
         type = tag.getId();
+        tag.setName("");
         list.add(tag);
         return this;
     }
 
     public ListTag<T> add(int index, T tag) {
         type = tag.getId();
+        tag.setName("");
 
         if (index >= list.size()) {
             list.add(index, tag);

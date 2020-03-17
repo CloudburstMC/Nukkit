@@ -49,8 +49,27 @@ public class BlockColor  {
     public static final BlockColor LAPIS_BLOCK_COLOR = new BlockColor(0x4a, 0x80, 0xff);
     public static final BlockColor EMERALD_BLOCK_COLOR = new BlockColor(0x00, 0xd9, 0x3a);
     public static final BlockColor OBSIDIAN_BLOCK_COLOR = new BlockColor(0x15, 0x14, 0x1f);
+    public static final BlockColor SPRUCE_BLOCK_COLOR = new BlockColor(0x81, 0x56, 0x31);
     public static final BlockColor NETHERRACK_BLOCK_COLOR = new BlockColor(0x70, 0x02, 0x00);
     public static final BlockColor REDSTONE_BLOCK_COLOR = TNT_BLOCK_COLOR;
+
+    public static final BlockColor WHITE_TERRACOTA_BLOCK_COLOR = new BlockColor(0xd1, 0xb1, 0xa1);
+    public static final BlockColor ORANGE_TERRACOTA_BLOCK_COLOR = new BlockColor(0x9f, 0x52, 0x24);
+    public static final BlockColor MAGENTA_TERRACOTA_BLOCK_COLOR = new BlockColor(0x95, 0x57, 0x6c);
+    public static final BlockColor LIGHT_BLUE_TERRACOTA_BLOCK_COLOR = new BlockColor(0x70, 0x6c, 0x8a);
+    public static final BlockColor YELLOW_TERRACOTA_BLOCK_COLOR = new BlockColor(0xba, 0x85, 0x24);
+    public static final BlockColor LIME_TERRACOTA_BLOCK_COLOR = new BlockColor(0x67, 0x75, 0x35);
+    public static final BlockColor PINK_TERRACOTA_BLOCK_COLOR = new BlockColor(0xa0, 0x4d, 0x4e);
+    public static final BlockColor GRAY_TERRACOTA_BLOCK_COLOR = new BlockColor(0x39, 0x29, 0x23);
+    public static final BlockColor LIGHT_GRAY_TERRACOTA_BLOCK_COLOR = new BlockColor(0x87, 0x6b, 0x62);
+    public static final BlockColor CYAN_TERRACOTA_BLOCK_COLOR = new BlockColor(0x57, 0x5c, 0x5c);
+    public static final BlockColor PURPLE_TERRACOTA_BLOCK_COLOR = new BlockColor(0x7a, 0x49, 0x58);
+    public static final BlockColor BLUE_TERRACOTA_BLOCK_COLOR = new BlockColor(0x4c, 0x3e, 0x5c);
+    public static final BlockColor BROWN_TERRACOTA_BLOCK_COLOR = new BlockColor(0x4c, 0x32, 0x23);
+    public static final BlockColor GREEN_TERRACOTA_BLOCK_COLOR = new BlockColor(0x4c, 0x52, 0x2a);
+    public static final BlockColor RED_TERRACOTA_BLOCK_COLOR = new BlockColor(0x8e, 0x3c, 0x2e);
+    public static final BlockColor BLACK_TERRACOTA_BLOCK_COLOR = new BlockColor(0x25, 0x16, 0x10);
+
 
     private int red;
     private int green;

@@ -26,15 +26,12 @@ public class BlockFlowerPot extends BlockFlowable {
     protected static boolean canPlaceIntoFlowerPot(int id) {
         switch (id) {
             case SAPLING:
-            case COBWEB:
-            case TALL_GRASS:
             case DEAD_BUSH:
             case DANDELION:
             case ROSE:
             case RED_MUSHROOM:
             case BROWN_MUSHROOM:
             case CACTUS:
-            case SUGARCANE_BLOCK:
                 // TODO: 2016/2/4 case NETHER_WART:
                 return true;
             default:
@@ -77,7 +74,8 @@ public class BlockFlowerPot extends BlockFlowable {
                 nbt.put(aTag.getName(), aTag);
             }
         }
-        new BlockEntityFlowerPot(getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
+        BlockEntityFlowerPot flowerPot = (BlockEntityFlowerPot) BlockEntity.createBlockEntity(BlockEntity.FLOWER_POT, getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
+        if (flowerPot == null) return false;
 
         this.getLevel().setBlock(block, this, true, true);
         return true;

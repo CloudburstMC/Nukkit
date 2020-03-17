@@ -5,10 +5,12 @@ import com.google.gson.Gson;
 
 public abstract class FormWindow {
 
+    private static final Gson GSON = new Gson();
+    
     protected boolean closed = false;
 
-    public String getJSONData(){
-        return new Gson().toJson(this);
+    public String getJSONData() {
+        return FormWindow.GSON.toJson(this);
     }
 
     public abstract void setResponse(String data);

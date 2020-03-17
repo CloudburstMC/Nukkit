@@ -55,7 +55,7 @@ public class BlockSoulSand extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.SAND_BLOCK_COLOR;
+        return BlockColor.BROWN_BLOCK_COLOR;
     }
 
 }
