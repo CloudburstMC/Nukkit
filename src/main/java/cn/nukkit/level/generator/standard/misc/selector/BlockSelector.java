@@ -9,6 +9,7 @@ import net.daporkchop.lib.random.PRandom;
  * Allows selecting a block from a pool of options.
  *
  * @author DaPorkchop_
+ * @see cn.nukkit.level.generator.standard.misc.ConstantBlock
  */
 @JsonDeserialize(using = BlockSelectorDeserializer.class)
 public interface BlockSelector {

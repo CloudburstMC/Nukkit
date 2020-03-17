@@ -1,0 +1,30 @@
+package cn.nukkit.level.generator.standard.pop;
+
+import cn.nukkit.level.ChunkManager;
+import cn.nukkit.level.generator.standard.StandardGenerator;
+import cn.nukkit.level.generator.standard.misc.IntRange;
+import cn.nukkit.utils.Identifier;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.common.base.Preconditions;
+import net.daporkchop.lib.random.PRandom;
+
+/**
+ * A populator that has a certain probability of running every time it finds a viable location.
+ *
+ * @author DaPorkchop_
+ */
+@JsonDeserialize
+public abstract class ChancePopulator implements Populator {
+    @JsonProperty
+    protected double chance = Double.NaN;
+
+    @Override
+    public void init(long levelSeed, long localSeed, StandardGenerator generator) {
+        Preconditions.checkState(!Double.isNaN(this.chance), "chance must be set!");
+        Preconditions.checkState(this.chance >= 0.0d && this.chance <= 1.0d, "chance (%s) must be in range 0-1!", this.chance);
+    }
+
+    @Override
+    public abstract Identifier getId();
+}

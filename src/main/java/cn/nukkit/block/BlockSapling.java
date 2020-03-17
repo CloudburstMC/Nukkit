@@ -2,6 +2,8 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.feature.WorldFeature;
+import cn.nukkit.level.feature.tree.TreeSpecies;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3f;
@@ -9,27 +11,28 @@ import cn.nukkit.math.Vector3i;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import net.daporkchop.lib.random.impl.ThreadLocalPRandom;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 import static cn.nukkit.block.BlockIds.*;
-import static cn.nukkit.item.ItemIds.DYE;
+import static cn.nukkit.item.ItemIds.*;
 
 /**
  * author: Angelic47
  * Nukkit Project
  */
 public class BlockSapling extends FloodableBlock {
-    public static final int OAK = 0;
-    public static final int SPRUCE = 1;
-    public static final int BIRCH = 2;
+    public static final int OAK        = 0;
+    public static final int SPRUCE     = 1;
+    public static final int BIRCH      = 2;
     /**
      * placeholder
      */
     public static final int BIRCH_TALL = 8 | BIRCH;
-    public static final int JUNGLE = 3;
-    public static final int ACACIA = 4;
-    public static final int DARK_OAK = 5;
+    public static final int JUNGLE     = 3;
+    public static final int ACACIA     = 4;
+    public static final int DARK_OAK   = 5;
 
     public BlockSapling(Identifier id) {
         super(id);
@@ -92,16 +95,15 @@ public class BlockSapling extends FloodableBlock {
     }
 
     private void grow() {
-        //porktodo: fix this
-        /*
-        BasicGenerator generator = null;
+        WorldFeature feature = null;
         boolean bigTree = false;
 
         int x = 0;
         int z = 0;
 
         switch (this.getDamage() & 0x07) {
-            case JUNGLE:
+            //porktodo: fix the rest of these
+            /*case JUNGLE:
                 loop:
                 for (; x >= -1; --x) {
                     for (; z >= -1; --z) {
@@ -138,11 +140,10 @@ public class BlockSapling extends FloodableBlock {
                 if (!bigTree) {
                     return;
                 }
-                break;
+                break;*/
             //TODO: big spruce
             default:
-                ObjectTree.growTree(this.level, this.getX(), this.getY(), this.getZ(), new BedrockRandom(), this.getDamage() & 0x07);
-                return;
+                feature = TreeSpecies.fromSaplingDamage(this.getDamage()).getDefaultGenerator();
         }
 
         if (bigTree) {
@@ -154,7 +155,7 @@ public class BlockSapling extends FloodableBlock {
             this.level.setBlock(this, get(AIR), true, false);
         }
 
-        if (!generator.generate(this.level, new BedrockRandom(), this.add(x, 0, z).asVector3i())) {
+        if (!feature.place(this.level, ThreadLocalPRandom.current(), this.x + x, this.y, this.z + z)) {
             if (bigTree) {
                 this.level.setBlock(this.add(x, 0, z), this, true, false);
                 this.level.setBlock(this.add(x + 1, 0, z), this, true, false);
@@ -163,7 +164,7 @@ public class BlockSapling extends FloodableBlock {
             } else {
                 this.level.setBlock(this, this, true, false);
             }
-        }*/
+        }
     }
 
     private boolean findSaplings(int x, int z, int type) {

@@ -45,6 +45,8 @@ public class OrePopulator extends RepeatingPopulator {
         Objects.requireNonNull(this.replace, "replace must be set!");
         Objects.requireNonNull(this.type, "type must be set!");
         Preconditions.checkArgument(this.size > 0, "size must be at least 1!");
+
+        super.init(levelSeed, localSeed, generator);
     }
 
     @Override

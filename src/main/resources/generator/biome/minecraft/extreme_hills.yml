@@ -23,3 +23,11 @@ populators:
     height: "0-32"
     block: "monster_egg"
     replace: "stone"
+
+    # Trees
+  - id: "nukkitx:tree"
+    chance: 0.00048828125 # about 1 per 8 chunks
+    on: "grass"
+    types:
+      - "oak"
+      - "spruce"

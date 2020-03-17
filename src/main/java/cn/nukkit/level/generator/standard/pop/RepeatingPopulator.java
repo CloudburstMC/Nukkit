@@ -1,11 +1,14 @@
 package cn.nukkit.level.generator.standard.pop;
 
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.level.generator.standard.StandardGenerator;
 import cn.nukkit.level.generator.standard.misc.IntRange;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.daporkchop.lib.random.PRandom;
+
+import java.util.Objects;
 
 /**
  * A populator that runs multiple times.
@@ -14,8 +17,13 @@ import net.daporkchop.lib.random.PRandom;
  */
 @JsonDeserialize
 public abstract class RepeatingPopulator implements Populator {
-    @JsonProperty(required = true)
+    @JsonProperty
     protected IntRange count;
+
+    @Override
+    public void init(long levelSeed, long localSeed, StandardGenerator generator) {
+        Objects.requireNonNull(this.count, "count must be set!");
+    }
 
     @Override
     public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ, int blockX, int blockZ) {

@@ -14,10 +14,8 @@ decorators:
     fill: "dirt"
 
 populators:
-  - id: "nukkitx:normal_tree"
-    count: 2-8
+    # Trees
+  - id: "nukkitx:tree"
+    chance: 0.03125 # about 8 per chunk
     on: "grass"
-    replaceOn: "dirt"
-    height: 4-7
-    trunk: "log"
-    leaf: "leaves"
+    type: "oak"
