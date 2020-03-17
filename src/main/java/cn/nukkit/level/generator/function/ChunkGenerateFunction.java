@@ -40,6 +40,7 @@ public class ChunkGenerateFunction implements Function<Chunk, Chunk> {
             generator.generateChunk(random, chunk);
             chunk.setGenerated();
         } finally {
+            lockableChunk.setDirty(false);
             lockableChunk.unlock();
         }
         return chunk;

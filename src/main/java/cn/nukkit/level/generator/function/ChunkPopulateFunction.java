@@ -67,6 +67,7 @@ public class ChunkPopulateFunction implements BiFunction<Chunk, List<Chunk>, Chu
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(String.format("Generation error (%d, %d)", chunk.getX(), chunk.getZ()), e);
         } finally {
+            lockableChunks.forEach(c -> c.setDirty(false));
             manager.clean();
             lockableChunks.forEach(Lock::unlock);
         }
