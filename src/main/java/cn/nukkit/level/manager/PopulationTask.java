@@ -30,7 +30,7 @@ public final class PopulationTask implements BiFunction<Chunk, List<Chunk>, Chun
         if (Preconditions.checkNotNull(chunk, "chunk").isPopulated())    {
             return chunk;
         }
-        Preconditions.checkState(chunk.isGenerated(), "Chunk %d,%d was populated before being generated!", chunk.getX(), chunk.getZ());
+        Preconditions.checkState(chunk.isGenerated(), "Chunk %s,%s was populated before being generated!", chunk.getX(), chunk.getZ());
 
         PRandom random = new FastPRandom(~(chunk.getX() * 3053330778986901431L ^ chunk.getZ() * 1517227374085824433L ^ chunk.getLevel().getSeed()));
 

@@ -473,6 +473,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
         this.entities.clear();
         this.generated = 0;
         this.populated = 0;
+        this.populatedAround = 0;
         this.dirty = 1;
     }
 
