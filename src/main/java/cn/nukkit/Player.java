@@ -1668,8 +1668,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.lastUpdate = currentTick;
 
-        if (this.fishing != null) {
-            if (this.distance(fishing) > 80) {
+        if (this.fishing != null && this.server.getTick() % 20 == 0) {
+            if (this.distance(fishing) > 33) {
                 this.stopFishing(false);
             }
         }
