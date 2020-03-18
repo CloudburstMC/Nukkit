@@ -54,12 +54,12 @@ public final class PopulationChunkManager implements ChunkManager {
     }
 
     @Override
-    public Identifier getBlockIdAt(int x, int y, int z, int layer) {
+    public Identifier getBlockId(int x, int y, int z, int layer) {
         return this.chunkFromBlock(x, z).getBlockId(x & 0xF, y, z & 0xF, layer);
     }
 
     @Override
-    public void setBlockIdAt(int x, int y, int z, int layer, Identifier id) {
+    public void setBlockId(int x, int y, int z, int layer, Identifier id) {
         this.chunkFromBlock(x, z).setBlockId(x & 0xF, y, z & 0xF, layer, id);
     }
 

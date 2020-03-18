@@ -49,7 +49,7 @@ public abstract class FeatureAbstractTree implements WorldFeature, BlockFilter {
         if (y >= 0 && y < 256) {
             Block below = level.getBlockAt(x, y, z);
             if (below.getId() == BlockIds.GRASS || below.getId() == BlockIds.DIRT || below.getId() == BlockIds.MYCELIUM || below.getId() == BlockIds.PODZOL) {
-                level.setBlockIdAt(x, y, z, BlockIds.DIRT);
+                level.setBlockId(x, y, z, BlockIds.DIRT);
             }
         }
     }

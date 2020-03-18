@@ -64,7 +64,7 @@ public final class ConstantBlock implements BlockFilter, BlockSelector {
     //block filter methods
     @Override
     public boolean test(Block block) {
-        return this.block == block || (this.block.getId() == block.getId() && this.block.getDamage() == block.getDamage());
+        return this.block == block || (this.block.getId() == block.getId() && this.block.getMeta() == block.getMeta());
     }
 
     @Override

@@ -4,7 +4,6 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.ChunkPos;
 import cn.nukkit.player.Player;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
@@ -13,8 +12,6 @@ import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
-
-import static cn.nukkit.block.BlockIds.*;
 
 public interface IChunk extends Comparable<IChunk> {
     @Nonnull
@@ -172,15 +169,6 @@ public interface IChunk extends Comparable<IChunk> {
      * @return chunk z
      */
     int getZ();
-
-    /**
-     * Gets the chunk's position in the level it was loaded.
-     *
-     * @return chunk position
-     */
-    default ChunkPos getPosition() {
-        return new ChunkPos(this.getX(), this.getZ());
-    }
 
     /**
      * Get the level the chunk was loaded in.

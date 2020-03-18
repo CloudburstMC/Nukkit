@@ -92,7 +92,7 @@ public final class ChunkPrimer {
     }
 
     public int getBlockData(int x, int y, int z, int layer)   {
-        return BlockRegistry.get().getBlock(this.data[index(x, y, z, layer)]).getDamage();
+        return BlockRegistry.get().getBlock(this.data[index(x, y, z, layer)]).getMeta();
     }
 
     /**

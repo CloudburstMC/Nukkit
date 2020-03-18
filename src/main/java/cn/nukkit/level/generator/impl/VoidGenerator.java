@@ -3,12 +3,8 @@ package cn.nukkit.level.generator.impl;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.Generator;
-import cn.nukkit.math.ChunkPos;
 import cn.nukkit.utils.Identifier;
 import net.daporkchop.lib.random.PRandom;
-
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * A basic generator that does nothing at all, resulting in a world of nothing but air.

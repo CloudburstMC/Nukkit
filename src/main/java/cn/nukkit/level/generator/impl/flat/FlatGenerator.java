@@ -3,22 +3,16 @@ package cn.nukkit.level.generator.impl.flat;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.Generator;
-import cn.nukkit.math.ChunkPos;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import lombok.RequiredArgsConstructor;
 import net.daporkchop.lib.random.PRandom;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static cn.nukkit.block.BlockIds.*;
 
 /**
  * A basic generator for superflat worlds.

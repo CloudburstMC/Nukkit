@@ -53,7 +53,7 @@ import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.Sound;
-import cn.nukkit.level.biome.EnumBiome;
+import cn.nukkit.level.biome.BiomeDefinitions;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.level.particle.PunchBlockParticle;
@@ -1620,7 +1620,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.sendPacket(startGamePacket);
 
         BiomeDefinitionListPacket biomeDefinitionListPacket = new BiomeDefinitionListPacket();
-        biomeDefinitionListPacket.setTag(EnumBiome.BIOME_DEFINITIONS);
+        biomeDefinitionListPacket.setTag(BiomeDefinitions.BIOME_DEFINITIONS);
         this.sendPacket(biomeDefinitionListPacket);
 
         AvailableEntityIdentifiersPacket availableEntityIdentifiersPacket = new AvailableEntityIdentifiersPacket();

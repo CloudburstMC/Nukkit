@@ -5,7 +5,6 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.chunk.ChunkBuilder;
 import cn.nukkit.level.provider.LevelProvider;
-import cn.nukkit.math.ChunkPos;
 import cn.nukkit.utils.Config;
 import co.aikar.timings.Timing;
 import com.google.common.base.Preconditions;
@@ -29,10 +28,6 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 @Log4j2

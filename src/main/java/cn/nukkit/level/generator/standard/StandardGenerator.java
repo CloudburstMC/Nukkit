@@ -43,6 +43,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static net.daporkchop.lib.common.util.PorkUtil.*;
+import static net.daporkchop.lib.math.primitive.PMath.floorI;
 
 /**
  * Main class of the NukkitX Standard Generator.
@@ -75,7 +76,7 @@ public final class StandardGenerator implements Generator {
                 sleep(100L);
                 Server.getInstance().getOnlinePlayers().values().forEach(player -> {
                     StandardGenerator generator = uncheckedCast(player.getLevel().getGenerator());
-                    player.sendTip(generator.biomes.get(player.getFloorX(), player.getFloorZ()).getId().toString());
+                    player.sendTip(generator.biomes.get(floorI(player.getX()), floorI(player.getZ())).getId().toString());
                 });
             }
         });
