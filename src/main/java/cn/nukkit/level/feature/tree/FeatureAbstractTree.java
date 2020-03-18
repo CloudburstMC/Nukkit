@@ -11,6 +11,7 @@ import cn.nukkit.level.generator.standard.misc.selector.BlockSelector;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
 import lombok.NonNull;
+import net.daporkchop.lib.random.PRandom;
 
 /**
  * Common code for all tree types.
@@ -37,7 +38,7 @@ public abstract class FeatureAbstractTree implements WorldFeature, BlockFilter {
     @Override
     public boolean test(Block block) {
         Identifier id = block.getId();
-        return id == BlockIds.AIR || id == BlockIds.LEAVES || id == BlockIds.LOG2 || block.canBeReplaced();
+        return id == BlockIds.AIR || id == BlockIds.LEAVES || id == BlockIds.LEAVES2 || block.canBeReplaced();
     }
 
     @Override
@@ -45,7 +46,7 @@ public abstract class FeatureAbstractTree implements WorldFeature, BlockFilter {
         return runtimeId == 0 || this.test(BlockRegistry.get().getBlock(runtimeId));
     }
 
-    public void maybeReplaceBelowWithDirt(ChunkManager level, int x, int y, int z) {
+    protected void maybeReplaceBelowWithDirt(ChunkManager level, int x, int y, int z) {
         if (y >= 0 && y < 256) {
             Block below = level.getBlockAt(x, y, z);
             if (below.getId() == BlockIds.GRASS || below.getId() == BlockIds.DIRT || below.getId() == BlockIds.MYCELIUM || below.getId() == BlockIds.PODZOL) {

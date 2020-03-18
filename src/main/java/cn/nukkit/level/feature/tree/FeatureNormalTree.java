@@ -35,7 +35,7 @@ public class FeatureNormalTree extends FeatureAbstractTree {
 
         final int height = this.height.rand(random);
 
-        for (int dy = 0; dy < height; dy++) {
+        for (int dy = 0; dy <= height; dy++) {
             if (y + dy >= 256 || !this.test(level.getBlockRuntimeIdUnsafe(x, y + dy, z, 0))) {
                 return false;
             }

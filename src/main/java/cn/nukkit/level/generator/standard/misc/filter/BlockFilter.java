@@ -2,6 +2,7 @@ package cn.nukkit.level.generator.standard.misc.filter;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockIds;
+import cn.nukkit.registry.BlockRegistry;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.function.Predicate;
@@ -22,6 +23,18 @@ public interface BlockFilter extends Predicate<Block> {
         @Override
         public boolean test(int runtimeId) {
             return runtimeId == 0;
+        }
+    };
+
+    BlockFilter REPLACEABLE = new BlockFilter() {
+        @Override
+        public boolean test(Block block) {
+            return block.canBeReplaced();
+        }
+
+        @Override
+        public boolean test(int runtimeId) {
+            return runtimeId == 0 || this.test(BlockRegistry.get().getBlock(runtimeId));
         }
     };
 

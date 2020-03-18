@@ -34,11 +34,11 @@ public class FeatureLargeOakTree extends FeatureNormalTree {
 
     @Override
     public boolean place(ChunkManager level, PRandom random, int x, int y, int z) {
-        if (random.nextDouble() < this.chance) {
+        if (random.nextDouble() >= this.chance) {
             return super.place(level, random, x, y, z);
         }
 
         //TODO: actually generate large oak tree
-        return false;
+        return super.place(level, random, x, y, z);
     }
 }

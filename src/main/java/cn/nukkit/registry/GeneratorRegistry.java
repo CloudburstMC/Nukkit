@@ -2,7 +2,7 @@ package cn.nukkit.registry;
 
 import cn.nukkit.level.generator.*;
 import cn.nukkit.level.generator.impl.VoidGenerator;
-import cn.nukkit.level.generator.impl.flat.FlatGenerator;
+import cn.nukkit.level.generator.impl.FlatGenerator;
 import cn.nukkit.level.generator.standard.StandardGenerator;
 import cn.nukkit.utils.Identifier;
 import lombok.RequiredArgsConstructor;

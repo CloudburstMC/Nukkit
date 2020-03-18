@@ -7,54 +7,56 @@ seaBlock: "water"
 seaLevel: 63
 
 biomes:
-  id: "nukkitx:filtered"
-  fallback: "ocean"
-  root:
-    id: "nukkitx:zoom"
-    times: 2
-    next:
-      id: "nukkitx:smooth"
-      next:
-        id: "nukkitx:zoom"
-        times: 1
-        next:
-          id: "nukkitx:shore"
-          ocean: "ocean"
-          beach: "beach"
-          next:
-            id: "nukkitx:zoom"
-            times: 1
-            next:
-              id: "nukkitx:zoom"
-              times: 1
-              fuzzy: true
-              next:
-                id: "nukkitx:island"
-                ocean: "ocean"
-                islandBiomes:
-                  - "plains"
-                chance: 32
-                next:
-                  id: "nukkitx:zoom"
-                  times: 1
-                  next:
-                    id: "nukkitx:substitute_random"
-                    biomes:
-                      plains:
-                        - "plains"
-                        - "sunflower_plains"
-                        - "extreme_hills"
-                        - "forest"
-                    next:
-                      id: "nukkitx:zoom"
-                      times: 3
-                      fuzzy: true
-                      next:
-                        id: "nukkitx:random"
-                        biomes:
-                          - "plains"
-                          - "plains"
-                          - "ocean"
+  id: "nukkitx:constant"
+  biome: "minecraft:forest"
+#  id: "nukkitx:filtered"
+#  fallback: "ocean"
+#  root:
+#    id: "nukkitx:zoom"
+#    times: 2
+#    next:
+#      id: "nukkitx:smooth"
+#      next:
+#        id: "nukkitx:zoom"
+#        times: 1
+#        next:
+#          id: "nukkitx:shore"
+#          ocean: "ocean"
+#          beach: "beach"
+#          next:
+#            id: "nukkitx:zoom"
+#            times: 1
+#            next:
+#              id: "nukkitx:zoom"
+#              times: 1
+#              fuzzy: true
+#              next:
+#                id: "nukkitx:island"
+#                ocean: "ocean"
+#                islandBiomes:
+#                  - "plains"
+#                chance: 32
+#                next:
+#                  id: "nukkitx:zoom"
+#                  times: 1
+#                  next:
+#                    id: "nukkitx:substitute_random"
+#                    biomes:
+#                      plains:
+#                        - "plains"
+#                        - "sunflower_plains"
+#                        - "extreme_hills"
+#                        - "forest"
+#                    next:
+#                      id: "nukkitx:zoom"
+#                      times: 3
+#                      fuzzy: true
+#                      next:
+#                        id: "nukkitx:random"
+#                        biomes:
+#                          - "plains"
+#                          - "plains"
+#                          - "ocean"
 
 #  id: "nukkitx:constant"
 #  seed: "biome"

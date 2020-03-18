@@ -1,4 +1,4 @@
-package cn.nukkit.level.generator.impl.flat;
+package cn.nukkit.level.generator.impl;
 
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;

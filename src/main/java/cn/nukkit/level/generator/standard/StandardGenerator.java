@@ -74,10 +74,13 @@ public final class StandardGenerator implements Generator {
             sleep(10000L);
             while (true) {
                 sleep(100L);
-                Server.getInstance().getOnlinePlayers().values().forEach(player -> {
-                    StandardGenerator generator = uncheckedCast(player.getLevel().getGenerator());
-                    player.sendTip(generator.biomes.get(floorI(player.getX()), floorI(player.getZ())).getId().toString());
-                });
+                try {
+                    Server.getInstance().getOnlinePlayers().values().forEach(player -> {
+                        StandardGenerator generator = uncheckedCast(player.getLevel().getGenerator());
+                        player.sendTip(generator.biomes.get(floorI(player.getX()), floorI(player.getZ())).getId().toString());
+                    });
+                } catch (RuntimeException e)   {
+                }
             }
         });
         t.setDaemon(true);

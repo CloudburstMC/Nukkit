@@ -6,7 +6,7 @@ import cn.nukkit.level.generator.standard.misc.NextGenerationPass;
 import cn.nukkit.level.generator.standard.pop.FlowerPopulator;
 import cn.nukkit.level.generator.standard.pop.OrePopulator;
 import cn.nukkit.level.generator.standard.pop.Populator;
-import cn.nukkit.level.generator.standard.pop.tree.TreePopulator;
+import cn.nukkit.level.generator.standard.pop.TreePopulator;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -24,7 +24,12 @@ public enum TreeSpecies {
             return new FeatureLargeOakTree(FeatureNormalTree.DEFAULT_HEIGHT, this, 0.1d, FeatureLargeOakTree.DEFAULT_HEIGHT);
         }
     },
-    SPRUCE(BlockIds.LOG, BlockLog.SPRUCE, BlockIds.LEAVES, BlockLeaves.SPRUCE, BlockSapling.SPRUCE),
+    SPRUCE(BlockIds.LOG, BlockLog.SPRUCE, BlockIds.LEAVES, BlockLeaves.SPRUCE, BlockSapling.SPRUCE) {
+        @Override
+        public WorldFeature getDefaultGenerator() {
+            return new FeatureSpruceTree(FeatureSpruceTree.DEFAULT_HEIGHT, this);
+        }
+    },
     BIRCH(BlockIds.LOG, BlockLog.BIRCH, BlockIds.LEAVES, BlockLeaves.BIRCH, BlockSapling.BIRCH),
     JUNGLE(BlockIds.LOG, BlockLog.JUNGLE, BlockIds.LEAVES, BlockLeaves.JUNGLE, BlockSapling.JUNGLE),
     ACACIA(BlockIds.LOG2, BlockLog2.ACACIA, BlockIds.LEAVES2, BlockLeaves2.ACACIA, BlockSapling.ACACIA),
