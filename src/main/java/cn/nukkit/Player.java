@@ -1729,7 +1729,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         boolean ignore = block == Block.LADDER || block == Block.VINES || block == Block.COBWEB;
 
                         if (!this.hasEffect(Effect.JUMP) && diff > 0.6 && expectedVelocity < this.speed.y && !ignore) {
-                            if (this.inAirTicks < 100) {
+                            if (this.inAirTicks < 150) {
                                 this.setMotion(new Vector3(0, expectedVelocity, 0));
                             } else if (this.kick(PlayerKickEvent.Reason.FLYING_DISABLED, "Flying is not enabled on this server")) {
                                 return false;
