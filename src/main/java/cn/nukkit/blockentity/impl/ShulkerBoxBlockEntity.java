@@ -83,4 +83,9 @@ public class ShulkerBoxBlockEntity extends BaseBlockEntity implements ShulkerBox
     public ShulkerBoxInventory getInventory() {
         return inventory;
     }
+
+    @Override
+    public boolean isSpawnable() {
+        return true;
+    }
 }
