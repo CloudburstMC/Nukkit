@@ -32,6 +32,7 @@ public class BarrelInventory extends ContainerInventory {
                     if (!blockBarrel.isOpen()) {
                         blockBarrel.setOpen(true);
                         level.addLevelSoundEvent(this.getHolder().getPosition(), SoundEvent.BARREL_OPEN);
+                        ContainerInventory.sendBlockEventPacket(this.getHolder(), 1);
                     }
                 }
             }
@@ -52,6 +53,7 @@ public class BarrelInventory extends ContainerInventory {
                     if (blockBarrel.isOpen()) {
                         blockBarrel.setOpen(false);
                         level.addLevelSoundEvent(this.getHolder().getPosition(), SoundEvent.BARREL_CLOSE);
+                        ContainerInventory.sendBlockEventPacket(this.getHolder(), 0);
                     }
                 }
             }

@@ -6,7 +6,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.player.Player;
 import com.nukkitx.protocol.bedrock.data.SoundEvent;
-import com.nukkitx.protocol.bedrock.packet.BlockEventPacket;
 
 /**
  * Created by PetteriM1
@@ -27,15 +26,10 @@ public class ShulkerBoxInventory extends ContainerInventory {
         super.onOpen(who);
 
         if (this.getViewers().size() == 1) {
-            BlockEventPacket packet = new BlockEventPacket();
-            packet.setBlockPosition(this.getHolder().getPosition());
-            packet.setEventType(1);
-            packet.setEventData(2);
-
             Level level = this.getHolder().getLevel();
             if (level != null) {
                 level.addLevelSoundEvent(this.getHolder().getPosition(), SoundEvent.SHULKERBOX_OPEN);
-                level.addChunkPacket(this.getHolder().getPosition(), packet);
+                ContainerInventory.sendBlockEventPacket(this.getHolder(), 1);
             }
         }
     }
@@ -43,15 +37,10 @@ public class ShulkerBoxInventory extends ContainerInventory {
     @Override
     public void onClose(Player who) {
         if (this.getViewers().size() == 1) {
-            BlockEventPacket packet = new BlockEventPacket();
-            packet.setBlockPosition(this.getHolder().getPosition());
-            packet.setEventType(1);
-            packet.setEventData(0);
-
             Level level = this.getHolder().getLevel();
             if (level != null) {
                 level.addLevelSoundEvent(this.getHolder().getPosition(), SoundEvent.SHULKERBOX_CLOSED);
-                level.addChunkPacket(this.getHolder().getPosition(), packet);
+                ContainerInventory.sendBlockEventPacket(this.getHolder(), 0);
             }
         }
 
