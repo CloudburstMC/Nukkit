@@ -68,6 +68,7 @@ import cn.nukkit.permission.PermissibleBase;
 import cn.nukkit.permission.Permission;
 import cn.nukkit.permission.PermissionAttachment;
 import cn.nukkit.permission.PermissionAttachmentInfo;
+import cn.nukkit.player.handler.PlayerPacketHandler;
 import cn.nukkit.player.manager.PlayerChunkManager;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
@@ -146,6 +147,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public static final int PERMISSION_VISITOR = 0;
 
     protected final BedrockServerSession session;
+
+    private final PlayerPacketHandler packetHandler;
 
     private boolean initialized;
     public boolean spawned = false;
@@ -313,6 +316,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         return randomClientId;
     }
 
+    public void setClientId(Long clientId) { this.randomClientId = clientId; }
+
     @Override
     public boolean isBanned() {
         return this.server.getNameBans().isBanned(this.getName());
@@ -350,6 +355,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public Player(BedrockServerSession session) {
         super(EntityTypes.PLAYER, Location.from(Server.getInstance().getDefaultLevel()));
         this.session = session;
+        this.packetHandler = new PlayerPacketHandler(this);
         session.setBatchedHandler(new Handler());
         this.perm = new PermissibleBase(this);
         this.server = Server.getInstance();
@@ -842,6 +848,14 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     public long getPing() {
         return this.session.getLatency();
+    }
+
+    public BedrockServerSession getSession() {
+        return session;
+    }
+
+    public PlayerPacketHandler getPacketHandler() {
+        return packetHandler;
     }
 
     public boolean sleepOn(Vector3i pos) {
@@ -1575,7 +1589,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
     }
 
-    protected void completeLoginSequence() {
+    public void completeLoginSequence() {
         PlayerLoginEvent ev;
         this.server.getPluginManager().callEvent(ev = new PlayerLoginEvent(this, "Plugin reason"));
         if (ev.isCancelled()) {
@@ -1683,7 +1697,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
     }
 
-    protected void processLogin() {
+    public void processLogin() {
         if (!this.server.isWhitelisted((this.getName()).toLowerCase())) {
             this.kick(PlayerKickEvent.Reason.NOT_WHITELISTED, "Server is white-listed");
 
@@ -1882,125 +1896,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             packetswitch:
             switch (packet.getPacketType()) {
                 case LOGIN:
-                    if (this.loggedIn) {
-                        break;
-                    }
 
-                    LoginPacket loginPacket = (LoginPacket) packet;
-
-                    int protocolVersion = loginPacket.getProtocolVersion();
-                    BedrockPacketCodec packetCodec = ProtocolInfo.getPacketCodec(protocolVersion);
-
-                    if (packetCodec == null) {
-                        String message;
-                        if (protocolVersion < ProtocolInfo.getDefaultProtocolVersion()) {
-                            message = "disconnectionScreen.outdatedClient";
-
-                            this.sendPlayStatus(PlayStatusPacket.Status.FAILED_CLIENT);
-                        } else {
-                            message = "disconnectionScreen.outdatedServer";
-
-                            this.sendPlayStatus(PlayStatusPacket.Status.FAILED_SERVER);
-                        }
-                        this.close("", message, false);
-                        break;
-                    }
-                    this.session.setPacketCodec(packetCodec);
-
-                    this.loginChainData = ClientChainData.read(loginPacket);
-
-
-                    if (!loginChainData.isXboxAuthed() && server.getPropertyBoolean("xbox-auth")) {
-                        this.close("", "disconnectionScreen.notAuthenticated");
-                        break;
-                    }
-
-                    if (this.server.getOnlinePlayers().size() >= this.server.getMaxPlayers() && this.kick(PlayerKickEvent.Reason.SERVER_FULL, "disconnectionScreen.serverFull", false)) {
-                        break;
-                    }
-
-                    this.randomClientId = this.loginChainData.getClientId();
-
-                    this.identity = this.loginChainData.getClientUUID();
-
-                    String username = this.loginChainData.getUsername();
-                    boolean valid = true;
-                    int len = username.length();
-                    if (len > 16 || len < 3) {
-                        valid = false;
-                    }
-
-                    for (int i = 0; i < len && valid; i++) {
-                        char c = username.charAt(i);
-                        if ((c >= 'a' && c <= 'z') ||
-                                (c >= 'A' && c <= 'Z') ||
-                                (c >= '0' && c <= '9') ||
-                                c == '_' || c == ' '
-                        ) {
-                            continue;
-                        }
-
-                        valid = false;
-                        break;
-                    }
-
-                    this.username = TextFormat.clean(username);
-                    this.displayName = this.username;
-                    this.iusername = this.username.toLowerCase();
-                    this.setNameTag(this.username);
-
-                    if (!valid || Objects.equals(this.iusername, "rcon") || Objects.equals(this.iusername, "console")) {
-                        this.close("", "disconnectionScreen.invalidName");
-
-                        break;
-                    }
-
-                    if (!this.loginChainData.getSkin().isValid()) {
-                        this.close("", "disconnectionScreen.invalidSkin");
-                        break;
-                    } else {
-                        this.setSkin(this.loginChainData.getSkin());
-                    }
-
-                    PlayerPreLoginEvent playerPreLoginEvent;
-                    this.server.getPluginManager().callEvent(playerPreLoginEvent = new PlayerPreLoginEvent(this, "Plugin reason"));
-                    if (playerPreLoginEvent.isCancelled()) {
-                        this.close("", playerPreLoginEvent.getKickMessage());
-
-                        break;
-                    }
-
-                    Player playerInstance = this;
-                    this.preLoginEventTask = new AsyncTask() {
-
-                        private PlayerAsyncPreLoginEvent e;
-
-                        @Override
-                        public void onRun() {
-                            e = new PlayerAsyncPreLoginEvent(username, identity, Player.this.getSocketAddress());
-                            server.getPluginManager().callEvent(e);
-                        }
-
-                        @Override
-                        public void onCompletion(Server server) {
-                            if (!playerInstance.closed) {
-                                if (e.getLoginResult() == LoginResult.KICK) {
-                                    playerInstance.close(e.getKickMessage(), e.getKickMessage());
-                                } else if (playerInstance.shouldLogin) {
-                                    playerInstance.completeLoginSequence();
-                                }
-
-                                for (Consumer<Server> action : e.getScheduledActions()) {
-                                    action.accept(server);
-                                }
-                            }
-                        }
-                    };
-
-                    this.server.getScheduler().scheduleAsyncTask(this.preLoginEventTask);
-
-                    this.processLogin();
-                    break;
                 case RESOURCE_PACK_CLIENT_RESPONSE:
                     ResourcePackClientResponsePacket responsePacket = (ResourcePackClientResponsePacket) packet;
                     switch (responsePacket.getStatus()) {
@@ -3333,6 +3229,30 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         return this.username;
     }
 
+    public void setName(String name){
+        this.username = name;
+    }
+
+    public String getLowerCaseName() {
+        return this.iusername;
+    }
+
+    public void setLowerCaseName(String lowerCaseName){
+        this.iusername = lowerCaseName;
+    }
+
+    public AsyncTask getPreLoginEventTask() {
+        return preLoginEventTask;
+    }
+
+    public void setPreLoginEventTask(AsyncTask preLoginEventTask) {
+        this.preLoginEventTask = preLoginEventTask;
+    }
+
+    public boolean isShouldLogin() {
+        return shouldLogin;
+    }
+
     public void close(TextContainer message, String reason, boolean notify) {
         if (this.connected && !this.closed) {
             if (notify && reason.length() > 0) {
@@ -3881,11 +3801,11 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.sendPacket(packet);
     }
 
-    protected void sendPlayStatus(PlayStatusPacket.Status status) {
+    public void sendPlayStatus(PlayStatusPacket.Status status) {
         sendPlayStatus(status, false);
     }
 
-    protected void sendPlayStatus(PlayStatusPacket.Status status, boolean immediate) {
+    public void sendPlayStatus(PlayStatusPacket.Status status, boolean immediate) {
         PlayStatusPacket packet = new PlayStatusPacket();
         packet.setStatus(status);
 
@@ -4407,6 +4327,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     public LoginChainData getLoginChainData() {
         return this.loginChainData;
+    }
+
+    public void setLoginChainData(LoginChainData loginChainData) {
+        this.loginChainData = loginChainData;
     }
 
     @Override
