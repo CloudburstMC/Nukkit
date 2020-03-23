@@ -21,7 +21,7 @@ public class BlockItem extends Item {
 
     @Override
     public void setMeta(int meta) {
-        if (BlockRegistry.get().hasMeta(getId(), meta)) {
+        if ((meta & 0xffff) == 0xffff || BlockRegistry.get().hasMeta(getId(), meta)) {
             super.setMeta(meta);
         } else {
             super.setMeta(0);
