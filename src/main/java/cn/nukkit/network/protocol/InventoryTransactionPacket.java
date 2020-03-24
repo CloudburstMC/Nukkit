@@ -101,7 +101,7 @@ public class InventoryTransactionPacket extends DataPacket {
     public void decode() {
         this.transactionType = (int) this.getUnsignedVarInt();
 
-        this.actions = new NetworkInventoryAction[(int) this.getUnsignedVarInt()];
+        this.actions = new NetworkInventoryAction[Math.min((int) this.getUnsignedVarInt(), 4096)];
         for (int i = 0; i < this.actions.length; i++) {
             this.actions[i] = new NetworkInventoryAction().read(this);
         }

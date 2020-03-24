@@ -1,6 +1,5 @@
 package cn.nukkit.network.protocol;
 
-
 import cn.nukkit.item.Item;
 import lombok.ToString;
 
@@ -31,18 +30,18 @@ public class CraftingEventPacket extends DataPacket {
     @Override
     public void decode() {
         this.windowId = this.getByte();
-        this.type = this.getVarInt();
+        this.type = (int) this.getUnsignedVarInt();
         this.id = this.getUUID();
 
         int inputSize = (int) this.getUnsignedVarInt();
-        this.input = new Item[inputSize];
-        for (int i = 0; i < inputSize && i < 128; ++i) {
+        this.input = new Item[Math.min(inputSize, 128)];
+        for (int i = 0; i < this.input.length; ++i) {
             this.input[i] = this.getSlot();
         }
 
         int outputSize = (int) this.getUnsignedVarInt();
-        this.output = new Item[outputSize];
-        for (int i = 0; i < outputSize && i < 128; ++i) {
+        this.output = new Item[Math.min(outputSize, 128)];
+        for (int i = 0; i < this.output.length; ++i) {
             this.output[i] = getSlot();
         }
     }
