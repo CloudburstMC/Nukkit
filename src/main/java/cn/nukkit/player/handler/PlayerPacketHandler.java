@@ -287,7 +287,8 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
         return true;
     }
 
-    public boolean handler(ResourcePackClientResponsePacket packet) {
+    @Override
+    public boolean handle(ResourcePackClientResponsePacket packet) {
         switch (packet.getStatus()) {
             case REFUSED:
                 player.close("", "disconnectionScreen.noReason");
