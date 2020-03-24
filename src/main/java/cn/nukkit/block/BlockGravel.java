@@ -54,4 +54,9 @@ public class BlockGravel extends BlockFallable {
             };
         }
     }
+    
+    @Override
+    public boolean canSilkTouch() {
+        return true;
+    }
 }
