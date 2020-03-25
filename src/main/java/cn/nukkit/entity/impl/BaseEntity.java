@@ -635,7 +635,7 @@ public abstract class BaseEntity implements Entity, Metadatable {
         }
     }
 
-    protected void sendData(Player player) {
+    public void sendData(Player player) {
         SetEntityDataPacket packet = new SetEntityDataPacket();
         packet.setRuntimeEntityId(this.getRuntimeId());
         this.data.putAllIn(packet.getMetadata());
