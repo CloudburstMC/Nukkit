@@ -27,7 +27,6 @@ public class SurfaceDecorator implements Decorator {
     public static final Identifier ID = Identifier.fromString("nukkitx:surface");
 
     //depth noise is not bound to world seed
-    //also for whatever reason it has the same name as the "depth noise" used in
     public static final NoiseSource DEPTH_NOISE = new SimplexNoiseEngine(new FastPRandom(0xDEADBEEF00001337L));
 
     protected NoiseSource depthNoise;

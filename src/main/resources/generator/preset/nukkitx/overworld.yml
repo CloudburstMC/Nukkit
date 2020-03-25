@@ -8,7 +8,7 @@ seaLevel: 63
 
 biomes:
   id: "nukkitx:constant"
-  biome: "minecraft:forest"
+  biome: "minecraft:extreme_hills_plus_trees"
 #  id: "nukkitx:filtered"
 #  fallback: "ocean"
 #  root:

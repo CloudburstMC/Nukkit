@@ -58,7 +58,7 @@ public final class GenerationBiome {
             if (populators == Populator.EMPTY_ARRAY) {
                 populators = parent.populators;
             } else {
-                populators = Arrays.stream(decorators)
+                populators = Arrays.stream(populators)
                         .flatMap(populator -> populator instanceof NextGenerationPass ? Arrays.stream(parent.getPopulators()) : Stream.of(populator))
                         .toArray(Populator[]::new);
             }

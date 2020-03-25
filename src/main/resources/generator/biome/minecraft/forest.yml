@@ -16,6 +16,6 @@ decorators:
 populators:
     # Trees
   - id: "nukkitx:tree"
-    chance: 0.03125 # about 8 per chunk
+    chance: 0.0390625 # about 10 per chunk
     on: "grass"
     type: "oak"

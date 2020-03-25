@@ -70,7 +70,7 @@ import java.util.*;
  * Nukkit APIs and try out the versions supported, and add them to this list. </li>
  * <li><b>main</b><br>
  * 字符串，表示这个插件的主类。插件的主类<i>不能放在“cn.nukkit”包下</i>。<br>
- * String, the main class of plugin. The main class<i> can't be placed at 'cn.nukkit' package</i>.</li>
+ * String, the main class of plugin. The primary class<i> can't be placed at 'cn.nukkit' package</i>.</li>
  * <li><i>author</i> or <i>authors</i><br>
  * 字符串/字符串序列，两个任选一个，表示这个插件的作者/作者列表。<br>
  * String or A set of String. One of two is chosen, to describe the author or the list of authors.</li>
@@ -329,7 +329,7 @@ public class PluginDescription {
      * Returns the main class name of this plugin.
      *
      * <p>一个插件的加载都是从主类开始的。主类的名字在插件的配置文件中定义后可以通过这个函数返回。一个返回值例子：<br>
-     * The load action of a Nukkit plugin begins from main class. The name of main class should be defined
+     * The load action of a Nukkit plugin begins from main class. The name of primary class should be defined
      * in the plugin configuration, and it can be returned by this function. An example for return value: <br>
      * {@code "com.example.ExamplePlugin"}</p>
      *
