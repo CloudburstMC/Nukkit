@@ -2021,6 +2021,10 @@ public class Level implements ChunkManager, Metadatable {
             return null;
         }
 
+        if (block.y > 127 && this.getDimension() == DIMENSION_NETHER) {
+            return null;
+        }
+        
         if (target.getId() == Item.AIR) {
             return null;
         }
