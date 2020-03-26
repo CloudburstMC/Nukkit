@@ -409,7 +409,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public boolean onBreak(Item item) {
-        return this.getLevel().setBlock(this, new BlockAir(), true, true);
+        return this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, true);
     }
 
     public int onUpdate(int type) {

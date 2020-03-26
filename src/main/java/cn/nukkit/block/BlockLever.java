@@ -101,7 +101,7 @@ public class BlockLever extends BlockFlowable implements Faceable {
 
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, new BlockAir(), true, true);
+        this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, true);
 
         if (isPowerOn()) {
             BlockFace face = LeverOrientation.byMetadata(this.isPowerOn() ? this.getDamage() ^ 0x08 : this.getDamage()).getFacing();

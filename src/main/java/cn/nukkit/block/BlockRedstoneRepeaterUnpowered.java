@@ -60,7 +60,7 @@ public class BlockRedstoneRepeaterUnpowered extends BlockRedstoneDiode {
 
     @Override
     protected Block getPowered() {
-        return new BlockRedstoneRepeaterPowered(this.getDamage());
+        return Block.get(BlockID.POWERED_REPEATER, this.getDamage());
     }
 
     @Override

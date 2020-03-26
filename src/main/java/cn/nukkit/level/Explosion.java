@@ -1,7 +1,6 @@
 package cn.nukkit.level;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockTNT;
 import cn.nukkit.blockentity.BlockEntity;
@@ -169,7 +168,7 @@ public class Explosion {
             }
         }
 
-        ItemBlock air = new ItemBlock(new BlockAir());
+        ItemBlock air = new ItemBlock(Block.get(BlockID.AIR));
 
         //Iterator iter = this.affectedBlocks.entrySet().iterator();
         for (Block block : this.affectedBlocks) {

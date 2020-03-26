@@ -1,6 +1,7 @@
 package cn.nukkit.item;
 
-import cn.nukkit.block.BlockWheat;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 
 /**
  * author: MagicDroidX
@@ -18,6 +19,6 @@ public class ItemSeedsWheat extends Item {
 
     public ItemSeedsWheat(Integer meta, int count) {
         super(WHEAT_SEEDS, 0, count, "Wheat Seeds");
-        this.block = new BlockWheat();
+        this.block = Block.get(BlockID.WHEAT_BLOCK);
     }
 }

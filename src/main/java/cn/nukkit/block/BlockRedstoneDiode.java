@@ -27,7 +27,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
     @Override
     public boolean onBreak(Item item) {
         Vector3 pos = getLocation();
-        this.level.setBlock(this, new BlockAir(), true, true);
+        this.level.setBlock(this, Block.get(BlockID.AIR), true, true);
 
         for (BlockFace face : BlockFace.values()) {
             this.level.updateAroundRedstone(pos.getSide(face), null);

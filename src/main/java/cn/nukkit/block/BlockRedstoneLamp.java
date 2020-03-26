@@ -45,7 +45,7 @@ public class BlockRedstoneLamp extends BlockSolid {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (this.level.isBlockPowered(this.getLocation())) {
-            this.level.setBlock(this, new BlockRedstoneLampLit(), false, true);
+            this.level.setBlock(this, Block.get(BlockID.LIT_REDSTONE_LAMP), false, true);
         } else {
             this.level.setBlock(this, this, false, true);
         }
@@ -62,7 +62,7 @@ public class BlockRedstoneLamp extends BlockSolid {
                 return 0;
             }
             if (this.level.isBlockPowered(this.getLocation())) {
-                this.level.setBlock(this, new BlockRedstoneLampLit(), false, false);
+                this.level.setBlock(this, Block.get(BlockID.LIT_REDSTONE_LAMP), false, false);
                 return 1;
             }
         }
@@ -73,7 +73,7 @@ public class BlockRedstoneLamp extends BlockSolid {
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-                new ItemBlock(new BlockRedstoneLamp())
+                new ItemBlock(Block.get(BlockID.REDSTONE_LAMP))
         };
     }
 

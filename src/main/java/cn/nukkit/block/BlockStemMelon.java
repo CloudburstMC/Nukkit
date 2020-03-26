@@ -8,7 +8,6 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
 import cn.nukkit.math.NukkitRandom;
-import cn.nukkit.utils.BlockColor;
 
 /**
  * Created by Pub4Game on 15.01.2016.
@@ -62,7 +61,7 @@ public class BlockStemMelon extends BlockCrops {
                     Block side = this.getSide(Plane.HORIZONTAL.random(random));
                     Block d = side.down();
                     if (side.getId() == AIR && (d.getId() == FARMLAND || d.getId() == GRASS || d.getId() == DIRT)) {
-                        BlockGrowEvent ev = new BlockGrowEvent(side, new BlockMelon());
+                        BlockGrowEvent ev = new BlockGrowEvent(side, Block.get(BlockID.MELON_BLOCK));
                         Server.getInstance().getPluginManager().callEvent(ev);
                         if (!ev.isCancelled()) {
                             this.getLevel().setBlock(side, ev.getNewState(), true);

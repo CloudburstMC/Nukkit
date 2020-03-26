@@ -133,7 +133,7 @@ public class BlockTripWireHook extends BlockFlowable {
 
         canConnect = canConnect & distance > 1;
         nextPowered = nextPowered & canConnect;
-        BlockTripWireHook hook = new BlockTripWireHook();
+        BlockTripWireHook hook = (BlockTripWireHook) Block.get(BlockID.TRIPWIRE_HOOK);
         hook.setAttached(canConnect);
         hook.setPowered(nextPowered);
 
