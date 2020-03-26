@@ -2428,8 +2428,8 @@ public class Level implements ChunkManager, Metadatable {
     public void addEntityMovement(BaseEntity entity, double x, double y, double z, double yaw, double pitch, double headYaw) {
         MoveEntityAbsolutePacket packet = new MoveEntityAbsolutePacket();
         packet.setRuntimeEntityId(entity.getRuntimeId());
-        packet.setPosition(com.nukkitx.math.vector.Vector3f.from(x, y, z));
-        packet.setRotation(com.nukkitx.math.vector.Vector3f.from(yaw, headYaw, pitch));
+        packet.setPosition(Vector3f.from(x, y, z));
+        packet.setRotation(Vector3f.from(pitch, yaw, headYaw));
 
         Server.broadcastPacket(entity.getViewers(), packet);
     }

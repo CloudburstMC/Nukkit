@@ -29,12 +29,13 @@ public class EntityLingeringPotion extends EntitySplashPotion implements Lingeri
         super.splash(collidedWith);
 
         AreaEffectCloud entity = EntityRegistry.get().newEntity(EntityTypes.AREA_EFFECT_CLOUD, this.getLocation());
+        entity.setPosition(this.getLocation().getPosition());
         entity.setPotionId(this.getPotionId());
 
         Effect effect = Potion.getEffect(this.getPotionId(), true);
 
         if (effect != null) {
-            entity.getCloudEffects().add(effect.setDuration(1).setVisible(false).setAmbient(false));
+            entity.getCloudEffects().add(effect);
             entity.spawnToAll();
         }
     }

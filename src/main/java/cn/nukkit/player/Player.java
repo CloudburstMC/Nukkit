@@ -504,7 +504,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         packet.setRuntimeEntityId(this.getRuntimeId());
         packet.setPosition(this.getPosition());
         packet.setMotion(this.getMotion());
-        packet.setRotation(Vector3f.from(this.getYaw(), this.getPitch(), this.getYaw()));
+        packet.setRotation(Vector3f.from(this.getPitch(), this.getYaw(), this.getYaw()));
         packet.setHand(this.getInventory().getItemInHand().toNetwork());
         packet.setPlatformChatId("");
         packet.setDeviceId("");
@@ -3278,6 +3278,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 this.getPitch(), this.getLevel());
         double f = 1;
         FishingHook fishingHook = EntityRegistry.get().newEntity(EntityTypes.FISHING_HOOK, location);
+        fishingHook.setPosition(location.getPosition());
         fishingHook.setOwner(this);
         fishingHook.setMotion(Vector3f.from(-Math.sin(Math.toRadians(this.getYaw())) * Math.cos(Math.toRadians(this.getPitch())) * f * f,
                 -Math.sin(Math.toRadians(this.getPitch())) * f * f, Math.cos(Math.toRadians(this.getYaw())) * Math.cos(Math.toRadians(this.getPitch())) * f * f));

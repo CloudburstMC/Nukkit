@@ -75,8 +75,9 @@ public class ItemBow extends ItemTool {
         double f = Math.min((p * p + p * 2) / 3, 1) * 2;
 
         Arrow arrow = EntityRegistry.get().newEntity(EntityTypes.ARROW, Location.from(position, player.getLevel()));
+        arrow.setPosition(position);
         arrow.setMotion(motion);
-        arrow.setRotation((player.getYaw() > 180 ? 360 : 0) - player.getY(), -player.getPitch());
+        arrow.setRotation((player.getYaw() > 180 ? 360 : 0) - player.getYaw(), -player.getPitch());
         arrow.setOnFire(flame ? 45 * 60 : 0);
         arrow.setDamage(damage);
         arrow.setCritical(f == 2);
