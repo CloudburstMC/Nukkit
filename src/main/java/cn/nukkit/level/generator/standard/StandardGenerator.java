@@ -11,9 +11,9 @@ import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
 import cn.nukkit.level.generator.standard.biome.map.CachingBiomeMap;
 import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
 import cn.nukkit.level.generator.standard.gen.density.DensitySource;
-import cn.nukkit.level.generator.standard.misc.NextGenerationPass;
 import cn.nukkit.level.generator.standard.misc.ConstantBlock;
 import cn.nukkit.level.generator.standard.misc.GenerationPass;
+import cn.nukkit.level.generator.standard.misc.NextGenerationPass;
 import cn.nukkit.level.generator.standard.pop.Populator;
 import cn.nukkit.level.generator.standard.store.StandardGeneratorStores;
 import cn.nukkit.utils.Identifier;
@@ -31,7 +31,6 @@ import net.daporkchop.lib.random.impl.FastPRandom;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,7 +42,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static net.daporkchop.lib.common.util.PorkUtil.*;
-import static net.daporkchop.lib.math.primitive.PMath.floorI;
+import static net.daporkchop.lib.math.primitive.PMath.*;
 
 /**
  * Main class of the NukkitX Standard Generator.
@@ -79,7 +78,7 @@ public final class StandardGenerator implements Generator {
                         StandardGenerator generator = uncheckedCast(player.getLevel().getGenerator());
                         player.sendTip(generator.biomes.get(floorI(player.getX()), floorI(player.getZ())).getId().toString());
                     });
-                } catch (RuntimeException e)   {
+                } catch (RuntimeException e) {
                 }
             }
         });
@@ -265,6 +264,24 @@ public final class StandardGenerator implements Generator {
         GenerationBiome biome = this.biomes.get(blockX + 7, blockZ + 7); //use biome in middle of chunk for selecting populators
         for (Populator populator : this.populatorsLookup.computeIfAbsent(biome, this.populatorsLookupComputer)) {
             populator.populate(random, level, chunkX, chunkZ, blockX, blockZ);
+        }
+    }
+
+    @JsonSetter("biomes")
+    private void setBiomes(Identifier id) {
+        try (InputStream in = StandardGeneratorUtils.read("biomemap", id)) {
+            this.biomes = Nukkit.YAML_MAPPER.readValue(in, BiomeMap.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @JsonSetter("density")
+    private void setDensity(Identifier id) {
+        try (InputStream in = StandardGeneratorUtils.read("density", id)) {
+            this.density = Nukkit.YAML_MAPPER.readValue(in, DensitySource.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

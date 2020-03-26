@@ -2,10 +2,70 @@
 #
 # Author: DaPorkchop_
 
-id: "nukkitx:constant"
-biome: "minecraft:extreme_hills_plus_trees"
+#id: "nukkitx:constant"
+#biome: "minecraft:extreme_hills_plus_trees"
 
-#id: "nukkitx:filtered"
+id: "nukkitx:complex"
+fallback: "ocean"
+root:
+  # Replaces large swaths of ocean biomes with land
+  # Result: https://i.daporkchop.net/8vK1WEke.png
+  id: "nukkitx:replace_swath"
+  target: "minecraft:ocean"
+  replacement: "minecraft:plains"
+  next:
+    # Result: https://i.daporkchop.net/Bn6Ks75w.png
+    id: "nukkitx:bleed_island"
+    ocean: "minecraft:ocean"
+    preserve: "minecraft:forest"
+    island: "minecraft:plains"
+    next:
+      # Result: https://i.daporkchop.net/zRG3o1AC.png
+      id: "nukkitx:bleed_island"
+      ocean: "minecraft:ocean"
+      preserve: "minecraft:forest"
+      island: "minecraft:plains"
+      next:
+        # 3 more island bleeding passes
+        # Result: https://i.daporkchop.net/Gh1DTLfJ.png
+        id: "nukkitx:bleed_island"
+        ocean: "minecraft:ocean"
+        preserve: "minecraft:forest"
+        island: "minecraft:plains"
+        next:
+          # Zoom again, but not fuzzy.
+          # Result: https://i.daporkchop.net/Fmpi8dge.png
+          id: "nukkitx:zoom"
+          next:
+            # Bleeds islands into each other
+            # Result: https://i.daporkchop.net/GYBUJasX.png
+            id: "nukkitx:bleed_island"
+            ocean: "minecraft:ocean"
+            preserve: "minecraft:forest"
+            island: "minecraft:plains"
+            next:
+              # Single fuzzy zoom pass.
+              # Result: https://i.daporkchop.net/AMJZJfwm.png
+              id: "nukkitx:zoom"
+              fuzzy: true
+              next:
+                # Start off with an ocean world with randomly scattered plains.
+                # Functionally equivalent to Java's "GenLayerIsland"
+                # Result: https://i.daporkchop.net/GUVSGAKC.png
+                id: "nukkitx:random"
+                biomes:
+                  - "minecraft:ocean" # 9:1 ratio
+                  - "minecraft:ocean"
+                  - "minecraft:ocean"
+                  - "minecraft:ocean"
+                  - "minecraft:ocean"
+                  - "minecraft:ocean"
+                  - "minecraft:ocean"
+                  - "minecraft:ocean"
+                  - "minecraft:ocean"
+                  - "minecraft:plains"
+
+#id: "nukkitx:complex"
 #fallback: "ocean"
 #root:
 #  id: "nukkitx:zoom"

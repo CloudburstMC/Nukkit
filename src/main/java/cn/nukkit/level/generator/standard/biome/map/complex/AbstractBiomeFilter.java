@@ -36,11 +36,9 @@ public abstract class AbstractBiomeFilter implements BiomeFilter {
 
         @Override
         public void init(long seed, PRandom random) {
-            Objects.requireNonNull(this.next, "next must be set!");
+            Objects.requireNonNull(this.next, "next must be set!").init(seed, random);
 
             super.init(seed, random);
-
-            this.next.init(seed, random);
         }
     }
 }
