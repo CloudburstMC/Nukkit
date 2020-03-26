@@ -3278,6 +3278,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 this.getPitch(), this.getLevel());
         double f = 1;
         FishingHook fishingHook = EntityRegistry.get().newEntity(EntityTypes.FISHING_HOOK, location);
+        fishingHook.setPosition(location.getPosition());
         fishingHook.setOwner(this);
         fishingHook.setMotion(Vector3f.from(-Math.sin(Math.toRadians(this.getYaw())) * Math.cos(Math.toRadians(this.getPitch())) * f * f,
                 -Math.sin(Math.toRadians(this.getPitch())) * f * f, Math.cos(Math.toRadians(this.getYaw())) * Math.cos(Math.toRadians(this.getPitch())) * f * f));
