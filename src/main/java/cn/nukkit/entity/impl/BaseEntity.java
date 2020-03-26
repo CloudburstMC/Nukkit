@@ -1845,7 +1845,7 @@ public abstract class BaseEntity implements Entity, Metadatable {
     @Override
     public Entity getOwner() {
         if (this.data.contains(OWNER_EID)) {
-            this.level.getEntity(this.data.getLong(OWNER_EID));
+            return this.level.getEntity(this.data.getLong(OWNER_EID));
         }
         return null;
     }
