@@ -26,7 +26,7 @@ public class BlockWaterStill extends BlockWater {
 
     @Override
     public BlockLiquid getBlock(int meta) {
-        return new BlockWaterStill(meta);
+        return (BlockLiquid) Block.get(BlockID.STILL_WATER, meta);
     }
 
 }

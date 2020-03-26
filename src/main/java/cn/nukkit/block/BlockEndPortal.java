@@ -71,6 +71,6 @@ public class BlockEndPortal extends BlockFlowable {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(new BlockAir());
+        return new ItemBlock(Block.get(BlockID.AIR));
     }
 }

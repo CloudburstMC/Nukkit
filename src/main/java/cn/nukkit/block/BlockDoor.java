@@ -201,7 +201,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
                 Block up = this.up();
 
                 if (up instanceof BlockDoor) {
-                    this.getLevel().setBlock(up, new BlockAir(), false);
+                    this.getLevel().setBlock(up, Block.get(BlockID.AIR), false);
                     this.getLevel().useBreakOn(this);
                 }
 
@@ -260,15 +260,15 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         if (isTop(this.getDamage())) {
             Block down = this.down();
             if (down.getId() == this.getId()) {
-                this.getLevel().setBlock(down, new BlockAir(), true);
+                this.getLevel().setBlock(down, Block.get(BlockID.AIR), true);
             }
         } else {
             Block up = this.up();
             if (up.getId() == this.getId()) {
-                this.getLevel().setBlock(up, new BlockAir(), true);
+                this.getLevel().setBlock(up, Block.get(BlockID.AIR), true);
             }
         }
-        this.getLevel().setBlock(this, new BlockAir(), true);
+        this.getLevel().setBlock(this, Block.get(BlockID.AIR), true);
 
         return true;
     }
