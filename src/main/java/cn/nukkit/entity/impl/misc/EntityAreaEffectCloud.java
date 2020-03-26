@@ -16,6 +16,7 @@ import com.nukkitx.nbt.CompoundTagBuilder;
 import com.nukkitx.nbt.tag.CompoundTag;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -45,7 +46,7 @@ public class EntityAreaEffectCloud extends BaseEntity implements AreaEffectCloud
     protected float initialRadius;
     protected float radiusOnUse;
     protected int nextApply;
-    protected List<Effect> cloudEffects;
+    protected List<Effect> cloudEffects = new LinkedList<>();
     protected int particleColor;
     protected boolean particleColorSet;
     private int lastAge;
