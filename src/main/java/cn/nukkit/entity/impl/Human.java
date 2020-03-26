@@ -82,6 +82,10 @@ public class Human extends EntityCreature implements InventoryHolder {
         return identity;
     }
 
+    public void setServerId(UUID serverId) {
+        this.identity = serverId;
+    }
+
     public void setSkin(SerializedSkin skin) {
         this.skin = skin;
     }

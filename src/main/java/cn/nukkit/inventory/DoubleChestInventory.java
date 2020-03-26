@@ -6,7 +6,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.player.Player;
 import com.nukkitx.protocol.bedrock.data.SoundEvent;
-import com.nukkitx.protocol.bedrock.packet.BlockEventPacket;
 import com.nukkitx.protocol.bedrock.packet.InventorySlotPacket;
 
 import java.util.HashMap;
@@ -116,14 +115,10 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
         this.right.viewers.add(who);
 
         if (this.getViewers().size() == 1) {
-            BlockEventPacket packet = new BlockEventPacket();
-            packet.setBlockPosition(this.left.getHolder().getPosition());
-            packet.setEventType(1);
-            packet.setEventData(1);
             Level level = this.left.getHolder().getLevel();
             if (level != null) {
+                ContainerInventory.sendBlockEventPacket(this.right.getHolder(), 1);
                 level.addLevelSoundEvent(this.left.getHolder().getPosition(), SoundEvent.CHEST_OPEN);
-                level.addChunkPacket(this.left.getHolder().getPosition(), packet);
             }
         }
     }
@@ -131,15 +126,10 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
     @Override
     public void onClose(Player who) {
         if (this.getViewers().size() == 1) {
-            BlockEventPacket packet = new BlockEventPacket();
-            packet.setBlockPosition(this.left.getHolder().getPosition());
-            packet.setEventType(1);
-            packet.setEventData(0);
-
             Level level = this.right.getHolder().getLevel();
             if (level != null) {
+                ContainerInventory.sendBlockEventPacket(this.right.getHolder(), 0);
                 level.addLevelSoundEvent(this.right.getHolder().getPosition(), SoundEvent.CHEST_CLOSED);
-                level.addChunkPacket(right.getHolder().getPosition(), packet);
             }
         }
 

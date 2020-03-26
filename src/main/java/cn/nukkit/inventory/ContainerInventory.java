@@ -5,6 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.player.Player;
 import com.nukkitx.math.vector.Vector3i;
+import com.nukkitx.protocol.bedrock.packet.BlockEventPacket;
 import com.nukkitx.protocol.bedrock.packet.ContainerClosePacket;
 import com.nukkitx.protocol.bedrock.packet.ContainerOpenPacket;
 
@@ -45,7 +46,6 @@ public abstract class ContainerInventory extends BaseInventory {
         } else {
             packet.setBlockPosition(Vector3i.ZERO);
         }
-
         who.sendPacket(packet);
 
         this.sendContents(who);
@@ -78,5 +78,14 @@ public abstract class ContainerInventory extends BaseInventory {
             averageCount = averageCount / (float) inv.getSize();
             return NukkitMath.floorFloat(averageCount * 14) + (itemCount > 0 ? 1 : 0);
         }
+    }
+
+    public static void sendBlockEventPacket(BlockEntity block, int eventData) {
+        if (block.getLevel() == null) return;
+        BlockEventPacket bep = new BlockEventPacket();
+        bep.setBlockPosition(block.getPosition());
+        bep.setEventType(1);
+        bep.setEventData(eventData);
+        block.getLevel().addChunkPacket(block.getPosition(), bep);
     }
 }
