@@ -24,4 +24,9 @@ public class SavannaBiome extends GrassyBiome {
     public String getName() {
         return "Savanna";
     }
+
+    @Override
+    public boolean canRain() {
+        return false;
+    }
 }
