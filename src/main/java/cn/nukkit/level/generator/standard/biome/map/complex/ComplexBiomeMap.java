@@ -1,4 +1,4 @@
-package cn.nukkit.level.generator.standard.biome.map.filtered;
+package cn.nukkit.level.generator.standard.biome.map.complex;
 
 import cn.nukkit.level.generator.standard.StandardGenerator;
 import cn.nukkit.level.generator.standard.biome.GenerationBiome;
@@ -14,8 +14,6 @@ import net.daporkchop.lib.random.impl.FastPRandom;
 
 import java.util.Objects;
 
-import static net.daporkchop.lib.common.util.PorkUtil.*;
-
 /**
  * Implementation of {@link BiomeMap} which uses a series of iterative passes ("filters") to progressively select a biome.
  * <p>
@@ -24,8 +22,8 @@ import static net.daporkchop.lib.common.util.PorkUtil.*;
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public final class FilteredBiomeMap extends AbstractGenerationPass implements BiomeMap {
-    public static final Identifier ID = Identifier.fromString("nukkitx:filtered");
+public final class ComplexBiomeMap extends AbstractGenerationPass implements BiomeMap {
+    public static final Identifier ID = Identifier.fromString("nukkitx:complex");
 
     @JsonProperty
     protected BiomeFilter root;

@@ -4,7 +4,7 @@ import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
 import cn.nukkit.level.generator.standard.biome.map.ConstantBiomeMap;
-import cn.nukkit.level.generator.standard.biome.map.filtered.FilteredBiomeMap;
+import cn.nukkit.level.generator.standard.biome.map.complex.ComplexBiomeMap;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,8 +21,8 @@ import lombok.RequiredArgsConstructor;
 public final class BiomeMapRegistry extends AbstractGeneratorRegistry<BiomeMap> {
     @Override
     protected void registerDefault() {
+        this.register(ComplexBiomeMap.ID, ComplexBiomeMap.class);
         this.register(ConstantBiomeMap.ID, ConstantBiomeMap.class);
-        this.register(FilteredBiomeMap.ID, FilteredBiomeMap.class);
     }
 
     @Override

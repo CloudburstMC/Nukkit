@@ -1,7 +1,6 @@
-package cn.nukkit.level.generator.standard.biome.map.filtered;
+package cn.nukkit.level.generator.standard.biome.map.complex;
 
 import cn.nukkit.Nukkit;
-import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
 import cn.nukkit.level.generator.standard.registry.StandardGeneratorRegistries;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.core.JsonParser;

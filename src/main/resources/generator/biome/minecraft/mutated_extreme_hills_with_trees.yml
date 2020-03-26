@@ -1,0 +1,13 @@
+dict: "nukkitx:vanilla"
+parent: "minecraft:mutated_extreme_hills"
+
+populators:
+  - id: "nukkitx:next"
+
+    # More trees
+  - id: "nukkitx:tree"
+    chance: 0.01171875 # about 3 per chunk
+    on: "grass"
+    types:
+      - "oak"
+      - "spruce"

@@ -1,4 +1,4 @@
-package cn.nukkit.level.generator.standard.biome.map.filtered;
+package cn.nukkit.level.generator.standard.biome.map.complex;
 
 import cn.nukkit.Nukkit;
 import cn.nukkit.level.generator.standard.StandardGeneratorUtils;
@@ -17,7 +17,7 @@ import static net.daporkchop.lib.random.impl.FastPRandom.*;
 /**
  * @author DaPorkchop_
  */
-public class FilteredTest {
+public class ComplexTest {
     public static final int SIZE = 400;
     public static final int CHUNK_SIZE = 16;
     public static final int CHUNK_COUNT = SIZE / CHUNK_SIZE;

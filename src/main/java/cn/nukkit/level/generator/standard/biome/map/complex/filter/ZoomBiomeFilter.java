@@ -1,11 +1,11 @@
-package cn.nukkit.level.generator.standard.biome.map.filtered;
+package cn.nukkit.level.generator.standard.biome.map.complex.filter;
 
 import cn.nukkit.level.generator.standard.biome.GenerationBiome;
+import cn.nukkit.level.generator.standard.biome.map.complex.AbstractBiomeFilter;
 import cn.nukkit.level.generator.standard.misc.IntArrayAllocator;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import net.daporkchop.lib.random.PRandom;
 
 import java.util.Collection;
 

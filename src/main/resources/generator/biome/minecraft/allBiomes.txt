@@ -24,7 +24,7 @@ smaller_extreme_hills (Extreme Hills Edge) baseHeight 0.8,variation 0.3,temperat
 jungle (Jungle) baseHeight 0.1,variation 0.2,temperature 0.95,rainfall 0.9
 jungle_hills (JungleHills) baseHeight 0.45,variation 0.3,temperature 0.95,rainfall 0.9
 jungle_edge (JungleEdge) baseHeight 0.1,variation 0.2,temperature 0.95,rainfall 0.8
-void (The Void) baseHeight -1.8,variation 0.1,temperature 0.5,rainfall 0.5
+deep_ocean (Deep Ocean) baseHeight -1.8,variation 0.1,temperature 0.5,rainfall 0.5
 stone_beach (Stone Beach) baseHeight 0.1,variation 0.8,temperature 0.2,rainfall 0.3
 cold_beach (Cold Beach) baseHeight 0.0,variation 0.025,temperature 0.05,rainfall 0.3
 birch_forest (Birch Forest) baseHeight 0.1,variation 0.2,temperature 0.6,rainfall 0.6
@@ -62,4 +62,3 @@ mutated_savanna_rock (Savanna Plateau M) baseHeight 1.05,variation 1.2125001,tem
 mutated_mesa (Mesa (Bryce)) baseHeight 0.1,variation 0.2,temperature 2.0,rainfall 0.0
 mutated_mesa_rock (Mesa Plateau F M) baseHeight 0.45,variation 0.3,temperature 2.0,rainfall 0.0
 mutated_mesa_clear_rock (Mesa Plateau M) baseHeight 0.45,variation 0.3,temperature 2.0,rainfall 0.0
-    

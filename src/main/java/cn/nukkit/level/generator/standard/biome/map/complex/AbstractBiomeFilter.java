@@ -1,4 +1,4 @@
-package cn.nukkit.level.generator.standard.biome.map.filtered;
+package cn.nukkit.level.generator.standard.biome.map.complex;
 
 import cn.nukkit.level.chunk.Chunk;
 import com.fasterxml.jackson.annotation.JsonAlias;
@@ -29,7 +29,7 @@ public abstract class AbstractBiomeFilter implements BiomeFilter {
     }
 
     @JsonDeserialize
-    protected abstract static class Next extends AbstractBiomeFilter {
+    public abstract static class Next extends AbstractBiomeFilter {
         @JsonProperty
         @JsonAlias({"parent"})
         protected BiomeFilter next;

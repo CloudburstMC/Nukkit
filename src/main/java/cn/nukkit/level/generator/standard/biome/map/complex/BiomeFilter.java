@@ -1,15 +1,14 @@
-package cn.nukkit.level.generator.standard.biome.map.filtered;
+package cn.nukkit.level.generator.standard.biome.map.complex;
 
 import cn.nukkit.level.generator.standard.biome.GenerationBiome;
 import cn.nukkit.level.generator.standard.misc.IntArrayAllocator;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import lombok.NonNull;
 import net.daporkchop.lib.random.PRandom;
 
 import java.util.Collection;
 
 /**
- * A single filter for {@link FilteredBiomeMap}.
+ * A single filter for {@link ComplexBiomeMap}.
  *
  * @author DaPorkchop_
  */

@@ -1,0 +1,50 @@
+# NukkitX Standard Generator - Default (overworld) density generator
+#
+# Author: DaPorkchop_
+
+id: "nukkitx:vanilla"
+seed: "noise"
+selectorNoise:
+  id: "nukkitx:simplex"
+  scale:
+    x: 0.016709277406334877
+    y: 0.008354638703167439
+    z: 0.016709277406334877
+  octaves: 8
+  factor: 12.75
+  offset: 0.5
+lowNoise:
+  id: "nukkitx:simplex"
+  scale:
+    x: 0.005221649073064327
+    y: 0.0026108245365321636
+    z: 0.005221649073064327
+  octaves: 16
+  factor: 1.0
+  offset: 0.0
+highNoise:
+  id: "nukkitx:simplex"
+  scale:
+    x: 0.005221649073064327
+    y: 0.0026108245365321636
+    z: 0.005221649073064327
+  octaves: 16
+  factor: 1.0
+  offset: 0.0
+depthNoise:
+  id: "nukkitx:simplex"
+  scale:
+    x: 0.005221649073064327
+    y: 0.0 # not used
+    z: 0.005221649073064327
+  octaves: 16
+  factor: 1.0240000486373901
+  offset: 0.0
+terrainSmoothing:
+  radius: 2
+  scale: 4
+specialHeightVariation: 0.25
+heightFactor: 64.0
+heightOffset: 64.0
+heightVariationFactor: 32.0 # TODO: this should be 64, which means I need to figure out how to scale biome variation correctly
+heightVariationOffset: 0.0

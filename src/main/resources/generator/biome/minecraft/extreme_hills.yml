@@ -9,6 +9,7 @@ rainfall: 0.3
 
 decorators:
   - id: "nukkitx:noise"
+    seed: "extreme_hills"
     selector:
       id: "nukkitx:simplex"
       scale: 0.0045
