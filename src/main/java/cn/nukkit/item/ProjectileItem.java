@@ -29,6 +29,8 @@ public abstract class ProjectileItem extends Item {
                 player.getYaw(), player.getPitch(), player.getLevel());
 
         Projectile projectile = EntityRegistry.get().newEntity(this.getProjectileEntityType(), location);
+        projectile.setPosition(location.getPosition());
+        projectile.setRotation(player.getYaw(), player.getPitch());
         projectile.setMotion(directionVector);
         projectile.setOwner(player);
         this.onProjectileCreation(projectile);
