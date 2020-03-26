@@ -4,8 +4,10 @@ import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.generator.standard.biome.map.complex.BiomeFilter;
 import cn.nukkit.level.generator.standard.biome.map.complex.filter.BleedIslandBiomeFilter;
+import cn.nukkit.level.generator.standard.biome.map.complex.filter.ClimateBiomeFilter;
 import cn.nukkit.level.generator.standard.biome.map.complex.filter.RandomBiomeFilter;
 import cn.nukkit.level.generator.standard.biome.map.complex.filter.ReplaceSwathBiomeFilter;
+import cn.nukkit.level.generator.standard.biome.map.complex.filter.ReplaceThresholdBiomeFilter;
 import cn.nukkit.level.generator.standard.biome.map.complex.filter.ShoreBiomeFilter;
 import cn.nukkit.level.generator.standard.biome.map.complex.filter.SmoothBiomeFilter;
 import cn.nukkit.level.generator.standard.biome.map.complex.filter.SubstituteRandomBiomeFilter;
@@ -27,8 +29,10 @@ public final class BiomeFilterRegistry extends AbstractGeneratorRegistry<BiomeFi
     @Override
     protected void registerDefault() {
         this.register(BleedIslandBiomeFilter.ID, BleedIslandBiomeFilter.class);
+        this.register(ClimateBiomeFilter.ID, ClimateBiomeFilter.class);
         this.register(RandomBiomeFilter.ID, RandomBiomeFilter.class);
         this.register(ReplaceSwathBiomeFilter.ID, ReplaceSwathBiomeFilter.class);
+        this.register(ReplaceThresholdBiomeFilter.ID, ReplaceThresholdBiomeFilter.class);
         this.register(ShoreBiomeFilter.ID, ShoreBiomeFilter.class);
         this.register(SmoothBiomeFilter.ID, SmoothBiomeFilter.class);
         this.register(SubstituteRandomBiomeFilter.ID, SubstituteRandomBiomeFilter.class);

@@ -8,62 +8,121 @@
 id: "nukkitx:complex"
 fallback: "ocean"
 root:
-  # Replaces large swaths of ocean biomes with land
-  # Result: https://i.daporkchop.net/8vK1WEke.png
-  id: "nukkitx:replace_swath"
+  # Replace ocean biomes which only neighbor more ocean with deep ocean
+  # Functionally equivalent to Java's "GenLayerDeepOcean"
+  # Result: https://i.daporkchop.net/6QJQaZGf.png
+  id: "nukkitx:replace_threshold"
+  threshold: 4
   target: "minecraft:ocean"
-  replacement: "minecraft:plains"
+  replacement: "minecraft:deep_ocean"
   next:
-    # Result: https://i.daporkchop.net/Bn6Ks75w.png
-    id: "nukkitx:bleed_island"
-    ocean: "minecraft:ocean"
-    preserve: "minecraft:forest"
-    island: "minecraft:plains"
+    # Generate mushroom islands.
+    # Functionally equivalent to Java's "GenLayerAddMushroomIsland"
+    # Result: https://i.daporkchop.net/9KiNCdke.png
+    id: "nukkitx:replace_swath"
+    chance: 100
+    target: "minecraft:ocean"
+    replacement: "minecraft:mushroom_island"
     next:
-      # Result: https://i.daporkchop.net/zRG3o1AC.png
+      # More island bleeding.
+      # Result: https://i.daporkchop.net/GbUKRJvr.png
       id: "nukkitx:bleed_island"
       ocean: "minecraft:ocean"
-      preserve: "minecraft:forest"
+      preserve: "minecraft:extreme_hills" # preserve biome is temperature 4: icy (extreme hills)
       island: "minecraft:plains"
       next:
-        # 3 more island bleeding passes
-        # Result: https://i.daporkchop.net/Gh1DTLfJ.png
-        id: "nukkitx:bleed_island"
-        ocean: "minecraft:ocean"
-        preserve: "minecraft:forest"
-        island: "minecraft:plains"
+        # Zoom in some more
+        # Result: https://i.daporkchop.net/Hvxe9BVQ.png
+        id: "nukkitx:zoom"
+        times: 2
         next:
-          # Zoom again, but not fuzzy.
-          # Result: https://i.daporkchop.net/Fmpi8dge.png
-          id: "nukkitx:zoom"
+          # Smooth temperature borders out
+          # Result: https://i.daporkchop.net/HEPLDmde.png
+          id: "nukkitx:climate"
+          specialChance: 13
+          icy: "minecraft:extreme_hills"
+          cool: "minecraft:taiga"
+          warm: "minecraft:plains"
+          hot: "minecraft:desert"
+          ocean: "minecraft:ocean"
           next:
-            # Bleeds islands into each other
-            # Result: https://i.daporkchop.net/GYBUJasX.png
+            # Bleed islands. AGAIN.
+            # Result: https://i.daporkchop.net/AxgFRfdz.png
             id: "nukkitx:bleed_island"
             ocean: "minecraft:ocean"
             preserve: "minecraft:forest"
             island: "minecraft:plains"
             next:
-              # Single fuzzy zoom pass.
-              # Result: https://i.daporkchop.net/AMJZJfwm.png
-              id: "nukkitx:zoom"
-              fuzzy: true
+              # Replaces 1/6 of the plains biomes with forests, and another 1/6 with extreme hills.
+              # Functionally equivalent to Java's "GenLayerAddSnow"
+              # Result: https://i.daporkchop.net/BsHqrXwW.png
+              id: "nukkitx:substitute_random"
+              biomes:
+                minecraft:plains: # Again, this is to simulate weighted randomness
+                  - "minecraft:extreme_hills" # temperature 4: icy
+                  - "minecraft:taiga" # temperature 3: cool
+                  - "minecraft:desert" # temperature 1: hot
+                  - "minecraft:desert"
+                  - "minecraft:desert"
+                  - "minecraft:desert"
               next:
-                # Start off with an ocean world with randomly scattered plains.
-                # Functionally equivalent to Java's "GenLayerIsland"
-                # Result: https://i.daporkchop.net/GUVSGAKC.png
-                id: "nukkitx:random"
-                biomes:
-                  - "minecraft:ocean" # 9:1 ratio
-                  - "minecraft:ocean"
-                  - "minecraft:ocean"
-                  - "minecraft:ocean"
-                  - "minecraft:ocean"
-                  - "minecraft:ocean"
-                  - "minecraft:ocean"
-                  - "minecraft:ocean"
-                  - "minecraft:ocean"
-                  - "minecraft:plains"
+                # Replaces large swaths of ocean biomes with land
+                # Result: https://i.daporkchop.net/8vK1WEke.png
+                id: "nukkitx:replace_swath"
+                chance: 2
+                target: "minecraft:ocean"
+                replacement: "minecraft:plains"
+                next:
+                  # Result: https://i.daporkchop.net/Bn6Ks75w.png
+                  id: "nukkitx:bleed_island"
+                  ocean: "minecraft:ocean"
+                  preserve: "minecraft:forest"
+                  island: "minecraft:plains"
+                  next:
+                    # Result: https://i.daporkchop.net/zRG3o1AC.png
+                    id: "nukkitx:bleed_island"
+                    ocean: "minecraft:ocean"
+                    preserve: "minecraft:forest"
+                    island: "minecraft:plains"
+                    next:
+                      # 3 more island bleeding passes
+                      # Result: https://i.daporkchop.net/Gh1DTLfJ.png
+                      id: "nukkitx:bleed_island"
+                      ocean: "minecraft:ocean"
+                      preserve: "minecraft:forest"
+                      island: "minecraft:plains"
+                      next:
+                        # Zoom again, but not fuzzy.
+                        # Result: https://i.daporkchop.net/Fmpi8dge.png
+                        id: "nukkitx:zoom"
+                        next:
+                          # Bleeds islands into each other
+                          # Result: https://i.daporkchop.net/GYBUJasX.png
+                          id: "nukkitx:bleed_island"
+                          ocean: "minecraft:ocean"
+                          preserve: "minecraft:forest" # dummy value because this is a required parameter
+                          island: "minecraft:plains"
+                          next:
+                            # Single fuzzy zoom pass.
+                            # Result: https://i.daporkchop.net/AMJZJfwm.png
+                            id: "nukkitx:zoom"
+                            fuzzy: true
+                            next:
+                              # Start off with an ocean world with randomly scattered plains.
+                              # Functionally equivalent to Java's "GenLayerIsland"
+                              # Result: https://i.daporkchop.net/GUVSGAKC.png
+                              id: "nukkitx:random"
+                              biomes:
+                                - "minecraft:ocean" # 9:1 ratio
+                                - "minecraft:ocean"
+                                - "minecraft:ocean"
+                                - "minecraft:ocean"
+                                - "minecraft:ocean"
+                                - "minecraft:ocean"
+                                - "minecraft:ocean"
+                                - "minecraft:ocean"
+                                - "minecraft:ocean"
+                                - "minecraft:plains"
 
 #id: "nukkitx:complex"
 #fallback: "ocean"

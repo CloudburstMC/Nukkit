@@ -47,15 +47,16 @@ public class ComplexTest {
 
         IntStream.range(0, 4).parallel()
                 .mapToObj(i -> Vector2i.from(i & 1, i >>> 1))
-                .map(v -> v.mul(SIZE >>> 1))
                 .forEach(v -> {
-                    int dx = v.getX();
-                    int dz = v.getY();
+                    int dx = v.getX() * (SIZE >>> 1);
+                    int dz = v.getY() * (SIZE >>> 1);
                     IntArrayAllocator alloc = IntArrayAllocator.DEFAULT.get();
-                    int[] arr = filter.get(dx, dx, SIZE >>> 1, SIZE >>> 1, alloc);
+                    int[] arr = filter.get(dx, dz, SIZE >>> 1, SIZE >>> 1, alloc);
                     for (int x = 0; x < (SIZE >>> 1); x++) {
                         for (int z = 0; z < (SIZE >>> 1); z++) {
-                            img.setRGB(dx + x, dz + z, mix32(internalIdLookup.get(arr[x * (SIZE >>> 1) + z]).getId().toString().hashCode()) | 0xFF000000);
+                            GenerationBiome biome = internalIdLookup.get(arr[x * (SIZE >>> 1) + z]);
+                            int color = biome == null ? 0 : mix32(biome.getId().toString().hashCode());
+                            img.setRGB(dx + x, dz + z, color | 0xFF000000);
                         }
                     }
                     alloc.release(arr);
