@@ -4,7 +4,7 @@ elevationVanilla:
   height: 0.2
   variation: 0.2
 
-temperature: 0.25
-rainfall: 0.8
+temperature: -0.5
+rainfall: 0.4
 
 #porktodo: this

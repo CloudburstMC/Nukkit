@@ -31,9 +31,6 @@ public class ClimateBiomeFilter extends AbstractBiomeFilter.Next {
     protected int oceanId;
 
     @JsonProperty
-    protected int specialChance;
-
-    @JsonProperty
     protected GenerationBiome icy;
     @JsonProperty
     protected GenerationBiome cool;
@@ -51,7 +48,6 @@ public class ClimateBiomeFilter extends AbstractBiomeFilter.Next {
         this.warmId = Objects.requireNonNull(this.warm, "warm must be set!").getInternalId();
         this.hotId = Objects.requireNonNull(this.hot, "hot must be set!").getInternalId();
         this.oceanId = Objects.requireNonNull(this.ocean, "ocean must be set!").getInternalId();
-        Preconditions.checkState(this.specialChance > 0, "specialChance must be set!");
 
         super.init(seed, random);
     }
@@ -69,9 +65,9 @@ public class ClimateBiomeFilter extends AbstractBiomeFilter.Next {
 
     @Override
     public int[] get(int x, int z, int sizeX, int sizeZ, IntArrayAllocator alloc) {
-        int belowSizeX = sizeX + 6;
-        int belowSizeZ = sizeZ + 6;
-        int[] below = this.next.get(x - 3, z - 3, belowSizeX, belowSizeZ, alloc);
+        int belowSizeX = sizeX + 4;
+        int belowSizeZ = sizeZ + 4;
+        int[] below = this.next.get(x - 2, z - 2, belowSizeX, belowSizeZ, alloc);
 
         final int icyId = this.icyId;
         final int coolId = this.coolId;
@@ -99,9 +95,10 @@ public class ClimateBiomeFilter extends AbstractBiomeFilter.Next {
             }
         }
 
+        int[] out = alloc.get(sizeX * sizeZ);
         //merge icy with warm/hot to make warm
-        for (int dx = 1; dx < belowSizeX - 4; dx++) {
-            for (int dz = 1; dz < belowSizeZ - 4; dz++) {
+        for (int dx = 1; dx <= belowSizeX - 4; dx++) {
+            for (int dz = 1; dz <= belowSizeZ - 4; dz++) {
                 int center = below[(dx + 1) * belowSizeZ + (dz + 1)];
 
                 if (center == icyId) {
@@ -116,29 +113,10 @@ public class ClimateBiomeFilter extends AbstractBiomeFilter.Next {
                     }
                 }
 
-                below[(dx + 1) * belowSizeZ + (dz + 1)] = center;
-            }
-        }
-
-        final int oceanId = this.oceanId;
-        final int specialChance = this.specialChance;
-
-        int[] out = alloc.get(sizeX * sizeZ);
-        //do some funky stuff
-        for (int dx = 0; dx < sizeX; dx++) {
-            for (int dz = 0; dz < sizeZ; dz++) {
-                int center = below[(dx + 3) * belowSizeZ + (dz + 3)];
-
-                if (center != oceanId && this.random(dx + x, dz + z, 0, specialChance) == 0) {
-                    //shift by 16, assume there will never be 65535 biomes in one world lol
-                    center |= ((1 + this.random(dx + x, dz + z, 1, 15)) << 16) & 0xF0000;
-                }
-
-                out[dx * sizeZ + dz] = center;
+                out[(dx - 1) * sizeZ + (dz - 1)] = center;
             }
         }
         alloc.release(below);
-
 
         return out;
     }

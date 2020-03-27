@@ -1,0 +1,21 @@
+dict: "nukkitx:vanilla"
+
+elevationVanilla:
+  height: 0.1
+  variation: 0.2
+
+temperature: 0.6
+rainfall: 0.6
+
+decorators:
+  - id: "nukkitx:surface"
+    ground: "stone"
+    top: "grass"
+    fill: "dirt"
+
+populators:
+    # Trees
+  - id: "nukkitx:tree"
+    chance: 0.0390625 # about 10 per chunk
+    on: "grass"
+    type: "birch"
