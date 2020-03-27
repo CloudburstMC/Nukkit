@@ -26,15 +26,16 @@ package co.aikar.timings;
 import cn.nukkit.Server;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.command.Command;
-import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityType;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.Listener;
-import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.plugin.EventExecutor;
 import cn.nukkit.plugin.MethodEventExecutor;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.scheduler.TaskHandler;
+import com.nukkitx.protocol.bedrock.BedrockPacket;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.HashSet;
 import java.util.Queue;
@@ -42,6 +43,7 @@ import java.util.Set;
 
 import static co.aikar.timings.TimingIdentifier.DEFAULT_GROUP;
 
+@Log4j2
 public final class Timings {
     private static boolean timingsEnabled = false;
     private static boolean verboseEnabled = false;
@@ -69,6 +71,8 @@ public final class Timings {
     public static final Timing playerChunkOrderTimer;
     public static final Timing playerChunkSendTimer;
     public static final Timing playerCommandTimer;
+    public static final Timing playerEntityLookingAtTimer;
+    public static final Timing playerEntityAtPositionTimer;
 
     public static final Timing tickEntityTimer;
     public static final Timing tickBlockEntityTimer;
@@ -92,7 +96,7 @@ public final class Timings {
         privacy = Server.getInstance().getConfig("timings.privacy", false);
         ignoredConfigSections.addAll(Server.getInstance().getConfig().getStringList("timings.ignore"));
 
-        Server.getInstance().getLogger().debug("Timings: \n" +
+        log.debug("Timings: \n" +
                 "Enabled - " + isTimingsEnabled() + "\n" +
                 "Verbose - " + isVerboseEnabled() + "\n" +
                 "History Interval - " + getHistoryInterval() + "\n" +
@@ -115,6 +119,8 @@ public final class Timings {
         playerChunkOrderTimer = TimingsManager.getTiming("Player Order Chunks");
         playerChunkSendTimer = TimingsManager.getTiming("Player Send Chunks");
         playerCommandTimer = TimingsManager.getTiming("Player Command");
+        playerEntityLookingAtTimer = TimingsManager.getTiming("## Player: Entity Looking At");
+        playerEntityAtPositionTimer = TimingsManager.getTiming(DEFAULT_GROUP.name, "## Player: Entity At Position", playerEntityLookingAtTimer);
 
         tickEntityTimer = TimingsManager.getTiming("## Entity Tick");
         tickBlockEntityTimer = TimingsManager.getTiming("## BlockEntity Tick");
@@ -187,11 +193,10 @@ public final class Timings {
         Queue<TimingsHistory> oldQueue = TimingsManager.HISTORY;
         int frames = (getHistoryLength() / getHistoryInterval());
         if (length > maxLength) {
-            Server.getInstance().getLogger().warning(
-                    "Timings Length too high. Requested " + length + ", max is " + maxLength
-                            + ". To get longer history, you must increase your interval. Set Interval to "
-                            + Math.ceil((float) length / MAX_HISTORY_FRAMES)
-                            + " to achieve this length.");
+            log.warn("Timings Length too high. Requested " + length + ", max is " + maxLength
+                    + ". To get longer history, you must increase your interval. Set Interval to "
+                    + Math.ceil((float) length / MAX_HISTORY_FRAMES)
+                    + " to achieve this length.");
         }
 
         TimingsManager.HISTORY = new TimingsManager.BoundedQueue<>(frames);
@@ -233,19 +238,19 @@ public final class Timings {
                 + " (" + event.getSimpleName() + ")", group);
     }
 
-    public static Timing getEntityTiming(Entity entity) {
-        return TimingsManager.getTiming(DEFAULT_GROUP.name, "## Entity Tick: " + entity.getClass().getSimpleName(), tickEntityTimer);
+    public static Timing getEntityTiming(EntityType<?> type) {
+        return TimingsManager.getTiming(DEFAULT_GROUP.name, "## Entity Tick: " + type.getIdentifier(), tickEntityTimer);
     }
 
     public static Timing getBlockEntityTiming(BlockEntity blockEntity) {
         return TimingsManager.getTiming(DEFAULT_GROUP.name, "## BlockEntity Tick: " + blockEntity.getClass().getSimpleName(), tickBlockEntityTimer);
     }
 
-    public static Timing getReceiveDataPacketTiming(DataPacket pk) {
+    public static Timing getReceiveDataPacketTiming(BedrockPacket pk) {
         return TimingsManager.getTiming(DEFAULT_GROUP.name, "## Receive Packet: " + pk.getClass().getSimpleName(), playerNetworkReceiveTimer);
     }
 
-    public static Timing getSendDataPacketTiming(DataPacket pk) {
+    public static Timing getSendDataPacketTiming(BedrockPacket pk) {
         return TimingsManager.getTiming(DEFAULT_GROUP.name, "## Send Packet: " + pk.getClass().getSimpleName(), playerNetworkSendTimer);
     }
 

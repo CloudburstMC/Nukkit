@@ -1,15 +1,16 @@
 package cn.nukkit.form.element;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ElementSlider extends Element {
 
+    @JsonProperty
     private final String type = "slider"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
     private String text = "";
     private float min = 0f;
     private float max = 100f;
     private int step;
-    @SerializedName("default")
+    @JsonProperty("default")
     private float defaultValue;
 
     public ElementSlider(String text, float min, float max) {
@@ -22,8 +23,8 @@ public class ElementSlider extends Element {
 
     public ElementSlider(String text, float min, float max, int step, float defaultValue) {
         this.text = text;
-        this.min = min < 0f ? 0f : min;
-        this.max = max > this.min ? max : this.min;
+        this.min = Math.max(min, 0f);
+        this.max = Math.max(max, this.min);
         if (step != -1f && step > 0) this.step = step;
         if (defaultValue != -1f) this.defaultValue = defaultValue;
     }

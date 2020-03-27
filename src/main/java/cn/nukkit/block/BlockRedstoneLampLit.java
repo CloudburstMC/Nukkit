@@ -2,25 +2,18 @@ package cn.nukkit.block;
 
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.REDSTONE_LAMP;
 
 /**
  * @author Pub4Game
  */
 public class BlockRedstoneLampLit extends BlockRedstoneLamp {
 
-    public BlockRedstoneLampLit() {
-    }
-
-    @Override
-    public String getName() {
-        return "Lit Redstone Lamp";
-    }
-
-    @Override
-    public int getId() {
-        return LIT_REDSTONE_LAMP;
+    public BlockRedstoneLampLit(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -30,7 +23,7 @@ public class BlockRedstoneLampLit extends BlockRedstoneLamp {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(new BlockRedstoneLamp());
+        return Item.get(REDSTONE_LAMP);
     }
 
     @Override
@@ -39,7 +32,7 @@ public class BlockRedstoneLampLit extends BlockRedstoneLamp {
             return 0;
         }
 
-        if ((type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) && !this.level.isBlockPowered(this.getLocation())) {
+        if ((type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) && !this.level.isBlockPowered(this.getPosition())) {
             // Redstone event
             RedstoneUpdateEvent ev = new RedstoneUpdateEvent(this);
             getLevel().getServer().getPluginManager().callEvent(ev);
@@ -50,8 +43,8 @@ public class BlockRedstoneLampLit extends BlockRedstoneLamp {
             return 1;
         }
 
-        if (type == Level.BLOCK_UPDATE_SCHEDULED && !this.level.isBlockPowered(this.getLocation())) {
-            this.level.setBlock(this, new BlockRedstoneLamp(), false, false);
+        if (type == Level.BLOCK_UPDATE_SCHEDULED && !this.level.isBlockPowered(this.getPosition())) {
+            this.level.setBlock(this.getPosition(), Block.get(REDSTONE_LAMP), false, false);
         }
         return 0;
     }

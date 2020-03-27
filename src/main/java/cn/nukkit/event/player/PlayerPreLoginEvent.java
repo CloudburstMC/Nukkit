@@ -1,8 +1,8 @@
 package cn.nukkit.event.player;
 
-import cn.nukkit.Player;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
+import cn.nukkit.player.Player;
 
 /**
  * Called when the player logs in, before things have been set up

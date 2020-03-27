@@ -1,25 +1,24 @@
 package cn.nukkit.scheduler;
 
-import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.PluginException;
-import cn.nukkit.utils.Utils;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayDeque;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Nukkit Project Team
  */
+@Log4j2
 public class ServerScheduler {
 
-    public static int WORKERS = 4;
-
-    private final AsyncPool asyncPool;
+    private final ForkJoinPool asyncPool;
 
     private final Queue<TaskHandler> pending;
     private final Map<Integer, ArrayDeque<TaskHandler>> queueMap;
@@ -33,7 +32,7 @@ public class ServerScheduler {
         this.currentTaskId = new AtomicInteger();
         this.queueMap = new ConcurrentHashMap<>();
         this.taskMap = new ConcurrentHashMap<>();
-        this.asyncPool = new AsyncPool(Server.getInstance(), WORKERS);
+        this.asyncPool = ForkJoinPool.commonPool();
     }
 
     public TaskHandler scheduleTask(Task task) {
@@ -82,11 +81,11 @@ public class ServerScheduler {
     }
 
     public int getAsyncTaskPoolSize() {
-        return asyncPool.getCorePoolSize();
+        return asyncPool.getPoolSize();
     }
 
-    public void increaseAsyncTaskPoolSize(int newSize) {
-        throw new UnsupportedOperationException("Cannot increase a working pool size."); //wtf?
+    public ForkJoinPool getAsyncPool() {
+        return asyncPool;
     }
 
     public TaskHandler scheduleDelayedTask(Task task, int delay) {
@@ -190,7 +189,7 @@ public class ServerScheduler {
             try {
                 taskMap.remove(taskId).cancel();
             } catch (RuntimeException ex) {
-                Server.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
+                log.error("Exception while invoking onCancel", ex);
             }
         }
     }
@@ -207,7 +206,7 @@ public class ServerScheduler {
                 try {
                     taskHandler.cancel(); /* It will remove from task map automatic in next main heartbeat. */
                 } catch (RuntimeException ex) {
-                    Server.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
+                    log.error("Exception while invoking onCancel", ex);
                 }
             }
         }
@@ -218,7 +217,7 @@ public class ServerScheduler {
             try {
                 entry.getValue().cancel();
             } catch (RuntimeException ex) {
-                Server.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
+                log.error("Exception while invoking onCancel", ex);
             }
         }
         this.taskMap.clear();
@@ -262,8 +261,7 @@ public class ServerScheduler {
         TaskHandler task;
         while ((task = pending.poll()) != null) {
             int tick = Math.max(currentTick, task.getNextRunTick()); // Do not schedule in the past
-            ArrayDeque<TaskHandler> queue = Utils.getOrCreate(queueMap, ArrayDeque.class, tick);
-            queue.add(task);
+            this.queueMap.computeIfAbsent(tick, integer -> new ArrayDeque<>()).add(task);
         }
         if (currentTick - this.currentTick > queueMap.size()) { // A large number of ticks have passed since the last execution
             for (Map.Entry<Integer, ArrayDeque<TaskHandler>> entry : queueMap.entrySet()) {
@@ -295,8 +293,7 @@ public class ServerScheduler {
                     try {
                         taskHandler.run(currentTick);
                     } catch (Throwable e) {
-                        Server.getInstance().getLogger().critical("Could not execute taskHandler " + taskHandler.getTaskId() + ": " + e.getMessage());
-                        Server.getInstance().getLogger().logException(e instanceof Exception ? (Exception) e : new RuntimeException(e));
+                        log.error("Could not execute taskHandler " + taskHandler.getTaskId(), e);
                     }
                     taskHandler.timing.stopTiming();
                 }
@@ -308,7 +305,7 @@ public class ServerScheduler {
                         TaskHandler removed = taskMap.remove(taskHandler.getTaskId());
                         if (removed != null) removed.cancel();
                     } catch (RuntimeException ex) {
-                        Server.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
+                        log.error("Exception while invoking onCancel", ex);
                     }
                 }
             }
@@ -327,4 +324,11 @@ public class ServerScheduler {
         return currentTaskId.incrementAndGet();
     }
 
+    public static class ExceptionHandler implements Thread.UncaughtExceptionHandler {
+
+        @Override
+        public void uncaughtException(Thread t, Throwable e) {
+            log.fatal("Exception in scheduled task on thread: " + t.getName(), e);
+        }
+    }
 }

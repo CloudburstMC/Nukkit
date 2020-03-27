@@ -2,7 +2,7 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 
 /**
  * author: MagicDroidX
@@ -11,7 +11,7 @@ import cn.nukkit.lang.TranslationContainer;
 public class StopCommand extends VanillaCommand {
 
     public StopCommand(String name) {
-        super(name, "%nukkit.command.stop.description", "%commands.stop.usage");
+        super(name, "commands.stop.description", "commands.stop.usage");
         this.setPermission("nukkit.command.stop");
         this.commandParameters.clear();
     }

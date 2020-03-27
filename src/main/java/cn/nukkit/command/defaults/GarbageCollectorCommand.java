@@ -13,7 +13,7 @@ import cn.nukkit.utils.ThreadCache;
 public class GarbageCollectorCommand extends VanillaCommand {
 
     public GarbageCollectorCommand(String name) {
-        super(name, "%nukkit.command.gc.description", "%nukkit.command.gc.usage");
+        super(name, "commands.gc.description", "commands.gc.usage");
         this.setPermission("nukkit.command.gc");
         this.commandParameters.clear();
     }
@@ -29,13 +29,13 @@ public class GarbageCollectorCommand extends VanillaCommand {
         int tilesCollected = 0;
         long memory = Runtime.getRuntime().freeMemory();
 
-        for (Level level : sender.getServer().getLevels().values()) {
-            int chunksCount = level.getChunks().size();
+        for (Level level : sender.getServer().getLevels()) {
+            int chunksCount = level.getChunkCount();
             int entitiesCount = level.getEntities().length;
             int tilesCount = level.getBlockEntities().size();
             level.doChunkGarbageCollection();
-            level.unloadChunks(true);
-            chunksCollected += chunksCount - level.getChunks().size();
+            //level.unloadChunks(true);
+            chunksCollected += chunksCount - level.getChunkCount();
             entitiesCollected += entitiesCount - level.getEntities().length;
             tilesCollected += tilesCount - level.getBlockEntities().size();
         }

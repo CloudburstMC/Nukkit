@@ -1,31 +1,25 @@
 package cn.nukkit.item;
 
-import cn.nukkit.block.BlockObsidian;
-import cn.nukkit.block.BlockBedrock;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.entity.Entity;
-import java.util.Random;
-import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.math.BlockFace;
 import cn.nukkit.block.Block;
-import cn.nukkit.Player;
+import cn.nukkit.block.BlockBedrock;
+import cn.nukkit.block.BlockObsidian;
+import cn.nukkit.entity.EntityTypes;
+import cn.nukkit.entity.misc.EnderCrystal;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.Location;
+import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.math.BlockFace;
+import cn.nukkit.player.Player;
+import cn.nukkit.registry.EntityRegistry;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ItemEndCrystal extends Item {
 
-    public ItemEndCrystal() {
-        this(0, 1);
-    }
-
-    public ItemEndCrystal(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemEndCrystal(Integer meta, int count) {
-        super(END_CRYSTAL, meta, count, "End Crystal");
+    public ItemEndCrystal(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -34,42 +28,28 @@ public class ItemEndCrystal extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, Vector3f clickPos) {
         if (!(target instanceof BlockBedrock) && !(target instanceof BlockObsidian)) return false;
-        FullChunk chunk = level.getChunk((int) block.getX() >> 4, (int) block.getZ() >> 4);
+        Chunk chunk = level.getLoadedChunk(block.getPosition());
 
         if (chunk == null) {
             return false;
         }
 
-        CompoundTag nbt = new CompoundTag()
-                .putList(new ListTag<DoubleTag>("Pos")
-                        .add(new DoubleTag("", block.getX() + 0.5))
-                        .add(new DoubleTag("", block.getY()))
-                        .add(new DoubleTag("", block.getZ() + 0.5)))
-                .putList(new ListTag<DoubleTag>("Motion")
-                        .add(new DoubleTag("", 0))
-                        .add(new DoubleTag("", 0))
-                        .add(new DoubleTag("", 0)))
-                .putList(new ListTag<FloatTag>("Rotation")
-                        .add(new FloatTag("", new Random().nextFloat() * 360))
-                        .add(new FloatTag("", 0)));
+        Vector3f position = block.getPosition().toFloat().add(0.5, 0, 0.5);
 
+        EnderCrystal enderCrystal = EntityRegistry.get().newEntity(EntityTypes.ENDER_CRYSTAL, Location.from(position, level));
+        enderCrystal.setRotation(ThreadLocalRandom.current().nextFloat() * 360, 0);
         if (this.hasCustomName()) {
-            nbt.putString("CustomName", this.getCustomName());
+            enderCrystal.setNameTag(this.getCustomName());
         }
 
-        Entity entity = Entity.createEntity("EndCrystal", chunk, nbt);
-
-        if (entity != null) {
-            if (player.isSurvival()) {
-                Item item = player.getInventory().getItemInHand();
-                item.setCount(item.getCount() - 1);
-                player.getInventory().setItemInHand(item);
-            }
-            entity.spawnToAll();
-            return true;
+        if (player.isSurvival()) {
+            Item item = player.getInventory().getItemInHand();
+            item.setCount(item.getCount() - 1);
+            player.getInventory().setItemInHand(item);
         }
-        return false;
+        enderCrystal.spawnToAll();
+        return true;
     }
 }

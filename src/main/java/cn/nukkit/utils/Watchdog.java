@@ -1,10 +1,13 @@
 package cn.nukkit.utils;
 
 import cn.nukkit.Server;
+import lombok.extern.log4j.Log4j2;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.MonitorInfo;
 import java.lang.management.ThreadInfo;
 
+@Log4j2
 public class Watchdog extends Thread {
 
     private final Server server;
@@ -26,6 +29,23 @@ public class Watchdog extends Thread {
         }
     }
 
+    private static void dumpThread(ThreadInfo thread) {
+        log.fatal("Current Thread: " + thread.getThreadName());
+        log.fatal("\tPID: " + thread.getThreadId() + " | Suspended: " + thread.isSuspended() + " | Native: " + thread.isInNative() + " | State: " + thread.getThreadState());
+        // Monitors
+        if (thread.getLockedMonitors().length != 0) {
+            log.fatal("\tThread is waiting on monitor(s):");
+            for (MonitorInfo monitor : thread.getLockedMonitors()) {
+                log.fatal("\t\tLocked on:" + monitor.getLockedStackFrame());
+            }
+        }
+
+        log.fatal("\tStack:");
+        for (StackTraceElement stack : thread.getStackTrace()) {
+            log.fatal("\t\t" + stack);
+        }
+    }
+
     @Override
     public void run() {
         while (this.running) {
@@ -37,21 +57,21 @@ public class Watchdog extends Thread {
                 }
                 if (server.isRunning() && diff > time) {
                     if (responding) {
-                        MainLogger logger = this.server.getLogger();
-                        logger.emergency("--------- Server stopped responding --------- (" + Math.round(diff / 1000d) + "s)");
-                        logger.emergency("Please report this to Nukkit:");
-                        logger.emergency(" - https://github.com/NukkitX/Nukkit/issues/new");
-                        logger.emergency("---------------- Main thread ----------------");
 
-                        dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(this.server.getPrimaryThread().getId(), Integer.MAX_VALUE), logger);
+                        log.fatal("--------- Server stopped responding --------- (" + Math.round(diff / 1000d) + "s)");
+                        log.fatal("Please report this to Nukkit:");
+                        log.fatal(" - https://github.com/NukkitX/Nukkit/issues/new");
+                        log.fatal("---------------- Main thread ----------------");
 
-                        logger.emergency("---------------- All threads ----------------");
+                        dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(this.server.getPrimaryThread().getId(), Integer.MAX_VALUE));
+
+                        log.fatal("---------------- All threads ----------------");
                         ThreadInfo[] threads = ManagementFactory.getThreadMXBean().dumpAllThreads(true, true);
                         for (int i = 0; i < threads.length; i++) {
-                            if (i != 0) logger.emergency("------------------------------");
-                            dumpThread(threads[i], logger);
+                            if (i != 0) log.fatal("------------------------------");
+                            dumpThread(threads[i]);
                         }
-                        logger.emergency("---------------------------------------------");
+                        log.fatal("---------------------------------------------");
                         responding = false;
                         this.server.forceShutdown();
                     }
@@ -64,23 +84,6 @@ public class Watchdog extends Thread {
                     this.wait(Math.max(time / 4, 1000));
                 }
             } catch (InterruptedException ignore) {}
-        }
-    }
-
-    private static void dumpThread(ThreadInfo thread, Logger logger) {
-        logger.emergency("Current Thread: " + thread.getThreadName());
-        logger.emergency("\tPID: " + thread.getThreadId() + " | Suspended: " + thread.isSuspended() + " | Native: " + thread.isInNative() + " | State: " + thread.getThreadState());
-        // Monitors
-        if (thread.getLockedMonitors().length != 0) {
-            logger.emergency("\tThread is waiting on monitor(s):");
-            for (MonitorInfo monitor : thread.getLockedMonitors()) {
-                logger.emergency("\t\tLocked on:" + monitor.getLockedStackFrame());
-            }
-        }
-
-        logger.emergency("\tStack:");
-        for (StackTraceElement stack : thread.getStackTrace()) {
-            logger.emergency("\t\t" + stack);
         }
     }
 }

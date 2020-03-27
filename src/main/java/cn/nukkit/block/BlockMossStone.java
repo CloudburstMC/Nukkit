@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -9,26 +10,17 @@ import cn.nukkit.item.ItemTool;
  */
 public class BlockMossStone extends BlockSolid {
 
-    public BlockMossStone() {
+    public BlockMossStone(Identifier id) {
+        super(id);
     }
 
     @Override
-    public String getName() {
-        return "Moss Stone";
-    }
-
-    @Override
-    public int getId() {
-        return MOSS_STONE;
-    }
-
-    @Override
-    public double getHardness() {
+    public float getHardness() {
         return 2;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 10;
     }
 

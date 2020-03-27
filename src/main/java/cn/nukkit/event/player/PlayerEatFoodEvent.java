@@ -1,9 +1,9 @@
 package cn.nukkit.event.player;
 
-import cn.nukkit.Player;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.item.food.Food;
+import cn.nukkit.player.Player;
 
 /**
  * Created by Snake1999 on 2016/1/14.

@@ -2,7 +2,7 @@ package cn.nukkit.event.level;
 
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 
 /**
  * author: MagicDroidX
@@ -16,7 +16,7 @@ public class ChunkUnloadEvent extends ChunkEvent implements Cancellable {
         return handlers;
     }
 
-    public ChunkUnloadEvent(FullChunk chunk) {
+    public ChunkUnloadEvent(Chunk chunk) {
         super(chunk);
     }
 

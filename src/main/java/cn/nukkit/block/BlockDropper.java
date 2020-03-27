@@ -1,30 +1,23 @@
 package cn.nukkit.block;
 
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityDropper;
+import cn.nukkit.blockentity.BlockEntityType;
+import cn.nukkit.blockentity.BlockEntityTypes;
+import cn.nukkit.blockentity.Dropper;
+import cn.nukkit.blockentity.impl.DropperBlockEntity;
 import cn.nukkit.dispenser.DefaultDispenseBehavior;
 import cn.nukkit.dispenser.DispenseBehavior;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
+import cn.nukkit.registry.BlockEntityRegistry;
+import cn.nukkit.utils.Identifier;
 
 public class BlockDropper extends BlockDispenser {
 
-    public BlockDropper() {
-        this(0);
-    }
+    private BlockEntityType<? extends Dropper> dropperEntity;
 
-    public BlockDropper(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Dropper";
-    }
-
-    @Override
-    public int getId() {
-        return DROPPER;
+    public BlockDropper(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -34,15 +27,14 @@ public class BlockDropper extends BlockDispenser {
 
     @Override
     protected void createBlockEntity() {
-        new BlockEntityDropper(this.level.getChunk(getChunkX(), getChunkZ()),
-                BlockEntity.getDefaultCompound(this, BlockEntity.DROPPER));
+        BlockEntityRegistry.get().newEntity(BlockEntityTypes.DROPPER, getChunk(), position);
     }
 
     @Override
     protected InventoryHolder getBlockEntity() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntity blockEntity = this.level.getBlockEntity(position);
 
-        if (!(blockEntity instanceof BlockEntityDropper)) {
+        if (!(blockEntity instanceof DropperBlockEntity)) {
             return null;
         }
 

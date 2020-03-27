@@ -1,29 +1,33 @@
 package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.IntTag;
-import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.utils.BannerPattern;
 import cn.nukkit.utils.DyeColor;
+import cn.nukkit.utils.Identifier;
+import com.google.common.collect.ImmutableList;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.tag.CompoundTag;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by PetteriM1
  */
 public class ItemBanner extends Item {
 
-    public ItemBanner() {
-        this(0);
+    public ItemBanner(Identifier id) {
+        super(id);
     }
 
-    public ItemBanner(Integer meta) {
-        this(meta, 1);
-    }
+    private final List<BannerPattern> patterns = new ArrayList<>();
+    private DyeColor base = DyeColor.WHITE;
+    private int type;
 
-    public ItemBanner(Integer meta, int count) {
-        super(BANNER, meta, count, "Banner");
-        this.block = Block.get(Block.STANDING_BANNER);
-        this.correctNBT();
+    @Override
+    public Block getBlock() {
+        return Block.get(BlockIds.STANDING_BANNER);
     }
 
     @Override
@@ -31,61 +35,92 @@ public class ItemBanner extends Item {
         return 16;
     }
 
-    public int getBaseColor() {
-        return this.getNamedTag().getInt("Base");
+    @Override
+    public void loadAdditionalData(CompoundTag tag) {
+        super.loadAdditionalData(tag);
+
+        tag.listenForInt("Base", v -> this.base = DyeColor.getByDyeData(v));
+        tag.listenForInt("Type", v -> this.type = v);
+
+        tag.listenForList("Patterns", CompoundTag.class, patternTags -> {
+            for (CompoundTag patternTag : patternTags) {
+                String pattern = patternTag.getString("Pattern");
+                DyeColor color = DyeColor.getByDyeData(patternTag.getInt("Color"));
+                this.patterns.add(new BannerPattern(BannerPattern.Type.getByName(pattern), color));
+            }
+        });
+    }
+
+    @Override
+    public void saveAdditionalData(CompoundTagBuilder tag) {
+        super.saveAdditionalData(tag);
+
+        tag.intTag("Base", this.base.getDyeData());
+        tag.intTag("Type", this.type);
+
+        if (!this.patterns.isEmpty()) {
+            List<CompoundTag> patternsTag = new ArrayList<>();
+            for (BannerPattern pattern : this.patterns) {
+                patternsTag.add(CompoundTag.builder().
+                        intTag("Color", pattern.getColor().getDyeData() & 0x0f).
+                        stringTag("Pattern", pattern.getType().getName())
+                        .buildRootTag());
+            }
+            tag.listTag("Patterns", CompoundTag.class, patternsTag);
+        }
+    }
+
+    public DyeColor getBaseColor() {
+        return this.base;
     }
 
     public void setBaseColor(DyeColor color) {
-        CompoundTag tag = this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag();
-        tag.putInt("Base", color.getDyeData() & 0x0f);
-        this.setDamage(color.getDyeData() & 0x0f);
-        this.setNamedTag(tag);
+        this.base = color;
+        this.setMeta(color.getDyeData() & 0x0f);
     }
 
     public int getType() {
-        return this.getNamedTag().getInt("Type");
+        return this.type;
     }
 
     public void setType(int type) {
-        CompoundTag tag = this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag();
-        tag.putInt("Type", type);
-        this.setNamedTag(tag);
+        this.type = type;
+    }
+
+    public DyeColor getBase() {
+        return this.base;
+    }
+
+    public void setBase(DyeColor color) {
+        this.setMeta(color.getDyeData());
+    }
+
+    public int getBannerType() {
+        return type;
+    }
+
+    public void setBannerType(int type) {
+        this.type = type;
     }
 
     public void addPattern(BannerPattern pattern) {
-        CompoundTag tag = this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag();
-        ListTag<CompoundTag> patterns = tag.getList("Patterns", CompoundTag.class);
-        patterns.add(new CompoundTag("").
-                putInt("Color", pattern.getColor().getDyeData() & 0x0f).
-                putString("Pattern", pattern.getType().getName()));
-        tag.putList(patterns);
-        this.setNamedTag(tag);
+        this.patterns.add(pattern);
     }
 
     public BannerPattern getPattern(int index) {
-        CompoundTag tag = this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag();
-        return BannerPattern.fromCompoundTag(tag.getList("Patterns").size() > index && index >= 0 ? tag.getList("Patterns", CompoundTag.class).get(index) : new CompoundTag());
+        return this.patterns.get(index);
+    }
+
+    public ImmutableList<BannerPattern> getPatterns() {
+        return ImmutableList.copyOf(this.patterns);
     }
 
     public void removePattern(int index) {
-        CompoundTag tag = this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag();
-        ListTag<CompoundTag> patterns = tag.getList("Patterns", CompoundTag.class);
-        if(patterns.size() > index && index >= 0) {
-            patterns.remove(index);
-        }
-        this.setNamedTag(tag);
+        this.patterns.remove(index);
     }
 
-    public int getPatternsSize() {
-        return (this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag()).getList("Patterns").size();
-    }
-
-    public void correctNBT() {
-        CompoundTag tag = this.getNamedTag() != null ? this.getNamedTag() : new CompoundTag();
-        if (!tag.contains("Base") || !(tag.get("Base") instanceof IntTag)) {
-            tag.putInt("Base", this.meta);
-        }
-
-        this.setNamedTag(tag);
+    @Override
+    protected void onMetaChange(int newMeta) {
+        this.base = DyeColor.getByDyeData(newMeta & 0xf);
     }
 }

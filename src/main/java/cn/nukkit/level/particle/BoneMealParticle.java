@@ -1,29 +1,32 @@
 package cn.nukkit.level.particle;
 
-import cn.nukkit.math.Vector3;
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.LevelEventPacket;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.math.vector.Vector3i;
+import com.nukkitx.protocol.bedrock.BedrockPacket;
+import com.nukkitx.protocol.bedrock.data.LevelEventType;
+import com.nukkitx.protocol.bedrock.packet.LevelEventPacket;
 
 /**
  * Created by CreeperFace on 15.4.2017.
  */
 public class BoneMealParticle extends Particle {
 
-    private Vector3 position;
+    private Vector3f position;
 
-    public BoneMealParticle(Vector3 pos) {
-        super(pos.x, pos.y, pos.z);
+    public BoneMealParticle(Vector3i pos) {
+        super(pos.toFloat().add(0.5, 0.5, 0.5));
+    }
+
+    public BoneMealParticle(Vector3f pos) {
+        super(pos);
     }
 
     @Override
-    public DataPacket[] encode() {
-        LevelEventPacket pk = new LevelEventPacket();
-        pk.evid = LevelEventPacket.EVENT_PARTICLE_BONEMEAL;
-        pk.x = (float) this.x;
-        pk.y = (float) this.y;
-        pk.z = (float) this.z;
-        pk.data = 0;
+    public BedrockPacket[] encode() {
+        LevelEventPacket packet = new LevelEventPacket();
+        packet.setType(LevelEventType.BONEMEAL);
+        packet.setPosition(this.getPosition());
 
-        return new DataPacket[]{pk};
+        return new BedrockPacket[]{packet};
     }
 }

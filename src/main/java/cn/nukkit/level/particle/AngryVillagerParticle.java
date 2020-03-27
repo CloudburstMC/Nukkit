@@ -1,13 +1,14 @@
 package cn.nukkit.level.particle;
 
-import cn.nukkit.math.Vector3;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.protocol.bedrock.data.LevelEventType;
 
 /**
  * Created on 2015/11/21 by xtypr.
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class AngryVillagerParticle extends GenericParticle {
-    public AngryVillagerParticle(Vector3 pos) {
-        super(pos, Particle.TYPE_VILLAGER_ANGRY);
+    public AngryVillagerParticle(Vector3f pos) {
+        super(pos, LevelEventType.PARTICLE_VILLAGER_ANGRY);
     }
 }

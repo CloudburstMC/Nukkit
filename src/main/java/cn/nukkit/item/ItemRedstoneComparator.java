@@ -1,22 +1,20 @@
 package cn.nukkit.item;
 
-import cn.nukkit.block.BlockRedstoneComparatorUnpowered;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockIds;
+import cn.nukkit.utils.Identifier;
 
 /**
  * @author CreeperFace
  */
 public class ItemRedstoneComparator extends Item {
 
-    public ItemRedstoneComparator() {
-        this(0);
+    public ItemRedstoneComparator(Identifier id) {
+        super(id);
     }
 
-    public ItemRedstoneComparator(Integer meta) {
-        this(0, 1);
-    }
-
-    public ItemRedstoneComparator(Integer meta, int count) {
-        super(COMPARATOR, meta, count, "Redstone Comparator");
-        this.block = new BlockRedstoneComparatorUnpowered();
+    @Override
+    public Block getBlock() {
+        return Block.get(BlockIds.UNPOWERED_COMPARATOR);
     }
 }

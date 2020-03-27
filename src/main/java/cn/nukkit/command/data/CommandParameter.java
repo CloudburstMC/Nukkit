@@ -1,9 +1,12 @@
 package cn.nukkit.command.data;
 
 
+import lombok.ToString;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
+@ToString
 public class CommandParameter {
 
     public final static String ARG_TYPE_STRING = "string";

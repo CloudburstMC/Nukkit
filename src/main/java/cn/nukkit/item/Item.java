@@ -1,323 +1,65 @@
 package cn.nukkit.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockAir;
-import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
-import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.nbt.tag.StringTag;
-import cn.nukkit.nbt.tag.Tag;
-import cn.nukkit.utils.Binary;
+import cn.nukkit.player.Player;
+import cn.nukkit.registry.ItemRegistry;
+import cn.nukkit.registry.RegistryException;
 import cn.nukkit.utils.Config;
-import cn.nukkit.utils.MainLogger;
+import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.Utils;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.NbtUtils;
+import com.nukkitx.nbt.stream.NBTInputStream;
+import com.nukkitx.nbt.tag.CompoundTag;
+import com.nukkitx.nbt.tag.StringTag;
+import com.nukkitx.protocol.bedrock.data.ItemData;
+import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
+import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
+import lombok.extern.log4j.Log4j2;
 
+import javax.annotation.Nullable;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.ByteOrder;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.item.ItemIds.BUCKET;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public class Item implements Cloneable, BlockID, ItemID {
-    //Normal Item IDs
+@Log4j2
+public abstract class Item implements Cloneable {
 
-    protected static String UNKNOWN_STR = "Unknown";
-    public static Class[] list = null;
+    private static final Pattern ITEM_STRING_PATTERN = Pattern.compile("^((?:[A-Za-z_0-9]+:)?[A-Za-z_0-9]+):?([0-9]+)?$");
 
-    protected Block block = null;
-    protected final int id;
-    protected int meta;
-    protected boolean hasMeta = true;
-    private byte[] tags = new byte[0];
-    private CompoundTag cachedNBT = null;
-    public int count;
-    protected int durability = 0;
-    protected String name;
+    private final Identifier id;
+    private int meta;
+    private int count;
+    private final List<String> lore = new ArrayList<>();
+    private final Short2ObjectMap<Enchantment> enchantments = new Short2ObjectOpenHashMap<>();
+    private int damage;
+    private String customName;
+    private CompoundTag tag = CompoundTag.EMPTY;
+    private Set<Identifier> canPlaceOn = new HashSet<>();
+    private Set<Identifier> canDestroy = new HashSet<>();
 
-    public Item(int id) {
-        this(id, 0, 1, UNKNOWN_STR);
+    public Item(Identifier id) {
+        this.id = id;
     }
-
-    public Item(int id, Integer meta) {
-        this(id, meta, 1, UNKNOWN_STR);
-    }
-
-    public Item(int id, Integer meta, int count) {
-        this(id, meta, count, UNKNOWN_STR);
-    }
-
-    public Item(int id, Integer meta, int count, String name) {
-        this.id = id & 0xffff;
-        if (meta != null && meta >= 0) {
-            this.meta = meta & 0xffff;
-        } else {
-            this.hasMeta = false;
-        }
-        this.count = count;
-        this.name = name;
-        /*f (this.block != null && this.id <= 0xff && Block.list[id] != null) { //probably useless
-            this.block = Block.get(this.id, this.meta);
-            this.name = this.block.getName();
-        }*/
-    }
-
-    public boolean hasMeta() {
-        return hasMeta;
-    }
-
-    public boolean canBeActivated() {
-        return false;
-    }
-
-    public static void init() {
-        if (list == null) {
-            list = new Class[65535];
-            list[IRON_SHOVEL] = ItemShovelIron.class; //256
-            list[IRON_PICKAXE] = ItemPickaxeIron.class; //257
-            list[IRON_AXE] = ItemAxeIron.class; //258
-            list[FLINT_AND_STEEL] = ItemFlintSteel.class; //259
-            list[APPLE] = ItemApple.class; //260
-            list[BOW] = ItemBow.class; //261
-            list[ARROW] = ItemArrow.class; //262
-            list[COAL] = ItemCoal.class; //263
-            list[DIAMOND] = ItemDiamond.class; //264
-            list[IRON_INGOT] = ItemIngotIron.class; //265
-            list[GOLD_INGOT] = ItemIngotGold.class; //266
-            list[IRON_SWORD] = ItemSwordIron.class; //267
-            list[WOODEN_SWORD] = ItemSwordWood.class; //268
-            list[WOODEN_SHOVEL] = ItemShovelWood.class; //269
-            list[WOODEN_PICKAXE] = ItemPickaxeWood.class; //270
-            list[WOODEN_AXE] = ItemAxeWood.class; //271
-            list[STONE_SWORD] = ItemSwordStone.class; //272
-            list[STONE_SHOVEL] = ItemShovelStone.class; //273
-            list[STONE_PICKAXE] = ItemPickaxeStone.class; //274
-            list[STONE_AXE] = ItemAxeStone.class; //275
-            list[DIAMOND_SWORD] = ItemSwordDiamond.class; //276
-            list[DIAMOND_SHOVEL] = ItemShovelDiamond.class; //277
-            list[DIAMOND_PICKAXE] = ItemPickaxeDiamond.class; //278
-            list[DIAMOND_AXE] = ItemAxeDiamond.class; //279
-            list[STICK] = ItemStick.class; //280
-            list[BOWL] = ItemBowl.class; //281
-            list[MUSHROOM_STEW] = ItemMushroomStew.class; //282
-            list[GOLD_SWORD] = ItemSwordGold.class; //283
-            list[GOLD_SHOVEL] = ItemShovelGold.class; //284
-            list[GOLD_PICKAXE] = ItemPickaxeGold.class; //285
-            list[GOLD_AXE] = ItemAxeGold.class; //286
-            list[STRING] = ItemString.class; //287
-            list[FEATHER] = ItemFeather.class; //288
-            list[GUNPOWDER] = ItemGunpowder.class; //289
-            list[WOODEN_HOE] = ItemHoeWood.class; //290
-            list[STONE_HOE] = ItemHoeStone.class; //291
-            list[IRON_HOE] = ItemHoeIron.class; //292
-            list[DIAMOND_HOE] = ItemHoeDiamond.class; //293
-            list[GOLD_HOE] = ItemHoeGold.class; //294
-            list[WHEAT_SEEDS] = ItemSeedsWheat.class; //295
-            list[WHEAT] = ItemWheat.class; //296
-            list[BREAD] = ItemBread.class; //297
-            list[LEATHER_CAP] = ItemHelmetLeather.class; //298
-            list[LEATHER_TUNIC] = ItemChestplateLeather.class; //299
-            list[LEATHER_PANTS] = ItemLeggingsLeather.class; //300
-            list[LEATHER_BOOTS] = ItemBootsLeather.class; //301
-            list[CHAIN_HELMET] = ItemHelmetChain.class; //302
-            list[CHAIN_CHESTPLATE] = ItemChestplateChain.class; //303
-            list[CHAIN_LEGGINGS] = ItemLeggingsChain.class; //304
-            list[CHAIN_BOOTS] = ItemBootsChain.class; //305
-            list[IRON_HELMET] = ItemHelmetIron.class; //306
-            list[IRON_CHESTPLATE] = ItemChestplateIron.class; //307
-            list[IRON_LEGGINGS] = ItemLeggingsIron.class; //308
-            list[IRON_BOOTS] = ItemBootsIron.class; //309
-            list[DIAMOND_HELMET] = ItemHelmetDiamond.class; //310
-            list[DIAMOND_CHESTPLATE] = ItemChestplateDiamond.class; //311
-            list[DIAMOND_LEGGINGS] = ItemLeggingsDiamond.class; //312
-            list[DIAMOND_BOOTS] = ItemBootsDiamond.class; //313
-            list[GOLD_HELMET] = ItemHelmetGold.class; //314
-            list[GOLD_CHESTPLATE] = ItemChestplateGold.class; //315
-            list[GOLD_LEGGINGS] = ItemLeggingsGold.class; //316
-            list[GOLD_BOOTS] = ItemBootsGold.class; //317
-            list[FLINT] = ItemFlint.class; //318
-            list[RAW_PORKCHOP] = ItemPorkchopRaw.class; //319
-            list[COOKED_PORKCHOP] = ItemPorkchopCooked.class; //320
-            list[PAINTING] = ItemPainting.class; //321
-            list[GOLDEN_APPLE] = ItemAppleGold.class; //322
-            list[SIGN] = ItemSign.class; //323
-            list[WOODEN_DOOR] = ItemDoorWood.class; //324
-            list[BUCKET] = ItemBucket.class; //325
-
-            list[MINECART] = ItemMinecart.class; //328
-            list[SADDLE] = ItemSaddle.class; //329
-            list[IRON_DOOR] = ItemDoorIron.class; //330
-            list[REDSTONE] = ItemRedstone.class; //331
-            list[SNOWBALL] = ItemSnowball.class; //332
-            list[BOAT] = ItemBoat.class; //333
-            list[LEATHER] = ItemLeather.class; //334
-
-            list[BRICK] = ItemBrick.class; //336
-            list[CLAY] = ItemClay.class; //337
-            list[SUGARCANE] = ItemSugarcane.class; //338
-            list[PAPER] = ItemPaper.class; //339
-            list[BOOK] = ItemBook.class; //340
-            list[SLIMEBALL] = ItemSlimeball.class; //341
-            list[MINECART_WITH_CHEST] = ItemMinecartChest.class; //342
-
-            list[EGG] = ItemEgg.class; //344
-            list[COMPASS] = ItemCompass.class; //345
-            list[FISHING_ROD] = ItemFishingRod.class; //346
-            list[CLOCK] = ItemClock.class; //347
-            list[GLOWSTONE_DUST] = ItemGlowstoneDust.class; //348
-            list[RAW_FISH] = ItemFish.class; //349
-            list[COOKED_FISH] = ItemFishCooked.class; //350
-            list[DYE] = ItemDye.class; //351
-            list[BONE] = ItemBone.class; //352
-            list[SUGAR] = ItemSugar.class; //353
-            list[CAKE] = ItemCake.class; //354
-            list[BED] = ItemBed.class; //355
-            list[REPEATER] = ItemRedstoneRepeater.class; //356
-            list[COOKIE] = ItemCookie.class; //357
-            list[MAP] = ItemMap.class; //358
-            list[SHEARS] = ItemShears.class; //359
-            list[MELON] = ItemMelon.class; //360
-            list[PUMPKIN_SEEDS] = ItemSeedsPumpkin.class; //361
-            list[MELON_SEEDS] = ItemSeedsMelon.class; //362
-            list[RAW_BEEF] = ItemBeefRaw.class; //363
-            list[STEAK] = ItemSteak.class; //364
-            list[RAW_CHICKEN] = ItemChickenRaw.class; //365
-            list[COOKED_CHICKEN] = ItemChickenCooked.class; //366
-            list[ROTTEN_FLESH] = ItemRottenFlesh.class; //367
-            list[ENDER_PEARL] = ItemEnderPearl.class; //368
-            list[BLAZE_ROD] = ItemBlazeRod.class; //369
-            list[GHAST_TEAR] = ItemGhastTear.class; //370
-            list[GOLD_NUGGET] = ItemNuggetGold.class; //371
-            list[NETHER_WART] = ItemNetherWart.class; //372
-            list[POTION] = ItemPotion.class; //373
-            list[GLASS_BOTTLE] = ItemGlassBottle.class; //374
-            list[SPIDER_EYE] = ItemSpiderEye.class; //375
-            list[FERMENTED_SPIDER_EYE] = ItemSpiderEyeFermented.class; //376
-            list[BLAZE_POWDER] = ItemBlazePowder.class; //377
-            list[MAGMA_CREAM] = ItemMagmaCream.class; //378
-            list[BREWING_STAND] = ItemBrewingStand.class; //379
-            list[CAULDRON] = ItemCauldron.class; //380
-            list[ENDER_EYE] = ItemEnderEye.class; //381
-            list[GLISTERING_MELON] = ItemMelonGlistering.class; //382
-            list[SPAWN_EGG] = ItemSpawnEgg.class; //383
-            list[EXPERIENCE_BOTTLE] = ItemExpBottle.class; //384
-            list[FIRE_CHARGE] = ItemFireCharge.class; //385
-            //TODO: list[BOOK_AND_QUILL] = ItemBookAndQuill.class; //386
-            list[WRITTEN_BOOK] = ItemBookWritten.class; //387
-            list[EMERALD] = ItemEmerald.class; //388
-            list[ITEM_FRAME] = ItemItemFrame.class; //389
-            list[FLOWER_POT] = ItemFlowerPot.class; //390
-            list[CARROT] = ItemCarrot.class; //391
-            list[POTATO] = ItemPotato.class; //392
-            list[BAKED_POTATO] = ItemPotatoBaked.class; //393
-            list[POISONOUS_POTATO] = ItemPotatoPoisonous.class; //394
-            //TODO: list[EMPTY_MAP] = ItemEmptyMap.class; //395
-            list[GOLDEN_CARROT] = ItemCarrotGolden.class; //396
-            list[SKULL] = ItemSkull.class; //397
-            list[CARROT_ON_A_STICK] = ItemCarrotOnAStick.class; //398
-            list[NETHER_STAR] = ItemNetherStar.class; //399
-            list[PUMPKIN_PIE] = ItemPumpkinPie.class; //400
-            list[FIREWORKS] = ItemFirework.class; //401
-
-            list[ENCHANTED_BOOK] = ItemBookEnchanted.class; //403
-            list[COMPARATOR] = ItemRedstoneComparator.class; //404
-            list[NETHER_BRICK] = ItemNetherBrick.class; //405
-            list[QUARTZ] = ItemQuartz.class; //406
-            list[MINECART_WITH_TNT] = ItemMinecartTNT.class; //407
-            list[MINECART_WITH_HOPPER] = ItemMinecartHopper.class; //408
-            list[PRISMARINE_SHARD] = ItemPrismarineShard.class; //409
-            list[HOPPER] = ItemHopper.class;
-            list[RAW_RABBIT] = ItemRabbitRaw.class; //411
-            list[COOKED_RABBIT] = ItemRabbitCooked.class; //412
-            list[RABBIT_STEW] = ItemRabbitStew.class; //413
-            list[RABBIT_FOOT] = ItemRabbitFoot.class; //414
-            //TODO: list[RABBIT_HIDE] = ItemRabbitHide.class; //415
-            list[LEATHER_HORSE_ARMOR] = ItemHorseArmorLeather.class; //416
-            list[IRON_HORSE_ARMOR] = ItemHorseArmorIron.class; //417
-            list[GOLD_HORSE_ARMOR] = ItemHorseArmorGold.class; //418
-            list[DIAMOND_HORSE_ARMOR] = ItemHorseArmorDiamond.class; //419
-            //TODO: list[LEAD] = ItemLead.class; //420
-            //TODO: list[NAME_TAG] = ItemNameTag.class; //421
-            list[PRISMARINE_CRYSTALS] = ItemPrismarineCrystals.class; //422
-            list[RAW_MUTTON] = ItemMuttonRaw.class; //423
-            list[COOKED_MUTTON] = ItemMuttonCooked.class; //424
-
-            list[END_CRYSTAL] = ItemEndCrystal.class; //426
-            list[SPRUCE_DOOR] = ItemDoorSpruce.class; //427
-            list[BIRCH_DOOR] = ItemDoorBirch.class; //428
-            list[JUNGLE_DOOR] = ItemDoorJungle.class; //429
-            list[ACACIA_DOOR] = ItemDoorAcacia.class; //430
-            list[DARK_OAK_DOOR] = ItemDoorDarkOak.class; //431
-            list[CHORUS_FRUIT] = ItemChorusFruit.class; //432
-            //TODO: list[POPPED_CHORUS_FRUIT] = ItemChorusFruitPopped.class; //433
-
-            //TODO: list[DRAGON_BREATH] = ItemDragonBreath.class; //437
-            list[SPLASH_POTION] = ItemPotionSplash.class; //438
-
-            list[LINGERING_POTION] = ItemPotionLingering.class; //441
-
-            list[ELYTRA] = ItemElytra.class; //444
-
-            //TODO: list[SHULKER_SHELL] = ItemShulkerShell.class; //445
-            list[BANNER] = ItemBanner.class; //446
-            
-            list[TRIDENT] = ItemTrident.class; //455
-
-            list[BEETROOT] = ItemBeetroot.class; //457
-            list[BEETROOT_SEEDS] = ItemSeedsBeetroot.class; //458
-            list[BEETROOT_SOUP] = ItemBeetrootSoup.class; //459
-            list[RAW_SALMON] = ItemSalmon.class; //460
-            list[CLOWNFISH] = ItemClownfish.class; //461
-            list[PUFFERFISH] = ItemPufferfish.class; //462
-            list[COOKED_SALMON] = ItemSalmonCooked.class; //463
-            list[DRIED_KELP] = ItemDriedKelp.class; //464
-
-            list[GOLDEN_APPLE_ENCHANTED] = ItemAppleGoldEnchanted.class; //466
-            
-            list[TURTLE_SHELL] = ItemTurtleShell.class; //469
-
-            list[SWEET_BERRIES] = ItemSweetBerries.class; //477
-
-            list[RECORD_11] = ItemRecord11.class;
-            list[RECORD_CAT] = ItemRecordCat.class;
-            list[RECORD_13] = ItemRecord13.class;
-            list[RECORD_BLOCKS] = ItemRecordBlocks.class;
-            list[RECORD_CHIRP] = ItemRecordChirp.class;
-            list[RECORD_FAR] = ItemRecordFar.class;
-            list[RECORD_WARD] = ItemRecordWard.class;
-            list[RECORD_MALL] = ItemRecordMall.class;
-            list[RECORD_MELLOHI] = ItemRecordMellohi.class;
-            list[RECORD_STAL] = ItemRecordStal.class;
-            list[RECORD_STRAD] = ItemRecordStrad.class;
-            list[RECORD_WAIT] = ItemRecordWait.class;
-
-            list[SHIELD] = ItemShield.class; //513
-
-            for (int i = 0; i < 256; ++i) {
-                if (Block.list[i] != null) {
-                    list[i] = Block.list[i];
-                }
-            }
-        }
-
-        initCreativeItems();
-    }
-
-    private static final ArrayList<Item> creative = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
-    private static void initCreativeItems() {
+    public static void initCreativeItems() {
         clearCreativeItems();
 
         Config config = new Config(Config.YAML);
@@ -327,10 +69,22 @@ public class Item implements Cloneable, BlockID, ItemID {
         for (Map map : list) {
             try {
                 addCreativeItem(fromJson(map));
+            } catch (RegistryException e) {
+                // ignore
             } catch (Exception e) {
-                MainLogger.getLogger().logException(e);
+                log.error("Error whilst adding creative item", e);
             }
         }
+    }
+
+    public boolean canBeActivated() {
+        return false;
+    }
+
+    private static final ArrayList<Item> creative = new ArrayList<>();
+
+    public static Item get(Identifier id) {
+        return get(id, 0);
     }
 
     public static void clearCreativeItems() {
@@ -374,82 +128,94 @@ public class Item implements Cloneable, BlockID, ItemID {
         return -1;
     }
 
+    public static Item get(Identifier id, int meta) {
+        return get(id, meta, 1);
+    }
+
+    public static Item get(Identifier id, int meta, int count) {
+        return get(id, meta, count, CompoundTag.EMPTY);
+    }
+
+    public static Item get(Identifier id, int meta, int count, CompoundTag tag) {
+        Item item = Server.getInstance().getItemRegistry().getItem(id);
+        item.setMeta(meta);
+        item.setCount(count);
+        item.loadAdditionalData(tag);
+
+        return item;
+    }
+
+    @Deprecated
     public static Item get(int id) {
         return get(id, 0);
     }
 
-    public static Item get(int id, Integer meta) {
+    @Deprecated
+    public static Item get(int id, int meta) {
         return get(id, meta, 1);
     }
 
-    public static Item get(int id, Integer meta, int count) {
-        return get(id, meta, count, new byte[0]);
+    @Deprecated
+    public static Item get(int id, int meta, int count) {
+        return get(id, meta, count, CompoundTag.EMPTY);
     }
 
-    public static Item get(int id, Integer meta, int count, byte[] tags) {
-        try {
-            Class c = list[id];
-            Item item;
-
-            if (c == null) {
-                item = new Item(id, meta, count);
-            } else if (id < 256) {
-                if (meta >= 0) {
-                    item = new ItemBlock(Block.get(id, meta), meta, count);
-                } else {
-                    item = new ItemBlock(Block.get(id), meta, count);
-                }
-            } else {
-                item = ((Item) c.getConstructor(Integer.class, int.class).newInstance(meta, count));
-            }
-
-            if (tags.length != 0) {
-                item.setCompoundTag(tags);
-            }
-
-            return item;
-        } catch (Exception e) {
-            return new Item(id, meta, count).setCompoundTag(tags);
-        }
+    @Deprecated
+    public static Item get(int id, int meta, int count, CompoundTag tags) {
+        ItemRegistry registry = Server.getInstance().getItemRegistry();
+        Identifier identifier = registry.fromLegacy(id);
+        return get(identifier, meta, count, tags);
     }
 
     public static Item fromString(String str) {
-        String[] b = str.trim().replace(' ', '_').replace("minecraft:", "").split(":");
-
-        int id = 0;
-        int meta = 0;
-
-        Pattern integerPattern = Pattern.compile("^[1-9]\\d*$");
-        if (integerPattern.matcher(b[0]).matches()) {
-            id = Integer.valueOf(b[0]);
-        } else {
-            try {
-                id = Item.class.getField(b[0].toUpperCase()).getInt(null);
-            } catch (Exception ignore) {
-            }
+        Matcher matcher = ITEM_STRING_PATTERN.matcher(str);
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("Invalid item string");
         }
 
-        id = id & 0xFFFF;
-        if (b.length != 1) meta = Integer.valueOf(b[1]) & 0xFFFF;
+        Identifier id;
+        int meta = 0;
+
+        String stringId = matcher.group(1);
+        Pattern integerPattern = Pattern.compile("^[1-9]\\d*$");
+        if (integerPattern.matcher(stringId).matches()) {
+            id = ItemRegistry.get().fromLegacy(Integer.parseInt(stringId));
+        } else {
+            id = Identifier.fromString(stringId);
+        }
+
+        String metaString = matcher.group(2);
+        if (metaString != null) meta = Integer.parseInt(metaString) & 0xFFFF;
 
         return get(id, meta);
     }
 
+    public boolean hasMeta() {
+        return this.meta < Short.MAX_VALUE;
+    }
+
     public static Item fromJson(Map<String, Object> data) {
         String nbt = (String) data.get("nbt_b64");
-        byte[] nbtBytes;
+
+        byte[] nbtBytes = null;
         if (nbt != null) {
             nbtBytes = Base64.getDecoder().decode(nbt);
-        } else { // Support old format for backwards compat
-            nbt = (String) data.getOrDefault("nbt_hex", null);
-            if (nbt == null) {
-                nbtBytes = new byte[0];
-            } else {
-                nbtBytes = Utils.parseHexBinary(nbt);
-            }
+        } else if ((nbt = nbt = (String) data.getOrDefault("nbt_hex", null)) != null) { // Support old format for backwards compat
+            nbtBytes = Utils.parseHexBinary(nbt);
         }
 
-        return get(Utils.toInt(data.get("id")), Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), nbtBytes);
+        CompoundTag tag;
+        if (nbtBytes != null) {
+            try (NBTInputStream stream = NbtUtils.createReaderLE(new ByteArrayInputStream(Base64.getDecoder().decode(nbt)))) {
+                tag = (CompoundTag) stream.readTag();
+            } catch (IOException e) {
+                throw new IllegalStateException("Unable to decode tag", e);
+            }
+        } else {
+            tag = CompoundTag.EMPTY;
+        }
+
+        return get(Utils.toInt(data.get("id")), Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), tag);
     }
 
     public static Item[] fromStringMultiple(String str) {
@@ -461,160 +227,174 @@ public class Item implements Cloneable, BlockID, ItemID {
         return items;
     }
 
-    public Item setCompoundTag(CompoundTag tag) {
-        this.setNamedTag(tag);
-        return this;
+    public static ItemData[] toNetwork(List<Item> items) {
+        return toNetwork(items.toArray(new Item[0]));
     }
 
-    public Item setCompoundTag(byte[] tags) {
-        this.tags = tags;
-        this.cachedNBT = null;
-        return this;
+    public static ItemData[] toNetwork(Item[] items) {
+        ItemData[] itemData = new ItemData[items.length];
+        for (int i = 0; i < items.length; i++) {
+            itemData[i] = items[i].toNetwork();
+        }
+        return itemData;
     }
 
-    public byte[] getCompoundTag() {
-        return tags;
+    public static Item fromNetwork(ItemData itemData) {
+        Identifier identifier = ItemRegistry.get().getIdentifier(itemData.getId());
+        int meta = itemData.getDamage();
+        int count = itemData.getCount();
+        String[] canBreak = itemData.getCanBreak();
+        String[] canPlace = itemData.getCanPlace();
+        com.nukkitx.nbt.tag.CompoundTag tag = itemData.getTag();
+        if (tag == null) {
+            tag = com.nukkitx.nbt.tag.CompoundTag.EMPTY;
+        }
+
+        if (canBreak.length > 0 || canPlace.length > 0) {
+            CompoundTagBuilder tagBuilder = tag.toBuilder();
+
+            if (canBreak.length > 0) {
+                List<com.nukkitx.nbt.tag.StringTag> listTag = new ArrayList<>();
+                for (String blockName : canBreak) {
+                    listTag.add(new com.nukkitx.nbt.tag.StringTag("", blockName));
+                }
+                tagBuilder.listTag("CanDestroy", com.nukkitx.nbt.tag.StringTag.class, listTag);
+            }
+
+            if (canPlace.length > 0) {
+                List<com.nukkitx.nbt.tag.StringTag> listTag = new ArrayList<>();
+                for (String blockName : canPlace) {
+                    listTag.add(new com.nukkitx.nbt.tag.StringTag("", blockName));
+                }
+                tagBuilder.listTag("CanPlaceOn", com.nukkitx.nbt.tag.StringTag.class, listTag);
+            }
+            tag = tagBuilder.buildRootTag();
+        }
+
+        return Item.get(identifier, meta, count, tag);
+    }
+
+    public void loadAdditionalData(CompoundTag tag) {
+        this.tag = this.tag.toBuilder().putAll(tag).buildRootTag();
+
+        tag.listenForCompound("display", displayTag -> {
+            displayTag.listenForString("Name", this::setCustomName);
+            displayTag.listenForList("Lore", StringTag.class, tags -> {
+                List<String> lines = new ArrayList<>();
+                for (StringTag line : tags) {
+                    lines.add(line.getValue());
+                }
+                setLore(lines);
+            });
+        });
+
+        tag.listenForList("ench", CompoundTag.class, tags -> {
+            for (CompoundTag entry : tags) {
+                short id = entry.getShort("id");
+                int level = entry.getShort("lvl");
+                this.enchantments.put(id, Enchantment.getEnchantment(id).setLevel(level, false));
+            }
+        });
+    }
+
+    public void saveAdditionalData(CompoundTagBuilder tag) {
+        tag.putAll(this.getTag());
+
+
+        CompoundTagBuilder displayTag = CompoundTag.builder();
+        if (this.customName != null) {
+            displayTag.stringTag("Name", this.customName);
+            tag.tag(displayTag.build("display"));
+        }
+
+        if (!this.lore.isEmpty()) {
+            List<StringTag> loreLinesTag = new ArrayList<>();
+            for (String line : this.lore) {
+                loreLinesTag.add(new StringTag("", line));
+            }
+            displayTag.listTag("Lore", StringTag.class, loreLinesTag);
+        }
+
+        CompoundTag display = displayTag.build("display");
+        if (!display.getValue().isEmpty()) {
+            tag.tag(display);
+        }
+
+        if (!this.canDestroy.isEmpty()) {
+            List<com.nukkitx.nbt.tag.StringTag> listTag = new ArrayList<>();
+            for (Identifier blockName : this.canDestroy) {
+                listTag.add(new com.nukkitx.nbt.tag.StringTag("", blockName.toString()));
+            }
+            tag.listTag("CanDestroy", com.nukkitx.nbt.tag.StringTag.class, listTag);
+        }
+
+        if (!this.canPlaceOn.isEmpty()) {
+            List<com.nukkitx.nbt.tag.StringTag> listTag = new ArrayList<>();
+            for (Identifier blockName : this.canPlaceOn) {
+                listTag.add(new com.nukkitx.nbt.tag.StringTag("", blockName.toString()));
+            }
+            tag.listTag("CanPlaceOn", com.nukkitx.nbt.tag.StringTag.class, listTag);
+        }
+
+        if (!this.enchantments.isEmpty()) {
+            List<CompoundTag> enchantmentTags = new ArrayList<>();
+            for (Enchantment enchantment : this.enchantments.values()) {
+                enchantmentTags.add(CompoundTag.builder()
+                        .shortTag("id", (short) enchantment.getId())
+                        .shortTag("lvl", (short) enchantment.getLevel())
+                        .buildRootTag());
+            }
+            tag.listTag("ench", CompoundTag.class, enchantmentTags);
+        }
+    }
+
+    public CompoundTag createTag() {
+        CompoundTagBuilder tag = CompoundTag.builder();
+        this.saveAdditionalData(tag);
+        return tag.buildRootTag();
+    }
+
+    public boolean canPlaceOn(Identifier identifier) {
+        return this.canPlaceOn.contains(identifier);
+    }
+
+    public boolean canDestroy(Identifier identifier) {
+        return this.canDestroy.contains(identifier);
     }
 
     public boolean hasCompoundTag() {
-        return this.tags != null && this.tags.length > 0;
+        return !this.tag.getValue().isEmpty();
     }
 
-    public boolean hasCustomBlockData() {
-        if (!this.hasCompoundTag()) {
-            return false;
-        }
-
-        CompoundTag tag = this.getNamedTag();
-        return tag.contains("BlockEntityTag") && tag.get("BlockEntityTag") instanceof CompoundTag;
-
-    }
-
-    public Item clearCustomBlockData() {
-        if (!this.hasCompoundTag()) {
-            return this;
-        }
-        CompoundTag tag = this.getNamedTag();
-
-        if (tag.contains("BlockEntityTag") && tag.get("BlockEntityTag") instanceof CompoundTag) {
-            tag.remove("BlockEntityTag");
-            this.setNamedTag(tag);
-        }
-
-        return this;
-    }
-
-    public Item setCustomBlockData(CompoundTag compoundTag) {
-        CompoundTag tags = compoundTag.copy();
-        tags.setName("BlockEntityTag");
-
-        CompoundTag tag;
-        if (!this.hasCompoundTag()) {
-            tag = new CompoundTag();
-        } else {
-            tag = this.getNamedTag();
-        }
-
-        tag.putCompound("BlockEntityTag", tags);
-        this.setNamedTag(tag);
-
-        return this;
-    }
-
-    public CompoundTag getCustomBlockData() {
-        if (!this.hasCompoundTag()) {
-            return null;
-        }
-
-        CompoundTag tag = this.getNamedTag();
-
-        if (tag.contains("BlockEntityTag")) {
-            Tag bet = tag.get("BlockEntityTag");
-            if (bet instanceof CompoundTag) {
-                return (CompoundTag) bet;
-            }
-        }
-
-        return null;
-    }
-
-    public boolean hasEnchantments() {
-        if (!this.hasCompoundTag()) {
-            return false;
-        }
-
-        CompoundTag tag = this.getNamedTag();
-
-        if (tag.contains("ench")) {
-            Tag enchTag = tag.get("ench");
-            return enchTag instanceof ListTag;
-        }
-
-        return false;
+    public CompoundTag getTag() {
+        return tag;
     }
 
     public Enchantment getEnchantment(int id) {
         return getEnchantment((short) (id & 0xffff));
     }
 
+    public void setTag(CompoundTag tag) {
+        this.tag = tag == null ? CompoundTag.EMPTY : tag;
+    }
+
+    public Item addTag(CompoundTag compoundTag) {
+        this.tag = this.tag.toBuilder().putAll(compoundTag).buildRootTag();
+        return this;
+    }
+
+    public boolean hasEnchantments() {
+        return !this.enchantments.isEmpty();
+    }
+
     public Enchantment getEnchantment(short id) {
-        if (!this.hasEnchantments()) {
-            return null;
-        }
-
-        for (CompoundTag entry : this.getNamedTag().getList("ench", CompoundTag.class).getAll()) {
-            if (entry.getShort("id") == id) {
-                Enchantment e = Enchantment.getEnchantment(entry.getShort("id"));
-                if (e != null) {
-                    e.setLevel(entry.getShort("lvl"), false);
-                    return e;
-                }
-            }
-        }
-
-        return null;
+        return this.enchantments.get(id);
     }
 
     public void addEnchantment(Enchantment... enchantments) {
-        CompoundTag tag;
-        if (!this.hasCompoundTag()) {
-            tag = new CompoundTag();
-        } else {
-            tag = this.getNamedTag();
-        }
-
-        ListTag<CompoundTag> ench;
-        if (!tag.contains("ench")) {
-            ench = new ListTag<>("ench");
-            tag.putList(ench);
-        } else {
-            ench = tag.getList("ench", CompoundTag.class);
-        }
-
         for (Enchantment enchantment : enchantments) {
-            boolean found = false;
-
-            for (int k = 0; k < ench.size(); k++) {
-                CompoundTag entry = ench.get(k);
-                if (entry.getShort("id") == enchantment.getId()) {
-                    ench.add(k, new CompoundTag()
-                            .putShort("id", enchantment.getId())
-                            .putShort("lvl", enchantment.getLevel())
-                    );
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found) {
-                ench.add(new CompoundTag()
-                        .putShort("id", enchantment.getId())
-                        .putShort("lvl", enchantment.getLevel())
-                );
-            }
+            this.enchantments.putIfAbsent((short) enchantment.getId(), enchantment);
         }
-
-        this.setNamedTag(tag);
     }
 
     public Enchantment[] getEnchantments() {
@@ -622,188 +402,42 @@ public class Item implements Cloneable, BlockID, ItemID {
             return new Enchantment[0];
         }
 
-        List<Enchantment> enchantments = new ArrayList<>();
-
-        ListTag<CompoundTag> ench = this.getNamedTag().getList("ench", CompoundTag.class);
-        for (CompoundTag entry : ench.getAll()) {
-            Enchantment e = Enchantment.getEnchantment(entry.getShort("id"));
-            if (e != null) {
-                e.setLevel(entry.getShort("lvl"), false);
-                enchantments.add(e);
-            }
-        }
-
-        return enchantments.toArray(new Enchantment[0]);
+        return this.enchantments.values().toArray(new Enchantment[0]);
     }
 
     public boolean hasCustomName() {
-        if (!this.hasCompoundTag()) {
-            return false;
-        }
-
-        CompoundTag tag = this.getNamedTag();
-        if (tag.contains("display")) {
-            Tag tag1 = tag.get("display");
-            return tag1 instanceof CompoundTag && ((CompoundTag) tag1).contains("Name") && ((CompoundTag) tag1).get("Name") instanceof StringTag;
-        }
-
-        return false;
+        return this.customName != null;
     }
 
+    @Nullable
     public String getCustomName() {
-        if (!this.hasCompoundTag()) {
-            return "";
-        }
-
-        CompoundTag tag = this.getNamedTag();
-        if (tag.contains("display")) {
-            Tag tag1 = tag.get("display");
-            if (tag1 instanceof CompoundTag && ((CompoundTag) tag1).contains("Name") && ((CompoundTag) tag1).get("Name") instanceof StringTag) {
-                return ((CompoundTag) tag1).getString("Name");
-            }
-        }
-
-        return "";
+        return this.customName;
     }
 
     public Item setCustomName(String name) {
-        if (name == null || name.equals("")) {
-            this.clearCustomName();
-        }
-
-        CompoundTag tag;
-        if (!this.hasCompoundTag()) {
-            tag = new CompoundTag();
-        } else {
-            tag = this.getNamedTag();
-        }
-        if (tag.contains("display") && tag.get("display") instanceof CompoundTag) {
-            tag.getCompound("display").putString("Name", name);
-        } else {
-            tag.putCompound("display", new CompoundTag("display")
-                    .putString("Name", name)
-            );
-        }
-        this.setNamedTag(tag);
+        this.customName = name;
         return this;
     }
 
     public Item clearCustomName() {
-        if (!this.hasCompoundTag()) {
-            return this;
-        }
-
-        CompoundTag tag = this.getNamedTag();
-
-        if (tag.contains("display") && tag.get("display") instanceof CompoundTag) {
-            tag.getCompound("display").remove("Name");
-            if (tag.getCompound("display").isEmpty()) {
-                tag.remove("display");
-            }
-
-            this.setNamedTag(tag);
-        }
-
+        this.customName = null;
         return this;
     }
 
-    public String[] getLore() {
-        Tag tag = this.getNamedTagEntry("display");
-        ArrayList<String> lines = new ArrayList<>();
-
-        if (tag instanceof CompoundTag) {
-            CompoundTag nbt = (CompoundTag) tag;
-            ListTag<StringTag> lore = nbt.getList("Lore", StringTag.class);
-
-            if (lore.size() > 0) {
-                for (StringTag stringTag : lore.getAll()) {
-                    lines.add(stringTag.data);
-                }
-            }
-        }
-
-        return lines.toArray(new String[0]);
+    public void decrementCount() {
+        this.decrementCount(1);
     }
 
-    public Item setLore(String... lines) {
-        CompoundTag tag;
-        if (!this.hasCompoundTag()) {
-            tag = new CompoundTag();
-        } else {
-            tag = this.getNamedTag();
-        }
-        ListTag<StringTag> lore = new ListTag<>("Lore");
-
-        for (String line : lines) {
-            lore.add(new StringTag("", line));
-        }
-
-        if (!tag.contains("display")) {
-            tag.putCompound("display", new CompoundTag("display").putList(lore));
-        } else {
-            tag.getCompound("display").putList(lore);
-        }
-
-        this.setNamedTag(tag);
-        return this;
+    public void decrementCount(int amount) {
+        this.count -= amount;
     }
 
-    public Tag getNamedTagEntry(String name) {
-        CompoundTag tag = this.getNamedTag();
-        if (tag != null) {
-            return tag.contains(name) ? tag.get(name) : null;
-        }
-
-        return null;
+    public void incrementCount() {
+        this.incrementCount(1);
     }
 
-    public CompoundTag getNamedTag() {
-        if (!this.hasCompoundTag()) {
-            return null;
-        }
-
-        if (this.cachedNBT == null) {
-            this.cachedNBT = parseCompoundTag(this.tags);
-        }
-
-        if (this.cachedNBT != null) {
-            this.cachedNBT.setName("");
-        }
-
-        return this.cachedNBT;
-    }
-
-    public Item setNamedTag(CompoundTag tag) {
-        if (tag.isEmpty()) {
-            return this.clearNamedTag();
-        }
-        tag.setName(null);
-
-        this.cachedNBT = tag;
-        this.tags = writeCompoundTag(tag);
-
-        return this;
-    }
-
-    public Item clearNamedTag() {
-        return this.setCompoundTag(new byte[0]);
-    }
-
-    public static CompoundTag parseCompoundTag(byte[] tag) {
-        try {
-            return NBTIO.read(tag, ByteOrder.LITTLE_ENDIAN);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public byte[] writeCompoundTag(CompoundTag tag) {
-        try {
-            tag.setName("");
-            return NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public void incrementCount(int amount) {
+        this.count += amount;
     }
 
     public int getCount() {
@@ -819,35 +453,35 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     final public String getName() {
-        return this.hasCustomName() ? this.getCustomName() : this.name;
+        return this.getCustomName();
     }
 
     final public boolean canBePlaced() {
-        return ((this.block != null) && this.block.canBePlaced());
+        return this.getBlock().canBePlaced();
     }
 
     public Block getBlock() {
-        if (this.block != null) {
-            return this.block.clone();
-        } else {
-            return new BlockAir();
-        }
+        return Block.get(AIR);
     }
 
-    public int getId() {
+    public Identifier getId() {
         return id;
     }
 
-    public int getDamage() {
-        return meta;
+    public String[] getLore() {
+        return this.lore.toArray(new String[0]);
     }
 
-    public void setDamage(Integer meta) {
-        if (meta != null) {
-            this.meta = meta & 0xffff;
-        } else {
-            this.hasMeta = false;
-        }
+    public Item setLore(Collection<String> lines) {
+        this.lore.clear();
+        this.lore.addAll(lines);
+        return this;
+    }
+
+    public Item setLore(String... lines) {
+        this.lore.clear();
+        Collections.addAll(this.lore, lines);
+        return this;
     }
 
     public int getMaxStackSize() {
@@ -956,16 +590,15 @@ public class Item implements Cloneable, BlockID, ItemID {
         return false;
     }
 
-    @Override
-    final public String toString() {
-        return "Item " + this.name + " (" + this.id + ":" + (!this.hasMeta ? "?" : this.meta) + ")x" + this.count + (this.hasCompoundTag() ? " tags:0x" + Binary.bytesToHexString(this.getCompoundTag()) : "");
+    public int getMeta() {
+        return meta == 0xffff ? 0 : meta;
     }
 
     public int getDestroySpeed(Block block, Player player) {
         return 1;
     }
 
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, Vector3f clickPos) {
         return false;
     }
 
@@ -973,11 +606,11 @@ public class Item implements Cloneable, BlockID, ItemID {
      * Called when a player uses the item on air, for example throwing a projectile.
      * Returns whether the item was changed, for example count decrease or durability change.
      *
-     * @param player player
+     * @param player          player
      * @param directionVector direction
      * @return item changed
      */
-    public boolean onClickAir(Player player, Vector3 directionVector) {
+    public boolean onClickAir(Player player, Vector3f directionVector) {
         return false;
     }
 
@@ -990,20 +623,9 @@ public class Item implements Cloneable, BlockID, ItemID {
         return equals(item, checkDamage, true);
     }
 
-    public final boolean equals(Item item, boolean checkDamage, boolean checkCompound) {
-        if (this.getId() == item.getId() && (!checkDamage || this.getDamage() == item.getDamage())) {
-            if (checkCompound) {
-                if (Arrays.equals(this.getCompoundTag(), item.getCompoundTag())) {
-                    return true;
-                } else if (this.hasCompoundTag() && item.hasCompoundTag()) {
-                    return this.getNamedTag().equals(item.getNamedTag());
-                }
-            } else {
-                return true;
-            }
-        }
-
-        return false;
+    public void setMeta(int meta) {
+        this.meta = meta & 0xffff;
+        this.onMetaChange(this.meta);
     }
 
     /**
@@ -1031,14 +653,57 @@ public class Item implements Cloneable, BlockID, ItemID {
         return equals(item, checkDamage, checkCompound);
     }
 
+    protected void onMetaChange(int newMeta) {
+    }
+
+    @Override
+    final public String toString() {
+        return "Item(id=" + this.id +
+                ", meta=" + this.meta +
+                ", count=" + this.count +
+                ", customName=" + this.customName +
+                ", enchantments=" + this.enchantments +
+                ")";
+    }
+
+    public final boolean equals(Item that, boolean checkDamage, boolean checkCompound) {
+        if (this.id == that.id && (!checkDamage || this.meta == that.meta)) {
+            if (!checkCompound) {
+                return true;
+            }
+            CompoundTagBuilder thisTag = CompoundTag.builder();
+            CompoundTagBuilder thatTag = CompoundTag.builder();
+            this.saveAdditionalData(thisTag);
+            that.saveAdditionalData(thatTag);
+            return thisTag.buildRootTag().equals(thatTag.buildRootTag());
+        }
+        return false;
+    }
+
     @Override
     public Item clone() {
         try {
-            Item item = (Item) super.clone();
-            item.tags = this.tags.clone();
-            return item;
+            return (Item) super.clone();
         } catch (CloneNotSupportedException e) {
             return null;
         }
+    }
+
+    public int getNetworkId() {
+        return ItemRegistry.get().getRuntimeId(this.id);
+    }
+
+    public ItemData toNetwork() {
+        int id = ItemRegistry.get().getRuntimeId(this.id);
+
+        CompoundTagBuilder tagBuilder = CompoundTag.builder();
+        this.saveAdditionalData(tagBuilder);
+        CompoundTag tag = tagBuilder.buildRootTag();
+        if (tag.getValue().isEmpty()) tag = null;
+
+        String[] canPlace = this.canPlaceOn.stream().map(Identifier::toString).toArray(String[]::new);
+        String[] canBreak = this.canDestroy.stream().map(Identifier::toString).toArray(String[]::new);
+
+        return ItemData.of(id, (short) this.meta, this.count, tag, canPlace, canBreak);
     }
 }

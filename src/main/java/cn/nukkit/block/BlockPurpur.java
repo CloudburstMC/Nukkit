@@ -1,49 +1,31 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
-public class BlockPurpur extends BlockSolidMeta {
+import static cn.nukkit.block.BlockIds.PURPUR_BLOCK;
+
+public class BlockPurpur extends BlockSolid {
 
     public static final int PURPUR_NORMAL = 0;
     public static final int PURPUR_PILLAR = 2;
 
-    public BlockPurpur() {
-        this(0);
-    }
-
-    public BlockPurpur(int meta) {
-        super(meta);
+    public BlockPurpur(Identifier id) {
+        super(id);
     }
 
     @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Purpur Block",
-                "",
-                "Purpur Pillar",
-                ""
-        };
-
-        return names[this.getDamage() & 0x03];
+    public float getHardness() {
+        return 1.5f;
     }
 
     @Override
-    public int getId() {
-        return PURPUR_BLOCK;
-    }
-
-    @Override
-    public double getHardness() {
-        return 1.5;
-    }
-
-    @Override
-    public double getResistance() {
+    public float getResistance() {
         return 30;
     }
 
@@ -53,8 +35,8 @@ public class BlockPurpur extends BlockSolidMeta {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (this.getDamage() != PURPUR_NORMAL) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        if (this.getMeta() != PURPUR_NORMAL) {
             short[] faces = new short[]{
                     0,
                     0,
@@ -64,9 +46,9 @@ public class BlockPurpur extends BlockSolidMeta {
                     0b0100
             };
 
-            this.setDamage(((this.getDamage() & 0x03) | faces[face.getIndex()]));
+            this.setMeta(((this.getMeta() & 0x03) | faces[face.getIndex()]));
         }
-        this.getLevel().setBlock(block, this, true, true);
+        this.getLevel().setBlock(block.getPosition(), this, true, true);
 
         return true;
     }
@@ -84,7 +66,7 @@ public class BlockPurpur extends BlockSolidMeta {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(new BlockPurpur(), this.getDamage() & 0x03, 1);
+        return Item.get(PURPUR_BLOCK, this.getMeta() & 0x03, 1);
     }
 
     @Override

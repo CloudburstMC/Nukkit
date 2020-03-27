@@ -5,30 +5,17 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * @author Nukkit Project Team
  */
 public class BlockPressurePlateWood extends BlockPressurePlateBase {
 
-    public BlockPressurePlateWood(int meta) {
-        super(meta);
+    public BlockPressurePlateWood(Identifier id) {
+        super(id);
         this.onPitch = 0.8f;
         this.offPitch = 0.7f;
-    }
-
-    public BlockPressurePlateWood() {
-        this(0);
-    }
-
-    @Override
-    public String getName() {
-        return "Wooden Pressure Plate";
-    }
-
-    @Override
-    public int getId() {
-        return WOODEN_PRESSURE_PLATE;
     }
 
     @Override
@@ -37,13 +24,13 @@ public class BlockPressurePlateWood extends BlockPressurePlateBase {
     }
 
     @Override
-    public double getHardness() {
-        return 0.5D;
+    public float getHardness() {
+        return 0.5f;
     }
 
     @Override
-    public double getResistance() {
-        return 2.5D;
+    public float getResistance() {
+        return 2.5f;
     }
 
     @Override
@@ -63,7 +50,7 @@ public class BlockPressurePlateWood extends BlockPressurePlateBase {
         AxisAlignedBB bb = getCollisionBoundingBox();
 
         for (Entity entity : this.level.getCollidingEntities(bb)) {
-            if (entity.doesTriggerPressurePlate()) {
+            if (entity.canTriggerPressurePlate()) {
                 return 15;
             }
         }

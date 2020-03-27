@@ -1,32 +1,20 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.RED_MUSHROOM;
 
 /**
  * Created by Pub4Game on 28.01.2016.
  */
-public class BlockHugeMushroomRed extends BlockSolidMeta {
+public class BlockHugeMushroomRed extends BlockSolid {
 
-    public BlockHugeMushroomRed() {
-        this(0);
-    }
-
-    public BlockHugeMushroomRed(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Red Mushroom Block";
-    }
-
-    @Override
-    public int getId() {
-        return RED_MUSHROOM_BLOCK;
+    public BlockHugeMushroomRed(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -35,12 +23,12 @@ public class BlockHugeMushroomRed extends BlockSolidMeta {
     }
 
     @Override
-    public double getHardness() {
-        return 0.2;
+    public float getHardness() {
+        return 0.2f;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 1;
     }
 
@@ -48,7 +36,7 @@ public class BlockHugeMushroomRed extends BlockSolidMeta {
     public Item[] getDrops(Item item) {
         if (new NukkitRandom().nextRange(1, 20) == 0) {
             return new Item[]{
-                    new ItemBlock(new BlockMushroomRed())
+                    Item.get(RED_MUSHROOM)
             };
         } else {
             return new Item[0];

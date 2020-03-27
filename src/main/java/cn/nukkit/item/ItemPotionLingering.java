@@ -1,21 +1,39 @@
 package cn.nukkit.item;
 
-public class ItemPotionLingering extends Item {
+import cn.nukkit.entity.EntityType;
+import cn.nukkit.entity.EntityTypes;
+import cn.nukkit.entity.Projectile;
+import cn.nukkit.entity.projectile.LingeringPotion;
+import cn.nukkit.utils.Identifier;
 
-    public ItemPotionLingering() {
-        this(0, 1);
-    }
+public class ItemPotionLingering extends ProjectileItem {
 
-    public ItemPotionLingering(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemPotionLingering(Integer meta, int count) {
-        super(POTION, meta, count, "Lingering Potion");
+    public ItemPotionLingering(Identifier id) {
+        super(id);
     }
 
     @Override
     public int getMaxStackSize() {
         return 1;
+    }
+
+    @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+
+    @Override
+    public EntityType<? extends Projectile> getProjectileEntityType() {
+        return EntityTypes.LINGERING_POTION;
+    }
+
+    @Override
+    public float getThrowForce() {
+        return 0.5f;
+    }
+
+    @Override
+    protected void onProjectileCreation(Projectile projectile) {
+        ((LingeringPotion) projectile).setPotionId(this.getMeta());
     }
 }

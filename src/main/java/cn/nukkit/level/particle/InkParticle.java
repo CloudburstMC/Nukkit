@@ -1,6 +1,7 @@
 package cn.nukkit.level.particle;
 
-import cn.nukkit.math.Vector3;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.protocol.bedrock.data.LevelEventType;
 
 /**
  * Created on 2015/11/21 by xtypr.
@@ -8,11 +9,11 @@ import cn.nukkit.math.Vector3;
  */
 public class InkParticle extends GenericParticle {
 
-    public InkParticle(Vector3 pos) {
+    public InkParticle(Vector3f pos) {
         this(pos, 0);
     }
 
-    public InkParticle(Vector3 pos, int scale) {
-        super(pos, Particle.TYPE_INK, scale);
+    public InkParticle(Vector3f pos, int scale) {
+        super(pos, LevelEventType.PARTICLE_INK, scale);
     }
 }

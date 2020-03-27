@@ -1,10 +1,11 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemQuartz;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.utils.Identifier;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -14,26 +15,17 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class BlockOreQuartz extends BlockSolid {
 
-    public BlockOreQuartz() {
+    public BlockOreQuartz(Identifier id) {
+        super(id);
     }
 
     @Override
-    public String getName() {
-        return "Quartz Ore";
-    }
-
-    @Override
-    public int getId() {
-        return QUARTZ_ORE;
-    }
-
-    @Override
-    public double getHardness() {
+    public float getHardness() {
         return 3;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 5;
     }
 
@@ -58,7 +50,7 @@ public class BlockOreQuartz extends BlockSolid {
             }
 
             return new Item[]{
-                    new ItemQuartz(0, count)
+                    Item.get(ItemIds.QUARTZ, 0, count)
             };
         } else {
             return new Item[0];

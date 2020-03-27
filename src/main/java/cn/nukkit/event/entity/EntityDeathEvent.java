@@ -1,6 +1,6 @@
 package cn.nukkit.event.entity;
 
-import cn.nukkit.entity.EntityLiving;
+import cn.nukkit.entity.impl.EntityLiving;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.item.Item;
 

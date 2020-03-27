@@ -2,8 +2,10 @@ package cn.nukkit.block;
 
 import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.REDSTONE_ORE;
 
 //和pm源码有点出入，这里参考了wiki
 
@@ -13,17 +15,8 @@ import cn.nukkit.level.Level;
  */
 public class BlockOreRedstoneGlowing extends BlockOreRedstone {
 
-    public BlockOreRedstoneGlowing() {
-    }
-
-    @Override
-    public String getName() {
-        return "Glowing Redstone Ore";
-    }
-
-    @Override
-    public int getId() {
-        return GLOWING_REDSTONE_ORE;
+    public BlockOreRedstoneGlowing(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -33,7 +26,7 @@ public class BlockOreRedstoneGlowing extends BlockOreRedstone {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(new BlockOreRedstone());
+        return Item.get(REDSTONE_ORE);
     }
 
     @Override
@@ -42,7 +35,7 @@ public class BlockOreRedstoneGlowing extends BlockOreRedstone {
             BlockFadeEvent event = new BlockFadeEvent(this, get(REDSTONE_ORE));
             level.getServer().getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
-                level.setBlock(this, event.getNewState(), false, false);
+                level.setBlock(this.getPosition(), event.getNewState(), false, false);
             }
 
             return Level.BLOCK_UPDATE_WEAK;

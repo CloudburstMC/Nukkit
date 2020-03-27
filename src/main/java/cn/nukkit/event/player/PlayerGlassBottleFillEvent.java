@@ -1,9 +1,9 @@
 package cn.nukkit.event.player;
 
-import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.item.Item;
+import cn.nukkit.player.Player;
 
 public class PlayerGlassBottleFillEvent extends PlayerEvent implements Cancellable {
 

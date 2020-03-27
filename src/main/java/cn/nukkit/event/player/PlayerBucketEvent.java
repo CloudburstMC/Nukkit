@@ -1,12 +1,12 @@
 package cn.nukkit.event.player;
 
-import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.player.Player;
 
-abstract class PlayerBucketEvent extends PlayerEvent implements Cancellable {
+public abstract class PlayerBucketEvent extends PlayerEvent implements Cancellable {
 
     private final Block blockClicked;
 

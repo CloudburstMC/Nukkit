@@ -1,397 +1,196 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.MovingObjectPosition;
-import cn.nukkit.level.Position;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
+import cn.nukkit.player.Player;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
+import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.math.vector.Vector3i;
+import com.nukkitx.math.vector.Vector4i;
 
-import java.lang.reflect.Constructor;
+import javax.annotation.Nonnegative;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static cn.nukkit.block.BlockIds.*;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Block extends Position implements Metadatable, Cloneable, AxisAlignedBB, BlockID {
-    public static Class[] list = null;
-    public static Block[] fullList = null;
-    public static int[] light = null;
-    public static int[] lightFilter = null;
-    public static boolean[] solid = null;
-    public static double[] hardness = null;
-    public static boolean[] transparent = null;
-    /**
-     * if a block has can have variants
-     */
-    public static boolean[] hasMeta = null;
 
-    protected Block() {}
+public abstract class Block implements Metadatable, Cloneable, AxisAlignedBB {
 
-    @SuppressWarnings("unchecked")
-    public static void init() {
-        if (list == null) {
-            list = new Class[256];
-            fullList = new Block[4096];
-            light = new int[256];
-            lightFilter = new int[256];
-            solid = new boolean[256];
-            hardness = new double[256];
-            transparent = new boolean[256];
-            hasMeta = new boolean[256];
+    protected final Identifier id;
+    protected int meta;
+    protected Vector3i position;
+    protected int layer;
+    protected Level level;
 
-            list[AIR] = BlockAir.class; //0
-            list[STONE] = BlockStone.class; //1
-            list[GRASS] = BlockGrass.class; //2
-            list[DIRT] = BlockDirt.class; //3
-            list[COBBLESTONE] = BlockCobblestone.class; //4
-            list[PLANKS] = BlockPlanks.class; //5
-            list[SAPLING] = BlockSapling.class; //6
-            list[BEDROCK] = BlockBedrock.class; //7
-            list[WATER] = BlockWater.class; //8
-            list[STILL_WATER] = BlockWaterStill.class; //9
-            list[LAVA] = BlockLava.class; //10
-            list[STILL_LAVA] = BlockLavaStill.class; //11
-            list[SAND] = BlockSand.class; //12
-            list[GRAVEL] = BlockGravel.class; //13
-            list[GOLD_ORE] = BlockOreGold.class; //14
-            list[IRON_ORE] = BlockOreIron.class; //15
-            list[COAL_ORE] = BlockOreCoal.class; //16
-            list[WOOD] = BlockWood.class; //17
-            list[LEAVES] = BlockLeaves.class; //18
-            list[SPONGE] = BlockSponge.class; //19
-            list[GLASS] = BlockGlass.class; //20
-            list[LAPIS_ORE] = BlockOreLapis.class; //21
-            list[LAPIS_BLOCK] = BlockLapis.class; //22
-            list[DISPENSER] = BlockDispenser.class; //23
-            list[SANDSTONE] = BlockSandstone.class; //24
-            list[NOTEBLOCK] = BlockNoteblock.class; //25
-            list[BED_BLOCK] = BlockBed.class; //26
-            list[POWERED_RAIL] = BlockRailPowered.class; //27
-            list[DETECTOR_RAIL] = BlockRailDetector.class; //28
-            list[STICKY_PISTON] = BlockPistonSticky.class; //29
-            list[COBWEB] = BlockCobweb.class; //30
-            list[TALL_GRASS] = BlockTallGrass.class; //31
-            list[DEAD_BUSH] = BlockDeadBush.class; //32
-            list[PISTON] = BlockPiston.class; //33
-            list[PISTON_HEAD] = BlockPistonHead.class; //34
-            list[WOOL] = BlockWool.class; //35
-            list[DANDELION] = BlockDandelion.class; //37
-            list[FLOWER] = BlockFlower.class; //38
-            list[BROWN_MUSHROOM] = BlockMushroomBrown.class; //39
-            list[RED_MUSHROOM] = BlockMushroomRed.class; //40
-            list[GOLD_BLOCK] = BlockGold.class; //41
-            list[IRON_BLOCK] = BlockIron.class; //42
-            list[DOUBLE_STONE_SLAB] = BlockDoubleSlabStone.class; //43
-            list[STONE_SLAB] = BlockSlabStone.class; //44
-            list[BRICKS_BLOCK] = BlockBricks.class; //45
-            list[TNT] = BlockTNT.class; //46
-            list[BOOKSHELF] = BlockBookshelf.class; //47
-            list[MOSS_STONE] = BlockMossStone.class; //48
-            list[OBSIDIAN] = BlockObsidian.class; //49
-            list[TORCH] = BlockTorch.class; //50
-            list[FIRE] = BlockFire.class; //51
-            list[MONSTER_SPAWNER] = BlockMobSpawner.class; //52
-            list[WOOD_STAIRS] = BlockStairsWood.class; //53
-            list[CHEST] = BlockChest.class; //54
-            list[REDSTONE_WIRE] = BlockRedstoneWire.class; //55
-            list[DIAMOND_ORE] = BlockOreDiamond.class; //56
-            list[DIAMOND_BLOCK] = BlockDiamond.class; //57
-            list[WORKBENCH] = BlockCraftingTable.class; //58
-            list[WHEAT_BLOCK] = BlockWheat.class; //59
-            list[FARMLAND] = BlockFarmland.class; //60
-            list[FURNACE] = BlockFurnace.class; //61
-            list[BURNING_FURNACE] = BlockFurnaceBurning.class; //62
-            list[SIGN_POST] = BlockSignPost.class; //63
-            list[WOOD_DOOR_BLOCK] = BlockDoorWood.class; //64
-            list[LADDER] = BlockLadder.class; //65
-            list[RAIL] = BlockRail.class; //66
-            list[COBBLESTONE_STAIRS] = BlockStairsCobblestone.class; //67
-            list[WALL_SIGN] = BlockWallSign.class; //68
-            list[LEVER] = BlockLever.class; //69
-            list[STONE_PRESSURE_PLATE] = BlockPressurePlateStone.class; //70
-            list[IRON_DOOR_BLOCK] = BlockDoorIron.class; //71
-            list[WOODEN_PRESSURE_PLATE] = BlockPressurePlateWood.class; //72
-            list[REDSTONE_ORE] = BlockOreRedstone.class; //73
-            list[GLOWING_REDSTONE_ORE] = BlockOreRedstoneGlowing.class; //74
-            list[UNLIT_REDSTONE_TORCH] = BlockRedstoneTorchUnlit.class;
-            list[REDSTONE_TORCH] = BlockRedstoneTorch.class; //76
-            list[STONE_BUTTON] = BlockButtonStone.class; //77
-            list[SNOW_LAYER] = BlockSnowLayer.class; //78
-            list[ICE] = BlockIce.class; //79
-            list[SNOW_BLOCK] = BlockSnow.class; //80
-            list[CACTUS] = BlockCactus.class; //81
-            list[CLAY_BLOCK] = BlockClay.class; //82
-            list[SUGARCANE_BLOCK] = BlockSugarcane.class; //83
-            list[JUKEBOX] = BlockJukebox.class; //84
-            list[FENCE] = BlockFence.class; //85
-            list[PUMPKIN] = BlockPumpkin.class; //86
-            list[NETHERRACK] = BlockNetherrack.class; //87
-            list[SOUL_SAND] = BlockSoulSand.class; //88
-            list[GLOWSTONE_BLOCK] = BlockGlowstone.class; //89
-            list[NETHER_PORTAL] = BlockNetherPortal.class; //90
-            list[LIT_PUMPKIN] = BlockPumpkinLit.class; //91
-            list[CAKE_BLOCK] = BlockCake.class; //92
-            list[UNPOWERED_REPEATER] = BlockRedstoneRepeaterUnpowered.class; //93
-            list[POWERED_REPEATER] = BlockRedstoneRepeaterPowered.class; //94
-            list[INVISIBLE_BEDROCK] = BlockBedrockInvisible.class; //95
-            list[TRAPDOOR] = BlockTrapdoor.class; //96
-            list[MONSTER_EGG] = BlockMonsterEgg.class; //97
-            list[STONE_BRICKS] = BlockBricksStone.class; //98
-            list[BROWN_MUSHROOM_BLOCK] = BlockHugeMushroomBrown.class; //99
-            list[RED_MUSHROOM_BLOCK] = BlockHugeMushroomRed.class; //100
-            list[IRON_BARS] = BlockIronBars.class; //101
-            list[GLASS_PANE] = BlockGlassPane.class; //102
-            list[MELON_BLOCK] = BlockMelon.class; //103
-            list[PUMPKIN_STEM] = BlockStemPumpkin.class; //104
-            list[MELON_STEM] = BlockStemMelon.class; //105
-            list[VINE] = BlockVine.class; //106
-            list[FENCE_GATE] = BlockFenceGate.class; //107
-            list[BRICK_STAIRS] = BlockStairsBrick.class; //108
-            list[STONE_BRICK_STAIRS] = BlockStairsStoneBrick.class; //109
-            list[MYCELIUM] = BlockMycelium.class; //110
-            list[WATER_LILY] = BlockWaterLily.class; //111
-            list[NETHER_BRICKS] = BlockBricksNether.class; //112
-            list[NETHER_BRICK_FENCE] = BlockFenceNetherBrick.class; //113
-            list[NETHER_BRICKS_STAIRS] = BlockStairsNetherBrick.class; //114
-            list[NETHER_WART_BLOCK] = BlockNetherWart.class; //115
-            list[ENCHANTING_TABLE] = BlockEnchantingTable.class; //116
-            list[BREWING_STAND_BLOCK] = BlockBrewingStand.class; //117
-            list[CAULDRON_BLOCK] = BlockCauldron.class; //118
-            list[END_PORTAL] = BlockEndPortal.class; //119
-            list[END_PORTAL_FRAME] = BlockEndPortalFrame.class; //120
-            list[END_STONE] = BlockEndStone.class; //121
-            list[DRAGON_EGG] = BlockDragonEgg.class; //122
-            list[REDSTONE_LAMP] = BlockRedstoneLamp.class; //123
-            list[LIT_REDSTONE_LAMP] = BlockRedstoneLampLit.class; //124
-            list[DROPPER] = BlockDropper.class; //125
-            list[ACTIVATOR_RAIL] = BlockRailActivator.class; //126
-            list[COCOA] = BlockCocoa.class; //127
-            list[SANDSTONE_STAIRS] = BlockStairsSandstone.class; //128
-            list[EMERALD_ORE] = BlockOreEmerald.class; //129
-            list[ENDER_CHEST] = BlockEnderChest.class; //130
-            list[TRIPWIRE_HOOK] = BlockTripWireHook.class;
-            list[TRIPWIRE] = BlockTripWire.class; //132
-            list[EMERALD_BLOCK] = BlockEmerald.class; //133
-            list[SPRUCE_WOOD_STAIRS] = BlockStairsSpruce.class; //134
-            list[BIRCH_WOOD_STAIRS] = BlockStairsBirch.class; //135
-            list[JUNGLE_WOOD_STAIRS] = BlockStairsJungle.class; //136
+    public Block(Identifier id) {
+        this.id = id;
+    }
 
-            list[BEACON] = BlockBeacon.class; //138
-            list[STONE_WALL] = BlockWall.class; //139
-            list[FLOWER_POT_BLOCK] = BlockFlowerPot.class; //140
-            list[CARROT_BLOCK] = BlockCarrot.class; //141
-            list[POTATO_BLOCK] = BlockPotato.class; //142
-            list[WOODEN_BUTTON] = BlockButtonWooden.class; //143
-            list[SKULL_BLOCK] = BlockSkull.class; //144
-            list[ANVIL] = BlockAnvil.class; //145
-            list[TRAPPED_CHEST] = BlockTrappedChest.class; //146
-            list[LIGHT_WEIGHTED_PRESSURE_PLATE] = BlockWeightedPressurePlateLight.class; //147
-            list[HEAVY_WEIGHTED_PRESSURE_PLATE] = BlockWeightedPressurePlateHeavy.class; //148
-            list[UNPOWERED_COMPARATOR] = BlockRedstoneComparatorUnpowered.class; //149
-            list[POWERED_COMPARATOR] = BlockRedstoneComparatorPowered.class; //149
-            list[DAYLIGHT_DETECTOR] = BlockDaylightDetector.class; //151
-            list[REDSTONE_BLOCK] = BlockRedstone.class; //152
-            list[QUARTZ_ORE] = BlockOreQuartz.class; //153
-            list[HOPPER_BLOCK] = BlockHopper.class; //154
-            list[QUARTZ_BLOCK] = BlockQuartz.class; //155
-            list[QUARTZ_STAIRS] = BlockStairsQuartz.class; //156
-            list[DOUBLE_WOOD_SLAB] = BlockDoubleSlabWood.class; //157
-            list[WOOD_SLAB] = BlockSlabWood.class; //158
-            list[STAINED_TERRACOTTA] = BlockTerracottaStained.class; //159
-            list[STAINED_GLASS_PANE] = BlockGlassPaneStained.class; //160
+    public static long key(Vector3i position) {
+        return key(position.getX(), position.getY(), position.getZ());
+    }
 
-            list[LEAVES2] = BlockLeaves2.class; //161
-            list[WOOD2] = BlockWood2.class; //162
-            list[ACACIA_WOOD_STAIRS] = BlockStairsAcacia.class; //163
-            list[DARK_OAK_WOOD_STAIRS] = BlockStairsDarkOak.class; //164
-            list[SLIME_BLOCK] = BlockSlime.class; //165
-
-            list[IRON_TRAPDOOR] = BlockTrapdoorIron.class; //167
-            list[PRISMARINE] = BlockPrismarine.class; //168
-            list[SEA_LANTERN] = BlockSeaLantern.class; //169
-            list[HAY_BALE] = BlockHayBale.class; //170
-            list[CARPET] = BlockCarpet.class; //171
-            list[TERRACOTTA] = BlockTerracotta.class; //172
-            list[COAL_BLOCK] = BlockCoal.class; //173
-            list[PACKED_ICE] = BlockIcePacked.class; //174
-            list[DOUBLE_PLANT] = BlockDoublePlant.class; //175
-            list[STANDING_BANNER] = BlockBanner.class; //176
-            list[WALL_BANNER] = BlockWallBanner.class; //177
-            list[DAYLIGHT_DETECTOR_INVERTED] = BlockDaylightDetectorInverted.class; //178
-            list[RED_SANDSTONE] = BlockRedSandstone.class; //179
-            list[RED_SANDSTONE_STAIRS] = BlockStairsRedSandstone.class; //180
-            list[DOUBLE_RED_SANDSTONE_SLAB] = BlockDoubleSlabRedSandstone.class; //181
-            list[RED_SANDSTONE_SLAB] = BlockSlabRedSandstone.class; //182
-            list[FENCE_GATE_SPRUCE] = BlockFenceGateSpruce.class; //183
-            list[FENCE_GATE_BIRCH] = BlockFenceGateBirch.class; //184
-            list[FENCE_GATE_JUNGLE] = BlockFenceGateJungle.class; //185
-            list[FENCE_GATE_DARK_OAK] = BlockFenceGateDarkOak.class; //186
-            list[FENCE_GATE_ACACIA] = BlockFenceGateAcacia.class; //187
-
-            list[SPRUCE_DOOR_BLOCK] = BlockDoorSpruce.class; //193
-            list[BIRCH_DOOR_BLOCK] = BlockDoorBirch.class; //194
-            list[JUNGLE_DOOR_BLOCK] = BlockDoorJungle.class; //195
-            list[ACACIA_DOOR_BLOCK] = BlockDoorAcacia.class; //196
-            list[DARK_OAK_DOOR_BLOCK] = BlockDoorDarkOak.class; //197
-            list[GRASS_PATH] = BlockGrassPath.class; //198
-            list[ITEM_FRAME_BLOCK] = BlockItemFrame.class; //199
-            list[CHORUS_FLOWER] = BlockChorusFlower.class; //200
-            list[PURPUR_BLOCK] = BlockPurpur.class; //201
-
-            list[PURPUR_STAIRS] = BlockStairsPurpur.class; //203
-            
-            list[UNDYED_SHULKER_BOX] = BlockUndyedShulkerBox.class; //205
-            list[END_BRICKS] = BlockBricksEndStone.class; //206
-
-            list[END_ROD] = BlockEndRod.class; //208
-            list[END_GATEWAY] = BlockEndGateway.class; //209
-
-            list[MAGMA] = BlockMagma.class; //213
-            list[BLOCK_NETHER_WART_BLOCK] = BlockNetherWartBlock.class; //214
-            list[RED_NETHER_BRICK] = BlockBricksRedNether.class; //215
-            list[BONE_BLOCK] = BlockBone.class; //216
-
-            list[SHULKER_BOX] = BlockShulkerBox.class; //218
-            list[PURPLE_GLAZED_TERRACOTTA] = BlockTerracottaGlazedPurple.class; //219
-            list[WHITE_GLAZED_TERRACOTTA] = BlockTerracottaGlazedWhite.class; //220
-            list[ORANGE_GLAZED_TERRACOTTA] = BlockTerracottaGlazedOrange.class; //221
-            list[MAGENTA_GLAZED_TERRACOTTA] = BlockTerracottaGlazedMagenta.class; //222
-            list[LIGHT_BLUE_GLAZED_TERRACOTTA] = BlockTerracottaGlazedLightBlue.class; //223
-            list[YELLOW_GLAZED_TERRACOTTA] = BlockTerracottaGlazedYellow.class; //224
-            list[LIME_GLAZED_TERRACOTTA] = BlockTerracottaGlazedLime.class; //225
-            list[PINK_GLAZED_TERRACOTTA] = BlockTerracottaGlazedPink.class; //226
-            list[GRAY_GLAZED_TERRACOTTA] = BlockTerracottaGlazedGray.class; //227
-            list[SILVER_GLAZED_TERRACOTTA] = BlockTerracottaGlazedSilver.class; //228
-            list[CYAN_GLAZED_TERRACOTTA] = BlockTerracottaGlazedCyan.class; //229
-
-            list[BLUE_GLAZED_TERRACOTTA] = BlockTerracottaGlazedBlue.class; //231
-            list[BROWN_GLAZED_TERRACOTTA] = BlockTerracottaGlazedBrown.class; //232
-            list[GREEN_GLAZED_TERRACOTTA] = BlockTerracottaGlazedGreen.class; //233
-            list[RED_GLAZED_TERRACOTTA] = BlockTerracottaGlazedRed.class; //234
-            list[BLACK_GLAZED_TERRACOTTA] = BlockTerracottaGlazedBlack.class; //235
-            list[CONCRETE] = BlockConcrete.class; //236
-            list[CONCRETE_POWDER] = BlockConcretePowder.class; //237
-
-            list[CHORUS_PLANT] = BlockChorusPlant.class; //240
-            list[STAINED_GLASS] = BlockGlassStained.class; //241
-            list[PODZOL] = BlockPodzol.class; //243
-            list[BEETROOT_BLOCK] = BlockBeetroot.class; //244
-            list[STONECUTTER] = BlockStonecutter.class; //245
-            list[GLOWING_OBSIDIAN] = BlockObsidianGlowing.class; //246
-            //list[NETHER_REACTOR] = BlockNetherReactor.class; //247 Should not be removed
-
-            list[MOVING_BLOCK] = BlockMoving.class; //250
-            list[OBSERVER] = BlockObserver.class; //251
-
-            for (int id = 0; id < 256; id++) {
-                Class c = list[id];
-                if (c != null) {
-                    Block block;
-                    try {
-                        block = (Block) c.newInstance();
-                        try {
-                            Constructor constructor = c.getDeclaredConstructor(int.class);
-                            constructor.setAccessible(true);
-                            for (int data = 0; data < 16; ++data) {
-                                fullList[(id << 4) | data] = (Block) constructor.newInstance(data);
-                            }
-                            hasMeta[id] = true;
-                        } catch (NoSuchMethodException ignore) {
-                            for (int data = 0; data < 16; ++data) {
-                                fullList[(id << 4) | data] = block;
-                            }
-                        }
-                    } catch (Exception e) {
-                        Server.getInstance().getLogger().error("Error while registering " + c.getName(), e);
-                        for (int data = 0; data < 16; ++data) {
-                            fullList[(id << 4) | data] = new BlockUnknown(id, data);
-                        }
-                        return;
-                    }
-
-                    solid[id] = block.isSolid();
-                    transparent[id] = block.isTransparent();
-                    hardness[id] = block.getHardness();
-                    light[id] = block.getLightLevel();
-
-                    if (block.isSolid()) {
-                        if (block.isTransparent()) {
-                            if (block instanceof BlockLiquid || block instanceof BlockIce) {
-                                lightFilter[id] = 2;
-                            } else {
-                                lightFilter[id] = 1;
-                            }
-                        } else {
-                            lightFilter[id] = 15;
-                        }
-                    } else {
-                        lightFilter[id] = 1;
-                    }
-                } else {
-                    lightFilter[id] = 1;
-                    for (int data = 0; data < 16; ++data) {
-                        fullList[(id << 4) | data] = new BlockUnknown(id, data);
-                    }
-                }
-            }
+    public static long key(int x, int y, int z) {
+        if (y < 0 || y >= 256) {
+            throw new IllegalArgumentException("Y coordinate y is out of range!");
         }
+        return (((long) x & (long) 0xFFFFFFF) << 36) | (((long) y & (long) 0xFF) << 28) | ((long) z & (long) 0xFFFFFFF);
     }
 
-    public static Block get(int id) {
-        return fullList[id << 4].clone();
+    public static Vector3i fromKey(long key) {
+        int x = (int) ((key >>> 36) & 0xFFFFFFF);
+        int y = (int) ((key >> 27) & 0xFF);
+        int z = (int) (key & 0xFFFFFFF);
+        return Vector3i.from(x, y, z);
     }
 
-    public static Block get(int id, Integer meta) {
-        if (meta != null) {
-            return fullList[(id << 4) + meta].clone();
-        } else {
-            return fullList[id << 4].clone();
-        }
+    public static Block get(Identifier identifier) {
+        return get(identifier, 0, 0, 0, 0, null);
     }
 
-    @SuppressWarnings("unchecked")
-    public static Block get(int id, Integer meta, Position pos) {
-        Block block = fullList[(id << 4) | (meta == null ? 0 : meta)].clone();
-        if (pos != null) {
-            block.x = pos.x;
-            block.y = pos.y;
-            block.z = pos.z;
-            block.level = pos.level;
-        }
-        return block;
+    public static Block get(Identifier identifier, int meta) {
+        return get(identifier, meta, 0, 0, 0, null);
     }
 
-    public static Block get(int id, int data) {
-        return fullList[(id << 4) + data].clone();
+    public static Block get(Identifier identifier, int meta, Vector3i pos) {
+        return pos != null ? get(identifier, meta, pos.getX(), pos.getY(), pos.getZ(), null) :
+                get(identifier, meta, 0, 0, 0, 0, null);
     }
 
-    public static Block get(int fullId, Level level, int x, int y, int z) {
-        Block block = fullList[fullId].clone();
-        block.x = x;
-        block.y = y;
-        block.z = z;
+    public static Block get(Identifier identifier, int meta, Vector3i pos, Level level) {
+        return get(identifier, meta, pos.getX(), pos.getY(), pos.getZ(), 0, level);
+    }
+
+    public static Block get(Identifier identifier, int meta, Vector3i pos, int layer) {
+        return pos != null ? get(identifier, meta, pos.getX(), pos.getY(), pos.getZ(), layer, null) :
+                get(identifier, meta, 0, 0, 0, 0, null);
+    }
+
+    public static Block get(Identifier identifier, int meta, int x, int y, int z, Level level) {
+        return get(identifier, meta, x, y, z, 0, level);
+    }
+
+    public static Block get(Identifier identifier, int meta, int x, int y, int z, int layer, Level level) {
+        Block block = BlockRegistry.get().getBlock(identifier, meta).clone();
+        block.position = Vector3i.from(x, y, z);
+        block.layer = layer;
         block.level = level;
         return block;
     }
 
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        return this.getLevel().setBlock(this, this, true, true);
+    @Deprecated
+    public static Block get(int id) {
+        return get(id, 0, 0, 0, 0, null);
+    }
+
+    @Deprecated
+    public static Block get(int id, int meta) {
+        return get(id, meta, 0, 0, 0, null);
+    }
+
+    @Deprecated
+    public static Block get(int id, int meta, Vector4i pos) {
+        return pos != null ? get(id, meta, pos.getX(), pos.getY(), pos.getZ(), pos.getW(), null) :
+                get(id, meta, 0, 0, 0, null);
+    }
+
+    @Deprecated
+    public static Block get(int id, int meta, int x, int y, int z, Level level) {
+        return get(id, meta, x, y, z, 0, level);
+    }
+
+    @Deprecated
+    public static Block get(int id, int meta, int x, int y, int z, int layer, Level level) {
+        Block block = BlockRegistry.get().getBlock(id, meta).clone();
+        block.position = Vector3i.from(x, y, z);
+        block.layer = layer;
+        block.level = level;
+        return block;
+    }
+
+    //http://minecraft.gamepedia.com/Breaking
+    private static float breakTime0(float blockHardness, boolean correctTool, boolean canHarvestWithHand,
+                                    Identifier id, int toolType, int toolTier, int efficiencyLoreLevel, int hasteEffectLevel,
+                                    boolean insideOfWaterWithoutAquaAffinity, boolean outOfWaterButNotOnGround) {
+        float baseTime = ((correctTool || canHarvestWithHand) ? 1.5f : 5.0f) * blockHardness;
+        float speed = 1.0f / baseTime;
+        boolean isWoolBlock = id == WOOL, isCobweb = id == WEB;
+        if (correctTool) speed *= toolBreakTimeBonus0(toolType, toolTier, isWoolBlock, isCobweb);
+        speed += speedBonusByEfficiencyLore0(efficiencyLoreLevel);
+        speed *= speedRateByHasteLore0(hasteEffectLevel);
+        if (insideOfWaterWithoutAquaAffinity) speed *= 0.2f;
+        if (outOfWaterButNotOnGround) speed *= 0.2f;
+        return 1.0f / speed;
+    }
+
+    private static float toolBreakTimeBonus0(
+            int toolType, int toolTier, boolean isWoolBlock, boolean isCobweb) {
+        if (toolType == ItemTool.TYPE_SWORD) return isCobweb ? 15.0f : 1.0f;
+        if (toolType == ItemTool.TYPE_SHEARS) return isWoolBlock ? 5.0f : 15.0f;
+        if (toolType == ItemTool.TYPE_NONE) return 1.0f;
+        switch (toolTier) {
+            case ItemTool.TIER_WOODEN:
+                return 2.0f;
+            case ItemTool.TIER_STONE:
+                return 4.0f;
+            case ItemTool.TIER_IRON:
+                return 6.0f;
+            case ItemTool.TIER_DIAMOND:
+                return 8.0f;
+            case ItemTool.TIER_GOLD:
+                return 12.0f;
+            default:
+                return 1.0f;
+        }
+    }
+
+    private static float speedBonusByEfficiencyLore0(int efficiencyLoreLevel) {
+        if (efficiencyLoreLevel == 0) return 0;
+        return efficiencyLoreLevel * efficiencyLoreLevel + 1;
+    }
+
+    private static float speedRateByHasteLore0(int hasteLoreLevel) {
+        return 1.0f + (0.2f * hasteLoreLevel);
+    }
+
+    public static boolean equals(Block b1, Block b2, boolean checkDamage) {
+        return b1 != null && b2 != null && b1.getId() == b2.getId() && (!checkDamage || b1.getMeta() == b2.getMeta());
+    }
+
+    public Vector3i getPosition() {
+        return position;
+    }
+
+    public final void setPosition(Vector3i v) {
+        this.position = v;
+    }
+
+    public int getLayer() {
+        return layer;
+    }
+
+    public final void setLayer(int layer) {
+        this.layer = layer;
     }
 
     //http://minecraft.gamepedia.com/Breaking
@@ -407,8 +206,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return 10;
     }
 
-    public boolean onBreak(Item item) {
-        return this.getLevel().setBlock(this, new BlockAir(), true, true);
+    public Level getLevel() {
+        return level;
     }
 
     public int onUpdate(int type) {
@@ -423,12 +222,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return false;
     }
 
-    public double getHardness() {
-        return 10;
+    public final void setLevel(Level level) {
+        this.level = level;
     }
 
-    public double getResistance() {
-        return 1;
+    public Chunk getChunk() {
+        return level.getChunk(this.position);
     }
 
     public int getBurnChance() {
@@ -443,12 +242,16 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return ItemTool.TYPE_NONE;
     }
 
-    public double getFrictionFactor() {
-        return 0.6;
+    public int getX() {
+        return this.position.getX();
     }
 
     public int getLightLevel() {
         return 0;
+    }
+
+    public int getY() {
+        return this.position.getY();
     }
 
     public boolean canBePlaced() {
@@ -467,8 +270,17 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return true;
     }
 
-    public boolean canBeFlowedInto() {
-        return false;
+    public int getFilterLevel() {
+        if (isSolid()) {
+            if (isTransparent()) {
+                if (this instanceof BlockLiquid || this instanceof BlockIce) {
+                    return 2;
+                }
+            } else {
+                return 15;
+            }
+        }
+        return 1;
     }
 
     public boolean canBeActivated() {
@@ -515,79 +327,65 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return BlockColor.VOID_BLOCK_COLOR;
     }
 
-    public abstract String getName();
-
-    public abstract int getId();
-
-    /**
-     * The full id is a combination of the id and data.
-     * @return full id
-     */
-    public int getFullId() {
-        return (getId() << 4);
+    public boolean canBeFlooded() {
+        return false;
     }
 
-    public void addVelocityToEntity(Entity entity, Vector3 vector) {
-
+    public final Identifier getId() {
+        return id;
     }
 
-    public int getDamage() {
-        return 0;
+    public int getZ() {
+        return this.position.getZ();
     }
 
-    public void setDamage(int meta) {
-        // Do nothing
+    public boolean isValid() {
+        return level != null && position != null;
     }
 
-    public final void setDamage(Integer meta) {
-        setDamage((meta == null ? 0 : meta & 0x0f));
+    public void setMeta(int meta) {
+        this.meta = meta;
     }
 
-    final public void position(Position v) {
-        this.x = (int) v.x;
-        this.y = (int) v.y;
-        this.z = (int) v.z;
-        this.level = v.level;
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        return this.getLevel().setBlock(this.getPosition(), this, true, true);
     }
 
-    public Item[] getDrops(Item item) {
-        if (this.getId() < 0 || this.getId() > list.length) { //Unknown blocks
-            return new Item[0];
-        } else {
-            return new Item[]{
-                    this.toItem()
-            };
+    public boolean onBreak(Item item) {
+        return removeBlock(true);
+    }
+
+    final protected boolean removeBlock(boolean update) {
+        if (this.isWaterlogged()) {
+            Block water = getLevel().getBlock(getX(), getY(), getZ(), 1);
+            getLevel().setBlock(this.getPosition(), water, true, false);
+            return getLevel().setBlock(getX(), getY(), getZ(), 1, Block.get(AIR), true, update);
         }
+        return this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true, update);
     }
 
-    private static double toolBreakTimeBonus0(
-            int toolType, int toolTier, boolean isWoolBlock, boolean isCobweb) {
-        if (toolType == ItemTool.TYPE_SWORD) return isCobweb ? 15.0 : 1.0;
-        if (toolType == ItemTool.TYPE_SHEARS) return isWoolBlock ? 5.0 : 15.0;
-        if (toolType == ItemTool.TYPE_NONE) return 1.0;
-        switch (toolTier) {
-            case ItemTool.TIER_WOODEN:
-                return 2.0;
-            case ItemTool.TIER_STONE:
-                return 4.0;
-            case ItemTool.TIER_IRON:
-                return 6.0;
-            case ItemTool.TIER_DIAMOND:
-                return 8.0;
-            case ItemTool.TIER_GOLD:
-                return 12.0;
-            default:
-                return 1.0;
-        }
+    public boolean onBreak(Item item, Player player) {
+        return onBreak(item);
     }
 
-    private static double speedBonusByEfficiencyLore0(int efficiencyLoreLevel) {
-        if (efficiencyLoreLevel == 0) return 0;
-        return efficiencyLoreLevel * efficiencyLoreLevel + 1;
+    public float getHardness() {
+        return 10;
     }
 
-    private static double speedRateByHasteLore0(int hasteLoreLevel) {
-        return 1.0 + (0.2 * hasteLoreLevel);
+    public String getDescriptionId() {
+        return "tile." + id.getName() + ".name";
+    }
+
+    public float getResistance() {
+        return 1;
+    }
+
+    public float getFrictionFactor() {
+        return 0.6f;
+    }
+
+    public Vector3f addVelocityToEntity(Entity entity, Vector3f vector) {
+        return vector;
     }
 
     private static int toolType0(Item item) {
@@ -608,50 +406,53 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                 blockToolType == ItemTool.TYPE_NONE;
     }
 
-    //http://minecraft.gamepedia.com/Breaking
-    private static double breakTime0(double blockHardness, boolean correctTool, boolean canHarvestWithHand,
-                                     int blockId, int toolType, int toolTier, int efficiencyLoreLevel, int hasteEffectLevel,
-                                     boolean insideOfWaterWithoutAquaAffinity, boolean outOfWaterButNotOnGround) {
-        double baseTime = ((correctTool || canHarvestWithHand) ? 1.5 : 5.0) * blockHardness;
-        double speed = 1.0 / baseTime;
-        boolean isWoolBlock = blockId == Block.WOOL, isCobweb = blockId == Block.COBWEB;
-        if (correctTool) speed *= toolBreakTimeBonus0(toolType, toolTier, isWoolBlock, isCobweb);
-        speed += speedBonusByEfficiencyLore0(efficiencyLoreLevel);
-        speed *= speedRateByHasteLore0(hasteEffectLevel);
-        if (insideOfWaterWithoutAquaAffinity) speed *= 0.2;
-        if (outOfWaterButNotOnGround) speed *= 0.2;
-        return 1.0 / speed;
+    public Item[] getDrops(Item item) {
+        return new Item[]{
+                this.toItem()
+        };
     }
 
-    public double getBreakTime(Item item, Player player) {
+    public final int getMeta() {
+        return meta;
+    }
+
+    public float getBreakTime(Item item, Player player) {
         Objects.requireNonNull(item, "getBreakTime: Item can not be null");
         Objects.requireNonNull(player, "getBreakTime: Player can not be null");
-        double blockHardness = getHardness();
+        float blockHardness = getHardness();
         boolean correctTool = correctTool0(getToolType(), item);
         boolean canHarvestWithHand = canHarvestWithHand();
-        int blockId = getId();
+        Identifier id = getId();
         int itemToolType = toolType0(item);
         int itemTier = item.getTier();
         int efficiencyLoreLevel = Optional.ofNullable(item.getEnchantment(Enchantment.ID_EFFICIENCY))
                 .map(Enchantment::getLevel).orElse(0);
         int hasteEffectLevel = Optional.ofNullable(player.getEffect(Effect.HASTE))
-                .map(Effect::getAmplifier).orElse(0);
+                .map(Effect::getAmplifier).orElse((byte) 0);
         boolean insideOfWaterWithoutAquaAffinity = player.isInsideOfWater() &&
                 Optional.ofNullable(player.getInventory().getHelmet().getEnchantment(Enchantment.ID_WATER_WORKER))
                         .map(Enchantment::getLevel).map(l -> l >= 1).orElse(false);
         boolean outOfWaterButNotOnGround = (!player.isInsideOfWater()) && (!player.isOnGround());
-        return breakTime0(blockHardness, correctTool, canHarvestWithHand, blockId, itemToolType, itemTier,
+        return breakTime0(blockHardness, correctTool, canHarvestWithHand, id, itemToolType, itemTier,
                 efficiencyLoreLevel, hasteEffectLevel, insideOfWaterWithoutAquaAffinity, outOfWaterButNotOnGround);
     }
 
+    public boolean canBeBrokenWith(Item item) {
+        return this.getHardness() != -1;
+    }
+
+    public Block getSide(BlockFace face) {
+        return this.getSide(face, true);
+    }
+
     /**
-     * @deprecated This function is lack of Player class and is not accurate enough, use #getBreakTime(Item, Player)
      * @param item item used
      * @return break time
+     * @deprecated This function is lack of Player class and is not accurate enough, use #getBreakTime(Item, Player)
      */
     @Deprecated
-    public double getBreakTime(Item item) {
-        double base = this.getHardness() * 1.5;
+    public float getBreakTime(Item item) {
+        float base = this.getHardness() * 1.5f;
         if (this.canBeBrokenWith(item)) {
             if (this.getToolType() == ItemTool.TYPE_SHEARS && item.isShears()) {
                 base /= 15;
@@ -659,7 +460,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                     (this.getToolType() == ItemTool.TYPE_PICKAXE && item.isPickaxe()) ||
                             (this.getToolType() == ItemTool.TYPE_AXE && item.isAxe()) ||
                             (this.getToolType() == ItemTool.TYPE_SHOVEL && item.isShovel())
-                    ) {
+            ) {
                 int tier = item.getTier();
                 switch (tier) {
                     case ItemTool.TIER_WOODEN:
@@ -680,44 +481,25 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                 }
             }
         } else {
-            base *= 3.33;
+            base *= 3.33f;
         }
 
         if (item.isSword()) {
-            base *= 0.5;
+            base *= 0.5f;
         }
 
         return base;
     }
 
-    public boolean canBeBrokenWith(Item item) {
-        return this.getHardness() != -1;
-    }
-
-    public Block getSide(BlockFace face) {
-        if (this.isValid()) {
-            return this.getLevel().getBlock((int) x + face.getXOffset(), (int) y + face.getYOffset(), (int) z + face.getZOffset());
-        }
-        return this.getSide(face, 1);
-    }
-
     public Block getSide(BlockFace face, int step) {
-        if (step == 0) {
-            return this;
-        }
+        return this.getSide(face, step, true);
+    }
 
+    public Block getSide(BlockFace face, boolean load) {
         if (this.isValid()) {
-            if (step == 1) {
-                return this.getLevel().getBlock((int) x + face.getXOffset(), (int) y + face.getYOffset(), (int) z + face.getZOffset());
-            } else {
-                return this.getLevel().getBlock((int) x + face.getXOffset() * step, (int) y + face.getYOffset() * step, (int) z + face.getZOffset() * step);
-            }
+            return this.getLevel().getBlock(this.getX() + face.getXOffset(), this.getY() + face.getYOffset(), this.getZ() + face.getZOffset());
         }
-        Block block = Block.get(Item.AIR, 0);
-        block.x = (int) x + face.getXOffset() * step;
-        block.y = (int) y + face.getYOffset() * step;
-        block.z = (int) z + face.getZOffset() * step;
-        return block;
+        return this.getSide(face, 1, load);
     }
 
     public Block up() {
@@ -768,9 +550,42 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return getSide(BlockFace.WEST, step);
     }
 
-    @Override
-    public String toString() {
-        return "Block[" + this.getName() + "] (" + this.getId() + ":" + this.getDamage() + ")";
+    public Block getSide(BlockFace face, int step, boolean load) {
+        if (this.isValid()) {
+            if (step == 1) {
+                if (load) {
+                    return this.getLevel().getBlock(this.getX() + face.getXOffset(), this.getY() + face.getYOffset(),
+                            this.getZ() + face.getZOffset());
+                } else {
+                    return this.getLevel().getLoadedBlock(this.getX() + face.getXOffset(), this.getY() + face.getYOffset(),
+                            this.getZ() + face.getZOffset());
+                }
+            } else {
+                if (load) {
+                    return this.getLevel().getBlock(this.getX() + face.getXOffset() * step,
+                            this.getY() + face.getYOffset() * step, this.getZ() + face.getZOffset() * step);
+                } else {
+                    return this.getLevel().getLoadedBlock(this.getX() + face.getXOffset() * step,
+                            this.getY() + face.getYOffset() * step, this.getZ() + face.getZOffset() * step);
+                }
+            }
+        }
+        Block block = Block.get(AIR, 0);
+        block.position = this.position.add(face.getUnitVector().mul(step));
+        return block;
+    }
+
+    public Block getExtra() {
+        return layer(1);
+    }
+
+    public Block layer(@Nonnegative int layer) {
+        if (this.isValid()) {
+            return this.getLevel().getBlock(position, layer);
+        }
+        Block block = Block.get(AIR);
+        block.layer = layer;
+        return block;
     }
 
     public boolean collidesWithBB(AxisAlignedBB bb) {
@@ -799,51 +614,89 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     @Override
-    public double getMinX() {
-        return this.x;
+    public String toString() {
+        return String.format("Block(id=%s, data=%s, position=%s)", this.id, this.meta, this.position);
     }
 
     @Override
-    public double getMinY() {
-        return this.y;
+    public float getMinX() {
+        return this.position.getX();
     }
 
     @Override
-    public double getMinZ() {
-        return this.z;
+    public float getMinY() {
+        return this.position.getY();
     }
 
     @Override
-    public double getMaxX() {
-        return this.x + 1;
+    public float getMinZ() {
+        return this.position.getZ();
     }
 
     @Override
-    public double getMaxY() {
-        return this.y + 1;
+    public float getMaxX() {
+        return this.position.getX() + 1;
     }
 
     @Override
-    public double getMaxZ() {
-        return this.z + 1;
+    public float getMaxY() {
+        return this.position.getY() + 1;
     }
 
     protected AxisAlignedBB recalculateCollisionBoundingBox() {
         return getBoundingBox();
     }
 
-    public MovingObjectPosition calculateIntercept(Vector3 pos1, Vector3 pos2) {
+    @Override
+    public float getMaxZ() {
+        return this.position.getZ() + 1;
+    }
+
+    public String getSaveId() {
+        String name = getClass().getName();
+        return name.substring(16);
+    }
+
+    @Override
+    public void setMetadata(String metadataKey, MetadataValue newMetadataValue) throws Exception {
+        if (this.getLevel() != null) {
+            this.getLevel().getBlockMetadata().setMetadata(this, metadataKey, newMetadataValue);
+        }
+    }
+
+    @Override
+    public List<MetadataValue> getMetadata(String metadataKey) throws Exception {
+        if (this.getLevel() != null) {
+            return this.getLevel().getBlockMetadata().getMetadata(this, metadataKey);
+
+        }
+        return null;
+    }
+
+    @Override
+    public boolean hasMetadata(String metadataKey) throws Exception {
+        return this.getLevel() != null && this.getLevel().getBlockMetadata().hasMetadata(this, metadataKey);
+    }
+
+    @Override
+    public void removeMetadata(String metadataKey, Plugin owningPlugin) throws Exception {
+        if (this.getLevel() != null) {
+            this.getLevel().getBlockMetadata().removeMetadata(this, metadataKey, owningPlugin);
+        }
+    }
+
+    public MovingObjectPosition calculateIntercept(Vector3f pos1, Vector3f pos2) {
         AxisAlignedBB bb = this.getBoundingBox();
         if (bb == null) {
             return null;
         }
 
-        Vector3 v1 = pos1.getIntermediateWithXValue(pos2, bb.getMinX());
-        Vector3 v2 = pos1.getIntermediateWithXValue(pos2, bb.getMaxX());
-        Vector3 v3 = pos1.getIntermediateWithYValue(pos2, bb.getMinY());
-        Vector3 v4 = pos1.getIntermediateWithYValue(pos2, bb.getMaxY());
-        Vector3 v5 = pos1.getIntermediateWithZValue(pos2, bb.getMinZ());
-        Vector3 v6 = pos1.getIntermediateWithZValue(pos2, bb.getMaxZ());
+        Vector3f v1 = NukkitMath.getIntermediateWithXValue(pos1, pos2, bb.getMinX());
+        Vector3f v2 = NukkitMath.getIntermediateWithXValue(pos1, pos2, bb.getMaxX());
+        Vector3f v3 = NukkitMath.getIntermediateWithYValue(pos1, pos2, bb.getMinY());
+        Vector3f v4 = NukkitMath.getIntermediateWithYValue(pos1, pos2, bb.getMaxY());
+        Vector3f v5 = NukkitMath.getIntermediateWithZValue(pos1, pos2, bb.getMinZ());
+        Vector3f v6 = NukkitMath.getIntermediateWithZValue(pos1, pos2, bb.getMaxZ());
 
         if (v1 != null && !bb.isVectorInYZ(v1)) {
             v1 = null;
@@ -869,7 +722,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             v6 = null;
         }
 
-        Vector3 vector = v1;
+        Vector3f vector = v1;
 
         if (v2 != null && (vector == null || pos1.distanceSquared(v2) < pos1.distanceSquared(vector))) {
             vector = v2;
@@ -911,44 +764,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             f = 3;
         }
 
-        return MovingObjectPosition.fromBlock((int) this.x, (int) this.y, (int) this.z, f, vector.add(this.x, this.y, this.z));
-    }
-
-    public String getSaveId() {
-        String name = getClass().getName();
-        return name.substring(16);
-    }
-
-    @Override
-    public void setMetadata(String metadataKey, MetadataValue newMetadataValue) throws Exception {
-        if (this.getLevel() != null) {
-            this.getLevel().getBlockMetadata().setMetadata(this, metadataKey, newMetadataValue);
-        }
-    }
-
-    @Override
-    public List<MetadataValue> getMetadata(String metadataKey) throws Exception {
-        if (this.getLevel() != null) {
-            return this.getLevel().getBlockMetadata().getMetadata(this, metadataKey);
-
-        }
-        return null;
-    }
-
-    @Override
-    public boolean hasMetadata(String metadataKey) throws Exception {
-        return this.getLevel() != null && this.getLevel().getBlockMetadata().hasMetadata(this, metadataKey);
-    }
-
-    @Override
-    public void removeMetadata(String metadataKey, Plugin owningPlugin) throws Exception {
-        if (this.getLevel() != null) {
-            this.getLevel().getBlockMetadata().removeMetadata(this, metadataKey, owningPlugin);
-        }
-    }
-
-    public Block clone() {
-        return (Block) super.clone();
+        return MovingObjectPosition.fromBlock(this.position, f, vector.add(this.position.toFloat()));
     }
 
     public int getWeakPower(BlockFace face) {
@@ -964,7 +780,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public String getLocationHash() {
-        return this.getFloorX() + ":" + this.getFloorY() + ":" + this.getFloorZ();
+        return this.getX() + ":" + this.getY() + ":" + this.getZ() + ":" + this.getLayer();
     }
 
     public int getDropExp() {
@@ -979,15 +795,43 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return equals(b1, b2, true);
     }
 
-    public static boolean equals(Block b1, Block b2, boolean checkDamage) {
-        return b1 != null && b2 != null && b1.getId() == b2.getId() && (!checkDamage || b1.getDamage() == b2.getDamage());
+    public Block clone() {
+        try {
+            return (Block) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public Item toItem() {
-        return new ItemBlock(this, this.getDamage(), 1);
+        return Item.get(this.id, this.meta);
     }
 
     public boolean canSilkTouch() {
         return false;
     }
+
+    public boolean canWaterlogSource() {
+        return false;
+    }
+
+    public boolean canWaterlogFlowing() {
+        return false;
+    }
+
+    public boolean isWaterlogged() {
+        Block b = getLevel().getBlock(this.getX(), this.getY(), this.getZ(), 1);
+        return (b.getId() == WATER || b.getId() == FLOWING_WATER);
+    }
+
+    /**
+     * Returns the data of the water which is waterlogging this block.
+     *
+     * @return -1 if the block is not waterlogged, the water meta otherwise.
+     */
+    public int getWaterloggingWaterDamage() {
+        Block block = getLevel().getBlock(this.getX(), this.getY(), this.getZ(), 1);
+        return (block.getId() != WATER && block.getId() != FLOWING_WATER) ? -1 : block.getMeta();
+    }
+
 }

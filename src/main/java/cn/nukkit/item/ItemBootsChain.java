@@ -1,21 +1,15 @@
 package cn.nukkit.item;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class ItemBootsChain extends ItemArmor {
 
-    public ItemBootsChain() {
-        this(0, 1);
-    }
-
-    public ItemBootsChain(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemBootsChain(Integer meta, int count) {
-        super(CHAIN_BOOTS, meta, count, "Chainmail Boots");
+    public ItemBootsChain(Identifier id) {
+        super(id);
     }
 
     @Override

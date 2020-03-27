@@ -5,8 +5,8 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
-import cn.nukkit.network.protocol.SetDifficultyPacket;
+import cn.nukkit.locale.TranslationContainer;
+import com.nukkitx.protocol.bedrock.packet.SetDifficultyPacket;
 
 import java.util.ArrayList;
 
@@ -17,13 +17,13 @@ import java.util.ArrayList;
 public class DifficultyCommand extends VanillaCommand {
 
     public DifficultyCommand(String name) {
-        super(name, "%nukkit.command.difficulty.description", "%commands.difficulty.usage");
+        super(name, "commands.difficulty.description", "commands.difficulty.usage");
         this.setPermission("nukkit.command.difficulty");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("difficulty", CommandParamType.INT, false)
         });
-        this.commandParameters.put("byString", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("difficulty", new String[]{"peaceful", "p", "easy", "e",
                         "normal", "n", "hard", "h"})
         });
@@ -49,9 +49,9 @@ public class DifficultyCommand extends VanillaCommand {
         if (difficulty != -1) {
             sender.getServer().setPropertyInt("difficulty", difficulty);
 
-            SetDifficultyPacket pk = new SetDifficultyPacket();
-            pk.difficulty = sender.getServer().getDifficulty();
-            Server.broadcastPacket(new ArrayList<>(sender.getServer().getOnlinePlayers().values()), pk);
+            SetDifficultyPacket packet = new SetDifficultyPacket();
+            packet.setDifficulty(sender.getServer().getDifficulty());
+            Server.broadcastPacket(new ArrayList<>(sender.getServer().getOnlinePlayers().values()), packet);
 
             Command.broadcastCommandMessage(sender, new TranslationContainer("commands.difficulty.success", String.valueOf(difficulty)));
         } else {

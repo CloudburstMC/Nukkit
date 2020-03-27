@@ -1,14 +1,14 @@
 package cn.nukkit.item.food;
 
-import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.event.player.PlayerTeleportEvent;
-import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.NukkitRandom;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.player.Player;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * Created by Leonidius20 on 20.08.18.
@@ -17,16 +17,16 @@ public class FoodChorusFruit extends FoodNormal {
 
     public FoodChorusFruit() {
         super(4, 2.4F);
-        addRelative(Item.CHORUS_FRUIT);
+        addRelative(ItemIds.CHORUS_FRUIT);
     }
 
     @Override
     protected boolean onEatenBy(Player player) {
         super.onEatenBy(player);
         // Teleportation
-        int minX = player.getFloorX() - 8;
-        int minY = player.getFloorY() - 8;
-        int minZ = player.getFloorZ() - 8;
+        int minX = player.getPosition().getFloorX() - 8;
+        int minY = player.getPosition().getFloorY() - 8;
+        int minZ = player.getPosition().getFloorZ() - 8;
         int maxX = minX + 16;
         int maxY = minY + 16;
         int maxZ = minZ + 16;
@@ -42,13 +42,13 @@ public class FoodChorusFruit extends FoodNormal {
 
             if (y < 0) continue;
 
-            while (y >= 0 && !level.getBlock(new Vector3(x, y + 1, z)).isSolid()) {
+            while (y >= 0 && !level.getBlock(x, y + 1, z).isSolid()) {
                 y--;
             }
             y++; // Back up to non solid
 
-            Block blockUp = level.getBlock(new Vector3(x, y + 1, z));
-            Block blockUp2 = level.getBlock(new Vector3(x, y + 2, z));
+            Block blockUp = level.getBlock(x, y + 1, z);
+            Block blockUp2 = level.getBlock(x, y + 2, z);
 
             if (blockUp.isSolid() || blockUp instanceof BlockLiquid ||
                     blockUp2.isSolid() || blockUp2 instanceof BlockLiquid) {
@@ -56,9 +56,9 @@ public class FoodChorusFruit extends FoodNormal {
             }
 
             // Sounds are broadcast at both source and destination
-            level.addSound(player.asBlockVector3().asVector3(), Sound.MOB_ENDERMEN_PORTAL);
-            player.teleport(new Vector3(x + 0.5, y + 1, z + 0.5), PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
-            level.addSound(player.asBlockVector3().asVector3(), Sound.MOB_ENDERMEN_PORTAL);
+            level.addSound(player.getPosition(), Sound.MOB_ENDERMEN_PORTAL);
+            player.teleport(Vector3f.from(x + 0.5, y + 1, z + 0.5), PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
+            level.addSound(player.getPosition(), Sound.MOB_ENDERMEN_PORTAL);
 
             break;
         }

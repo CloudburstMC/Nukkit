@@ -1,12 +1,13 @@
 package cn.nukkit.form.element;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ElementToggle extends Element {
 
+    @JsonProperty
     private final String type = "toggle"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
     private String text;
-    @SerializedName("default")
+    @JsonProperty("default")
     private boolean defaultValue;
 
     public ElementToggle(String text) {

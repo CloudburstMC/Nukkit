@@ -4,40 +4,32 @@ package cn.nukkit.block;
  * author: Justin
  */
 
-import cn.nukkit.Player;
-import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntitySkull;
+import cn.nukkit.blockentity.Skull;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemSkull;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
+import static cn.nukkit.blockentity.BlockEntityTypes.SKULL;
 
-public class BlockSkull extends BlockTransparentMeta {
+public class BlockSkull extends BlockTransparent {
 
-    public BlockSkull() {
-        this(0);
-    }
-
-    public BlockSkull(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return SKULL_BLOCK;
+    public BlockSkull(Identifier id) {
+        super(id);
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 1;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 5;
     }
 
@@ -47,49 +39,25 @@ public class BlockSkull extends BlockTransparentMeta {
     }
 
     @Override
-    public String getName() {
-        int itemMeta = 0;
-
-        if (this.level != null) {
-            BlockEntity blockEntity = getLevel().getBlockEntity(this);
-            if (blockEntity != null) itemMeta = blockEntity.namedTag.getByte("SkullType");
-        }
-
-        return ItemSkull.getItemSkullName(itemMeta);
-    }
-
-    @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         switch (face) {
             case NORTH:
             case SOUTH:
             case EAST:
             case WEST:
             case UP:
-                this.setDamage(face.getIndex());
+                this.setMeta(face.getIndex());
                 break;
             case DOWN:
             default:
                 return false;
         }
-        this.getLevel().setBlock(block, this, true, true);
+        this.getLevel().setBlock(block.getPosition(), this, true, true);
 
-        CompoundTag nbt = new CompoundTag()
-                .putString("id", BlockEntity.SKULL)
-                .putByte("SkullType", item.getDamage())
-                .putInt("x", block.getFloorX())
-                .putInt("y", block.getFloorY())
-                .putInt("z", block.getFloorZ())
-                .putByte("Rot", (int) Math.floor((player.yaw * 16 / 360) + 0.5) & 0x0f);
-        if (item.hasCustomBlockData()) {
-            for (Tag aTag : item.getCustomBlockData().getAllTags()) {
-                nbt.put(aTag.getName(), aTag);
-            }
-        }
-        BlockEntitySkull skull = (BlockEntitySkull) BlockEntity.createBlockEntity(BlockEntity.SKULL, getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
-        if (skull == null) {
-            return false;
-        }
+        Skull skull = BlockEntityRegistry.get().newEntity(SKULL, this.getChunk(), this.getPosition());
+        skull.loadAdditionalData(item.getTag());
+        skull.setSkullType(item.getMeta());
+        skull.setRotation((player.getYaw() * 16 / 360) + 0.5f);
 
         // TODO: 2016/2/3 SPAWN WITHER
 
@@ -97,21 +65,11 @@ public class BlockSkull extends BlockTransparentMeta {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        BlockEntity blockEntity = getLevel().getBlockEntity(this);
-        int dropMeta = 0;
-        if (blockEntity != null) dropMeta = blockEntity.namedTag.getByte("SkullType");
-        return new Item[]{
-                new ItemSkull(dropMeta)
-        };
-    }
-
-    @Override
     public Item toItem() {
-        BlockEntity blockEntity = getLevel().getBlockEntity(this);
-        int itemMeta = 0;
-        if (blockEntity != null) itemMeta = blockEntity.namedTag.getByte("SkullType");
-        return new ItemSkull(itemMeta);
+        Skull blockEntity = (Skull) getLevel().getBlockEntity(this.getPosition());
+        int meta = 0;
+        if (blockEntity != null) meta = blockEntity.getSkullType();
+        return Item.get(ItemIds.SKULL, meta);
     }
 
     @Override
@@ -122,6 +80,11 @@ public class BlockSkull extends BlockTransparentMeta {
     @Override
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 
     @Override

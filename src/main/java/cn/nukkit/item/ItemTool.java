@@ -3,10 +3,15 @@ package cn.nukkit.item;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.nbt.tag.ByteTag;
-import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.nbt.CompoundTagBuilder;
+import com.nukkitx.nbt.tag.CompoundTag;
 
 import java.util.Random;
+
+import static cn.nukkit.block.BlockIds.DIRT;
+import static cn.nukkit.block.BlockIds.GRASS;
+import static cn.nukkit.item.ItemIds.*;
 
 /**
  * author: MagicDroidX
@@ -25,6 +30,10 @@ public abstract class ItemTool extends Item implements ItemDurable {
     public static final int TYPE_PICKAXE = 3;
     public static final int TYPE_AXE = 4;
     public static final int TYPE_SHEARS = 5;
+    /**
+     * Same breaking speed independent of the tool.
+     */
+    public static final int TYPE_HANDS_ONLY = 6;
 
     public static final int DURABILITY_WOODEN = 60;
     public static final int DURABILITY_GOLD = 33;
@@ -37,20 +46,24 @@ public abstract class ItemTool extends Item implements ItemDurable {
     public static final int DURABILITY_TRIDENT = 251;
     public static final int DURABILITY_FISHING_ROD = 65;
 
-    public ItemTool(int id) {
-        this(id, 0, 1, UNKNOWN_STR);
+    private boolean unbreakable;
+
+    public ItemTool(Identifier id) {
+        super(id);
     }
 
-    public ItemTool(int id, Integer meta) {
-        this(id, meta, 1, UNKNOWN_STR);
+    @Override
+    public void loadAdditionalData(CompoundTag tag) {
+        super.loadAdditionalData(tag);
+
+        tag.listenForBoolean("Unbreakable", this::setUnbreakable);
     }
 
-    public ItemTool(int id, Integer meta, int count) {
-        this(id, meta, count, UNKNOWN_STR);
-    }
+    @Override
+    public void saveAdditionalData(CompoundTagBuilder tag) {
+        super.saveAdditionalData(tag);
 
-    public ItemTool(int id, Integer meta, int count, String name) {
-        super(id, meta, count, name);
+        if (this.unbreakable) tag.booleanTag("Unbreakable", true);
     }
 
     @Override
@@ -68,17 +81,17 @@ public abstract class ItemTool extends Item implements ItemDurable {
                 block.getToolType() == ItemTool.TYPE_SHOVEL && this.isShovel() ||
                 block.getToolType() == ItemTool.TYPE_AXE && this.isAxe() ||
                 block.getToolType() == ItemTool.TYPE_SWORD && this.isSword() ||
-                block.getToolType() == ItemTool.SHEARS && this.isShears()
+                block.getToolType() == ItemTool.TYPE_SHEARS && this.isShears()
                 ) {
-            this.meta++;
+            this.setMeta(getMeta() + 1);
         } else if (!this.isShears() && block.getBreakTime(this) > 0) {
-            this.meta += 2;
+            this.setMeta(getMeta() + 2);
         } else if (this.isHoe()) {
             if (block.getId() == GRASS || block.getId() == DIRT) {
-                this.meta++;
+                this.setMeta(getMeta() + 1);
             }
         } else {
-            this.meta++;
+            this.setMeta(getMeta() + 1);
         }
         return true;
     }
@@ -90,9 +103,9 @@ public abstract class ItemTool extends Item implements ItemDurable {
         }
 
         if ((entity != null) && !this.isSword()) {
-            this.meta += 2;
+            this.setMeta(getMeta() + 2);
         } else {
-            this.meta++;
+            this.setMeta(getMeta() + 1);
         }
 
         return true;
@@ -109,8 +122,11 @@ public abstract class ItemTool extends Item implements ItemDurable {
 
     @Override
     public boolean isUnbreakable() {
-        Tag tag = this.getNamedTagEntry("Unbreakable");
-        return tag instanceof ByteTag && ((ByteTag) tag).data > 0;
+        return unbreakable;
+    }
+
+    public void setUnbreakable(boolean unbreakable) {
+        this.unbreakable = unbreakable;
     }
 
     @Override
@@ -140,12 +156,14 @@ public abstract class ItemTool extends Item implements ItemDurable {
 
     @Override
     public boolean isShears() {
-        return (this.id == SHEARS);
+        return (this.getId() == SHEARS);
     }
 
     @Override
     public boolean isTool() {
-        return (this.id == FLINT_STEEL || this.id == SHEARS || this.id == BOW || this.isPickaxe() || this.isAxe() || this.isShovel() || this.isSword() || this.isHoe());
+        Identifier id = getId();
+        return id == FLINT_AND_STEEL || id == SHEARS || id == BOW ||
+                this.isPickaxe() || this.isAxe() || this.isShovel() || this.isSword() || this.isHoe();
     }
 
     @Override

@@ -1,16 +1,23 @@
 package cn.nukkit.item;
 
-import cn.nukkit.Player;
-import cn.nukkit.block.*;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockLava;
+import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
-import cn.nukkit.math.Vector3;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
-import cn.nukkit.network.protocol.UpdateBlockPacket;
+import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
+import com.nukkitx.protocol.bedrock.packet.UpdateBlockPacket;
+
+import static cn.nukkit.block.BlockIds.*;
+import static cn.nukkit.item.ItemIds.BUCKET;
 
 /**
  * author: MagicDroidX
@@ -18,16 +25,8 @@ import cn.nukkit.network.protocol.UpdateBlockPacket;
  */
 public class ItemBucket extends Item {
 
-    public ItemBucket() {
-        this(0, 1);
-    }
-
-    public ItemBucket(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemBucket(Integer meta, int count) {
-        super(BUCKET, meta, count, getName(meta));
+    public ItemBucket(Identifier id) {
+        super(id);
     }
 
     protected static String getName(int meta) {
@@ -51,7 +50,7 @@ public class ItemBucket extends Item {
         }
     }
 
-    public static int getDamageByTarget(int target) {
+    public static Identifier getBlockIdFromDamage(int target) {
         switch (target) {
             case 2:
             case 3:
@@ -59,18 +58,27 @@ public class ItemBucket extends Item {
             case 5:
             case 8:
             case 9:
-                return 8;
+                return FLOWING_WATER;
             case 10:
             case 11:
-                return 10;
+                return FLOWING_LAVA;
             default:
-                return 0;
+                return AIR;
         }
+    }
+
+    public static int getDamageFromIdentifier(Identifier id) {
+        if (id == FLOWING_WATER) {
+            return 8;
+        } else if (id == FLOWING_LAVA) {
+            return 10;
+        }
+        throw new IllegalArgumentException(id + " cannot be in bucket");
     }
 
     @Override
     public int getMaxStackSize() {
-        return this.meta == 0 ? 16 : 1;
+        return this.getMeta() == 0 ? 16 : 1;
     }
 
     @Override
@@ -79,23 +87,29 @@ public class ItemBucket extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
-        Block targetBlock = Block.get(getDamageByTarget(this.meta));
+    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, Vector3f clickPos) {
+        Block bucketContents = Block.get(getBlockIdFromDamage(this.getMeta()));
 
-        if (targetBlock instanceof BlockAir) {
-            if (target instanceof BlockLiquid && target.getDamage() == 0) {
-                Item result = Item.get(BUCKET, getDamageByTarget(target.getId()), 1);
+        if (bucketContents instanceof BlockAir) {
+            if (target.isWaterlogged()) {
+                target = player.getLevel().getBlock(target.getX(), target.getY(), target.getZ(), 1);
+            }
+            if (target instanceof BlockLiquid && target.getMeta() == 0) {
+                Item result = Item.get(BUCKET, this.getDamageFromIdentifier(target.getId()), 1);
                 PlayerBucketFillEvent ev;
                 player.getServer().getPluginManager().callEvent(ev = new PlayerBucketFillEvent(player, block, face, this, result));
                 if (!ev.isCancelled()) {
-                    player.getLevel().setBlock(target, new BlockAir(), true, true);
+                    player.getLevel().setBlock(target.getPosition(), Block.get(AIR), true, true);
 
                     // When water is removed ensure any adjacent still water is
                     // replaced with water that can flow.
                     for (BlockFace side : Plane.HORIZONTAL) {
                         Block b = target.getSide(side);
-                        if (b.getId() == STILL_WATER) {
-                            level.setBlock(b, new BlockWater());
+                        if (b.isWaterlogged()) {
+                            b = player.getLevel().getBlock(b.getX(), b.getY(), b.getZ(), 1);
+                        }
+                        if (b.getId() == WATER) {
+                            level.setBlock(b.getPosition(), Block.get(FLOWING_WATER));
                         }
                     }
 
@@ -107,9 +121,9 @@ public class ItemBucket extends Item {
                     }
 
                     if (target instanceof BlockLava) {
-                        level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_FILL_LAVA);
+                        level.addLevelSoundEvent(block.getPosition(), SoundEvent.BUCKET_FILL_LAVA);
                     } else {
-                        level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_FILL_WATER);
+                        level.addLevelSoundEvent(block.getPosition(), SoundEvent.BUCKET_FILL_WATER);
                     }
 
                     return true;
@@ -117,19 +131,28 @@ public class ItemBucket extends Item {
                     player.getInventory().sendContents(player);
                 }
             }
-        } else if (targetBlock instanceof BlockLiquid) {
+        } else if (bucketContents instanceof BlockLiquid) {
             Item result = Item.get(BUCKET, 0, 1);
-            PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, block, face, this, result);
-            ev.setCancelled(!block.canBeFlowedInto());
+            Block emptyTarget = block;
+            if (target.canWaterlogSource() && bucketContents.getId() == FLOWING_WATER) {
+                emptyTarget = target;
+            }
+            PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, emptyTarget, face, this, result);
+            if (!emptyTarget.canBeFlooded() && !emptyTarget.canWaterlogSource()) {
+                ev.setCancelled(true);
+            }
 
-            if (player.getLevel().getDimension() == Level.DIMENSION_NETHER && this.getDamage() != 10) {
+            if (player.getLevel().getDimension() == Level.DIMENSION_NETHER && this.getMeta() != 10) {
                 ev.setCancelled(true);
             }
 
             player.getServer().getPluginManager().callEvent(ev);
 
             if (!ev.isCancelled()) {
-                player.getLevel().setBlock(block, targetBlock, true, true);
+                int layer = emptyTarget.canWaterlogSource() ? 1 : 0;
+                if (target.getLevel().setBlock(emptyTarget.getPosition(), layer, bucketContents, true, true)) {
+                    bucketContents.getLevel().scheduleUpdate(bucketContents, bucketContents.tickRate());
+                }
                 if (player.isSurvival()) {
                     Item clone = this.clone();
                     clone.setCount(this.getCount() - 1);
@@ -137,15 +160,15 @@ public class ItemBucket extends Item {
                     player.getInventory().addItem(ev.getItem());
                 }
 
-                if (this.getDamage() == 10) {
-                    level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_EMPTY_LAVA);
+                if (this.getMeta() == 10) {
+                    level.addLevelSoundEvent(block.getPosition(), SoundEvent.BUCKET_EMPTY_LAVA);
                 } else {
-                    level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_EMPTY_WATER);
+                    level.addLevelSoundEvent(block.getPosition(), SoundEvent.BUCKET_EMPTY_WATER);
                 }
 
                 return true;
             } else {
-                player.getLevel().sendBlocks(new Player[]{player}, new Block[]{Block.get(Block.AIR, 0, block)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
+                player.getLevel().sendBlocks(new Player[]{player}, new Block[]{Block.get(AIR, 0, block.getPosition(), 1)}, UpdateBlockPacket.FLAG_ALL_PRIORITY);
                 player.getInventory().sendContents(player);
             }
         }
@@ -154,8 +177,8 @@ public class ItemBucket extends Item {
     }
 
     @Override
-    public boolean onClickAir(Player player, Vector3 directionVector) {
-        return this.getDamage() == 1; // Milk
+    public boolean onClickAir(Player player, Vector3f directionVector) {
+        return this.getMeta() == 1; // Milk
     }
 
     @Override
@@ -169,9 +192,9 @@ public class ItemBucket extends Item {
         }
 
         if (player.isSurvival()) {
-            this.count--;
+            this.decrementCount();
             player.getInventory().setItemInHand(this);
-            player.getInventory().addItem(new ItemBucket());
+            player.getInventory().addItem(Item.get(BUCKET));
         }
 
         player.removeAllEffects();

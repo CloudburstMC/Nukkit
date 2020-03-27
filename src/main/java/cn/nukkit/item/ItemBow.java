@@ -1,21 +1,23 @@
 package cn.nukkit.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.projectile.EntityArrow;
-import cn.nukkit.entity.projectile.EntityProjectile;
+import cn.nukkit.entity.EntityTypes;
+import cn.nukkit.entity.impl.projectile.EntityArrow;
+import cn.nukkit.entity.projectile.Arrow;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.math.Vector3;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.level.Location;
+import cn.nukkit.player.Player;
+import cn.nukkit.registry.EntityRegistry;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
 
 import java.util.Random;
+
+import static cn.nukkit.item.ItemIds.ARROW;
 
 /**
  * author: MagicDroidX
@@ -23,16 +25,8 @@ import java.util.Random;
  */
 public class ItemBow extends ItemTool {
 
-    public ItemBow() {
-        this(0, 1);
-    }
-
-    public ItemBow(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemBow(Integer meta, int count) {
-        super(BOW, meta, count, "Bow");
+    public ItemBow(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -46,52 +40,47 @@ public class ItemBow extends ItemTool {
     }
 
     @Override
-    public boolean onClickAir(Player player, Vector3 directionVector) {
-        return player.getInventory().contains(Item.get(ItemID.ARROW)) || player.isCreative();
+    public boolean onClickAir(Player player, Vector3f directionVector) {
+        return player.getInventory().contains(Item.get(ARROW)) || player.isCreative();
     }
 
     @Override
     public boolean onRelease(Player player, int ticksUsed) {
-        Item itemArrow = Item.get(Item.ARROW, 0, 1);
+        Item itemArrow = Item.get(ARROW, 0, 1);
 
         if (player.isSurvival() && !player.getInventory().contains(itemArrow)) {
             player.getInventory().sendContents(player);
             return false;
         }
 
-        double damage = 2;
+        float damage = 2;
 
         Enchantment bowDamage = this.getEnchantment(Enchantment.ID_BOW_POWER);
         if (bowDamage != null && bowDamage.getLevel() > 0) {
-            damage += 0.25 * (bowDamage.getLevel() + 1);
+            damage += 0.25f * (bowDamage.getLevel() + 1);
         }
 
         Enchantment flameEnchant = this.getEnchantment(Enchantment.ID_BOW_FLAME);
         boolean flame = flameEnchant != null && flameEnchant.getLevel() > 0;
 
-        CompoundTag nbt = new CompoundTag()
-                .putList(new ListTag<DoubleTag>("Pos")
-                        .add(new DoubleTag("", player.x))
-                        .add(new DoubleTag("", player.y + player.getEyeHeight()))
-                        .add(new DoubleTag("", player.z)))
-                .putList(new ListTag<DoubleTag>("Motion")
-                        .add(new DoubleTag("", -Math.sin(player.yaw / 180 * Math.PI) * Math.cos(player.pitch / 180 * Math.PI)))
-                        .add(new DoubleTag("", -Math.sin(player.pitch / 180 * Math.PI)))
-                        .add(new DoubleTag("", Math.cos(player.yaw / 180 * Math.PI) * Math.cos(player.pitch / 180 * Math.PI))))
-                .putList(new ListTag<FloatTag>("Rotation")
-                        .add(new FloatTag("", (player.yaw > 180 ? 360 : 0) - (float) player.yaw))
-                        .add(new FloatTag("", (float) -player.pitch)))
-                .putShort("Fire", flame ? 45 * 60 : 0)
-                .putDouble("damage", damage);
+        Vector3f position = Vector3f.from(player.getX(), player.getY() + player.getEyeHeight(), player.getZ());
+        Vector3f motion = Vector3f.from(
+                -Math.sin(player.getYaw() / 180 * Math.PI) * Math.cos(player.getPitch() / 180 * Math.PI),
+                -Math.sin(player.getPitch() / 180 * Math.PI),
+                Math.cos(player.getYaw() / 180 * Math.PI) * Math.cos(player.getPitch() / 180 * Math.PI)
+        );
+
 
         double p = (double) ticksUsed / 20;
         double f = Math.min((p * p + p * 2) / 3, 1) * 2;
 
-        EntityArrow arrow = (EntityArrow) Entity.createEntity("Arrow", player.chunk, nbt, player, f == 2);
-
-        if (arrow == null) {
-            return false;
-        }
+        Arrow arrow = EntityRegistry.get().newEntity(EntityTypes.ARROW, Location.from(position, player.getLevel()));
+        arrow.setMotion(motion);
+        arrow.setRotation((player.getYaw() > 180 ? 360 : 0) - player.getY(), -player.getPitch());
+        arrow.setOnFire(flame ? 45 * 60 : 0);
+        arrow.setDamage(damage);
+        arrow.setCritical(f == 2);
+        arrow.setOwner(player);
 
         EntityShootBowEvent entityShootBowEvent = new EntityShootBowEvent(player, this, arrow, f);
 
@@ -104,11 +93,11 @@ public class ItemBow extends ItemTool {
             entityShootBowEvent.getProjectile().kill();
             player.getInventory().sendContents(player);
         } else {
-            entityShootBowEvent.getProjectile().setMotion(entityShootBowEvent.getProjectile().getMotion().multiply(entityShootBowEvent.getForce()));
+            entityShootBowEvent.getProjectile().setMotion(entityShootBowEvent.getProjectile().getMotion().mul(entityShootBowEvent.getForce()));
             Enchantment infinityEnchant = this.getEnchantment(Enchantment.ID_BOW_INFINITY);
             boolean infinity = infinityEnchant != null && infinityEnchant.getLevel() > 0;
-            EntityProjectile projectile;
-            if (infinity && (projectile = entityShootBowEvent.getProjectile()) instanceof EntityArrow) {
+            Entity projectile;
+            if (infinity && (projectile = entityShootBowEvent.getProjectile()) instanceof Arrow) {
                 ((EntityArrow) projectile).setPickupMode(EntityArrow.PICKUP_CREATIVE);
             }
             if (player.isSurvival()) {
@@ -118,9 +107,9 @@ public class ItemBow extends ItemTool {
                 if (!this.isUnbreakable()) {
                     Enchantment durability = this.getEnchantment(Enchantment.ID_DURABILITY);
                     if (!(durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= new Random().nextInt(100))) {
-                        this.setDamage(this.getDamage() + 1);
-                        if (this.getDamage() >= getMaxDurability()) {
-                            this.count--;
+                        this.setMeta(this.getMeta() + 1);
+                        if (this.getMeta() >= getMaxDurability()) {
+                            this.decrementCount();
                         }
                         player.getInventory().setItemInHand(this);
                     }
@@ -133,7 +122,7 @@ public class ItemBow extends ItemTool {
                     entityShootBowEvent.getProjectile().kill();
                 } else {
                     entityShootBowEvent.getProjectile().spawnToAll();
-                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BOW);
+                    player.getLevel().addLevelSoundEvent(player.getPosition(), SoundEvent.BOW);
                 }
             }
         }

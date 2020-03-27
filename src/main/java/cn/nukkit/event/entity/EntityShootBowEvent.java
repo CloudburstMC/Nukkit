@@ -1,8 +1,7 @@
 package cn.nukkit.event.entity;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.EntityLiving;
-import cn.nukkit.entity.projectile.EntityProjectile;
+import cn.nukkit.entity.impl.EntityLiving;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.item.Item;
@@ -20,11 +19,11 @@ public class EntityShootBowEvent extends EntityEvent implements Cancellable {
 
     private final Item bow;
 
-    private EntityProjectile projectile;
+    private Entity projectile;
 
     private double force;
 
-    public EntityShootBowEvent(EntityLiving shooter, Item bow, EntityProjectile projectile, double force) {
+    public EntityShootBowEvent(EntityLiving shooter, Item bow, Entity projectile, double force) {
         this.entity = shooter;
         this.bow = bow;
         this.projectile = projectile;
@@ -42,7 +41,7 @@ public class EntityShootBowEvent extends EntityEvent implements Cancellable {
     }
 
 
-    public EntityProjectile getProjectile() {
+    public Entity getProjectile() {
         return this.projectile;
     }
 
@@ -52,7 +51,7 @@ public class EntityShootBowEvent extends EntityEvent implements Cancellable {
                 this.projectile.kill();
                 this.projectile.close();
             }
-            this.projectile = (EntityProjectile) projectile;
+            this.projectile = projectile;
         }
     }
 

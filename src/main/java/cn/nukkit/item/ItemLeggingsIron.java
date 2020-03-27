@@ -1,21 +1,15 @@
 package cn.nukkit.item;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class ItemLeggingsIron extends ItemArmor {
 
-    public ItemLeggingsIron() {
-        this(0, 1);
-    }
-
-    public ItemLeggingsIron(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemLeggingsIron(Integer meta, int count) {
-        super(IRON_LEGGINGS, meta, count, "Iron Leggings");
+    public ItemLeggingsIron(Identifier id) {
+        super(id);
     }
 
     @Override

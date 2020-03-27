@@ -2,23 +2,15 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by Pub4Game on 27.12.2015.
  */
 public class BlockMobSpawner extends BlockSolid {
 
-    public BlockMobSpawner() {
-    }
-
-    @Override
-    public String getName() {
-        return "Monster Spawner";
-    }
-
-    @Override
-    public int getId() {
-        return MONSTER_SPAWNER;
+    public BlockMobSpawner(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -27,12 +19,12 @@ public class BlockMobSpawner extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 5;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 25;
     }
 
@@ -56,4 +48,8 @@ public class BlockMobSpawner extends BlockSolid {
         return false;
     }
 
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

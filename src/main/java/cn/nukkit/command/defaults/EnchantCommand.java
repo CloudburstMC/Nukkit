@@ -1,14 +1,16 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * Created by Pub4Game on 23.01.2016.
@@ -16,15 +18,15 @@ import cn.nukkit.utils.TextFormat;
 public class EnchantCommand extends VanillaCommand {
 
     public EnchantCommand(String name) {
-        super(name, "%nukkit.command.enchant.description", "%commands.enchant.usage");
+        super(name, "commands.enchant.description", "commands.enchant.usage");
         this.setPermission("nukkit.command.enchant");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
                 new CommandParameter("enchantment ID", CommandParamType.INT, false),
                 new CommandParameter("level", CommandParamType.INT, true)
         });
-        this.commandParameters.put("byName", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
                 new CommandParameter("id", false, CommandParameter.ENUM_TYPE_ENCHANTMENT_LIST),
                 new CommandParameter("level", CommandParamType.INT, true)
@@ -61,7 +63,7 @@ public class EnchantCommand extends VanillaCommand {
         }
         enchantment.setLevel(enchantLevel);
         Item item = player.getInventory().getItemInHand();
-        if (item.getId() <= 0) {
+        if (item.getId() == AIR) {
             sender.sendMessage(new TranslationContainer("commands.enchant.noItem"));
             return true;
         }

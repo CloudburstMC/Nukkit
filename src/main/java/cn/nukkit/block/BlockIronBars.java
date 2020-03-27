@@ -1,9 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created on 2015/12/6 by xtypr.
@@ -11,26 +11,17 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockIronBars extends BlockThin {
 
-    public BlockIronBars() {
+    public BlockIronBars(Identifier id) {
+        super(id);
     }
 
     @Override
-    public String getName() {
-        return "Iron Bars";
-    }
-
-    @Override
-    public int getId() {
-        return IRON_BARS;
-    }
-
-    @Override
-    public double getHardness() {
+    public float getHardness() {
         return 5;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 10;
     }
 
@@ -41,7 +32,7 @@ public class BlockIronBars extends BlockThin {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return Item.get(id, 0);
     }
 
     @Override
@@ -63,5 +54,10 @@ public class BlockIronBars extends BlockThin {
     @Override
     public boolean canHarvestWithHand() {
         return false;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

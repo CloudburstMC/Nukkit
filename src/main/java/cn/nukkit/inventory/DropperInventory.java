@@ -1,15 +1,15 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.blockentity.BlockEntityDropper;
+import cn.nukkit.blockentity.Dropper;
 
 public class DropperInventory extends ContainerInventory {
 
-    public DropperInventory(BlockEntityDropper blockEntity) {
+    public DropperInventory(Dropper blockEntity) {
         super(blockEntity, InventoryType.DROPPER);
     }
 
     @Override
-    public BlockEntityDropper getHolder() {
-        return (BlockEntityDropper) super.getHolder();
+    public Dropper getHolder() {
+        return (Dropper) super.getHolder();
     }
 }

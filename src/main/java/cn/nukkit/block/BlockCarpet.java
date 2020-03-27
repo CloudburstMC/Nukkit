@@ -1,53 +1,39 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * Created on 2015/11/24 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockCarpet extends BlockFlowable {
-    public BlockCarpet() {
-        this(0);
-    }
-
-    public BlockCarpet(int meta) {
-        super(meta);
-    }
-
-    public BlockCarpet(DyeColor dyeColor) {
-        this(dyeColor.getWoolData());
+public class BlockCarpet extends FloodableBlock {
+    public BlockCarpet(Identifier id) {
+        super(id);
     }
 
     @Override
-    public int getId() {
-        return CARPET;
+    public float getHardness() {
+        return 0.1f;
     }
 
     @Override
-    public double getHardness() {
-        return 0.1;
-    }
-
-    @Override
-    public double getResistance() {
-        return 0.5;
+    public float getResistance() {
+        return 0.5f;
     }
 
     @Override
     public boolean isSolid() {
         return true;
-    }
-
-    @Override
-    public String getName() {
-        return DyeColor.getByWoolData(getDamage()) + " Carpet";
     }
 
     @Override
@@ -61,15 +47,15 @@ public class BlockCarpet extends BlockFlowable {
     }
 
     @Override
-    public double getMaxY() {
-        return this.y + 0.0625;
+    public float getMaxY() {
+        return this.getY() + 0.0625f;
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         Block down = this.down();
-        if (down.getId() != Item.AIR) {
-            this.getLevel().setBlock(block, this, true, true);
+        if (down.getId() != AIR) {
+            this.getLevel().setBlock(block.getPosition(), this, true, true);
             return true;
         }
         return false;
@@ -78,8 +64,8 @@ public class BlockCarpet extends BlockFlowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.down().getId() == Item.AIR) {
-                this.getLevel().useBreakOn(this);
+            if (this.down().getId() == AIR) {
+                this.getLevel().useBreakOn(this.getPosition());
 
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -90,11 +76,15 @@ public class BlockCarpet extends BlockFlowable {
 
     @Override
     public BlockColor getColor() {
-        return DyeColor.getByWoolData(getDamage()).getColor();
+        return DyeColor.getByWoolData(getMeta()).getColor();
     }
 
     public DyeColor getDyeColor() {
-        return DyeColor.getByWoolData(getDamage());
+        return DyeColor.getByWoolData(getMeta());
     }
 
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
 }

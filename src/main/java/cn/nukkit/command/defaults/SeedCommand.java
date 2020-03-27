@@ -1,8 +1,8 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
+import cn.nukkit.player.Player;
 
 /**
  * author: MagicDroidX
@@ -11,7 +11,7 @@ import cn.nukkit.lang.TranslationContainer;
 public class SeedCommand extends VanillaCommand {
 
     public SeedCommand(String name) {
-        super(name, "%nukkit.command.seed.description", "%commands.seed.usage");
+        super(name);
         this.setPermission("nukkit.command.seed");
         this.commandParameters.clear();
     }

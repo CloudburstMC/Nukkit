@@ -1,8 +1,7 @@
 package cn.nukkit.utils;
 
-import cn.nukkit.nbt.tag.CompoundTag;
+import com.nukkitx.nbt.tag.CompoundTag;
 
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,16 +15,17 @@ public class BannerPattern {
         this.color = color;
     }
 
+    public static BannerPattern fromCompoundTag(CompoundTag compoundTag) {
+        return new BannerPattern(Type.getByName(compoundTag.contains("Pattern") ? compoundTag.getString("Pattern") : ""),
+                compoundTag.contains("Color") ? DyeColor.getByDyeData(compoundTag.getInt("Color")) : DyeColor.BLACK);
+    }
+
     public DyeColor getColor() {
         return this.color;
     }
 
     public Type getType() {
         return this.type;
-    }
-
-    public static BannerPattern fromCompoundTag(CompoundTag compoundTag) {
-        return new BannerPattern(Type.getByName(compoundTag.contains("Pattern") ? compoundTag.getString("Pattern") : ""), compoundTag.contains("Color") ? DyeColor.getByDyeData(compoundTag.getInt("Color")) : DyeColor.BLACK);
     }
 
     public enum Type {
@@ -71,24 +71,24 @@ public class BannerPattern {
 
         private final static Map<String, Type> BY_NAME = new HashMap<>();
 
-        private String name;
-
-        Type(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return this.name;
-        }
-
         static {
             for (Type type : values()) {
                 BY_NAME.put(type.getName(), type);
             }
         }
 
+        private String name;
+
+        Type(String name) {
+            this.name = name;
+        }
+
         public static Type getByName(String name) {
             return BY_NAME.get(name);
+        }
+
+        public String getName() {
+            return this.name;
         }
 
     }

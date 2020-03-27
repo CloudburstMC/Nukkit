@@ -7,11 +7,13 @@ package cn.nukkit.entity;
  */
 
 import cn.nukkit.utils.ServerException;
+import lombok.ToString;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+@ToString(exclude = {"shouldSend"})
 public class Attribute implements Cloneable {
 
     public static final int ABSORPTION = 0;
@@ -169,5 +171,9 @@ public class Attribute implements Cloneable {
         } catch (CloneNotSupportedException e) {
             return null;
         }
+    }
+
+    public com.nukkitx.protocol.bedrock.data.Attribute toNetwork() {
+        return new com.nukkitx.protocol.bedrock.data.Attribute(name, minValue, maxValue, currentValue, defaultValue);
     }
 }

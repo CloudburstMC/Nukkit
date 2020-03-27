@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created on 2015/12/26 by Pub4Game.
@@ -10,32 +11,23 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockNetherrack extends BlockSolid {
 
-    public BlockNetherrack() {
+    public BlockNetherrack(Identifier id) {
+        super(id);
     }
 
     @Override
-    public int getId() {
-        return NETHERRACK;
-    }
-
-    @Override
-    public double getResistance() {
+    public float getResistance() {
         return 2;
     }
 
     @Override
-    public double getHardness() {
-        return 0.4;
+    public float getHardness() {
+        return 0.4f;
     }
 
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
-    }
-
-    @Override
-    public String getName() {
-        return "Netherrack";
     }
 
     @Override

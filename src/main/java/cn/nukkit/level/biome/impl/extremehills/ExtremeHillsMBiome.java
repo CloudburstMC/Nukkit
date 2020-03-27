@@ -1,18 +1,22 @@
 package cn.nukkit.level.biome.impl.extremehills;
 
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.generator.noise.nukkit.f.SimplexF;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 
 /**
  * author: DaPorkchop_
  * Nukkit Project
  * <p>
  * make sure this is touching another extreme hills type or it'll look dumb
- *
+ * <p>
  * very smooth hills with flat areas between
  */
 public class ExtremeHillsMBiome extends ExtremeHillsPlusBiome {
-    private static final SimplexF gravelNoise = new SimplexF(new NukkitRandom(0), 1f, 1 / 4f, 1 / 64f);
+    private static final Block GRAVEL = Block.get(BlockIds.GRAVEL);
+
+    private static final SimplexF gravelNoise = new SimplexF(new BedrockRandom(0), 1f, 1 / 4f, 1 / 64f);
     private boolean isGravel = false;
 
     public ExtremeHillsMBiome() {
@@ -32,24 +36,18 @@ public class ExtremeHillsMBiome extends ExtremeHillsPlusBiome {
     }
 
     @Override
-    public int getSurfaceBlock(int y) {
-        return isGravel ? GRAVEL : super.getSurfaceBlock(y);
+    public Block getSurface(int x, int y, int z) {
+        return gravelNoise.noise2D(x, z, true) < -0.75f ? GRAVEL : super.getSurface(x, y, z);
     }
 
     @Override
-    public int getSurfaceDepth(int y) {
-        return isGravel ? 4 : super.getSurfaceDepth(y);
+    public int getSurfaceDepth(int x, int y, int z) {
+        return gravelNoise.noise2D(x, z, true) < -0.75f ? 4 : super.getSurfaceDepth(x, y, z);
     }
 
     @Override
-    public int getGroundDepth(int y) {
-        return isGravel ? 0 : super.getGroundDepth(y);
-    }
-
-    @Override
-    public void preCover(int x, int z) {
-        //-0.75 is farily rare, so there'll be much more gravel than grass
-        isGravel = gravelNoise.noise2D(x, z, true) < -0.75f;
+    public int getGroundDepth(int x, int y, int z) {
+        return gravelNoise.noise2D(x, z, true) < -0.75f ? 0 : super.getGroundDepth(x, y, z);
     }
 
     @Override

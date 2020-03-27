@@ -4,7 +4,8 @@ import cn.nukkit.block.BlockDispenser;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Axis;
-import cn.nukkit.math.Vector3;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.math.vector.Vector3i;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -17,32 +18,31 @@ public class DefaultDispenseBehavior implements DispenseBehavior {
     public boolean success = true;
 
     @Override
-    public Item dispense(BlockDispenser block, BlockFace face, Item item) {
-        Vector3 dispensePos = block.getDispensePosition();
+    public Item dispense(Vector3i position, BlockDispenser block, BlockFace face, Item item) {
+        Vector3f dispensePos = block.getDispensePosition();
 
         if (face.getAxis() == Axis.Y) {
-            dispensePos.y -= 0.125;
+            dispensePos = dispensePos.sub(0, 0.125, 0);
         } else {
-            dispensePos.y -= 0.15625;
+            dispensePos = dispensePos.sub(0, 0.15625, 0);
         }
 
         Random rand = ThreadLocalRandom.current();
-        Vector3 motion = new Vector3();
 
-        double offset = rand.nextDouble() * 0.1 + 0.2;
+        float offset = rand.nextFloat() * 0.1f + 0.2f;
 
-        motion.x = face.getXOffset() * offset;
-        motion.y = 0.20000000298023224;
-        motion.z = face.getZOffset() * offset;
+        float motionX = face.getXOffset() * offset;
+        float motionY = 0.2f;
+        float motionZ = face.getZOffset() * offset;
 
-        motion.x += rand.nextGaussian() * 0.007499999832361937 * 6;
-        motion.y += rand.nextGaussian() * 0.007499999832361937 * 6;
-        motion.z += rand.nextGaussian() * 0.007499999832361937 * 6;
+        motionX += rand.nextGaussian() * 0.0075f * 6;
+        motionY += rand.nextGaussian() * 0.0075f * 6;
+        motionZ += rand.nextGaussian() * 0.0075f * 6;
 
         Item clone = item.clone();
-        clone.count = 1;
+        clone.setCount(1);
 
-        block.level.dropItem(dispensePos, clone, motion);
+        block.getLevel().dropItem(dispensePos, clone, Vector3f.from(motionX, motionY, motionZ));
         return null;
     }
 

@@ -1,7 +1,8 @@
 package cn.nukkit.item;
 
-import cn.nukkit.Player;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * author: MagicDroidX
@@ -9,20 +10,12 @@ import cn.nukkit.math.Vector3;
  */
 public class ItemAppleGold extends ItemEdible {
 
-    public ItemAppleGold() {
-        this(0, 1);
-    }
-
-    public ItemAppleGold(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemAppleGold(Integer meta, int count) {
-        super(GOLDEN_APPLE, meta, count, "Golden Apple");
+    public ItemAppleGold(Identifier id) {
+        super(id);
     }
 
     @Override
-    public boolean onClickAir(Player player, Vector3 directionVector) {
+    public boolean onClickAir(Player player, Vector3f directionVector) {
         return true;
     }
 }

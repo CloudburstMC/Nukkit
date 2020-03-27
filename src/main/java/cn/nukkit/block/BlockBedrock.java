@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.utils.Identifier;
 
 /**
  * author: Angelic47
@@ -8,27 +9,18 @@ import cn.nukkit.item.Item;
  */
 public class BlockBedrock extends BlockSolid {
 
-    public BlockBedrock() {
+    public BlockBedrock(Identifier id) {
+        super(id);
     }
 
     @Override
-    public int getId() {
-        return BEDROCK;
-    }
-
-    @Override
-    public double getHardness() {
+    public float getHardness() {
         return -1;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 18000000;
-    }
-
-    @Override
-    public String getName() {
-        return "Bedrock";
     }
 
     @Override

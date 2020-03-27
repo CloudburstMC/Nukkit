@@ -1,11 +1,14 @@
 package cn.nukkit.block;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.item.EntityMinecartAbstract;
+import cn.nukkit.entity.impl.vehicle.EntityAbstractMinecart;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.DETECTOR_RAIL;
 
 /**
  * Created on 2015/11/22 by CreeperFace.
@@ -17,23 +20,9 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
  */
 public class BlockRailDetector extends BlockRail {
 
-    public BlockRailDetector() {
-        this(0);
+    public BlockRailDetector(Identifier id) {
+        super(id);
         canBePowered = true;
-    }
-
-    public BlockRailDetector(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return DETECTOR_RAIL;
-    }
-
-    @Override
-    public String getName() {
-        return "Detector Rail";
     }
 
     @Override
@@ -70,36 +59,36 @@ public class BlockRailDetector extends BlockRail {
         boolean isPowered = false;
 
         for (Entity entity : level.getNearbyEntities(new SimpleAxisAlignedBB(
-                getFloorX() + 0.125D,
-                getFloorY(),
-                getFloorZ() + 0.125D,
-                getFloorX() + 0.875D,
-                getFloorY() + 0.525D,
-                getFloorZ() + 0.875D))) {
-            if (entity instanceof EntityMinecartAbstract) {
+                getX() + 0.125f,
+                getY(),
+                getZ() + 0.125f,
+                getX() + 0.875f,
+                getY() + 0.525f,
+                getZ() + 0.875f))) {
+            if (entity instanceof EntityAbstractMinecart) {
                 isPowered = true;
             }
         }
 
         if (isPowered && !wasPowered) {
             setActive(true);
-            level.scheduleUpdate(this, this, 0);
-            level.scheduleUpdate(this, this.down(), 0);
+            level.scheduleUpdate(this, this.getPosition(), 0);
+            level.scheduleUpdate(this, this.getPosition().down(), 0);
         }
 
         if (!isPowered && wasPowered) {
             setActive(false);
-            level.scheduleUpdate(this, this, 0);
-            level.scheduleUpdate(this, this.down(), 0);
+            level.scheduleUpdate(this, this.getPosition(), 0);
+            level.scheduleUpdate(this, this.getPosition().down(), 0);
         }
 
-        level.updateComparatorOutputLevel(this);
+        level.updateComparatorOutputLevel(this.getPosition());
     }
 
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-                Item.get(Item.DETECTOR_RAIL, 0, 1)
+                Item.get(DETECTOR_RAIL, 0, 1)
         };
     }
 }

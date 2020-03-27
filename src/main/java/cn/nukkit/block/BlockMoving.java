@@ -1,25 +1,12 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.utils.Identifier;
 
 public class BlockMoving extends BlockTransparent {
 
-    public BlockMoving() {
-        this(0);
-    }
-
-    public BlockMoving(int meta) {
-        super();
-    }
-
-    @Override
-    public String getName() {
-        return "MovingBlock";
-    }
-
-    @Override
-    public int getId() {
-        return BlockID.MOVING_BLOCK;
+    public BlockMoving(Identifier id) {
+        super(id);
     }
 
     @Override

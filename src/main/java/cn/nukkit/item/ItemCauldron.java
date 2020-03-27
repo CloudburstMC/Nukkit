@@ -1,6 +1,8 @@
 package cn.nukkit.item;
 
-import cn.nukkit.block.BlockCauldron;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockIds;
+import cn.nukkit.utils.Identifier;
 
 /**
  * author: CreeperFace
@@ -8,16 +10,12 @@ import cn.nukkit.block.BlockCauldron;
  */
 public class ItemCauldron extends Item {
 
-    public ItemCauldron() {
-        this(0, 1);
+    public ItemCauldron(Identifier id) {
+        super(id);
     }
 
-    public ItemCauldron(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemCauldron(Integer meta, int count) {
-        super(CAULDRON, meta, count, "Cauldron");
-        this.block = new BlockCauldron();
+    @Override
+    public Block getBlock() {
+        return Block.get(BlockIds.CAULDRON);
     }
 }

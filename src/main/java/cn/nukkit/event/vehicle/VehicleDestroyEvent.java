@@ -12,14 +12,14 @@ public class VehicleDestroyEvent extends VehicleEvent implements Cancellable {
         return handlers;
     }
 
-    private final cn.nukkit.entity.Entity attacker;
+    private final Entity attacker;
 
-    public VehicleDestroyEvent(Entity vehicle, cn.nukkit.entity.Entity attacker) {
+    public VehicleDestroyEvent(Entity vehicle, Entity attacker) {
         super(vehicle);
         this.attacker = attacker;
     }
 
-    public cn.nukkit.entity.Entity getAttacker() {
+    public Entity getAttacker() {
         return attacker;
     }
 

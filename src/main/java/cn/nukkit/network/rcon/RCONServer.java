@@ -1,6 +1,7 @@
 package cn.nukkit.network.rcon;
 
-import cn.nukkit.Server;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -20,6 +21,7 @@ import java.util.*;
  *
  * @author Tee7even
  */
+@Log4j2
 public class RCONServer extends Thread {
     private static final int SERVERDATA_AUTH = 3;
     private static final int SERVERDATA_AUTH_RESPONSE = 2;
@@ -104,7 +106,7 @@ public class RCONServer extends Thread {
             } catch (BufferUnderflowException exception) {
                 //Corrupted packet, ignore
             } catch (Exception exception) {
-                Server.getInstance().getLogger().logException(exception);
+                log.throwing(Level.ERROR, exception);
             }
         }
 
@@ -113,7 +115,7 @@ public class RCONServer extends Thread {
             this.serverChannel.close();
             this.selector.close();
         } catch (IOException exception) {
-            Server.getInstance().getLogger().logException(exception);
+            log.throwing(Level.ERROR, exception);
         }
 
         synchronized (this) {

@@ -1,6 +1,5 @@
 package cn.nukkit.utils;
 
-import cn.nukkit.api.API;
 import cn.nukkit.block.Block;
 import cn.nukkit.math.BlockFace;
 
@@ -10,6 +9,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static cn.nukkit.block.BlockIds.*;
 import static cn.nukkit.math.BlockFace.*;
 import static cn.nukkit.utils.Rail.Orientation.State.*;
 
@@ -19,7 +19,6 @@ import static cn.nukkit.utils.Rail.Orientation.State.*;
  * By lmlstarqaq http://snake1999.com/
  * Creation time: 2017/7/1 17:42.
  */
-@API(usage = API.Usage.BLEEDING, definition = API.Definition.INTERNAL)
 public final class Rail {
 
     public static boolean isRailBlock(Block block) {
@@ -143,16 +142,8 @@ public final class Rail {
         }
     }
 
-    public static boolean isRailBlock(int blockId) {
-        switch (blockId) {
-            case Block.RAIL:
-            case Block.POWERED_RAIL:
-            case Block.ACTIVATOR_RAIL:
-            case Block.DETECTOR_RAIL:
-                return true;
-            default:
-                return false;
-        }
+    public static boolean isRailBlock(Identifier id) {
+        return id == RAIL || id == GOLDEN_RAIL || id == ACTIVATOR_RAIL || id == DETECTOR_RAIL;
     }
 
     private Rail() {

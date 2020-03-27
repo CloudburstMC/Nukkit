@@ -1,27 +1,17 @@
 package cn.nukkit.block;
 
+import cn.nukkit.blockentity.BlockEntityType;
+import cn.nukkit.blockentity.Furnace;
+import cn.nukkit.utils.Identifier;
+
 /**
  * author: Angelic47
  * Nukkit Project
  */
 public class BlockFurnace extends BlockFurnaceBurning {
 
-    public BlockFurnace() {
-        this(0);
-    }
-
-    public BlockFurnace(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Furnace";
-    }
-
-    @Override
-    public int getId() {
-        return FURNACE;
+    protected BlockFurnace(Identifier id, BlockEntityType<? extends Furnace> furnace) {
+        super(id, furnace);
     }
 
     @Override

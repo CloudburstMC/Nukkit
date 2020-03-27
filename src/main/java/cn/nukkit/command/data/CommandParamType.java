@@ -1,35 +1,35 @@
 package cn.nukkit.command.data;
 
-import static cn.nukkit.network.protocol.AvailableCommandsPacket.*;
+import com.nukkitx.protocol.bedrock.data.CommandParamData;
 
 /**
  * @author CreeperFace
  */
 public enum CommandParamType {
-    INT(ARG_TYPE_INT),
-    FLOAT(ARG_TYPE_FLOAT),
-    VALUE(ARG_TYPE_VALUE),
-    WILDCARD_INT(ARG_TYPE_WILDCARD_INT),
-    TARGET(ARG_TYPE_TARGET),
-    WILDCARD_TARGET(ARG_TYPE_WILDCARD_TARGET),
-    STRING(ARG_TYPE_STRING),
-    POSITION(ARG_TYPE_POSITION),
-    MESSAGE(ARG_TYPE_MESSAGE),
-    RAWTEXT(ARG_TYPE_RAWTEXT),
-    JSON(ARG_TYPE_JSON),
-    TEXT(ARG_TYPE_RAWTEXT), // backwards compatibility
-    COMMAND(ARG_TYPE_COMMAND),
-    FILE_PATH(ARG_TYPE_FILE_PATH),
-    OPERATOR(ARG_TYPE_OPERATOR),
+    INT(CommandParamData.Type.INT),
+    FLOAT(CommandParamData.Type.FLOAT),
+    VALUE(CommandParamData.Type.VALUE),
+    WILDCARD_INT(CommandParamData.Type.WILDCARD_INT),
+    TARGET(CommandParamData.Type.TARGET),
+    WILDCARD_TARGET(CommandParamData.Type.WILDCARD_TARGET),
+    STRING(CommandParamData.Type.STRING),
+    POSITION(CommandParamData.Type.POSITION),
+    MESSAGE(CommandParamData.Type.MESSAGE),
+    RAWTEXT(CommandParamData.Type.TEXT),
+    JSON(CommandParamData.Type.JSON),
+    TEXT(CommandParamData.Type.TEXT), // backwards compatibility
+    COMMAND(CommandParamData.Type.COMMAND),
+    FILE_PATH(CommandParamData.Type.FILE_PATH),
+    OPERATOR(CommandParamData.Type.OPERATOR),
     ;
 
-    private final int id;
+    private final CommandParamData.Type type;
 
-    CommandParamType(int id) {
-        this.id = id;
+    CommandParamType(CommandParamData.Type type) {
+        this.type = type;
     }
 
-    public int getId() {
-        return id;
+    public CommandParamData.Type getType() {
+        return type;
     }
 }

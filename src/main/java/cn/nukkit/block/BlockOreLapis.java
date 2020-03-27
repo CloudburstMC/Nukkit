@@ -1,10 +1,11 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemDye;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -16,32 +17,23 @@ import java.util.concurrent.ThreadLocalRandom;
 public class BlockOreLapis extends BlockSolid {
 
 
-    public BlockOreLapis() {
+    public BlockOreLapis(Identifier id) {
+        super(id);
     }
 
     @Override
-    public int getId() {
-        return LAPIS_ORE;
-    }
-
-    @Override
-    public double getHardness() {
+    public float getHardness() {
         return 3;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 5;
     }
 
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
-    }
-
-    @Override
-    public String getName() {
-        return "Lapis Lazuli Ore";
     }
 
     @Override
@@ -60,7 +52,7 @@ public class BlockOreLapis extends BlockSolid {
             }
 
             return new Item[]{
-                    new ItemDye(4, new Random().nextInt(4) + 4)
+                    Item.get(ItemIds.DYE, 4, new Random().nextInt(4) + 4)
             };
         } else {
             return new Item[0];

@@ -1,10 +1,14 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+
+import static cn.nukkit.block.BlockIds.FLOWING_WATER;
 
 /**
  * author: MagicDroidX
@@ -12,31 +16,20 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockWater extends BlockLiquid {
 
-
-    public BlockWater() {
-        this(0);
+    protected BlockWater(Identifier id, Identifier flowingId, Identifier stationaryId) {
+        super(id, flowingId, stationaryId);
     }
 
-    public BlockWater(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return WATER;
+    protected BlockWater(Identifier flowingId, Identifier stationaryId) {
+        this(flowingId, flowingId, stationaryId);
     }
 
     @Override
-    public String getName() {
-        return "Water";
-    }
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        boolean success = target.getLevel().setBlock(block.getPosition(), this, true, false);
+        if (success) this.getLevel().scheduleUpdate(this, this.tickRate());
 
-    @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        boolean ret = this.getLevel().setBlock(this, this, true, false);
-        this.getLevel().scheduleUpdate(this, this.tickRate());
-
-        return ret;
+        return success;
     }
 
     @Override
@@ -45,15 +38,15 @@ public class BlockWater extends BlockLiquid {
     }
 
     @Override
-    public BlockLiquid getBlock(int meta) {
-        return new BlockWater(meta);
+    public Block getBlock(int meta) {
+        return Block.get(FLOWING_WATER, meta);
     }
 
     @Override
     public void onEntityCollide(Entity entity) {
         super.onEntityCollide(entity);
 
-        if (entity.fireTicks > 0) {
+        if (entity.isOnFire()) {
             entity.extinguish();
         }
     }
@@ -61,5 +54,14 @@ public class BlockWater extends BlockLiquid {
     @Override
     public int tickRate() {
         return 5;
+    }
+
+    @Override
+    public boolean usesWaterLogging() {
+        return true;
+    }
+
+    public static BlockFactory factory(Identifier stationaryId) {
+        return id -> new BlockWater(id, stationaryId);
     }
 }

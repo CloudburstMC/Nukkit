@@ -1,18 +1,29 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.level.Position;
+import cn.nukkit.block.Block;
+import cn.nukkit.level.Level;
+import com.nukkitx.math.vector.Vector3i;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public class FakeBlockMenu extends Position implements InventoryHolder {
+public class FakeBlockMenu implements InventoryHolder {
 
     private final Inventory inventory;
+    private final Block block;
 
-    public FakeBlockMenu(Inventory inventory, Position pos) {
-        super(pos.x, pos.y, pos.z, pos.level);
+    public FakeBlockMenu(Inventory inventory, Block block) {
         this.inventory = inventory;
+        this.block = block;
+    }
+
+    public Vector3i getPosition() {
+        return block.getPosition();
+    }
+
+    public Level getLevel() {
+        return block.getLevel();
     }
 
     @Override

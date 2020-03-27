@@ -1,13 +1,14 @@
 package cn.nukkit.command;
 
 import cn.nukkit.Server;
-import cn.nukkit.lang.TextContainer;
+import cn.nukkit.locale.TextContainer;
+import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.permission.PermissibleBase;
 import cn.nukkit.permission.Permission;
 import cn.nukkit.permission.PermissionAttachment;
 import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.plugin.Plugin;
-import cn.nukkit.utils.MainLogger;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import java.util.Map;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public class ConsoleCommandSender implements CommandSender {
 
     private final PermissibleBase perm;
@@ -84,15 +86,19 @@ public class ConsoleCommandSender implements CommandSender {
 
     @Override
     public void sendMessage(String message) {
-        message = this.getServer().getLanguage().translateString(message);
+        message = this.getServer().getLanguage().translate(message);
         for (String line : message.trim().split("\n")) {
-            MainLogger.getLogger().info(line);
+            log.info(line);
         }
     }
 
     @Override
     public void sendMessage(TextContainer message) {
-        this.sendMessage(this.getServer().getLanguage().translate(message));
+        Object[] args = null;
+        if (message instanceof TranslationContainer) {
+            args = ((TranslationContainer) message).getParameters();
+        }
+        this.sendMessage(this.getServer().getLanguage().translate(message.getText(), args));
     }
 
     @Override

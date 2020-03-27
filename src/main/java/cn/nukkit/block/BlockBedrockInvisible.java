@@ -1,34 +1,27 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * Created by Pub4Game on 03.01.2016.
  */
 public class BlockBedrockInvisible extends BlockSolid {
 
-    public BlockBedrockInvisible() {
+    public BlockBedrockInvisible(Identifier id) {
+        super(id);
     }
 
     @Override
-    public int getId() {
-        return INVISIBLE_BEDROCK;
-    }
-
-    @Override
-    public String getName() {
-        return "Invisible Bedrock";
-    }
-
-    @Override
-    public double getHardness() {
+    public float getHardness() {
         return -1;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 18000000;
     }
 
@@ -54,6 +47,6 @@ public class BlockBedrockInvisible extends BlockSolid {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(new BlockAir());
+        return Item.get(AIR, 0, 0);
     }
 }

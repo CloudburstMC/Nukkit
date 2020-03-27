@@ -3,33 +3,16 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.TerracottaColor;
 
 /**
  * Created on 2015/11/24 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockTerracotta extends BlockSolidMeta {
-    public BlockTerracotta() {
-        this(0);
-    }
-
-    public BlockTerracotta(int meta) {
-        super(0);
-    }
-
-    public BlockTerracotta(TerracottaColor dyeColor) {
-        this(dyeColor.getTerracottaData());
-    }
-
-    @Override
-    public int getId() {
-        return TERRACOTTA;
-    }
-
-    @Override
-    public String getName() {
-        return "Terracotta";
+public class BlockTerracotta extends BlockSolid {
+    public BlockTerracotta(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -38,12 +21,12 @@ public class BlockTerracotta extends BlockSolidMeta {
     }
 
     @Override
-    public double getHardness() {
-        return 1.25;
+    public float getHardness() {
+        return 1.25f;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 7;
     }
 
@@ -60,10 +43,10 @@ public class BlockTerracotta extends BlockSolidMeta {
 
     @Override
     public BlockColor getColor() {
-        return TerracottaColor.getByTerracottaData(getDamage()).getColor();
+        return TerracottaColor.getByTerracottaData(getMeta()).getColor();
     }
 
     public TerracottaColor getDyeColor() {
-        return TerracottaColor.getByTerracottaData(getDamage());
+        return TerracottaColor.getByTerracottaData(getMeta());
     }
 }

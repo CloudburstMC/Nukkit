@@ -1,15 +1,15 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.blockentity.BlockEntityDispenser;
+import cn.nukkit.blockentity.Dispenser;
 
 public class DispenserInventory extends ContainerInventory {
 
-    public DispenserInventory(BlockEntityDispenser blockEntity) {
+    public DispenserInventory(Dispenser blockEntity) {
         super(blockEntity, InventoryType.DISPENSER);
     }
 
     @Override
-    public BlockEntityDispenser getHolder() {
-        return (BlockEntityDispenser) super.getHolder();
+    public Dispenser getHolder() {
+        return (Dispenser) super.getHolder();
     }
 }

@@ -1,27 +1,20 @@
 package cn.nukkit.item;
 
-import cn.nukkit.Player;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * Created by Leonidius20 on 20.08.18.
  */
 public class ItemChorusFruit extends ItemEdible {
 
-    public ItemChorusFruit() {
-        this(0, 1);
-    }
-
-    public ItemChorusFruit(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemChorusFruit(Integer meta, int count) {
-        super(CHORUS_FRUIT, meta, count, "Chorus Fruit");
+    public ItemChorusFruit(Identifier id) {
+        super(id);
     }
 
     @Override
-    public boolean onClickAir(Player player, Vector3 directionVector) {
+    public boolean onClickAir(Player player, Vector3f directionVector) {
         return player.getServer().getTick() - player.getLastChorusFruitTeleport() >= 20;
     }
 

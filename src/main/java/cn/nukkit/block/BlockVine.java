@@ -1,46 +1,33 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * Created by Pub4Game on 15.01.2016.
  */
-public class BlockVine extends BlockTransparentMeta {
+public class BlockVine extends BlockTransparent {
 
-    public BlockVine(int meta) {
-        super(meta);
-    }
-
-    public BlockVine() {
-        this(0);
+    public BlockVine(Identifier id) {
+        super(id);
     }
 
     @Override
-    public String getName() {
-        return "Vines";
+    public float getHardness() {
+        return 0.2f;
     }
 
     @Override
-    public int getId() {
-        return VINE;
-    }
-
-    @Override
-    public double getHardness() {
-        return 0.2;
-    }
-
-    @Override
-    public double getResistance() {
+    public float getResistance() {
         return 1;
     }
 
@@ -67,7 +54,7 @@ public class BlockVine extends BlockTransparentMeta {
     @Override
     public void onEntityCollide(Entity entity) {
         entity.resetFallDistance();
-        entity.onGround = true;
+        entity.setOnGround(true);
     }
 
     @Override
@@ -77,15 +64,15 @@ public class BlockVine extends BlockTransparentMeta {
 
     @Override
     protected AxisAlignedBB recalculateBoundingBox() {
-        double f1 = 1;
-        double f2 = 1;
-        double f3 = 1;
-        double f4 = 0;
-        double f5 = 0;
-        double f6 = 0;
-        boolean flag = this.getDamage() > 0;
-        if ((this.getDamage() & 0x02) > 0) {
-            f4 = Math.max(f4, 0.0625);
+        float f1 = 1;
+        float f2 = 1;
+        float f3 = 1;
+        float f4 = 0;
+        float f5 = 0;
+        float f6 = 0;
+        boolean flag = this.getMeta() > 0;
+        if ((this.getMeta() & 0x02) > 0) {
+            f4 = Math.max(f4, 0.0625f);
             f1 = 0;
             f2 = 0;
             f5 = 1;
@@ -93,8 +80,8 @@ public class BlockVine extends BlockTransparentMeta {
             f6 = 1;
             flag = true;
         }
-        if ((this.getDamage() & 0x08) > 0) {
-            f1 = Math.min(f1, 0.9375);
+        if ((this.getMeta() & 0x08) > 0) {
+            f1 = Math.min(f1, 0.9375f);
             f4 = 1;
             f2 = 0;
             f5 = 1;
@@ -102,8 +89,8 @@ public class BlockVine extends BlockTransparentMeta {
             f6 = 1;
             flag = true;
         }
-        if ((this.getDamage() & 0x01) > 0) {
-            f3 = Math.min(f3, 0.9375);
+        if ((this.getMeta() & 0x01) > 0) {
+            f3 = Math.min(f3, 0.9375f);
             f6 = 1;
             f1 = 0;
             f4 = 1;
@@ -112,7 +99,7 @@ public class BlockVine extends BlockTransparentMeta {
             flag = true;
         }
         if (!flag && this.up().isSolid()) {
-            f2 = Math.min(f2, 0.9375);
+            f2 = Math.min(f2, 0.9375f);
             f5 = 1;
             f1 = 0;
             f4 = 1;
@@ -120,20 +107,20 @@ public class BlockVine extends BlockTransparentMeta {
             f6 = 1;
         }
         return new SimpleAxisAlignedBB(
-                this.x + f1,
-                this.y + f2,
-                this.z + f3,
-                this.x + f4,
-                this.y + f5,
-                this.z + f6
+                this.getX() + f1,
+                this.getY() + f2,
+                this.getZ() + f3,
+                this.getX() + f4,
+                this.getY() + f5,
+                this.getZ() + f6
         );
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (target.isSolid() && face.getHorizontalIndex() != -1) {
-            this.setDamage(getMetaFromFace(face.getOpposite()));
-            this.getLevel().setBlock(block, this, true, true);
+            this.setMeta(getMetaFromFace(face.getOpposite()));
+            this.getLevel().setBlock(block.getPosition(), this, true, true);
             return true;
         }
 
@@ -153,7 +140,7 @@ public class BlockVine extends BlockTransparentMeta {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return Item.get(id, 0);
     }
 
     @Override
@@ -161,8 +148,8 @@ public class BlockVine extends BlockTransparentMeta {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (!this.getSide(getFace()).isSolid()) {
                 Block up = this.up();
-                if (up.getId() != this.getId() || up.getDamage() != this.getDamage()) {
-                    this.getLevel().useBreakOn(this, null, null, true);
+                if (up.getId() != this.getId() || up.getMeta() != this.getMeta()) {
+                    this.getLevel().useBreakOn(this.getPosition(), null, null, true);
                     return Level.BLOCK_UPDATE_NORMAL;
                 }
             }
@@ -171,7 +158,7 @@ public class BlockVine extends BlockTransparentMeta {
     }
 
     private BlockFace getFace() {
-        int meta = this.getDamage();
+        int meta = this.getMeta();
         if ((meta & 1) > 0) {
             return BlockFace.SOUTH;
         } else if ((meta & 2) > 0) {
@@ -207,6 +194,11 @@ public class BlockVine extends BlockTransparentMeta {
     @Override
     public BlockColor getColor() {
         return BlockColor.FOLIAGE_BLOCK_COLOR;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 
     @Override

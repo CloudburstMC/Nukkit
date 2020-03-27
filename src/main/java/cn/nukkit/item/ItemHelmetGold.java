@@ -1,21 +1,15 @@
 package cn.nukkit.item;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class ItemHelmetGold extends ItemArmor {
 
-    public ItemHelmetGold() {
-        this(0, 1);
-    }
-
-    public ItemHelmetGold(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemHelmetGold(Integer meta, int count) {
-        super(GOLD_HELMET, meta, count, "Gold Helmet");
+    public ItemHelmetGold(Identifier id) {
+        super(id);
     }
 
     @Override

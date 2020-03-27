@@ -1,14 +1,18 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemSnowball;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+
+import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.item.ItemIds.SNOWBALL;
 
 /**
  * Created on 2015/12/6 by xtypr.
@@ -16,44 +20,18 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockSnowLayer extends BlockFallable {
 
-    private int meta;
-
-    public BlockSnowLayer() {
-        this(0);
-    }
-
-    public BlockSnowLayer(int meta) {
-        this.meta = meta;
+    public BlockSnowLayer(Identifier id) {
+        super(id);
     }
 
     @Override
-    public final int getDamage() {
-        return this.meta;
+    public float getHardness() {
+        return 0.1f;
     }
 
     @Override
-    public final void setDamage(int meta) {
-        this.meta = meta;
-    }
-
-    @Override
-    public String getName() {
-        return "Snow Layer";
-    }
-
-    @Override
-    public int getId() {
-        return SNOW_LAYER;
-    }
-
-    @Override
-    public double getHardness() {
-        return 0.1;
-    }
-
-    @Override
-    public double getResistance() {
-        return 0.5;
+    public float getResistance() {
+        return 0.5f;
     }
 
     @Override
@@ -67,10 +45,10 @@ public class BlockSnowLayer extends BlockFallable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         Block down = this.down();
         if (down.isSolid()) {
-            this.getLevel().setBlock(block, this, true);
+            this.getLevel().setBlock(block.getPosition(), this, true);
 
             return true;
         }
@@ -81,11 +59,11 @@ public class BlockSnowLayer extends BlockFallable {
     public int onUpdate(int type) {
         super.onUpdate(type);
         if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if (this.getLevel().getBlockLightAt((int) this.x, (int) this.y, (int) this.z) >= 10) {
+            if (this.getLevel().getBlockLightAt((int) this.getX(), (int) this.getY(), (int) this.getZ()) >= 10) {
                 BlockFadeEvent event = new BlockFadeEvent(this, get(AIR));
                 level.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    level.setBlock(this, event.getNewState(), true);
+                    level.setBlock(this.getPosition(), event.getNewState(), true);
                 }
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -95,7 +73,7 @@ public class BlockSnowLayer extends BlockFallable {
 
     @Override
     public Item toItem() {
-        return new ItemSnowball();
+        return Item.get(SNOWBALL);
     }
 
     @Override
@@ -125,7 +103,7 @@ public class BlockSnowLayer extends BlockFallable {
     }
 
     @Override
-    public boolean canBeFlowedInto() {
+    public boolean canBeFlooded() {
         return true;
     }
 

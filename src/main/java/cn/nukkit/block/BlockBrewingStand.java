@@ -1,35 +1,25 @@
 package cn.nukkit.block;
 
 
-import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityBrewingStand;
+import cn.nukkit.blockentity.BrewingStand;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBrewingStand;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.nbt.tag.StringTag;
-import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
-import java.util.Map;
+import static cn.nukkit.blockentity.BlockEntityTypes.BREWING_STAND;
 
-public class BlockBrewingStand extends BlockSolidMeta {
+public class BlockBrewingStand extends BlockSolid {
 
-    public BlockBrewingStand() {
-        this(0);
-    }
-
-    public BlockBrewingStand(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Brewing Stand";
+    public BlockBrewingStand(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -38,13 +28,13 @@ public class BlockBrewingStand extends BlockSolidMeta {
     }
 
     @Override
-    public double getHardness() {
-        return 0.5;
+    public float getHardness() {
+        return 0.5f;
     }
 
     @Override
-    public double getResistance() {
-        return 2.5;
+    public float getResistance() {
+        return 2.5f;
     }
 
     @Override
@@ -53,40 +43,22 @@ public class BlockBrewingStand extends BlockSolidMeta {
     }
 
     @Override
-    public int getId() {
-        return BREWING_STAND_BLOCK;
-    }
-
-    @Override
     public int getLightLevel() {
         return 1;
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (!block.down().isTransparent()) {
-            getLevel().setBlock(block, this, true, true);
+            getLevel().setBlock(block.getPosition(), this, true, true);
 
-            CompoundTag nbt = new CompoundTag()
-                    .putList(new ListTag<>("Items"))
-                    .putString("id", BlockEntity.BREWING_STAND)
-                    .putInt("x", (int) this.x)
-                    .putInt("y", (int) this.y)
-                    .putInt("z", (int) this.z);
-
+            BrewingStand brewingStand = BlockEntityRegistry.get().newEntity(BREWING_STAND, this.getChunk(), this.getPosition());
+            brewingStand.loadAdditionalData(item.getTag());
             if (item.hasCustomName()) {
-                nbt.putString("CustomName", item.getCustomName());
+                brewingStand.setCustomName(item.getCustomName());
             }
 
-            if (item.hasCustomBlockData()) {
-                Map<String, Tag> customData = item.getCustomBlockData().getTags();
-                for (Map.Entry<String, Tag> tag : customData.entrySet()) {
-                    nbt.put(tag.getKey(), tag.getValue());
-                }
-            }
-
-            BlockEntityBrewingStand brewing = (BlockEntityBrewingStand) BlockEntity.createBlockEntity(BlockEntity.BREWING_STAND, getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
-            return brewing != null;
+            return true;
         }
         return false;
     }
@@ -94,27 +66,14 @@ public class BlockBrewingStand extends BlockSolidMeta {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            BlockEntity t = getLevel().getBlockEntity(this);
-            BlockEntityBrewingStand brewing;
-            if (t instanceof BlockEntityBrewingStand) {
-                brewing = (BlockEntityBrewingStand) t;
+            BlockEntity blockEntity = getLevel().getBlockEntity(this.getPosition());
+            BrewingStand brewing;
+            if (blockEntity instanceof BrewingStand) {
+                brewing = (BrewingStand) blockEntity;
             } else {
-                CompoundTag nbt = new CompoundTag()
-                        .putList(new ListTag<>("Items"))
-                        .putString("id", BlockEntity.BREWING_STAND)
-                        .putInt("x", (int) this.x)
-                        .putInt("y", (int) this.y)
-                        .putInt("z", (int) this.z);
-                brewing = (BlockEntityBrewingStand) BlockEntity.createBlockEntity(BlockEntity.BREWING_STAND, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
-                if (brewing == null) {
-                    return false;
-                }
-            }
+                blockEntity.close();
 
-            if (brewing.namedTag.contains("Lock") && brewing.namedTag.get("Lock") instanceof StringTag) {
-                if (!brewing.namedTag.getString("Lock").equals(item.getCustomName())) {
-                    return false;
-                }
+                brewing = BlockEntityRegistry.get().newEntity(BREWING_STAND, this.getChunk(), this.getPosition());
             }
 
             player.addWindow(brewing.getInventory());
@@ -125,7 +84,7 @@ public class BlockBrewingStand extends BlockSolidMeta {
 
     @Override
     public Item toItem() {
-        return new ItemBrewingStand();
+        return Item.get(ItemIds.BREWING_STAND);
     }
 
     @Override
@@ -150,10 +109,10 @@ public class BlockBrewingStand extends BlockSolidMeta {
 
     @Override
     public int getComparatorInputOverride() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntity blockEntity = this.level.getBlockEntity(this.getPosition());
 
-        if (blockEntity instanceof BlockEntityBrewingStand) {
-            return ContainerInventory.calculateRedstone(((BlockEntityBrewingStand) blockEntity).getInventory());
+        if (blockEntity instanceof BrewingStand) {
+            return ContainerInventory.calculateRedstone(((BrewingStand) blockEntity).getInventory());
         }
 
         return super.getComparatorInputOverride();
@@ -162,5 +121,10 @@ public class BlockBrewingStand extends BlockSolidMeta {
     @Override
     public boolean canHarvestWithHand() {
         return false;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

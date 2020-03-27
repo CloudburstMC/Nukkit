@@ -1,21 +1,18 @@
 package cn.nukkit.item;
 
+import cn.nukkit.entity.EntityType;
+import cn.nukkit.entity.EntityTypes;
+import cn.nukkit.entity.Projectile;
+import cn.nukkit.utils.Identifier;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class ItemSnowball extends ProjectileItem {
 
-    public ItemSnowball() {
-        this(0, 1);
-    }
-
-    public ItemSnowball(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemSnowball(Integer meta, int count) {
-        super(SNOWBALL, 0, count, "Snowball");
+    public ItemSnowball(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -24,8 +21,8 @@ public class ItemSnowball extends ProjectileItem {
     }
 
     @Override
-    public String getProjectileEntityType() {
-        return "Snowball";
+    public EntityType<? extends Projectile> getProjectileEntityType() {
+        return EntityTypes.SNOWBALL;
     }
 
     @Override

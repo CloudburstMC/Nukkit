@@ -1,10 +1,11 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemEmerald;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.utils.Identifier;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -14,17 +15,8 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class BlockOreEmerald extends BlockSolid {
 
-    public BlockOreEmerald() {
-    }
-
-    @Override
-    public String getName() {
-        return "Emerald Ore";
-    }
-
-    @Override
-    public int getId() {
-        return EMERALD_ORE;
+    public BlockOreEmerald(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -33,12 +25,12 @@ public class BlockOreEmerald extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 3;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 15;
     }
 
@@ -58,7 +50,7 @@ public class BlockOreEmerald extends BlockSolid {
             }
 
             return new Item[]{
-                    new ItemEmerald(0, count)
+                    Item.get(ItemIds.EMERALD, 0, count)
             };
         } else {
             return new Item[0];

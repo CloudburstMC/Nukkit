@@ -1,10 +1,11 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemDiamond;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.utils.Identifier;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -15,32 +16,23 @@ import java.util.concurrent.ThreadLocalRandom;
 public class BlockOreDiamond extends BlockSolid {
 
 
-    public BlockOreDiamond() {
+    public BlockOreDiamond(Identifier id) {
+        super(id);
     }
 
     @Override
-    public int getId() {
-        return DIAMOND_ORE;
-    }
-
-    @Override
-    public double getHardness() {
+    public float getHardness() {
         return 3;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 15;
     }
 
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
-    }
-
-    @Override
-    public String getName() {
-        return "Diamond Ore";
     }
 
     @Override
@@ -59,7 +51,7 @@ public class BlockOreDiamond extends BlockSolid {
             }
 
             return new Item[]{
-                    new ItemDiamond(0, count)
+                    Item.get(ItemIds.DIAMOND, 0, count)
             };
         } else {
             return new Item[0];

@@ -1,32 +1,29 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityEnderChest;
+import cn.nukkit.blockentity.EnderChest;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.StringTag;
-import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-public class BlockEnderChest extends BlockTransparentMeta implements Faceable {
+import static cn.nukkit.block.BlockIds.OBSIDIAN;
+import static cn.nukkit.blockentity.BlockEntityTypes.ENDER_CHEST;
+
+public class BlockEnderChest extends BlockTransparent implements Faceable {
 
     private Set<Player> viewers = new HashSet<>();
 
-    public BlockEnderChest() {
-        this(0);
-    }
-
-    public BlockEnderChest(int meta) {
-        super(meta);
+    public BlockEnderChest(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -35,27 +32,17 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public int getId() {
-        return ENDER_CHEST;
-    }
-
-    @Override
     public int getLightLevel() {
         return 7;
     }
 
     @Override
-    public String getName() {
-        return "Chest";
+    public float getHardness() {
+        return 22.5f;
     }
 
     @Override
-    public double getHardness() {
-        return 22.5;
-    }
-
-    @Override
-    public double getResistance() {
+    public float getResistance() {
         return 3000;
     }
 
@@ -65,55 +52,43 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public double getMinX() {
-        return this.x + 0.0625;
+    public float getMinX() {
+        return this.getX() + 0.0625f;
     }
 
     @Override
-    public double getMinZ() {
-        return this.z + 0.0625;
+    public float getMinZ() {
+        return this.getZ() + 0.0625f;
     }
 
     @Override
-    public double getMaxX() {
-        return this.x + 0.9375;
+    public float getMaxX() {
+        return this.getX() + 0.9375f;
     }
 
     @Override
-    public double getMaxY() {
-        return this.y + 0.9475;
+    public float getMaxY() {
+        return this.getY() + 0.9475f;
     }
 
     @Override
-    public double getMaxZ() {
-        return this.z + 0.9375;
+    public float getMaxZ() {
+        return this.getZ() + 0.9375f;
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         int[] faces = {2, 5, 3, 4};
-        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+        this.setMeta(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
 
-        this.getLevel().setBlock(block, this, true, true);
-        CompoundTag nbt = new CompoundTag("")
-                .putString("id", BlockEntity.ENDER_CHEST)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z);
+        this.getLevel().setBlock(block.getPosition(), this, true, true);
 
+        EnderChest enderChest = BlockEntityRegistry.get().newEntity(ENDER_CHEST, this.getChunk(), this.getPosition());
+        enderChest.loadAdditionalData(item.getTag());
         if (item.hasCustomName()) {
-            nbt.putString("CustomName", item.getCustomName());
+            enderChest.setCustomName(item.getCustomName());
         }
-
-        if (item.hasCustomBlockData()) {
-            Map<String, Tag> customData = item.getCustomBlockData().getTags();
-            for (Map.Entry<String, Tag> tag : customData.entrySet()) {
-                nbt.put(tag.getKey(), tag.getValue());
-            }
-        }
-
-        BlockEntityEnderChest ender = (BlockEntityEnderChest) BlockEntity.createBlockEntity(BlockEntity.ENDER_CHEST, this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
-        return ender != null;
+        return true;
     }
 
     @Override
@@ -124,26 +99,9 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable {
                 return true;
             }
 
-            BlockEntity t = this.getLevel().getBlockEntity(this);
-            BlockEntityEnderChest chest;
-            if (t instanceof BlockEntityEnderChest) {
-                chest = (BlockEntityEnderChest) t;
-            } else {
-                CompoundTag nbt = new CompoundTag("")
-                        .putString("id", BlockEntity.ENDER_CHEST)
-                        .putInt("x", (int) this.x)
-                        .putInt("y", (int) this.y)
-                        .putInt("z", (int) this.z);
-                chest = (BlockEntityEnderChest) BlockEntity.createBlockEntity(BlockEntity.ENDER_CHEST, this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
-                if (chest == null) {
-                    return false;
-                }
-            }
-
-            if (chest.namedTag.contains("Lock") && chest.namedTag.get("Lock") instanceof StringTag) {
-                if (!chest.namedTag.getString("Lock").equals(item.getCustomName())) {
-                    return true;
-                }
+            BlockEntity blockEntity = this.getLevel().getBlockEntity(this.getPosition());
+            if ((blockEntity instanceof EnderChest)) {
+                BlockEntityRegistry.get().newEntity(ENDER_CHEST, this.getChunk(), this.getPosition());
             }
 
             player.setViewingEnderChest(this);
@@ -157,7 +115,7 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable {
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
-                    Item.get(Item.OBSIDIAN, 0, 8)
+                    Item.get(OBSIDIAN, 0, 8)
             };
         } else {
             return new Item[0];
@@ -195,11 +153,16 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return Item.get(id);
     }
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

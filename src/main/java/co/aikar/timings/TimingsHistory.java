@@ -23,16 +23,17 @@
  */
 package co.aikar.timings;
 
-import cn.nukkit.Player;
+import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.player.Player;
 import cn.nukkit.timings.JsonUtil;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import cn.nukkit.utils.Identifier;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.lang.management.ManagementFactory;
 import java.util.Collection;
@@ -53,8 +54,8 @@ public class TimingsHistory {
 
     private static int levelIdPool = 1;
     static Map<String, Integer> levelMap = new HashMap<>();
-    static Map<Integer, String> entityMap = new HashMap<>();
-    static Map<Integer, String> blockEntityMap = new HashMap<>();
+    static Map<Identifier, String> entityMap = new HashMap<>();
+    static Map<Identifier, String> blockEntityMap = new HashMap<>();
 
     private final long endTime;
     private final long startTime;
@@ -64,7 +65,7 @@ public class TimingsHistory {
     private final MinuteReport[] minuteReports;
 
     private final TimingsHistoryEntry[] entries;
-    private final JsonObject levels = new JsonObject();
+    private final ObjectNode levels = Nukkit.JSON_MAPPER.createObjectNode();
 
     TimingsHistory() {
         this.endTime = System.currentTimeMillis() / 1000;
@@ -91,26 +92,25 @@ public class TimingsHistory {
             this.entries[i++] = new TimingsHistoryEntry(timing);
         }
 
-        final Map<Integer, AtomicInteger> entityCounts = new HashMap<>();
-        final Map<Integer, AtomicInteger> blockEntityCounts = new HashMap<>();
-        final Gson GSON = new Gson();
+        final Map<Identifier, AtomicInteger> entityCounts = new HashMap<>();
+        final Map<Identifier, AtomicInteger> blockEntityCounts = new HashMap<>();
         // Information about all loaded entities/block entities
-        for (Level level : Server.getInstance().getLevels().values()) {
-            JsonArray jsonLevel = new JsonArray();
-            for (FullChunk chunk : level.getChunks().values()) {
+        for (Level level : Server.getInstance().getLevels()) {
+            ArrayNode jsonLevel = Nukkit.JSON_MAPPER.createArrayNode();
+            for (Chunk chunk : level.getChunks()) {
                 entityCounts.clear();
                 blockEntityCounts.clear();
 
                 //count entities
-                for (Entity entity : chunk.getEntities().values()) {
-                    if (!entityCounts.containsKey(entity.getNetworkId()))
-                        entityCounts.put(entity.getNetworkId(), new AtomicInteger(0));
-                    entityCounts.get(entity.getNetworkId()).incrementAndGet();
-                    entityMap.put(entity.getNetworkId(), entity.getClass().getSimpleName());
+                for (Entity entity : chunk.getEntities()) {
+                    if (!entityCounts.containsKey(entity.getType().getIdentifier()))
+                        entityCounts.put(entity.getType().getIdentifier(), new AtomicInteger(0));
+                    entityCounts.get(entity.getType().getIdentifier()).incrementAndGet();
+                    entityMap.put(entity.getType().getIdentifier(), entity.getClass().getSimpleName());
                 }
 
                 //count block entities
-                for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
+                for (BlockEntity blockEntity : chunk.getBlockEntities()) {
                     if (!blockEntityCounts.containsKey(blockEntity.getBlock().getId()))
                         blockEntityCounts.put(blockEntity.getBlock().getId(), new AtomicInteger(0));
                     blockEntityCounts.get(blockEntity.getBlock().getId()).incrementAndGet();
@@ -121,16 +121,18 @@ public class TimingsHistory {
                     continue;
                 }
 
-                JsonArray jsonChunk = new JsonArray();
+                ArrayNode jsonChunk = Nukkit.JSON_MAPPER.createArrayNode();
                 jsonChunk.add(chunk.getX());
                 jsonChunk.add(chunk.getZ());
-                jsonChunk.add(GSON.toJsonTree(JsonUtil.mapToObject(entityCounts.entrySet(), (entry) -> new JsonUtil.JSONPair(entry.getKey(), entry.getValue().get()))).getAsJsonObject());
-                jsonChunk.add(GSON.toJsonTree(JsonUtil.mapToObject(blockEntityCounts.entrySet(), (entry) -> new JsonUtil.JSONPair(entry.getKey(), entry.getValue().get()))).getAsJsonObject());
+                jsonChunk.add(JsonUtil.mapToObject(entityCounts.entrySet(), (entry) ->
+                        new JsonUtil.JSONPair(entry.getKey().toString(), entry.getValue().get())));
+                jsonChunk.add(JsonUtil.mapToObject(blockEntityCounts.entrySet(), (entry) ->
+                        new JsonUtil.JSONPair(entry.getKey().toString(), entry.getValue().get())));
                 jsonLevel.add(jsonChunk);
             }
 
             if (!levelMap.containsKey(level.getName())) levelMap.put(level.getName(), levelIdPool++);
-            levels.add(String.valueOf(levelMap.get(level.getName())), jsonLevel);
+            levels.set(String.valueOf(levelMap.get(level.getName())), jsonLevel);
         }
     }
 
@@ -145,20 +147,20 @@ public class TimingsHistory {
         activatedEntityTicks = 0;
     }
 
-    JsonObject export() {
-        JsonObject json = new JsonObject();
-        json.addProperty("s", this.startTime);
-        json.addProperty("e", this.endTime);
-        json.addProperty("tk", this.totalTicks);
-        json.addProperty("tm", this.totalTime);
-        json.add("w", this.levels);
-        json.add("h", JsonUtil.mapToArray(this.entries, (entry) -> {
+    ObjectNode export() {
+        ObjectNode json = Nukkit.JSON_MAPPER.createObjectNode();
+        json.put("s", this.startTime);
+        json.put("e", this.endTime);
+        json.put("tk", this.totalTicks);
+        json.put("tm", this.totalTime);
+        json.set("w", this.levels);
+        json.set("h", JsonUtil.mapToArray(this.entries, (entry) -> {
             if (entry.data.count == 0) {
                 return null;
             }
             return entry.export();
         }));
-        json.add("mp", JsonUtil.mapToArray(this.minuteReports, MinuteReport::export));
+        json.set("mp", JsonUtil.mapToArray(this.minuteReports, MinuteReport::export));
         return json;
     }
 
@@ -173,7 +175,7 @@ public class TimingsHistory {
         final double freeMemory = Timings.fullServerTickTimer.avgFreeMemory;
         final double loadAvg = ManagementFactory.getOperatingSystemMXBean().getSystemLoadAverage();
 
-        JsonArray export() {
+        ArrayNode export() {
             return JsonUtil.toArray(this.time,
                     Math.round(this.tps * 100D) / 100D,
                     Math.round(this.pingRecord.avg * 100D) / 100D,

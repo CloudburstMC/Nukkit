@@ -1,11 +1,11 @@
 package cn.nukkit.event.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.player.Player;
 
 /**
  * author: MagicDroidX

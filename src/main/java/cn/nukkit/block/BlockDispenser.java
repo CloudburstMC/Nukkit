@@ -1,20 +1,24 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityDispenser;
+import cn.nukkit.blockentity.BlockEntityTypes;
+import cn.nukkit.blockentity.impl.DispenserBlockEntity;
 import cn.nukkit.dispenser.DispenseBehavior;
 import cn.nukkit.dispenser.DispenseBehaviorRegister;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
-import cn.nukkit.network.protocol.LevelEventPacket;
+import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.protocol.bedrock.data.LevelEventType;
+import com.nukkitx.protocol.bedrock.packet.LevelEventPacket;
 
 import java.util.Map.Entry;
 import java.util.Random;
@@ -23,14 +27,10 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by CreeperFace on 15.4.2017.
  */
-public class BlockDispenser extends BlockSolidMeta implements Faceable {
+public class BlockDispenser extends BlockSolid implements Faceable {
 
-    public BlockDispenser() {
-        this(0);
-    }
-
-    public BlockDispenser(int meta) {
-        super(meta);
+    public BlockDispenser(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -39,18 +39,8 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
     }
 
     @Override
-    public String getName() {
-        return "Dispenser";
-    }
-
-    @Override
-    public int getId() {
-        return DISPENSER;
-    }
-
-    @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return Item.get(id, 0);
     }
 
     @Override
@@ -65,7 +55,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
     }
 
     public boolean isTriggered() {
-        return (this.getDamage() & 8) > 0;
+        return (this.getMeta() & 8) > 0;
     }
 
     public void setTriggered(boolean value) {
@@ -76,7 +66,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
             i |= 8;
         }
 
-        this.setDamage(i);
+        this.setMeta(i);
     }
 
     @Override
@@ -101,38 +91,37 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (player != null) {
-            if (Math.abs(player.x - this.x) < 2 && Math.abs(player.z - this.z) < 2) {
-                double y = player.y + player.getEyeHeight();
+            if (Math.abs(player.getX() - this.getX()) < 2 && Math.abs(player.getZ() - this.getZ()) < 2) {
+                double y = player.getY() + player.getEyeHeight();
 
-                if (y - this.y > 2) {
-                    this.setDamage(BlockFace.UP.getIndex());
-                } else if (this.y - y > 0) {
-                    this.setDamage(BlockFace.DOWN.getIndex());
+                if (y - this.getY() > 2) {
+                    this.setMeta(BlockFace.UP.getIndex());
+                } else if (this.getY() - y > 0) {
+                    this.setMeta(BlockFace.DOWN.getIndex());
                 } else {
-                    this.setDamage(player.getHorizontalFacing().getOpposite().getIndex());
+                    this.setMeta(player.getHorizontalFacing().getOpposite().getIndex());
                 }
             } else {
-                this.setDamage(player.getHorizontalFacing().getOpposite().getIndex());
+                this.setMeta(player.getHorizontalFacing().getOpposite().getIndex());
             }
         }
 
-        this.getLevel().setBlock(block, this, true);
+        this.getLevel().setBlock(block.getPosition(), this, true);
 
         createBlockEntity();
         return true;
     }
 
     protected void createBlockEntity() {
-        new BlockEntityDispenser(this.level.getChunk(getChunkX(), getChunkZ()),
-                BlockEntity.getDefaultCompound(this, BlockEntity.DISPENSER));
+        BlockEntityRegistry.get().newEntity(BlockEntityTypes.DISPENSER, getChunk(), position);
     }
 
     protected InventoryHolder getBlockEntity() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntity blockEntity = this.level.getBlockEntity(position);
 
-        if (!(blockEntity instanceof BlockEntityDispenser)) {
+        if (!(blockEntity instanceof DispenserBlockEntity)) {
             return null;
         }
 
@@ -147,20 +136,18 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
 
         if (type == Level.BLOCK_UPDATE_SCHEDULED) {
             this.setTriggered(false);
-            this.level.setBlock(this, this, false, false);
+            this.level.setBlock(position, this, false, false);
 
             dispense();
             return type;
         } else if (type == Level.BLOCK_UPDATE_REDSTONE) {
-            Vector3 pos = this.add(0);
-
-            boolean powered = level.isBlockPowered(pos) || level.isBlockPowered(pos.up());
+            boolean powered = level.isBlockPowered(position) || level.isBlockPowered(position.up());
             boolean triggered = isTriggered();
 
             if (powered && !triggered) {
                 this.setTriggered(true);
-                this.level.setBlock(this, this, false, false);
-                level.scheduleUpdate(this, this, 4);
+                this.level.setBlock(position, this, false, false);
+                level.scheduleUpdate(this, position, 4);
             }
 
             return type;
@@ -195,46 +182,48 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
 
         BlockFace facing = getBlockFace();
 
-        pk.x = 0.5f + facing.getXOffset() * 0.7f;
-        pk.y = 0.5f + facing.getYOffset() * 0.7f;
-        pk.z = 0.5f + facing.getZOffset() * 0.7f;
+        Vector3f pkPos = Vector3f.from(
+                0.5f + facing.getXOffset() * 0.7f,
+                0.5f + facing.getYOffset() * 0.7f,
+                0.5f + facing.getZOffset() * 0.7f
+        );
+        Chunk chunk = getChunk();
+        pk.setPosition(pkPos);
 
         if (target == null) {
-            pk.evid = LevelEventPacket.EVENT_SOUND_CLICK_FAIL;
-            pk.data = 1200;
+            pk.setType(LevelEventType.SOUND_CLICK_FAIL);
+            pk.setData(1200);
 
-            this.level.addChunkPacket(getChunkX(), getChunkZ(), pk.clone());
+            this.level.addChunkPacket(chunk.getX(), chunk.getZ(), pk);
             return;
-        } else {
-            pk.evid = LevelEventPacket.EVENT_SOUND_CLICK;
-            pk.data = 1000;
-
-            this.level.addChunkPacket(getChunkX(), getChunkZ(), pk.clone());
         }
 
-        pk.evid = LevelEventPacket.EVENT_PARTICLE_SHOOT;
-        pk.data = 7;
-        this.level.addChunkPacket(getChunkX(), getChunkZ(), pk);
+        pk.setType(LevelEventType.SOUND_CLICK);
+        pk.setData(1000);
+        this.level.addChunkPacket(chunk.getX(), chunk.getZ(), pk);
+
+        pk = new LevelEventPacket();
+        pk.setPosition(pkPos);
+        pk.setType(LevelEventType.SHOOT);
+        pk.setData(7);
+        this.level.addChunkPacket(chunk.getX(), chunk.getZ(), pk);
 
         Item origin = target;
         target = target.clone();
 
         DispenseBehavior behavior = getDispenseBehavior(target);
-        Item result = behavior.dispense(this, facing, target);
+        Item result = behavior.dispense(position, this, facing, target);
 
-
-        pk.evid = LevelEventPacket.EVENT_SOUND_CLICK;
-
-        target.count--;
+        target.decrementCount();
         inv.setItem(slot, target);
 
         if (result != null) {
-            if (result.getId() != origin.getId() || result.getDamage() != origin.getDamage()) {
+            if (!result.equals(origin, true, false)) {
                 Item[] fit = inv.addItem(result);
 
                 if (fit.length > 0) {
                     for (Item drop : fit) {
-                        this.level.dropItem(this, drop);
+                        this.level.dropItem(position, drop);
                     }
                 }
             } else {
@@ -252,9 +241,9 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
         return false;
     }
 
-    public Vector3 getDispensePosition() {
+    public Vector3f getDispensePosition() {
         BlockFace facing = getBlockFace();
-        return this.add(
+        return position.toFloat().add(
                 0.5 + 0.7 * facing.getXOffset(),
                 0.5 + 0.7 * facing.getYOffset(),
                 0.5 + 0.7 * facing.getZOffset()
@@ -263,6 +252,6 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
     }
 }

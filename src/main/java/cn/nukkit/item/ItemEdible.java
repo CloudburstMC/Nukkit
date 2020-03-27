@@ -1,33 +1,23 @@
 package cn.nukkit.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
 import cn.nukkit.item.food.Food;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public abstract class ItemEdible extends Item {
-    public ItemEdible(int id, Integer meta, int count, String name) {
-        super(id, meta, count, name);
-    }
 
-    public ItemEdible(int id) {
+    public ItemEdible(Identifier id) {
         super(id);
     }
 
-    public ItemEdible(int id, Integer meta) {
-        super(id, meta);
-    }
-
-    public ItemEdible(int id, Integer meta, int count) {
-        super(id, meta, count);
-    }
-
     @Override
-    public boolean onClickAir(Player player, Vector3 directionVector) {
+    public boolean onClickAir(Player player, Vector3f directionVector) {
         if (player.getFoodData().getLevel() < player.getFoodData().getMaxLevel() || player.isCreative()) {
             return true;
         }
@@ -47,7 +37,7 @@ public abstract class ItemEdible extends Item {
 
         Food food = Food.getByRelative(this);
         if (player.isSurvival() && food != null && food.eatenBy(player)) {
-            --this.count;
+            decrementCount();
             player.getInventory().setItemInHand(this);
         }
         return true;

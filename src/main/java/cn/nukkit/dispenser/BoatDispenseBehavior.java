@@ -2,35 +2,35 @@ package cn.nukkit.dispenser;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockDispenser;
-import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.block.BlockWater;
-import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.item.EntityBoat;
+import cn.nukkit.entity.EntityTypes;
+import cn.nukkit.entity.vehicle.Boat;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Location;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.registry.EntityRegistry;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.math.vector.Vector3i;
 
 public class BoatDispenseBehavior extends DefaultDispenseBehavior {
 
     @Override
-    public Item dispense(BlockDispenser block, BlockFace face, Item item) {
-        Vector3 pos = block.getSide(face).multiply(1.125);
+    public Item dispense(Vector3i position, BlockDispenser block, BlockFace face, Item item) {
+        Vector3f pos = face.getOffset(position).toFloat().mul(1.125);
 
         Block target = block.getSide(face);
 
         if (target instanceof BlockWater) {
-            pos.y += 1;
-        } else if (target.getId() != BlockID.AIR || !(target.down() instanceof BlockWater)) {
-            return super.dispense(block, face, item);
+            pos = pos.add(0, 1, 0); //TODO: :thinking:
+        } else if (target.getId() != BlockIds.AIR || !(target.down() instanceof BlockWater)) {
+            return super.dispense(position, block, face, item);
         }
 
-        pos = target.getLocation().setYaw(face.getHorizontalAngle());
+        Location loc = Location.from(target.getPosition(), face.getHorizontalAngle(), 0, target.getLevel());
 
-        EntityBoat boat = new EntityBoat(block.level.getChunk(target.getChunkX(), target.getChunkZ()),
-                Entity.getDefaultNBT(pos)
-                        .putByte("woodID", item.getDamage())
-        );
-
+        Boat boat = EntityRegistry.get().newEntity(EntityTypes.BOAT, loc);
+        boat.setWoodType(item.getMeta());
         boat.spawnToAll();
 
         return null;

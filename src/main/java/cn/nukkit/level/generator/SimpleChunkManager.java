@@ -1,7 +1,13 @@
 package cn.nukkit.level.generator;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.IChunk;
+import cn.nukkit.registry.BlockRegistry;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.AIR;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * author: MagicDroidX
@@ -9,66 +15,77 @@ import cn.nukkit.level.format.FullChunk;
  */
 public abstract class SimpleChunkManager implements ChunkManager {
 
-    protected long seed;
+    protected Long seed;
 
-    public SimpleChunkManager(long seed) {
-        this.seed = seed;
+    public SimpleChunkManager() {
     }
 
     @Override
-    public int getBlockIdAt(int x, int y, int z) {
-        FullChunk chunk = this.getChunk(x >> 4, z >> 4);
+    public Identifier getBlockId(int x, int y, int z, int layer) {
+        IChunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
-            return chunk.getBlockId(x & 0xf, y & 0xff, z & 0xf);
+            return chunk.getBlockId(x & 0xf, y & 0xff, z & 0xf, layer);
+        }
+        return AIR;
+    }
+
+    @Override
+    public void setBlockId(int x, int y, int z, int layer, Identifier id) {
+        IChunk chunk = this.getChunk(x >> 4, z >> 4);
+        if (chunk != null) {
+            chunk.setBlockId(x & 0xf, y & 0xff, z & 0xf, layer, id);
+        }
+    }
+
+    @Override
+    public Block getBlockAt(int x, int y, int z, int layer) {
+        IChunk chunk = this.getChunk(x >> 4, z >> 4);
+        if (chunk != null) {
+            return chunk.getBlock(x & 0xf, y & 0xff, z & 0xf, layer);
+        }
+        return Block.get(AIR);
+    }
+
+    @Override
+    public void setBlockAt(int x, int y, int z, int layer, Block block) {
+        IChunk chunk = this.getChunk(x >> 4, z >> 4);
+        if (chunk != null) {
+            chunk.setBlock(x & 0xf, y & 0xff, z & 0xf, layer, block);
+        }
+    }
+
+    @Override
+    public int getBlockRuntimeIdUnsafe(int x, int y, int z, int layer) {
+        IChunk chunk = this.getChunk(x >> 4, z >> 4);
+        if (chunk != null) {
+            return chunk.getBlockRuntimeIdUnsafe(x & 0xf, y & 0xff, z & 0xf, layer);
+        }
+        return BlockRegistry.get().getRuntimeId(AIR, 0);
+    }
+
+    @Override
+    public void setBlockRuntimeIdUnsafe(int x, int y, int z, int layer, int runtimeId) {
+        IChunk chunk = this.getChunk(x >> 4, z >> 4);
+        if (chunk != null) {
+            chunk.setBlockRuntimeIdUnsafe(x & 0xF, y & 0xFF, z & 0xF, layer, runtimeId);
+        }
+    }
+
+    @Override
+    public int getBlockDataAt(int x, int y, int z, int layer) {
+        IChunk chunk = this.getChunk(x >> 4, z >> 4);
+        if (chunk != null) {
+            return chunk.getBlockData(x & 0xf, y & 0xff, z & 0xf, layer);
         }
         return 0;
     }
 
     @Override
-    public void setBlockIdAt(int x, int y, int z, int id) {
-        FullChunk chunk = this.getChunk(x >> 4, z >> 4);
+    public void setBlockDataAt(int x, int y, int z, int layer, int data) {
+        IChunk chunk = this.getChunk(x >> 4, z >> 4);
         if (chunk != null) {
-            chunk.setBlockId(x & 0xf, y & 0xff, z & 0xf, id);
+            chunk.setBlockData(x & 0xf, y & 0xff, z & 0xf, layer, data);
         }
-    }
-
-    @Override
-    public void setBlockAt(int x, int y, int z, int id, int data) {
-        FullChunk chunk = this.getChunk(x >> 4, z >> 4);
-        if (chunk != null) {
-            chunk.setBlock(x & 0xf, y & 0xff, z & 0xf, id, data);
-        }
-    }
-
-
-    @Override
-    public void setBlockFullIdAt(int x, int y, int z, int fullId) {
-        FullChunk chunk = this.getChunk(x >> 4, z >> 4);
-        if (chunk != null) {
-            chunk.setFullBlockId(x & 0xf, y & 0xff, z & 0xf, fullId);
-        }
-    }
-
-    @Override
-    public int getBlockDataAt(int x, int y, int z) {
-        FullChunk chunk = this.getChunk(x >> 4, z >> 4);
-        if (chunk != null) {
-            return chunk.getBlockData(x & 0xf, y & 0xff, z & 0xf);
-        }
-        return 0;
-    }
-
-    @Override
-    public void setBlockDataAt(int x, int y, int z, int data) {
-        FullChunk chunk = this.getChunk(x >> 4, z >> 4);
-        if (chunk != null) {
-            chunk.setBlockData(x & 0xf, y & 0xff, z & 0xf, data);
-        }
-    }
-
-    @Override
-    public void setChunk(int chunkX, int chunkZ) {
-        this.setChunk(chunkX, chunkZ, null);
     }
 
     @Override
@@ -80,7 +97,14 @@ public abstract class SimpleChunkManager implements ChunkManager {
         this.seed = seed;
     }
 
-    public void cleanChunks(long seed) {
-        this.seed = seed;
+    public void clean() {
+        checkState(seed != null, "ChunkManager has already been cleaned");
+        this.seed = null;
+    }
+
+    public abstract void setChunk(IChunk chunk);
+
+    public void isValid(int chunkX, int chunkZ) {
+        this.getChunk(chunkX, chunkZ);
     }
 }

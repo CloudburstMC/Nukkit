@@ -3,6 +3,9 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.NETHER_BRICK;
 
 /**
  * Created on 2015/12/7 by xtypr.
@@ -10,17 +13,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockBricksNether extends BlockSolid {
 
-    public BlockBricksNether() {
-    }
-
-    @Override
-    public String getName() {
-        return "Nether Brick";
-    }
-
-    @Override
-    public int getId() {
-        return NETHER_BRICKS;
+    public BlockBricksNether(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -29,12 +23,12 @@ public class BlockBricksNether extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 2;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 10;
     }
 
@@ -42,7 +36,7 @@ public class BlockBricksNether extends BlockSolid {
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
-                    Item.get(Item.NETHER_BRICKS, 0, 1)
+                    Item.get(NETHER_BRICK, 0, 1)
             };
         } else {
             return new Item[0];

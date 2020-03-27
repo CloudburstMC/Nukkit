@@ -1,46 +1,47 @@
 package cn.nukkit.level.generator.object;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.math.NukkitRandom;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.BedrockRandom;
+import com.nukkitx.math.vector.Vector3i;
+
+import static cn.nukkit.block.BlockIds.*;
 
 /**
  * author: ItsLucas
  * Nukkit Project
  */
 public class ObjectTallGrass {
-    public static void growGrass(ChunkManager level, Vector3 pos, NukkitRandom random) {
+    public static void growGrass(ChunkManager level, Vector3i pos, BedrockRandom random) {
         for (int i = 0; i < 128; ++i) {
             int num = 0;
 
-            int x = pos.getFloorX();
-            int y = pos.getFloorY() + 1;
-            int z = pos.getFloorZ();
+            int x = pos.getX();
+            int y = pos.getY() + 1;
+            int z = pos.getZ();
 
             while (true) {
                 if (num >= i / 16) {
-                    if (level.getBlockIdAt(x, y, z) == Block.AIR) {
-                        if (random.nextBoundedInt(8) == 0) {
+                    if (level.getBlockId(x, y, z) == AIR) {
+                        if (random.nextInt(8) == 0) {
                             //porktodo: biomes have specific flower types that can grow in them
                             if (random.nextBoolean()) {
-                                level.setBlockAt(x, y, z, Block.DANDELION);
+                                level.setBlockId(x, y, z, YELLOW_FLOWER);
                             } else {
-                                level.setBlockAt(x, y, z, Block.POPPY);
+                                level.setBlockId(x, y, z, RED_FLOWER);
                             }
                         } else {
-                            level.setBlockAt(x, y, z, Block.TALL_GRASS, 1);
+                            level.setBlockAt(x, y, z, TALL_GRASS, 1);
                         }
                     }
 
                     break;
                 }
 
-                x += random.nextRange(-1, 1);
-                y += random.nextRange(-1, 1) * random.nextBoundedInt(3) / 2;
-                z += random.nextRange(-1, 1);
+                x += random.nextInt(-1, 1);
+                y += random.nextInt(-1, 1) * random.nextInt(3) / 2;
+                z += random.nextInt(-1, 1);
 
-                if (level.getBlockIdAt(x, y - 1, z) != Block.GRASS || y > 255 || y < 0) {
+                if (level.getBlockId(x, y - 1, z) != GRASS || y > 255 || y < 0) {
                     break;
                 }
 

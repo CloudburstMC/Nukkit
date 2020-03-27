@@ -1,6 +1,5 @@
 package cn.nukkit.inventory.transaction;
 
-import cn.nukkit.Player;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.inventory.InventoryTransactionEvent;
 import cn.nukkit.inventory.Inventory;
@@ -8,14 +7,18 @@ import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
-import cn.nukkit.utils.MainLogger;
+import cn.nukkit.player.Player;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.*;
 import java.util.Map.Entry;
 
+import static cn.nukkit.block.BlockIds.AIR;
+
 /**
  * @author CreeperFace
  */
+@Log4j2
 public class InventoryTransaction {
 
     private long creationTime;
@@ -83,7 +86,7 @@ public class InventoryTransaction {
 
     protected boolean matchItems(List<Item> needItems, List<Item> haveItems) {
         for (InventoryAction action : this.actions) {
-            if (action.getTargetItem().getId() != Item.AIR) {
+            if (action.getTargetItem().getId() != AIR) {
                 needItems.add(action.getTargetItem());
             }
 
@@ -91,7 +94,7 @@ public class InventoryTransaction {
                 return false;
             }
 
-            if (action.getSourceItem().getId() != Item.AIR) {
+            if (action.getSourceItem().getId() != AIR) {
                 haveItems.add(action.getSourceItem());
             }
         }
@@ -199,15 +202,15 @@ public class InventoryTransaction {
                         sortedThisLoop++;
                     }
                     else if (actionSource.equals(lastTargetItem)) {
-                        lastTargetItem.count -= actionSource.count;
+                        lastTargetItem.decrementCount(actionSource.getCount());
                         list.remove(i);
-                        if (lastTargetItem.count == 0) sortedThisLoop++;
+                        if (lastTargetItem.getCount() == 0) sortedThisLoop++;
                     }
                 }
             } while (sortedThisLoop > 0);
 
             if (list.size() > 0) { //couldn't chain all the actions together
-                MainLogger.getLogger().debug("Failed to compact " + originalList.size() + " actions for " + this.source.getName());
+                log.debug("Failed to compact " + originalList.size() + " actions for " + this.source.getName());
                 return false;
             }
 
@@ -217,7 +220,7 @@ public class InventoryTransaction {
 
             this.addAction(new SlotChangeAction(originalAction.getInventory(), originalAction.getSlot(), originalAction.getSourceItem(), lastTargetItem));
 
-            MainLogger.getLogger().debug("Successfully compacted " + originalList.size() + " actions for " + this.source.getName());
+            log.debug("Successfully compacted " + originalList.size() + " actions for " + this.source.getName());
         }
 
         return true;

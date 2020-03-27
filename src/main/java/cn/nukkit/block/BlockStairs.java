@@ -1,43 +1,45 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class BlockStairs extends BlockTransparentMeta implements Faceable {
+public abstract class BlockStairs extends BlockTransparent implements Faceable {
 
-    protected BlockStairs(int meta) {
-        super(meta);
+    public BlockStairs(Identifier id) {
+        super(id);
     }
 
     @Override
-    public double getMinY() {
+    public float getMinY() {
         // TODO: this seems wrong
-        return this.y + ((getDamage() & 0x04) > 0 ? 0.5 : 0);
+        return this.getY() + ((getMeta() & 0x04) > 0 ? 0.5f : 0);
     }
 
     @Override
-    public double getMaxY() {
+    public float getMaxY() {
         // TODO: this seems wrong
-        return this.y + ((getDamage() & 0x04) > 0 ? 1 : 0.5);
+        return this.getY() + ((getMeta() & 0x04) > 0 ? 1 : 0.5f);
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         int[] faces = new int[]{2, 1, 3, 0};
-        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
-        if ((fy > 0.5 && face != BlockFace.UP) || face == BlockFace.DOWN) {
-            this.setDamage(this.getDamage() | 0x04); //Upside-down stairs
+        this.setMeta(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+        if ((clickPos.getY() > 0.5 && face != BlockFace.UP) || face == BlockFace.DOWN) {
+            this.setMeta(this.getMeta() | 0x04); //Upside-down stairs
         }
-        this.getLevel().setBlock(block, this, true, true);
+        this.getLevel().setBlock(block.getPosition(), this, true, true);
 
         return true;
     }
@@ -56,32 +58,32 @@ public abstract class BlockStairs extends BlockTransparentMeta implements Faceab
     @Override
     public Item toItem() {
         Item item = super.toItem();
-        item.setDamage(0);
+        item.setMeta(0);
         return item;
     }
 
     @Override
     public boolean collidesWithBB(AxisAlignedBB bb) {
-        int damage = this.getDamage();
+        int damage = this.getMeta();
         int side = damage & 0x03;
-        double f = 0;
-        double f1 = 0.5;
-        double f2 = 0.5;
-        double f3 = 1;
+        float f = 0;
+        float f1 = 0.5f;
+        float f2 = 0.5f;
+        float f3 = 1;
         if ((damage & 0x04) > 0) {
-            f = 0.5;
+            f = 0.5f;
             f1 = 1;
             f2 = 0;
-            f3 = 0.5;
+            f3 = 0.5f;
         }
 
         if (bb.intersectsWith(new SimpleAxisAlignedBB(
-                this.x,
-                this.y + f,
-                this.z,
-                this.x + 1,
-                this.y + f1,
-                this.z + 1
+                this.getX(),
+                this.getY() + f,
+                this.getZ(),
+                this.getX() + 1,
+                this.getY() + f1,
+                this.getZ() + 1
         ))) {
             return true;
         }
@@ -89,45 +91,45 @@ public abstract class BlockStairs extends BlockTransparentMeta implements Faceab
 
         if (side == 0) {
             if (bb.intersectsWith(new SimpleAxisAlignedBB(
-                    this.x + 0.5,
-                    this.y + f2,
-                    this.z,
-                    this.x + 1,
-                    this.y + f3,
-                    this.z + 1
+                    this.getX() + 0.5f,
+                    this.getY() + f2,
+                    this.getZ(),
+                    this.getX() + 1,
+                    this.getY() + f3,
+                    this.getZ() + 1
             ))) {
                 return true;
             }
         } else if (side == 1) {
             if (bb.intersectsWith(new SimpleAxisAlignedBB(
-                    this.x,
-                    this.y + f2,
-                    this.z,
-                    this.x + 0.5,
-                    this.y + f3,
-                    this.z + 1
+                    this.getX(),
+                    this.getY() + f2,
+                    this.getZ(),
+                    this.getX() + 0.5f,
+                    this.getY() + f3,
+                    this.getZ() + 1
             ))) {
                 return true;
             }
         } else if (side == 2) {
             if (bb.intersectsWith(new SimpleAxisAlignedBB(
-                    this.x,
-                    this.y + f2,
-                    this.z + 0.5,
-                    this.x + 1,
-                    this.y + f3,
-                    this.z + 1
+                    this.getX(),
+                    this.getY() + f2,
+                    this.getZ() + 0.5f,
+                    this.getX() + 1,
+                    this.getY() + f3,
+                    this.getZ() + 1
             ))) {
                 return true;
             }
         } else if (side == 3) {
             if (bb.intersectsWith(new SimpleAxisAlignedBB(
-                    this.x,
-                    this.y + f2,
-                    this.z,
-                    this.x + 1,
-                    this.y + f3,
-                    this.z + 0.5
+                    this.getX(),
+                    this.getY() + f2,
+                    this.getZ(),
+                    this.getX() + 1,
+                    this.getY() + f3,
+                    this.getZ() + 0.5f
             ))) {
                 return true;
             }
@@ -138,6 +140,11 @@ public abstract class BlockStairs extends BlockTransparentMeta implements Faceab
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x7);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

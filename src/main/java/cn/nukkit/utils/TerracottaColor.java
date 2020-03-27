@@ -20,15 +20,24 @@ public enum TerracottaColor {
     WHITE(15, 0, "White", "Bone Meal", BlockColor.WHITE_TERRACOTA_BLOCK_COLOR);
 
 
+    private final static TerracottaColor[] BY_TERRACOTA_DATA;
+    private final static TerracottaColor[] BY_DYE_DATA;
+
+    static {
+        BY_DYE_DATA = values();
+        BY_TERRACOTA_DATA = values();
+
+        for (TerracottaColor color : values()) {
+            BY_TERRACOTA_DATA[color.terracottaColorMeta & 0x0f] = color;
+            BY_DYE_DATA[color.dyeColorMeta & 0x0f] = color;
+        }
+    }
+
     private int dyeColorMeta;
     private int terracottaColorMeta;
     private String colorName;
     private String dyeName;
     private BlockColor blockColor;
-
-
-    private final static TerracottaColor[] BY_TERRACOTA_DATA;
-    private final static TerracottaColor[] BY_DYE_DATA;
 
     TerracottaColor(int dyeColorMeta, int terracottaColorMeta, String colorName, BlockColor blockColor) {
         this(dyeColorMeta, terracottaColorMeta, colorName, colorName + " Dye", blockColor);
@@ -40,6 +49,14 @@ public enum TerracottaColor {
         this.colorName = colorName;
         this.blockColor = blockColor;
         this.dyeName = dyeName;
+    }
+
+    public static TerracottaColor getByDyeData(int dyeColorMeta) {
+        return BY_DYE_DATA[dyeColorMeta & 0x0f];
+    }
+
+    public static TerracottaColor getByTerracottaData(int terracottaColorMeta) {
+        return BY_TERRACOTA_DATA[terracottaColorMeta & 0x0f];
     }
 
     public BlockColor getColor() {
@@ -60,24 +77,6 @@ public enum TerracottaColor {
 
     public String getDyeName() {
         return this.dyeName;
-    }
-
-    static {
-        BY_DYE_DATA = values();
-        BY_TERRACOTA_DATA = values();
-
-        for (TerracottaColor color : values()) {
-            BY_TERRACOTA_DATA[color.terracottaColorMeta & 0x0f] = color;
-            BY_DYE_DATA[color.dyeColorMeta & 0x0f] = color;
-        }
-    }
-
-    public static TerracottaColor getByDyeData(int dyeColorMeta) {
-        return BY_DYE_DATA[dyeColorMeta & 0x0f];
-    }
-
-    public static TerracottaColor getByTerracottaData(int terracottaColorMeta) {
-        return BY_TERRACOTA_DATA[terracottaColorMeta & 0x0f];
     }
 
 }

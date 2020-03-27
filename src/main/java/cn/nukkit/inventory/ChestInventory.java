@@ -1,10 +1,9 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.Player;
-import cn.nukkit.blockentity.BlockEntityChest;
+import cn.nukkit.blockentity.Chest;
 import cn.nukkit.level.Level;
-import cn.nukkit.network.protocol.BlockEventPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.player.Player;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
 
 /**
  * author: MagicDroidX
@@ -14,13 +13,13 @@ public class ChestInventory extends ContainerInventory {
 
     protected DoubleChestInventory doubleInventory;
 
-    public ChestInventory(BlockEntityChest chest) {
+    public ChestInventory(Chest chest) {
         super(chest, InventoryType.CHEST);
     }
 
     @Override
-    public BlockEntityChest getHolder() {
-        return (BlockEntityChest) this.holder;
+    public Chest getHolder() {
+        return (Chest) this.holder;
     }
 
     @Override
@@ -28,17 +27,10 @@ public class ChestInventory extends ContainerInventory {
         super.onOpen(who);
 
         if (this.getViewers().size() == 1) {
-            BlockEventPacket pk = new BlockEventPacket();
-            pk.x = (int) this.getHolder().getX();
-            pk.y = (int) this.getHolder().getY();
-            pk.z = (int) this.getHolder().getZ();
-            pk.case1 = 1;
-            pk.case2 = 2;
-
             Level level = this.getHolder().getLevel();
             if (level != null) {
-                level.addLevelSoundEvent(this.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_CHEST_OPEN);
-                level.addChunkPacket((int) this.getHolder().getX() >> 4, (int) this.getHolder().getZ() >> 4, pk);
+                level.addLevelSoundEvent(this.getHolder().getPosition(), SoundEvent.CHEST_OPEN);
+                ContainerInventory.sendBlockEventPacket(this.getHolder(), 1);
             }
         }
     }
@@ -46,20 +38,12 @@ public class ChestInventory extends ContainerInventory {
     @Override
     public void onClose(Player who) {
         if (this.getViewers().size() == 1) {
-            BlockEventPacket pk = new BlockEventPacket();
-            pk.x = (int) this.getHolder().getX();
-            pk.y = (int) this.getHolder().getY();
-            pk.z = (int) this.getHolder().getZ();
-            pk.case1 = 1;
-            pk.case2 = 0;
-
             Level level = this.getHolder().getLevel();
             if (level != null) {
-                level.addLevelSoundEvent(this.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_CHEST_CLOSED);
-                level.addChunkPacket((int) this.getHolder().getX() >> 4, (int) this.getHolder().getZ() >> 4, pk);
+                level.addLevelSoundEvent(this.getHolder().getPosition(), SoundEvent.CHEST_CLOSED);
+                ContainerInventory.sendBlockEventPacket(this.getHolder(), 0);
             }
         }
-
         super.onClose(who);
     }
 

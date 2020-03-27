@@ -1,8 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemFlint;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
 
@@ -12,22 +13,17 @@ import java.util.Random;
  */
 public class BlockGravel extends BlockFallable {
 
-
-    public BlockGravel() {
+    public BlockGravel(Identifier id) {
+        super(id);
     }
 
     @Override
-    public int getId() {
-        return GRAVEL;
+    public float getHardness() {
+        return 0.6f;
     }
 
     @Override
-    public double getHardness() {
-        return 0.6;
-    }
-
-    @Override
-    public double getResistance() {
+    public float getResistance() {
         return 3;
     }
 
@@ -37,15 +33,10 @@ public class BlockGravel extends BlockFallable {
     }
 
     @Override
-    public String getName() {
-        return "Gravel";
-    }
-
-    @Override
     public Item[] getDrops(Item item) {
         if (new Random().nextInt(9) == 0) {
             return new Item[]{
-                    new ItemFlint()
+                    Item.get(ItemIds.FLINT)
             };
         } else {
             return new Item[]{

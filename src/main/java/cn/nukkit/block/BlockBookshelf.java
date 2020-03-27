@@ -1,41 +1,29 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBook;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.item.ItemIds.BOOK;
 
 /**
  * @author Nukkit Project Team
  */
-public class BlockBookshelf extends BlockSolidMeta {
+public class BlockBookshelf extends BlockSolid {
 
-    public BlockBookshelf(int meta) {
-        super(meta);
-    }
-
-    public BlockBookshelf() {
-        this(0);
+    public BlockBookshelf(Identifier id) {
+        super(id);
     }
 
     @Override
-    public String getName() {
-        return "Bookshelf";
+    public float getHardness() {
+        return 1.5f;
     }
 
     @Override
-    public int getId() {
-        return BOOKSHELF;
-    }
-
-    @Override
-    public double getHardness() {
-        return 1.5D;
-    }
-
-    @Override
-    public double getResistance() {
-        return 7.5D;
+    public float getResistance() {
+        return 7.5f;
     }
 
     @Override
@@ -56,7 +44,7 @@ public class BlockBookshelf extends BlockSolidMeta {
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-                new ItemBook(0, 3)
+                Item.get(BOOK, 0, 3)
         };
     }
 

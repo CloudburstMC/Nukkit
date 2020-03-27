@@ -1,13 +1,15 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.Player;
+import cn.nukkit.block.Block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.level.Position;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.player.Player;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * author: MagicDroidX
@@ -19,8 +21,8 @@ public class AnvilInventory extends FakeBlockUIComponent {
     public static final int SACRIFICE = 1;
     public static final int RESULT = 50;
 
-    public AnvilInventory(PlayerUIInventory playerUI, Position position) {
-        super(playerUI, InventoryType.ANVIL, 1, position);
+    public AnvilInventory(PlayerUIInventory playerUI, Block block) {
+        super(playerUI, InventoryType.ANVIL, 1, block);
     }
 
     public boolean onRename(Player player, Item resultItem) {
@@ -37,7 +39,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
             return true;
         }
 
-        if (local.getId() != 0 && second.getId() == 0) { //only rename
+        if (local.getId() != AIR && second.getId() == AIR) { //only rename
             local.setCustomName(resultItem.getCustomName());
             setItem(RESULT, local);
             player.getInventory().addItem(local);
@@ -45,14 +47,14 @@ public class AnvilInventory extends FakeBlockUIComponent {
             player.getInventory().sendContents(player);
             sendContents(player);
 
-            player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_RANDOM_ANVIL_USE);
+            player.getLevel().addLevelSoundEvent(player.getPosition(), SoundEvent.RANDOM_ANVIL_USE);
             return true;
-        } else if (local.getId() != 0 && second.getId() != 0) { //enchants combining
+        } else if (local.getId() != AIR && second.getId() != AIR) { //enchants combining
             if (!local.equals(second, true, false)) {
                 return false;
             }
 
-            if (local.getId() != 0 && second.getId() != 0) {
+            if (local.getId() != AIR && second.getId() != AIR) {
                 Item result = local.clone();
                 int enchants = 0;
 
@@ -112,7 +114,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
                 clearAll();
                 sendContents(player);
 
-                player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_RANDOM_ANVIL_USE);
+                player.getLevel().addLevelSoundEvent(player.getPosition(), SoundEvent.RANDOM_ANVIL_USE);
                 return true;
             }
         }
@@ -127,7 +129,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
         who.resetCraftingGridType();
 
         for (int i = 0; i < 2; ++i) {
-            this.getHolder().getLevel().dropItem(this.getHolder().add(0.5, 0.5, 0.5), this.getItem(i));
+            this.getHolder().getLevel().dropItem(this.getHolder().getPosition().toFloat().add(0.5, 0.5, 0.5), this.getItem(i));
             this.clear(i);
         }
     }

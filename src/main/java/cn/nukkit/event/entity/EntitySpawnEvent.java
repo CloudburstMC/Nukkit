@@ -1,12 +1,14 @@
 package cn.nukkit.event.entity;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.EntityCreature;
-import cn.nukkit.entity.EntityHuman;
-import cn.nukkit.entity.item.EntityItem;
-import cn.nukkit.entity.projectile.EntityProjectile;
+import cn.nukkit.entity.EntityType;
+import cn.nukkit.entity.impl.EntityCreature;
+import cn.nukkit.entity.impl.Human;
+import cn.nukkit.entity.impl.projectile.EntityProjectile;
+import cn.nukkit.entity.impl.vehicle.EntityVehicle;
+import cn.nukkit.entity.misc.DroppedItem;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.Position;
+import cn.nukkit.level.Location;
 
 /**
  * author: MagicDroidX
@@ -19,19 +21,16 @@ public class EntitySpawnEvent extends EntityEvent {
         return handlers;
     }
 
-    private final int entityType;
-
-    public EntitySpawnEvent(cn.nukkit.entity.Entity entity) {
+    public EntitySpawnEvent(Entity entity) {
         this.entity = entity;
-        this.entityType = entity.getNetworkId();
     }
 
-    public Position getPosition() {
-        return this.entity.getPosition();
+    public Location getLocation() {
+        return this.entity.getLocation();
     }
 
-    public int getType() {
-        return this.entityType;
+    public EntityType<?> getType() {
+        return this.entity.getType();
     }
 
     public boolean isCreature() {
@@ -39,7 +38,7 @@ public class EntitySpawnEvent extends EntityEvent {
     }
 
     public boolean isHuman() {
-        return this.entity instanceof EntityHuman;
+        return this.entity instanceof Human;
     }
 
     public boolean isProjectile() {
@@ -47,11 +46,11 @@ public class EntitySpawnEvent extends EntityEvent {
     }
 
     public boolean isVehicle() {
-        return this.entity instanceof Entity;
+        return this.entity instanceof EntityVehicle;
     }
 
     public boolean isItem() {
-        return this.entity instanceof EntityItem;
+        return this.entity instanceof DroppedItem;
     }
 
 }

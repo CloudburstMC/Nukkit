@@ -1,6 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.level.Level;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.LAVA;
 
 /**
  * author: Angelic47
@@ -8,27 +11,17 @@ import cn.nukkit.level.Level;
  */
 public class BlockLavaStill extends BlockLava {
 
-    public BlockLavaStill() {
-        super(0);
+    protected BlockLavaStill(Identifier id, Identifier flowingId, Identifier stationaryId) {
+        super(id, flowingId, stationaryId);
     }
 
-    public BlockLavaStill(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return STILL_LAVA;
+    protected BlockLavaStill(Identifier flowingId, Identifier stationaryId) {
+        this(stationaryId, flowingId, stationaryId);
     }
 
     @Override
-    public String getName() {
-        return "Still Lava";
-    }
-
-    @Override
-    public BlockLiquid getBlock(int meta) {
-        return new BlockLavaStill(meta);
+    public Block getBlock(int meta) {
+        return Block.get(LAVA);
     }
 
     @Override
@@ -37,5 +30,9 @@ public class BlockLavaStill extends BlockLava {
             return super.onUpdate(type);
         }
         return 0;
+    }
+
+    public static BlockFactory factory(Identifier flowingId) {
+        return id -> new BlockLavaStill(flowingId, id);
     }
 }

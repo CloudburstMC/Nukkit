@@ -1,56 +1,39 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.BlockFace.Axis;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
-/**
- * author: MagicDroidX
- * Nukkit Project
- */
-public class BlockWood extends BlockSolidMeta {
+//Block state information: https://hastebin.com/emuvawasoj.js
+public class BlockWood extends BlockSolid {
     public static final int OAK = 0;
     public static final int SPRUCE = 1;
     public static final int BIRCH = 2;
     public static final int JUNGLE = 3;
+    public static final int ACACIA = 4;
+    public static final int DARK_OAK = 5;
+    private static final int STRIPPED_BIT = 0b1000;
+    private static final int AXIS_Y = 0;
+    private static final int AXIS_X = 1 << 4;
+    private static final int AXIS_Z = 2 << 4;
 
-
-    public BlockWood() {
-        this(0);
-    }
-
-    public BlockWood(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return WOOD;
+    public BlockWood(Identifier id) {
+        super(id);
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 2;
     }
 
     @Override
-    public double getResistance() {
-        return 10;
-    }
-
-    @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Oak Wood",
-                "Spruce Wood",
-                "Birch Wood",
-                "Jungle Wood"
-        };
-
-        return names[this.getDamage() & 0x03];
+    public float getResistance() {
+        return 15;
     }
 
     @Override
@@ -60,29 +43,7 @@ public class BlockWood extends BlockSolidMeta {
 
     @Override
     public int getBurnAbility() {
-        return 10;
-    }
-
-    @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        short[] faces = new short[]{
-                0,
-                0,
-                0b1000,
-                0b1000,
-                0b0100,
-                0b0100
-        };
-
-        this.setDamage(((this.getDamage() & 0x03) | faces[face.getIndex()]));
-        this.getLevel().setBlock(block, this, true, true);
-
-        return true;
-    }
-
-    @Override
-    public Item toItem() {
-        return new ItemBlock(this, this.getDamage() & 0x03);
+        return 20;
     }
 
     @Override
@@ -91,8 +52,84 @@ public class BlockWood extends BlockSolidMeta {
     }
 
     @Override
+    public Item toItem() {
+        return Item.get(id, getMeta() & 0xF);
+    }
+
+
+    @Override
+    public boolean canBeActivated() {
+        return !isStripped();
+    }
+
+    @Override
+    public boolean onActivate(Item item, Player player) {
+        if (!item.isAxe() || !player.isCreative() && !item.useOn(this)) {
+            return false;
+        }
+
+        setMeta(getMeta() | STRIPPED_BIT);  // adds the offset for stripped woods
+        getLevel().setBlock(this.getPosition(), this, true);
+        return true;
+    }
+
+    public boolean isStripped() {
+        return (getMeta() & STRIPPED_BIT) != 0;
+    }
+
+    public void setStripped(boolean stripped) {
+        setMeta((getMeta() & ~STRIPPED_BIT) | (stripped ? STRIPPED_BIT : 0));
+    }
+
+    public Axis getAxis() {
+        switch (getMeta() & 0x30) {
+            default:
+            case AXIS_Y:
+                return Axis.Y;
+            case AXIS_X:
+                return Axis.X;
+            case AXIS_Z:
+                return Axis.Z;
+        }
+    }
+
+    public void setAxis(Axis axis) {
+        int axisProp;
+        switch (axis) {
+            default:
+            case Y:
+                axisProp = AXIS_Y;
+                break;
+            case X:
+                axisProp = AXIS_X;
+                break;
+            case Z:
+                axisProp = AXIS_Z;
+                break;
+        }
+        setMeta((getMeta() & ~0x30) | axisProp);
+    }
+
+    @Override
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        setAxis(face.getAxis());
+        return super.place(item, block, target, face, clickPos, player);
+    }
+
+    public int getWoodType() {
+        return getMeta() & 0b111;
+    }
+
+    public void setWoodType(int woodType) {
+        if (woodType < OAK || woodType > DARK_OAK) {
+            woodType = OAK;
+        }
+        setMeta((getMeta() & -0b1000) | woodType);
+    }
+
+    @Override
     public BlockColor getColor() {
-        switch (getDamage() & 0x07) {
+        switch (getWoodType()) {
             default:
             case OAK:
                 return BlockColor.WOOD_BLOCK_COLOR;
@@ -102,6 +139,10 @@ public class BlockWood extends BlockSolidMeta {
                 return BlockColor.SAND_BLOCK_COLOR;
             case JUNGLE:
                 return BlockColor.DIRT_BLOCK_COLOR;
+            case ACACIA:
+                return BlockColor.ORANGE_BLOCK_COLOR;
+            case DARK_OAK: //DARK OAK
+                return BlockColor.BROWN_BLOCK_COLOR;
         }
     }
 }

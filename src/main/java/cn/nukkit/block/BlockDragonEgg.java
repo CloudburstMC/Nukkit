@@ -1,33 +1,28 @@
 package cn.nukkit.block;
 
 import cn.nukkit.level.Level;
-import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.protocol.bedrock.data.LevelEventType;
+import com.nukkitx.protocol.bedrock.packet.LevelEventPacket;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+import static cn.nukkit.block.BlockIds.AIR;
+
 public class BlockDragonEgg extends BlockFallable {
 
-    public BlockDragonEgg() {
+    public BlockDragonEgg(Identifier id) {
+        super(id);
     }
 
     @Override
-    public String getName() {
-        return "Dragon Egg";
-    }
-
-    @Override
-    public int getId() {
-        return DRAGON_EGG;
-    }
-
-    @Override
-    public double getHardness() {
+    public float getHardness() {
         return 3;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 45;
     }
 
@@ -55,24 +50,30 @@ public class BlockDragonEgg extends BlockFallable {
     }
 
     public void teleport() {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
         for (int i = 0; i < 1000; ++i) {
-            Block t = this.getLevel().getBlock(this.add(ThreadLocalRandom.current().nextInt(-16, 16), ThreadLocalRandom.current().nextInt(-16, 16), ThreadLocalRandom.current().nextInt(-16, 16)));
+            Block t = this.getLevel().getBlock(this.getPosition().add(random.nextInt(-16, 16),
+                    random.nextInt(-16, 16), random.nextInt(-16, 16)));
             if (t.getId() == AIR) {
-                int diffX = this.getFloorX() - t.getFloorX();
-                int diffY = this.getFloorY() - t.getFloorY();
-                int diffZ = this.getFloorZ() - t.getFloorZ();
+                int diffX = this.getX() - t.getX();
+                int diffY = this.getY() - t.getY();
+                int diffZ = this.getZ() - t.getZ();
                 LevelEventPacket pk = new LevelEventPacket();
-                pk.evid = LevelEventPacket.EVENT_PARTICLE_DRAGON_EGG_TELEPORT;
-                pk.data = (((((Math.abs(diffX) << 16) | (Math.abs(diffY) << 8)) | Math.abs(diffZ)) | ((diffX < 0 ? 1 : 0) << 24)) | ((diffY < 0 ? 1 : 0) << 25)) | ((diffZ < 0 ? 1 : 0) << 26);
-                pk.x = this.getFloorX();
-                pk.y = this.getFloorY();
-                pk.z = this.getFloorZ();
-                this.getLevel().addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, pk);
-                this.getLevel().setBlock(this, get(AIR), true);
-                this.getLevel().setBlock(t, this, true);
+                pk.setType(LevelEventType.DRAGON_EGG_TELEPORT);
+                pk.setData((((((Math.abs(diffX) << 16) | (Math.abs(diffY) << 8)) | Math.abs(diffZ)) |
+                        ((diffX < 0 ? 1 : 0) << 24)) | ((diffY < 0 ? 1 : 0) << 25)) | ((diffZ < 0 ? 1 : 0) << 26));
+                pk.setPosition(this.getPosition().toFloat().add(0.5, 0.5, 0.5));
+                this.getLevel().addChunkPacket(this.getPosition(), pk);
+                this.getLevel().setBlock(this.getPosition(), get(AIR), true);
+                this.getLevel().setBlock(t.getPosition(), this, true);
                 return;
             }
         }
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 
     @Override

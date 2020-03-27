@@ -23,9 +23,8 @@
  */
 package co.aikar.timings;
 
-import com.google.gson.JsonArray;
-
 import cn.nukkit.timings.JsonUtil;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 class TimingData {
     private int id;
@@ -80,12 +79,12 @@ class TimingData {
         return new TimingData(this);
     }
 
-    JsonArray export() {
-        JsonArray json = JsonUtil.toArray(this.id, this.count, this.totalTime);
+    ArrayNode export() {
+        ArrayNode array = JsonUtil.toArray(this.id, this.count, this.totalTime);
         if (this.lagCount > 0) {
-            json.add(this.lagCount);
-            json.add(this.lagTotalTime);
+            array.add(this.lagCount);
+            array.add(this.lagTotalTime);
         }
-        return json;
+        return array;
     }
 }

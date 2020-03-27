@@ -1,33 +1,37 @@
 package cn.nukkit.timings;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
  * @author Tee7even
- *         <p>
- *         Various methods for more compact JSON object constructing
+ * <p>
+ * Various methods for more compact JSON object constructing
  */
 @SuppressWarnings("unchecked")
 public class JsonUtil {
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final JsonMapper MAPPER = new JsonMapper();
 
-    public static JsonArray toArray(Object... objects) {
-        List array = new ArrayList();
-        Collections.addAll(array, objects);
-        return GSON.toJsonTree(array).getAsJsonArray();
+    public static ArrayNode toArray(Object... objects) {
+        ArrayNode array = MAPPER.createArrayNode();
+        for (Object object : objects) {
+            array.addPOJO(object);
+        }
+        return array;
     }
 
-    public static JsonObject toObject(Object object) {
-        return GSON.toJsonTree(object).getAsJsonObject();
+    public static JsonNode toObject(Object object) {
+        return MAPPER.valueToTree(object);
     }
 
-    public static <E> JsonObject mapToObject(Iterable<E> collection, Function<E, JSONPair> mapper) {
+    public static <E> JsonNode mapToObject(Iterable<E> collection, Function<E, JSONPair> mapper) {
         Map object = new LinkedHashMap();
         for (E e : collection) {
             JSONPair pair = mapper.apply(e);
@@ -35,24 +39,24 @@ public class JsonUtil {
                 object.put(pair.key, pair.value);
             }
         }
-        return GSON.toJsonTree(object).getAsJsonObject();
+        return MAPPER.valueToTree(object);
     }
 
-    public static <E> JsonArray mapToArray(E[] elements, Function<E, Object> mapper) {
+    public static <E> ArrayNode mapToArray(E[] elements, Function<E, Object> mapper) {
         ArrayList array = new ArrayList();
         Collections.addAll(array, elements);
         return mapToArray(array, mapper);
     }
 
-    public static <E> JsonArray mapToArray(Iterable<E> collection, Function<E, Object> mapper) {
-        List array = new ArrayList();
+    public static <E> ArrayNode mapToArray(Iterable<E> collection, Function<E, Object> mapper) {
+        ArrayNode node = MAPPER.createArrayNode();
         for (E e : collection) {
             Object obj = mapper.apply(e);
             if (obj != null) {
-                array.add(obj);
+                node.addPOJO(obj);
             }
         }
-        return GSON.toJsonTree(array).getAsJsonArray();
+        return node;
     }
 
     public static class JSONPair {

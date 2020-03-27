@@ -2,6 +2,10 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * author: MagicDroidX
@@ -9,17 +13,8 @@ import cn.nukkit.item.ItemTool;
  */
 public class BlockIcePacked extends BlockIce {
 
-    public BlockIcePacked() {
-    }
-
-    @Override
-    public int getId() {
-        return PACKED_ICE;
-    }
-
-    @Override
-    public String getName() {
-        return "Packed Ice";
+    public BlockIcePacked(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -36,11 +31,15 @@ public class BlockIcePacked extends BlockIce {
     public boolean canHarvestWithHand() {
         return false;
     }
-    
+
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, new BlockAir(), true); //no water
-        return true;
+        return this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true); //no water
+    }
+
+    @Override
+    public boolean onBreak(Item item, Player player) {
+        return this.onBreak(item);
     }
 
     @Override

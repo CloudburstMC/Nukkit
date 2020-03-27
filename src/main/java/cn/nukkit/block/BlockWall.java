@@ -4,27 +4,21 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.COBBLESTONE_WALL;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BlockWall extends BlockTransparentMeta {
+public class BlockWall extends BlockTransparent {
     public static final int NONE_MOSSY_WALL = 0;
     public static final int MOSSY_WALL = 1;
 
 
-    public BlockWall() {
-        this(0);
-    }
-
-    public BlockWall(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return STONE_WALL;
+    public BlockWall(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -33,22 +27,13 @@ public class BlockWall extends BlockTransparentMeta {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 2;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 30;
-    }
-
-    @Override
-    public String getName() {
-        if (this.getDamage() == 0x01) {
-            return "Mossy Cobblestone Wall";
-        }
-
-        return "Cobblestone Wall";
     }
 
     @Override
@@ -59,31 +44,31 @@ public class BlockWall extends BlockTransparentMeta {
         boolean west = this.canConnect(this.getSide(BlockFace.WEST));
         boolean east = this.canConnect(this.getSide(BlockFace.EAST));
 
-        double n = north ? 0 : 0.25;
-        double s = south ? 1 : 0.75;
-        double w = west ? 0 : 0.25;
-        double e = east ? 1 : 0.75;
+        float n = north ? 0 : 0.25f;
+        float s = south ? 1 : 0.75f;
+        float w = west ? 0 : 0.25f;
+        float e = east ? 1 : 0.75f;
 
         if (north && south && !west && !east) {
-            w = 0.3125;
-            e = 0.6875;
+            w = 0.3125f;
+            e = 0.6875f;
         } else if (!north && !south && west && east) {
-            n = 0.3125;
-            s = 0.6875;
+            n = 0.3125f;
+            s = 0.6875f;
         }
 
         return new SimpleAxisAlignedBB(
-                this.x + w,
-                this.y,
-                this.z + n,
-                this.x + e,
-                this.y + 1.5,
-                this.z + s
+                this.getX() + w,
+                this.getY(),
+                this.getZ() + n,
+                this.getX() + e,
+                this.getY() + 1.5f,
+                this.getZ() + s
         );
     }
 
     public boolean canConnect(Block block) {
-        return (!(block.getId() != COBBLE_WALL && block.getId() != FENCE_GATE)) || block.isSolid() && !block.isTransparent();
+        return (!(block.getId() != COBBLESTONE_WALL && block instanceof BlockFence)) || block.isSolid() && !block.isTransparent();
     }
 
     @Override
@@ -94,5 +79,10 @@ public class BlockWall extends BlockTransparentMeta {
     @Override
     public boolean canHarvestWithHand() {
         return false;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

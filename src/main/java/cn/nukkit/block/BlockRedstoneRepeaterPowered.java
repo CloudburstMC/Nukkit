@@ -1,37 +1,26 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemRedstoneRepeater;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.UNPOWERED_REPEATER;
 
 /**
  * Created by CreeperFace on 10.4.2017.
  */
 public class BlockRedstoneRepeaterPowered extends BlockRedstoneDiode {
 
-    public BlockRedstoneRepeaterPowered() {
-        this(0);
-    }
-
-    public BlockRedstoneRepeaterPowered(int meta) {
-        super(meta);
+    public BlockRedstoneRepeaterPowered(Identifier id) {
+        super(id);
         this.isPowered = true;
     }
 
     @Override
-    public int getId() {
-        return POWERED_REPEATER;
-    }
-
-    @Override
-    public String getName() {
-        return "Powered Repeater";
-    }
-
-    @Override
     public BlockFace getFacing() {
-        return BlockFace.fromHorizontalIndex(getDamage());
+        return BlockFace.fromHorizontalIndex(getMeta());
     }
 
     @Override
@@ -41,12 +30,12 @@ public class BlockRedstoneRepeaterPowered extends BlockRedstoneDiode {
 
     @Override
     public Item toItem() {
-        return new ItemRedstoneRepeater();
+        return Item.get(ItemIds.REPEATER);
     }
 
     @Override
     protected int getDelay() {
-        return (1 + (getDamage() >> 2)) * 2;
+        return (1 + (getMeta() >> 2)) * 2;
     }
 
     @Override
@@ -56,7 +45,7 @@ public class BlockRedstoneRepeaterPowered extends BlockRedstoneDiode {
 
     @Override
     protected Block getUnpowered() {
-        return new BlockRedstoneRepeaterUnpowered(this.getDamage());
+        return Block.get(UNPOWERED_REPEATER, this.getMeta());
     }
 
     @Override
@@ -66,10 +55,10 @@ public class BlockRedstoneRepeaterPowered extends BlockRedstoneDiode {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        this.setDamage(this.getDamage() + 4);
-        if (this.getDamage() > 15) this.setDamage(this.getDamage() % 4);
+        this.setMeta(this.getMeta() + 4);
+        if (this.getMeta() > 15) this.setMeta(this.getMeta() % 4);
 
-        this.level.setBlock(this, this, true, false);
+        this.level.setBlock(this.getPosition(), this, true, false);
         return true;
     }
 

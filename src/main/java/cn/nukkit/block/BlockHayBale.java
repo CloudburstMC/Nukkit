@@ -1,42 +1,30 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * Created on 2015/11/24 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockHayBale extends BlockSolidMeta implements Faceable {
-    public BlockHayBale() {
-        this(0);
-    }
-
-    public BlockHayBale(int meta) {
-        super(meta);
-     }
-
-    @Override
-    public int getId() {
-        return HAY_BALE;
+public class BlockHayBale extends BlockSolid implements Faceable {
+    public BlockHayBale(Identifier id) {
+        super(id);
     }
 
     @Override
-    public String getName() {
-        return "Hay Bale";
+    public float getHardness() {
+        return 0.5f;
     }
 
     @Override
-    public double getHardness() {
-        return 0.5;
-    }
-
-    @Override
-    public double getResistance() {
-        return 2.5;
+    public float getResistance() {
+        return 2.5f;
     }
 
     @Override
@@ -50,7 +38,7 @@ public class BlockHayBale extends BlockSolidMeta implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         int[] faces = new int[]{
                 0,
                 0,
@@ -59,8 +47,8 @@ public class BlockHayBale extends BlockSolidMeta implements Faceable {
                 0b0100,
                 0b0100,
         };
-        this.setDamage((this.getDamage() & 0x03) | faces[face.getIndex()]);
-        this.getLevel().setBlock(block, this, true, true);
+        this.setMeta((this.getMeta() & 0x03) | faces[face.getIndex()]);
+        this.getLevel().setBlock(block.getPosition(), this, true, true);
 
         return true;
     }
@@ -72,6 +60,6 @@ public class BlockHayBale extends BlockSolidMeta implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
     }
 }

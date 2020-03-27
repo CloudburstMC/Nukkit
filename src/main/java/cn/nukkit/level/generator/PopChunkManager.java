@@ -1,93 +1,57 @@
 package cn.nukkit.level.generator;
 
-import cn.nukkit.level.format.generic.BaseFullChunk;
+import cn.nukkit.level.chunk.IChunk;
+
 import java.util.Arrays;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 public class PopChunkManager extends SimpleChunkManager {
     private boolean clean = true;
-    private final BaseFullChunk[] chunks = new BaseFullChunk[9];
-    private int CX = Integer.MAX_VALUE;
-    private int CZ = Integer.MAX_VALUE;
+    private final IChunk[] chunks = new IChunk[9];
+    private int CX = 0;
+    private int CZ = 0;
 
-    public PopChunkManager(long seed) {
-        super(seed);
+    public PopChunkManager() {
+        super();
     }
 
     @Override
-    public void cleanChunks(long seed) {
-        super.cleanChunks(seed);
-        if (!clean) {
+    public void clean() {
+        super.clean();
+        if (!this.clean) {
             Arrays.fill(chunks, null);
-            CX = Integer.MAX_VALUE;
-            CZ = Integer.MAX_VALUE;
-            clean = true;
+            CX = 0;
+            CZ = 0;
+            this.clean = true;
         }
     }
 
     @Override
-    public BaseFullChunk getChunk(int chunkX, int chunkZ) {
-        int index;
-        switch (chunkX - CX) {
-            case 0:
-                index = 0;
-                break;
-            case 1:
-                index = 1;
-                break;
-            case 2:
-                index = 2;
-                break;
-            default:
-                return null;
-        }
-        switch (chunkZ - CZ) {
-            case 0:
-                break;
-            case 1:
-                index += 3;
-                break;
-            case 2:
-                index += 6;
-                break;
-            default:
-                return null;
-        }
-        return chunks[index];
+    public IChunk getChunk(int chunkX, int chunkZ) {
+        int offsetX = (chunkX - CX) + 1;
+        int offsetZ = (chunkZ - CZ) + 1;
+        checkArgument(offsetX >= 0 && offsetX < 3 && offsetZ >= 0 && offsetZ < 3,
+                "Chunk (%s, %s) is outside population area (%s, %s)", chunkX, chunkZ, CX, CZ);
+
+        return chunks[offsetX + (offsetZ * 3)];
     }
 
     @Override
-    public void setChunk(int chunkX, int chunkZ, BaseFullChunk chunk) {
-        if (CX == Integer.MAX_VALUE) {
-            CX = chunkX;
-            CZ = chunkZ;
+    public void setChunk(IChunk chunk) {
+        int chunkX = chunk.getX();
+        int chunkZ = chunk.getZ();
+        if (clean) {
+            CX = chunkX + 1; //this method is called with sorted chunks, meaning the first chunk is the one with the lowest position
+            CZ = chunkZ + 1;
+            clean = false;
         }
-        int index;
-        switch (chunkX - CX) {
-            case 0:
-                index = 0;
-                break;
-            case 1:
-                index = 1;
-                break;
-            case 2:
-                index = 2;
-                break;
-            default:
-                throw new UnsupportedOperationException("Chunk is outside population area");
-        }
-        switch (chunkZ - CZ) {
-            case 0:
-                break;
-            case 1:
-                index += 3;
-                break;
-            case 2:
-                index += 6;
-                break;
-            default:
-                throw new UnsupportedOperationException("Chunk is outside population area");
-        }
-        clean = false;
-        chunks[index] = chunk;
+
+        int offsetX = (chunkX - CX) + 1;
+        int offsetZ = (chunkZ - CZ) + 1;
+        checkArgument(offsetX >= 0 && offsetX < 3 && offsetZ >= 0 && offsetZ < 3,
+                "Chunk (%s, %s) is outside population area (%s, %s)", chunkX, chunkZ, CX, CZ);
+
+        this.chunks[offsetX + (offsetZ * 3)] = chunk;
     }
 }

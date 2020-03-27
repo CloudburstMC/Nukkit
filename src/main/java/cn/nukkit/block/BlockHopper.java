@@ -1,88 +1,70 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityHopper;
+import cn.nukkit.blockentity.Hopper;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemHopper;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+
+import static cn.nukkit.blockentity.BlockEntityTypes.HOPPER;
 
 /**
  * @author CreeperFace
  */
-public class BlockHopper extends BlockTransparentMeta implements Faceable {
+public class BlockHopper extends BlockTransparent implements Faceable {
 
-    public BlockHopper() {
-        this(0);
-    }
-
-    public BlockHopper(int meta) {
-        super(meta);
+    public BlockHopper(Identifier id) {
+        super(id);
     }
 
     @Override
-    public int getId() {
-        return HOPPER_BLOCK;
-    }
-
-    @Override
-    public String getName() {
-        return "Hopper Block";
-    }
-
-    @Override
-    public double getHardness() {
+    public float getHardness() {
         return 3;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 24;
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         BlockFace facing = face.getOpposite();
 
         if (facing == BlockFace.UP) {
             facing = BlockFace.DOWN;
         }
 
-        this.setDamage(facing.getIndex());
+        this.setMeta(facing.getIndex());
 
         if (this.level.getServer().isRedstoneEnabled()) {
-            boolean powered = this.level.isBlockPowered(this.getLocation());
+            boolean powered = this.level.isBlockPowered(this.position);
 
             if (powered == this.isEnabled()) {
                 this.setEnabled(!powered);
             }
         }
 
-        this.level.setBlock(this, this);
+        this.level.setBlock(this.getPosition(), this);
 
-        CompoundTag nbt = new CompoundTag()
-                .putList(new ListTag<>("Items"))
-                .putString("id", BlockEntity.HOPPER)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z);
-
-        BlockEntityHopper hopper = (BlockEntityHopper) BlockEntity.createBlockEntity(BlockEntity.HOPPER, this.level.getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), nbt);
-        return hopper != null;
+        BlockEntityRegistry.get().newEntity(HOPPER, this.getChunk(), this.getPosition());
+        return true;
     }
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntity blockEntity = this.level.getBlockEntity(this.getPosition());
 
-        if (blockEntity instanceof BlockEntityHopper) {
-            return player.addWindow(((BlockEntityHopper) blockEntity).getInventory()) != -1;
+        if (blockEntity instanceof Hopper) {
+            return player.addWindow(((Hopper) blockEntity).getInventory()) != -1;
         }
 
         return false;
@@ -99,26 +81,26 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
 
     @Override
     public int getComparatorInputOverride() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntity blockEntity = this.level.getBlockEntity(this.getPosition());
 
-        if (blockEntity instanceof BlockEntityHopper) {
-            return ContainerInventory.calculateRedstone(((BlockEntityHopper) blockEntity).getInventory());
+        if (blockEntity instanceof Hopper) {
+            return ContainerInventory.calculateRedstone(((Hopper) blockEntity).getInventory());
         }
 
         return super.getComparatorInputOverride();
     }
 
     public BlockFace getFacing() {
-        return BlockFace.fromIndex(this.getDamage() & 7);
+        return BlockFace.fromIndex(this.getMeta() & 7);
     }
 
     public boolean isEnabled() {
-        return (this.getDamage() & 0x08) != 8;
+        return (this.getMeta() & 0x08) != 8;
     }
 
     public void setEnabled(boolean enabled) {
         if (isEnabled() != enabled) {
-            this.setDamage(this.getDamage() ^ 0x08);
+            this.setMeta(this.getMeta() ^ 0x08);
         }
     }
 
@@ -129,14 +111,14 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
         }
 
         if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) {
-            boolean powered = this.level.isBlockPowered(this.getLocation());
+            boolean powered = this.level.isBlockPowered(this.position);
 
             if (powered == this.isEnabled()) {
                 this.setEnabled(!powered);
-                this.level.setBlock(this, this, false, false);
+                this.level.setBlock(this.position, this, false, false);
 
                 if (!powered) {
-                    BlockEntity be = this.level.getBlockEntity(this);
+                    BlockEntity be = this.level.getBlockEntity(this.position);
 
                     if (be != null) {
                         be.scheduleUpdate();
@@ -166,7 +148,7 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemHopper();
+        return Item.get(ItemIds.HOPPER);
     }
 
     @Override
@@ -176,6 +158,11 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

@@ -1,25 +1,27 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemClay;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * @author Nukkit Project Team
  */
 public class BlockClay extends BlockSolid {
 
-    public BlockClay() {
+    public BlockClay(Identifier id) {
+        super(id);
     }
 
     @Override
-    public double getHardness() {
-        return 0.6;
+    public float getHardness() {
+        return 0.6f;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 3;
     }
 
@@ -29,19 +31,9 @@ public class BlockClay extends BlockSolid {
     }
 
     @Override
-    public int getId() {
-        return CLAY_BLOCK;
-    }
-
-    @Override
-    public String getName() {
-        return "Clay Block";
-    }
-
-    @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-                new ItemClay(0, 4)
+                Item.get(ItemIds.CLAY_BALL, 0, 4)
         };
     }
 

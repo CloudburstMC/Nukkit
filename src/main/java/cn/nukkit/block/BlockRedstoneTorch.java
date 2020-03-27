@@ -1,12 +1,16 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.math.vector.Vector3i;
+
+import static cn.nukkit.block.BlockIds.UNLIT_REDSTONE_TORCH;
 
 /**
  * author: Angelic47
@@ -14,22 +18,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockRedstoneTorch extends BlockTorch {
 
-    public BlockRedstoneTorch() {
-        this(0);
-    }
-
-    public BlockRedstoneTorch(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public String getName() {
-        return "Redstone Torch";
-    }
-
-    @Override
-    public int getId() {
-        return REDSTONE_TORCH;
+    public BlockRedstoneTorch(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -38,22 +28,22 @@ public class BlockRedstoneTorch extends BlockTorch {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (!super.place(item, block, target, face, fx, fy, fz, player)) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        if (!super.place(item, block, target, face, clickPos, player)) {
             return false;
         }
 
         if (this.level.getServer().isRedstoneEnabled()) {
             if (!checkState()) {
                 BlockFace facing = getBlockFace().getOpposite();
-                Vector3 pos = getLocation();
+                Vector3i pos = getPosition();
 
                 for (BlockFace side : BlockFace.values()) {
                     if (facing == side) {
                         continue;
                     }
 
-                    this.level.updateAroundRedstone(pos.getSide(side), null);
+                    this.level.updateAroundRedstone(side.getOffset(pos), null);
                 }
             }
 
@@ -77,7 +67,7 @@ public class BlockRedstoneTorch extends BlockTorch {
     public boolean onBreak(Item item) {
         super.onBreak(item);
 
-        Vector3 pos = getLocation();
+        Vector3i pos = this.getPosition();
 
         BlockFace face = getBlockFace().getOpposite();
 
@@ -87,7 +77,7 @@ public class BlockRedstoneTorch extends BlockTorch {
                     continue;
                 }
 
-                this.level.updateAroundRedstone(pos.getSide(side), null);
+                this.level.updateAroundRedstone(side.getOffset(pos), null);
             }
         }
         return true;
@@ -122,16 +112,16 @@ public class BlockRedstoneTorch extends BlockTorch {
     private boolean checkState() {
         if (isPoweredFromSide()) {
             BlockFace face = getBlockFace().getOpposite();
-            Vector3 pos = getLocation();
+            Vector3i pos = this.getPosition();
 
-            this.level.setBlock(pos, new BlockRedstoneTorchUnlit(getDamage()), false, true);
+            this.level.setBlock(pos, Block.get(UNLIT_REDSTONE_TORCH, getMeta()), false, true);
 
             for (BlockFace side : BlockFace.values()) {
                 if (side == face) {
                     continue;
                 }
 
-                this.level.updateAroundRedstone(pos.getSide(side), null);
+                this.level.updateAroundRedstone(side.getOffset(pos), null);
             }
 
             return true;
@@ -142,7 +132,7 @@ public class BlockRedstoneTorch extends BlockTorch {
 
     protected boolean isPoweredFromSide() {
         BlockFace face = getBlockFace().getOpposite();
-        return this.level.isSidePowered(this.getLocation().getSide(face), face);
+        return this.level.isSidePowered(face.getOffset(this.getPosition()), face);
     }
 
     @Override

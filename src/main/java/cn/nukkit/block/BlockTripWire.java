@@ -1,34 +1,25 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemString;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+
+import static cn.nukkit.block.BlockIds.TRIPWIRE;
+import static cn.nukkit.item.ItemIds.SHEARS;
 
 /**
  * @author CreeperFace
  */
-public class BlockTripWire extends BlockTransparentMeta {
+public class BlockTripWire extends FloodableBlock {
 
-    public BlockTripWire(int meta) {
-        super(meta);
-    }
-
-    public BlockTripWire() {
-        this(0);
-    }
-
-    @Override
-    public int getId() {
-        return TRIPWIRE;
-    }
-
-    @Override
-    public String getName() {
-        return "Tripwire";
+    public BlockTripWire(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -37,12 +28,12 @@ public class BlockTripWire extends BlockTransparentMeta {
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 0;
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 0;
     }
 
@@ -53,36 +44,36 @@ public class BlockTripWire extends BlockTransparentMeta {
 
     @Override
     public Item toItem() {
-        return new ItemString();
+        return Item.get(ItemIds.STRING);
     }
 
     public boolean isPowered() {
-        return (this.getDamage() & 1) > 0;
-    }
-
-    public boolean isAttached() {
-        return (this.getDamage() & 4) > 0;
-    }
-
-    public boolean isDisarmed() {
-        return (this.getDamage() & 8) > 0;
+        return (this.getMeta() & 1) > 0;
     }
 
     public void setPowered(boolean value) {
         if (value ^ this.isPowered()) {
-            this.setDamage(this.getDamage() ^ 0x01);
+            this.setMeta(this.getMeta() ^ 0x01);
         }
+    }
+
+    public boolean isAttached() {
+        return (this.getMeta() & 4) > 0;
     }
 
     public void setAttached(boolean value) {
         if (value ^ this.isAttached()) {
-            this.setDamage(this.getDamage() ^ 0x04);
+            this.setMeta(this.getMeta() ^ 0x04);
         }
+    }
+
+    public boolean isDisarmed() {
+        return (this.getMeta() & 8) > 0;
     }
 
     public void setDisarmed(boolean value) {
         if (value ^ this.isDisarmed()) {
-            this.setDamage(this.getDamage() ^ 0x08);
+            this.setMeta(this.getMeta() ^ 0x08);
         }
     }
 
@@ -92,7 +83,7 @@ public class BlockTripWire extends BlockTransparentMeta {
             return;
         }
 
-        if (!entity.doesTriggerPressurePlate()) {
+        if (!entity.canTriggerPressurePlate()) {
             return;
         }
 
@@ -100,7 +91,7 @@ public class BlockTripWire extends BlockTransparentMeta {
 
         if (!powered) {
             this.setPowered(true);
-            this.level.setBlock(this, this, true, false);
+            this.level.setBlock(this.getPosition(), this, true, false);
             this.updateHook(false);
 
             this.level.scheduleUpdate(this, 10);
@@ -129,7 +120,7 @@ public class BlockTripWire extends BlockTransparentMeta {
                     break;
                 }
 
-                if (block.getId() != Block.TRIPWIRE) {
+                if (block.getId() != TRIPWIRE) {
                     break;
                 }
             }
@@ -149,7 +140,7 @@ public class BlockTripWire extends BlockTransparentMeta {
 
             boolean found = false;
             for (Entity entity : this.level.getCollidingEntities(this.getCollisionBoundingBox())) {
-                if (!entity.doesTriggerPressurePlate()) {
+                if (!entity.canTriggerPressurePlate()) {
                     continue;
                 }
 
@@ -160,7 +151,7 @@ public class BlockTripWire extends BlockTransparentMeta {
                 this.level.scheduleUpdate(this, 10);
             } else {
                 this.setPowered(false);
-                this.level.setBlock(this, this, true, false);
+                this.level.setBlock(this.getPosition(), this, true, false);
                 this.updateHook(false);
             }
             return type;
@@ -170,8 +161,8 @@ public class BlockTripWire extends BlockTransparentMeta {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.getLevel().setBlock(this, this, true, true);
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        this.getLevel().setBlock(this.getPosition(), this, true, true);
         this.updateHook(false);
 
         return true;
@@ -179,14 +170,14 @@ public class BlockTripWire extends BlockTransparentMeta {
 
     @Override
     public boolean onBreak(Item item) {
-        if (item.getId() == Item.SHEARS) {
+        if (item.getId() == SHEARS) {
             this.setDisarmed(true);
-            this.level.setBlock(this, this, true, false);
+            this.level.setBlock(this.getPosition(), this, true, false);
             this.updateHook(false);
-            this.getLevel().setBlock(this, new BlockAir(), true, true);
+            super.onBreak(item);
         } else {
             this.setPowered(true);
-            this.getLevel().setBlock(this, new BlockAir(), true, true);
+            super.onBreak(item);
             this.updateHook(true);
         }
 
@@ -194,12 +185,22 @@ public class BlockTripWire extends BlockTransparentMeta {
     }
 
     @Override
-    public double getMaxY() {
-        return this.y + 0.5;
+    public float getMaxY() {
+        return this.getY() + 0.5f;
     }
 
     @Override
     protected AxisAlignedBB recalculateCollisionBoundingBox() {
         return this;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
+
+    @Override
+    public boolean canWaterlogFlowing() {
+        return true;
     }
 }

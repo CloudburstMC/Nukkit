@@ -1,29 +1,23 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.DIRT;
+import static cn.nukkit.block.BlockIds.FARMLAND;
 
 /**
  * author: MagicDroidX
  * AMAZING COARSE DIRT added by kvetinac97
  * Nukkit Project
  */
-public class BlockDirt extends BlockSolidMeta {
+public class BlockDirt extends BlockSolid {
 
-    public BlockDirt() {
-        this(0);
-    }
-
-    public BlockDirt(int meta){
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return DIRT;
+    public BlockDirt(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -32,13 +26,13 @@ public class BlockDirt extends BlockSolidMeta {
     }
 
     @Override
-    public double getResistance() {
-        return 2.5;
+    public float getResistance() {
+        return 2.5f;
     }
 
     @Override
-    public double getHardness() {
-        return 0.5;
+    public float getHardness() {
+        return 0.5f;
     }
 
     @Override
@@ -47,15 +41,10 @@ public class BlockDirt extends BlockSolidMeta {
     }
 
     @Override
-    public String getName() {
-        return this.getDamage() == 0 ? "Dirt" : "Coarse Dirt";
-    }
-
-    @Override
     public boolean onActivate(Item item, Player player) {
         if (item.isHoe()) {
             item.useOn(this);
-            this.getLevel().setBlock(this, this.getDamage() == 0 ? get(FARMLAND) : get(DIRT), true);
+            this.getLevel().setBlock(this.getPosition(), this.getMeta() == 0 ? Block.get(FARMLAND) : Block.get(DIRT), true);
 
             return true;
         }
@@ -65,7 +54,7 @@ public class BlockDirt extends BlockSolidMeta {
 
     @Override
     public Item[] getDrops(Item item) {
-        return new Item[]{new ItemBlock(new BlockDirt())};
+        return new Item[]{Item.get(DIRT)};
     }
 
     @Override

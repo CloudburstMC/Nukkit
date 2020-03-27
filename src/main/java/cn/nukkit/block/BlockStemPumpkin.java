@@ -3,52 +3,42 @@ package cn.nukkit.block;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemSeedsPumpkin;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.*;
 
 /**
  * Created by Pub4Game on 15.01.2016.
  */
 public class BlockStemPumpkin extends BlockCrops {
 
-    public BlockStemPumpkin() {
-        this(0);
-    }
-
-    public BlockStemPumpkin(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return PUMPKIN_STEM;
-    }
-
-    @Override
-    public String getName() {
-        return "Pumpkin Stem";
+    public BlockStemPumpkin(Identifier id) {
+        super(id);
     }
 
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (this.down().getId() != FARMLAND) {
-                this.getLevel().useBreakOn(this);
+                this.getLevel().useBreakOn(this.getPosition());
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
-            NukkitRandom random = new NukkitRandom();
-            if (random.nextRange(1, 2) == 1) {
-                if (this.getDamage() < 0x07) {
+            BedrockRandom random = new BedrockRandom();
+            if (random.nextBoolean()) {
+                if (this.getMeta() < 0x07) {
                     Block block = this.clone();
-                    block.setDamage(block.getDamage() + 1);
+                    block.setMeta(block.getMeta() + 1);
                     BlockGrowEvent ev = new BlockGrowEvent(this, block);
                     Server.getInstance().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
-                        this.getLevel().setBlock(this, ev.getNewState(), true);
+                        this.getLevel().setBlock(this.getPosition(), ev.getNewState(), true);
                     }
                     return Level.BLOCK_UPDATE_RANDOM;
                 } else {
@@ -61,10 +51,10 @@ public class BlockStemPumpkin extends BlockCrops {
                     Block side = this.getSide(Plane.HORIZONTAL.random(random));
                     Block d = side.down();
                     if (side.getId() == AIR && (d.getId() == FARMLAND || d.getId() == GRASS || d.getId() == DIRT)) {
-                        BlockGrowEvent ev = new BlockGrowEvent(side, new BlockPumpkin());
+                        BlockGrowEvent ev = new BlockGrowEvent(side, Block.get(PUMPKIN));
                         Server.getInstance().getPluginManager().callEvent(ev);
                         if (!ev.isCancelled()) {
-                            this.getLevel().setBlock(side, ev.getNewState(), true);
+                            this.getLevel().setBlock(side.getPosition(), ev.getNewState(), true);
                         }
                     }
                 }
@@ -76,14 +66,14 @@ public class BlockStemPumpkin extends BlockCrops {
 
     @Override
     public Item toItem() {
-        return new ItemSeedsPumpkin();
+        return Item.get(ItemIds.PUMPKIN_SEEDS);
     }
 
     @Override
     public Item[] getDrops(Item item) {
         NukkitRandom random = new NukkitRandom();
         return new Item[]{
-                new ItemSeedsPumpkin(0, random.nextRange(0, 3))
+                Item.get(ItemIds.PUMPKIN_SEEDS, 0, random.nextRange(0, 3))
         };
     }
 }

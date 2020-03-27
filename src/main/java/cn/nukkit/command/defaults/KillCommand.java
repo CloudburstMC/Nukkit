@@ -1,6 +1,5 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
@@ -9,8 +8,9 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
-import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
+import cn.nukkit.locale.TranslationContainer;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
 import java.util.StringJoiner;
@@ -22,11 +22,11 @@ import java.util.StringJoiner;
 public class KillCommand extends VanillaCommand {
 
     public KillCommand(String name) {
-        super(name, "%nukkit.command.kill.description", "%nukkit.command.kill.usage", new String[]{"suicide"});
+        super(name, "commands.kill.description", "commands.kill.usage", new String[]{"suicide"});
         this.setPermission("nukkit.command.kill.self;"
                 + "nukkit.command.kill.other");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, true)
         });
     }
@@ -57,7 +57,7 @@ public class KillCommand extends VanillaCommand {
                 Command.broadcastCommandMessage(sender, new TranslationContainer("commands.kill.successful", player.getName()));
             } else if (args[0].equals("@e")) {
                 StringJoiner joiner = new StringJoiner(", ");
-                for (Level level : Server.getInstance().getLevels().values()) {
+                for (Level level : Server.getInstance().getLevels()) {
                     for (Entity entity : level.getEntities()) {
                         if (!(entity instanceof Player)) {
                             joiner.add(entity.getName());
@@ -85,7 +85,7 @@ public class KillCommand extends VanillaCommand {
                     sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
                     return true;
                 }
-                for (Level level : Server.getInstance().getLevels().values()) {
+                for (Level level : Server.getInstance().getLevels()) {
                     for (Entity entity : level.getEntities()) {
                         if (entity instanceof Player) {
                             entity.setHealth(0);

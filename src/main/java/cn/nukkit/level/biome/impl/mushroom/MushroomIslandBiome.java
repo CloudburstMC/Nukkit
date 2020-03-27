@@ -1,10 +1,13 @@
 package cn.nukkit.level.biome.impl.mushroom;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.biome.type.GrassyBiome;
 import cn.nukkit.level.generator.populator.impl.MushroomPopulator;
 
 public class MushroomIslandBiome extends GrassyBiome {
+    private static final Block MYCELIUM = Block.get(BlockIds.MYCELIUM);
+
     public MushroomIslandBiome() {
         MushroomPopulator mushroomPopulator = new MushroomPopulator();
         mushroomPopulator.setBaseAmount(1);
@@ -20,7 +23,7 @@ public class MushroomIslandBiome extends GrassyBiome {
     }
 
     @Override
-    public int getSurfaceBlock(int y) {
-        return Block.MYCELIUM;
+    public Block getSurface(int x, int y, int z) {
+        return MYCELIUM;
     }
 }

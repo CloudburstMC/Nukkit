@@ -1,6 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.event.block.DoorToggleEvent;
 import cn.nukkit.item.Item;
@@ -9,21 +8,26 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class BlockDoor extends BlockTransparentMeta implements Faceable {
+public abstract class BlockDoor extends BlockTransparent implements Faceable {
 
     public static int DOOR_OPEN_BIT = 0x04;
     public static int DOOR_TOP_BIT = 0x08;
     public static int DOOR_HINGE_BIT = 0x01;
     public static int DOOR_POWERED_BIT = 0x02;
 
-    protected BlockDoor(int meta) {
-        super(meta);
+    public BlockDoor(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -36,32 +40,21 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         return false;
     }
 
-    public int getFullDamage() {
-        int meta;
-
-        if(isTop()) {
-            meta = this.down().getDamage();
-        } else {
-            meta = this.getDamage();
-        }
-        return (this.getId() << 5 ) + (meta & 0x07 | (isTop() ? 0x08 : 0) | (isRightHinged() ? 0x10 :0));
-    }
-
     @Override
     protected AxisAlignedBB recalculateBoundingBox() {
 
-        double f = 0.1875;
+        float f = 0.1875f;
 
         AxisAlignedBB bb = new SimpleAxisAlignedBB(
-                this.x,
-                this.y,
-                this.z,
-                this.x + 1,
-                this.y + 2,
-                this.z + 1
+                this.getX(),
+                this.getY(),
+                this.getZ(),
+                this.getX() + 1,
+                this.getY() + 2,
+                this.getZ() + 1
         );
 
-        int j = isTop() ? (this.down().getDamage() & 0x03) : getDamage() & 0x03;
+        int j = isTop() ? (this.down().getMeta() & 0x03) : getMeta() & 0x03;
         boolean isOpen = isOpen();
         boolean isRight = isRightHinged();
 
@@ -69,124 +62,124 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
             if (isOpen) {
                 if (!isRight) {
                     bb.setBounds(
-                            this.x,
-                            this.y,
-                            this.z,
-                            this.x + 1,
-                            this.y + 1,
-                            this.z + f
+                            this.getX(),
+                            this.getY(),
+                            this.getZ(),
+                            this.getX() + 1,
+                            this.getY() + 1,
+                            this.getZ() + f
                     );
                 } else {
                     bb.setBounds(
-                            this.x,
-                            this.y,
-                            this.z + 1 - f,
-                            this.x + 1,
-                            this.y + 1,
-                            this.z + 1
+                            this.getX(),
+                            this.getY(),
+                            this.getZ() + 1 - f,
+                            this.getX() + 1,
+                            this.getY() + 1,
+                            this.getZ() + 1
                     );
                 }
             } else {
                 bb.setBounds(
-                        this.x,
-                        this.y,
-                        this.z,
-                        this.x + f,
-                        this.y + 1,
-                        this.z + 1
+                        this.getX(),
+                        this.getY(),
+                        this.getZ(),
+                        this.getX() + f,
+                        this.getY() + 1,
+                        this.getZ() + 1
                 );
             }
         } else if (j == 1) {
             if (isOpen) {
                 if (!isRight) {
                     bb.setBounds(
-                            this.x + 1 - f,
-                            this.y,
-                            this.z,
-                            this.x + 1,
-                            this.y + 1,
-                            this.z + 1
+                            this.getX() + 1 - f,
+                            this.getY(),
+                            this.getZ(),
+                            this.getX() + 1,
+                            this.getY() + 1,
+                            this.getZ() + 1
                     );
                 } else {
                     bb.setBounds(
-                            this.x,
-                            this.y,
-                            this.z,
-                            this.x + f,
-                            this.y + 1,
-                            this.z + 1
+                            this.getX(),
+                            this.getY(),
+                            this.getZ(),
+                            this.getX() + f,
+                            this.getY() + 1,
+                            this.getZ() + 1
                     );
                 }
             } else {
                 bb.setBounds(
-                        this.x,
-                        this.y,
-                        this.z,
-                        this.x + 1,
-                        this.y + 1,
-                        this.z + f
+                        this.getX(),
+                        this.getY(),
+                        this.getZ(),
+                        this.getX() + 1,
+                        this.getY() + 1,
+                        this.getZ() + f
                 );
             }
         } else if (j == 2) {
             if (isOpen) {
                 if (!isRight) {
                     bb.setBounds(
-                            this.x,
-                            this.y,
-                            this.z + 1 - f,
-                            this.x + 1,
-                            this.y + 1,
-                            this.z + 1
+                            this.getX(),
+                            this.getY(),
+                            this.getZ() + 1 - f,
+                            this.getX() + 1,
+                            this.getY() + 1,
+                            this.getZ() + 1
                     );
                 } else {
                     bb.setBounds(
-                            this.x,
-                            this.y,
-                            this.z,
-                            this.x + 1,
-                            this.y + 1,
-                            this.z + f
+                            this.getX(),
+                            this.getY(),
+                            this.getZ(),
+                            this.getX() + 1,
+                            this.getY() + 1,
+                            this.getZ() + f
                     );
                 }
             } else {
                 bb.setBounds(
-                        this.x + 1 - f,
-                        this.y,
-                        this.z,
-                        this.x + 1,
-                        this.y + 1,
-                        this.z + 1
+                        this.getX() + 1 - f,
+                        this.getY(),
+                        this.getZ(),
+                        this.getX() + 1,
+                        this.getY() + 1,
+                        this.getZ() + 1
                 );
             }
         } else if (j == 3) {
             if (isOpen) {
                 if (!isRight) {
                     bb.setBounds(
-                            this.x,
-                            this.y,
-                            this.z,
-                            this.x + f,
-                            this.y + 1,
-                            this.z + 1
+                            this.getX(),
+                            this.getY(),
+                            this.getZ(),
+                            this.getX() + f,
+                            this.getY() + 1,
+                            this.getZ() + 1
                     );
                 } else {
                     bb.setBounds(
-                            this.x + 1 - f,
-                            this.y,
-                            this.z,
-                            this.x + 1,
-                            this.y + 1,
-                            this.z + 1
+                            this.getX() + 1 - f,
+                            this.getY(),
+                            this.getZ(),
+                            this.getX() + 1,
+                            this.getY() + 1,
+                            this.getZ() + 1
                     );
                 }
             } else {
                 bb.setBounds(
-                        this.x,
-                        this.y,
-                        this.z + 1 - f,
-                        this.x + 1,
-                        this.y + 1,
-                        this.z + 1
+                        this.getX(),
+                        this.getY(),
+                        this.getZ() + 1 - f,
+                        this.getX() + 1,
+                        this.getY() + 1,
+                        this.getZ() + 1
                 );
             }
         }
@@ -201,8 +194,8 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
                 Block up = this.up();
 
                 if (up instanceof BlockDoor) {
-                    this.getLevel().setBlock(up, new BlockAir(), false);
-                    this.getLevel().useBreakOn(this);
+                    this.getLevel().setBlock(up.getPosition(), Block.get(AIR), false);
+                    this.getLevel().useBreakOn(this.getPosition());
                 }
 
                 return Level.BLOCK_UPDATE_NORMAL;
@@ -214,7 +207,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
                 return 0;
             }
 
-            if ((!isOpen() && this.level.isBlockPowered(this.getLocation())) || (isOpen() && !this.level.isBlockPowered(this.getLocation()))) {
+            if ((!isOpen() && this.level.isBlockPowered(this.position)) || (isOpen() && !this.level.isBlockPowered(this.position))) {
                 this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isOpen() ? 15 : 0, isOpen() ? 0 : 15));
 
                 this.toggle(null);
@@ -225,8 +218,8 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (this.y > 254) return false;
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        if (this.getY() > 254) return false;
         if (face == BlockFace.UP) {
             Block blockUp = this.up();
             Block blockDown = this.down();
@@ -243,15 +236,18 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
                 metaUp |= DOOR_HINGE_BIT;
             }
 
-            this.setDamage(direction);
-            this.getLevel().setBlock(block, this, true, false); //Bottom
-            this.getLevel().setBlock(blockUp, Block.get(this.getId(), metaUp), true, true); //Top
+            this.setMeta(direction);
+            this.getLevel().setBlock(block.getPosition(), this, true, false); //Bottom
+            if (blockUp instanceof BlockLiquid && ((BlockLiquid) blockUp).usesWaterLogging()) {
+                this.getLevel().setBlock(blockUp.getPosition(), 1, blockUp.clone(), true, false);
+            }
+            this.getLevel().setBlock(blockUp.getPosition(), Block.get(this.getId(), metaUp), true, true); //Top
 
             if (this.level.getServer().isRedstoneEnabled()) {
-                if (!this.isOpen() && this.level.isBlockPowered(this.getLocation())) {
+                if (!this.isOpen() && this.level.isBlockPowered(this.position)) {
                     this.toggle(null);
                     metaUp |= DOOR_POWERED_BIT;
-                    this.getLevel().setBlockDataAt(blockUp.getFloorX(), blockUp.getFloorY(), blockUp.getFloorZ(), metaUp);
+                    this.getLevel().setBlockDataAt(blockUp.position, metaUp);
                 }
             }
 
@@ -263,18 +259,18 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
 
     @Override
     public boolean onBreak(Item item) {
-        if (isTop(this.getDamage())) {
+        if (isTop(this.getMeta())) {
             Block down = this.down();
             if (down.getId() == this.getId()) {
-                this.getLevel().setBlock(down, new BlockAir(), true);
+                down.removeBlock(true);
             }
         } else {
             Block up = this.up();
             if (up.getId() == this.getId()) {
-                this.getLevel().setBlock(up, new BlockAir(), true);
+                up.removeBlock(true);
             }
         }
-        this.getLevel().setBlock(this, new BlockAir(), true);
+        super.onBreak(item);
 
         return true;
     }
@@ -290,7 +286,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
             return false;
         }
 
-        this.level.addSound(this, isOpen() ? Sound.RANDOM_DOOR_OPEN : Sound.RANDOM_DOOR_CLOSE);
+        this.level.addSound(this.getPosition(), isOpen() ? Sound.RANDOM_DOOR_OPEN : Sound.RANDOM_DOOR_CLOSE);
         return true;
     }
 
@@ -308,24 +304,23 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         } else {
             down = this;
         }
-        if( down.up().getId() != down.getId() ) {
+        if (down.up().getId() != down.getId()) {
             return false;
         }
-        down.setDamage(down.getDamage() ^ DOOR_OPEN_BIT);
-        getLevel().setBlock(down, down, true, true);
+        down.setMeta(down.getMeta() ^ DOOR_OPEN_BIT);
+        getLevel().setBlock(down.getPosition(), down, true, true);
         return true;
     }
 
     public boolean isOpen() {
-        if (isTop(this.getDamage())) {
-            return (this.down().getDamage() & DOOR_OPEN_BIT) > 0;
-        }
-        else{
-            return (this.getDamage() & DOOR_OPEN_BIT) >0;
+        if (isTop(this.getMeta())) {
+            return (this.down().getMeta() & DOOR_OPEN_BIT) > 0;
+        } else {
+            return (this.getMeta() & DOOR_OPEN_BIT) > 0;
         }
     }
     public boolean isTop() {
-        return isTop(this.getDamage());
+        return isTop(this.getMeta());
     }
 
     public boolean isTop(int meta) {
@@ -334,14 +329,19 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
 
     public boolean isRightHinged() {
         if (isTop()) {
-            return (this.getDamage() & DOOR_HINGE_BIT) > 0;
+            return (this.getMeta() & DOOR_HINGE_BIT) > 0;
         }
-        return (this.up().getDamage() & DOOR_HINGE_BIT) > 0;
+        return (this.up().getMeta() & DOOR_HINGE_BIT) > 0;
     }
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 
     @Override

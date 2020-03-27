@@ -1,28 +1,29 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityComparator;
+import cn.nukkit.blockentity.Comparator;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemRedstoneComparator;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+
+import static cn.nukkit.block.BlockIds.POWERED_COMPARATOR;
+import static cn.nukkit.block.BlockIds.UNPOWERED_COMPARATOR;
+import static cn.nukkit.blockentity.BlockEntityTypes.COMPARATOR;
 
 /**
  * @author CreeperFace
  */
 public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
 
-    public BlockRedstoneComparator() {
-        this(0);
-    }
-
-    public BlockRedstoneComparator(int meta) {
-        super(meta);
+    public BlockRedstoneComparator(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -32,36 +33,36 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
 
     @Override
     public BlockFace getFacing() {
-        return BlockFace.fromHorizontalIndex(this.getDamage());
+        return BlockFace.fromHorizontalIndex(this.getMeta());
     }
 
     public Mode getMode() {
-        return (getDamage() & 4) > 0 ? Mode.SUBTRACT : Mode.COMPARE;
+        return (getMeta() & 4) > 0 ? Mode.SUBTRACT : Mode.COMPARE;
     }
 
     @Override
-    protected BlockRedstoneComparator getUnpowered() {
-        return new BlockRedstoneComparatorUnpowered(this.getDamage());
+    protected Block getUnpowered() {
+        return Block.get(UNPOWERED_COMPARATOR, this.getMeta());
     }
 
     @Override
-    protected BlockRedstoneComparator getPowered() {
-        return new BlockRedstoneComparatorPowered(this.getDamage());
+    protected Block getPowered() {
+        return Block.get(POWERED_COMPARATOR, this.getMeta());
     }
 
     @Override
     protected int getRedstoneSignal() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntity blockEntity = this.level.getBlockEntity(this.getPosition());
 
-        return blockEntity instanceof BlockEntityComparator ? ((BlockEntityComparator) blockEntity).getOutputSignal() : 0;
+        return blockEntity instanceof Comparator ? ((Comparator) blockEntity).getOutputSignal() : 0;
     }
 
     @Override
     public void updateState() {
-        if (!this.level.isBlockTickPending(this, this)) {
+        if (!this.level.isBlockTickPending(this.getPosition(), this)) {
             int output = this.calculateOutput();
-            BlockEntity blockEntity = this.level.getBlockEntity(this);
-            int power = blockEntity instanceof BlockEntityComparator ? ((BlockEntityComparator) blockEntity).getOutputSignal() : 0;
+            BlockEntity blockEntity = this.level.getBlockEntity(this.getPosition());
+            int power = blockEntity instanceof Comparator ? ((Comparator) blockEntity).getOutputSignal() : 0;
 
             if (output != power || this.isPowered() != this.shouldBePowered()) {
                 /*if(isFacingTowardsRepeater()) {
@@ -70,7 +71,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
                     this.level.scheduleUpdate(this, this, 2, 0);
                 }*/
 
-                this.level.scheduleUpdate(this, this, 2);
+                this.level.scheduleUpdate(this, this.getPosition(), 2);
             }
         }
     }
@@ -113,13 +114,13 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (getMode() == Mode.SUBTRACT) {
-            this.setDamage(this.getDamage() - 4);
+            this.setMeta(this.getMeta() - 4);
         } else {
-            this.setDamage(this.getDamage() + 4);
+            this.setMeta(this.getMeta() + 4);
         }
 
-        this.level.addSound(this, Sound.RANDOM_CLICK, 1, getMode() == Mode.SUBTRACT ? 0.55F : 0.5F);
-        this.level.setBlock(this, this, true, false);
+        this.level.addSound(this.getPosition(), Sound.RANDOM_CLICK, 1, getMode() == Mode.SUBTRACT ? 0.55F : 0.5F);
+        this.level.setBlock(this.getPosition(), this, true, false);
         //bug?
 
         this.onChange();
@@ -142,11 +143,11 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
         }
 
         int output = this.calculateOutput();
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntity blockEntity = this.level.getBlockEntity(this.getPosition());
         int currentOutput = 0;
 
-        if (blockEntity instanceof BlockEntityComparator) {
-            BlockEntityComparator blockEntityComparator = (BlockEntityComparator) blockEntity;
+        if (blockEntity instanceof Comparator) {
+            Comparator blockEntityComparator = (Comparator) blockEntity;
             currentOutput = blockEntityComparator.getOutputSignal();
             blockEntityComparator.setOutputSignal(output);
         }
@@ -156,29 +157,21 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
             boolean isPowered = this.isPowered();
 
             if (isPowered && !shouldBePowered) {
-                this.level.setBlock(this, getUnpowered(), true, false);
+                this.level.setBlock(this.getPosition(), getUnpowered(), true, false);
             } else if (!isPowered && shouldBePowered) {
-                this.level.setBlock(this, getPowered(), true, false);
+                this.level.setBlock(this.getPosition(), getPowered(), true, false);
             }
 
-            this.level.updateAroundRedstone(this, null);
+            this.level.updateAroundRedstone(this.getPosition(), null);
         }
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (super.place(item, block, target, face, fx, fy, fz, player)) {
-            CompoundTag nbt = new CompoundTag()
-                    .putList(new ListTag<>("Items"))
-                    .putString("id", BlockEntity.COMPARATOR)
-                    .putInt("x", (int) this.x)
-                    .putInt("y", (int) this.y)
-                    .putInt("z", (int) this.z);
-            BlockEntityComparator comparator = (BlockEntityComparator) BlockEntity.createBlockEntity(BlockEntity.COMPARATOR, this.level.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
-            if (comparator == null) {
-                return false;
-            }
-            onUpdate(Level.BLOCK_UPDATE_REDSTONE);
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        if (super.place(item, block, target, face, clickPos, player)) {
+            BlockEntityRegistry.get().newEntity(COMPARATOR, this.getChunk(), this.getPosition());
+
+            this.onUpdate(Level.BLOCK_UPDATE_REDSTONE);
             return true;
         }
 
@@ -187,12 +180,12 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
 
     @Override
     public boolean isPowered() {
-        return this.isPowered || (this.getDamage() & 8) > 0;
+        return this.isPowered || (this.getMeta() & 8) > 0;
     }
 
     @Override
     public Item toItem() {
-        return new ItemRedstoneComparator();
+        return Item.get(ItemIds.COMPARATOR);
     }
 
     public enum Mode {

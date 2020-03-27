@@ -1,5 +1,7 @@
 package cn.nukkit.command;
 
+import cn.nukkit.plugin.Plugin;
+
 import java.util.List;
 
 /**
@@ -8,11 +10,17 @@ import java.util.List;
  */
 public interface CommandMap {
 
-    void registerAll(String fallbackPrefix, List<? extends Command> commands);
+    default void registerAll(Plugin plugin, List<? extends Command> commands) {
+        for (Command command : commands) {
+            this.register(plugin, command);
+        }
+    }
 
-    boolean register(String fallbackPrefix, Command command);
+    default boolean register(Plugin plugin, Command command) {
+        return register(plugin, command, null);
+    }
 
-    boolean register(String fallbackPrefix, Command command, String label);
+    boolean register(Plugin plugin, Command command, String label);
 
     void registerSimpleCommands(Object object);
 

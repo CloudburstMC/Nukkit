@@ -1,32 +1,24 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemSnowball;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 public class BlockSnow extends BlockSolid {
 
-    public BlockSnow() {
+    public BlockSnow(Identifier id) {
+        super(id);
     }
 
     @Override
-    public String getName() {
-        return "Snow Block";
+    public float getHardness() {
+        return 0.2f;
     }
 
     @Override
-    public int getId() {
-        return SNOW_BLOCK;
-    }
-
-    @Override
-    public double getHardness() {
-        return 0.2;
-    }
-
-    @Override
-    public double getResistance() {
+    public float getResistance() {
         return 1;
     }
 
@@ -39,7 +31,7 @@ public class BlockSnow extends BlockSolid {
     public Item[] getDrops(Item item) {
         if (item.isShovel() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
-                    new ItemSnowball(0, 4)
+                    Item.get(ItemIds.SNOWBALL, 0, 4)
             };
         } else {
             return new Item[0];

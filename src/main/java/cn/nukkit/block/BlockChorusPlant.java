@@ -3,29 +3,21 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 public class BlockChorusPlant extends BlockTransparent {
 
-    public BlockChorusPlant() {
+    public BlockChorusPlant(Identifier id) {
+        super(id);
     }
 
     @Override
-    public int getId() {
-        return CHORUS_PLANT;
+    public float getHardness() {
+        return 0.4f;
     }
 
     @Override
-    public String getName() {
-        return "Chorus Plant";
-    }
-
-    @Override
-    public double getHardness() {
-        return 0.4;
-    }
-
-    @Override
-    public double getResistance() {
+    public float getResistance() {
         return 2;
     }
 

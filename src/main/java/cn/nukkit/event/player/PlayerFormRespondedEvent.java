@@ -1,9 +1,9 @@
 package cn.nukkit.event.player;
 
-import cn.nukkit.Player;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.form.response.FormResponse;
 import cn.nukkit.form.window.FormWindow;
+import cn.nukkit.player.Player;
 
 public class PlayerFormRespondedEvent extends PlayerEvent {
 

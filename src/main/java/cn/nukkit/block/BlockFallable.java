@@ -1,12 +1,13 @@
 package cn.nukkit.block;
 
-import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.item.EntityFallingBlock;
+import cn.nukkit.entity.EntityTypes;
+import cn.nukkit.entity.misc.FallingBlock;
 import cn.nukkit.level.Level;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.level.Location;
+import cn.nukkit.registry.EntityRegistry;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 
 /**
@@ -15,35 +16,20 @@ import cn.nukkit.nbt.tag.ListTag;
  */
 public abstract class BlockFallable extends BlockSolid {
 
-    protected BlockFallable() {
+    public BlockFallable(Identifier id) {
+        super(id);
     }
 
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             Block down = this.down();
             if (down.getId() == AIR || down instanceof BlockLiquid) {
-                this.level.setBlock(this, Block.get(Block.AIR), true, true);
-                CompoundTag nbt = new CompoundTag()
-                        .putList(new ListTag<DoubleTag>("Pos")
-                                .add(new DoubleTag("", this.x + 0.5))
-                                .add(new DoubleTag("", this.y))
-                                .add(new DoubleTag("", this.z + 0.5)))
-                        .putList(new ListTag<DoubleTag>("Motion")
-                                .add(new DoubleTag("", 0))
-                                .add(new DoubleTag("", 0))
-                                .add(new DoubleTag("", 0)))
+                this.level.setBlock(this.getPosition(), Block.get(AIR), true, true);
 
-                        .putList(new ListTag<FloatTag>("Rotation")
-                                .add(new FloatTag("", 0))
-                                .add(new FloatTag("", 0)))
-                        .putInt("TileID", this.getId())
-                        .putByte("Data", this.getDamage());
-
-                EntityFallingBlock fall = (EntityFallingBlock) Entity.createEntity("FallingSand", this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
-
-                if (fall != null) {
-                    fall.spawnToAll();
-                }
+                FallingBlock fallingBlock = EntityRegistry.get().newEntity(EntityTypes.FALLING_BLOCK,
+                        Location.from(this.getPosition().toFloat().add(0.5, 0, 0.5), this.level));
+                fallingBlock.setBlock(this.clone());
+                fallingBlock.spawnToAll();
             }
         }
         return type;

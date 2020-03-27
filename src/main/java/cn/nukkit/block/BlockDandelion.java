@@ -1,30 +1,20 @@
 package cn.nukkit.block;
 
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.RED_FLOWER;
+
 /**
  * Created on 2015/12/2 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockDandelion extends BlockFlower {
-    public BlockDandelion() {
-        this(0);
-    }
-
-    public BlockDandelion(int meta) {
-        super(0);
-    }
-
-    @Override
-    public String getName() {
-        return "Dandelion";
-    }
-
-    @Override
-    public int getId() {
-        return DANDELION;
+    public BlockDandelion(Identifier id) {
+        super(id);
     }
 
     @Override
     protected Block getUncommonFlower() {
-        return get(POPPY);
+        return Block.get(RED_FLOWER);
     }
 }

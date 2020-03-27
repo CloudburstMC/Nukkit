@@ -3,23 +3,18 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class BlockAir extends BlockTransparent {
+    private static final Item[] EMPTY = new Item[0];
 
-    public BlockAir() {}
 
-    @Override
-    public int getId() {
-        return AIR;
-    }
-
-    @Override
-    public String getName() {
-        return "Air";
+    public BlockAir(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -33,7 +28,7 @@ public class BlockAir extends BlockTransparent {
     }
 
     @Override
-    public boolean canBeFlowedInto() {
+    public boolean canBeFlooded() {
         return true;
     }
 
@@ -58,12 +53,12 @@ public class BlockAir extends BlockTransparent {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 0;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 0;
     }
 
@@ -75,5 +70,10 @@ public class BlockAir extends BlockTransparent {
     @Override
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
+    }
+
+    @Override
+    public Item[] getDrops(Item item) {
+        return EMPTY;
     }
 }

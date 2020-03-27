@@ -1,21 +1,15 @@
 package cn.nukkit.item;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class ItemHelmetLeather extends ItemColorArmor {
 
-    public ItemHelmetLeather() {
-        this(0, 1);
-    }
-
-    public ItemHelmetLeather(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemHelmetLeather(Integer meta, int count) {
-        super(LEATHER_CAP, meta, count, "Leather Cap");
+    public ItemHelmetLeather(Identifier id) {
+        super(id);
     }
 
     @Override

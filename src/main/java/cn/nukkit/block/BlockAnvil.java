@@ -1,63 +1,31 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.inventory.AnvilInventory;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.network.protocol.types.ContainerIds;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+
+import static cn.nukkit.block.BlockIds.SNOW_LAYER;
 
 /**
  * Created by Pub4Game on 27.12.2015.
  */
 public class BlockAnvil extends BlockFallable implements Faceable {
 
-    private static final String[] NAMES = new String[]{
-            "Anvil",
-            "Anvil",
-            "Anvil",
-            "Anvil",
-            "Slighty Damaged Anvil",
-            "Slighty Damaged Anvil",
-            "Slighty Damaged Anvil",
-            "Slighty Damaged Anvil",
-            "Very Damaged Anvil",
-            "Very Damaged Anvil",
-            "Very Damaged Anvil",
-            "Very Damaged Anvil"
-    };
-
-    private int meta;
-
-    public BlockAnvil() {
-        this(0);
+    public BlockAnvil(Identifier id) {
+        super(id);
     }
 
-    public BlockAnvil(int meta) {
+    @Override
+    public final void setMeta(int meta) {
         this.meta = meta;
-    }
-
-    @Override
-    public int getFullId() {
-        return (getId() << 4) + getDamage();
-    }
-
-    @Override
-    public final int getDamage() {
-        return this.meta;
-    }
-
-    @Override
-    public final void setDamage(int meta) {
-        this.meta = meta;
-    }
-
-    @Override
-    public int getId() {
-        return ANVIL;
     }
 
     @Override
@@ -71,12 +39,12 @@ public class BlockAnvil extends BlockFallable implements Faceable {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 5;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 6000;
     }
 
@@ -86,23 +54,18 @@ public class BlockAnvil extends BlockFallable implements Faceable {
     }
 
     @Override
-    public String getName() {
-        return NAMES[this.getDamage() > 11 ? 0 : this.getDamage()];
-    }
-
-    @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (!target.isTransparent() || target.getId() == Block.SNOW_LAYER) {
-            int damage = this.getDamage();
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        if (!target.isTransparent() || target.getId() == SNOW_LAYER) {
+            int meta = this.getMeta();
             int[] faces = {1, 2, 3, 0};
-            this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
-            if (damage >= 4 && damage <= 7) {
-                this.setDamage(this.getDamage() | 0x04);
-            } else if (damage >= 8 && damage <= 11) {
-                this.setDamage(this.getDamage() | 0x08);
+            this.setMeta(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+            if (meta >= 4 && meta <= 7) {
+                this.setMeta(this.getMeta() | 0x04);
+            } else if (meta >= 8 && meta <= 11) {
+                this.setMeta(this.getMeta() | 0x08);
             }
-            this.getLevel().setBlock(block, this, true);
-            this.getLevel().addSound(this, Sound.RANDOM_ANVIL_LAND, 1, 0.8F);
+            this.getLevel().setBlock(block.getPosition(), this, true);
+            this.getLevel().addSound(this.getPosition().toFloat(), Sound.RANDOM_ANVIL_LAND, 1, 0.8F);
             return true;
         }
         return false;
@@ -111,20 +74,20 @@ public class BlockAnvil extends BlockFallable implements Faceable {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            player.addWindow(new AnvilInventory(player.getUIInventory(), this), Player.ANVIL_WINDOW_ID);
+            player.addWindow(new AnvilInventory(player.getUIInventory(), this), ContainerIds.ANVIL);
         }
         return true;
     }
 
     @Override
     public Item toItem() {
-        int damage = this.getDamage();
-        if (damage >= 4 && damage <= 7) {
-            return new ItemBlock(this, this.getDamage() & 0x04);
-        } else if (damage >= 8 && damage <= 11) {
-            return new ItemBlock(this, this.getDamage() & 0x08);
+        int meta = this.getMeta();
+        if (meta >= 4 && meta <= 7) {
+            return Item.get(id, this.getMeta() & 0x04);
+        } else if (meta >= 8 && meta <= 11) {
+            return Item.get(id, this.getMeta() & 0x08);
         } else {
-            return new ItemBlock(this);
+            return Item.get(id);
         }
     }
 
@@ -150,6 +113,11 @@ public class BlockAnvil extends BlockFallable implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x7);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

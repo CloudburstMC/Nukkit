@@ -1,13 +1,15 @@
 package cn.nukkit.level.generator.populator.impl;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.populator.type.Populator;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.MathHelper;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.utils.Identifier;
 
 import java.util.Random;
+
+import static cn.nukkit.block.BlockIds.*;
 
 public class PopulatorRavines extends Populator {
 
@@ -30,7 +32,7 @@ public class PopulatorRavines extends Populator {
     private float[] a = new float[1024];
 
     @Override
-    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {
+    public void populate(ChunkManager level, int chunkX, int chunkZ, BedrockRandom random, IChunk chunk) {
         this.random = new Random();
         this.random.setSeed(level.getSeed());
         worldLong1 = this.random.nextLong();
@@ -47,7 +49,7 @@ public class PopulatorRavines extends Populator {
             }
     }
 
-    protected void generateChunk(int chunkX, int chunkZ, FullChunk generatingChunkBuffer) {
+    protected void generateChunk(int chunkX, int chunkZ, IChunk generatingChunkBuffer) {
         if (this.random.nextInt(300) >= this.ravineRarity)
             return;
         double d1 = (chunkX * 16) + this.random.nextInt(16);
@@ -67,7 +69,7 @@ public class PopulatorRavines extends Populator {
         }
     }
 
-    protected void createRavine(long paramLong, FullChunk generatingChunkBuffer, double paramDouble1, double paramDouble2, double paramDouble3,
+    protected void createRavine(long paramLong, IChunk generatingChunkBuffer, double paramDouble1, double paramDouble2, double paramDouble3,
                                 float paramFloat1, float paramFloat2, float paramFloat3, int size, double paramDouble4) {
         Random localRandom = new Random(paramLong);
 
@@ -159,9 +161,8 @@ public class PopulatorRavines extends Populator {
                         if (localY < 0)
                             continue;
                         if (localY < this.worldHeightCap) {
-                            int materialAtPosition = generatingChunkBuffer.getBlockId(localX, localY, localZ);
-                            if (materialAtPosition == Block.WATER
-                                    || materialAtPosition == Block.STILL_WATER) {
+                            Identifier materialAtPosition = generatingChunkBuffer.getBlockId(localX, localY, localZ);
+                            if (materialAtPosition == FLOWING_WATER || materialAtPosition == WATER) {
                                 i4 = 1;
                             }
                             if ((localY != maxY - 1) && (localX != k) && (localX != m - 1) && (localZ != i2) && (localZ != i3 - 1))
@@ -181,12 +182,12 @@ public class PopulatorRavines extends Populator {
                         for (int localY = minY; localY >= maxY; localY--) {
                             double d11 = ((localY - 1) + 0.5D - paramDouble2) / d4;
                             if ((d9 * d9 + d10 * d10) * this.a[localY - 1] + d11 * d11 / 6.0D < 1.0D) {
-                                int material = generatingChunkBuffer.getBlockId(localX, localY, localZ);
-                                if (material == Block.GRASS) {
+                                Identifier material = generatingChunkBuffer.getBlockId(localX, localY, localZ);
+                                if (material == GRASS) {
                                     if (localY - 1 < 10) {
-                                        generatingChunkBuffer.setBlock(localX, localY, localZ, Block.LAVA);
+                                        generatingChunkBuffer.setBlockId(localX, localY, localZ, FLOWING_LAVA);
                                     } else {
-                                        generatingChunkBuffer.setBlock(localX, localY, localZ, Block.AIR);
+                                        generatingChunkBuffer.setBlockId(localX, localY, localZ, AIR);
                                     }
                                 }
                             }

@@ -1,6 +1,6 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.Player;
+import cn.nukkit.player.Player;
 
 /**
  * @author CreeperFace

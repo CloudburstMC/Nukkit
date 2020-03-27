@@ -1,32 +1,29 @@
 package cn.nukkit.block;
 
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.WATER;
+
 /**
  * author: Angelic47
  * Nukkit Project
  */
 public class BlockWaterStill extends BlockWater {
 
-    public BlockWaterStill() {
-        super(0);
+    protected BlockWaterStill(Identifier id, Identifier flowingId, Identifier stationaryId) {
+        super(id, flowingId, stationaryId);
     }
 
-    public BlockWaterStill(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return STILL_WATER;
+    protected BlockWaterStill(Identifier flowingId, Identifier stationaryId) {
+        this(stationaryId, flowingId, stationaryId);
     }
 
     @Override
-    public String getName() {
-        return "Still Water";
+    public Block getBlock(int meta) {
+        return Block.get(WATER, meta);
     }
 
-    @Override
-    public BlockLiquid getBlock(int meta) {
-        return new BlockWaterStill(meta);
+    public static BlockFactory factory(Identifier flowingId) {
+        return id -> new BlockWaterStill(flowingId, id);
     }
-
 }

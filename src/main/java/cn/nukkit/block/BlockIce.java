@@ -4,7 +4,12 @@ import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.block.BlockIds.WATER;
 
 /**
  * author: MagicDroidX
@@ -12,32 +17,23 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockIce extends BlockTransparent {
 
-    public BlockIce() {
+    public BlockIce(Identifier id) {
+        super(id);
     }
 
     @Override
-    public int getId() {
-        return ICE;
+    public float getResistance() {
+        return 2.5f;
     }
 
     @Override
-    public String getName() {
-        return "Ice";
+    public float getHardness() {
+        return 0.5f;
     }
 
     @Override
-    public double getResistance() {
-        return 2.5;
-    }
-
-    @Override
-    public double getHardness() {
-        return 0.5;
-    }
-
-    @Override
-    public double getFrictionFactor() {
-        return 0.98;
+    public float getFrictionFactor() {
+        return 0.98f;
     }
 
     @Override
@@ -46,19 +42,26 @@ public class BlockIce extends BlockTransparent {
     }
 
     @Override
-    public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, new BlockWater(), true);
-        return true;
+    public boolean onBreak(Item item, Player player) {
+        if (player.getGamemode() == Player.CREATIVE) {
+            return this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true);
+        }
+
+        if (down().isSolid()) {
+            return this.getLevel().setBlock(this.getPosition(), Block.get(WATER), true);
+        } else {
+            return this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true);
+        }
     }
 
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if (this.getLevel().getBlockLightAt((int) this.x, (int) this.y, (int) this.z) >= 12) {
+            if (this.getLevel().getBlockLightAt(this.getX(), this.getY(), this.getZ()) >= 12) {
                 BlockFadeEvent event = new BlockFadeEvent(this, get(WATER));
                 level.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    level.setBlock(this, event.getNewState(), true);
+                    level.setBlock(this.getPosition(), event.getNewState(), true);
                 }
                 return Level.BLOCK_UPDATE_NORMAL;
             }

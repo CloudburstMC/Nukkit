@@ -2,16 +2,25 @@ package cn.nukkit.network.query;
 
 import cn.nukkit.Server;
 import cn.nukkit.event.server.QueryRegenerateEvent;
-import cn.nukkit.utils.Binary;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
+import lombok.extern.log4j.Log4j2;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public class QueryHandler {
 
     public static final byte HANDSHAKE = 0x09;
@@ -26,22 +35,22 @@ public class QueryHandler {
 
     public QueryHandler() {
         this.server = Server.getInstance();
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.server.query.start"));
+        log.info(this.server.getLanguage().translate("nukkit.server.query.start"));
         String ip = this.server.getIp();
         String addr = (!ip.isEmpty()) ? ip : "0.0.0.0";
         int port = this.server.getPort();
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.server.query.info", String.valueOf(port)));
+        log.info(this.server.getLanguage().translate("nukkit.server.query.info", String.valueOf(port)));
 
         this.regenerateToken();
         this.lastToken = this.token;
         this.regenerateInfo();
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.server.query.running", new String[]{addr, String.valueOf(port)}));
+        log.info(this.server.getLanguage().translate("nukkit.server.query.running", addr, String.valueOf(port)));
     }
 
     public void regenerateInfo() {
         QueryRegenerateEvent ev = this.server.getQueryInformation();
-        this.longData = ev.getLongQuery(this.longData);
-        this.shortData = ev.getShortQuery(this.shortData);
+        this.longData = ev.getLongQuery();
+        this.shortData = ev.getShortQuery();
         this.timeout = System.currentTimeMillis() + ev.getTimeout();
     }
 
@@ -54,53 +63,57 @@ public class QueryHandler {
         this.token = token;
     }
 
-    public static String getTokenString(byte[] token, String salt) {
-        return getTokenString(new String(token), salt);
+    public static byte[] getTokenString(String token, InetAddress address) {
+        return getTokenString(token.getBytes(StandardCharsets.UTF_8), address);
     }
 
-
-    public static String getTokenString(String token, String salt) {
+    public static byte[] getTokenString(byte[] token, InetAddress address) {
         try {
-            return String.valueOf(Binary.readInt(Binary.subBytes(MessageDigest.getInstance("SHA-512").digest((salt + ":" + token).getBytes()), 7, 4)));
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            digest.update(address.toString().getBytes(StandardCharsets.UTF_8));
+            digest.update(token);
+            return Arrays.copyOf(digest.digest(), 4);
         } catch (NoSuchAlgorithmException e) {
-            return String.valueOf(new Random().nextInt());
+            return ByteBuffer.allocate(4).putInt(ThreadLocalRandom.current().nextInt()).array();
         }
     }
 
-    public void handle(String address, int port, byte[] packet) {
-        int offset = 2; //skip MAGIC
-        byte packetType = packet[offset++];
-        int sessionID = Binary.readInt(Binary.subBytes(packet, offset, 4));
-        offset += 4;
-        byte[] payload = Binary.subBytes(packet, offset);
+    public void handle(InetSocketAddress address, ByteBuf packet) {
+        short packetId = packet.readUnsignedByte();
+        int sessionId = packet.readInt();
 
-        switch (packetType) {
+        switch (packetId) {
             case HANDSHAKE:
-                byte[] reply = Binary.appendBytes(
-                        HANDSHAKE,
-                        Binary.writeInt(sessionID),
-                        getTokenString(this.token, address).getBytes(),
-                        new byte[]{0x00}
-                );
+                ByteBuf reply = ByteBufAllocator.DEFAULT.ioBuffer(10); // 1 + 4 + 4 + 1
+                reply.writeByte(HANDSHAKE);
+                reply.writeInt(sessionId);
+                reply.writeBytes(getTokenString(this.token, address.getAddress()));
+                reply.writeByte(0);
 
-                this.server.getNetwork().sendPacket(address, port, reply);
+                this.server.getNetwork().sendRawPacket(address, reply);
                 break;
             case STATISTICS:
-                String token = String.valueOf(Binary.readInt(Binary.subBytes(payload, 0, 4)));
-                if (!token.equals(getTokenString(this.token, address)) && !token.equals(getTokenString(this.lastToken, address))) {
+                byte[] token = new byte[4];
+                packet.readBytes(token);
+
+                if (!Arrays.equals(token, getTokenString(this.token, address.getAddress())) &&
+                        !Arrays.equals(token, getTokenString(this.lastToken, address.getAddress()))) {
                     break;
                 }
 
                 if (this.timeout < System.currentTimeMillis()) {
                     this.regenerateInfo();
                 }
-                reply = Binary.appendBytes(
-                        STATISTICS,
-                        Binary.writeInt(sessionID),
-                        payload.length == 8 ? this.longData : this.shortData
-                );
+                reply = ByteBufAllocator.DEFAULT.ioBuffer(64);
+                reply.writeByte(STATISTICS);
+                reply.writeInt(sessionId);
+                if (packet.readableBytes() == 8) {
+                    reply.writeBytes(this.longData);
+                } else {
+                    reply.writeBytes(this.shortData);
+                }
 
-                this.server.getNetwork().sendPacket(address, port, reply);
+                this.server.getNetwork().sendRawPacket(address, reply);
                 break;
         }
     }

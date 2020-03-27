@@ -3,33 +3,25 @@ package cn.nukkit.block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by Pub4Game on 27.12.2015.
  */
 public class BlockSoulSand extends BlockSolid {
 
-    public BlockSoulSand() {
+    public BlockSoulSand(Identifier id) {
+        super(id);
     }
 
     @Override
-    public String getName() {
-        return "Soul Sand";
+    public float getHardness() {
+        return 0.5f;
     }
 
     @Override
-    public int getId() {
-        return SOUL_SAND;
-    }
-
-    @Override
-    public double getHardness() {
-        return 0.5;
-    }
-
-    @Override
-    public double getResistance() {
-        return 2.5;
+    public float getResistance() {
+        return 2.5f;
     }
 
     @Override
@@ -38,8 +30,8 @@ public class BlockSoulSand extends BlockSolid {
     }
 
     @Override
-    public double getMaxY() {
-        return this.y + 1 - 0.125;
+    public float getMaxY() {
+        return this.getY() + 1 - 0.125f;
     }
 
     @Override
@@ -49,8 +41,7 @@ public class BlockSoulSand extends BlockSolid {
 
     @Override
     public void onEntityCollide(Entity entity) {
-        entity.motionX *= 0.4d;
-        entity.motionZ *= 0.4d;
+        entity.setMotion(entity.getMotion().mul(0.4, 1, 0.4));
     }
 
     @Override

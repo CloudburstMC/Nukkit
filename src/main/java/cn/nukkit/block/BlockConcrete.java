@@ -4,38 +4,25 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created by CreeperFace on 2.6.2017.
  */
-public class BlockConcrete extends BlockSolidMeta {
+public class BlockConcrete extends BlockSolid {
 
-    public BlockConcrete() {
-        this(0);
-    }
-
-    public BlockConcrete(int meta) {
-        super(meta);
+    public BlockConcrete(Identifier id) {
+        super(id);
     }
 
     @Override
-    public int getId() {
-        return CONCRETE;
-    }
-
-    @Override
-    public double getResistance() {
+    public float getResistance() {
         return 9;
     }
 
     @Override
-    public double getHardness() {
-        return 1.8;
-    }
-
-    @Override
-    public String getName() {
-        return "Concrete";
+    public float getHardness() {
+        return 1.8f;
     }
 
     @Override
@@ -50,10 +37,10 @@ public class BlockConcrete extends BlockSolidMeta {
 
     @Override
     public BlockColor getColor() {
-        return DyeColor.getByWoolData(getDamage()).getColor();
+        return DyeColor.getByWoolData(getMeta()).getColor();
     }
 
     public DyeColor getDyeColor() {
-        return DyeColor.getByWoolData(getDamage());
+        return DyeColor.getByWoolData(getMeta());
     }
 }

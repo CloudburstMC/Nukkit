@@ -1,9 +1,13 @@
 package cn.nukkit.level.generator.object.tree;
 
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockWood;
+import cn.nukkit.block.BlockLog;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
+import cn.nukkit.registry.BlockRegistry;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.LEAVES;
+import static cn.nukkit.block.BlockIds.LOG;
 
 /**
  * author: MagicDroidX
@@ -13,18 +17,18 @@ public class ObjectSpruceTree extends ObjectTree {
     protected int treeHeight;
 
     @Override
-    public int getTrunkBlock() {
-        return Block.LOG;
+    public Identifier getTrunkBlock() {
+        return LOG;
     }
 
     @Override
-    public int getLeafBlock() {
-        return Block.LEAVES;
+    public Identifier getLeafBlock() {
+        return LEAVES;
     }
 
     @Override
     public int getType() {
-        return BlockWood.SPRUCE;
+        return BlockLog.SPRUCE;
     }
 
     @Override
@@ -33,19 +37,19 @@ public class ObjectSpruceTree extends ObjectTree {
     }
 
     @Override
-    public void placeObject(ChunkManager level, int x, int y, int z, NukkitRandom random) {
-        this.treeHeight = random.nextBoundedInt(4) + 6;
+    public void placeObject(ChunkManager level, int x, int y, int z, BedrockRandom random) {
+        this.treeHeight = random.nextInt(4) + 6;
 
-        int topSize = this.getTreeHeight() - (1 + random.nextBoundedInt(2));
-        int lRadius = 2 + random.nextBoundedInt(2);
+        int topSize = this.getTreeHeight() - (1 + random.nextInt(2));
+        int lRadius = 2 + random.nextInt(2);
 
-        this.placeTrunk(level, x, y, z, random, this.getTreeHeight() - random.nextBoundedInt(3));
+        this.placeTrunk(level, x, y, z, random, this.getTreeHeight() - random.nextInt(3));
 
         this.placeLeaves(level, topSize, lRadius, x, y, z, random);
     }
 
-    public void placeLeaves(ChunkManager level, int topSize, int lRadius, int x, int y, int z, NukkitRandom random)   {
-        int radius = random.nextBoundedInt(2);
+    public void placeLeaves(ChunkManager level, int topSize, int lRadius, int x, int y, int z, BedrockRandom random) {
+        int radius = random.nextInt(2);
         int maxR = 1;
         int minR = 0;
 
@@ -60,7 +64,7 @@ public class ObjectSpruceTree extends ObjectTree {
                         continue;
                     }
 
-                    if (!Block.solid[level.getBlockIdAt(xx, yyy, zz)]) {
+                    if (!BlockRegistry.get().getBlock(level.getBlockId(xx, yyy, zz), 0).isSolid()) {
                         level.setBlockAt(xx, yyy, zz, this.getLeafBlock(), this.getType());
                     }
                 }

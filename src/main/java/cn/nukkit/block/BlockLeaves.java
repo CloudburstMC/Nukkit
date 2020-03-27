@@ -1,62 +1,45 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.LeavesDecayEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.Hash;
-import it.unimi.dsi.fastutil.longs.LongArraySet;
-import it.unimi.dsi.fastutil.longs.LongSet;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import java.util.concurrent.ThreadLocalRandom;
+
+import static cn.nukkit.block.BlockIds.*;
+import static cn.nukkit.item.ItemIds.APPLE;
+import static cn.nukkit.item.ItemIds.STICK;
 
 /**
  * author: Angelic47
  * Nukkit Project
  */
-public class BlockLeaves extends BlockTransparentMeta {
+public class BlockLeaves extends BlockTransparent {
     public static final int OAK = 0;
     public static final int SPRUCE = 1;
     public static final int BIRCH = 2;
     public static final int JUNGLE = 3;
 
-    public BlockLeaves() {
-        this(0);
-    }
-
-    public BlockLeaves(int meta) {
-        super(meta);
+    public BlockLeaves(Identifier id) {
+        super(id);
     }
 
     @Override
-    public int getId() {
-        return LEAVES;
-    }
-
-    @Override
-    public double getHardness() {
-        return 0.2;
+    public float getHardness() {
+        return 0.2f;
     }
 
     @Override
     public int getToolType() {
         return ItemTool.TYPE_SHEARS;
-    }
-
-    @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Oak Leaves",
-                "Spruce Leaves",
-                "Birch Leaves",
-                "Jungle Leaves"
-        };
-        return names[this.getDamage() & 0x03];
     }
 
     @Override
@@ -70,15 +53,15 @@ public class BlockLeaves extends BlockTransparentMeta {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         this.setPersistent(true);
-        this.getLevel().setBlock(this, this, true);
+        this.getLevel().setBlock(this.getPosition(), this, true);
         return true;
     }
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, this.getDamage() & 0x3, 1);
+        return Item.get(id, this.getMeta() & 0x3, 1);
     }
 
     @Override
@@ -90,15 +73,15 @@ public class BlockLeaves extends BlockTransparentMeta {
         } else {
             if (this.canDropApple() && ThreadLocalRandom.current().nextInt(200) == 0) {
                 return new Item[]{
-                        Item.get(Item.APPLE)
+                        Item.get(APPLE)
                 };
             }
             if (ThreadLocalRandom.current().nextInt(20) == 0) {
                 if (ThreadLocalRandom.current().nextBoolean()) {
                     return new Item[]{
-                            Item.get(Item.STICK, 0, ThreadLocalRandom.current().nextInt(1, 2))
+                            Item.get(STICK, 0, ThreadLocalRandom.current().nextInt(1, 2))
                     };
-                } else if ((this.getDamage() & 0x03) != JUNGLE || ThreadLocalRandom.current().nextInt(20) == 0) {
+                } else if ((this.getMeta() & 0x03) != JUNGLE || ThreadLocalRandom.current().nextInt(20) == 0) {
                     return new Item[]{
                             this.getSapling()
                     };
@@ -112,105 +95,55 @@ public class BlockLeaves extends BlockTransparentMeta {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_RANDOM && !isPersistent() && !isCheckDecay()) {
             setCheckDecay(true);
-            getLevel().setBlock(this, this, false, false);
+            getLevel().setBlock(this.getPosition(), this, false, false);
         } else if (type == Level.BLOCK_UPDATE_RANDOM && isCheckDecay() && !isPersistent()) {
-            setDamage(getDamage() & 0x03);
-            int check = 0;
+            setMeta(getMeta() & 0x03);
 
             LeavesDecayEvent ev = new LeavesDecayEvent(this);
 
             Server.getInstance().getPluginManager().callEvent(ev);
-            if (ev.isCancelled() || findLog(this, new LongArraySet(), 0, check)) {
-                getLevel().setBlock(this, this, false, false);
+            if (ev.isCancelled() || findLog(this, 7)) {
+                getLevel().setBlock(this.getPosition(), this, false, false);
             } else {
-                getLevel().useBreakOn(this);
+                getLevel().useBreakOn(this.getPosition());
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         }
         return 0;
     }
 
-    private Boolean findLog(Block pos, LongSet visited, Integer distance, Integer check) {
-        return findLog(pos, visited, distance, check, null);
-    }
-
-    private Boolean findLog(Block pos, LongSet visited, Integer distance, Integer check, BlockFace fromSide) {
-        ++check;
-        long index = Hash.hashBlock((int) pos.x, (int) pos.y, (int) pos.z);
-        if (visited.contains(index)) return false;
-        if (pos.getId() == WOOD || pos.getId() == WOOD2) return true;
-        if ((pos.getId() == LEAVES || pos.getId() == LEAVES2) && distance <= 4) {
-            visited.add(index);
-            int down = pos.down().getId();
-            if (down == WOOD || down == WOOD2) {
+    private Boolean findLog(Block pos, Integer distance) {
+        for (Block collisionBlock : this.getLevel().getCollisionBlocks(new SimpleAxisAlignedBB(
+                pos.getX() - distance, pos.getY() - distance, pos.getZ() - distance,
+                pos.getX() + distance, pos.getY() + distance, pos.getZ() + distance))) {
+            if (collisionBlock.getId() == LOG || collisionBlock.getId() == LOG2) {
                 return true;
-            }
-            if (fromSide == null) {
-                //North, East, South, West
-                for (int side = 2; side <= 5; ++side) {
-                    if (this.findLog(pos.getSide(BlockFace.fromIndex(side)), visited, distance + 1, check, BlockFace.fromIndex(side)))
-                        return true;
-                }
-            } else { //No more loops
-                switch (fromSide) {
-                    case NORTH:
-                        if (this.findLog(pos.getSide(BlockFace.NORTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.WEST), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.EAST), visited, distance + 1, check, fromSide))
-                            return true;
-                        break;
-                    case SOUTH:
-                        if (this.findLog(pos.getSide(BlockFace.SOUTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.WEST), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.EAST), visited, distance + 1, check, fromSide))
-                            return true;
-                        break;
-                    case WEST:
-                        if (this.findLog(pos.getSide(BlockFace.NORTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.SOUTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.WEST), visited, distance + 1, check, fromSide))
-                            return true;
-                    case EAST:
-                        if (this.findLog(pos.getSide(BlockFace.NORTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.SOUTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.EAST), visited, distance + 1, check, fromSide))
-                            return true;
-                        break;
-                }
             }
         }
         return false;
     }
 
     public boolean isCheckDecay() {
-        return (this.getDamage() & 0x08) != 0;
+        return (this.getMeta() & 0x08) != 0;
     }
 
     public void setCheckDecay(boolean checkDecay) {
         if (checkDecay) {
-            this.setDamage(this.getDamage() | 0x08);
+            this.setMeta(this.getMeta() | 0x08);
         } else {
-            this.setDamage(this.getDamage() & ~0x08);
+            this.setMeta(this.getMeta() & ~0x08);
         }
     }
 
     public boolean isPersistent() {
-        return (this.getDamage() & 0x04) != 0;
+        return (this.getMeta() & 0x04) != 0;
     }
 
     public void setPersistent(boolean persistent) {
         if (persistent) {
-            this.setDamage(this.getDamage() | 0x04);
+            this.setMeta(this.getMeta() | 0x04);
         } else {
-            this.setDamage(this.getDamage() & ~0x04);
+            this.setMeta(this.getMeta() & ~0x04);
         }
     }
 
@@ -225,11 +158,16 @@ public class BlockLeaves extends BlockTransparentMeta {
     }
 
     protected boolean canDropApple() {
-        return (this.getDamage() & 0x03) == OAK;
+        return (this.getMeta() & 0x03) == OAK;
     }
 
     protected Item getSapling() {
-        return Item.get(BlockID.SAPLING, this.getDamage() & 0x03);
+        return Item.get(SAPLING, this.getMeta() & 0x03);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 
     @Override

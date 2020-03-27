@@ -1,6 +1,7 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.item.Item;
+import com.nukkitx.protocol.bedrock.data.ContainerMixData;
 
 public class ContainerRecipe extends MixRecipe {
     public ContainerRecipe(Item input, Item ingredient, Item output) {
@@ -12,8 +13,7 @@ public class ContainerRecipe extends MixRecipe {
         manager.registerContainerRecipe(this);
     }
 
-    @Override
-    public RecipeType getType() {
-        throw new UnsupportedOperationException();
+    public ContainerMixData toData() {
+        return new ContainerMixData(getInput().getNetworkId(), getIngredient().getNetworkId(), getResult().getNetworkId());
     }
 }

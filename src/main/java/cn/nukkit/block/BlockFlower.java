@@ -1,20 +1,25 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.math.vector.Vector3i;
 
 import java.util.concurrent.ThreadLocalRandom;
+
+import static cn.nukkit.block.BlockIds.*;
+import static cn.nukkit.item.ItemIds.DYE;
 
 /**
  * Created on 2015/11/23 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockFlower extends BlockFlowable {
+public class BlockFlower extends FloodableBlock {
     public static final int TYPE_POPPY = 0;
     public static final int TYPE_BLUE_ORCHID = 1;
     public static final int TYPE_ALLIUM = 2;
@@ -25,47 +30,15 @@ public class BlockFlower extends BlockFlowable {
     public static final int TYPE_PINK_TULIP = 7;
     public static final int TYPE_OXEYE_DAISY = 8;
 
-    public BlockFlower() {
-        this(0);
-    }
-
-    public BlockFlower(int meta) {
-        super(meta);
+    public BlockFlower(Identifier id) {
+        super(id);
     }
 
     @Override
-    public int getId() {
-        return FLOWER;
-    }
-
-    @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Poppy",
-                "Blue Orchid",
-                "Allium",
-                "Azure Bluet",
-                "Red Tulip",
-                "Orange Tulip",
-                "White Tulip",
-                "Pink Tulip",
-                "Oxeye Daisy",
-                "Unknown",
-                "Unknown",
-                "Unknown",
-                "Unknown",
-                "Unknown",
-                "Unknown",
-                "Unknown"
-        };
-        return names[this.getDamage() & 0x0f];
-    }
-
-    @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         Block down = this.down();
-        if (down.getId() == Block.GRASS || down.getId() == Block.DIRT || down.getId() == Block.FARMLAND || down.getId() == Block.PODZOL) {
-            this.getLevel().setBlock(block, this, true);
+        if (down.getId() == GRASS || down.getId() == DIRT || down.getId() == FARMLAND || down.getId() == PODZOL) {
+            this.getLevel().setBlock(block.getPosition(), this, true);
 
             return true;
         }
@@ -76,7 +49,7 @@ public class BlockFlower extends BlockFlowable {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (this.down().isTransparent()) {
-                this.getLevel().useBreakOn(this);
+                this.getLevel().useBreakOn(this.getPosition());
 
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -97,15 +70,15 @@ public class BlockFlower extends BlockFlowable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0f) { //Bone meal
-            if (player != null && (player.gamemode & 0x01) == 0) {
-                item.count--;
+        if (item.getId() == DYE && item.getMeta() == 0x0f) { //Bone meal
+            if (player != null && (player.getGamemode() & 0x01) == 0) {
+                item.decrementCount();
             }
 
-            this.level.addParticle(new BoneMealParticle(this));
+            this.level.addParticle(new BoneMealParticle(this.getPosition()));
 
             for (int i = 0; i < 8; i++) {
-                Vector3 vec = this.add(
+                Vector3i vec = this.getPosition().add(
                         ThreadLocalRandom.current().nextInt(-3, 4),
                         ThreadLocalRandom.current().nextInt(-1, 2),
                         ThreadLocalRandom.current().nextInt(-3, 4));
@@ -114,7 +87,7 @@ public class BlockFlower extends BlockFlowable {
                     if (ThreadLocalRandom.current().nextInt(10) == 0) {
                         this.level.setBlock(vec, this.getUncommonFlower(), true);
                     } else {
-                        this.level.setBlock(vec, get(this.getId()), true);
+                        this.level.setBlock(vec, Block.get(this.getId()), true);
                     }
                 }
             }
@@ -126,6 +99,6 @@ public class BlockFlower extends BlockFlowable {
     }
 
     protected Block getUncommonFlower() {
-        return get(DANDELION);
+        return Block.get(YELLOW_FLOWER);
     }
 }

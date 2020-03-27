@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created on 2015/12/6 by xtypr.
@@ -9,27 +10,18 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockGlassPane extends BlockThin {
 
-    public BlockGlassPane() {
+    public BlockGlassPane(Identifier id) {
+        super(id);
     }
 
     @Override
-    public String getName() {
-        return "Glass Pane";
+    public float getResistance() {
+        return 1.5f;
     }
 
     @Override
-    public int getId() {
-        return GLASS_PANE;
-    }
-
-    @Override
-    public double getResistance() {
-        return 1.5;
-    }
-
-    @Override
-    public double getHardness() {
-        return 0.3;
+    public float getHardness() {
+        return 0.3f;
     }
 
     @Override
@@ -44,6 +36,11 @@ public class BlockGlassPane extends BlockThin {
 
     @Override
     public boolean canSilkTouch() {
+        return true;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
         return true;
     }
 }

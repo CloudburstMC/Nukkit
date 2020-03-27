@@ -1,14 +1,19 @@
 package cn.nukkit.level.generator.populator.impl;
 
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockIds;
+import cn.nukkit.level.ChunkManager;
+import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.populator.helper.EnsureCover;
 import cn.nukkit.level.generator.populator.helper.EnsureGrassBelow;
 import cn.nukkit.level.generator.populator.type.PopulatorSurfaceBlock;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static cn.nukkit.block.BlockIds.DOUBLE_PLANT;
 
 /**
  * @author Angelic47, Niall Lindsay (Niall7459)
@@ -17,37 +22,36 @@ import java.util.concurrent.ThreadLocalRandom;
  * </p>
  */
 public class PopulatorFlower extends PopulatorSurfaceBlock {
-    private final List<int[]> flowerTypes = new ArrayList<>();
+    private static final Block AIR = Block.get(BlockIds.AIR);
 
-    public void addType(int a, int b) {
-        int[] c = new int[2];
-        c[0] = a;
-        c[1] = b;
-        this.flowerTypes.add(c);
+    private final List<Block> flowerTypes = new ArrayList<>();
+
+    public void addType(Block block) {
+        this.flowerTypes.add(block);
     }
 
-    public List<int[]> getTypes() {
+    public List<Block> getTypes() {
         return this.flowerTypes;
     }
 
     @Override
-    protected void placeBlock(int x, int y, int z, int id, FullChunk chunk, NukkitRandom random) {
+    protected void placeBlock(int x, int y, int z, Block block, IChunk chunk, BedrockRandom random) {
         if (flowerTypes.size() != 0) {
-            int[] type = flowerTypes.get(ThreadLocalRandom.current().nextInt(flowerTypes.size()));
-            chunk.setFullBlockId(x, y, z, (type[0] << 4) | type[1]);
-            if (type[0] == DOUBLE_PLANT) {
-                chunk.setFullBlockId(x, y + 1, z, (type[0] << 4) | (8 | type[1]));
+            Block type = flowerTypes.get(ThreadLocalRandom.current().nextInt(flowerTypes.size()));
+            chunk.setBlock(x, y, z, type);
+            if (type.getId() == DOUBLE_PLANT) {
+                chunk.setBlock(x, y + 1, z, type);
             }
         }
     }
 
     @Override
-    protected boolean canStay(int x, int y, int z, FullChunk chunk) {
+    protected boolean canStay(int x, int y, int z, IChunk chunk, ChunkManager level) {
         return EnsureCover.ensureCover(x, y, z, chunk) && EnsureGrassBelow.ensureGrassBelow(x, y, z, chunk);
     }
 
     @Override
-    protected int getBlockId(int x, int z, NukkitRandom random, FullChunk chunk) {
-        return 0;
+    protected Block getBlock(int x, int z, BedrockRandom random, IChunk chunk) {
+        return AIR;
     }
 }

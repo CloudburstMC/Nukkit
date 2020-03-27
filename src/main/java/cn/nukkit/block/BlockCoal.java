@@ -3,27 +3,24 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created on 2015/11/24 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockCoal extends BlockSolid {
-    public BlockCoal() {
+    public BlockCoal(Identifier id) {
+        super(id);
     }
 
     @Override
-    public int getId() {
-        return COAL_BLOCK;
-    }
-
-    @Override
-    public double getHardness() {
+    public float getHardness() {
         return 5;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 30;
     }
 
@@ -40,11 +37,6 @@ public class BlockCoal extends BlockSolid {
     @Override
     public int getBurnAbility() {
         return 5;
-    }
-
-    @Override
-    public String getName() {
-        return "Block of Coal";
     }
 
     @Override

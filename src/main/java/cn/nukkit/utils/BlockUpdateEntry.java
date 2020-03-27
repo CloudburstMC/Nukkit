@@ -1,7 +1,8 @@
 package cn.nukkit.utils;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.math.Vector3;
+import com.nukkitx.math.vector.Vector3i;
+import com.nukkitx.math.vector.Vector4i;
 
 /**
  * author: MagicDroidX
@@ -13,18 +14,18 @@ public class BlockUpdateEntry implements Comparable<BlockUpdateEntry> {
     public int priority;
     public long delay;
 
-    public final Vector3 pos;
+    public final Vector3i pos;
     public final Block block;
 
     public final long id;
 
-    public BlockUpdateEntry(Vector3 pos, Block block) {
+    public BlockUpdateEntry(Vector3i pos, Block block) {
         this.pos = pos;
         this.block = block;
         this.id = entryID++;
     }
 
-    public BlockUpdateEntry(Vector3 pos, Block block, long delay, int priority) {
+    public BlockUpdateEntry(Vector3i pos, Block block, long delay, int priority) {
         this.id = entryID++;
         this.pos = pos;
         this.priority = priority;
@@ -40,7 +41,7 @@ public class BlockUpdateEntry implements Comparable<BlockUpdateEntry> {
     @Override
     public boolean equals(Object object) {
         if (!(object instanceof BlockUpdateEntry)) {
-            if (object instanceof Vector3) {
+            if (object instanceof Vector4i) {
                 return pos.equals(object);
             }
             return false;

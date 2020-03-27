@@ -1,30 +1,22 @@
 package cn.nukkit.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockRail;
-import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.item.EntityMinecartTNT;
+import cn.nukkit.entity.EntityTypes;
+import cn.nukkit.entity.vehicle.TntMinecart;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Location;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.player.Player;
+import cn.nukkit.registry.EntityRegistry;
+import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.Rail;
+import com.nukkitx.math.vector.Vector3f;
 
 public class ItemMinecartTNT extends Item {
 
-    public ItemMinecartTNT() {
-        this(0, 1);
-    }
-
-    public ItemMinecartTNT(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemMinecartTNT(Integer meta, int count) {
-        super(MINECART_WITH_TNT, meta, count, "Minecart with TNT");
+    public ItemMinecartTNT(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -33,35 +25,19 @@ public class ItemMinecartTNT extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, Vector3f clickPos) {
         if (Rail.isRailBlock(target)) {
             Rail.Orientation type = ((BlockRail) target).getOrientation();
             double adjacent = 0.0D;
             if (type.isAscending()) {
                 adjacent = 0.5D;
             }
-            EntityMinecartTNT minecart = (EntityMinecartTNT) Entity.createEntity("MinecartTnt",
-                    level.getChunk(target.getFloorX() >> 4, target.getFloorZ() >> 4), new CompoundTag("")
-                    .putList(new ListTag<>("Pos")
-                            .add(new DoubleTag("", target.getX() + 0.5))
-                            .add(new DoubleTag("", target.getY() + 0.0625D + adjacent))
-                            .add(new DoubleTag("", target.getZ() + 0.5)))
-                    .putList(new ListTag<>("Motion")
-                            .add(new DoubleTag("", 0))
-                            .add(new DoubleTag("", 0))
-                            .add(new DoubleTag("", 0)))
-                    .putList(new ListTag<>("Rotation")
-                            .add(new FloatTag("", 0))
-                            .add(new FloatTag("", 0)))
-            );
-
-            if(minecart == null) {
-                return false;
-            }
+            Vector3f pos = target.getPosition().toFloat().add(0.5, 0.0625 + adjacent, 0.5);
+            TntMinecart minecart = EntityRegistry.get().newEntity(EntityTypes.TNT_MINECART, Location.from(pos, level));
 
             if (player.isSurvival()) {
                 Item item = player.getInventory().getItemInHand();
-                item.setCount(item.getCount() - 1);
+                item.decrementCount();
                 player.getInventory().setItemInHand(item);
             }
 

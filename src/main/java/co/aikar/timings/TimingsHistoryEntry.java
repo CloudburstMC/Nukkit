@@ -23,9 +23,8 @@
  */
 package co.aikar.timings;
 
-import com.google.gson.JsonArray;
-
 import cn.nukkit.timings.JsonUtil;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 class TimingsHistoryEntry {
     final TimingData data;
@@ -41,9 +40,9 @@ class TimingsHistoryEntry {
         }
     }
 
-    JsonArray export() {
-        JsonArray json = this.data.export();
-        if (this.children.length > 0) json.add(JsonUtil.mapToArray(this.children, TimingData::export));
+    ArrayNode export() {
+        ArrayNode json = this.data.export();
+        if (this.children.length > 0) json.addAll(JsonUtil.mapToArray(this.children, TimingData::export));
         return json;
     }
 }

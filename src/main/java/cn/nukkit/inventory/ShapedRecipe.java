@@ -1,10 +1,16 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.Utils;
+import com.google.common.collect.ImmutableList;
+import com.nukkitx.protocol.bedrock.data.CraftingData;
 import io.netty.util.collection.CharObjectHashMap;
+import io.netty.util.collection.CharObjectMap;
 
 import java.util.*;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * author: MagicDroidX
@@ -12,21 +18,15 @@ import java.util.*;
  */
 public class ShapedRecipe implements CraftingRecipe {
 
-    private String recipeId;
-    private Item primaryResult;
-    private List<Item> extraResults = new ArrayList<>();
-
-    private long least,most;
-
+    private final String recipeId;
+    private final Item primaryResult;
+    private final ImmutableList<Item> extraResults;
+    private final CharObjectHashMap<Item> ingredients = new CharObjectHashMap<>();
     private final String[] shape;
     private final int priority;
+    private final Identifier block;
 
-    private final CharObjectHashMap<Item> ingredients = new CharObjectHashMap<>();
-
-
-    public ShapedRecipe(Item primaryResult, String[] shape, Map<Character, Item> ingredients, List<Item> extraResults) {
-        this(null, 1, primaryResult, shape, ingredients, extraResults);
-    }
+    private UUID id;
 
     /**
      * Constructs a ShapedRecipe instance.
@@ -43,7 +43,8 @@ public class ShapedRecipe implements CraftingRecipe {
      *                         <p>
      *                         Note: Recipes **do not** need to be square. Do NOT add padding for empty rows/columns.
      */
-    public ShapedRecipe(String recipeId, int priority, Item primaryResult, String[] shape, Map<Character, Item> ingredients, List<Item> extraResults) {
+    public ShapedRecipe(String recipeId, int priority, Item primaryResult, String[] shape,
+                        CharObjectMap<Item> ingredients, List<Item> extraResults, Identifier block) {
         this.recipeId = recipeId;
         this.priority = priority;
         int rowCount = shape.length;
@@ -73,8 +74,8 @@ public class ShapedRecipe implements CraftingRecipe {
         }
 
         this.primaryResult = primaryResult.clone();
-        this.extraResults.addAll(extraResults);
-
+        this.extraResults = ImmutableList.copyOf(extraResults);
+        this.block = block;
         this.shape = shape;
 
         for (Map.Entry<Character, Item> entry : ingredients.entrySet()) {
@@ -102,16 +103,12 @@ public class ShapedRecipe implements CraftingRecipe {
 
     @Override
     public UUID getId() {
-        return new UUID(least, most);
+        return id;
     }
 
     @Override
-    public void setId(UUID uuid) {
-        this.least = uuid.getLeastSignificantBits();
-        this.most = uuid.getMostSignificantBits();
-        if (this.recipeId == null) {
-            this.recipeId = getId().toString();
-        }
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public ShapedRecipe setIngredient(String key, Item item) {
@@ -156,7 +153,7 @@ public class ShapedRecipe implements CraftingRecipe {
     public Item getIngredient(int x, int y) {
         Item item = this.ingredients.get(this.shape[y].charAt(x));
 
-        return item != null ? item.clone() : Item.get(Item.AIR);
+        return item != null ? item.clone() : Item.get(AIR);
     }
 
     public String[] getShape() {
@@ -262,10 +259,15 @@ public class ShapedRecipe implements CraftingRecipe {
     }
 
     @Override
+    public Identifier getBlock() {
+        return block;
+    }
+
+    @Override
     public String toString() {
         StringJoiner joiner = new StringJoiner(", ");
 
-        ingredients.forEach((character, item) -> joiner.add(item.getName() + ":" + item.getDamage()));
+        ingredients.forEach((character, item) -> joiner.add(item.getName() + ":" + item.getMeta()));
         return joiner.toString();
     }
 
@@ -274,13 +276,10 @@ public class ShapedRecipe implements CraftingRecipe {
         return this.getHeight() > 2 || this.getWidth() > 2;
     }
 
-    public static class Entry {
-        public final int x;
-        public final int y;
-
-        public Entry(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
+    @Override
+    public CraftingData toNetwork() {
+        return CraftingData.fromShaped(this.recipeId, this.getWidth(), this.getHeight(),
+                Item.toNetwork(this.getIngredientList()), Item.toNetwork(this.getAllResults()), this.getId(),
+                this.block.getName(), this.priority);
     }
 }

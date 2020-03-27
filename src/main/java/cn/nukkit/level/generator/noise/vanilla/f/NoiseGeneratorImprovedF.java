@@ -1,6 +1,6 @@
 package cn.nukkit.level.generator.noise.vanilla.f;
 
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 
 public class NoiseGeneratorImprovedF {
     private static final float[] GRAD_X = new float[]{1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f};
@@ -14,10 +14,10 @@ public class NoiseGeneratorImprovedF {
     public float zCoord;
 
     public NoiseGeneratorImprovedF() {
-        this(new NukkitRandom(System.currentTimeMillis()));
+        this(new BedrockRandom());
     }
 
-    public NoiseGeneratorImprovedF(NukkitRandom p_i45469_1_) {
+    public NoiseGeneratorImprovedF(BedrockRandom p_i45469_1_) {
         this.permutations = new int[512];
         this.xCoord = p_i45469_1_.nextFloat() * 256.0f;
         this.yCoord = p_i45469_1_.nextFloat() * 256.0f;
@@ -29,7 +29,7 @@ public class NoiseGeneratorImprovedF {
         }
 
         for (int l = 0; l < 256; ++l) {
-            int j = p_i45469_1_.nextBoundedInt(256 - l) + l;
+            int j = p_i45469_1_.nextInt(256 - l) + l;
             int k = this.permutations[l];
             this.permutations[l] = this.permutations[j];
             this.permutations[j] = k;

@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created on 2015/12/7 by xtypr.
@@ -10,12 +11,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockFenceNetherBrick extends BlockFence {
 
-    public BlockFenceNetherBrick() {
-        this(0);
-    }
-
-    public BlockFenceNetherBrick(int meta) {
-        super(meta);
+    public BlockFenceNetherBrick(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -24,22 +21,12 @@ public class BlockFenceNetherBrick extends BlockFence {
     }
 
     @Override
-    public String getName() {
-        return "Nether Brick Fence";
-    }
-
-    @Override
-    public int getId() {
-        return NETHER_BRICK_FENCE;
-    }
-
-    @Override
-    public double getHardness() {
+    public float getHardness() {
         return 2;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 10;
     }
 

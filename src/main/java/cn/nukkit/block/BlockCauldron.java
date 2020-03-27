@@ -1,49 +1,40 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityCauldron;
+import cn.nukkit.blockentity.Cauldron;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
-import cn.nukkit.item.*;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBucket;
+import cn.nukkit.item.ItemIds;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.Tag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockEntityRegistry;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
 
-import java.util.Map;
+import static cn.nukkit.blockentity.BlockEntityTypes.CAULDRON;
 
 /**
  * author: CreeperFace
  * Nukkit Project
  */
-public class BlockCauldron extends BlockSolidMeta {
+public class BlockCauldron extends BlockSolid {
 
-    public BlockCauldron() {
-        super(0);
-    }
-
-    public BlockCauldron(int meta) {
-        super(meta);
+    public BlockCauldron(Identifier id) {
+        super(id);
     }
 
     @Override
-    public int getId() {
-        return CAULDRON_BLOCK;
-    }
-
-    public String getName() {
-        return "Cauldron Block";
-    }
-
-    @Override
-    public double getResistance() {
+    public float getResistance() {
         return 10;
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 2;
     }
 
@@ -58,138 +49,135 @@ public class BlockCauldron extends BlockSolidMeta {
     }
 
     public boolean isFull() {
-        return this.getDamage() == 0x06;
+        return this.getMeta() == 0x06;
     }
 
     public boolean isEmpty() {
-        return this.getDamage() == 0x00;
+        return this.getMeta() == 0x00;
     }
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        BlockEntity be = this.level.getBlockEntity(this);
+        BlockEntity be = this.level.getBlockEntity(this.getPosition());
 
-        if (!(be instanceof BlockEntityCauldron)) {
+        if (!(be instanceof Cauldron)) {
             return false;
         }
 
-        BlockEntityCauldron cauldron = (BlockEntityCauldron) be;
+        Cauldron cauldron = (Cauldron) be;
 
-        switch (item.getId()) {
-            case Item.BUCKET:
-                if (item.getDamage() == 0) {//empty bucket
-                    if (!isFull() || cauldron.isCustomColor() || cauldron.hasPotion()) {
-                        break;
-                    }
+        Identifier itemType = item.getId();
 
-                    ItemBucket bucket = (ItemBucket) item.clone();
-                    bucket.setCount(1);
-                    bucket.setDamage(8);//water bucket
-
-                    PlayerBucketFillEvent ev = new PlayerBucketFillEvent(player, this, null, item, bucket);
-                    this.level.getServer().getPluginManager().callEvent(ev);
-                    if (!ev.isCancelled()) {
-                        replaceBucket(item, player, ev.getItem());
-                        this.setDamage(0);//empty
-                        this.level.setBlock(this, this, true);
-                        cauldron.clearCustomColor();
-                        this.getLevel().addSound(this.add(0.5, 1, 0.5), Sound.CAULDRON_TAKEWATER);
-                    }
-                } else if (item.getDamage() == 8) {//water bucket
-
-                    if (isFull() && !cauldron.isCustomColor() && !cauldron.hasPotion()) {
-                        break;
-                    }
-
-                    ItemBucket bucket = (ItemBucket) item.clone();
-                    bucket.setCount(1);
-                    bucket.setDamage(0);//empty bucket
-
-                    PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, this, null, item, bucket);
-                    this.level.getServer().getPluginManager().callEvent(ev);
-                    if (!ev.isCancelled()) {
-                        replaceBucket(item, player, ev.getItem());
-                        if (cauldron.hasPotion()) {//if has potion
-                            this.setDamage(0);//empty
-                            cauldron.setPotionId(0xffff);//reset potion
-                            cauldron.setSplashPotion(false);
-                            cauldron.clearCustomColor();
-                            this.level.setBlock(this, this, true);
-                            this.level.addSound(this.add(0.5, 0, 0.5), Sound.CAULDRON_EXPLODE);
-                        } else {
-                            this.setDamage(6);//fill
-                            cauldron.clearCustomColor();
-                            this.level.setBlock(this, this, true);
-                            this.getLevel().addLevelSoundEvent(this.add(0.5, 1, 0.5), LevelSoundEventPacket.SOUND_BUCKET_FILL_WATER);
-                        }
-                        //this.update();
-                    }
+        if (itemType == ItemIds.BUCKET) {
+            if (item.getMeta() == 0) {//empty bucket
+                if (!isFull() || cauldron.hasCustomColor() || cauldron.getPotionId() != 0) {
+                    return true;
                 }
-                break;
-            case Item.DYE: //TODO
-                break;
-            case Item.LEATHER_CAP:
-            case Item.LEATHER_TUNIC:
-            case Item.LEATHER_PANTS:
-            case Item.LEATHER_BOOTS:
-                break;
-            case Item.POTION:
-                if (isFull()) {
-                    break;
+
+                ItemBucket bucket = (ItemBucket) item.clone();
+                bucket.setCount(1);
+                bucket.setMeta(8);//water bucket
+
+                PlayerBucketFillEvent ev = new PlayerBucketFillEvent(player, this, null, item, bucket);
+                this.level.getServer().getPluginManager().callEvent(ev);
+                if (!ev.isCancelled()) {
+                    replaceBucket(item, player, ev.getItem());
+                    this.setMeta(0);//empty
+                    this.level.setBlock(this.getPosition(), this, true);
+                    cauldron.setCustomColor(null);
+                    this.getLevel().addSound(this.getPosition().toFloat().add(0.5, 1, 0.5), Sound.CAULDRON_TAKEWATER);
                 }
-                this.setDamage(this.getDamage() + 1);
-                if (this.getDamage() > 0x06)
-                    this.setDamage(0x06);
+            } else if (item.getMeta() == 8) {//water bucket
 
-                if (item.getCount() == 1) {
-                    player.getInventory().setItemInHand(new ItemBlock(new BlockAir()));
-                } else if (item.getCount() > 1) {
-                    item.setCount(item.getCount() - 1);
-                    player.getInventory().setItemInHand(item);
+                if (isFull() && !cauldron.hasCustomColor() && cauldron.getPotionId() == 0) {
+                    return true;
+                }
 
-                    Item bottle = new ItemGlassBottle();
-                    if (player.getInventory().canAddItem(bottle)) {
-                        player.getInventory().addItem(bottle);
+                ItemBucket bucket = (ItemBucket) item.clone();
+                bucket.setCount(1);
+                bucket.setMeta(0);//empty bucket
+
+                PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, this, null, item, bucket);
+                this.level.getServer().getPluginManager().callEvent(ev);
+                if (!ev.isCancelled()) {
+                    replaceBucket(item, player, ev.getItem());
+
+                    if (cauldron.getPotionId() != 0) {//if has potion
+                        this.setMeta(0);//empty
+                        cauldron.setPotionId(0xffff);//reset potion
+                        cauldron.setSplash(false);
+                        cauldron.setCustomColor(null);
+                        this.level.setBlock(this.getPosition(), this, true);
+                        this.level.addSound(this.getPosition(), Sound.CAULDRON_EXPLODE);
                     } else {
-                        player.getLevel().dropItem(player.add(0, 1.3, 0), bottle, player.getDirectionVector().multiply(0.4));
+                        this.setMeta(6);//fill
+                        cauldron.setCustomColor(null);
+                        this.level.setBlock(this.getPosition(), this, true);
+                        this.getLevel().addLevelSoundEvent(this.getPosition().toFloat().add(0.5, 1, 0.5), SoundEvent.BUCKET_FILL_WATER);
                     }
+                    //this.update();
                 }
-
-                this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.CAULDRON_FILLPOTION);
-                break;
-            case Item.GLASS_BOTTLE:
-                if (isEmpty()) {
-                    break;
-                }
-
-                this.setDamage(this.getDamage() - 1);
-                if (this.getDamage() < 0x00)
-                    this.setDamage(0x00);
-
-                if (item.getCount() == 1) {
-                    player.getInventory().setItemInHand(new ItemPotion());
-                } else if (item.getCount() > 1) {
-                    item.setCount(item.getCount() - 1);
-                    player.getInventory().setItemInHand(item);
-
-                    Item potion = new ItemPotion();
-                    if (player.getInventory().canAddItem(potion)) {
-                        player.getInventory().addItem(potion);
-                    } else {
-                        player.getLevel().dropItem(player.add(0, 1.3, 0), potion, player.getDirectionVector().multiply(0.4));
-                    }
-                }
-
-                this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.CAULDRON_TAKEPOTION);
-                break;
-            default:
+            }
+        } else if (itemType == ItemIds.DYE) {
+            // todo
+        } else if (itemType == ItemIds.LEATHER_HELMET || itemType == ItemIds.LEATHER_CHESTPLATE ||
+                itemType == ItemIds.LEATHER_LEGGINGS || itemType == ItemIds.LEATHER_BOOTS) {
+            // todo
+        } else if (itemType == ItemIds.POTION) {
+            if (isFull()) {
                 return true;
+            }
+            this.setMeta(this.getMeta() + 1);
+            if (this.getMeta() > 0x06)
+                this.setMeta(0x06);
+
+            if (item.getCount() == 1) {
+                player.getInventory().clear(player.getInventory().getHeldItemIndex());
+            } else if (item.getCount() > 1) {
+                item.setCount(item.getCount() - 1);
+                player.getInventory().setItemInHand(item);
+
+                Item bottle = Item.get(ItemIds.GLASS_BOTTLE);
+                if (player.getInventory().canAddItem(bottle)) {
+                    player.getInventory().addItem(bottle);
+                } else {
+                    player.getLevel().dropItem(player.getPosition().toFloat().add(0, 1.3, 0), bottle, player.getDirectionVector().mul(0.4));
+                }
+            }
+
+            this.level.addSound(this.getPosition(), Sound.CAULDRON_FILLPOTION);
+        } else if (itemType == ItemIds.GLASS_BOTTLE) {
+            if (isEmpty()) {
+                return true;
+            }
+
+            this.setMeta(this.getMeta() - 1);
+            if (this.getMeta() < 0x00)
+                this.setMeta(0x00);
+
+            if (item.getCount() == 1) {
+                player.getInventory().setItemInHand(Item.get(ItemIds.POTION));
+            } else if (item.getCount() > 1) {
+                item.setCount(item.getCount() - 1);
+                player.getInventory().setItemInHand(item);
+
+                Item potion = Item.get(ItemIds.POTION);
+                if (player.getInventory().canAddItem(potion)) {
+                    player.getInventory().addItem(potion);
+                } else {
+                    player.getLevel().dropItem(player.getPosition().toFloat().add(0, 1.3, 0), potion, player.getDirectionVector().mul(0.4));
+                }
+            }
+
+            this.level.addSound(this.getPosition(), Sound.CAULDRON_TAKEPOTION);
+        } else {
+            return true;
         }
 
-        this.level.updateComparatorOutputLevel(this);
+        this.level.updateComparatorOutputLevel(this.getPosition());
         return true;
     }
-    
+
     protected void replaceBucket(Item oldBucket, Player player, Item newBucket) {
         if (player.isSurvival() || player.isAdventure()) {
             if (oldBucket.getCount() == 1) {
@@ -199,41 +187,25 @@ public class BlockCauldron extends BlockSolidMeta {
                 if (player.getInventory().canAddItem(newBucket)) {
                     player.getInventory().addItem(newBucket);
                 } else {
-                    player.getLevel().dropItem(player.add(0, 1.3, 0), newBucket, player.getDirectionVector().multiply(0.4));
+                    player.getLevel().dropItem(player.getPosition().add(0, 1.3, 0), newBucket, player.getDirectionVector().mul(0.4));
                 }
             }
         }
     }
-    
+
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        CompoundTag nbt = new CompoundTag("")
-                .putString("id", BlockEntity.CAULDRON)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z)
-                .putShort("PotionId", 0xffff)
-                .putByte("SplashPotion", 0);
-
-        if (item.hasCustomBlockData()) {
-            Map<String, Tag> customData = item.getCustomBlockData().getTags();
-            for (Map.Entry<String, Tag> tag : customData.entrySet()) {
-                nbt.put(tag.getKey(), tag.getValue());
-            }
-        }
-
-        BlockEntityCauldron cauldron = (BlockEntityCauldron) BlockEntity.createBlockEntity(BlockEntity.CAULDRON, this.level.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
-        if (cauldron == null) {
-            return false;
-        }
-        this.getLevel().setBlock(block, this, true, true);
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        Cauldron cauldron = BlockEntityRegistry.get().newEntity(CAULDRON, this.getChunk(), this.getPosition());
+        cauldron.loadAdditionalData(item.getTag());
+        cauldron.setPotionId(0xffff);
+        this.getLevel().setBlock(block.getPosition(), this, true, true);
         return true;
     }
 
     @Override
     public Item[] getDrops(Item item) {
         if (item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{new ItemCauldron()};
+            return new Item[]{Item.get(ItemIds.CAULDRON)};
         }
 
         return new Item[0];
@@ -241,7 +213,7 @@ public class BlockCauldron extends BlockSolidMeta {
 
     @Override
     public Item toItem() {
-        return new ItemCauldron();
+        return Item.get(ItemIds.CAULDRON);
     }
 
     public boolean hasComparatorInputOverride() {
@@ -249,7 +221,7 @@ public class BlockCauldron extends BlockSolidMeta {
     }
 
     public int getComparatorInputOverride() {
-        return this.getDamage();
+        return this.getMeta();
     }
 
     @Override

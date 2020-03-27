@@ -1,8 +1,8 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
+import cn.nukkit.player.Player;
 
 /**
  * Created on 2015/11/11 by xtypr.
@@ -11,7 +11,7 @@ import cn.nukkit.lang.TranslationContainer;
 public class ListCommand extends VanillaCommand {
 
     public ListCommand(String name) {
-        super(name, "%nukkit.command.list.description", "%commands.players.usage");
+        super(name, "commands.list.description", "commands.players.usage");
         this.setPermission("nukkit.command.list");
         this.commandParameters.clear();
     }

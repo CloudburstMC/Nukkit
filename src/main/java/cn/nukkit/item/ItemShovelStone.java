@@ -1,21 +1,15 @@
 package cn.nukkit.item;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class ItemShovelStone extends ItemTool {
 
-    public ItemShovelStone() {
-        this(0, 1);
-    }
-
-    public ItemShovelStone(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemShovelStone(Integer meta, int count) {
-        super(STONE_SHOVEL, meta, count, "Stone Shovel");
+    public ItemShovelStone(Identifier id) {
+        super(id);
     }
 
     @Override

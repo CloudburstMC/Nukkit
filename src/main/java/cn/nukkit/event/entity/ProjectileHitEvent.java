@@ -1,6 +1,6 @@
 package cn.nukkit.event.entity;
 
-import cn.nukkit.entity.projectile.EntityProjectile;
+import cn.nukkit.entity.impl.projectile.EntityProjectile;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.MovingObjectPosition;

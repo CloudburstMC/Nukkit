@@ -2,7 +2,9 @@ package cn.nukkit.scheduler;
 
 import cn.nukkit.Server;
 import cn.nukkit.utils.ThreadStore;
+import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -10,6 +12,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * @author Nukkit Project Team
  */
+@Log4j2
 public abstract class AsyncTask implements Runnable {
 
     public static final Queue<AsyncTask> FINISHED_LIST = new ConcurrentLinkedQueue<>();
@@ -76,18 +79,15 @@ public abstract class AsyncTask implements Runnable {
     }
 
     public static void collectTask() {
-        Timings.schedulerAsyncTimer.startTiming();
-        while (!FINISHED_LIST.isEmpty()) {
-            AsyncTask task = FINISHED_LIST.poll();
-            try {
-                task.onCompletion(Server.getInstance());
-            } catch (Exception e) {
-                Server.getInstance().getLogger().critical("Exception while async task "
-                        + task.getTaskId()
-                        + " invoking onCompletion", e);
+        try (Timing ignored = Timings.schedulerAsyncTimer.startTiming()) {
+            while (!FINISHED_LIST.isEmpty()) {
+                AsyncTask task = FINISHED_LIST.poll();
+                try {
+                    task.onCompletion(Server.getInstance());
+                } catch (Exception e) {
+                    log.error("Exception while async task " + task.getTaskId() + " invoking onCompletion", e);
+                }
             }
         }
-        Timings.schedulerAsyncTimer.stopTiming();
     }
-
 }

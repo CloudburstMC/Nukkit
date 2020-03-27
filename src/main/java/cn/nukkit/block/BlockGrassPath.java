@@ -1,9 +1,12 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.FARMLAND;
 
 /**
  * Created on 2015/11/22 by xtypr.
@@ -11,17 +14,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockGrassPath extends BlockGrass {
 
-    public BlockGrassPath() {
-    }
-
-    @Override
-    public int getId() {
-        return GRASS_PATH;
-    }
-
-    @Override
-    public String getName() {
-        return "Grass Path";
+    public BlockGrassPath(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -30,23 +24,18 @@ public class BlockGrassPath extends BlockGrass {
     }
 
     @Override
-    public double getMaxY() {
-        return this.y + 0.9375;
+    public float getMaxY() {
+        return this.getY() + 0.9375f;
     }
 
     @Override
-    public double getResistance() {
-        return 3.25;
+    public float getResistance() {
+        return 3.25f;
     }
 
     @Override
     public BlockColor getColor() {
         return BlockColor.DIRT_BLOCK_COLOR;
-    }
-
-    @Override
-    public boolean canSilkTouch() {
-        return true;
     }
 
     @Override
@@ -58,7 +47,7 @@ public class BlockGrassPath extends BlockGrass {
     public boolean onActivate(Item item, Player player) {
         if (item.isHoe()) {
             item.useOn(this);
-            this.getLevel().setBlock(this, get(FARMLAND), true);
+            this.getLevel().setBlock(this.getPosition(), Block.get(FARMLAND), true);
             return true;
         }
 

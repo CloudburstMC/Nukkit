@@ -3,38 +3,30 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * @author Nukkit Project Team
  */
 public class BlockDiamond extends BlockSolid {
 
-    public BlockDiamond() {
+    public BlockDiamond(Identifier id) {
+        super(id);
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 5;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 30;
     }
 
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
-    }
-
-    @Override
-    public int getId() {
-        return DIAMOND_BLOCK;
-    }
-
-    @Override
-    public String getName() {
-        return "Diamond Block";
     }
 
     @Override

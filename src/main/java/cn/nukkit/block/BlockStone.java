@@ -2,12 +2,16 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.COBBLESTONE;
+import static cn.nukkit.block.BlockIds.STONE;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BlockStone extends BlockSolidMeta {
+public class BlockStone extends BlockSolid {
     public static final int NORMAL = 0;
     public static final int GRANITE = 1;
     public static final int POLISHED_GRANITE = 2;
@@ -17,26 +21,17 @@ public class BlockStone extends BlockSolidMeta {
     public static final int POLISHED_ANDESITE = 6;
 
 
-    public BlockStone() {
-        this(0);
-    }
-
-    public BlockStone(int meta) {
-        super(meta);
+    public BlockStone(Identifier id) {
+        super(id);
     }
 
     @Override
-    public int getId() {
-        return STONE;
+    public float getHardness() {
+        return 1.5f;
     }
 
     @Override
-    public double getHardness() {
-        return 1.5;
-    }
-
-    @Override
-    public double getResistance() {
+    public float getResistance() {
         return 10;
     }
 
@@ -46,25 +41,10 @@ public class BlockStone extends BlockSolidMeta {
     }
 
     @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Stone",
-                "Granite",
-                "Polished Granite",
-                "Diorite",
-                "Polished Diorite",
-                "Andesite",
-                "Polished Andesite",
-                "Unknown Stone"
-        };
-        return names[this.getDamage() & 0x07];
-    }
-
-    @Override
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
-                    Item.get(this.getDamage() == 0 ? Item.COBBLESTONE : Item.STONE, this.getDamage(), 1)
+                    Item.get(this.getMeta() == 0 ? COBBLESTONE : STONE, this.getMeta(), 1)
             };
         } else {
             return new Item[0];

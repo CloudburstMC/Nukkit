@@ -3,10 +3,14 @@ package cn.nukkit.plugin;
 import cn.nukkit.Server;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.PluginCommand;
 import cn.nukkit.command.PluginIdentifiableCommand;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
 import com.google.common.base.Preconditions;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
+import org.slf4j.Logger;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -24,6 +28,7 @@ import java.util.LinkedHashMap;
  * @see cn.nukkit.plugin.PluginDescription
  * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
+@Log4j2
 abstract public class PluginBase implements Plugin {
 
     private PluginLoader loader;
@@ -40,8 +45,7 @@ abstract public class PluginBase implements Plugin {
     private Config config;
     private File configFile;
     private File file;
-    private PluginLogger logger;
-
+    private Logger logger;
 
     public void onLoad() {
 
@@ -137,7 +141,7 @@ abstract public class PluginBase implements Plugin {
         }
     }
 
-    public PluginLogger getLogger() {
+    public Logger getLogger() {
         return logger;
     }
 
@@ -155,14 +159,15 @@ abstract public class PluginBase implements Plugin {
     /**
      * TODO: FINISH JAVADOC
      */
-    public PluginIdentifiableCommand getCommand(String name) {
+    public <T extends Plugin> PluginCommand<T> getCommand(String name) {
         PluginIdentifiableCommand command = this.getServer().getPluginCommand(name);
         if (command == null || !command.getPlugin().equals(this)) {
             command = this.getServer().getPluginCommand(this.description.getName().toLowerCase() + ":" + name);
         }
 
-        if (command != null && command.getPlugin().equals(this)) {
-            return command;
+        if (command instanceof PluginCommand && command.getPlugin().equals(this)) {
+            //noinspection unchecked
+            return (PluginCommand<T>) command;
         } else {
             return null;
         }
@@ -206,7 +211,7 @@ abstract public class PluginBase implements Plugin {
                     return true;
                 }
             } catch (IOException e) {
-                Server.getInstance().getLogger().logException(e);
+                log.throwing(Level.ERROR, e);
             }
         }
         return false;
@@ -223,7 +228,7 @@ abstract public class PluginBase implements Plugin {
     @Override
     public void saveConfig() {
         if (!this.getConfig().save()) {
-            this.getLogger().critical("Could not save config to " + this.configFile.toString());
+            this.getLogger().error("Could not save config to " + this.configFile.toString());
         }
     }
 
@@ -245,7 +250,7 @@ abstract public class PluginBase implements Plugin {
             try {
                 this.config.setDefault(yaml.loadAs(Utils.readFile(this.configFile), LinkedHashMap.class));
             } catch (IOException e) {
-                Server.getInstance().getLogger().logException(e);
+                log.throwing(Level.ERROR, e);
             }
         }
     }

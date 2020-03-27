@@ -1,39 +1,27 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * Created by Leonidius20 on 18.08.18.
  */
-public class BlockObserver extends BlockSolidMeta implements Faceable {
+public class BlockObserver extends BlockSolid implements Faceable {
 
-    public BlockObserver() {
-        this(0);
-    }
-
-    public BlockObserver(int meta) {
-        super(meta);
+    public BlockObserver(Identifier id) {
+        super(id);
     }
 
     @Override
-    public String getName() {
-        return "Observer";
-    }
-
-    @Override
-    public int getId() {
-        return OBSERVER;
-    }
-
-    @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         int[] faces = {2, 5, 3, 4};
-        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
-        this.getLevel().setBlock(block, this, true, true);
+        this.setMeta(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+        this.getLevel().setBlock(block.getPosition(), this, true, true);
         return true;
     }
 
@@ -48,18 +36,18 @@ public class BlockObserver extends BlockSolidMeta implements Faceable {
     }
 
     @Override
-    public double getHardness() {
-        return 3.5;
+    public float getHardness() {
+        return 3.5f;
     }
 
     @Override
-    public double getResistance() {
-        return 17.5;
+    public float getResistance() {
+        return 17.5f;
     }
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
     }
 
 }

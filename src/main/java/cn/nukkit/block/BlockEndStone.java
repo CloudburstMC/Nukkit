@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created on 2015/12/1 by xtypr.
@@ -10,26 +11,17 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockEndStone extends BlockSolid {
 
-    public BlockEndStone() {
+    public BlockEndStone(Identifier id) {
+        super(id);
     }
 
     @Override
-    public String getName() {
-        return "End Stone";
-    }
-
-    @Override
-    public int getId() {
-        return END_STONE;
-    }
-
-    @Override
-    public double getHardness() {
+    public float getHardness() {
         return 3;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 45;
     }
 

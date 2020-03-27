@@ -1,38 +1,31 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
+
+import static cn.nukkit.item.ItemIds.ENDER_EYE;
 
 /**
  * Created by Pub4Game on 26.12.2015.
  */
-public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceable {
+public class BlockEndPortalFrame extends BlockTransparent implements Faceable {
 
-    public BlockEndPortalFrame() {
-        this(0);
-    }
-
-    public BlockEndPortalFrame(int meta) {
-        super(meta);
+    public BlockEndPortalFrame(Identifier id) {
+        super(id);
     }
 
     @Override
-    public int getId() {
-        return END_PORTAL_FRAME;
-    }
-
-    @Override
-    public double getResistance() {
+    public float getResistance() {
         return 18000000;
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return -1;
     }
 
@@ -42,18 +35,13 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
     }
 
     @Override
-    public String getName() {
-        return "End Portal Frame";
-    }
-
-    @Override
     public boolean isBreakable(Item item) {
         return false;
     }
 
     @Override
-    public double getMaxY() {
-        return this.y + ((this.getDamage() & 0x04) > 0 ? 1 : 0.8125);
+    public float getMaxY() {
+        return this.getY() + ((this.getMeta() & 0x04) > 0 ? 1 : 0.8125f);
     }
 
     @Override
@@ -71,7 +59,7 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
     }
 
     public int getComparatorInputOverride() {
-        return (getDamage() & 4) != 0 ? 15 : 0;
+        return (getMeta() & 4) != 0 ? 15 : 0;
     }
 
     @Override
@@ -81,10 +69,10 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if ((this.getDamage() & 0x04) == 0 && player != null && item.getId() == Item.ENDER_EYE) {
-            this.setDamage(this.getDamage() + 4);
-            this.getLevel().setBlock(this, this, true, true);
-            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BLOCK_END_PORTAL_FRAME_FILL);
+        if ((this.getMeta() & 0x04) == 0 && player != null && item.getId() == ENDER_EYE) {
+            this.setMeta(this.getMeta() + 4);
+            this.getLevel().setBlock(this.getPosition(), this, true, true);
+            this.getLevel().addLevelSoundEvent(this.getPosition(), SoundEvent.BLOCK_END_PORTAL_FRAME_FILL);
             //TODO: create portal
             return true;
         }
@@ -98,16 +86,21 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return Item.get(id, 0);
     }
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
     }
 
     @Override
     public BlockColor getColor() {
         return BlockColor.GREEN_BLOCK_COLOR;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

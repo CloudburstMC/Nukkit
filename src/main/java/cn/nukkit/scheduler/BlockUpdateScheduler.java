@@ -4,9 +4,10 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockUpdateEntry;
 import com.google.common.collect.Maps;
+import com.nukkitx.math.vector.Vector3i;
+import com.nukkitx.math.vector.Vector4i;
 
 import java.util.*;
 
@@ -53,8 +54,8 @@ public class BlockUpdateScheduler {
                 while (updateIterator.hasNext()) {
                     BlockUpdateEntry entry = updateIterator.next();
 
-                    Vector3 pos = entry.pos;
-                    if (level.isChunkLoaded(NukkitMath.floorDouble(pos.x) >> 4, NukkitMath.floorDouble(pos.z) >> 4)) {
+                    Vector3i pos = entry.pos;
+                    if (level.isChunkLoaded(NukkitMath.floorDouble(pos.getX()) >> 4, NukkitMath.floorDouble(pos.getZ()) >> 4)) {
                         Block block = level.getBlock(entry.pos);
 
                         updateIterator.remove();
@@ -77,7 +78,7 @@ public class BlockUpdateScheduler {
         for (Map.Entry<Long, LinkedHashSet<BlockUpdateEntry>> tickEntries : this.queuedUpdates.entrySet()) {
             LinkedHashSet<BlockUpdateEntry> tickSet = tickEntries.getValue();
             for (BlockUpdateEntry update : tickSet) {
-                Vector3 pos = update.pos;
+                Vector3i pos = update.pos;
 
                 if (pos.getX() >= boundingBox.getMinX() && pos.getX() < boundingBox.getMaxX() && pos.getZ() >= boundingBox.getMinZ() && pos.getZ() < boundingBox.getMaxZ()) {
                     if (set == null) {
@@ -92,7 +93,7 @@ public class BlockUpdateScheduler {
         return set;
     }
 
-    public boolean isBlockTickPending(Vector3 pos, Block block) {
+    public boolean isBlockTickPending(Vector3i pos, Block block) {
         Set<BlockUpdateEntry> tmpUpdates = pendingUpdates;
         if (tmpUpdates == null || tmpUpdates.isEmpty()) return false;
         return tmpUpdates.contains(new BlockUpdateEntry(pos, block));
@@ -130,7 +131,7 @@ public class BlockUpdateScheduler {
         return false;
     }
 
-    public boolean remove(Vector3 pos) {
+    public boolean remove(Vector4i pos) {
         for (Map.Entry<Long, LinkedHashSet<BlockUpdateEntry>> tickUpdateSet : queuedUpdates.entrySet()) {
             if (tickUpdateSet.getValue().remove(pos)) {
                 return true;

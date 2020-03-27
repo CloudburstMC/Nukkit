@@ -3,38 +3,43 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
+import com.nukkitx.protocol.bedrock.packet.LevelSoundEvent2Packet;
+
+import java.util.Arrays;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BlockDoubleSlab extends BlockSolidMeta {
-    public static final int STONE = 0;
-    public static final int SANDSTONE = 1;
-    public static final int WOODEN = 2;
-    public static final int COBBLESTONE = 3;
-    public static final int BRICK = 4;
-    public static final int STONE_BRICK = 5;
-    public static final int QUARTZ = 6;
-    public static final int NETHER_BRICK = 7;
+public class BlockDoubleSlab extends BlockSolid {
 
-    public BlockDoubleSlab() {
-        this(0);
+    private final Identifier slabId;
+    private final BlockColor[] colors;
+
+    protected BlockDoubleSlab(Identifier id, Identifier slabId, BlockColor[] colors) {
+        super(id);
+        this.slabId = slabId;
+        this.colors = colors;
     }
 
-    public BlockDoubleSlab(int meta) {
-        super(meta);
+    public static BlockFactory factory(Identifier slabId, BlockColor... colors) {
+        return id -> new BlockDoubleSlab(id, slabId, Arrays.copyOf(colors, 8));
+    }
+
+    public Identifier getSlabId() {
+        return this.slabId;
     }
 
     @Override
-    public int getId() {
-        return DOUBLE_SLAB;
+    public float getResistance() {
+        return 30;
     }
 
-    //todo hardness and residence
-
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 2;
     }
 
@@ -44,25 +49,15 @@ public class BlockDoubleSlab extends BlockSolidMeta {
     }
 
     @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Stone",
-                "Sandstone",
-                "Wooden",
-                "Cobblestone",
-                "Brick",
-                "Stone Brick",
-                "Quartz",
-                "Nether Brick"
-        };
-        return "Double " + names[this.getDamage() & 0x07] + " Slab";
+    public boolean canHarvestWithHand() {
+        return false;
     }
 
     @Override
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{
-                    Item.get(Item.SLAB, this.getDamage() & 0x07, 2)
+                    Item.get(this.slabId, this.getMeta() & 0x07, 2)
             };
         } else {
             return new Item[0];
@@ -71,21 +66,19 @@ public class BlockDoubleSlab extends BlockSolidMeta {
 
     @Override
     public BlockColor getColor() {
-        switch (this.getDamage() & 0x07) {
-            case BlockDoubleSlab.WOODEN:
-                return BlockColor.WOOD_BLOCK_COLOR;
-            default:
-            case BlockDoubleSlab.COBBLESTONE:
-            case BlockDoubleSlab.BRICK:
-            case BlockDoubleSlab.STONE_BRICK:
-            case BlockDoubleSlab.STONE:
-                return BlockColor.STONE_BLOCK_COLOR;
-            case BlockDoubleSlab.SANDSTONE:
-                return BlockColor.SAND_BLOCK_COLOR;
-            case BlockDoubleSlab.QUARTZ:
-                return BlockColor.QUARTZ_BLOCK_COLOR;
-            case BlockDoubleSlab.NETHER_BRICK:
-                return BlockColor.NETHERRACK_BLOCK_COLOR;
-        }
+        return colors[this.getMeta() & 0x7];
+    }
+
+    protected void playPlaceSound() {
+        LevelSoundEvent2Packet pk = new LevelSoundEvent2Packet();
+        pk.setSound(SoundEvent.ITEM_USE_ON);
+        pk.setExtraData(725); // Who knows what this means? It's what is sent per ProxyPass
+        pk.setPosition(Vector3f.from(this.getX() + 0.5f, this.getY() + 0.5f, this.getZ() + 0.5f));
+        pk.setIdentifier("");
+        pk.setBabySound(false);
+        pk.setRelativeVolumeDisabled(false);
+
+
+        this.getLevel().addChunkPacket(this.getChunk().getX(), this.getChunk().getZ(), pk);
     }
 }

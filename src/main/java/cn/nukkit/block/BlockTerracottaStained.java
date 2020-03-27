@@ -4,43 +4,26 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
+import cn.nukkit.utils.Identifier;
 
 /**
  * Created on 2015/12/2 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockTerracottaStained extends BlockSolidMeta {
+public class BlockTerracottaStained extends BlockSolid {
 
-    public BlockTerracottaStained() {
-        this(0);
-    }
-
-    public BlockTerracottaStained(int meta) {
-        super(meta);
-    }
-
-    public BlockTerracottaStained(DyeColor dyeColor) {
-        this(dyeColor.getWoolData());
+    public BlockTerracottaStained(Identifier id) {
+        super(id);
     }
 
     @Override
-    public String getName() {
-        return getDyeColor().getName() + " Terracotta";
+    public float getHardness() {
+        return 1.25f;
     }
 
     @Override
-    public int getId() {
-        return STAINED_TERRACOTTA;
-    }
-
-    @Override
-    public double getHardness() {
-        return 1.25;
-    }
-
-    @Override
-    public double getResistance() {
-        return 0.75;
+    public float getResistance() {
+        return 0.75f;
     }
 
     @Override
@@ -59,11 +42,11 @@ public class BlockTerracottaStained extends BlockSolidMeta {
 
     @Override
     public BlockColor getColor() {
-        return DyeColor.getByWoolData(getDamage()).getColor();
+        return DyeColor.getByWoolData(getMeta()).getColor();
     }
 
     public DyeColor getDyeColor() {
-        return DyeColor.getByWoolData(getDamage());
+        return DyeColor.getByWoolData(getMeta());
     }
 
 }

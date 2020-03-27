@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.Identifier;
 
 /**
  * author: Angelic47
@@ -9,32 +10,23 @@ import cn.nukkit.item.ItemTool;
  */
 public class BlockCobblestone extends BlockSolid {
 
-    public BlockCobblestone() {
+    public BlockCobblestone(Identifier id) {
+        super(id);
     }
 
     @Override
-    public int getId() {
-        return COBBLESTONE;
-    }
-
-    @Override
-    public double getHardness() {
+    public float getHardness() {
         return 2;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 30;
     }
 
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
-    }
-
-    @Override
-    public String getName() {
-        return "Cobblestone";
     }
 
     @Override

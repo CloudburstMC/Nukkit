@@ -1,43 +1,30 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 /**
  * Created on 2015/12/8 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockPumpkin extends BlockSolidMeta implements Faceable {
-    public BlockPumpkin() {
-        this(0);
-    }
-
-    public BlockPumpkin(int meta) {
-        super(meta);
+public class BlockPumpkin extends BlockSolid implements Faceable {
+    public BlockPumpkin(Identifier id) {
+        super(id);
     }
 
     @Override
-    public String getName() {
-        return "Pumpkin";
-    }
-
-    @Override
-    public int getId() {
-        return PUMPKIN;
-    }
-
-    @Override
-    public double getHardness() {
+    public float getHardness() {
         return 1;
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 5;
     }
 
@@ -48,13 +35,13 @@ public class BlockPumpkin extends BlockSolidMeta implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return Item.get(id, 0);
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.setDamage(player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0);
-        this.getLevel().setBlock(block, this, true, true);
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        this.setMeta(player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0);
+        this.getLevel().setBlock(block.getPosition(), this, true, true);
         return true;
     }
 
@@ -75,6 +62,6 @@ public class BlockPumpkin extends BlockSolidMeta implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x7);
     }
 }

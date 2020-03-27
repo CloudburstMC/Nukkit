@@ -12,7 +12,7 @@ public class VehicleDamageEvent extends VehicleEvent implements Cancellable {
         return handlers;
     }
 
-    private final cn.nukkit.entity.Entity attacker;
+    private final Entity attacker;
     private double damage;
 
     public VehicleDamageEvent(Entity vehicle, Entity attacker, double damage) {
@@ -21,7 +21,7 @@ public class VehicleDamageEvent extends VehicleEvent implements Cancellable {
         this.damage = damage;
     }
 
-    public cn.nukkit.entity.Entity getAttacker() {
+    public Entity getAttacker() {
         return attacker;
     }
 

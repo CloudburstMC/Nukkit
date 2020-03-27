@@ -1,10 +1,9 @@
 package cn.nukkit.level.biome;
 
-import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.populator.type.Populator;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,7 @@ import java.util.List;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Biome implements BlockID {
+public abstract class Biome {
     public static final int MAX_BIOMES = 256;
     public static final Biome[] biomes = new Biome[MAX_BIOMES];
     public static final List<Biome> unorderedBiomes = new ArrayList<>();
@@ -57,8 +56,8 @@ public abstract class Biome implements BlockID {
         this.populators.add(populator);
     }
 
-    public void populateChunk(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random) {
-        FullChunk chunk = level.getChunk(chunkX, chunkZ);
+    public void populateChunk(ChunkManager level, final int chunkX, final int chunkZ, BedrockRandom random) {
+        IChunk chunk = level.getChunk(chunkX, chunkZ);
         for (Populator populator : populators) {
             populator.populate(level, chunkX, chunkZ, random, chunk);
         }

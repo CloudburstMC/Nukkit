@@ -3,8 +3,10 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.locale.TranslationContainer;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.regex.Pattern;
 
 /**
@@ -14,11 +16,11 @@ import java.util.regex.Pattern;
 public class PardonIpCommand extends VanillaCommand {
 
     public PardonIpCommand(String name) {
-        super(name, "%nukkit.command.unban.ip.description", "%commands.unbanip.usage");
+        super(name);
         this.setPermission("nukkit.command.unban.ip");
         this.setAliases(new String[]{"unbanip", "unban-ip", "pardonip"});
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("ip")
         });
     }
@@ -39,7 +41,13 @@ public class PardonIpCommand extends VanillaCommand {
 
         if (Pattern.matches("^(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])$", value)) {
             sender.getServer().getIPBans().remove(value);
-            sender.getServer().getNetwork().unblockAddress(value);
+
+            try {
+                sender.getServer().getNetwork().unblockAddress(InetAddress.getByName(value));
+            } catch (UnknownHostException e) {
+                sender.sendMessage(new TranslationContainer("commands.unbanip.invalid"));
+                return true;
+            }
 
             Command.broadcastCommandMessage(sender, new TranslationContainer("commands.unbanip.success", value));
         } else {

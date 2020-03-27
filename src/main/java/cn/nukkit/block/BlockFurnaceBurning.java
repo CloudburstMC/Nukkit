@@ -1,43 +1,34 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityFurnace;
+import cn.nukkit.blockentity.BlockEntityType;
+import cn.nukkit.blockentity.Furnace;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.nbt.tag.StringTag;
-import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.player.Player;
+import cn.nukkit.registry.BlockEntityRegistry;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
-import java.util.Map;
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * author: Angelic47
  * Nukkit Project
  */
-public class BlockFurnaceBurning extends BlockSolidMeta implements Faceable {
+public class BlockFurnaceBurning extends BlockSolid implements Faceable {
+    private BlockEntityType<? extends Furnace> furnaceEntity;
 
-    public BlockFurnaceBurning() {
-        this(0);
+    protected BlockFurnaceBurning(Identifier id, BlockEntityType<? extends Furnace> entity) {
+        super(id);
+        this.furnaceEntity = entity;
     }
 
-    public BlockFurnaceBurning(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return BURNING_FURNACE;
-    }
-
-    @Override
-    public String getName() {
-        return "Burning Furnace";
+    public static BlockFactory factory(BlockEntityType<? extends Furnace> furnaceEntity) {
+        return id -> new BlockFurnaceBurning(id, furnaceEntity);
     }
 
     @Override
@@ -46,13 +37,13 @@ public class BlockFurnaceBurning extends BlockSolidMeta implements Faceable {
     }
 
     @Override
-    public double getHardness() {
-        return 3.5;
+    public float getHardness() {
+        return 3.5f;
     }
 
     @Override
-    public double getResistance() {
-        return 17.5;
+    public float getResistance() {
+        return 17.5f;
     }
 
     @Override
@@ -66,62 +57,35 @@ public class BlockFurnaceBurning extends BlockSolidMeta implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         int[] faces = {2, 5, 3, 4};
-        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
-        this.getLevel().setBlock(block, this, true, true);
-        CompoundTag nbt = new CompoundTag()
-                .putList(new ListTag<>("Items"))
-                .putString("id", BlockEntity.FURNACE)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z);
+        this.setMeta(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+        this.getLevel().setBlock(block.getPosition(), this, true, true);
 
+        Furnace furnace = BlockEntityRegistry.get().newEntity(furnaceEntity, this.getChunk(), this.getPosition());
+        furnace.loadAdditionalData(item.getTag());
         if (item.hasCustomName()) {
-            nbt.putString("CustomName", item.getCustomName());
+            furnace.setCustomName(item.getCustomName());
         }
 
-        if (item.hasCustomBlockData()) {
-            Map<String, Tag> customData = item.getCustomBlockData().getTags();
-            for (Map.Entry<String, Tag> tag : customData.entrySet()) {
-                nbt.put(tag.getKey(), tag.getValue());
-            }
-        }
-
-        BlockEntityFurnace furnace = (BlockEntityFurnace) BlockEntity.createBlockEntity(BlockEntity.FURNACE, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
-        return furnace != null;
+        return true;
     }
 
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, new BlockAir(), true, true);
+        this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true, true);
         return true;
     }
 
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            BlockEntity t = this.getLevel().getBlockEntity(this);
-            BlockEntityFurnace furnace;
-            if (t instanceof BlockEntityFurnace) {
-                furnace = (BlockEntityFurnace) t;
+            BlockEntity blockEntity = this.getLevel().getBlockEntity(this.getPosition());
+            Furnace furnace;
+            if (blockEntity instanceof Furnace) {
+                furnace = (Furnace) blockEntity;
             } else {
-                CompoundTag nbt = new CompoundTag()
-                        .putList(new ListTag<>("Items"))
-                        .putString("id", BlockEntity.FURNACE)
-                        .putInt("x", (int) this.x)
-                        .putInt("y", (int) this.y)
-                        .putInt("z", (int) this.z);
-                furnace = (BlockEntityFurnace) BlockEntity.createBlockEntity(BlockEntity.FURNACE, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
-                if (furnace == null) {
-                    return false;
-                }
-            }
-
-            if (furnace.namedTag.contains("Lock") && furnace.namedTag.get("Lock") instanceof StringTag) {
-                if (!furnace.namedTag.getString("Lock").equals(item.getCustomName())) {
-                    return true;
-                }
+                furnace = BlockEntityRegistry.get().newEntity(furnaceEntity, this.getChunk(), this.getPosition());
             }
 
             player.addWindow(furnace.getInventory());
@@ -132,7 +96,7 @@ public class BlockFurnaceBurning extends BlockSolidMeta implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(new BlockFurnace());
+        return Item.get(getId(), 0);
     }
 
     @Override
@@ -152,10 +116,10 @@ public class BlockFurnaceBurning extends BlockSolidMeta implements Faceable {
 
     @Override
     public int getComparatorInputOverride() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntity blockEntity = this.level.getBlockEntity(this.getPosition());
 
-        if (blockEntity instanceof BlockEntityFurnace) {
-            return ContainerInventory.calculateRedstone(((BlockEntityFurnace) blockEntity).getInventory());
+        if (blockEntity instanceof Furnace) {
+            return ContainerInventory.calculateRedstone(((Furnace) blockEntity).getInventory());
         }
 
         return super.getComparatorInputOverride();
@@ -168,6 +132,7 @@ public class BlockFurnaceBurning extends BlockSolidMeta implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x7);
     }
+
 }

@@ -3,6 +3,9 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.PORTAL;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -10,17 +13,8 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockObsidian extends BlockSolid {
 
-    public BlockObsidian() {
-    }
-
-    @Override
-    public String getName() {
-        return "Obsidian";
-    }
-
-    @Override
-    public int getId() {
-        return OBSIDIAN;
+    public BlockObsidian(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -29,12 +23,12 @@ public class BlockObsidian extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
+    public float getHardness() {
         return 35; //50 in PC
     }
 
     @Override
-    public double getResistance() {
+    public float getResistance() {
         return 6000;
     }
 
@@ -58,7 +52,7 @@ public class BlockObsidian extends BlockSolid {
                 this.west(), this.east(),
         };
         for (Block aNearby : nearby) {
-            if (aNearby != null) if (aNearby.getId() == NETHER_PORTAL) {
+            if (aNearby != null) if (aNearby.getId() == PORTAL) {
                 aNearby.onBreak(item);
             }
         }

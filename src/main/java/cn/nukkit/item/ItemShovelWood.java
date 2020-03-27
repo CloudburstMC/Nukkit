@@ -1,21 +1,15 @@
 package cn.nukkit.item;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class ItemShovelWood extends ItemTool {
 
-    public ItemShovelWood() {
-        this(0, 1);
-    }
-
-    public ItemShovelWood(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemShovelWood(Integer meta, int count) {
-        super(WOODEN_SHOVEL, meta, count, "Wooden Shovel");
+    public ItemShovelWood(Identifier id) {
+        super(id);
     }
 
     @Override

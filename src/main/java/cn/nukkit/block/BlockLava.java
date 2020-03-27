@@ -1,23 +1,27 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.item.EntityPrimedTNT;
+import cn.nukkit.entity.misc.PrimedTnt;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.event.entity.EntityCombustByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.player.Player;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+import com.nukkitx.math.vector.Vector3i;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static cn.nukkit.block.BlockIds.*;
 
 /**
  * author: MagicDroidX
@@ -25,17 +29,12 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class BlockLava extends BlockLiquid {
 
-    public BlockLava() {
-        this(0);
+    protected BlockLava(Identifier id, Identifier flowingId, Identifier stationaryId) {
+        super(id, flowingId, stationaryId);
     }
 
-    public BlockLava(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return LAVA;
+    protected BlockLava(Identifier flowingId, Identifier stationaryId) {
+        this(flowingId, flowingId, stationaryId);
     }
 
     @Override
@@ -44,13 +43,9 @@ public class BlockLava extends BlockLiquid {
     }
 
     @Override
-    public String getName() {
-        return "Lava";
-    }
-
-    @Override
     public void onEntityCollide(Entity entity) {
-        entity.highestPosition -= (entity.highestPosition - entity.y) * 0.5;
+        float highestPos = entity.getHighestPosition();
+        entity.setHighestPosition(highestPos - (highestPos - entity.getY()) * 0.5f);
 
         // Always setting the duration to 15 seconds? TODO
         EntityCombustByBlockEvent ev = new EntityCombustByBlockEvent(this, entity, 15);
@@ -58,7 +53,7 @@ public class BlockLava extends BlockLiquid {
         if (!ev.isCancelled()
                 // Making sure the entity is actually alive and not invulnerable.
                 && entity.isAlive()
-                && entity.noDamageTicks == 0) {
+                && entity.getNoDamageTicks() == 0) {
             entity.setOnFire(ev.getDuration());
         }
 
@@ -70,8 +65,8 @@ public class BlockLava extends BlockLiquid {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        boolean ret = this.getLevel().setBlock(this, this, true, false);
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        boolean ret = this.getLevel().setBlock(this.getPosition(), this, true, false);
         this.getLevel().scheduleUpdate(this, this.tickRate());
 
         return ret;
@@ -81,14 +76,14 @@ public class BlockLava extends BlockLiquid {
     public int onUpdate(int type) {
         int result = super.onUpdate(type);
 
-        if (type == Level.BLOCK_UPDATE_RANDOM && this.level.gameRules.getBoolean(GameRule.DO_FIRE_TICK)) {
+        if (type == Level.BLOCK_UPDATE_RANDOM && this.level.getGameRules().get(GameRules.DO_FIRE_TICK)) {
             Random random = ThreadLocalRandom.current();
 
             int i = random.nextInt(3);
 
             if (i > 0) {
                 for (int k = 0; k < i; ++k) {
-                    Vector3 v = this.add(random.nextInt(3) - 1, 1, random.nextInt(3) - 1);
+                    Vector3i v = this.getPosition().add(random.nextInt(3) - 1, 1, random.nextInt(3) - 1);
                     Block block = this.getLevel().getBlock(v);
 
                     if (block.getId() == AIR) {
@@ -97,7 +92,7 @@ public class BlockLava extends BlockLiquid {
                             this.level.getServer().getPluginManager().callEvent(e);
 
                             if (!e.isCancelled()) {
-                                BlockFire fire = new BlockFire();
+                                Block fire = Block.get(FIRE);
                                 this.getLevel().setBlock(v, fire, true);
                                 this.getLevel().scheduleUpdate(fire, fire.tickRate());
                                 return Level.BLOCK_UPDATE_RANDOM;
@@ -111,7 +106,7 @@ public class BlockLava extends BlockLiquid {
                 }
             } else {
                 for (int k = 0; k < 3; ++k) {
-                    Vector3 v = this.add(random.nextInt(3) - 1, 0, random.nextInt(3) - 1);
+                    Vector3i v = this.getPosition().add(random.nextInt(3) - 1, 0, random.nextInt(3) - 1);
                     Block block = this.getLevel().getBlock(v);
 
                     if (block.up().getId() == AIR && block.getBurnChance() > 0) {
@@ -119,7 +114,7 @@ public class BlockLava extends BlockLiquid {
                         this.level.getServer().getPluginManager().callEvent(e);
 
                         if (!e.isCancelled()) {
-                            BlockFire fire = new BlockFire();
+                            Block fire = Block.get(FIRE);
                             this.getLevel().setBlock(v, fire, true);
                             this.getLevel().scheduleUpdate(fire, fire.tickRate());
                         }
@@ -147,8 +142,8 @@ public class BlockLava extends BlockLiquid {
     }
 
     @Override
-    public BlockLiquid getBlock(int meta) {
-        return new BlockLava(meta);
+    public Block getBlock(int meta) {
+        return Block.get(FLOWING_LAVA, meta);
     }
 
     @Override
@@ -167,18 +162,19 @@ public class BlockLava extends BlockLiquid {
     @Override
     protected void checkForHarden(){ 
         Block colliding = null;
-        for(int side = 1; side < 6; ++side){ //don't check downwards side
+        for (int side = 1; side < 6; ++side) { //don't check downwards side
             Block blockSide = this.getSide(BlockFace.fromIndex(side));
-            if(blockSide instanceof BlockWater){
+            if (blockSide instanceof BlockWater
+                    || (blockSide = blockSide.layer(1)) instanceof BlockWater) {
                 colliding = blockSide;
                 break;
             }
         }
-        if(colliding != null){
-            if(this.getDamage() == 0){
-                this.liquidCollide(colliding, new BlockObsidian());
-            }else if(this.getDamage() <= 4){
-                this.liquidCollide(colliding, new BlockCobblestone());
+        if(colliding != null) {
+            if (this.getMeta() == 0) {
+                this.liquidCollide(colliding, Block.get(OBSIDIAN));
+            } else if (this.getMeta() <= 4) {
+                this.liquidCollide(colliding, Block.get(COBBLESTONE));
             }
         }
     }
@@ -186,16 +182,22 @@ public class BlockLava extends BlockLiquid {
     @Override
     protected void flowIntoBlock(Block block, int newFlowDecay){
         if(block instanceof BlockWater){
-            ((BlockLiquid) block).liquidCollide(this, new BlockStone());
-        }else{
+            ((BlockLiquid) block).liquidCollide(this, Block.get(STONE));
+        } else {
             super.flowIntoBlock(block, newFlowDecay);
         }
     }
 
     @Override
-    public void addVelocityToEntity(Entity entity, Vector3 vector) {
-        if (!(entity instanceof EntityPrimedTNT)) {
-            super.addVelocityToEntity(entity, vector);
+    public Vector3f addVelocityToEntity(Entity entity, Vector3f vector) {
+        if (!(entity instanceof PrimedTnt)) {
+            return super.addVelocityToEntity(entity, vector);
         }
+        return vector;
+    }
+
+
+    public static BlockFactory factory(Identifier stationaryId) {
+        return id -> new BlockLava(id, stationaryId);
     }
 }

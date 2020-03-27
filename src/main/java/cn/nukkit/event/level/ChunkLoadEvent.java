@@ -1,7 +1,7 @@
 package cn.nukkit.event.level;
 
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.chunk.Chunk;
 
 /**
  * author: MagicDroidX
@@ -17,7 +17,7 @@ public class ChunkLoadEvent extends ChunkEvent {
 
     private final boolean newChunk;
 
-    public ChunkLoadEvent(FullChunk chunk, boolean newChunk) {
+    public ChunkLoadEvent(Chunk chunk, boolean newChunk) {
         super(chunk);
         this.newChunk = newChunk;
     }

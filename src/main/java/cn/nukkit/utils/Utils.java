@@ -1,13 +1,13 @@
 package cn.nukkit.utils;
 
+import com.google.common.base.FinalizableReferenceQueue;
+
 import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -15,6 +15,27 @@ import java.util.concurrent.ConcurrentHashMap;
  * Nukkit Project
  */
 public class Utils {
+
+    public static final FinalizableReferenceQueue REFERENCE_QUEUE = new FinalizableReferenceQueue();
+
+    private static final Deque<Runnable> SHUTDOWN_QUEUE = new ArrayDeque<>();
+
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            synchronized (SHUTDOWN_QUEUE) {
+                for (Runnable runnable : SHUTDOWN_QUEUE) {
+                    runnable.run();
+                }
+            }
+        }));
+    }
+
+    public static void addShutdownTask(Runnable runnable) {
+        Objects.requireNonNull(runnable, "runnable");
+        synchronized (SHUTDOWN_QUEUE) {
+            SHUTDOWN_QUEUE.add(runnable);
+        }
+    }
 
     public static void writeFile(String fileName, String content) throws IOException {
         writeFile(fileName, new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
@@ -231,23 +252,6 @@ public class Utils {
             }
         }
         return existing;
-    }
-
-    public static <T, U, V extends U> U getOrCreate(Map<T, U> map, Class<V> clazz, T key) {
-        U existing = map.get(key);
-        if (existing != null) {
-            return existing;
-        }
-        try {
-            U toPut = clazz.newInstance();
-            existing = map.putIfAbsent(key, toPut);
-            if (existing == null) {
-                return toPut;
-            }
-            return existing;
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public static int toInt(Object number) {

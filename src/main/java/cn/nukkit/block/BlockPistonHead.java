@@ -1,41 +1,29 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.AIR;
 
 /**
  * @author CreeperFace
  */
-public class BlockPistonHead extends BlockTransparentMeta implements Faceable {
+public class BlockPistonHead extends BlockTransparent implements Faceable {
 
-    public BlockPistonHead() {
-        this(0);
-    }
-
-    public BlockPistonHead(int meta) {
-        super(meta);
+    public BlockPistonHead(Identifier id) {
+        super(id);
     }
 
     @Override
-    public int getId() {
-        return PISTON_HEAD;
+    public float getResistance() {
+        return 2.5f;
     }
 
     @Override
-    public String getName() {
-        return "Piston Head";
-    }
-
-    @Override
-    public double getResistance() {
-        return 2.5;
-    }
-
-    @Override
-    public double getHardness() {
-        return 0.5;
+    public float getHardness() {
+        return 0.5f;
     }
 
     @Override
@@ -45,7 +33,7 @@ public class BlockPistonHead extends BlockTransparentMeta implements Faceable {
 
     @Override
     public boolean onBreak(Item item) {
-        this.level.setBlock(this, new BlockAir(), true, true);
+        super.onBreak(item);
         Block piston = getSide(getBlockFace().getOpposite());
 
         if (piston instanceof BlockPistonBase && ((BlockPistonBase) piston).getBlockFace() == this.getBlockFace()) {
@@ -56,7 +44,7 @@ public class BlockPistonHead extends BlockTransparentMeta implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        BlockFace face = BlockFace.fromIndex(this.getDamage());
+        BlockFace face = BlockFace.fromIndex(this.getMeta());
 
         return face.getHorizontalIndex() >= 0 ? face.getOpposite() : face;
     }
@@ -78,6 +66,11 @@ public class BlockPistonHead extends BlockTransparentMeta implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(new BlockAir());
+        return Item.get(AIR, 0, 0);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 }

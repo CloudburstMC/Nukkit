@@ -1,11 +1,12 @@
 package cn.nukkit.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.player.Player;
 import cn.nukkit.potion.Potion;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
-import static cn.nukkit.Player.SURVIVAL;
+import static cn.nukkit.player.Player.SURVIVAL;
 
 public class ItemPotion extends Item {
 
@@ -47,16 +48,8 @@ public class ItemPotion extends Item {
     public static final int WEAKNESS_LONG = 35;
     public static final int DECAY = 36;
 
-    public ItemPotion() {
-        this(0, 1);
-    }
-
-    public ItemPotion(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemPotion(Integer meta, int count) {
-        super(POTION, meta, count, "Potion");
+    public ItemPotion(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -65,7 +58,7 @@ public class ItemPotion extends Item {
     }
 
     @Override
-    public boolean onClickAir(Player player, Vector3 directionVector) {
+    public boolean onClickAir(Player player, Vector3f directionVector) {
         return true;
     }
 
@@ -76,12 +69,12 @@ public class ItemPotion extends Item {
         if (consumeEvent.isCancelled()) {
             return false;
         }
-        Potion potion = Potion.getPotion(this.getDamage()).setSplash(false);
+        Potion potion = Potion.getPotion(this.getMeta()).setSplash(false);
 
         if (player.getGamemode() == SURVIVAL) {
-            --this.count;
+            this.decrementCount();
             player.getInventory().setItemInHand(this);
-            player.getInventory().addItem(new ItemGlassBottle());
+            player.getInventory().addItem(Item.get(ItemIds.GLASS_BOTTLE));
         }
 
         if (potion != null) {

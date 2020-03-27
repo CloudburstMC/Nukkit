@@ -1,58 +1,32 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.player.Player;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
+
+import static cn.nukkit.block.BlockIds.*;
 
 /**
  * Created by CreeperFace on 2.6.2017.
  */
 public class BlockConcretePowder extends BlockFallable {
-    private int meta;
 
-    public BlockConcretePowder() {
-        this(0);
-    }
-
-    public BlockConcretePowder(int meta) {
-        this.meta = meta;
+    public BlockConcretePowder(Identifier id) {
+        super(id);
     }
 
     @Override
-    public int getFullId() {
-        return (getId() << 4) + getDamage();
+    public float getResistance() {
+        return 2.5f;
     }
 
     @Override
-    public final int getDamage() {
-        return this.meta;
-    }
-
-    @Override
-    public final void setDamage(int meta) {
-        this.meta = meta;
-    }
-
-    @Override
-    public int getId() {
-        return CONCRETE_POWDER;
-    }
-
-    @Override
-    public String getName() {
-        return "Concrete Powder";
-    }
-
-    @Override
-    public double getResistance() {
-        return 2.5;
-    }
-
-    @Override
-    public double getHardness() {
-        return 0.5;
+    public float getHardness() {
+        return 0.5f;
     }
 
     @Override
@@ -67,8 +41,8 @@ public class BlockConcretePowder extends BlockFallable {
 
             for (int side = 1; side <= 5; side++) {
                 Block block = this.getSide(BlockFace.fromIndex(side));
-                if (block.getId() == Block.WATER || block.getId() == Block.STILL_WATER || block.getId() == Block.LAVA || block.getId() == Block.STILL_LAVA) {
-                    this.level.setBlock(this, Block.get(Block.CONCRETE, this.meta), true, true);
+                if (block.getId() == FLOWING_WATER || block.getId() == WATER || block.getId() == FLOWING_LAVA || block.getId() == LAVA) {
+                    this.level.setBlock(this.getPosition(), Block.get(CONCRETE, this.meta), true, true);
                 }
             }
 
@@ -78,21 +52,21 @@ public class BlockConcretePowder extends BlockFallable {
     }
 
     @Override
-    public boolean place(Item item, Block b, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block b, Block target, BlockFace face, Vector3f clickPos, Player player) {
         boolean concrete = false;
 
         for (int side = 1; side <= 5; side++) {
             Block block = this.getSide(BlockFace.fromIndex(side));
-            if (block.getId() == Block.WATER || block.getId() == Block.STILL_WATER || block.getId() == Block.LAVA || block.getId() == Block.STILL_LAVA) {
+            if (block.getId() == FLOWING_WATER || block.getId() == WATER || block.getId() == FLOWING_LAVA || block.getId() == LAVA) {
                 concrete = true;
                 break;
             }
         }
 
         if (concrete) {
-            this.level.setBlock(this, Block.get(Block.CONCRETE, this.getDamage()), true, true);
+            this.level.setBlock(this.getPosition(), Block.get(CONCRETE, this.getMeta()), true, true);
         } else {
-            this.level.setBlock(this, this, true, true);
+            this.level.setBlock(this.getPosition(), this, true, true);
         }
 
         return true;

@@ -1,8 +1,10 @@
 package cn.nukkit.level;
 
 import cn.nukkit.Server;
-import cn.nukkit.level.generator.Generator;
+import com.nukkitx.math.vector.Vector3f;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public enum EnumLevel {
     OVERWORLD,
     NETHER,
@@ -18,31 +20,13 @@ public enum EnumLevel {
     public static void initLevels() {
         OVERWORLD.level = Server.getInstance().getDefaultLevel();
 
+        Level netherLevel = Server.getInstance().getLevelByName("nether");
         // attempt to load the nether world if it is allowed in server properties
-        if (Server.getInstance().isNetherAllowed() && !Server.getInstance().loadLevel("nether")) {
-
-            // Nether is allowed, and not found, create the default nether world
-            Server.getInstance().getLogger().info("No level called \"nether\" found, creating default nether level.");
-
-            // Generate seed for nether and get nether generator
-            long seed = System.currentTimeMillis();
-            Class<? extends Generator> generator = Generator.getGenerator("nether");
-
-            // Generate the nether world
-            Server.getInstance().generateLevel("nether", seed, generator);
-
-            // Finally, load the level if not already loaded and set the level
-            if (!Server.getInstance().isLevelLoaded("nether")) {
-                Server.getInstance().loadLevel("nether");
-            }
-
-        }
-
-        NETHER.level = Server.getInstance().getLevelByName("nether");
-
-        if (NETHER.level == null) {
+        if (netherLevel != null && Server.getInstance().isNetherAllowed()) {
+            NETHER.level = netherLevel;
+        } else {
             // Nether is not found or disabled
-            Server.getInstance().getLogger().alert("No level called \"nether\" found or nether is disabled in server properties! Nether functionality will be disabled.");
+            log.warn("No level called \"nether\" found or nether is disabled in server properties! Nether functionality will be disabled.");
         }
     }
 
@@ -56,17 +40,26 @@ public enum EnumLevel {
         }
     }
 
-    public static Position moveToNether(Position current)   {
+    public static Location moveToNether(Location current) {
         if (NETHER.level == null) {
             return null;
         } else {
-            if (current.level == OVERWORLD.level) {
-                return new Position(mRound(current.getFloorX() >> 3, 128), mRound(current.getFloorY(), 32), mRound(current.getFloorZ() >> 3, 128), NETHER.level);
-            } else if (current.level == NETHER.level) {
-                return new Position(mRound(current.getFloorX() << 3, 1024), mRound(current.getFloorY(), 32), mRound(current.getFloorZ() << 3, 1024), OVERWORLD.level);
+            int x, y, z;
+            Level level;
+            if (current.getLevel() == OVERWORLD.level) {
+                x = mRound(current.getFloorX() >> 3, 128);
+                y = mRound(current.getFloorY(), 32);
+                z = mRound(current.getFloorZ() >> 3, 128);
+                level = NETHER.level;
+            } else if (current.getLevel() == NETHER.level) {
+                x = mRound(current.getFloorX() << 3, 1024);
+                y = mRound(current.getFloorY(), 32);
+                z = mRound(current.getFloorZ() << 3, 1024);
+                level = OVERWORLD.level;
             } else {
                 throw new IllegalArgumentException("Neither overworld nor nether given!");
             }
+            return Location.from(Vector3f.from(x, y, z), current.getYaw(), current.getPitch(), level);
         }
     }
 

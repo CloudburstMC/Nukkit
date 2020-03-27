@@ -1,11 +1,17 @@
 package cn.nukkit.level.generator.object.tree;
 
-import cn.nukkit.block.*;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockIds;
+import cn.nukkit.block.BlockLeaves;
+import cn.nukkit.block.BlockLog;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.math.BedrockRandom;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.BlockVector3;
-import cn.nukkit.math.NukkitRandom;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3i;
+
+import static cn.nukkit.block.BlockIds.*;
+import static cn.nukkit.math.BlockFace.*;
 
 /**
  * Created by CreeperFace on 26. 10. 2016.
@@ -22,23 +28,26 @@ public class NewJungleTree extends TreeGenerator {
     /**
      * The metadata value of the wood to use in tree generation.
      */
-    private final Block metaWood = new BlockWood(BlockWood.JUNGLE);
+    private final Block metaWood = Block.get(BlockIds.LOG, BlockLog.JUNGLE);
 
     /**
      * The metadata value of the leaves to use in tree generation.
      */
-    private final Block metaLeaves = new BlockLeaves(BlockLeaves.JUNGLE);
+    private final Block metaLeaves = Block.get(BlockIds.LEAVES, BlockLeaves.JUNGLE);
 
     public NewJungleTree(int minTreeHeight, int maxTreeHeight) {
         this.minTreeHeight = minTreeHeight;
         this.maxTreeHeight = maxTreeHeight;
     }
 
-    @Override
-    public boolean generate(ChunkManager worldIn, NukkitRandom rand, Vector3 vectorPosition) {
-        BlockVector3 position = new BlockVector3(vectorPosition.getFloorX(), vectorPosition.getFloorY(), vectorPosition.getFloorZ());
+    private static boolean isAirBlock(ChunkManager level, Vector3i v) {
+        return level.getBlockId(v) == AIR;
+    }
 
-        int i = rand.nextBoundedInt(maxTreeHeight) + this.minTreeHeight;
+    @Override
+    public boolean generate(ChunkManager worldIn, BedrockRandom random, Vector3i position) {
+
+        int i = random.nextInt(maxTreeHeight) + this.minTreeHeight;
         boolean flag = true;
 
         if (position.getY() >= 1 && position.getY() + i + 1 <= 256) {
@@ -53,13 +62,10 @@ public class NewJungleTree extends TreeGenerator {
                     k = 2;
                 }
 
-                BlockVector3 pos2 = new BlockVector3();
-
                 for (int l = position.getX() - k; l <= position.getX() + k && flag; ++l) {
                     for (int i1 = position.getZ() - k; i1 <= position.getZ() + k && flag; ++i1) {
                         if (j >= 0 && j < 256) {
-                            pos2.setComponents(l, j, i1);
-                            if (!this.canGrowInto(worldIn.getBlockIdAt(pos2.x, pos2.y, pos2.z))) {
+                            if (!this.canGrowInto(worldIn.getBlockId(l, j, i1))) {
                                 flag = false;
                             }
                         } else {
@@ -72,10 +78,10 @@ public class NewJungleTree extends TreeGenerator {
             if (!flag) {
                 return false;
             } else {
-                BlockVector3 down = position.down();
-                int block = worldIn.getBlockIdAt(down.x, down.y, down.z);
+                Vector3i down = position.down();
+                Identifier block = worldIn.getBlockId(down);
 
-                if ((block == Block.GRASS || block == Block.DIRT || block == Block.FARMLAND) && position.getY() < 256 - i - 1) {
+                if ((block == GRASS || block == DIRT || block == FARMLAND) && position.getY() < 256 - i - 1) {
                     this.setDirtAt(worldIn, down);
                     int k2 = 3;
                     int l2 = 0;
@@ -90,12 +96,11 @@ public class NewJungleTree extends TreeGenerator {
                             for (int i2 = position.getZ() - j1; i2 <= position.getZ() + j1; ++i2) {
                                 int j2 = i2 - position.getZ();
 
-                                if (Math.abs(l1) != j1 || Math.abs(j2) != j1 || rand.nextBoundedInt(2) != 0 && i4 != 0) {
-                                    BlockVector3 blockpos = new BlockVector3(k1, i3, i2);
-                                    int id = worldIn.getBlockIdAt(blockpos.x, blockpos.y, blockpos.z);
+                                if (Math.abs(l1) != j1 || Math.abs(j2) != j1 || random.nextInt(2) != 0 && i4 != 0) {
+                                    Identifier id = worldIn.getBlockId(k1, i3, i2);
 
-                                    if (id == Block.AIR || id == Block.LEAVES || id == Block.VINE) {
-                                        this.setBlockAndNotifyAdequately(worldIn, blockpos, this.metaLeaves);
+                                    if (id == AIR || id == LEAVES || id == VINE) {
+                                        worldIn.setBlockAt(k1, i3, i2, this.metaLeaves);
                                     }
                                 }
                             }
@@ -103,26 +108,26 @@ public class NewJungleTree extends TreeGenerator {
                     }
 
                     for (int j3 = 0; j3 < i; ++j3) {
-                        BlockVector3 up = position.up(j3);
-                        int id = worldIn.getBlockIdAt(up.x, up.y, up.z);
+                        Vector3i up = position.up(j3);
+                        Identifier id = worldIn.getBlockId(up);
 
-                        if (id == Block.AIR || id == Block.LEAVES || id == Block.VINE) {
-                            this.setBlockAndNotifyAdequately(worldIn, up, this.metaWood);
+                        if (id == AIR || id == LEAVES || id == VINE) {
+                            worldIn.setBlockAt(up, this.metaWood);
 
                             if (j3 > 0) {
-                                if (rand.nextBoundedInt(3) > 0 && isAirBlock(worldIn, position.add(-1, j3, 0))) {
+                                if (random.nextInt(3) > 0 && isAirBlock(worldIn, position.add(-1, j3, 0))) {
                                     this.addVine(worldIn, position.add(-1, j3, 0), 8);
                                 }
 
-                                if (rand.nextBoundedInt(3) > 0 && isAirBlock(worldIn, position.add(1, j3, 0))) {
+                                if (random.nextInt(3) > 0 && isAirBlock(worldIn, position.add(1, j3, 0))) {
                                     this.addVine(worldIn, position.add(1, j3, 0), 2);
                                 }
 
-                                if (rand.nextBoundedInt(3) > 0 && isAirBlock(worldIn, position.add(0, j3, -1))) {
+                                if (random.nextInt(3) > 0 && isAirBlock(worldIn, position.add(0, j3, -1))) {
                                     this.addVine(worldIn, position.add(0, j3, -1), 1);
                                 }
 
-                                if (rand.nextBoundedInt(3) > 0 && isAirBlock(worldIn, position.add(0, j3, 1))) {
+                                if (random.nextInt(3) > 0 && isAirBlock(worldIn, position.add(0, j3, 1))) {
                                     this.addVine(worldIn, position.add(0, j3, 1), 4);
                                 }
                             }
@@ -132,31 +137,30 @@ public class NewJungleTree extends TreeGenerator {
                     for (int k3 = position.getY() - 3 + i; k3 <= position.getY() + i; ++k3) {
                         int j4 = k3 - (position.getY() + i);
                         int k4 = 2 - j4 / 2;
-                        BlockVector3 pos2 = new BlockVector3();
 
                         for (int l4 = position.getX() - k4; l4 <= position.getX() + k4; ++l4) {
                             for (int i5 = position.getZ() - k4; i5 <= position.getZ() + k4; ++i5) {
-                                pos2.setComponents(l4, k3, i5);
 
-                                if (worldIn.getBlockIdAt(pos2.x, pos2.y, pos2.z) == Block.LEAVES) {
-                                    BlockVector3 blockpos2 = pos2.west();
-                                    BlockVector3 blockpos3 = pos2.east();
-                                    BlockVector3 blockpos4 = pos2.north();
-                                    BlockVector3 blockpos1 = pos2.south();
+                                Vector3i pos2 = Vector3i.from(l4, k3, i5);
+                                if (worldIn.getBlockId(pos2) == LEAVES) {
+                                    Vector3i blockpos2 = WEST.getOffset(pos2);
+                                    Vector3i blockpos3 = EAST.getOffset(pos2);
+                                    Vector3i blockpos4 = NORTH.getOffset(pos2);
+                                    Vector3i blockpos1 = SOUTH.getOffset(pos2);
 
-                                    if (rand.nextBoundedInt(4) == 0 && worldIn.getBlockIdAt(blockpos2.x, blockpos2.y, blockpos2.z) == Block.AIR) {
+                                    if (random.nextInt(4) == 0 && worldIn.getBlockId(blockpos2) == AIR) {
                                         this.addHangingVine(worldIn, blockpos2, 8);
                                     }
 
-                                    if (rand.nextBoundedInt(4) == 0 && worldIn.getBlockIdAt(blockpos3.x, blockpos3.y, blockpos3.z) == Block.AIR) {
+                                    if (random.nextInt(4) == 0 && worldIn.getBlockId(blockpos3) == AIR) {
                                         this.addHangingVine(worldIn, blockpos3, 2);
                                     }
 
-                                    if (rand.nextBoundedInt(4) == 0 && worldIn.getBlockIdAt(blockpos4.x, blockpos4.y, blockpos4.z) == Block.AIR) {
+                                    if (random.nextInt(4) == 0 && worldIn.getBlockId(blockpos4) == AIR) {
                                         this.addHangingVine(worldIn, blockpos4, 1);
                                     }
 
-                                    if (rand.nextBoundedInt(4) == 0 && worldIn.getBlockIdAt(blockpos1.x, blockpos1.y, blockpos1.z) == Block.AIR) {
+                                    if (random.nextInt(4) == 0 && worldIn.getBlockId(blockpos1) == AIR) {
                                         this.addHangingVine(worldIn, blockpos1, 4);
                                     }
                                 }
@@ -164,12 +168,12 @@ public class NewJungleTree extends TreeGenerator {
                         }
                     }
 
-                    if (rand.nextBoundedInt(5) == 0 && i > 5) {
+                    if (random.nextInt(5) == 0 && i > 5) {
                         for (int l3 = 0; l3 < 2; ++l3) {
                             for (BlockFace enumfacing : BlockFace.Plane.HORIZONTAL) {
-                                if (rand.nextBoundedInt(4 - l3) == 0) {
+                                if (random.nextInt(4 - l3) == 0) {
                                     BlockFace enumfacing1 = enumfacing.getOpposite();
-                                    this.placeCocoa(worldIn, rand.nextBoundedInt(3), position.add(enumfacing1.getXOffset(), i - 5 + l3, enumfacing1.getZOffset()), enumfacing);
+                                    this.placeCocoa(worldIn, random.nextInt(3), position.add(enumfacing1.getXOffset(), i - 5 + l3, enumfacing1.getZOffset()), enumfacing);
                                 }
                             }
                         }
@@ -185,28 +189,24 @@ public class NewJungleTree extends TreeGenerator {
         }
     }
 
-    private void placeCocoa(ChunkManager worldIn, int age, BlockVector3 pos, BlockFace side) {
+    private void placeCocoa(ChunkManager worldIn, int age, Vector3i pos, BlockFace side) {
         int meta = getCocoaMeta(age, side.getIndex());
 
-        this.setBlockAndNotifyAdequately(worldIn, pos, new BlockUnknown(127, meta));
+        worldIn.setBlockAt(pos.getX(), pos.getY(), pos.getZ(), Block.get(COCOA, meta));
     }
 
-    private void addVine(ChunkManager worldIn, BlockVector3 pos, int meta) {
-        this.setBlockAndNotifyAdequately(worldIn, pos, new BlockVine(meta));
+    private void addVine(ChunkManager worldIn, Vector3i pos, int meta) {
+        worldIn.setBlockAt(pos.getX(), pos.getY(), pos.getZ(), Block.get(BlockIds.VINE, meta));
     }
 
-    private void addHangingVine(ChunkManager worldIn, BlockVector3 pos, int meta) {
+    private void addHangingVine(ChunkManager worldIn, Vector3i pos, int meta) {
         this.addVine(worldIn, pos, meta);
         int i = 4;
 
-        for (pos = pos.down(); i > 0 && worldIn.getBlockIdAt(pos.x, pos.y, pos.z) == Block.AIR; --i) {
+        for (pos = pos.down(); i > 0 && worldIn.getBlockId(pos) == AIR; --i) {
             this.addVine(worldIn, pos, meta);
             pos = pos.down();
         }
-    }
-
-    private boolean isAirBlock(ChunkManager level, BlockVector3 v) {
-        return level.getBlockIdAt(v.x, v.y, v.z) == 0;
     }
 
     private int getCocoaMeta(int age, int side) {

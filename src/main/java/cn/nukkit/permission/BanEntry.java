@@ -1,9 +1,11 @@
 package cn.nukkit.permission;
 
-import cn.nukkit.Server;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import cn.nukkit.Nukkit;
+import com.fasterxml.jackson.core.type.TypeReference;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,8 +17,13 @@ import java.util.TreeMap;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public class BanEntry {
     public static final String format = "yyyy-MM-dd HH:mm:ss Z";
+
+    private static final TypeReference<TreeMap<String, String>> BAN_ENTRY_TYPE_REFERENCE =
+            new TypeReference<TreeMap<String, String>>() {
+            };
 
     private final String name;
     private Date creationDate = null;
@@ -86,7 +93,7 @@ public class BanEntry {
             banEntry.setCreationDate(new SimpleDateFormat(format).parse(map.get("creationDate")));
             banEntry.setExpirationDate(!map.get("expireDate").equals("Forever") ? new SimpleDateFormat(format).parse(map.get("expireDate")) : null);
         } catch (ParseException e) {
-            Server.getInstance().getLogger().logException(e);
+            log.throwing(Level.ERROR, e);
         }
         banEntry.setSource(map.get("source"));
         banEntry.setReason(map.get("reason"));
@@ -94,18 +101,26 @@ public class BanEntry {
     }
 
     public String getString() {
-        return new Gson().toJson(this.getMap());
+        try {
+            return Nukkit.JSON_MAPPER.writeValueAsString(this.getMap());
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public static BanEntry fromString(String str) {
-        Map<String, String> map = new Gson().fromJson(str, new TypeToken<TreeMap<String, String>>() {
-        }.getType());
+        Map<String, String> map;
+        try {
+            map = Nukkit.JSON_MAPPER.readValue(str, BAN_ENTRY_TYPE_REFERENCE);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
         BanEntry banEntry = new BanEntry(map.get("name"));
         try {
             banEntry.setCreationDate(new SimpleDateFormat(format).parse(map.get("creationDate")));
             banEntry.setExpirationDate(!map.get("expireDate").equals("Forever") ? new SimpleDateFormat(format).parse(map.get("expireDate")) : null);
         } catch (ParseException e) {
-            Server.getInstance().getLogger().logException(e);
+            log.throwing(Level.ERROR, e);
         }
         banEntry.setSource(map.get("source"));
         banEntry.setReason(map.get("reason"));

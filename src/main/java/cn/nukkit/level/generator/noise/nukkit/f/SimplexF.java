@@ -1,6 +1,6 @@
 package cn.nukkit.level.generator.noise.nukkit.f;
 
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.BedrockRandom;
 
 /**
  * author: DaPorkchop_
@@ -26,7 +26,7 @@ public class SimplexF extends PerlinF {
     };
     protected final float offsetW;
 
-    public SimplexF(NukkitRandom random, float octaves, float persistence) {
+    public SimplexF(BedrockRandom random, float octaves, float persistence) {
         super(random, octaves, persistence);
         this.offsetW = random.nextFloat() * 256;
         SQRT_3 = (float) Math.sqrt(3);
@@ -43,7 +43,7 @@ public class SimplexF extends PerlinF {
         G44 = G4 * 4.0f - 1.0f;
     }
 
-    public SimplexF(NukkitRandom random, float octaves, float persistence, float expansion) {
+    public SimplexF(BedrockRandom random, float octaves, float persistence, float expansion) {
         super(random, octaves, persistence, expansion);
         this.offsetW = random.nextFloat() * 256;
         SQRT_3 = (float) Math.sqrt(3);

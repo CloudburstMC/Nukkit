@@ -1,9 +1,11 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+
+import static cn.nukkit.block.BlockIds.DOUBLE_WOODEN_SLAB;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -11,32 +13,17 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockSlabWood extends BlockSlab {
 
-    public BlockSlabWood() {
-        this(0);
-    }
+    static final BlockColor[] COLORS = new BlockColor[]{
+            BlockColor.WOOD_BLOCK_COLOR,
+            BlockColor.SPRUCE_BLOCK_COLOR,
+            BlockColor.SAND_BLOCK_COLOR,
+            BlockColor.DIRT_BLOCK_COLOR,
+            BlockColor.ORANGE_BLOCK_COLOR,
+            BlockColor.BROWN_BLOCK_COLOR
+    };
 
-    public BlockSlabWood(int meta) {
-        super(meta, DOUBLE_WOODEN_SLAB);
-    }
-
-    @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Oak",
-                "Spruce",
-                "Birch",
-                "Jungle",
-                "Acacia",
-                "Dark Oak",
-                "",
-                ""
-        };
-        return (((this.getDamage() & 0x08) == 0x08) ? "Upper " : "") + names[this.getDamage() & 0x07] + " Wooden Slab";
-    }
-
-    @Override
-    public int getId() {
-        return WOOD_SLAB;
+    public BlockSlabWood(Identifier id) {
+        super(id, DOUBLE_WOODEN_SLAB, COLORS);
     }
 
     @Override
@@ -55,33 +42,17 @@ public class BlockSlabWood extends BlockSlab {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        return new Item[]{
-                toItem()
-        };
+    public float getResistance() {
+        return 15;
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return true;
     }
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, this.getDamage() & 0x07);
-    }
-
-    @Override
-    public BlockColor getColor() {
-        switch (getDamage() & 0x07) {
-            default:
-            case 0: //OAK
-                return BlockColor.WOOD_BLOCK_COLOR;
-            case 1: //SPRUCE
-                return BlockColor.SPRUCE_BLOCK_COLOR;
-            case 2: //BIRCH
-                return BlockColor.SAND_BLOCK_COLOR;
-            case 3: //JUNGLE
-                return BlockColor.DIRT_BLOCK_COLOR;
-            case 4: //ACACIA
-                return BlockColor.ORANGE_BLOCK_COLOR;
-            case 5: //DARK OAK
-                return BlockColor.BROWN_BLOCK_COLOR;
-        }
+        return Item.get(id, this.getMeta() & 0x07);
     }
 }

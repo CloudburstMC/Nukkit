@@ -1,44 +1,29 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemSeedsWheat;
+import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.math.vector.Vector3f;
 
 import java.util.concurrent.ThreadLocalRandom;
+
+import static cn.nukkit.block.BlockIds.*;
+import static cn.nukkit.item.ItemIds.DYE;
 
 /**
  * author: Angelic47
  * Nukkit Project
  */
-public class BlockTallGrass extends BlockFlowable {
+public class BlockTallGrass extends FloodableBlock {
 
-    public BlockTallGrass() {
-        this(1);
-    }
-
-    public BlockTallGrass(int meta) {
-        super(meta);
-    }
-
-    @Override
-    public int getId() {
-        return TALL_GRASS;
-    }
-
-    @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Grass",
-                "Grass",
-                "Fern",
-                "Fern"
-        };
-        return names[this.getDamage() & 0x03];
+    public BlockTallGrass(Identifier id) {
+        super(id);
     }
 
     @Override
@@ -62,10 +47,10 @@ public class BlockTallGrass extends BlockFlowable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         Block down = this.down();
-        if (down.getId() == Block.GRASS || down.getId() == Block.DIRT || down.getId() == Block.PODZOL) {
-            this.getLevel().setBlock(block, this, true);
+        if (down.getId() == GRASS || down.getId() == DIRT || down.getId() == PODZOL) {
+            this.getLevel().setBlock(block.getPosition(), this, true);
             return true;
         }
         return false;
@@ -75,7 +60,7 @@ public class BlockTallGrass extends BlockFlowable {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (this.down().isTransparent()) {
-                this.getLevel().useBreakOn(this);
+                this.getLevel().useBreakOn(this.getPosition());
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         }
@@ -84,13 +69,13 @@ public class BlockTallGrass extends BlockFlowable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0f) {
+        if (item.getId() == DYE && item.getMeta() == 0x0f) {
             Block up = this.up();
 
             if (up.getId() == AIR) {
                 int meta;
 
-                switch (this.getDamage()) {
+                switch (this.getMeta()) {
                     case 0:
                     case 1:
                         meta = BlockDoublePlant.TALL_GRASS;
@@ -104,13 +89,13 @@ public class BlockTallGrass extends BlockFlowable {
                 }
 
                 if (meta != -1) {
-                    if (player != null && (player.gamemode & 0x01) == 0) {
-                        item.count--;
+                    if (player != null && (player.getGamemode() & 0x01) == 0) {
+                        item.decrementCount();
                     }
 
-                    this.level.addParticle(new BoneMealParticle(this));
-                    this.level.setBlock(this, get(DOUBLE_PLANT, meta), true, false);
-                    this.level.setBlock(up, get(DOUBLE_PLANT, meta ^ BlockDoublePlant.TOP_HALF_BITMASK), true);
+                    this.level.addParticle(new BoneMealParticle(this.getPosition()));
+                    this.level.setBlock(this.getPosition(), get(DOUBLE_PLANT, meta), true, false);
+                    this.level.setBlock(up.getPosition(), get(DOUBLE_PLANT, meta ^ BlockDoublePlant.TOP_HALF_BITMASK), true);
                 }
             }
 
@@ -127,19 +112,19 @@ public class BlockTallGrass extends BlockFlowable {
             //todo enchantment
             if (dropSeeds) {
                 return new Item[]{
-                        new ItemSeedsWheat(),
-                        Item.get(Item.TALL_GRASS, this.getDamage(), 1)
+                        Item.get(ItemIds.WHEAT_SEEDS),
+                        Item.get(BlockIds.TALL_GRASS, this.getMeta(), 1)
                 };
             } else {
                 return new Item[]{
-                        Item.get(Item.TALL_GRASS, this.getDamage(), 1)
+                        Item.get(BlockIds.TALL_GRASS, this.getMeta(), 1)
                 };
             }
         }
 
         if (dropSeeds) {
             return new Item[]{
-                    new ItemSeedsWheat()
+                    Item.get(ItemIds.WHEAT_SEEDS)
             };
         } else {
             return new Item[0];

@@ -1,21 +1,15 @@
 package cn.nukkit.item;
 
+import cn.nukkit.utils.Identifier;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class ItemPickaxeIron extends ItemTool {
 
-    public ItemPickaxeIron() {
-        this(0, 1);
-    }
-
-    public ItemPickaxeIron(Integer meta) {
-        this(meta, 1);
-    }
-
-    public ItemPickaxeIron(Integer meta, int count) {
-        super(IRON_PICKAXE, meta, count, "Iron Pickaxe");
+    public ItemPickaxeIron(Identifier id) {
+        super(id);
     }
 
     @Override
