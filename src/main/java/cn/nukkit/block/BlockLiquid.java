@@ -234,7 +234,7 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
                     BlockFromToEvent event = new BlockFromToEvent(this, to);
                     level.getServer().getPluginManager().callEvent(event);
                     if (!event.isCancelled()) {
-                        this.level.setBlock(this, to, true, true);
+                        this.level.setBlock(this, event.getTo(), true, true);
                         if (!decayed) {
                             this.level.scheduleUpdate(this, this.tickRate());
                         }
@@ -432,7 +432,7 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
         if (event.isCancelled()) {
             return false;
         }
-        this.level.setBlock(this, result, true, true);
+        this.level.setBlock(this, event.getTo(), true, true);
         this.getLevel().addLevelSoundEvent(this.add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_FIZZ);
         return true;
     }
