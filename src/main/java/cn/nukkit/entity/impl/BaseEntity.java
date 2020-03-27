@@ -1392,12 +1392,6 @@ public abstract class BaseEntity implements Entity, Metadatable {
         return false;
     }
 
-    public boolean isOnLadder() {
-        Block block = this.level.getLoadedBlock(this.getPosition());
-
-        return block != null && block.getId() == LADDER;
-    }
-
     public boolean fastMove(float dx, float dy, float dz) {
         if (dx == 0 && dy == 0 && dz == 0) {
             return true;
