@@ -313,10 +313,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         return randomClientId;
     }
 
-    public void setClientId(Long clientId) {
-        this.randomClientId = clientId;
-    }
-
     @Override
     public boolean isBanned() {
         return this.server.getNameBans().isBanned(this.getName());
@@ -359,7 +355,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         return this;
     }
 
-    public Player(BedrockServerSession session) {
+    public Player(BedrockServerSession session, ClientChainData chainData) {
         super(EntityTypes.PLAYER, Location.from(Server.getInstance().getDefaultLevel()));
         this.session = session;
         this.packetHandler = new PlayerPacketHandler(this);
@@ -376,7 +372,14 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.boundingBox = new SimpleAxisAlignedBB(0, 0, 0, 0, 0, 0);
         this.lastSkinChange = -1;
 
-        this.identity = null;
+        this.randomClientId = chainData.getClientId();
+        this.identity = chainData.getClientUUID();
+        this.username = TextFormat.clean(chainData.getUsername());
+        this.iusername = username.toLowerCase();
+        this.setDisplayName(this.username);
+        this.setNameTag(this.username);
+
+        this.setSkin(chainData.getSkin());
 
         this.creationTime = System.currentTimeMillis();
     }
@@ -855,14 +858,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     public long getPing() {
         return this.session.getLatency();
-    }
-
-    public BedrockServerSession getSession() {
-        return session;
-    }
-
-    public PlayerPacketHandler getPacketHandler() {
-        return packetHandler;
     }
 
     public boolean sleepOn(Vector3i pos) {
@@ -1705,9 +1700,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public void processLogin() {
-        if (!this.server.isWhitelisted((this.getName()).toLowerCase())) {
+        if (this.server.getOnlinePlayers().size() >= this.server.getMaxPlayers() && this.kick(PlayerKickEvent.Reason.SERVER_FULL, "disconnectionScreen.serverFull", false)) {
+            return;
+        } else if (!this.server.isWhitelisted((this.getName()).toLowerCase())) {
             this.kick(PlayerKickEvent.Reason.NOT_WHITELISTED, "Server is white-listed");
-
             return;
         } else if (this.isBanned()) {
             this.kick(PlayerKickEvent.Reason.NAME_BANNED, "You are banned");
@@ -2074,18 +2070,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     public String getName() {
         return this.username;
-    }
-
-    public void setName(String name) {
-        this.username = name;
-    }
-
-    public String getLowerCaseName() {
-        return this.iusername;
-    }
-
-    public void setLowerCaseName(String lowerCaseName) {
-        this.iusername = lowerCaseName;
     }
 
     public AsyncTask getPreLoginEventTask() {
@@ -2676,11 +2660,11 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.sendPacket(packet);
     }
 
-    public void sendPlayStatus(PlayStatusPacket.Status status) {
+    protected void sendPlayStatus(PlayStatusPacket.Status status) {
         sendPlayStatus(status, false);
     }
 
-    public void sendPlayStatus(PlayStatusPacket.Status status, boolean immediate) {
+    protected void sendPlayStatus(PlayStatusPacket.Status status, boolean immediate) {
         PlayStatusPacket packet = new PlayStatusPacket();
         packet.setStatus(status);
 
