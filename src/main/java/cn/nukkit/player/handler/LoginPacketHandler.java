@@ -90,7 +90,6 @@ public class LoginPacketHandler implements BedrockPacketHandler {
         }
 
         loginData.setName(TextFormat.clean(username));
-
         if (!valid || Objects.equals(loginData.getName().toLowerCase(), "rcon") || Objects.equals(loginData.getName().toLowerCase(), "console")) {
             session.disconnect("disconnectionScreen.invalidName");
             return true;
@@ -107,7 +106,6 @@ public class LoginPacketHandler implements BedrockPacketHandler {
             session.disconnect(playerPreLoginEvent.getKickMessage());
             return true;
         }
-
         session.setPacketHandler(new ResourcePackPacketHandler(session, server, loginData));
 
         PlayerLoginData loginDataInstance = loginData;
@@ -135,7 +133,11 @@ public class LoginPacketHandler implements BedrockPacketHandler {
             }
         });
 
-        this.server.getScheduler().scheduleAsyncTask(null, loginData.getPreLoginEventTask());
+        this.server.getScheduler().scheduleAsyncTask(loginData.getPreLoginEventTask());
+        PlayStatusPacket statusPacket = new PlayStatusPacket();
+        statusPacket.setStatus(PlayStatusPacket.Status.LOGIN_SUCCESS);
+        session.sendPacket(statusPacket);
+        session.sendPacket(this.server.getPackManager().getPacksInfos());
         return true;
     }
 }

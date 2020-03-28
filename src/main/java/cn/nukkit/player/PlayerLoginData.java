@@ -35,7 +35,7 @@ public class PlayerLoginData {
         shouldLogin = false;
     }
 
-    public void initializePlayer(){
+    public void initializePlayer() {
         Player player;
 
         session.setLogging(false);
@@ -44,8 +44,8 @@ public class PlayerLoginData {
         Class<? extends Player> clazz = ev.getPlayerClass();
 
         try {
-            Constructor<? extends Player> constructor = clazz.getConstructor(BedrockServerSession.class);
-            player = constructor.newInstance(session);
+            Constructor<? extends Player> constructor = clazz.getConstructor(BedrockServerSession.class, ClientChainData.class);
+            player = constructor.newInstance(session, chainData);
             this.server.addPlayer(session.getAddress(), player);
             session.addDisconnectHandler(interfaz.initDisconnectHandler(player));
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {

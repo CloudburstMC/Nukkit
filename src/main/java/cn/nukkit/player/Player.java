@@ -372,6 +372,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.boundingBox = new SimpleAxisAlignedBB(0, 0, 0, 0, 0, 0);
         this.lastSkinChange = -1;
 
+        this.loginChainData = chainData;
+
         this.randomClientId = chainData.getClientId();
         this.identity = chainData.getClientUUID();
         this.username = TextFormat.clean(chainData.getUsername());
@@ -1781,7 +1783,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.server.saveOfflinePlayerData(this.identity, nbt, true);
         }
 
-        this.sendPlayStatus(PlayStatusPacket.Status.LOGIN_SUCCESS);
         this.server.onPlayerLogin(this);
 
         super.init(this.getLocation());
@@ -1789,8 +1790,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         if (this.isSpectator()) this.keepMovement = true;
 
         this.forceMovement = this.teleportPosition = this.getPosition();
-
-        this.sendPacket(this.server.getPackManager().getPacksInfos());
     }
 
     /**
