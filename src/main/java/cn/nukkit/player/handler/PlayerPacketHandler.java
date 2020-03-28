@@ -94,10 +94,6 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
             }
 
             switch (packet.getPacketType()) {
-                case RESOURCE_PACK_CLIENT_RESPONSE:
-                    return handle((ResourcePackClientResponsePacket) packet);
-                case RESOURCE_PACK_CHUNK_REQUEST:
-                    return handle((ResourcePackChunkRequestPacket) packet);
                 case PLAYER_SKIN:
                     return handle((PlayerSkinPacket) packet);
                 case PLAYER_INPUT:
@@ -164,64 +160,6 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
             }
             return true;
         }
-    }
-
-    @Override
-    public boolean handle(ResourcePackClientResponsePacket packet) {
-        switch (packet.getStatus()) {
-            case REFUSED:
-                player.close("", "disconnectionScreen.noReason");
-                return true;
-            case SEND_PACKS:
-                for (String entry : packet.getPackIds()) {
-                    Pack pack = player.getServer().getPackManager().getPackByIdVersion(entry);
-                    if (pack == null) {
-                        player.close("", "disconnectionScreen.resourcePack");
-                        return true;
-                    }
-
-                    ResourcePackDataInfoPacket dataInfoPacket = new ResourcePackDataInfoPacket();
-                    dataInfoPacket.setPackId(pack.getId());
-                    dataInfoPacket.setPackVersion(pack.getVersion().toString());
-                    dataInfoPacket.setMaxChunkSize(1048576); //megabyte
-                    dataInfoPacket.setChunkCount(pack.getSize() / dataInfoPacket.getMaxChunkSize());
-                    dataInfoPacket.setCompressedPackSize(pack.getSize());
-                    dataInfoPacket.setHash(pack.getHash());
-                    dataInfoPacket.setType(pack.getType());
-                    player.sendPacket(dataInfoPacket);
-                }
-                return true;
-            case HAVE_ALL_PACKS:
-                player.sendPacket(player.getServer().getPackManager().getPackStack());
-                return true;
-            case COMPLETED:
-                if (player.getPreLoginEventTask().isFinished()) {
-                    player.completeLoginSequence();
-                } else {
-                    player.setShouldLogin(true);
-                }
-                return true;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean handle(ResourcePackChunkRequestPacket packet) {
-        Pack resourcePack = player.getServer().getPackManager().getPackByIdVersion(
-                packet.getPackId() + "_" + packet.getPackVersion());
-        if (resourcePack == null) {
-            player.close("", "disconnectionScreen.resourcePack");
-            return true;
-        }
-
-        ResourcePackChunkDataPacket dataPacket = new ResourcePackChunkDataPacket();
-        dataPacket.setPackId(packet.getPackId());
-        dataPacket.setPackVersion(packet.getPackVersion());
-        dataPacket.setChunkIndex(packet.getChunkIndex());
-        dataPacket.setData(resourcePack.getChunk(1048576 * packet.getChunkIndex(), 1048576));
-        dataPacket.setProgress(1048576 * packet.getChunkIndex());
-        player.sendPacket(dataPacket);
-        return true;
     }
 
     @Override

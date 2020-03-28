@@ -2,11 +2,10 @@ package cn.nukkit.player.handler;
 
 import cn.nukkit.Server;
 import cn.nukkit.event.player.PlayerAsyncPreLoginEvent;
-import cn.nukkit.event.player.PlayerCreationEvent;
 import cn.nukkit.event.player.PlayerPreLoginEvent;
 import cn.nukkit.network.BedrockInterface;
 import cn.nukkit.network.ProtocolInfo;
-import cn.nukkit.player.Player;
+import cn.nukkit.player.PlayerLoginData;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.ClientChainData;
 import cn.nukkit.utils.TextFormat;
@@ -16,10 +15,7 @@ import com.nukkitx.protocol.bedrock.handler.BedrockPacketHandler;
 import com.nukkitx.protocol.bedrock.packet.LoginPacket;
 import com.nukkitx.protocol.bedrock.packet.PlayStatusPacket;
 import lombok.extern.log4j.Log4j2;
-import org.apache.logging.log4j.Level;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -30,19 +26,18 @@ import java.util.function.Consumer;
 public class LoginPacketHandler implements BedrockPacketHandler {
     private final BedrockServerSession session;
     private final Server server;
-    private final BedrockInterface interfaz;
 
-    private ClientChainData chainData;
+    private PlayerLoginData loginData;
 
     public LoginPacketHandler(BedrockServerSession session, Server server, BedrockInterface interfaz) {
         this.session = session;
-        this.interfaz = interfaz;
         this.server = server;
+        loginData = new PlayerLoginData(session, server, interfaz);
     }
 
     @Override
     public boolean handle(LoginPacket packet) {
-        if(!session.isLogging()){
+        if (!session.isLogging()) {
             return true;
         }
         int protocolVersion = packet.getProtocolVersion();
@@ -66,15 +61,14 @@ public class LoginPacketHandler implements BedrockPacketHandler {
         }
         session.setPacketCodec(packetCodec);
 
-        this.chainData = ClientChainData.read(packet);
+        this.loginData.setChainData(ClientChainData.read(packet));
 
-
-        if (!this.chainData.isXboxAuthed() && this.server.getPropertyBoolean("xbox-auth")) {
+        if (!this.loginData.getChainData().isXboxAuthed() && this.server.getPropertyBoolean("xbox-auth")) {
             session.disconnect("disconnectionScreen.notAuthenticated");
             return true;
         }
 
-        String username = this.chainData.getUsername();
+        String username = this.loginData.getChainData().getUsername();
         boolean valid = true;
         int len = username.length();
         if (len > 16 || len < 3) {
@@ -95,72 +89,53 @@ public class LoginPacketHandler implements BedrockPacketHandler {
             break;
         }
 
-        username = TextFormat.clean(username);
+        loginData.setName(TextFormat.clean(username));
 
-        if (!valid || Objects.equals(username.toLowerCase(), "rcon") || Objects.equals(username.toLowerCase(), "console")) {
+        if (!valid || Objects.equals(loginData.getName().toLowerCase(), "rcon") || Objects.equals(loginData.getName().toLowerCase(), "console")) {
             session.disconnect("disconnectionScreen.invalidName");
             return true;
         }
 
-        if (!this.chainData.getSkin().isValid()) {
+        if (!this.loginData.getChainData().getSkin().isValid()) {
             session.disconnect("disconnectionScreen.invalidSkin");
             return true;
         }
 
-        Player player;
-
-        session.setLogging(false);
-        PlayerCreationEvent ev = new PlayerCreationEvent(interfaz, Player.class, Player.class, this.chainData.getClientId(), session.getAddress());
-        this.server.getPluginManager().callEvent(ev);
-        Class<? extends Player> clazz = ev.getPlayerClass();
-
-        try {
-            Constructor<? extends Player> constructor = clazz.getConstructor(BedrockServerSession.class);
-            player = constructor.newInstance(session);
-            this.server.addPlayer(session.getAddress(), player);
-            session.addDisconnectHandler(interfaz.initDisconnectHandler(player));
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            log.throwing(Level.ERROR, e);
-            return true;
-        }
-
         PlayerPreLoginEvent playerPreLoginEvent;
-        this.server.getPluginManager().callEvent(playerPreLoginEvent = new PlayerPreLoginEvent(player, "Plugin reason"));
+        this.server.getPluginManager().callEvent(playerPreLoginEvent = new PlayerPreLoginEvent(loginData, "Plugin reason"));
         if (playerPreLoginEvent.isCancelled()) {
-            player.close("", playerPreLoginEvent.getKickMessage());
+            session.disconnect(playerPreLoginEvent.getKickMessage());
             return true;
         }
 
-        Player playerInstance = player;
-        player.setPreLoginEventTask(new AsyncTask() {
+        session.setPacketHandler(new ResourcePackPacketHandler(session, server, loginData));
+
+        PlayerLoginData loginDataInstance = loginData;
+        loginData.setPreLoginEventTask(new AsyncTask() {
 
             private PlayerAsyncPreLoginEvent e;
 
             @Override
             public void onRun() {
-                e = new PlayerAsyncPreLoginEvent(playerInstance.getName(), playerInstance.getServerId(), playerInstance.getSocketAddress());
+                e = new PlayerAsyncPreLoginEvent(loginData.getName(), loginDataInstance.getChainData().getClientUUID(), loginDataInstance.getSession().getAddress());
                 server.getPluginManager().callEvent(e);
             }
 
             @Override
             public void onCompletion(Server server) {
-                if (!playerInstance.closed) {
-                    if (e.getLoginResult() == PlayerAsyncPreLoginEvent.LoginResult.KICK) {
-                        playerInstance.close(e.getKickMessage(), e.getKickMessage());
-                    } else if (playerInstance.isShouldLogin()) {
-                        playerInstance.completeLoginSequence();
-                    }
+                if (e.getLoginResult() == PlayerAsyncPreLoginEvent.LoginResult.KICK) {
+                    loginDataInstance.getSession().disconnect(e.getKickMessage());
+                } else if (loginDataInstance.isShouldLogin()) {
+                    loginData.initializePlayer();
+                }
 
-                    for (Consumer<Server> action : e.getScheduledActions()) {
-                        action.accept(server);
-                    }
+                for (Consumer<Server> action : e.getScheduledActions()) {
+                    action.accept(server);
                 }
             }
         });
 
-        this.server.getScheduler().scheduleAsyncTask(player.getPreLoginEventTask());
-
-        player.processLogin();
+        this.server.getScheduler().scheduleAsyncTask(null, loginData.getPreLoginEventTask());
         return true;
     }
 }
