@@ -1,0 +1,10 @@
+dict: "nukkitx:vanilla"
+
+elevationVanilla:
+  height: 1.5
+  variation: 0.025
+
+temperature: 2.0
+rainfall: 0.0
+
+#porktodo: this
