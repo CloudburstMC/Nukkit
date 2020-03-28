@@ -7,4 +7,23 @@ elevationVanilla:
 temperature: 0.9
 rainfall: 1.0
 
-#porktodo: this
+decorators:
+  - id: "nukkitx:surface"
+    ground: "stone"
+    top: "mycelium"
+    fill: "dirt"
+
+populators:
+    # Small mushrooms
+  - id: "nukkitx:shrub"
+    count: 2
+    on: "mycelium"
+    block: "2*brown_mushroom,red_mushroom"
+
+    # Huge mushrooms
+  - id: "nukkitx:tree"
+    chance: 0.00390625 # about 1 per chunk
+    on: "mycelium"
+    types:
+      - "mushroom_red"
+      - "mushroom_brown"

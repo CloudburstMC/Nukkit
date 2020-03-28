@@ -97,7 +97,7 @@ public class TreePopulator extends ChancePopulator {
             this.feature = TreeSpecies.valueOf(species.toUpperCase()).getDefaultGenerator();
         }
 
-        //TODO: ways to access the other tree varieties
+        //porktodo: ways to access the other tree varieties
 
         public WorldFeature build() {
             return this.feature;

@@ -143,7 +143,7 @@ public class BlockSapling extends FloodableBlock {
                 break;*/
             //TODO: big spruce
             default:
-                feature = TreeSpecies.fromSaplingDamage(this.getMeta()).getDefaultGenerator();
+                feature = TreeSpecies.fromItem(this.getId(), this.getMeta()).getDefaultGenerator();
         }
 
         if (bigTree) {

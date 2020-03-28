@@ -2,6 +2,8 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.feature.WorldFeature;
+import cn.nukkit.level.feature.tree.TreeSpecies;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
@@ -9,6 +11,7 @@ import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3f;
+import net.daporkchop.lib.random.impl.ThreadLocalPRandom;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -65,18 +68,16 @@ public abstract class BlockMushroom extends FloodableBlock {
     }
 
     public boolean grow() {
-        //porktodo: fix this
-        /*this.level.setBlock(this.getPosition(), Block.get(AIR), true, false);
+        this.level.setBlock(this.getPosition(), Block.get(AIR), true, false);
 
-        BigMushroom generator = new BigMushroom(getType());
+        WorldFeature feature = TreeSpecies.fromItem(this.getId(), this.getMeta()).getDefaultGenerator();
 
-        if (generator.generate(this.level, new BedrockRandom(), this.getPosition())) {
+        if (feature.place(this.level, ThreadLocalPRandom.current(), this.getX(), this.getY(), this.getZ())) {
             return true;
         } else {
             this.level.setBlock(this.getPosition(), this, true, false);
             return false;
-        }*/
-        return false;
+        }
     }
 
     public boolean canStay() {

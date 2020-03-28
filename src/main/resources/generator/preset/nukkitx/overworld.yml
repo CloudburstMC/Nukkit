@@ -13,12 +13,6 @@ density: "nukkitx:default"
 decorators:
   - id: "nukkitx:next"
 
-    # Tall grass
-  - id: "nukkitx:scattered_cover"
-    chance: 0.3333
-    on: "grass,dirt"
-    block: "tallgrass"
-
     # Bedrock
   - id: "nukkitx:bedrock"
     block: "bedrock"
@@ -48,28 +42,12 @@ populators:
     replace: "stone"
 
     # Granite, Diorite and Andesite
-    # in vanilla these are generated separately
+    # in vanilla these are generated as three separate ores, but this way adds a bit of variety
   - id: "nukkitx:ore"
-    count: 10
+    count: 30
     size: 33
     height: "0-80"
-    block: "stone#1"
-    replace: "stone"
-
-    #
-  - id: "nukkitx:ore"
-    count: 10
-    size: 33
-    height: "0-80"
-    block: "stone#3"
-    replace: "stone"
-
-    # Andesite
-  - id: "nukkitx:ore"
-    count: 10
-    size: 33
-    height: "0-80"
-    block: "stone#5"
+    block: "stone#1,stone#3,stone#5"
     replace: "stone"
 
     #

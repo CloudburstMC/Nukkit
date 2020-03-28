@@ -2,25 +2,31 @@ package cn.nukkit.level.generator.standard.pop;
 
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
-import cn.nukkit.level.generator.standard.misc.IntRange;
+import cn.nukkit.level.generator.standard.StandardGenerator;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.misc.selector.BlockSelector;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.common.base.Preconditions;
+import net.daporkchop.lib.common.util.PValidation;
 import net.daporkchop.lib.random.PRandom;
 
-import static cn.nukkit.math.NukkitMath.clamp;
+import java.util.Objects;
+
+import static cn.nukkit.math.NukkitMath.*;
 
 /**
- * Places patches of flowers in the world.
+ * Places patches of single blocks in the world.
+ * <p>
+ * https://i.imgur.com/BUocESm.gif
  *
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public class FlowerPopulator extends RepeatingPopulator {
-    public static final Identifier ID = Identifier.fromString("nukkitx:flower");
+public class ShrubPopulator extends RepeatingPopulator {
+    public static final Identifier ID = Identifier.fromString("nukkitx:shrub");
 
     @JsonProperty
     protected BlockFilter on;
@@ -33,19 +39,32 @@ public class FlowerPopulator extends RepeatingPopulator {
     protected BlockSelector type;
 
     @JsonProperty
-    protected IntRange height = IntRange.WHOLE_WORLD;
+    protected int size = 64;
+
+    @Override
+    public void init(long levelSeed, long localSeed, StandardGenerator generator) {
+        Objects.requireNonNull(this.on, "on must be set!");
+        Objects.requireNonNull(this.replace, "replace must be set!");
+        Objects.requireNonNull(this.type, "type must be set!");
+        Preconditions.checkState(this.size > 0, "size must be at least 1!");
+
+        super.init(levelSeed, localSeed, generator);
+    }
 
     @Override
     protected void tryPopulate(PRandom random, ChunkManager level, int x, int z) {
-        int y = this.height.rand(random);
+        int y = random.nextInt(level.getChunk(x >> 4, z >> 4).getHighestBlock(x & 0xF, z & 0xF) << 1);
 
         BlockFilter on = this.on;
         BlockFilter replace = this.replace;
         int type = this.type.selectRuntimeId(random);
 
-        for (int i = 0; i < 64; i++) {
+        for (int i = this.size - 1; i >= 0; i--) {
+            int blockY = y + random.nextInt(4) - random.nextInt(4);
+            if (blockY < 0 || blockY >= 255)    {
+                continue;
+            }
             int blockX = x + random.nextInt(8) - random.nextInt(8);
-            int blockY = clamp(y + random.nextInt(4) - random.nextInt(4), 1, 255);
             int blockZ = z + random.nextInt(8) - random.nextInt(8);
 
             IChunk chunk = level.getChunk(blockX >> 4, blockZ >> 4);

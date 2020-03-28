@@ -24,7 +24,7 @@ root:
       #todo: uncomment all of these after they're added
       # Mushroom island cannot have rivers inside of it, so simply remap them to themselves
       minecraft:mushroom_island: "minecraft:mushroom_island"
-      #minecraft:mushroom_island_shore: "minecraft:mushroom_island_shore"
+      minecraft:mushroom_island_shore: "minecraft:mushroom_island_shore"
 
       #minecraft:ice_plains: "minecraft:frozen_river"
     riverLayer:
@@ -68,7 +68,7 @@ root:
           defaultBeach: "minecraft:beach"
           beaches:
             #todo: uncomment all of these after they're added
-            #minecraft:mushroom_island: "minecraft:mushroom_island_shore"
+            minecraft:mushroom_island: "minecraft:mushroom_island_shore"
 
             # All icy biomes should use cold beach
             #minecraft:ice_plains: "minecraft:cold_beach" # add the other icy biomes

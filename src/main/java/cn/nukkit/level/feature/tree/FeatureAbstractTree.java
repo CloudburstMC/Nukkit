@@ -29,7 +29,7 @@ public abstract class FeatureAbstractTree implements WorldFeature, BlockFilter {
         this.leaves = new ConstantBlock(species.getLeavesId(), species.getLeavesDamage());
     }
 
-    public FeatureAbstractTree(@NonNull IntRange height, @NonNull BlockSelector log, @NonNull BlockSelector leaves) {
+    public FeatureAbstractTree(@NonNull IntRange height, BlockSelector log, BlockSelector leaves) {
         this.height = height;
         this.log = log;
         this.leaves = leaves;

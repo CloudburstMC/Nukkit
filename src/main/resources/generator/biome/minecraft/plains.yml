@@ -13,6 +13,12 @@ decorators:
     top: "grass"
     fill: "dirt"
 
+    # Tall grass
+  - id: "nukkitx:scattered_cover"
+    chance: 0.25
+    on: "grass,dirt"
+    block: "tallgrass"
+
     # Double tall grass
   - id: "nukkitx:double_scattered_cover"
     chance: 0.02
@@ -22,9 +28,8 @@ decorators:
 
 populators:
     # Flowers
-  - id: "nukkitx:flower"
-    count: 2
-    height: "50-90"
+  - id: "nukkitx:shrub"
+    count: 4
     on: "grass"
     replace: "air,tallgrass"
     blocks:

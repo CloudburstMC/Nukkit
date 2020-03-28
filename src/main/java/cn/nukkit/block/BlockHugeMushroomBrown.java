@@ -13,6 +13,19 @@ import static cn.nukkit.block.BlockIds.BROWN_MUSHROOM;
  * Created by Pub4Game on 28.01.2016.
  */
 public class BlockHugeMushroomBrown extends BlockSolid {
+    public static final int NONE = 0;
+    public static final int TOP_NW = 1;
+    public static final int TOP_N = 2;
+    public static final int TOP_NE = 3;
+    public static final int TOP_W = 4;
+    public static final int TOP = 5;
+    public static final int TOP_E = 6;
+    public static final int TOP_SW = 7;
+    public static final int TOP_S = 8;
+    public static final int TOP_SE = 9;
+    public static final int STEM = 10;
+    public static final int ALL = 14;
+    public static final int STEM_ALL = 15;
 
     public BlockHugeMushroomBrown(Identifier id) {
         super(id);
