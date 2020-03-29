@@ -2,7 +2,7 @@ package cn.nukkit.event.player;
 
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.player.Player;
+import cn.nukkit.player.PlayerLoginData;
 
 /**
  * Called when the player logs in, before things have been set up
@@ -14,10 +14,11 @@ public class PlayerPreLoginEvent extends PlayerEvent implements Cancellable {
         return handlers;
     }
 
+    protected PlayerLoginData loginData;
     protected String kickMessage;
 
-    public PlayerPreLoginEvent(Player player, String kickMessage) {
-        this.player = player;
+    public PlayerPreLoginEvent(PlayerLoginData loginData, String kickMessage) {
+        this.loginData = loginData;
         this.kickMessage = kickMessage;
     }
 
@@ -27,5 +28,9 @@ public class PlayerPreLoginEvent extends PlayerEvent implements Cancellable {
 
     public String getKickMessage() {
         return this.kickMessage;
+    }
+
+    public PlayerLoginData getLoginData() {
+        return loginData;
     }
 }
