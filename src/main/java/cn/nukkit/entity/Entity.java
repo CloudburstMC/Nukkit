@@ -1323,7 +1323,23 @@ public abstract class Entity extends Location implements Metadatable {
             this.lastYaw = this.yaw;
             this.lastPitch = this.pitch;
 
-            this.addMovement(this.x, this.y + this.getBaseOffset(), this.z, this.yaw, this.pitch, this.yaw);
+            Location from = new Location(
+                    this.lastX,
+                    this.lastY,
+                    this.lastZ,
+                    this.lastYaw,
+                    this.lastPitch,
+                    this.level);
+
+            Location to = this.getLocation();
+
+            EntityMoveEvent entityMoveEvent = new EntityMoveEvent(this, from, to);
+
+            Server.getInstance().getPluginManager().callEvent(entityMoveEvent);
+
+            if(!entityMoveEvent.isCancelled()) {
+                this.addMovement(this.x, this.y + this.getBaseOffset(), this.z, this.yaw, this.pitch, this.yaw);
+            }
         }
 
         if (diffMotion > 0.0025 || (diffMotion > 0.0001 && this.getMotion().lengthSquared() <= 0.0001)) { //0.05 ** 2
