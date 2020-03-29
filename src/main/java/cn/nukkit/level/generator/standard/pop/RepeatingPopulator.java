@@ -26,9 +26,9 @@ public abstract class RepeatingPopulator implements Populator {
     }
 
     @Override
-    public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ, int blockX, int blockZ) {
+    public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
         for (int i = this.count.rand(random) - 1; i >= 0; i--) {
-            this.tryPopulate(random, level, blockX + random.nextInt(16), blockZ + random.nextInt(16));
+            this.tryPopulate(random, level, (chunkX << 4) + random.nextInt(16), (chunkZ << 4) + random.nextInt(16));
         }
     }
 
@@ -37,7 +37,7 @@ public abstract class RepeatingPopulator implements Populator {
      *
      * @param x the X coordinate to attempt population at (in blocks)
      * @param z the Z coordinate to attempt population at (in blocks)
-     * @see Populator#populate(PRandom, ChunkManager, int, int, int, int)
+     * @see Populator#populate(PRandom, ChunkManager, int, int)
      */
     protected abstract void tryPopulate(PRandom random, ChunkManager level, int x, int z);
 

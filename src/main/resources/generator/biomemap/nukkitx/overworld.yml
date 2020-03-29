@@ -2,9 +2,6 @@
 #
 # Author: DaPorkchop_
 
-#id: "nukkitx:constant"
-#biome: "minecraft:extreme_hills_plus_trees"
-
 id: "nukkitx:complex"
 fallback: "ocean"
 root:

@@ -1,0 +1,31 @@
+dict: "nukkitx:vanilla"
+parent: "minecraft:plains"
+
+elevationVanilla:
+  height: 0.425
+  variation: 0.45
+
+temperature: 0.0
+rainfall: 0.5
+
+decorators:
+  - id: "nukkitx:surface"
+    ground: "stone"
+    top: "snow"
+    fill: "dirt"
+
+populators:
+    # Ice spikes
+  - id: "nukkitx:spikes"
+    count: 3
+    height: "7-11"
+    tallHeight: "10-39"
+    on: "snow"
+    replace: "air,dirt,snow,snow_layer"
+    block: "packed_ice"
+    tallChance: 0.0166666666666
+
+    # Snow
+  - id: "nukkitx:cover"
+    on: "snow"
+    block: "snow_layer"

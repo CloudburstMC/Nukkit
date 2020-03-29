@@ -1,7 +1,8 @@
-package cn.nukkit.level.generator.standard.gen.decorator;
+package cn.nukkit.level.generator.standard.pop;
 
-import cn.nukkit.level.chunk.IChunk;
+import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.standard.StandardGenerator;
+import cn.nukkit.level.generator.standard.gen.decorator.SurfaceDecorator;
 import cn.nukkit.level.generator.standard.gen.noise.NoiseGenerator;
 import cn.nukkit.level.generator.standard.misc.AbstractGenerationPass;
 import cn.nukkit.utils.Identifier;
@@ -14,12 +15,12 @@ import net.daporkchop.lib.random.impl.FastPRandom;
 import java.util.Objects;
 
 /**
- * Similar to {@link SurfaceDecorator}, but switches between two different decorators based on the output of a noise function.
+ * Similar to {@link SurfaceDecorator}, but switches between two different populators based on the output of a noise function.
  *
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public class NoiseSelectionDecorator extends AbstractGenerationPass implements Decorator {
+public class NoiseSelectionPopulator extends AbstractGenerationPass implements Populator {
     public static final Identifier ID = Identifier.fromString("nukkitx:noise");
 
     protected NoiseSource selector;
@@ -31,10 +32,10 @@ public class NoiseSelectionDecorator extends AbstractGenerationPass implements D
     protected double max = Double.MAX_VALUE;
 
     @JsonProperty
-    protected Decorator[] in = Decorator.EMPTY_ARRAY;
+    protected Populator[] in = Populator.EMPTY_ARRAY;
 
     @JsonProperty
-    protected Decorator[] out = Decorator.EMPTY_ARRAY;
+    protected Populator[] out = Populator.EMPTY_ARRAY;
 
     @JsonProperty("selector")
     protected NoiseGenerator selectorNoise;
@@ -44,19 +45,19 @@ public class NoiseSelectionDecorator extends AbstractGenerationPass implements D
         this.selector = Objects.requireNonNull(this.selectorNoise, "selector must be set!").create(new FastPRandom(localSeed));
         this.selectorNoise = null;
 
-        for (Decorator decorator : Objects.requireNonNull(this.in, "in must be set!"))  {
-            decorator.init(levelSeed, localSeed, generator);
+        for (Populator populator : Objects.requireNonNull(this.in, "in must be set!"))  {
+            populator.init(levelSeed, localSeed, generator);
         }
-        for (Decorator decorator : Objects.requireNonNull(this.out, "out must be set!"))  {
-            decorator.init(levelSeed, localSeed, generator);
+        for (Populator populator : Objects.requireNonNull(this.out, "out must be set!"))  {
+            populator.init(levelSeed, localSeed, generator);
         }
     }
 
     @Override
-    public void decorate(IChunk chunk, PRandom random, int x, int z) {
-        double noise = this.selector.get((chunk.getX() << 4) + x, (chunk.getZ() << 4) + z);
-        for (Decorator decorator : noise >= this.min && noise <= this.max ? this.in : this.out) {
-            decorator.decorate(chunk, random, x, z);
+    public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
+        double noise = this.selector.get(chunkX << 4, chunkZ << 4);
+        for (Populator populator : noise >= this.min && noise <= this.max ? this.in : this.out) {
+            populator.populate(random, level, chunkX, chunkZ);
         }
     }
 

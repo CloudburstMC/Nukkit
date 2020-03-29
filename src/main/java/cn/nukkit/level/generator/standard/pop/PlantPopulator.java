@@ -33,7 +33,7 @@ public class PlantPopulator extends RepeatingPopulator {
     protected BlockFilter water;
 
     @JsonProperty
-    protected BlockFilter replace = BlockFilter.REPLACEABLE;
+    protected BlockFilter replace = BlockFilter.AIR;
 
     @JsonProperty
     @JsonAlias({"types", "block", "blocks"})

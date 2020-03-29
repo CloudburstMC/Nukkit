@@ -2,11 +2,11 @@ dict: "nukkitx:vanilla"
 parent: "minecraft:plains"
 
 decorators:
-  - id: "nukkitx:next"
-
     # Sunflower
   - id: "nukkitx:double_scattered_cover"
-    chance: 0.03
+    chance: 0.0390625 # about 10 per chunk
     on: "grass"
     lowBlock: "double_plant#0"
     highBlock: "double_plant#8"
+
+  - id: "nukkitx:next"

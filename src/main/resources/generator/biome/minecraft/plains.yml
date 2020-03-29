@@ -16,27 +16,56 @@ decorators:
     # Tall grass
   - id: "nukkitx:scattered_cover"
     chance: 0.25
-    on: "grass,dirt"
+    on: "grass"
     block: "tallgrass"
 
-    # Double tall grass
-  - id: "nukkitx:double_scattered_cover"
-    chance: 0.02
-    on: "grass"
-    lowBlock: "double_plant#2"
-    highBlock: "double_plant#10"
 
 populators:
-    # Flowers
-  - id: "nukkitx:shrub"
-    count: 4
+  - id: "nukkitx:noise"
+    selector:
+      id: "nukkitx:simplex"
+      scale: 0.005
+      octaves: 1
+    min: -0.8
+    in:
+        # Double tall grass
+      - id: "nukkitx:double_scattered_cover"
+        chance: 0.02734375 # about 7 per chunk
+        on: "grass"
+        replace: "air,tallgrass"
+        lowBlock: "double_plant#2"
+        highBlock: "double_plant#10"
+
+        # Flowers
+      - id: "nukkitx:shrub"
+        count: 4
+        on: "grass"
+        replace: "air,tallgrass"
+        blocks:
+          - "red_flower#4" # Red Tulip
+          - "red_flower#5" # Orange Tulip
+          - "red_flower#6" # White Tulip
+          - "red_flower#7" # Pink Tulip
+          - "red_flower#3" # Azure Bluet
+          - "red_flower#8" # Oxeye Daisy
+          - "red_flower#9" # Cornflower
+    out:
+        # Flowers
+      - id: "nukkitx:shrub"
+        count: 15
+        on: "grass"
+        replace: "air,tallgrass"
+        blocks:
+          - "red_flower#4" # Red Tulip
+          - "red_flower#5" # Orange Tulip
+          - "red_flower#6" # White Tulip
+          - "red_flower#7" # Pink Tulip
+          - "red_flower#3" # Azure Bluet
+          - "red_flower#8" # Oxeye Daisy
+          - "red_flower#9" # Cornflower
+
+    # Oak trees
+  - id: "nukkitx:tree"
+    chance: 0.0001953125 # about 1 per 20 chunks
     on: "grass"
-    replace: "air,tallgrass"
-    blocks:
-      - "red_flower#4" # Red Tulip
-      - "red_flower#5" # Orange Tulip
-      - "red_flower#6" # White Tulip
-      - "red_flower#7" # Pink Tulip
-      - "red_flower#3" # Azure Bluet
-      - "red_flower#8" # Oxeye Daisy
-      - "red_flower#9" # Cornflower
+    type: "oak"

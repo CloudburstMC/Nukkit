@@ -5,11 +5,7 @@ import cn.nukkit.level.feature.WorldFeature;
 import cn.nukkit.level.feature.tree.TreeSpecies;
 import cn.nukkit.level.generator.standard.StandardGenerator;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
-import cn.nukkit.level.generator.standard.pop.ChancePopulator;
-import cn.nukkit.level.generator.standard.pop.RepeatingPopulator;
-import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -48,20 +44,20 @@ public class TreePopulator extends ChancePopulator {
     }
 
     @Override
-    public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ, int blockX, int blockZ) {
+    public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
         final BlockFilter replace = this.replace;
         final BlockFilter on = this.on;
 
         for (int x = 0; x < 16; x++)    {
             for (int z = 0; z < 16; z++)    {
-                blockX = (chunkX << 4) | x;
-                blockZ = (chunkZ << 4) | z;
+                int xx = (chunkX << 4) | x;
+                int zz = (chunkZ << 4) | z;
 
-                for (int y = 254, id, lastId = level.getBlockRuntimeIdUnsafe(blockX, 255, blockZ, 0); y >= 0; y--) {
-                    id = level.getBlockRuntimeIdUnsafe(blockX, y, blockZ, 0);
+                for (int y = 254, id, lastId = level.getBlockRuntimeIdUnsafe(xx, 255, zz, 0); y >= 0; y--) {
+                    id = level.getBlockRuntimeIdUnsafe(xx, y, zz, 0);
 
                     if (replace.test(lastId) && on.test(id) && random.nextDouble() < this.chance) {
-                        this.types[random.nextInt(this.types.length)].place(level, random, blockX, y + 1, blockZ);
+                        this.types[random.nextInt(this.types.length)].place(level, random, xx, y + 1, zz);
                     }
 
                     lastId = id;
@@ -96,8 +92,6 @@ public class TreePopulator extends ChancePopulator {
         public ConfigTree(String species) {
             this.feature = TreeSpecies.valueOf(species.toUpperCase()).getDefaultGenerator();
         }
-
-        //porktodo: ways to access the other tree varieties
 
         public WorldFeature build() {
             return this.feature;

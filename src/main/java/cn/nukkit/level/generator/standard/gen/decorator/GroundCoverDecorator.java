@@ -29,7 +29,7 @@ public class GroundCoverDecorator implements Decorator {
     protected BlockFilter on;
 
     @JsonProperty
-    protected BlockFilter replace = BlockFilter.REPLACEABLE;
+    protected BlockFilter replace = BlockFilter.AIR;
 
     @JsonProperty
     @JsonAlias({"block"})
@@ -46,7 +46,7 @@ public class GroundCoverDecorator implements Decorator {
         int y = chunk.getHighestBlock(x, z);
         if (y >= 0 && y < 255 && (this.on == null || this.on.test(chunk.getBlockRuntimeIdUnsafe(x, y, z, 0)))
                 && this.replace.test(chunk.getBlockRuntimeIdUnsafe(x, y + 1, z, 0))) {
-            chunk.setBlockRuntimeIdUnsafe(x, y, z, 0, this.cover);
+            chunk.setBlockRuntimeIdUnsafe(x, y + 1, z, 0, this.cover);
         }
     }
 

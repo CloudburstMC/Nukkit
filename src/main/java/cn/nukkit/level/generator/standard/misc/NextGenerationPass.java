@@ -27,7 +27,7 @@ public final class NextGenerationPass implements Decorator, Populator {
     }
 
     @Override
-    public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ, int blockX, int blockZ) {
+    public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
         throw new UnsupportedOperationException();
     }
 

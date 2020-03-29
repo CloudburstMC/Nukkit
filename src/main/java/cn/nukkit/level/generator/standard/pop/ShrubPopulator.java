@@ -27,7 +27,7 @@ public class ShrubPopulator extends RepeatingPopulator {
     protected BlockFilter on;
 
     @JsonProperty
-    protected BlockFilter replace = BlockFilter.REPLACEABLE;
+    protected BlockFilter replace = BlockFilter.AIR;
 
     @JsonProperty
     @JsonAlias({"types", "block", "blocks"})

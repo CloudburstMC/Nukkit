@@ -266,7 +266,7 @@ public final class StandardGenerator implements Generator {
         //porktodo: cache this as well? (reuse cache instead of clearing)
         GenerationBiome biome = this.biomes.get(blockX + 7, blockZ + 7); //use biome in middle of chunk for selecting populators
         for (Populator populator : this.populatorsLookup.computeIfAbsent(biome, this.populatorsLookupComputer)) {
-            populator.populate(random, level, chunkX, chunkZ, blockX, blockZ);
+            populator.populate(random, level, chunkX, chunkZ);
         }
     }
 

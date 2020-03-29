@@ -1,0 +1,6 @@
+dict: "nukkitx:vanilla"
+parent: "minecraft:ice_plains"
+
+elevationVanilla:
+  height: 0.45
+  variation: 0.3

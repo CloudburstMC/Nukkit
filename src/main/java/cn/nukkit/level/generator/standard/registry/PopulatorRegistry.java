@@ -2,11 +2,13 @@ package cn.nukkit.level.generator.standard.registry;
 
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.generator.standard.misc.NextGenerationPass;
+import cn.nukkit.level.generator.standard.gen.decorator.NoiseSelectionDecorator;
+import cn.nukkit.level.generator.standard.pop.NoiseSelectionPopulator;
 import cn.nukkit.level.generator.standard.pop.OrePopulator;
 import cn.nukkit.level.generator.standard.pop.PlantPopulator;
 import cn.nukkit.level.generator.standard.pop.Populator;
 import cn.nukkit.level.generator.standard.pop.ShrubPopulator;
+import cn.nukkit.level.generator.standard.pop.SpikesPopulator;
 import cn.nukkit.level.generator.standard.pop.SubmergedOrePopulator;
 import cn.nukkit.level.generator.standard.pop.TreePopulator;
 import lombok.AccessLevel;
@@ -28,10 +30,15 @@ public final class PopulatorRegistry extends AbstractGeneratorRegistry<Populator
         this.register(OrePopulator.ID, OrePopulator.class);
         this.register(PlantPopulator.ID, PlantPopulator.class);
         this.register(ShrubPopulator.ID, ShrubPopulator.class);
+        this.register(SpikesPopulator.ID, SpikesPopulator.class);
         this.register(SubmergedOrePopulator.ID, SubmergedOrePopulator.class);
         this.register(TreePopulator.ID, TreePopulator.class);
 
-        this.register(NextGenerationPass.ID, NextGenerationPass.class);
+        StandardGeneratorRegistries.decorator().idToValues.forEach(this::register);
+        //nukkitx:next is implicitly registered
+
+        this.idToValues.remove(NoiseSelectionDecorator.ID);
+        this.register(NoiseSelectionPopulator.ID, NoiseSelectionPopulator.class);
     }
 
     @Override

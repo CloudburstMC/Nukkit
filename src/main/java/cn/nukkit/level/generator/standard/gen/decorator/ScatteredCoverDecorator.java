@@ -29,7 +29,7 @@ public class ScatteredCoverDecorator implements Decorator {
     protected BlockFilter on;
 
     @JsonProperty
-    protected BlockFilter replace = BlockFilter.REPLACEABLE;
+    protected BlockFilter replace = BlockFilter.AIR;
 
     @JsonProperty
     @JsonAlias({"blocks"})
