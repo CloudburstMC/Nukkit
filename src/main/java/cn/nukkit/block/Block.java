@@ -602,11 +602,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                                      int blockId, int toolType, int toolTier, int efficiencyLoreLevel, int hasteEffectLevel,
                                      boolean insideOfWaterWithoutAquaAffinity, boolean outOfWaterButNotOnGround) {
         double baseTime = ((correctTool || canHarvestWithHand) ? 1.5 : 5.0) * blockHardness;
-        
-        if (baseTime == 0) {
-            return 0;
-        }
-
         double speed = 1.0 / baseTime;
         boolean isWoolBlock = blockId == Block.WOOL, isCobweb = blockId == Block.COBWEB;
         if (correctTool) speed *= toolBreakTimeBonus0(toolType, toolTier, isWoolBlock, isCobweb);
@@ -621,6 +616,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         Objects.requireNonNull(item, "getBreakTime: Item can not be null");
         Objects.requireNonNull(player, "getBreakTime: Player can not be null");
         double blockHardness = getHardness();
+
+        if (blockHardness == 0) {
+            return 0;
+        }
+
         boolean correctTool = correctTool0(getToolType(), item);
         boolean canHarvestWithHand = canHarvestWithHand();
         int blockId = getId();
