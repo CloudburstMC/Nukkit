@@ -7,7 +7,7 @@ rainfall: 0.5
 decorators:
   - id: "nukkitx:next"
 
-    # Ice layer
+    # Ice layer on water
   - id: "nukkitx:replace_top"
     replace: "water"
     with: "ice"

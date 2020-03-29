@@ -49,11 +49,11 @@ public class SurfaceDecorator implements Decorator {
 
     @JsonProperty
     @JsonAlias({"depthFactor", "factor"})
-    protected double depthNoiseFactor = 2.0d;
+    protected double depthNoiseFactor = 1.5d;
 
     @JsonProperty
     @JsonAlias({"depthOffset", "offset"})
-    protected double depthNoiseOffset = 3.0d;
+    protected double depthNoiseOffset = 5.0d;
 
     @Override
     public void init(long levelSeed, long localSeed, StandardGenerator generator) {

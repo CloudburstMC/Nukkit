@@ -1,0 +1,11 @@
+dict: "nukkitx:vanilla"
+parent: "minecraft:ocean" # inherit sand, clay and gravel populators from ocean
+
+elevationVanilla:
+  height: 0.1
+  variation: 0.8
+
+temperature: 0.2
+rainfall: 0.3
+
+# this is basically the easiest biome in the game lol

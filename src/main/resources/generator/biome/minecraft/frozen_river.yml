@@ -2,11 +2,17 @@ dict: "nukkitx:vanilla"
 parent: "minecraft:river"
 
 temperature: 0.0
+rainfall: 0.5
 
 decorators:
   - id: "nukkitx:next"
 
-    # Ice layer
+    # Snow layer on ground
+  - id: "nukkitx:cover"
+    on: "grass"
+    cover: "snow_layer"
+
+    # Ice layer on water
   - id: "nukkitx:replace_top"
     replace: "water"
     with: "ice"

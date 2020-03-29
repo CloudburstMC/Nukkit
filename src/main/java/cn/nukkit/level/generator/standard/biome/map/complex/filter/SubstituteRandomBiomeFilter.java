@@ -30,6 +30,9 @@ public class SubstituteRandomBiomeFilter extends AbstractBiomeFilter.Next {
     protected final Int2ObjectMap<int[]> replacements = new Int2ObjectOpenHashMap<>();
 
     @JsonProperty
+    protected int chance = 1;
+
+    @JsonProperty
     protected Map<String, GenerationBiome[]> biomes;
 
     @Override
@@ -54,13 +57,18 @@ public class SubstituteRandomBiomeFilter extends AbstractBiomeFilter.Next {
     public int[] get(int x, int z, int sizeX, int sizeZ, IntArrayAllocator alloc) {
         int[] out = this.next.get(x, z, sizeX, sizeZ, alloc);
 
+        final int chance = this.chance;
+
         for (int dx = 0; dx < sizeX; dx++) {
             for (int dz = 0; dz < sizeZ; dz++) {
+                if (chance > 1 && this.random(x + dx, z + dz, 0, chance) != 0)  {
+                    continue;
+                }
                 int i = dx * sizeZ + dz;
 
                 int[] replacementIds = this.replacements.get(out[i]);
                 if (replacementIds != null) {
-                    out[i] = replacementIds[this.random(x + dx, z + dz, 0, replacementIds.length)];
+                    out[i] = replacementIds[this.random(x + dx, z + dz, 1, replacementIds.length)];
                 }
             }
         }

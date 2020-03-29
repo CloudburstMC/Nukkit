@@ -4,6 +4,7 @@ import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.generator.standard.gen.decorator.BedrockDecorator;
 import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
+import cn.nukkit.level.generator.standard.gen.decorator.DeepSurfaceDecorator;
 import cn.nukkit.level.generator.standard.gen.decorator.DoubleScatteredCoverDecorator;
 import cn.nukkit.level.generator.standard.gen.decorator.GroundCoverDecorator;
 import cn.nukkit.level.generator.standard.gen.decorator.NoiseSelectionDecorator;
@@ -29,6 +30,7 @@ public final class DecoratorRegistry extends AbstractGeneratorRegistry<Decorator
     @Override
     protected void registerDefault() {
         this.register(BedrockDecorator.ID, BedrockDecorator.class);
+        this.register(DeepSurfaceDecorator.ID, DeepSurfaceDecorator.class);
         this.register(DoubleScatteredCoverDecorator.ID, DoubleScatteredCoverDecorator.class);
         this.register(GroundCoverDecorator.ID, GroundCoverDecorator.class);
         this.register(NoiseSelectionDecorator.ID, NoiseSelectionDecorator.class);

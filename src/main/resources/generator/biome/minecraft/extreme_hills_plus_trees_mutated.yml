@@ -1,5 +1,5 @@
 dict: "nukkitx:vanilla"
-parent: "minecraft:mutated_extreme_hills"
+parent: "minecraft:extreme_hills_mutated"
 
 populators:
   - id: "nukkitx:next"
