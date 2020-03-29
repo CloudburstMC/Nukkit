@@ -37,9 +37,6 @@ public class LoginPacketHandler implements BedrockPacketHandler {
 
     @Override
     public boolean handle(LoginPacket packet) {
-        if (!session.isLogging()) {
-            return true;
-        }
         int protocolVersion = packet.getProtocolVersion();
         BedrockPacketCodec packetCodec = ProtocolInfo.getPacketCodec(protocolVersion);
 
@@ -115,7 +112,7 @@ public class LoginPacketHandler implements BedrockPacketHandler {
 
             @Override
             public void onRun() {
-                e = new PlayerAsyncPreLoginEvent(loginData.getName(), loginDataInstance.getChainData().getClientUUID(), loginDataInstance.getSession().getAddress());
+                e = new PlayerAsyncPreLoginEvent(loginDataInstance.getName(), loginDataInstance.getChainData().getClientUUID(), loginDataInstance.getSession().getAddress());
                 server.getPluginManager().callEvent(e);
             }
 
@@ -124,7 +121,7 @@ public class LoginPacketHandler implements BedrockPacketHandler {
                 if (e.getLoginResult() == PlayerAsyncPreLoginEvent.LoginResult.KICK) {
                     loginDataInstance.getSession().disconnect(e.getKickMessage());
                 } else if (loginDataInstance.isShouldLogin()) {
-                    loginData.initializePlayer();
+                    loginDataInstance.initializePlayer();
                 }
 
                 for (Consumer<Server> action : e.getScheduledActions()) {
@@ -134,9 +131,11 @@ public class LoginPacketHandler implements BedrockPacketHandler {
         });
 
         this.server.getScheduler().scheduleAsyncTask(loginData.getPreLoginEventTask());
+
         PlayStatusPacket statusPacket = new PlayStatusPacket();
         statusPacket.setStatus(PlayStatusPacket.Status.LOGIN_SUCCESS);
         session.sendPacket(statusPacket);
+
         session.sendPacket(this.server.getPackManager().getPacksInfos());
         return true;
     }

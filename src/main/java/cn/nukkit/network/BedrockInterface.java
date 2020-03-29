@@ -70,7 +70,7 @@ public class BedrockInterface implements AdvancedSourceInterface, BedrockServerE
 
     @Override
     public void onSessionCreation(BedrockServerSession session) {
-        session.setLogging(true);
+        session.setLogging(false);
         session.setPacketHandler(new LoginPacketHandler(session, server, this));
     }
 

@@ -6,8 +6,6 @@ import cn.nukkit.network.BedrockInterface;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.ClientChainData;
 import com.nukkitx.protocol.bedrock.BedrockServerSession;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
 
@@ -38,7 +36,6 @@ public class PlayerLoginData {
     public void initializePlayer() {
         Player player;
 
-        session.setLogging(false);
         PlayerCreationEvent ev = new PlayerCreationEvent(interfaz, Player.class, Player.class, this.chainData.getClientId(), session.getAddress());
         this.server.getPluginManager().callEvent(ev);
         Class<? extends Player> clazz = ev.getPlayerClass();
