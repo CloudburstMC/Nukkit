@@ -6,7 +6,7 @@ groundBlock: "stone"
 seaBlock: "water"
 seaLevel: 63
 
-biomes: "nukkitx:overworld"
+biomes: "nukkitx:flat"
 
 density: "nukkitx:default"
 

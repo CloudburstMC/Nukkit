@@ -25,6 +25,14 @@ populators:
     block: "packed_ice"
     tallChance: 0.0166666666666
 
+    # "Glaciers"
+  - id: "nukkitx:ore_submerged"
+    count: 2
+    radius: "2-3"
+    block: "packed_ice"
+    replace: "dirt,snow"
+    start: "air"
+
     # Snow
   - id: "nukkitx:cover"
     on: "snow"

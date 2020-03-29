@@ -16,7 +16,7 @@ import net.daporkchop.lib.random.PRandom;
  * @author DaPorkchop_
  */
 @JsonDeserialize(using = DecoratorDeserializer.class)
-public interface Decorator extends GenerationPass, Populator {
+public interface Decorator extends Populator {
     Decorator[] EMPTY_ARRAY = new Decorator[0];
 
     @Override

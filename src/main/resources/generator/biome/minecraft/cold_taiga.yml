@@ -1,10 +1,18 @@
 dict: "nukkitx:vanilla"
-
-elevationVanilla:
-  height: 0.2
-  variation: 0.2
+parent: "minecraft:taiga"
 
 temperature: -0.5
 rainfall: 0.4
 
-#porktodo: this
+populators:
+  - id: "nukkitx:next"
+
+    # Snow layer on ground
+  - id: "nukkitx:cover"
+    on: "grass,leaves#1"
+    cover: "snow_layer"
+
+    # Ice layer on water
+  - id: "nukkitx:replace_top"
+    replace: "water"
+    with: "ice"

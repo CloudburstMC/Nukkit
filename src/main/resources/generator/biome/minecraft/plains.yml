@@ -19,7 +19,6 @@ decorators:
     on: "grass"
     block: "tallgrass"
 
-
 populators:
   - id: "nukkitx:noise"
     selector:

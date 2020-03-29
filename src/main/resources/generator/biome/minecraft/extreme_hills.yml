@@ -16,10 +16,11 @@ decorators:
       octaves: 4
     min: -0.06666666666
     in:
-      id: "nukkitx:surface"
-      ground: "stone"
-      top: "grass"
-      fill: "dirt"
+        # Generate grass surface sometimes
+      - id: "nukkitx:surface"
+        ground: "stone"
+        top: "grass"
+        fill: "dirt"
 
 populators:
     # Emerald

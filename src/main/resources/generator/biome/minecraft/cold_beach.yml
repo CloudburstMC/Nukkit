@@ -25,15 +25,3 @@ decorators:
   - id: "nukkitx:replace_top"
     replace: "water"
     with: "ice"
-
-populators:
-  - id: "nukkitx:next"
-
-    # Sugar cane
-  - id: "nukkitx:plant"
-    count: 10
-    height: "1-3"
-    block: "reeds"
-    on: "sand"
-    replace: "air,snow_layer"
-    water: "water"

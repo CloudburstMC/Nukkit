@@ -1,0 +1,6 @@
+dict: "nukkitx:vanilla"
+parent: "minecraft:cold_taiga"
+
+elevationVanilla:
+  height: 0.45
+  variation: 0.3

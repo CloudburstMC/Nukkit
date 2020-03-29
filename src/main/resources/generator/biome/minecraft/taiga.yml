@@ -7,4 +7,35 @@ elevationVanilla:
 temperature: 0.25
 rainfall: 0.8
 
-#porktodo: this
+decorators:
+  - id: "nukkitx:surface"
+    ground: "stone"
+    top: "grass"
+    fill: "dirt"
+
+    # Tall grass
+  - id: "nukkitx:scattered_cover"
+    chance: 0.05
+    on: "grass"
+    block:
+      - "tallgrass"
+      - "tallgrass"
+      - "tallgrass"
+      - "tallgrass"
+      - "tallgrass#2" # fern
+
+populators:
+    # Trees
+  - id: "nukkitx:tree"
+    chance: 0.0390625 # about 10 per chunk
+    on: "grass"
+    replace: "air"
+    type: "spruce"
+
+    # Berry bushes
+  - id: "nukkitx:shrub"
+    count: 2
+    on: "grass"
+    block: "sweet_berry_bush"
+
+
