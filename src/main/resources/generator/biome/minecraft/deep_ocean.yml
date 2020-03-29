@@ -2,14 +2,11 @@ dict: "nukkitx:vanilla"
 parent: "minecraft:ocean"
 
 elevationVanilla:
-  height: -1.0
+  height: -1.8
   variation: 0.1
-
-temperature: 0.5
-rainfall: 0.5
 
 decorators:
   - id: "nukkitx:surface"
     ground: "stone"
-    top: "dirt"
-    fill: "gravel"
+    top: "gravel"
+    fill: "stone"

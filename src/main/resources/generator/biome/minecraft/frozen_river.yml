@@ -1,0 +1,12 @@
+dict: "nukkitx:vanilla"
+parent: "minecraft:river"
+
+temperature: 0.0
+
+decorators:
+  - id: "nukkitx:next"
+
+    # Ice layer
+  - id: "nukkitx:replace_top"
+    replace: "water"
+    with: "ice"

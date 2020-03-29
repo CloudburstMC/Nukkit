@@ -143,7 +143,7 @@ public interface IChunk extends Comparable<IChunk> {
                 return y;
             }
         }
-        return 0;
+        return -1;
     }
 
     void addEntity(@Nonnull Entity entity);

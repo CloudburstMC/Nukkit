@@ -1,11 +1,9 @@
 dict: "nukkitx:vanilla"
+parent: "minecraft:ocean" # inherit sand, clay and gravel populators from ocean
 
 elevationVanilla:
   height: -0.5
   variation: 0.0
-
-temperature: 0.5
-rainfall: 0.5
 
 decorators:
   - id: "nukkitx:surface"

@@ -32,6 +32,8 @@ public class SurfaceDecorator implements Decorator {
     protected NoiseSource depthNoise;
 
     @JsonProperty
+    protected int cover = -1;
+    @JsonProperty
     protected int ground = -1;
     @JsonProperty
     protected int top    = -1;
@@ -73,6 +75,9 @@ public class SurfaceDecorator implements Decorator {
                 if (!placed) {
                     placed = true;
                     if (y + 1 >= this.seaLevel) {
+                        if (y < 255 && this.cover >= 0)    {
+                            chunk.setBlockRuntimeIdUnsafe(x, y + 1, z, 0, this.cover);
+                        }
                         chunk.setBlockRuntimeIdUnsafe(x, y--, z, 0, this.top);
                     }
                     for (int i = depth - 1; i >= 0 && y >= 0; i--, y--) {
@@ -95,6 +100,11 @@ public class SurfaceDecorator implements Decorator {
     @Override
     public Identifier getId() {
         return ID;
+    }
+
+    @JsonSetter("cover")
+    private void setCover(ConstantBlock block) {
+        this.cover = block.runtimeId();
     }
 
     @JsonSetter("ground")

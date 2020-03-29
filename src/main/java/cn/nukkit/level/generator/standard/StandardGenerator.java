@@ -16,6 +16,7 @@ import cn.nukkit.level.generator.standard.misc.GenerationPass;
 import cn.nukkit.level.generator.standard.misc.NextGenerationPass;
 import cn.nukkit.level.generator.standard.pop.Populator;
 import cn.nukkit.level.generator.standard.store.StandardGeneratorStores;
+import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -77,6 +78,8 @@ public final class StandardGenerator implements Generator {
                     Server.getInstance().getOnlinePlayers().values().forEach(player -> {
                         StandardGenerator generator = uncheckedCast(player.getLevel().getGenerator());
                         player.sendTip(generator.biomes.get(floorI(player.getX()), floorI(player.getZ())).getId().toString());
+
+                        player.addEffect(Effect.getEffect(Effect.SPEED).setDuration(160).setAmplifier(3).setVisible(false));
                     });
                 } catch (RuntimeException e) {
                 }

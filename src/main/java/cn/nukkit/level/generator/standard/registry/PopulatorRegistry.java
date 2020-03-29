@@ -6,6 +6,7 @@ import cn.nukkit.level.generator.standard.misc.NextGenerationPass;
 import cn.nukkit.level.generator.standard.pop.OrePopulator;
 import cn.nukkit.level.generator.standard.pop.Populator;
 import cn.nukkit.level.generator.standard.pop.ShrubPopulator;
+import cn.nukkit.level.generator.standard.pop.SubmergedOrePopulator;
 import cn.nukkit.level.generator.standard.pop.TreePopulator;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -25,6 +26,7 @@ public final class PopulatorRegistry extends AbstractGeneratorRegistry<Populator
     protected void registerDefault() {
         this.register(OrePopulator.ID, OrePopulator.class);
         this.register(ShrubPopulator.ID, ShrubPopulator.class);
+        this.register(SubmergedOrePopulator.ID, SubmergedOrePopulator.class);
         this.register(TreePopulator.ID, TreePopulator.class);
 
         this.register(NextGenerationPass.ID, NextGenerationPass.class);

@@ -22,8 +22,8 @@ root:
     defaultRiver: "minecraft:river"
     riverBiomes:
       #todo: uncomment all of these after they're added
-      # Mushroom island cannot have rivers inside of it, so simply remap them to themselves
-      minecraft:mushroom_island: "minecraft:mushroom_island"
+      # Mushroom island has shore instead of rivers
+      minecraft:mushroom_island: "minecraft:mushroom_island_shore"
       minecraft:mushroom_island_shore: "minecraft:mushroom_island_shore"
 
       #minecraft:ice_plains: "minecraft:frozen_river"

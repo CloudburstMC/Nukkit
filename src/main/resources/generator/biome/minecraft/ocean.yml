@@ -12,3 +12,28 @@ decorators:
     ground: "stone"
     top: "dirt"
     fill: "gravel"
+
+populators:
+    # Sand
+  - id: "nukkitx:ore_submerged"
+    count: 3
+    radius: "2-6"
+    block: "sand"
+    replace: "dirt,grass"
+    start: "water"
+
+    # Clay
+  - id: "nukkitx:ore_submerged"
+    count: 1
+    radius: "2-3"
+    block: "clay"
+    replace: "dirt"
+    start: "water"
+
+    # Gravel
+  - id: "nukkitx:ore_submerged"
+    count: 1
+    radius: "2-5"
+    block: "gravel"
+    replace: "dirt,grass"
+    start: "water"
