@@ -118,14 +118,16 @@ public class LoginPacketHandler implements BedrockPacketHandler {
 
             @Override
             public void onCompletion(Server server) {
-                if (e.getLoginResult() == PlayerAsyncPreLoginEvent.LoginResult.KICK) {
-                    loginDataInstance.getSession().disconnect(e.getKickMessage());
-                } else if (loginDataInstance.isShouldLogin()) {
-                    loginDataInstance.initializePlayer();
-                }
+                if(!loginDataInstance.getSession().isClosed()){
+                    if (e.getLoginResult() == PlayerAsyncPreLoginEvent.LoginResult.KICK) {
+                        loginDataInstance.getSession().disconnect(e.getKickMessage());
+                    } else if (loginDataInstance.isShouldLogin()) {
+                        loginDataInstance.initializePlayer();
+                    }
 
-                for (Consumer<Server> action : e.getScheduledActions()) {
-                    action.accept(server);
+                    for (Consumer<Server> action : e.getScheduledActions()) {
+                        action.accept(server);
+                    }
                 }
             }
         });
