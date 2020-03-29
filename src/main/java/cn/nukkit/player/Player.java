@@ -242,9 +242,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     protected Map<Long, DummyBossBar> dummyBossBars = new Long2ObjectLinkedOpenHashMap<>();
 
-    private AsyncTask preLoginEventTask = null;
-    protected boolean shouldLogin = false;
-
     public FishingHook fishing = null;
 
     private final PlayerChunkManager chunkManager = new PlayerChunkManager(this);
@@ -2069,22 +2066,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     public String getName() {
         return this.username;
-    }
-
-    public AsyncTask getPreLoginEventTask() {
-        return preLoginEventTask;
-    }
-
-    public void setPreLoginEventTask(AsyncTask preLoginEventTask) {
-        this.preLoginEventTask = preLoginEventTask;
-    }
-
-    public boolean isShouldLogin() {
-        return shouldLogin;
-    }
-
-    public void setShouldLogin(boolean shouldLogin) {
-        this.shouldLogin = shouldLogin;
     }
 
     public Vector3f getTeleportPosition() {
