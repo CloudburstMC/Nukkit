@@ -1,36 +1,8 @@
 dict: "nukkitx:vanilla"
+parent: "minecraft:mega_taiga"
 
-elevationVanilla:
-  height: 0.1
-  variation: 0.2
-
-temperature: 0.3
+temperature: 0.25
 rainfall: 0.8
-
-decorators:
-  - id: "nukkitx:noise"
-    seed: "extreme_hills"
-    selector:
-      id: "nukkitx:simplex"
-      scale: 0.0045
-      octaves: 4
-    min: -0.06333333333
-    max: 0.11666666666
-    above:
-      - id: "nukkitx:surface"
-        ground: "stone"
-        top: "dirt#1" # coarse dirt
-        fill: "dirt"
-    in:
-      - id: "nukkitx:surface"
-        ground: "stone"
-        top: "grass"
-        fill: "dirt"
-    below:
-      - id: "nukkitx:surface"
-        ground: "stone"
-        top: "podzol"
-        fill: "dirt"
 
 populators:
     # Mossy cobblestone blobs
@@ -47,7 +19,20 @@ populators:
     on: "grass,podzol,dirt#1"
     replace: "air"
     below: "dirt"
-    type: "pine"
+    types:
+      - "spruce"
+      - "spruce"
+      - "spruce"
+      - "spruce"
+      - "spruce"
+      - "spruce"
+      - "spruce"
+      - "spruce"
+      - "spruce"
+      - "spruce"
+      - "spruce"
+      - "spruce"
+      - "pine"
 
     # Trees
   - id: "nukkitx:tree"

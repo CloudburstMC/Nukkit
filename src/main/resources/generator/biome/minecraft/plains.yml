@@ -25,8 +25,8 @@ populators:
       id: "nukkitx:simplex"
       scale: 0.005
       octaves: 1
-    min: -0.8
-    in:
+    threshold: -0.8
+    above:
         # Double tall grass
       - id: "nukkitx:double_scattered_cover"
         chance: 0.02734375 # about 7 per chunk
@@ -48,7 +48,7 @@ populators:
           - "red_flower#3" # Azure Bluet
           - "red_flower#8" # Oxeye Daisy
           - "red_flower#9" # Cornflower
-    out:
+    below:
         # Flowers
       - id: "nukkitx:shrub"
         count: 15

@@ -31,7 +31,7 @@ public class FeatureMushroomBrown extends FeatureAbstractTree {
         }
 
         for (int dy = 0; dy <= height + 1; dy++) {
-            if (y + dy >= 256) {
+            if (y + dy < 0 ||y + dy >= 256) {
                 return false;
             }
 

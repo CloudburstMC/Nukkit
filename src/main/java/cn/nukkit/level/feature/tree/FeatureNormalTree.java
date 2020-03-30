@@ -26,20 +26,16 @@ public class FeatureNormalTree extends FeatureAbstractTree {
 
     @Override
     public boolean place(ChunkManager level, PRandom random, int x, int y, int z) {
-        if (y < 0 || y >= 256) {
-            return false;
+        final int height = this.height.rand(random);
+
+        for (int dy = 0; dy <= height; dy++) {
+            if (y + dy < 0 || y + dy >= 256 || !this.test(level.getBlockRuntimeIdUnsafe(x, y + dy, z, 0))) {
+                return false;
+            }
         }
 
         final int log = this.log.selectRuntimeId(random);
         final int leaves = this.leaves.selectRuntimeId(random);
-
-        final int height = this.height.rand(random);
-
-        for (int dy = 0; dy <= height; dy++) {
-            if (y + dy >= 256 || !this.test(level.getBlockRuntimeIdUnsafe(x, y + dy, z, 0))) {
-                return false;
-            }
-        }
 
         //place leaves
         for (int yy = y + height - 3; yy <= y + height; yy++) {

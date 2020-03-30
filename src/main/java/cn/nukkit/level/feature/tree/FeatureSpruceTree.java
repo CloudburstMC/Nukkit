@@ -30,15 +30,12 @@ public class FeatureSpruceTree extends FeatureAbstractTree {
             return false;
         }
 
-        final int log = this.log.selectRuntimeId(random);
-        final int leaves = this.leaves.selectRuntimeId(random);
-
         final int height = this.height.rand(random);
         final int leavesStart = random.nextInt(2) + 1;
         final int maxRadius = 2 + random.nextInt(2);
 
         for (int dy = 0; dy <= height + 1; dy++) {
-            if (y + dy >= 256) {
+            if (y + dy < 0 ||y + dy >= 256) {
                 return false;
             }
 
@@ -51,6 +48,9 @@ public class FeatureSpruceTree extends FeatureAbstractTree {
                 }
             }
         }
+
+        final int log = this.log.selectRuntimeId(random);
+        final int leaves = this.leaves.selectRuntimeId(random);
 
         //place leaves
         int radius = random.nextInt(2);

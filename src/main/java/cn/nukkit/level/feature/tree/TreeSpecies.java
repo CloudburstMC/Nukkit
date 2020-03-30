@@ -30,6 +30,23 @@ public enum TreeSpecies {
         public WorldFeature getDefaultGenerator() {
             return new FeatureSpruceTree(FeatureSpruceTree.DEFAULT_HEIGHT, this);
         }
+
+        @Override
+        public WorldFeature getHugeGenerator() {
+            return new FeatureHugeSpruceTree(FeatureHugeSpruceTree.DEFAULT_HEIGHT, this);
+        }
+    },
+    PINE(BlockIds.LOG, BlockLog.SPRUCE, BlockIds.LEAVES, BlockLeaves.SPRUCE, null, -1) {
+        @Override
+        public WorldFeature getDefaultGenerator() {
+            //porktodo: this
+            return new FeatureSpruceTree(FeatureSpruceTree.DEFAULT_HEIGHT, this);
+        }
+
+        @Override
+        public WorldFeature getHugeGenerator() {
+            return new FeatureHugePineTree(FeatureHugeSpruceTree.DEFAULT_HEIGHT, this);
+        }
     },
     BIRCH(BlockIds.LOG, BlockLog.BIRCH, BlockIds.LEAVES, BlockLeaves.BIRCH, BlockIds.SAPLING, BlockSapling.BIRCH),
     JUNGLE(BlockIds.LOG, BlockLog.JUNGLE, BlockIds.LEAVES, BlockLeaves.JUNGLE, BlockIds.SAPLING, BlockSapling.JUNGLE),
@@ -93,5 +110,9 @@ public enum TreeSpecies {
 
     public WorldFeature getDefaultGenerator() {
         return new FeatureNormalTree(FeatureNormalTree.DEFAULT_HEIGHT, this);
+    }
+
+    public WorldFeature getHugeGenerator()  {
+        return null;
     }
 }

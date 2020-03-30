@@ -13,17 +13,6 @@ decorators:
     top: "grass"
     fill: "dirt"
 
-    # Tall grass
-  - id: "nukkitx:scattered_cover"
-    chance: 0.05
-    on: "grass"
-    block:
-      - "tallgrass"
-      - "tallgrass"
-      - "tallgrass"
-      - "tallgrass"
-      - "tallgrass#2" # fern
-
 populators:
     # Trees
   - id: "nukkitx:tree"
@@ -38,4 +27,13 @@ populators:
     on: "grass"
     block: "sweet_berry_bush"
 
-
+    # Tall grass
+  - id: "nukkitx:scattered_cover"
+    chance: 0.05
+    on: "grass"
+    block:
+      - "tallgrass"
+      - "tallgrass"
+      - "tallgrass"
+      - "tallgrass"
+      - "tallgrass#2" # fern

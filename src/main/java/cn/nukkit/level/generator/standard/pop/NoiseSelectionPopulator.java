@@ -7,7 +7,9 @@ import cn.nukkit.level.generator.standard.gen.noise.NoiseGenerator;
 import cn.nukkit.level.generator.standard.misc.AbstractGenerationPass;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.common.base.Preconditions;
 import net.daporkchop.lib.noise.NoiseSource;
 import net.daporkchop.lib.random.PRandom;
 import net.daporkchop.lib.random.impl.FastPRandom;
@@ -26,29 +28,37 @@ public class NoiseSelectionPopulator extends AbstractGenerationPass implements P
     protected NoiseSource selector;
 
     @JsonProperty
-    protected double min = 0.0d;
+    protected double min = Double.NaN;
 
     @JsonProperty
-    protected double max = Double.MAX_VALUE;
+    protected double max = Double.NaN;
+
+    @JsonProperty
+    protected Populator[] below = Populator.EMPTY_ARRAY;
+
+    @JsonProperty
+    protected Populator[] above = Populator.EMPTY_ARRAY;
 
     @JsonProperty
     protected Populator[] in = Populator.EMPTY_ARRAY;
-
-    @JsonProperty
-    protected Populator[] out = Populator.EMPTY_ARRAY;
 
     @JsonProperty("selector")
     protected NoiseGenerator selectorNoise;
 
     @Override
     protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
+        Preconditions.checkState(!Double.isNaN(this.min), "min must be set!");
+        Preconditions.checkState(!Double.isNaN(this.max), "max must be set!");
         this.selector = Objects.requireNonNull(this.selectorNoise, "selector must be set!").create(new FastPRandom(localSeed));
         this.selectorNoise = null;
 
-        for (Populator populator : Objects.requireNonNull(this.in, "in must be set!"))  {
+        for (Populator populator : Objects.requireNonNull(this.below, "below must be set!")) {
             populator.init(levelSeed, localSeed, generator);
         }
-        for (Populator populator : Objects.requireNonNull(this.out, "out must be set!"))  {
+        for (Populator populator : Objects.requireNonNull(this.above, "above must be set!")) {
+            populator.init(levelSeed, localSeed, generator);
+        }
+        for (Populator populator : Objects.requireNonNull(this.in, "in must be set!")) {
             populator.init(levelSeed, localSeed, generator);
         }
     }
@@ -56,7 +66,7 @@ public class NoiseSelectionPopulator extends AbstractGenerationPass implements P
     @Override
     public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
         double noise = this.selector.get(chunkX << 4, chunkZ << 4);
-        for (Populator populator : noise >= this.min && noise <= this.max ? this.in : this.out) {
+        for (Populator populator : noise < this.min ? this.below : noise > this.max ? this.above : this.in) {
             populator.populate(random, level, chunkX, chunkZ);
         }
     }
@@ -64,5 +74,15 @@ public class NoiseSelectionPopulator extends AbstractGenerationPass implements P
     @Override
     public Identifier getId() {
         return ID;
+    }
+
+    @JsonSetter("threshold")
+    private void setThreshold(double threshold) {
+        this.min = this.max = threshold;
+    }
+
+    @JsonSetter("out")
+    private void setOut(Populator[] out) {
+        this.above = this.below = out;
     }
 }

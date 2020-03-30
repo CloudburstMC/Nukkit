@@ -6,7 +6,7 @@ groundBlock: "stone"
 seaBlock: "water"
 seaLevel: 63
 
-biomes: "nukkitx:flat"
+biomes: "nukkitx:flat" #todo: reset this to overworld when i'm done testing
 
 density: "nukkitx:default"
 
