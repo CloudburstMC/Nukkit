@@ -1,36 +1,22 @@
 dict: "nukkitx:vanilla"
+parent: "minecraft:forest"
 
 elevationVanilla:
-  height: 0.1
-  variation: 0.2
+  height: 0.2
+  variation: 0.4
 
-temperature: 0.7
-rainfall: 0.8
-
-decorators:
-  - id: "nukkitx:surface"
-    ground: "stone"
-    top: "grass"
-    fill: "dirt"
-
-    # Tall grass
-  - id: "nukkitx:scattered_cover"
-    chance: 0.05
-    on: "grass"
-    block: "tallgrass"
+temperature: 0.6
+rainfall: 0.6
 
 populators:
     # Trees
   - id: "nukkitx:tree"
     chance: 0.0390625 # about 10 per chunk
     on: "grass"
-    replace: "air,tallgrass"
     types:
-      - "oak"
-      - "oak"
-      - "oak"
-      - "oak"
       - "birch"
+      - species: "birch"
+        height: "5-13"
 
     # Flowers
   - id: "nukkitx:shrub"

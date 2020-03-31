@@ -4,6 +4,7 @@ import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.generator.standard.gen.decorator.NoiseSelectionDecorator;
 import cn.nukkit.level.generator.standard.pop.BlobPopulator;
+import cn.nukkit.level.generator.standard.pop.DoublePlantPopulator;
 import cn.nukkit.level.generator.standard.pop.HugeTreePopulator;
 import cn.nukkit.level.generator.standard.pop.NoiseSelectionPopulator;
 import cn.nukkit.level.generator.standard.pop.OrePopulator;
@@ -30,6 +31,7 @@ public final class PopulatorRegistry extends AbstractGeneratorRegistry<Populator
     @Override
     protected void registerDefault() {
         this.register(BlobPopulator.ID, BlobPopulator.class);
+        this.register(DoublePlantPopulator.ID, DoublePlantPopulator.class);
         this.register(HugeTreePopulator.ID, HugeTreePopulator.class);
         this.register(OrePopulator.ID, OrePopulator.class);
         this.register(PlantPopulator.ID, PlantPopulator.class);

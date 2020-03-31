@@ -38,21 +38,21 @@ public class FeatureSwampTree extends FeatureNormalTree {
                 }
 
                 if (level.getBlockRuntimeIdUnsafe(x + dx + 1, y, z + dz, 0) == leaves)  {
-                    this.placeVines(level, random,x + dx + 1, y, z + dz, BlockFace.EAST);
+                    this.placeVines(level, random,x + dx, y, z + dz, BlockFace.WEST, leaves);
                 } else if (level.getBlockRuntimeIdUnsafe(x + dx - 1, y, z + dz, 0) == leaves)  {
-                    this.placeVines(level, random,x + dx - 1, y, z + dz, BlockFace.WEST);
+                    this.placeVines(level, random,x + dx, y, z + dz, BlockFace.EAST, leaves);
                 } else if (level.getBlockRuntimeIdUnsafe(x + dx, y, z + dz + 1, 0) == leaves)  {
-                    this.placeVines(level, random,x + dx, y, z + dz + 1, BlockFace.SOUTH);
+                    this.placeVines(level, random,x + dx, y, z + dz, BlockFace.NORTH, leaves);
                 } else if (level.getBlockRuntimeIdUnsafe(x + dx, y, z + dz - 1, 0) == leaves)  {
-                    this.placeVines(level, random,x + dx, y, z + dz - 1, BlockFace.NORTH);
+                    this.placeVines(level, random,x + dx, y, z + dz, BlockFace.SOUTH, leaves);
                 }
             }
         }
     }
 
-    protected void placeVines(ChunkManager level, PRandom random, int x, int y, int z, BlockFace face)  {
+    protected void placeVines(ChunkManager level, PRandom random, int x, int y, int z, BlockFace face, int leaves)  {
         int block = BlockRegistry.get().getRuntimeId(BlockIds.VINE, BlockVine.getMeta(face.getOpposite()));
-        for (int dy = 0; dy < 4 && this.test(level.getBlockRuntimeIdUnsafe(x, y - dy, z, 0)); dy++)  {
+        for (int dy = 0, id; dy < 4 && (id = level.getBlockRuntimeIdUnsafe(x, y - dy, z, 0)) != leaves && this.test(id); dy++)  {
             level.setBlockRuntimeIdUnsafe(x, y - dy, z, 0, block);
         }
     }

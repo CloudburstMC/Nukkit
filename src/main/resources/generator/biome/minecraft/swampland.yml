@@ -31,6 +31,12 @@ decorators:
     top: "grass"
     fill: "dirt"
 
+    # Tall grass
+  - id: "nukkitx:scattered_cover"
+    chance: 0.05
+    on: "grass"
+    block: "tallgrass"
+
 populators:
     # Clay
   - id: "nukkitx:ore_submerged"
@@ -67,9 +73,3 @@ populators:
     count: 1
     on: "grass"
     block: "red_flower#1"
-
-    # Tall grass
-  - id: "nukkitx:scattered_cover"
-    chance: 0.05
-    on: "grass"
-    block: "tallgrass"

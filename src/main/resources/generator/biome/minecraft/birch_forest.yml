@@ -1,17 +1,8 @@
 dict: "nukkitx:vanilla"
-
-elevationVanilla:
-  height: 0.1
-  variation: 0.2
+parent: "minecraft:forest"
 
 temperature: 0.6
 rainfall: 0.6
-
-decorators:
-  - id: "nukkitx:surface"
-    ground: "stone"
-    top: "grass"
-    fill: "dirt"
 
 populators:
     # Trees
@@ -19,3 +10,20 @@ populators:
     chance: 0.0390625 # about 10 per chunk
     on: "grass"
     type: "birch"
+
+    # Flowers
+  - id: "nukkitx:shrub"
+    count: 4
+    on: "grass"
+    replace: "air,tallgrass"
+    block: "2*yellow_flower,red_flower"
+
+    # Double plants
+  - id: "nukkitx:double_plant"
+    count: 3
+    on: "grass"
+    replace: "air,tallgrass"
+    types:
+      - 1 # lilac
+      - 4 # rose
+      - 5 # peony

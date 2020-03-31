@@ -27,13 +27,13 @@ populators:
       octaves: 1
     threshold: -0.8
     above:
-        # Double tall grass
-      - id: "nukkitx:double_scattered_cover"
-        chance: 0.02734375 # about 7 per chunk
-        on: "grass"
-        replace: "air,tallgrass"
-        lowBlock: "double_plant#2"
-        highBlock: "double_plant#10"
+#        # Double tall grass
+#      - id: "nukkitx:double_scattered_cover"
+#        chance: 0.02734375 # about 7 per chunk
+#        on: "grass"
+#        replace: "air,tallgrass"
+#        lowBlock: "double_plant#2"
+#        highBlock: "double_plant#10"
 
         # Flowers
       - id: "nukkitx:shrub"

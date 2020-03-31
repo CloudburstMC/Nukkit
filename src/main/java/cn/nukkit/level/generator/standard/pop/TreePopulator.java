@@ -93,15 +93,25 @@ public class TreePopulator extends ChancePopulator {
 
     @JsonDeserialize
     private static final class ConfigTree {
-        private WorldFeature feature;
+        private final TreeSpecies species;
+        private IntRange height;
 
         @JsonCreator
         public ConfigTree(String species) {
-            this.feature = TreeSpecies.valueOf(species.toUpperCase()).getDefaultGenerator();
+            this.species = TreeSpecies.valueOf(species.toUpperCase());
+        }
+
+        @JsonCreator
+        public ConfigTree(
+                @JsonProperty(value = "species", required = true) @NonNull String species,
+                @JsonProperty(value = "height") IntRange height) {
+            this(species);
+
+            this.height = height;
         }
 
         public WorldFeature build() {
-            return this.feature;
+            return this.height == null ? this.species.getDefaultGenerator() : this.species.getDefaultGenerator(this.height);
         }
     }
 }

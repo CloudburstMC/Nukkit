@@ -1,11 +1,9 @@
 dict: "nukkitx:vanilla"
+parent: "minecraft:forest"
 
 elevationVanilla:
   height: 0.1
-  variation: 0.2
-
-temperature: 0.7
-rainfall: 0.8
+  variation: 0.4
 
 decorators:
   - id: "nukkitx:surface"
@@ -13,16 +11,10 @@ decorators:
     top: "grass"
     fill: "dirt"
 
-    # Tall grass
-  - id: "nukkitx:scattered_cover"
-    chance: 0.05
-    on: "grass"
-    block: "tallgrass"
-
 populators:
     # Trees
   - id: "nukkitx:tree"
-    chance: 0.0390625 # about 10 per chunk
+    chance: 0.0234375 # about 6 per chunk
     on: "grass"
     replace: "air,tallgrass"
     types:
@@ -33,11 +25,23 @@ populators:
       - "birch"
 
     # Flowers
+    # This doesn't use the "flower gradient" thing like vanilla, but instead simply distributes them randomly
   - id: "nukkitx:shrub"
-    count: 4
+    count: 100
     on: "grass"
     replace: "air,tallgrass"
-    block: "2*yellow_flower,red_flower"
+    block:
+      - "yellow_flower"
+      - "red_flower"
+      - "red_flower#2"
+      - "red_flower#3"
+      - "red_flower#4"
+      - "red_flower#5"
+      - "red_flower#6"
+      - "red_flower#7"
+      - "red_flower#8"
+      - "red_flower#9"
+      - "red_flower#10"
 
     # Double plants
   - id: "nukkitx:double_plant"

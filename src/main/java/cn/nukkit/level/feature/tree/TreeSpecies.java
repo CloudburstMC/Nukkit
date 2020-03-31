@@ -9,7 +9,9 @@ import cn.nukkit.block.BlockLog;
 import cn.nukkit.block.BlockLog2;
 import cn.nukkit.block.BlockSapling;
 import cn.nukkit.level.feature.WorldFeature;
+import cn.nukkit.level.generator.standard.misc.IntRange;
 import cn.nukkit.utils.Identifier;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -21,20 +23,30 @@ import lombok.RequiredArgsConstructor;
 public enum TreeSpecies {
     OAK(BlockIds.LOG, BlockLog.OAK, BlockIds.LEAVES, BlockLeaves.OAK, BlockIds.SAPLING, BlockSapling.OAK) {
         @Override
-        public WorldFeature getDefaultGenerator() {
-            return new FeatureLargeOakTree(FeatureNormalTree.DEFAULT_HEIGHT, this, 0.1d, FeatureLargeOakTree.DEFAULT_HEIGHT);
+        public WorldFeature getDefaultGenerator(@NonNull IntRange height) {
+            return new FeatureLargeOakTree(height, this, 0.1d, FeatureLargeOakTree.DEFAULT_HEIGHT);
         }
     },
     SWAMP(BlockIds.LOG, BlockLog.OAK, BlockIds.LEAVES, BlockLeaves.OAK, null, -1) {
         @Override
         public WorldFeature getDefaultGenerator() {
-            return new FeatureSwampTree(FeatureSwampTree.DEFAULT_HEIGHT, OAK);
+            return this.getDefaultGenerator(FeatureSwampTree.DEFAULT_HEIGHT);
+        }
+
+        @Override
+        public WorldFeature getDefaultGenerator(@NonNull IntRange height) {
+            return new FeatureSwampTree(height, OAK);
         }
     },
     SPRUCE(BlockIds.LOG, BlockLog.SPRUCE, BlockIds.LEAVES, BlockLeaves.SPRUCE, BlockIds.SAPLING, BlockSapling.SPRUCE) {
         @Override
         public WorldFeature getDefaultGenerator() {
-            return new FeatureSpruceTree(FeatureSpruceTree.DEFAULT_HEIGHT, this);
+            return this.getDefaultGenerator(FeatureSpruceTree.DEFAULT_HEIGHT);
+        }
+
+        @Override
+        public WorldFeature getDefaultGenerator(@NonNull IntRange height) {
+            return new FeatureSpruceTree(height, this);
         }
 
         @Override
@@ -45,6 +57,11 @@ public enum TreeSpecies {
     PINE(BlockIds.LOG, BlockLog.SPRUCE, BlockIds.LEAVES, BlockLeaves.SPRUCE, null, -1) {
         @Override
         public WorldFeature getDefaultGenerator() {
+            return this.getDefaultGenerator(FeatureSpruceTree.DEFAULT_HEIGHT);
+        }
+
+        @Override
+        public WorldFeature getDefaultGenerator(@NonNull IntRange height) {
             //porktodo: this
             return new FeatureSpruceTree(FeatureSpruceTree.DEFAULT_HEIGHT, this);
         }
@@ -60,14 +77,14 @@ public enum TreeSpecies {
     DARK_OAK(BlockIds.LOG2, BlockLog2.DARK_OAK, BlockIds.LEAVES2, BlockLeaves2.DARK_OAK, BlockIds.SAPLING, BlockSapling.DARK_OAK),
     MUSHROOM_RED(BlockIds.RED_MUSHROOM_BLOCK, BlockHugeMushroomRed.STEM, BlockIds.RED_MUSHROOM_BLOCK, BlockHugeMushroomRed.ALL, BlockIds.RED_MUSHROOM, 0)   {
         @Override
-        public WorldFeature getDefaultGenerator() {
-            return new FeatureMushroomRed(FeatureNormalTree.DEFAULT_HEIGHT);
+        public WorldFeature getDefaultGenerator(@NonNull IntRange height) {
+            return new FeatureMushroomRed(height);
         }
     },
     MUSHROOM_BROWN(BlockIds.BROWN_MUSHROOM_BLOCK, BlockHugeMushroomBrown.STEM, BlockIds.BROWN_MUSHROOM_BLOCK, BlockHugeMushroomBrown.ALL, BlockIds.BROWN_MUSHROOM, 0)   {
         @Override
-        public WorldFeature getDefaultGenerator() {
-            return new FeatureMushroomBrown(FeatureNormalTree.DEFAULT_HEIGHT);
+        public WorldFeature getDefaultGenerator(@NonNull IntRange height) {
+            return new FeatureMushroomBrown(height);
         }
     };
 
@@ -115,7 +132,11 @@ public enum TreeSpecies {
     }
 
     public WorldFeature getDefaultGenerator() {
-        return new FeatureNormalTree(FeatureNormalTree.DEFAULT_HEIGHT, this);
+        return this.getDefaultGenerator(FeatureNormalTree.DEFAULT_HEIGHT);
+    }
+
+    public WorldFeature getDefaultGenerator(@NonNull IntRange height) {
+        return new FeatureNormalTree(height, this);
     }
 
     public WorldFeature getHugeGenerator()  {
