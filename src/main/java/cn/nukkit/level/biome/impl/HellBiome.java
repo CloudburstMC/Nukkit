@@ -7,4 +7,9 @@ public class HellBiome extends Biome {
     public String getName() {
         return "Hell";
     }
+
+    @Override
+    public boolean canRain() {
+        return false;
+    }
 }
