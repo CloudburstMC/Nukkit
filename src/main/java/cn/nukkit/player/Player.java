@@ -2710,12 +2710,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         Location from = this.getLocation();
         if (super.teleport(location, cause)) {
 
-            for (Inventory window : new ArrayList<>(this.windows.keySet())) {
-                if (window == this.getInventory()) {
-                    continue;
-                }
-                this.removeWindow(window);
-            }
+            this.removeAllWindows(false);
 
             if (from.getLevel() != location.getLevel()) { //Different level, update compass position
                 SetSpawnPositionPacket packet = new SetSpawnPositionPacket();
@@ -2900,6 +2895,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         } else {
             cnt = forceId;
         }
+
         this.windows.forcePut(inventory, cnt);
 
         if (isPermanent) {
