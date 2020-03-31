@@ -3302,20 +3302,20 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     Item newBook = oldBook.clone();
                     boolean success;
-                    switch (bookEditPacket.type) {
-                        case BookEditPacket.TYPE_REPLACE_PAGE:
+                    switch (bookEditPacket.action) {
+                        case REPLACE_PAGE:
                             success = ((ItemBookAndQuill) newBook).setPageText(bookEditPacket.pageNumber, bookEditPacket.text);
                             break;
-                        case BookEditPacket.TYPE_ADD_PAGE:
+                        case ADD_PAGE:
                             success = ((ItemBookAndQuill) newBook).insertPage(bookEditPacket.pageNumber, bookEditPacket.text);
                             break;
-                        case BookEditPacket.TYPE_DELETE_PAGE:
+                        case DELETE_PAGE:
                             success = ((ItemBookAndQuill) newBook).deletePage(bookEditPacket.pageNumber);
                             break;
-                        case BookEditPacket.TYPE_SWAP_PAGES:
+                        case SWAP_PAGES:
                             success = ((ItemBookAndQuill) newBook).swapPages(bookEditPacket.pageNumber, bookEditPacket.secondaryPageNumber);
                             break;
-                        case BookEditPacket.TYPE_SIGN_BOOK:
+                        case SIGN_BOOK:
                             newBook = Item.get(Item.WRITTEN_BOOK, 0, 1, oldBook.getCompoundTag());
                             success = ((ItemBookWritten) newBook).signBook(bookEditPacket.title, bookEditPacket.author, bookEditPacket.xuid, ItemBookWritten.GENERATION_ORIGINAL);
                             break;
@@ -3324,7 +3324,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
 
                     if (success) {
-                        PlayerEditBookEvent editBookEvent = new PlayerEditBookEvent(this, oldBook, newBook, bookEditPacket.type);
+                        PlayerEditBookEvent editBookEvent = new PlayerEditBookEvent(this, oldBook, newBook, bookEditPacket.action);
                         this.server.getPluginManager().callEvent(editBookEvent);
                         if (!editBookEvent.isCancelled()) {
                             this.inventory.setItem(bookEditPacket.inventorySlot, editBookEvent.getNewBook());
