@@ -1,0 +1,6 @@
+dict: "nukkitx:vanilla"
+parent: "minecraft:swampland"
+
+elevationVanilla:
+  height: -0.1
+  variation: 0.3

@@ -5,6 +5,7 @@ import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.feature.WorldFeature;
 import cn.nukkit.level.feature.tree.TreeSpecies;
 import cn.nukkit.level.generator.standard.StandardGenerator;
+import cn.nukkit.level.generator.standard.misc.IntRange;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -33,12 +34,16 @@ public class TreePopulator extends ChancePopulator {
     @JsonProperty
     private BlockFilter on;
 
+    @JsonProperty
+    private IntRange height = IntRange.WHOLE_WORLD;
+
     private WorldFeature[] types;
 
     @Override
     public void init(long levelSeed, long localSeed, StandardGenerator generator) {
         Objects.requireNonNull(this.replace, "replace must be set!");
         Objects.requireNonNull(this.on, "on must be set!");
+        Objects.requireNonNull(this.height, "height must be set!");
         Objects.requireNonNull(this.types, "type must be set!");
 
         super.init(levelSeed, localSeed, generator);
@@ -49,10 +54,13 @@ public class TreePopulator extends ChancePopulator {
         final BlockFilter replace = this.replace;
         final BlockFilter on = this.on;
 
+        final int max = this.height.max - 1;
+        final int min = this.height.min;
+
         IChunk chunk = level.getChunk(chunkX, chunkZ);
         for (int x = 0; x < 16; x++)    {
             for (int z = 0; z < 16; z++)    {
-                for (int y = 254, id, lastId = chunk.getBlockRuntimeIdUnsafe(x, 255, z, 0); y >= 0; y--) {
+                for (int y = max, id, lastId = chunk.getBlockRuntimeIdUnsafe(x, 255, z, 0); y >= min; y--) {
                     id = chunk.getBlockRuntimeIdUnsafe(x, y, z, 0);
 
                     if (replace.test(lastId) && on.test(id) && random.nextDouble() < this.chance) {

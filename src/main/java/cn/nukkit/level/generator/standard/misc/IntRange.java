@@ -87,9 +87,9 @@ public final class IntRange {
      * @return a random value within this {@link IntRange}
      */
     public int rand(@NonNull PRandom random) {
-        if (this.empty())   {
+        if (this.empty()) {
             return this.min;
-        } else if (this.gaussian)   {
+        } else if (this.gaussian) {
             double center = (this.min + this.max) * 0.5d;
             return (int) (random.nextGaussianDouble() * (this.max - center) + center);
         } else {
@@ -109,6 +109,16 @@ public final class IntRange {
      */
     public int size() {
         return this.max - this.min;
+    }
+
+    /**
+     * Whether or not the given value is included in this range.
+     *
+     * @param value the value to check
+     * @return whether or not this range contains the givenv alue
+     */
+    public boolean contains(int value) {
+        return value >= this.min && value < this.max;
     }
 
     @Override

@@ -23,7 +23,7 @@ populators:
 
     # Berry bushes
   - id: "nukkitx:shrub"
-    count: 2
+    count: 1
     on: "grass"
     block: "sweet_berry_bush"
 

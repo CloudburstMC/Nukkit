@@ -16,6 +16,36 @@ import com.nukkitx.math.vector.Vector3f;
  * Created by Pub4Game on 15.01.2016.
  */
 public class BlockVine extends BlockTransparent {
+    public static final int SOUTH = 1;
+    public static final int WEST  = 2;
+    public static final int NORTH = 4;
+    public static final int EAST  = 8;
+
+    public static BlockFace getFace(int meta) {
+        if ((meta & EAST) != 0) {
+            return BlockFace.EAST;
+        } else if ((meta & NORTH) != 0) {
+            return BlockFace.NORTH;
+        } else if ((meta & WEST) != 0)  {
+            return BlockFace.WEST;
+        } else {
+            return BlockFace.SOUTH;
+        }
+    }
+
+    public static int getMeta(BlockFace face) {
+        switch (face) {
+            case SOUTH:
+            default:
+                return SOUTH;
+            case WEST:
+                return WEST;
+            case NORTH:
+                return NORTH;
+            case EAST:
+                return EAST;
+        }
+    }
 
     public BlockVine(Identifier id) {
         super(id);
@@ -71,7 +101,7 @@ public class BlockVine extends BlockTransparent {
         float f5 = 0;
         float f6 = 0;
         boolean flag = this.getMeta() > 0;
-        if ((this.getMeta() & 0x02) > 0) {
+        if ((this.getMeta() & WEST) != 0) {
             f4 = Math.max(f4, 0.0625f);
             f1 = 0;
             f2 = 0;
@@ -80,7 +110,7 @@ public class BlockVine extends BlockTransparent {
             f6 = 1;
             flag = true;
         }
-        if ((this.getMeta() & 0x08) > 0) {
+        if ((this.getMeta() & EAST) != 0) {
             f1 = Math.min(f1, 0.9375f);
             f4 = 1;
             f2 = 0;
@@ -89,7 +119,7 @@ public class BlockVine extends BlockTransparent {
             f6 = 1;
             flag = true;
         }
-        if ((this.getMeta() & 0x01) > 0) {
+        if ((this.getMeta() & SOUTH) != 0) {
             f3 = Math.min(f3, 0.9375f);
             f6 = 1;
             f1 = 0;
@@ -119,7 +149,7 @@ public class BlockVine extends BlockTransparent {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         if (target.isSolid() && face.getHorizontalIndex() != -1) {
-            this.setMeta(getMetaFromFace(face.getOpposite()));
+            this.setMeta(getMeta(face.getOpposite()));
             this.getLevel().setBlock(block.getPosition(), this, true, true);
             return true;
         }
@@ -146,7 +176,7 @@ public class BlockVine extends BlockTransparent {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (!this.getSide(getFace()).isSolid()) {
+            if (!this.getSide(getFace(this.getMeta())).isSolid()) {
                 Block up = this.up();
                 if (up.getId() != this.getId() || up.getMeta() != this.getMeta()) {
                     this.getLevel().useBreakOn(this.getPosition(), null, null, true);
@@ -155,35 +185,6 @@ public class BlockVine extends BlockTransparent {
             }
         }
         return 0;
-    }
-
-    private BlockFace getFace() {
-        int meta = this.getMeta();
-        if ((meta & 1) > 0) {
-            return BlockFace.SOUTH;
-        } else if ((meta & 2) > 0) {
-            return BlockFace.WEST;
-        } else if ((meta & 4) > 0) {
-            return BlockFace.NORTH;
-        } else if ((meta & 8) > 0) {
-            return BlockFace.EAST;
-        }
-
-        return BlockFace.SOUTH;
-    }
-
-    private int getMetaFromFace(BlockFace face) {
-        switch (face) {
-            case SOUTH:
-            default:
-                return 0x01;
-            case WEST:
-                return 0x02;
-            case NORTH:
-                return 0x04;
-            case EAST:
-                return 0x08;
-        }
     }
 
     @Override

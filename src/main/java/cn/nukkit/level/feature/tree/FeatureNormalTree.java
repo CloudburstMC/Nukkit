@@ -25,19 +25,18 @@ public class FeatureNormalTree extends FeatureAbstractTree {
     }
 
     @Override
-    public boolean place(ChunkManager level, PRandom random, int x, int y, int z) {
-        final int height = this.height.rand(random);
-
+    protected boolean canPlace(ChunkManager level, PRandom random, int x, int y, int z, int height) {
         for (int dy = 0; dy <= height; dy++) {
             if (y + dy < 0 || y + dy >= 256 || !this.test(level.getBlockRuntimeIdUnsafe(x, y + dy, z, 0))) {
                 return false;
             }
         }
 
-        final int log = this.log.selectRuntimeId(random);
-        final int leaves = this.leaves.selectRuntimeId(random);
+        return true;
+    }
 
-        //place leaves
+    @Override
+    protected void placeLeaves(ChunkManager level, PRandom random, int x, int y, int z, int height, int log, int leaves)    {
         for (int yy = y + height - 3; yy <= y + height; yy++) {
             int dy = yy - (y + height);
             int radius = 1 - (dy / 2);
@@ -50,14 +49,17 @@ public class FeatureNormalTree extends FeatureAbstractTree {
                 }
             }
         }
+    }
 
-        //place logs
+    @Override
+    protected void placeTrunk(ChunkManager level, PRandom random, int x, int y, int z, int height, int log, int leaves)    {
         for (int dy = 0; dy < height; dy++) {
             level.setBlockRuntimeIdUnsafe(x, y + dy, z, 0, log);
         }
+    }
 
+    @Override
+    protected void finish(ChunkManager level, PRandom random, int x, int y, int z, int height, int log, int leaves)    {
         this.maybeReplaceBelowWithDirt(level, x, y - 1, z);
-
-        return true;
     }
 }

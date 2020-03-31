@@ -4,6 +4,7 @@ import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.standard.StandardGenerator;
 import cn.nukkit.level.generator.standard.misc.ConstantBlock;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
+import cn.nukkit.level.generator.standard.misc.selector.BlockSelector;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -32,31 +33,29 @@ public class GroundCoverDecorator implements Decorator {
     protected BlockFilter replace = BlockFilter.AIR;
 
     @JsonProperty
+    protected double chance = 1.0d;
+
+    @JsonProperty
     @JsonAlias({"block"})
-    protected int cover = -1;
+    protected BlockSelector cover;
 
     @Override
     public void init(long levelSeed, long localSeed, StandardGenerator generator) {
         Objects.requireNonNull(this.replace, "replace must be set!");
-        Preconditions.checkState(this.cover >= 0, "cover must be set!");
+        Objects.requireNonNull(this.cover, "cover must be set!");
     }
 
     @Override
     public void decorate(IChunk chunk, PRandom random, int x, int z) {
         int y = chunk.getHighestBlock(x, z);
         if (y >= 0 && y < 255 && (this.on == null || this.on.test(chunk.getBlockRuntimeIdUnsafe(x, y, z, 0)))
-                && this.replace.test(chunk.getBlockRuntimeIdUnsafe(x, y + 1, z, 0))) {
-            chunk.setBlockRuntimeIdUnsafe(x, y + 1, z, 0, this.cover);
+                && this.replace.test(chunk.getBlockRuntimeIdUnsafe(x, y + 1, z, 0)) && random.nextDouble() < this.chance) {
+            chunk.setBlockRuntimeIdUnsafe(x, y + 1, z, 0, this.cover.selectRuntimeId(random));
         }
     }
 
     @Override
     public Identifier getId() {
         return ID;
-    }
-
-    @JsonSetter("cover")
-    private void setCover(ConstantBlock block) {
-        this.cover = block.runtimeId();
     }
 }

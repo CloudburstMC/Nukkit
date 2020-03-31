@@ -13,7 +13,7 @@ import static java.lang.Math.*;
  *
  * @author DaPorkchop_
  */
-public class FeatureSpruceTree extends FeatureAbstractTree {
+public class FeatureSpruceTree extends FeatureNormalTree {
     public static final IntRange DEFAULT_HEIGHT = new IntRange(6, 10);
 
     public FeatureSpruceTree(@NonNull IntRange height, @NonNull TreeSpecies species) {

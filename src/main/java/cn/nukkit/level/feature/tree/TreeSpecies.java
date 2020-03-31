@@ -25,6 +25,12 @@ public enum TreeSpecies {
             return new FeatureLargeOakTree(FeatureNormalTree.DEFAULT_HEIGHT, this, 0.1d, FeatureLargeOakTree.DEFAULT_HEIGHT);
         }
     },
+    SWAMP(BlockIds.LOG, BlockLog.OAK, BlockIds.LEAVES, BlockLeaves.OAK, null, -1) {
+        @Override
+        public WorldFeature getDefaultGenerator() {
+            return new FeatureSwampTree(FeatureSwampTree.DEFAULT_HEIGHT, OAK);
+        }
+    },
     SPRUCE(BlockIds.LOG, BlockLog.SPRUCE, BlockIds.LEAVES, BlockLeaves.SPRUCE, BlockIds.SAPLING, BlockSapling.SPRUCE) {
         @Override
         public WorldFeature getDefaultGenerator() {

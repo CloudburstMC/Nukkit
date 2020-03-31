@@ -3,6 +3,7 @@ package cn.nukkit.level.generator.standard.gen.decorator;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.standard.StandardGenerator;
 import cn.nukkit.level.generator.standard.misc.ConstantBlock;
+import cn.nukkit.level.generator.standard.misc.IntRange;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonAlias;
@@ -27,19 +28,23 @@ public class ReplaceTopDecorator implements Decorator {
     protected BlockFilter replace;
 
     @JsonProperty
+    protected IntRange height = IntRange.WHOLE_WORLD;
+
+    @JsonProperty
     @JsonAlias({"with", "replacement"})
     protected int block = -1;
 
     @Override
     public void init(long levelSeed, long localSeed, StandardGenerator generator) {
         Objects.requireNonNull(this.replace, "replace must be set!");
+        Objects.requireNonNull(this.height, "height must be set!");
         Preconditions.checkState(this.block >= 0, "block must be set!");
     }
 
     @Override
     public void decorate(IChunk chunk, PRandom random, int x, int z) {
         int y = chunk.getHighestBlock(x, z);
-        if (y >= 0 && this.replace.test(chunk.getBlockRuntimeIdUnsafe(x, y, z, 0))) {
+        if (y >= 0 && this.replace.test(chunk.getBlockRuntimeIdUnsafe(x, y, z, 0)) && this.height.contains(y)) {
             chunk.setBlockRuntimeIdUnsafe(x, y, z, 0, this.block);
         }
     }

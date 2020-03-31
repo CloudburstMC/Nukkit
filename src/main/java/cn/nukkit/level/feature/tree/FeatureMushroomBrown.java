@@ -4,6 +4,7 @@ import cn.nukkit.block.BlockHugeMushroomBrown;
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.standard.misc.IntRange;
+import cn.nukkit.registry.BlockRegistry;
 import lombok.NonNull;
 import net.daporkchop.lib.random.PRandom;
 
@@ -16,20 +17,16 @@ import static java.lang.Math.abs;
  */
 public class FeatureMushroomBrown extends FeatureAbstractTree {
     public FeatureMushroomBrown(@NonNull IntRange height) {
-        super(height, null, null);
+        super(height);
     }
 
     @Override
-    public boolean place(ChunkManager level, PRandom random, int x, int y, int z) {
-        if (y < 0 || y >= 256) {
-            return false;
-        }
+    protected int chooseHeight(ChunkManager level, PRandom random, int x, int y, int z) {
+        return this.height.rand(random) << (~random.nextInt(12) & 1);
+    }
 
-        int height = this.height.rand(random);
-        if (random.nextInt(12) == 0) {
-            height <<= 1;
-        }
-
+    @Override
+    protected boolean canPlace(ChunkManager level, PRandom random, int x, int y, int z, int height) {
         for (int dy = 0; dy <= height + 1; dy++) {
             if (y + dy < 0 ||y + dy >= 256) {
                 return false;
@@ -45,7 +42,16 @@ public class FeatureMushroomBrown extends FeatureAbstractTree {
             }
         }
 
-        //place leaves
+        return true;
+    }
+
+    @Override
+    protected int selectLog(ChunkManager level, PRandom random, int x, int y, int z, int height) {
+        return BlockRegistry.get().getRuntimeId(BlockIds.BROWN_MUSHROOM_BLOCK, BlockHugeMushroomBrown.STEM);
+    }
+
+    @Override
+    protected void placeLeaves(ChunkManager level, PRandom random, int x, int y, int z, int height, int log, int leaves) {
         //as ugly as it is, this makes more sense to hardcode than trying to be smart about it
         int yy = y + height;
         for (int dx = -2; dx <= 2; dx++)    {
@@ -69,20 +75,17 @@ public class FeatureMushroomBrown extends FeatureAbstractTree {
         level.setBlockAt(x + 3, yy, z - 2, BlockIds.BROWN_MUSHROOM_BLOCK, BlockHugeMushroomBrown.TOP_NE);
         level.setBlockAt(x - 3, yy, z + 2, BlockIds.BROWN_MUSHROOM_BLOCK, BlockHugeMushroomBrown.TOP_SW);
         level.setBlockAt(x - 3, yy, z - 2, BlockIds.BROWN_MUSHROOM_BLOCK, BlockHugeMushroomBrown.TOP_NW);
-
-        //place logs
-        for (int dy = 0; dy < height; dy++) {
-            level.setBlockAt(x, y + dy, z, 0, BlockIds.BROWN_MUSHROOM_BLOCK, BlockHugeMushroomBrown.STEM);
-        }
-
-        this.maybeReplaceBelowWithDirt(level, x, y - 1, z);
-
-        return true;
     }
 
-    protected void placeSideColumn(ChunkManager level, int x, int y, int z, int damage) {
-        for (int dy = 0; dy < 3; dy++) {
-            level.setBlockAt(x, y + dy, z, BlockIds.BROWN_MUSHROOM_BLOCK, damage);
+    @Override
+    protected void placeTrunk(ChunkManager level, PRandom random, int x, int y, int z, int height, int log, int leaves) {
+        for (int dy = 0; dy < height; dy++) {
+            level.setBlockRuntimeIdUnsafe(x, y + dy, z, 0, log);
         }
+    }
+
+    @Override
+    protected void finish(ChunkManager level, PRandom random, int x, int y, int z, int height, int log, int leaves) {
+        this.maybeReplaceBelowWithDirt(level, x, y - 1, z);
     }
 }
