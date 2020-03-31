@@ -141,6 +141,7 @@ public class EntitySplashPotion extends EntityProjectile implements SplashPotion
             this.splash(null);
             hasUpdate = true;
         }
+        this.data.update();
 
         this.timing.stopTiming();
         return hasUpdate;

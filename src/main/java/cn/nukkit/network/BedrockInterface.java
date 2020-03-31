@@ -4,6 +4,7 @@ import cn.nukkit.Server;
 import cn.nukkit.event.player.PlayerCreationEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
 import cn.nukkit.player.Player;
+import cn.nukkit.player.handler.LoginPacketHandler;
 import cn.nukkit.utils.Utils;
 import com.nukkitx.network.util.DisconnectReason;
 import com.nukkitx.protocol.bedrock.BedrockPong;
@@ -70,18 +71,7 @@ public class BedrockInterface implements AdvancedSourceInterface, BedrockServerE
     @Override
     public void onSessionCreation(BedrockServerSession session) {
         session.setLogging(false);
-        PlayerCreationEvent ev = new PlayerCreationEvent(this, Player.class, Player.class, null, session.getAddress());
-        this.server.getPluginManager().callEvent(ev);
-        Class<? extends Player> clazz = ev.getPlayerClass();
-
-        try {
-            Constructor<? extends Player> constructor = clazz.getConstructor(BedrockServerSession.class);
-            Player player = constructor.newInstance(session);
-            this.server.addPlayer(session.getAddress(), player);
-            session.addDisconnectHandler(new NukkitSessionListener(player));
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            log.throwing(Level.ERROR, e);
-        }
+        session.setPacketHandler(new LoginPacketHandler(session, server, this));
     }
 
     @Override
@@ -151,6 +141,10 @@ public class BedrockInterface implements AdvancedSourceInterface, BedrockServerE
     @Override
     public void emergencyShutdown() {
         this.bedrock.close();
+    }
+
+    public NukkitSessionListener initDisconnectHandler(Player player){
+        return new NukkitSessionListener(player);
     }
 
     @RequiredArgsConstructor

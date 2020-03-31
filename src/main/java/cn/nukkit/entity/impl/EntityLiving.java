@@ -2,6 +2,7 @@ package cn.nukkit.entity.impl;
 
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.block.BlockMagma;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityDamageable;
@@ -226,7 +227,9 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
                     this.attack(new EntityDamageEvent(this, DamageCause.SUFFOCATION, 1));
                 }
 
-                if (this.isOnLadder() || this.hasEffect(Effect.LEVITATION)) {
+                Identifier block = this.getLevel().getBlock(this.getPosition()).getId();
+                boolean ignore = block == BlockIds.LADDER || block == BlockIds.VINE || block == BlockIds.WEB;
+                if (ignore || this.hasEffect(Effect.LEVITATION)) {
                     this.resetFallDistance();
                 }
 

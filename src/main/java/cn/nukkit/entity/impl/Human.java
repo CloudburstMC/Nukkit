@@ -82,10 +82,6 @@ public class Human extends EntityCreature implements InventoryHolder {
         return identity;
     }
 
-    public void setServerId(UUID serverId) {
-        this.identity = serverId;
-    }
-
     public void setSkin(SerializedSkin skin) {
         this.skin = skin;
     }
@@ -301,7 +297,7 @@ public class Human extends EntityCreature implements InventoryHolder {
         packet.setRuntimeEntityId(this.getRuntimeId());
         packet.setPosition(this.getPosition());
         packet.setMotion(this.getMotion());
-        packet.setRotation(Vector3f.from(this.getYaw(), this.getPitch(), this.getYaw()));
+        packet.setRotation(Vector3f.from(this.getPitch(), this.getYaw(), this.getYaw()));
         packet.setHand(this.getInventory().getItemInHand().toNetwork());
         packet.setPlatformChatId("");
         packet.setDeviceId("");

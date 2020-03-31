@@ -595,7 +595,7 @@ public abstract class BaseEntity implements Entity, Metadatable {
         addEntity.setUniqueEntityId(this.getUniqueId());
         addEntity.setRuntimeEntityId(this.getUniqueId());
         addEntity.setPosition(this.getPosition());
-        addEntity.setRotation(com.nukkitx.math.vector.Vector3f.from(this.yaw, this.yaw, this.pitch));
+        addEntity.setRotation(Vector3f.from(this.pitch, this.yaw, this.yaw));
         addEntity.setMotion(this.getMotion());
         this.data.putAllIn(addEntity.getMetadata());
 
@@ -1392,12 +1392,6 @@ public abstract class BaseEntity implements Entity, Metadatable {
         return false;
     }
 
-    public boolean isOnLadder() {
-        Block block = this.level.getLoadedBlock(this.getPosition());
-
-        return block != null && block.getId() == LADDER;
-    }
-
     public boolean fastMove(float dx, float dy, float dz) {
         if (dx == 0 && dy == 0 && dz == 0) {
             return true;
@@ -1845,7 +1839,7 @@ public abstract class BaseEntity implements Entity, Metadatable {
     @Override
     public Entity getOwner() {
         if (this.data.contains(OWNER_EID)) {
-            this.level.getEntity(this.data.getLong(OWNER_EID));
+            return this.level.getEntity(this.data.getLong(OWNER_EID));
         }
         return null;
     }

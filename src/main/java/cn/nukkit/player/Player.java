@@ -242,9 +242,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     protected Map<Long, DummyBossBar> dummyBossBars = new Long2ObjectLinkedOpenHashMap<>();
 
-    private AsyncTask preLoginEventTask = null;
-    protected boolean shouldLogin = false;
-
     public FishingHook fishing = null;
 
     private final PlayerChunkManager chunkManager = new PlayerChunkManager(this);
@@ -313,10 +310,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         return randomClientId;
     }
 
-    public void setClientId(Long clientId) {
-        this.randomClientId = clientId;
-    }
-
     @Override
     public boolean isBanned() {
         return this.server.getNameBans().isBanned(this.getName());
@@ -359,7 +352,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         return this;
     }
 
-    public Player(BedrockServerSession session) {
+    public Player(BedrockServerSession session, ClientChainData chainData) {
         super(EntityTypes.PLAYER, Location.from(Server.getInstance().getDefaultLevel()));
         this.session = session;
         this.packetHandler = new PlayerPacketHandler(this);
@@ -376,7 +369,16 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.boundingBox = new SimpleAxisAlignedBB(0, 0, 0, 0, 0, 0);
         this.lastSkinChange = -1;
 
-        this.identity = null;
+        this.loginChainData = chainData;
+
+        this.randomClientId = chainData.getClientId();
+        this.identity = chainData.getClientUUID();
+        this.username = TextFormat.clean(chainData.getUsername());
+        this.iusername = username.toLowerCase();
+        this.setDisplayName(this.username);
+        this.setNameTag(this.username);
+
+        this.setSkin(chainData.getSkin());
 
         this.creationTime = System.currentTimeMillis();
     }
@@ -504,7 +506,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         packet.setRuntimeEntityId(this.getRuntimeId());
         packet.setPosition(this.getPosition());
         packet.setMotion(this.getMotion());
-        packet.setRotation(Vector3f.from(this.getYaw(), this.getPitch(), this.getYaw()));
+        packet.setRotation(Vector3f.from(this.getPitch(), this.getYaw(), this.getYaw()));
         packet.setHand(this.getInventory().getItemInHand().toNetwork());
         packet.setPlatformChatId("");
         packet.setDeviceId("");
@@ -855,14 +857,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     public long getPing() {
         return this.session.getLatency();
-    }
-
-    public BedrockServerSession getSession() {
-        return session;
-    }
-
-    public PlayerPacketHandler getPacketHandler() {
-        return packetHandler;
     }
 
     public boolean sleepOn(Vector3i pos) {
@@ -1705,9 +1699,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public void processLogin() {
-        if (!this.server.isWhitelisted((this.getName()).toLowerCase())) {
+        if (this.server.getOnlinePlayers().size() >= this.server.getMaxPlayers() && this.kick(PlayerKickEvent.Reason.SERVER_FULL, "disconnectionScreen.serverFull", false)) {
+            return;
+        } else if (!this.server.isWhitelisted((this.getName()).toLowerCase())) {
             this.kick(PlayerKickEvent.Reason.NOT_WHITELISTED, "Server is white-listed");
-
             return;
         } else if (this.isBanned()) {
             this.kick(PlayerKickEvent.Reason.NAME_BANNED, "You are banned");
@@ -1785,7 +1780,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.server.saveOfflinePlayerData(this.identity, nbt, true);
         }
 
-        this.sendPlayStatus(PlayStatusPacket.Status.LOGIN_SUCCESS);
         this.server.onPlayerLogin(this);
 
         super.init(this.getLocation());
@@ -1793,8 +1787,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         if (this.isSpectator()) this.keepMovement = true;
 
         this.forceMovement = this.teleportPosition = this.getPosition();
-
-        this.sendPacket(this.server.getPackManager().getPacksInfos());
     }
 
     /**
@@ -2074,34 +2066,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     public String getName() {
         return this.username;
-    }
-
-    public void setName(String name) {
-        this.username = name;
-    }
-
-    public String getLowerCaseName() {
-        return this.iusername;
-    }
-
-    public void setLowerCaseName(String lowerCaseName) {
-        this.iusername = lowerCaseName;
-    }
-
-    public AsyncTask getPreLoginEventTask() {
-        return preLoginEventTask;
-    }
-
-    public void setPreLoginEventTask(AsyncTask preLoginEventTask) {
-        this.preLoginEventTask = preLoginEventTask;
-    }
-
-    public boolean isShouldLogin() {
-        return shouldLogin;
-    }
-
-    public void setShouldLogin(boolean shouldLogin) {
-        this.shouldLogin = shouldLogin;
     }
 
     public Vector3f getTeleportPosition() {
@@ -2676,11 +2640,11 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.sendPacket(packet);
     }
 
-    public void sendPlayStatus(PlayStatusPacket.Status status) {
+    protected void sendPlayStatus(PlayStatusPacket.Status status) {
         sendPlayStatus(status, false);
     }
 
-    public void sendPlayStatus(PlayStatusPacket.Status status, boolean immediate) {
+    protected void sendPlayStatus(PlayStatusPacket.Status status, boolean immediate) {
         PlayStatusPacket packet = new PlayStatusPacket();
         packet.setStatus(status);
 
@@ -2746,12 +2710,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         Location from = this.getLocation();
         if (super.teleport(location, cause)) {
 
-            for (Inventory window : new ArrayList<>(this.windows.keySet())) {
-                if (window == this.getInventory()) {
-                    continue;
-                }
-                this.removeWindow(window);
-            }
+            this.removeAllWindows(false);
 
             if (from.getLevel() != location.getLevel()) { //Different level, update compass position
                 SetSpawnPositionPacket packet = new SetSpawnPositionPacket();
@@ -2936,6 +2895,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         } else {
             cnt = forceId;
         }
+
         this.windows.forcePut(inventory, cnt);
 
         if (isPermanent) {
@@ -3278,6 +3238,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 this.getPitch(), this.getLevel());
         double f = 1;
         FishingHook fishingHook = EntityRegistry.get().newEntity(EntityTypes.FISHING_HOOK, location);
+        fishingHook.setPosition(location.getPosition());
         fishingHook.setOwner(this);
         fishingHook.setMotion(Vector3f.from(-Math.sin(Math.toRadians(this.getYaw())) * Math.cos(Math.toRadians(this.getPitch())) * f * f,
                 -Math.sin(Math.toRadians(this.getPitch())) * f * f, Math.cos(Math.toRadians(this.getYaw())) * Math.cos(Math.toRadians(this.getPitch())) * f * f));
