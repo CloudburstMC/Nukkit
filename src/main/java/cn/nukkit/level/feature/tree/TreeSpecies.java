@@ -74,7 +74,17 @@ public enum TreeSpecies {
     BIRCH(BlockIds.LOG, BlockLog.BIRCH, BlockIds.LEAVES, BlockLeaves.BIRCH, BlockIds.SAPLING, BlockSapling.BIRCH),
     JUNGLE(BlockIds.LOG, BlockLog.JUNGLE, BlockIds.LEAVES, BlockLeaves.JUNGLE, BlockIds.SAPLING, BlockSapling.JUNGLE),
     ACACIA(BlockIds.LOG2, BlockLog2.ACACIA, BlockIds.LEAVES2, BlockLeaves2.ACACIA, BlockIds.SAPLING, BlockSapling.ACACIA),
-    DARK_OAK(BlockIds.LOG2, BlockLog2.DARK_OAK, BlockIds.LEAVES2, BlockLeaves2.DARK_OAK, BlockIds.SAPLING, BlockSapling.DARK_OAK),
+    DARK_OAK(BlockIds.LOG2, BlockLog2.DARK_OAK, BlockIds.LEAVES2, BlockLeaves2.DARK_OAK, BlockIds.SAPLING, BlockSapling.DARK_OAK)   {
+        @Override
+        public WorldFeature getDefaultGenerator(@NonNull IntRange height) {
+            return null;
+        }
+
+        @Override
+        public WorldFeature getHugeGenerator() {
+            return new FeatureDarkOakTree(FeatureDarkOakTree.DEFAULT_HEIGHT, this);
+        }
+    },
     MUSHROOM_RED(BlockIds.RED_MUSHROOM_BLOCK, BlockHugeMushroomRed.STEM, BlockIds.RED_MUSHROOM_BLOCK, BlockHugeMushroomRed.ALL, BlockIds.RED_MUSHROOM, 0)   {
         @Override
         public WorldFeature getDefaultGenerator(@NonNull IntRange height) {

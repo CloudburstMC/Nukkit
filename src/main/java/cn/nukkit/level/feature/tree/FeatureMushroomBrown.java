@@ -51,6 +51,11 @@ public class FeatureMushroomBrown extends FeatureAbstractTree {
     }
 
     @Override
+    protected int selectLeaves(ChunkManager level, PRandom random, int x, int y, int z, int height) {
+        return -1;
+    }
+
+    @Override
     protected void placeLeaves(ChunkManager level, PRandom random, int x, int y, int z, int height, int log, int leaves) {
         //as ugly as it is, this makes more sense to hardcode than trying to be smart about it
         int yy = y + height;

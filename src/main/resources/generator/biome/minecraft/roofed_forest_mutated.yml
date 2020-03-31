@@ -1,0 +1,6 @@
+dict: "nukkitx:vanilla"
+parent: "minecraft:roofed_forest"
+
+elevationVanilla:
+  height: 0.2
+  variation: 0.4

@@ -7,4 +7,50 @@ elevationVanilla:
 temperature: 0.7
 rainfall: 0.8
 
-#porktodo: this
+decorators:
+  - id: "nukkitx:surface"
+    ground: "stone"
+    top: "grass"
+    fill: "dirt"
+
+    # Tall grass
+  - id: "nukkitx:scattered_cover"
+    chance: 0.05
+    on: "grass"
+    block: "tallgrass"
+
+populators:
+    # Mushrooms
+  - id: "nukkitx:tree"
+    chance: 0.001953125 # about 1 per 2 chunks
+    on: "grass"
+    replace: "air,tallgrass"
+    types:
+      - "mushroom_red"
+      - "mushroom_brown"
+
+    # Huge trees
+  - id: "nukkitx:huge_tree"
+    chance: 1.0
+    grid: true
+    on: "grass"
+    replace: "air"
+    below: "dirt"
+    type: "dark_oak"
+
+    # Flowers
+  - id: "nukkitx:shrub"
+    count: 4
+    on: "grass"
+    replace: "air,tallgrass"
+    block: "2*yellow_flower,red_flower"
+
+    # Double plants
+  - id: "nukkitx:double_plant"
+    count: 3
+    on: "grass"
+    replace: "air,tallgrass"
+    types:
+      - 1 # lilac
+      - 4 # rose
+      - 5 # peony

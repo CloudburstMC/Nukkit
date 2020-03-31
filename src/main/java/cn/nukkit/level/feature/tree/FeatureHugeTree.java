@@ -87,11 +87,12 @@ public abstract class FeatureHugeTree extends FeatureAbstractTree {
             return;
         }
 
-        double radiusSq = radius * radius;
-        for (int dx = -radius; dx <= radius; dx++)    {
-            for (int dz = -radius; dz <= radius; dz++)    {
-                if ((dx - 0.5d) * (dx - 0.5d) + (dz - 0.5d) * (dz - 0.5d) <= radiusSq
-                        && this.test(level.getBlockRuntimeIdUnsafe(x + dx, y, z + dz, 0)))  {
+        int radiusSq = radius * radius;
+        for (int dx = -radius; dx <= radius + 1; dx++)  {
+            for (int dz = -radius; dz <= radius + 1; dz++)  {
+                int dxSq = dx > 0 ? (dx - 1) * (dx - 1) : dx * dx;
+                int dzSq = dz > 0 ? (dz - 1) * (dz - 1) : dz * dz;
+                if (dxSq + dzSq <= radiusSq && this.test(level.getBlockRuntimeIdUnsafe(x + dx, y, z + dz, 0)))  {
                     level.setBlockRuntimeIdUnsafe(x + dx, y, z + dz, 0, block);
                 }
             }

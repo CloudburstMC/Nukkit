@@ -58,8 +58,8 @@ public class TreePopulator extends ChancePopulator {
         final int min = this.height.min;
 
         IChunk chunk = level.getChunk(chunkX, chunkZ);
-        for (int x = 0; x < 16; x++)    {
-            for (int z = 0; z < 16; z++)    {
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
                 for (int y = max, id, lastId = chunk.getBlockRuntimeIdUnsafe(x, 255, z, 0); y >= min; y--) {
                     id = chunk.getBlockRuntimeIdUnsafe(x, y, z, 0);
 
@@ -94,7 +94,7 @@ public class TreePopulator extends ChancePopulator {
     @JsonDeserialize
     private static final class ConfigTree {
         private final TreeSpecies species;
-        private IntRange height;
+        private       IntRange    height;
 
         @JsonCreator
         public ConfigTree(String species) {
@@ -111,7 +111,11 @@ public class TreePopulator extends ChancePopulator {
         }
 
         public WorldFeature build() {
-            return this.height == null ? this.species.getDefaultGenerator() : this.species.getDefaultGenerator(this.height);
+            if (this.height != null) {
+                return Preconditions.checkNotNull(this.species.getDefaultGenerator(this.height), "%s does not support huge trees!", this.species.name());
+            } else {
+                return Preconditions.checkNotNull(this.species.getDefaultGenerator(), "%s does not support normal trees!", this.species.name());
+            }
         }
     }
 }
