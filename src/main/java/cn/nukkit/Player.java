@@ -3292,6 +3292,45 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         respawn1.respawnState = RespawnPacket.STATE_READY_TO_SPAWN;
                         this.dataPacket(respawn1);
                     }
+                    break;
+                case ProtocolInfo.BOOK_EDIT_PACKET:
+                    BookEditPacket bookEditPacket = (BookEditPacket) packet;
+                    Item oldBook = this.inventory.getItem(bookEditPacket.inventorySlot);
+                    if (oldBook.getId() != Item.BOOK_AND_QUILL) {
+                        return;
+                    }
+
+                    Item newBook = oldBook.clone();
+                    boolean success;
+                    switch (bookEditPacket.type) {
+                        case BookEditPacket.TYPE_REPLACE_PAGE:
+                            success = ((ItemBookAndQuill) newBook).setPageText(bookEditPacket.pageNumber, bookEditPacket.text);
+                            break;
+                        case BookEditPacket.TYPE_ADD_PAGE:
+                            success = ((ItemBookAndQuill) newBook).insertPage(bookEditPacket.pageNumber, bookEditPacket.text);
+                            break;
+                        case BookEditPacket.TYPE_DELETE_PAGE:
+                            success = ((ItemBookAndQuill) newBook).deletePage(bookEditPacket.pageNumber);
+                            break;
+                        case BookEditPacket.TYPE_SWAP_PAGES:
+                            success = ((ItemBookAndQuill) newBook).swapPages(bookEditPacket.pageNumber, bookEditPacket.secondaryPageNumber);
+                            break;
+                        case BookEditPacket.TYPE_SIGN_BOOK:
+                            newBook = Item.get(Item.WRITTEN_BOOK, 0, 1, oldBook.getCompoundTag());
+                            success = ((ItemBookWritten) newBook).signBook(bookEditPacket.title, bookEditPacket.author, bookEditPacket.xuid, ItemBookWritten.GENERATION_ORIGINAL);
+                            break;
+                        default:
+                            return;
+                    }
+
+                    if (success) {
+                        PlayerEditBookEvent editBookEvent = new PlayerEditBookEvent(this, oldBook, newBook, bookEditPacket.type);
+                        this.server.getPluginManager().callEvent(editBookEvent);
+                        if (!editBookEvent.isCancelled()) {
+                            this.inventory.setItem(bookEditPacket.inventorySlot, editBookEvent.getNewBook());
+                        }
+                    }
+                    break;
                 default:
                     break;
             }
