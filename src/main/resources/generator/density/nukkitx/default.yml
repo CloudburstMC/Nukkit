@@ -46,5 +46,5 @@ terrainSmoothing:
 specialHeightVariation: 0.25
 heightFactor: 64.0
 heightOffset: 64.0
-heightVariationFactor: 32.0 # TODO: this should be 64, which means I need to figure out how to scale biome variation correctly
+heightVariationFactor: 64.0
 heightVariationOffset: 0.0

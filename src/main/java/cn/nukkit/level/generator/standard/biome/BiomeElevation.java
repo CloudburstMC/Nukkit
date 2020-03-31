@@ -109,8 +109,7 @@ public abstract class BiomeElevation {
 
         @Override
         protected double normalizeVariation(double variation) {
-            //porktodo: urgent! fix this, it's totally wrong
-            return variation * 2.4d + 4.0d / 15.0d;
+            return variation * 1.2d + 2.0d / 15.0d;
         }
     }
 }
