@@ -16,7 +16,10 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
+
+import java.util.Map;
 
 /**
  *
@@ -109,6 +112,13 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
         if (t != null) {
             if (t.contains("Items")) {
                 nbt.putList(t.getList("Items"));
+            }
+        }
+
+        if (item.hasCustomBlockData()) {
+            Map<String, Tag> customData = item.getCustomBlockData().getTags();
+            for (Map.Entry<String, Tag> tag : customData.entrySet()) {
+                nbt.put(tag.getKey(), tag.getValue());
             }
         }
 
