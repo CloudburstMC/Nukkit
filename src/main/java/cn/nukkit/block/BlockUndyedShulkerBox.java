@@ -107,14 +107,6 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
             nbt.putString("CustomName", item.getCustomName());
         }
 
-        CompoundTag t = item.getNamedTag();
-
-        if (t != null) {
-            if (t.contains("Items")) {
-                nbt.putList(t.getList("Items"));
-            }
-        }
-
         if (item.hasCustomBlockData()) {
             Map<String, Tag> customData = item.getCustomBlockData().getTags();
             for (Map.Entry<String, Tag> tag : customData.entrySet()) {
