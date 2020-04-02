@@ -46,7 +46,7 @@ public class BlockMycelium extends BlockSolid {
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-                new ItemBlock(new BlockDirt())
+                new ItemBlock(Block.get(BlockID.DIRT))
         };
     }
 
@@ -61,7 +61,7 @@ public class BlockMycelium extends BlockSolid {
             Block block = this.getLevel().getBlock(new Vector3(x, y, z));
             if (block.getId() == Block.DIRT && block.getDamage() == 0) {
                 if (block.up().isTransparent()) {
-                    BlockSpreadEvent ev = new BlockSpreadEvent(block, this, new BlockMycelium());
+                    BlockSpreadEvent ev = new BlockSpreadEvent(block, this, Block.get(BlockID.MYCELIUM));
                     Server.getInstance().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
                         this.getLevel().setBlock(block, ev.getNewState());

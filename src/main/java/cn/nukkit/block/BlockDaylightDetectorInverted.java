@@ -1,6 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 
@@ -25,7 +24,7 @@ public class BlockDaylightDetectorInverted extends BlockDaylightDetector {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(new BlockDaylightDetector(), 0);
+        return new ItemBlock(Block.get(BlockID.DAYLIGHT_DETECTOR), 0);
     }
 
     protected boolean invertDetect() {

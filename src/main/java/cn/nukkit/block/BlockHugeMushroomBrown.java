@@ -48,7 +48,7 @@ public class BlockHugeMushroomBrown extends BlockSolidMeta {
     public Item[] getDrops(Item item) {
         if (new NukkitRandom().nextRange(1, 20) == 0) {
             return new Item[]{
-                    new ItemBlock(new BlockMushroomBrown())
+                    new ItemBlock(Block.get(BlockID.BROWN_MUSHROOM))
             };
         } else {
             return new Item[0];

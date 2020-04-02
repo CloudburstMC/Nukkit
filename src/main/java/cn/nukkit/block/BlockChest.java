@@ -153,7 +153,7 @@ public class BlockChest extends BlockTransparentMeta implements Faceable {
         if (t instanceof BlockEntityChest) {
             ((BlockEntityChest) t).unpair();
         }
-        this.getLevel().setBlock(this, new BlockAir(), true, true);
+        this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, true);
 
         return true;
     }
