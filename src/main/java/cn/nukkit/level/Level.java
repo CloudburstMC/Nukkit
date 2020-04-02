@@ -1881,14 +1881,12 @@ public class Level implements ChunkManager, Metadatable {
                 ev.setCancelled();
             } else if(!player.isOp() && isInSpawnRadius(target)) {
                 ev.setCancelled();
+            } else if (!ev.getInstaBreak() && ev.isFastBreak()) {
+                ev.setCancelled();
             }
 
             this.server.getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {
-                return null;
-            }
-
-            if (!ev.getInstaBreak() && ev.isFastBreak()) {
                 return null;
             }
 

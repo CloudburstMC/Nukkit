@@ -21,7 +21,9 @@ public enum InventoryType {
     UI(1, "UI", -1),
     SHULKER_BOX(27, "Shulker Box", 0),
     BEACON(1, "Beacon", 13),
-    OFFHAND(1, "Offhand", -1);
+    OFFHAND(1, "Offhand", -1),
+    MINECART_CHEST(27, "Minecart with Chest", 0),
+    MINECART_HOPPER(5, "Minecart with Hopper", 8);
 
     private final int size;
     private final String title;
