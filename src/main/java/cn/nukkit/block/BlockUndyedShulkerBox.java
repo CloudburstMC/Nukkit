@@ -107,6 +107,14 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
             nbt.putString("CustomName", item.getCustomName());
         }
 
+        CompoundTag t = item.getNamedTag();
+
+        // This code gets executed when the player has broken the shulker box and placed it back (©Kevims 2020)
+        if (t != null && t.contains("Items")) {
+            nbt.putList(t.getList("Items"));
+        }
+
+        // This code gets executed when the player has copied the shulker box in creative mode (©Kevims 2020)
         if (item.hasCustomBlockData()) {
             Map<String, Tag> customData = item.getCustomBlockData().getTags();
             for (Map.Entry<String, Tag> tag : customData.entrySet()) {
