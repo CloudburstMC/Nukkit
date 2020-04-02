@@ -215,6 +215,11 @@ public class EntityHuman extends EntityHumanType {
     }
 
     @Override
+    public void addMovement(double x, double y, double z, double yaw, double pitch, double headYaw) {
+        this.level.addPlayerMovement(this, x, y, z, yaw, pitch, headYaw);
+    }
+
+    @Override
     public void spawnTo(Player player) {
         if (this != player && !this.hasSpawned.containsKey(player.getLoaderId())) {
             this.hasSpawned.put(player.getLoaderId(), player);
