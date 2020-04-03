@@ -5,7 +5,7 @@
 id: "nukkitx:vanilla"
 seed: "noise"
 selectorNoise:
-  id: "nukkitx:perlin"
+  id: "nukkitx:simplex"
   scale:
     x: 0.016709277406334877
     y: 0.008354638703167439
@@ -14,7 +14,7 @@ selectorNoise:
   factor: 12.75
   offset: 0.5
 lowNoise:
-  id: "nukkitx:perlin"
+  id: "nukkitx:simplex"
   scale:
     x: 0.005221649073064327
     y: 0.0026108245365321636
@@ -23,7 +23,7 @@ lowNoise:
   factor: 1.0
   offset: 0.0
 highNoise:
-  id: "nukkitx:perlin"
+  id: "nukkitx:simplex"
   scale:
     x: 0.005221649073064327
     y: 0.0026108245365321636
@@ -32,7 +32,7 @@ highNoise:
   factor: 1.0
   offset: 0.0
 depthNoise:
-  id: "nukkitx:perlin"
+  id: "nukkitx:simplex"
   scale:
     x: 0.005221649073064327
     y: 0.0 # not used

@@ -7,4 +7,35 @@ elevationVanilla:
 temperature: 1.2
 rainfall: 0.0
 
-#porktodo: this
+decorators:
+  - id: "nukkitx:surface"
+    ground: "stone"
+    top: "grass"
+    fill: "dirt"
+
+    # Tall grass
+  - id: "nukkitx:scattered_cover"
+    chance: 0.25
+    on: "grass"
+    block: "tallgrass"
+
+populators:
+    # Acacia trees
+  - id: "nukkitx:tree"
+    chance: 0.00390625 # about 1 per chunk
+    on: "grass"
+    replace: "air,tallgrass"
+    type: "acacia"
+
+    # Double tall grass
+  - id: "nukkitx:double_plant"
+    count: 7
+    on: "grass"
+    type: 2
+
+    # Flowers
+  - id: "nukkitx:shrub"
+    count: 4
+    on: "grass"
+    replace: "air,tallgrass"
+    block: "2*yellow_flower,red_flower"

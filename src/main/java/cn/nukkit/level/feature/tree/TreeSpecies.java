@@ -78,7 +78,17 @@ public enum TreeSpecies {
             return new FeatureHugeJungleTree(FeatureHugeJungleTree.DEFAULT_HEIGHT, this);
         }
     },
-    ACACIA(BlockIds.LOG2, BlockLog2.ACACIA, BlockIds.LEAVES2, BlockLeaves2.ACACIA, BlockIds.SAPLING, BlockSapling.ACACIA),
+    ACACIA(BlockIds.LOG2, BlockLog2.ACACIA, BlockIds.LEAVES2, BlockLeaves2.ACACIA, BlockIds.SAPLING, BlockSapling.ACACIA)   {
+        @Override
+        public WorldFeature getDefaultGenerator() {
+            return this.getDefaultGenerator(FeatureSavannaTree.DEFAULT_HEIGHT);
+        }
+
+        @Override
+        public WorldFeature getDefaultGenerator(@NonNull IntRange height) {
+            return new FeatureSavannaTree(height, this);
+        }
+    },
     DARK_OAK(BlockIds.LOG2, BlockLog2.DARK_OAK, BlockIds.LEAVES2, BlockLeaves2.DARK_OAK, BlockIds.SAPLING, BlockSapling.DARK_OAK)   {
         @Override
         public WorldFeature getDefaultGenerator(@NonNull IntRange height) {

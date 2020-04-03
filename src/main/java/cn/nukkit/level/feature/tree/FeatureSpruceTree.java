@@ -35,14 +35,14 @@ public class FeatureSpruceTree extends FeatureNormalTree {
         final int maxRadius = 2 + random.nextInt(2);
 
         for (int dy = 0; dy <= height + 1; dy++) {
-            if (y + dy < 0 ||y + dy >= 256) {
+            if (y + dy < 0 || y + dy >= 256) {
                 return false;
             }
 
             int radius = dy < leavesStart ? 0 : maxRadius;
-            for (int dx = -radius; dx <= radius; dx++)  {
-                for (int dz = -radius; dz <= radius; dz++)  {
-                    if (!this.test(level.getBlockRuntimeIdUnsafe(x, y + dy, z, 0)))  {
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    if (!this.test(level.getBlockRuntimeIdUnsafe(x, y + dy, z, 0))) {
                         return false;
                     }
                 }
@@ -71,7 +71,7 @@ public class FeatureSpruceTree extends FeatureNormalTree {
                 radius = flag;
                 flag = 1;
 
-                if (++step > maxRadius)  {
+                if (++step > maxRadius) {
                     step = maxRadius;
                 }
             } else {
