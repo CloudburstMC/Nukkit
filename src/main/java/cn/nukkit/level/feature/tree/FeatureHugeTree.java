@@ -6,8 +6,6 @@ import cn.nukkit.level.generator.standard.misc.selector.BlockSelector;
 import lombok.NonNull;
 import net.daporkchop.lib.random.PRandom;
 
-import static java.lang.Math.min;
-
 /**
  * Base class for 2x2 trees.
  *
@@ -26,6 +24,9 @@ public abstract class FeatureHugeTree extends FeatureAbstractTree {
     public boolean place(ChunkManager level, PRandom random, int x, int y, int z) {
         final int height = this.height.rand(random);
 
+        if (!this.canPlace(level, random, x, y, z, height)) {
+            return false;
+        }
 
         final int log = this.log.selectRuntimeId(random);
         final int leaves = this.leaves.selectRuntimeId(random);
@@ -39,22 +40,14 @@ public abstract class FeatureHugeTree extends FeatureAbstractTree {
 
     @Override
     protected boolean canPlace(ChunkManager level, PRandom random, int x, int y, int z, int height) {
-        for (int dy = 0; dy < 3; dy++) {
-            if (y + dy < 0 || y + dy >= 256
-                    || !this.test(level.getBlockRuntimeIdUnsafe(x, y + dy, z, 0))
-                    || !this.test(level.getBlockRuntimeIdUnsafe(x + 1, y + dy, z, 0))
-                    || !this.test(level.getBlockRuntimeIdUnsafe(x, y + dy, z + 1, 0))
-                    || !this.test(level.getBlockRuntimeIdUnsafe(x + 1, y + dy, z + 1, 0))) {
-                return false;
-            }
-        }
-        for (int dy = 3; dy < height - 2; dy++) {
+        for (int dy = 0; dy <= height + 1; dy++) {
             if (y + dy < 0 || y + dy >= 256) {
                 return false;
             }
-            for (int dx = -2; dx <= 2; dx++)    {
-                for (int dz = -2; dz <= 2; dz++)    {
-                    if (!this.test(level.getBlockRuntimeIdUnsafe(x + dx, y + dy, z + dz, 0)))   {
+            int radius = dy == 0 ? 1 : 2;
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    if (!this.test(level.getBlockRuntimeIdUnsafe(x + dx, y + dy, z + dz, 0))) {
                         return false;
                     }
                 }
@@ -82,17 +75,17 @@ public abstract class FeatureHugeTree extends FeatureAbstractTree {
         this.maybeReplaceBelowWithDirt(level, x + 1, y - 1, z + 1);
     }
 
-    protected void placeCircularLeafLayer(ChunkManager level, int x, int y, int z, int radius, int block)     {
-        if (y < 0 || y >= 256)  {
+    protected void placeCircularLeafLayer(ChunkManager level, int x, int y, int z, int radius, int block) {
+        if (y < 0 || y >= 256) {
             return;
         }
 
         int radiusSq = radius * radius;
-        for (int dx = -radius; dx <= radius + 1; dx++)  {
-            for (int dz = -radius; dz <= radius + 1; dz++)  {
+        for (int dx = -radius; dx <= radius + 1; dx++) {
+            for (int dz = -radius; dz <= radius + 1; dz++) {
                 int dxSq = dx > 0 ? (dx - 1) * (dx - 1) : dx * dx;
                 int dzSq = dz > 0 ? (dz - 1) * (dz - 1) : dz * dz;
-                if (dxSq + dzSq <= radiusSq && this.test(level.getBlockRuntimeIdUnsafe(x + dx, y, z + dz, 0)))  {
+                if (dxSq + dzSq <= radiusSq && this.test(level.getBlockRuntimeIdUnsafe(x + dx, y, z + dz, 0))) {
                     level.setBlockRuntimeIdUnsafe(x + dx, y, z + dz, 0, block);
                 }
             }

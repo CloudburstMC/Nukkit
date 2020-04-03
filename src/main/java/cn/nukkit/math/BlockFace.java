@@ -237,7 +237,7 @@ public enum BlockFace {
     }
 
     /**
-     * Rotate this BlockFace around the Y axis clockwise (NORTH =&gt; EAST =&gt; SOUTH =&gt; WEST =&gt; NORTH)
+     * Rotate this BlockFace around the Y axis clockwise (NORTH =&gt; EAST =&gt; SOUTH =&gt; WEST =&gt; BB_NORTH)
      *
      * @return block face
      */
@@ -257,7 +257,7 @@ public enum BlockFace {
     }
 
     /**
-     * Rotate this BlockFace around the Y axis counter-clockwise (NORTH =&gt; WEST =&gt; SOUTH =&gt; EAST =&gt; NORTH)
+     * Rotate this BlockFace around the Y axis counter-clockwise (NORTH =&gt; WEST =&gt; SOUTH =&gt; EAST =&gt; BB_NORTH)
      *
      * @return block face
      */

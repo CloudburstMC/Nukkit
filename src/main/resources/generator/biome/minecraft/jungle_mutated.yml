@@ -1,0 +1,6 @@
+dict: "nukkitx:vanilla"
+parent: "minecraft:jungle"
+
+elevationVanilla:
+  height: 0.2
+  variation: 0.4

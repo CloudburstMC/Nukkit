@@ -4,8 +4,8 @@ import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.generator.standard.gen.decorator.NoiseSelectionDecorator;
 import cn.nukkit.level.generator.standard.pop.BlobPopulator;
+import cn.nukkit.level.generator.standard.pop.CocoaPopulator;
 import cn.nukkit.level.generator.standard.pop.DoublePlantPopulator;
-import cn.nukkit.level.generator.standard.pop.HugeTreePopulator;
 import cn.nukkit.level.generator.standard.pop.NoiseSelectionPopulator;
 import cn.nukkit.level.generator.standard.pop.OrePopulator;
 import cn.nukkit.level.generator.standard.pop.PlantPopulator;
@@ -13,7 +13,10 @@ import cn.nukkit.level.generator.standard.pop.Populator;
 import cn.nukkit.level.generator.standard.pop.ShrubPopulator;
 import cn.nukkit.level.generator.standard.pop.SpikesPopulator;
 import cn.nukkit.level.generator.standard.pop.SubmergedOrePopulator;
-import cn.nukkit.level.generator.standard.pop.TreePopulator;
+import cn.nukkit.level.generator.standard.pop.VinesPopulator;
+import cn.nukkit.level.generator.standard.pop.tree.BushPopulator;
+import cn.nukkit.level.generator.standard.pop.tree.HugeTreePopulator;
+import cn.nukkit.level.generator.standard.pop.tree.TreePopulator;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +34,8 @@ public final class PopulatorRegistry extends AbstractGeneratorRegistry<Populator
     @Override
     protected void registerDefault() {
         this.register(BlobPopulator.ID, BlobPopulator.class);
+        this.register(BushPopulator.ID, BushPopulator.class);
+        this.register(CocoaPopulator.ID, CocoaPopulator.class);
         this.register(DoublePlantPopulator.ID, DoublePlantPopulator.class);
         this.register(HugeTreePopulator.ID, HugeTreePopulator.class);
         this.register(OrePopulator.ID, OrePopulator.class);
@@ -39,6 +44,7 @@ public final class PopulatorRegistry extends AbstractGeneratorRegistry<Populator
         this.register(SpikesPopulator.ID, SpikesPopulator.class);
         this.register(SubmergedOrePopulator.ID, SubmergedOrePopulator.class);
         this.register(TreePopulator.ID, TreePopulator.class);
+        this.register(VinesPopulator.ID, VinesPopulator.class);
 
         StandardGeneratorRegistries.decorator().idToValues.forEach(this::register);
         //nukkitx:next is implicitly registered
