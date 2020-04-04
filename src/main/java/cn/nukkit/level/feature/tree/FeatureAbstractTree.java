@@ -49,9 +49,18 @@ public abstract class FeatureAbstractTree implements WorldFeature, BlockFilter {
         return runtimeId == 0 || this.test(BlockRegistry.get().getBlock(runtimeId));
     }
 
+    public boolean testOrLiquid(Block block) {
+        Identifier id = block.getId();
+        return id == BlockIds.AIR || id == BlockIds.LEAVES || id == BlockIds.LEAVES2 || block.canBeReplaced();
+    }
+
+    public boolean testOrLiquid(int runtimeId) {
+        return runtimeId == 0 || this.testOrLiquid(BlockRegistry.get().getBlock(runtimeId));
+    }
+
     @Override
     public boolean place(ChunkManager level, PRandom random, int x, int y, int z) {
-        if (y < 0 || y >= 256) {
+        if (y < 0 || y >= 255) {
             return false;
         }
 

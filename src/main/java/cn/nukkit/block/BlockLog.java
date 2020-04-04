@@ -14,10 +14,15 @@ import com.nukkitx.math.vector.Vector3f;
  * Nukkit Project
  */
 public class BlockLog extends BlockSolid {
-    public static final int OAK = 0;
+    public static final int OAK    = 0;
     public static final int SPRUCE = 1;
-    public static final int BIRCH = 2;
+    public static final int BIRCH  = 2;
     public static final int JUNGLE = 3;
+
+    public static final int UP_DOWN     = 0 << 2;
+    public static final int EAST_WEST   = 1 << 2;
+    public static final int NORTH_SOUTH = 2 << 2;
+    public static final int ALL         = 3 << 2;
 
     protected static final Identifier[] STRIPPED_IDS = new Identifier[]{
             BlockIds.STRIPPED_OAK_LOG,
@@ -107,7 +112,7 @@ public class BlockLog extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        switch (getMeta() & 0x07) {
+        switch (getMeta() & 0x03) {
             default:
             case OAK:
                 return BlockColor.WOOD_BLOCK_COLOR;

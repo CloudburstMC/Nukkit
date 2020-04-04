@@ -32,7 +32,7 @@ public class DeepSurfaceDecorator extends SurfaceDecorator {
 
     @Override
     public void init0(long levelSeed, long localSeed, StandardGenerator generator) {
-        super.init(levelSeed, localSeed, generator);
+        super.init0(levelSeed, localSeed, generator);
 
         Preconditions.checkState(this.deep >= 0, "deep must be set!");
         Objects.requireNonNull(this.deepSize, "deepSize must be set!");

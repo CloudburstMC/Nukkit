@@ -38,6 +38,15 @@ decorators:
     block: "tallgrass"
 
 populators:
+    # Fallen trees
+  - id: "nukkitx:tree"
+    chance: 0.0005580357 # about 1 per 7 chunks
+    on: "grass"
+    replace: "air,tallgrass"
+    type:
+      species: "oak"
+      fallen: true
+
     # Clay
   - id: "nukkitx:ore_submerged"
     count: 1

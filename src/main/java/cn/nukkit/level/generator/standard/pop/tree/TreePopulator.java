@@ -1,13 +1,10 @@
 package cn.nukkit.level.generator.standard.pop.tree;
 
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.feature.WorldFeature;
 import cn.nukkit.level.feature.tree.TreeSpecies;
 import cn.nukkit.level.generator.standard.StandardGenerator;
 import cn.nukkit.level.generator.standard.misc.IntRange;
-import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
-import cn.nukkit.level.generator.standard.pop.tree.AbstractTreePopulator;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,8 +16,6 @@ import net.daporkchop.lib.random.PRandom;
 
 import java.util.Arrays;
 import java.util.Objects;
-
-import static java.lang.Math.min;
 
 /**
  * A populator that places simple trees, with a similar shape to vanilla oak/birch trees.
@@ -67,6 +62,7 @@ public class TreePopulator extends AbstractTreePopulator {
     private static final class ConfigTree {
         private final TreeSpecies species;
         private       IntRange    height;
+        private       boolean     fallen;
 
         @JsonCreator
         public ConfigTree(String species) {
@@ -76,14 +72,18 @@ public class TreePopulator extends AbstractTreePopulator {
         @JsonCreator
         public ConfigTree(
                 @JsonProperty(value = "species", required = true) @NonNull String species,
-                @JsonProperty(value = "height") IntRange height) {
+                @JsonProperty(value = "height") IntRange height,
+                @JsonProperty(value = "fallen") boolean fallen) {
             this(species);
 
             this.height = height;
+            this.fallen = fallen;
         }
 
         public WorldFeature build() {
-            if (this.height != null) {
+            if (this.fallen) {
+                return Preconditions.checkNotNull(this.species.getFallenGenerator(), "%s does not support fallen trees!", this.species.name());
+            } else if (this.height != null) {
                 return Preconditions.checkNotNull(this.species.getDefaultGenerator(this.height), "%s does not support huge trees!", this.species.name());
             } else {
                 return Preconditions.checkNotNull(this.species.getDefaultGenerator(), "%s does not support normal trees!", this.species.name());

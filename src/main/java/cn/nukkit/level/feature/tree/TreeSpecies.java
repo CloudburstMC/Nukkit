@@ -8,6 +8,7 @@ import cn.nukkit.block.BlockLeaves2;
 import cn.nukkit.block.BlockLog;
 import cn.nukkit.block.BlockLog2;
 import cn.nukkit.block.BlockSapling;
+import cn.nukkit.level.feature.FeatureFallenTree;
 import cn.nukkit.level.feature.WorldFeature;
 import cn.nukkit.level.generator.standard.misc.IntRange;
 import cn.nukkit.utils.Identifier;
@@ -25,6 +26,11 @@ public enum TreeSpecies {
         @Override
         public WorldFeature getDefaultGenerator(@NonNull IntRange height) {
             return new FeatureLargeOakTree(height, this, 0.1d, FeatureLargeOakTree.DEFAULT_HEIGHT);
+        }
+
+        @Override
+        public WorldFeature getFallenGenerator() {
+            return new FeatureFallenTree(FeatureNormalTree.DEFAULT_HEIGHT, this.logId, this.logDamage, 0.75d);
         }
     },
     SWAMP(BlockIds.LOG, BlockLog.OAK, BlockIds.LEAVES, BlockLeaves.OAK, null, -1) {
@@ -53,6 +59,11 @@ public enum TreeSpecies {
         public WorldFeature getHugeGenerator() {
             return new FeatureHugeSpruceTree(FeatureHugeSpruceTree.DEFAULT_HEIGHT, this);
         }
+
+        @Override
+        public WorldFeature getFallenGenerator() {
+            return new FeatureFallenTree(FeatureSpruceTree.DEFAULT_HEIGHT, this.logId, this.logDamage, 0.0d);
+        }
     },
     PINE(BlockIds.LOG, BlockLog.SPRUCE, BlockIds.LEAVES, BlockLeaves.SPRUCE, null, -1) {
         @Override
@@ -71,11 +82,21 @@ public enum TreeSpecies {
             return new FeatureHugePineTree(FeatureHugeSpruceTree.DEFAULT_HEIGHT, this);
         }
     },
-    BIRCH(BlockIds.LOG, BlockLog.BIRCH, BlockIds.LEAVES, BlockLeaves.BIRCH, BlockIds.SAPLING, BlockSapling.BIRCH),
+    BIRCH(BlockIds.LOG, BlockLog.BIRCH, BlockIds.LEAVES, BlockLeaves.BIRCH, BlockIds.SAPLING, BlockSapling.BIRCH)   {
+        @Override
+        public WorldFeature getFallenGenerator() {
+            return new FeatureFallenTree(new IntRange(5, 8), this.logId, this.logDamage, 0.0d);
+        }
+    },
     JUNGLE(BlockIds.LOG, BlockLog.JUNGLE, BlockIds.LEAVES, BlockLeaves.JUNGLE, BlockIds.SAPLING, BlockSapling.JUNGLE)   {
         @Override
         public WorldFeature getHugeGenerator() {
             return new FeatureHugeJungleTree(FeatureHugeJungleTree.DEFAULT_HEIGHT, this);
+        }
+
+        @Override
+        public WorldFeature getFallenGenerator() {
+            return new FeatureFallenTree(new IntRange(4, 11), this.logId, this.logDamage, 0.75d);
         }
     },
     ACACIA(BlockIds.LOG2, BlockLog2.ACACIA, BlockIds.LEAVES2, BlockLeaves2.ACACIA, BlockIds.SAPLING, BlockSapling.ACACIA)   {
@@ -165,6 +186,10 @@ public enum TreeSpecies {
     }
 
     public WorldFeature getHugeGenerator()  {
+        return null;
+    }
+
+    public WorldFeature getFallenGenerator()  {
         return null;
     }
 }

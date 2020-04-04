@@ -20,6 +20,23 @@ decorators:
     block: "tallgrass"
 
 populators:
+    # Fallen trees
+  - id: "nukkitx:tree"
+    chance: 0.0005580357 # about 1 per 7 chunks
+    on: "grass"
+    replace: "air,tallgrass"
+    types:
+      - species: "oak"
+        fallen: true
+      - species: "oak"
+        fallen: true
+      - species: "oak"
+        fallen: true
+      - species: "oak"
+        fallen: true
+      - species: "birch"
+        fallen: true
+
     # Trees
   - id: "nukkitx:tree"
     chance: 0.0390625 # about 10 per chunk
