@@ -1,7 +1,7 @@
 dict: "nukkitx:vanilla"
 parent: "minecraft:plains"
 
-decorators:
+populators:
     # Sunflower
   - id: "nukkitx:double_plant"
     count: 10

@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nukkitx.math.vector.Vector2i;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import net.daporkchop.lib.common.util.PorkUtil;
 import net.daporkchop.lib.random.impl.FastPRandom;
 
@@ -16,6 +18,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.IntConsumer;
 import java.util.stream.IntStream;
 
 import static net.daporkchop.lib.random.impl.FastPRandom.*;
@@ -40,8 +43,33 @@ public class ComplexTest {
                 .distinct()
                 .forEach(biome -> internalIdLookup.put(biome.getInternalId(), biome));
 
+        System.out.printf("Total of %d biomes registered.\n", internalIdLookup.size());
+
         long seed = 0xDEADBEEF13370000L;
         filter.init(seed, new FastPRandom(seed));
+
+        if (true)   {
+            IntSet pending = new IntOpenHashSet(internalIdLookup.keySet());
+            IntStream.range(0, 10000 * 4).parallel()
+                    .forEach(i -> {
+                        IntArrayAllocator alloc = IntArrayAllocator.DEFAULT.get();
+                        int[] arr = filter.get(i * SIZE, 0, SIZE, SIZE, alloc);
+                        synchronized (pending) {
+                            for (int j = 0; j < SIZE * SIZE; j++) {
+                                if (pending.remove(arr[i])) {
+                                    System.out.printf("Found biome \"%s\"\n", internalIdLookup.get(arr[i]).getId());
+                                }
+                            }
+                        }
+                        alloc.release(arr);
+                    });
+
+            System.out.println("\nDidn't generate the following biomes:");
+            pending.stream().mapToInt(Integer::intValue)
+                    .mapToObj(internalIdLookup::get)
+                    .map(GenerationBiome::getId)
+                    .forEach(System.out::println);
+        }
 
         BufferedImage img = new BufferedImage(SIZE/* * 3*/, SIZE, BufferedImage.TYPE_INT_ARGB);
 

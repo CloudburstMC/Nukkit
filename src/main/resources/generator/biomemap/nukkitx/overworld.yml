@@ -63,16 +63,15 @@ root:
             - "minecraft:deep_ocean"
           defaultBeach: "minecraft:beach"
           beaches:
-            #todo: uncomment all of these after they're added
             minecraft:mushroom_island: "minecraft:mushroom_island_shore"
 
             # All icy biomes should use cold beach
+            minecraft:ice_mountains: "minecraft:cold_beach"
             minecraft:ice_plains: "minecraft:cold_beach"
-            #minecraft:ice_plains_spikes: "minecraft:cold_beach"
-            #minecraft:ice_mountains: "minecraft:cold_beach"
+            minecraft:ice_plains_spikes: "minecraft:cold_beach"
             minecraft:cold_taiga: "minecraft:cold_beach"
-            #minecraft:cold_taiga_hills: "minecraft:cold_beach"
-            #minecraft:cold_taiga_mutated: "minecraft:cold_beach"
+            minecraft:cold_taiga_hills: "minecraft:cold_beach"
+            minecraft:cold_taiga_mutated: "minecraft:cold_beach"
 
             # Extreme hills and variants should use stone beach
             minecraft:extreme_hills: "minecraft:stone_beach"
@@ -83,9 +82,9 @@ root:
             # Mesa and variants don't have a beach biome at all
             minecraft:mesa: "minecraft:mesa"
             minecraft:mesa_plateau: "minecraft:mesa_plateau"
-            #minecraft:mesa_plateau_mutated: "minecraft:mesa_plateau_mutated"
-            #minecraft:mesa_plateau_stone: "minecraft:mesa_plateau_stone"
-            #minecraft:mesa_plateau_stone_mutated: "minecraft:mesa_plateau_stone_mutated"
+            minecraft:mesa_plateau_mutated: "minecraft:mesa_plateau_mutated"
+            minecraft:mesa_plateau_stone: "minecraft:mesa_plateau_stone"
+            minecraft:mesa_plateau_stone_mutated: "minecraft:mesa_plateau_stone_mutated"
             #minecraft:mesa_bryce: "minecraft:mesa_bryce"
           next:
             # Zoom in some more
@@ -103,27 +102,61 @@ root:
                 # Result:
                 id: "nukkitx:zoom"
                 next:
-                  #todo: finish this up
                   # Randomly replaces 1:3 of biomes with a mutation of themselves.
                   # Almost functionally equivalent to the second part of Java's "GenLayerHills" combined with "GenLayerRareBiome"
                   # Result:
                   id: "nukkitx:substitute_random"
                   chance: 29
                   biomes:
-                    minecraft:plains:
-                      - "minecraft:sunflower_plains"
+                    minecraft:birch_forest:
+                      - "minecraft:birch_forest_mutated"
+                    minecraft:birch_forest_hills:
+                      - "minecraft:birch_forest_hills_mutated"
+                    minecraft:cold_taiga:
+                      - "minecraft:cold_taiga_mutated"
+                    minecraft:desert:
+                      - "minecraft:desert_mutated"
                     minecraft:extreme_hills:
                       - "minecraft:extreme_hills_mutated"
                     minecraft:extreme_hills_plus_trees:
                       - "minecraft:extreme_hills_plus_trees_mutated"
+                    minecraft:forest:
+                      - "minecraft:flower_forest"
+                    minecraft:ice_plains:
+                      - "minecraft:ice_plains_spikes"
+                    minecraft:jungle:
+                      - "minecraft:jungle_mutated"
+                    minecraft:mega_taiga:
+                      - "minecraft:redwood_taiga_mutated"
+                    minecraft:mega_taiga_hills:
+                      - "minecraft:redwood_taiga_hills_mutated"
+                    minecraft:mesa_plateau:
+                      - "minecraft:mesa_plateau_mutated"
+                    minecraft:mesa_plateau_stone:
+                      - "minecraft:mesa_plateau_stone_mutated"
+                    minecraft:plains:
+                      - "minecraft:sunflower_plains"
+                    minecraft:roofed_forest:
+                      - "minecraft:roofed_forest_mutated"
+                    minecraft:savanna:
+                      - "minecraft:savanna_mutated"
+                    minecraft:savanna_plateau:
+                      - "minecraft:savanna_plateau_mutated"
+                    minecraft:swampland:
+                      - "minecraft:swampland_mutated"
+                    minecraft:taiga:
+                      - "minecraft:taiga_mutated"
                   next:
-                    #todo: finish this up
                     # Randomly replaces 1:3 of biomes with something else.
                     # Almost functionally equivalent to the first part of Java's "GenLayerHills"
                     # Result:
                     id: "nukkitx:substitute_random"
                     chance: 3
                     biomes:
+                      minecraft:birch_forest:
+                        - "minecraft:birch_forest_hills"
+                      minecraft:cold_taiga:
+                        - "minecraft:cold_taiga_hills"
                       minecraft:deep_ocean:
                         # 4:1:1 ratio of deep ocean to plains to forest
                         # this makes all of the tiny islands that you find in deep oceans
@@ -134,17 +167,35 @@ root:
 
                         - "minecraft:plains"
                         - "minecraft:forest"
+                      minecraft:desert:
+                        - "minecraft:desert_hills"
                       minecraft:extreme_hills:
                         - "minecraft:extreme_hills_plus_trees"
+                      minecraft:forest:
+                        - "minecraft:forest_hills"
+                      minecraft:ice_plains:
+                        - "minecraft:ice_mountains"
+                      minecraft:jungle:
+                        - "minecraft:jungle_hills"
+                      minecraft:mega_taiga:
+                        - "minecraft:mega_taiga_hills"
+                      minecraft:mesa_plateau:
+                        - "minecraft:mesa"
+                      minecraft:mesa_plateau_stone:
+                        - "minecraft:mesa"
                       minecraft:ocean:
                         - "minecraft:deep_ocean"
                       minecraft:plains:
-                        # 2:1 ratio of forest hills to forest
+                        # 2:1 ratio of forest to forest hills
                         - "minecraft:forest"
                         - "minecraft:forest"
-                        #- "minecraft:forest_hills"
+                        - "minecraft:forest_hills"
                       minecraft:roofed_forest:
                         - "minecraft:plains"
+                      minecraft:savanna:
+                        - "minecraft:savanna_plateau"
+                      minecraft:taiga:
+                        - "minecraft:taiga_hills"
                     next:
                       # Zoom in some more
                       # Result:
@@ -189,11 +240,11 @@ root:
                           chance: 13
                           biomes:
                             minecraft:desert: # hot biomes
-                              # 1:3:48 ratio of mesa plateau to mesa to everything else
+                              # 1:3:48 ratio of mesa plateau to mesa plateau f to everything else
+                              - "minecraft:mesa_plateau_stone"
                               - "minecraft:mesa_plateau"
-                              - "minecraft:mesa"
-                              - "minecraft:mesa"
-                              - "minecraft:mesa"
+                              - "minecraft:mesa_plateau"
+                              - "minecraft:mesa_plateau"
                             minecraft:birch_forest: # warm biomes
                               # 1:12 ratio of jungle to everything else
                               - "minecraft:jungle"
@@ -204,7 +255,6 @@ root:
                               # really, nothing needs to happen here (it just looks nicer to include it lol)
                               - "minecraft:cold_taiga"
                           next:
-                            #todo: this is where vanilla river generation branches
                             # Replace ocean biomes which only neighbor more ocean with deep ocean
                             # Functionally equivalent to Java's "GenLayerDeepOcean"
                             # Result: https://i.daporkchop.net/HKEdiTdy.png
