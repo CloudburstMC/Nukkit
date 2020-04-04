@@ -66,10 +66,10 @@ public class NoiseSelectionPopulator extends AbstractGenerationPass implements P
     }
 
     @Override
-    public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
-        double noise = this.selector.get(chunkX << 4, chunkZ << 4);
+    public void populate(PRandom random, ChunkManager level, int blockX, int blockZ) {
+        double noise = this.selector.get(blockX, blockZ);
         for (Populator populator : noise < this.min ? this.below : noise > this.max ? this.above : this.in) {
-            populator.populate(random, level, chunkX, chunkZ);
+            populator.populate(random, level, blockX, blockZ);
         }
     }
 

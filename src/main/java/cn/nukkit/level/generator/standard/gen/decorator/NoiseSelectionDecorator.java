@@ -65,10 +65,10 @@ public class NoiseSelectionDecorator extends AbstractGenerationPass implements D
     }
 
     @Override
-    public void decorate(IChunk chunk, PRandom random, int x, int z) {
+    public void decorate(PRandom random, IChunk chunk, int x, int z) {
         double noise = this.selector.get((chunk.getX() << 4) + x, (chunk.getZ() << 4) + z);
         for (Decorator decorator : noise < this.min ? this.below : noise > this.max ? this.above : this.in) {
-            decorator.decorate(chunk, random, x, z);
+            decorator.decorate(random, chunk, x, z);
         }
     }
 

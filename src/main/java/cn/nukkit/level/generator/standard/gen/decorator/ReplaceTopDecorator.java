@@ -42,7 +42,7 @@ public class ReplaceTopDecorator implements Decorator {
     }
 
     @Override
-    public void decorate(IChunk chunk, PRandom random, int x, int z) {
+    public void decorate(PRandom random, IChunk chunk, int x, int z) {
         int y = chunk.getHighestBlock(x, z);
         if (y >= 0 && this.replace.test(chunk.getBlockRuntimeIdUnsafe(x, y, z, 0)) && this.height.contains(y)) {
             chunk.setBlockRuntimeIdUnsafe(x, y, z, 0, this.block);

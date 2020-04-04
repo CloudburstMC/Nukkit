@@ -32,16 +32,16 @@ public class BushPopulator extends AbstractTreePopulator {
     protected int size = 2;
 
     @Override
-    public void init(long levelSeed, long localSeed, StandardGenerator generator) {
+    protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
+        super.init0(levelSeed, localSeed, generator);
+
         Objects.requireNonNull(this.log, "log must be set!");
         Objects.requireNonNull(this.leaves, "leaves must be set!");
         Preconditions.checkState(this.size > 0, "size must be at least 1!");
-
-        super.init(levelSeed, localSeed, generator);
     }
 
     @Override
-    protected void tryPlaceTree(PRandom random, ChunkManager level, int x, int y, int z) {
+    protected void placeTree(PRandom random, ChunkManager level, int x, int y, int z) {
         level.setBlockRuntimeIdUnsafe(x, ++y, z, 0, this.log.selectRuntimeId(random));
 
         final int leaves = this.leaves.selectRuntimeId(random);

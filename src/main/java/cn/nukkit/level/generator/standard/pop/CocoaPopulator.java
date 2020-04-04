@@ -2,17 +2,12 @@ package cn.nukkit.level.generator.standard.pop;
 
 import cn.nukkit.block.BlockCocoa;
 import cn.nukkit.block.BlockIds;
-import cn.nukkit.block.BlockVine;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.generator.standard.StandardGenerator;
-import cn.nukkit.level.generator.standard.misc.IntRange;
+import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.utils.Identifier;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.daporkchop.lib.random.PRandom;
-
-import java.util.Objects;
 
 /**
  * @author DaPorkchop_
@@ -24,39 +19,33 @@ public class CocoaPopulator extends VinesPopulator {
     public boolean avoidDouble = false;
 
     @Override
-    public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
+    public void populate(PRandom random, ChunkManager level, int blockX, int blockZ) {
         final double chance = this.chance;
         final BlockFilter replace = this.replace;
         final BlockFilter on = this.on;
         final boolean avoidDouble = this.avoidDouble;
 
-        final int x = chunkX << 4;
-        final int z = chunkZ << 4;
+        final IChunk chunk = level.getChunk(blockX >> 4, blockZ >> 4);
+        for (int y = this.height.min, max = this.height.max; y < max; y++) {
+            if (random.nextDouble() >= chance || !replace.test(chunk.getBlockRuntimeIdUnsafe(blockX & 0xF, y, blockZ & 0xF, 0))) {
+                continue;
+            }
 
-        for (int y = this.height.min, max = this.height.max; y < max; y++)   {
-            for (int dx = 0; dx < 16; dx++) {
-                for (int dz = 0; dz < 16; dz++) {
-                    if (random.nextDouble() >= chance || !replace.test(level.getBlockRuntimeIdUnsafe(x + dx, y, z + dz, 0))) {
-                        continue;
-                    }
-
-                    if (on.test(level.getBlockRuntimeIdUnsafe(x + dx - 1, y, z + dz, 0)))   {
-                        if (!avoidDouble || !on.test(level.getBlockRuntimeIdUnsafe(x + dx - 2, y, z + dz, 0))) {
-                            level.setBlockAt(x + dx, y, z + dz, 0, BlockIds.COCOA, BlockCocoa.EAST);
-                        }
-                    } else if (on.test(level.getBlockRuntimeIdUnsafe(x + dx + 1, y, z + dz, 0)))   {
-                        if (!avoidDouble || !on.test(level.getBlockRuntimeIdUnsafe(x + dx + 2, y, z + dz, 0))) {
-                            level.setBlockAt(x + dx, y, z + dz, 0, BlockIds.COCOA, BlockCocoa.WEST);
-                        }
-                    } else if (on.test(level.getBlockRuntimeIdUnsafe(x + dx, y, z + dz - 1, 0)))   {
-                        if (!avoidDouble || !on.test(level.getBlockRuntimeIdUnsafe(x + dx, y, z + dz - 2, 0))) {
-                            level.setBlockAt(x + dx, y, z + dz, 0, BlockIds.COCOA, BlockCocoa.SOUTH);
-                        }
-                    } else if (on.test(level.getBlockRuntimeIdUnsafe(x + dx, y, z + dz + 1, 0)))   {
-                        if (!avoidDouble || !on.test(level.getBlockRuntimeIdUnsafe(x + dx, y, z + dz + 2, 0))) {
-                            level.setBlockAt(x + dx, y, z + dz, 0, BlockIds.COCOA, BlockCocoa.NORTH);
-                        }
-                    }
+            if (on.test(level.getBlockRuntimeIdUnsafe(blockX - 1, y, blockZ, 0))) {
+                if (!avoidDouble || !on.test(level.getBlockRuntimeIdUnsafe(blockX - 2, y, blockZ, 0))) {
+                    level.setBlockAt(blockX, y, blockZ, 0, BlockIds.COCOA, BlockCocoa.EAST);
+                }
+            } else if (on.test(level.getBlockRuntimeIdUnsafe(blockX + 1, y, blockZ, 0))) {
+                if (!avoidDouble || !on.test(level.getBlockRuntimeIdUnsafe(blockX + 2, y, blockZ, 0))) {
+                    level.setBlockAt(blockX, y, blockZ, 0, BlockIds.COCOA, BlockCocoa.WEST);
+                }
+            } else if (on.test(level.getBlockRuntimeIdUnsafe(blockX, y, blockZ - 1, 0))) {
+                if (!avoidDouble || !on.test(level.getBlockRuntimeIdUnsafe(blockX, y, blockZ - 2, 0))) {
+                    level.setBlockAt(blockX, y, blockZ, 0, BlockIds.COCOA, BlockCocoa.SOUTH);
+                }
+            } else if (on.test(level.getBlockRuntimeIdUnsafe(blockX, y, blockZ + 1, 0))) {
+                if (!avoidDouble || !on.test(level.getBlockRuntimeIdUnsafe(blockX, y, blockZ + 2, 0))) {
+                    level.setBlockAt(blockX, y, blockZ, 0, BlockIds.COCOA, BlockCocoa.NORTH);
                 }
             }
         }

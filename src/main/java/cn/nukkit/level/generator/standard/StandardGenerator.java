@@ -249,7 +249,7 @@ public final class StandardGenerator implements Generator {
                 GenerationBiome biome = biomeMap.get(x | baseX, z | baseZ);
                 chunk.setBiome(x, z, biome.getRuntimeId());
                 for (Decorator decorator : this.decoratorLookup.computeIfAbsent(biome, this.decoratorLookupComputer)) {
-                    decorator.decorate(chunk, random, x, z);
+                    decorator.decorate(random, chunk, x, z);
                 }
             }
         }
@@ -260,13 +260,15 @@ public final class StandardGenerator implements Generator {
 
     @Override
     public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
-        int blockX = chunkX << 4;
-        int blockZ = chunkZ << 4;
+        final int blockX = chunkX << 4;
+        final int blockZ = chunkZ << 4;
 
-        //porktodo: cache this as well? (reuse cache instead of clearing)
-        GenerationBiome biome = this.biomes.get(blockX + 7, blockZ + 7); //use biome in middle of chunk for selecting populators
-        for (Populator populator : this.populatorsLookup.computeIfAbsent(biome, this.populatorsLookupComputer)) {
-            populator.populate(random, level, chunkX, chunkZ);
+        for (int x = 0; x < 16; x++)    {
+            for (int z = 0; z < 16; z++)     {
+                for (Populator populator : this.populatorsLookup.computeIfAbsent(this.biomes.get(blockX + x, blockZ + z), this.populatorsLookupComputer)) {
+                    populator.populate(random, level, blockX + x, blockZ + z);
+                }
+            }
         }
     }
 

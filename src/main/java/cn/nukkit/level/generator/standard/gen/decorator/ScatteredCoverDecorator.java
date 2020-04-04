@@ -43,7 +43,7 @@ public class ScatteredCoverDecorator implements Decorator {
     }
 
     @Override
-    public void decorate(IChunk chunk, PRandom random, int x, int z) {
+    public void decorate(PRandom random, IChunk chunk, int x, int z) {
         BlockFilter on = this.on;
         BlockFilter replace = this.replace;
         double chance = this.chance;

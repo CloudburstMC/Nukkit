@@ -5,6 +5,8 @@ import cn.nukkit.level.generator.standard.StandardGeneratorUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
 /**
  * Base class for all implementations of {@link GenerationPass}.
@@ -15,13 +17,15 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  * @author DaPorkchop_
  */
 @JsonDeserialize
+@Accessors(fluent = true)
 public abstract class AbstractGenerationPass implements GenerationPass {
     @JsonProperty
+    @Getter
     private long seed = -1L;
 
     @Override
     public final void init(long levelSeed, long localSeed, StandardGenerator generator) {
-        this.init0(levelSeed, this.seed == -1L ? localSeed : levelSeed ^ this.seed, generator);
+        this.init0(levelSeed, this.seed = (this.seed == -1L ? localSeed : levelSeed ^ this.seed), generator);
     }
 
     protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {

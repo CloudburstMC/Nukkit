@@ -59,11 +59,11 @@ public class HeightSelectionDecorator extends AbstractGenerationPass implements 
     }
 
     @Override
-    public void decorate(IChunk chunk, PRandom random, int x, int z) {
+    public void decorate(PRandom random, IChunk chunk, int x, int z) {
         int height = chunk.getHighestBlock(x, z);
         double noise = this.threshold.get((chunk.getX() << 4) + x, (chunk.getZ() << 4) + z) + this.additionalOffset;
         for (Decorator decorator : height < noise ? this.below : this.above) {
-            decorator.decorate(chunk, random, x, z);
+            decorator.decorate(random, chunk, x, z);
         }
     }
 

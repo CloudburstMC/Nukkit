@@ -5,10 +5,8 @@ import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.feature.WorldFeature;
 import cn.nukkit.level.feature.tree.TreeSpecies;
 import cn.nukkit.level.generator.standard.StandardGenerator;
-import cn.nukkit.level.generator.standard.misc.IntRange;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.misc.selector.BlockSelector;
-import cn.nukkit.level.generator.standard.pop.ChancePopulator;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,7 +19,8 @@ import net.daporkchop.lib.random.PRandom;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static java.lang.Math.min;
+import static java.lang.Math.*;
+import static net.daporkchop.lib.random.impl.FastPRandom.*;
 
 /**
  * A populator that places simple trees, with a similar shape to vanilla oak/birch trees.
@@ -41,46 +40,45 @@ public class HugeTreePopulator extends AbstractTreePopulator {
     protected boolean grid;
 
     @Override
-    public void init(long levelSeed, long localSeed, StandardGenerator generator) {
+    protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
+        super.init0(levelSeed, localSeed, generator);
+
         Objects.requireNonNull(this.types, "type must be set!");
         Objects.requireNonNull(this.below, "below must be set!");
-
-        super.init(levelSeed, localSeed, generator);
     }
 
     @Override
-    public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
-        if (this.grid)  {
+    public void populate(PRandom random, ChunkManager level, int blockX, int blockZ) {
+        if (this.grid) {
+            if ((mix32(mix64(this.seed() + (blockX >> 2)) + (blockZ >> 2)) & 0xF) != (((blockX & 3) << 2) | (blockZ & 3))) {
+                //bitwise magic!
+                //splits the world into 4x4 tiles with a single tree in each one
+                return;
+            }
+
             final BlockFilter replace = this.replace;
             final BlockFilter on = this.on;
 
             final int max = min(this.height.max - 1, 254);
             final int min = this.height.min;
 
-            for (int gridX = 0; gridX < 4; gridX++) {
-                for (int gridZ = 0; gridZ < 4; gridZ++) {
-                    int x = (chunkX << 4) + (gridX << 2) + random.nextInt(1, 4);
-                    int z = (chunkZ << 4) + (gridZ << 2) + random.nextInt(1, 4);
+            IChunk chunk = level.getChunk(blockX >> 4, blockZ >> 4);
+            for (int y = max, id, lastId = chunk.getBlockRuntimeIdUnsafe(blockX & 0xF, y + 1, blockZ & 0xF, 0); y >= min; y--) {
+                id = chunk.getBlockRuntimeIdUnsafe(blockX & 0xF, y, blockZ& 0xF, 0);
 
-                    IChunk chunk = level.getChunk(x >> 4, z >> 4);
-                    for (int y = max, id, lastId = chunk.getBlockRuntimeIdUnsafe(x & 0xF, y + 1, z & 0xF, 0); y >= min; y--) {
-                        id = chunk.getBlockRuntimeIdUnsafe(x & 0xF, y, z & 0xF, 0);
-
-                        if (replace.test(lastId) && on.test(id)) {
-                            this.tryPlaceTree(random, level, x, y, z);
-                        }
-
-                        lastId = id;
-                    }
+                if (replace.test(lastId) && on.test(id)) {
+                    this.placeTree(random, level, blockX, y, blockZ);
                 }
+
+                lastId = id;
             }
         } else {
-            super.populate(random, level, chunkX, chunkZ);
+            super.populate(random, level, blockX, blockZ);
         }
     }
 
     @Override
-    protected void tryPlaceTree(PRandom random, ChunkManager level, int x, int y, int z) {
+    protected void placeTree(PRandom random, ChunkManager level, int x, int y, int z) {
         for (int dx = 0; dx <= 1; dx++) {
             for (int dz = 0; dz <= 1; dz++) {
                 int testId = level.getBlockRuntimeIdUnsafe(x + dx, y, z + dz, 0);

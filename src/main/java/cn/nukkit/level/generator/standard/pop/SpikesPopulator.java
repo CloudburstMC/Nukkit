@@ -22,7 +22,7 @@ import static net.daporkchop.lib.math.primitive.PMath.*;
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public class SpikesPopulator extends RepeatingPopulator {
+public class SpikesPopulator extends ChancePopulator {
     public static final Identifier ID = Identifier.fromString("nukkitx:spikes");
 
     @JsonProperty
@@ -45,18 +45,22 @@ public class SpikesPopulator extends RepeatingPopulator {
     protected double tallChance = 0.1d;
 
     @Override
-    public void init(long levelSeed, long localSeed, StandardGenerator generator) {
+    protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
+        super.init0(levelSeed, localSeed, generator);
+
         Objects.requireNonNull(this.on, "on must be set!");
         Objects.requireNonNull(this.replace, "replace must be set!");
         Objects.requireNonNull(this.type, "type must be set!");
         Objects.requireNonNull(this.height, "height must be set!");
         this.tallHeight = this.tallHeight == null ? this.height : this.tallHeight;
-
-        super.init(levelSeed, localSeed, generator);
     }
 
     @Override
-    protected void tryPopulate(PRandom random, ChunkManager level, int x, int z) {
+    public void populate(PRandom random, ChunkManager level, int x, int z) {
+        if (random.nextDouble() >= this.chance) {
+            return;
+        }
+
         int y = level.getChunk(x >> 4, z >> 4).getHighestBlock(x & 0xF, z & 0xF);
         if (y < 0 || !this.on.test(level.getBlockRuntimeIdUnsafe(x, y, z, 0))) {
             return;

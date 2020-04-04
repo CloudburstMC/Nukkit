@@ -1,4 +1,4 @@
-package cn.nukkit.level.generator.standard.pop;
+package cn.nukkit.level.generator.standard.pop.cluster;
 
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.standard.StandardGenerator;
@@ -23,14 +23,8 @@ import static net.daporkchop.lib.math.primitive.PMath.*;
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public class OrePopulator extends RepeatingPopulator {
+public class OrePopulator extends AbstractClusterPopulator {
     public static final Identifier ID = Identifier.fromString("nukkitx:ore");
-
-    @JsonProperty
-    protected IntRange height = IntRange.WHOLE_WORLD;
-
-    @JsonProperty
-    protected BlockFilter replace;
 
     @JsonProperty
     @JsonAlias({"types", "block", "blocks"})
@@ -41,18 +35,16 @@ public class OrePopulator extends RepeatingPopulator {
     protected int size;
 
     @Override
-    public void init(long levelSeed, long localSeed, StandardGenerator generator) {
+    protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
+        super.init0(levelSeed, localSeed, generator);
+
         Objects.requireNonNull(this.replace, "replace must be set!");
         Objects.requireNonNull(this.type, "type must be set!");
         Preconditions.checkArgument(this.size > 0, "size must be at least 1!");
-
-        super.init(levelSeed, localSeed, generator);
     }
 
     @Override
-    protected void tryPopulate(PRandom random, ChunkManager level, int x, int z) {
-        final int y = this.height.rand(random);
-
+    protected void placeCluster(PRandom random, ChunkManager level, int x, int y, int z) {
         final int block = this.type.selectRuntimeId(random);
         final int size = this.size;
 

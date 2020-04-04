@@ -22,12 +22,12 @@ public final class NextGenerationPass implements Decorator, Populator {
     public static final NextGenerationPass INSTANCE = new NextGenerationPass();
 
     @Override
-    public void decorate(IChunk chunk, PRandom random, int x, int z) {
+    public void decorate(PRandom random, IChunk chunk, int x, int z) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
+    public void populate(PRandom random, ChunkManager level, int blockX, int blockZ) {
         throw new UnsupportedOperationException();
     }
 

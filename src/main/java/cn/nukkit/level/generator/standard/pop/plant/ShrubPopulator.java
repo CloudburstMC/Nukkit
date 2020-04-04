@@ -1,4 +1,4 @@
-package cn.nukkit.level.generator.standard.pop;
+package cn.nukkit.level.generator.standard.pop.plant;
 
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
@@ -15,41 +15,29 @@ import net.daporkchop.lib.random.PRandom;
 import java.util.Objects;
 
 /**
- * Places patches of plants of varying height in the world.
+ * Places patches of 1-block-tall plants in the world.
+ * <p>
+ * https://i.imgur.com/BUocESm.gif
  *
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public class ShrubPopulator extends RepeatingPopulator {
+public class ShrubPopulator extends AbstractPlantPopulator {
     public static final Identifier ID = Identifier.fromString("nukkitx:shrub");
-
-    @JsonProperty
-    protected BlockFilter on;
-
-    @JsonProperty
-    protected BlockFilter replace = BlockFilter.AIR;
 
     @JsonProperty
     @JsonAlias({"types", "block", "blocks"})
     protected BlockSelector type;
 
-    @JsonProperty
-    protected int size = 64;
-
     @Override
-    public void init(long levelSeed, long localSeed, StandardGenerator generator) {
-        Objects.requireNonNull(this.on, "on must be set!");
-        Objects.requireNonNull(this.replace, "replace must be set!");
-        Objects.requireNonNull(this.type, "type must be set!");
-        Preconditions.checkState(this.size > 0, "size must be at least 1!");
+    protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
+        super.init0(levelSeed, localSeed, generator);
 
-        super.init(levelSeed, localSeed, generator);
+        Objects.requireNonNull(this.type, "type must be set!");
     }
 
     @Override
-    protected void tryPopulate(PRandom random, ChunkManager level, int x, int z) {
-        int y = random.nextInt(level.getChunk(x >> 4, z >> 4).getHighestBlock(x & 0xF, z & 0xF) << 1);
-
+    protected void placeCluster(PRandom random, ChunkManager level, int x, int y, int z) {
         final BlockFilter on = this.on;
         final BlockFilter replace = this.replace;
         final int type = this.type.selectRuntimeId(random);

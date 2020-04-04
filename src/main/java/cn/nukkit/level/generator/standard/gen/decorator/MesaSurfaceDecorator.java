@@ -68,7 +68,7 @@ public class MesaSurfaceDecorator extends DepthNoiseDecorator {
     }
 
     @Override
-    public void decorate(IChunk chunk, PRandom random, int x, int z) {
+    public void decorate(PRandom random, IChunk chunk, int x, int z) {
         final int blockX = (chunk.getX() << 4) + x;
         final int blockZ = (chunk.getZ() << 4) + z;
 

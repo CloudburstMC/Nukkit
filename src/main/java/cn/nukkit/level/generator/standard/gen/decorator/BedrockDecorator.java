@@ -29,7 +29,7 @@ public class BedrockDecorator extends AbstractGenerationPass implements Decorato
     private boolean  reverseFade = false;
 
     @Override
-    public void decorate(IChunk chunk, PRandom random, int x, int z) {
+    public void decorate(PRandom random, IChunk chunk, int x, int z) {
         final int runtimeId = this.block.runtimeId();
 
         for (int y = this.base.min, max = this.base.max; y < max; y++) {

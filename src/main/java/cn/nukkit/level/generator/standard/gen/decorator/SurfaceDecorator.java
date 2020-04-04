@@ -2,7 +2,6 @@ package cn.nukkit.level.generator.standard.gen.decorator;
 
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.standard.StandardGenerator;
-import cn.nukkit.level.generator.standard.misc.AbstractGenerationPass;
 import cn.nukkit.level.generator.standard.misc.ConstantBlock;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonAlias;
@@ -10,11 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
-import net.daporkchop.lib.noise.NoiseSource;
-import net.daporkchop.lib.noise.filter.ScaleOctavesOffsetFilter;
 import net.daporkchop.lib.random.PRandom;
-
-import static net.daporkchop.lib.math.primitive.PMath.*;
 
 /**
  * Places the surface blocks on terrain, consisting of a single "top" block followed by a number of "filler" blocks.
@@ -50,7 +45,7 @@ public class SurfaceDecorator extends DepthNoiseDecorator {
     }
 
     @Override
-    public void decorate(IChunk chunk, PRandom random, int x, int z) {
+    public void decorate(PRandom random, IChunk chunk, int x, int z) {
         boolean placed = false;
         final int depth = this.getDepthNoise(chunk, random, x, z);
 

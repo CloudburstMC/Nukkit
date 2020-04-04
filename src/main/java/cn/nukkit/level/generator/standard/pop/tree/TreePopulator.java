@@ -29,14 +29,14 @@ public class TreePopulator extends AbstractTreePopulator {
     protected WorldFeature[] types;
 
     @Override
-    public void init(long levelSeed, long localSeed, StandardGenerator generator) {
-        Objects.requireNonNull(this.types, "type must be set!");
+    protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
+        super.init0(levelSeed, localSeed, generator);
 
-        super.init(levelSeed, localSeed, generator);
+        Objects.requireNonNull(this.types, "type must be set!");
     }
 
     @Override
-    protected void tryPlaceTree(PRandom random, ChunkManager level, int x, int y, int z) {
+    protected void placeTree(PRandom random, ChunkManager level, int x, int y, int z) {
         this.types[random.nextInt(this.types.length)].place(level, random, x, y + 1, z);
     }
 

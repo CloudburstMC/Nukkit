@@ -22,7 +22,7 @@ import static net.daporkchop.lib.math.primitive.PMath.*;
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public class BlobPopulator extends RepeatingPopulator {
+public class BlobPopulator extends ChancePopulator {
     public static final Identifier ID = Identifier.fromString("nukkitx:blob");
 
     @JsonProperty
@@ -39,19 +39,23 @@ public class BlobPopulator extends RepeatingPopulator {
     protected IntRange radius;
 
     @Override
-    public void init(long levelSeed, long localSeed, StandardGenerator generator) {
+    protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
+        super.init0(levelSeed, localSeed, generator);
+
         Objects.requireNonNull(this.on, "on must be set!");
         Objects.requireNonNull(this.replace, "replace must be set!");
         Objects.requireNonNull(this.type, "type must be set!");
         Objects.requireNonNull(this.radius, "radius must be set!");
-
-        super.init(levelSeed, localSeed, generator);
     }
 
     @Override
-    protected void tryPopulate(PRandom random, ChunkManager level, int x, int z) {
-        int y = level.getChunk(x >> 4, z >> 4).getHighestBlock(x & 0xF, z & 0xF);
-        if (y < 0 || !this.on.test(level.getBlockRuntimeIdUnsafe(x, y, z, 0))) {
+    public void populate(PRandom random, ChunkManager level, int blockX, int blockZ) {
+        if (random.nextDouble() >= this.chance) {
+            return;
+        }
+
+        int y = level.getChunk(blockX >> 4, blockZ >> 4).getHighestBlock(blockX & 0xF, blockZ & 0xF);
+        if (y < 0 || !this.on.test(level.getBlockRuntimeIdUnsafe(blockX, y, blockZ, 0))) {
             return;
         }
 
@@ -72,16 +76,16 @@ public class BlobPopulator extends RepeatingPopulator {
                         continue;
                     }
                     for (int dz = -vz; dz <= vz; dz++)  {
-                        if (dx * dx + dy * dy + dz * dz <= g && replace.test(level.getBlockRuntimeIdUnsafe(x + dx, y + dy, z + dz, 0))) {
-                            level.setBlockRuntimeIdUnsafe(x + dx, y + dy, z + dz, 0, type);
+                        if (dx * dx + dy * dy + dz * dz <= g && replace.test(level.getBlockRuntimeIdUnsafe(blockX + dx, y + dy, blockZ + dz, 0))) {
+                            level.setBlockRuntimeIdUnsafe(blockX + dx, y + dy, blockZ + dz, 0, type);
                         }
                     }
                 }
             }
 
-            x += random.nextInt(-(min + 1), min + 2);
+            blockX += random.nextInt(-(min + 1), min + 2);
             y -= min > 0 ? random.nextInt(min) : 0;
-            z += random.nextInt(-(min + 1), min + 2);
+            blockZ += random.nextInt(-(min + 1), min + 2);
         }
     }
 

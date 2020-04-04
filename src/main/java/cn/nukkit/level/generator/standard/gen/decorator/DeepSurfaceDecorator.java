@@ -13,8 +13,6 @@ import net.daporkchop.lib.random.PRandom;
 
 import java.util.Objects;
 
-import static net.daporkchop.lib.math.primitive.PMath.*;
-
 /**
  * Variant of {@link SurfaceDecorator} that adds an additional layer of blocks under the main layers.
  *
@@ -39,7 +37,7 @@ public class DeepSurfaceDecorator extends SurfaceDecorator {
     }
 
     @Override
-    public void decorate(IChunk chunk, PRandom random, int x, int z) {
+    public void decorate(PRandom random, IChunk chunk, int x, int z) {
         boolean placed = false;
         final int depth = this.getDepthNoise(chunk, random, x, z);
 

@@ -2,15 +2,12 @@ package cn.nukkit.level.generator.standard.gen.decorator;
 
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.standard.StandardGenerator;
-import cn.nukkit.level.generator.standard.misc.ConstantBlock;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.misc.selector.BlockSelector;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.google.common.base.Preconditions;
 import net.daporkchop.lib.random.PRandom;
 
 import java.util.Objects;
@@ -46,7 +43,7 @@ public class GroundCoverDecorator implements Decorator {
     }
 
     @Override
-    public void decorate(IChunk chunk, PRandom random, int x, int z) {
+    public void decorate(PRandom random, IChunk chunk, int x, int z) {
         int y = chunk.getHighestBlock(x, z);
         if (y >= 0 && y < 255 && (this.on == null || this.on.test(chunk.getBlockRuntimeIdUnsafe(x, y, z, 0)))
                 && this.replace.test(chunk.getBlockRuntimeIdUnsafe(x, y + 1, z, 0)) && random.nextDouble() < this.chance) {
