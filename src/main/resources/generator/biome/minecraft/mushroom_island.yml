@@ -16,7 +16,7 @@ decorators:
 populators:
     # Small mushrooms
   - id: "nukkitx:shrub"
-    count: 2
+    chance: 0.0078125 # about 2 per chunk
     on: "mycelium"
     block: "2*brown_mushroom,red_mushroom"
 

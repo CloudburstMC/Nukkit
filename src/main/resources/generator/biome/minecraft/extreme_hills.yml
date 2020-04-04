@@ -25,7 +25,7 @@ decorators:
 populators:
     # Emerald
   - id: "nukkitx:ore"
-    count: "3-8"
+    chance: 0.021484375 # about 5.5 per chunk
     size: 1
     height: "4-32"
     block: "emerald_ore"
@@ -33,7 +33,7 @@ populators:
 
     # Silverfish
   - id: "nukkitx:ore"
-    count: 4
+    chance: 0.015625 # about 4 per chunk
     size: 9
     height: "0-32"
     block: "monster_egg"

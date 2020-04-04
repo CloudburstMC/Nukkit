@@ -4,7 +4,7 @@ parent: "minecraft:plains"
 populators:
     # Sunflower
   - id: "nukkitx:double_plant"
-    count: 10
+    chance: 0.0390625 # about 10 per chunk
     on: "grass"
     type: 0
 

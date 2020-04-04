@@ -42,7 +42,7 @@ public class DoublePlantPopulator extends AbstractPlantPopulator {
         final int bottom = BlockRegistry.get().getRuntimeId(BlockIds.DOUBLE_PLANT, type);
         final int top = BlockRegistry.get().getRuntimeId(BlockIds.DOUBLE_PLANT, type | 0x8);
 
-        for (int i = this.size - 1; i >= 0; i--) {
+        for (int i = this.patchSize - 1; i >= 0; i--) {
             int blockY = y + random.nextInt(4) - random.nextInt(4);
             if (blockY < 0 || blockY >= 254) {
                 continue;

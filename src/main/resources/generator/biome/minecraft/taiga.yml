@@ -31,7 +31,7 @@ populators:
 
     # Berry bushes
   - id: "nukkitx:shrub"
-    count: 1
+    chance: 0.00390625 # about 1 per chunk
     on: "grass"
     block: "sweet_berry_bush"
 

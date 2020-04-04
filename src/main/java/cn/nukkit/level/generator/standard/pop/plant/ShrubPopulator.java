@@ -42,7 +42,7 @@ public class ShrubPopulator extends AbstractPlantPopulator {
         final BlockFilter replace = this.replace;
         final int type = this.type.selectRuntimeId(random);
 
-        for (int i = this.size - 1; i >= 0; i--) {
+        for (int i = this.patchSize - 1; i >= 0; i--) {
             int blockY = y + random.nextInt(4) - random.nextInt(4);
             if (blockY < 0 || blockY >= 255) {
                 continue;

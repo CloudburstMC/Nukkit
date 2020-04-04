@@ -21,7 +21,7 @@ populators:
 
     # Sugar cane
   - id: "nukkitx:plant"
-    count: 10
+    chance: 0.0390625 # about 10 per chunk
     height: "1-3"
     block: "reeds"
     on: "sand"

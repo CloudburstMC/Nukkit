@@ -24,7 +24,7 @@ import static net.daporkchop.lib.math.primitive.PMath.*;
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public class SubmergedOrePopulator extends ChancePopulator {
+public class SubmergedOrePopulator extends ChancePopulator.Column {
     public static final Identifier ID = Identifier.fromString("nukkitx:ore_submerged");
 
     @JsonProperty
@@ -51,11 +51,7 @@ public class SubmergedOrePopulator extends ChancePopulator {
     }
 
     @Override
-    public void populate(PRandom random, ChunkManager level, int blockX, int blockZ) {
-        if (random.nextDouble() >= this.chance) {
-            return;
-        }
-
+    protected void populate0(PRandom random, ChunkManager level, int blockX, int blockZ) {
         IChunk chunk = level.getChunk(blockX >> 4, blockZ >> 4);
         int y = chunk.getHighestBlock(blockX & 0xF, blockZ & 0xF);
         for (; y > 0; y--)  {

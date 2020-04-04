@@ -26,6 +26,14 @@ public abstract class ChancePopulator extends AbstractGenerationPass implements 
         Preconditions.checkState(this.chance >= 0.0d && this.chance <= 1.0d, "chance (%s) must be in range 0-1!", this.chance);
     }
 
-    @Override
-    public abstract Identifier getId();
+    public abstract static class Column extends ChancePopulator    {
+        @Override
+        public final void populate(PRandom random, ChunkManager level, int blockX, int blockZ) {
+            if (random.nextDouble() < this.chance)  {
+                this.populate0(random, level, blockX, blockZ);
+            }
+        }
+
+        protected abstract void populate0(PRandom random, ChunkManager level, int blockX, int blockZ);
+    }
 }

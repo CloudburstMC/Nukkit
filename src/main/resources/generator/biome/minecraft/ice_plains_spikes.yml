@@ -17,7 +17,7 @@ decorators:
 populators:
     # Ice spikes
   - id: "nukkitx:spikes"
-    count: 3
+    chance: 0.01171875 # about 3 per chunk
     height: "7-11"
     tallHeight: "10-39"
     on: "snow"
@@ -27,7 +27,7 @@ populators:
 
     # "Glaciers"
   - id: "nukkitx:ore_submerged"
-    count: 2
+    chance: 0.0078125 # about 2 per chunk
     radius: "2-3"
     block: "packed_ice"
     replace: "dirt,snow"

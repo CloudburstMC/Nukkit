@@ -49,7 +49,7 @@ populators:
 
     # Clay
   - id: "nukkitx:ore_submerged"
-    count: 1
+    chance: 0.00390625 # about 1 per chunk
     radius: "2-3"
     block: "clay"
     replace: "dirt"
@@ -65,7 +65,7 @@ populators:
 
     # Sugar cane
   - id: "nukkitx:plant"
-    count: 10
+    chance: 0.0390625 # about 10 per chunk
     height: "1-3"
     block: "reeds"
     on: "grass"
@@ -73,12 +73,12 @@ populators:
 
     # Mushrooms
   - id: "nukkitx:shrub"
-    count: 3
+    chance: 0.01171875 # about 3 per chunk
     on: "grass"
     block: "2*brown_mushroom,red_mushroom"
 
     # Blue orchids
   - id: "nukkitx:shrub"
-    count: 1
+    chance: 0.00390625 # about 1 per chunk
     on: "grass"
     block: "red_flower#1"

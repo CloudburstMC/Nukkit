@@ -25,17 +25,21 @@ public class PlantPopulator extends AbstractPlantPopulator {
     public static final Identifier ID = Identifier.fromString("nukkitx:plant");
 
     @JsonProperty
+    @JsonAlias({"types", "block", "blocks"})
+    protected BlockSelector type;
+
+    @JsonProperty
     protected BlockFilter water;
 
     @JsonProperty
-    @JsonAlias({"types", "block", "blocks"})
-    protected BlockSelector type;
+    protected IntRange height;
 
     @Override
     protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
         super.init0(levelSeed, localSeed, generator);
 
         Objects.requireNonNull(this.type, "type must be set!");
+        Objects.requireNonNull(this.height, "height must be set!");
     }
 
     @Override
@@ -45,7 +49,7 @@ public class PlantPopulator extends AbstractPlantPopulator {
         final BlockFilter replace = this.replace;
         final int type = this.type.selectRuntimeId(random);
 
-        for (int i = this.size - 1; i >= 0; i--) {
+        for (int i = this.patchSize - 1; i >= 0; i--) {
             int blockY = y + random.nextInt(4) - random.nextInt(4);
             int height = this.height.rand(random);
             if (blockY < 0 || blockY >= 256 - height) {

@@ -11,12 +11,12 @@ decorators:
   - id: "nukkitx:surface"
     ground: "stone"
     top: "dirt"
-    fill: "gravel"
+    fill: "dirt"
 
 populators:
     # Sand
   - id: "nukkitx:ore_submerged"
-    count: 3
+    chance: 0.01171875 # about 3 per chunk
     radius: "2-6"
     block: "sand"
     replace: "dirt,grass"
@@ -24,7 +24,7 @@ populators:
 
     # Clay
   - id: "nukkitx:ore_submerged"
-    count: 1
+    chance: 0.00390625 # about 1 per chunk
     radius: "2-3"
     block: "clay"
     replace: "dirt"
@@ -32,7 +32,7 @@ populators:
 
     # Gravel
   - id: "nukkitx:ore_submerged"
-    count: 1
+    chance: 0.00390625 # about 1 per chunk
     radius: "2-5"
     block: "gravel"
     replace: "dirt,grass"

@@ -51,14 +51,14 @@ populators:
 
     # Flowers
   - id: "nukkitx:shrub"
-    count: 4
+    chance: 0.015625 # about 4 per chunk
     on: "grass"
     replace: "air,tallgrass"
     block: "2*yellow_flower,red_flower"
 
     # Double plants
   - id: "nukkitx:double_plant"
-    count: 3
+    chance: 0.01171875 # about 3 per chunk
     on: "grass"
     replace: "air,tallgrass"
     types:

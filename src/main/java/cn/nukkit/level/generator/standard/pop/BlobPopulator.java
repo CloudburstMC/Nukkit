@@ -22,7 +22,7 @@ import static net.daporkchop.lib.math.primitive.PMath.*;
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public class BlobPopulator extends ChancePopulator {
+public class BlobPopulator extends ChancePopulator.Column {
     public static final Identifier ID = Identifier.fromString("nukkitx:blob");
 
     @JsonProperty
@@ -49,11 +49,7 @@ public class BlobPopulator extends ChancePopulator {
     }
 
     @Override
-    public void populate(PRandom random, ChunkManager level, int blockX, int blockZ) {
-        if (random.nextDouble() >= this.chance) {
-            return;
-        }
-
+    protected void populate0(PRandom random, ChunkManager level, int blockX, int blockZ) {
         int y = level.getChunk(blockX >> 4, blockZ >> 4).getHighestBlock(blockX & 0xF, blockZ & 0xF);
         if (y < 0 || !this.on.test(level.getBlockRuntimeIdUnsafe(blockX, y, blockZ, 0))) {
             return;

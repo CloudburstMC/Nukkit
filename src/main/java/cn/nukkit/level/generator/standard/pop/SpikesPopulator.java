@@ -22,7 +22,7 @@ import static net.daporkchop.lib.math.primitive.PMath.*;
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public class SpikesPopulator extends ChancePopulator {
+public class SpikesPopulator extends ChancePopulator.Column {
     public static final Identifier ID = Identifier.fromString("nukkitx:spikes");
 
     @JsonProperty
@@ -56,11 +56,7 @@ public class SpikesPopulator extends ChancePopulator {
     }
 
     @Override
-    public void populate(PRandom random, ChunkManager level, int x, int z) {
-        if (random.nextDouble() >= this.chance) {
-            return;
-        }
-
+    protected void populate0(PRandom random, ChunkManager level, int x, int z) {
         int y = level.getChunk(x >> 4, z >> 4).getHighestBlock(x & 0xF, z & 0xF);
         if (y < 0 || !this.on.test(level.getBlockRuntimeIdUnsafe(x, y, z, 0))) {
             return;

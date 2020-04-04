@@ -39,7 +39,7 @@ populators:
 
     # Melons
   - id: "nukkitx:shrub"
-    count: 1
+    chance: 0.00390625 # about 1 per chunk
     on: "grass"
     replace: "air,tallgrass"
     block: "melon_block"
@@ -67,21 +67,21 @@ populators:
 
     # Flowers
   - id: "nukkitx:shrub"
-    count: 4
+    chance: 0.015625 # about 4 per chunk
     on: "grass"
     replace: "air,tallgrass"
     block: "2*yellow_flower,red_flower"
 
     # Flowers
   - id: "nukkitx:shrub"
-    count: 4
+    chance: 0.015625 # about 4 per chunk
     on: "grass"
     replace: "air,tallgrass"
     block: "2*yellow_flower,red_flower"
 
     # Tall grass
   - id: "nukkitx:shrub"
-    count: 25
+    chance: 0.09765625 # about 25 per chunk
     on: "grass"
     block:
       - "tallgrass"

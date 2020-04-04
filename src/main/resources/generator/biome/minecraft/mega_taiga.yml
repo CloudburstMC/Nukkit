@@ -35,7 +35,7 @@ decorators:
 populators:
     # Mossy cobblestone blobs
   - id: "nukkitx:blob"
-    count: "0-2"
+    chance: 0.00390625 # about 1 per chunk
     radius: "0-1"
     on: "grass,podzol,dirt#1"
     replace: "air,grass,podzol,dirt,dirt#1,water"
@@ -58,7 +58,7 @@ populators:
 
     # Berry bushes and dead bushes
   - id: "nukkitx:shrub"
-    count: 5
+    chance: 0.01953125 # about 5 per chunk
     on: "grass,podzol,dirt#1"
     block:
       - "sweet_berry_bush"

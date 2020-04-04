@@ -33,11 +33,11 @@ public class VinesPopulator extends ChancePopulator {
 
     @Override
     protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
+        super.init0(levelSeed, localSeed, generator);
+
         Objects.requireNonNull(this.height, "height must be set!");
         Objects.requireNonNull(this.on, "on must be set!");
         Objects.requireNonNull(this.replace, "replace must be set!");
-
-        super.init(levelSeed, localSeed, generator);
     }
 
     @Override

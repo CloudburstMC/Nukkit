@@ -27,24 +27,18 @@ populators:
     # (and other veins that aren't ores)
     #
 
-    # Dirt
+    # Dirt and gravel
   - id: "nukkitx:ore"
-    count: 10
+    chance: 0.0703125 # about 18 per chunk
     size: 33
-    block: "dirt"
-    replace: "stone"
-
-    # Gravel
-  - id: "nukkitx:ore"
-    count: 8
-    size: 33
-    block: "gravel"
+    height: "0-255"
+    block: "5*dirt,4*gravel"
     replace: "stone"
 
     # Granite, Diorite and Andesite
     # in vanilla these are generated as three separate ores, but this way adds a bit of variety
   - id: "nukkitx:ore"
-    count: 30
+    chance: 0.1171875 # about 30 per chunk
     size: 33
     height: "0-80"
     block: "stone#1,stone#3,stone#5"
@@ -56,7 +50,7 @@ populators:
 
     # Coal
   - id: "nukkitx:ore"
-    count: 20
+    chance: 0.078125 # about 20 per chunk
     size: 17
     height: "0-128"
     block: "coal_ore"
@@ -64,7 +58,7 @@ populators:
 
     # Iron
   - id: "nukkitx:ore"
-    count: 20
+    chance: 0.078125 # about 20 per chunk
     size: 9
     height: "0-64"
     block: "iron_ore"
@@ -72,7 +66,7 @@ populators:
 
     # Gold
   - id: "nukkitx:ore"
-    count: 2
+    chance: 0.0078125 # about 2 per chunk
     size: 9
     height: "0-32"
     block: "gold_ore"
@@ -80,7 +74,7 @@ populators:
 
     # Redstone
   - id: "nukkitx:ore"
-    count: 8
+    chance: 0.03125 # about 8 per chunk
     size: 8
     height: "0-16"
     block: "redstone_ore"
@@ -88,7 +82,7 @@ populators:
 
     # Diamond
   - id: "nukkitx:ore"
-    count: 1
+    chance: 0.00390625 # about 1 per chunk
     size: 8
     height: "0-16"
     block: "diamond_ore"
@@ -96,7 +90,7 @@ populators:
 
     # Lapis Lazuli
   - id: "nukkitx:ore"
-    count: 1
+    chance: 0.00390625 # about 1 per chunk
     size: 7
     height:
       min: 0

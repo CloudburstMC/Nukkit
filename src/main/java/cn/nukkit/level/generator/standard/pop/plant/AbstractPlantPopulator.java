@@ -1,29 +1,32 @@
 package cn.nukkit.level.generator.standard.pop.plant;
 
+import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.standard.StandardGenerator;
 import cn.nukkit.level.generator.standard.misc.IntRange;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
-import cn.nukkit.level.generator.standard.pop.cluster.AbstractClusterPopulator;
+import cn.nukkit.level.generator.standard.pop.cluster.AbstractReplacingPopulator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
+import net.daporkchop.lib.random.PRandom;
 
 import java.util.Objects;
+
+import static java.lang.Math.*;
 
 /**
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public abstract class AbstractPlantPopulator extends AbstractClusterPopulator {
+public abstract class AbstractPlantPopulator extends AbstractReplacingPopulator {
     @JsonProperty
     protected BlockFilter on;
 
     @JsonProperty
-    protected int size = 64;
+    protected int patchSize = 64;
 
     public AbstractPlantPopulator() {
         this.replace = BlockFilter.AIR;
-        this.height = IntRange.WHOLE_WORLD;
     }
 
     @Override
@@ -31,6 +34,14 @@ public abstract class AbstractPlantPopulator extends AbstractClusterPopulator {
         super.init0(levelSeed, localSeed, generator);
 
         Objects.requireNonNull(this.on, "on must be set!");
-        Preconditions.checkState(this.size > 0, "size must be at least 1!");
+        Preconditions.checkState(this.patchSize > 0, "patchSize must be at least 1!");
     }
+
+    @Override
+    protected void populate0(PRandom random, ChunkManager level, int blockX, int blockZ) {
+        int height = level.getChunk(blockX >> 4, blockZ >> 4).getHighestBlock(blockX & 0xF, blockZ & 0xF);
+        this.placeCluster(random, level, blockX, random.nextInt(height << 1), blockZ);
+    }
+
+    protected abstract void placeCluster(PRandom random, ChunkManager level, int x, int y, int z);
 }

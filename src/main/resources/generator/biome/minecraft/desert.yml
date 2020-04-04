@@ -18,20 +18,20 @@ decorators:
 populators:
     # Dead bushes
   - id: "nukkitx:shrub"
-    count: 2
+    chance: 0.0078125 # about 2 per chunk
     on: "sand"
     block: "deadbush"
 
     # Cactus
   - id: "nukkitx:plant"
-    count: 10
+    chance: 0.0390625 # about 10 per chunk
     height: "1-3"
     on: "sand"
     block: "cactus"
 
     # Sugar cane
   - id: "nukkitx:plant"
-    count: 5
+    chance: 0.01953125 # about 5 per chunk
     height: "1-3"
     on: "sand"
     water: "water"
