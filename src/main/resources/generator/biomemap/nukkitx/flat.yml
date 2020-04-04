@@ -1,2 +1,16 @@
-id: "nukkitx:constant"
-biome: "minecraft:savanna_mutated"
+#id: "nukkitx:constant"
+#biome: "minecraft:mesa"
+
+id: "nukkitx:complex"
+fallback: "minecraft:ocean"
+root:
+  id: "nukkitx:zoom"
+  times: 5
+  next:
+    id: "nukkitx:zoom"
+    mode: "fuzzy"
+    next:
+      id: "nukkitx:random"
+      biomes:
+        - "minecraft:mesa"
+        - "minecraft:mesa_plateau"

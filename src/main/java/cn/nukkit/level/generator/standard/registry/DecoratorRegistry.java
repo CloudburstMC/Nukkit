@@ -6,6 +6,8 @@ import cn.nukkit.level.generator.standard.gen.decorator.BedrockDecorator;
 import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
 import cn.nukkit.level.generator.standard.gen.decorator.DeepSurfaceDecorator;
 import cn.nukkit.level.generator.standard.gen.decorator.GroundCoverDecorator;
+import cn.nukkit.level.generator.standard.gen.decorator.HeightSelectionDecorator;
+import cn.nukkit.level.generator.standard.gen.decorator.MesaSurfaceDecorator;
 import cn.nukkit.level.generator.standard.gen.decorator.NoiseSelectionDecorator;
 import cn.nukkit.level.generator.standard.gen.decorator.ReplaceTopDecorator;
 import cn.nukkit.level.generator.standard.gen.decorator.ScatteredCoverDecorator;
@@ -31,6 +33,8 @@ public final class DecoratorRegistry extends AbstractGeneratorRegistry<Decorator
         this.register(BedrockDecorator.ID, BedrockDecorator.class);
         this.register(DeepSurfaceDecorator.ID, DeepSurfaceDecorator.class);
         this.register(GroundCoverDecorator.ID, GroundCoverDecorator.class);
+        this.register(HeightSelectionDecorator.ID, HeightSelectionDecorator.class);
+        this.register(MesaSurfaceDecorator.ID, MesaSurfaceDecorator.class);
         this.register(NoiseSelectionDecorator.ID, NoiseSelectionDecorator.class);
         this.register(ReplaceTopDecorator.ID, ReplaceTopDecorator.class);
         this.register(ScatteredCoverDecorator.ID, ScatteredCoverDecorator.class);

@@ -46,19 +46,21 @@ public class NoiseSelectionDecorator extends AbstractGenerationPass implements D
 
     @Override
     protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
+        PRandom random = new FastPRandom(localSeed);
+
         Preconditions.checkState(!Double.isNaN(this.min), "min must be set!");
         Preconditions.checkState(!Double.isNaN(this.max), "max must be set!");
-        this.selector = Objects.requireNonNull(this.selectorNoise, "selector must be set!").create(new FastPRandom(localSeed));
+        this.selector = Objects.requireNonNull(this.selectorNoise, "selector must be set!").create(random);
         this.selectorNoise = null;
 
         for (Decorator decorator : Objects.requireNonNull(this.below, "below must be set!"))  {
-            decorator.init(levelSeed, localSeed, generator);
+            decorator.init(levelSeed, random.nextLong(), generator);
         }
         for (Decorator decorator : Objects.requireNonNull(this.above, "above must be set!"))  {
-            decorator.init(levelSeed, localSeed, generator);
+            decorator.init(levelSeed, random.nextLong(), generator);
         }
         for (Decorator decorator : Objects.requireNonNull(this.in, "in must be set!"))  {
-            decorator.init(levelSeed, localSeed, generator);
+            decorator.init(levelSeed, random.nextLong(), generator);
         }
     }
 

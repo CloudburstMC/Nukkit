@@ -31,17 +31,17 @@ public class DeepSurfaceDecorator extends SurfaceDecorator {
     protected IntRange deepSize;
 
     @Override
-    public void init(long levelSeed, long localSeed, StandardGenerator generator) {
+    public void init0(long levelSeed, long localSeed, StandardGenerator generator) {
+        super.init(levelSeed, localSeed, generator);
+
         Preconditions.checkState(this.deep >= 0, "deep must be set!");
         Objects.requireNonNull(this.deepSize, "deepSize must be set!");
-
-        super.init(levelSeed, localSeed, generator);
     }
 
     @Override
     public void decorate(IChunk chunk, PRandom random, int x, int z) {
         boolean placed = false;
-        int depth = roundI(this.depthNoise.get(x + (chunk.getX() << 4), z + (chunk.getZ() << 4)));
+        final int depth = this.getDepthNoise(chunk, random, x, z);
 
         for (int y = 255; y >= 0; y--) {
             if (chunk.getBlockRuntimeIdUnsafe(x, y, z, 0) == this.ground) {
