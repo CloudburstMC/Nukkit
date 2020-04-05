@@ -59,7 +59,7 @@ public class TextPacket extends DataPacket {
             case TYPE_POPUP:
             case TYPE_JUKEBOX_POPUP:
                 this.message = this.getString();
-                this.parameters = this.getArray(BinaryStream::getString);
+                this.parameters = this.getArray(String.class, BinaryStream::getString);
         }
         this.xboxUserId = this.getString();
         this.platformChatId = this.getString();

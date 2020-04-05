@@ -14,9 +14,11 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.network.protocol.types.EntityLink;
+import com.google.common.collect.Iterables;
 import it.unimi.dsi.fastutil.io.FastByteArrayInputStream;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -669,13 +671,13 @@ public class BinaryStream {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T[] getArray(Function<BinaryStream, T> function) {
-        ArrayDeque<T> array = new ArrayDeque<>();
+    public <T> T[] getArray(Class<T> clazz, Function<BinaryStream, T> function) {
+        ArrayDeque<T> deque = new ArrayDeque<>();
         int count = (int) getUnsignedVarInt();
         for (int i = 0; i < count; i++) {
-            array.add(function.apply(this));
+            deque.add(function.apply(this));
         }
-        return (T[]) array.toArray();
+        return deque.toArray((T[]) Array.newInstance(clazz, 0));
     }
 
     public boolean feof() {
