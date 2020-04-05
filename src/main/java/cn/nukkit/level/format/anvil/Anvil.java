@@ -155,7 +155,6 @@ public class Anvil extends BaseLevelProvider {
         }
 //        stream.putByte((byte) count);  count is now sent in packet
         for (int i = 0; i < count; i++) {
-            stream.putByte((byte) 0);
             stream.put(sections[i].getBytes());
         }
 //        for (byte height : chunk.getHeightMapArray()) {
