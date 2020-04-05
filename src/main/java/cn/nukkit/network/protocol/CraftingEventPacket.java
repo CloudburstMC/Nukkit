@@ -38,8 +38,8 @@ public class CraftingEventPacket extends DataPacket {
         this.type = (int) this.getUnsignedVarInt();
         this.id = this.getUUID();
 
-        this.input = this.getArray(BinaryStream::getSlot);
-        this.output = this.getArray(BinaryStream::getSlot);
+        this.input = this.getArray(Item.class, BinaryStream::getSlot);
+        this.output = this.getArray(Item.class, BinaryStream::getSlot);
     }
 
     @Override
