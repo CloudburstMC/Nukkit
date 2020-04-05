@@ -175,5 +175,7 @@ public class AvailableCommandsPacket extends DataPacket {
             this.putUnsignedVarInt(values.size());
             values.forEach(this::putString);
         });
+
+        this.putUnsignedVarInt(0);
     }
 }

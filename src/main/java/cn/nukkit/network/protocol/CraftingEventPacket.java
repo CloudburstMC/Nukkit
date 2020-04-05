@@ -1,11 +1,14 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.utils.BinaryStream;
 import lombok.ToString;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 
 /**
  * @author Nukkit Project Team
@@ -35,19 +38,8 @@ public class CraftingEventPacket extends DataPacket {
         this.type = (int) this.getUnsignedVarInt();
         this.id = this.getUUID();
 
-        int inputSize = (int) this.getUnsignedVarInt();
-        List<Item> input = new ArrayList<>();
-        for (int i = 0; i < inputSize; ++i) {
-            input.add(this.getSlot());
-        }
-        this.input = input.toArray(new Item[0]);
-
-        int outputSize = (int) this.getUnsignedVarInt();
-        List<Item> output = new ArrayList<>();
-        for (int i = 0; i < outputSize; ++i) {
-            output.add(this.getSlot());
-        }
-        this.output = output.toArray(new Item[0]);
+        this.input = this.getArray(BinaryStream::getSlot);
+        this.output = this.getArray(BinaryStream::getSlot);
     }
 
     @Override

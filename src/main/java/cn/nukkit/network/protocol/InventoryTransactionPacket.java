@@ -7,7 +7,8 @@ import cn.nukkit.inventory.transaction.data.UseItemOnEntityData;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
 import lombok.ToString;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.List;
 
 @ToString
@@ -105,7 +106,7 @@ public class InventoryTransactionPacket extends DataPacket {
         this.transactionType = (int) this.getUnsignedVarInt();
 
         int length = (int) this.getUnsignedVarInt();
-        List<NetworkInventoryAction> actions = new ArrayList<>();
+        Collection<NetworkInventoryAction> actions = new ArrayDeque<>();
         for (int i = 0; i < length; i++) {
             actions.add(new NetworkInventoryAction().read(this));
         }
