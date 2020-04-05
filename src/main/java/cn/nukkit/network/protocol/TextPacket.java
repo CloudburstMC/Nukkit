@@ -1,6 +1,11 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.BinaryStream;
 import lombok.ToString;
+
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Created on 15-10-13.
@@ -54,11 +59,7 @@ public class TextPacket extends DataPacket {
             case TYPE_POPUP:
             case TYPE_JUKEBOX_POPUP:
                 this.message = this.getString();
-                int count = (int) this.getUnsignedVarInt();
-                this.parameters = new String[count];
-                for (int i = 0; i < count; i++) {
-                    this.parameters[i] = this.getString();
-                }
+                this.parameters = this.getArray(BinaryStream::getString);
         }
         this.xboxUserId = this.getString();
         this.platformChatId = this.getString();

@@ -3,7 +3,6 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemFlint;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.utils.BlockColor;
 
 import java.util.Random;
 

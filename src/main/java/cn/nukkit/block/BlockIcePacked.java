@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.utils.BlockColor;
 
 /**
  * author: MagicDroidX
@@ -40,7 +39,7 @@ public class BlockIcePacked extends BlockIce {
     
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, new BlockAir(), true); //no water
+        this.getLevel().setBlock(this, Block.get(BlockID.AIR), true); //no water
         return true;
     }
 

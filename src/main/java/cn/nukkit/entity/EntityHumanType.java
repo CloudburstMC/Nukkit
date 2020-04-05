@@ -1,7 +1,8 @@
 package cn.nukkit.entity;
 
 import cn.nukkit.Player;
-import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -201,7 +202,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
                 armor.setDamage(armor.getDamage() + 1);
 
                 if (armor.getDamage() >= armor.getMaxDurability()) {
-                    inventory.setArmorItem(slot, new ItemBlock(new BlockAir()));
+                    inventory.setArmorItem(slot, new ItemBlock(Block.get(BlockID.AIR)));
                 } else {
                     inventory.setArmorItem(slot, armor, true);
                 }

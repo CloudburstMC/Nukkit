@@ -262,6 +262,7 @@ public class Network {
         this.registerPacket(ProtocolInfo.BLOCK_ENTITY_DATA_PACKET, BlockEntityDataPacket.class);
         this.registerPacket(ProtocolInfo.BLOCK_EVENT_PACKET, BlockEventPacket.class);
         this.registerPacket(ProtocolInfo.BLOCK_PICK_REQUEST_PACKET, BlockPickRequestPacket.class);
+        this.registerPacket(ProtocolInfo.BOOK_EDIT_PACKET, BookEditPacket.class);
         this.registerPacket(ProtocolInfo.BOSS_EVENT_PACKET, BossEventPacket.class);
         this.registerPacket(ProtocolInfo.CHANGE_DIMENSION_PACKET, ChangeDimensionPacket.class);
         this.registerPacket(ProtocolInfo.CHUNK_RADIUS_UPDATED_PACKET, ChunkRadiusUpdatedPacket.class);

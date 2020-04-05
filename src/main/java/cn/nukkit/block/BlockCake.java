@@ -90,7 +90,7 @@ public class BlockCake extends BlockTransparentMeta {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (down().getId() == Block.AIR) {
-                getLevel().setBlock(this, new BlockAir(), true);
+                getLevel().setBlock(this, Block.get(BlockID.AIR), true);
 
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -114,7 +114,7 @@ public class BlockCake extends BlockTransparentMeta {
         if (player != null && player.getFoodData().getLevel() < player.getFoodData().getMaxLevel()) {
             if (getDamage() <= 0x06) setDamage(getDamage() + 1);
             if (getDamage() >= 0x06) {
-                getLevel().setBlock(this, new BlockAir(), true);
+                getLevel().setBlock(this, Block.get(BlockID.AIR), true);
             } else {
                 Food.getByRelative(this).eatenBy(player);
                 getLevel().setBlock(this, this, true);

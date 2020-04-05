@@ -130,4 +130,8 @@ public abstract class Biome implements BlockID {
     public int getHeightOffset(int x, int z)    {
         return 0;
     }
+
+    public boolean canRain() {
+        return true;
+    }
 }

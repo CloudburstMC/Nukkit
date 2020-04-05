@@ -10,7 +10,6 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
-import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 

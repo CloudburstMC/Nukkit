@@ -2412,7 +2412,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             }
                             Block block = target.getSide(face);
                             if (block.getId() == Block.FIRE) {
-                                this.level.setBlock(block, new BlockAir(), true);
+                                this.level.setBlock(block, Block.get(BlockID.AIR), true);
                                 this.level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_EXTINGUISH_FIRE);
                                 break;
                             }
@@ -2770,7 +2770,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     TextPacket textPacket = (TextPacket) packet;
 
                     if (textPacket.type == TextPacket.TYPE_CHAT) {
-                        this.chat(textPacket.message);
+                        String chatMessage = textPacket.message;
+                        int breakLine = chatMessage.indexOf('\n');
+                        // Chat messages shouldn't contain break lines so ignore text afterwards
+                        if (breakLine != -1) {
+                            chatMessage = chatMessage.substring(0, breakLine);
+                        }
+                        this.chat(chatMessage);
                     }
                     break;
                 case ProtocolInfo.CONTAINER_CLOSE_PACKET:
@@ -2856,7 +2862,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             if (itemDrop.getId() != Item.AIR) {
                                 vector3 = this.temporalVector.setComponents(itemFrame.x + 0.5, itemFrame.y, itemFrame.z + 0.5);
                                 this.level.dropItem(vector3, itemDrop);
-                                itemFrame.setItem(new ItemBlock(new BlockAir()));
+                                itemFrame.setItem(new ItemBlock(Block.get(BlockID.AIR)));
                                 itemFrame.setItemRotation(0);
                                 this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_REMOVE_ITEM);
                             }
@@ -3126,13 +3132,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     if (target.onInteract(this, item, useItemOnEntityData.clickPos) && this.isSurvival()) {
                                         if (item.isTool()) {
                                             if (item.useOn(target) && item.getDamage() >= item.getMaxDurability()) {
-                                                item = new ItemBlock(new BlockAir());
+                                                item = new ItemBlock(Block.get(BlockID.AIR));
                                             }
                                         } else {
                                             if (item.count > 1) {
                                                 item.count--;
                                             } else {
-                                                item = new ItemBlock(new BlockAir());
+                                                item = new ItemBlock(Block.get(BlockID.AIR));
                                             }
                                         }
 
@@ -3178,7 +3184,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                                     if (item.isTool() && this.isSurvival()) {
                                         if (item.useOn(target) && item.getDamage() >= item.getMaxDurability()) {
-                                            this.inventory.setItemInHand(new ItemBlock(new BlockAir()));
+                                            this.inventory.setItemInHand(new ItemBlock(Block.get(BlockID.AIR)));
                                         } else {
                                             this.inventory.setItemInHand(item);
                                         }
@@ -3263,6 +3269,45 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         respawn1.respawnState = RespawnPacket.STATE_READY_TO_SPAWN;
                         this.dataPacket(respawn1);
                     }
+                    break;
+                case ProtocolInfo.BOOK_EDIT_PACKET:
+                    BookEditPacket bookEditPacket = (BookEditPacket) packet;
+                    Item oldBook = this.inventory.getItem(bookEditPacket.inventorySlot);
+                    if (oldBook.getId() != Item.BOOK_AND_QUILL) {
+                        return;
+                    }
+
+                    Item newBook = oldBook.clone();
+                    boolean success;
+                    switch (bookEditPacket.action) {
+                        case REPLACE_PAGE:
+                            success = ((ItemBookAndQuill) newBook).setPageText(bookEditPacket.pageNumber, bookEditPacket.text);
+                            break;
+                        case ADD_PAGE:
+                            success = ((ItemBookAndQuill) newBook).insertPage(bookEditPacket.pageNumber, bookEditPacket.text);
+                            break;
+                        case DELETE_PAGE:
+                            success = ((ItemBookAndQuill) newBook).deletePage(bookEditPacket.pageNumber);
+                            break;
+                        case SWAP_PAGES:
+                            success = ((ItemBookAndQuill) newBook).swapPages(bookEditPacket.pageNumber, bookEditPacket.secondaryPageNumber);
+                            break;
+                        case SIGN_BOOK:
+                            newBook = Item.get(Item.WRITTEN_BOOK, 0, 1, oldBook.getCompoundTag());
+                            success = ((ItemBookWritten) newBook).signBook(bookEditPacket.title, bookEditPacket.author, bookEditPacket.xuid, ItemBookWritten.GENERATION_ORIGINAL);
+                            break;
+                        default:
+                            return;
+                    }
+
+                    if (success) {
+                        PlayerEditBookEvent editBookEvent = new PlayerEditBookEvent(this, oldBook, newBook, bookEditPacket.action);
+                        this.server.getPluginManager().callEvent(editBookEvent);
+                        if (!editBookEvent.isCancelled()) {
+                            this.inventory.setItem(bookEditPacket.inventorySlot, editBookEvent.getNewBook());
+                        }
+                    }
+                    break;
                 default:
                     break;
             }

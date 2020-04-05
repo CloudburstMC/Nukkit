@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * author: MagicDroidX
@@ -665,6 +666,16 @@ public class BinaryStream {
                 (byte) getByte(),
                 getBoolean()
         );
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T[] getArray(Function<BinaryStream, T> function) {
+        ArrayDeque<T> array = new ArrayDeque<>();
+        int count = (int) getUnsignedVarInt();
+        for (int i = 0; i < count; i++) {
+            array.add(function.apply(this));
+        }
+        return (T[]) array.toArray();
     }
 
     public boolean feof() {

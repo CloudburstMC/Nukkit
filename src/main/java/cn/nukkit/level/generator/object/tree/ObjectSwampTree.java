@@ -1,9 +1,6 @@
 package cn.nukkit.level.generator.object.tree;
 
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockLeaves;
-import cn.nukkit.block.BlockVine;
-import cn.nukkit.block.BlockWood;
+import cn.nukkit.block.*;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.NukkitRandom;
@@ -14,12 +11,12 @@ public class ObjectSwampTree extends TreeGenerator {
     /**
      * The metadata value of the wood to use in tree generation.
      */
-    private final Block metaWood = new BlockWood(BlockWood.OAK);
+    private final Block metaWood = Block.get(BlockID.WOOD, BlockWood.OAK);
 
     /**
      * The metadata value of the leaves to use in tree generation.
      */
-    private final Block metaLeaves = new BlockLeaves(BlockLeaves.OAK);
+    private final Block metaLeaves = Block.get(BlockID.LEAVES, BlockLeaves.OAK);
 
     @Override
     public boolean generate(ChunkManager worldIn, NukkitRandom rand, Vector3 vectorPosition) {
@@ -141,7 +138,7 @@ public class ObjectSwampTree extends TreeGenerator {
     }
 
     private void addVine(ChunkManager worldIn, BlockVector3 pos, int meta) {
-        this.setBlockAndNotifyAdequately(worldIn, pos, new BlockVine(meta));
+        this.setBlockAndNotifyAdequately(worldIn, pos, Block.get(BlockID.VINE, meta));
     }
 
     private void addHangingVine(ChunkManager worldIn, BlockVector3 pos, int meta) {
