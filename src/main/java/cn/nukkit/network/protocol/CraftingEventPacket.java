@@ -3,6 +3,8 @@ package cn.nukkit.network.protocol;
 import cn.nukkit.item.Item;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -34,16 +36,18 @@ public class CraftingEventPacket extends DataPacket {
         this.id = this.getUUID();
 
         int inputSize = (int) this.getUnsignedVarInt();
-        this.input = new Item[Math.min(inputSize, 128)];
-        for (int i = 0; i < this.input.length; ++i) {
-            this.input[i] = this.getSlot();
+        List<Item> input = new ArrayList<>();
+        for (int i = 0; i < inputSize; ++i) {
+            input.add(this.getSlot());
         }
+        this.input = input.toArray(new Item[0]);
 
         int outputSize = (int) this.getUnsignedVarInt();
-        this.output = new Item[Math.min(outputSize, 128)];
-        for (int i = 0; i < this.output.length; ++i) {
-            this.output[i] = getSlot();
+        List<Item> output = new ArrayList<>();
+        for (int i = 0; i < outputSize; ++i) {
+            output.add(this.getSlot());
         }
+        this.output = output.toArray(new Item[0]);
     }
 
     @Override

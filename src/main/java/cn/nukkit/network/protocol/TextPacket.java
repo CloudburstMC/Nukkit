@@ -2,6 +2,9 @@ package cn.nukkit.network.protocol;
 
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created on 15-10-13.
  */
@@ -55,10 +58,11 @@ public class TextPacket extends DataPacket {
             case TYPE_JUKEBOX_POPUP:
                 this.message = this.getString();
                 int count = (int) this.getUnsignedVarInt();
-                this.parameters = new String[Math.min(count, 128)];
-                for (int i = 0; i < this.parameters.length; i++) {
-                    this.parameters[i] = this.getString();
+                List<String> parameters = new ArrayList<>();
+                for (int i = 0; i < count; i++) {
+                    parameters.add(this.getString());
                 }
+                this.parameters = parameters.toArray(new String[0]);
         }
         this.xboxUserId = this.getString();
         this.platformChatId = this.getString();
