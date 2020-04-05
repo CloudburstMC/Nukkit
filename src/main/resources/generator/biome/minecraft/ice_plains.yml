@@ -32,3 +32,13 @@ populators:
   - id: "nukkitx:cover"
     on: "grass,leaves#1"
     block: "snow_layer"
+
+    # porktodo: this, along with some other things (like snow layers) is a bit messy because of the fact that when something from a neighboring chunk
+    # overhangs onto this biome after this biome was populated, it'll result in the overhang being OVER the ice layer, even though the entire purpose
+    # of it being applied last is to avoid exactly that. i'm not sure how vanilla avoids this (it should have the same problem...), only thing i can
+    # think of is a third "post-population" phase (but that's bad for other reasons)
+
+    # Ice layer on water
+  - id: "nukkitx:replace_top"
+    replace: "water"
+    with: "ice"

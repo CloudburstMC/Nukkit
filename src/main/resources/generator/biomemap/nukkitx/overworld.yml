@@ -22,7 +22,13 @@ root:
       minecraft:mushroom_island: "minecraft:mushroom_island_shore"
       minecraft:mushroom_island_shore: "minecraft:mushroom_island_shore"
 
+      # All icy biomes should use frozen river
+      minecraft:ice_mountains: "minecraft:frozen_river"
       minecraft:ice_plains: "minecraft:frozen_river"
+      minecraft:ice_plains_spikes: "minecraft:frozen_river"
+      minecraft:cold_taiga: "minecraft:frozen_river"
+      minecraft:cold_taiga_hills: "minecraft:frozen_river"
+      minecraft:cold_taiga_mutated: "minecraft:frozen_river"
     riverLayer:
       # Smooth out jagged edges.
       # Result:
