@@ -1,7 +1,8 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
-import cn.nukkit.block.BlockTNT;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityExplosive;
 import cn.nukkit.entity.data.IntEntityData;
@@ -31,7 +32,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
 
     public EntityMinecartTNT(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
-        super.setDisplayBlock(new BlockTNT(), false);
+        super.setDisplayBlock(Block.get(BlockID.TNT), false);
     }
 
     @Override

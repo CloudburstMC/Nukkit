@@ -14,7 +14,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.nio.ByteOrder;
-import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
