@@ -32,9 +32,9 @@ public final class BiomeTerrainCache {
         this.diameter = radius * 2 + 1;
 
         this.weights = new double[this.diameter * this.diameter];
-        for (int x = -radius; x <= radius; x++) {
-            for (int z = -radius; z <= radius; z++) {
-                this.weights[(x + radius) * this.diameter + z + radius] = 10.0d / Math.sqrt(x * x + z * z + 0.2d);
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                this.weights[(dx + radius) * this.diameter + dz + radius] = 10.0d / Math.sqrt(dx * dx + dz * dz + 0.2d);
             }
         }
     }
@@ -53,14 +53,14 @@ public final class BiomeTerrainCache {
             double totalWeight = 0.0d;
 
             final double centerHeight = biomes.get(x, z).getElevation().getNormalizedHeight();
-            for (int radius = this.radius, dx = -radius; dx <= radius; dx++) {
+            for (int radius = this.radius, scale = this.scale, diameter = this.diameter, dx = -radius; dx <= radius; dx++) {
                 for (int dz = -radius; dz <= radius; dz++) {
-                    BiomeElevation elevation = biomes.get(x + dx * this.scale, z + dz * this.scale).getElevation();
+                    BiomeElevation elevation = biomes.get(x + dx * scale, z + dz * scale).getElevation();
 
                     double height = elevation.getNormalizedHeight();
                     double variation = elevation.getNormalizedVariation();
 
-                    double weight = Math.abs(this.weights[(dx + this.radius) * this.diameter + dx + this.radius] / (height + 2.0d));
+                    double weight = Math.abs(this.weights[(dx + radius) * diameter + dx + radius] / (height + 2.0d));
                     if (height > centerHeight) {
                         weight *= 0.5d;
                     }
@@ -80,10 +80,5 @@ public final class BiomeTerrainCache {
     public static final class Data {
         public final double baseHeight;
         public final double heightVariation;
-
-        /*public Data(double baseHeight, double heightVariation)  {
-            this.baseHeight = baseHeight * 17.0d / 64.0d - 1.0d / 256.0d;
-            this.heightVariation = heightVariation * 2.4d + 4.0d / 15.0d;
-        }*/
     }
 }

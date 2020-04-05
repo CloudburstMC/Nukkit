@@ -3,6 +3,7 @@ package cn.nukkit.level.generator.standard.registry;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.generator.standard.gen.density.DensitySource;
+import cn.nukkit.level.generator.standard.gen.density.EndDensitySource;
 import cn.nukkit.level.generator.standard.gen.density.VanillaDensitySource;
 import cn.nukkit.utils.Identifier;
 import lombok.AccessLevel;
@@ -22,6 +23,7 @@ import net.daporkchop.lib.noise.NoiseSource;
 public final class DensitySourceRegistry extends AbstractGeneratorRegistry<DensitySource> {
     @Override
     protected void registerDefault() {
+        this.register(EndDensitySource.ID, EndDensitySource.class);
         this.register(VanillaDensitySource.ID, VanillaDensitySource.class);
     }
 

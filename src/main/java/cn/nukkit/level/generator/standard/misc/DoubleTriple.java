@@ -14,6 +14,7 @@ import java.util.regex.Matcher;
  *
  * @author DaPorkchop_
  */
+//TODO: remove this and add jackson deserializer methods to Vector classes in math library
 @JsonDeserialize
 public final class DoubleTriple {
     private static final Ref<Matcher> TRIPLE_MATCHER_CACHE = ThreadRef.regex("^(-?(?:[0-9]+|[0-9]*\\.[0-9]+)),(-?(?:[0-9]+|[0-9]*\\.[0-9]+)),(-?(?:[0-9]+|[0-9]*\\.[0-9]+))$");
