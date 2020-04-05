@@ -5,13 +5,11 @@ import cn.nukkit.level.format.anvil.util.BlockStorage;
 import cn.nukkit.level.format.anvil.util.NibbleArray;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.utils.Binary;
-import cn.nukkit.utils.ThreadCache;
-import cn.nukkit.utils.Utils;
-import cn.nukkit.utils.Zlib;
+import cn.nukkit.utils.*;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.function.IntConsumer;
 
 /**
  * author: MagicDroidX
@@ -319,14 +317,12 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     @Override
     public byte[] getBytes() {
         synchronized (storage) {
+            BinaryStream stream = new BinaryStream();
 
-            byte[] ids = storage.getBlockIds();
-            byte[] data = storage.getBlockData();
-            byte[] merged = new byte[ids.length + data.length];
-
-            System.arraycopy(ids, 0, merged, 0, ids.length);
-            System.arraycopy(data, 0, merged, ids.length, data.length);
-            return merged;
+            stream.putByte((byte) 8); // Paletted chunk because Mojang messed up the old one
+            stream.putByte((byte) 1);
+            this.storage.writeTo(stream);
+            return stream.getBuffer();
         }
     }
 
