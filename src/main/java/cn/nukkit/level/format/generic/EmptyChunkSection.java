@@ -2,6 +2,8 @@ package cn.nukkit.level.format.generic;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.format.ChunkSection;
+import cn.nukkit.level.util.PalettedBlockStorage;
+import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
 
 import java.util.Arrays;
@@ -12,6 +14,8 @@ import java.util.Arrays;
  */
 public class EmptyChunkSection implements ChunkSection {
     public static final EmptyChunkSection[] EMPTY = new EmptyChunkSection[16];
+    private static final PalettedBlockStorage EMPTY_STORAGE = new PalettedBlockStorage();
+
     static {
         for (int y = 0; y < EMPTY.length; y++) {
             EMPTY[y] = new EmptyChunkSection(y);
@@ -129,8 +133,11 @@ public class EmptyChunkSection implements ChunkSection {
     }
 
     @Override
-    public byte[] getBytes() {
-        return new byte[6144];
+    public void writeTo(BinaryStream stream) {
+        stream.putByte((byte) 8);
+        stream.putByte((byte) 2);
+        EMPTY_STORAGE.writeTo(stream);
+        EMPTY_STORAGE.writeTo(stream);
     }
 
     @Override
