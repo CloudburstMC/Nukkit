@@ -105,7 +105,24 @@ public class McRegion extends BaseLevelProvider {
 
         long timestamp = chunk.getChanges();
 
-        byte[] tiles = new byte[0];
+        BinaryStream stream = new BinaryStream();
+        stream.putByte((byte) 0); // subchunk version
+
+        stream.put(chunk.getBlockIdArray());
+        stream.put(chunk.getBlockDataArray());
+        stream.put(chunk.getBlockSkyLightArray());
+        stream.put(chunk.getBlockLightArray());
+        stream.put(chunk.getHeightMapArray());
+        stream.put(chunk.getBiomeIdArray());
+
+        Map<Integer, Integer> extra = chunk.getBlockExtraDataArray();
+        stream.putLInt(extra.size());
+        if (!extra.isEmpty()) {
+            for (Integer key : extra.values()) {
+                stream.putLInt(key);
+                stream.putLShort(extra.get(key));
+            }
+        }
 
         if (!chunk.getBlockEntities().isEmpty()) {
             List<CompoundTag> tagList = new ArrayList<>();
@@ -117,40 +134,11 @@ public class McRegion extends BaseLevelProvider {
             }
 
             try {
-                tiles = NBTIO.write(tagList, ByteOrder.LITTLE_ENDIAN, true);
+                stream.put(NBTIO.write(tagList, ByteOrder.LITTLE_ENDIAN));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-
-        Map<Integer, Integer> extra = chunk.getBlockExtraDataArray();
-        BinaryStream extraData;
-        if (!extra.isEmpty()) {
-            extraData = new BinaryStream();
-            extraData.putLInt(extra.size());
-            for (Map.Entry<Integer, Integer> entry : extra.entrySet()) {
-                extraData.putLInt(entry.getKey());
-                extraData.putLShort(entry.getValue());
-            }
-        } else {
-            extraData = null;
-        }
-
-        BinaryStream stream = new BinaryStream();
-        stream.put(chunk.getBlockIdArray());
-        stream.put(chunk.getBlockDataArray());
-        stream.put(chunk.getBlockSkyLightArray());
-        stream.put(chunk.getBlockLightArray());
-        stream.put(chunk.getHeightMapArray());
-        stream.put(chunk.getBiomeIdArray());
-        if (extraData != null) {
-            stream.put(extraData.getBuffer());
-        } else {
-            stream.putLInt(0);
-        }
-        stream.put(tiles);
-
-        this.getLevel().chunkRequestCallback(timestamp, x, z, 16, stream.getBuffer());
 
         return null;
     }
