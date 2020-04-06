@@ -62,8 +62,10 @@ public class GlobalBlockPalette {
         int legacyId = id << 6 | meta;
         int runtimeId = legacyToRuntimeId.get(legacyId);
         if (runtimeId == -1) {
-            //runtimeId = registerMapping(runtimeIdAllocator.incrementAndGet(), legacyId);
-            throw new NoSuchElementException("Unmapped block registered id:" + id + " meta:" + meta);
+            runtimeId = legacyToRuntimeId.get(id << 6);
+            if (runtimeId == -1) {
+                throw new NoSuchElementException("Unmapped block registered id:" + id + " meta:" + meta);
+            }
         }
         return runtimeId;
     }
