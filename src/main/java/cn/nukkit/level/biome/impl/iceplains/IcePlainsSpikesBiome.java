@@ -76,7 +76,7 @@ public class IcePlainsSpikesBiome extends IcePlainsBiome {
                     level.setBlockAt(x - 1, maxY, z, PACKED_ICE);
                     level.setBlockAt(x, maxY, z + 1, PACKED_ICE);
                     level.setBlockAt(x, maxY, z - 1, PACKED_ICE);
-                    for (int y = maxY; y < maxY + 3; maxY++) {
+                    for (int y = maxY; y < maxY + 3; y++) {
                         level.setBlockAt(x, y, z, PACKED_ICE);
                     }
                 } else {
