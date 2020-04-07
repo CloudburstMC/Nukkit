@@ -20,7 +20,7 @@ public class GiveCommand extends VanillaCommand {
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("item", false, CommandParameter.ENUM_TYPE_ITEM_LIST),
+                new CommandParameter("itemName", false, CommandParameter.ENUM_TYPE_ITEM_LIST),
                 new CommandParameter("amount", CommandParamType.INT, true),
                 new CommandParameter("meta", CommandParamType.INT, true),
                 new CommandParameter("tags...", CommandParamType.RAWTEXT, true)
