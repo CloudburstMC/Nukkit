@@ -23,7 +23,6 @@ import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.nbt.tag.NumberTag;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
-import io.netty.buffer.Unpooled;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
@@ -87,17 +86,6 @@ public class AnvilConverter {
             sections[y] = new ChunkSection(new BlockStorage[]{blockStorage, new BlockStorage()}, blockLight, skyLight);
         }
         chunkBuilder.sections(sections);
-
-        // Extra data
-        byte[] extra = tag.getByteArray("ExtraData");
-        ByteBuf buffer = Unpooled.wrappedBuffer(extra);
-        int length = buffer.readInt();
-        for (int i = 0; i < length; i++) {
-            int index = buffer.readInt();
-            short data = buffer.readShort();
-            chunkBuilder.extraData(index, data);
-
-        }
 
         byte[] biomes;
         if (tag.contains("BiomeColors")) {
