@@ -62,6 +62,20 @@ public class EndDensitySource extends AbstractGenerationPass implements DensityS
 
     @Override
     public double get(int x, int y, int z, @NonNull BiomeMap biomes) {
+        /*if ((x & 7) != 0 && (z & 7) != 0)   {
+            int floorX = x & ~7;
+            int floorZ = z & ~7;
+            double vx = lerp(this.get(floorX, y, floorZ, biomes), this.get(floorX, y, floorZ + 8, biomes), 0.5d);
+            double vX = lerp(this.get(floorX + 8, y, floorZ, biomes), this.get(floorX + 8, y, floorZ + 8, biomes), 0.5d);
+            return lerp(vx, vX, 0.5d);
+        } else if ((x & 7) != 0)   {
+            int floorX = x & ~7;
+            return lerp(this.get(floorX, y, z, biomes), this.get(floorX + 8, y, z, biomes), 0.5d);
+        } else if ((z & 7) != 0)   {
+            int floorZ = z & ~7;
+            return lerp(this.get(x, y, floorZ, biomes), this.get(x, y, floorZ + 8, biomes), 0.5d);
+        }*/
+
         double xd = x; //only do floating-point conversion once
         double yd = y;
         double zd = z;
@@ -69,17 +83,20 @@ public class EndDensitySource extends AbstractGenerationPass implements DensityS
         //do all noise computations together to allow JIT to potentally apply some optimizations if all noise sources use the same implementation
         // (also this ensures the noise code is cached for the following invocations)
         double selector = clamp(this.selector.get(xd, yd, zd), 0.0d, 1.0d);
-        double low = this.low.get(xd, yd, zd);
-        double high = this.high.get(xd, yd, zd);
+        double low = this.low.get(xd, yd, zd) * ((1 << 16) - 1) / 512.0d;
+        double high = this.high.get(xd, yd, zd) * ((1 << 16) - 1) / 512.0d;
 
-        double outputNoise = lerp(low, high, selector) + this.islands.get(x, z);
+        double outputNoise = lerp(low, high, selector) - 8.0d + this.islands.get(x, z);
 
-        if (yd > this.maxHeightCutoff) {
+        /*if (yd > this.maxHeightCutoff) {
             double factor = clamp((yd - this.maxHeightCutoff) * 0.015625d * 8.0d, 0.0d, 1.0d);
             outputNoise = outputNoise * (1.0d - factor) - 0.5d * factor;
         } else if (yd < this.minHeightCutoff)   {
             double factor = (((this.minHeightCutoff * 0.125d) - (yd * 0.125d)) / ((this.minHeightCutoff * 0.125d) - 1.0d));
             outputNoise = outputNoise * (1.0d - factor) - 30.0d * factor;
+        }*/
+        if (yd > this.maxHeightCutoff || yd < this.minHeightCutoff)  {
+            outputNoise = -1.0d;
         }
 
         return outputNoise;
@@ -92,13 +109,16 @@ public class EndDensitySource extends AbstractGenerationPass implements DensityS
 
     @JsonDeserialize
     protected static class IslandCache extends TerrainDoubleCache {
+        protected NoiseSource island;
         protected NoiseSource size;
         protected NoiseSource distortion;
         protected long        seed;
 
         protected double centerIslandRadius;
         protected long   outerIslandStartRadiusSq;
+        protected double   outerIslandSeedThreshold;
 
+        protected NoiseGenerator islandNoise;
         protected NoiseGenerator islandSize;
         protected NoiseGenerator islandDistortion;
 
@@ -108,6 +128,8 @@ public class EndDensitySource extends AbstractGenerationPass implements DensityS
                 @JsonProperty(value = "scale", required = true) int scale,
                 @JsonProperty(value = "centerIslandRadius", required = true) double centerIslandRadius,
                 @JsonProperty(value = "outerIslandStartRadius", required = true) double outerIslandStartRadius,
+                @JsonProperty(value = "outerIslandSeedThreshold", required = true) double outerIslandSeedThreshold,
+                @JsonProperty(value = "islandNoise", required = true) NoiseGenerator islandNoise,
                 @JsonProperty(value = "islandSize", required = true) NoiseGenerator islandSize,
                 @JsonProperty(value = "islandDistortion", required = true) NoiseGenerator islandDistortion) {
             super(radius, scale);
@@ -115,14 +137,17 @@ public class EndDensitySource extends AbstractGenerationPass implements DensityS
             this.centerIslandRadius = centerIslandRadius;
             outerIslandStartRadius /= scale;
             this.outerIslandStartRadiusSq = floorL(outerIslandStartRadius * outerIslandStartRadius);
+            this.outerIslandSeedThreshold = outerIslandSeedThreshold;
+            this.islandNoise = islandNoise;
             this.islandSize = islandSize;
             this.islandDistortion = islandDistortion;
         }
 
         protected void init(@NonNull PRandom random) {
+            this.island = this.islandNoise.create(new FastPRandom(random.nextLong()));
             this.size = this.islandSize.create(new FastPRandom(random.nextLong()));
             this.distortion = this.islandDistortion.create(new FastPRandom(random.nextLong()));
-            this.islandSize = this.islandDistortion = null;
+            this.islandNoise = this.islandSize = this.islandDistortion = null;
 
             this.seed = random.nextLong();
         }
@@ -131,6 +156,7 @@ public class EndDensitySource extends AbstractGenerationPass implements DensityS
         protected double computeValue(int x, int z, int radius, int scale) {
             final double islandRadius = this.centerIslandRadius;
             final long outerIslandStartRadiusSq = this.outerIslandStartRadiusSq;
+            final double outerIslandSeedThreshold = this.outerIslandSeedThreshold;
 
             double val = islandRadius - sqrt((double) x * (double) x + (double) z * (double) z);
 
@@ -142,19 +168,24 @@ public class EndDensitySource extends AbstractGenerationPass implements DensityS
                     long islandX = tileX + dx;
                     long islandZ = tileZ + dz;
 
-                    if (islandX * islandX + islandZ * islandZ > outerIslandStartRadiusSq && (mix32(mix64(this.seed + islandX) + islandZ) & 0xFF) == 0)    {
-                        double size = this.size.get(islandX, islandZ);
-                        double weight = this.distortion.get(x, z);
+                    if (islandX * islandX + islandZ * islandZ > outerIslandStartRadiusSq && this.island.get(islandX, islandZ) < outerIslandSeedThreshold)    {
+                        double weight = this.distortion.get(islandX, islandZ);
 
-                        double offsetX = dx * scale - (x % scale);
-                        double offsetZ = dz * scale - (z % scale);
+                        //double offsetX = dx * scale - (x % scale);
+                        //double offsetZ = dz * scale - (z % scale);
+                        //double offsetX = (x % scale) - dx * scale;
+                        //double offsetZ = (z % scale) - dz * scale;
+                        double offsetX = (x / (double) scale) - islandX;
+                        double offsetZ = (z / (double) scale) - islandZ;
+                        //double offsetX = islandX - (x / (double) scale);
+                        //double offsetZ = islandZ - (z / (double) scale);
 
-                        val = Math.max(val, size - sqrt(offsetX * offsetX + offsetZ * offsetZ) * weight);
+                        val = Math.max(val, islandRadius / scale - sqrt(offsetX * offsetX + offsetZ * offsetZ) * weight);
                     }
                 }
             }
 
-            return clamp(val / islandRadius, -0.78740d, 0.62992d) - 0.0625d;
+            return clamp(val, -100.0d, 80.0d);
         }
     }
 }

@@ -38,22 +38,30 @@ islands:
   scale: 8
   centerIslandRadius: 100.0
   outerIslandStartRadius: 1000.0
-#  islandSize:
-#    id: "nukkitx:simplex"
-#    octaves: 1
-##    factor: 512.0
-##    offset: 512.0
+  outerIslandSeedThreshold: -0.8999999761581421
+#  outerIslandSeedThreshold: -0.5
+  islandNoise:
+    id: "nukkitx:simplex"
+    octaves: 1
+  islandSize:
+    id: "nukkitx:simplex"
+    octaves: 1
+#    factor: 512.0
+#    offset: 512.0
 #    factor: 32.0
 #    offset: 64.0
-#  islandDistortion:
-#    id: "nukkitx:simplex"
-#    octaves: 2
-#    scale: 0.0625
-##    factor: 0.05859375
-##    offset: 0.12890625
+    factor: 0.0
+    offset: 100.0
+  islandDistortion:
+    id: "nukkitx:simplex"
+    octaves: 1
+    factor: 6.5
+    offset: 15.5
+#    factor: 0.05859375
+#    offset: 0.12890625
 #    factor: 0.0
 #    offset: 0.0
-##    factor: 8
-##    offset: 16
+#    factor: 8
+#    offset: 16
 maxHeightCutoff: 112.0
 minHeightCutoff: 64.0

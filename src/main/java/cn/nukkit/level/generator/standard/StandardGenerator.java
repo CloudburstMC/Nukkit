@@ -53,7 +53,7 @@ import static net.daporkchop.lib.math.primitive.PMath.*;
 @NoArgsConstructor
 @Accessors(fluent = true)
 public final class StandardGenerator implements Generator {
-    public static final Identifier ID = Identifier.fromString("minecraft:standard");
+    public static final Identifier ID = Identifier.fromString("nukkitx:standard");
 
     private static final String DEFAULT_PRESET = "nukkitx:overworld";
 
@@ -89,7 +89,7 @@ public final class StandardGenerator implements Generator {
         t.start();
     }
 
-    private static final int STEP_X = 4;
+    private static final int STEP_X = 8;
     private static final int STEP_Y = 8;
     private static final int STEP_Z = STEP_X;
 
