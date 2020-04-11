@@ -1,7 +1,6 @@
 package cn.nukkit.level.generator.standard.gen.density;
 
 import cn.nukkit.level.generator.standard.StandardGenerator;
-import cn.nukkit.level.generator.standard.biome.BiomeTerrainCache;
 import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
 import cn.nukkit.level.generator.standard.gen.noise.NoiseGenerator;
 import cn.nukkit.level.generator.standard.misc.AbstractGenerationPass;
@@ -18,6 +17,7 @@ import net.daporkchop.lib.random.impl.FastPRandom;
 import static java.lang.Math.*;
 import static java.util.Objects.*;
 import static net.daporkchop.lib.math.primitive.PMath.*;
+import static net.daporkchop.lib.random.impl.FastPRandom.*;
 
 /**
  * A {@link NoiseSource} that provides noise similar to that of vanilla terrain.
@@ -34,8 +34,8 @@ public class EndDensitySource extends AbstractGenerationPass implements DensityS
     private NoiseSource low;
     private NoiseSource high;
 
-    @JsonProperty("height")
-    private HeightCache heightCache;
+    @JsonProperty
+    private IslandCache islands;
 
     @JsonProperty
     private double maxHeightCutoff = 112.0d;
@@ -48,8 +48,6 @@ public class EndDensitySource extends AbstractGenerationPass implements DensityS
     private NoiseGenerator lowNoise;
     @JsonProperty
     private NoiseGenerator highNoise;
-    @JsonProperty
-    private NoiseGenerator heightNoise;
 
     @Override
     protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
@@ -57,10 +55,9 @@ public class EndDensitySource extends AbstractGenerationPass implements DensityS
         this.selector = requireNonNull(this.selectorNoise, "selectorNoise must be set!").create(new FastPRandom(random.nextLong()));
         this.low = requireNonNull(this.lowNoise, "lowNoise must be set!").create(new FastPRandom(random.nextLong()));
         this.high = requireNonNull(this.highNoise, "highNoise must be set!").create(new FastPRandom(random.nextLong()));
-        requireNonNull(this.heightCache, "height must be set!").height
-                = requireNonNull(this.heightNoise, "heightNoise must be set!").create(new FastPRandom(random.nextLong()));
+        this.selectorNoise = this.lowNoise = this.highNoise = null;
 
-        this.selectorNoise = this.lowNoise = this.highNoise = this.heightNoise = null;
+        requireNonNull(this.islands, "islands must be set!").init(random);
     }
 
     @Override
@@ -75,12 +72,11 @@ public class EndDensitySource extends AbstractGenerationPass implements DensityS
         double low = this.low.get(xd, yd, zd);
         double high = this.high.get(xd, yd, zd);
 
-        double outputNoise = lerp(low, high, selector) + this.heightCache.get(x, z);
-        //double outputNoise = lerp(low, high, selector) + this.heightCache.height.get(x, z);
+        double outputNoise = lerp(low, high, selector) + this.islands.get(x, z);
 
         if (yd > this.maxHeightCutoff) {
-            double factor = clamp(((yd * 0.125d) - (this.maxHeightCutoff * 0.125d)) * 0.015625d, 0.0d, 1.0d);
-            outputNoise = outputNoise * (1.0d - factor) - 3000.0d * factor;
+            double factor = clamp((yd - this.maxHeightCutoff) * 0.015625d * 8.0d, 0.0d, 1.0d);
+            outputNoise = outputNoise * (1.0d - factor) - 0.5d * factor;
         } else if (yd < this.minHeightCutoff)   {
             double factor = (((this.minHeightCutoff * 0.125d) - (yd * 0.125d)) / ((this.minHeightCutoff * 0.125d) - 1.0d));
             outputNoise = outputNoise * (1.0d - factor) - 30.0d * factor;
@@ -95,58 +91,70 @@ public class EndDensitySource extends AbstractGenerationPass implements DensityS
     }
 
     @JsonDeserialize
-    protected static class HeightCache extends TerrainDoubleCache {
-        protected NoiseSource height;
-        protected double islandRadius;
+    protected static class IslandCache extends TerrainDoubleCache {
+        protected NoiseSource size;
+        protected NoiseSource distortion;
+        protected long        seed;
+
+        protected double centerIslandRadius;
         protected long   outerIslandStartRadiusSq;
-        protected double outerNoiseConsiderThreshold;
+
+        protected NoiseGenerator islandSize;
+        protected NoiseGenerator islandDistortion;
 
         @JsonCreator
-        public HeightCache(
+        public IslandCache(
                 @JsonProperty(value = "radius", required = true) int radius,
                 @JsonProperty(value = "scale", required = true) int scale,
-                @JsonProperty(value = "islandRadius", required = true) double islandRadius,
+                @JsonProperty(value = "centerIslandRadius", required = true) double centerIslandRadius,
                 @JsonProperty(value = "outerIslandStartRadius", required = true) double outerIslandStartRadius,
-                @JsonProperty(value = "outerNoiseConsiderThreshold", required = true) double outerNoiseConsiderThreshold) {
+                @JsonProperty(value = "islandSize", required = true) NoiseGenerator islandSize,
+                @JsonProperty(value = "islandDistortion", required = true) NoiseGenerator islandDistortion) {
             super(radius, scale);
 
-            this.islandRadius = islandRadius;
+            this.centerIslandRadius = centerIslandRadius;
             outerIslandStartRadius /= scale;
             this.outerIslandStartRadiusSq = floorL(outerIslandStartRadius * outerIslandStartRadius);
-            this.outerNoiseConsiderThreshold = outerNoiseConsiderThreshold;
+            this.islandSize = islandSize;
+            this.islandDistortion = islandDistortion;
+        }
+
+        protected void init(@NonNull PRandom random) {
+            this.size = this.islandSize.create(new FastPRandom(random.nextLong()));
+            this.distortion = this.islandDistortion.create(new FastPRandom(random.nextLong()));
+            this.islandSize = this.islandDistortion = null;
+
+            this.seed = random.nextLong();
         }
 
         @Override
         protected double computeValue(int x, int z, int radius, int scale) {
-            final NoiseSource height = this.height;
-            final double islandRadius = this.islandRadius;
+            final double islandRadius = this.centerIslandRadius;
             final long outerIslandStartRadiusSq = this.outerIslandStartRadiusSq;
-            final double outerNoiseConsiderThreshold = this.outerNoiseConsiderThreshold;
 
-            double val = clamp(islandRadius - sqrt((double) x * (double) x + (double) z * (double) z) * 8.0d, -100.0d, 80.0d);
+            double val = islandRadius - sqrt((double) x * (double) x + (double) z * (double) z);
 
-            int baseX = x / scale;
-            int baseZ = z / scale;
+            int tileX = x / scale;
+            int tileZ = z / scale;
 
             for (int dx = -radius; dx <= radius; dx++) {
                 for (int dz = -radius; dz <= radius; dz++) {
-                    long offsetX = baseX + dx;
-                    long offsetZ = baseZ + dz;
+                    long islandX = tileX + dx;
+                    long islandZ = tileZ + dz;
 
-                    if (offsetX * offsetX + offsetZ * offsetZ <= outerIslandStartRadiusSq
-                            || height.get(offsetX, offsetZ) >= outerNoiseConsiderThreshold) {
-                        continue;
+                    if (islandX * islandX + islandZ * islandZ > outerIslandStartRadiusSq && (mix32(mix64(this.seed + islandX) + islandZ) & 0xFF) == 0)    {
+                        double size = this.size.get(islandX, islandZ);
+                        double weight = this.distortion.get(x, z);
+
+                        double offsetX = dx * scale - (x % scale);
+                        double offsetZ = dz * scale - (z % scale);
+
+                        val = Math.max(val, size - sqrt(offsetX * offsetX + offsetZ * offsetZ) * weight);
                     }
-
-                    double weight = (abs(offsetX) * 3439.0d + abs(offsetZ) * 147.0d) % 13.0d + 9.0d;
-                    double tileX = dx * scale - (x % scale);
-                    double tileZ = dz * scale - (z % scale);
-
-                    val = Math.max(val, clamp(islandRadius - sqrt(tileX * tileX + tileZ * tileZ) * weight, -100.0d, 80.0d));
                 }
             }
 
-            return val - 8.0d;
+            return clamp(val / islandRadius, -0.78740d, 0.62992d) - 0.0625d;
         }
     }
 }

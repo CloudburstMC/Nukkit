@@ -9,39 +9,51 @@ seed: "end"
 selectorNoise:
   id: "nukkitx:perlin"
   scale:
-    x: 0.066837109375
+    x: 0.01670927734375
     y: 0.0041773193359375
-    z: 0.066837109375
+    z: 0.01670927734375
   octaves: 8
   factor: 12.75
   offset: 0.5
 lowNoise:
   id: "nukkitx:perlin"
   scale:
-    x: 0.0026108245849609375
-    y: 0.0208865966796875
-    z: 0.0026108245849609375
+    x: 0.005221649169921875
+    y: 0.0026108245849609375
+    z: 0.005221649169921875
   octaves: 16
-  factor: 127.998046875
+  factor: 1.0
   offset: 0.0
 highNoise:
   id: "nukkitx:perlin"
   scale:
-    x: 0.0026108245849609375
-    y: 0.0208865966796875
-    z: 0.0026108245849609375
+    x: 0.005221649169921875
+    y: 0.0026108245849609375
+    z: 0.005221649169921875
   octaves: 16
-  factor: 127.998046875
+  factor: 1.0
   offset: 0.0
-heightNoise:
-  id: "nukkitx:simplex"
-  octaves: 1
-  scale: 1.0
-height:
+islands:
   radius: 12
-  scale: 16
-  islandRadius: 1000.0
+  scale: 8
+  centerIslandRadius: 100.0
   outerIslandStartRadius: 1000.0
-  outerNoiseConsiderThreshold: -0.75 # this value is straight from minecraft itself
+#  islandSize:
+#    id: "nukkitx:simplex"
+#    octaves: 1
+##    factor: 512.0
+##    offset: 512.0
+#    factor: 32.0
+#    offset: 64.0
+#  islandDistortion:
+#    id: "nukkitx:simplex"
+#    octaves: 2
+#    scale: 0.0625
+##    factor: 0.05859375
+##    offset: 0.12890625
+#    factor: 0.0
+#    offset: 0.0
+##    factor: 8
+##    offset: 16
 maxHeightCutoff: 112.0
 minHeightCutoff: 64.0
