@@ -52,15 +52,11 @@ public abstract class Zlib {
         return provider.deflate(data, level);
     }
 
-    public static byte[] inflate(InputStream stream) throws IOException {
-        return provider.inflate(stream);
-    }
-
     public static byte[] inflate(byte[] data) throws IOException {
-        return inflate(new ByteArrayInputStream(data));
+        return inflate(data, -1);
     }
 
     public static byte[] inflate(byte[] data, int maxSize) throws IOException {
-        return inflate(new ByteArrayInputStream(data, 0, maxSize));
+        return provider.inflate(data, maxSize);
     }
 }
