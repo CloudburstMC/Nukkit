@@ -4,9 +4,9 @@
 
 groundBlock: "end_stone"
 
-biomes: "nukkitx:end"
+biomes: "minecraft:end"
 
-density: "nukkitx:end"
+density: "minecraft:end"
 
 decorators:
   - id: "nukkitx:next"

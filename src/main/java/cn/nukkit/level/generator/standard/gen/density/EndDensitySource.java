@@ -22,7 +22,7 @@ import static net.daporkchop.lib.math.primitive.PMath.*;
 import static net.daporkchop.lib.random.impl.FastPRandom.*;
 
 /**
- * A {@link NoiseSource} that provides noise similar to that of vanilla terrain.
+ * A {@link NoiseSource} that provides noise similar to that of vanilla's end terrain.
  *
  * @author DaPorkchop_
  */

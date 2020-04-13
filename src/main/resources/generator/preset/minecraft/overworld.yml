@@ -6,9 +6,9 @@ groundBlock: "stone"
 seaBlock: "water"
 seaLevel: 63
 
-biomes: "nukkitx:overworld"
+biomes: "minecraft:overworld"
 
-density: "nukkitx:overworld"
+density: "minecraft:overworld"
 
 decorators:
   - id: "nukkitx:next"
