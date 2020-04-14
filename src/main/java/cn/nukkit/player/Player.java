@@ -99,6 +99,7 @@ import it.unimi.dsi.fastutil.bytes.ByteOpenHashSet;
 import it.unimi.dsi.fastutil.bytes.ByteSet;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
+import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
@@ -316,12 +317,30 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     @Override
+    @Deprecated
     public void setBanned(boolean value) {
         if (value) {
             this.server.getNameBans().addBan(this.getName(), null, null, null);
-            this.kick(PlayerKickEvent.Reason.NAME_BANNED, "Banned by admin");
+            this.kick(PlayerKickEvent.Reason.BANNED, "Banned by admin");
         } else {
             this.server.getNameBans().remove(this.getName());
+        }
+    }
+
+    @Override
+    public void ban(@NonNull String reason) {
+        if (!(this.server.getNameBans().isBanned(this.getName()) && this.server.getIPBans().isBanned(this.getAddress()))) {
+            this.server.getNameBans().addBan(this.getName(), reason, null, null);
+            this.kick(PlayerKickEvent.Reason.BANNED, reason);
+        }
+    }
+
+    @Override
+    public void pardon() {
+        if (this.server.getNameBans().isBanned(this.getName())) {
+           this.server.getNameBans().remove(this.getName());
+        } else if (this.server.getIPBans().isBanned(this.getAddress())) {
+           this.server.getIPBans().remove(this.getAddress());
         }
     }
 
@@ -1704,14 +1723,11 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         } else if (!this.server.isWhitelisted((this.getName()).toLowerCase())) {
             this.kick(PlayerKickEvent.Reason.NOT_WHITELISTED, "Server is white-listed");
             return;
-        } else if (this.isBanned()) {
-            this.kick(PlayerKickEvent.Reason.NAME_BANNED, "You are banned");
-            return;
-        } else if (this.server.getIPBans().isBanned(this.getSocketAddress().getAddress().getHostAddress())) {
-            this.kick(PlayerKickEvent.Reason.IP_BANNED, "You are banned");
+        } else if (this.isBanned() || this.server.getIPBans().isBanned(this.getSocketAddress().getAddress().getHostAddress())) {
+            this.kick(PlayerKickEvent.Reason.BANNED, "You are banned");
             return;
         }
-
+        
         if (this.hasPermission(Server.BROADCAST_CHANNEL_USERS)) {
             this.server.getPluginManager().subscribeToPermission(Server.BROADCAST_CHANNEL_USERS, this);
         }
