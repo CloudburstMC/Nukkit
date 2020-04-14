@@ -233,7 +233,7 @@ public final class StandardGenerator implements Generator {
 
                                 if (iz > 0.0d) {
                                     chunk.setBlockRuntimeIdUnsafe(blockX, blockY, blockZ, 0, this.ground);
-                                } else if (blockY < this.seaLevel) {
+                                } else if (blockY <= this.seaLevel) {
                                     chunk.setBlockRuntimeIdUnsafe(blockX, blockY, blockZ, 0, this.sea);
                                 }
                             }

@@ -53,6 +53,10 @@ public class NetherDensitySource extends AbstractGenerationPass implements Densi
 
     @Override
     public double get(int x, int y, int z, @NonNull BiomeMap biomes) {
+        if (y >= 128)    {
+            return 0.0d;
+        }
+
         double xd = x; //only do floating-point conversion once
         double yd = y;
         double zd = z;

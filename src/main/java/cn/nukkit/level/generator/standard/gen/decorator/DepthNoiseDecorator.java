@@ -30,7 +30,7 @@ public abstract class DepthNoiseDecorator extends AbstractGenerationPass impleme
 
     @JsonProperty
     @JsonAlias({"depthScale", "scale"})
-    protected double depthNoiseScale = 0.0078125d;
+    protected double depthNoiseScale = 0.0078125d; // 0.0625 / (1 << 3)
 
     @JsonProperty
     @JsonAlias({"depthFactor", "factor"})

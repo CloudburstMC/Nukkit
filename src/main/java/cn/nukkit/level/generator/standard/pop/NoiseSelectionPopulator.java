@@ -28,6 +28,9 @@ public class NoiseSelectionPopulator extends AbstractGenerationPass implements P
     protected NoiseSource selector;
 
     @JsonProperty
+    protected double randomFactor = 0.0d;
+
+    @JsonProperty
     protected double min = Double.NaN;
 
     @JsonProperty
@@ -67,7 +70,7 @@ public class NoiseSelectionPopulator extends AbstractGenerationPass implements P
 
     @Override
     public void populate(PRandom random, ChunkManager level, int blockX, int blockZ) {
-        double noise = this.selector.get(blockX, blockZ);
+        double noise = this.selector.get(blockX, blockZ) + random.nextDouble() * this.randomFactor;
         for (Populator populator : noise < this.min ? this.below : noise > this.max ? this.above : this.in) {
             populator.populate(random, level, blockX, blockZ);
         }

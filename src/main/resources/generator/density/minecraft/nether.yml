@@ -10,8 +10,8 @@ selectorNoise:
   id: "nukkitx:perlin"
   scale:
     x: 0.01670927734375
-    y: 0.0041773193359375
-    x: 0.01670927734375
+    y: 0.0334185546875
+    z: 0.01670927734375
   octaves: 8
   factor: 12.75
   offset: 0.5

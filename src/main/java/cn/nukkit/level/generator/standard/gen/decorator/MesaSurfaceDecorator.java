@@ -23,14 +23,14 @@ import static net.daporkchop.lib.math.primitive.PMath.*;
 /**
  * @author DaPorkchop_
  */
+@JsonDeserialize
 public class MesaSurfaceDecorator extends DepthNoiseDecorator {
     public static final Identifier ID = Identifier.fromString("nukkitx:mesa_surface");
 
     protected static final int BAND_COUNT = 64;
     protected static final int BAND_MASK  = BAND_COUNT - 1;
 
-    @JsonProperty
-    protected int ground = -1;
+    protected int ground;
 
     @JsonProperty
     protected int seaLevel = -1;
@@ -52,7 +52,7 @@ public class MesaSurfaceDecorator extends DepthNoiseDecorator {
     protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
         super.init0(levelSeed, localSeed, generator);
 
-        Preconditions.checkState(this.ground > 0, "ground must be set!");
+        this.ground = this.ground < 0 ? generator.ground() : this.ground;
         this.seaLevel = this.seaLevel < 0 ? generator.seaLevel() : this.seaLevel;
 
         PRandom random = new FastPRandom(localSeed);

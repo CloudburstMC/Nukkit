@@ -3,6 +3,7 @@ package cn.nukkit.level.generator.standard.gen.decorator;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.standard.StandardGenerator;
 import cn.nukkit.level.generator.standard.misc.ConstantBlock;
+import cn.nukkit.level.generator.standard.misc.IntRange;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,6 +11,8 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
 import net.daporkchop.lib.random.PRandom;
+
+import java.util.Objects;
 
 /**
  * Places the surface blocks on terrain, consisting of a single "top" block followed by a number of "filler" blocks.
@@ -21,11 +24,14 @@ public class SurfaceDecorator extends DepthNoiseDecorator {
     public static final Identifier ID = Identifier.fromString("nukkitx:surface");
 
     @JsonProperty
+    protected IntRange height = null;
+
+    @JsonProperty //porktodo: remove all redundant references to this in biomes config
     protected int ground = -1;
     @JsonProperty
     protected int cover = -1;
     @JsonProperty
-    protected int top    = -1;
+    protected int top = -1;
     @JsonProperty
     @JsonAlias({"fill"})
     protected int filler = -1;
@@ -37,7 +43,7 @@ public class SurfaceDecorator extends DepthNoiseDecorator {
     protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
         super.init0(levelSeed, localSeed, generator);
 
-        Preconditions.checkState(this.ground > 0, "ground must be set!");
+        this.ground = this.ground < 0 ? generator.ground() : this.ground;
         Preconditions.checkState(this.top >= 0, "top must be set!");
         Preconditions.checkState(this.filler >= 0, "filler must be set!");
 
@@ -49,23 +55,28 @@ public class SurfaceDecorator extends DepthNoiseDecorator {
         boolean placed = false;
         final int depth = this.getDepthNoise(chunk, random, x, z);
 
-        for (int y = chunk.getHighestBlock(x, z); y >= 0; y--) {
+        final int max = this.height == null ? 255 : this.height.max;
+        final int min = this.height == null ? 0 : this.height.min;
+
+        for (int y = chunk.getHighestBlock(x, z); y >= min; y--) {
             if (chunk.getBlockRuntimeIdUnsafe(x, y, z, 0) == this.ground) {
                 if (!placed) {
                     placed = true;
-                    if (y + 1 >= this.seaLevel) {
-                        if (y < 255 && this.cover >= 0)    {
-                            chunk.setBlockRuntimeIdUnsafe(x, y + 1, z, 0, this.cover);
+                    if (y <= max) {
+                        if (y + 1 >= this.seaLevel) {
+                            if (y < 255 && this.cover >= 0) {
+                                chunk.setBlockRuntimeIdUnsafe(x, y + 1, z, 0, this.cover);
+                            }
+                            chunk.setBlockRuntimeIdUnsafe(x, y--, z, 0, this.top);
                         }
-                        chunk.setBlockRuntimeIdUnsafe(x, y--, z, 0, this.top);
-                    }
-                    for (int i = depth - 1; i >= 0 && y >= 0; i--, y--) {
-                        if (chunk.getBlockRuntimeIdUnsafe(x, y, z, 0) == this.ground) {
-                            chunk.setBlockRuntimeIdUnsafe(x, y, z, 0, this.filler);
-                        } else {
-                            //we hit air prematurely, abort!
-                            placed = false;
-                            break;
+                        for (int i = depth - 1; i >= 0 && y >= 0; i--, y--) {
+                            if (chunk.getBlockRuntimeIdUnsafe(x, y, z, 0) == this.ground) {
+                                chunk.setBlockRuntimeIdUnsafe(x, y, z, 0, this.filler);
+                            } else {
+                                //we hit air prematurely, abort!
+                                placed = false;
+                                break;
+                            }
                         }
                     }
                 }

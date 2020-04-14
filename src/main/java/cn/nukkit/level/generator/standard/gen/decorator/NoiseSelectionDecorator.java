@@ -27,6 +27,9 @@ public class NoiseSelectionDecorator extends AbstractGenerationPass implements D
     protected NoiseSource selector;
 
     @JsonProperty
+    protected double randomFactor = 0.0d;
+
+    @JsonProperty
     protected double min = Double.NaN;
 
     @JsonProperty
@@ -66,7 +69,7 @@ public class NoiseSelectionDecorator extends AbstractGenerationPass implements D
 
     @Override
     public void decorate(PRandom random, IChunk chunk, int x, int z) {
-        double noise = this.selector.get((chunk.getX() << 4) + x, (chunk.getZ() << 4) + z);
+        double noise = this.selector.get((chunk.getX() << 4) + x, (chunk.getZ() << 4) + z) + random.nextDouble() * this.randomFactor;
         for (Decorator decorator : noise < this.min ? this.below : noise > this.max ? this.above : this.in) {
             decorator.decorate(random, chunk, x, z);
         }
