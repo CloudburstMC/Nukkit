@@ -329,7 +329,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     @Override
     public void ban(@NonNull String reason) {
-        if (!(this.server.getNameBans().isBanned(this.getName()) && this.server.getIPBans().isBanned(this.getAddress()))) {
+        if (!(this.server.getNameBans().isBanned(this.getName()) && this.server.getIPBans().isBanned(this.getSocketAddress().getAddress().getHostAddress()))) {
             this.server.getNameBans().addBan(this.getName(), reason, null, null);
             this.kick(PlayerKickEvent.Reason.BANNED, reason);
         }
@@ -339,8 +339,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public void pardon() {
         if (this.server.getNameBans().isBanned(this.getName())) {
            this.server.getNameBans().remove(this.getName());
-        } else if (this.server.getIPBans().isBanned(this.getAddress())) {
-           this.server.getIPBans().remove(this.getAddress());
+        } else if (this.server.getIPBans().isBanned(this.getSocketAddress().getAddress().getHostAddress())) {
+           this.server.getIPBans().remove(this.getSocketAddress().getAddress().getHostAddress());
         }
     }
 
