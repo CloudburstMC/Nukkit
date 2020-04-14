@@ -5,6 +5,8 @@ import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.plugin.Plugin;
 import com.nukkitx.nbt.tag.CompoundTag;
 
+import lombok.NonNull;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -119,10 +121,25 @@ public class OfflinePlayer implements IPlayer {
     }
 
     @Override
+    @Deprecated
     public void setBanned(boolean value) {
         if (value) {
             this.server.getNameBans().addBan(this.getName(), null, null, null);
         } else {
+            this.server.getNameBans().remove(this.getName());
+        }
+    }
+
+    @Override
+    public void ban(@NonNull String reason) {
+        if (!(this.server.getNameBans().isBanned(this.getName()))) {
+            this.server.getNameBans().addBan(this.getName(), reason, null, null);
+        }
+    }
+
+    @Override
+    public void pardon() {
+        if (this.server.getNameBans().isBanned(this.getName())) {
             this.server.getNameBans().remove(this.getName());
         }
     }
