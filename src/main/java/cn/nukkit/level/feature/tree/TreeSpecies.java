@@ -8,6 +8,8 @@ import cn.nukkit.block.BlockLeaves2;
 import cn.nukkit.block.BlockLog;
 import cn.nukkit.block.BlockLog2;
 import cn.nukkit.block.BlockSapling;
+import cn.nukkit.item.ItemIds;
+import cn.nukkit.level.feature.FeatureChorusTree;
 import cn.nukkit.level.feature.FeatureFallenTree;
 import cn.nukkit.level.feature.WorldFeature;
 import cn.nukkit.level.generator.standard.misc.IntRange;
@@ -131,6 +133,17 @@ public enum TreeSpecies {
         @Override
         public WorldFeature getDefaultGenerator(@NonNull IntRange height) {
             return new FeatureMushroomBrown(height);
+        }
+    },
+    CHORUS(BlockIds.CHORUS_PLANT, 0, BlockIds.CHORUS_FLOWER, 5, BlockIds.CHORUS_FLOWER, 0)  {
+        @Override
+        public WorldFeature getDefaultGenerator() {
+            return this.getDefaultGenerator(FeatureChorusTree.DEFAULT_BRANCH_HEIGHT);
+        }
+
+        @Override
+        public WorldFeature getDefaultGenerator(@NonNull IntRange height) {
+            return new FeatureChorusTree(height, FeatureChorusTree.DEFAULT_MAX_RECURSION, FeatureChorusTree.DEFAULT_MAX_OVERHANG);
         }
     };
 

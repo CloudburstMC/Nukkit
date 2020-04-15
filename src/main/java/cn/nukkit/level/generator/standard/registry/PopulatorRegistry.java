@@ -2,9 +2,13 @@ package cn.nukkit.level.generator.standard.registry;
 
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
+import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
 import cn.nukkit.level.generator.standard.gen.decorator.NoiseSelectionDecorator;
+import cn.nukkit.level.generator.standard.misc.NextGenerationPass;
 import cn.nukkit.level.generator.standard.pop.BlobPopulator;
 import cn.nukkit.level.generator.standard.pop.CocoaPopulator;
+import cn.nukkit.level.generator.standard.pop.DistanceSelectionPopulator;
+import cn.nukkit.level.generator.standard.pop.EndIslandPopulator;
 import cn.nukkit.level.generator.standard.pop.GlowstonePopulator;
 import cn.nukkit.level.generator.standard.pop.SpringPopulator;
 import cn.nukkit.level.generator.standard.pop.plant.DoublePlantPopulator;
@@ -35,12 +39,22 @@ import lombok.RequiredArgsConstructor;
 public final class PopulatorRegistry extends AbstractGeneratorRegistry<Populator> {
     @Override
     protected void registerDefault() {
+        //register all decorators as populators as well, unless they have the @SkipRegistrationAsPopulator annotation
+        StandardGeneratorRegistries.decorator().idToValues.forEach((id, clazz) -> {
+            if (clazz.getAnnotation(Decorator.SkipRegistrationAsPopulator.class) == null)   {
+                this.register(id, clazz);
+            }
+        });
+
         this.register(BlobPopulator.ID, BlobPopulator.class);
         this.register(BushPopulator.ID, BushPopulator.class);
         this.register(CocoaPopulator.ID, CocoaPopulator.class);
+        this.register(DistanceSelectionPopulator.ID, DistanceSelectionPopulator.class);
         this.register(DoublePlantPopulator.ID, DoublePlantPopulator.class);
+        this.register(EndIslandPopulator.ID, EndIslandPopulator.class);
         this.register(GlowstonePopulator.ID, GlowstonePopulator.class);
         this.register(HugeTreePopulator.ID, HugeTreePopulator.class);
+        this.register(NoiseSelectionPopulator.ID, NoiseSelectionPopulator.class);
         this.register(OrePopulator.ID, OrePopulator.class);
         this.register(PlantPopulator.ID, PlantPopulator.class);
         this.register(ShrubPopulator.ID, ShrubPopulator.class);
@@ -50,11 +64,7 @@ public final class PopulatorRegistry extends AbstractGeneratorRegistry<Populator
         this.register(TreePopulator.ID, TreePopulator.class);
         this.register(VinesPopulator.ID, VinesPopulator.class);
 
-        StandardGeneratorRegistries.decorator().idToValues.forEach(this::register);
-        //nukkitx:next is implicitly registered
-
-        this.idToValues.remove(NoiseSelectionDecorator.ID);
-        this.register(NoiseSelectionPopulator.ID, NoiseSelectionPopulator.class);
+        this.register(NextGenerationPass.ID, NextGenerationPass.class);
     }
 
     @Override

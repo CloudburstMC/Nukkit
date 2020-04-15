@@ -7,7 +7,7 @@ import lombok.NonNull;
 import net.daporkchop.lib.random.PRandom;
 
 /**
- * Base class for 2x2 trees.
+ * Common code for all huge (2x2) tree types.
  *
  * @author DaPorkchop_
  */
@@ -69,10 +69,10 @@ public abstract class FeatureHugeTree extends FeatureAbstractTree {
 
     @Override
     protected void finish(ChunkManager level, PRandom random, int x, int y, int z, int height, int log, int leaves) {
-        this.maybeReplaceBelowWithDirt(level, x, y - 1, z);
-        this.maybeReplaceBelowWithDirt(level, x + 1, y - 1, z);
-        this.maybeReplaceBelowWithDirt(level, x, y - 1, z + 1);
-        this.maybeReplaceBelowWithDirt(level, x + 1, y - 1, z + 1);
+        this.replaceGrassWithDirt(level, x, y - 1, z);
+        this.replaceGrassWithDirt(level, x + 1, y - 1, z);
+        this.replaceGrassWithDirt(level, x, y - 1, z + 1);
+        this.replaceGrassWithDirt(level, x + 1, y - 1, z + 1);
     }
 
     protected void placeCircularLeafLayer(ChunkManager level, int x, int y, int z, int radius, int block) {

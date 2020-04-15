@@ -16,6 +16,7 @@ import net.daporkchop.lib.random.PRandom;
  * @author DaPorkchop_
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Decorator.SkipRegistrationAsPopulator
 @JsonDeserialize
 public final class NextGenerationPass implements Decorator, Populator {
     public static final Identifier         ID       = Identifier.fromString("nukkitx:next");

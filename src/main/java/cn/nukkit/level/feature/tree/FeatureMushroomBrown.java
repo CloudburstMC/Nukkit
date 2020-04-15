@@ -91,6 +91,6 @@ public class FeatureMushroomBrown extends FeatureAbstractTree {
 
     @Override
     protected void finish(ChunkManager level, PRandom random, int x, int y, int z, int height, int log, int leaves) {
-        this.maybeReplaceBelowWithDirt(level, x, y - 1, z);
+        this.replaceGrassWithDirt(level, x, y - 1, z);
     }
 }

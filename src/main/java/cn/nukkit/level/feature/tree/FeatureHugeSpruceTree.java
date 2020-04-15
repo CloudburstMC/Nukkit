@@ -9,6 +9,8 @@ import net.daporkchop.lib.random.PRandom;
 import static net.daporkchop.lib.math.primitive.PMath.*;
 
 /**
+ * Generates a huge spruce tree.
+ *
  * @author DaPorkchop_
  */
 public class FeatureHugeSpruceTree extends FeatureHugeTree {

@@ -7,6 +7,11 @@ import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.daporkchop.lib.random.PRandom;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * Allows individual modification of blocks in a chunk after surfaces have been built.
  * <p>
@@ -35,4 +40,14 @@ public interface Decorator extends Populator {
 
     @Override
     Identifier getId();
+
+    /**
+     * Indicates that a specific {@link Decorator} class should not be automatically registered to the {@link Populator} registry as well.
+     *
+     * @author DaPorkchop_
+     */
+    @Target(ElementType.TYPE)
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface SkipRegistrationAsPopulator {
+    }
 }

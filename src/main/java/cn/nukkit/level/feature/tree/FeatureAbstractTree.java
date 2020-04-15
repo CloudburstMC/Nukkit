@@ -4,6 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.level.feature.ReplacingWorldFeature;
 import cn.nukkit.level.feature.WorldFeature;
 import cn.nukkit.level.generator.standard.misc.ConstantBlock;
 import cn.nukkit.level.generator.standard.misc.IntRange;
@@ -19,7 +20,7 @@ import net.daporkchop.lib.random.PRandom;
  *
  * @author DaPorkchop_
  */
-public abstract class FeatureAbstractTree implements WorldFeature, BlockFilter {
+public abstract class FeatureAbstractTree extends ReplacingWorldFeature {
     protected final IntRange      height;
     protected final BlockSelector log;
     protected final BlockSelector leaves;
@@ -36,26 +37,6 @@ public abstract class FeatureAbstractTree implements WorldFeature, BlockFilter {
         this.height = height;
         this.log = log;
         this.leaves = leaves;
-    }
-
-    @Override
-    public boolean test(Block block) {
-        Identifier id = block.getId();
-        return id == BlockIds.AIR || id == BlockIds.LEAVES || id == BlockIds.LEAVES2 || (!(block instanceof BlockLiquid) && block.canBeReplaced());
-    }
-
-    @Override
-    public boolean test(int runtimeId) {
-        return runtimeId == 0 || this.test(BlockRegistry.get().getBlock(runtimeId));
-    }
-
-    public boolean testOrLiquid(Block block) {
-        Identifier id = block.getId();
-        return id == BlockIds.AIR || id == BlockIds.LEAVES || id == BlockIds.LEAVES2 || block.canBeReplaced();
-    }
-
-    public boolean testOrLiquid(int runtimeId) {
-        return runtimeId == 0 || this.testOrLiquid(BlockRegistry.get().getBlock(runtimeId));
     }
 
     @Override
@@ -99,13 +80,4 @@ public abstract class FeatureAbstractTree implements WorldFeature, BlockFilter {
     protected abstract void placeTrunk(ChunkManager level, PRandom random, int x, int y, int z, int height, int log, int leaves);
 
     protected abstract void finish(ChunkManager level, PRandom random, int x, int y, int z, int height, int log, int leaves);
-
-    protected void maybeReplaceBelowWithDirt(ChunkManager level, int x, int y, int z) {
-        if (y >= 0 && y < 256) {
-            Block below = level.getBlockAt(x, y, z);
-            if (below.getId() == BlockIds.GRASS || below.getId() == BlockIds.DIRT || below.getId() == BlockIds.MYCELIUM || below.getId() == BlockIds.PODZOL) {
-                level.setBlockId(x, y, z, BlockIds.DIRT);
-            }
-        }
-    }
 }

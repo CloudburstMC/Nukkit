@@ -9,6 +9,10 @@ import net.daporkchop.lib.random.PRandom;
 import static net.daporkchop.lib.math.primitive.PMath.*;
 
 /**
+ * Generates a huge pine tree.
+ *
+ * Pine trees are identical to spruce trees, but have only a small cluster of leaves near the top.
+ *
  * @author DaPorkchop_
  */
 public class FeatureHugePineTree extends FeatureHugeSpruceTree {

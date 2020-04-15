@@ -11,7 +11,7 @@ import net.daporkchop.lib.random.PRandom;
 import static java.lang.Math.*;
 
 /**
- * Generates a spruce tree.
+ * Generates an acacia (savanna) tree.
  *
  * @author DaPorkchop_
  */

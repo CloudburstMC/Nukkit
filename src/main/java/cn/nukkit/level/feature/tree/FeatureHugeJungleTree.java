@@ -10,6 +10,8 @@ import static java.lang.Math.*;
 import static net.daporkchop.lib.math.primitive.PMath.*;
 
 /**
+ * Generates a huge jungle tree.
+ *
  * @author DaPorkchop_
  */
 public class FeatureHugeJungleTree extends FeatureHugeTree {

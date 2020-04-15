@@ -84,7 +84,7 @@ public class FeatureSpruceTree extends FeatureNormalTree {
             level.setBlockRuntimeIdUnsafe(x, y + dy, z, 0, log);
         }
 
-        this.maybeReplaceBelowWithDirt(level, x, y - 1, z);
+        this.replaceGrassWithDirt(level, x, y - 1, z);
 
         return true;
     }

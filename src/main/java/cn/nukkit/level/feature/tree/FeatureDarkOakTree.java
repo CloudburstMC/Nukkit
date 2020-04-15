@@ -9,6 +9,8 @@ import net.daporkchop.lib.random.PRandom;
 import static java.lang.Math.*;
 
 /**
+ * Generates a dark oak tree.
+ *
  * @author DaPorkchop_
  */
 public class FeatureDarkOakTree extends FeatureHugeTree {

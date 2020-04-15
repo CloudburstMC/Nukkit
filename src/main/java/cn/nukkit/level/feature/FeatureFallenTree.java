@@ -4,7 +4,6 @@ import cn.nukkit.block.BlockIds;
 import cn.nukkit.block.BlockLog;
 import cn.nukkit.block.BlockVine;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.feature.tree.FeatureAbstractTree;
 import cn.nukkit.level.generator.standard.misc.IntRange;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.registry.BlockRegistry;
@@ -15,14 +14,14 @@ import net.daporkchop.lib.random.PRandom;
 /**
  * @author DaPorkchop_
  */
-public class FeatureFallenTree extends FeatureAbstractTree {
+public class FeatureFallenTree extends ReplacingWorldFeature {
+    protected final IntRange size;
     protected final Identifier logId;
-    protected final int        logType;
-    protected final double     vineChance;
+    protected final int logType;
+    protected final double vineChance;
 
     public FeatureFallenTree(@NonNull IntRange size, @NonNull Identifier logId, int logType, double vineChance) {
-        super(size);
-
+        this.size = size;
         this.logId = logId;
         this.logType = logType;
         this.vineChance = vineChance;
@@ -34,7 +33,7 @@ public class FeatureFallenTree extends FeatureAbstractTree {
             return false;
         }
 
-        final int size = this.height.rand(random);
+        final int size = this.size.rand(random);
         final BlockFace direction = BlockFace.Plane.HORIZONTAL.random(random);
         for (int i = 0; i < size; i++) {
             if (!this.test(level.getBlockRuntimeIdUnsafe(x + direction.getXOffset() * i, y, z + direction.getZOffset() * i, 0))
@@ -54,7 +53,7 @@ public class FeatureFallenTree extends FeatureAbstractTree {
                 level.setBlockAt(x + direction.getXOffset() * i, y + 1, z + direction.getZOffset() * i, 0, random.nextBoolean() ? BlockIds.BROWN_MUSHROOM : BlockIds.RED_MUSHROOM, 0);
             }
 
-            this.maybeReplaceBelowWithDirt(level, x + direction.getXOffset() * i, y - 1, z + direction.getZOffset() * i);
+            this.replaceGrassWithDirt(level, x + direction.getXOffset() * i, y - 1, z + direction.getZOffset() * i);
         }
 
         if (this.vineChance > 0.0d) {
@@ -73,22 +72,5 @@ public class FeatureFallenTree extends FeatureAbstractTree {
         }
 
         return true;
-    }
-
-    @Override
-    protected boolean canPlace(ChunkManager level, PRandom random, int x, int y, int z, int height) {
-        return false;
-    }
-
-    @Override
-    protected void placeLeaves(ChunkManager level, PRandom random, int x, int y, int z, int height, int log, int leaves) {
-    }
-
-    @Override
-    protected void placeTrunk(ChunkManager level, PRandom random, int x, int y, int z, int height, int log, int leaves) {
-    }
-
-    @Override
-    protected void finish(ChunkManager level, PRandom random, int x, int y, int z, int height, int log, int leaves) {
     }
 }
