@@ -317,7 +317,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     @Override
-    @Deprecated
     public void setBanned(boolean value) {
         if (value) {
             this.server.getNameBans().addBan(this.getName(), null, null, null);
