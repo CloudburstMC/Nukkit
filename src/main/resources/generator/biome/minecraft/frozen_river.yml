@@ -4,7 +4,7 @@ parent: "minecraft:river"
 temperature: 0.0
 rainfall: 0.5
 
-decorators:
+populators:
   - id: "nukkitx:next"
 
     # Snow layer on ground

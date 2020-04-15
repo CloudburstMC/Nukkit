@@ -20,6 +20,25 @@ decorators:
     fade: 1-5
 
 populators:
+    # Water lakes
+  - id: "nukkitx:lake"
+    chance: 0.0009765625 # about 1 per 4 chunks
+    block: "water"
+
+    # Lava lakes (underground)
+  - id: "nukkitx:lake"
+    chance: 0.00048828125 # about 1 per 8 chunks
+    height: "8-63"
+    block: "lava"
+    border: "stone"
+
+    # Lava lakes (surface)
+  - id: "nukkitx:lake"
+    chance: 0.00006103515625 # about 1 per 64 chunks
+    height: "64-255"
+    block: "lava"
+    border: "stone"
+
   - id: "nukkitx:next"
 
     #

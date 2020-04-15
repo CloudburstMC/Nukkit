@@ -33,7 +33,12 @@ populators:
     replace: "dirt,snow"
     start: "air"
 
-    # Snow
+    # Snow layer on ground
   - id: "nukkitx:cover"
     on: "snow"
     block: "snow_layer"
+
+    # Ice layer on water
+  - id: "nukkitx:replace_top"
+    replace: "water"
+    with: "ice"

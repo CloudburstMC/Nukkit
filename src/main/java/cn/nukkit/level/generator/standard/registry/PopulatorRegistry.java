@@ -10,6 +10,7 @@ import cn.nukkit.level.generator.standard.pop.CocoaPopulator;
 import cn.nukkit.level.generator.standard.pop.DistanceSelectionPopulator;
 import cn.nukkit.level.generator.standard.pop.EndIslandPopulator;
 import cn.nukkit.level.generator.standard.pop.GlowstonePopulator;
+import cn.nukkit.level.generator.standard.pop.LakePopulator;
 import cn.nukkit.level.generator.standard.pop.SpringPopulator;
 import cn.nukkit.level.generator.standard.pop.plant.DoublePlantPopulator;
 import cn.nukkit.level.generator.standard.pop.NoiseSelectionPopulator;
@@ -54,6 +55,7 @@ public final class PopulatorRegistry extends AbstractGeneratorRegistry<Populator
         this.register(EndIslandPopulator.ID, EndIslandPopulator.class);
         this.register(GlowstonePopulator.ID, GlowstonePopulator.class);
         this.register(HugeTreePopulator.ID, HugeTreePopulator.class);
+        this.register(LakePopulator.ID, LakePopulator.class);
         this.register(NoiseSelectionPopulator.ID, NoiseSelectionPopulator.class);
         this.register(OrePopulator.ID, OrePopulator.class);
         this.register(PlantPopulator.ID, PlantPopulator.class);
