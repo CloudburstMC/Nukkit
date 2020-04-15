@@ -15,6 +15,8 @@ import net.daporkchop.lib.random.PRandom;
 
 import java.util.Objects;
 
+import static java.lang.Math.min;
+
 /**
  * Places patches of plants of varying heights in the world.
  *

@@ -5,18 +5,12 @@ elevationVanilla:
   height: 0.1
   variation: 0.4
 
-decorators:
-  - id: "nukkitx:surface"
-    ground: "stone"
-    top: "grass"
-    fill: "dirt"
-
 populators:
     # Trees
   - id: "nukkitx:tree"
     chance: 0.0234375 # about 6 per chunk
     on: "grass"
-    replace: "air,tallgrass"
+    replace: "air"
     types:
       - "oak"
       - "oak"
@@ -29,7 +23,7 @@ populators:
   - id: "nukkitx:shrub"
     chance: 0.390625 # about 100 per chunk
     on: "grass"
-    replace: "air,tallgrass"
+    replace: "air"
     block:
       - "yellow_flower"
       - "red_flower"
@@ -42,6 +36,12 @@ populators:
       - "red_flower#8"
       - "red_flower#9"
       - "red_flower#10"
+
+    # Tall grass
+  - id: "nukkitx:shrub"
+    chance: 0.00390625 # about 1 per chunk
+    on: "grass"
+    block: "tallgrass"
 
     # Double plants
   - id: "nukkitx:double_plant"

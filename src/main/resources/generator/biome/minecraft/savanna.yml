@@ -13,18 +13,12 @@ decorators:
     top: "grass"
     fill: "dirt"
 
-    # Tall grass
-  - id: "nukkitx:scattered_cover"
-    chance: 0.25
-    on: "grass"
-    block: "tallgrass"
-
 populators:
     # Acacia trees
   - id: "nukkitx:tree"
     chance: 0.00390625 # about 1 per chunk
     on: "grass"
-    replace: "air,tallgrass"
+    replace: "air"
     type: "acacia"
 
     # Double tall grass
@@ -37,5 +31,11 @@ populators:
   - id: "nukkitx:shrub"
     chance: 0.015625 # about 4 per chunk
     on: "grass"
-    replace: "air,tallgrass"
+    replace: "air"
     block: "2*yellow_flower,red_flower"
+
+    # Tall grass
+  - id: "nukkitx:shrub"
+    chance: 0.078125 # about 20 per chunk
+    on: "grass"
+    block: "tallgrass"

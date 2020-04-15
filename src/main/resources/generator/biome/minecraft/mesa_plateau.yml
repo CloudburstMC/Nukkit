@@ -46,12 +46,6 @@ decorators:
               - "stained_hardened_clay#14" # red
             with: "dirt#1" # coarse dirt
 
-    # Tall grass
-  - id: "nukkitx:scattered_cover"
-    chance: 0.05
-    on: "grass,dirt#1"
-    block: "tallgrass"
-
 populators:
   - id: "nukkitx:next"
 
@@ -60,3 +54,9 @@ populators:
     chance: 0.01953125 # about 5 per chunk
     on: "grass,dirt#1"
     type: "oak"
+
+    # Tall grass
+  - id: "nukkitx:shrub"
+    chance: 0.00390625 # about 1 per chunk
+    on: "grass,dirt#1"
+    block: "tallgrass"

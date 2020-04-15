@@ -13,13 +13,13 @@ decorators:
     top: "grass"
     fill: "dirt"
 
+populators:
     # Tall grass
-  - id: "nukkitx:scattered_cover"
-    chance: 0.25
+  - id: "nukkitx:shrub"
+    chance: 0.0390625 # about 10 per chunk
     on: "grass"
     block: "tallgrass"
 
-populators:
   - id: "nukkitx:noise"
     selector:
       id: "nukkitx:simplex"

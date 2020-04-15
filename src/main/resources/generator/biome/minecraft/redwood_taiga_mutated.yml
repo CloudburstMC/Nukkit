@@ -41,17 +41,22 @@ populators:
     replace: "air"
     type: "spruce"
 
-    # Berry bushes and dead bushes
+    # Berry bushes & mushrooms
   - id: "nukkitx:shrub"
-    chance: 0.01953125 # about 5 per chunk
+    chance: 0.015625 # about 4 per chunk
     on: "grass,podzol,dirt#1"
-    block:
-      - "sweet_berry_bush"
-      - "deadbush"
+    block: "sweet_berry_bush,2*brown_mushroom,red_mushroom"
 
-    # Tall grass
-  - id: "nukkitx:scattered_cover"
-    chance: 0.075
+    # Dead bushes
+  - id: "nukkitx:shrub"
+    chance: 0.00390625 # about 1 per chunk
+    patchSize: 4
+    on: "grass,podzol,dirt#1"
+    block: "deadbush"
+
+    # Tall grass & ferns
+  - id: "nukkitx:shrub"
+    chance: 0.02734375 # about 7 per chunk
     on: "grass,podzol,dirt#1"
     block:
       - "tallgrass"

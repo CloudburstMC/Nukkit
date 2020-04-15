@@ -8,25 +8,19 @@ elevationVanilla:
 temperature: 0.0
 rainfall: 0.5
 
-decorators:
-  - id: "nukkitx:surface"
-    ground: "stone"
-    top: "grass"
-    fill: "dirt"
-
-    # Tall grass
-  - id: "nukkitx:scattered_cover"
-    chance: 0.05
-    on: "grass"
-    block: "tallgrass"
-
 populators:
     # Trees
   - id: "nukkitx:tree"
     chance: 0.000390625 # about 1 per 10 chunks
     on: "grass"
-    replace: "air,tallgrass"
+    replace: "air"
     type: "spruce"
+
+    # Tall grass
+  - id: "nukkitx:shrub"
+    chance: 0.00390625 # about 1 per chunk
+    on: "grass"
+    block: "tallgrass"
 
     # Snow
   - id: "nukkitx:cover"

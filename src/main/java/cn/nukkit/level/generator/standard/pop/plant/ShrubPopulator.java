@@ -14,6 +14,8 @@ import net.daporkchop.lib.random.PRandom;
 
 import java.util.Objects;
 
+import static java.lang.Math.min;
+
 /**
  * Places patches of 1-block-tall plants in the world.
  * <p>
@@ -34,6 +36,12 @@ public class ShrubPopulator extends AbstractPlantPopulator {
         super.init0(levelSeed, localSeed, generator);
 
         Objects.requireNonNull(this.type, "type must be set!");
+    }
+
+    @Override
+    protected void populate0(PRandom random, ChunkManager level, int blockX, int blockZ) {
+        int height = level.getChunk(blockX >> 4, blockZ >> 4).getHighestBlock(blockX & 0xF, blockZ & 0xF);
+        this.placeCluster(random, level, blockX, min(height, random.nextInt(height << 1)), blockZ);
     }
 
     @Override
