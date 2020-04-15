@@ -280,6 +280,10 @@ public class BinaryStream {
         this.putBoolean(skin.isCapeOnClassic());
         this.putString(skin.getCapeId());
         this.putString(skin.getFullSkinId());
+        this.putString(""); // ArmSize
+        this.putString(""); // SkinColor
+        this.putLInt(0); // Persona Pieces
+        this.putLInt(0); // Piece Tint Colors
     }
 
     public Skin getSkin() {
@@ -304,6 +308,10 @@ public class BinaryStream {
         skin.setCapeOnClassic(this.getBoolean());
         skin.setCapeId(this.getString());
         this.getString(); // TODO: Full skin id
+        this.getString(); // ArmSize
+        this.getString(); // SkinColor
+        this.getLInt(); // Persona Pieces
+        this.getLInt(); // Piece Tint Colors
         return skin;
     }
 
