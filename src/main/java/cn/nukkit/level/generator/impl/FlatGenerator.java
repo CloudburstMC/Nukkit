@@ -70,6 +70,11 @@ public final class FlatGenerator implements Generator {
         //no-op
     }
 
+    @Override
+    public void finish(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
+        //no-op
+    }
+
     @RequiredArgsConstructor
     private static final class Layer    {
         private final int runtimeId;

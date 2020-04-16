@@ -8,6 +8,7 @@ import cn.nukkit.level.provider.LevelProvider;
 import cn.nukkit.level.provider.leveldb.serializer.*;
 import cn.nukkit.utils.LoadState;
 import com.google.common.base.Preconditions;
+import io.netty.buffer.Unpooled;
 import lombok.extern.log4j.Log4j2;
 import net.daporkchop.ldbjni.LevelDB;
 import org.iq80.leveldb.*;
@@ -24,6 +25,7 @@ import java.util.function.BiConsumer;
 @Log4j2
 @ParametersAreNonnullByDefault
 class LevelDBProvider implements LevelProvider {
+    private static final byte[] COMPLETE_STATE = { 2, 0, 0, 0 };
 
     private final String levelId;
     private final Path path;
@@ -97,6 +99,7 @@ class LevelDBProvider implements LevelProvider {
                     Data2dSerializer.serialize(batch, chunk);
 
                     batch.put(LevelDBKey.VERSION.getKey(x, z), new byte[]{7});
+                    batch.put(LevelDBKey.STATE_FINALIZATION.getKey(x, z), COMPLETE_STATE);
 
                     BlockEntitySerializer.saveBlockEntities(batch, chunk);
                     EntitySerializer.saveEntities(batch, chunk);

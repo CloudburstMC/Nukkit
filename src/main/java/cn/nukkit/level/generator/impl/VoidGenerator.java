@@ -27,4 +27,9 @@ public final class VoidGenerator implements Generator {
     public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
         //no-op
     }
+
+    @Override
+    public void finish(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
+        //no-op
+    }
 }

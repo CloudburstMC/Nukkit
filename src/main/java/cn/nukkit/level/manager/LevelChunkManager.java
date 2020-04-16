@@ -36,7 +36,7 @@ public final class LevelChunkManager {
     private static final CompletableFuture<Void> COMPLETED_VOID_FUTURE = CompletableFuture.completedFuture(null);
     private static final AtomicIntegerFieldUpdater<LoadingChunk> GENERATION_RUNNING_UPDATER = AtomicIntegerFieldUpdater.newUpdater(LoadingChunk.class, "generationRunning");
     private static final AtomicIntegerFieldUpdater<LoadingChunk> POPULATION_RUNNING_UPDATER = AtomicIntegerFieldUpdater.newUpdater(LoadingChunk.class, "populationRunning");
-    private static final AtomicIntegerFieldUpdater<LoadingChunk> POPULATION_AROUND_RUNNING_UPDATER = AtomicIntegerFieldUpdater.newUpdater(LoadingChunk.class, "populationAroundRunning");
+    private static final AtomicIntegerFieldUpdater<LoadingChunk> FINISH_RUNNING_UPDATER = AtomicIntegerFieldUpdater.newUpdater(LoadingChunk.class, "finishRunning");
 
     private final Level level;
     private final LevelProvider provider;
@@ -53,20 +53,6 @@ public final class LevelChunkManager {
         this.level = level;
         this.executor = this.level.getServer().getScheduler().getAsyncPool();
         this.provider = provider;
-    }
-
-    private static long chunkKey(int x, int z) {
-        return (((long) x) << 32) | (z & 0xffffffffL);
-    }
-
-    public boolean isChunkGenerated(int x, int z) {
-        Chunk chunk = this.getLoadedChunk(x, z);
-        return chunk != null && chunk.isGenerated();
-    }
-
-    public boolean isChunkPopulated(int x, int z) {
-        Chunk chunk = this.getLoadedChunk(x, z);
-        return chunk != null && chunk.isPopulated();
     }
 
     /**
@@ -144,13 +130,13 @@ public final class LevelChunkManager {
     }
 
     @Nonnull
-    private synchronized CompletableFuture<Chunk> getChunkFuture(int chunkX, int chunkZ, boolean generate, boolean populate, boolean populateAround) {
+    private synchronized CompletableFuture<Chunk> getChunkFuture(int chunkX, int chunkZ, boolean generate, boolean populate, boolean finish) {
         final long chunkKey = Chunk.key(chunkX, chunkZ);
         this.chunkLastAccessTimes.put(chunkKey, System.currentTimeMillis());
         LoadingChunk chunk = this.chunks.computeIfAbsent(chunkKey, key -> new LoadingChunk(key, true));
 
-        if (populateAround) {
-            chunk.populateAround();
+        if (finish) {
+            chunk.finish();
         } else if (populate) {
             chunk.populate();
         } else if (generate) {
@@ -166,7 +152,7 @@ public final class LevelChunkManager {
     }
 
     public synchronized boolean isChunkLoaded(int x, int z) {
-        return this.isChunkLoaded(chunkKey(x, z));
+        return this.isChunkLoaded(Chunk.key(x, z));
     }
 
     public synchronized boolean unloadChunk(long hash) {
@@ -258,28 +244,6 @@ public final class LevelChunkManager {
         return COMPLETED_VOID_FUTURE;
     }
 
-    @Nonnull
-    public synchronized CompletableFuture<Chunk> regenerateChunk(int x, int z) {
-        long chunkKey = Chunk.key(x, z);
-        long currentTime = System.currentTimeMillis();
-        this.chunkLastAccessTimes.put(chunkKey, currentTime);
-
-        LoadingChunk chunk = this.chunks.get(chunkKey);
-
-        if (chunk == null) {
-            // No need to load the old chunk
-            chunk = new LoadingChunk(chunkKey, false);
-            this.chunks.put(chunkKey, chunk);
-        } else {
-            chunk.clear();
-        }
-
-        chunk.generate();
-        chunk.populate();
-
-        return chunk.getFuture();
-    }
-
     public synchronized void tick() {
         if (this.chunks.isEmpty()) {
             return;
@@ -342,7 +306,7 @@ public final class LevelChunkManager {
         private CompletableFuture<Chunk> future;
         volatile int generationRunning;
         volatile int populationRunning;
-        volatile int populationAroundRunning;
+        volatile int finishRunning;
         private Chunk chunk;
 
         public LoadingChunk(long key, boolean load) {
@@ -384,7 +348,7 @@ public final class LevelChunkManager {
 
         @Nullable
         private Chunk getChunk() {
-            if (this.chunk != null && this.chunk.isGenerated() && this.chunk.isPopulated() && this.chunk.isPopulatedAround()) {
+            if (this.chunk != null && this.chunk.isGenerated() && this.chunk.isPopulated() && this.chunk.isFinished()) {
                 return this.chunk;
             }
             return null;
@@ -415,9 +379,9 @@ public final class LevelChunkManager {
             }
         }
 
-        private void populateAround()   {
+        private void finish()   {
             this.populate();
-            if ((this.chunk == null || !this.chunk.isPopulatedAround()) && POPULATION_AROUND_RUNNING_UPDATER.compareAndSet(this, 0, 1)) {
+            if ((this.chunk == null || !this.chunk.isFinished()) && FINISH_RUNNING_UPDATER.compareAndSet(this, 0, 1)) {
                 List<CompletableFuture<Chunk>> chunksToLoad = new ArrayList<>(8);
                 for (int z = this.z - 1, maxZ = this.z + 1; z <= maxZ; z++) {
                     for (int x = this.x - 1, maxX = this.x + 1; x <= maxX; x++) {
@@ -427,8 +391,8 @@ public final class LevelChunkManager {
                 }
                 CompletableFuture<List<Chunk>> aroundFuture = CompletableFutures.allAsList(chunksToLoad);
 
-                future = future.thenCombineAsync(aroundFuture, PopulationAroundTask.INSTANCE, LevelChunkManager.this.executor);
-                future.thenRun(() -> POPULATION_AROUND_RUNNING_UPDATER.compareAndSet(this, 1, 0));
+                future = future.thenCombineAsync(aroundFuture, FinishingTask.INSTANCE, LevelChunkManager.this.executor);
+                future.thenRun(() -> FINISH_RUNNING_UPDATER.compareAndSet(this, 1, 0));
             }
         }
 
@@ -437,7 +401,7 @@ public final class LevelChunkManager {
                 chunk.clear();
                 GENERATION_RUNNING_UPDATER.set(this, 0);
                 POPULATION_RUNNING_UPDATER.set(this, 0);
-                POPULATION_AROUND_RUNNING_UPDATER.set(this, 0);
+                FINISH_RUNNING_UPDATER.set(this, 0);
                 return chunk;
             });
         }

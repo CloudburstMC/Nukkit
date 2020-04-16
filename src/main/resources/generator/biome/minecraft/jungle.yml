@@ -41,7 +41,7 @@ populators:
   - id: "nukkitx:shrub"
     chance: 0.00390625 # about 1 per chunk
     on: "grass"
-    replace: "air,tallgrass"
+    replace: "air"
     block: "melon_block"
 
     # Huge trees
@@ -69,14 +69,8 @@ populators:
   - id: "nukkitx:shrub"
     chance: 0.015625 # about 4 per chunk
     on: "grass"
-    replace: "air,tallgrass"
-    block: "2*yellow_flower,red_flower"
-
-    # Flowers
-  - id: "nukkitx:shrub"
-    chance: 0.015625 # about 4 per chunk
-    on: "grass"
-    replace: "air,tallgrass"
+    replace: "air"
+    roundDown: false
     block: "2*yellow_flower,red_flower"
 
     # Tall grass

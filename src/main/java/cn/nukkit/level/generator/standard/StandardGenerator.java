@@ -272,6 +272,11 @@ public final class StandardGenerator implements Generator {
         }
     }
 
+    @Override
+    public void finish(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
+        //porktodo: this
+    }
+
     @JsonSetter("biomes")
     private void setBiomes(Identifier id) {
         try (InputStream in = StandardGeneratorUtils.read("biomemap", id)) {

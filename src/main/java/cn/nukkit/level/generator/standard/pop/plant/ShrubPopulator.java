@@ -31,6 +31,9 @@ public class ShrubPopulator extends AbstractPlantPopulator {
     @JsonAlias({"types", "block", "blocks"})
     protected BlockSelector type;
 
+    @JsonProperty
+    protected boolean roundDown = true;
+
     @Override
     protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
         super.init0(levelSeed, localSeed, generator);
@@ -40,8 +43,12 @@ public class ShrubPopulator extends AbstractPlantPopulator {
 
     @Override
     protected void populate0(PRandom random, ChunkManager level, int blockX, int blockZ) {
-        int height = level.getChunk(blockX >> 4, blockZ >> 4).getHighestBlock(blockX & 0xF, blockZ & 0xF);
-        this.placeCluster(random, level, blockX, min(height, random.nextInt(height << 1)), blockZ);
+        if (this.roundDown) {
+            int height = level.getChunk(blockX >> 4, blockZ >> 4).getHighestBlock(blockX & 0xF, blockZ & 0xF);
+            this.placeCluster(random, level, blockX, min(height, random.nextInt(height << 1)), blockZ);
+        } else {
+            super.populate0(random, level, blockX, blockZ);
+        }
     }
 
     @Override

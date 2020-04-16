@@ -24,6 +24,7 @@ populators:
     chance: 0.390625 # about 100 per chunk
     on: "grass"
     replace: "air"
+    roundDown: false
     block:
       - "yellow_flower"
       - "red_flower"

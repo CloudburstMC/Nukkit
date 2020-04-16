@@ -237,33 +237,13 @@ public final class LockableChunk implements IChunk, Lock {
     }
 
     @Override
-    public boolean isGenerated() {
-        return unsafe.isGenerated();
+    public int getState() {
+        return this.unsafe.getState();
     }
 
     @Override
-    public void setGenerated(boolean generated) {
-        unsafe.setGenerated(generated);
-    }
-
-    @Override
-    public boolean isPopulated() {
-        return unsafe.isPopulated();
-    }
-
-    @Override
-    public void setPopulated(boolean populated) {
-        unsafe.setPopulated(populated);
-    }
-
-    @Override
-    public boolean isPopulatedAround() {
-        return this.unsafe.isPopulatedAround();
-    }
-
-    @Override
-    public void setPopulatedAround(boolean populatedAround) {
-        this.unsafe.setPopulatedAround(populatedAround);
+    public int setState(int next) {
+        return this.unsafe.setState(next);
     }
 
     @Override

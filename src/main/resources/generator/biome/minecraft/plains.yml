@@ -38,6 +38,7 @@ populators:
         chance: 0.015625 # about 4 per chunk
         on: "grass"
         replace: "air,tallgrass"
+        roundDown: false
         blocks:
           - "red_flower#4" # Red Tulip
           - "red_flower#5" # Orange Tulip
@@ -52,6 +53,7 @@ populators:
         chance: 0.05859375 # about 15 per chunk
         on: "grass"
         replace: "air,tallgrass"
+        roundDown: false
         blocks:
           - "red_flower#4" # Red Tulip
           - "red_flower#5" # Orange Tulip

@@ -70,6 +70,7 @@ populators:
   - id: "nukkitx:shrub"
     chance: 0.015625 # about 4 per chunk
     on: "grass"
+    roundDown: false
     block: "2*brown_mushroom,red_mushroom,red_flower#1"
 
     # Dead bushes

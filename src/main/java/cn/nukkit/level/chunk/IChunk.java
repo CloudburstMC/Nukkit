@@ -14,6 +14,11 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 
 public interface IChunk extends Comparable<IChunk> {
+    int STATE_NEW = 0;
+    int STATE_GENERATED = 1;
+    int STATE_POPULATED = 2;
+    int STATE_FINISHED = 3;
+
     @Nonnull
     ChunkSection getOrCreateSection(@Nonnegative int y);
 
@@ -218,25 +223,31 @@ public interface IChunk extends Comparable<IChunk> {
     @Nonnull
     Collection<BlockEntity> getBlockEntities();
 
-    boolean isGenerated();
+    /**
+     * Gets this chunk's current state.
+     */
+    int getState();
 
-    void setGenerated(boolean generated);
+    /**
+     * Atomically updates this chunk's state.
+     *
+     * @param next the new state to set
+     * @return the chunk's previous state
+     * @throws IllegalStateException if the new state is invalid, or the same as or lower than the current state
+     */
+    int setState(int next);
 
-    default void setGenerated() {
-        this.setGenerated(true);
+    default boolean isGenerated()   {
+        return this.getState() >= STATE_GENERATED;
     }
 
-    boolean isPopulated();
-
-    void setPopulated(boolean populated);
-
-    default void setPopulated() {
-        this.setPopulated(true);
+    default boolean isPopulated()   {
+        return this.getState() >= STATE_POPULATED;
     }
 
-    boolean isPopulatedAround();
-
-    void setPopulatedAround(boolean populatedAround);
+    default boolean isFinished() {
+        return this.getState() >= STATE_FINISHED;
+    }
 
     /**
      * Whether the chunk has changed since it was last loaded or saved.

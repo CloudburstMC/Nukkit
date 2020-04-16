@@ -54,6 +54,7 @@ populators:
     chance: 0.015625 # about 4 per chunk
     on: "grass"
     replace: "air,tallgrass"
+    roundDown: false
     block: "2*yellow_flower,red_flower"
 
     # Double plants

@@ -9,32 +9,29 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.daporkchop.lib.random.PRandom;
-import net.daporkchop.lib.random.impl.FastJavaPRandom;
 import net.daporkchop.lib.random.impl.FastPRandom;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 /**
- * Delegates chunk population to a {@link Generator}.
+ * Delegates chunk finishing to a {@link Generator}.
  *
  * @author DaPorkchop_
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class PopulationTask implements BiFunction<Chunk, List<Chunk>, Chunk> {
-    public static final PopulationTask INSTANCE = new PopulationTask();
+public final class FinishingTask implements BiFunction<Chunk, List<Chunk>, Chunk> {
+    public static final FinishingTask INSTANCE = new FinishingTask();
 
     @Override
     public Chunk apply(@NonNull Chunk chunk, List<Chunk> chunks) {
-        if (chunk.isPopulated())    {
+        if (chunk.isFinished())    {
             return chunk;
         }
-        Preconditions.checkState(chunk.isGenerated(), "Chunk %s,%s was populated before being generated!", chunk.getX(), chunk.getZ());
+        Preconditions.checkState(chunk.isPopulated(), "Chunk %s,%s was finished before being populated!", chunk.getX(), chunk.getZ());
 
-        PRandom random = new FastPRandom(chunk.getX() * 6169336838570288771L ^ chunk.getZ() * 1173358236373774883L ^ chunk.getLevel().getSeed());
+        PRandom random = new FastPRandom(chunk.getX() * 9050650275199519859L ^ chunk.getZ() * 5251710924988638743L ^ chunk.getLevel().getSeed());
 
         chunks.add(chunk);
         LockableChunk[] lockableChunks = chunks.stream()
@@ -44,8 +41,8 @@ public final class PopulationTask implements BiFunction<Chunk, List<Chunk>, Chun
                 .peek(Lock::lock)
                 .toArray(LockableChunk[]::new);
         try {
-            chunk.getLevel().getGenerator().populate(random, new PopulationChunkManager(chunk, lockableChunks, chunk.getLevel().getSeed()), chunk.getX(), chunk.getZ());
-            chunk.setState(IChunk.STATE_POPULATED);
+            chunk.getLevel().getGenerator().finish(random, new PopulationChunkManager(chunk, lockableChunks, chunk.getLevel().getSeed()), chunk.getX(), chunk.getZ());
+            chunk.setState(IChunk.STATE_FINISHED);
         } finally {
             for (LockableChunk lockableChunk : lockableChunks)  {
                 lockableChunk.unlock();
