@@ -224,7 +224,9 @@ public class EntityHuman extends EntityHumanType {
                     .putByteArray("AnimationData", this.getSkin().getAnimationData().getBytes(StandardCharsets.UTF_8))
                     .putBoolean("PremiumSkin", this.getSkin().isPremium())
                     .putBoolean("PersonaSkin", this.getSkin().isPersona())
-                    .putBoolean("CapeOnClassicSkin", this.getSkin().isCapeOnClassic());
+                    .putBoolean("CapeOnClassicSkin", this.getSkin().isCapeOnClassic())
+                    .putString("ArmSize", this.getSkin().getArmSize())
+                    .putString("SkinColor", this.getSkin().getSkinColor());
             List<SkinAnimation> animations = this.getSkin().getAnimations();
             if (!animations.isEmpty()) {
                 ListTag<CompoundTag> animationsTag = new ListTag<>("AnimationImageData");
