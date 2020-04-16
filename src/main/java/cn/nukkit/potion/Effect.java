@@ -17,7 +17,7 @@ import static com.nukkitx.protocol.bedrock.data.EntityFlag.INVISIBLE;
  */
 public class Effect implements Cloneable {
 
-    public static final int SPEED = 1;
+    public static final int SWIFTNESS = 1;
     public static final int SLOWNESS = 2;
     public static final int HASTE = 3;
     public static final int FATIGUE = 4;
@@ -62,7 +62,7 @@ public class Effect implements Cloneable {
     public static void init() {
         effects = new Effect[256];
 
-        effects[Effect.SPEED] = new Effect(Effect.SPEED, "%potion.moveSpeed", 124, 175, 198);
+        effects[Effect.SWIFTNESS] = new Effect(Effect.SWIFTNESS, "%potion.moveSpeed", 124, 175, 198);
         effects[Effect.SLOWNESS] = new Effect(Effect.SLOWNESS, "%potion.moveSlowdown", 90, 108, 129, true);
         effects[Effect.HASTE] = new Effect(Effect.HASTE, "%potion.digSpeed", 217, 192, 67);
         effects[Effect.FATIGUE] = new Effect(Effect.FATIGUE, "%potion.digSlowDown", 74, 66, 23, true);
