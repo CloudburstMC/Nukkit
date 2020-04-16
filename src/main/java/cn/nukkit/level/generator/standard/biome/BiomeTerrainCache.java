@@ -41,7 +41,7 @@ public final class BiomeTerrainCache {
 
     public Data get(int x, int z, @NonNull BiomeMap biomes) {
         Long2ObjectLinkedOpenHashMap<Data> cache = this.cacheCache.get();
-        Data val = cache.get(Chunk.key(x, z));
+        Data val = cache.getAndMoveToLast(Chunk.key(x, z));
         if (val == null) {
             if (cache.size() >= 1024) {
                 cache.removeFirst();

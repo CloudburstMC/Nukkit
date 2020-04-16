@@ -158,6 +158,10 @@ public final class StandardGenerator implements Generator {
             for (GenerationPass pass : generationPasses) {
                 pass.init(seed, random.nextLong(), this);
             }
+
+            if (this.biomes.needsCaching()) {
+                this.biomes = new CachingBiomeMap(this.biomes);
+            }
             return this;
         } finally {
             //reset generation biome store to ensure that the replacers/decorators/populators for a given islandBiomes aren't initialized multiple times for multiple worlds
@@ -171,7 +175,7 @@ public final class StandardGenerator implements Generator {
         final int baseZ = chunkZ << 4;
         final ThreadData threadData = THREAD_DATA_CACHE.get();
 
-        final CachingBiomeMap biomeMap = threadData.biomeMap.init(this.biomes);
+        final BiomeMap biomeMap = this.biomes;
 
         //compute initial densities
         final double[] densityCache = threadData.densityCache;
@@ -244,9 +248,10 @@ public final class StandardGenerator implements Generator {
         }
 
         //run decorators and set biomes
+        GenerationBiome[] biomes = threadData.biomes = biomeMap.getRegion(threadData.biomes, baseX, baseZ, 16, 16);
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                GenerationBiome biome = biomeMap.get(x | baseX, z | baseZ);
+                GenerationBiome biome = biomes[(x << 4) | z];
                 chunk.setBiome(x, z, biome.getRuntimeId());
                 for (Decorator decorator : this.decoratorLookup.computeIfAbsent(biome, this.decoratorLookupComputer)) {
                     decorator.decorate(random, chunk, x, z);
@@ -255,21 +260,27 @@ public final class StandardGenerator implements Generator {
         }
 
         //clean up
-        biomeMap.clear();
+        Arrays.fill(biomes, null);
     }
 
     @Override
     public void populate(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
-        final int blockX = chunkX << 4;
-        final int blockZ = chunkZ << 4;
+        final int baseX = chunkX << 4;
+        final int baseZ = chunkZ << 4;
+        final ThreadData threadData = THREAD_DATA_CACHE.get();
 
+        //run populators
+        GenerationBiome[] biomes = threadData.biomes = this.biomes.getRegion(threadData.biomes, baseX, baseZ, 16, 16);
         for (int x = 0; x < 16; x++)    {
             for (int z = 0; z < 16; z++)     {
-                for (Populator populator : this.populatorsLookup.computeIfAbsent(this.biomes.get(blockX + x, blockZ + z), this.populatorsLookupComputer)) {
-                    populator.populate(random, level, blockX + x, blockZ + z);
+                for (Populator populator : this.populatorsLookup.computeIfAbsent(biomes[(x << 4) | z], this.populatorsLookupComputer)) {
+                    populator.populate(random, level, baseX + x, baseZ + z);
                 }
             }
         }
+
+        //clean up
+        Arrays.fill(biomes, null);
     }
 
     @Override
@@ -307,6 +318,6 @@ public final class StandardGenerator implements Generator {
 
     private static final class ThreadData {
         private final double[]        densityCache = new double[CACHE_X * CACHE_Y * CACHE_Z];
-        private final CachingBiomeMap biomeMap     = new CachingBiomeMap();
+        private GenerationBiome[] biomes;
     }
 }

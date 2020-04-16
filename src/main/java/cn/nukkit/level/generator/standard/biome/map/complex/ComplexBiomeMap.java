@@ -10,8 +10,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.daporkchop.lib.common.util.PValidation;
 import net.daporkchop.lib.random.impl.FastPRandom;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -53,6 +55,43 @@ public final class ComplexBiomeMap extends AbstractGenerationPass implements Bio
         GenerationBiome biome = this.internalIdLookup.getOrDefault(arr[0], this.fallback);
         alloc.release(arr);
         return biome;
+    }
+
+    @Override
+    public GenerationBiome[] getRegion(GenerationBiome[] arr, int x, int z, int sizeX, int sizeZ) {
+        int totalSize = PValidation.ensurePositive(sizeX) * PValidation.ensurePositive(sizeZ);
+        if (arr == null || arr.length < totalSize)  {
+            arr = new GenerationBiome[totalSize];
+        }
+
+        IntArrayAllocator alloc = IntArrayAllocator.DEFAULT.get();
+        int[] biomes = this.root.get(x, z, sizeX, sizeZ, alloc);
+        for (int i = 0; i < totalSize; i++) {
+            arr[i] = this.internalIdLookup.getOrDefault(biomes[i], this.fallback);
+        }
+        alloc.release(biomes);
+        return arr;
+    }
+
+    @Override
+    public Identifier[] getRegionIds(Identifier[] arr, int x, int z, int sizeX, int sizeZ) {
+        int totalSize = PValidation.ensurePositive(sizeX) * PValidation.ensurePositive(sizeZ);
+        if (arr == null || arr.length < totalSize)  {
+            arr = new Identifier[totalSize];
+        }
+
+        IntArrayAllocator alloc = IntArrayAllocator.DEFAULT.get();
+        int[] biomes = this.root.get(x, z, sizeX, sizeZ, alloc);
+        for (int i = 0; i < totalSize; i++) {
+            arr[i] = this.internalIdLookup.getOrDefault(biomes[i], this.fallback).getId();
+        }
+        alloc.release(biomes);
+        return arr;
+    }
+
+    @Override
+    public boolean needsCaching() {
+        return true;
     }
 
     @Override

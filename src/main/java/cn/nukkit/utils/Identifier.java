@@ -10,6 +10,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import net.daporkchop.lib.common.ref.Ref;
 import net.daporkchop.lib.common.ref.ThreadRef;
+import net.daporkchop.lib.random.impl.FastPRandom;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -43,10 +44,14 @@ public final class Identifier implements Comparable<Identifier> {
     private final String name;
     private final String fullName;
 
+    private final transient int hashCode;
+
     private Identifier(String namespace, String name, String fullName) {
         this.namespace = namespace;
         this.name = name;
         this.fullName = fullName;
+
+        this.hashCode = FastPRandom.mix32(fullName.chars().asLongStream().reduce(0L, (a, b) -> FastPRandom.mix64(a + b)));
     }
 
     public static Identifier fromString(String identifier) {
@@ -117,6 +122,12 @@ public final class Identifier implements Comparable<Identifier> {
     @Override
     public int compareTo(Identifier o) {
         return this.fullName.compareTo(o.fullName);
+    }
+
+    @Override
+    public int hashCode() {
+        //provides significantly better hash distribution, good for hash tables
+        return this.hashCode;
     }
 
     static final class Deserializer extends JsonDeserializer<Identifier>    {
