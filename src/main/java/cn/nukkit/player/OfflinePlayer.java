@@ -158,7 +158,7 @@ public class OfflinePlayer implements IPlayer {
 
     @Override
     public boolean hasPlayedBefore() {
-        return this.namedTag != null;
+        return this.namedTag != CompoundTag.EMPTY;
     }
 
     public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
