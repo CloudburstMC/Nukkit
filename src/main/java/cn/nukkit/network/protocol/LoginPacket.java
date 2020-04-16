@@ -1,25 +1,23 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.entity.data.Skin;
-import cn.nukkit.utils.SerializedImage;
-import cn.nukkit.utils.SkinAnimation;
+import cn.nukkit.utils.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import lombok.ToString;
+import lombok.extern.log4j.Log4j2;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 
 /**
  * Created by on 15-10-13.
  */
+@Log4j2
 @ToString
 public class LoginPacket extends DataPacket {
 
@@ -81,6 +79,7 @@ public class LoginPacket extends DataPacket {
 
     private void decodeSkinData() {
         JsonObject skinToken = decodeToken(new String(this.get(this.getLInt())));
+        log.info(skinToken);
         if (skinToken.has("ClientRandomId")) this.clientId = skinToken.get("ClientRandomId").getAsLong();
         skin = new Skin();
         if (skinToken.has("SkinId")) {
@@ -120,6 +119,26 @@ public class LoginPacket extends DataPacket {
                 skin.getAnimations().add(getAnimation(element.getAsJsonObject()));
             }
         }
+
+        if (skinToken.has("SkinColor")) {
+            skin.setSkinColor(skinToken.get("SkinColor").getAsString());
+        }
+
+        if (skinToken.has("ArmSize")) {
+            skin.setArmSize(skinToken.get("ArmSize").getAsString());
+        }
+
+        if (skinToken.has("PersonaPieces")) {
+            for (JsonElement object : skinToken.get("PersonaPieces").getAsJsonArray()) {
+                skin.getPersonaPieces().add(getPersonaPiece(object.getAsJsonObject()));
+            }
+        }
+
+        if (skinToken.has("PieceTintColors")) {
+            for (JsonElement object : skinToken.get("PieceTintColors").getAsJsonArray()) {
+                skin.getTintColors().add(getTint(object.getAsJsonObject()));
+            }
+        }
     }
 
     private JsonObject decodeToken(String token) {
@@ -149,5 +168,23 @@ public class LoginPacket extends DataPacket {
             }
         }
         return SerializedImage.EMPTY;
+    }
+
+    private static PersonaPiece getPersonaPiece(JsonObject object) {
+        String pieceId = object.get("PieceId").getAsString();
+        String pieceType = object.get("PieceType").getAsString();
+        String packId = object.get("PackId").getAsString();
+        boolean isDefault = object.get("IsDefault").getAsBoolean();
+        String productId = object.get("ProductId").getAsString();
+        return new PersonaPiece(pieceId, pieceType, packId, isDefault, productId);
+    }
+
+    public static PersonaPieceTint getTint(JsonObject object) {
+        String pieceType = object.get("PieceType").getAsString();
+        List<String> colors = new ArrayList<>();
+        for (JsonElement element : object.get("Colors").getAsJsonArray()) {
+            colors.add(element.getAsString()); // remove #
+        }
+        return new PersonaPieceTint(pieceType, colors);
     }
 }
