@@ -47,6 +47,7 @@ public class Skin {
     private String capeId;
     private String skinColor = "#0";
     private String armSize = "wide";
+    private boolean trusted;
 
     public boolean isValid() {
         return isValidSkin() && isValidResourcePatch();
@@ -231,6 +232,14 @@ public class Skin {
 
     public void setCapeOnClassic(boolean capeOnClassic) {
         this.capeOnClassic = capeOnClassic;
+    }
+
+    public boolean isTrusted() {
+        return trusted;
+    }
+
+    public void setTrusted(boolean trusted) {
+        this.trusted = trusted;
     }
 
     public String getSkinColor() {

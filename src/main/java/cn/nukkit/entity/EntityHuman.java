@@ -190,6 +190,7 @@ public class EntityHuman extends EntityHumanType {
                         ));
                     }
                 }
+                skin.setTrusted(skinTag.getBoolean("IsTrustedSkin"));
                 this.setSkin(newSkin);
             }
 
@@ -226,7 +227,8 @@ public class EntityHuman extends EntityHumanType {
                     .putBoolean("PersonaSkin", this.getSkin().isPersona())
                     .putBoolean("CapeOnClassicSkin", this.getSkin().isCapeOnClassic())
                     .putString("ArmSize", this.getSkin().getArmSize())
-                    .putString("SkinColor", this.getSkin().getSkinColor());
+                    .putString("SkinColor", this.getSkin().getSkinColor())
+                    .putBoolean("IsTrustedSkin", this.getSkin().isTrusted());
             List<SkinAnimation> animations = this.getSkin().getAnimations();
             if (!animations.isEmpty()) {
                 ListTag<CompoundTag> animationsTag = new ListTag<>("AnimationImageData");
