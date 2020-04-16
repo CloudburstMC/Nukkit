@@ -182,7 +182,7 @@ public class EntityHuman extends EntityHumanType {
                 }
                 if (skinTag.contains("PieceTintColors")) {
                     ListTag<CompoundTag> tintColors = skinTag.getList("PieceTintColors", CompoundTag.class);
-                    for (CompoundTag tintColor: tintColors.getAll()) {
+                    for (CompoundTag tintColor : tintColors.getAll()) {
                         newSkin.getTintColors().add(new PersonaPieceTint(
                                 tintColor.getString("PieceType"),
                                 tintColor.getList("Colors", StringTag.class).getAll().stream()
@@ -190,7 +190,9 @@ public class EntityHuman extends EntityHumanType {
                         ));
                     }
                 }
-                newSkin.setTrusted(skinTag.getBoolean("IsTrustedSkin"));
+                if (skinTag.contains("IsTrustedSkin")) {
+                    newSkin.setTrusted(skinTag.getBoolean("IsTrustedSkin"));
+                }
                 this.setSkin(newSkin);
             }
 
