@@ -24,7 +24,9 @@ public class PlayerSkinPacket extends DataPacket {
         skin = getSkin();
         newSkinName = getString();
         oldSkinName = getString();
-        skin.setTrusted(getBoolean());
+        if (!feof()) { // -facepalm-
+            skin.setTrusted(getBoolean());
+        }
     }
 
     @Override
