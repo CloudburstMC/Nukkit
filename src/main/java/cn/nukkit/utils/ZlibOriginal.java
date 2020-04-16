@@ -70,7 +70,7 @@ public class ZlibOriginal implements ZlibProvider {
             while (!inflater.finished()) {
                 int i = inflater.inflate(buffer);
                 length += i;
-                if (maxSize < 0 && length >= maxSize) {
+                if (maxSize > 0 && length >= maxSize) {
                     throw new IOException("Inflated data exceeds maximum size");
                 }
                 bos.write(buffer, 0, i);
