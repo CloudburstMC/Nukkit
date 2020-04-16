@@ -159,19 +159,19 @@ public class EntityHuman extends EntityHumanType {
                         byte[] image = animationTag.getByteArray("Image");
                         int width = animationTag.getInt("ImageWidth");
                         int height = animationTag.getInt("ImageHeight");
-                        skin.getAnimations().add(new SkinAnimation(new SerializedImage(width, height, image), type, frames));
+                        newSkin.getAnimations().add(new SkinAnimation(new SerializedImage(width, height, image), type, frames));
                     }
                 }
                 if (skinTag.contains("ArmSize")) {
-                    skin.setArmSize(skinTag.getString("ArmSize"));
+                    newSkin.setArmSize(skinTag.getString("ArmSize"));
                 }
                 if (skinTag.contains("SkinColor")) {
-                    skin.setSkinColor(skinTag.getString("SkinColor"));
+                    newSkin.setSkinColor(skinTag.getString("SkinColor"));
                 }
                 if (skinTag.contains("PersonaPieces")) {
                     ListTag<CompoundTag> pieces = skinTag.getList("PersonaPieces", CompoundTag.class);
                     for (CompoundTag piece : pieces.getAll()) {
-                        skin.getPersonaPieces().add(new PersonaPiece(
+                        newSkin.getPersonaPieces().add(new PersonaPiece(
                                 piece.getString("PieceId"),
                                 piece.getString("PieceType"),
                                 piece.getString("PackId"),
@@ -183,14 +183,14 @@ public class EntityHuman extends EntityHumanType {
                 if (skinTag.contains("PieceTintColors")) {
                     ListTag<CompoundTag> tintColors = skinTag.getList("PieceTintColors", CompoundTag.class);
                     for (CompoundTag tintColor: tintColors.getAll()) {
-                        skin.getTintColors().add(new PersonaPieceTint(
+                        newSkin.getTintColors().add(new PersonaPieceTint(
                                 tintColor.getString("PieceType"),
                                 tintColor.getList("Colors", StringTag.class).getAll().stream()
                                         .map(stringTag -> stringTag.data).collect(Collectors.toList())
                         ));
                     }
                 }
-                skin.setTrusted(skinTag.getBoolean("IsTrustedSkin"));
+                newSkin.setTrusted(skinTag.getBoolean("IsTrustedSkin"));
                 this.setSkin(newSkin);
             }
 
