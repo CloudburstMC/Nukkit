@@ -256,7 +256,7 @@ public class Potion implements Cloneable {
             case SPEED:
             case SPEED_LONG:
             case SPEED_II:
-                effect = Effect.getEffect(Effect.SPEED);
+                effect = Effect.getEffect(Effect.SWIFTNESS);
                 break;
             case SLOWNESS:
             case SLOWNESS_LONG:
