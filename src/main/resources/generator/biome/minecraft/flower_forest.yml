@@ -38,18 +38,18 @@ populators:
       - "red_flower#9"
       - "red_flower#10"
 
+    # Double plants
+  - id: "nukkitx:double_plant"
+    chance: 0.01171875 # about 3 per chunk
+    on: "grass"
+    replace: "air"
+    types:
+      - 1 # lilac
+      - 4 # rose
+      - 5 # peony
+
     # Tall grass
   - id: "nukkitx:shrub"
     chance: 0.00390625 # about 1 per chunk
     on: "grass"
     block: "tallgrass"
-
-    # Double plants
-  - id: "nukkitx:double_plant"
-    chance: 0.01171875 # about 3 per chunk
-    on: "grass"
-    replace: "air,tallgrass"
-    types:
-      - 1 # lilac
-      - 4 # rose
-      - 5 # peony

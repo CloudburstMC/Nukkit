@@ -98,58 +98,7 @@ public interface IChunk extends Comparable<IChunk> {
 
     void setBlockLight(int x, int y, int z, @Nonnegative int level);
 
-    default void recalculateHeightMap() {
-        for (int z = 0; z < 16; ++z) {
-            for (int x = 0; x < 16; ++x) {
-                this.setHeightMap(x, z, this.getHighestBlock(x, z, false));
-            }
-        }
-        setDirty();
-    }
-
-    default void populateSkyLight() {
-        for (int z = 0; z < 16; ++z) {
-            for (int x = 0; x < 16; ++x) {
-                int top = this.getHeightMap(x, z);
-                for (int y = 255; y > top; --y) {
-                    this.setSkyLight(x, y, z, (byte) 15);
-                }
-                for (int y = top; y >= 0; --y) {
-                    if (BlockRegistry.get().getBlock(this.getBlockId(x, y, z), 0).isSolid()) {
-                        break;
-                    }
-                    this.setSkyLight(x, y, z, (byte) 15);
-                }
-                this.setHeightMap(x, z, this.getHighestBlock(x, z, false));
-            }
-        }
-    }
-
-    int getHeightMap(int x, int z);
-
-    void setHeightMap(int x, int z, @Nonnegative int value);
-
-    default int getHighestBlock(int x, int z) {
-        //porktodo: fix heightmap
-        return this.getHighestBlock(x, z, false);
-    }
-
-    default int getHighestBlock(int x, int z, boolean cache) {
-        //porktodo: fix heightmap
-        if (false && cache) {
-            int h = this.getHeightMap(x, z);
-            if (h != 0 && h != 255) {
-                return h;
-            }
-        }
-
-        for (int y = 255; y >= 0; y--)  {
-            if (this.getBlockRuntimeIdUnsafe(x, y, z, 0) != 0) {
-                return y;
-            }
-        }
-        return -1;
-    }
+    int getHighestBlock(int x, int z);
 
     void addEntity(@Nonnull Entity entity);
 

@@ -154,13 +154,8 @@ public final class LockableChunk implements IChunk, Lock {
     }
 
     @Override
-    public int getHeightMap(int x, int z) {
-        return this.unsafe.getHeightMap(x, z);
-    }
-
-    @Override
-    public void setHeightMap(int x, int z, int value) {
-        this.unsafe.setHeightMap(x, z, value);
+    public int getHighestBlock(int x, int z) {
+        return this.unsafe.getHighestBlock(x, z);
     }
 
     @Override
@@ -207,15 +202,13 @@ public final class LockableChunk implements IChunk, Lock {
     @Nonnull
     @Override
     public byte[] getBiomeArray() {
-        byte[] biomes = this.unsafe.getBiomeArray();
-        return Arrays.copyOf(biomes, biomes.length);
+        return this.unsafe.getBiomeArray().clone();
     }
 
     @Nonnull
     @Override
     public int[] getHeightMapArray() {
-        int[] heightmap = this.unsafe.getHeightMapArray();
-        return Arrays.copyOf(heightmap, heightmap.length);
+        return this.unsafe.getHeightMapArray().clone();
     }
 
     @Nonnull

@@ -2066,11 +2066,11 @@ public class Level implements ChunkManager, Metadatable {
 
 
     public Identifier getBlockId(int x, int y, int z, int layer) {
-        return this.getChunk(x >> 4, z >> 4).getBlockId(x & 0x0f, y & 0xff, z & 0x0f, layer);
+        return this.getChunk(x >> 4, z >> 4).getBlockId(x & 0xF, y, z & 0xF, layer);
     }
 
     public void setBlockId(int x, int y, int z, int layer, Identifier id) {
-        this.getChunk(x >> 4, z >> 4).setBlockId(x & 0x0f, y & 0xff, z & 0x0f, layer, id);
+        this.getChunk(x >> 4, z >> 4).setBlockId(x & 0xF, y, z & 0xF, layer, id);
         addBlockChange(x, y, z, layer);
     }
 
@@ -2089,12 +2089,12 @@ public class Level implements ChunkManager, Metadatable {
 
     @Override
     public int getBlockRuntimeIdUnsafe(int x, int y, int z, int layer) {
-        return this.getChunk(x >> 4, z >> 4).getBlockRuntimeIdUnsafe(x & 0xF, y & 0xFF, z & 0xF, layer);
+        return this.getChunk(x >> 4, z >> 4).getBlockRuntimeIdUnsafe(x & 0xF, y, z & 0xF, layer);
     }
 
     @Override
     public void setBlockRuntimeIdUnsafe(int x, int y, int z, int layer, int runtimeId) {
-        this.getChunk(x >> 4, z >> 4).setBlockRuntimeIdUnsafe(x & 0xF, y & 0xFF, z & 0xF, layer, runtimeId);
+        this.getChunk(x >> 4, z >> 4).setBlockRuntimeIdUnsafe(x & 0xF, y, z & 0xF, layer, runtimeId);
         this.addBlockChange(x, y, z, layer);
     }
 
@@ -2109,36 +2109,32 @@ public class Level implements ChunkManager, Metadatable {
         this.addBlockChange(x, y, z, layer);
     }
 
-    public int getBlockSkyLightAt(int x, int y, int z) {
-        return this.getChunk(x >> 4, z >> 4).getBlockLight(x & 0x0f, y & 0xff, z & 0x0f);
-    }
-
-    public void setBlockSkyLightAt(int x, int y, int z, int level) {
-        this.getChunk(x >> 4, z >> 4).setBlockLight(x & 0x0f, y & 0xff, z & 0x0f, (byte) (level & 0x0f));
-    }
-
-    public int getBlockLightAt(int x, int y, int z) {
-        return this.getChunk(x >> 4, z >> 4).getBlockLight(x & 0x0f, y & 0xff, z & 0x0f);
-    }
-
-    public void setBlockLightAt(int x, int y, int z, int level) {
-        this.getChunk(x >> 4, z >> 4).setBlockLight(x & 0x0f, y & 0xff, z & 0x0f, (byte) (level & 0x0f));
-    }
-
     public int getBiomeId(int x, int z) {
-        return this.getChunk(x >> 4, z >> 4).getBiome(x & 0x0f, z & 0x0f);
+        return this.getChunk(x >> 4, z >> 4).getBiome(x & 0xF, z & 0xF);
     }
 
     public void setBiomeId(int x, int z, byte biomeId) {
-        this.getChunk(x >> 4, z >> 4).setBiome(x & 0x0f, z & 0x0f, biomeId);
+        this.getChunk(x >> 4, z >> 4).setBiome(x & 0xF, z & 0xF, biomeId);
     }
 
-    public int getHeightMap(int x, int z) {
-        return this.getChunk(x >> 4, z >> 4).getHeightMap(x & 0x0f, z & 0x0f);
+    public int getSkyLightAt(int x, int y, int z) {
+        return this.getChunk(x >> 4, z >> 4).getBlockLight(x & 0xF, y, z & 0xF);
     }
 
-    public void setHeightMap(int x, int z, int value) {
-        this.getChunk(x >> 4, z >> 4).setHeightMap(x & 0x0f, z & 0x0f, value & 0x0f);
+    public void setSkyLightAt(int x, int y, int z, int level) {
+        this.getChunk(x >> 4, z >> 4).setBlockLight(x & 0xF, y, z & 0xF, level);
+    }
+
+    public int getBlockLightAt(int x, int y, int z) {
+        return this.getChunk(x >> 4, z >> 4).getBlockLight(x & 0xF, y, z & 0xF);
+    }
+
+    public void setBlockLightAt(int x, int y, int z, int level) {
+        this.getChunk(x >> 4, z >> 4).setBlockLight(x & 0xF, y, z & 0xF, level);
+    }
+
+    public int getHighestBlock(int x, int z) {
+        return this.getChunk(x >> 4, z >> 4).getHighestBlock(x & 0xF, z & 0xF);
     }
 
     public Chunk getLoadedChunk(Vector3f pos) {

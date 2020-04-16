@@ -22,7 +22,7 @@ populators:
   - id: "nukkitx:shrub"
     chance: 0.015625 # about 4 per chunk
     on: "grass"
-    replace: "air,tallgrass"
+    replace: "air"
     roundDown: false
     block: "2*yellow_flower,red_flower"
 
@@ -30,8 +30,14 @@ populators:
   - id: "nukkitx:double_plant"
     chance: 0.01171875 # about 3 per chunk
     on: "grass"
-    replace: "air,tallgrass"
+    replace: "air"
     types:
       - 1 # lilac
       - 4 # rose
       - 5 # peony
+
+    # Tall grass
+  - id: "nukkitx:shrub"
+    chance: 0.0078125 # about 2 per chunk
+    on: "grass"
+    block: "tallgrass"

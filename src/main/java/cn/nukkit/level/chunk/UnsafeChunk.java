@@ -121,7 +121,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
 
     @Nullable
     @Override
-    public synchronized ChunkSection getSection(int y) {
+    public ChunkSection getSection(int y) {
         checkElementIndex(y, sections.length, "section Y");
         return this.sections[y];
     }
@@ -285,6 +285,22 @@ public final class UnsafeChunk implements IChunk, Closeable {
     }
 
     @Override
+    public int getHighestBlock(int x, int z) {
+        checkBounds(x, z);
+        for (int sectionY = 15; sectionY >= 0; sectionY--)  {
+            ChunkSection section = this.sections[sectionY];
+            if (section != null)    {
+                for (int y = 15; y >= 0; y--)    {
+                    if (section.getBlockRuntimeIdUnsafe(x, y, z, 0) != 0)  {
+                        return (sectionY << 4) | y;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    /*@Override
     public int getHeightMap(int x, int z) {
         checkBounds(x, z);
         return this.heightMap[get2dIndex(x, z)] & 0xFF;
@@ -295,7 +311,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
         checkBounds(x, z);
         this.heightMap[get2dIndex(x, z)] = (byte) value;
         setDirty();
-    }
+    }*/
 
     @Override
     public void addEntity(@Nonnull Entity entity) {
@@ -425,7 +441,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
      */
     @Override
     public boolean isDirty() {
-        return this.dirty == 1;
+        return this.state >= STATE_GENERATED && this.dirty == 1;
     }
 
     /**
@@ -441,14 +457,14 @@ public final class UnsafeChunk implements IChunk, Closeable {
 
     @Override
     public boolean clearDirty() {
-        return DIRTY_FIELD.compareAndSet(this, 1, 0);
+        return this.state >= STATE_GENERATED && DIRTY_FIELD.compareAndSet(this, 1, 0);
     }
 
     /**
      * Clear chunk to a state as if it was not generated.
      */
     @Override
-    public synchronized void clear() {
+    public void clear() {
         Arrays.fill(this.sections, null);
         Arrays.fill(this.biomes, (byte) 0);
         Arrays.fill(this.heightMap, (byte) 0);
@@ -459,7 +475,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
     }
 
     @Override
-    public synchronized void close() {
+    public void close() {
         if (CLOSED_FIELD.compareAndSet(this, 0, 1)) {
             for (Entity entity : ImmutableList.copyOf(this.entities)) {
                 if (entity instanceof Player) {
