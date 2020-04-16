@@ -55,7 +55,7 @@ import static net.daporkchop.lib.math.primitive.PMath.*;
 public final class StandardGenerator implements Generator {
     public static final Identifier ID = Identifier.fromString("nukkitx:standard");
 
-    private static final String DEFAULT_PRESET = "nukkitx:overworld";
+    private static final String DEFAULT_PRESET = "minecraft:overworld";
 
     public static final GeneratorFactory FACTORY = (seed, options) -> {
         Identifier presetId = Identifier.fromString(Strings.isNullOrEmpty(options) ? DEFAULT_PRESET : options);
