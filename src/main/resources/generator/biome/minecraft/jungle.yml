@@ -42,6 +42,7 @@ populators:
     chance: 0.00390625 # about 1 per chunk
     on: "grass"
     replace: "air"
+    roundDown: false
     block: "melon_block"
 
     # Huge trees

@@ -8,4 +8,6 @@ elevationVanilla:
 temperature: 0.2
 rainfall: 0.3
 
+decorators: []
+
 # this is basically the easiest biome in the game lol

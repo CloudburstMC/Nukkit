@@ -46,6 +46,7 @@ public final class PopulationTask implements BiFunction<Chunk, List<Chunk>, Chun
         try {
             chunk.getLevel().getGenerator().populate(random, new PopulationChunkManager(chunk, lockableChunks, chunk.getLevel().getSeed()), chunk.getX(), chunk.getZ());
             chunk.setState(IChunk.STATE_POPULATED);
+            chunk.setDirty();
         } finally {
             for (LockableChunk lockableChunk : lockableChunks)  {
                 lockableChunk.unlock();

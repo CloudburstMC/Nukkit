@@ -150,10 +150,10 @@ public class AnvilConverter {
         }
 
         if (tag.getBoolean("TerrainGenerated")) {
-            chunkBuilder.generated();
+            chunkBuilder.state(IChunk.STATE_GENERATED);
         }
         if (tag.getBoolean("TerrainPopulated")) {
-            chunkBuilder.populated();
+            chunkBuilder.state(IChunk.STATE_POPULATED);
         }
     }
 

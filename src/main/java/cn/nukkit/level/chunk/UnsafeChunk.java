@@ -425,7 +425,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
      */
     @Override
     public boolean isDirty() {
-        return this.state == STATE_FINISHED && this.dirty == 1;
+        return this.dirty == 1;
     }
 
     /**

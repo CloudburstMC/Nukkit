@@ -43,6 +43,7 @@ public final class FinishingTask implements BiFunction<Chunk, List<Chunk>, Chunk
         try {
             chunk.getLevel().getGenerator().finish(random, new PopulationChunkManager(chunk, lockableChunks, chunk.getLevel().getSeed()), chunk.getX(), chunk.getZ());
             chunk.setState(IChunk.STATE_FINISHED);
+            chunk.setDirty();
         } finally {
             for (LockableChunk lockableChunk : lockableChunks)  {
                 lockableChunk.unlock();

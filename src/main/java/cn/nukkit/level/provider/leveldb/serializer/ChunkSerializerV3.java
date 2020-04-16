@@ -107,9 +107,6 @@ class ChunkSerializerV3 extends ChunkSerializerV1 {
         }
 
         chunkBuilder.sections(sections);
-
-        chunkBuilder.generated();
-        chunkBuilder.populated();
     }
 
     @Override

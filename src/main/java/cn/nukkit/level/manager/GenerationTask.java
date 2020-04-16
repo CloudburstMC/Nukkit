@@ -36,6 +36,7 @@ public final class GenerationTask implements Function<Chunk, Chunk> {
         try {
             chunk.getLevel().getGenerator().generate(random, lockable, chunk.getX(), chunk.getZ());
             chunk.setState(IChunk.STATE_GENERATED);
+            chunk.setDirty();
         } finally {
             lockable.unlock();
         }
