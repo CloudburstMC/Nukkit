@@ -8,7 +8,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import lombok.ToString;
-import lombok.extern.log4j.Log4j2;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -17,7 +16,6 @@ import java.util.*;
 /**
  * Created by on 15-10-13.
  */
-@Log4j2
 @ToString
 public class LoginPacket extends DataPacket {
 
@@ -79,7 +77,6 @@ public class LoginPacket extends DataPacket {
 
     private void decodeSkinData() {
         JsonObject skinToken = decodeToken(new String(this.get(this.getLInt())));
-        log.info(skinToken);
         if (skinToken.has("ClientRandomId")) this.clientId = skinToken.get("ClientRandomId").getAsLong();
         skin = new Skin();
         if (skinToken.has("SkinId")) {
