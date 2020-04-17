@@ -2,8 +2,8 @@ package cn.nukkit.level.generator.standard.misc;
 
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
-import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
-import cn.nukkit.level.generator.standard.pop.Populator;
+import cn.nukkit.level.generator.standard.generation.decorator.Decorator;
+import cn.nukkit.level.generator.standard.population.Populator;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AccessLevel;
@@ -17,6 +17,7 @@ import net.daporkchop.lib.random.PRandom;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Decorator.SkipRegistrationAsPopulator
+@Populator.SkipRegistrationAsFinisher
 @JsonDeserialize
 public final class NextGenerationPass implements Decorator, Populator {
     public static final Identifier         ID       = Identifier.fromString("nukkitx:next");

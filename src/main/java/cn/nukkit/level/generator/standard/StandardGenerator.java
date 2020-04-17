@@ -9,12 +9,13 @@ import cn.nukkit.level.generator.GeneratorFactory;
 import cn.nukkit.level.generator.standard.biome.GenerationBiome;
 import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
 import cn.nukkit.level.generator.standard.biome.map.CachingBiomeMap;
-import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
-import cn.nukkit.level.generator.standard.gen.density.DensitySource;
+import cn.nukkit.level.generator.standard.finish.Finisher;
+import cn.nukkit.level.generator.standard.generation.decorator.Decorator;
+import cn.nukkit.level.generator.standard.generation.density.DensitySource;
 import cn.nukkit.level.generator.standard.misc.ConstantBlock;
 import cn.nukkit.level.generator.standard.misc.GenerationPass;
 import cn.nukkit.level.generator.standard.misc.NextGenerationPass;
-import cn.nukkit.level.generator.standard.pop.Populator;
+import cn.nukkit.level.generator.standard.population.Populator;
 import cn.nukkit.level.generator.standard.store.StandardGeneratorStores;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.Identifier;
@@ -108,18 +109,19 @@ public final class StandardGenerator implements Generator {
     private static final Ref<ThreadData> THREAD_DATA_CACHE = ThreadRef.soft(ThreadData::new);
 
     @JsonProperty
-    //porktodo: make this private again
-    BiomeMap biomes;
+    private BiomeMap biomes;
     @JsonProperty
-    //porktodo: make this private again
-    DensitySource density;
+    private DensitySource density;
     @JsonProperty
     private Decorator[] decorators = Decorator.EMPTY_ARRAY;
     @JsonProperty
     private Populator[] populators = Populator.EMPTY_ARRAY;
+    @JsonProperty
+    private Finisher[] finishers = Finisher.EMPTY_ARRAY;
 
     private final Map<GenerationBiome, Decorator[]> decoratorLookup = new ConcurrentHashMap<>();
     private final Map<GenerationBiome, Populator[]> populatorsLookup = new ConcurrentHashMap<>();
+    private final Map<GenerationBiome, Finisher[]> finishersLookup = new ConcurrentHashMap<>();
 
     private final Function<GenerationBiome, Decorator[]> decoratorLookupComputer = biome -> Arrays.stream(this.decorators)
             .flatMap(decorator -> decorator instanceof NextGenerationPass ? Arrays.stream(biome.getDecorators()) : Stream.of(decorator))
@@ -127,6 +129,9 @@ public final class StandardGenerator implements Generator {
     private final Function<GenerationBiome, Populator[]> populatorsLookupComputer = biome -> Arrays.stream(this.populators)
             .flatMap(populator -> populator instanceof NextGenerationPass ? Arrays.stream(biome.getPopulators()) : Stream.of(populator))
             .toArray(Populator[]::new);
+    private final Function<GenerationBiome, Finisher[]> finishersLookupComputer = biome -> Arrays.stream(this.populators)
+            .flatMap(finisher -> finisher instanceof NextGenerationPass ? Arrays.stream(biome.getFinishers()) : Stream.of(finisher))
+            .toArray(Finisher[]::new);
 
     @JsonProperty("groundBlock")
     @Getter
@@ -150,10 +155,12 @@ public final class StandardGenerator implements Generator {
             generationPasses.add(Objects.requireNonNull(this.biomes, "biomes must be set!"));
             Collections.addAll(generationPasses, this.decorators = fallbackIfNull(this.decorators, Decorator.EMPTY_ARRAY));
             Collections.addAll(generationPasses, this.populators = fallbackIfNull(this.populators, Populator.EMPTY_ARRAY));
+            Collections.addAll(generationPasses, this.finishers = fallbackIfNull(this.finishers, Finisher.EMPTY_ARRAY));
 
             for (GenerationBiome biome : biomes) {
                 Collections.addAll(generationPasses, biome.getDecorators());
                 Collections.addAll(generationPasses, biome.getPopulators());
+                Collections.addAll(generationPasses, biome.getFinishers());
             }
 
             PRandom random = new FastPRandom(seed);
@@ -280,7 +287,22 @@ public final class StandardGenerator implements Generator {
 
     @Override
     public void finish(PRandom random, ChunkManager level, int chunkX, int chunkZ) {
-        //porktodo: this
+        final int baseX = chunkX << 4;
+        final int baseZ = chunkZ << 4;
+        final ThreadData threadData = THREAD_DATA_CACHE.get();
+
+        //run finishers
+        GenerationBiome[] biomes = threadData.biomes = this.biomes.getRegion(threadData.biomes, baseX, baseZ, 16, 16);
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                for (Finisher finisher : this.finishersLookup.computeIfAbsent(biomes[(x << 4) | z], this.finishersLookupComputer)) {
+                    finisher.finish(random, level, baseX + x, baseZ + z);
+                }
+            }
+        }
+
+        //clean up
+        Arrays.fill(biomes, null);
     }
 
     @JsonSetter("biomes")

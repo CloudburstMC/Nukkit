@@ -2,11 +2,10 @@ package cn.nukkit.level.generator.standard.registry;
 
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.generator.standard.gen.density.DensitySource;
-import cn.nukkit.level.generator.standard.gen.density.EndDensitySource;
-import cn.nukkit.level.generator.standard.gen.density.NetherDensitySource;
-import cn.nukkit.level.generator.standard.gen.density.VanillaDensitySource;
-import cn.nukkit.utils.Identifier;
+import cn.nukkit.level.generator.standard.generation.density.DensitySource;
+import cn.nukkit.level.generator.standard.generation.density.EndDensitySource;
+import cn.nukkit.level.generator.standard.generation.density.NetherDensitySource;
+import cn.nukkit.level.generator.standard.generation.density.VanillaDensitySource;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

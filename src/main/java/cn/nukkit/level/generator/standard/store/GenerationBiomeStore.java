@@ -4,13 +4,13 @@ import cn.nukkit.Nukkit;
 import cn.nukkit.level.generator.standard.StandardGeneratorUtils;
 import cn.nukkit.level.generator.standard.biome.BiomeElevation;
 import cn.nukkit.level.generator.standard.biome.GenerationBiome;
-import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
-import cn.nukkit.level.generator.standard.pop.Populator;
+import cn.nukkit.level.generator.standard.finish.Finisher;
+import cn.nukkit.level.generator.standard.generation.decorator.Decorator;
+import cn.nukkit.level.generator.standard.population.Populator;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.google.common.base.Preconditions;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -61,6 +61,8 @@ public final class GenerationBiomeStore extends AbstractGeneratorStore<Generatio
         private Decorator[] decorators = Decorator.EMPTY_ARRAY;
         @JsonProperty
         private Populator[] populators = Populator.EMPTY_ARRAY;
+        @JsonProperty
+        private Finisher[] finishers = Finisher.EMPTY_ARRAY;
 
         private BiomeElevation elevation = BiomeElevation.DEFAULT;
 

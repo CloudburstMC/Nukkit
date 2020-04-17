@@ -1,9 +1,10 @@
 package cn.nukkit.level.generator.standard.biome;
 
 import cn.nukkit.level.biome.Biome;
-import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
+import cn.nukkit.level.generator.standard.finish.Finisher;
+import cn.nukkit.level.generator.standard.generation.decorator.Decorator;
 import cn.nukkit.level.generator.standard.misc.NextGenerationPass;
-import cn.nukkit.level.generator.standard.pop.Populator;
+import cn.nukkit.level.generator.standard.population.Populator;
 import cn.nukkit.level.generator.standard.store.GenerationBiomeStore;
 import cn.nukkit.registry.BiomeRegistry;
 import cn.nukkit.utils.Identifier;
@@ -14,8 +15,6 @@ import net.daporkchop.lib.common.util.PorkUtil;
 
 import java.util.Arrays;
 import java.util.stream.Stream;
-
-import static net.daporkchop.lib.common.util.PorkUtil.*;
 
 /**
  * Representation of a biome used during terrain generation.
@@ -29,6 +28,7 @@ public final class GenerationBiome {
 
     private final Decorator[] decorators;
     private final Populator[] populators;
+    private final Finisher[] finishers;
 
     private final BiomeElevation elevation;
 
@@ -40,6 +40,7 @@ public final class GenerationBiome {
 
         Decorator[] decorators = temp.getDecorators();
         Populator[] populators = temp.getPopulators();
+        Finisher[] finishers = temp.getFinishers();
 
         BiomeElevation elevation = temp.getElevation();
 
@@ -55,7 +56,7 @@ public final class GenerationBiome {
                 decorators = parent.decorators;
             } else {
                 decorators = Arrays.stream(decorators)
-                        .flatMap(decorator -> decorator instanceof NextGenerationPass ? Arrays.stream(parent.getDecorators()) : Stream.of(decorator))
+                        .flatMap(decorator -> decorator instanceof NextGenerationPass ? Arrays.stream(parent.decorators) : Stream.of(decorator))
                         .toArray(Decorator[]::new);
             }
             if (populators == null) {
@@ -64,8 +65,17 @@ public final class GenerationBiome {
                 populators = parent.populators;
             } else {
                 populators = Arrays.stream(populators)
-                        .flatMap(populator -> populator instanceof NextGenerationPass ? Arrays.stream(parent.getPopulators()) : Stream.of(populator))
+                        .flatMap(populator -> populator instanceof NextGenerationPass ? Arrays.stream(parent.populators) : Stream.of(populator))
                         .toArray(Populator[]::new);
+            }
+            if (finishers == null) {
+                finishers = Finisher.EMPTY_ARRAY;
+            } else if (finishers == Finisher.EMPTY_ARRAY) {
+                finishers = parent.finishers;
+            } else {
+                finishers = Arrays.stream(finishers)
+                        .flatMap(finisher -> finisher instanceof NextGenerationPass ? Arrays.stream(parent.finishers) : Stream.of(finisher))
+                        .toArray(Finisher[]::new);
             }
 
             if (elevation == BiomeElevation.DEFAULT) {
@@ -78,6 +88,9 @@ public final class GenerationBiome {
             if (populators == null) {
                 populators = Populator.EMPTY_ARRAY;
             }
+            if (finishers == null) {
+                finishers = Finisher.EMPTY_ARRAY;
+            }
         }
 
         this.id = id;
@@ -85,6 +98,7 @@ public final class GenerationBiome {
 
         this.decorators = decorators;
         this.populators = populators;
+        this.finishers = finishers;
 
         this.elevation = elevation;
 
@@ -106,6 +120,10 @@ public final class GenerationBiome {
 
     public Populator[] getPopulators() {
         return this.populators;
+    }
+
+    public Finisher[] getFinishers() {
+        return this.finishers;
     }
 
     public BiomeElevation getElevation() {

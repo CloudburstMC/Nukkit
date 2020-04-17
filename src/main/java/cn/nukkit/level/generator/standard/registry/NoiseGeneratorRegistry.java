@@ -2,11 +2,11 @@ package cn.nukkit.level.generator.standard.registry;
 
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.generator.standard.gen.noise.NoiseGenerator;
-import cn.nukkit.level.generator.standard.gen.noise.OpenSimplexDefaultNoiseGenerator;
-import cn.nukkit.level.generator.standard.gen.noise.PerlinDefaultNoiseGenerator;
-import cn.nukkit.level.generator.standard.gen.noise.PorkianDefaultNoiseGenerator;
-import cn.nukkit.level.generator.standard.gen.noise.SimplexDefaultNoiseGenerator;
+import cn.nukkit.level.generator.standard.generation.noise.NoiseGenerator;
+import cn.nukkit.level.generator.standard.generation.noise.OpenSimplexDefaultNoiseGenerator;
+import cn.nukkit.level.generator.standard.generation.noise.PerlinDefaultNoiseGenerator;
+import cn.nukkit.level.generator.standard.generation.noise.PorkianDefaultNoiseGenerator;
+import cn.nukkit.level.generator.standard.generation.noise.SimplexDefaultNoiseGenerator;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
