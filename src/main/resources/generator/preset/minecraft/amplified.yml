@@ -1,0 +1,7 @@
+# NukkitX Standard Generator - AMPLIFIED preset
+#
+# Author: DaPorkchop_
+
+copyFrom: "minecraft:overworld"
+
+density: "minecraft:amplified"

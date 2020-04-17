@@ -23,10 +23,19 @@ public final class BiomeTerrainCache {
     private final int      scale;
     private final int      diameter;
 
+    private final double heightFactor;
+    private final double heightOffset;
+    private final double heightVariationFactor;
+    private final double heightVariationOffset;
+
     @JsonCreator
     public BiomeTerrainCache(
             @JsonProperty(value = "radius", required = true) int radius,
-            @JsonProperty(value = "scale", required = true) int scale) {
+            @JsonProperty(value = "scale", required = true) int scale,
+            @JsonProperty(value = "heightFactor", required = true) double heightFactor,
+            @JsonProperty(value = "heightOffset", required = true) double heightOffset,
+            @JsonProperty(value = "heightVariationFactor", required = true) double heightVariationFactor,
+            @JsonProperty(value = "heightVariationOffset", required = true) double heightVariationOffset) {
         this.radius = PValidation.ensureNonNegative(radius);
         this.scale = PValidation.ensureNonNegative(scale);
         this.diameter = radius * 2 + 1;
@@ -37,6 +46,11 @@ public final class BiomeTerrainCache {
                 this.weights[(dx + radius) * this.diameter + dz + radius] = 10.0d / Math.sqrt(dx * dx + dz * dz + 0.2d);
             }
         }
+
+        this.heightFactor = heightFactor;
+        this.heightOffset = heightOffset;
+        this.heightVariationFactor = heightVariationFactor;
+        this.heightVariationOffset = heightVariationOffset;
     }
 
     public Data get(int x, int z, @NonNull BiomeMap biomes) {
@@ -52,13 +66,18 @@ public final class BiomeTerrainCache {
             double smoothVariation = 0.0d;
             double totalWeight = 0.0d;
 
+            final double heightFactor = this.heightFactor;
+            final double heightOffset = this.heightOffset;
+            final double heightVariationFactor = this.heightVariationFactor;
+            final double heightVariationOffset = this.heightVariationOffset;
+
             final double centerHeight = biomes.get(x, z).getElevation().getNormalizedHeight();
             for (int radius = this.radius, scale = this.scale, diameter = this.diameter, dx = -radius; dx <= radius; dx++) {
                 for (int dz = -radius; dz <= radius; dz++) {
                     BiomeElevation elevation = biomes.get(x + dx * scale, z + dz * scale).getElevation();
 
-                    double height = elevation.getNormalizedHeight();
-                    double variation = elevation.getNormalizedVariation();
+                    double height = elevation.getNormalizedHeight() * heightFactor + heightOffset;
+                    double variation = elevation.getNormalizedVariation() * heightVariationFactor + heightVariationOffset;
 
                     double weight = Math.abs(this.weights[(dx + radius) * diameter + dx + radius] / (height + 2.0d));
                     if (height > centerHeight) {

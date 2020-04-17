@@ -1,0 +1,54 @@
+# NukkitX Standard Generator - AMPLIFIED density generator preset
+#
+# Author: DaPorkchop_
+
+# This is almost identical to the normal overworld density preset, but with some slight modifications to the height and
+# height variation factors and offsets. The result is nearly identical to the vanilla AMPLIFIED world type.
+
+id: "nukkitx:vanilla"
+seed: "overworld"
+selectorNoise:
+  id: "nukkitx:perlin"
+  scale:
+    x: 0.01670927734375
+    y: 0.008354638671875
+    z: 0.01670927734375
+  octaves: 8
+  factor: 12.75
+  offset: 0.5
+lowNoise:
+  id: "nukkitx:perlin"
+  scale:
+    x: 0.005221649169921875
+    y: 0.0026108245849609375
+    z: 0.005221649169921875
+  octaves: 16
+  factor: 1.0
+  offset: 0.0
+highNoise:
+  id: "nukkitx:perlin"
+  scale:
+    x: 0.005221649169921875
+    y: 0.0026108245849609375
+    z: 0.005221649169921875
+  octaves: 16
+  factor: 1.0
+  offset: 0.0
+depthNoise:
+  id: "nukkitx:perlin"
+  scale: 0.00152587890625
+  octaves: 16
+  factor: 1.0240000486373901
+  offset: 0.0
+terrainSmoothing:
+  radius: 2
+  scale: 4
+  heightFactor: 2.0
+  heightOffset: 1.0
+  heightVariationFactor: 4.0
+  heightVariationOffset: 1.0
+specialHeightVariation: 0.25
+heightFactor: 64.0
+heightOffset: 64.0
+heightVariationFactor: 64.0
+heightVariationOffset: 0.0

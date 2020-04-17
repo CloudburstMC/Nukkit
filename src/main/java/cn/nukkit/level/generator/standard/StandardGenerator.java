@@ -25,6 +25,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.experimental.Accessors;
 import net.daporkchop.lib.common.ref.Ref;
 import net.daporkchop.lib.common.ref.ThreadRef;
@@ -306,6 +307,23 @@ public final class StandardGenerator implements Generator {
         Arrays.fill(biomes, null);
     }
 
+    @JsonSetter("copyFrom")
+    private void copyFrom(@NonNull Identifier presetId)    {
+        try (InputStream in = StandardGeneratorUtils.read("preset", presetId)) {
+            StandardGenerator from = Nukkit.YAML_MAPPER.readValue(in, StandardGenerator.class);
+            this.biomes = from.biomes;
+            this.density = from.density;
+            this.decorators = from.decorators;
+            this.populators = from.populators;
+            this.finishers = from.finishers;
+            this.ground = from.ground;
+            this.sea = from.sea;
+            this.seaLevel = from.seaLevel;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @JsonSetter("biomes")
     private void setBiomes(Identifier id) {
         try (InputStream in = StandardGeneratorUtils.read("biomemap", id)) {
@@ -325,13 +343,13 @@ public final class StandardGenerator implements Generator {
     }
 
     @JsonSetter("groundBlock")
-    private void setGroundBlock(ConstantBlock block) {
-        this.ground = block.runtimeId();
+    private void setGroundBlock(@NonNull ConstantBlock groundBlock) {
+        this.ground = groundBlock.runtimeId();
     }
 
     @JsonSetter("seaBlock")
-    private void setSeaBlock(ConstantBlock block) {
-        this.sea = block.runtimeId();
+    private void setSeaBlock(@NonNull ConstantBlock seaBlock) {
+        this.sea = seaBlock.runtimeId();
     }
 
     private static final class ThreadData {

@@ -61,6 +61,10 @@ depthNoise:
 terrainSmoothing:
   radius: 2
   scale: 4
+  heightFactor: 1.0
+  heightOffset: 0.0
+  heightVariationFactor: 1.0
+  heightVariationOffset: 0.0
 specialHeightVariation: 0.25
 heightFactor: 64.0
 heightOffset: 64.0
