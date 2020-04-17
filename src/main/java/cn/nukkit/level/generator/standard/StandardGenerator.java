@@ -89,37 +89,39 @@ public final class StandardGenerator implements Generator {
         t.start();
     }
 
-    private static final int STEP_X = 4;
-    private static final int STEP_Y = 8;
-    private static final int STEP_Z = STEP_X;
+    public static final int STEP_X = 4;
+    public static final int STEP_Y = 8;
+    public static final int STEP_Z = STEP_X;
 
-    private static final int SAMPLES_X = 16 / STEP_X;
-    private static final int SAMPLES_Y = 256 / STEP_Y;
-    private static final int SAMPLES_Z = 16 / STEP_Z;
+    public static final int SAMPLES_X = 16 / STEP_X;
+    public static final int SAMPLES_Y = 256 / STEP_Y;
+    public static final int SAMPLES_Z = 16 / STEP_Z;
 
-    private static final int CACHE_X = SAMPLES_X + 1;
-    private static final int CACHE_Y = SAMPLES_Y + 1;
-    private static final int CACHE_Z = SAMPLES_Z + 1;
+    public static final int CACHE_X = SAMPLES_X + 1;
+    public static final int CACHE_Y = SAMPLES_Y + 1;
+    public static final int CACHE_Z = SAMPLES_Z + 1;
 
-    private static final double SCALE_X = 1.0d / STEP_X;
-    private static final double SCALE_Y = 1.0d / STEP_Y;
-    private static final double SCALE_Z = 1.0d / STEP_Z;
+    public static final double SCALE_X = 1.0d / STEP_X;
+    public static final double SCALE_Y = 1.0d / STEP_Y;
+    public static final double SCALE_Z = 1.0d / STEP_Z;
 
     private static final Ref<ThreadData> THREAD_DATA_CACHE = ThreadRef.soft(ThreadData::new);
 
     @JsonProperty
-    private BiomeMap      biomes;
+    //porktodo: make this private again
+    BiomeMap biomes;
     @JsonProperty
-    private DensitySource density;
+    //porktodo: make this private again
+    DensitySource density;
     @JsonProperty
     private Decorator[] decorators = Decorator.EMPTY_ARRAY;
     @JsonProperty
     private Populator[] populators = Populator.EMPTY_ARRAY;
 
-    private final Map<GenerationBiome, Decorator[]> decoratorLookup  = new ConcurrentHashMap<>();
+    private final Map<GenerationBiome, Decorator[]> decoratorLookup = new ConcurrentHashMap<>();
     private final Map<GenerationBiome, Populator[]> populatorsLookup = new ConcurrentHashMap<>();
 
-    private final Function<GenerationBiome, Decorator[]> decoratorLookupComputer  = biome -> Arrays.stream(this.decorators)
+    private final Function<GenerationBiome, Decorator[]> decoratorLookupComputer = biome -> Arrays.stream(this.decorators)
             .flatMap(decorator -> decorator instanceof NextGenerationPass ? Arrays.stream(biome.getDecorators()) : Stream.of(decorator))
             .toArray(Decorator[]::new);
     private final Function<GenerationBiome, Populator[]> populatorsLookupComputer = biome -> Arrays.stream(this.populators)
@@ -128,10 +130,10 @@ public final class StandardGenerator implements Generator {
 
     @JsonProperty("groundBlock")
     @Getter
-    private int ground   = -1;
+    private int ground = -1;
     @JsonProperty("seaBlock")
     @Getter
-    private int sea      = -1;
+    private int sea = -1;
     @JsonProperty
     @Getter
     private int seaLevel = -1;
@@ -175,31 +177,22 @@ public final class StandardGenerator implements Generator {
         final int baseZ = chunkZ << 4;
         final ThreadData threadData = THREAD_DATA_CACHE.get();
 
-        final BiomeMap biomeMap = this.biomes;
-
         //compute initial densities
-        final double[] densityCache = threadData.densityCache;
-        final DensitySource density = this.density; //avoid expensive getfield opcode
-        for (int i = 0, x = 0; x < CACHE_X; x++) {
-            for (int y = 0; y < CACHE_Y; y++) {
-                for (int z = 0; z < CACHE_Z; z++) {
-                    densityCache[i++] = density.get(baseX + x * STEP_X, y * STEP_Y, baseZ + z * STEP_Z, biomeMap);
-                }
-            }
-        }
+        final double[] densityCache = threadData.densityCache
+                = this.density.get(threadData.densityCache, this.biomes, baseX, 0, baseZ, CACHE_X, CACHE_Y, CACHE_Z, STEP_X, STEP_Y, STEP_Z);
 
         //interpolate densities and build initial surfaces
-        for (int sectionX = 0; sectionX < SAMPLES_X; sectionX++) {
-            for (int sectionY = 0; sectionY < SAMPLES_Y; sectionY++) {
-                for (int i = (sectionX * CACHE_Y + sectionY) * CACHE_Z, sectionZ = 0; sectionZ < SAMPLES_Z; sectionZ++, i++) {
+        for (int i = 0, sectionX = 0; sectionX < SAMPLES_X; sectionX++) {
+            for (int sectionZ = 0; sectionZ < SAMPLES_Z; sectionZ++) {
+                for (int sectionY = 0; sectionY < SAMPLES_Y; sectionY++, i++) {
                     double dxyz = densityCache[i];
-                    double dxyZ = densityCache[i + 1];
-                    double dxYz = densityCache[i + CACHE_Z];
-                    double dxYZ = densityCache[i + CACHE_Z + 1];
+                    double dxYz = densityCache[i + 1];
+                    double dxyZ = densityCache[i + CACHE_Y];
+                    double dxYZ = densityCache[i + CACHE_Y + 1];
                     double dXyz = densityCache[i + CACHE_Y * CACHE_Z];
-                    double dXyZ = densityCache[i + CACHE_Y * CACHE_Z + 1];
-                    double dXYz = densityCache[i + CACHE_Y * CACHE_Z + CACHE_Z];
-                    double dXYZ = densityCache[i + CACHE_Y * CACHE_Z + CACHE_Z + 1];
+                    double dXYz = densityCache[i + CACHE_Y * CACHE_Z + 1];
+                    double dXyZ = densityCache[i + CACHE_Y * CACHE_Z + CACHE_Y];
+                    double dXYZ = densityCache[i + CACHE_Y * CACHE_Z + CACHE_Y + 1];
 
                     double bx00 = dxyz;
                     double bx01 = dxyZ;
@@ -244,11 +237,13 @@ public final class StandardGenerator implements Generator {
                         }
                     }
                 }
+                i++;
             }
+            i += CACHE_Y;
         }
 
         //run decorators and set biomes
-        GenerationBiome[] biomes = threadData.biomes = biomeMap.getRegion(threadData.biomes, baseX, baseZ, 16, 16);
+        GenerationBiome[] biomes = threadData.biomes = this.biomes.getRegion(threadData.biomes, baseX, baseZ, 16, 16);
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 GenerationBiome biome = biomes[(x << 4) | z];
@@ -271,8 +266,8 @@ public final class StandardGenerator implements Generator {
 
         //run populators
         GenerationBiome[] biomes = threadData.biomes = this.biomes.getRegion(threadData.biomes, baseX, baseZ, 16, 16);
-        for (int x = 0; x < 16; x++)    {
-            for (int z = 0; z < 16; z++)     {
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
                 for (Populator populator : this.populatorsLookup.computeIfAbsent(biomes[(x << 4) | z], this.populatorsLookupComputer)) {
                     populator.populate(random, level, baseX + x, baseZ + z);
                 }
@@ -317,7 +312,7 @@ public final class StandardGenerator implements Generator {
     }
 
     private static final class ThreadData {
-        private final double[]        densityCache = new double[CACHE_X * CACHE_Y * CACHE_Z];
+        private double[] densityCache;
         private GenerationBiome[] biomes;
     }
 }

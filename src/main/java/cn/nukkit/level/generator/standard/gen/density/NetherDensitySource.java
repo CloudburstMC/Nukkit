@@ -4,9 +4,7 @@ import cn.nukkit.level.generator.standard.StandardGenerator;
 import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
 import cn.nukkit.level.generator.standard.gen.noise.NoiseGenerator;
 import cn.nukkit.level.generator.standard.misc.AbstractGenerationPass;
-import cn.nukkit.level.generator.standard.misc.TerrainDoubleCache;
 import cn.nukkit.utils.Identifier;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.NonNull;
@@ -52,7 +50,7 @@ public class NetherDensitySource extends AbstractGenerationPass implements Densi
     }
 
     @Override
-    public double get(int x, int y, int z, @NonNull BiomeMap biomes) {
+    public double get(@NonNull BiomeMap biomes, int x, int y, int z) {
         if (y >= 128)    {
             return 0.0d;
         }

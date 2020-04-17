@@ -62,7 +62,7 @@ public class EndDensitySource extends AbstractGenerationPass implements DensityS
     }
 
     @Override
-    public double get(int x, int y, int z, @NonNull BiomeMap biomes) {
+    public double get(@NonNull BiomeMap biomes, int x, int y, int z) {
         double xd = x; //only do floating-point conversion once
         double yd = y;
         double zd = z;

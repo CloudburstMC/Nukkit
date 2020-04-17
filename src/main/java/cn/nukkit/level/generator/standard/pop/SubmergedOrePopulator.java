@@ -59,7 +59,7 @@ public class SubmergedOrePopulator extends ChancePopulator.Column {
                 break;
             }
         }
-        if (y == 0 || !this.start.test(level.getBlockRuntimeIdUnsafe(blockX, y + 1, blockZ, 0))) {
+        if (y <= 0 || y >= 255 || !this.start.test(level.getBlockRuntimeIdUnsafe(blockX, y + 1, blockZ, 0))) {
             return;
         }
 
