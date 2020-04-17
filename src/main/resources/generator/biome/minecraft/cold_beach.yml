@@ -12,13 +12,11 @@ decorators:
     deep: "sandstone"
     deepSize: "1-4"
 
+finishers:
     # Snow layer on ground
   - id: "nukkitx:cover"
-    on: "grass"
+    on: "sand,stone"
     cover: "snow_layer"
-
-populators:
-  - id: "nukkitx:next"
 
     # Ice layer on water
   - id: "nukkitx:replace_top"

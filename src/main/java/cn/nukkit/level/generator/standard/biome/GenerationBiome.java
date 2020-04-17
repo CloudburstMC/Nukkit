@@ -52,7 +52,7 @@ public final class GenerationBiome {
 
             if (decorators == null) {
                 decorators = Decorator.EMPTY_ARRAY;
-            } else if (decorators == Decorator.EMPTY_ARRAY) {
+            } else if (decorators.length == 0) {
                 decorators = parent.decorators;
             } else {
                 decorators = Arrays.stream(decorators)
@@ -61,7 +61,7 @@ public final class GenerationBiome {
             }
             if (populators == null) {
                 populators = Populator.EMPTY_ARRAY;
-            } else if (populators == Populator.EMPTY_ARRAY) {
+            } else if (populators.length == 0) {
                 populators = parent.populators;
             } else {
                 populators = Arrays.stream(populators)
@@ -70,7 +70,7 @@ public final class GenerationBiome {
             }
             if (finishers == null) {
                 finishers = Finisher.EMPTY_ARRAY;
-            } else if (finishers == Finisher.EMPTY_ARRAY) {
+            } else if (finishers.length == 0) {
                 finishers = parent.finishers;
             } else {
                 finishers = Arrays.stream(finishers)

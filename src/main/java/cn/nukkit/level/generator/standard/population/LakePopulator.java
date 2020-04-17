@@ -4,6 +4,7 @@ import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.standard.StandardGenerator;
 import cn.nukkit.level.generator.standard.misc.IntRange;
+import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.misc.selector.BlockSelector;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
@@ -43,12 +44,23 @@ public class LakePopulator extends ChancePopulator.Column {
     @JsonProperty
     protected BlockSelector border;
 
+    @JsonProperty
+    protected BlockFilter surfaceBlocks;
+
+    @JsonProperty
+    protected BlockFilter replaceWithSurface;
+
     @Override
     protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
         super.init0(levelSeed, localSeed, generator);
 
         Objects.requireNonNull(this.height, "height must be set!");
         Objects.requireNonNull(this.type, "type must be set!");
+
+        if (this.surfaceBlocks != null || this.replaceWithSurface != null) {
+            Objects.requireNonNull(this.surfaceBlocks, "replaceWithSurface requires surfaceBlocks to be set!");
+            Objects.requireNonNull(this.replaceWithSurface, "surfaceBlocks requires replaceWithSurface to be set!");
+        }
     }
 
     @Override
@@ -56,7 +68,7 @@ public class LakePopulator extends ChancePopulator.Column {
         blockX -= 8;
         blockZ -= 8;
         final int blockY = min(level.getChunk(blockX >> 4, blockZ >> 4).getHighestBlock(blockX & 0xF, blockZ & 0xF), this.height.rand(random));
-        if (blockY <= 8 || !this.height.contains(blockY))    {
+        if (blockY <= 1 || blockY >= 247 || !this.height.contains(blockY)) {
             return;
         }
 
@@ -126,12 +138,46 @@ public class LakePopulator extends ChancePopulator.Column {
                 }
             }
 
+            int surface = -1;
+
+            //if needed: figure out what the current surface block is
+            COMPUTE_SURFACE:
+            if (this.surfaceBlocks != null) {
+                BlockFilter surfaceBlocks = this.surfaceBlocks;
+                for (int y = 4; y < 8; y++) {
+                    for (int x = 0; x < 16; x++) {
+                        for (int z = 0; z < 16; z++) {
+                            if (points.get((y << 8) | (x << 4) | z) && surfaceBlocks.test(surface = level.getBlockRuntimeIdUnsafe(blockX + x, blockY + y, blockZ + z, 0))) {
+                                break COMPUTE_SURFACE;
+                            }
+                        }
+                    }
+                }
+
+                //couldn't find any surface
+                surface = -1;
+            }
+
             //place actual liquid blocks
             for (int y = 0; y < 8; y++) {
                 for (int x = 0; x < 16; x++) {
                     for (int z = 0; z < 16; z++) {
                         if (points.get((y << 8) | (x << 4) | z)) {
                             level.setBlockRuntimeIdUnsafe(blockX + x, blockY + y, blockZ + z, 0, y >= 4 ? 0 : type);
+                        }
+                    }
+                }
+            }
+
+            //if needed: replace ground with surface blocks
+            if (surface >= 0) {
+                BlockFilter replaceWithSurface = this.replaceWithSurface;
+                for (int y = 4; y < 8; y++) {
+                    for (int x = 0; x < 16; x++) {
+                        for (int z = 0; z < 16; z++) {
+                            if (points.get((y << 8) | (x << 4) | z) && replaceWithSurface.test(level.getBlockRuntimeIdUnsafe(blockX + x, blockY + y - 1, blockZ + z, 0))) {
+                                level.setBlockRuntimeIdUnsafe(blockX + x, blockY + y - 1, blockZ + z, 0, surface);
+                            }
                         }
                     }
                 }

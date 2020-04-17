@@ -22,5 +22,5 @@ populators:
     height: "1-3"
     block: "reeds"
     on: "sand"
-    replace: "air,snow_layer" #allow replacing snow layer as well for cold beach
+    replace: "air"
     water: "water"

@@ -1,11 +1,9 @@
 parent: "minecraft:taiga"
 
-populators:
-  - id: "nukkitx:next"
-
+finishers:
     # Snow layer on ground
   - id: "nukkitx:cover"
-    on: "grass,leaves#1"
+    on: "grass,stone,leaves#1"
     cover: "snow_layer"
 
     # Ice layer on water

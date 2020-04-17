@@ -1,11 +1,9 @@
 parent: "minecraft:river"
 
-populators:
-  - id: "nukkitx:next"
-
+finishers:
     # Snow layer on ground
   - id: "nukkitx:cover"
-    on: "grass"
+    on: "grass,stone"
     cover: "snow_layer"
 
     # Ice layer on water

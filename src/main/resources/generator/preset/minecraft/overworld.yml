@@ -24,6 +24,8 @@ populators:
   - id: "nukkitx:lake"
     chance: 0.0009765625 # about 1 per 4 chunks
     block: "water"
+    surfaceBlocks: "grass,podzol,mycelium"
+    replaceWithSurface: "dirt"
 
     # Lava lakes (underground)
   - id: "nukkitx:lake"
@@ -38,6 +40,8 @@ populators:
     height: "64-255"
     block: "lava"
     border: "stone"
+    surfaceBlocks: "grass,podzol,mycelium"
+    replaceWithSurface: "dirt"
 
   - id: "nukkitx:next"
 
