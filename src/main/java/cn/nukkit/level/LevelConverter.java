@@ -23,6 +23,7 @@ public class LevelConverter {
         LevelData data = new LevelData();
         data.setName("converting");
         data.setGenerator(VoidGenerator.ID);
+        data.setRandomSeed(0L);
         this.fakeLevel = new Level(Server.getInstance(), "converting", newLevelProvider, data);
     }
 

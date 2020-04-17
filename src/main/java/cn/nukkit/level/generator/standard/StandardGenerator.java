@@ -144,6 +144,7 @@ public final class StandardGenerator implements Generator {
     private int seaLevel = -1;
 
     private StandardGenerator init(long seed) {
+        System.out.printf("Initializing generator with seed %016x\n", seed);
         try {
             Collection<GenerationBiome> biomes = StandardGeneratorStores.generationBiome().snapshot();
 

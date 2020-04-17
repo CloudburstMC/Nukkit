@@ -1930,7 +1930,8 @@ public class Server {
             Identifier generator = Identifier.fromString(this.getConfig("worlds." + name + ".generator"));
             String options = this.getConfig("worlds." + name + ".options", "");
 
-            levelFutures.add(this.loadLevel().id(name).seed(seed)
+            levelFutures.add(this.loadLevel().id(name)
+                    .seed(seed)
                     .generator(generator == null ? this.generatorRegistry.getFallback() : generator)
                     .generatorOptions(options)
                     .load());

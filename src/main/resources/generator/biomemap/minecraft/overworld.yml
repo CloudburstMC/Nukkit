@@ -3,6 +3,7 @@
 # Author: DaPorkchop_
 
 id: "nukkitx:complex"
+seed: "overworld"
 fallback: "ocean"
 root:
   # Finally, scale everything up by a factor of 4 using the smoother voronoi algorithm.
