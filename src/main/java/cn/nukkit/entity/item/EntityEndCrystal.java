@@ -32,6 +32,8 @@ public class EntityEndCrystal extends Entity implements EntityExplosive {
         if (this.namedTag.contains("ShowBottom")) {
             this.setShowBase(this.namedTag.getBoolean("ShowBottom"));
         }
+
+        this.fireProof = true;
     }
 
     @Override
