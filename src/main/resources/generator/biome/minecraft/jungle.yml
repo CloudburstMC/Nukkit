@@ -1,11 +1,7 @@
-dict: "nukkitx:vanilla"
 
 elevationVanilla:
   height: 0.1
   variation: 0.2
-
-temperature: 0.95
-rainfall: 0.9
 
 decorators:
   - id: "nukkitx:surface"

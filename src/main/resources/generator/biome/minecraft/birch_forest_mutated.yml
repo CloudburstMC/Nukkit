@@ -1,12 +1,8 @@
-dict: "nukkitx:vanilla"
 parent: "minecraft:forest"
 
 elevationVanilla:
   height: 0.2
   variation: 0.4
-
-temperature: 0.6
-rainfall: 0.6
 
 populators:
     # Trees

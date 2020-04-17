@@ -1,11 +1,14 @@
 package cn.nukkit.utils;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import net.daporkchop.lib.common.ref.Ref;
@@ -21,11 +24,12 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Matcher;
 
-@JsonDeserialize(using = Identifier.Deserializer.class)
+//@JsonDeserialize(using = Identifier.Deserializer.class)
+@JsonSerialize(using = ToStringSerializer.class)
 public final class Identifier implements Comparable<Identifier> {
     private static final char NAMESPACE_SEPARATOR = ':';
 
-    public static final Identifier EMPTY = new Identifier("", "", "" + NAMESPACE_SEPARATOR);
+    public static final Identifier EMPTY = new Identifier("", "", String.valueOf(NAMESPACE_SEPARATOR));
 
     private static final Ref<Matcher> MATCHER_CACHE = ThreadRef.regex("^(?>minecraft:)?(?>([a-z0-9_]*)" + NAMESPACE_SEPARATOR + ")?([a-zA-Z0-9_]*)$");
 
@@ -54,6 +58,7 @@ public final class Identifier implements Comparable<Identifier> {
         this.hashCode = FastPRandom.mix32(fullName.chars().asLongStream().reduce(0L, (a, b) -> FastPRandom.mix64(a + b)));
     }
 
+    @JsonCreator
     public static Identifier fromString(String identifier) {
         if (Preconditions.checkNotNull(identifier, "identifier").isEmpty()) {
             //check for empty before using matcher

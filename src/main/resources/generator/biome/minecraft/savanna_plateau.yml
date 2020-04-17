@@ -1,9 +1,6 @@
-dict: "nukkitx:vanilla"
 parent: "minecraft:savanna"
 
 elevationVanilla:
   height: 1.5
   variation: 0.025
 
-temperature: 1.0
-rainfall: 0.0

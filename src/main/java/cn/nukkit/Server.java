@@ -197,6 +197,7 @@ public class Server {
     private final BlockEntityRegistry blockEntityRegistry = BlockEntityRegistry.get();
     private final ItemRegistry itemRegistry = ItemRegistry.get();
     private final EntityRegistry entityRegistry = EntityRegistry.get();
+    private final BiomeRegistry biomeRegistry = BiomeRegistry.get();
 
     private final Map<InetSocketAddress, Player> players = new HashMap<>();
 
@@ -520,6 +521,7 @@ public class Server {
             this.blockRegistry.close();
             this.itemRegistry.close();
             this.entityRegistry.close();
+            this.biomeRegistry.close();
             this.gameRuleRegistry.close();
             this.generatorRegistry.close();
             this.storageRegistry.close();

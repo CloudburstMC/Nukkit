@@ -1,12 +1,8 @@
-dict: "nukkitx:vanilla"
 parent: "minecraft:plains"
 
 elevationVanilla:
   height: 0.425
   variation: 0.45
-
-temperature: 0.0
-rainfall: 0.5
 
 decorators:
   - id: "nukkitx:surface"

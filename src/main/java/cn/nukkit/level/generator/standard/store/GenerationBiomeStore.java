@@ -2,13 +2,11 @@ package cn.nukkit.level.generator.standard.store;
 
 import cn.nukkit.Nukkit;
 import cn.nukkit.level.generator.standard.StandardGeneratorUtils;
-import cn.nukkit.level.generator.standard.biome.BiomeDictionary;
 import cn.nukkit.level.generator.standard.biome.BiomeElevation;
 import cn.nukkit.level.generator.standard.biome.GenerationBiome;
 import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
 import cn.nukkit.level.generator.standard.pop.Populator;
 import cn.nukkit.utils.Identifier;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -54,8 +52,7 @@ public final class GenerationBiomeStore extends AbstractGeneratorStore<Generatio
     @JsonDeserialize
     public static final class TempBiome {
         @JsonProperty
-        @JsonAlias({"dict"})
-        private BiomeDictionary dictionary;
+        private Identifier realId;
 
         @JsonProperty
         private GenerationBiome parent;
@@ -67,20 +64,8 @@ public final class GenerationBiomeStore extends AbstractGeneratorStore<Generatio
 
         private BiomeElevation elevation = BiomeElevation.DEFAULT;
 
-        @JsonProperty
-        private double temperature = Double.NaN;
-        @JsonProperty
-        private double rainfall    = Double.NaN;
-
         public GenerationBiome build(@NonNull Identifier id, int internalId) {
-            Preconditions.checkState(this.dictionary != null || (this.parent != null && this.parent.getDictionary() != null), "dictionary must be set!");
-
             return new GenerationBiome(this, id, internalId);
-        }
-
-        @JsonSetter("dictionary")
-        private void setDictionary(Identifier dictionaryId) {
-            this.dictionary = StandardGeneratorStores.biomeDictionary().find(dictionaryId);
         }
 
         @JsonSetter("elevationAbsolute")

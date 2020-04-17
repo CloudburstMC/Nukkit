@@ -1,12 +1,16 @@
 package cn.nukkit.level.generator.standard.biome;
 
+import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.generator.standard.gen.decorator.Decorator;
 import cn.nukkit.level.generator.standard.misc.NextGenerationPass;
 import cn.nukkit.level.generator.standard.pop.Populator;
 import cn.nukkit.level.generator.standard.store.GenerationBiomeStore;
+import cn.nukkit.registry.BiomeRegistry;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.common.base.Preconditions;
 import lombok.NonNull;
+import net.daporkchop.lib.common.util.PorkUtil;
 
 import java.util.Arrays;
 import java.util.stream.Stream;
@@ -21,41 +25,42 @@ import static net.daporkchop.lib.common.util.PorkUtil.*;
 @JsonDeserialize(using = GenerationBiomeDeserializer.class)
 public final class GenerationBiome {
     private final Identifier      id;
-    private final BiomeDictionary dictionary;
+    private final Biome biome;
 
     private final Decorator[] decorators;
     private final Populator[] populators;
 
     private final BiomeElevation elevation;
 
-    private final double temperature;
-    private final double rainfall;
-
     private final int runtimeId;
     private final int internalId;
 
     public GenerationBiome(@NonNull GenerationBiomeStore.TempBiome temp, @NonNull Identifier id, int internalId) {
-        this.id = id;
-        this.dictionary = temp.getDictionary();
+        Biome biome = BiomeRegistry.get().getBiome(PorkUtil.fallbackIfNull(temp.getRealId(), id));
 
-        Decorator[] decorators = fallbackIfNull(temp.getDecorators(), Decorator.EMPTY_ARRAY);
-        Populator[] populators = fallbackIfNull(temp.getPopulators(), Populator.EMPTY_ARRAY);
+        Decorator[] decorators = temp.getDecorators();
+        Populator[] populators = temp.getPopulators();
 
         BiomeElevation elevation = temp.getElevation();
 
-        double temperature = temp.getTemperature();
-        double rainfall = temp.getRainfall();
-
         GenerationBiome parent = temp.getParent();
         if (parent != null) {
-            if (decorators == Decorator.EMPTY_ARRAY) {
+            if (biome == null)  {
+                biome = parent.biome;
+            }
+
+            if (decorators == null) {
+                decorators = Decorator.EMPTY_ARRAY;
+            } else if (decorators == Decorator.EMPTY_ARRAY) {
                 decorators = parent.decorators;
             } else {
                 decorators = Arrays.stream(decorators)
                         .flatMap(decorator -> decorator instanceof NextGenerationPass ? Arrays.stream(parent.getDecorators()) : Stream.of(decorator))
                         .toArray(Decorator[]::new);
             }
-            if (populators == Populator.EMPTY_ARRAY) {
+            if (populators == null) {
+                populators = Populator.EMPTY_ARRAY;
+            } else if (populators == Populator.EMPTY_ARRAY) {
                 populators = parent.populators;
             } else {
                 populators = Arrays.stream(populators)
@@ -66,29 +71,24 @@ public final class GenerationBiome {
             if (elevation == BiomeElevation.DEFAULT) {
                 elevation = parent.elevation;
             }
-
-            if (Double.isNaN(temperature)) {
-                temperature = parent.temperature;
-            }
-            if (Double.isNaN(rainfall)) {
-                temperature = parent.rainfall;
-            }
         } else {
-            if (Double.isNaN(temperature)) {
-                temperature = 0.5d;
+            if (decorators == null) {
+                decorators = Decorator.EMPTY_ARRAY;
             }
-            if (Double.isNaN(rainfall)) {
-                temperature = 0.5d;
+            if (populators == null) {
+                populators = Populator.EMPTY_ARRAY;
             }
         }
 
+        this.id = id;
+        Preconditions.checkState((this.biome = biome) != null, temp.getRealId() == null ? "Unknown biome %s! Consider adding a 'realId' entry if this is a virtual biome." : "Unknown real biome %s!", PorkUtil.fallbackIfNull(temp.getRealId(), id));
+
         this.decorators = decorators;
         this.populators = populators;
-        this.elevation = elevation;
-        this.temperature = temperature;
-        this.rainfall = rainfall;
 
-        this.runtimeId = this.dictionary.get(id);
+        this.elevation = elevation;
+
+        this.runtimeId = BiomeRegistry.get().getRuntimeId(this.biome);
         this.internalId = internalId;
     }
 
@@ -96,8 +96,8 @@ public final class GenerationBiome {
         return this.id;
     }
 
-    public BiomeDictionary getDictionary() {
-        return this.dictionary;
+    public Biome getBiome() {
+        return this.biome;
     }
 
     public Decorator[] getDecorators() {
@@ -110,14 +110,6 @@ public final class GenerationBiome {
 
     public BiomeElevation getElevation() {
         return this.elevation;
-    }
-
-    public double getTemperature() {
-        return this.temperature;
-    }
-
-    public double getRainfall() {
-        return this.rainfall;
     }
 
     public int getRuntimeId() {

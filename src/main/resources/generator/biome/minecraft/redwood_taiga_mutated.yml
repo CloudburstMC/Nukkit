@@ -1,8 +1,4 @@
-dict: "nukkitx:vanilla"
 parent: "minecraft:mega_taiga"
-
-temperature: 0.25
-rainfall: 0.8
 
 populators:
     # Mossy cobblestone blobs

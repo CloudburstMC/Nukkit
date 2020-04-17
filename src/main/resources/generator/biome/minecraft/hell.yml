@@ -1,11 +1,7 @@
-dict: "nukkitx:vanilla"
 
 elevationVanilla:
   height: 0.1
   variation: 0.2
-
-temperature: 0.5
-rainfall: 0.5
 
 decorators:
     # Determine whether anything other than netherrack may generate at the given coordinates

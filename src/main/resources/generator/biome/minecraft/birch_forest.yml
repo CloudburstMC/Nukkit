@@ -1,8 +1,4 @@
-dict: "nukkitx:vanilla"
 parent: "minecraft:forest"
-
-temperature: 0.6
-rainfall: 0.6
 
 populators:
     # Fallen trees

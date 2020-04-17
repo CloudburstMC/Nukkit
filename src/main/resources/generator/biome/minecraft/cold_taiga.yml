@@ -1,8 +1,4 @@
-dict: "nukkitx:vanilla"
 parent: "minecraft:taiga"
-
-temperature: -0.5
-rainfall: 0.4
 
 populators:
   - id: "nukkitx:next"

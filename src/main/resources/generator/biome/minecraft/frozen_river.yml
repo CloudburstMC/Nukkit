@@ -1,8 +1,4 @@
-dict: "nukkitx:vanilla"
 parent: "minecraft:river"
-
-temperature: 0.0
-rainfall: 0.5
 
 populators:
   - id: "nukkitx:next"
