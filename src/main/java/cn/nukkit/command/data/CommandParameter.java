@@ -18,8 +18,8 @@ public class CommandParameter {
     public final static String ARG_TYPE_RAW_TEXT = "rawtext";
     public final static String ARG_TYPE_INT = "int";
 
-    public static final String ENUM_TYPE_ITEM_LIST = "itemType";
-    public static final String ENUM_TYPE_BLOCK_LIST = "blockType";
+    public static final String ENUM_TYPE_ITEM_LIST = "Item";
+    public static final String ENUM_TYPE_BLOCK_LIST = "Block";
     public static final String ENUM_TYPE_COMMAND_LIST = "commandName";
     public static final String ENUM_TYPE_ENCHANTMENT_LIST = "enchantmentType";
     public static final String ENUM_TYPE_ENTITY_LIST = "entityType";

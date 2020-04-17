@@ -137,7 +137,7 @@ public class BlockEntityRegistry implements Registry {
         registerVanilla(SKULL, SkullBlockEntity::new, "Skull");
         registerVanilla(FLOWER_POT, FlowerPotBlockEntity::new, "FlowerPot");
         registerVanilla(BREWING_STAND, BrewingStandBlockEntity::new, "BrewingStand");
-        //registerVanilla(DAYLIGHT_DETECTOR, DaylightDetectorBlockEntity::new, "DaylightDetector");
+        registerVanilla(DAYLIGHT_DETECTOR, DaylightDetectorBlockEntity::new, "DaylightDetector");
         registerVanilla(NOTEBLOCK, MusicBlockEntity::new, "Music");
         registerVanilla(ITEM_FRAME, ItemFrameBlockEntity::new, "ItemFrame");
         registerVanilla(CAULDRON, CauldronBlockEntity::new, "Cauldron");

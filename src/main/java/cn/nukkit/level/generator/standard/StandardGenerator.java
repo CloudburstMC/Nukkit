@@ -81,7 +81,7 @@ public final class StandardGenerator implements Generator {
                         StandardGenerator generator = uncheckedCast(player.getLevel().getGenerator());
                         player.sendTip(generator.biomes.get(floorI(player.getX()), floorI(player.getZ())).getId().toString());
 
-                        player.addEffect(Effect.getEffect(Effect.SPEED).setDuration(160).setAmplifier(3).setVisible(false));
+                        player.addEffect(Effect.getEffect(Effect.SWIFTNESS).setDuration(160).setAmplifier(3).setVisible(false));
                     });
                 } catch (RuntimeException e) {
                 }
