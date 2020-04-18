@@ -15,7 +15,7 @@ populators:
         chance: 0.0003487723214 # about 1.25 per 14 chunks
         height: "32-56"
         radius: "4-6"
-        type: "end_stone"
+        block: "end_stone"
 
         # Chorus plants
       - id: "nukkitx:tree"

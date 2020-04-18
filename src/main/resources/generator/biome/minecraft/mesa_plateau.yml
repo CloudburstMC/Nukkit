@@ -31,7 +31,7 @@ decorators:
               - "stained_hardened_clay#8" # light gray
               - "stained_hardened_clay#12" # brown
               - "stained_hardened_clay#14" # red
-            with: "grass"
+            block: "grass"
         below:
           - id: "nukkitx:replace_top"
             height: "86-255"
@@ -43,7 +43,7 @@ decorators:
               - "stained_hardened_clay#8" # light gray
               - "stained_hardened_clay#12" # brown
               - "stained_hardened_clay#14" # red
-            with: "dirt#1" # coarse dirt
+            block: "dirt#1" # coarse dirt
 
 populators:
   - id: "nukkitx:next"

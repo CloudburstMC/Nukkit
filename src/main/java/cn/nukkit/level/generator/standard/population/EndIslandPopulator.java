@@ -26,8 +26,7 @@ public class EndIslandPopulator extends ChancePopulator.Column {
     protected IntRange height;
 
     @JsonProperty
-    @JsonAlias({"types", "block", "blocks"})
-    protected BlockSelector type;
+    protected BlockSelector block;
 
     @JsonProperty
     protected IntRange radius;
@@ -37,14 +36,14 @@ public class EndIslandPopulator extends ChancePopulator.Column {
         super.init0(levelSeed, localSeed, generator);
 
         Objects.requireNonNull(this.height, "height must be set!");
-        Objects.requireNonNull(this.type, "type must be set!");
+        Objects.requireNonNull(this.block, "block must be set!");
         Objects.requireNonNull(this.radius, "radius must be set!");
     }
 
     @Override
     protected void populate0(PRandom random, ChunkManager level, int blockX, int blockZ) {
         final int blockY = this.height.rand(random);
-        final int type = this.type.selectRuntimeId(random);
+        final int block = this.block.selectRuntimeId(random);
         double radius = this.radius.rand(random);
 
         for (int dy = 0; radius > 0.5d; dy--)   {
@@ -55,7 +54,7 @@ public class EndIslandPopulator extends ChancePopulator.Column {
             for (int f = floorI(-radius), c = ceilI(radius), dx = f; dx <= c; dx++) {
                 for (int dz = f; dz <= c; dz++) {
                     if (dx * dx + dz * dz <= (radius + 1.0d) * (radius + 1.0d)) {
-                        level.setBlockRuntimeIdUnsafe(blockX + dx, blockY + dy, blockZ + dz, 0, type);
+                        level.setBlockRuntimeIdUnsafe(blockX + dx, blockY + dy, blockZ + dz, 0, block);
                     }
                 }
             }

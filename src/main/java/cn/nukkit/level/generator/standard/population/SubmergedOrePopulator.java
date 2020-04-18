@@ -37,8 +37,7 @@ public class SubmergedOrePopulator extends ChancePopulator.Column {
     protected IntRange radius;
 
     @JsonProperty
-    @JsonAlias({"types", "block", "blocks"})
-    protected BlockSelector type;
+    protected BlockSelector block;
 
     @Override
     protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
@@ -47,7 +46,7 @@ public class SubmergedOrePopulator extends ChancePopulator.Column {
         Objects.requireNonNull(this.replace, "replace must be set!");
         Objects.requireNonNull(this.start, "start must be set!");
         Objects.requireNonNull(this.radius, "radius must be set!");
-        Objects.requireNonNull(this.type, "type must be set!");
+        Objects.requireNonNull(this.block, "block must be set!");
     }
 
     @Override
@@ -65,7 +64,7 @@ public class SubmergedOrePopulator extends ChancePopulator.Column {
 
         final int radius = this.radius.rand(random);
         final int radiusSq = radius * radius;
-        final int block = this.type.selectRuntimeId(random);
+        final int block = this.block.selectRuntimeId(random);
 
         for (int dx = -radius; dx <= radius; dx++)  {
             for (int dz = -radius; dz <= radius; dz++)  {

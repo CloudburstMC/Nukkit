@@ -3,7 +3,7 @@ parent: "minecraft:extreme_hills"
 decorators:
   - id: "nukkitx:surface"
     top: "grass"
-    fill: "dirt"
+    filler: "dirt"
 
 populators:
   - id: "nukkitx:next"

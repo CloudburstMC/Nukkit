@@ -6,7 +6,7 @@ elevationVanilla:
 decorators:
   - id: "nukkitx:surface"
     top: "mycelium"
-    fill: "dirt"
+    filler: "dirt"
 
 populators:
     # Small mushrooms

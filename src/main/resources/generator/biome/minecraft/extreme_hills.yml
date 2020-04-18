@@ -15,7 +15,7 @@ decorators:
         # Generate grass surface sometimes
       - id: "nukkitx:surface"
         top: "grass"
-        fill: "dirt"
+        filler: "dirt"
 
 populators:
     # Emerald

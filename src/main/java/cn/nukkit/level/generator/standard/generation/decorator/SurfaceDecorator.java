@@ -31,7 +31,6 @@ public class SurfaceDecorator extends DepthNoiseDecorator {
     @JsonProperty
     protected int top = -1;
     @JsonProperty
-    @JsonAlias({"fill"})
     protected int filler = -1;
 
     @JsonProperty

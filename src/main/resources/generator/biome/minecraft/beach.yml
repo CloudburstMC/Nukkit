@@ -7,7 +7,7 @@ elevationVanilla:
 decorators:
   - id: "nukkitx:surface_deep"
     top: "sand"
-    fill: "sand"
+    filler: "sand"
     deep: "sandstone"
     deepSize: "1-4"
 

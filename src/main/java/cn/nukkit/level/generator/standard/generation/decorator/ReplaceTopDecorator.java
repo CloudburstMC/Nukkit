@@ -31,7 +31,6 @@ public class ReplaceTopDecorator implements Decorator {
     protected IntRange height = IntRange.WHOLE_WORLD;
 
     @JsonProperty
-    @JsonAlias({"with", "replacement"})
     protected int block = -1;
 
     @Override

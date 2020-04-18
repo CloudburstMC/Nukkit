@@ -34,8 +34,7 @@ public class SpringPopulator extends AbstractReplacingPopulator {
     protected IntRange airCount;
 
     @JsonProperty
-    @JsonAlias({"types", "block", "blocks"})
-    protected BlockSelector type;
+    protected BlockSelector block;
 
     @Override
     protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
@@ -45,7 +44,7 @@ public class SpringPopulator extends AbstractReplacingPopulator {
         Objects.requireNonNull(this.neighbor, "neighbor must be set!");
         Objects.requireNonNull(this.neighborCount, "neighborCount must be set!");
         Objects.requireNonNull(this.airCount, "airCount must be set!");
-        Objects.requireNonNull(this.type, "type must be set!");
+        Objects.requireNonNull(this.block, "block must be set!");
     }
 
     @Override
@@ -93,7 +92,7 @@ public class SpringPopulator extends AbstractReplacingPopulator {
         }
 
         if (this.neighborCount.contains(neighbors) && this.airCount.contains(air))  {
-            level.setBlockRuntimeIdUnsafe(blockX, blockY, blockZ, 0, this.type.selectRuntimeId(random));
+            level.setBlockRuntimeIdUnsafe(blockX, blockY, blockZ, 0, this.block.selectRuntimeId(random));
             //TODO: request immediate block update
         }
     }

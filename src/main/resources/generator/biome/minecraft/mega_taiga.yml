@@ -15,15 +15,15 @@ decorators:
     above:
       - id: "nukkitx:surface"
         top: "dirt#1" # coarse dirt
-        fill: "dirt"
+        filler: "dirt"
     in:
       - id: "nukkitx:surface"
         top: "grass"
-        fill: "dirt"
+        filler: "dirt"
     below:
       - id: "nukkitx:surface"
         top: "podzol"
-        fill: "dirt"
+        filler: "dirt"
 
 populators:
     # Mossy cobblestone blobs

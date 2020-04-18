@@ -56,7 +56,7 @@ populators:
     neighbor: "netherrack"
     neighborCount: 4
     airCount: 1
-    type: "lava"
+    block: "lava"
 
     # Fire
   - id: "nukkitx:shrub"
@@ -104,4 +104,4 @@ populators:
     neighbor: "netherrack"
     neighborCount: 5
     airCount: 0
-    type: "lava"
+    block: "lava"

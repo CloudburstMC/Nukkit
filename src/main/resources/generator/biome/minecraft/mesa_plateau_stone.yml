@@ -23,4 +23,4 @@ decorators:
           - "stained_hardened_clay#8" # light gray
           - "stained_hardened_clay#12" # brown
           - "stained_hardened_clay#14" # red
-        with: "hardened_clay"
+        block: "hardened_clay"

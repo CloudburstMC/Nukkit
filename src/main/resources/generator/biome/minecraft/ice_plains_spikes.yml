@@ -7,7 +7,7 @@ elevationVanilla:
 decorators:
   - id: "nukkitx:surface"
     top: "snow"
-    fill: "dirt"
+    filler: "dirt"
 
 populators:
     # Ice spikes

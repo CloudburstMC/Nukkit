@@ -24,7 +24,7 @@ decorators:
 
   - id: "nukkitx:surface"
     top: "grass"
-    fill: "dirt"
+    filler: "dirt"
 
 populators:
     # Fallen trees

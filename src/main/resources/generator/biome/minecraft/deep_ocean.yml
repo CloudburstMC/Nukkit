@@ -7,4 +7,4 @@ elevationVanilla:
 decorators:
   - id: "nukkitx:surface"
     top: "gravel"
-    fill: "stone"
+    filler: "stone"

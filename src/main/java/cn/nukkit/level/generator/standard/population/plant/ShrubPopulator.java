@@ -28,8 +28,7 @@ public class ShrubPopulator extends AbstractPlantPopulator {
     public static final Identifier ID = Identifier.fromString("nukkitx:shrub");
 
     @JsonProperty
-    @JsonAlias({"types", "block", "blocks"})
-    protected BlockSelector type;
+    protected BlockSelector block;
 
     @JsonProperty
     protected boolean roundDown = true;
@@ -38,7 +37,7 @@ public class ShrubPopulator extends AbstractPlantPopulator {
     protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
         super.init0(levelSeed, localSeed, generator);
 
-        Objects.requireNonNull(this.type, "type must be set!");
+        Objects.requireNonNull(this.block, "block must be set!");
     }
 
     @Override
@@ -55,7 +54,7 @@ public class ShrubPopulator extends AbstractPlantPopulator {
     protected void placeCluster(PRandom random, ChunkManager level, int x, int y, int z) {
         final BlockFilter on = this.on;
         final BlockFilter replace = this.replace;
-        final int type = this.type.selectRuntimeId(random);
+        final int block = this.block.selectRuntimeId(random);
 
         for (int i = this.patchSize - 1; i >= 0; i--) {
             int blockY = y + random.nextInt(4) - random.nextInt(4);
@@ -68,7 +67,7 @@ public class ShrubPopulator extends AbstractPlantPopulator {
             IChunk chunk = level.getChunk(blockX >> 4, blockZ >> 4);
             if (on.test(chunk.getBlockRuntimeIdUnsafe(blockX & 0xF, blockY, blockZ & 0xF, 0))
                     && replace.test(chunk.getBlockRuntimeIdUnsafe(blockX & 0xF, blockY + 1, blockZ & 0xF, 0))) {
-                chunk.setBlockRuntimeIdUnsafe(blockX & 0xF, blockY + 1, blockZ & 0xF, 0, type);
+                chunk.setBlockRuntimeIdUnsafe(blockX & 0xF, blockY + 1, blockZ & 0xF, 0, block);
             }
         }
     }

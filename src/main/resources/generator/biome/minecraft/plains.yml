@@ -6,7 +6,7 @@ elevationVanilla:
 decorators:
   - id: "nukkitx:surface"
     top: "grass"
-    fill: "dirt"
+    filler: "dirt"
 
 populators:
     # Tall grass
@@ -34,7 +34,7 @@ populators:
         on: "grass"
         replace: "air,tallgrass"
         roundDown: false
-        blocks:
+        block:
           - "red_flower#4" # Red Tulip
           - "red_flower#5" # Orange Tulip
           - "red_flower#6" # White Tulip
@@ -49,7 +49,7 @@ populators:
         on: "grass"
         replace: "air,tallgrass"
         roundDown: false
-        blocks:
+        block:
           - "red_flower#4" # Red Tulip
           - "red_flower#5" # Orange Tulip
           - "red_flower#6" # White Tulip

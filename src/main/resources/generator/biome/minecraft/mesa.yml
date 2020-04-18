@@ -16,7 +16,7 @@ decorators:
         # Plain old mesa surface
       - id: "nukkitx:surface"
         top: "sand#1" # red sand
-        fill: "stained_hardened_clay#1" # orange
+        filler: "stained_hardened_clay#1" # orange
     above:
         # Generate clay layers
       - id: "nukkitx:mesa_surface"

@@ -32,8 +32,7 @@ public class BlobPopulator extends ChancePopulator.Column {
     protected BlockFilter replace = BlockFilter.AIR;
 
     @JsonProperty
-    @JsonAlias({"types", "block", "blocks"})
-    protected BlockSelector type;
+    protected BlockSelector block;
 
     @JsonProperty
     protected IntRange radius;
@@ -44,7 +43,7 @@ public class BlobPopulator extends ChancePopulator.Column {
 
         Objects.requireNonNull(this.on, "on must be set!");
         Objects.requireNonNull(this.replace, "replace must be set!");
-        Objects.requireNonNull(this.type, "type must be set!");
+        Objects.requireNonNull(this.block, "block must be set!");
         Objects.requireNonNull(this.radius, "radius must be set!");
     }
 
@@ -56,7 +55,7 @@ public class BlobPopulator extends ChancePopulator.Column {
         }
 
         final BlockFilter replace = this.replace;
-        final int type = this.type.selectRuntimeId(random);
+        final int block = this.block.selectRuntimeId(random);
         final int min = this.radius.min;
 
         for (int i = 0; i < 3; i++) {
@@ -73,7 +72,7 @@ public class BlobPopulator extends ChancePopulator.Column {
                     }
                     for (int dz = -vz; dz <= vz; dz++)  {
                         if (dx * dx + dy * dy + dz * dz <= g && replace.test(level.getBlockRuntimeIdUnsafe(blockX + dx, y + dy, blockZ + dz, 0))) {
-                            level.setBlockRuntimeIdUnsafe(blockX + dx, y + dy, blockZ + dz, 0, type);
+                            level.setBlockRuntimeIdUnsafe(blockX + dx, y + dy, blockZ + dz, 0, block);
                         }
                     }
                 }

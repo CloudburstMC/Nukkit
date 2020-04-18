@@ -6,7 +6,7 @@ elevationVanilla:
 decorators:
   - id: "nukkitx:surface"
     top: "grass"
-    fill: "dirt"
+    filler: "dirt"
 
 populators:
     # Acacia trees

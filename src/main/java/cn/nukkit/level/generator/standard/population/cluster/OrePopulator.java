@@ -29,8 +29,7 @@ public class OrePopulator extends AbstractReplacingPopulator {
     protected IntRange height;
 
     @JsonProperty
-    @JsonAlias({"types", "block", "blocks"})
-    protected BlockSelector type;
+    protected BlockSelector block;
 
     @JsonProperty
     @JsonAlias({"maxSize"})
@@ -42,7 +41,7 @@ public class OrePopulator extends AbstractReplacingPopulator {
 
         Objects.requireNonNull(this.height, "height must be set!");
         Objects.requireNonNull(this.replace, "replace must be set!");
-        Objects.requireNonNull(this.type, "type must be set!");
+        Objects.requireNonNull(this.block, "block must be set!");
         Preconditions.checkArgument(this.size > 0, "size must be at least 1!");
     }
 
@@ -50,7 +49,7 @@ public class OrePopulator extends AbstractReplacingPopulator {
     protected void populate0(PRandom random, ChunkManager level, int x, int z) {
         final int y = this.height.rand(random);
 
-        final int block = this.type.selectRuntimeId(random);
+        final int block = this.block.selectRuntimeId(random);
         final int size = this.size;
 
         double seed = random.nextDouble() * Math.PI;

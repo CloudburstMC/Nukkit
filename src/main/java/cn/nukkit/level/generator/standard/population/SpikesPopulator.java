@@ -32,8 +32,7 @@ public class SpikesPopulator extends ChancePopulator.Column {
     protected BlockFilter replace = BlockFilter.AIR;
 
     @JsonProperty
-    @JsonAlias({"types", "block", "blocks"})
-    protected BlockSelector type;
+    protected BlockSelector block;
 
     @JsonProperty
     protected IntRange height;
@@ -50,7 +49,7 @@ public class SpikesPopulator extends ChancePopulator.Column {
 
         Objects.requireNonNull(this.on, "on must be set!");
         Objects.requireNonNull(this.replace, "replace must be set!");
-        Objects.requireNonNull(this.type, "type must be set!");
+        Objects.requireNonNull(this.block, "block must be set!");
         Objects.requireNonNull(this.height, "height must be set!");
         this.tallHeight = this.tallHeight == null ? this.height : this.tallHeight;
     }
@@ -63,7 +62,7 @@ public class SpikesPopulator extends ChancePopulator.Column {
         }
 
         final BlockFilter replace = this.replace;
-        final int type = this.type.selectRuntimeId(random);
+        final int block = this.block.selectRuntimeId(random);
 
         int height = this.height.rand(random);
         final int sink = (height >> 2) + random.nextInt(2);
@@ -82,10 +81,12 @@ public class SpikesPopulator extends ChancePopulator.Column {
                     if (((dx == 0 && dz == 0) || fx * fx + fz * fz < rf)
                             && ((abs(dx) != radius && abs(dz) != radius) || random.nextInt(4) == 0)) {
                         if (y + dy < 255 && replace.test(level.getBlockRuntimeIdUnsafe(x + dx, y + dy, z + dz, 0))) {
-                            level.setBlockRuntimeIdUnsafe(x + dx, y + dy, z + dz, 0, type);
+                            level.setBlockRuntimeIdUnsafe(x + dx, y + dy, z + dz, 0, block
+        );
                         }
                         if (dy != 0 && radius > 1 && y - dy < 255 && replace.test(level.getBlockRuntimeIdUnsafe(x + dx, y - dy, z + dz, 0))) {
-                            level.setBlockRuntimeIdUnsafe(x + dx, y - dy, z + dz, 0, type);
+                            level.setBlockRuntimeIdUnsafe(x + dx, y - dy, z + dz, 0, block
+        );
                         }
                     }
                 }
@@ -94,13 +95,15 @@ public class SpikesPopulator extends ChancePopulator.Column {
 
         for (; y >= 0; y--) {
             int id = level.getBlockRuntimeIdUnsafe(x, y, z, 0);
-            if (id != type && !replace.test(id)) {
+            if (id != block
+         && !replace.test(id)) {
                 return;
             }
             for (int dx = -1; dx <= 1; dx++) {
                 for (int dz = -1; dz <= 1; dz++) {
                     if ((dx == 0 || dz == 0 || random.nextBoolean()) && replace.test(level.getBlockRuntimeIdUnsafe(x + dx, y, z + dz, 0))) {
-                        level.setBlockRuntimeIdUnsafe(x + dx, y, z + dz, 0, type);
+                        level.setBlockRuntimeIdUnsafe(x + dx, y, z + dz, 0, block
+        );
                     }
                 }
             }

@@ -34,12 +34,7 @@ public class LakePopulator extends ChancePopulator.Column {
     protected IntRange height = IntRange.WHOLE_WORLD;
 
     @JsonProperty
-    @JsonAlias({
-            "types",
-            "block",
-            "blocks"
-    })
-    protected BlockSelector type;
+    protected BlockSelector block;
 
     @JsonProperty
     protected BlockSelector border;
@@ -55,7 +50,7 @@ public class LakePopulator extends ChancePopulator.Column {
         super.init0(levelSeed, localSeed, generator);
 
         Objects.requireNonNull(this.height, "height must be set!");
-        Objects.requireNonNull(this.type, "type must be set!");
+        Objects.requireNonNull(this.block, "block must be set!");
 
         if (this.surfaceBlocks != null || this.replaceWithSurface != null) {
             Objects.requireNonNull(this.surfaceBlocks, "replaceWithSurface requires surfaceBlocks to be set!");
@@ -72,7 +67,7 @@ public class LakePopulator extends ChancePopulator.Column {
             return;
         }
 
-        final int type = this.type.selectRuntimeId(random);
+        final int block = this.block.selectRuntimeId(random);
 
         try (Handle<BitSet> handle = BITSET_CACHE.get()) {
             //BitSet has 8x greater storage density than a boolean[], so the additional overhead is negligible compared to the better cache utilization
@@ -125,7 +120,7 @@ public class LakePopulator extends ChancePopulator.Column {
                             int runtimeId = level.getBlockRuntimeIdUnsafe(blockX + x, blockY + y, blockZ + z, 0);
 
                             if (y < 4) {
-                                if (runtimeId != type && !BlockRegistry.get().getBlock(runtimeId).isSolid()) {
+                                if (runtimeId != block && !BlockRegistry.get().getBlock(runtimeId).isSolid()) {
                                     return;
                                 }
                             } else {
@@ -163,7 +158,7 @@ public class LakePopulator extends ChancePopulator.Column {
                 for (int x = 0; x < 16; x++) {
                     for (int z = 0; z < 16; z++) {
                         if (points.get((y << 8) | (x << 4) | z)) {
-                            level.setBlockRuntimeIdUnsafe(blockX + x, blockY + y, blockZ + z, 0, y >= 4 ? 0 : type);
+                            level.setBlockRuntimeIdUnsafe(blockX + x, blockY + y, blockZ + z, 0, y >= 4 ? 0 : block);
                         }
                     }
                 }

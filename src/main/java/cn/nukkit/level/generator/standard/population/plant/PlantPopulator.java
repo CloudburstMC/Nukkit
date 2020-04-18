@@ -27,8 +27,7 @@ public class PlantPopulator extends AbstractPlantPopulator {
     public static final Identifier ID = Identifier.fromString("nukkitx:plant");
 
     @JsonProperty
-    @JsonAlias({"types", "block", "blocks"})
-    protected BlockSelector type;
+    protected BlockSelector block;
 
     @JsonProperty
     protected BlockFilter water;
@@ -40,7 +39,7 @@ public class PlantPopulator extends AbstractPlantPopulator {
     protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
         super.init0(levelSeed, localSeed, generator);
 
-        Objects.requireNonNull(this.type, "type must be set!");
+        Objects.requireNonNull(this.block, "block must be set!");
         Objects.requireNonNull(this.height, "height must be set!");
     }
 
@@ -49,7 +48,7 @@ public class PlantPopulator extends AbstractPlantPopulator {
         final BlockFilter on = this.on;
         final BlockFilter water = this.water;
         final BlockFilter replace = this.replace;
-        final int type = this.type.selectRuntimeId(random);
+        final int block = this.block.selectRuntimeId(random);
 
         for (int i = this.patchSize - 1; i >= 0; i--) {
             int blockY = y + random.nextInt(4) - random.nextInt(4);
@@ -75,7 +74,7 @@ public class PlantPopulator extends AbstractPlantPopulator {
                     && replace.test(level.getBlockRuntimeIdUnsafe(blockX - 1, blockY + dy, blockZ, 0))
                     && replace.test(level.getBlockRuntimeIdUnsafe(blockX, blockY + dy, blockZ + 1, 0))
                     && replace.test(level.getBlockRuntimeIdUnsafe(blockX, blockY + dy, blockZ - 1, 0)); dy++) {
-                chunk.setBlockRuntimeIdUnsafe(blockX & 0xF, blockY + dy, blockZ & 0xF, 0, type);
+                chunk.setBlockRuntimeIdUnsafe(blockX & 0xF, blockY + dy, blockZ & 0xF, 0, block);
             }
         }
     }

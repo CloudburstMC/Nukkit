@@ -12,8 +12,8 @@ decorators:
     in:
       - id: "nukkitx:surface"
         top: "grass"
-        fill: "dirt"
+        filler: "dirt"
     out:
       - id: "nukkitx:surface"
         top: "gravel"
-        fill: "gravel"
+        filler: "gravel"

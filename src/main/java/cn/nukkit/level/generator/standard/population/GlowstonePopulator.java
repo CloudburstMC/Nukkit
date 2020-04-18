@@ -26,12 +26,7 @@ public class GlowstonePopulator extends AbstractReplacingPopulator {
     protected IntRange height = IntRange.WHOLE_WORLD;
 
     @JsonProperty
-    @JsonAlias({
-            "types",
-            "block",
-            "blocks"
-    })
-    protected BlockSelector type;
+    protected BlockSelector block;
 
     @JsonProperty
     protected int tries = 0;
@@ -43,7 +38,7 @@ public class GlowstonePopulator extends AbstractReplacingPopulator {
         super.init0(levelSeed, localSeed, generator);
 
         Objects.requireNonNull(this.height, "height must be set!");
-        Objects.requireNonNull(this.type, "type must be set!");
+        Objects.requireNonNull(this.block, "block must be set!");
         Preconditions.checkState(this.tries > 0, "tries must be set!");
 
         this.ground = generator.ground();
@@ -53,7 +48,7 @@ public class GlowstonePopulator extends AbstractReplacingPopulator {
     protected void populate0(PRandom random, ChunkManager level, int blockX, int blockZ) {
         final BlockFilter replace = this.replace;
         final int blockY = this.height.rand(random);
-        final int block = this.type.selectRuntimeId(random);
+        final int block = this.block.selectRuntimeId(random);
         final int ground = this.ground;
 
         if (blockY >= 255 || !replace.test(level.getBlockRuntimeIdUnsafe(blockX, blockY, blockZ, 0)) || level.getBlockRuntimeIdUnsafe(blockX, blockY + 1, blockZ, 0) != ground) {
