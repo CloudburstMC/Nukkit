@@ -29,7 +29,7 @@ public class MesaSurfaceDecorator extends DepthNoiseDecorator {
     protected static final int BAND_COUNT = 64;
     protected static final int BAND_MASK  = BAND_COUNT - 1;
 
-    protected int ground;
+    protected int ground = -1;
 
     @JsonProperty
     protected int seaLevel = -1;

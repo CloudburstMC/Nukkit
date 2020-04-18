@@ -23,7 +23,6 @@ decorators:
         block: "waterlily"
 
   - id: "nukkitx:surface"
-    ground: "stone"
     top: "grass"
     fill: "dirt"
 

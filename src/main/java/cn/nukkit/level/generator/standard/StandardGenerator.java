@@ -70,27 +70,6 @@ public final class StandardGenerator implements Generator {
         }
     };
 
-    static {
-        //porktodo: remove this before merge
-        Thread t = new Thread(() -> {
-            sleep(10000L);
-            while (true) {
-                sleep(100L);
-                try {
-                    Server.getInstance().getOnlinePlayers().values().forEach(player -> {
-                        StandardGenerator generator = uncheckedCast(player.getLevel().getGenerator());
-                        player.sendTip(generator.biomes.get(floorI(player.getX()), floorI(player.getZ())).getId().toString());
-
-                        player.addEffect(Effect.getEffect(Effect.SWIFTNESS).setDuration(160).setAmplifier(3).setVisible(false));
-                    });
-                } catch (RuntimeException e) {
-                }
-            }
-        });
-        t.setDaemon(true);
-        t.start();
-    }
-
     public static final int STEP_X = 4;
     public static final int STEP_Y = 8;
     public static final int STEP_Z = STEP_X;

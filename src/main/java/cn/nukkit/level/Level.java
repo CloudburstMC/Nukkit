@@ -283,9 +283,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void reloadGenerator()   {
-        //porktodo: remove this
         this.generator = GeneratorRegistry.get().getGeneratorFactory(this.levelData.getGenerator()).create(this.getSeed(), this.levelData.getGeneratorOptions());
-        this.generator.hashCode();
     }
 
     public int getTickRate() {
@@ -301,13 +299,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void init() {
-        //TODO: Generator generator = generators.get();
     }
-
-    //TODO:
-    /*public Generator getGenerator() {
-        return generators.get();
-    }*/
 
     public BlockMetadataStore getBlockMetadata() {
         return this.blockMetadata;

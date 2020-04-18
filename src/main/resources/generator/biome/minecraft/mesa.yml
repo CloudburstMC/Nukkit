@@ -15,7 +15,6 @@ decorators:
     below:
         # Plain old mesa surface
       - id: "nukkitx:surface"
-        ground: "stone"
         top: "sand#1" # red sand
         fill: "stained_hardened_clay#1" # orange
     above:
@@ -26,7 +25,6 @@ decorators:
           scale: 0.001953125 # 1/512
           octaves: 4
           factor: 2.0
-        ground: "stone"
         base: "hardened_clay"
         bands:
           - count: 21

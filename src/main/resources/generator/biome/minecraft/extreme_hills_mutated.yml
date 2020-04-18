@@ -11,11 +11,9 @@ decorators:
     max: 0.13333333333
     in:
       - id: "nukkitx:surface"
-        ground: "stone"
         top: "grass"
         fill: "dirt"
     out:
       - id: "nukkitx:surface"
-        ground: "stone"
         top: "gravel"
         fill: "gravel"

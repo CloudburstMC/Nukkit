@@ -14,7 +14,6 @@ decorators:
     above:
         # Generate grass surface sometimes
       - id: "nukkitx:surface"
-        ground: "stone"
         top: "grass"
         fill: "dirt"
 

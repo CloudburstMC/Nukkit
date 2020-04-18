@@ -95,55 +95,25 @@ public class BlockSapling extends FloodableBlock {
     }
 
     private void grow() {
-        WorldFeature feature = null;
         boolean bigTree = false;
 
         int x = 0;
         int z = 0;
 
-        switch (this.getMeta() & 0x07) {
-            //porktodo: fix the rest of these
-            /*case JUNGLE:
-                loop:
-                for (; x >= -1; --x) {
-                    for (; z >= -1; --z) {
-                        if (this.findSaplings(x, z, JUNGLE)) {
-                            generator = new ObjectJungleBigTree(10, 20,
-                                    Block.get(LOG, BlockLog.JUNGLE), Block.get(LEAVES, BlockLeaves.JUNGLE));
-                            bigTree = true;
-                            break loop;
-                        }
+        TreeSpecies species = TreeSpecies.fromItem(this.getId(), this.getMeta());
+        WorldFeature feature = species.getHugeGenerator();
+        BIG_TREE:
+        if (bigTree = feature != null)  {
+            for (int dx = 0; dx >= -1; dx--)    {
+                for (int dz = 0; dz >= -1; dz--)    {
+                    if (this.findSaplings(x + dx, z + dz, species.getItemDamage())) {
+                        x += dx;
+                        z += dz;
+                        break BIG_TREE;
                     }
                 }
-
-                if (!bigTree) {
-                    x = 0;
-                    z = 0;
-                    generator = new NewJungleTree(4, 7);
-                }
-                break;
-            case ACACIA:
-                generator = new ObjectSavannaTree();
-                break;
-            case DARK_OAK:
-                loop:
-                for (; x >= -1; --x) {
-                    for (; z >= -1; --z) {
-                        if (this.findSaplings(x, z, DARK_OAK)) {
-                            generator = new ObjectDarkOakTree();
-                            bigTree = true;
-                            break loop;
-                        }
-                    }
-                }
-
-                if (!bigTree) {
-                    return;
-                }
-                break;*/
-            //TODO: big spruce
-            default:
-                feature = TreeSpecies.fromItem(this.getId(), this.getMeta()).getDefaultGenerator();
+            }
+            bigTree = false;
         }
 
         if (bigTree) {
@@ -152,6 +122,12 @@ public class BlockSapling extends FloodableBlock {
             this.level.setBlock(this.getPosition().add(x, 0, z + 1), get(AIR), true, false);
             this.level.setBlock(this.getPosition().add(x + 1, 0, z + 1), get(AIR), true, false);
         } else {
+            x = z = 0;
+            feature = species.getDefaultGenerator();
+            if (feature == null)    {
+                return;
+            }
+
             this.level.setBlock(this.getPosition(), get(AIR), true, false);
         }
 

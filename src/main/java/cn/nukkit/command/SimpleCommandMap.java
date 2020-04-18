@@ -69,6 +69,7 @@ public class SimpleCommandMap implements CommandMap {
         this.register("nukkit", new TitleCommand("title"));
         this.register("nukkit", new WeatherCommand("weather"));
         this.register("nukkit", new XpCommand("xp"));
+        this.register("nukkit", new ReloadGeneratorCommand("reload"));
 
 //        if ((boolean) this.server.getConfig("debug.commands", false)) {
         this.register("nukkit", new StatusCommand("status"));
@@ -77,9 +78,6 @@ public class SimpleCommandMap implements CommandMap {
         this.register("nukkit", new DebugPasteCommand("debugpaste"));
 //        this.register("nukkit", new DumpMemoryCommand("dumpmemory"));
 //        }
-
-        //porktodo: remove this
-        this.register("nukkit", new ReloadGeneratorCommand("reload"));
     }
 
     @Override

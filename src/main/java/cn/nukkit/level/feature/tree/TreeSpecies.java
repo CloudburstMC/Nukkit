@@ -75,7 +75,6 @@ public enum TreeSpecies {
 
         @Override
         public WorldFeature getDefaultGenerator(@NonNull IntRange height) {
-            //porktodo: this
             return new FeatureSpruceTree(FeatureSpruceTree.DEFAULT_HEIGHT, this);
         }
 

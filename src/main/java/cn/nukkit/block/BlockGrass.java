@@ -9,6 +9,8 @@ import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3i;
+import net.daporkchop.lib.random.PRandom;
+import net.daporkchop.lib.random.impl.FastPRandom;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -43,8 +45,22 @@ public class BlockGrass extends BlockDirt {
             }
             this.level.addParticle(new BoneMealParticle(this.getPosition()));
 
-            //porktodo: fix this
-            //ObjectTallGrass.growGrass(this.getLevel(), this.getPosition(), new BedrockRandom());
+            PRandom random = new FastPRandom();
+
+            for (int i = 0; i < 64; i++) {
+                int blockY = this.getY() + random.nextInt(4) - random.nextInt(4);
+                if (blockY < 0 || blockY >= 255) {
+                    continue;
+                }
+                int blockX = this.getX() + random.nextInt(8) - random.nextInt(8);
+                int blockZ = this.getZ() + random.nextInt(8) - random.nextInt(8);
+
+                Block tallGrass = Block.get(BlockIds.TALL_GRASS, 0, blockX, blockY + 1, blockZ, this.level);
+                Block toReplace = this.level.getBlock(blockX, blockY + 1, blockZ);
+                if (toReplace.getId() == BlockIds.AIR)  {
+                    tallGrass.place(null, toReplace, null, null, null, null);
+                }
+            }
             return true;
         } else if (item.isHoe()) {
             item.useOn(this);

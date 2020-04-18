@@ -82,7 +82,6 @@ public class BleedIslandBiomeFilter extends AbstractBiomeFilter.Next {
                 int v3 = below[(dx + 1) * belowSizeZ + (dz + 2)];
 
                 if (center != oceanId || (v0 == oceanId && v1 == oceanId && v2 == oceanId && v3 == oceanId))    {
-                    //porktodo: something something negative values
                     if (center != oceanId && (v0 == oceanId || v1 == oceanId || v2 == oceanId || v3 == oceanId))    {
                         if (this.random(dx + x, dz + z, 0, chance) == 0)    {
                             out[dx * sizeZ + dz] = center == preserveId ? center : oceanId;

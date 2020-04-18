@@ -24,7 +24,7 @@ public class SurfaceDecorator extends DepthNoiseDecorator {
     @JsonProperty
     protected IntRange height = null;
 
-    @JsonProperty //porktodo: remove all redundant references to this in biomes config
+    @JsonProperty
     protected int ground = -1;
     @JsonProperty
     protected int cover = -1;

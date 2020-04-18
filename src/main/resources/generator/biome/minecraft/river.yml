@@ -6,6 +6,5 @@ elevationVanilla:
 
 decorators:
   - id: "nukkitx:surface"
-    ground: "stone"
     top: "grass"
     fill: "dirt"

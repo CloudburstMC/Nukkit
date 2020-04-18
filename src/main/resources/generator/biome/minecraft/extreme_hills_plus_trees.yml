@@ -2,7 +2,6 @@ parent: "minecraft:extreme_hills"
 
 decorators:
   - id: "nukkitx:surface"
-    ground: "stone"
     top: "grass"
     fill: "dirt"
 
