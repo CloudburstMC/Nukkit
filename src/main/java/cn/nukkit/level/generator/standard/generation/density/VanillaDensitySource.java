@@ -9,6 +9,7 @@ import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.NonNull;
+import net.daporkchop.lib.common.util.PValidation;
 import net.daporkchop.lib.noise.NoiseSource;
 import net.daporkchop.lib.random.PRandom;
 import net.daporkchop.lib.random.impl.FastPRandom;
@@ -71,42 +72,71 @@ public class VanillaDensitySource extends AbstractGenerationPass implements Dens
 
     @Override
     public double get(@NonNull BiomeMap biomes, int x, int y, int z) {
-        double xd = x; //only do floating-point conversion once
-        double yd = y;
-        double zd = z;
-
         //do all noise computations together to allow JIT to potentally apply some optimizations if all noise sources use the same implementation
         // (also this ensures the noise code is cached for the following invocations)
-        double selector = clamp(this.selector.get(xd, yd, zd), 0.0d, 1.0d);
-        double low = this.low.get(xd, yd, zd);
-        double high = this.high.get(xd, yd, zd);
+        double selector = clamp(this.selector.get(x, y, (double) z), 0.0d, 1.0d);
+        double low = this.low.get(x, y, (double) z);
+        double high = this.high.get(x, y, (double) z);
 
-        double outputNoise = lerp(low, high, selector);
-
-        double depth = this.depth.get(xd, zd);
-
-        if (depth < 0.0d) {
-            depth *= -0.3d;
-        }
-        depth = clamp(depth * 3.0d - 2.0d, -2.0d, 1.0d);
-        depth /= depth < 0.0d ? 2.0d * 2.0d * 1.4d : 8.0d;
-        depth *= 0.2d * 17.0d / 64.0d;
-
-        outputNoise += depth;
+        double outputNoise = lerp(low, high, selector) + this.getDepth(x, z);
 
         BiomeTerrainCache.Data terrainData = this.terrainCache.get(x, z, biomes);
         double height = terrainData.baseHeight * this.heightFactor + this.heightOffset;
         double variation = terrainData.heightVariation;
-        if (height > yd) {
+        if (height > y) {
             variation *= this.specialHeightVariation;
         }
         variation = variation * this.heightVariationFactor + this.heightVariationOffset;
 
         outputNoise *= variation;
         outputNoise += height;
-        outputNoise -= signum(variation) * yd;
+        outputNoise -= signum(variation) * y;
 
         return outputNoise;
+    }
+
+    @Override
+    public double[] get(double[] arr, int startIndex, @NonNull BiomeMap biomes, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int stepX, int stepY, int stepZ) {
+        int totalSize = PValidation.ensurePositive(sizeX) * PValidation.ensurePositive(sizeY) * PValidation.ensurePositive(sizeZ) + PValidation.ensureNonNegative(startIndex);
+        if (arr == null || arr.length < totalSize) {
+            double[] newArr = new double[totalSize];
+            if (arr != null && startIndex != 0)    {
+                //copy existing elements into new array
+                System.arraycopy(arr, 0, newArr, 0, startIndex);
+            }
+            arr = newArr;
+        }
+
+        for (int i = startIndex, dx = 0, xx = x; dx < sizeX; dx++, xx += stepX) {
+            for (int dz = 0, zz = z; dz < sizeZ; dz++, zz += stepZ) {
+                double depth = this.getDepth(xx, zz);
+
+                BiomeTerrainCache.Data terrainData = this.terrainCache.get(xx, zz, biomes);
+                double height = terrainData.baseHeight * this.heightFactor + this.heightOffset;
+                double columnVariation = terrainData.heightVariation;
+
+                for (int dy = 0, yy = y; dy < sizeY; dy++, yy += stepY) {
+                    double selector = clamp(this.selector.get(xx, yy, (double) zz), 0.0d, 1.0d);
+                    double low = this.low.get(xx, yy, (double) zz);
+                    double high = this.high.get(xx, yy, (double) zz);
+
+                    double variation = (height > yy ? columnVariation * this.specialHeightVariation : columnVariation) * this.heightVariationFactor + this.heightVariationOffset;
+                    arr[i++] = (lerp(low, high, selector) + depth) * variation + height - signum(variation) * yy;
+                }
+            }
+        }
+        return arr;
+    }
+
+    protected double getDepth(double x, double z)   {
+        double depth = this.depth.get(x, z);
+        if (depth < 0.0d) {
+            depth *= -0.3d;
+        }
+        depth = clamp(depth * 3.0d - 2.0d, -2.0d, 1.0d);
+        depth /= depth < 0.0d ? 2.0d * 2.0d * 1.4d : 8.0d;
+        depth *= 0.2d * 17.0d / 64.0d;
+        return depth;
     }
 
     @Override

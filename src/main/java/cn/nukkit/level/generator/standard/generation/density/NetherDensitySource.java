@@ -51,29 +51,23 @@ public class NetherDensitySource extends AbstractGenerationPass implements Densi
 
     @Override
     public double get(@NonNull BiomeMap biomes, int x, int y, int z) {
-        if (y >= 128)    {
+        if (y >= 128) {
             return 0.0d;
         }
 
-        double xd = x; //only do floating-point conversion once
-        double yd = y;
-        double zd = z;
-
-        //do all noise computations together to allow JIT to potentally apply some optimizations if all noise sources use the same implementation
-        // (also this ensures the noise code is cached for the following invocations)
-        double selector = clamp(this.selector.get(xd, yd, zd), 0.0d, 1.0d);
-        double low = this.low.get(xd, yd, zd) * NOISE_SCALE_FACTOR;
-        double high = this.high.get(xd, yd, zd) * NOISE_SCALE_FACTOR;
+        double selector = clamp(this.selector.get(x, y, (double) z), 0.0d, 1.0d);
+        double low = this.low.get(x, y, (double) z) * NOISE_SCALE_FACTOR;
+        double high = this.high.get(x, y, (double) z) * NOISE_SCALE_FACTOR;
 
         double outputNoise = lerp(low, high, selector);
 
-        double threshold = yd * 0.125d;
+        double threshold = y * 0.125d;
         double offset = cos(threshold * Math.PI * 6.0d / 17.0d) * 2.0d;
 
         if (threshold > 8.0d) {
             threshold = 16.0d - threshold;
         }
-        if (threshold < 4.0d)   {
+        if (threshold < 4.0d) {
             threshold = 4.0d - threshold;
             offset -= threshold * threshold * threshold * 10.0d;
         }

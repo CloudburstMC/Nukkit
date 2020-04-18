@@ -145,7 +145,6 @@ public final class StandardGenerator implements Generator {
     private int seaLevel = -1;
 
     private StandardGenerator init(long seed) {
-        System.out.printf("Initializing generator with seed %016x\n", seed);
         try {
             Collection<GenerationBiome> biomes = StandardGeneratorStores.generationBiome().snapshot();
 
@@ -188,7 +187,7 @@ public final class StandardGenerator implements Generator {
 
         //compute initial densities
         final double[] densityCache = threadData.densityCache
-                = this.density.get(threadData.densityCache, this.biomes, baseX, 0, baseZ, CACHE_X, CACHE_Y, CACHE_Z, STEP_X, STEP_Y, STEP_Z);
+                = this.density.get(threadData.densityCache, 0, this.biomes, baseX, 0, baseZ, CACHE_X, CACHE_Y, CACHE_Z, STEP_X, STEP_Y, STEP_Z);
 
         //interpolate densities and build initial surfaces
         for (int i = 0, sectionX = 0; sectionX < SAMPLES_X; sectionX++) {
@@ -308,7 +307,7 @@ public final class StandardGenerator implements Generator {
     }
 
     @JsonSetter("copyFrom")
-    private void copyFrom(@NonNull Identifier presetId)    {
+    private void copyFrom(@NonNull Identifier presetId) {
         try (InputStream in = StandardGeneratorUtils.read("preset", presetId)) {
             StandardGenerator from = Nukkit.YAML_MAPPER.readValue(in, StandardGenerator.class);
             this.biomes = from.biomes;

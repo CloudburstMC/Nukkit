@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.NonNull;
+import net.daporkchop.lib.common.util.PValidation;
 import net.daporkchop.lib.noise.NoiseSource;
 import net.daporkchop.lib.random.PRandom;
 import net.daporkchop.lib.random.impl.FastPRandom;
@@ -63,27 +64,51 @@ public class EndDensitySource extends AbstractGenerationPass implements DensityS
 
     @Override
     public double get(@NonNull BiomeMap biomes, int x, int y, int z) {
-        double xd = x; //only do floating-point conversion once
-        double yd = y;
-        double zd = z;
+        double selector = clamp(this.selector.get(x, y, (double) z), 0.0d, 1.0d);
+        double low = this.low.get(x, y, (double) z) * NOISE_SCALE_FACTOR;
+        double high = this.high.get(x, y, (double) z) * NOISE_SCALE_FACTOR;
 
-        //do all noise computations together to allow JIT to potentally apply some optimizations if all noise sources use the same implementation
-        // (also this ensures the noise code is cached for the following invocations)
-        double selector = clamp(this.selector.get(xd, yd, zd), 0.0d, 1.0d);
-        double low = this.low.get(xd, yd, zd) * NOISE_SCALE_FACTOR;
-        double high = this.high.get(xd, yd, zd) * NOISE_SCALE_FACTOR;
+        return this.cutOff(y, lerp(low, high, selector) - 8.0d + this.islands.get(x, z));
+    }
 
-        double outputNoise = lerp(low, high, selector) - 8.0d + this.islands.get(x, z);
-
-        if (yd > this.maxHeightCutoff) {
-            double factor = clamp(((yd * 0.125d) - (this.minHeightCutoff * 0.125d)) * 0.015625d, 0.0d, 1.0d);
-            outputNoise = outputNoise * (1.0d - factor) - 3000.0d * factor;
-        } else if (yd < this.minHeightCutoff) {
-            double factor = (((this.minHeightCutoff * 0.125d) - (yd * 0.125d)) / ((this.minHeightCutoff * 0.125d) - 1.0d));
-            outputNoise = outputNoise * (1.0d - factor) - 30.0d * factor;
+    @Override
+    public double[] get(double[] arr, int startIndex, @NonNull BiomeMap biomes, int x, int y, int z, int sizeX, int sizeY, int sizeZ, int stepX, int stepY, int stepZ) {
+        int totalSize = PValidation.ensurePositive(sizeX) * PValidation.ensurePositive(sizeY) * PValidation.ensurePositive(sizeZ) + PValidation.ensureNonNegative(startIndex);
+        if (arr == null || arr.length < totalSize) {
+            double[] newArr = new double[totalSize];
+            if (arr != null && startIndex != 0) {
+                //copy existing elements into new array
+                System.arraycopy(arr, 0, newArr, 0, startIndex);
+            }
+            arr = newArr;
         }
 
-        return outputNoise;
+        for (int i = startIndex, dx = 0, xx = x; dx < sizeX; dx++, xx += stepX) {
+            for (int dz = 0, zz = z; dz < sizeZ; dz++, zz += stepZ) {
+                double islandNoise = this.islands.get(xx, zz) - 8.0d;
+
+                for (int dy = 0, yy = y; dy < sizeY; dy++, yy += stepY) {
+                    double selector = clamp(this.selector.get(xx, yy, (double) zz), 0.0d, 1.0d);
+                    double low = this.low.get(xx, yy, (double) zz);
+                    double high = this.high.get(xx, yy, (double) zz);
+
+                    arr[i++] = this.cutOff(yy, lerp(low, high, selector) + islandNoise);
+                }
+            }
+        }
+        return arr;
+    }
+
+    protected double cutOff(double y, double noise) {
+        if (y > this.maxHeightCutoff) {
+            double factor = clamp(((y * 0.125d) - (this.minHeightCutoff * 0.125d)) * 0.015625d, 0.0d, 1.0d);
+            return noise * (1.0d - factor) - 3000.0d * factor;
+        } else if (y < this.minHeightCutoff) {
+            double factor = (((this.minHeightCutoff * 0.125d) - (y * 0.125d)) / ((this.minHeightCutoff * 0.125d) - 1.0d));
+            return noise * (1.0d - factor) - 30.0d * factor;
+        } else {
+            return noise;
+        }
     }
 
     @Override
