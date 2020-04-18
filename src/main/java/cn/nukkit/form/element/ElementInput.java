@@ -1,51 +1,50 @@
 package cn.nukkit.form.element;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.ToString;
 
-public class ElementInput extends Element {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-    @JsonProperty
-    private final String type = "input"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
-    private String text = "";
-    private String placeholder = "";
-    @JsonProperty("default")
-    private String defaultText = "";
+@ToString
+public final class ElementInput extends Element {
 
-    public ElementInput(String text) {
-        this(text, "");
+    private String placeholder;
+    private String defaultText;
+
+    public ElementInput(@Nonnull String elementId, @Nonnull String elementText) {
+        super(ElementType.INPUT, elementId, elementText);
     }
 
-    public ElementInput(String text, String placeholder) {
-        this(text, placeholder, "");
+    public ElementInput(@Nonnull String elementId, @Nonnull String elementText, @Nullable String placeholder) {
+        super(ElementType.INPUT, elementId, elementText);
+        this.placeholder = placeholder;
     }
 
-    public ElementInput(String text, String placeholder, String defaultText) {
-        this.text = text;
+    public ElementInput(@Nonnull String elementId, @Nonnull String elementText, @Nullable String placeholder, @Nullable String defaultText) {
+        super(ElementType.INPUT, elementId, elementText);
         this.placeholder = placeholder;
         this.defaultText = defaultText;
     }
 
-    public String getText() {
-        return text;
+    @Nullable
+    public String getPlaceholder() {
+        return this.placeholder;
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public String getPlaceHolder() {
-        return placeholder;
-    }
-
-    public void setPlaceHolder(String placeholder) {
+    @Nonnull
+    public ElementInput placeholder(@Nullable String placeholder) {
         this.placeholder = placeholder;
+        return this;
     }
 
+    @Nullable
     public String getDefaultText() {
-        return defaultText;
+        return this.defaultText;
     }
 
-    public void setDefaultText(String defaultText) {
+    @Nonnull
+    public ElementInput defaultText(@Nullable String defaultText) {
         this.defaultText = defaultText;
+        return this;
     }
 }

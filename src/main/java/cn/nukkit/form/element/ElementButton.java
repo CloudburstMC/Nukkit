@@ -1,33 +1,103 @@
 package cn.nukkit.form.element;
 
-public class ElementButton {
+import cn.nukkit.form.util.ImageData;
+import cn.nukkit.form.util.ImageType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Preconditions;
+import lombok.ToString;
 
-    private String text = "";
-    private ElementButtonImageData image;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-    public ElementButton(String text) {
-        this.text = text;
+@ToString
+public final class ElementButton {
+
+    @JsonIgnore
+    private final ElementType elementType = ElementType.BUTTON;
+    @JsonIgnore
+    private String elementId;
+
+    @JsonProperty("text")
+    private String buttonText;
+    @JsonProperty("image")
+    private ImageData imageData;
+
+    @JsonIgnore
+    private Runnable callback;
+
+    public ElementButton(@Nonnull String elementId, @Nonnull String buttonText) {
+        Preconditions.checkNotNull(elementId, "The provided element id can not be null");
+        Preconditions.checkNotNull(buttonText, "The provided button text can not be null");
+
+        this.elementId = elementId;
+        this.buttonText = buttonText;
+        this.imageData = new ImageData();
     }
 
-    public ElementButton(String text, ElementButtonImageData image) {
-        this.text = text;
-        if (!image.getData().isEmpty() && !image.getType().isEmpty()) this.image = image;
+    public ElementButton(@Nonnull String elementId, @Nonnull String buttonText, @Nullable ImageType imageType, @Nullable String imageData) {
+        Preconditions.checkNotNull(elementId, "The provided element id can not be null");
+        Preconditions.checkNotNull(buttonText, "The provided button text can not be null");
+
+        this.elementId = elementId;
+        this.buttonText = buttonText;
+        this.imageData = new ImageData(imageType, imageData);
     }
 
-    public String getText() {
-        return text;
+    @Nonnull
+    public String getElementId() {
+        return this.elementId;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    @Nonnull
+    public ElementButton id(@Nonnull String elementId) {
+        Preconditions.checkNotNull(elementId, "The provided element id can not be null");
+
+        this.elementId = elementId;
+        return this;
     }
 
-    public ElementButtonImageData getImage() {
-        return image;
+    @Nullable
+    public String getButtonText() {
+        return this.buttonText;
     }
 
-    public void addImage(ElementButtonImageData image) {
-        if (!image.getData().isEmpty() && !image.getType().isEmpty()) this.image = image;
+    @Nonnull
+    public ElementButton text(@Nonnull String buttonText) {
+        Preconditions.checkNotNull(buttonText, "The provided button text can not be null");
+
+        this.buttonText = buttonText;
+        return this;
     }
 
+    @Nonnull
+    public ElementButton imageType(@Nullable ImageType imageType) {
+        this.imageData.imageType(imageType);
+        return this;
+    }
+
+    @Nonnull
+    public ImageData getImageData() {
+        return this.imageData;
+    }
+
+    @Nonnull
+    public ElementButton imageData(@Nullable String imageData) {
+        this.imageData.imageData(imageData);
+        return this;
+    }
+
+    public void triggerClick() {
+        if (this.callback != null) {
+            this.callback.run();
+        }
+    }
+
+    @Nonnull
+    public ElementButton onClick(@Nonnull Runnable callback) {
+        Preconditions.checkNotNull(callback, "The provided answer callback can not be null");
+
+        this.callback = callback;
+        return this;
+    }
 }
