@@ -4,19 +4,42 @@ import cn.nukkit.block.BlockCocoa;
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
+import cn.nukkit.level.generator.standard.StandardGenerator;
+import cn.nukkit.level.generator.standard.misc.IntRange;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.utils.Identifier;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.daporkchop.lib.random.PRandom;
+
+import java.util.Objects;
 
 /**
  * @author DaPorkchop_
  */
 @JsonDeserialize
-public class CocoaPopulator extends VinesPopulator {
+public class CocoaPopulator extends ChancePopulator {
     public static final Identifier ID = Identifier.fromString("nukkitx:cocoa");
 
+    @JsonProperty
+    protected IntRange height = IntRange.WHOLE_WORLD;
+
+    @JsonProperty
+    protected BlockFilter on;
+
+    @JsonProperty
+    protected BlockFilter replace = BlockFilter.AIR;
+
     public boolean avoidDouble = false;
+
+    @Override
+    protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {
+        super.init0(levelSeed, localSeed, generator);
+
+        Objects.requireNonNull(this.height, "height must be set!");
+        Objects.requireNonNull(this.on, "on must be set!");
+        Objects.requireNonNull(this.replace, "replace must be set!");
+    }
 
     @Override
     public void populate(PRandom random, ChunkManager level, int blockX, int blockZ) {

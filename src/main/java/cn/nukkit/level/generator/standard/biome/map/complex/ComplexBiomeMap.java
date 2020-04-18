@@ -14,7 +14,10 @@ import net.daporkchop.lib.common.util.PValidation;
 import net.daporkchop.lib.random.impl.FastPRandom;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Implementation of {@link BiomeMap} which uses a series of iterative passes ("filters") to progressively select a biome.
@@ -42,9 +45,7 @@ public final class ComplexBiomeMap extends AbstractGenerationPass implements Bio
 
         this.root.init(localSeed, new FastPRandom(localSeed));
 
-        this.root.getAllBiomes().stream()
-                .distinct()
-                .forEach(biome -> this.internalIdLookup.put(biome.getInternalId(), biome));
+        this.possibleBiomes().forEach(biome -> this.internalIdLookup.put(biome.getInternalId(), biome));
     }
 
     @Override
@@ -92,6 +93,11 @@ public final class ComplexBiomeMap extends AbstractGenerationPass implements Bio
     @Override
     public boolean needsCaching() {
         return true;
+    }
+
+    @Override
+    public Set<GenerationBiome> possibleBiomes() {
+        return new LinkedHashSet<>(this.root.getAllBiomes());
     }
 
     @Override

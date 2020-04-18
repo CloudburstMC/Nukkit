@@ -1,7 +1,6 @@
 package cn.nukkit.level.generator.standard;
 
 import cn.nukkit.Nukkit;
-import cn.nukkit.Server;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.Generator;
@@ -17,12 +16,13 @@ import cn.nukkit.level.generator.standard.misc.GenerationPass;
 import cn.nukkit.level.generator.standard.misc.NextGenerationPass;
 import cn.nukkit.level.generator.standard.population.Populator;
 import cn.nukkit.level.generator.standard.store.StandardGeneratorStores;
-import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -38,14 +38,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static net.daporkchop.lib.common.util.PorkUtil.*;
-import static net.daporkchop.lib.math.primitive.PMath.*;
 
 /**
  * Main class of the NukkitX Standard Generator.
@@ -99,19 +96,9 @@ public final class StandardGenerator implements Generator {
     @JsonProperty
     private Finisher[] finishers = Finisher.EMPTY_ARRAY;
 
-    private final Map<GenerationBiome, Decorator[]> decoratorLookup = new ConcurrentHashMap<>();
-    private final Map<GenerationBiome, Populator[]> populatorsLookup = new ConcurrentHashMap<>();
-    private final Map<GenerationBiome, Finisher[]> finishersLookup = new ConcurrentHashMap<>();
-
-    private final Function<GenerationBiome, Decorator[]> decoratorLookupComputer = biome -> Arrays.stream(this.decorators)
-            .flatMap(decorator -> decorator instanceof NextGenerationPass ? Arrays.stream(biome.getDecorators()) : Stream.of(decorator))
-            .toArray(Decorator[]::new);
-    private final Function<GenerationBiome, Populator[]> populatorsLookupComputer = biome -> Arrays.stream(this.populators)
-            .flatMap(populator -> populator instanceof NextGenerationPass ? Arrays.stream(biome.getPopulators()) : Stream.of(populator))
-            .toArray(Populator[]::new);
-    private final Function<GenerationBiome, Finisher[]> finishersLookupComputer = biome -> Arrays.stream(this.finishers)
-            .flatMap(finisher -> finisher instanceof NextGenerationPass ? Arrays.stream(biome.getFinishers()) : Stream.of(finisher))
-            .toArray(Finisher[]::new);
+    private final Int2ObjectMap<Decorator[]> decoratorLookup = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<Populator[]> populatorLookup = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<Finisher[]> finisherLookup = new Int2ObjectOpenHashMap<>();
 
     @JsonProperty("groundBlock")
     @Getter
@@ -125,7 +112,7 @@ public final class StandardGenerator implements Generator {
 
     private StandardGenerator init(long seed) {
         try {
-            Collection<GenerationBiome> biomes = StandardGeneratorStores.generationBiome().snapshot();
+            Collection<GenerationBiome> biomes = this.biomes.possibleBiomes();
 
             Preconditions.checkState(this.ground >= 0, "groundBlock must be set!");
             Preconditions.checkState(this.seaLevel < 0 || this.sea >= 0, "seaBlock and seaLevel must either both be set or be omitted!");
@@ -141,6 +128,16 @@ public final class StandardGenerator implements Generator {
                 Collections.addAll(generationPasses, biome.getDecorators());
                 Collections.addAll(generationPasses, biome.getPopulators());
                 Collections.addAll(generationPasses, biome.getFinishers());
+
+                this.decoratorLookup.put(biome.getInternalId(), Arrays.stream(this.decorators)
+                        .flatMap(decorator -> decorator instanceof NextGenerationPass ? Arrays.stream(biome.getDecorators()) : Stream.of(decorator))
+                        .toArray(Decorator[]::new));
+                this.populatorLookup.put(biome.getInternalId(), Arrays.stream(this.populators)
+                        .flatMap(populator -> populator instanceof NextGenerationPass ? Arrays.stream(biome.getPopulators()) : Stream.of(populator))
+                        .toArray(Populator[]::new));
+                this.finisherLookup.put(biome.getInternalId(), Arrays.stream(this.finishers)
+                        .flatMap(finisher -> finisher instanceof NextGenerationPass ? Arrays.stream(biome.getFinishers()) : Stream.of(finisher))
+                        .toArray(Finisher[]::new));
             }
 
             PRandom random = new FastPRandom(seed);
@@ -235,7 +232,7 @@ public final class StandardGenerator implements Generator {
             for (int z = 0; z < 16; z++) {
                 GenerationBiome biome = biomes[(x << 4) | z];
                 chunk.setBiome(x, z, biome.getRuntimeId());
-                for (Decorator decorator : this.decoratorLookup.computeIfAbsent(biome, this.decoratorLookupComputer)) {
+                for (Decorator decorator : this.decoratorLookup.get(biome.getInternalId())) {
                     decorator.decorate(random, chunk, x, z);
                 }
             }
@@ -255,7 +252,7 @@ public final class StandardGenerator implements Generator {
         GenerationBiome[] biomes = threadData.biomes = this.biomes.getRegion(threadData.biomes, baseX, baseZ, 16, 16);
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                for (Populator populator : this.populatorsLookup.computeIfAbsent(biomes[(x << 4) | z], this.populatorsLookupComputer)) {
+                for (Populator populator : this.populatorLookup.get(biomes[(x << 4) | z].getInternalId())) {
                     populator.populate(random, level, baseX + x, baseZ + z);
                 }
             }
@@ -275,7 +272,7 @@ public final class StandardGenerator implements Generator {
         GenerationBiome[] biomes = threadData.biomes = this.biomes.getRegion(threadData.biomes, baseX, baseZ, 16, 16);
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                for (Finisher finisher : this.finishersLookup.computeIfAbsent(biomes[(x << 4) | z], this.finishersLookupComputer)) {
+                for (Finisher finisher : this.finisherLookup.get(biomes[(x << 4) | z].getInternalId())) {
                     finisher.finish(random, level, baseX + x, baseZ + z);
                 }
             }

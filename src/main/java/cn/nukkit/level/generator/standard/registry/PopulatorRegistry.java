@@ -19,7 +19,6 @@ import cn.nukkit.level.generator.standard.population.Populator;
 import cn.nukkit.level.generator.standard.population.plant.ShrubPopulator;
 import cn.nukkit.level.generator.standard.population.SpikesPopulator;
 import cn.nukkit.level.generator.standard.population.SubmergedOrePopulator;
-import cn.nukkit.level.generator.standard.population.VinesPopulator;
 import cn.nukkit.level.generator.standard.population.tree.BushPopulator;
 import cn.nukkit.level.generator.standard.population.tree.HugeTreePopulator;
 import cn.nukkit.level.generator.standard.population.tree.TreePopulator;
@@ -63,7 +62,6 @@ public final class PopulatorRegistry extends AbstractGeneratorRegistry<Populator
         this.register(SpringPopulator.ID, SpringPopulator.class);
         this.register(SubmergedOrePopulator.ID, SubmergedOrePopulator.class);
         this.register(TreePopulator.ID, TreePopulator.class);
-        this.register(VinesPopulator.ID, VinesPopulator.class);
 
         this.register(NextGenerationPass.ID, NextGenerationPass.class);
     }

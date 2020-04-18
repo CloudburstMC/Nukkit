@@ -91,6 +91,11 @@ public enum TreeSpecies {
     },
     JUNGLE(BlockIds.LOG, BlockLog.JUNGLE, BlockIds.LEAVES, BlockLeaves.JUNGLE, BlockIds.SAPLING, BlockSapling.JUNGLE)   {
         @Override
+        public WorldFeature getDefaultGenerator(@NonNull IntRange height) {
+            return new FeatureJungleTree(height, this);
+        }
+
+        @Override
         public WorldFeature getHugeGenerator() {
             return new FeatureHugeJungleTree(FeatureHugeJungleTree.DEFAULT_HEIGHT, this);
         }

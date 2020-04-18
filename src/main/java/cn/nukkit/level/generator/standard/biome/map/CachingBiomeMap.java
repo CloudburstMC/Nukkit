@@ -8,6 +8,8 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import lombok.NonNull;
 import net.daporkchop.lib.common.util.PValidation;
 
+import java.util.Set;
+
 /**
  * Implementation of {@link BiomeMap} which caches the biomes looked up at a given position.
  *
@@ -119,6 +121,11 @@ public final class CachingBiomeMap implements BiomeMap {
     public boolean needsCaching() {
         //this is already cached, no reason to cache it a second time :P
         return false;
+    }
+
+    @Override
+    public Set<GenerationBiome> possibleBiomes() {
+        return this.delegate.possibleBiomes();
     }
 
     @Override

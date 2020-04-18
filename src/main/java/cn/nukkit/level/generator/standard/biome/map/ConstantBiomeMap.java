@@ -10,7 +10,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.daporkchop.lib.common.util.PValidation;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Implementation of {@link BiomeMap} which returns a constant biome.
@@ -60,6 +62,11 @@ public final class ConstantBiomeMap extends AbstractGenerationPass implements Bi
     public boolean needsCaching() {
         //obviously this doesn't need to be cached, there's no logic involved at all :P
         return false;
+    }
+
+    @Override
+    public Set<GenerationBiome> possibleBiomes() {
+        return Collections.singleton(this.biome);
     }
 
     @Override

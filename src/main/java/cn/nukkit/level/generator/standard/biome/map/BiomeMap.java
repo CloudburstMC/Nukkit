@@ -5,6 +5,8 @@ import cn.nukkit.level.generator.standard.misc.GenerationPass;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import java.util.Set;
+
 /**
  * A map of the biomes in a given area.
  *
@@ -49,6 +51,11 @@ public interface BiomeMap extends GenerationPass {
      * @return whether or not this {@link BiomeMap}'s results should be cached for performance
      */
     boolean needsCaching();
+
+    /**
+     * @return a {@link Set} containing all of the biomes that could be returned by this {@link BiomeMap}
+     */
+    Set<GenerationBiome> possibleBiomes();
 
     @Override
     Identifier getId();
