@@ -25,7 +25,7 @@ public final class FinisherRegistry extends AbstractGeneratorRegistry<Finisher> 
     protected void registerDefault() {
         //register all decorators as populators as well, unless they have the @SkipRegistrationAsPopulator annotation
         StandardGeneratorRegistries.populator().idToValues.forEach((id, clazz) -> {
-            if (clazz.getAnnotation(Populator.SkipRegistrationAsFinisher.class) == null || clazz.getAnnotation(Decorator.SkipRegistrationAsPopulator.class) == null)   {
+            if (clazz.getAnnotation(Populator.SkipRegistrationAsFinisher.class) == null || clazz.getAnnotation(Decorator.SkipRegistrationAsPopulator.class) == null) {
                 this.register(id, clazz);
             }
         });

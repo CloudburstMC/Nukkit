@@ -11,7 +11,6 @@ import net.daporkchop.lib.math.primitive.BinMath;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Queue;
 
 /**
  * A simple pooling allocator for {@code int[]}s.

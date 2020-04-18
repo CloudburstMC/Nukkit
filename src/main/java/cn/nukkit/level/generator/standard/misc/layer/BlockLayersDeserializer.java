@@ -90,8 +90,8 @@ public final class BlockLayersDeserializer extends JsonDeserializer<BlockLayer[]
 
         public BlockLayer toActualLayer() {
             return this.minSize == this.maxSize - 1
-                    ? new ConstantSizeBlockLayer(this.blockId, this.minSize)
-                    : new VariableSizeBlockLayer(this.blockId, this.minSize, this.maxSize);
+                   ? new ConstantSizeBlockLayer(this.blockId, this.minSize)
+                   : new VariableSizeBlockLayer(this.blockId, this.minSize, this.maxSize);
         }
     }
 }

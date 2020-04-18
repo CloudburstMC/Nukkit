@@ -6,15 +6,11 @@ import cn.nukkit.level.generator.standard.misc.IntRange;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.misc.selector.BlockSelector;
 import cn.nukkit.utils.Identifier;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.daporkchop.lib.random.PRandom;
 
 import java.util.Objects;
-
-import static java.lang.Math.*;
-import static net.daporkchop.lib.math.primitive.PMath.*;
 
 /**
  * Places large spikes in the world.
@@ -65,12 +61,12 @@ public class BlobPopulator extends ChancePopulator.Column {
             double g = (vx + vy + vz) * 0.333333333333d + 0.5d;
             g *= g;
 
-            for (int dx = -vx; dx <= vx; dx++)  {
-                for (int dy = -vy; dy <= vy; dy++)  {
-                    if (y + dy < 0 || y + dy >= 256)    {
+            for (int dx = -vx; dx <= vx; dx++) {
+                for (int dy = -vy; dy <= vy; dy++) {
+                    if (y + dy < 0 || y + dy >= 256) {
                         continue;
                     }
-                    for (int dz = -vz; dz <= vz; dz++)  {
+                    for (int dz = -vz; dz <= vz; dz++) {
                         if (dx * dx + dy * dy + dz * dz <= g && replace.test(level.getBlockRuntimeIdUnsafe(blockX + dx, y + dy, blockZ + dz, 0))) {
                             level.setBlockRuntimeIdUnsafe(blockX + dx, y + dy, blockZ + dz, 0, block);
                         }

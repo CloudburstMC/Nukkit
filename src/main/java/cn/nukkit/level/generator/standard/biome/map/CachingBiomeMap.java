@@ -83,8 +83,8 @@ public final class CachingBiomeMap implements BiomeMap {
         }
 
         //this could be optimized some more, but it's unlikely it'll be called frequently if at all
-        for (int dx = 0; dx < sizeX; dx++)   {
-            for (int dz = 0; dz < sizeZ; dz++)  {
+        for (int dx = 0; dx < sizeX; dx++) {
+            for (int dz = 0; dz < sizeZ; dz++) {
                 arr[dx * sizeZ + dz] = this.getChunk((x + dx) >> 4, (z + dz) >> 4)[(((x + dx) & 0xF) << 4) | ((z + dz) & 0xF)];
             }
         }
@@ -108,8 +108,8 @@ public final class CachingBiomeMap implements BiomeMap {
             return arr;
         }
 
-        for (int dx = 0; dx < sizeX; dx++)   {
-            for (int dz = 0; dz < sizeZ; dz++)  {
+        for (int dx = 0; dx < sizeX; dx++) {
+            for (int dz = 0; dz < sizeZ; dz++) {
                 arr[dx * sizeZ + dz] = this.getChunk((x + dx) >> 4, (z + dz) >> 4)[(((x + dx) & 0xF) << 4) | ((z + dz) & 0xF)].getId();
             }
         }

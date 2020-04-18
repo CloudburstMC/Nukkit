@@ -20,7 +20,7 @@ import net.daporkchop.lib.random.PRandom;
 @Populator.SkipRegistrationAsFinisher
 @JsonDeserialize
 public final class NextGenerationPass implements Decorator, Populator {
-    public static final Identifier         ID       = Identifier.fromString("nukkitx:next");
+    public static final Identifier ID = Identifier.fromString("nukkitx:next");
     public static final NextGenerationPass INSTANCE = new NextGenerationPass();
 
     @Override

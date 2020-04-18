@@ -2,7 +2,6 @@ package cn.nukkit.level.generator.standard.population;
 
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.standard.finish.Finisher;
-import cn.nukkit.level.generator.standard.misc.GenerationPass;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.daporkchop.lib.random.PRandom;

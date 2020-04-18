@@ -4,17 +4,11 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.biome.Biome;
-import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.generator.standard.StandardGenerator;
-import cn.nukkit.level.generator.standard.generation.decorator.Decorator;
-import cn.nukkit.level.generator.standard.generation.decorator.SurfaceDecorator;
 import cn.nukkit.level.generator.standard.misc.IntRange;
-import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
-import cn.nukkit.level.generator.standard.misc.selector.BlockSelector;
 import cn.nukkit.registry.BiomeRegistry;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.daporkchop.lib.random.PRandom;
@@ -42,9 +36,9 @@ public class IceSnowFinisher implements Finisher {
         int y = level.getChunk(blockX >> 4, blockZ >> 4).getHighestBlock(blockX & 0xF, blockZ & 0xF);
         if (this.height.contains(y) && biome.canSnowAt(level, blockX, y + 1, blockZ)) {
             Block block = BlockRegistry.get().getBlock(level.getBlockRuntimeIdUnsafe(blockX, y, blockZ, 0));
-            if (block.getId() == BlockIds.WATER)   {
+            if (block.getId() == BlockIds.WATER) {
                 level.setBlockId(blockX, y, blockZ, 0, BlockIds.ICE);
-            } else if (y < 256 && block.isSolid())  {
+            } else if (y < 256 && block.isSolid()) {
                 level.setBlockId(blockX, y + 1, blockZ, 0, BlockIds.SNOW_LAYER);
             }
         }

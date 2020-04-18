@@ -6,7 +6,6 @@ import cn.nukkit.level.generator.standard.biome.map.complex.BiomeFilter;
 import cn.nukkit.level.generator.standard.misc.IntArrayAllocator;
 import cn.nukkit.level.generator.standard.store.StandardGeneratorStores;
 import cn.nukkit.utils.Identifier;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
@@ -34,14 +33,14 @@ public class RiverCombineBiomeFilter extends AbstractBiomeFilter {
     @JsonProperty
     protected BiomeFilter riverLayer;
 
-    protected final IntSet     oceanBiomes  = new IntOpenHashSet();
+    protected final IntSet oceanBiomes = new IntOpenHashSet();
     protected final Int2IntMap replacements = new Int2IntOpenHashMap();
 
     @JsonProperty
     protected GenerationBiome defaultRiver;
 
     @JsonProperty
-    protected GenerationBiome[]            oceans;
+    protected GenerationBiome[] oceans;
     @JsonProperty
     protected Map<String, GenerationBiome> riverBiomes;
 

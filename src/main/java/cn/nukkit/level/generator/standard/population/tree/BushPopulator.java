@@ -11,7 +11,7 @@ import net.daporkchop.lib.random.PRandom;
 
 import java.util.Objects;
 
-import static java.lang.Math.abs;
+import static java.lang.Math.*;
 
 /**
  * Places very short "trees", consisting of only a single log with a pile of leaves around it.
@@ -47,10 +47,10 @@ public class BushPopulator extends AbstractTreePopulator {
         final int leaves = this.leaves.selectRuntimeId(random);
         final int size = this.size;
 
-        for (int dy = 0; dy <= size; dy++)  {
+        for (int dy = 0; dy <= size; dy++) {
             int radius = size - dy;
-            for (int dx = -radius; dx <= radius; dx++)  {
-                for (int dz = -radius; dz <= radius; dz++)  {
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
                     if ((abs(dx) != radius || abs(dz) != radius || random.nextBoolean())
                             && this.replace.test(level.getBlockRuntimeIdUnsafe(x + dx, y + dy, z + dz, 0))) {
                         level.setBlockRuntimeIdUnsafe(x + dx, y + dy, z + dz, 0, leaves);

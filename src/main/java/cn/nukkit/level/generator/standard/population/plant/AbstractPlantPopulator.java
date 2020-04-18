@@ -2,7 +2,6 @@ package cn.nukkit.level.generator.standard.population.plant;
 
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.standard.StandardGenerator;
-import cn.nukkit.level.generator.standard.misc.IntRange;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.population.cluster.AbstractReplacingPopulator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,8 +10,6 @@ import com.google.common.base.Preconditions;
 import net.daporkchop.lib.random.PRandom;
 
 import java.util.Objects;
-
-import static java.lang.Math.*;
 
 /**
  * @author DaPorkchop_

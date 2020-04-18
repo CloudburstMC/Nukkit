@@ -81,7 +81,7 @@ public class OrePopulator extends AbstractReplacingPopulator {
                     continue;
                 }
                 for (int dy = minY; dy <= maxY; dy++) {
-                    if (dy < 0 || dy >= 256)    {
+                    if (dy < 0 || dy >= 256) {
                         continue;
                     }
                     double sideY = (dy + 0.5d - angleY) / rayLength;

@@ -7,16 +7,11 @@ import cn.nukkit.level.generator.standard.misc.IntRange;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.misc.selector.BlockSelector;
 import cn.nukkit.utils.Identifier;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.google.common.base.Preconditions;
 import net.daporkchop.lib.random.PRandom;
 
 import java.util.Objects;
-
-import static java.lang.Math.*;
-import static net.daporkchop.lib.math.primitive.PMath.*;
 
 /**
  * Generates underwater ore veins.
@@ -53,8 +48,8 @@ public class SubmergedOrePopulator extends ChancePopulator.Column {
     protected void populate0(PRandom random, ChunkManager level, int blockX, int blockZ) {
         IChunk chunk = level.getChunk(blockX >> 4, blockZ >> 4);
         int y = chunk.getHighestBlock(blockX & 0xF, blockZ & 0xF);
-        for (; y > 0; y--)  {
-            if (this.replace.test(chunk.getBlockRuntimeIdUnsafe(blockX & 0xF, y, blockZ & 0xF, 0)))   {
+        for (; y > 0; y--) {
+            if (this.replace.test(chunk.getBlockRuntimeIdUnsafe(blockX & 0xF, y, blockZ & 0xF, 0))) {
                 break;
             }
         }
@@ -66,11 +61,11 @@ public class SubmergedOrePopulator extends ChancePopulator.Column {
         final int radiusSq = radius * radius;
         final int block = this.block.selectRuntimeId(random);
 
-        for (int dx = -radius; dx <= radius; dx++)  {
-            for (int dz = -radius; dz <= radius; dz++)  {
-                if (dx * dx + dz * dz <= radiusSq)  {
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dz = -radius; dz <= radius; dz++) {
+                if (dx * dx + dz * dz <= radiusSq) {
                     for (int dy = -1; dy < 1; dy++) {
-                        if (this.replace.test(level.getBlockRuntimeIdUnsafe(blockX + dx, y + dy, blockZ + dz, 0)))    {
+                        if (this.replace.test(level.getBlockRuntimeIdUnsafe(blockX + dx, y + dy, blockZ + dz, 0))) {
                             level.setBlockRuntimeIdUnsafe(blockX + dx, y + dy, blockZ + dz, 0, block);
                         }
                     }

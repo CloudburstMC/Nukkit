@@ -10,15 +10,15 @@ import cn.nukkit.level.generator.standard.population.DistanceSelectionPopulator;
 import cn.nukkit.level.generator.standard.population.EndIslandPopulator;
 import cn.nukkit.level.generator.standard.population.GlowstonePopulator;
 import cn.nukkit.level.generator.standard.population.LakePopulator;
-import cn.nukkit.level.generator.standard.population.SpringPopulator;
-import cn.nukkit.level.generator.standard.population.plant.DoublePlantPopulator;
 import cn.nukkit.level.generator.standard.population.NoiseSelectionPopulator;
-import cn.nukkit.level.generator.standard.population.cluster.OrePopulator;
-import cn.nukkit.level.generator.standard.population.plant.PlantPopulator;
 import cn.nukkit.level.generator.standard.population.Populator;
-import cn.nukkit.level.generator.standard.population.plant.ShrubPopulator;
 import cn.nukkit.level.generator.standard.population.SpikesPopulator;
+import cn.nukkit.level.generator.standard.population.SpringPopulator;
 import cn.nukkit.level.generator.standard.population.SubmergedOrePopulator;
+import cn.nukkit.level.generator.standard.population.cluster.OrePopulator;
+import cn.nukkit.level.generator.standard.population.plant.DoublePlantPopulator;
+import cn.nukkit.level.generator.standard.population.plant.PlantPopulator;
+import cn.nukkit.level.generator.standard.population.plant.ShrubPopulator;
 import cn.nukkit.level.generator.standard.population.tree.BushPopulator;
 import cn.nukkit.level.generator.standard.population.tree.HugeTreePopulator;
 import cn.nukkit.level.generator.standard.population.tree.TreePopulator;
@@ -40,7 +40,7 @@ public final class PopulatorRegistry extends AbstractGeneratorRegistry<Populator
     protected void registerDefault() {
         //register all decorators as populators as well, unless they have the @SkipRegistrationAsPopulator annotation
         StandardGeneratorRegistries.decorator().idToValues.forEach((id, clazz) -> {
-            if (clazz.getAnnotation(Decorator.SkipRegistrationAsPopulator.class) == null)   {
+            if (clazz.getAnnotation(Decorator.SkipRegistrationAsPopulator.class) == null) {
                 this.register(id, clazz);
             }
         });

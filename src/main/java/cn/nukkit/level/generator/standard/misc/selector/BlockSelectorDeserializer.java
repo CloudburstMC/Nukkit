@@ -2,7 +2,6 @@ package cn.nukkit.level.generator.standard.misc.selector;
 
 import cn.nukkit.Nukkit;
 import cn.nukkit.level.generator.standard.misc.ConstantBlock;
-import cn.nukkit.level.generator.standard.misc.layer.BlockLayer;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
@@ -66,7 +65,7 @@ final class BlockSelectorDeserializer extends JsonDeserializer<BlockSelector> {
         private static final Ref<Matcher> ENTRY_MATCHER_CACHE = ThreadRef.regex("^(?:([0-9]+(?:-[0-9]+)?)\\*)?((?:[a-zA-Z0-9_]+:)?[a-zA-Z0-9_]+(?:#[0-9]+)?)$");
 
         private final ConstantBlock block;
-        private final int           weight;
+        private final int weight;
 
         @JsonCreator
         public SelectionEntry(

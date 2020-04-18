@@ -61,7 +61,7 @@ public class SubstituteRandomBiomeFilter extends AbstractBiomeFilter.Next {
 
         for (int dx = 0; dx < sizeX; dx++) {
             for (int dz = 0; dz < sizeZ; dz++) {
-                if (chance > 1 && this.random(x + dx, z + dz, 0, chance) != 0)  {
+                if (chance > 1 && this.random(x + dx, z + dz, 0, chance) != 0) {
                     continue;
                 }
                 int i = dx * sizeZ + dz;

@@ -39,7 +39,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static net.daporkchop.lib.common.util.PorkUtil.*;

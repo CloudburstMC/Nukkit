@@ -23,7 +23,7 @@ import java.util.stream.Stream;
  */
 @JsonDeserialize(using = GenerationBiomeDeserializer.class)
 public final class GenerationBiome {
-    private final Identifier      id;
+    private final Identifier id;
     private final Biome biome;
 
     private final Decorator[] decorators;
@@ -46,7 +46,7 @@ public final class GenerationBiome {
 
         GenerationBiome parent = temp.getParent();
         if (parent != null) {
-            if (biome == null)  {
+            if (biome == null) {
                 biome = parent.biome;
             }
 
@@ -137,5 +137,4 @@ public final class GenerationBiome {
     public int getInternalId() {
         return this.internalId;
     }
-
 }

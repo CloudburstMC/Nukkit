@@ -49,7 +49,7 @@ public interface DensitySource extends GenerationPass {
         int totalSize = PValidation.ensurePositive(sizeX) * PValidation.ensurePositive(sizeY) * PValidation.ensurePositive(sizeZ) + PValidation.ensureNonNegative(startIndex);
         if (arr == null || arr.length < totalSize) {
             double[] newArr = new double[totalSize];
-            if (arr != null && startIndex != 0)    {
+            if (arr != null && startIndex != 0) {
                 //copy existing elements into new array
                 System.arraycopy(arr, 0, newArr, 0, startIndex);
             }

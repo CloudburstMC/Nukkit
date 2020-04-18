@@ -19,9 +19,9 @@ import net.daporkchop.lib.common.util.PValidation;
 public final class BiomeTerrainCache {
     private final Ref<Long2ObjectLinkedOpenHashMap<Data>> cacheCache = ThreadRef.soft(Long2ObjectLinkedOpenHashMap::new);
     private final double[] weights;
-    private final int      radius;
-    private final int      scale;
-    private final int      diameter;
+    private final int radius;
+    private final int scale;
+    private final int diameter;
 
     private final double heightFactor;
     private final double heightOffset;

@@ -14,10 +14,16 @@ public abstract class BiomeElevation {
     public static final BiomeElevation DEFAULT = new Vanilla(0.1d, 0.2d);
 
     @JsonProperty
-    @JsonAlias({"base", "baseHeight"})
+    @JsonAlias({
+            "base",
+            "baseHeight"
+    })
     protected final double height;
     @JsonProperty
-    @JsonAlias({"volatility", "heightVariation"})
+    @JsonAlias({
+            "volatility",
+            "heightVariation"
+    })
     protected final double variation;
 
     protected final double normalizedHeight;

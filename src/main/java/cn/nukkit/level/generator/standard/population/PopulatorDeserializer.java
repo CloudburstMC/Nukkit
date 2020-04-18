@@ -24,6 +24,6 @@ final class PopulatorDeserializer extends JsonDeserializer<Populator> {
         p.nextToken();
 
         return id == NextGenerationPass.ID
-                ? NextGenerationPass.INSTANCE : Nukkit.YAML_MAPPER.readValue(p, StandardGeneratorRegistries.populator().get(id));
+               ? NextGenerationPass.INSTANCE : Nukkit.YAML_MAPPER.readValue(p, StandardGeneratorRegistries.populator().get(id));
     }
 }

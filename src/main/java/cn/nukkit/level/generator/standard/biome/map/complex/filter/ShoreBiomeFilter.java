@@ -25,14 +25,14 @@ import java.util.Objects;
 public class ShoreBiomeFilter extends AbstractBiomeFilter.Next {
     public static final Identifier ID = Identifier.fromString("nukkitx:shore");
 
-    protected final IntSet     oceanBiomes  = new IntOpenHashSet();
+    protected final IntSet oceanBiomes = new IntOpenHashSet();
     protected final Int2IntMap replacements = new Int2IntOpenHashMap();
 
     @JsonProperty
     protected GenerationBiome defaultBeach;
 
     @JsonProperty
-    protected GenerationBiome[]            oceans;
+    protected GenerationBiome[] oceans;
     @JsonProperty
     protected Map<String, GenerationBiome> beaches;
 

@@ -66,7 +66,7 @@ public class DoublePlantPopulator extends AbstractPlantPopulator {
     }
 
     @JsonSetter("type")
-    private void setType(int type)  {
-        this.types = new int[] { type };
+    private void setType(int type) {
+        this.types = new int[]{type};
     }
 }

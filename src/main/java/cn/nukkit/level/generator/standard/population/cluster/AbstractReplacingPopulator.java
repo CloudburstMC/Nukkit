@@ -1,13 +1,10 @@
 package cn.nukkit.level.generator.standard.population.cluster;
 
-import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.standard.StandardGenerator;
-import cn.nukkit.level.generator.standard.misc.IntRange;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.population.ChancePopulator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import net.daporkchop.lib.random.PRandom;
 
 import java.util.Objects;
 

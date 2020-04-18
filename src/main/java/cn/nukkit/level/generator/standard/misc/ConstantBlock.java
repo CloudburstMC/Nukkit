@@ -26,7 +26,7 @@ public final class ConstantBlock implements BlockFilter, BlockSelector {
     private static final Ref<Matcher> BLOCK_MATCHER_CACHE = ThreadRef.regex("^((?:[a-zA-Z0-9_]+:)?[a-zA-Z0-9_]+)(?:#([0-9]+))?$");
 
     private final Block block;
-    private final int   runtimeId;
+    private final int runtimeId;
 
     public ConstantBlock(int runtimeId) {
         this.block = BlockRegistry.get().getBlock(runtimeId);
@@ -36,7 +36,10 @@ public final class ConstantBlock implements BlockFilter, BlockSelector {
     @JsonCreator
     public ConstantBlock(
             @JsonProperty(value = "id", required = true) Identifier id,
-            @JsonProperty(value = "meta") @JsonAlias({"damage", "metadata"}) int meta) {
+            @JsonProperty(value = "meta") @JsonAlias({
+                    "damage",
+                    "metadata"
+            }) int meta) {
         this.block = BlockRegistry.get().getBlock(id, meta);
         this.runtimeId = BlockRegistry.get().getRuntimeId(id, meta);
     }

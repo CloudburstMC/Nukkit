@@ -28,14 +28,14 @@ public final class FlatGenerator implements Generator {
     private final Layer[] layers;
 
     public FlatGenerator(long seed, String options) {
-        if (options == null || options.isEmpty())   {
+        if (options == null || options.isEmpty()) {
             options = DEFAULT_PRESET;
         }
 
         List<Layer> layers = new ArrayList<>();
         Matcher matcher = PRESET_PATTERN.matcher("");
         String[] split = options.split(",");
-        for (String s : split)  {
+        for (String s : split) {
             Preconditions.checkArgument(matcher.reset(s).find(), "Invalid layer: \"%s\"", s);
 
             String size = matcher.group(1);
@@ -76,7 +76,7 @@ public final class FlatGenerator implements Generator {
     }
 
     @RequiredArgsConstructor
-    private static final class Layer    {
+    private static final class Layer {
         private final int runtimeId;
         private final int size;
     }

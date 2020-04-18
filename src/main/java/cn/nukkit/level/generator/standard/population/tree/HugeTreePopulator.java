@@ -64,7 +64,7 @@ public class HugeTreePopulator extends AbstractTreePopulator {
 
             IChunk chunk = level.getChunk(blockX >> 4, blockZ >> 4);
             for (int y = max, id, lastId = chunk.getBlockRuntimeIdUnsafe(blockX & 0xF, y + 1, blockZ & 0xF, 0); y >= min; y--) {
-                id = chunk.getBlockRuntimeIdUnsafe(blockX & 0xF, y, blockZ& 0xF, 0);
+                id = chunk.getBlockRuntimeIdUnsafe(blockX & 0xF, y, blockZ & 0xF, 0);
 
                 if (replace.test(lastId) && on.test(id)) {
                     this.placeTree(random, level, blockX, y, blockZ);

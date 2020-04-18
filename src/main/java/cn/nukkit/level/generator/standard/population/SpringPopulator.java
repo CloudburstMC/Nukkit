@@ -7,7 +7,6 @@ import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.misc.selector.BlockSelector;
 import cn.nukkit.level.generator.standard.population.cluster.AbstractReplacingPopulator;
 import cn.nukkit.utils.Identifier;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.daporkchop.lib.random.PRandom;
@@ -23,7 +22,7 @@ public class SpringPopulator extends AbstractReplacingPopulator {
 
     @JsonProperty
     protected IntRange height = IntRange.WHOLE_WORLD;
-    
+
     @JsonProperty
     protected BlockFilter neighbor = BlockFilter.AIR;
 
@@ -51,47 +50,47 @@ public class SpringPopulator extends AbstractReplacingPopulator {
     protected void populate0(PRandom random, ChunkManager level, int blockX, int blockZ) {
         int blockY = this.height.rand(random);
 
-        if (blockY <= 0 || !this.replace.test(level.getBlockRuntimeIdUnsafe(blockX, blockY, blockZ, 0)))   {
+        if (blockY <= 0 || !this.replace.test(level.getBlockRuntimeIdUnsafe(blockX, blockY, blockZ, 0))) {
             return;
         }
-        
+
         final BlockFilter neighbor = this.neighbor;
 
         int neighbors = 0;
         int air = 0;
 
         int id = level.getBlockRuntimeIdUnsafe(blockX, blockY - 1, blockZ, 0);
-        if (neighbor.test(id))   {
+        if (neighbor.test(id)) {
             neighbors++;
         } else if (id == 0) {
             air++;
         }
         id = level.getBlockRuntimeIdUnsafe(blockX - 1, blockY, blockZ, 0);
-        if (neighbor.test(id))   {
+        if (neighbor.test(id)) {
             neighbors++;
         } else if (id == 0) {
             air++;
         }
         id = level.getBlockRuntimeIdUnsafe(blockX + 1, blockY, blockZ, 0);
-        if (neighbor.test(id))   {
+        if (neighbor.test(id)) {
             neighbors++;
         } else if (id == 0) {
             air++;
         }
         id = level.getBlockRuntimeIdUnsafe(blockX, blockY, blockZ - 1, 0);
-        if (neighbor.test(id))   {
+        if (neighbor.test(id)) {
             neighbors++;
         } else if (id == 0) {
             air++;
         }
         id = level.getBlockRuntimeIdUnsafe(blockX, blockY, blockZ + 1, 0);
-        if (neighbor.test(id))   {
+        if (neighbor.test(id)) {
             neighbors++;
         } else if (id == 0) {
             air++;
         }
 
-        if (this.neighborCount.contains(neighbors) && this.airCount.contains(air))  {
+        if (this.neighborCount.contains(neighbors) && this.airCount.contains(air)) {
             level.setBlockRuntimeIdUnsafe(blockX, blockY, blockZ, 0, this.block.selectRuntimeId(random));
             //TODO: request immediate block update
         }

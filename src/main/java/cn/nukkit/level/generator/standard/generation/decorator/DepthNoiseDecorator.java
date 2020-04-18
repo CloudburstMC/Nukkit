@@ -25,19 +25,31 @@ public abstract class DepthNoiseDecorator extends AbstractGenerationPass impleme
     protected NoiseSource depthNoise;
 
     @JsonProperty
-    @JsonAlias({"depthRandom", "random"})
+    @JsonAlias({
+            "depthRandom",
+            "random"
+    })
     protected double randomFactor = 0.25d;
 
     @JsonProperty
-    @JsonAlias({"depthScale", "scale"})
+    @JsonAlias({
+            "depthScale",
+            "scale"
+    })
     protected double depthNoiseScale = 0.0078125d; // 0.0625 / (1 << 3)
 
     @JsonProperty
-    @JsonAlias({"depthFactor", "factor"})
+    @JsonAlias({
+            "depthFactor",
+            "factor"
+    })
     protected double depthNoiseFactor = 0.3333333333d;
 
     @JsonProperty
-    @JsonAlias({"depthOffset", "offset"})
+    @JsonAlias({
+            "depthOffset",
+            "offset"
+    })
     protected double depthNoiseOffset = 3.0d;
 
     @Override

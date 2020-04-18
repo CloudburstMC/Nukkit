@@ -6,7 +6,6 @@ import cn.nukkit.level.generator.standard.misc.IntRange;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.misc.selector.BlockSelector;
 import cn.nukkit.utils.Identifier;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.daporkchop.lib.random.PRandom;
@@ -82,11 +81,11 @@ public class SpikesPopulator extends ChancePopulator.Column {
                             && ((abs(dx) != radius && abs(dz) != radius) || random.nextInt(4) == 0)) {
                         if (y + dy < 255 && replace.test(level.getBlockRuntimeIdUnsafe(x + dx, y + dy, z + dz, 0))) {
                             level.setBlockRuntimeIdUnsafe(x + dx, y + dy, z + dz, 0, block
-        );
+                            );
                         }
                         if (dy != 0 && radius > 1 && y - dy < 255 && replace.test(level.getBlockRuntimeIdUnsafe(x + dx, y - dy, z + dz, 0))) {
                             level.setBlockRuntimeIdUnsafe(x + dx, y - dy, z + dz, 0, block
-        );
+                            );
                         }
                     }
                 }
@@ -96,14 +95,14 @@ public class SpikesPopulator extends ChancePopulator.Column {
         for (; y >= 0; y--) {
             int id = level.getBlockRuntimeIdUnsafe(x, y, z, 0);
             if (id != block
-         && !replace.test(id)) {
+                    && !replace.test(id)) {
                 return;
             }
             for (int dx = -1; dx <= 1; dx++) {
                 for (int dz = -1; dz <= 1; dz++) {
                     if ((dx == 0 || dz == 0 || random.nextBoolean()) && replace.test(level.getBlockRuntimeIdUnsafe(x + dx, y, z + dz, 0))) {
                         level.setBlockRuntimeIdUnsafe(x + dx, y, z + dz, 0, block
-        );
+                        );
                     }
                 }
             }

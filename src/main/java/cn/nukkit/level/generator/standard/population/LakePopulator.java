@@ -8,7 +8,6 @@ import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.misc.selector.BlockSelector;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import net.daporkchop.lib.common.pool.handle.DefaultThreadHandledPool;

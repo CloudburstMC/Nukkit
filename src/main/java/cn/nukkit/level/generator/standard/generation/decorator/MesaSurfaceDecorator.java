@@ -27,7 +27,7 @@ public class MesaSurfaceDecorator extends DepthNoiseDecorator {
     public static final Identifier ID = Identifier.fromString("nukkitx:mesa_surface");
 
     protected static final int BAND_COUNT = 64;
-    protected static final int BAND_MASK  = BAND_COUNT - 1;
+    protected static final int BAND_MASK = BAND_COUNT - 1;
 
     protected int ground = -1;
 

@@ -24,7 +24,7 @@ public final class MultiBlockSelector implements BlockSelector {
 
     protected MultiBlockSelector(@NonNull int[] blocks) {
         this.ids = blocks.clone();
-        for (int i : this.ids)   {
+        for (int i : this.ids) {
             BlockRegistry.get().getBlock(i); //make sure id is valid
         }
     }

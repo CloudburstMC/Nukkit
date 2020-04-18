@@ -2,7 +2,6 @@ package cn.nukkit.level.generator.standard.finish;
 
 import cn.nukkit.Nukkit;
 import cn.nukkit.level.generator.standard.misc.NextGenerationPass;
-import cn.nukkit.level.generator.standard.population.Populator;
 import cn.nukkit.level.generator.standard.registry.StandardGeneratorRegistries;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.core.JsonParser;
@@ -25,6 +24,6 @@ final class FinisherDeserializer extends JsonDeserializer<Finisher> {
         p.nextToken();
 
         return id == NextGenerationPass.ID
-                ? NextGenerationPass.INSTANCE : Nukkit.YAML_MAPPER.readValue(p, StandardGeneratorRegistries.finisher().get(id));
+               ? NextGenerationPass.INSTANCE : Nukkit.YAML_MAPPER.readValue(p, StandardGeneratorRegistries.finisher().get(id));
     }
 }

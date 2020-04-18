@@ -61,8 +61,8 @@ public class TreePopulator extends AbstractTreePopulator {
     @JsonDeserialize
     private static final class ConfigTree {
         private final TreeSpecies species;
-        private       IntRange    height;
-        private       boolean     fallen;
+        private IntRange height;
+        private boolean fallen;
 
         @JsonCreator
         public ConfigTree(String species) {

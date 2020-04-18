@@ -3,7 +3,6 @@ package cn.nukkit.level.generator.standard.biome.map;
 import cn.nukkit.level.generator.standard.StandardGenerator;
 import cn.nukkit.level.generator.standard.biome.GenerationBiome;
 import cn.nukkit.level.generator.standard.misc.AbstractGenerationPass;
-import cn.nukkit.level.generator.standard.misc.IntArrayAllocator;
 import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -39,7 +38,7 @@ public final class ConstantBiomeMap extends AbstractGenerationPass implements Bi
     @Override
     public GenerationBiome[] getRegion(GenerationBiome[] arr, int x, int z, int sizeX, int sizeZ) {
         int totalSize = PValidation.ensurePositive(sizeX) * PValidation.ensurePositive(sizeZ);
-        if (arr == null || arr.length < totalSize)  {
+        if (arr == null || arr.length < totalSize) {
             arr = new GenerationBiome[totalSize];
         }
 
@@ -50,7 +49,7 @@ public final class ConstantBiomeMap extends AbstractGenerationPass implements Bi
     @Override
     public Identifier[] getRegionIds(Identifier[] arr, int x, int z, int sizeX, int sizeZ) {
         int totalSize = PValidation.ensurePositive(sizeX) * PValidation.ensurePositive(sizeZ);
-        if (arr == null || arr.length < totalSize)  {
+        if (arr == null || arr.length < totalSize) {
             arr = new Identifier[totalSize];
         }
 

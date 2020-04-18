@@ -31,8 +31,8 @@ public class ZoomBiomeFilter extends AbstractBiomeFilter.Next {
     @Override
     public int[] get(int x, int z, int sizeX, int sizeZ, IntArrayAllocator alloc) {
         return this.times > 0
-                ? this.getRecursive(x, z, sizeX, sizeZ, alloc, this.times)
-                : this.next.get(x, z, sizeX, sizeZ, alloc);
+               ? this.getRecursive(x, z, sizeX, sizeZ, alloc, this.times)
+               : this.next.get(x, z, sizeX, sizeZ, alloc);
     }
 
     protected int[] getRecursive(int x, int z, int sizeX, int sizeZ, IntArrayAllocator alloc, int depth) {
@@ -41,8 +41,8 @@ public class ZoomBiomeFilter extends AbstractBiomeFilter.Next {
         int belowSizeX = this.mode.belowSize(sizeX);
         int belowSizeZ = this.mode.belowSize(sizeZ);
         int[] below = depth == 1
-                ? this.next.get(belowX, belowZ, belowSizeX, belowSizeZ, alloc)
-                : this.getRecursive(belowX, belowZ, belowSizeX, belowSizeZ, alloc, depth - 1);
+                      ? this.next.get(belowX, belowZ, belowSizeX, belowSizeZ, alloc)
+                      : this.getRecursive(belowX, belowZ, belowSizeX, belowSizeZ, alloc, depth - 1);
 
         return this.mode.doZoom(this, below, x, z, sizeX, sizeZ, alloc);
     }
@@ -89,7 +89,7 @@ public class ZoomBiomeFilter extends AbstractBiomeFilter.Next {
     }
 
     @JsonSetter("mode")
-    private void setMode(String mode)   {
+    private void setMode(String mode) {
         this.mode = Mode.valueOf(mode.toUpperCase());
     }
 
@@ -215,15 +215,15 @@ public class ZoomBiomeFilter extends AbstractBiomeFilter.Next {
                         double rXZ0 = (filter.random(rndX + 4, rndZ + 4, 0, 1024) * 0.0009765625d - 0.5d) * 3.6d + 4.0D;
                         double rXZ1 = (filter.random(rndX + 4, rndZ + 4, 1, 1024) * 0.0009765625d - 0.5d) * 3.6d + 4.0D;
 
-                        for (int ddx = 0; ddx < 4; ddx++)   {
+                        for (int ddx = 0; ddx < 4; ddx++) {
                             i = ((dx << 2) + ddx) * zoomSizeZ + (dz << 2);
-                            for (int ddz = 0; ddz < 4; ddz++, i++)   {
+                            for (int ddz = 0; ddz < 4; ddz++, i++) {
                                 double dxz = (ddz - rxz1) * (ddz - rxz1) + (ddx - rxz0) * (ddx - rxz0);
                                 double dXz = (ddz - rXz1) * (ddz - rXz1) + (ddx - rXz0) * (ddx - rXz0);
                                 double dxZ = (ddz - rxZ1) * (ddz - rxZ1) + (ddx - rxZ0) * (ddx - rxZ0);
                                 double dXZ = (ddz - rXZ1) * (ddz - rXZ1) + (ddx - rXZ0) * (ddx - rXZ0);
 
-                                if (dxz < dXz && dxz < dxZ && dxz < dXZ)    {
+                                if (dxz < dXz && dxz < dxZ && dxz < dXZ) {
                                     tmp[i] = vxz;
                                 } else if (dXz < dxz && dXz < dxZ && dXz < dXZ) {
                                     tmp[i] = vXz;

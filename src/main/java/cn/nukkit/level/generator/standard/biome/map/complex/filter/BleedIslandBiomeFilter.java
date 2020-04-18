@@ -81,9 +81,9 @@ public class BleedIslandBiomeFilter extends AbstractBiomeFilter.Next {
                 int v2 = below[(dx + 2) * belowSizeZ + (dz + 1)];
                 int v3 = below[(dx + 1) * belowSizeZ + (dz + 2)];
 
-                if (center != oceanId || (v0 == oceanId && v1 == oceanId && v2 == oceanId && v3 == oceanId))    {
-                    if (center != oceanId && (v0 == oceanId || v1 == oceanId || v2 == oceanId || v3 == oceanId))    {
-                        if (this.random(dx + x, dz + z, 0, chance) == 0)    {
+                if (center != oceanId || (v0 == oceanId && v1 == oceanId && v2 == oceanId && v3 == oceanId)) {
+                    if (center != oceanId && (v0 == oceanId || v1 == oceanId || v2 == oceanId || v3 == oceanId)) {
+                        if (this.random(dx + x, dz + z, 0, chance) == 0) {
                             out[dx * sizeZ + dz] = center == preserveId ? center : oceanId;
                             continue;
                         }
@@ -93,16 +93,16 @@ public class BleedIslandBiomeFilter extends AbstractBiomeFilter.Next {
                     int limit = 1;
                     int next = islandId;
 
-                    if (v0 != oceanId && this.random(dx + x, dz + z, 0, limit++) == 0)  {
+                    if (v0 != oceanId && this.random(dx + x, dz + z, 0, limit++) == 0) {
                         next = v0;
                     }
-                    if (v1 != oceanId && this.random(dx + x, dz + z, 1, limit++) == 0)  {
+                    if (v1 != oceanId && this.random(dx + x, dz + z, 1, limit++) == 0) {
                         next = v1;
                     }
-                    if (v2 != oceanId && this.random(dx + x, dz + z, 2, limit++) == 0)  {
+                    if (v2 != oceanId && this.random(dx + x, dz + z, 2, limit++) == 0) {
                         next = v2;
                     }
-                    if (v3 != oceanId && this.random(dx + x, dz + z, 3, limit) == 0)  {
+                    if (v3 != oceanId && this.random(dx + x, dz + z, 3, limit) == 0) {
                         next = v3;
                     }
 

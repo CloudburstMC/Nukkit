@@ -7,15 +7,11 @@ import cn.nukkit.level.generator.standard.misc.IntRange;
 import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.misc.selector.BlockSelector;
 import cn.nukkit.utils.Identifier;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.google.common.base.Preconditions;
 import net.daporkchop.lib.random.PRandom;
 
 import java.util.Objects;
-
-import static java.lang.Math.min;
 
 /**
  * Places patches of plants of varying heights in the world.

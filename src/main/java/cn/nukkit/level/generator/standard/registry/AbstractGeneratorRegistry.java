@@ -2,19 +2,15 @@ package cn.nukkit.level.generator.standard.registry;
 
 import cn.nukkit.Server;
 import cn.nukkit.event.Event;
-import cn.nukkit.level.generator.standard.StandardGeneratorUtils;
 import cn.nukkit.registry.Registry;
 import cn.nukkit.registry.RegistryException;
-import cn.nukkit.utils.ConfigSection;
 import cn.nukkit.utils.Identifier;
 import com.google.common.base.Preconditions;
 import lombok.NonNull;
-import net.daporkchop.lib.random.PRandom;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
-import java.util.function.BiFunction;
 
 /**
  * Base class for registries used by the NukkitX standard generator.
@@ -33,7 +29,7 @@ public abstract class AbstractGeneratorRegistry<V> implements Registry {
         this.registerDefault();
 
         Event event = this.constructionEvent();
-        if (Server.getInstance() != null)   {
+        if (Server.getInstance() != null) {
             //i was debugging stuff
             Server.getInstance().getPluginManager().callEvent(event);
         }
@@ -44,7 +40,7 @@ public abstract class AbstractGeneratorRegistry<V> implements Registry {
         Preconditions.checkState(this.idToValues.putIfAbsent(id, clazz) == null, "ID \"%s\" already registered!", id);
     }
 
-    public Class<? extends V> get(@NonNull Identifier id)   {
+    public Class<? extends V> get(@NonNull Identifier id) {
         Preconditions.checkState(this.closed == 1, "not closed");
         return Preconditions.checkNotNull(this.idToValues.get(id), id.toString());
     }

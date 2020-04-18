@@ -1,6 +1,5 @@
 package cn.nukkit.level.generator.standard.misc.layer;
 
-import cn.nukkit.level.chunk.IChunk;
 import lombok.NonNull;
 import net.daporkchop.lib.random.PRandom;
 

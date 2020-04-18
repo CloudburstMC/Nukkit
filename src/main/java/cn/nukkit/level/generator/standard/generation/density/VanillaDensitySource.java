@@ -40,13 +40,13 @@ public class VanillaDensitySource extends AbstractGenerationPass implements Dens
     @JsonProperty
     private double specialHeightVariation = 0.25d;
     @JsonProperty
-    private double heightFactor           = 1.0d;
+    private double heightFactor = 1.0d;
     @JsonProperty
-    private double heightOffset           = 0.0d;
+    private double heightOffset = 0.0d;
     @JsonProperty
-    private double heightVariationFactor  = 1.0d;
+    private double heightVariationFactor = 1.0d;
     @JsonProperty
-    private double heightVariationOffset  = 0.0d;
+    private double heightVariationOffset = 0.0d;
 
     @JsonProperty
     private NoiseGenerator selectorNoise;
@@ -100,7 +100,7 @@ public class VanillaDensitySource extends AbstractGenerationPass implements Dens
         int totalSize = PValidation.ensurePositive(sizeX) * PValidation.ensurePositive(sizeY) * PValidation.ensurePositive(sizeZ) + PValidation.ensureNonNegative(startIndex);
         if (arr == null || arr.length < totalSize) {
             double[] newArr = new double[totalSize];
-            if (arr != null && startIndex != 0)    {
+            if (arr != null && startIndex != 0) {
                 //copy existing elements into new array
                 System.arraycopy(arr, 0, newArr, 0, startIndex);
             }
@@ -128,7 +128,7 @@ public class VanillaDensitySource extends AbstractGenerationPass implements Dens
         return arr;
     }
 
-    protected double getDepth(double x, double z)   {
+    protected double getDepth(double x, double z) {
         double depth = this.depth.get(x, z);
         if (depth < 0.0d) {
             depth *= -0.3d;

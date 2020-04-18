@@ -3,8 +3,6 @@ package cn.nukkit.level.generator.standard.population;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.standard.StandardGenerator;
 import cn.nukkit.level.generator.standard.misc.AbstractGenerationPass;
-import cn.nukkit.level.generator.standard.misc.IntRange;
-import cn.nukkit.utils.Identifier;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
@@ -26,10 +24,10 @@ public abstract class ChancePopulator extends AbstractGenerationPass implements 
         Preconditions.checkState(this.chance >= 0.0d && this.chance <= 1.0d, "chance (%s) must be in range 0-1!", this.chance);
     }
 
-    public abstract static class Column extends ChancePopulator    {
+    public abstract static class Column extends ChancePopulator {
         @Override
         public final void populate(PRandom random, ChunkManager level, int blockX, int blockZ) {
-            if (random.nextDouble() < this.chance)  {
+            if (random.nextDouble() < this.chance) {
                 this.populate0(random, level, blockX, blockZ);
             }
         }

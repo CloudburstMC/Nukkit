@@ -17,8 +17,8 @@ public abstract class TerrainDoubleCache {
     protected static final long NaN = Double.doubleToRawLongBits(Double.NaN);
 
     protected final Ref<Long2LongLinkedOpenHashMap> cacheCache = ThreadRef.soft(Long2LongLinkedOpenHashMap::new);
-    protected final int      radius;
-    protected final int      scale;
+    protected final int radius;
+    protected final int scale;
 
     @JsonCreator
     public TerrainDoubleCache(
