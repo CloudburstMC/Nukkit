@@ -31,25 +31,29 @@ public final class IntRange {
     public final int max;
 
     public final boolean gaussian;
+    public final boolean downwardBias;
 
     private IntRange(int min, int max, long overloadFlag) {
         this.min = min;
         this.max = max;
         this.gaussian = false;
+        this.downwardBias = false;
     }
 
     public IntRange(int min, int max) {
-        this(min, max, false);
+        this(min, max, false, false);
     }
 
     @JsonCreator
     public IntRange(
             @JsonProperty(value = "min", required = true) @JsonAlias({"min"}) int min,
             @JsonProperty(value = "max", required = true) @JsonAlias({"max"}) int max,
-            @JsonProperty("gaussian") boolean gaussian) {
+            @JsonProperty("gaussian") boolean gaussian,
+            @JsonProperty("downwardBias") boolean downwardBias) {
         this.min = min;
         this.max = max + 1; //add 1 to make max exclusive
         this.gaussian = gaussian;
+        this.downwardBias = downwardBias;
 
         this.validate();
     }
@@ -61,6 +65,7 @@ public final class IntRange {
         this.min = Integer.parseUnsignedInt(matcher.group(1));
         this.max = (matcher.group(2) == null ? this.min : Integer.parseUnsignedInt(matcher.group(2))) + 1;
         this.gaussian = false;
+        this.downwardBias = false;
 
         this.validate();
     }
@@ -70,6 +75,7 @@ public final class IntRange {
         this.min = value;
         this.max = value + 1;
         this.gaussian = false;
+        this.downwardBias = false;
 
         this.validate();
     }
@@ -92,6 +98,8 @@ public final class IntRange {
         } else if (this.gaussian) {
             double center = (this.min + this.max) * 0.5d;
             return (int) (random.nextGaussianDouble() * (this.max - center) + center);
+        } else if (this.downwardBias) {
+            return random.nextInt(this.min, random.nextInt(this.min, this.max) + 1);
         } else {
             return random.nextInt(this.min, this.max);
         }

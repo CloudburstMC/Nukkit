@@ -130,7 +130,7 @@ public final class StandardGenerator implements Generator {
     private final Function<GenerationBiome, Populator[]> populatorsLookupComputer = biome -> Arrays.stream(this.populators)
             .flatMap(populator -> populator instanceof NextGenerationPass ? Arrays.stream(biome.getPopulators()) : Stream.of(populator))
             .toArray(Populator[]::new);
-    private final Function<GenerationBiome, Finisher[]> finishersLookupComputer = biome -> Arrays.stream(this.populators)
+    private final Function<GenerationBiome, Finisher[]> finishersLookupComputer = biome -> Arrays.stream(this.finishers)
             .flatMap(finisher -> finisher instanceof NextGenerationPass ? Arrays.stream(biome.getFinishers()) : Stream.of(finisher))
             .toArray(Finisher[]::new);
 

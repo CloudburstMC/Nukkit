@@ -1,12 +1,1 @@
 parent: "minecraft:taiga"
-
-finishers:
-    # Snow layer on ground
-  - id: "nukkitx:cover"
-    on: "grass,stone,leaves#1"
-    cover: "snow_layer"
-
-    # Ice layer on water
-  - id: "nukkitx:replace_top"
-    replace: "water"
-    with: "ice"

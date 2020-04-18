@@ -30,14 +30,20 @@ populators:
     # Lava lakes (underground)
   - id: "nukkitx:lake"
     chance: 0.00048828125 # about 1 per 8 chunks
-    height: "8-63"
+    height:
+      min: 8
+      max: 63
+      downwardBias: true
     block: "lava"
     border: "stone"
 
     # Lava lakes (surface)
   - id: "nukkitx:lake"
     chance: 0.00006103515625 # about 1 per 64 chunks
-    height: "64-255"
+    height:
+      min: 64
+      max: 255
+      downwardBias: true
     block: "lava"
     border: "stone"
     surfaceBlocks: "grass,podzol,mycelium"
@@ -121,3 +127,10 @@ populators:
       gaussian: true
     block: "lapis_ore"
     replace: "stone"
+
+finishers:
+  - id: "nukkitx:next"
+
+    # Ice and snow in cold biomes
+  - id: "nukkitx:ice_snow"
+    height: "60-255"

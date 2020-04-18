@@ -1,12 +1,1 @@
 parent: "minecraft:river"
-
-finishers:
-    # Snow layer on ground
-  - id: "nukkitx:cover"
-    on: "grass,stone"
-    cover: "snow_layer"
-
-    # Ice layer on water
-  - id: "nukkitx:replace_top"
-    replace: "water"
-    with: "ice"

@@ -2,6 +2,8 @@ package cn.nukkit.level.generator.standard.registry;
 
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
+import cn.nukkit.level.generator.standard.finish.Finisher;
+import cn.nukkit.level.generator.standard.finish.IceSnowFinisher;
 import cn.nukkit.level.generator.standard.generation.decorator.Decorator;
 import cn.nukkit.level.generator.standard.misc.NextGenerationPass;
 import cn.nukkit.level.generator.standard.population.BlobPopulator;
@@ -36,7 +38,7 @@ import lombok.RequiredArgsConstructor;
  * @see StandardGeneratorRegistries#populator()
  */
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-public final class FinisherRegistry extends AbstractGeneratorRegistry<Populator> {
+public final class FinisherRegistry extends AbstractGeneratorRegistry<Finisher> {
     @Override
     protected void registerDefault() {
         //register all decorators as populators as well, unless they have the @SkipRegistrationAsPopulator annotation
@@ -45,6 +47,8 @@ public final class FinisherRegistry extends AbstractGeneratorRegistry<Populator>
                 this.register(id, clazz);
             }
         });
+
+        this.register(IceSnowFinisher.ID, IceSnowFinisher.class);
 
         this.register(NextGenerationPass.ID, NextGenerationPass.class);
     }

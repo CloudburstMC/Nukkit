@@ -1,30 +1,26 @@
 package cn.nukkit.level.biome;
 
 import cn.nukkit.Nukkit;
-import cn.nukkit.registry.BiomeRegistry;
+import cn.nukkit.level.ChunkManager;
 import cn.nukkit.utils.Identifier;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.google.common.base.Preconditions;
 import com.nukkitx.nbt.NbtUtils;
 import com.nukkitx.nbt.stream.NBTInputStream;
 import com.nukkitx.nbt.tag.CompoundTag;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import net.daporkchop.lib.noise.NoiseSource;
+import net.daporkchop.lib.noise.engine.PerlinNoiseEngine;
+import net.daporkchop.lib.random.impl.FastPRandom;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 
 /**
  * @author DaPorkchop_
  */
 public class Biome {
-    public static final transient CompoundTag BIOME_DEFINITIONS;
+    public static final CompoundTag BIOME_DEFINITIONS;
+    public static final NoiseSource TEMPERATURE_NOISE = new PerlinNoiseEngine(new FastPRandom(123456789L));
 
     static {
         InputStream inputStream = Nukkit.class.getClassLoader().getResourceAsStream("biome_definitions.dat");
@@ -40,10 +36,10 @@ public class Biome {
 
     protected final Identifier id;
     protected final Set<Identifier> tags;
-    protected final float temperature;
-    protected final float downfall;
+    protected final double temperature;
+    protected final double downfall;
 
-    protected Biome(@NonNull Identifier id, Set<Identifier> tags, float temperature, float downfall)   {
+    protected Biome(@NonNull Identifier id, Set<Identifier> tags, float temperature, float downfall) {
         this.id = id;
         this.tags = tags == null || tags.isEmpty() ? Collections.emptySet() : Collections.unmodifiableSet(tags);
         this.temperature = temperature;
@@ -54,7 +50,7 @@ public class Biome {
         return this.id;
     }
 
-    public boolean hasTag(Identifier tag)   {
+    public boolean hasTag(Identifier tag) {
         return this.tags.contains(tag);
     }
 
@@ -62,11 +58,25 @@ public class Biome {
         return this.tags;
     }
 
-    public float getTemperature() {
+    public double getTemperature() {
         return this.temperature;
     }
 
-    public float getDownfall() {
+    public double getTemperature(int x, int y, int z)  {
+        double temperature = this.temperature;
+        if (y > 64) {
+            double noise = TEMPERATURE_NOISE.get(x * 0.125d, z * 0.125d) * 4.0d;
+            temperature -= (noise + y - 64.0d) * 0.001666666666d;
+        }
+        return temperature;
+    }
+
+    public boolean canSnowAt(ChunkManager level, int x, int y, int z)  {
+        //TODO: light level must be less than 10
+        return y >= 0 && this.getTemperature(x, y, z) < 0.15d && (y >= 256 || level.getBlockRuntimeIdUnsafe(x, y, z, 0) == 0);
+    }
+
+    public double getDownfall() {
         return this.downfall;
     }
 }
