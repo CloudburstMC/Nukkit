@@ -1,6 +1,7 @@
 package cn.nukkit.entity.projectile;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -63,7 +64,15 @@ public class EntityEnderPearl extends EntityProjectile {
         boolean hasUpdate = super.onUpdate(currentTick);
 
         if (this.isCollided && this.shootingEntity instanceof Player) {
-            teleport();
+            boolean portal = false;
+            for (Block collided : this.getCollisionBlocks()) {
+                if (collided.getId() == Block.NETHER_PORTAL) {
+                    portal = true;
+                }
+            }
+            if (!portal) {
+                teleport();
+            }
         }
 
         if (this.age > 1200 || this.isCollided) {
