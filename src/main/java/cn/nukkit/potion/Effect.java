@@ -17,10 +17,9 @@ import static com.nukkitx.protocol.bedrock.data.EntityFlag.INVISIBLE;
  */
 public class Effect implements Cloneable {
 
-    public static final int SPEED = 1;
+    public static final int SWIFTNESS = 1;
     public static final int SLOWNESS = 2;
     public static final int HASTE = 3;
-    public static final int SWIFTNESS = 3;
     public static final int FATIGUE = 4;
     public static final int MINING_FATIGUE = 4;
     public static final int STRENGTH = 5;
@@ -63,9 +62,9 @@ public class Effect implements Cloneable {
     public static void init() {
         effects = new Effect[256];
 
-        effects[Effect.SPEED] = new Effect(Effect.SPEED, "%potion.moveSpeed", 124, 175, 198);
+        effects[Effect.SWIFTNESS] = new Effect(Effect.SWIFTNESS, "%potion.moveSpeed", 124, 175, 198);
         effects[Effect.SLOWNESS] = new Effect(Effect.SLOWNESS, "%potion.moveSlowdown", 90, 108, 129, true);
-        effects[Effect.SWIFTNESS] = new Effect(Effect.SWIFTNESS, "%potion.digSpeed", 217, 192, 67);
+        effects[Effect.HASTE] = new Effect(Effect.HASTE, "%potion.digSpeed", 217, 192, 67);
         effects[Effect.FATIGUE] = new Effect(Effect.FATIGUE, "%potion.digSlowDown", 74, 66, 23, true);
         effects[Effect.STRENGTH] = new Effect(Effect.STRENGTH, "%potion.damageBoost", 147, 36, 35);
         effects[Effect.HEALING] = new InstantEffect(Effect.HEALING, "%potion.heal", 248, 36, 35);
@@ -268,7 +267,7 @@ public class Effect implements Cloneable {
 
             player.sendPacket(packet);
 
-            if (this.id == Effect.SPEED) {
+            if (this.id == Effect.SWIFTNESS) {
                 if (oldEffect != null) {
                     player.setMovementSpeed(player.getMovementSpeed() / (1 + 0.2f * (oldEffect.amplifier + 1)), false);
                 }
@@ -303,7 +302,7 @@ public class Effect implements Cloneable {
 
             ((Player) entity).sendPacket(packet);
 
-            if (this.id == Effect.SPEED) {
+            if (this.id == Effect.SWIFTNESS) {
                 ((Player) entity).setMovementSpeed(((Player) entity).getMovementSpeed() / (1 + 0.2f * (this.amplifier + 1)));
             }
             if (this.id == Effect.SLOWNESS) {
