@@ -120,10 +120,8 @@ aliases:
 # %worlds
 worlds:
   world:
-    seed: 404
-    generator: normal
-    options:
+    generator: nukkitx:standard
+    options: overworld
   nether:
-    seed: my_cool_nether_seed
-    generator: nether
-    options:
+    generator: nukkitx:standard
+    options: nether
