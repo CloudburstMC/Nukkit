@@ -20,8 +20,6 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.inventory.InventoryCloseEvent;
 import cn.nukkit.event.player.*;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
-import cn.nukkit.form.window.FormWindow;
-import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.inventory.transaction.CraftingTransaction;
 import cn.nukkit.inventory.transaction.InventoryTransaction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
@@ -34,12 +32,8 @@ import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.level.particle.PunchBlockParticle;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.network.ProtocolInfo;
 import cn.nukkit.network.protocol.types.InventoryTransactionUtils;
-import cn.nukkit.pack.Pack;
 import cn.nukkit.player.Player;
-import cn.nukkit.scheduler.AsyncTask;
-import cn.nukkit.utils.ClientChainData;
 import cn.nukkit.utils.TextFormat;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
@@ -47,15 +41,13 @@ import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.math.vector.Vector3i;
 import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.protocol.bedrock.BedrockPacket;
-import com.nukkitx.protocol.bedrock.BedrockPacketCodec;
 import com.nukkitx.protocol.bedrock.data.*;
 import com.nukkitx.protocol.bedrock.handler.BedrockPacketHandler;
 import com.nukkitx.protocol.bedrock.packet.*;
-import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 import static cn.nukkit.block.BlockIds.AIR;
 import static cn.nukkit.player.Player.CRAFTING_SMALL;
@@ -64,8 +56,8 @@ import static cn.nukkit.player.Player.DEFAULT_SPEED;
 /**
  * @author Extollite
  */
-@Log4j2
 public class PlayerPacketHandler implements BedrockPacketHandler {
+    private static final Logger log = org.apache.logging.log4j.LogManager.getLogger(PlayerPacketHandler.class);
     private final Player player;
 
     protected Vector3i lastRightClickPos = null;
@@ -507,30 +499,30 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
         return true;
     }
 
-    @Override
-    public boolean handle(ModalFormResponsePacket packet) {
-        if (!player.spawned || !player.isAlive()) {
-            return true;
-        }
-
-        FormWindow window;
-        if ((window = player.removeFormWindow(packet.getFormId())) != null) {
-            window.setResponse(packet.getFormData().trim());
-
-            PlayerFormRespondedEvent event = new PlayerFormRespondedEvent(player, packet.getFormId(), window);
-            player.getServer().getPluginManager().callEvent(event);
-        } else if ((window = player.getServerSettingById(packet.getFormId())) != null) {
-            window.setResponse(packet.getFormData().trim());
-
-            PlayerSettingsRespondedEvent event = new PlayerSettingsRespondedEvent(player, packet.getFormId(), window);
-            player.getServer().getPluginManager().callEvent(event);
-
-            //Set back new settings if not been cancelled
-            if (!event.isCancelled() && window instanceof FormWindowCustom)
-                ((FormWindowCustom) window).setElementsFromResponse();
-        }
-        return true;
-    }
+//    @Override
+//    public boolean handle(ModalFormResponsePacket packet) {
+//        if (!player.spawned || !player.isAlive()) {
+//            return true;
+//        }
+//
+//        FormWindow window;
+//        if ((window = player.removeFormWindow(packet.getFormId())) != null) {
+//            window.setResponse(packet.getFormData().trim());
+//
+//            PlayerFormRespondedEvent event = new PlayerFormRespondedEvent(player, packet.getFormId(), window);
+//            player.getServer().getPluginManager().callEvent(event);
+//        } else if ((window = player.getServerSettingById(packet.getFormId())) != null) {
+//            window.setResponse(packet.getFormData().trim());
+//
+//            PlayerSettingsRespondedEvent event = new PlayerSettingsRespondedEvent(player, packet.getFormId(), window);
+//            player.getServer().getPluginManager().callEvent(event);
+//
+//            //Set back new settings if not been cancelled
+//            if (!event.isCancelled() && window instanceof FormWindowCustom)
+//                ((FormWindowCustom) window).setElementsFromResponse();
+//        }
+//        return true;
+//    }
 
     @Override
     public boolean handle(InteractPacket packet) {
@@ -1196,21 +1188,21 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
         return true;
     }
 
-    @Override
-    public boolean handle(ServerSettingsRequestPacket packet) {
-        PlayerServerSettingsRequestEvent settingsRequestEvent = new PlayerServerSettingsRequestEvent(player, new HashMap<>(player.getServerSettings()));
-        player.getServer().getPluginManager().callEvent(settingsRequestEvent);
-
-        if (!settingsRequestEvent.isCancelled()) {
-            settingsRequestEvent.getSettings().forEach((id, formWindow) -> {
-                ServerSettingsResponsePacket re = new ServerSettingsResponsePacket();
-                re.setFormId(id);
-                re.setFormData(formWindow.getJSONData());
-                player.sendPacket(re);
-            });
-        }
-        return true;
-    }
+//    @Override
+//    public boolean handle(ServerSettingsRequestPacket packet) {
+//        PlayerServerSettingsRequestEvent settingsRequestEvent = new PlayerServerSettingsRequestEvent(player, new HashMap<>(player.getServerSettings()));
+//        player.getServer().getPluginManager().callEvent(settingsRequestEvent);
+//
+//        if (!settingsRequestEvent.isCancelled()) {
+//            settingsRequestEvent.getSettings().forEach((id, formWindow) -> {
+//                ServerSettingsResponsePacket re = new ServerSettingsResponsePacket();
+//                re.setFormId(id);
+//                re.setFormData(formWindow.getJSONData());
+//                player.sendPacket(re);
+//            });
+//        }
+//        return true;
+//    }
 
     @Override
     public boolean handle(RespawnPacket packet) {

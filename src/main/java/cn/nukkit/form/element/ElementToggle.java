@@ -1,37 +1,30 @@
 package cn.nukkit.form.element;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.ToString;
 
-public class ElementToggle extends Element {
+import javax.annotation.Nonnull;
 
-    @JsonProperty
-    private final String type = "toggle"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
-    private String text;
-    @JsonProperty("default")
+@ToString
+public final class ElementToggle extends Element {
+
     private boolean defaultValue;
 
-    public ElementToggle(String text) {
-        this(text, false);
+    public ElementToggle(@Nonnull String elementId, @Nonnull String elementText) {
+        super(ElementType.TOGGLE, elementId, elementText);
     }
 
-    public ElementToggle(String text, boolean defaultValue) {
-        this.text = text;
+    public ElementToggle(@Nonnull String elementId, @Nonnull String elementText, boolean defaultValue) {
+        super(ElementType.TOGGLE, elementId, elementText);
         this.defaultValue = defaultValue;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
     }
 
     public boolean isDefaultValue() {
-        return defaultValue;
+        return this.defaultValue;
     }
 
-    public void setDefaultValue(boolean defaultValue) {
+    @Nonnull
+    public ElementToggle defaultValue(boolean defaultValue) {
         this.defaultValue = defaultValue;
+        return this;
     }
 }

@@ -1,71 +1,95 @@
 package cn.nukkit.form.element;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.ToString;
 
-public class ElementSlider extends Element {
+import javax.annotation.Nonnull;
 
-    @JsonProperty
-    private final String type = "slider"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
-    private String text = "";
-    private float min = 0f;
-    private float max = 100f;
-    private int step;
-    @JsonProperty("default")
+@ToString
+public final class ElementSlider extends Element {
+
+    private float minimum;
+    private float maximum;
+    private int stepCount;
     private float defaultValue;
 
-    public ElementSlider(String text, float min, float max) {
-        this(text, min, max, -1);
+    public ElementSlider(@Nonnull String elementId, @Nonnull String elementText) {
+        super(ElementType.SLIDER, elementId, elementText);
+        this.minimum = 0f;
+        this.maximum = 100f;
+        this.stepCount = 1;
+        this.defaultValue = 0f;
     }
 
-    public ElementSlider(String text, float min, float max, int step) {
-        this(text, min, max, step, -1);
+    public ElementSlider(@Nonnull String elementId, @Nonnull String elementText, float minimum, float maximum) {
+        super(ElementType.SLIDER, elementId, elementText);
+        if (minimum >= maximum) {
+            throw new IllegalArgumentException("Maximal value can't be smaller or equal to the minimal value");
+        }
+        this.minimum = minimum;
+        this.maximum = maximum;
+        this.stepCount = 1;
+        this.defaultValue = minimum;
     }
 
-    public ElementSlider(String text, float min, float max, int step, float defaultValue) {
-        this.text = text;
-        this.min = Math.max(min, 0f);
-        this.max = Math.max(max, this.min);
-        if (step != -1f && step > 0) this.step = step;
-        if (defaultValue != -1f) this.defaultValue = defaultValue;
+    public ElementSlider(@Nonnull String elementId, @Nonnull String elementText, float minimum, float maximum, int stepCount) {
+        super(ElementType.SLIDER, elementId, elementText);
+        if (minimum >= maximum) {
+            throw new IllegalArgumentException("Maximal value can't be smaller or equal to the minimal value");
+        }
+        this.minimum = minimum;
+        this.maximum = maximum;
+        this.stepCount = stepCount;
+        this.defaultValue = minimum;
     }
 
-    public String getText() {
-        return text;
+    public ElementSlider(@Nonnull String elementId, @Nonnull String elementText, float minimum, float maximum, int stepCount, float defaultValue) {
+        super(ElementType.SLIDER, elementId, elementText);
+        if (minimum >= maximum) {
+            throw new IllegalArgumentException("Maximal value can't be smaller or equal to the minimal value");
+        }
+        this.minimum = minimum;
+        this.maximum = maximum;
+        this.stepCount = stepCount;
+        this.defaultValue = defaultValue;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public float getMinimum() {
+        return this.minimum;
     }
 
-    public float getMin() {
-        return min;
+    @Nonnull
+    public ElementSlider minimum(float minimum) {
+        this.minimum = minimum;
+        return this;
     }
 
-    public void setMin(float min) {
-        this.min = min;
+    public float getMaximum() {
+        return this.maximum;
     }
 
-    public float getMax() {
-        return max;
+    @Nonnull
+    public ElementSlider maximum(float maximum) {
+        this.maximum = maximum;
+        return this;
     }
 
-    public void setMax(float max) {
-        this.max = max;
+    public int getStepCount() {
+        return this.stepCount;
     }
 
-    public int getStep() {
-        return step;
-    }
-
-    public void setStep(int step) {
-        this.step = step;
+    @Nonnull
+    public ElementSlider stepCount(int stepCount) {
+        this.stepCount = stepCount;
+        return this;
     }
 
     public float getDefaultValue() {
-        return defaultValue;
+        return this.defaultValue;
     }
 
-    public void setDefaultValue(float defaultValue) {
+    @Nonnull
+    public ElementSlider defaultValue(float defaultValue) {
         this.defaultValue = defaultValue;
+        return this;
     }
 }

@@ -29,10 +29,12 @@ import cn.nukkit.event.inventory.InventoryPickupItemEvent;
 import cn.nukkit.event.player.*;
 import cn.nukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import cn.nukkit.event.server.PlayerPacketSendEvent;
-import cn.nukkit.form.window.FormWindow;
 import cn.nukkit.inventory.*;
 import cn.nukkit.inventory.transaction.CraftingTransaction;
-import cn.nukkit.item.*;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemArmor;
+import cn.nukkit.item.ItemIds;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
@@ -43,7 +45,10 @@ import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.locale.TextContainer;
 import cn.nukkit.locale.TranslationContainer;
-import cn.nukkit.math.*;
+import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockRayTrace;
+import cn.nukkit.math.NukkitMath;
+import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.permission.PermissibleBase;
 import cn.nukkit.permission.Permission;
@@ -76,7 +81,6 @@ import com.nukkitx.protocol.bedrock.packet.*;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.bytes.ByteOpenHashSet;
 import it.unimi.dsi.fastutil.bytes.ByteSet;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import lombok.extern.log4j.Log4j2;
 
@@ -213,8 +217,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public int pickedXPOrb = 0;
 
     protected int formWindowCount = 0;
-    protected Map<Integer, FormWindow> formWindows = new Int2ObjectOpenHashMap<>();
-    protected Map<Integer, FormWindow> serverSettings = new Int2ObjectOpenHashMap<>();
+//    protected Map<Integer, FormWindow> formWindows = new Int2ObjectOpenHashMap<>();
+//    protected Map<Integer, FormWindow> serverSettings = new Int2ObjectOpenHashMap<>();
 
     protected Map<Long, DummyBossBar> dummyBossBars = new Long2ObjectLinkedOpenHashMap<>();
 
@@ -1323,8 +1327,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     } else {
                         this.addMovement(this.getX(), this.getY(), this.getZ(), this.getYaw(), this.getPitch(), this.getYaw());
                     }
-                    //Biome biome = Biome.biomes[level.getBiomeId(this.getFloorX(), this.getFloorZ())];
-                    //sendTip(biome.getName() + " (" + islandBiomes.doesOverhang() + " " + islandBiomes.getBaseHeight() + "-" + islandBiomes.getHeightVariation() + ")");
                 } else {
                     this.blocksAround = blocksAround;
                     this.collisionBlocks = collidingBlocks;
@@ -2710,60 +2712,60 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
     }
 
-    /**
-     * Shows a new FormWindow to the player
-     * You can find out FormWindow result by listening to PlayerFormRespondedEvent
-     *
-     * @param window to show
-     * @return form id to use in {@link PlayerFormRespondedEvent}
-     */
-    public int showFormWindow(FormWindow window) {
-        return showFormWindow(window, this.formWindowCount++);
-    }
-
-    /**
-     * Shows a new FormWindow to the player
-     * You can find out FormWindow result by listening to PlayerFormRespondedEvent
-     *
-     * @param window to show
-     * @param id     form id
-     * @return form id to use in {@link PlayerFormRespondedEvent}
-     */
-    public int showFormWindow(FormWindow window, int id) {
-        ModalFormRequestPacket packet = new ModalFormRequestPacket();
-        packet.setFormId(id);
-        packet.setFormData(window.getJSONData());
-        this.formWindows.put(id, window);
-
-        this.sendPacket(packet);
-        return id;
-    }
-
-    public FormWindow removeFormWindow(int id) {
-        return this.formWindows.remove(id);
-    }
-
-    public Map<Integer, FormWindow> getServerSettings() {
-        return serverSettings;
-    }
-
-    /**
-     * Shows a new setting page in game settings
-     * You can find out settings result by listening to PlayerFormRespondedEvent
-     *
-     * @param window to show on settings page
-     * @return form id to use in {@link PlayerFormRespondedEvent}
-     */
-    public int addServerSettings(FormWindow window) {
-        int id = this.formWindowCount++;
-
-        this.serverSettings.put(id, window);
-        return id;
-    }
-
-    public FormWindow getServerSettingById(int id) {
-        return this.serverSettings.get(id);
-    }
+//    /**
+//     * Shows a new FormWindow to the player
+//     * You can find out FormWindow result by listening to PlayerFormRespondedEvent
+//     *
+//     * @param window to show
+//     * @return form id to use in {@link PlayerFormRespondedEvent}
+//     */
+//    public int showFormWindow(FormWindow window) {
+//        return showFormWindow(window, this.formWindowCount++);
+//    }
+//
+//    /**
+//     * Shows a new FormWindow to the player
+//     * You can find out FormWindow result by listening to PlayerFormRespondedEvent
+//     *
+//     * @param window to show
+//     * @param id     form id
+//     * @return form id to use in {@link PlayerFormRespondedEvent}
+//     */
+//    public int showFormWindow(FormWindow window, int id) {
+//        ModalFormRequestPacket packet = new ModalFormRequestPacket();
+//        packet.setFormId(id);
+//        packet.setFormData(window.getJSONData());
+//        this.formWindows.put(id, window);
+//
+//        this.sendPacket(packet);
+//        return id;
+//    }
+//
+//    public FormWindow removeFormWindow(int id) {
+//        return this.formWindows.remove(id);
+//    }
+//
+//    public Map<Integer, FormWindow> getServerSettings() {
+//        return serverSettings;
+//    }
+//
+//    /**
+//     * Shows a new setting page in game settings
+//     * You can find out settings result by listening to PlayerFormRespondedEvent
+//     *
+//     * @param window to show on settings page
+//     * @return form id to use in {@link PlayerFormRespondedEvent}
+//     */
+//    public int addServerSettings(FormWindow window) {
+//        int id = this.formWindowCount++;
+//
+//        this.serverSettings.put(id, window);
+//        return id;
+//    }
+//
+//    public FormWindow getServerSettingById(int id) {
+//        return this.serverSettings.get(id);
+//    }
 
     /**
      * Creates and sends a BossBar to the player

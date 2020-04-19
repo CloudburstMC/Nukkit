@@ -1,61 +1,84 @@
 package cn.nukkit.form.element;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Preconditions;
+import lombok.ToString;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ElementDropdown extends Element {
+@ToString
+public final class ElementDropdown extends Element {
 
-    @JsonProperty
-    private final String type = "dropdown"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
-    private String text = "";
-    private List<String> options;
-    @JsonProperty("default")
+    @JsonProperty("options")
+    private final List<String> dropdownOptions = new ArrayList<>();
     private int defaultOptionIndex = 0;
 
-    public ElementDropdown(String text) {
-        this(text, new ArrayList<>());
+    public ElementDropdown(@Nonnull String elementId, @Nonnull String elementText) {
+        super(ElementType.DROPDOWN, elementId, elementText);
     }
 
-    public ElementDropdown(String text, List<String> options) {
-        this(text, options, 0);
+    public ElementDropdown(@Nonnull String elementId, @Nonnull String elementText, @Nonnull List<String> dropdownOptions) {
+        super(ElementType.DROPDOWN, elementId, elementText);
+
+        Preconditions.checkNotNull(dropdownOptions, "The provided dropdown options can not be null");
+        this.dropdownOptions.addAll(dropdownOptions);
     }
 
-    public ElementDropdown(String text, List<String> options, int defaultOption) {
-        this.text = text;
-        this.options = options;
-        this.defaultOptionIndex = defaultOption;
+    public ElementDropdown(@Nonnull String elementId, @Nonnull String elementText, @Nonnull List<String> dropdownOptions, int defaultOptionIndex) {
+        super(ElementType.DROPDOWN, elementId, elementText);
+
+        Preconditions.checkNotNull(dropdownOptions, "The provided dropdown options can not be null");
+        Preconditions.checkElementIndex(defaultOptionIndex, dropdownOptions.size(), "Default option index");
+
+        this.dropdownOptions.addAll(dropdownOptions);
+        this.defaultOptionIndex = defaultOptionIndex;
+    }
+
+    @Nonnull
+    public List<String> getDropdownOptions() {
+        return this.dropdownOptions;
+    }
+
+    @Nonnull
+    public ElementDropdown addOptions(@Nonnull List<String> dropdownOptions) {
+        Preconditions.checkNotNull(dropdownOptions, "The provided dropdown options can not be null");
+
+        this.dropdownOptions.addAll(dropdownOptions);
+        return this;
+    }
+
+    @Nonnull
+    public ElementDropdown addOption(@Nonnull String dropdownOption) {
+        Preconditions.checkNotNull(dropdownOption, "The provided dropdown option can not be null");
+
+        this.dropdownOptions.add(dropdownOption);
+        return this;
     }
 
     public int getDefaultOptionIndex() {
-        return defaultOptionIndex;
+        return this.defaultOptionIndex;
     }
 
-    public void setDefaultOptionIndex(int index) {
-        if (index >= options.size()) return;
-        this.defaultOptionIndex = index;
+    @Nonnull
+    public ElementDropdown defaultIndex(int defaultOptionIndex) {
+        Preconditions.checkElementIndex(defaultOptionIndex, dropdownOptions.size(), "Default option index");
+
+        this.defaultOptionIndex = defaultOptionIndex;
+        return this;
     }
 
-    public List<String> getOptions() {
-        return options;
-    }
+    @Nonnull
+    public ElementDropdown defaultIndex(@Nonnull String dropdownOption) {
+        Preconditions.checkNotNull(dropdownOption, "The provided dropdown option can not be null");
 
-    public String getText() {
-        return text;
+        if (this.dropdownOptions.contains(dropdownOption)) {
+            this.defaultOptionIndex = this.dropdownOptions.indexOf(dropdownOption);
+        } else {
+            this.dropdownOptions.add(dropdownOption);
+            this.defaultOptionIndex = this.dropdownOptions.size() - 1;
+        }
+        return this;
     }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public void addOption(String option) {
-        addOption(option, false);
-    }
-
-    public void addOption(String option, boolean isDefault) {
-        options.add(option);
-        if (isDefault) this.defaultOptionIndex = options.size() - 1;
-    }
-
 }
