@@ -46,7 +46,7 @@ public class DeepSurfaceDecorator extends SurfaceDecorator {
                 PLACE:
                 if (!placed) {
                     placed = true;
-                    if (y + 1 >= this.seaLevel) {
+                    if (y + 1 > this.seaLevel) {
                         if (y < 255 && this.cover >= 0) {
                             chunk.setBlockRuntimeIdUnsafe(x, y + 1, z, 0, this.cover);
                         }
