@@ -4,10 +4,9 @@ import cn.nukkit.Achievement;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.AdventureSettings.Type;
 import cn.nukkit.Server;
-import cn.nukkit.block.*;
-import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.ItemFrame;
-import cn.nukkit.blockentity.Lectern;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockEnderChest;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.entity.Attribute;
@@ -17,37 +16,27 @@ import cn.nukkit.entity.EntityTypes;
 import cn.nukkit.entity.impl.EntityLiving;
 import cn.nukkit.entity.impl.Human;
 import cn.nukkit.entity.impl.projectile.EntityArrow;
-import cn.nukkit.entity.impl.vehicle.EntityAbstractMinecart;
-import cn.nukkit.entity.impl.vehicle.EntityBoat;
 import cn.nukkit.entity.misc.DroppedItem;
 import cn.nukkit.entity.misc.ExperienceOrb;
 import cn.nukkit.entity.projectile.Arrow;
 import cn.nukkit.entity.projectile.FishingHook;
 import cn.nukkit.entity.projectile.ThrownTrident;
-import cn.nukkit.event.block.ItemFrameDropItemEvent;
-import cn.nukkit.event.block.LecternPageChangeEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
-import cn.nukkit.event.entity.EntityDamageEvent.DamageModifier;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
-import cn.nukkit.event.inventory.InventoryCloseEvent;
 import cn.nukkit.event.inventory.InventoryPickupArrowEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
 import cn.nukkit.event.player.*;
-import cn.nukkit.event.player.PlayerAsyncPreLoginEvent.LoginResult;
-import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.event.server.PlayerPacketSendEvent;
-import cn.nukkit.form.window.FormWindow;
-import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.inventory.*;
 import cn.nukkit.inventory.transaction.CraftingTransaction;
-import cn.nukkit.inventory.transaction.InventoryTransaction;
-import cn.nukkit.inventory.transaction.action.InventoryAction;
-import cn.nukkit.item.*;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemArmor;
+import cn.nukkit.item.ItemIds;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
@@ -56,14 +45,13 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.gamerule.GameRules;
-import cn.nukkit.level.particle.PunchBlockParticle;
 import cn.nukkit.locale.TextContainer;
 import cn.nukkit.locale.TranslationContainer;
-import cn.nukkit.math.*;
+import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockRayTrace;
+import cn.nukkit.math.NukkitMath;
+import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.metadata.MetadataValue;
-import cn.nukkit.network.ProtocolInfo;
-import cn.nukkit.network.protocol.types.InventoryTransactionUtils;
-import cn.nukkit.pack.Pack;
 import cn.nukkit.permission.PermissibleBase;
 import cn.nukkit.permission.Permission;
 import cn.nukkit.permission.PermissionAttachment;
@@ -75,7 +63,6 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.registry.ItemRegistry;
-import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.*;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
@@ -88,7 +75,6 @@ import com.nukkitx.math.vector.Vector3i;
 import com.nukkitx.nbt.CompoundTagBuilder;
 import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.protocol.bedrock.BedrockPacket;
-import com.nukkitx.protocol.bedrock.BedrockPacketCodec;
 import com.nukkitx.protocol.bedrock.BedrockServerSession;
 import com.nukkitx.protocol.bedrock.BedrockSession;
 import com.nukkitx.protocol.bedrock.data.*;
@@ -97,7 +83,6 @@ import com.nukkitx.protocol.bedrock.packet.*;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.bytes.ByteOpenHashSet;
 import it.unimi.dsi.fastutil.bytes.ByteSet;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import lombok.extern.log4j.Log4j2;
 
@@ -106,12 +91,9 @@ import java.net.InetSocketAddress;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 import java.util.function.LongConsumer;
 
-import static cn.nukkit.block.BlockIds.AIR;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.nukkitx.protocol.bedrock.data.EntityData.*;
 import static com.nukkitx.protocol.bedrock.data.EntityFlag.USING_ITEM;
@@ -237,8 +219,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public int pickedXPOrb = 0;
 
     protected int formWindowCount = 0;
-    protected Map<Integer, FormWindow> formWindows = new Int2ObjectOpenHashMap<>();
-    protected Map<Integer, FormWindow> serverSettings = new Int2ObjectOpenHashMap<>();
+//    protected Map<Integer, FormWindow> formWindows = new Int2ObjectOpenHashMap<>();
+//    protected Map<Integer, FormWindow> serverSettings = new Int2ObjectOpenHashMap<>();
 
     protected Map<Long, DummyBossBar> dummyBossBars = new Long2ObjectLinkedOpenHashMap<>();
 
@@ -2734,60 +2716,60 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
     }
 
-    /**
-     * Shows a new FormWindow to the player
-     * You can find out FormWindow result by listening to PlayerFormRespondedEvent
-     *
-     * @param window to show
-     * @return form id to use in {@link PlayerFormRespondedEvent}
-     */
-    public int showFormWindow(FormWindow window) {
-        return showFormWindow(window, this.formWindowCount++);
-    }
-
-    /**
-     * Shows a new FormWindow to the player
-     * You can find out FormWindow result by listening to PlayerFormRespondedEvent
-     *
-     * @param window to show
-     * @param id     form id
-     * @return form id to use in {@link PlayerFormRespondedEvent}
-     */
-    public int showFormWindow(FormWindow window, int id) {
-        ModalFormRequestPacket packet = new ModalFormRequestPacket();
-        packet.setFormId(id);
-        packet.setFormData(window.getJSONData());
-        this.formWindows.put(id, window);
-
-        this.sendPacket(packet);
-        return id;
-    }
-
-    public FormWindow removeFormWindow(int id) {
-        return this.formWindows.remove(id);
-    }
-
-    public Map<Integer, FormWindow> getServerSettings() {
-        return serverSettings;
-    }
-
-    /**
-     * Shows a new setting page in game settings
-     * You can find out settings result by listening to PlayerFormRespondedEvent
-     *
-     * @param window to show on settings page
-     * @return form id to use in {@link PlayerFormRespondedEvent}
-     */
-    public int addServerSettings(FormWindow window) {
-        int id = this.formWindowCount++;
-
-        this.serverSettings.put(id, window);
-        return id;
-    }
-
-    public FormWindow getServerSettingById(int id) {
-        return this.serverSettings.get(id);
-    }
+//    /**
+//     * Shows a new FormWindow to the player
+//     * You can find out FormWindow result by listening to PlayerFormRespondedEvent
+//     *
+//     * @param window to show
+//     * @return form id to use in {@link PlayerFormRespondedEvent}
+//     */
+//    public int showFormWindow(FormWindow window) {
+//        return showFormWindow(window, this.formWindowCount++);
+//    }
+//
+//    /**
+//     * Shows a new FormWindow to the player
+//     * You can find out FormWindow result by listening to PlayerFormRespondedEvent
+//     *
+//     * @param window to show
+//     * @param id     form id
+//     * @return form id to use in {@link PlayerFormRespondedEvent}
+//     */
+//    public int showFormWindow(FormWindow window, int id) {
+//        ModalFormRequestPacket packet = new ModalFormRequestPacket();
+//        packet.setFormId(id);
+//        packet.setFormData(window.getJSONData());
+//        this.formWindows.put(id, window);
+//
+//        this.sendPacket(packet);
+//        return id;
+//    }
+//
+//    public FormWindow removeFormWindow(int id) {
+//        return this.formWindows.remove(id);
+//    }
+//
+//    public Map<Integer, FormWindow> getServerSettings() {
+//        return serverSettings;
+//    }
+//
+//    /**
+//     * Shows a new setting page in game settings
+//     * You can find out settings result by listening to PlayerFormRespondedEvent
+//     *
+//     * @param window to show on settings page
+//     * @return form id to use in {@link PlayerFormRespondedEvent}
+//     */
+//    public int addServerSettings(FormWindow window) {
+//        int id = this.formWindowCount++;
+//
+//        this.serverSettings.put(id, window);
+//        return id;
+//    }
+//
+//    public FormWindow getServerSettingById(int id) {
+//        return this.serverSettings.get(id);
+//    }
 
     /**
      * Creates and sends a BossBar to the player
