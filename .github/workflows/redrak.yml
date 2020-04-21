@@ -1,0 +1,16 @@
+name: RedRak Auto Merge
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  merge-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Merge to redrak
+        uses: devmasx/merge-branch@v1.1.0
+        with:
+          type: now
+          target_branch: 'redrak'
