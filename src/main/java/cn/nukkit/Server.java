@@ -1,6 +1,7 @@
 package cn.nukkit;
 
-import cn.nukkit.command.*;
+import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.console.NukkitConsole;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.event.HandlerList;
@@ -80,7 +81,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -105,13 +105,13 @@ public class Server {
 
     private Config whitelist;
 
-    private AtomicBoolean isRunning = new AtomicBoolean(true);
+    private final AtomicBoolean isRunning = new AtomicBoolean(true);
 
     private boolean hasStopped = false;
 
     private PluginManager pluginManager;
 
-    private int profilingTickrate = 20;
+    private final int profilingTickrate = 20;
 
     private ServerScheduler scheduler;
 
@@ -129,12 +129,12 @@ public class Server {
 
     private int sendUsageTicker = 0;
 
-    private boolean dispatchSignals = false;
+    private final boolean dispatchSignals = false;
 
     private final NukkitConsole console;
     private final ConsoleThread consoleThread;
 
-    private SimpleCommandMap commandMap;
+    //private SimpleCommandMap commandMap;
 
     private CraftingManager craftingManager;
 
@@ -158,7 +158,7 @@ public class Server {
 
     private boolean networkCompressionAsync = true;
     public int networkCompressionLevel = 7;
-    private int networkZlibProvider = 0;
+    private final int networkZlibProvider = 0;
 
     private boolean autoTickRate = true;
     private int autoTickRateLimit = 20;
@@ -198,6 +198,7 @@ public class Server {
     private final ItemRegistry itemRegistry = ItemRegistry.get();
     private final EntityRegistry entityRegistry = EntityRegistry.get();
     private final BiomeRegistry biomeRegistry = BiomeRegistry.get();
+    private CommandRegistry commandRegistry;
 
     private final Map<InetSocketAddress, Player> players = new HashMap<>();
 
@@ -219,7 +220,7 @@ public class Server {
     private Properties properties;
     private volatile Identifier defaultStorageId;
 
-    private Set<String> ignoredPackets = new HashSet<>();
+    private final Set<String> ignoredPackets = new HashSet<>();
 
     public Server(String filePath, String dataPath, String pluginPath, String predefinedLanguage) {
         Preconditions.checkState(instance == null, "Already initialized!");
@@ -385,7 +386,7 @@ public class Server {
             }
         }
         log.debug("DataPath Directory: {}", this.dataPath);
-
+        this.commandRegistry = CommandRegistry.get();
         log.info("Loading {} ...", TextFormat.GREEN + "server.properties" + TextFormat.WHITE);
         this.properties = new Properties();
         this.properties.setProperty("motd", "A Nukkit Powered Server");
@@ -486,7 +487,7 @@ public class Server {
         log.info(this.getLanguage().translate("nukkit.server.license", this.getName()));
 
         this.consoleSender = new ConsoleCommandSender();
-        this.commandMap = new SimpleCommandMap(this);
+        // this.commandMap = new SimpleCommandMap(this);
 
         // Convert legacy data before plugins get the chance to mess with it.
         try {
@@ -501,7 +502,7 @@ public class Server {
 
         this.craftingManager = new CraftingManager();
 
-        this.pluginManager = new PluginManager(this, this.commandMap);
+        this.pluginManager = new PluginManager(this);
         this.pluginManager.subscribeToPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE, this.consoleSender);
 
         this.pluginManager.registerInterface(JavaPluginLoader.class);
@@ -526,6 +527,7 @@ public class Server {
             this.generatorRegistry.close();
             this.storageRegistry.close();
             this.packManager.closeRegistration();
+            this.commandRegistry.close();
         } catch (RegistryException e) {
             throw new IllegalStateException("Unable to close registries", e);
         } finally {
@@ -620,7 +622,6 @@ public class Server {
         }
 
         if (type == PluginLoadOrder.POSTWORLD) {
-            this.commandMap.registerServerAliases();
             DefaultPermissions.registerCorePermissions();
         }
     }
@@ -644,7 +645,7 @@ public class Server {
             throw new ServerException("CommandSender is not valid");
         }
 
-        if (this.commandMap.dispatch(sender, commandLine)) {
+        if (this.commandRegistry.dispatch(sender, commandLine)) {
             return true;
         }
 
@@ -1310,8 +1311,8 @@ public class Server {
         return ((float) Math.round(sum / count * 100)) / 100;
     }
 
-    public SimpleCommandMap getCommandMap() {
-        return commandMap;
+    public CommandRegistry getCommandRegistry() {
+        return this.commandRegistry;
     }
 
     public Map<UUID, Player> getOnlinePlayers() {
@@ -1758,15 +1759,6 @@ public class Server {
             this.properties.store(stream, "");
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    public PluginIdentifiableCommand getPluginCommand(String name) {
-        Command command = this.commandMap.getCommand(name);
-        if (command instanceof PluginIdentifiableCommand) {
-            return (PluginIdentifiableCommand) command;
-        } else {
-            return null;
         }
     }
 

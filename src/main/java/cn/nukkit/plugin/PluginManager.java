@@ -2,7 +2,6 @@ package cn.nukkit.plugin;
 
 import cn.nukkit.Server;
 import cn.nukkit.command.PluginCommand;
-import cn.nukkit.command.SimpleCommandMap;
 import cn.nukkit.event.*;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.permission.Permission;
@@ -27,8 +26,6 @@ public class PluginManager {
 
     private final Server server;
 
-    private final SimpleCommandMap commandMap;
-
     protected final Map<String, Plugin> plugins = new LinkedHashMap<>();
 
     protected final Map<String, Permission> permissions = new HashMap<>();
@@ -45,9 +42,8 @@ public class PluginManager {
 
     protected final Map<String, PluginLoader> fileAssociations = new HashMap<>();
 
-    public PluginManager(Server server, SimpleCommandMap commandMap) {
+    public PluginManager(Server server) {
         this.server = server;
-        this.commandMap = commandMap;
     }
 
     public Plugin getPlugin(String name) {
@@ -98,11 +94,13 @@ public class PluginManager {
                             if (plugin != null) {
                                 this.plugins.put(plugin.getDescription().getName(), plugin);
 
+/*
                                 List<PluginCommand> pluginCommands = this.parseYamlCommands(plugin);
 
                                 if (!pluginCommands.isEmpty()) {
-                                    this.commandMap.registerAll(plugin, pluginCommands);
+                                    this.server.registerAll(plugin, pluginCommands);
                                 }
+*/
 
                                 return plugin;
                             }
@@ -445,7 +443,7 @@ public class PluginManager {
         List<PluginCommand> pluginCmds = new ArrayList<>();
 
         for (Map.Entry<String, Object> entry : plugin.getDescription().getCommands().entrySet()) {
-            String key = (String) entry.getKey();
+            String key = entry.getKey();
             Object data = entry.getValue();
             if (key.contains(":")) {
                 log.error(this.server.getLanguage().translate("nukkit.plugin.commandError",

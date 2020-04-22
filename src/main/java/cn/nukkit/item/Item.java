@@ -51,8 +51,8 @@ public abstract class Item implements Cloneable {
     private int damage;
     private String customName;
     private CompoundTag tag = CompoundTag.EMPTY;
-    private Set<Identifier> canPlaceOn = new HashSet<>();
-    private Set<Identifier> canDestroy = new HashSet<>();
+    private final Set<Identifier> canPlaceOn = new HashSet<>();
+    private final Set<Identifier> canDestroy = new HashSet<>();
 
     public Item(Identifier id) {
         this.id = id;
@@ -453,7 +453,9 @@ public abstract class Item implements Cloneable {
     }
 
     final public String getName() {
-        return this.getCustomName();
+        if (this.hasCustomName())
+            return this.getCustomName();
+        return Server.getInstance().getLanguage().translate("item." + getId().getName() + ".name");
     }
 
     final public boolean canBePlaced() {

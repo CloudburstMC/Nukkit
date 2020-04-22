@@ -21,7 +21,7 @@ import java.util.*;
  */
 public abstract class Command {
 
-    private static CommandData defaultDataTemplate = null;
+    private static final CommandData defaultDataTemplate = null;
 
     protected CommandData commandData;
 
@@ -31,15 +31,15 @@ public abstract class Command {
 
     private String label;
 
-    private String[] aliases = new String[0];
+    private String[] aliases;
 
-    private String[] activeAliases = new String[0];
+    private String[] activeAliases;
 
     private CommandMap commandMap = null;
 
-    protected String description = "";
+    protected String description;
 
-    protected String usageMessage = "";
+    protected String usageMessage;
 
     private String permission = null;
 
@@ -100,13 +100,6 @@ public abstract class Command {
         this.activeAliases = aliases;
         this.timing = Timings.getCommandTiming(this);
         this.commandParameters.add(new CommandParameter[]{new CommandParameter("args", CommandParamType.RAWTEXT, true)});
-    }
-
-    public static CommandData generateDefaultData() {
-        if (defaultDataTemplate == null) {
-            //defaultDataTemplate = new Gson().fromJson(new InputStreamReader(Server.class.getClassLoader().getResourceAsStream("command_default.json")));
-        }
-        return defaultDataTemplate;
     }
 
     private static CommandParamData toNetwork(CommandParameter commandParameter) {
@@ -284,7 +277,7 @@ public abstract class Command {
 
     public static void broadcastCommandMessage(CommandSender source, TextContainer message, boolean sendToSource) {
         TextContainer m = message.clone();
-        String resultStr = "[" + source.getName() + ": " + (!m.getText().equals(source.getServer().getLanguage().get(m.getText())) ? "%" : "") + m.getText() + "]";
+        String resultStr = "[" + source.getName() + ": " + m.getText() + "]";
 
         Set<Permissible> users = source.getServer().getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_ADMINISTRATIVE);
 

@@ -36,7 +36,7 @@ public class HelpCommand extends VanillaCommand {
         int pageHeight = 5;
         if (args.length != 0) {
             try {
-                pageNumber = Integer.valueOf(args[args.length - 1]);
+                pageNumber = Integer.parseInt(args[args.length - 1]);
                 if (pageNumber <= 0) {
                     pageNumber = 1;
                 }
@@ -72,7 +72,7 @@ public class HelpCommand extends VanillaCommand {
 
         if (command.equals("")) {
             Map<String, Command> commands = new TreeMap<>();
-            for (Command cmd : sender.getServer().getCommandMap().getCommands().values()) {
+            for (Command cmd : sender.getServer().getCommandRegistry().getRegisteredCommands().values()) {
                 if (cmd.testPermissionSilent(sender)) {
                     commands.put(cmd.getName(), cmd);
                 }
@@ -94,7 +94,7 @@ public class HelpCommand extends VanillaCommand {
 
             return true;
         } else {
-            Command cmd = sender.getServer().getCommandMap().getCommand(command.toLowerCase());
+            Command cmd = sender.getServer().getCommandRegistry().getCommand(command.toLowerCase());
             if (cmd != null) {
                 if (cmd.testPermissionSilent(sender)) {
                     String message = TextFormat.YELLOW + "--------- " + TextFormat.WHITE + " Help: /" + cmd.getName() + TextFormat.YELLOW + " ---------\n";
