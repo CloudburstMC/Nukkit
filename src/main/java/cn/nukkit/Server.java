@@ -4,6 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.*;
 import cn.nukkit.command.*;
 import cn.nukkit.console.NukkitConsole;
+import cn.nukkit.dispenser.DispenseBehaviorRegister;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
@@ -79,6 +80,7 @@ import cn.nukkit.utils.bugreport.ExceptionHandler;
 import co.aikar.timings.Timings;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import io.netty.buffer.ByteBuf;
 import lombok.extern.log4j.Log4j2;
 import org.iq80.leveldb.CompressionType;
 import org.iq80.leveldb.DB;
@@ -89,6 +91,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
@@ -157,6 +162,8 @@ public class Server {
 
     private boolean autoSave = true;
 
+    private boolean redstoneEnabled = true;
+
     private RCON rcon;
 
     private EntityMetadataStore entityMetadata;
@@ -201,11 +208,9 @@ public class Server {
     private Config properties;
     private Config config;
 
-    private final Map<String, Player> players = new HashMap<>();
+    private final Map<InetSocketAddress, Player> players = new HashMap<>();
 
     private final Map<UUID, Player> playerList = new HashMap<>();
-
-    private final Map<Integer, String> identifier = new HashMap<>();
 
     private final Map<Integer, Level> levels = new HashMap<Integer, Level>() {
         public Level put(Integer key, Level value) {
@@ -387,6 +392,7 @@ public class Server {
         this.autoTickRateLimit = this.getConfig("level-settings.auto-tick-rate-limit", 20);
         this.alwaysTickPlayers = this.getConfig("level-settings.always-tick-players", false);
         this.baseTickRate = this.getConfig("level-settings.base-tick-rate", 1);
+        this.redstoneEnabled = this.getConfig("level-settings.tick-redstone", true);
 
         this.scheduler = new ServerScheduler();
 
@@ -461,6 +467,7 @@ public class Server {
         Effect.init();
         Potion.init();
         Attribute.init();
+        DispenseBehaviorRegister.init();
         GlobalBlockPalette.getOrCreateRuntimeId(0, 0); //Force it to load
 
         // Convert legacy data before plugins get the chance to mess with it.
@@ -656,10 +663,6 @@ public class Server {
         } else {
             getInstance().batchPackets(players, new DataPacket[]{packet}, true);
         }
-
-        if (packet.encapsulatedPacket != null) {
-            packet.encapsulatedPacket = null;
-        }
     }
 
     public void batchPackets(Player[] players, DataPacket[] packets) {
@@ -693,10 +696,10 @@ public class Server {
             size += payload[i * 2 + 1].length;
         }
 
-        List<String> targets = new ArrayList<>();
+        List<InetSocketAddress> targets = new ArrayList<>();
         for (Player p : players) {
             if (p.isConnected()) {
-                targets.add(this.identifier.get(p.rawHashCode()));
+                targets.add(p.getSocketAddress());
             }
         }
 
@@ -713,11 +716,11 @@ public class Server {
         Timings.playerNetworkSendTimer.stopTiming();
     }
 
-    public void broadcastPacketsCallback(byte[] data, List<String> identifiers) {
+    public void broadcastPacketsCallback(byte[] data, List<InetSocketAddress> targets) {
         BatchPacket pk = new BatchPacket();
         pk.payload = data;
 
-        for (String i : identifiers) {
+        for (InetSocketAddress i : targets) {
             if (this.players.containsKey(i)) {
                 this.players.get(i).dataPacket(pk);
             }
@@ -750,8 +753,11 @@ public class Server {
         if (!this.isPrimaryThread()) {
             getLogger().warning("Command Dispatched Async: " + commandLine);
             getLogger().warning("Please notify author of plugin causing this execution to fix this bug!", new Throwable());
-            // TODO: We should sync the command to the main thread too!
+
+            this.scheduler.scheduleTask(null, () -> dispatchCommand(sender, commandLine));
+            return true;
         }
+
         if (sender == null) {
             throw new ServerException("CommandSender is not valid");
         }
@@ -797,7 +803,11 @@ public class Server {
         this.operators.reload();
 
         for (BanEntry entry : this.getIPBans().getEntires().values()) {
-            this.getNetwork().blockAddress(entry.getName(), -1);
+            try {
+                this.getNetwork().blockAddress(InetAddress.getByName(entry.getName()), -1);
+            } catch (UnknownHostException e) {
+                // ignore
+            }
         }
 
         this.pluginManager.registerInterface(JavaPluginLoader.class);
@@ -875,7 +885,11 @@ public class Server {
         }
 
         for (BanEntry entry : this.getIPBans().getEntires().values()) {
-            this.network.blockAddress(entry.getName(), -1);
+            try {
+                this.network.blockAddress(InetAddress.getByName(entry.getName()), -1);
+            } catch (UnknownHostException e) {
+                // ignore
+            }
         }
 
         //todo send usage setting
@@ -889,15 +903,24 @@ public class Server {
         this.forceShutdown();
     }
 
-    public void handlePacket(String address, int port, byte[] payload) {
+    public void handlePacket(InetSocketAddress address, ByteBuf payload) {
         try {
-            if (payload.length > 2 && Arrays.equals(Binary.subBytes(payload, 0, 2), new byte[]{(byte) 0xfe, (byte) 0xfd}) && this.queryHandler != null) {
-                this.queryHandler.handle(address, port, payload);
+            if (!payload.isReadable(3)) {
+                return;
+            }
+            byte[] prefix = new byte[2];
+            payload.readBytes(prefix);
+
+            if (!Arrays.equals(prefix, new byte[]{(byte) 0xfe, (byte) 0xfd})) {
+                return;
+            }
+            if (this.queryHandler != null) {
+                this.queryHandler.handle(address, payload);
             }
         } catch (Exception e) {
             log.error("Error whilst handling packet", e);
 
-            this.getNetwork().blockAddress(address, 600);
+            this.network.blockAddress(address.getAddress(), -1);
         }
     }
 
@@ -954,9 +977,8 @@ public class Server {
         }
     }
 
-    public void addPlayer(String identifier, Player player) {
-        this.players.put(identifier, player);
-        this.identifier.put(player.rawHashCode(), identifier);
+    public void addPlayer(InetSocketAddress socketAddress, Player player) {
+        this.players.put(socketAddress, player);
     }
 
     public void addOnlinePlayer(Player player) {
@@ -1808,18 +1830,15 @@ public class Server {
     }
 
     public void removePlayer(Player player) {
-        if (this.identifier.containsKey(player.rawHashCode())) {
-            String identifier = this.identifier.get(player.rawHashCode());
-            this.players.remove(identifier);
-            this.identifier.remove(player.rawHashCode());
+        Player toRemove = this.players.remove(player.getSocketAddress());
+        if (toRemove != null) {
             return;
         }
 
-        for (String identifier : new ArrayList<>(this.players.keySet())) {
-            Player p = this.players.get(identifier);
+        for (InetSocketAddress socketAddress : new ArrayList<>(this.players.keySet())) {
+            Player p = this.players.get(socketAddress);
             if (player == p) {
-                this.players.remove(identifier);
-                this.identifier.remove(player.rawHashCode());
+                this.players.remove(socketAddress);
                 break;
             }
         }
@@ -2031,6 +2050,14 @@ public class Server {
 
     public boolean isLanguageForced() {
         return forceLanguage;
+    }
+
+    public boolean isRedstoneEnabled() {
+        return redstoneEnabled;
+    }
+
+    public void setRedstoneEnabled(boolean redstoneEnabled) {
+        this.redstoneEnabled = redstoneEnabled;
     }
 
     public Network getNetwork() {
@@ -2344,6 +2371,9 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.SHULKER_BOX, BlockEntityShulkerBox.class);
         BlockEntity.registerBlockEntity(BlockEntity.BANNER, BlockEntityBanner.class);
         BlockEntity.registerBlockEntity(BlockEntity.MUSIC, BlockEntityMusic.class);
+        BlockEntity.registerBlockEntity(BlockEntity.DISPENSER, BlockEntityDispenser.class);
+        BlockEntity.registerBlockEntity(BlockEntity.DROPPER, BlockEntityDropper.class);
+        BlockEntity.registerBlockEntity(BlockEntity.MOVING_BLOCK, BlockEntityMovingBlock.class);
     }
 
     public boolean isNetherAllowed() {

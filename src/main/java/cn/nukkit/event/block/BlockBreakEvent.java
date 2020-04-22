@@ -77,9 +77,13 @@ public class BlockBreakEvent extends BlockEvent implements Cancellable {
         this.blockDrops = drops;
     }
 
-    public int getDropExp() { return this.blockXP; }
+    public int getDropExp() {
+        return this.blockXP;
+    }
 
-    public void setDropExp(int xp) { this.blockXP = xp; }
+    public void setDropExp(int xp) {
+        this.blockXP = xp;
+    }
 
     public void setInstaBreak(boolean instaBreak) {
         this.instaBreak = instaBreak;

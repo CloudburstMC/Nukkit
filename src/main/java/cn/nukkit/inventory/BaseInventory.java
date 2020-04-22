@@ -37,6 +37,8 @@ public abstract class BaseInventory implements Inventory {
 
     protected InventoryHolder holder;
 
+    private List<InventoryListener> listeners;
+
     public BaseInventory(InventoryHolder holder, InventoryType type) {
         this(holder, type, new HashMap<>());
     }
@@ -380,9 +382,6 @@ public abstract class BaseInventory implements Inventory {
                 }
                 item = ev.getNewItem();
             }
-            if (holder instanceof BlockEntity) {
-                ((BlockEntity) holder).setDirty();
-            }
 
             if (item.getId() != Item.AIR) {
                 this.slots.put(index, item.clone());
@@ -449,6 +448,16 @@ public abstract class BaseInventory implements Inventory {
     public void onSlotChange(int index, Item before, boolean send) {
         if (send) {
             this.sendSlot(index, this.getViewers());
+        }
+
+        if (holder instanceof BlockEntity) {
+            ((BlockEntity) holder).setDirty();
+        }
+
+        if (this.listeners != null) {
+            for (InventoryListener listener : listeners) {
+                listener.onInventoryChanged(this, before, index);
+            }
         }
     }
 
@@ -554,6 +563,22 @@ public abstract class BaseInventory implements Inventory {
     @Override
     public void sendSlot(int index, Collection<Player> players) {
         this.sendSlot(index, players.toArray(new Player[0]));
+    }
+
+    @Override
+    public void addListener(InventoryListener listener) {
+        if (this.listeners == null) {
+            this.listeners = new ArrayList<>();
+        }
+
+        this.listeners.add(listener);
+    }
+
+    @Override
+    public void removeListener(InventoryListener listener) {
+        if (this.listeners != null) {
+            this.listeners.remove(listener);
+        }
     }
 
     @Override

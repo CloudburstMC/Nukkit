@@ -1,6 +1,7 @@
 package cn.nukkit.level.generator;
 
-import cn.nukkit.block.*;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.biome.Biome;
@@ -15,6 +16,7 @@ import cn.nukkit.level.generator.populator.impl.PopulatorOre;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
+
 import java.util.*;
 
 public class Nether extends Generator {
@@ -81,8 +83,7 @@ public class Nether extends Generator {
         this.localSeed1 = this.random.nextLong();
         this.localSeed2 = this.random.nextLong();
 
-        PopulatorOre ores = new PopulatorOre(Block.NETHERRACK);
-        ores.setOreTypes(new OreType[]{
+        PopulatorOre ores = new PopulatorOre(Block.NETHERRACK, new OreType[]{
                 new OreType(Block.get(BlockID.QUARTZ_ORE), 20, 16, 0, 128),
                 new OreType(Block.get(BlockID.SOUL_SAND), 5, 64, 0, 128),
                 new OreType(Block.get(BlockID.GRAVEL), 5, 64, 0, 128),
@@ -100,8 +101,7 @@ public class Nether extends Generator {
         lava.setRandomAmount(2);
         this.populators.add(lava);
         this.populators.add(new PopulatorGlowStone());
-        PopulatorOre ore = new PopulatorOre(Block.NETHERRACK);
-        ore.setOreTypes(new OreType[]{
+        PopulatorOre ore = new PopulatorOre(Block.NETHERRACK, new OreType[]{
                 new OreType(Block.get(BlockID.QUARTZ_ORE), 40, 16, 0, 128, NETHERRACK),
                 new OreType(Block.get(BlockID.SOUL_SAND), 1, 64, 30, 35, NETHERRACK),
                 new OreType(Block.get(BlockID.LAVA), 32, 1, 0, 32, NETHERRACK),

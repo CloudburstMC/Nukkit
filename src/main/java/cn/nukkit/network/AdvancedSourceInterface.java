@@ -1,18 +1,23 @@
 package cn.nukkit.network;
 
+import io.netty.buffer.ByteBuf;
+
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public interface AdvancedSourceInterface extends SourceInterface {
 
-    void blockAddress(String address);
+    void blockAddress(InetAddress address);
 
-    void blockAddress(String address, int timeout);
+    void blockAddress(InetAddress address, int timeout);
 
-    void unblockAddress(String address);
+    void unblockAddress(InetAddress address);
 
     void setNetwork(Network network);
 
-    void sendRawPacket(String address, int port, byte[] payload);
+    void sendRawPacket(InetSocketAddress socketAddress, ByteBuf payload);
 }

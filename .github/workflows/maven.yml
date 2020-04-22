@@ -1,6 +1,9 @@
 name: Java CI
 
-on: [pull_request]
+on: 
+  push:
+    branches: 
+      - redrak
 
 jobs:
   build:
@@ -27,5 +30,5 @@ jobs:
         uses: actions/upload-artifact@v1
         if: success()
         with:
-          name: Nukkit
+          name: Nukkit-RedRak
           path: target/nukkit-1.0-SNAPSHOT.jar

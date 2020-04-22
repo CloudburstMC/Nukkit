@@ -92,7 +92,7 @@ public class BlockWood extends BlockSolidMeta {
 
     @Override
     public BlockColor getColor() {
-        switch(getDamage() & 0x07){
+        switch (getDamage() & 0x07) {
             default:
             case OAK:
                 return BlockColor.WOOD_BLOCK_COLOR;

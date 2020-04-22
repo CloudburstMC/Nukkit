@@ -48,11 +48,6 @@ public class BlockEndRod extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean canBePushed() {
-        return true;
-    }
-
-    @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }

@@ -99,7 +99,7 @@ public class BlockFence extends BlockTransparentMeta {
 
     @Override
     public BlockColor getColor() {
-        switch(this.getDamage() & 0x07){
+        switch (this.getDamage() & 0x07) {
             default:
             case BlockFence.FENCE_OAK: //OAK
                 return BlockColor.WOOD_BLOCK_COLOR;

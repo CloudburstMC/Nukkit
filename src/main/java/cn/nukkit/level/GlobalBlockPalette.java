@@ -6,9 +6,13 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.nio.ByteOrder;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,6 +20,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class GlobalBlockPalette {
     private static final Int2IntMap legacyToRuntimeId = new Int2IntOpenHashMap();
     private static final Int2IntMap runtimeIdToLegacy = new Int2IntOpenHashMap();
+    private static final Int2ObjectMap<String> legacyIdToString = new Int2ObjectOpenHashMap<>();
+    private static final Map<String, Integer> stringToLegacyId = new HashMap<>();
     private static final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
     public static final byte[] BLOCK_PALETTE;
 
@@ -41,9 +47,13 @@ public class GlobalBlockPalette {
 
             int id = state.getShort("id");
             int[] meta = state.getIntArray("meta");
+            String name = state.getCompound("block").getString("name");
 
             // Resolve to first legacy id
             runtimeIdToLegacy.put(runtimeId, id << 6 | meta[0]);
+            stringToLegacyId.put(name, id);
+            legacyIdToString.put(id, name);
+
             for (int val : meta) {
                 int legacyId = id << 6 | val;
                 legacyToRuntimeId.put(legacyId, runtimeId);
@@ -72,5 +82,13 @@ public class GlobalBlockPalette {
 
     public static int getOrCreateRuntimeId(int legacyId) throws NoSuchElementException {
         return getOrCreateRuntimeId(legacyId >> 4, legacyId & 0xf);
+    }
+
+    public static int getLegacyId(int runtimeId) {
+        return runtimeIdToLegacy.get(runtimeId);
+    }
+
+    public static String getName(int id) {
+        return legacyIdToString.get(id);
     }
 }

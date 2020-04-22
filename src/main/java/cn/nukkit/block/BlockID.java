@@ -302,7 +302,7 @@ public interface BlockID {
     int GLOWING_OBSIDIAN = 246;
     int NETHER_REACTOR = 247; //Should not be removed
 
-    int PISTON_EXTENSION = 250;
+    int MOVING_BLOCK = 250;
 
     int OBSERVER = 251;
 }

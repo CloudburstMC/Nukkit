@@ -13,6 +13,9 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -125,6 +128,8 @@ public abstract class EntityProjectile extends Entity {
 
             if (!this.isCollided) {
                 this.motionY -= this.getGravity();
+                this.motionX *= 1 - this.getDrag();
+                this.motionZ *= 1 - this.getDrag();
             }
 
             Vector3 moveVector = new Vector3(this.x + this.motionX, this.y + this.motionY, this.z + this.motionZ);
@@ -137,7 +142,7 @@ public abstract class EntityProjectile extends Entity {
             for (Entity entity : list) {
                 if (/*!entity.canCollideWith(this) or */
                         (entity == this.shootingEntity && this.ticksLived < 5)
-                        ) {
+                ) {
                     continue;
                 }
 
@@ -183,9 +188,7 @@ public abstract class EntityProjectile extends Entity {
             }
 
             if (!this.hadCollision || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001) {
-                double f = Math.sqrt((this.motionX * this.motionX) + (this.motionZ * this.motionZ));
-                this.yaw = Math.atan2(this.motionX, this.motionZ) * 180 / Math.PI;
-                this.pitch = Math.atan2(this.motionY, f) * 180 / Math.PI;
+                updateRotation();
                 hasUpdate = true;
             }
 
@@ -194,5 +197,19 @@ public abstract class EntityProjectile extends Entity {
         }
 
         return hasUpdate;
+    }
+
+    public void updateRotation() {
+        double f = Math.sqrt((this.motionX * this.motionX) + (this.motionZ * this.motionZ));
+        this.yaw = Math.atan2(this.motionX, this.motionZ) * 180 / Math.PI;
+        this.pitch = Math.atan2(this.motionY, f) * 180 / Math.PI;
+    }
+
+    public void inaccurate(float modifier) {
+        Random rand = ThreadLocalRandom.current();
+
+        this.motionX += rand.nextGaussian() * 0.007499999832361937 * modifier;
+        this.motionY += rand.nextGaussian() * 0.007499999832361937 * modifier;
+        this.motionZ += rand.nextGaussian() * 0.007499999832361937 * modifier;
     }
 }

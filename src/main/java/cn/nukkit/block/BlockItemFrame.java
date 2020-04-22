@@ -10,12 +10,14 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Random;
 
 /**
  * Created by Pub4Game on 03.07.2016.
  */
+@Log4j2
 public class BlockItemFrame extends BlockTransparentMeta {
     private final static int[] FACING = new int[]{4, 5, 3, 2, 1, 0}; // TODO when 1.13 support arrives, add UP/DOWN facings
 
@@ -171,5 +173,15 @@ public class BlockItemFrame extends BlockTransparentMeta {
     @Override
     public double getHardness() {
         return 0.25;
+    }
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
     }
 }
