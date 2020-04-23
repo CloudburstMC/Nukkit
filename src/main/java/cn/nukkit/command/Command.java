@@ -186,7 +186,7 @@ public abstract class Command {
         List<String> old = Lists.newArrayList(this.aliases);
         this.aliases = aliases;
         if (CommandRegistry.get().isRegistered(this)) {
-            //  CommandRegistry.get().registerAliases(this.getId(), aliases);
+          //  CommandRegistry.get().registerAliases(this.getId(), aliases);
         }
     }
 

@@ -198,7 +198,7 @@ public class Server {
     private final ItemRegistry itemRegistry = ItemRegistry.get();
     private final EntityRegistry entityRegistry = EntityRegistry.get();
     private final BiomeRegistry biomeRegistry = BiomeRegistry.get();
-    private CommandRegistry commandRegistry;
+    private final CommandRegistry commandRegistry = CommandRegistry.get();
 
     private final Map<InetSocketAddress, Player> players = new HashMap<>();
 
@@ -386,7 +386,7 @@ public class Server {
             }
         }
         log.debug("DataPath Directory: {}", this.dataPath);
-        this.commandRegistry = CommandRegistry.get();
+
         log.info("Loading {} ...", TextFormat.GREEN + "server.properties" + TextFormat.WHITE);
         this.properties = new Properties();
         this.properties.setProperty("motd", "A Nukkit Powered Server");

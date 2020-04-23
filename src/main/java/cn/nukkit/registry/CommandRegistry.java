@@ -22,7 +22,6 @@ import java.util.*;
 @Log4j2
 public class CommandRegistry implements Registry {
     private static final CommandRegistry INSTANCE = new CommandRegistry();
-    private final Server server = Server.getInstance();
     private final Map<String, CommandFactory> factoryMap = new HashMap<>();
     private final Map<String, Command> registeredCommands = new HashMap<>();
     private final Map<String, String> knownAliases = new HashMap<>();
@@ -125,7 +124,7 @@ public class CommandRegistry implements Registry {
                 registerAlias(cmd instanceof PluginCommand ? ((PluginCommand) cmd).getPlugin() : null, cmdName, alias);
             }
         }
-        this.registerServerAliases(); // Want to do this after all plugins have registered thier commands
+        this.registerServerAliases(Server.getInstance()); // Want to do this after all plugins have registered thier commands
         this.closed = true;
     }
 
@@ -171,7 +170,7 @@ public class CommandRegistry implements Registry {
             target.execute(sender, sentCmd, args);
         } catch (Exception e) {
             sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.exception"));
-            log.error(server.getLanguage().translate("nukkit.command.exception", commandLine,
+            log.error(Server.getInstance().getLanguage().translate("nukkit.command.exception", commandLine,
                     target.toString(), Utils.getExceptionMessage(e)));
         }
         target.timing.stopTiming();
@@ -271,7 +270,7 @@ public class CommandRegistry implements Registry {
         this.registerInternal("stop", StopCommand::new);
     }
 
-    public void registerServerAliases() {
+    public void registerServerAliases(Server server) {
         Map<String, List<String>> values = server.getCommandAliases();
         int count = 0;
         for (Map.Entry<String, List<String>> entry : values.entrySet()) {

@@ -59,7 +59,7 @@ public class SimpleCommandMap {
                     sc.commandParameters.addAll(map);
                 }
 
-                // this.register(def.name(), sc);
+               // this.register(def.name(), sc);
             }
         }
     }
