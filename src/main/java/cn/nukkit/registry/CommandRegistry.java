@@ -1,13 +1,11 @@
 package cn.nukkit.registry;
 
 import cn.nukkit.Server;
-import cn.nukkit.command.Command;
-import cn.nukkit.command.CommandSender;
-import cn.nukkit.command.FormattedCommandAlias;
-import cn.nukkit.command.PluginIdentifiableCommand;
+import cn.nukkit.command.*;
 import cn.nukkit.command.defaults.*;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
+import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Utils;
@@ -25,8 +23,9 @@ import java.util.*;
 public class CommandRegistry implements Registry {
     private static final CommandRegistry INSTANCE = new CommandRegistry();
     private final Server server = Server.getInstance();
-    private final Map<Identifier, Command> registeredCommands = new IdentityHashMap<>();
-    private final Map<String, Identifier> knownAliases = new HashMap<>();
+    private final Map<String, CommandFactory> factoryMap = new HashMap<>();
+    private final Map<String, Command> registeredCommands = new HashMap<>();
+    private final Map<String, String> knownAliases = new HashMap<>();
 
     private volatile boolean closed;
 
@@ -45,50 +44,62 @@ public class CommandRegistry implements Registry {
     }
 
     /**
-     * Method used to register a custom command.
+     * Method used to register a custom command. Any aliases
      *
-     * @param id      The {@link Identifier} of your command, should be unique
-     * @param command The {@link Command} object you are registering.
-     * @throws RegistryException if command is already registered with this id
+     * @param name           The name of your command, which is how it will be run. Should be all lowercase.
+     * @param commandFactory The {@link CommandFactory} that will produce your command. (ex. CommandClass::new)
+     * @throws RegistryException if command is unable to be registered
      */
-    public synchronized void register(Identifier id, Command command) throws RegistryException {
-        Objects.requireNonNull(id, "identifier");
-        Objects.requireNonNull(command, "command");
+    public synchronized void register(Plugin plugin, String name, CommandFactory commandFactory) throws RegistryException {
+        Objects.requireNonNull(name, "command name");
+        Objects.requireNonNull(commandFactory, "commandFactory");
         checkClosed();
-        String label = command.getName();
-        if (knownAliases.containsKey(label)) {
-            label = id.getNamespace() + ":" + label;
-        }
-        if (this.registeredCommands.containsKey(id) || this.knownAliases.containsKey(label)) {
-            throw new RegistryException("Command " + id + " is already registered.");
+        // Pattern match to make sure name is lowercase? or just lowercase it?
+
+        if (knownAliases.containsKey(name) && plugin != null) {
+            log.warn("Command with name {} already exists, attempting to add prefix {}", name, plugin.getName());
+            name = plugin.getName().toLowerCase() + ":" + name;
         }
 
-        this.registeredCommands.put(id, command);
-        this.knownAliases.put(label, id);
-        log.debug("Registered command: {} => {}", id, label);
-
-        if (command.getAliases() != null && command.getAliases().length != 0) {
-            this.registerAliases(id, command.getAliases());
+        if (this.factoryMap.containsKey(name) || this.knownAliases.containsKey(name)) {
+            throw new RegistryException("Command " + name + " is already registered.");
         }
+
+        this.factoryMap.put(name, commandFactory);
+        this.knownAliases.put(name, name);
+
+        log.debug("Registered command: {} ", name);
     }
 
-    public synchronized void registerAlias(Identifier id, String alias) throws RegistryException {
-        Objects.requireNonNull(id, "identifier");
+    private synchronized void registerInternal(String command, CommandFactory factory) {
+        if (this.factoryMap.containsKey(command)) {
+            throw new RegistryException("Command " + command + " already registered.");
+        }
+        this.register(null, command, factory);
+    }
+
+    public synchronized void registerAlias(Plugin plugin, String name, String alias) throws RegistryException {
+        Objects.requireNonNull(name, "command name");
         Objects.requireNonNull(alias, "alias");
         checkClosed();
-        if (this.knownAliases.containsKey(alias)) {
-            alias = id.getNamespace() + ":" + alias;
-            log.warn("Alias already registered, trying with alias: {}", alias);
+        if (!this.factoryMap.containsKey(name)) {
+            throw new RegistryException("Unable to register alias " + alias + " as command " + name + " is not yet registered.");
         }
-        if (this.knownAliases.putIfAbsent(alias.toLowerCase(), id) != null) {
+
+        if (this.knownAliases.containsKey(alias) && plugin != null) {
+            log.warn("Alias {} already registered, trying with plugin prefix", alias);
+            alias = plugin.getName().toLowerCase() + ":" + alias;
+        }
+
+        if (this.knownAliases.putIfAbsent(alias.toLowerCase(), name) != null) {
             throw new RegistryException("Unable to register alias " + alias + ", already registered");
         }
-        log.debug("Registered alias: {} => {}", alias, id);
+        log.debug("Registered alias: {} => {}", alias, name);
     }
 
-    public void registerAliases(Identifier id, String... aliases) {
+    public void registerAliases(Plugin plugin, String name, String... aliases) {
         for (String alias : aliases) {
-            registerAlias(id, alias);
+            registerAlias(plugin, name, alias);
         }
     }
 
@@ -101,6 +112,19 @@ public class CommandRegistry implements Registry {
     @Override
     public void close() throws RegistryException {
         checkClosed();
+
+        for (Map.Entry<String, CommandFactory> entry : factoryMap.entrySet()) {
+            String cmdName = entry.getKey();
+            Command cmd = entry.getValue().create(cmdName);
+            String[] aliases = cmd.getAliases();
+            this.registeredCommands.putIfAbsent(cmdName, cmd);
+            for (String alias : aliases) {
+                if (knownAliases.containsKey(alias) && knownAliases.get(alias).equalsIgnoreCase(cmdName)) {
+                    continue;
+                }
+                registerAlias(cmd instanceof PluginCommand ? ((PluginCommand) cmd).getPlugin() : null, cmdName, alias);
+            }
+        }
         this.registerServerAliases(); // Want to do this after all plugins have registered thier commands
         this.closed = true;
     }
@@ -116,8 +140,16 @@ public class CommandRegistry implements Registry {
         return this.knownAliases.keySet();
     }
 
-    public Map<Identifier, Command> getRegisteredCommands() {
+    public Map<String, Command> getRegisteredCommands() {
         return this.registeredCommands;
+    }
+
+    public boolean isRegistered(Command cmd) {
+        return this.registeredCommands.containsValue(cmd);
+    }
+
+    public boolean isRegistered(Identifier id) {
+        return this.registeredCommands.containsKey(id);
     }
 
     public boolean dispatch(CommandSender sender, String commandLine) {
@@ -192,52 +224,51 @@ public class CommandRegistry implements Registry {
 
     private void registerDefaults() {
         // TODO - Move this to a plugin to provide vanilla commands
-        this.register(Identifier.from("nukkit", "plugins"), new PluginsCommand("plugins"));
-        this.register(Identifier.from("nukkit", "seed"), new SeedCommand("seed"));
-        this.register(Identifier.from("nukkit", "stop"), new StopCommand("stop"));
-        this.register(Identifier.from("nukkit", "tell"), new TellCommand("tell"));
-        this.register(Identifier.from("nukkit", "defaultgamemode"), new DefaultGamemodeCommand("defaultgamemode"));
-        this.register(Identifier.from("nukkit", "ban"), new BanCommand("ban"));
-        this.register(Identifier.from("nukkit", "banip"), new BanIpCommand("ban-ip"));
-        this.register(Identifier.from("nukkit", "banlist"), new BanListCommand("banlist"));
-        this.register(Identifier.from("nukkit", "pardon"), new PardonCommand("pardon"));
-        this.register(Identifier.from("nukkit", "pardonip"), new PardonIpCommand("pardon-ip"));
-        this.register(Identifier.from("nukkit", "say"), new SayCommand("say"));
-        this.register(Identifier.from("nukkit", "me"), new MeCommand("me"));
-        this.register(Identifier.from("nukkit", "list"), new ListCommand("list"));
-        this.register(Identifier.from("nukkit", "difficulty"), new DifficultyCommand("difficulty"));
-        this.register(Identifier.from("nukkit", "kick"), new KickCommand("kick"));
-        this.register(Identifier.from("nukkit", "op"), new OpCommand("op"));
-        this.register(Identifier.from("nukkit", "deop"), new DeopCommand("deop"));
-        this.register(Identifier.from("nukkit", "whitelist"), new WhitelistCommand("whitelist"));
-        this.register(Identifier.from("nukkit", "give"), new GiveCommand("give"));
-        this.register(Identifier.from("nukkit", "effect"), new EffectCommand("effect"));
-        this.register(Identifier.from("nukkit", "enchant"), new EnchantCommand("enchant"));
-        this.register(Identifier.from("nukkit", "particle"), new ParticleCommand("particle"));
-        this.register(Identifier.from("nukkit", "gamemode"), new GamemodeCommand("gamemode"));
-        this.register(Identifier.from("nukkit", "gamerule"), new GameruleCommand("gamerule"));
-        this.register(Identifier.from("nukkit", "kill"), new KillCommand("kill"));
-        this.register(Identifier.from("nukkit", "spawnpoint"), new SpawnpointCommand("spawnpoint"));
-        this.register(Identifier.from("nukkit", "setworldspawn"), new SetWorldSpawnCommand("setworldspawn"));
-        this.register(Identifier.from("nukkit", "tp"), new TeleportCommand("tp"));
-        this.register(Identifier.from("nukkit", "time"), new TimeCommand("time"));
-        this.register(Identifier.from("nukkit", "title"), new TitleCommand("title"));
-        this.register(Identifier.from("nukkit", "weather"), new WeatherCommand("weather"));
-        this.register(Identifier.from("nukkit", "xp"), new XpCommand("xp"));
-
+        this.registerInternal("plugins", PluginsCommand::new);
+        this.registerInternal("seed", SeedCommand::new);
+        this.registerInternal("tell", TellCommand::new);
+        this.registerInternal("defaultgamemode", DefaultGamemodeCommand::new);
+        this.registerInternal("ban", BanCommand::new);
+        this.registerInternal("ban-ip", BanIpCommand::new);
+        this.registerInternal("banlist", BanListCommand::new);
+        this.registerInternal("pardon", PardonCommand::new);
+        this.registerInternal("pardon-ip", PardonIpCommand::new);
+        this.registerInternal("say", SayCommand::new);
+        this.registerInternal("me", MeCommand::new);
+        this.registerInternal("list", ListCommand::new);
+        this.registerInternal("difficulty", DifficultyCommand::new);
+        this.registerInternal("kick", KickCommand::new);
+        this.registerInternal("op", OpCommand::new);
+        this.registerInternal("deop", DeopCommand::new);
+        this.registerInternal("whitelist", WhitelistCommand::new);
+        this.registerInternal("give", GiveCommand::new);
+        this.registerInternal("effect", EffectCommand::new);
+        this.registerInternal("enchant", EnchantCommand::new);
+        this.registerInternal("particle", ParticleCommand::new);
+        this.registerInternal("gamemode", GamemodeCommand::new);
+        this.registerInternal("gamerule", GameruleCommand::new);
+        this.registerInternal("kill", KickCommand::new);
+        this.registerInternal("spawnpoint", SpawnpointCommand::new);
+        this.registerInternal("setworldspawn", SetWorldSpawnCommand::new);
+        this.registerInternal("tp", TeleportCommand::new);
+        this.registerInternal("time", TimeCommand::new);
+        this.registerInternal("title", TitleCommand::new);
+        this.registerInternal("weather", WeatherCommand::new);
+        this.registerInternal("xp", XpCommand::new);
     }
 
     private void registerBuiltIn() {
-        this.register(Identifier.from("nukkit", "help"), new HelpCommand("help"));
-        this.register(Identifier.from("nukkitx", "version"), new VersionCommand("version"));
-        this.register(Identifier.from("nukkit", "status"), new StatusCommand("status"));
-        this.register(Identifier.from("nukkit", "gc"), new GarbageCollectorCommand("gc"));
-        this.register(Identifier.from("nukkit", "timings"), new TimingsCommand("timings"));
-        this.register(Identifier.from("nukkit", "debugpaste"), new DebugPasteCommand("debugpaste"));
-        this.register(Identifier.from("nukkit", "reload"), new ReloadGeneratorCommand("reload"));
-        this.register(Identifier.from("nukkit", "saveon"), new SaveOnCommand("save-on"));
-        this.register(Identifier.from("nukkit", "saveoff"), new SaveOffCommand("save-off"));
-        this.register(Identifier.from("nukkit", "saveall"), new SaveCommand("save-all"));
+        this.registerInternal("help", HelpCommand::new);
+        this.registerInternal("version", VersionCommand::new);
+        this.registerInternal("status", StatusCommand::new);
+        this.registerInternal("gc", GarbageCollectorCommand::new);
+        this.registerInternal("timings", TimingsCommand::new);
+        this.registerInternal("debugpaste", DebugPasteCommand::new);
+        this.registerInternal("reload", ReloadGeneratorCommand::new);
+        this.registerInternal("save-on", SaveOnCommand::new);
+        this.registerInternal("save-off", SaveOffCommand::new);
+        this.registerInternal("save-all", SaveCommand::new);
+        this.registerInternal("stop", StopCommand::new);
     }
 
     public void registerServerAliases() {
@@ -275,7 +306,7 @@ public class CommandRegistry implements Registry {
             }
 
             if (!targets.isEmpty()) {
-                this.register(Identifier.from("nukkitx", "server_alias_" + count++), new FormattedCommandAlias(alias.toLowerCase(), targets));
+                this.registerInternal(alias.toLowerCase(), FormattedCommandAlias.factory(targets));
             }
         }
     }

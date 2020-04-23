@@ -6,10 +6,13 @@ import cn.nukkit.locale.TextContainer;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.CommandRegistry;
+import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.TextFormat;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.nukkitx.protocol.bedrock.data.CommandEnumData;
 import com.nukkitx.protocol.bedrock.data.CommandParamData;
 
@@ -21,21 +24,15 @@ import java.util.*;
  */
 public abstract class Command {
 
-    private static final CommandData defaultDataTemplate = null;
+    private Identifier id;
 
     protected CommandData commandData;
 
     private final String name;
 
-    private String nextLabel;
-
-    private String label;
+    private final String label;
 
     private String[] aliases;
-
-    private String[] activeAliases;
-
-    private CommandMap commandMap = null;
 
     protected String description;
 
@@ -64,6 +61,8 @@ public abstract class Command {
 
             .build();
 
+    protected List<CommandParameter[]> commandParameters = new ArrayList<>();
+
     public Timing timing;
 
     public Command(String name) {
@@ -78,26 +77,13 @@ public abstract class Command {
         this(name, description, usageMessage, new String[0]);
     }
 
-    protected List<CommandParameter[]> commandParameters = new ArrayList<>();
-
-    /**
-     * Returns an CommandData containing command data
-     *
-     * @return CommandData
-     */
-    public CommandData getDefaultCommandData() {
-        return this.commandData;
-    }
-
     public Command(String name, String description, String usageMessage, String[] aliases) {
         this.commandData = new CommandData();
         this.name = name.toLowerCase(); // Uppercase letters crash the client?!?
-        this.nextLabel = name;
         this.label = name;
         this.description = description;
         this.usageMessage = usageMessage == null ? "/" + name : usageMessage;
         this.aliases = aliases;
-        this.activeAliases = aliases;
         this.timing = Timings.getCommandTiming(this);
         this.commandParameters.add(new CommandParameter[]{new CommandParameter("args", CommandParamType.RAWTEXT, true)});
     }
@@ -171,43 +157,17 @@ public abstract class Command {
     }
 
     public boolean setLabel(String name) {
-        this.nextLabel = name;
+/*        this.nextLabel = name;
         if (!this.isRegistered()) {
             this.label = name;
             this.timing = Timings.getCommandTiming(this);
             return true;
-        }
+        }*/
         return false;
-    }
-
-    public boolean register(CommandMap commandMap) {
-        if (this.allowChangesFrom(commandMap)) {
-            this.commandMap = commandMap;
-            return true;
-        }
-        return false;
-    }
-
-    public boolean unregister(CommandMap commandMap) {
-        if (this.allowChangesFrom(commandMap)) {
-            this.commandMap = null;
-            this.activeAliases = this.aliases;
-            this.label = this.nextLabel;
-            return true;
-        }
-        return false;
-    }
-
-    public boolean allowChangesFrom(CommandMap commandMap) {
-        return commandMap != null && !commandMap.equals(this.commandMap);
-    }
-
-    public boolean isRegistered() {
-        return this.commandMap != null;
     }
 
     public String[] getAliases() {
-        return this.activeAliases;
+        return this.aliases;
     }
 
     public String getPermissionMessage() {
@@ -223,9 +183,10 @@ public abstract class Command {
     }
 
     public void setAliases(String[] aliases) {
+        List<String> old = Lists.newArrayList(this.aliases);
         this.aliases = aliases;
-        if (!this.isRegistered()) {
-            this.activeAliases = aliases;
+        if (CommandRegistry.get().isRegistered(this)) {
+            //  CommandRegistry.get().registerAliases(this.getId(), aliases);
         }
     }
 
