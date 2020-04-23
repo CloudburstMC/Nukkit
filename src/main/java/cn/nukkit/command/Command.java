@@ -1,6 +1,9 @@
 package cn.nukkit.command;
 
-import cn.nukkit.command.data.*;
+import cn.nukkit.command.data.CommandData;
+import cn.nukkit.command.data.CommandOverload;
+import cn.nukkit.command.data.CommandParamType;
+import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.registry.CommandRegistry;
@@ -8,7 +11,6 @@ import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.TextFormat;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.nukkitx.protocol.bedrock.data.CommandEnumData;
 import com.nukkitx.protocol.bedrock.data.CommandParamData;
@@ -39,25 +41,6 @@ public abstract class Command {
 
     private String permissionMessage = null;
 
-    private static final ImmutableMap<CommandParamType, CommandParamData.Type> NETWORK_TYPES = ImmutableMap.<CommandParamType, CommandParamData.Type>builder()
-            .put(CommandParamType.INT, CommandParamData.Type.INT)
-            .put(CommandParamType.FLOAT, CommandParamData.Type.FLOAT)
-            .put(CommandParamType.VALUE, CommandParamData.Type.VALUE)
-            .put(CommandParamType.WILDCARD_INT, CommandParamData.Type.WILDCARD_INT)
-            .put(CommandParamType.OPERATOR, CommandParamData.Type.OPERATOR)
-            .put(CommandParamType.TARGET, CommandParamData.Type.TARGET)
-            .put(CommandParamType.WILDCARD_TARGET, CommandParamData.Type.WILDCARD_TARGET)
-            .put(CommandParamType.FILE_PATH, CommandParamData.Type.FILE_PATH)
-            .put(CommandParamType.STRING, CommandParamData.Type.STRING)
-            .put(CommandParamType.POSITION, CommandParamData.Type.POSITION)
-            .put(CommandParamType.MESSAGE, CommandParamData.Type.MESSAGE)
-            .put(CommandParamType.TEXT, CommandParamData.Type.TEXT)
-            .put(CommandParamType.JSON, CommandParamData.Type.JSON)
-            .put(CommandParamType.COMMAND, CommandParamData.Type.COMMAND)
-            .put(CommandParamType.RAWTEXT, CommandParamData.Type.TEXT)
-
-            .build();
-
     protected List<CommandParameter[]> commandParameters = new ArrayList<>();
 
     public Timing timing;
@@ -83,19 +66,6 @@ public abstract class Command {
         this.aliases = aliases;
         this.timing = Timings.getCommandTiming(this);
         this.commandParameters.add(new CommandParameter[]{new CommandParameter("args", CommandParamType.RAWTEXT, true)});
-    }
-
-    private static CommandParamData toNetwork(CommandParameter commandParameter) {
-        return new CommandParamData(commandParameter.name, commandParameter.optional,
-                toNetwork(commandParameter.enumData), NETWORK_TYPES.get(commandParameter.type),
-                commandParameter.postFix, Collections.emptyList());
-    }
-
-    private static CommandEnumData toNetwork(CommandEnum commandEnum) {
-        if (commandEnum == null) {
-            return null;
-        }
-        return new CommandEnumData(commandEnum.getName(), commandEnum.getValues().toArray(new String[0]), false);
     }
 
     public CommandParameter[] getCommandParameters(int key) {
@@ -247,7 +217,7 @@ public abstract class Command {
             CommandParameter[] parameters = this.commandParameters.get(i);
             CommandParamData[] params = new CommandParamData[parameters.length];
             for (int i2 = 0; i2 < parameters.length; i2++) {
-                params[i2] = toNetwork(parameters[i2]);
+                params[i2] = CommandUtils.toNetwork(parameters[i2]);
             }
             overloads[i] = params;
         }
