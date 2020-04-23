@@ -87,7 +87,8 @@ public class HelpCommand extends VanillaCommand {
             int i = 1;
             for (Command command1 : commands.values()) {
                 if (i >= (pageNumber - 1) * pageHeight + 1 && i <= Math.min(commands.size(), pageNumber * pageHeight)) {
-                    sender.sendMessage(TextFormat.DARK_GREEN + "/" + command1.getName() + ": " + TextFormat.WHITE + command1.getDescription());
+                    sender.sendMessage(TextFormat.DARK_GREEN + "/" + command1.getName() + ": "
+                            + TextFormat.WHITE + sender.getServer().getLanguage().translate(command1.getDescription()));
                 }
                 i++;
             }
@@ -97,8 +98,10 @@ public class HelpCommand extends VanillaCommand {
             Command cmd = sender.getServer().getCommandRegistry().getCommand(command.toLowerCase());
             if (cmd != null) {
                 if (cmd.testPermissionSilent(sender)) {
+
+                    String desc = sender.getServer().getLanguage().translate(cmd.getDescription());
                     String message = TextFormat.YELLOW + "--------- " + TextFormat.WHITE + " Help: /" + cmd.getName() + TextFormat.YELLOW + " ---------\n";
-                    message += TextFormat.GOLD + "Description: " + TextFormat.WHITE + cmd.getDescription() + "\n";
+                    message += TextFormat.GOLD + "Description: " + TextFormat.WHITE + desc + "\n";
                     String usage = "";
                     String[] usages = cmd.getUsage().split("\n");
                     for (String u : usages) {

@@ -300,8 +300,7 @@ public abstract class Command {
             aliasesEnum = new String[]{this.name.toLowerCase()};
         }
         CommandEnumData aliases = new CommandEnumData(this.name.toLowerCase() + "Aliases", aliasesEnum, false);
-
-        String description = player.getServer().getLanguage().translateOnly("nukkit.", this.description);
+        String description = player.getServer().getLanguage().translate(this.description);
 
         CommandParamData[][] overloads = new CommandParamData[this.commandParameters.size()][];
 
