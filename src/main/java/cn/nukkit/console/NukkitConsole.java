@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class NukkitConsole extends SimpleTerminalConsole {
     private final Server server;
     private final BlockingQueue<String> consoleQueue = new LinkedBlockingQueue<>();
-    private AtomicBoolean executingCommands = new AtomicBoolean(false);
+    private final AtomicBoolean executingCommands = new AtomicBoolean(false);
 
     @Override
     protected boolean isRunning() {
@@ -26,6 +26,9 @@ public class NukkitConsole extends SimpleTerminalConsole {
 
     @Override
     protected void runCommand(String command) {
+        if (command.startsWith("/")) {
+            command = command.substring(1);
+        }
         if (executingCommands.get()) {
             try (Timing ignored = Timings.serverCommandTimer.startTiming()) {
                 ServerCommandEvent event = new ServerCommandEvent(server.getConsoleSender(), command);
