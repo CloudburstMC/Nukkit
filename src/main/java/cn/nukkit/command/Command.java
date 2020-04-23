@@ -6,12 +6,9 @@ import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
-import cn.nukkit.registry.CommandRegistry;
-import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.TextFormat;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
-import com.google.common.collect.Lists;
 import com.nukkitx.protocol.bedrock.data.CommandEnumData;
 import com.nukkitx.protocol.bedrock.data.CommandParamData;
 
@@ -23,13 +20,9 @@ import java.util.*;
  */
 public abstract class Command {
 
-    private Identifier id;
-
     protected CommandData commandData;
 
     private final String name;
-
-    private final String label;
 
     private String[] aliases;
 
@@ -60,7 +53,6 @@ public abstract class Command {
     public Command(String name, String description, String usageMessage, String[] aliases) {
         this.commandData = new CommandData();
         this.name = name.toLowerCase(); // Uppercase letters crash the client?!?
-        this.label = name;
         this.description = description;
         this.usageMessage = usageMessage == null ? "/" + name : usageMessage;
         this.aliases = aliases;
@@ -120,17 +112,7 @@ public abstract class Command {
     }
 
     public String getLabel() {
-        return label;
-    }
-
-    public boolean setLabel(String name) {
-/*        this.nextLabel = name;
-        if (!this.isRegistered()) {
-            this.label = name;
-            this.timing = Timings.getCommandTiming(this);
-            return true;
-        }*/
-        return false;
+        return getName();
     }
 
     public String[] getAliases() {
@@ -150,11 +132,7 @@ public abstract class Command {
     }
 
     public void setAliases(String[] aliases) {
-        List<String> old = Lists.newArrayList(this.aliases);
         this.aliases = aliases;
-        if (CommandRegistry.get().isRegistered(this)) {
-          //  CommandRegistry.get().registerAliases(this.getId(), aliases);
-        }
     }
 
     public void setDescription(String description) {
