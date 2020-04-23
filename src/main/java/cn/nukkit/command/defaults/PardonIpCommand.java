@@ -19,6 +19,7 @@ public class PardonIpCommand extends VanillaCommand {
         super(name);
         this.setPermission("nukkit.command.unban.ip");
         this.setAliases(new String[]{"unbanip", "unban-ip", "pardonip"});
+        this.setUsage("/unbanip <ip>");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("ip")

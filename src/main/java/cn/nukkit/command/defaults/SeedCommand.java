@@ -13,6 +13,7 @@ public class SeedCommand extends VanillaCommand {
     public SeedCommand(String name) {
         super(name);
         this.setPermission("nukkit.command.seed");
+        this.setUsage("/seed");
         this.commandParameters.clear();
     }
 

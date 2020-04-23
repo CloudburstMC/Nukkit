@@ -246,7 +246,7 @@ public class CommandRegistry implements Registry {
         this.registerInternal("particle", ParticleCommand::new);
         this.registerInternal("gamemode", GamemodeCommand::new);
         this.registerInternal("gamerule", GameruleCommand::new);
-        this.registerInternal("kill", KickCommand::new);
+        this.registerInternal("kill", KillCommand::new);
         this.registerInternal("spawnpoint", SpawnpointCommand::new);
         this.registerInternal("setworldspawn", SetWorldSpawnCommand::new);
         this.registerInternal("tp", TeleportCommand::new);

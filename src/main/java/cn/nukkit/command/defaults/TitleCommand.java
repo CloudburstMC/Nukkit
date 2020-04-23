@@ -13,7 +13,7 @@ import cn.nukkit.utils.TextFormat;
  */
 public class TitleCommand extends VanillaCommand {
     public TitleCommand(String name) {
-        super(name, "commands.title.description", "commands.title.usage");
+        super(name, "commands.title.description", "/title <player> <clear|reset>\n/title <player> <|title|subtitle|actionbar> <text>\n/title <player> <times> <fadein> <stay> <fadeOut>");
         this.setPermission("nukkit.command.title");
 
         this.commandParameters.clear();
@@ -113,7 +113,7 @@ public class TitleCommand extends VanillaCommand {
                     sender.sendMessage(new TranslationContainer("nukkit.command.title.times.success",
                             args[2], args[3], args[4], player.getName()));
                 } catch (NumberFormatException exception) {
-                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.title.times.fail"));
+                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.exception"));
                 }
             } else {
                 sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));

@@ -16,7 +16,7 @@ import cn.nukkit.utils.TextFormat;
 public class TimeCommand extends VanillaCommand {
 
     public TimeCommand(String name) {
-        super(name, "commands.time.description", "commands.time.usage");
+        super(name, "commands.time.description", "/time <add|set|start|stop> [value]");
         this.setPermission("nukkit.command.time.add;" +
                 "nukkit.command.time.set;" +
                 "nukkit.command.time.start;" +
@@ -66,8 +66,8 @@ public class TimeCommand extends VanillaCommand {
                 level.checkTime();
                 level.stopTime();
                 level.checkTime();
+                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.time.stop", level.getTime()));
             }
-            Command.broadcastCommandMessage(sender, "Stopped the time");
             return true;
         } else if ("query".equals(args[0])) {
             if (!sender.hasPermission("nukkit.command.time.query")) {
@@ -81,7 +81,7 @@ public class TimeCommand extends VanillaCommand {
             } else {
                 level = sender.getServer().getDefaultLevel();
             }
-            sender.sendMessage(new TranslationContainer("commands.time.query.gametime", String.valueOf(level.getTime())));
+            sender.sendMessage(new TranslationContainer("commands.time.query.gametime", level.getTime()));
             return true;
         }
 
@@ -147,7 +147,7 @@ public class TimeCommand extends VanillaCommand {
                 level.setTime(level.getTime() + value);
                 level.checkTime();
             }
-            Command.broadcastCommandMessage(sender, new TranslationContainer("commands.time.added", String.valueOf(value)));
+            Command.broadcastCommandMessage(sender, new TranslationContainer("commands.time.added", value));
         } else {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
         }

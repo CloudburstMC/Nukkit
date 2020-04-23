@@ -13,7 +13,7 @@ import co.aikar.timings.TimingsExport;
 public class TimingsCommand extends VanillaCommand {
 
     public TimingsCommand(String name) {
-        super(name, "nukkit.command.timings.description", "nukkit.command.timings.usage");
+        super(name, "nukkit.command.timings.description", "/timings <on|off|paste>");
         this.setPermission("nukkit.command.timings");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{

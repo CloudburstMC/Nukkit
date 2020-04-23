@@ -14,7 +14,7 @@ import cn.nukkit.utils.TextFormat;
 public class WhitelistCommand extends VanillaCommand {
 
     public WhitelistCommand(String name) {
-        super(name, "commands.whitelist.description", "commands.whitelist.usage");
+        super(name, "commands.whitelist.description", "/whitelist <on|off|reload|list>\n/whitelist <add|remove> <player>");
         this.setPermission(
                 "nukkit.command.whitelist.reload;" +
                         "nukkit.command.whitelist.enable;" +
@@ -72,17 +72,14 @@ public class WhitelistCommand extends VanillaCommand {
                         result += player + ", ";
                         ++count;
                     }
-                    sender.sendMessage(new TranslationContainer("commands.whitelist.list", String.valueOf(count), String.valueOf(count)));
+                    sender.sendMessage(new TranslationContainer("commands.whitelist.list", count, count));
                     sender.sendMessage(result.length() > 0 ? result.substring(0, result.length() - 2) : "");
 
                     return true;
 
                 case "add":
-                    sender.sendMessage(new TranslationContainer("commands.generic.usage", "%commands.whitelist.add.usage"));
-                    return true;
-
                 case "remove":
-                    sender.sendMessage(new TranslationContainer("commands.generic.usage", "%commands.whitelist.remove.usage"));
+                    sender.sendMessage(new TranslationContainer("commands.generic.usage", usageMessage));
                     return true;
             }
         } else if (args.length == 2) {

@@ -16,7 +16,7 @@ import java.util.Objects;
 public class TellCommand extends VanillaCommand {
 
     public TellCommand(String name) {
-        super(name, "commands.tell.description", "commands.message.usage", new String[]{"w", "msg"});
+        super(name, "commands.tell.description", "/tell <player> <message>", new String[]{"w", "msg"});
         this.setPermission("nukkit.command.tell");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{
@@ -60,8 +60,8 @@ public class TellCommand extends VanillaCommand {
 
         String displayName = (sender instanceof Player ? ((Player) sender).getDisplayName() : sender.getName());
 
-        sender.sendMessage("[" + sender.getName() + " -> " + player.getDisplayName() + "] " + msg);
-        player.sendMessage("[" + displayName + " -> " + player.getName() + "] " + msg);
+        sender.sendMessage(new TranslationContainer("commands.message.display.outgoing", player.getDisplayName(), msg));
+        player.sendMessage(new TranslationContainer("commands.message.display.incoming", displayName, msg));
 
         return true;
     }

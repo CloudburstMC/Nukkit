@@ -19,7 +19,7 @@ import java.util.UUID;
 public class OpCommand extends VanillaCommand {
 
     public OpCommand(String name) {
-        super(name, "commands.op.description", "commands.op.description");
+        super(name, "commands.op.description", "/op <player>");
         this.setPermission("nukkit.command.op.give");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{

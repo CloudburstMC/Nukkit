@@ -14,8 +14,8 @@ import java.lang.reflect.Method;
  */
 @Log4j2
 public class SimpleCommand extends Command {
-    private Object object;
-    private Method method;
+    private final Object object;
+    private final Method method;
     private boolean forbidConsole;
     private int maxArgs;
     private int minArgs;
@@ -45,7 +45,7 @@ public class SimpleCommand extends Command {
     }
 
     public void sendInGameMessage(CommandSender sender) {
-        sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
+        sender.sendMessage(new TranslationContainer("commands.locate.fail.noplayer"));
     }
 
     @Override

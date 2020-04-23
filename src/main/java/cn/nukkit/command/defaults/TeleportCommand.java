@@ -22,7 +22,7 @@ import java.util.Optional;
  */
 public class TeleportCommand extends VanillaCommand {
     public TeleportCommand(String name) {
-        super(name, "commands.tp.description", "commands.tp.usage");
+        super(name, "commands.tp.description", "/tp [player] <position|target>");
         this.setPermission("nukkit.command.teleport");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{
@@ -84,6 +84,9 @@ public class TeleportCommand extends VanillaCommand {
         if (args.length < 3) {
             ((Player) origin).teleport(((Player) target).getLocation(), PlayerTeleportEvent.TeleportCause.COMMAND);
             Command.broadcastCommandMessage(sender, new TranslationContainer("commands.tp.success", origin.getName(), target.getName()));
+            if (origin != sender) {
+                origin.sendMessage(new TranslationContainer("commands.tp.successVictim", target.getName()));
+            }
             return true;
         } else if (((Player) target).getLevel() != null) {
             int pos;
@@ -110,6 +113,9 @@ public class TeleportCommand extends VanillaCommand {
                     target.getName(), String.valueOf(NukkitMath.round(position.getX(), 2)),
                     String.valueOf(NukkitMath.round(position.getY(), 2)),
                     String.valueOf(NukkitMath.round(position.getZ(), 2))));
+            if (target != sender) {
+                target.sendMessage(new TranslationContainer("commands.tp.successVictim", position.toString()));
+            }
             return true;
         }
         sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));

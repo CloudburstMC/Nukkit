@@ -6,8 +6,6 @@ import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.google.common.base.Preconditions;
 import io.netty.util.ResourceLeakDetector;
-import io.netty.util.internal.logging.InternalLoggerFactory;
-import io.netty.util.internal.logging.Log4J2LoggerFactory;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -69,7 +67,7 @@ public class Nukkit {
         System.getProperties().putIfAbsent("io.netty.allocator.type", "unpooled");
 
         // Netty logger for debug info
-        InternalLoggerFactory.setDefaultFactory(Log4J2LoggerFactory.INSTANCE);
+        //InternalLoggerFactory.setDefaultFactory(Log4J2LoggerFactory.INSTANCE);
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED);
 
         // Get current directory path

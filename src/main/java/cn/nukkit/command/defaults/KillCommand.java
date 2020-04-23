@@ -22,7 +22,7 @@ import java.util.StringJoiner;
 public class KillCommand extends VanillaCommand {
 
     public KillCommand(String name) {
-        super(name, "commands.kill.description", "commands.kill.usage", new String[]{"suicide"});
+        super(name, "commands.kill.description", "/kill [player]", new String[]{"suicide"});
         this.setPermission("nukkit.command.kill.self;"
                 + "nukkit.command.kill.other");
         this.commandParameters.clear();
@@ -89,10 +89,10 @@ public class KillCommand extends VanillaCommand {
                     for (Entity entity : level.getEntities()) {
                         if (entity instanceof Player) {
                             entity.setHealth(0);
+                            sender.sendMessage(new TranslationContainer(TextFormat.GOLD + "%commands.kill.successful", entity.getName()));
                         }
                     }
                 }
-                sender.sendMessage(new TranslationContainer(TextFormat.GOLD + "%commands.kill.all.successful"));
             } else {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
             }

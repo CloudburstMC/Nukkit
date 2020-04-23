@@ -74,7 +74,7 @@ public class GiveCommand extends VanillaCommand {
 
         if (player != null) {
             if (item.getId() == AIR) {
-                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.give.item.notFound", args[1]));
+                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.give.item.invalid", args[1]));
                 return true;
             }
             player.getInventory().addItem(item.clone());
@@ -86,7 +86,7 @@ public class GiveCommand extends VanillaCommand {
         Command.broadcastCommandMessage(sender, new TranslationContainer(
                 "%commands.give.success",
                 item.getName() + " (" + item.getId() + ":" + item.getMeta() + ")",
-                String.valueOf(item.getCount()),
+                item.getCount(),
                 player.getName()));
         return true;
     }
