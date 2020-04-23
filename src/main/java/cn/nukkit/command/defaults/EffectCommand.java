@@ -2,6 +2,7 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
@@ -108,7 +109,7 @@ public class EffectCommand extends Command {
         } else {
             effect.setDuration(duration).setAmplifier(amplification);
             player.addEffect(effect);
-            Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.effect.success", effect.getName(), effect.getAmplifier(), player.getDisplayName(), effect.getDuration() / 20));
+            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.effect.success", effect.getName(), effect.getAmplifier(), player.getDisplayName(), effect.getDuration() / 20));
         }
         return true;
     }

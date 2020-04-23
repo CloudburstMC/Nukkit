@@ -1,7 +1,7 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.level.Level;
@@ -53,7 +53,7 @@ public class SetWorldSpawnCommand extends VanillaCommand {
         }
         level.setSpawnLocation(pos);
 
-        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.setworldspawn.success", NukkitMath.round(pos.getX(), 2),
+        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.setworldspawn.success", NukkitMath.round(pos.getX(), 2),
                 NukkitMath.round(pos.getY(), 2), NukkitMath.round(pos.getZ(), 2)));
         return true;
     }

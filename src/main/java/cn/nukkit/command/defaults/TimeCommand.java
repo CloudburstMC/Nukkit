@@ -1,7 +1,7 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.level.Level;
@@ -54,7 +54,7 @@ public class TimeCommand extends VanillaCommand {
                 level.startTime();
                 level.checkTime();
             }
-            Command.broadcastCommandMessage(sender, "Restarted the time");
+            CommandUtils.broadcastCommandMessage(sender, "Restarted the time");
             return true;
         } else if ("stop".equals(args[0])) {
             if (!sender.hasPermission("nukkit.command.time.stop")) {
@@ -66,7 +66,7 @@ public class TimeCommand extends VanillaCommand {
                 level.checkTime();
                 level.stopTime();
                 level.checkTime();
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.time.stop", level.getTime()));
+                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.time.stop", level.getTime()));
             }
             return true;
         } else if ("query".equals(args[0])) {
@@ -126,7 +126,7 @@ public class TimeCommand extends VanillaCommand {
                 level.setTime(value);
                 level.checkTime();
             }
-            Command.broadcastCommandMessage(sender, new TranslationContainer("commands.time.set", value));
+            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.time.set", value));
         } else if ("add".equals(args[0])) {
             if (!sender.hasPermission("nukkit.command.time.add")) {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
@@ -147,7 +147,7 @@ public class TimeCommand extends VanillaCommand {
                 level.setTime(level.getTime() + value);
                 level.checkTime();
             }
-            Command.broadcastCommandMessage(sender, new TranslationContainer("commands.time.added", value));
+            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.time.added", value));
         } else {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
         }

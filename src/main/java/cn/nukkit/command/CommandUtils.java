@@ -1,9 +1,15 @@
 package cn.nukkit.command;
 
+import cn.nukkit.Server;
+import cn.nukkit.locale.TextContainer;
+import cn.nukkit.locale.TranslationContainer;
+import cn.nukkit.permission.Permissible;
+import cn.nukkit.utils.TextFormat;
 import com.nukkitx.math.vector.Vector3f;
 import lombok.experimental.UtilityClass;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,5 +47,63 @@ public class CommandUtils {
             position += relative;
         }
         return position;
+    }
+
+    public static void broadcastCommandMessage(CommandSender source, String message) {
+        broadcastCommandMessage(source, message, true);
+    }
+
+    public static void broadcastCommandMessage(CommandSender source, String message, boolean sendToSource) {
+        Set<Permissible> users = source.getServer().getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_ADMINISTRATIVE);
+
+        TranslationContainer result = new TranslationContainer("chat.type.admin", source.getName(), message);
+
+        TranslationContainer colored = new TranslationContainer(TextFormat.GRAY + "" + TextFormat.ITALIC + "%chat.type.admin", source.getName(), message);
+
+        if (sendToSource && !(source instanceof ConsoleCommandSender)) {
+            source.sendMessage(message);
+        }
+
+        for (Permissible user : users) {
+            if (user instanceof CommandSender) {
+                if (user instanceof ConsoleCommandSender) {
+                    ((ConsoleCommandSender) user).sendMessage(result);
+                } else if (!user.equals(source)) {
+                    ((CommandSender) user).sendMessage(colored);
+                }
+            }
+        }
+    }
+
+    public static void broadcastCommandMessage(CommandSender source, TextContainer message) {
+        broadcastCommandMessage(source, message, true);
+    }
+
+    public static void broadcastCommandMessage(CommandSender source, TextContainer message, boolean sendToSource) {
+        TextContainer m = message.clone();
+        String resultStr = "[" + source.getName() + ": " + m.getText() + "]";
+
+        Set<Permissible> users = source.getServer().getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_ADMINISTRATIVE);
+
+        String coloredStr = TextFormat.GRAY + "" + TextFormat.ITALIC + resultStr;
+
+        m.setText(resultStr);
+        TextContainer result = m.clone();
+        m.setText(coloredStr);
+        TextContainer colored = m.clone();
+
+        if (sendToSource && !(source instanceof ConsoleCommandSender)) {
+            source.sendMessage(message);
+        }
+
+        for (Permissible user : users) {
+            if (user instanceof CommandSender) {
+                if (user instanceof ConsoleCommandSender) {
+                    ((ConsoleCommandSender) user).sendMessage(result);
+                } else if (!user.equals(source)) {
+                    ((CommandSender) user).sendMessage(colored);
+                }
+            }
+        }
     }
 }

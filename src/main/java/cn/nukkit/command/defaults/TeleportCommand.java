@@ -1,6 +1,5 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
@@ -83,7 +82,7 @@ public class TeleportCommand extends VanillaCommand {
         }
         if (args.length < 3) {
             ((Player) origin).teleport(((Player) target).getLocation(), PlayerTeleportEvent.TeleportCause.COMMAND);
-            Command.broadcastCommandMessage(sender, new TranslationContainer("commands.tp.success", origin.getName(), target.getName()));
+            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.tp.success", origin.getName(), target.getName()));
             if (origin != sender) {
                 origin.sendMessage(new TranslationContainer("commands.tp.successVictim", target.getName()));
             }
@@ -109,7 +108,7 @@ public class TeleportCommand extends VanillaCommand {
                 pitch = Float.parseFloat(args[pos++]);
             }
             ((Player) target).teleport(Location.from(position, yaw, pitch, ((Player) target).getLevel()), PlayerTeleportEvent.TeleportCause.COMMAND);
-            Command.broadcastCommandMessage(sender, new TranslationContainer("commands.tp.success.coordinates",
+            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.tp.success.coordinates",
                     target.getName(), String.valueOf(NukkitMath.round(position.getX(), 2)),
                     String.valueOf(NukkitMath.round(position.getY(), 2)),
                     String.valueOf(NukkitMath.round(position.getZ(), 2))));

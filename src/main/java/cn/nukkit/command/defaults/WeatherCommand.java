@@ -1,7 +1,7 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.level.Level;
@@ -62,20 +62,20 @@ public class WeatherCommand extends VanillaCommand {
                 level.setThundering(false);
                 level.setRainTime(seconds * 20);
                 level.setThunderTime(seconds * 20);
-                Command.broadcastCommandMessage(sender,
+                CommandUtils.broadcastCommandMessage(sender,
                         new TranslationContainer("commands.weather.clear"));
                 return true;
             case "rain":
                 level.setRaining(true);
                 level.setRainTime(seconds * 20);
-                Command.broadcastCommandMessage(sender,
+                CommandUtils.broadcastCommandMessage(sender,
                         new TranslationContainer("commands.weather.rain"));
                 return true;
             case "thunder":
                 level.setThundering(true);
                 level.setRainTime(seconds * 20);
                 level.setThunderTime(seconds * 20);
-                Command.broadcastCommandMessage(sender,
+                CommandUtils.broadcastCommandMessage(sender,
                         new TranslationContainer("commands.weather.thunder"));
                 return true;
             default:
