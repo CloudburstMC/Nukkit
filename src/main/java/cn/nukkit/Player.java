@@ -2774,7 +2774,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             }
 
                             int levels = entityEventPacket.data; // Sent as negative number of levels lost
-                            this.setExperience(this.exp, this.expLevel + levels);
+                            if (levels < 0) this.setExperience(this.exp, this.expLevel + levels);
                             break;
                     }
                     break;
