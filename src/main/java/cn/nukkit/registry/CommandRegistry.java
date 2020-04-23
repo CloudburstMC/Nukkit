@@ -263,7 +263,6 @@ public class CommandRegistry implements Registry {
         this.registerInternal("gc", GarbageCollectorCommand::new);
         this.registerInternal("timings", TimingsCommand::new);
         this.registerInternal("debugpaste", DebugPasteCommand::new);
-        this.registerInternal("reload", ReloadGeneratorCommand::new);
         this.registerInternal("save-on", SaveOnCommand::new);
         this.registerInternal("save-off", SaveOffCommand::new);
         this.registerInternal("save-all", SaveCommand::new);
