@@ -51,6 +51,7 @@ public class EntityMinecartChest extends EntityMinecartAbstract implements Inven
         for (Item item : this.inventory.getContents().values()) {
             this.level.dropItem(this, item);
         }
+        this.inventory.clearAll();
     }
 
     @Override
