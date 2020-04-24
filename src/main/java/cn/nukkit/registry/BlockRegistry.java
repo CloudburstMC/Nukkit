@@ -164,7 +164,8 @@ public class BlockRegistry implements Registry {
     public int getLegacyId(Identifier identifier) {
         int legacyId = this.idLegacyMap.getOrDefault(identifier, -1);
         if (legacyId == -1) {
-            throw new RegistryException("No legacy ID found for " + identifier);
+            legacyId = getLegacyId(AIR);
+            //throw new RegistryException("No legacy ID found for " + identifier);
         }
         return legacyId;
     }
