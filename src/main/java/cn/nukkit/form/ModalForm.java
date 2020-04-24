@@ -1,7 +1,6 @@
 package cn.nukkit.form;
 
 import cn.nukkit.form.util.FormType;
-import cn.nukkit.player.Player;
 import lombok.Getter;
 
 import javax.annotation.Nonnull;
@@ -20,12 +19,7 @@ public class ModalForm extends Form {
         this.falseValue = falseValue;
     }
 
-    @Override
-    public void handleResponse(Player p, String data) {
-
-    }
-
-    public static class ModalFormBuilder extends FormBuilder<ModalForm, ModalFormBuilder, Boolean> {
+    public static class ModalFormBuilder extends FormBuilder<ModalForm, ModalFormBuilder> {
 
         private String content = "";
         private String trueValue = "true";

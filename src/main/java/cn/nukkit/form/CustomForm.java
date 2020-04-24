@@ -1,9 +1,7 @@
 package cn.nukkit.form;
 
 import cn.nukkit.form.element.Element;
-import cn.nukkit.form.response.CustomFormResponse;
 import cn.nukkit.form.util.FormType;
-import cn.nukkit.player.Player;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
@@ -21,12 +19,7 @@ public class CustomForm extends Form {
         this.elements = elements;
     }
 
-    @Override
-    public void handleResponse(Player p, String data) {
-
-    }
-
-    public static class CustomFormBuilder extends FormBuilder<CustomForm, CustomFormBuilder, CustomFormResponse> {
+    public static class CustomFormBuilder extends FormBuilder<CustomForm, CustomFormBuilder> {
 
         private final List<Element> elements = new ArrayList<>();
 
