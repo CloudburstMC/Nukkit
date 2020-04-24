@@ -2,6 +2,8 @@ package cn.nukkit.form.element;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 import javax.annotation.Nonnull;
@@ -39,6 +41,10 @@ public final class ElementDropdown extends Element {
     @Nonnull
     public List<String> getDropdownOptions() {
         return this.dropdownOptions;
+    }
+
+    public String getDropdownOption(int index) {
+        return this.dropdownOptions.get(index);
     }
 
     @Nonnull
@@ -80,5 +86,13 @@ public final class ElementDropdown extends Element {
             this.defaultOptionIndex = this.dropdownOptions.size() - 1;
         }
         return this;
+    }
+
+    @RequiredArgsConstructor
+    @Getter
+    public static class Response {
+
+        private final int index;
+        private final String option;
     }
 }

@@ -21,6 +21,10 @@ public class CustomForm extends Form {
         this.elements = elements;
     }
 
+    public Element getElement(int index) {
+        return elements.get(index);
+    }
+
     @Override
     public void handleResponse(Player p, String data) {
 

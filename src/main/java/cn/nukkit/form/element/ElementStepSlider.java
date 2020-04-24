@@ -1,6 +1,8 @@
 package cn.nukkit.form.element;
 
 import com.google.common.base.Preconditions;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 import javax.annotation.Nonnull;
@@ -74,5 +76,13 @@ public final class ElementStepSlider extends Element {
             this.defaultStepIndex = this.stepOptions.size() - 1;
         }
         return this;
+    }
+
+    @RequiredArgsConstructor
+    @Getter
+    public static class Response {
+
+        private final int index;
+        private final String option;
     }
 }

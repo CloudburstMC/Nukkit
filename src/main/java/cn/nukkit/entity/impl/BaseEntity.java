@@ -38,6 +38,7 @@ import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.nbt.tag.FloatTag;
 import com.nukkitx.nbt.tag.NumberTag;
 import com.nukkitx.protocol.bedrock.BedrockPacket;
+import com.nukkitx.protocol.bedrock.data.EntityData;
 import com.nukkitx.protocol.bedrock.data.EntityDataMap;
 import com.nukkitx.protocol.bedrock.data.EntityLink;
 import com.nukkitx.protocol.bedrock.packet.*;
@@ -51,10 +52,10 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cn.nukkit.block.BlockIds.*;
+import static cn.nukkit.block.BlockIds.FARMLAND;
+import static cn.nukkit.block.BlockIds.PORTAL;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.nukkitx.protocol.bedrock.data.EntityData.AIR;
 import static com.nukkitx.protocol.bedrock.data.EntityData.*;
 import static com.nukkitx.protocol.bedrock.data.EntityFlag.*;
 
@@ -639,6 +640,27 @@ public abstract class BaseEntity implements Entity, Metadatable {
         SetEntityDataPacket packet = new SetEntityDataPacket();
         packet.setRuntimeEntityId(this.getRuntimeId());
         this.data.putAllIn(packet.getMetadata());
+        player.sendPacket(packet);
+    }
+
+    public void sendData(Player player, EntityData... data) {
+        SetEntityDataPacket packet = new SetEntityDataPacket();
+        packet.setRuntimeEntityId(this.getRuntimeId());
+
+        for (EntityData entityData : data) {
+            packet.getMetadata().put(entityData, this.data.get(entityData));
+        }
+
+        player.sendPacket(packet);
+    }
+
+    public void sendFlags(Player player) {
+        SetEntityDataPacket packet = new SetEntityDataPacket();
+        packet.setRuntimeEntityId(this.getRuntimeId());
+
+        packet.getMetadata().put(FLAGS, this.data.get(FLAGS));
+        packet.getMetadata().put(FLAGS_2, this.data.get(FLAGS_2));
+
         player.sendPacket(packet);
     }
 

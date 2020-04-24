@@ -403,7 +403,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
                 PlayerToggleSprintEvent playerToggleSprintEvent = new PlayerToggleSprintEvent(player, true);
                 player.getServer().getPluginManager().callEvent(playerToggleSprintEvent);
                 if (playerToggleSprintEvent.isCancelled()) {
-                    player.sendData(player);
+                    player.sendFlags(player);
                 } else {
                     player.setSprinting(true);
                 }
@@ -412,7 +412,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
                 playerToggleSprintEvent = new PlayerToggleSprintEvent(player, false);
                 player.getServer().getPluginManager().callEvent(playerToggleSprintEvent);
                 if (playerToggleSprintEvent.isCancelled()) {
-                    player.sendData(player);
+                    player.sendFlags(player);
                 } else {
                     player.setSprinting(false);
                 }
@@ -421,7 +421,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
                     player.getServer().getPluginManager().callEvent(ptse);
 
                     if (ptse.isCancelled()) {
-                        player.sendData(player);
+                        player.sendFlags(player);
                     } else {
                         player.setSwimming(false);
                     }
@@ -431,7 +431,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
                 PlayerToggleSneakEvent playerToggleSneakEvent = new PlayerToggleSneakEvent(player, true);
                 player.getServer().getPluginManager().callEvent(playerToggleSneakEvent);
                 if (playerToggleSneakEvent.isCancelled()) {
-                    player.sendData(player);
+                    player.sendFlags(player);
                 } else {
                     player.setSneaking(true);
                 }
@@ -440,7 +440,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
                 playerToggleSneakEvent = new PlayerToggleSneakEvent(player, false);
                 player.getServer().getPluginManager().callEvent(playerToggleSneakEvent);
                 if (playerToggleSneakEvent.isCancelled()) {
-                    player.sendData(player);
+                    player.sendFlags(player);
                 } else {
                     player.setSneaking(false);
                 }
@@ -452,7 +452,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
                 PlayerToggleGlideEvent playerToggleGlideEvent = new PlayerToggleGlideEvent(player, true);
                 player.getServer().getPluginManager().callEvent(playerToggleGlideEvent);
                 if (playerToggleGlideEvent.isCancelled()) {
-                    player.sendData(player);
+                    player.sendFlags(player);
                 } else {
                     player.setGliding(true);
                 }
@@ -461,7 +461,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
                 playerToggleGlideEvent = new PlayerToggleGlideEvent(player, false);
                 player.getServer().getPluginManager().callEvent(playerToggleGlideEvent);
                 if (playerToggleGlideEvent.isCancelled()) {
-                    player.sendData(player);
+                    player.sendFlags(player);
                 } else {
                     player.setGliding(false);
                 }
@@ -477,7 +477,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
                 player.getServer().getPluginManager().callEvent(ptse);
 
                 if (ptse.isCancelled()) {
-                    player.sendData(player);
+                    player.sendFlags(player);
                 } else {
                     player.setSwimming(true);
                 }
@@ -487,7 +487,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
                 player.getServer().getPluginManager().callEvent(ptse);
 
                 if (ptse.isCancelled()) {
-                    player.sendData(player);
+                    player.sendFlags(player);
                 } else {
                     player.setSwimming(false);
                 }

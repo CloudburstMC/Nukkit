@@ -167,6 +167,10 @@ public class SyncedEntityData {
         }
     }
 
+    public Object get(EntityData data) {
+        return this.data.ensureAndGet(data);
+    }
+
     public boolean getFlag(EntityFlag flag) {
         return flags.getFlag(flag);
     }
